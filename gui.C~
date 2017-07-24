@@ -1,3 +1,0 @@
-void gui(std::string const fname) {
-  TMVA::TMVAGui(fname.c_str());
-}
