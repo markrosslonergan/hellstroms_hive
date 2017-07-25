@@ -109,6 +109,7 @@ struct runtmva_app_tree_struct {
 class tmva_helper {
 
   std::string const method_name;
+  std::string const signal_definition;
 
   TFile * ifile_sp;
   TFile * ifile_bnb;
@@ -216,6 +217,7 @@ public:
 
   tmva_helper(std::string dir) :
     method_name("runtmva"),
+    signal_definition("is_delta_rad == 1 && true_nu_vtx_fid_contained == 1"),
     ifile_sp(nullptr),
     ifile_bnb(nullptr),
     ifile_bnb_cosmic(nullptr),
@@ -316,7 +318,7 @@ public:
     for(std::pair<std::string, std::string> const & p : variable_v) dataloader->AddVariable(p.first.c_str());
 
     TCut all_cut = "";
-    TCut sig_cut = all_cut + "is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
+    TCut sig_cut = all_cut + TCut(signal_definition.c_str());
 
     dataloader->PrepareTrainingAndTestTree(sig_cut, all_cut,
 					   "nTrain_Signal="+std::to_string(vertex_tree_sp->GetEntries(sig_cut)/2)+":nTrain_Background="+std::to_string((vertex_tree_bnb_cosmic->GetEntries(all_cut)+vertex_tree_cosmic->GetEntries(all_cut))/2)+":SplitMode=Random:NormMode=NumEvents:!V");
@@ -352,62 +354,74 @@ public:
 
 
 
-  void runtmva_sig(double const run_pot) {
+  void runtmva_sig(std::string const & method_str, double const run_pot) {
 
-  TTree * tree_sp = (TTree*)file->Get(("ncdeltarad_"+method).c_str()); 
-  TTree * tree_bnb_cosmic = (TTree*)file->Get(("bnbcosmic_"+method).c_str());
-  TTree * tree_cosmic = (TTree*)file->Get(("cosmic_"+method).c_str());
+    TFile * file = TFile::Open("runtmva_app.root");
 
-  double total_scaled_sp = tree_sp->GetEntries(signal_definition.c_str()) * run_pot / pot_sp;
-  double total_scaled_bnb_cosmic = tree_bnb_cosmic->GetEntries() * run_pot / pot_bnb_cosmic;
-  double total_scaled_cosmic = tree_cosmic->GetEntries() * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
-
-  double largest_significance = 0;
-  int isp = 0;
-  int ibc = 0;
-  int ic = 0;
-  double lsp = 0;
-  double lbc = 0;
-  double lc = 0;
-
-  cout << method << "\n";
-
-  for(double d = -1; d < 1; d += 0.05) {
-  
-    double scaled_sp = tree_sp->GetEntries(("mva > "+std::to_string(d)+"&&"+signal_definition).c_str()) * run_pot / pot_sp;
-    double scaled_bnb_cosmic = tree_bnb_cosmic->GetEntries(("mva > "+std::to_string(d)).c_str()) * run_pot / pot_bnb_cosmic;
-    double scaled_cosmic = tree_cosmic->GetEntries(("mva > "+std::to_string(d)).c_str()) * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
-
-    if(scaled_bnb_cosmic+scaled_cosmic) {
-      if(scaled_sp / sqrt(scaled_bnb_cosmic+scaled_cosmic) > largest_significance) {
-	largest_significance = scaled_sp / sqrt(scaled_bnb_cosmic+scaled_cosmic);
-	isp = tree_sp->GetEntries(("mva > "+std::to_string(d)+"&&"+signal_definition).c_str());
-	lsp = scaled_sp;
-	ibc = tree_bnb_cosmic->GetEntries(("mva > "+std::to_string(d)).c_str());
-	lbc = scaled_bnb_cosmic;
-	ic = tree_cosmic->GetEntries(("mva > "+std::to_string(d)).c_str());
-	lc = scaled_cosmic;
-      } 
-    }
-    else if(scaled_sp) {
-      cout << "Background eliminated scaled signal: " << scaled_sp << " efficiency: " << scaled_sp / total_scaled_sp * 100 << " %\n";
-    }
-
-  }
-
-  cout << "total - sp: " << tree_sp->GetEntries(signal_definition.c_str()) << " scaled: " << total_scaled_sp << "\n"
-       << "        bnb_cosmic: " << tree_bnb_cosmic->GetEntries() << " scaled: " << total_scaled_bnb_cosmic << "\n"
-       << "        cosmic: " << tree_cosmic->GetEntries() << " scaled: " << total_scaled_cosmic << "\n"
-       << "after - sp: " << isp << " scaled: " << lsp << "\n"
-       << "        bnb_cosmic: " << ibc << " scaled: " << lbc << "\n"
-       << "        cosmic: " << ic << " scaled: " << lc << "\n"
-       << "largest significance: " << largest_significance << "\n"
-       << "seff: " << lsp / total_scaled_sp * 100 << " % beff: " << (lbc + lc) / (total_scaled_bnb_cosmic + total_scaled_cosmic) * 100 << " %\n\n";
-
+    TTree * tree_sp = (TTree*)file->Get(("sp_"+method_str).c_str()); 
+    TTree * tree_bnb_cosmic = (TTree*)file->Get(("bnbcosmic_"+method_str).c_str());
+    TTree * tree_cosmic = (TTree*)file->Get(("cosmic_"+method_str).c_str());
     
+    double total_scaled_sp = tree_sp->GetEntries(signal_definition.c_str()) * run_pot / pot_sp;
+    double total_scaled_bnb_cosmic = tree_bnb_cosmic->GetEntries() * run_pot / pot_bnb_cosmic;
+    double total_scaled_cosmic = tree_cosmic->GetEntries() * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+    
+    double largest_significance = 0;
+    int isp = 0;
+    int ibc = 0;
+    int ic = 0;
+    double lsp = 0;
+    double lbc = 0;
+    double lc = 0;
+    
+    std::cout << method_str << "\n";
+    
+    for(double d = -1; d < 1; d += 0.05) {
+      
+      double scaled_sp = tree_sp->GetEntries(("mva > "+std::to_string(d)+"&&"+signal_definition).c_str()) * run_pot / pot_sp;
+      double scaled_bnb_cosmic = tree_bnb_cosmic->GetEntries(("mva > "+std::to_string(d)).c_str()) * run_pot / pot_bnb_cosmic;
+      double scaled_cosmic = tree_cosmic->GetEntries(("mva > "+std::to_string(d)).c_str()) * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+      
+      if(scaled_bnb_cosmic+scaled_cosmic) {
+	if(scaled_sp / sqrt(scaled_bnb_cosmic+scaled_cosmic) > largest_significance) {
+	  largest_significance = scaled_sp / sqrt(scaled_bnb_cosmic+scaled_cosmic);
+	  isp = tree_sp->GetEntries(("mva > "+std::to_string(d)+"&&"+signal_definition).c_str());
+	  lsp = scaled_sp;
+	  ibc = tree_bnb_cosmic->GetEntries(("mva > "+std::to_string(d)).c_str());
+	  lbc = scaled_bnb_cosmic;
+	  ic = tree_cosmic->GetEntries(("mva > "+std::to_string(d)).c_str());
+	  lc = scaled_cosmic;
+	} 
+      }
+      else if(scaled_sp) {
+	std::cout << "Background eliminated scaled signal: " << scaled_sp << " efficiency: " << scaled_sp / total_scaled_sp * 100 << " %\n";
+      }
+      
+    }
+    
+    std::cout << "total - sp: " << tree_sp->GetEntries(signal_definition.c_str()) << " scaled: " << total_scaled_sp << "\n"
+	      << "        bnb_cosmic: " << tree_bnb_cosmic->GetEntries() << " scaled: " << total_scaled_bnb_cosmic << "\n"
+	      << "        cosmic: " << tree_cosmic->GetEntries() << " scaled: " << total_scaled_cosmic << "\n"
+	      << "after - sp: " << isp << " scaled: " << lsp << "\n"
+	      << "        bnb_cosmic: " << ibc << " scaled: " << lbc << "\n"
+	      << "        cosmic: " << ic << " scaled: " << lc << "\n"
+	      << "largest significance: " << largest_significance << "\n"
+	      << "seff: " << lsp / total_scaled_sp * 100 << " % beff: " << (lbc + lc) / (total_scaled_bnb_cosmic + total_scaled_cosmic) * 100 << " %\n\n";
+    
+    file->Close();
 
   }
   
+
+
+  void runtmva_sig_all(double const run_pot) {
+
+    for(method const & m : method_v) {
+      runtmva_sig(m.method_str, run_pot);
+    }
+
+  }
+
 
 
 };
@@ -456,14 +470,14 @@ int main(int const argc, char const * argv[]) {
   if(option == "all") {
     th.runtmva();
     th.runtmva_app();
-    th.runtmva_sig(run_pot);
+    th.runtmva_sig_all(run_pot);
   }
   else if(option == "app") {
     th.runtmva_app();
-    th.runtmva_sig(run_pot);
+    th.runtmva_sig_all(run_pot);
   }
   else if(option == "sig") {
-    th.runtmva_sig(run_pot);
+    th.runtmva_sig_all(run_pot);
   }
   else {
     std::cout << "Invalid option\n";
