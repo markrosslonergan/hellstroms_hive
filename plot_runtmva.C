@@ -1,0 +1,192 @@
+
+
+
+
+TFile * ifile_sp = nullptr;
+TFile * ifile_bnb_cosmic = nullptr;
+TFile * ifile_cosmic = nullptr;
+
+TFile * ofile = nullptr;
+
+TTree * vertex_tree_sp = nullptr;
+TTree * vertex_tree_bnb_cosmic = nullptr;
+TTree * vertex_tree_cosmic = nullptr;
+
+double pot_sp = -1;
+double pot_sp_cosmic = -1;
+double pot_bnb_cosmic = -1;
+double ngenbnbcosmic = -1;
+double ngencosmic = -1;
+
+double const run_pot = 6.6e20;
+
+std::string const method = "BDT";
+
+
+
+void init(std::string dir) {
+
+  std::string gdir;
+  if(dir.find("old") == std::string::npos) gdir = "LEEPhoton/";
+  std::string const app_file = "runtmva_app.root";
+
+  ifile_sp = TFile::Open((dir+"runmv_sp.root").c_str());
+  if(!ifile_sp) {
+    std::cout << "Could not find file\n";
+    exit(1);
+  }
+  vertex_tree_sp = (TTree*)ifile_sp->Get((gdir+"vertex_tree").c_str());
+  vertex_tree_sp->AddFriend(("runtmva_sp_"+method).c_str(), app_file.c_str());  
+  TTree * pot_tree_sp = (TTree*)ifile_sp->Get((gdir+"get_pot").c_str());
+  pot_tree_sp->SetBranchAddress("pot", &pot_sp);
+  pot_tree_sp->GetEntry(0);
+  
+  ifile_bnb_cosmic = TFile::Open((dir+"runmv_bnb_cosmic.root").c_str());
+  if(!ifile_bnb_cosmic) {
+    std::cout << "Could not find file\n";
+    exit(1);
+  }
+  vertex_tree_bnb_cosmic = (TTree*)ifile_bnb_cosmic->Get((gdir+"vertex_tree").c_str());
+  vertex_tree_bnb_cosmic->AddFriend(("runtmva_bnb_cosmic_"+method).c_str(), app_file.c_str());  
+  TTree * pot_tree_bnb_cosmic = (TTree*)ifile_bnb_cosmic->Get((gdir+"get_pot").c_str());
+  pot_tree_bnb_cosmic->SetBranchAddress("pot", &pot_bnb_cosmic);
+  int temp_ngenbnbcosmic;
+  pot_tree_bnb_cosmic->SetBranchAddress("number_of_events", &temp_ngenbnbcosmic);
+  pot_tree_bnb_cosmic->GetEntry(0);
+  ngenbnbcosmic = temp_ngenbnbcosmic;
+
+  ifile_cosmic = TFile::Open((dir+"runmv_cosmic.root").c_str());
+  if(!ifile_cosmic) {
+    std::cout << "Could not find file\n";
+    exit(1);
+  }
+  vertex_tree_cosmic = (TTree*)ifile_cosmic->Get((gdir+"vertex_tree").c_str());
+  vertex_tree_cosmic->AddFriend(("runtmva_cosmic_"+method).c_str(), app_file.c_str());  
+  TTree * pot_tree_cosmic = (TTree*)ifile_cosmic->Get((gdir+"get_pot").c_str());
+  int temp_ngencosmic;
+  pot_tree_cosmic->SetBranchAddress("number_of_events", &temp_ngencosmic);
+  pot_tree_cosmic->GetEntry(0);
+  ngencosmic = temp_ngencosmic;
+
+  ofile = TFile::Open("plot_runtmva.root", "recreate");
+  
+}
+
+
+
+double get_weight(double const true_nu_E) {
+
+  std::vector<double> const weights { 3.14581, 2.98233, 2.87886,2.60848,2.78501,2.38658,2.58249,2.54745,2.84427,3.1148,2.90477};
+  std::vector<double> bins{400,600,700,800,900,1000,1200,1400,1600,1800,2000,2500}; for(double & d : bins) d *= 1e-3;
+
+  if(true_nu_E < bins.front() || true_nu_E > bins.back()) return 1;
+ 
+  for(size_t i = 0; i < weights.size(); ++i) {
+    if(true_nu_E < bins.at(i+1)) return weights.at(i); 
+  }
+
+  std::cout << "something broke\n";
+  return -1;
+
+}
+
+
+
+void plotstack(std::string const & cname,
+	       std::string const & draw,
+	       std::string const & binning,
+	       std::string const & weight,
+	       bool const nue_weight = false,
+	       std::string const & xtitle = "",
+	       std::string const & ytitle = "",
+	       std::string const & title = "") {
+
+  std::string const cut = "passed_swtrigger == 1";
+  std::string const signal_definition = cut + " && is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
+  std::string const mva = "0.1";
+
+  std::string signal_weight = signal_definition + " && runtmva_sp_" + method + ".mva > " + mva;
+  if(weight != "") signal_weight = signal_weight + " && " + weight;
+  if(nue_weight) signal_weight = "("+signal_weight+") * get_weight(true_nu_E)";
+
+  TCanvas * canvas = new TCanvas(cname.c_str());
+  vertex_tree_sp->Draw((draw+">>hsp"+binning).c_str(), signal_weight.c_str());
+  TH1F * hsp = (TH1F*)gDirectory->Get("hsp");
+  hsp->SetLineColor(1);
+  hsp->SetFillColor(kBlue+2);
+  hsp->Scale(run_pot / pot_sp);
+
+  std::string background_weight = cut;
+  if(weight != "") background_weight = background_weight + " && " + weight;
+
+  vertex_tree_bnb_cosmic->Draw((draw+">>hbc"+binning).c_str(), (background_weight + " && runtmva_bnb_cosmic_" + method + ".mva > " + mva).c_str());
+  TH1F * hbc = (TH1F*)gDirectory->Get("hbc");
+  hbc->SetLineColor(1);
+  hbc->SetFillColor(kGreen+2);
+  hbc->Scale(run_pot / pot_bnb_cosmic);
+
+  vertex_tree_cosmic->Draw((draw+">>hc"+binning).c_str(), (background_weight + " && runtmva_cosmic_" + method + ".mva > " + mva).c_str());
+  TH1F * hc = (TH1F*)gDirectory->Get("hc");
+  hc->SetLineColor(1);
+  hc->SetFillColor(kMagenta+2);
+  hc->Scale(ngenbnbcosmic/ngencosmic*10.729 / pot_bnb_cosmic * run_pot);
+
+  THStack * stack = new THStack("stack", "");
+  stack->Add(hsp);
+  stack->Add(hbc);
+  stack->Add(hc);
+
+  TLegend * leg = new TLegend(0.6, 0.9, 0.9, 0.6);
+  leg->AddEntry(hc, "Cosmic");
+  leg->AddEntry(hbc, "BNB + Cosmic");
+  leg->AddEntry(hsp, "NC #Delta Radiative");
+  
+  stack->Draw("hist");
+  stack->SetTitle(title.c_str());
+  stack->GetXaxis()->SetTitle(xtitle.c_str());
+  stack->GetXaxis()->CenterTitle();
+  stack->GetYaxis()->SetTitle(ytitle.c_str());
+  stack->GetYaxis()->CenterTitle();
+
+  leg->Draw();
+
+  stack->SetMinimum(0.1);
+  stack->SetMaximum(1e6);
+  canvas->SetLogy();
+  
+  canvas->Write();
+
+  std::cout << hsp->Integral(0, hsp->GetNbinsX()+1) / sqrt(hbc->Integral(0, hbc->GetNbinsX()+1) + hc->Integral(0, hc->GetNbinsX()+1)) << "\n";
+
+  delete canvas;
+  delete stack;
+  delete leg;
+
+}
+
+
+
+void plot_runtmva(std::string dir) {
+
+  if(dir != "") dir += "/";
+  init(dir);
+
+  plotstack("summed_associated_reco_shower_energy_weighted",
+	    "summed_associated_reco_shower_energy",
+	    "(15, 0, 0.75)",
+	    "",
+	    true,
+	    "Summed Associated Reco Shower Energy [GeV]",
+	    "Number of Vertices per 6.6e20 POT",
+	    "MiniBooNE Weights Applied");
+
+  plotstack("summed_associated_reco_shower_energy",
+	    "summed_associated_reco_shower_energy",
+	    "(15, 0, 0.75)",
+	    "",
+	    false,
+	    "Summed Associated Reco Shower Energy [GeV]",
+	    "Number of Vertices per 6.6e20 POT",
+	    "");
+  
+}

@@ -303,4 +303,13 @@ void plotsupimp(std::string const dir = "") {
              "Longest Associated Track #theta_{yz} [radians]",
              "Area Normalized");  
 
+  plotsupimp("reco_asso_tracks",
+             "reco_asso_tracks",
+             "(5, 0, 5)",
+             acut,
+             "",
+             "",
+             "Number of Associated Tracks",
+             "Area Normalized");  
+
 }

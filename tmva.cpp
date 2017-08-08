@@ -93,11 +93,13 @@ struct runtmva_app_tree_struct {
   int reco_asso_tracks;
   double mva;
 
-  runtmva_app_tree_struct(std::string const & tree_name) {
+  runtmva_app_tree_struct(std::string const & tree_name, bool const extra = true) {
     tree = new TTree(tree_name.c_str(), "");
-    tree->Branch("is_delta_rad", &is_delta_rad, "is_delta_rad/I");
-    tree->Branch("true_nu_vtx_fid_contained", &true_nu_vtx_fid_contained, "true_nu_vtx_fid_contained/I");
-    tree->Branch("reco_asso_tracks", &reco_asso_tracks, "reco_asso_tracks/I");
+    if(extra) {
+      tree->Branch("is_delta_rad", &is_delta_rad, "is_delta_rad/I");
+      tree->Branch("true_nu_vtx_fid_contained", &true_nu_vtx_fid_contained, "true_nu_vtx_fid_contained/I");
+      tree->Branch("reco_asso_tracks", &reco_asso_tracks, "reco_asso_tracks/I");
+    }
     tree->Branch("mva", &mva, "mva/D");
   }
 
@@ -115,6 +117,7 @@ class tmva_helper {
   std::string const signal_definition;
   std::string const sample_selection;
   std::string and_sample_selection;
+  bool verbose;
 
   TFile * ifile_sp;
   TFile * ifile_bnb;
@@ -133,10 +136,12 @@ class tmva_helper {
   double ngenbnbcosmic;
   double ngencosmic;
 
+  double const run_pot;
+
   std::vector<std::pair<std::string, std::string>> variable_v;
   std::vector<method> method_v;
 
-
+  std::vector<double> test_v;
 
   void update(void_vec const & tvv, std::vector<float *> & rvv) {
 
@@ -177,28 +182,19 @@ class tmva_helper {
       reader_var_v.push_back(new float(-1));
       reader->AddVariable(p.first.c_str(), reader_var_v.back());
     }
-  
-    int is_delta_rad;
-    int true_nu_vtx_fid_contained;
-    int reco_asso_tracks;
-    tree->SetBranchAddress("is_delta_rad", &is_delta_rad);
-    tree->SetBranchAddress("true_nu_vtx_fid_contained", &true_nu_vtx_fid_contained);
-    tree->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
 
     TTreeFormula * tf = new TTreeFormula("tf", sample_selection.c_str(), tree);
 
     for(method const & m : method_v) {
       reader->BookMVA(m.method_str.c_str(), ("dataset/weights/"+method_name+"_"+m.method_str+".weights.xml").c_str());
-      runtmva_app_tree_struct ts(otree_name+"_"+m.method_str);
+      runtmva_app_tree_struct ts(otree_name+"_"+m.method_str, false);
       for(int i = 0; i < tree->GetEntries(); ++i) {
 	tree->GetEntry(i);
-	if(!tf->EvalInstance()) continue;
 	update(tree_var_v, reader_var_v);
-	ts.is_delta_rad = is_delta_rad;
-	ts.true_nu_vtx_fid_contained = true_nu_vtx_fid_contained;
-	ts.reco_asso_tracks = reco_asso_tracks;
-	ts.mva = reader->EvaluateMVA(m.method_str.c_str());
-	if(ts.mva != -999) ts.tree->Fill();
+	ts.mva = -999;
+	if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(m.method_str.c_str());
+	test_v.push_back(ts.mva);
+	ts.tree->Fill();
       }
       ts.tree->Write();
     }
@@ -215,10 +211,11 @@ public:
 
 
 
-  tmva_helper(std::string const & name, std::string dir, std::string const & selection = "") :
+  tmva_helper(std::string const & name, std::string dir, std::string const & selection = "", double const pot = 1) :
     method_name(name),
     signal_definition("is_delta_rad == 1 && true_nu_vtx_fid_contained == 1"),
     sample_selection(selection),
+    verbose(true),
     ifile_sp(nullptr),
     ifile_bnb(nullptr),
     ifile_bnb_cosmic(nullptr),
@@ -231,6 +228,7 @@ public:
     pot_sp_cosmic(-1),
     pot_bnb(-1),
     pot_bnb_cosmic(-1),
+    run_pot(pot),
     ngenbnbcosmic(-1),
     ngencosmic(-1) {
 
@@ -303,7 +301,7 @@ public:
 
 
 
-  void runtmva() {
+  void runtmva(bool const weight) {
     
     TFile * runtmva_ofile = TFile::Open((method_name+".root").c_str(), "recreate");
 
@@ -313,13 +311,21 @@ public:
     TMVA::DataLoader * dataloader = new TMVA::DataLoader("dataset");
 
     {
-      double const sp_weight = 1;
-      double const bnb_cosmic_weight = 1;
-      double const cosmic_weight = 1;
-      
+
+      double sp_weight = 1;
+      double bnb_cosmic_weight = 1;
+      double cosmic_weight = 1;
+
+      if(weight) {
+	sp_weight = run_pot / pot_sp;
+	bnb_cosmic_weight = run_pot / pot_bnb_cosmic;
+	cosmic_weight = run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+      }
+
       dataloader->AddSignalTree(vertex_tree_sp, sp_weight);
       dataloader->AddBackgroundTree(vertex_tree_bnb_cosmic, bnb_cosmic_weight);
       dataloader->AddBackgroundTree(vertex_tree_cosmic, cosmic_weight);
+
     }
 
     for(std::pair<std::string, std::string> const & p : variable_v) dataloader->AddVariable(p.first.c_str());
@@ -351,23 +357,27 @@ public:
 
     TFile * runtmva_app_ofile = TFile::Open((method_name+"_app.root").c_str(), "recreate");
 
-    runtmva_app_tree(vertex_tree_sp, "sp");
-    runtmva_app_tree(vertex_tree_bnb_cosmic, "bnbcosmic");
-    runtmva_app_tree(vertex_tree_cosmic, "cosmic");
-
+    runtmva_app_tree(vertex_tree_sp, method_name+"_sp");
+    runtmva_app_tree(vertex_tree_bnb_cosmic, method_name+"_bnb_cosmic");
+    runtmva_app_tree(vertex_tree_cosmic, method_name+"_cosmic");
+ 
     runtmva_app_ofile->Close();
 
   }
 
 
 
-  void runtmva_sig(std::string const & method_str, double const run_pot) {
+  double runtmva_sig(std::string const & method_str) {
+    
+    std::cout << "---------------------------------------------\n";
 
-    TFile * file = TFile::Open((method_name+"_app.root").c_str());
+    std::string const name_sp = method_name+"_sp_"+method_str;
+    std::string const name_bnb_cosmic = method_name+"_bnb_cosmic_"+method_str;
+    std::string const name_cosmic = method_name+"_cosmic_"+method_str;
 
-    TTree * tree_sp = (TTree*)file->Get(("sp_"+method_str).c_str()); 
-    TTree * tree_bnb_cosmic = (TTree*)file->Get(("bnbcosmic_"+method_str).c_str());
-    TTree * tree_cosmic = (TTree*)file->Get(("cosmic_"+method_str).c_str());
+    vertex_tree_sp->AddFriend(name_sp.c_str());
+    vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic.c_str());
+    vertex_tree_cosmic->AddFriend(name_cosmic.c_str());
 
     int total_sp = vertex_tree_sp->GetEntries((signal_definition).c_str());
     int total_bnb_cosmic = vertex_tree_bnb_cosmic->GetEntries();
@@ -375,7 +385,8 @@ public:
     double total_scaled_sp = total_sp * run_pot / pot_sp;
     double total_scaled_bnb_cosmic = total_bnb_cosmic * run_pot / pot_bnb_cosmic;
     double total_scaled_cosmic = total_cosmic * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
-    
+
+    double mva = -2;    
     double largest_significance = 0;
     int isp = 0;
     int ibc = 0;
@@ -386,17 +397,20 @@ public:
     
     std::cout << method_str << "\n";
 
-    for(double d = -1; d < 1; d += 0.05) {
-    
-      int sp = tree_sp->GetEntries(("mva > "+std::to_string(d)+"&&"+signal_definition).c_str());
-      int bnb_cosmic = tree_bnb_cosmic->GetEntries(("mva > "+std::to_string(d)).c_str());
-      int cosmic = tree_cosmic->GetEntries(("mva > "+std::to_string(d)).c_str());
+    double br_sig = 0;
+    for(double d = -1; d <= 1; d += 0.05) {
+
+      int sp = vertex_tree_sp->GetEntries((name_sp+".mva > "+std::to_string(d)+"&&"+signal_definition).c_str());
+      int bnb_cosmic = vertex_tree_bnb_cosmic->GetEntries((name_bnb_cosmic+".mva > "+std::to_string(d)).c_str());
+      int cosmic = vertex_tree_cosmic->GetEntries((name_cosmic+".mva > "+std::to_string(d)).c_str());
+
       double scaled_sp = sp * run_pot / pot_sp;
       double scaled_bnb_cosmic =  bnb_cosmic * run_pot / pot_bnb_cosmic;
       double scaled_cosmic = cosmic * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
       
       if(scaled_bnb_cosmic+scaled_cosmic) {
 	if(scaled_sp / sqrt(scaled_bnb_cosmic+scaled_cosmic) > largest_significance) {
+	  mva = d;
 	  largest_significance = scaled_sp / sqrt(scaled_bnb_cosmic+scaled_cosmic);
 	  isp = sp;
 	  lsp = scaled_sp;
@@ -406,54 +420,86 @@ public:
 	  lc = scaled_cosmic;
 	} 
       }
-      else if(scaled_sp) {
-	std::cout << "Background eliminated scaled signal: " << scaled_sp << " efficiency: " << scaled_sp / total_scaled_sp * 100 << " %\n";
+      else if(scaled_sp > br_sig) {
+	br_sig = scaled_sp;
       }
       
     }
+
+    if(verbose) {
+      std::cout << "total - sp: " << total_sp << " scaled: " << total_scaled_sp << "\n"
+		<< "        bnb_cosmic: " << total_bnb_cosmic << " scaled: " << total_scaled_bnb_cosmic << "\n"
+		<< "        cosmic: " << total_cosmic << " scaled: " << total_scaled_cosmic << "\n"
+		<< "after - sp: " << isp << " scaled: " << lsp << "\n"
+		<< "        bnb_cosmic: " << ibc << " scaled: " << lbc << "\n"
+		<< "        cosmic: " << ic << " scaled: " << lc << "\n"
+		<< "seff: " << lsp / total_scaled_sp * 100 << " % beff: " << (lbc + lc) / (total_scaled_bnb_cosmic + total_scaled_cosmic) * 100 << " %\n";
+    }
     
-    std::cout << "total - sp: " << total_sp << " scaled: " << total_scaled_sp << "\n"
-	      << "        bnb_cosmic: " << total_bnb_cosmic << " scaled: " << total_scaled_bnb_cosmic << "\n"
-	      << "        cosmic: " << total_cosmic << " scaled: " << total_scaled_cosmic << "\n"
-	      << "after - sp: " << isp << " scaled: " << lsp << "\n"
-	      << "        bnb_cosmic: " << ibc << " scaled: " << lbc << "\n"
-	      << "        cosmic: " << ic << " scaled: " << lc << "\n"
-	      << "largest significance: " << largest_significance << "\n"
-	      << "seff: " << lsp / total_scaled_sp * 100 << " % beff: " << (lbc + lc) / (total_scaled_bnb_cosmic + total_scaled_cosmic) * 100 << " %\n\n";
-    
-    file->Close();
+    if(br_sig) std::cout << "Largest background eliminated signal: " << br_sig << " efficiency: " << br_sig / total_scaled_sp * 100 << " %\n";
+    std::cout << "largest significance: " << largest_significance << " at mva > " << mva << "\n\n";
+
+    vertex_tree_sp->GetListOfFriends()->Delete();
+    vertex_tree_bnb_cosmic->GetListOfFriends()->Delete();
+    vertex_tree_cosmic->GetListOfFriends()->Delete();
+
+    return largest_significance;
 
   }
   
 
 
-  void runtmva_sig_all(double const run_pot) {
+  void runtmva_sig_all() {
 
+    std::cout << "runtmva_sig_all\n=============================================\n";
+
+    TFile * file = TFile::Open((method_name+"_app.root").c_str());
+
+    double largest_sig = 0;
+    std::string method_str;
     for(method const & m : method_v) {
-      runtmva_sig(m.method_str, run_pot);
+      double sig = runtmva_sig(m.method_str);
+      if(sig > largest_sig) {
+	largest_sig = sig;
+	method_str = m.method_str;
+      }
     }
+
+    file->Close();
+
+    std::cout << "Best significance method: " << method_str << " value: " << largest_sig << "\n\n";
 
   }
 
 
 
-  void runtmva_sig(std::string const & fname1, std::string const & cut1, std::string const & fname2, std::string const & cut2, std::string const & method_str, double const run_pot) {
+  double runtmva_sig(std::string const & name1, std::string const & cut1, std::string const & name2, std::string const & cut2, std::string const & method_str) {
+
+    std::cout << "---------------------------------------------\n";
+
+    std::string const fname1 = name1+"_app.root";
+    std::string const fname2 = name2+"_app.root";
 
     std::string andcut1 = "";
     if(cut1 != "") andcut1 = "&&"+cut1;
     std::string andcut2 = "";
     if(cut2 != "") andcut2 = "&&"+cut2;
 
-    TFile * file1 = TFile::Open(fname1.c_str());
-    TFile * file2 = TFile::Open(fname2.c_str());
+    std::string const name_sp1 = name1+"_sp_"+method_str;
+    std::string const name_bnb_cosmic1 = name1+"_bnb_cosmic_"+method_str;
+    std::string const name_cosmic1 = name1+"_cosmic_"+method_str;
 
-    TTree * tree_sp1 = (TTree*)file1->Get(("sp_"+method_str).c_str());
-    TTree * tree_bnb_cosmic1 = (TTree*)file1->Get(("bnbcosmic_"+method_str).c_str());
-    TTree * tree_cosmic1 = (TTree*)file1->Get(("cosmic_"+method_str).c_str());
+    std::string const name_sp2 = name2+"_sp_"+method_str;
+    std::string const name_bnb_cosmic2 = name2+"_bnb_cosmic_"+method_str;
+    std::string const name_cosmic2 = name2+"_cosmic_"+method_str;
 
-    TTree * tree_sp2 = (TTree*)file2->Get(("sp_"+method_str).c_str()); 
-    TTree * tree_bnb_cosmic2 = (TTree*)file2->Get(("bnbcosmic_"+method_str).c_str());
-    TTree * tree_cosmic2 = (TTree*)file2->Get(("cosmic_"+method_str).c_str());
+    vertex_tree_sp->AddFriend(name_sp1.c_str(), fname1.c_str());
+    vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic1.c_str(), fname1.c_str());
+    vertex_tree_cosmic->AddFriend(name_cosmic1.c_str(), fname1.c_str());    
+
+    vertex_tree_sp->AddFriend(name_sp2.c_str(), fname2.c_str());
+    vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic2.c_str(), fname2.c_str());
+    vertex_tree_cosmic->AddFriend(name_cosmic2.c_str(), fname2.c_str());    
 
     int total_sp1 = vertex_tree_sp->GetEntries((signal_definition+andcut1).c_str());
     int total_bnb_cosmic1 = vertex_tree_bnb_cosmic->GetEntries(cut1.c_str());
@@ -486,80 +532,120 @@ public:
     double lc2 = 0;
     
     std::cout << method_str << "\n";
+
+    double br_sig1 = 0;
+    for(double d = -1; d <= 1; d += 0.05) {
     
-    for(double d = -1; d < 1; d += 0.05) {
-    
-      int sp = tree_sp1->GetEntries(("mva > "+std::to_string(d)+"&&"+signal_definition).c_str());
-      int bnb_cosmic = tree_bnb_cosmic1->GetEntries(("mva > "+std::to_string(d)).c_str());
-      int cosmic = tree_cosmic1->GetEntries(("mva > "+std::to_string(d)).c_str());
+      int sp = vertex_tree_sp->GetEntries((name_sp1+".mva > "+std::to_string(d)+"&&"+cut1+"&&"+signal_definition).c_str());
+      int bnb_cosmic = vertex_tree_bnb_cosmic->GetEntries((name_bnb_cosmic1+".mva > "+std::to_string(d)+"&&"+cut1).c_str());
+      int cosmic = vertex_tree_cosmic->GetEntries((name_cosmic1+".mva > "+std::to_string(d)+"&&"+cut1).c_str());
       double scaled_sp = sp * run_pot / pot_sp;
       double scaled_bnb_cosmic =  bnb_cosmic * run_pot / pot_bnb_cosmic;
       double scaled_cosmic = cosmic * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
-      
-      if(scaled_bnb_cosmic+scaled_cosmic) {
-	if(scaled_sp / sqrt(scaled_bnb_cosmic+scaled_cosmic) > largest_significance1) {
-	  largest_significance1 = scaled_sp / sqrt(scaled_bnb_cosmic+scaled_cosmic);
-	  isp1 = sp;
-	  lsp1 = scaled_sp;
-	  ibc1 = bnb_cosmic;
-	  lbc1 = scaled_bnb_cosmic;
-	  ic1 = cosmic;
-	  lc1 = scaled_cosmic;
-	} 
-      }
-      else if(scaled_sp) {
-	std::cout << "Background eliminated scaled signal: " << scaled_sp << " efficiency: " << scaled_sp / total_scaled_sp1 * 100 << " %\n";
+
+      if(!(scaled_bnb_cosmic+scaled_cosmic) && scaled_sp > br_sig1) {
+	br_sig1 = scaled_sp;
       }
       
     }
 
-    for(double d = -1; d < 1; d += 0.05) {
+    double br_sig2 = 0;
+    for(double d = -1; d <= 1; d += 0.05) {
     
-      int sp = tree_sp2->GetEntries(("mva > "+std::to_string(d)+"&&"+signal_definition).c_str());
-      int bnb_cosmic = tree_bnb_cosmic2->GetEntries(("mva > "+std::to_string(d)).c_str());
-      int cosmic = tree_cosmic2->GetEntries(("mva > "+std::to_string(d)).c_str());
+      int sp = vertex_tree_sp->GetEntries((name_sp2+".mva > "+std::to_string(d)+"&&"+cut2+"&&"+signal_definition).c_str());
+      int bnb_cosmic = vertex_tree_bnb_cosmic->GetEntries((name_bnb_cosmic2+".mva > "+std::to_string(d)+"&&"+cut2).c_str());
+      int cosmic = vertex_tree_cosmic->GetEntries((name_cosmic2+".mva > "+std::to_string(d)+"&&"+cut2).c_str());
       double scaled_sp = sp * run_pot / pot_sp;
       double scaled_bnb_cosmic =  bnb_cosmic * run_pot / pot_bnb_cosmic;
       double scaled_cosmic = cosmic * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
-      
-      if(scaled_bnb_cosmic+scaled_cosmic) {
-	if(scaled_sp / sqrt(scaled_bnb_cosmic+scaled_cosmic) > largest_significance2) {
-	  largest_significance2 = scaled_sp / sqrt(scaled_bnb_cosmic+scaled_cosmic);
-	  isp2 = sp;
-	  lsp2 = scaled_sp;
-	  ibc2 = bnb_cosmic;
-	  lbc2 = scaled_bnb_cosmic;
-	  ic2 = cosmic;
-	  lc2 = scaled_cosmic;
-	} 
+
+      if(!(scaled_bnb_cosmic+scaled_cosmic) && scaled_sp > br_sig2) {
+	br_sig2 = scaled_sp;
       }
-      else if(scaled_sp) {
-	std::cout << "Background eliminated scaled signal: " << scaled_sp << " efficiency: " << scaled_sp / total_scaled_sp2 * 100 << " %\n";
-      }
-      
+            
     }
+
+    double mva1 = -2;
+    double mva2 = -2;
+    double largest_sig_nested = 0;
+    for(double d = -1; d <= 1; d += 0.05) {
     
-    std::cout << "total - sp: " << total_sp1 + total_sp2 << " scaled: " << total_scaled_sp1 + total_scaled_sp2 << "\n"
-	      << "        bnb_cosmic: " << total_bnb_cosmic1 + total_bnb_cosmic2 << " scaled: " << total_scaled_bnb_cosmic1 + total_scaled_bnb_cosmic2 << "\n"
-	      << "        cosmic: " << total_cosmic1 + total_cosmic2 << " scaled: " << total_scaled_cosmic1 + total_scaled_cosmic2 << "\n"
-	      << "after - sp: " << isp1 + isp2 << " scaled: " << lsp1 + lsp2 << "\n"
-	      << "        bnb_cosmic: " << ibc1 + ibc2 << " scaled: " << lbc1 + lbc2 << "\n"
-	      << "        cosmic: " << ic1 + ic2 << " scaled: " << lc1 + lc2 << "\n"
-	      << "largest significance: " << (lsp1+lsp2) / sqrt(lbc1+lbc2+lc1+lc2) << "\n"
-	      << "seff: " << (lsp1+lsp2) / (total_scaled_sp1+total_scaled_sp2) * 100 << " % beff: " << (lbc1 + lbc2 + lc1 + lc2) / (total_scaled_bnb_cosmic1 + total_scaled_bnb_cosmic2 + total_scaled_cosmic1 + total_scaled_cosmic2) * 100 << " %\n\n";
+      int sp1 = vertex_tree_sp->GetEntries((name_sp1+".mva > "+std::to_string(d)+"&&"+cut1+"&&"+signal_definition).c_str());
+      int bnb_cosmic1 = vertex_tree_bnb_cosmic->GetEntries((name_bnb_cosmic1+".mva > "+std::to_string(d)+"&&"+cut1).c_str());
+      int cosmic1 = vertex_tree_cosmic->GetEntries((name_cosmic1+".mva > "+std::to_string(d)+"&&"+cut1).c_str());
+      double scaled_sp1 = sp1 * run_pot / pot_sp;
+      double scaled_bnb_cosmic1 =  bnb_cosmic1 * run_pot / pot_bnb_cosmic;
+      double scaled_cosmic1 = cosmic1 * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+
+      for(double d2 = -1; d2 <= 1; d2 += 0.05) {
+	
+	int sp2 = vertex_tree_sp->GetEntries((name_sp2+".mva > "+std::to_string(d2)+"&&"+cut2+"&&"+signal_definition).c_str());
+	int bnb_cosmic2 = vertex_tree_bnb_cosmic->GetEntries((name_bnb_cosmic2+".mva > "+std::to_string(d2)+"&&"+cut2).c_str());
+	int cosmic2 = vertex_tree_cosmic->GetEntries((name_cosmic2+".mva > "+std::to_string(d2)+"&&"+cut2).c_str());
+	double scaled_sp2 = sp2 * run_pot / pot_sp;
+	double scaled_bnb_cosmic2 =  bnb_cosmic2 * run_pot / pot_bnb_cosmic;
+	double scaled_cosmic2 = cosmic2 * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+
+	double sig = (scaled_sp1+scaled_sp2) / sqrt(scaled_bnb_cosmic1+scaled_cosmic1+scaled_bnb_cosmic2+scaled_cosmic2);
+
+	if(scaled_bnb_cosmic1+scaled_cosmic1+scaled_bnb_cosmic2+scaled_cosmic2) {
+	  if(sig > largest_sig_nested) {
+	    mva1 = d;
+	    mva2 = d2;
+	    
+	    largest_sig_nested = sig;
+
+	    isp1 = sp1;
+	    lsp1 = scaled_sp1;
+	    ibc1 = bnb_cosmic1;
+	    lbc1 = scaled_bnb_cosmic1;
+	    ic1 = cosmic1;
+	    lc1 = scaled_cosmic1;
+
+	    isp2 = sp2;
+	    lsp2 = scaled_sp2;
+	    ibc2 = bnb_cosmic2;
+	    lbc2 = scaled_bnb_cosmic2;
+	    ic2 = cosmic2;
+	    lc2 = scaled_cosmic2;
+	  } 
+	}
+      }
+    }
+
+    if(verbose) {
+      std::cout << "total - sp: " << total_sp1 + total_sp2 << " scaled: " << total_scaled_sp1 + total_scaled_sp2 << "\n"
+		<< "        bnb_cosmic: " << total_bnb_cosmic1 + total_bnb_cosmic2 << " scaled: " << total_scaled_bnb_cosmic1 + total_scaled_bnb_cosmic2 << "\n"
+		<< "        cosmic: " << total_cosmic1 + total_cosmic2 << " scaled: " << total_scaled_cosmic1 + total_scaled_cosmic2 << "\n"
+		<< "after - sp: " << isp1 + isp2 << " scaled: " << lsp1 + lsp2 << "\n"
+		<< "        bnb_cosmic: " << ibc1 + ibc2 << " scaled: " << lbc1 + lbc2 << "\n"
+		<< "        cosmic: " << ic1 + ic2 << " scaled: " << lc1 + lc2 << "\n"
+		<< "seff: " << (lsp1+lsp2) / (total_scaled_sp1+total_scaled_sp2) * 100 << " % beff: " << (lbc1 + lbc2 + lc1 + lc2) / (total_scaled_bnb_cosmic1 + total_scaled_bnb_cosmic2 + total_scaled_cosmic1 + total_scaled_cosmic2) * 100 << " %\n";
+    }
+    if(br_sig1 + br_sig2) std::cout << "Largest background eliminated signal: " << br_sig1 + br_sig2 << " efficiency: " << (br_sig1 + br_sig2) / (total_scaled_sp1 + total_scaled_sp2) * 100 << " %\n";   
+    std::cout << "largest significance: " << (lsp1+lsp2) / sqrt(lbc1+lbc2+lc1+lc2) << " at " << mva1 << " for cut " << cut1 << " and " << mva2 << " for cut " << cut2 << "\n\n";
  
-    file1->Close();
-    file2->Close();
+    return largest_sig_nested > (lsp1+lsp2) / sqrt(lbc1+lbc2+lc1+lc2) ? largest_sig_nested : (lsp1+lsp2) / sqrt(lbc1+lbc2+lc1+lc2);
 
   }
 
 
   
-  void runtmva_sig_all_twofiles(std::string const & fname1, std::string const & cut1, std::string const & fname2, std::string const & cut2, double const run_pot) {
+  void runtmva_sig_all_twofiles(std::string const & fname1, std::string const & cut1, std::string const & fname2, std::string const & cut2) {
     
+    std::cout << "runtmva_sig_all_twofiles\n=============================================\n";
+
+    double largest_sig = 0;
+    std::string method_str;
     for(method const & m : method_v) {
-      runtmva_sig(fname1, cut1, fname2, cut2, m.method_str, run_pot);
+      double sig = runtmva_sig(fname1, cut1, fname2, cut2, m.method_str);
+      if(sig > largest_sig) {
+	largest_sig = sig;
+	method_str = m.method_str;
+      }
     }
+
+    std::cout << "Best significance method: " << method_str << " value: " << largest_sig << "\n\n";
 
   }
 
@@ -569,9 +655,11 @@ public:
 
 
 
-void run(std::string const & dir, std::string const option) {
+void run(std::string const & dir, std::string const option, double const run_pot, bool const weight) {
 
-  tmva_helper th("runtmva", dir, "passed_swtrigger == 1");
+  std::string name = "runtmva";
+  if(weight) name += "_weight";
+  tmva_helper th(name, dir, "passed_swtrigger == 1", run_pot);
   
   th.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
   th.add_variable("totalpe_ibg_sum", "d");
@@ -585,7 +673,7 @@ void run(std::string const & dir, std::string const option) {
   th.add_variable("longest_asso_track_thetayz", "d");
   th.add_variable("reco_asso_tracks", "i");
   th.add_variable("longest_asso_track_displacement", "d");
-  
+
   th.add_method(TMVA::Types::kBDT, "BDTG",
 		"!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2");
   th.add_method(TMVA::Types::kBDT, "BDT",
@@ -599,19 +687,15 @@ void run(std::string const & dir, std::string const option) {
   th.add_method(TMVA::Types::kRuleFit, "RuleFit",
 		"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
 
-  double const run_pot = 6.6e20;
-    
   if(option == "all") {
-    th.runtmva();
+    th.runtmva(weight);
     th.runtmva_app();
-    th.runtmva_sig_all(run_pot);
   }
   else if(option == "app") {
     th.runtmva_app();
-    th.runtmva_sig_all(run_pot);
   }
   else if(option == "sig") {
-    th.runtmva_sig_all(run_pot);
+    th.runtmva_sig_all();
   }
   else {
     std::cout << "Invalid option\n";
@@ -622,10 +706,12 @@ void run(std::string const & dir, std::string const option) {
 
 
 
-void run_split_track(std::string const & dir, std::string const option) {
-  
-  std::string const thg0_cut = "reco_asso_tracks > 0 && passed_swtrigger";
-  tmva_helper thg0("runtmva_g0track", dir, thg0_cut);
+void run_split_track(std::string const & dir, std::string const option, double const run_pot, bool const weight) {
+
+  std::string nameg0 = "runtmva_g0track";
+  if(weight) nameg0 += "_weight";  
+  std::string const thg0_cut = "reco_asso_tracks > 0";
+  tmva_helper thg0(nameg0, dir, thg0_cut+"&&passed_swtrigger", run_pot);
   
   thg0.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
   thg0.add_variable("totalpe_ibg_sum", "d");
@@ -639,7 +725,7 @@ void run_split_track(std::string const & dir, std::string const option) {
   thg0.add_variable("longest_asso_track_thetayz", "d");
   thg0.add_variable("reco_asso_tracks", "i");
   thg0.add_variable("longest_asso_track_displacement", "d");
-  
+
   thg0.add_method(TMVA::Types::kBDT, "BDTG",
 		"!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2");
   thg0.add_method(TMVA::Types::kBDT, "BDT",
@@ -653,47 +739,44 @@ void run_split_track(std::string const & dir, std::string const option) {
   thg0.add_method(TMVA::Types::kRuleFit, "RuleFit",
 		"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
 
-  std::string const th0_cut = "reco_asso_tracks == 0 && passed_swtrigger";
-  tmva_helper th0("runtmva_0track", dir, th0_cut);
+  std::string name0 = "runtmva_0track";
+  if(weight) name0 += "_weight";  
+  std::string const th0_cut = "reco_asso_tracks == 0";
+  tmva_helper th0(name0, dir, th0_cut+"&&passed_swtrigger", 6.6e20);
   
   th0.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
   th0.add_variable("totalpe_ibg_sum", "d");
   th0.add_variable("summed_associated_reco_shower_energy", "d");
   th0.add_variable("reco_nu_vtx_dist_to_closest_tpc_wall", "d");
-  th0.add_variable("shortest_asso_shower_to_vert_dist", "d");
   th0.add_variable("most_energetic_shower_reco_thetaxz", "d");
   th0.add_variable("most_energetic_shower_reco_thetayz", "d");
   th0.add_variable("most_energetic_shower_bp_dist_to_tpc", "d");
   
   th0.add_method(TMVA::Types::kBDT, "BDTG",
-		"!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2");
+		 "!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2");
   th0.add_method(TMVA::Types::kBDT, "BDT",
-		"!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20");
+		 "!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20");
   th0.add_method(TMVA::Types::kBDT, "BDTB",
-		"!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20");
+		 "!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20");
   th0.add_method(TMVA::Types::kBDT, "BDTD",
-		"!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate");
+		 "!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate");
   th0.add_method(TMVA::Types::kBDT, "BDTF",
-		"!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20");
+		 "!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20");
   th0.add_method(TMVA::Types::kRuleFit, "RuleFit",
-		"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
-
-  double const run_pot = 6.6e20;
-    
+		 "H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
+  
   if(option == "all") {
-    thg0.runtmva();
+    thg0.runtmva(weight);
     thg0.runtmva_app();
-    th0.runtmva();
+    th0.runtmva(weight);
     th0.runtmva_app();
-    thg0.runtmva_sig_all_twofiles("runtmva_g0track_app.root", thg0_cut, "runtmva_0track_app.root", th0_cut, run_pot);
   }
   else if(option == "app") {
     thg0.runtmva_app();
     th0.runtmva_app();
-    thg0.runtmva_sig_all_twofiles("runtmva_g0track_app.root", thg0_cut, "runtmva_0track_app.root", th0_cut, run_pot);
   }
   else if(option == "sig") {
-    thg0.runtmva_sig_all_twofiles("runtmva_g0track_app.root", thg0_cut, "runtmva_0track_app.root", th0_cut, run_pot);
+    thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut);
   }
   else {
     std::cout << "Invalid option\n";
@@ -710,9 +793,11 @@ int main(int const argc, char const * argv[]) {
     std::cout << "Usage: option (\"all\", \"app\", \"sig\"), directory with runmv*root files\n";
     return 1;
   }
-
-  run(argv[2], argv[1]);
-  run_split_track(argv[2], argv[1]);
+  
+  double const run_pot = 6.6e20;
+  bool const weight = false;  
+  run(argv[2], argv[1], run_pot, weight);
+  run_split_track(argv[2], argv[1], run_pot, weight);
 
   return 0;
 
