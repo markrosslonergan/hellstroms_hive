@@ -222,6 +222,15 @@ void plotsupimp(std::string const dir = "") {
 	     "Total Reconstructed In-Time PE",
 	     "Area Normalized");
 
+  plotsupimp("totalpe_bbg_sum",
+	     "totalpe_bbg_sum",
+	     "(25, 0, 2000)",
+	     acut,
+	     "",
+	     "",
+	     "Total Reconstructed Before-Beam PE",
+	     "Area Normalized");
+
   plotsupimp("summed_associated_reco_shower_energy",
 	     "summed_associated_reco_shower_energy",
 	     "(25, 0, 0.5)",
@@ -283,6 +292,24 @@ void plotsupimp(std::string const dir = "") {
              "",
              "",
              "Most Energetic Shower #theta_{yz} [radians]",
+             "Area Normalized");  
+
+  plotsupimp("reco_shower_dedx_plane2",
+             "reco_shower_dedx_plane2",
+             "(48, 0, 10)",
+             acut,
+             "",
+             "",
+             "Most Energetic Shower dE/dx [MeV/cm]",
+             "Area Normalized");  
+
+  plotsupimp("closest_shower_dedx_plane2",
+             "closest_shower_dedx_plane2",
+             "(48, 0, 10)",
+             acut,
+             "",
+             "",
+             "Closest Shower to Reco Vertex dE/dx [MeV/cm]",
              "Area Normalized");  
 
   plotsupimp("longest_asso_track_thetaxz",

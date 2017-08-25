@@ -117,6 +117,7 @@ class tmva_helper {
   std::string const signal_definition;
   std::string const sample_selection;
   std::string and_sample_selection;
+  bool separate_backgrounds;
   bool verbose;
 
   TFile * ifile_sp;
@@ -158,8 +159,9 @@ class tmva_helper {
 
 
 
-  void runtmva_app_tree(TTree * tree, std::string const & otree_name) {
+  void runtmva_app_tree(TTree * tree, std::string const & otree_name, std::string background = "") {
 
+    if(background != "") background += "_";
     TMVA::Reader * reader = new TMVA::Reader("!Color:!Silent");
 
     void_vec tree_var_v;
@@ -186,8 +188,8 @@ class tmva_helper {
     TTreeFormula * tf = new TTreeFormula("tf", sample_selection.c_str(), tree);
 
     for(method const & m : method_v) {
-      reader->BookMVA(m.method_str.c_str(), ("dataset/weights/"+method_name+"_"+m.method_str+".weights.xml").c_str());
-      runtmva_app_tree_struct ts(otree_name+"_"+m.method_str, false);
+      reader->BookMVA(m.method_str.c_str(), ("dataset/weights/"+method_name+"_"+background+m.method_str+".weights.xml").c_str());
+      runtmva_app_tree_struct ts(otree_name+"_"+background+m.method_str, false);
       for(int i = 0; i < tree->GetEntries(); ++i) {
 	tree->GetEntry(i);
 	update(tree_var_v, reader_var_v);
@@ -215,6 +217,7 @@ public:
     method_name(name),
     signal_definition("is_delta_rad == 1 && true_nu_vtx_fid_contained == 1"),
     sample_selection(selection),
+    separate_backgrounds(false),
     verbose(true),
     ifile_sp(nullptr),
     ifile_bnb(nullptr),
@@ -289,6 +292,10 @@ public:
 
 
 
+  void set_separate_backgrounds(bool const b = true) {separate_backgrounds = b;}
+
+
+
   void add_variable(std::string const & var, std::string const & type) {
     variable_v.push_back({var, type});
   }
@@ -301,11 +308,13 @@ public:
 
 
 
-  void runtmva(bool const weight) {
+  void runtmva(bool const weight, std::string const background = "") {
     
-    TFile * runtmva_ofile = TFile::Open((method_name+".root").c_str(), "recreate");
+    std::string name = method_name;
+    if(background != "") name = method_name+"_"+background;
+    TFile * runtmva_ofile = TFile::Open((name+".root").c_str(), "recreate");
 
-    TMVA::Factory * factory = new TMVA::Factory(method_name.c_str(),
+    TMVA::Factory * factory = new TMVA::Factory(name.c_str(),
 						runtmva_ofile,
 						"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
     TMVA::DataLoader * dataloader = new TMVA::DataLoader("dataset");
@@ -323,18 +332,24 @@ public:
       }
 
       dataloader->AddSignalTree(vertex_tree_sp, sp_weight);
-      dataloader->AddBackgroundTree(vertex_tree_bnb_cosmic, bnb_cosmic_weight);
-      dataloader->AddBackgroundTree(vertex_tree_cosmic, cosmic_weight);
+      if(background == "" || background == "bnb_cosmic") dataloader->AddBackgroundTree(vertex_tree_bnb_cosmic, bnb_cosmic_weight);
+      if(background == "" || background == "cosmic") dataloader->AddBackgroundTree(vertex_tree_cosmic, cosmic_weight);
 
     }
-
-    for(std::pair<std::string, std::string> const & p : variable_v) dataloader->AddVariable(p.first.c_str());
 
     TCut all_cut = sample_selection.c_str();
     TCut sig_cut = all_cut + TCut(signal_definition.c_str());
 
+    int background_entries = -1;
+    if(background == "bnb_cosmic") background_entries = vertex_tree_bnb_cosmic->GetEntries(all_cut);
+    else if(background == "cosmic") background_entries = vertex_tree_cosmic->GetEntries(all_cut);
+    else if(background == "") background_entries = double(vertex_tree_bnb_cosmic->GetEntries(all_cut)+vertex_tree_cosmic->GetEntries(all_cut));
+    background_entries /= 2;
+
+    for(std::pair<std::string, std::string> const & p : variable_v) dataloader->AddVariable(p.first.c_str());
+
     dataloader->PrepareTrainingAndTestTree(sig_cut, all_cut,
-					   "nTrain_Signal="+std::to_string(vertex_tree_sp->GetEntries(sig_cut)/2)+":nTrain_Background="+std::to_string((vertex_tree_bnb_cosmic->GetEntries(all_cut)+vertex_tree_cosmic->GetEntries(all_cut))/2)+":SplitMode=Random:NormMode=NumEvents:!V");
+					   "nTrain_Signal="+std::to_string(vertex_tree_sp->GetEntries(sig_cut)/2)+":nTrain_Background="+std::to_string(background_entries)+":SplitMode=Random:NormMode=NumEvents:!V");
 
     for(method const & m : method_v) {
       factory->BookMethod(dataloader, m.menum, m.method_str, m.option);
@@ -357,23 +372,36 @@ public:
 
     TFile * runtmva_app_ofile = TFile::Open((method_name+"_app.root").c_str(), "recreate");
 
-    runtmva_app_tree(vertex_tree_sp, method_name+"_sp");
-    runtmva_app_tree(vertex_tree_bnb_cosmic, method_name+"_bnb_cosmic");
-    runtmva_app_tree(vertex_tree_cosmic, method_name+"_cosmic");
+    if(separate_backgrounds) {
+      runtmva_app_tree(vertex_tree_sp, method_name+"_sp", "bnb_cosmic");
+      runtmva_app_tree(vertex_tree_sp, method_name+"_sp", "cosmic");
+      runtmva_app_tree(vertex_tree_bnb_cosmic, method_name+"_bnb_cosmic", "bnb_cosmic");
+      runtmva_app_tree(vertex_tree_bnb_cosmic, method_name+"_bnb_cosmic", "cosmic");
+      runtmva_app_tree(vertex_tree_cosmic, method_name+"_cosmic", "bnb_cosmic");
+      runtmva_app_tree(vertex_tree_cosmic, method_name+"_cosmic", "cosmic");
+    }
+    else {
+      runtmva_app_tree(vertex_tree_sp, method_name+"_sp");
+      runtmva_app_tree(vertex_tree_bnb_cosmic, method_name+"_bnb_cosmic");
+      runtmva_app_tree(vertex_tree_cosmic, method_name+"_cosmic");
+    }
  
+
     runtmva_app_ofile->Close();
 
   }
 
 
 
-  double runtmva_sig(std::string const & method_str) {
+  double runtmva_sig(std::string const & method_str, std::string background = "") {
     
+    if(background != "") background += "_";
+
     std::cout << "---------------------------------------------\n";
 
-    std::string const name_sp = method_name+"_sp_"+method_str;
-    std::string const name_bnb_cosmic = method_name+"_bnb_cosmic_"+method_str;
-    std::string const name_cosmic = method_name+"_cosmic_"+method_str;
+    std::string const name_sp = method_name+"_sp_"+background+method_str;
+    std::string const name_bnb_cosmic = method_name+"_bnb_cosmic_"+background+method_str;
+    std::string const name_cosmic = method_name+"_cosmic_"+background+method_str;
 
     vertex_tree_sp->AddFriend(name_sp.c_str());
     vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic.c_str());
@@ -449,7 +477,7 @@ public:
   
 
 
-  void runtmva_sig_all() {
+  void runtmva_sig_all(std::string const & background = "") {
 
     std::cout << "runtmva_sig_all\n=============================================\n";
 
@@ -458,7 +486,7 @@ public:
     double largest_sig = 0;
     std::string method_str;
     for(method const & m : method_v) {
-      double sig = runtmva_sig(m.method_str);
+      double sig = runtmva_sig(m.method_str, background);
       if(sig > largest_sig) {
 	largest_sig = sig;
 	method_str = m.method_str;
@@ -473,7 +501,9 @@ public:
 
 
 
-  double runtmva_sig(std::string const & name1, std::string const & cut1, std::string const & name2, std::string const & cut2, std::string const & method_str) {
+  double runtmva_sig(std::string const & name1, std::string const & cut1, std::string const & name2, std::string const & cut2, std::string const & method_str, std::string background = "") {
+
+    if(background != "") background += "_";
 
     std::cout << "---------------------------------------------\n";
 
@@ -485,13 +515,13 @@ public:
     std::string andcut2 = "";
     if(cut2 != "") andcut2 = "&&"+cut2;
 
-    std::string const name_sp1 = name1+"_sp_"+method_str;
-    std::string const name_bnb_cosmic1 = name1+"_bnb_cosmic_"+method_str;
-    std::string const name_cosmic1 = name1+"_cosmic_"+method_str;
+    std::string const name_sp1 = name1+"_sp_"+background+method_str;
+    std::string const name_bnb_cosmic1 = name1+"_bnb_cosmic_"+background+method_str;
+    std::string const name_cosmic1 = name1+"_cosmic_"+background+method_str;
 
-    std::string const name_sp2 = name2+"_sp_"+method_str;
-    std::string const name_bnb_cosmic2 = name2+"_bnb_cosmic_"+method_str;
-    std::string const name_cosmic2 = name2+"_cosmic_"+method_str;
+    std::string const name_sp2 = name2+"_sp_"+background+method_str;
+    std::string const name_bnb_cosmic2 = name2+"_bnb_cosmic_"+background+method_str;
+    std::string const name_cosmic2 = name2+"_cosmic_"+background+method_str;
 
     vertex_tree_sp->AddFriend(name_sp1.c_str(), fname1.c_str());
     vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic1.c_str(), fname1.c_str());
@@ -631,14 +661,14 @@ public:
 
 
   
-  void runtmva_sig_all_twofiles(std::string const & fname1, std::string const & cut1, std::string const & fname2, std::string const & cut2) {
+  void runtmva_sig_all_twofiles(std::string const & fname1, std::string const & cut1, std::string const & fname2, std::string const & cut2, std::string const & background = "") {
     
     std::cout << "runtmva_sig_all_twofiles\n=============================================\n";
 
     double largest_sig = 0;
     std::string method_str;
     for(method const & m : method_v) {
-      double sig = runtmva_sig(fname1, cut1, fname2, cut2, m.method_str);
+      double sig = runtmva_sig(fname1, cut1, fname2, cut2, m.method_str, background);
       if(sig > largest_sig) {
 	largest_sig = sig;
 	method_str = m.method_str;
@@ -655,12 +685,13 @@ public:
 
 
 
-void run(std::string const & dir, std::string const option, double const run_pot, bool const weight) {
+void run(std::string const & dir, std::string name, std::string const option, double const run_pot, bool const weight, bool const sep = false) {
 
-  std::string name = "runtmva";
   if(weight) name += "_weight";
+  if(sep) name += "_sepbackgrounds";
   tmva_helper th(name, dir, "passed_swtrigger == 1", run_pot);
-  
+  if(sep) th.set_separate_backgrounds();  
+
   th.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
   th.add_variable("totalpe_ibg_sum", "d");
   th.add_variable("summed_associated_reco_shower_energy", "d");
@@ -669,6 +700,7 @@ void run(std::string const & dir, std::string const option, double const run_pot
   th.add_variable("most_energetic_shower_reco_thetaxz", "d");
   th.add_variable("most_energetic_shower_reco_thetayz", "d");
   th.add_variable("most_energetic_shower_bp_dist_to_tpc", "d");
+  th.add_variable("reco_shower_dedx_plane2", "d");
   th.add_variable("longest_asso_track_thetaxz", "d");
   th.add_variable("longest_asso_track_thetayz", "d");
   th.add_variable("reco_asso_tracks", "i");
@@ -688,14 +720,30 @@ void run(std::string const & dir, std::string const option, double const run_pot
 		"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
 
   if(option == "all") {
-    th.runtmva(weight);
+    if(sep) {
+      th.runtmva(weight, "bnb_cosmic");
+      th.runtmva(weight, "cosmic");
+    }
+    else {
+      th.runtmva(weight);
+    }
     th.runtmva_app();
   }
   else if(option == "app") {
     th.runtmva_app();
   }
   else if(option == "sig") {
-    th.runtmva_sig_all();
+    if(sep) {
+      std::cout << "BACKGROUND: bnb_cosmic\n"
+		<< "===================================================================================\n";
+      th.runtmva_sig_all("bnb_cosmic");
+      std::cout << "BACKGROUND: cosmic\n"
+		<< "===================================================================================\n";
+      th.runtmva_sig_all("cosmic");
+    }
+    else {
+      th.runtmva_sig_all();
+    }
   }
   else {
     std::cout << "Invalid option\n";
@@ -706,13 +754,17 @@ void run(std::string const & dir, std::string const option, double const run_pot
 
 
 
-void run_split_track(std::string const & dir, std::string const option, double const run_pot, bool const weight) {
+void run_split_track(std::string const & dir, std::string name, std::string const option, double const run_pot, bool const weight, bool const sep = false) {
 
-  std::string nameg0 = "runtmva_g0track";
-  if(weight) nameg0 += "_weight";  
+  std::string const all_cut = " && passed_swtrigger == 1";
+
+  std::string nameg0 = name+"_g0track";
+  if(weight) nameg0 += "_weight";
+  if(sep) nameg0 += "_sepbackgrounds";
   std::string const thg0_cut = "reco_asso_tracks > 0";
-  tmva_helper thg0(nameg0, dir, thg0_cut+"&&passed_swtrigger", run_pot);
-  
+  tmva_helper thg0(nameg0, dir, thg0_cut + all_cut, run_pot);
+  if(sep) thg0.set_separate_backgrounds();
+
   thg0.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
   thg0.add_variable("totalpe_ibg_sum", "d");
   thg0.add_variable("summed_associated_reco_shower_energy", "d");
@@ -721,6 +773,7 @@ void run_split_track(std::string const & dir, std::string const option, double c
   thg0.add_variable("most_energetic_shower_reco_thetaxz", "d");
   thg0.add_variable("most_energetic_shower_reco_thetayz", "d");
   thg0.add_variable("most_energetic_shower_bp_dist_to_tpc", "d");
+  thg0.add_variable("reco_shower_dedx_plane2", "d");
   thg0.add_variable("longest_asso_track_thetaxz", "d");
   thg0.add_variable("longest_asso_track_thetayz", "d");
   thg0.add_variable("reco_asso_tracks", "i");
@@ -739,11 +792,13 @@ void run_split_track(std::string const & dir, std::string const option, double c
   thg0.add_method(TMVA::Types::kRuleFit, "RuleFit",
 		"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
 
-  std::string name0 = "runtmva_0track";
-  if(weight) name0 += "_weight";  
+  std::string name0 = name+"_0track";
+  if(weight) name0 += "_weight";
+  if(sep) name0 += "_sepbackgrounds";
   std::string const th0_cut = "reco_asso_tracks == 0";
-  tmva_helper th0(name0, dir, th0_cut+"&&passed_swtrigger", 6.6e20);
-  
+  tmva_helper th0(name0, dir, th0_cut + all_cut, 6.6e20);
+  if(sep) th0.set_separate_backgrounds(); 
+ 
   th0.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
   th0.add_variable("totalpe_ibg_sum", "d");
   th0.add_variable("summed_associated_reco_shower_energy", "d");
@@ -751,7 +806,8 @@ void run_split_track(std::string const & dir, std::string const option, double c
   th0.add_variable("most_energetic_shower_reco_thetaxz", "d");
   th0.add_variable("most_energetic_shower_reco_thetayz", "d");
   th0.add_variable("most_energetic_shower_bp_dist_to_tpc", "d");
-  
+  th0.add_variable("reco_shower_dedx_plane2", "d");  
+
   th0.add_method(TMVA::Types::kBDT, "BDTG",
 		 "!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2");
   th0.add_method(TMVA::Types::kBDT, "BDT",
@@ -764,11 +820,19 @@ void run_split_track(std::string const & dir, std::string const option, double c
 		 "!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20");
   th0.add_method(TMVA::Types::kRuleFit, "RuleFit",
 		 "H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
-  
+
   if(option == "all") {
-    thg0.runtmva(weight);
+    if(sep) {
+      thg0.runtmva(weight, "bnb_cosmic");
+      th0.runtmva(weight, "bnb_cosmic");
+      thg0.runtmva(weight, "cosmic");
+      th0.runtmva(weight, "cosmic");
+    }
+    else {
+      thg0.runtmva(weight);
+      th0.runtmva(weight);
+    } 
     thg0.runtmva_app();
-    th0.runtmva(weight);
     th0.runtmva_app();
   }
   else if(option == "app") {
@@ -776,7 +840,127 @@ void run_split_track(std::string const & dir, std::string const option, double c
     th0.runtmva_app();
   }
   else if(option == "sig") {
-    thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut);
+    std::cout << "Split Track\n";
+    if(sep) {
+      std::cout << "BACKGROUND: bnb_cosmic\n"
+		<< "===================================================================================\n";
+      thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut, "bnb_cosmic");
+      std::cout << "BACKGROUND: cosmic\n"
+		<< "===================================================================================\n";
+      thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut, "cosmic");
+    }
+    else {
+      thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut);
+    }
+  }
+  else {
+    std::cout << "Invalid option\n";
+    return;
+  }
+
+}
+
+
+
+void run_split_track_dedx_only(std::string const & dir, std::string name, std::string const option, double const run_pot, bool const weight, bool const sep = false) {
+
+  name += "_dedxonly";
+  std::string const all_cut = " && passed_swtrigger == 1 && reco_shower_dedx_plane2 > -1";
+
+  std::string nameg0 = name+"_g0track";
+  if(weight) nameg0 += "_weight";
+  if(sep) nameg0 += "_sepbackgrounds";
+  std::string const thg0_cut = "reco_asso_tracks > 0";
+  tmva_helper thg0(nameg0, dir, thg0_cut + all_cut, run_pot);
+  if(sep) thg0.set_separate_backgrounds();
+
+  thg0.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
+  thg0.add_variable("totalpe_ibg_sum", "d");
+  thg0.add_variable("summed_associated_reco_shower_energy", "d");
+  thg0.add_variable("reco_nu_vtx_dist_to_closest_tpc_wall", "d");
+  thg0.add_variable("shortest_asso_shower_to_vert_dist", "d");
+  thg0.add_variable("most_energetic_shower_reco_thetaxz", "d");
+  thg0.add_variable("most_energetic_shower_reco_thetayz", "d");
+  thg0.add_variable("most_energetic_shower_bp_dist_to_tpc", "d");
+  thg0.add_variable("reco_shower_dedx_plane2", "d");
+  thg0.add_variable("longest_asso_track_thetaxz", "d");
+  thg0.add_variable("longest_asso_track_thetayz", "d");
+  thg0.add_variable("reco_asso_tracks", "i");
+  thg0.add_variable("longest_asso_track_displacement", "d");
+
+  thg0.add_method(TMVA::Types::kBDT, "BDTG",
+		"!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2");
+  thg0.add_method(TMVA::Types::kBDT, "BDT",
+		"!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20");
+  thg0.add_method(TMVA::Types::kBDT, "BDTB",
+		"!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20");
+  thg0.add_method(TMVA::Types::kBDT, "BDTD",
+		"!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate");
+  thg0.add_method(TMVA::Types::kBDT, "BDTF",
+		"!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20");
+  thg0.add_method(TMVA::Types::kRuleFit, "RuleFit",
+		"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
+
+  std::string name0 = name+"_0track";
+  if(weight) name0 += "_weight";
+  if(sep) name0 += "_sepbackgrounds";
+  std::string const th0_cut = "reco_asso_tracks == 0";
+  tmva_helper th0(name0, dir, th0_cut + all_cut, 6.6e20);
+  if(sep) th0.set_separate_backgrounds(); 
+ 
+  th0.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
+  th0.add_variable("totalpe_ibg_sum", "d");
+  th0.add_variable("summed_associated_reco_shower_energy", "d");
+  th0.add_variable("reco_nu_vtx_dist_to_closest_tpc_wall", "d");
+  th0.add_variable("most_energetic_shower_reco_thetaxz", "d");
+  th0.add_variable("most_energetic_shower_reco_thetayz", "d");
+  th0.add_variable("most_energetic_shower_bp_dist_to_tpc", "d");
+  th0.add_variable("reco_shower_dedx_plane2", "d");  
+
+  th0.add_method(TMVA::Types::kBDT, "BDTG",
+		 "!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2");
+  th0.add_method(TMVA::Types::kBDT, "BDT",
+		 "!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20");
+  th0.add_method(TMVA::Types::kBDT, "BDTB",
+		 "!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20");
+  th0.add_method(TMVA::Types::kBDT, "BDTD",
+		 "!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate");
+  th0.add_method(TMVA::Types::kBDT, "BDTF",
+		 "!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20");
+  th0.add_method(TMVA::Types::kRuleFit, "RuleFit",
+		 "H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
+
+  if(option == "all") {
+    if(sep) {
+      thg0.runtmva(weight, "bnb_cosmic");
+      th0.runtmva(weight, "bnb_cosmic");
+      thg0.runtmva(weight, "cosmic");
+      th0.runtmva(weight, "cosmic");
+    }
+    else {
+      thg0.runtmva(weight);
+      th0.runtmva(weight);
+    } 
+    thg0.runtmva_app();
+    th0.runtmva_app();
+  }
+  else if(option == "app") {
+    thg0.runtmva_app();
+    th0.runtmva_app();
+  }
+  else if(option == "sig") {
+    std::cout << "Split Track dE/dx Only\n";
+    if(sep) {
+      std::cout << "BACKGROUND: bnb_cosmic\n"
+		<< "===================================================================================\n";
+      thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut, "bnb_cosmic");
+      std::cout << "BACKGROUND: cosmic\n"
+		<< "===================================================================================\n";
+      thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut, "cosmic");
+    }
+    else {
+      thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut);
+    }
   }
   else {
     std::cout << "Invalid option\n";
@@ -796,8 +980,9 @@ int main(int const argc, char const * argv[]) {
   
   double const run_pot = 6.6e20;
   bool const weight = false;  
-  run(argv[2], argv[1], run_pot, weight);
-  run_split_track(argv[2], argv[1], run_pot, weight);
+  bool const sepbackgrounds = false;
+  run_split_track(argv[3], argv[1], argv[2], run_pot, weight, sepbackgrounds);
+  run_split_track_dedx_only(argv[3], argv[1], argv[2], run_pot, weight, sepbackgrounds);
 
   return 0;
 
