@@ -276,17 +276,18 @@ public:
 
     ifile_cosmic = TFile::Open((dir+"runmv_cosmic.root").c_str());
     if(!ifile_cosmic) {
-      std::cout << "Could not find file\n";
-      exit(1);
+      std::cout << "No in-time cosmic file\n";
     }
-    vertex_tree_cosmic = (TTree*)ifile_cosmic->Get((gdir+"vertex_tree").c_str());
-    TTree * pot_tree_cosmic = (TTree*)ifile_cosmic->Get((gdir+"get_pot").c_str());
-    {
-      int temp_ngencosmic;
-      pot_tree_cosmic->SetBranchAddress("number_of_events", &temp_ngencosmic);
-      pot_tree_cosmic->GetEntry(0);
-      ngencosmic = temp_ngencosmic;
-    }      
+    else {
+      vertex_tree_cosmic = (TTree*)ifile_cosmic->Get((gdir+"vertex_tree").c_str());
+      TTree * pot_tree_cosmic = (TTree*)ifile_cosmic->Get((gdir+"get_pot").c_str());
+      {
+	int temp_ngencosmic;
+	pot_tree_cosmic->SetBranchAddress("number_of_events", &temp_ngencosmic);
+	pot_tree_cosmic->GetEntry(0);
+	ngencosmic = temp_ngencosmic;
+      }      
+    }
 
   }
 
@@ -754,9 +755,10 @@ void run(std::string const & dir, std::string name, std::string const option, do
 
 
 
-void run_split_track(std::string const & dir, std::string name, std::string const option, double const run_pot, bool const weight, bool const sep = false) {
+void run_split_track(std::string const & dir, std::string name, std::string const option, double const run_pot, std::string all_cut = "", bool const weight = false, bool const sep = false) {
 
-  std::string const all_cut = " && passed_swtrigger == 1";
+  if(all_cut != "") all_cut = " && " + all_cut + " && passed_swtrigger == 1";
+  else all_cut = " && passed_swtrigger == 1";
 
   std::string nameg0 = name+"_g0track";
   if(weight) nameg0 += "_weight";
@@ -840,7 +842,8 @@ void run_split_track(std::string const & dir, std::string name, std::string cons
     th0.runtmva_app();
   }
   else if(option == "sig") {
-    std::cout << "Split Track\n";
+    std::cout << "Names: " << name0 << " " << nameg0 << "\n"
+	      << "Split Track\n";
     if(sep) {
       std::cout << "BACKGROUND: bnb_cosmic\n"
 		<< "===================================================================================\n";
@@ -949,7 +952,8 @@ void run_split_track_dedx_only(std::string const & dir, std::string name, std::s
     th0.runtmva_app();
   }
   else if(option == "sig") {
-    std::cout << "Split Track dE/dx Only\n";
+    std::cout << "Names: " << name0 << " " << nameg0 << "\n"
+	      << "Split Track dE/dx Only\n";
     if(sep) {
       std::cout << "BACKGROUND: bnb_cosmic\n"
 		<< "===================================================================================\n";
@@ -981,7 +985,7 @@ int main(int const argc, char const * argv[]) {
   double const run_pot = 6.6e20;
   bool const weight = false;  
   bool const sepbackgrounds = false;
-  run_split_track(argv[3], argv[1], argv[2], run_pot, weight, sepbackgrounds);
+  run_split_track(argv[3], std::string(argv[1]) + "_dedxonly_new", argv[2], run_pot, "reco_shower_dedx_plane2 > -1", weight, sepbackgrounds);
   run_split_track_dedx_only(argv[3], argv[1], argv[2], run_pot, weight, sepbackgrounds);
 
   return 0;
