@@ -7,6 +7,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TTreeFormula.h"
+#include "TFriendElement.h"
 
 #include "tmva/Types.h"
 #include "tmva/DataLoader.h"
@@ -116,17 +117,17 @@ class tmva_helper {
   std::string const method_name;
   std::string const signal_definition;
   std::string const sample_selection;
-  std::string and_sample_selection;
   bool separate_backgrounds;
+  bool single_background;
   bool verbose;
 
   TFile * ifile_sp;
-  TFile * ifile_bnb;
+  TFile * ifile_sp_cosmic;
   TFile * ifile_bnb_cosmic;
   TFile * ifile_cosmic;
   
   TTree * vertex_tree_sp;
-  TTree * vertex_tree_bnb;
+  TTree * vertex_tree_sp_cosmic;
   TTree * vertex_tree_bnb_cosmic;
   TTree * vertex_tree_cosmic;
   
@@ -218,13 +219,14 @@ public:
     signal_definition("is_delta_rad == 1 && true_nu_vtx_fid_contained == 1"),
     sample_selection(selection),
     separate_backgrounds(false),
+    single_background(false),
     verbose(true),
     ifile_sp(nullptr),
-    ifile_bnb(nullptr),
+    ifile_sp_cosmic(nullptr),
     ifile_bnb_cosmic(nullptr),
     ifile_cosmic(nullptr),
     vertex_tree_sp(nullptr),
-    vertex_tree_bnb(nullptr),
+    vertex_tree_sp_cosmic(nullptr),
     vertex_tree_bnb_cosmic(nullptr),
     vertex_tree_cosmic(nullptr),
     pot_sp(-1),
@@ -234,11 +236,6 @@ public:
     run_pot(pot),
     ngenbnbcosmic(-1),
     ngencosmic(-1) {
-
-
-    
-    if(sample_selection != "") and_sample_selection = "&&"+sample_selection;
-    else and_sample_selection = "";
 
 
 
@@ -252,10 +249,24 @@ public:
       std::cout << "Could not find file\n";
       exit(1);
     }
-    vertex_tree_sp = (TTree*)ifile_sp->Get((gdir+"vertex_tree").c_str());  
+    vertex_tree_sp = (TTree*)ifile_sp->Get((gdir+"vertex_tree").c_str());
     TTree * pot_tree_sp = (TTree*)ifile_sp->Get((gdir+"get_pot").c_str());
     pot_tree_sp->SetBranchAddress("pot", &pot_sp);
     pot_tree_sp->GetEntry(0);
+
+
+
+    /*
+    ifile_sp_cosmic = TFile::Open((dir+"runmv_sp_cosmic.root").c_str());
+    if(!ifile_sp_cosmic) {
+      std::cout << "Could not find file\n";
+      exit(1);
+    }
+    vertex_tree_sp_cosmic = (TTree*)ifile_sp_cosmic->Get((gdir+"vertex_tree").c_str());
+    TTree * pot_tree_sp_cosmic = (TTree*)ifile_sp_cosmic->Get((gdir+"get_pot").c_str());
+    pot_tree_sp_cosmic->SetBranchAddress("pot", &pot_sp_cosmic);
+    pot_tree_sp_cosmic->GetEntry(0);
+    */
 
 
   
@@ -273,6 +284,8 @@ public:
       pot_tree_bnb_cosmic->GetEntry(0);
       ngenbnbcosmic = temp_ngenbnbcosmic;
     }
+
+
 
     ifile_cosmic = TFile::Open((dir+"runmv_cosmic.root").c_str());
     if(!ifile_cosmic) {
@@ -294,6 +307,7 @@ public:
 
 
   void set_separate_backgrounds(bool const b = true) {separate_backgrounds = b;}
+  void set_single_background(bool const b = true) {single_background = b;}
 
 
 
@@ -305,6 +319,12 @@ public:
   
   void add_method(TMVA::Types::EMVA const emva, std::string const & method, std::string const & option) {
     method_v.push_back({emva, method, option});
+  }
+
+
+
+  void add_method(method const & m) {
+    method_v.push_back(m);
   }
 
 
@@ -341,16 +361,16 @@ public:
     TCut all_cut = sample_selection.c_str();
     TCut sig_cut = all_cut + TCut(signal_definition.c_str());
 
-    int background_entries = -1;
+    double background_entries = -1;
     if(background == "bnb_cosmic") background_entries = vertex_tree_bnb_cosmic->GetEntries(all_cut);
     else if(background == "cosmic") background_entries = vertex_tree_cosmic->GetEntries(all_cut);
-    else if(background == "") background_entries = double(vertex_tree_bnb_cosmic->GetEntries(all_cut)+vertex_tree_cosmic->GetEntries(all_cut));
+    else if(background == "") background_entries = vertex_tree_bnb_cosmic->GetEntries(all_cut)+vertex_tree_cosmic->GetEntries(all_cut);
     background_entries /= 2;
 
     for(std::pair<std::string, std::string> const & p : variable_v) dataloader->AddVariable(p.first.c_str());
 
     dataloader->PrepareTrainingAndTestTree(sig_cut, all_cut,
-					   "nTrain_Signal="+std::to_string(vertex_tree_sp->GetEntries(sig_cut)/2)+":nTrain_Background="+std::to_string(background_entries)+":SplitMode=Random:NormMode=NumEvents:!V");
+					   "nTrain_Signal="+std::to_string(vertex_tree_sp->GetEntries(sig_cut)/2)+":nTrain_Background="+std::to_string(int(background_entries))+":SplitMode=Random:NormMode=NumEvents:!V");
 
     for(method const & m : method_v) {
       factory->BookMethod(dataloader, m.menum, m.method_str, m.option);
@@ -374,6 +394,7 @@ public:
     TFile * runtmva_app_ofile = TFile::Open((method_name+"_app.root").c_str(), "recreate");
 
     if(separate_backgrounds) {
+      std::cout << "1\n";
       runtmva_app_tree(vertex_tree_sp, method_name+"_sp", "bnb_cosmic");
       runtmva_app_tree(vertex_tree_sp, method_name+"_sp", "cosmic");
       runtmva_app_tree(vertex_tree_bnb_cosmic, method_name+"_bnb_cosmic", "bnb_cosmic");
@@ -381,12 +402,17 @@ public:
       runtmva_app_tree(vertex_tree_cosmic, method_name+"_cosmic", "bnb_cosmic");
       runtmva_app_tree(vertex_tree_cosmic, method_name+"_cosmic", "cosmic");
     }
+    else if(single_background) {
+      std::cout << "2\n";
+      runtmva_app_tree(vertex_tree_sp, method_name+"_sp", "bnb_cosmic");
+      runtmva_app_tree(vertex_tree_bnb_cosmic, method_name+"_bnb_cosmic", "bnb_cosmic");
+    }
     else {
+      std::cout << "3\n";
       runtmva_app_tree(vertex_tree_sp, method_name+"_sp");
       runtmva_app_tree(vertex_tree_bnb_cosmic, method_name+"_bnb_cosmic");
       runtmva_app_tree(vertex_tree_cosmic, method_name+"_cosmic");
-    }
- 
+    } 
 
     runtmva_app_ofile->Close();
 
@@ -502,7 +528,64 @@ public:
 
 
 
-  double runtmva_sig(std::string const & name1, std::string const & cut1, std::string const & name2, std::string const & cut2, std::string const & method_str, std::string background = "") {
+  void GetVerticesPerEvent(TTree * vertex_tree, TTree * mva_tree1, std::string const & cut1, double const mva1, TTree * mva_tree2, std::string const & cut2, double const mva2, std::string other_cut = "") {
+    
+    if(other_cut != "") other_cut = " && " + other_cut;
+
+    TTreeFormula * vertex_tf1 = new TTreeFormula("vertex_tf1", (cut1 + other_cut).c_str(), vertex_tree);
+    TTreeFormula * vertex_tf2 = new TTreeFormula("vertex_tf2", (cut2 + other_cut).c_str(), vertex_tree);
+
+    TTreeFormula * mva_tf1 = new TTreeFormula("mva_tf1", ("mva > " + std::to_string(mva1)).c_str(), mva_tree1);
+    TTreeFormula * mva_tf2 = new TTreeFormula("mva_tf2", ("mva > " + std::to_string(mva2)).c_str(), mva_tree2);    
+
+    int number_of_events = 0;
+    int number_of_vertices = 0;
+    
+    int event;
+    vertex_tree->SetBranchAddress("event_number", &event);
+    int previous_event = -1;
+
+    for(int i = 0; i < vertex_tree->GetEntries(); ++i) {
+
+      vertex_tree->GetEntry(i);
+
+      if(vertex_tf1->EvalInstance()) {
+	mva_tree1->GetEntry(i);
+	if(mva_tf1->EvalInstance()) {
+	  ++number_of_vertices;
+	  if(event != previous_event) {
+	    ++number_of_events;
+	    previous_event = event;
+	  }
+	}
+      }
+
+      else if(vertex_tf2->EvalInstance()) {
+	mva_tree2->GetEntry(i);
+	if(mva_tf2->EvalInstance()) {
+	  ++number_of_vertices;
+	  if(event != previous_event) {
+	    ++number_of_events;
+	    previous_event = event;
+	  }
+	}
+      }      
+
+    }
+
+    std::cout << "Events: " << number_of_events << " Vertices: " << number_of_vertices << " Vertices per Event: " << double(number_of_vertices) / number_of_events << "\n";
+
+    delete vertex_tf1;
+    delete vertex_tf2;
+
+    delete mva_tf1;
+    delete mva_tf2;
+
+  }
+
+
+
+  double runtmva_sig(std::string const & all_cut, std::string const & name1, std::string cut1, std::string const & name2, std::string cut2, std::string const & method_str, std::string background = "") {
 
     if(background != "") background += "_";
 
@@ -510,11 +593,6 @@ public:
 
     std::string const fname1 = name1+"_app.root";
     std::string const fname2 = name2+"_app.root";
-
-    std::string andcut1 = "";
-    if(cut1 != "") andcut1 = "&&"+cut1;
-    std::string andcut2 = "";
-    if(cut2 != "") andcut2 = "&&"+cut2;
 
     std::string const name_sp1 = name1+"_sp_"+background+method_str;
     std::string const name_bnb_cosmic1 = name1+"_bnb_cosmic_"+background+method_str;
@@ -524,28 +602,43 @@ public:
     std::string const name_bnb_cosmic2 = name2+"_bnb_cosmic_"+background+method_str;
     std::string const name_cosmic2 = name2+"_cosmic_"+background+method_str;
 
-    vertex_tree_sp->AddFriend(name_sp1.c_str(), fname1.c_str());
-    vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic1.c_str(), fname1.c_str());
-    vertex_tree_cosmic->AddFriend(name_cosmic1.c_str(), fname1.c_str());    
+    TFriendElement * tfe_sp1 = vertex_tree_sp->AddFriend(name_sp1.c_str(), fname1.c_str());
+    TFriendElement * tfe_bnb_cosmic1 =  vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic1.c_str(), fname1.c_str());
 
-    vertex_tree_sp->AddFriend(name_sp2.c_str(), fname2.c_str());
-    vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic2.c_str(), fname2.c_str());
-    vertex_tree_cosmic->AddFriend(name_cosmic2.c_str(), fname2.c_str());    
+    TFriendElement * tfe_sp2 = vertex_tree_sp->AddFriend(name_sp2.c_str(), fname2.c_str());
+    TFriendElement * tfe_bnb_cosmic2 = vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic2.c_str(), fname2.c_str());
 
-    int total_sp1 = vertex_tree_sp->GetEntries((signal_definition+andcut1).c_str());
+    int total_sp1 = vertex_tree_sp->GetEntries((signal_definition+"&&"+cut1).c_str());
     int total_bnb_cosmic1 = vertex_tree_bnb_cosmic->GetEntries(cut1.c_str());
-    int total_cosmic1 = vertex_tree_cosmic->GetEntries(cut1.c_str());
+    int total_cosmic1 = 0;
+
     double total_scaled_sp1 = total_sp1 * run_pot / pot_sp;
     double total_scaled_bnb_cosmic1 = total_bnb_cosmic1 * run_pot / pot_bnb_cosmic;
-    double total_scaled_cosmic1 = total_cosmic1 * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+    double total_scaled_cosmic1 = 0;
 
-    int total_sp2 = vertex_tree_sp->GetEntries((signal_definition+andcut2).c_str());
+    int total_sp2 = vertex_tree_sp->GetEntries((signal_definition+"&&"+cut2).c_str());
     int total_bnb_cosmic2 = vertex_tree_bnb_cosmic->GetEntries(cut2.c_str());
-    int total_cosmic2 = vertex_tree_cosmic->GetEntries(cut2.c_str());
+    int total_cosmic2 = 0;
+
     double total_scaled_sp2 = total_sp2 * run_pot / pot_sp;
     double total_scaled_bnb_cosmic2 = total_bnb_cosmic2 * run_pot / pot_bnb_cosmic;
-    double total_scaled_cosmic2 = total_cosmic2 * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+    double total_scaled_cosmic2 = 0;
+
+    TFriendElement * tfe_cosmic1 = nullptr;
+    TFriendElement * tfe_cosmic2 = nullptr;
+
+    if(!single_background) {
+      tfe_cosmic1 = vertex_tree_cosmic->AddFriend(name_cosmic1.c_str(), fname1.c_str());
+      tfe_cosmic2 = vertex_tree_cosmic->AddFriend(name_cosmic2.c_str(), fname2.c_str());    
+      total_cosmic1 = vertex_tree_cosmic->GetEntries(cut1.c_str());
+      total_scaled_cosmic1 = total_cosmic1 * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+      total_cosmic2 = vertex_tree_cosmic->GetEntries(cut2.c_str());
+      total_scaled_cosmic2 = total_cosmic2 * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;    
+    }
     
+    cut1 += all_cut;
+    cut2 += all_cut;
+
     double largest_significance1 = 0;
     int isp1 = 0;
     int ibc1 = 0;
@@ -569,10 +662,15 @@ public:
     
       int sp = vertex_tree_sp->GetEntries((name_sp1+".mva > "+std::to_string(d)+"&&"+cut1+"&&"+signal_definition).c_str());
       int bnb_cosmic = vertex_tree_bnb_cosmic->GetEntries((name_bnb_cosmic1+".mva > "+std::to_string(d)+"&&"+cut1).c_str());
-      int cosmic = vertex_tree_cosmic->GetEntries((name_cosmic1+".mva > "+std::to_string(d)+"&&"+cut1).c_str());
+      int cosmic = 0;
       double scaled_sp = sp * run_pot / pot_sp;
       double scaled_bnb_cosmic =  bnb_cosmic * run_pot / pot_bnb_cosmic;
-      double scaled_cosmic = cosmic * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+      double scaled_cosmic = 0;
+
+      if(!single_background) {
+	cosmic = vertex_tree_cosmic->GetEntries((name_cosmic1+".mva > "+std::to_string(d)+"&&"+cut1).c_str());
+	scaled_cosmic = cosmic * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;	
+      }
 
       if(!(scaled_bnb_cosmic+scaled_cosmic) && scaled_sp > br_sig1) {
 	br_sig1 = scaled_sp;
@@ -585,10 +683,15 @@ public:
     
       int sp = vertex_tree_sp->GetEntries((name_sp2+".mva > "+std::to_string(d)+"&&"+cut2+"&&"+signal_definition).c_str());
       int bnb_cosmic = vertex_tree_bnb_cosmic->GetEntries((name_bnb_cosmic2+".mva > "+std::to_string(d)+"&&"+cut2).c_str());
-      int cosmic = vertex_tree_cosmic->GetEntries((name_cosmic2+".mva > "+std::to_string(d)+"&&"+cut2).c_str());
+      int cosmic = 0;
       double scaled_sp = sp * run_pot / pot_sp;
       double scaled_bnb_cosmic =  bnb_cosmic * run_pot / pot_bnb_cosmic;
-      double scaled_cosmic = cosmic * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+      double scaled_cosmic = 0;
+
+      if(!single_background) {
+	cosmic = vertex_tree_cosmic->GetEntries((name_cosmic1+".mva > "+std::to_string(d)+"&&"+cut1).c_str());
+	scaled_cosmic = cosmic * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;	
+      }
 
       if(!(scaled_bnb_cosmic+scaled_cosmic) && scaled_sp > br_sig2) {
 	br_sig2 = scaled_sp;
@@ -603,24 +706,35 @@ public:
     
       int sp1 = vertex_tree_sp->GetEntries((name_sp1+".mva > "+std::to_string(d)+"&&"+cut1+"&&"+signal_definition).c_str());
       int bnb_cosmic1 = vertex_tree_bnb_cosmic->GetEntries((name_bnb_cosmic1+".mva > "+std::to_string(d)+"&&"+cut1).c_str());
-      int cosmic1 = vertex_tree_cosmic->GetEntries((name_cosmic1+".mva > "+std::to_string(d)+"&&"+cut1).c_str());
+      int cosmic1 = 0;
       double scaled_sp1 = sp1 * run_pot / pot_sp;
       double scaled_bnb_cosmic1 =  bnb_cosmic1 * run_pot / pot_bnb_cosmic;
-      double scaled_cosmic1 = cosmic1 * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+      double scaled_cosmic1 = 0;
+
+      if(!single_background) {
+	cosmic1 = vertex_tree_cosmic->GetEntries((name_cosmic1+".mva > "+std::to_string(d)+"&&"+cut1).c_str());
+	scaled_cosmic1 = cosmic1 * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;	
+      }
 
       for(double d2 = -1; d2 <= 1; d2 += 0.05) {
 	
 	int sp2 = vertex_tree_sp->GetEntries((name_sp2+".mva > "+std::to_string(d2)+"&&"+cut2+"&&"+signal_definition).c_str());
 	int bnb_cosmic2 = vertex_tree_bnb_cosmic->GetEntries((name_bnb_cosmic2+".mva > "+std::to_string(d2)+"&&"+cut2).c_str());
-	int cosmic2 = vertex_tree_cosmic->GetEntries((name_cosmic2+".mva > "+std::to_string(d2)+"&&"+cut2).c_str());
+	int cosmic2 = 0;
 	double scaled_sp2 = sp2 * run_pot / pot_sp;
 	double scaled_bnb_cosmic2 =  bnb_cosmic2 * run_pot / pot_bnb_cosmic;
-	double scaled_cosmic2 = cosmic2 * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+	double scaled_cosmic2 = 0;
+
+	if(!single_background) {
+	  cosmic2 = vertex_tree_cosmic->GetEntries((name_cosmic2+".mva > "+std::to_string(d2)+"&&"+cut2).c_str());
+	  scaled_cosmic2 =  cosmic2 * run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+	}
 
 	double sig = (scaled_sp1+scaled_sp2) / sqrt(scaled_bnb_cosmic1+scaled_cosmic1+scaled_bnb_cosmic2+scaled_cosmic2);
 
 	if(scaled_bnb_cosmic1+scaled_cosmic1+scaled_bnb_cosmic2+scaled_cosmic2) {
 	  if(sig > largest_sig_nested) {
+
 	    mva1 = d;
 	    mva2 = d2;
 	    
@@ -646,30 +760,48 @@ public:
 
     if(verbose) {
       std::cout << "total - sp: " << total_sp1 + total_sp2 << " scaled: " << total_scaled_sp1 + total_scaled_sp2 << "\n"
-		<< "        bnb_cosmic: " << total_bnb_cosmic1 + total_bnb_cosmic2 << " scaled: " << total_scaled_bnb_cosmic1 + total_scaled_bnb_cosmic2 << "\n"
-		<< "        cosmic: " << total_cosmic1 + total_cosmic2 << " scaled: " << total_scaled_cosmic1 + total_scaled_cosmic2 << "\n"
-		<< "after - sp: " << isp1 + isp2 << " scaled: " << lsp1 + lsp2 << "\n"
-		<< "        bnb_cosmic: " << ibc1 + ibc2 << " scaled: " << lbc1 + lbc2 << "\n"
-		<< "        cosmic: " << ic1 + ic2 << " scaled: " << lc1 + lc2 << "\n"
-		<< "seff: " << (lsp1+lsp2) / (total_scaled_sp1+total_scaled_sp2) * 100 << " % beff: " << (lbc1 + lbc2 + lc1 + lc2) / (total_scaled_bnb_cosmic1 + total_scaled_bnb_cosmic2 + total_scaled_cosmic1 + total_scaled_cosmic2) * 100 << " %\n";
+		<< "        bnb_cosmic: " << total_bnb_cosmic1 + total_bnb_cosmic2 << " scaled: " << total_scaled_bnb_cosmic1 + total_scaled_bnb_cosmic2 << "\n";
+      if(!single_background) 
+	std::cout << "        cosmic: " << total_cosmic1 + total_cosmic2 << " scaled: " << total_scaled_cosmic1 + total_scaled_cosmic2 << "\n";
+      std::cout << "after - sp: " << isp1 + isp2 << " scaled: " << lsp1 + lsp2 << "\n"
+		<< "        bnb_cosmic: " << ibc1 + ibc2 << " scaled: " << lbc1 + lbc2 << "\n";
+      if(!single_background)
+	std::cout << "        cosmic: " << ic1 + ic2 << " scaled: " << lc1 + lc2 << "\n";
+      std::cout << "seff: " << (lsp1+lsp2) / (total_scaled_sp1+total_scaled_sp2) * 100 << " % beff: " << (lbc1 + lbc2 + lc1 + lc2) / (total_scaled_bnb_cosmic1 + total_scaled_bnb_cosmic2 + total_scaled_cosmic1 + total_scaled_cosmic2) * 100 << " %\n";
     }
     if(br_sig1 + br_sig2) std::cout << "Largest background eliminated signal: " << br_sig1 + br_sig2 << " efficiency: " << (br_sig1 + br_sig2) / (total_scaled_sp1 + total_scaled_sp2) * 100 << " %\n";   
     std::cout << "largest significance: " << (lsp1+lsp2) / sqrt(lbc1+lbc2+lc1+lc2) << " at " << mva1 << " for cut " << cut1 << " and " << mva2 << " for cut " << cut2 << "\n\n";
- 
+
+    std::cout << "sp: ";
+    GetVerticesPerEvent(vertex_tree_sp, tfe_sp1->GetTree(), cut1, mva1, tfe_sp2->GetTree(), cut2, mva2, signal_definition);
+    std::cout << "bnb_cosmic: ";
+    GetVerticesPerEvent(vertex_tree_bnb_cosmic, tfe_bnb_cosmic1->GetTree(), cut1, mva1, tfe_bnb_cosmic2->GetTree(), cut2, mva2);
+    if(!single_background) {
+      std::cout << "cosmic: ";
+      GetVerticesPerEvent(vertex_tree_cosmic, tfe_cosmic1->GetTree(), cut1, mva1, tfe_cosmic2->GetTree(), cut2, mva2);
+    }
+    std::cout << "\n";
+
+    /*
+    vertex_tree_sp->GetListOfFriends()->Delete();
+    vertex_tree_bnb_cosmic->GetListOfFriends()->Delete();
+    vertex_tree_cosmic->GetListOfFriends()->Delete();
+    */
+
     return largest_sig_nested > (lsp1+lsp2) / sqrt(lbc1+lbc2+lc1+lc2) ? largest_sig_nested : (lsp1+lsp2) / sqrt(lbc1+lbc2+lc1+lc2);
 
   }
 
 
   
-  void runtmva_sig_all_twofiles(std::string const & fname1, std::string const & cut1, std::string const & fname2, std::string const & cut2, std::string const & background = "") {
+  void runtmva_sig_all_twofiles(std::string const & all_cut, std::string const & fname1, std::string const & cut1, std::string const & fname2, std::string const & cut2, std::string const & background = "") {
     
     std::cout << "runtmva_sig_all_twofiles\n=============================================\n";
 
     double largest_sig = 0;
     std::string method_str;
     for(method const & m : method_v) {
-      double sig = runtmva_sig(fname1, cut1, fname2, cut2, m.method_str, background);
+      double sig = runtmva_sig(all_cut, fname1, cut1, fname2, cut2, m.method_str, background);
       if(sig > largest_sig) {
 	largest_sig = sig;
 	method_str = m.method_str;
@@ -755,17 +887,38 @@ void run(std::string const & dir, std::string name, std::string const option, do
 
 
 
-void run_split_track(std::string const & dir, std::string name, std::string const option, double const run_pot, std::string all_cut = "", bool const weight = false, bool const sep = false) {
+void run_split_track(std::string const & dir, std::string name, std::string const option, double const run_pot, std::string all_cut = "", bool const weight = false, std::string const & background_option = "") {
+
+  if(background_option != "" && background_option != "singlebackground" && background_option != "separatebackgrounds") {
+    std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ << "\n"
+	      << "ERROR: invalid background_option\n";
+    return;
+  }
+
+  std::vector<method> methods;
+  methods.push_back({TMVA::Types::kBDT, "BDTG",
+	"!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2"});
+  methods.push_back({TMVA::Types::kBDT, "BDT",
+	"!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20"});
+  methods.push_back({TMVA::Types::kBDT, "BDTB",
+	"!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20"});
+  methods.push_back({TMVA::Types::kBDT, "BDTD",
+	"!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate"});
+  methods.push_back({TMVA::Types::kBDT, "BDTF",
+	"!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20"});
+  methods.push_back({TMVA::Types::kRuleFit, "RuleFit",
+		"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02"});
 
   if(all_cut != "") all_cut = " && " + all_cut + " && passed_swtrigger == 1";
   else all_cut = " && passed_swtrigger == 1";
 
   std::string nameg0 = name+"_g0track";
   if(weight) nameg0 += "_weight";
-  if(sep) nameg0 += "_sepbackgrounds";
+  if(background_option != "") nameg0 += "_" + background_option;
   std::string const thg0_cut = "reco_asso_tracks > 0";
   tmva_helper thg0(nameg0, dir, thg0_cut + all_cut, run_pot);
-  if(sep) thg0.set_separate_backgrounds();
+  if(background_option == "separatebackgrounds") thg0.set_separate_backgrounds();
+  else if(background_option == "singlebackground") thg0.set_single_background();
 
   thg0.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
   thg0.add_variable("totalpe_ibg_sum", "d");
@@ -776,31 +929,22 @@ void run_split_track(std::string const & dir, std::string name, std::string cons
   thg0.add_variable("most_energetic_shower_reco_thetayz", "d");
   thg0.add_variable("most_energetic_shower_bp_dist_to_tpc", "d");
   thg0.add_variable("reco_shower_dedx_plane2", "d");
+  //thg0.add_variable("reco_shower_dedx_best_plane", "d");
   thg0.add_variable("longest_asso_track_thetaxz", "d");
   thg0.add_variable("longest_asso_track_thetayz", "d");
   thg0.add_variable("reco_asso_tracks", "i");
   thg0.add_variable("longest_asso_track_displacement", "d");
 
-  thg0.add_method(TMVA::Types::kBDT, "BDTG",
-		"!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2");
-  thg0.add_method(TMVA::Types::kBDT, "BDT",
-		"!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20");
-  thg0.add_method(TMVA::Types::kBDT, "BDTB",
-		"!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20");
-  thg0.add_method(TMVA::Types::kBDT, "BDTD",
-		"!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate");
-  thg0.add_method(TMVA::Types::kBDT, "BDTF",
-		"!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20");
-  thg0.add_method(TMVA::Types::kRuleFit, "RuleFit",
-		"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
+  for(method const & m : methods) thg0.add_method(m);
 
   std::string name0 = name+"_0track";
   if(weight) name0 += "_weight";
-  if(sep) name0 += "_sepbackgrounds";
+  if(background_option != "") name0 += "_" + background_option;
   std::string const th0_cut = "reco_asso_tracks == 0";
   tmva_helper th0(name0, dir, th0_cut + all_cut, 6.6e20);
-  if(sep) th0.set_separate_backgrounds(); 
- 
+  if(background_option == "separatebackgrounds") th0.set_separate_backgrounds(); 
+  else if(background_option == "singlebackground") th0.set_single_background(); 
+
   th0.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
   th0.add_variable("totalpe_ibg_sum", "d");
   th0.add_variable("summed_associated_reco_shower_energy", "d");
@@ -809,161 +953,53 @@ void run_split_track(std::string const & dir, std::string name, std::string cons
   th0.add_variable("most_energetic_shower_reco_thetayz", "d");
   th0.add_variable("most_energetic_shower_bp_dist_to_tpc", "d");
   th0.add_variable("reco_shower_dedx_plane2", "d");  
+  //th0.add_variable("reco_shower_dedx_best_plane", "d");
 
-  th0.add_method(TMVA::Types::kBDT, "BDTG",
-		 "!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2");
-  th0.add_method(TMVA::Types::kBDT, "BDT",
-		 "!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20");
-  th0.add_method(TMVA::Types::kBDT, "BDTB",
-		 "!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20");
-  th0.add_method(TMVA::Types::kBDT, "BDTD",
-		 "!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate");
-  th0.add_method(TMVA::Types::kBDT, "BDTF",
-		 "!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20");
-  th0.add_method(TMVA::Types::kRuleFit, "RuleFit",
-		 "H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
+  for(method const & m : methods) th0.add_method(m);
 
   if(option == "all") {
-    if(sep) {
+    std::cout << "TRAIN\n";
+    if(background_option == "separatebackgrounds") {
       thg0.runtmva(weight, "bnb_cosmic");
       th0.runtmva(weight, "bnb_cosmic");
       thg0.runtmva(weight, "cosmic");
       th0.runtmva(weight, "cosmic");
     }
-    else {
-      thg0.runtmva(weight);
-      th0.runtmva(weight);
-    } 
-    thg0.runtmva_app();
-    th0.runtmva_app();
-  }
-  else if(option == "app") {
-    thg0.runtmva_app();
-    th0.runtmva_app();
-  }
-  else if(option == "sig") {
-    std::cout << "Names: " << name0 << " " << nameg0 << "\n"
-	      << "Split Track\n";
-    if(sep) {
-      std::cout << "BACKGROUND: bnb_cosmic\n"
-		<< "===================================================================================\n";
-      thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut, "bnb_cosmic");
-      std::cout << "BACKGROUND: cosmic\n"
-		<< "===================================================================================\n";
-      thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut, "cosmic");
-    }
-    else {
-      thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut);
-    }
-  }
-  else {
-    std::cout << "Invalid option\n";
-    return;
-  }
-
-}
-
-
-
-void run_split_track_dedx_only(std::string const & dir, std::string name, std::string const option, double const run_pot, bool const weight, bool const sep = false) {
-
-  name += "_dedxonly";
-  std::string const all_cut = " && passed_swtrigger == 1 && reco_shower_dedx_plane2 > -1";
-
-  std::string nameg0 = name+"_g0track";
-  if(weight) nameg0 += "_weight";
-  if(sep) nameg0 += "_sepbackgrounds";
-  std::string const thg0_cut = "reco_asso_tracks > 0";
-  tmva_helper thg0(nameg0, dir, thg0_cut + all_cut, run_pot);
-  if(sep) thg0.set_separate_backgrounds();
-
-  thg0.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
-  thg0.add_variable("totalpe_ibg_sum", "d");
-  thg0.add_variable("summed_associated_reco_shower_energy", "d");
-  thg0.add_variable("reco_nu_vtx_dist_to_closest_tpc_wall", "d");
-  thg0.add_variable("shortest_asso_shower_to_vert_dist", "d");
-  thg0.add_variable("most_energetic_shower_reco_thetaxz", "d");
-  thg0.add_variable("most_energetic_shower_reco_thetayz", "d");
-  thg0.add_variable("most_energetic_shower_bp_dist_to_tpc", "d");
-  thg0.add_variable("reco_shower_dedx_plane2", "d");
-  thg0.add_variable("longest_asso_track_thetaxz", "d");
-  thg0.add_variable("longest_asso_track_thetayz", "d");
-  thg0.add_variable("reco_asso_tracks", "i");
-  thg0.add_variable("longest_asso_track_displacement", "d");
-
-  thg0.add_method(TMVA::Types::kBDT, "BDTG",
-		"!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2");
-  thg0.add_method(TMVA::Types::kBDT, "BDT",
-		"!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20");
-  thg0.add_method(TMVA::Types::kBDT, "BDTB",
-		"!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20");
-  thg0.add_method(TMVA::Types::kBDT, "BDTD",
-		"!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate");
-  thg0.add_method(TMVA::Types::kBDT, "BDTF",
-		"!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20");
-  thg0.add_method(TMVA::Types::kRuleFit, "RuleFit",
-		"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
-
-  std::string name0 = name+"_0track";
-  if(weight) name0 += "_weight";
-  if(sep) name0 += "_sepbackgrounds";
-  std::string const th0_cut = "reco_asso_tracks == 0";
-  tmva_helper th0(name0, dir, th0_cut + all_cut, 6.6e20);
-  if(sep) th0.set_separate_backgrounds(); 
- 
-  th0.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
-  th0.add_variable("totalpe_ibg_sum", "d");
-  th0.add_variable("summed_associated_reco_shower_energy", "d");
-  th0.add_variable("reco_nu_vtx_dist_to_closest_tpc_wall", "d");
-  th0.add_variable("most_energetic_shower_reco_thetaxz", "d");
-  th0.add_variable("most_energetic_shower_reco_thetayz", "d");
-  th0.add_variable("most_energetic_shower_bp_dist_to_tpc", "d");
-  th0.add_variable("reco_shower_dedx_plane2", "d");  
-
-  th0.add_method(TMVA::Types::kBDT, "BDTG",
-		 "!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2");
-  th0.add_method(TMVA::Types::kBDT, "BDT",
-		 "!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20");
-  th0.add_method(TMVA::Types::kBDT, "BDTB",
-		 "!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20");
-  th0.add_method(TMVA::Types::kBDT, "BDTD",
-		 "!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate");
-  th0.add_method(TMVA::Types::kBDT, "BDTF",
-		 "!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20");
-  th0.add_method(TMVA::Types::kRuleFit, "RuleFit",
-		 "H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02");
-
-  if(option == "all") {
-    if(sep) {
+    else if(background_option == "singlebackground") {
       thg0.runtmva(weight, "bnb_cosmic");
       th0.runtmva(weight, "bnb_cosmic");
-      thg0.runtmva(weight, "cosmic");
-      th0.runtmva(weight, "cosmic");
     }
     else {
       thg0.runtmva(weight);
       th0.runtmva(weight);
     } 
+    std::cout << "APP\n";
     thg0.runtmva_app();
     th0.runtmva_app();
   }
   else if(option == "app") {
+    std::cout << "APP\n";
     thg0.runtmva_app();
     th0.runtmva_app();
   }
   else if(option == "sig") {
+    std::cout << "SIG\n";
     std::cout << "Names: " << name0 << " " << nameg0 << "\n"
-	      << "Split Track dE/dx Only\n";
-    if(sep) {
+	      << "Split Track\n"
+	      << "Background Option: " << background_option << "\n";
+    if(background_option == "separatebackgrounds") {
       std::cout << "BACKGROUND: bnb_cosmic\n"
 		<< "===================================================================================\n";
-      thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut, "bnb_cosmic");
+      thg0.runtmva_sig_all_twofiles(all_cut, nameg0, thg0_cut, name0, th0_cut, "bnb_cosmic");
       std::cout << "BACKGROUND: cosmic\n"
 		<< "===================================================================================\n";
-      thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut, "cosmic");
+      thg0.runtmva_sig_all_twofiles(all_cut, nameg0, thg0_cut, name0, th0_cut, "cosmic");
+    }
+    else if(background_option == "singlebackground") {
+      thg0.runtmva_sig_all_twofiles(all_cut, nameg0, thg0_cut, name0, th0_cut, "bnb_cosmic");
     }
     else {
-      thg0.runtmva_sig_all_twofiles(nameg0, thg0_cut, name0, th0_cut);
+      thg0.runtmva_sig_all_twofiles(all_cut, nameg0, thg0_cut, name0, th0_cut);
     }
   }
   else {
@@ -984,9 +1020,8 @@ int main(int const argc, char const * argv[]) {
   
   double const run_pot = 6.6e20;
   bool const weight = false;  
-  bool const sepbackgrounds = false;
-  run_split_track(argv[3], std::string(argv[1]) + "_dedxonly_new", argv[2], run_pot, "reco_shower_dedx_plane2 > -1", weight, sepbackgrounds);
-  run_split_track_dedx_only(argv[3], argv[1], argv[2], run_pot, weight, sepbackgrounds);
+  run_split_track(argv[3], std::string(argv[1]), argv[2], run_pot, "", weight, "singlebackground");
+  //run_split_track(argv[3], std::string(argv[1]), argv[2], run_pot, "", weight);
 
   return 0;
 
