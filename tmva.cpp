@@ -256,7 +256,6 @@ public:
 
 
 
-    /*
     ifile_sp_cosmic = TFile::Open((dir+"runmv_sp_cosmic.root").c_str());
     if(!ifile_sp_cosmic) {
       std::cout << "Could not find file\n";
@@ -266,7 +265,6 @@ public:
     TTree * pot_tree_sp_cosmic = (TTree*)ifile_sp_cosmic->Get((gdir+"get_pot").c_str());
     pot_tree_sp_cosmic->SetBranchAddress("pot", &pot_sp_cosmic);
     pot_tree_sp_cosmic->GetEntry(0);
-    */
 
 
   
@@ -394,22 +392,23 @@ public:
     TFile * runtmva_app_ofile = TFile::Open((method_name+"_app.root").c_str(), "recreate");
 
     if(separate_backgrounds) {
-      std::cout << "1\n";
       runtmva_app_tree(vertex_tree_sp, method_name+"_sp", "bnb_cosmic");
       runtmva_app_tree(vertex_tree_sp, method_name+"_sp", "cosmic");
+      runtmva_app_tree(vertex_tree_sp_cosmic, method_name+"_sp_cosmic", "bnb_cosmic");
+      runtmva_app_tree(vertex_tree_sp_cosmic, method_name+"_sp_cosmic", "cosmic");
       runtmva_app_tree(vertex_tree_bnb_cosmic, method_name+"_bnb_cosmic", "bnb_cosmic");
       runtmva_app_tree(vertex_tree_bnb_cosmic, method_name+"_bnb_cosmic", "cosmic");
       runtmva_app_tree(vertex_tree_cosmic, method_name+"_cosmic", "bnb_cosmic");
       runtmva_app_tree(vertex_tree_cosmic, method_name+"_cosmic", "cosmic");
     }
     else if(single_background) {
-      std::cout << "2\n";
       runtmva_app_tree(vertex_tree_sp, method_name+"_sp", "bnb_cosmic");
+      runtmva_app_tree(vertex_tree_sp_cosmic, method_name+"_sp_cosmic", "bnb_cosmic");
       runtmva_app_tree(vertex_tree_bnb_cosmic, method_name+"_bnb_cosmic", "bnb_cosmic");
     }
     else {
-      std::cout << "3\n";
       runtmva_app_tree(vertex_tree_sp, method_name+"_sp");
+      runtmva_app_tree(vertex_tree_sp_cosmic, method_name+"_sp_cosmic");
       runtmva_app_tree(vertex_tree_bnb_cosmic, method_name+"_bnb_cosmic");
       runtmva_app_tree(vertex_tree_cosmic, method_name+"_cosmic");
     } 
@@ -595,32 +594,40 @@ public:
     std::string const fname2 = name2+"_app.root";
 
     std::string const name_sp1 = name1+"_sp_"+background+method_str;
+    std::string const name_sp_cosmic1 = name1+"_sp_cosmic_"+background+method_str;
     std::string const name_bnb_cosmic1 = name1+"_bnb_cosmic_"+background+method_str;
     std::string const name_cosmic1 = name1+"_cosmic_"+background+method_str;
 
     std::string const name_sp2 = name2+"_sp_"+background+method_str;
+    std::string const name_sp_cosmic2 = name2+"_sp_cosmic_"+background+method_str;
     std::string const name_bnb_cosmic2 = name2+"_bnb_cosmic_"+background+method_str;
     std::string const name_cosmic2 = name2+"_cosmic_"+background+method_str;
 
     TFriendElement * tfe_sp1 = vertex_tree_sp->AddFriend(name_sp1.c_str(), fname1.c_str());
+    TFriendElement * tfe_sp_cosmic1 = vertex_tree_sp_cosmic->AddFriend(name_sp_cosmic1.c_str(), fname1.c_str());
     TFriendElement * tfe_bnb_cosmic1 =  vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic1.c_str(), fname1.c_str());
 
     TFriendElement * tfe_sp2 = vertex_tree_sp->AddFriend(name_sp2.c_str(), fname2.c_str());
+    TFriendElement * tfe_sp_cosmic2 = vertex_tree_sp_cosmic->AddFriend(name_sp_cosmic2.c_str(), fname2.c_str());
     TFriendElement * tfe_bnb_cosmic2 = vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic2.c_str(), fname2.c_str());
 
     int total_sp1 = vertex_tree_sp->GetEntries((signal_definition+"&&"+cut1).c_str());
+    int total_sp_cosmic1 = vertex_tree_sp_cosmic->GetEntries((signal_definition+"&&"+cut1).c_str());
     int total_bnb_cosmic1 = vertex_tree_bnb_cosmic->GetEntries(cut1.c_str());
     int total_cosmic1 = 0;
 
     double total_scaled_sp1 = total_sp1 * run_pot / pot_sp;
+    double total_scaled_sp_cosmic1 = total_sp_cosmic1 * run_pot / pot_sp_cosmic;
     double total_scaled_bnb_cosmic1 = total_bnb_cosmic1 * run_pot / pot_bnb_cosmic;
     double total_scaled_cosmic1 = 0;
 
     int total_sp2 = vertex_tree_sp->GetEntries((signal_definition+"&&"+cut2).c_str());
+    int total_sp_cosmic2 = vertex_tree_sp_cosmic->GetEntries((signal_definition+"&&"+cut2).c_str());
     int total_bnb_cosmic2 = vertex_tree_bnb_cosmic->GetEntries(cut2.c_str());
     int total_cosmic2 = 0;
 
     double total_scaled_sp2 = total_sp2 * run_pot / pot_sp;
+    double total_scaled_sp_cosmic2 = total_sp_cosmic2 * run_pot / pot_sp_cosmic;
     double total_scaled_bnb_cosmic2 = total_bnb_cosmic2 * run_pot / pot_bnb_cosmic;
     double total_scaled_cosmic2 = 0;
 
@@ -758,28 +765,39 @@ public:
       }
     }
 
+    int ispc1 = vertex_tree_sp_cosmic->GetEntries((name_sp_cosmic1+".mva > "+std::to_string(mva1)+"&&"+cut1+"&&"+signal_definition).c_str());
+    int ispc2 = vertex_tree_sp_cosmic->GetEntries((name_sp_cosmic2+".mva > "+std::to_string(mva2)+"&&"+cut2+"&&"+signal_definition).c_str());
+    double lspc1 = double(ispc1) * run_pot / pot_sp_cosmic;
+    double lspc2 = double(ispc2) * run_pot / pot_sp_cosmic;
+
     if(verbose) {
       std::cout << "total - sp: " << total_sp1 + total_sp2 << " scaled: " << total_scaled_sp1 + total_scaled_sp2 << "\n"
+		<< "        sp_cosmic: " << total_sp_cosmic1 + total_sp_cosmic2 << " scaled: " << total_scaled_sp_cosmic1 + total_scaled_sp_cosmic2 << "\n"
 		<< "        bnb_cosmic: " << total_bnb_cosmic1 + total_bnb_cosmic2 << " scaled: " << total_scaled_bnb_cosmic1 + total_scaled_bnb_cosmic2 << "\n";
       if(!single_background) 
 	std::cout << "        cosmic: " << total_cosmic1 + total_cosmic2 << " scaled: " << total_scaled_cosmic1 + total_scaled_cosmic2 << "\n";
       std::cout << "after - sp: " << isp1 + isp2 << " scaled: " << lsp1 + lsp2 << "\n"
+		<< "        sp_cosmic: " << ispc1 + ispc2 << " scaled: " << lspc1 + lspc2 << "\n"
 		<< "        bnb_cosmic: " << ibc1 + ibc2 << " scaled: " << lbc1 + lbc2 << "\n";
       if(!single_background)
 	std::cout << "        cosmic: " << ic1 + ic2 << " scaled: " << lc1 + lc2 << "\n";
       std::cout << "seff: " << (lsp1+lsp2) / (total_scaled_sp1+total_scaled_sp2) * 100 << " % beff: " << (lbc1 + lbc2 + lc1 + lc2) / (total_scaled_bnb_cosmic1 + total_scaled_bnb_cosmic2 + total_scaled_cosmic1 + total_scaled_cosmic2) * 100 << " %\n";
     }
     if(br_sig1 + br_sig2) std::cout << "Largest background eliminated signal: " << br_sig1 + br_sig2 << " efficiency: " << (br_sig1 + br_sig2) / (total_scaled_sp1 + total_scaled_sp2) * 100 << " %\n";   
-    std::cout << "largest significance: " << (lsp1+lsp2) / sqrt(lbc1+lbc2+lc1+lc2) << " at " << mva1 << " for cut " << cut1 << " and " << mva2 << " for cut " << cut2 << "\n\n";
 
     std::cout << "sp: ";
     GetVerticesPerEvent(vertex_tree_sp, tfe_sp1->GetTree(), cut1, mva1, tfe_sp2->GetTree(), cut2, mva2, signal_definition);
+    std::cout << "sp_cosmic: ";
+    GetVerticesPerEvent(vertex_tree_sp_cosmic, tfe_sp_cosmic1->GetTree(), cut1, mva1, tfe_sp_cosmic2->GetTree(), cut2, mva2, signal_definition);
     std::cout << "bnb_cosmic: ";
     GetVerticesPerEvent(vertex_tree_bnb_cosmic, tfe_bnb_cosmic1->GetTree(), cut1, mva1, tfe_bnb_cosmic2->GetTree(), cut2, mva2);
     if(!single_background) {
       std::cout << "cosmic: ";
       GetVerticesPerEvent(vertex_tree_cosmic, tfe_cosmic1->GetTree(), cut1, mva1, tfe_cosmic2->GetTree(), cut2, mva2);
     }
+
+    std::cout << "largest sp significance: " << (lsp1+lsp2) / sqrt(lbc1+lbc2+lc1+lc2) << " at " << mva1 << " for cut " << cut1 << " and " << mva2 << " for cut " << cut2 << "\n"
+	      << "largest sp_cosmic significance: " << (lspc1+lspc2) / sqrt(lbc1+lbc2+lc1+lc2);
     std::cout << "\n";
 
     /*
@@ -912,6 +930,17 @@ void run_split_track(std::string const & dir, std::string name, std::string cons
   if(all_cut != "") all_cut = " && " + all_cut + " && passed_swtrigger == 1";
   else all_cut = " && passed_swtrigger == 1";
 
+  std::vector<std::pair<std::string, std::string> > variables;
+  variables.emplace_back("closest_asso_shower_dist_to_flashzcenter", "d");
+  variables.emplace_back("totalpe_ibg_sum", "d");
+  variables.emplace_back("summed_associated_reco_shower_energy", "d");
+  variables.emplace_back("reco_nu_vtx_dist_to_closest_tpc_wall", "d");
+  variables.emplace_back("most_energetic_shower_reco_thetaxz", "d");
+  variables.emplace_back("most_energetic_shower_reco_thetayz", "d");
+  variables.emplace_back("most_energetic_shower_bp_dist_to_tpc", "d");
+  variables.emplace_back("reco_shower_dedx_plane2", "d");
+  //variables.emplace_back("reco_shower_dedx_best_plane", "d");  
+
   std::string nameg0 = name+"_g0track";
   if(weight) nameg0 += "_weight";
   if(background_option != "") nameg0 += "_" + background_option;
@@ -920,21 +949,12 @@ void run_split_track(std::string const & dir, std::string name, std::string cons
   if(background_option == "separatebackgrounds") thg0.set_separate_backgrounds();
   else if(background_option == "singlebackground") thg0.set_single_background();
 
-  thg0.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
-  thg0.add_variable("totalpe_ibg_sum", "d");
-  thg0.add_variable("summed_associated_reco_shower_energy", "d");
-  thg0.add_variable("reco_nu_vtx_dist_to_closest_tpc_wall", "d");
+  for(auto const & p : variables) thg0.add_variable(p.first, p.second);
   thg0.add_variable("shortest_asso_shower_to_vert_dist", "d");
-  thg0.add_variable("most_energetic_shower_reco_thetaxz", "d");
-  thg0.add_variable("most_energetic_shower_reco_thetayz", "d");
-  thg0.add_variable("most_energetic_shower_bp_dist_to_tpc", "d");
-  thg0.add_variable("reco_shower_dedx_plane2", "d");
-  //thg0.add_variable("reco_shower_dedx_best_plane", "d");
   thg0.add_variable("longest_asso_track_thetaxz", "d");
   thg0.add_variable("longest_asso_track_thetayz", "d");
   thg0.add_variable("reco_asso_tracks", "i");
   thg0.add_variable("longest_asso_track_displacement", "d");
-
   for(method const & m : methods) thg0.add_method(m);
 
   std::string name0 = name+"_0track";
@@ -945,16 +965,7 @@ void run_split_track(std::string const & dir, std::string name, std::string cons
   if(background_option == "separatebackgrounds") th0.set_separate_backgrounds(); 
   else if(background_option == "singlebackground") th0.set_single_background(); 
 
-  th0.add_variable("closest_asso_shower_dist_to_flashzcenter", "d");
-  th0.add_variable("totalpe_ibg_sum", "d");
-  th0.add_variable("summed_associated_reco_shower_energy", "d");
-  th0.add_variable("reco_nu_vtx_dist_to_closest_tpc_wall", "d");
-  th0.add_variable("most_energetic_shower_reco_thetaxz", "d");
-  th0.add_variable("most_energetic_shower_reco_thetayz", "d");
-  th0.add_variable("most_energetic_shower_bp_dist_to_tpc", "d");
-  th0.add_variable("reco_shower_dedx_plane2", "d");  
-  //th0.add_variable("reco_shower_dedx_best_plane", "d");
-
+  for(auto const & p : variables) th0.add_variable(p.first, p.second);
   for(method const & m : methods) th0.add_method(m);
 
   if(option == "all") {
@@ -1019,8 +1030,9 @@ int main(int const argc, char const * argv[]) {
   }
   
   double const run_pot = 6.6e20;
-  bool const weight = false;  
+  bool const weight = false; 
   run_split_track(argv[3], std::string(argv[1]), argv[2], run_pot, "", weight, "singlebackground");
+  //run_split_track(argv[3], std::string(argv[1]), argv[2], run_pot, "closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140", weight, "singlebackground");
   //run_split_track(argv[3], std::string(argv[1]), argv[2], run_pot, "", weight);
 
   return 0;
