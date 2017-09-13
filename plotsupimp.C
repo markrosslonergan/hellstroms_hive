@@ -5,6 +5,7 @@ TFile * ifile_sp = nullptr;
 TFile * ifile_bnb = nullptr;
 TFile * ifile_bnb_cosmic = nullptr;
 TFile * ifile_cosmic = nullptr;
+TFile * ifile_sp_cosmic = nullptr;
 
 TFile * ofile = nullptr;
 
@@ -12,11 +13,13 @@ TTree * vertex_tree_sp = nullptr;
 TTree * vertex_tree_bnb = nullptr;
 TTree * vertex_tree_bnb_cosmic = nullptr;
 TTree * vertex_tree_cosmic = nullptr;
+TTree * vertex_tree_sp_cosmic = nullptr;
 
 TTree * event_tree_sp = nullptr;
 TTree * event_tree_bnb = nullptr;
 TTree * event_tree_bnb_cosmic = nullptr;
 TTree * event_tree_cosmic = nullptr;
+TTree * event_tree_sp_cosmic = nullptr;
 
 double pot_sp = -1;
 double pot_sp_cosmic = -1;
@@ -44,7 +47,8 @@ void init(std::string dir) {
   TTree * pot_tree_sp = (TTree*)ifile_sp->Get((gdir+"get_pot").c_str());
   pot_tree_sp->SetBranchAddress("pot", &pot_sp);
   pot_tree_sp->GetEntry(0);
-  
+
+  /*  
   ifile_bnb = TFile::Open((dir+"runmv_bnb.root").c_str());
   if(!ifile_bnb) {
     std::cout << "Could not find file\n";
@@ -55,6 +59,7 @@ void init(std::string dir) {
   TTree * pot_tree_bnb = (TTree*)ifile_bnb->Get((gdir+"get_pot").c_str());
   pot_tree_bnb->SetBranchAddress("pot", &pot_bnb);
   pot_tree_bnb->GetEntry(0);
+  */
 
   ifile_bnb_cosmic = TFile::Open((dir+"runmv_bnb_cosmic.root").c_str());
   if(!ifile_bnb_cosmic) {
@@ -70,6 +75,7 @@ void init(std::string dir) {
   pot_tree_bnb_cosmic->GetEntry(0);
   ngenbnbcosmic = temp_ngenbnbcosmic;
 
+  /*
   ifile_cosmic = TFile::Open((dir+"runmv_cosmic.root").c_str());
   if(!ifile_cosmic) {
     std::cout << "Could not find file\n";
@@ -82,12 +88,18 @@ void init(std::string dir) {
   pot_tree_cosmic->SetBranchAddress("number_of_events", &temp_ngencosmic);
   pot_tree_cosmic->GetEntry(0);
   ngencosmic = temp_ngencosmic;
+  */
 
-  std::cout << pot_sp << "\n"
-	    << pot_bnb << "\n"
-	    << pot_bnb_cosmic << "\n"
-	    << ngenbnbcosmic << "\n"
-	    << ngencosmic << "\n";
+  ifile_sp_cosmic = TFile::Open((dir+"runmv_sp_cosmic.root").c_str());
+  if(!ifile_sp_cosmic) {
+    std::cout << "Could not find file\n";
+    exit(1);
+  }
+  event_tree_sp_cosmic = (TTree*)ifile_sp_cosmic->Get((gdir+"event_tree").c_str());
+  vertex_tree_sp_cosmic = (TTree*)ifile_sp_cosmic->Get((gdir+"vertex_tree").c_str());  
+  TTree * pot_tree_sp_cosmic = (TTree*)ifile_sp_cosmic->Get((gdir+"get_pot").c_str());
+  pot_tree_sp_cosmic->SetBranchAddress("pot", &pot_sp_cosmic);
+  pot_tree_sp_cosmic->GetEntry(0);
 
   ofile = TFile::Open("plotsupimp.root", "recreate");
   
@@ -171,6 +183,7 @@ void plotsupimp(std::string const & cname,
   hist_errors(h3, 1./h3->Integral(1,h3->GetNbinsX()));
   if(h3->GetBinContent(h3->GetMaximumBin()) > ymax) ymax = h3->GetBinContent(h3->GetMaximumBin());  
  
+  /*
   if(vertex_tree) vertex_tree_cosmic->Draw((draw+">>h4"+binning).c_str(), we2.c_str(), opt.c_str());
   else event_tree_cosmic->Draw((draw+">>h4"+binning).c_str(), we2.c_str(), opt.c_str()); 
   TH1 * h4 = (TH1*)gDirectory->Get("h4");
@@ -178,13 +191,24 @@ void plotsupimp(std::string const & cname,
   h4->SetLineWidth(3);
   hist_errors(h4, 1./h4->Integral(1,h4->GetNbinsX()));
   if(h4->GetBinContent(h4->GetMaximumBin()) > ymax) ymax = h4->GetBinContent(h4->GetMaximumBin());
+  */
 
-  h->GetYaxis()->SetRangeUser(0, ymax*1.1);
+  if(vertex_tree) vertex_tree_sp_cosmic->Draw((draw+">>h5"+binning).c_str(), we2.c_str(), opt.c_str());
+  else event_tree_sp_cosmic->Draw((draw+">>h5"+binning).c_str(), we2.c_str(), opt.c_str());
+  TH1 * h5 = (TH1*)gDirectory->Get("h5");
+  h5->SetLineColor(kCyan+color_offset);
+  h5->SetLineWidth(3);
+  hist_errors(h5, 1./h5->Integral(1,h5->GetNbinsX()));
+  if(h5->GetBinContent(h5->GetMaximumBin()) > ymax) ymax = h5->GetBinContent(h5->GetMaximumBin());  
+  
+
+  h->GetYaxis()->SetRangeUser(0, ymax*1.6);
   TLegend * l = new TLegend(0.6, 0.9, 0.9, 0.6);
   l->AddEntry(h, "NC #Delta Rad");
+  l->AddEntry(h5, "NC #Delta Rad + Cosmic");
   //l->AddEntry(h2, "BNB Inclusive");
   l->AddEntry(h3, "BNB + Cosmic");
-  l->AddEntry(h4, "Cosmic");
+  //l->AddEntry(h4, "Cosmic");
   l->Draw();
 
   canvas->Write();
@@ -192,7 +216,8 @@ void plotsupimp(std::string const & cname,
   delete h;
   //delete h2;
   delete h3;
-  delete h4;
+  //delete h4;
+  delete h5;
 
 }
 
@@ -224,7 +249,7 @@ void plotsupimp(std::string const dir = "") {
 
   plotsupimp("totalpe_bbg_sum",
 	     "totalpe_bbg_sum",
-	     "(25, 0, 2000)",
+	     "(25, 0, 200)",
 	     acut,
 	     "",
 	     "",
@@ -237,18 +262,18 @@ void plotsupimp(std::string const dir = "") {
 	     acut,
 	     "",
 	     "",
-	     "Summed Associated Shower Energy [GeV]",
+	     "Summed Associated Shower Reco Energy [GeV]",
 	     "Area Normalized");
 
-  plotsupimp("longest_asso_track_displacement",
-	     "longest_asso_track_displacement",
-	     "(25, 0, 300)",
+  plotsupimp("summed_associated_helper_shower_energy",
+	     "summed_associated_helper_shower_energy",
+	     "(25, 0, 0.5)",
 	     acut,
 	     "",
 	     "",
-	     "Longest Associated Track Length [cm]",
+	     "Summed Associated Shower Helper Energy [GeV]",
 	     "Area Normalized");
-  
+
   plotsupimp("reco_nu_vtx_dist_to_closest_tpc_wall",
              "reco_nu_vtx_dist_to_closest_tpc_wall",
              "(25, 0, 125)",
@@ -256,24 +281,6 @@ void plotsupimp(std::string const dir = "") {
              "",
              "",
              "Reco Vtx Distance to Closest TPC Wall [cm]",
-             "Area Normalized");
-
-  plotsupimp("shortest_asso_shower_to_vert_dist",
-             "shortest_asso_shower_to_vert_dist",
-             "(25, 0, 10)",
-             acut + " && reco_asso_tracks == 1",
-             "",
-             "",
-             "Distance Between Closest Associated Shower Start and Reco Vtx [cm]",
-             "Area Normalized");
-
-  plotsupimp("most_energetic_shower_bp_dist_to_tpc",
-             "most_energetic_shower_bp_dist_to_tpc",
-             "(25, 0, 1000)",
-             acut,
-             "",
-             "",
-             "Backwards Procted Shower Distance to TPC Wall [cm]",
              "Area Normalized");
 
   plotsupimp("most_energetic_shower_reco_thetaxz",
@@ -294,23 +301,50 @@ void plotsupimp(std::string const dir = "") {
              "Most Energetic Shower #theta_{yz} [radians]",
              "Area Normalized");  
 
+  plotsupimp("most_energetic_shower_bp_dist_to_tpc",
+             "most_energetic_shower_bp_dist_to_tpc",
+             "(25, 0, 1000)",
+             acut,
+             "",
+             "",
+             "Backwards Procted Shower Distance to TPC Wall [cm]",
+             "Area Normalized");
+
+  plotsupimp("reco_shower_dedx_plane0",
+             "reco_shower_dedx_plane0",
+             "(48, 0, 10)",
+             acut,
+             "",
+             "Plane 0",
+             "Most Energetic Shower dE/dx [MeV/cm]",
+             "Area Normalized");  
+
+  plotsupimp("reco_shower_dedx_plane1",
+             "reco_shower_dedx_plane1",
+             "(48, 0, 10)",
+             acut,
+             "",
+             "Plane 1",
+             "Most Energetic Shower dE/dx [MeV/cm]",
+             "Area Normalized");  
+
   plotsupimp("reco_shower_dedx_plane2",
              "reco_shower_dedx_plane2",
              "(48, 0, 10)",
              acut,
              "",
-             "",
+             "Plane 2",
              "Most Energetic Shower dE/dx [MeV/cm]",
              "Area Normalized");  
 
-  plotsupimp("closest_shower_dedx_plane2",
-             "closest_shower_dedx_plane2",
-             "(48, 0, 10)",
-             acut,
+  plotsupimp("shortest_asso_shower_to_vert_dist",
+             "shortest_asso_shower_to_vert_dist",
+             "(25, 0, 10)",
+             acut + " && reco_asso_tracks == 1",
              "",
              "",
-             "Closest Shower to Reco Vertex dE/dx [MeV/cm]",
-             "Area Normalized");  
+             "Distance Between Closest Associated Shower Start and Reco Vtx [cm]",
+             "Area Normalized");
 
   plotsupimp("longest_asso_track_thetaxz",
 	     "longest_asso_track_thetaxz",
@@ -338,5 +372,14 @@ void plotsupimp(std::string const dir = "") {
              "",
              "Number of Associated Tracks",
              "Area Normalized");  
+
+  plotsupimp("longest_asso_track_displacement",
+	     "longest_asso_track_displacement",
+	     "(25, 0, 300)",
+	     acut,
+	     "",
+	     "",
+	     "Longest Associated Track Length [cm]",
+	     "Area Normalized");
 
 }
