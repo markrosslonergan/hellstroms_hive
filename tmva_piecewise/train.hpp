@@ -16,7 +16,7 @@
 
 
 
-void train(std::string const & identifier, std::string const & all_cut, std::string const & signal_definition, std::string const & background_cut, std::vector<TTree *> const & signal_trees, std::vector<TTree *> const & background_trees, std::vector<std::pair<std::string, std::string>> const & variables, std::vector<method_struct> const & methods, bool const apply_weights = false) {
+void train(std::string const & identifier, std::string const & all_cut, std::string const & signal_definition, std::string const & background_definition, std::vector<TTree *> const & signal_trees, std::vector<TTree *> const & background_trees, std::vector<std::pair<std::string, std::string>> const & variables, std::vector<method_struct> const & methods, bool const apply_weights = false) {
 
   std::string const name = identifier + "_training";
   
@@ -29,7 +29,7 @@ void train(std::string const & identifier, std::string const & all_cut, std::str
 
   TCut all_tcut = all_cut.c_str();
   TCut sig_tcut = all_tcut + TCut(signal_definition.c_str());
-  TCut back_tcut = all_tcut + TCut(background_cut.c_str());
+  TCut back_tcut = all_tcut + TCut(background_definition.c_str());
   
   double signal_entries = 0;
   for(TTree * tree : signal_trees) {

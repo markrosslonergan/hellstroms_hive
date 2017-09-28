@@ -1,6 +1,8 @@
 
 
 
+#include "TTreeFormula.h"
+
 #include "void_vec.hpp"
 #include "app_tree_struct.hpp"
 
@@ -23,7 +25,8 @@ void update(void_vec const & tvv, std::vector<float *> & rvv) {
 
 void app_tree(std::string const & identifier,
 	      TTree * tree,
-	      std::string const & otree_name, 
+	      std::string const & cut,
+	      std::string const & otree_name,
 	      std::vector<std::pair<std::string, std::string>> const & variables,
 	      std::vector<method_struct> const & methods) {
   
@@ -49,6 +52,8 @@ void app_tree(std::string const & identifier,
     reader_var_v.push_back(new float(-1));
     reader->AddVariable(p.first.c_str(), reader_var_v.back());
   }
+
+  TTreeFormula * tf = new TTreeFormula("tf", cut.c_str(), tree);
   
   for(method_struct const & method : methods) {
     reader->BookMVA(method.str.c_str(), ("dataset/weights/"+identifier+"_training_"+method.str+".weights.xml").c_str());
@@ -57,13 +62,14 @@ void app_tree(std::string const & identifier,
       tree->GetEntry(i);
 	update(tree_var_v, reader_var_v);
 	ts.mva = -999;
-	ts.mva = reader->EvaluateMVA(method.str.c_str());
+	if(tf->EvalInstance()) reader->EvaluateMVA(method.str.c_str());
 	ts.tree->Fill();
     }
     ts.tree->Write();
   }
   
   delete reader;
+  delete tf;
   for(float * f : reader_var_v) delete f;
   
 }
@@ -72,11 +78,16 @@ void app_tree(std::string const & identifier,
 
 void app(std::string const & identifier, 
 	 std::vector<std::pair<TTree *, std::string>> const & trees, 
+	 std::vector<std::string> const & tree_cuts,
+	 std::string const & additional_cut,
 	 std::vector<std::pair<std::string, std::string>> const & variables,
 	 std::vector<method_struct> const & methods) {
   
   TFile * app_ofile = TFile::Open((identifier+"_app.root").c_str(), "recreate");
-  for(auto const & p : trees) app_tree(identifier, p.first, p.second, variables, methods);
+  for(size_t i = 0; i < trees.size(); ++i) {
+    auto const & p = trees.at(i);
+    app_tree(identifier, p.first, tree_cuts.at(i) + " && " + additional_cut, p.second, variables, methods);
+  }
   app_ofile->Close();
   
 }
