@@ -1505,11 +1505,15 @@ void run(std::string const & dir, std::string name, std::string const option, do
 
 void run_split_track(std::string const & dir, std::string name, std::string const option, std::vector<std::pair<std::string, std::string>> const & variables, std::vector<std::pair<std::string, std::string>> const & variables_g0track, double const run_pot, std::string all_cut = "", bool const weight = false, std::string const & background_option = "") {
 
+  std::cout << "2" << std::endl;
+
   if(background_option != "" && background_option != "singlebackground" && background_option != "separatebackgrounds") {
     std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ << "\n"
 	      << "ERROR: invalid background_option\n";
     return;
   }
+
+  std::cout << "3" << std::endl;
 
   std::vector<method> methods;
   methods.push_back({TMVA::Types::kBDT, "BDTG",
@@ -1651,6 +1655,8 @@ int main(int const argc, char const * argv[]) {
 
   variables_g0track.emplace_back("reco_asso_tracks", "i");
   variables_g0track.emplace_back("longest_asso_track_displacement", "d");
+
+  std::cout << "1" << std::endl;
 
   //run(argv[3], argv[1], argv[2], run_pot, "", weight, "singlebackground");
   //run_split_track(argv[3], argv[1], argv[2], run_pot, "", weight, "singlebackground");

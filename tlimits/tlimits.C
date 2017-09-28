@@ -9,7 +9,7 @@ void tlimits(char const * fname, std::string const method) {
   TH1 * hsp = (TH1*)ifile->Get(("hsp_"+method).c_str());
   TH1 * hspc = (TH1*)ifile->Get(("hspcosmic_"+method).c_str());
   TH1 * hbnbc = (TH1*)ifile->Get(("hbnbcosmic_"+method).c_str());
-  //TH1* dh=(TH1*)infile->Get("data");
+  TH1* dh=(TH1*)infile->Get("data");
 
   /*
   TLimitDataSource * mydatasource = new TLimitDataSource(sh,bh,dh);

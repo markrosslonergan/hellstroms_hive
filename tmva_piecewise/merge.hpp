@@ -122,15 +122,15 @@ void merge(std::string const & ofile_path,
 	   std::string const & cut1,
 	   std::string const & cut2) {
 
-  tree_helper th;
+  object_helper oh;
   TFile * ofile = TFile::Open(ofile_path.c_str(), "recreate");
 
   for(method_struct const & method : methods) {
 
     for(auto const & p : trees) {
 
-      TTree * tree1 = th.GetTree(file_path1, p.second+"_"+method.str);
-      TTree * tree2 = th.GetTree(file_path2, p.second+"_"+method.str);
+      TTree * tree1 = oh.GetObject<TTree>(file_path1, p.second+"_"+method.str);
+      TTree * tree2 = oh.GetObject<TTree>(file_path2, p.second+"_"+method.str);
 
       ofile->cd();
 
