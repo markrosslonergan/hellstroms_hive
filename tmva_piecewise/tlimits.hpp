@@ -17,6 +17,8 @@ void tlimits(std::string const & ifile_path,
   TH1 * background_hist = oh.GetObject<TH1>(ifile_path, "background_" + method.str + "_mva");
   TH1 * data_hist = oh.GetObject<TH1>(ifile_path, "data_" + method.str + "_mva");
 
+  std::cout << signal_hist->Integral() << "\n";
+
   TLimitDataSource * mydatasource = new TLimitDataSource(signal_hist, background_hist, data_hist);
   TConfidenceLevel * myconfidence = TLimit::ComputeLimit(mydatasource, 50000);
   std::cout << "  CLs    : " << myconfidence->CLs()  << std::endl;

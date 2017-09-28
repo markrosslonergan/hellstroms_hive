@@ -63,8 +63,8 @@ TTree * merge_trees(TTree * tree1,
   }
 
   TTreeFormula * tf = new TTreeFormula("tf", all_cut.c_str(), cut_tree);
-  TTreeFormula * tf1 = new TTreeFormula("tf1", cut1.c_str(), cut_tree);
-  TTreeFormula * tf2 = new TTreeFormula("tf2", cut2.c_str(), cut_tree);
+  TTreeFormula * tf1 = new TTreeFormula("tf1", (all_cut + " && " + cut1).c_str(), cut_tree);
+  TTreeFormula * tf2 = new TTreeFormula("tf2", (all_cut + " && " + cut2).c_str(), cut_tree);
 
   for(int i = 0; i < cut_tree->GetEntries(); ++i) {
 

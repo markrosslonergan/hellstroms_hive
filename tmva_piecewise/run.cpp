@@ -120,16 +120,16 @@ int main(int const argc, char const * argv[]) {
   }
   
   else if(option == "app") {
-    app(identifier_notrack, trees, tree_cuts, cut_notrack, variables_notrack, methods);
-    app(identifier_trackonly, trees, tree_cuts, cut_trackonly, variables_trackonly, methods);
+    app(identifier_notrack, trees, tree_cuts, all_cut_notrack, variables_notrack, methods);
+    app(identifier_trackonly, trees, tree_cuts, all_cut_trackonly, variables_trackonly, methods);
   }
 
   else if(option == "merge") {
-    merge(identifier+"_app.root", identifier_notrack+"_app.root", identifier_trackonly+"_app.root", trees, methods, branches, all_cut, all_cut_notrack, all_cut_trackonly);
+    merge(identifier+"_app.root", identifier_notrack+"_app.root", identifier_trackonly+"_app.root", trees, methods, branches, all_cut, cut_notrack, cut_trackonly);
   }
 
   else if(option == "getresponse") {
-    get_mva_response_hists(identifier+"_mva_response.root", identifier+"_app.root", trees, methods, branches, "(100, -1, 1)", tree_cuts, cut_notrack, cut_trackonly);
+    get_mva_response_hists(identifier+"_mva_response.root", identifier+"_app.root", trees, methods, branches, tree_cuts, cut_notrack, cut_trackonly);
   }
 
   else if(option == "tlimits") {

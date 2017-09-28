@@ -8,7 +8,7 @@ TFile * ofile = nullptr;
 
 void draw_app(std::string const & name, std::string const & file_path, std::string const & cut, std::string const & method) {
   
-  TFile * sig_file = TFile::Open("../samples/mcc82/runmv_sp.root");
+  TFile * sig_file = TFile::Open("../samples/mcc82/runmv_sp_cosmic.root");
   TTree * sig_tree = (TTree*)sig_file->Get("LEEPhoton/vertex_tree");
   
   sig_tree->AddFriend(("signal_"+method).c_str(), file_path.c_str());
@@ -35,9 +35,11 @@ void test_app() {
   std::string const all_cut_notrack = all_cut + " && reco_asso_tracks == 0";
   std::string const all_cut_trackonly = all_cut + " && reco_asso_tracks > 0";
 
-  draw_app("all_notrack", "runtmva_app.root", all_cut_notrack + " && " + signal_definition, "BDTG");
-  draw_app("notrack", "runtmva_notrack_app.root", all_cut_notrack + " && " + signal_definition, "BDTG");
-  draw_app("all_trackonly", "runtmva_app.root", all_cut_trackonly + " && " + signal_definition, "BDTG");
-  draw_app("trackonly", "runtmva_trackonly_app.root", all_cut_trackonly + " && " + signal_definition, "BDTG");
+  std::string const method = "BDTG";
+
+  draw_app("all_notrack", "runtmva_app.root", all_cut_notrack + " && " + signal_definition, method);
+  draw_app("notrack", "runtmva_notrack_app.root", all_cut_notrack + " && " + signal_definition, method);
+  draw_app("all_trackonly", "runtmva_app.root", all_cut_trackonly + " && " + signal_definition, method);
+  draw_app("trackonly", "runtmva_trackonly_app.root", all_cut_trackonly + " && " + signal_definition, method);
 
 }
