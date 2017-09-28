@@ -149,8 +149,6 @@ class tmva_helper {
   std::vector<std::pair<std::string, std::string>> variable_v;
   std::vector<method> method_v;
 
-  std::vector<double> test_v;
-
   void update(void_vec const & tvv, std::vector<float *> & rvv) {
 
     for(size_t i = 0; i < tvv.size(); ++i) {
@@ -202,7 +200,6 @@ class tmva_helper {
 	update(tree_var_v, reader_var_v);
 	ts.mva = -999;
 	if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(m.method_str.c_str());
-	test_v.push_back(ts.mva);
 	ts.tree->Fill();
       }
       ts.tree->Write();
@@ -819,9 +816,9 @@ public:
 		  std::string const & ytitle = "") {
 
     TCanvas * canvas_stack = new TCanvas((method_str+"_stack").c_str());    
-    vertex_tree_sp->Draw((draw+">>hsp1c"+binning).c_str(), (name_sp1+".mva > "+std::to_string(mva1)+"&&"+cut1+"&&"+all_cut+"&&"+signal_definition).c_str());
+    vertex_tree_sp_cosmic->Draw((draw+">>hsp1c"+binning).c_str(), (name_sp_cosmic1+".mva > "+std::to_string(mva1)+"&&"+cut1+"&&"+all_cut+"&&"+signal_definition).c_str());
     TH1 * hspc1 = (TH1*)gDirectory->Get("hsp1c");
-    vertex_tree_sp->Draw((draw+">>hsp2c"+binning).c_str(), (name_sp2+".mva > "+std::to_string(mva2)+"&&"+cut2+"&&"+all_cut+"&&"+signal_definition).c_str());
+    vertex_tree_sp_cosmic->Draw((draw+">>hsp2c"+binning).c_str(), (name_sp_cosmic2+".mva > "+std::to_string(mva2)+"&&"+cut2+"&&"+all_cut+"&&"+signal_definition).c_str());
     TH1 * hspc2 = (TH1*)gDirectory->Get("hsp2c");
     TH1 * hspc = (TH1*)hspc1->Clone();
     hspc->Add(hspc2);
@@ -1172,8 +1169,8 @@ public:
 
     int ispc1 = vertex_tree_sp_cosmic->GetEntries((name_sp_cosmic1+".mva > "+std::to_string(mva1)+"&&"+all_cut1+"&&"+signal_definition).c_str());
     int ispc2 = vertex_tree_sp_cosmic->GetEntries((name_sp_cosmic2+".mva > "+std::to_string(mva2)+"&&"+all_cut2+"&&"+signal_definition).c_str());
-    double lspc1 = double(ispc1) * run_pot / pot_sp_cosmic;
-    double lspc2 = double(ispc2) * run_pot / pot_sp_cosmic;
+    double lspc1 = ispc1 * run_pot / pot_sp_cosmic;
+    double lspc2 = ispc2 * run_pot / pot_sp_cosmic;
 
     if(verbose) {
       std::cout << "total - sp: " << total_sp1 + total_sp2 << " scaled: " << total_scaled_sp1 + total_scaled_sp2 << "\n"
@@ -1280,7 +1277,6 @@ public:
 
   }
 
-
   
   void runtmva_sig_all_twofiles(std::string const & all_cut, std::string const & fname1, std::string const & cut1, std::string const & fname2, std::string const & cut2, std::string const & background = "") {
     
@@ -1304,6 +1300,114 @@ public:
 
   }
 
+
+  void draw_mva_response_hist(std::string const & name,
+			      TTree * tree,
+			      std::string const & name1,
+			      std::string const & name2,
+			      std::string const & binning,
+			      std::string const & cut1,
+			      std::string const & cut2) {
+
+    TCanvas * ctemp = new TCanvas("ctemp");
+    
+    std::string const h1_name = "h1";
+    tree->Draw((name1+".mva>>"+h1_name+binning).c_str(), cut1.c_str());
+    TH1F * h1 = (TH1F*)gDirectory->Get(h1_name.c_str());
+
+    std::string const h2_name = "h2";
+    tree->Draw((name2+".mva>>"+h2_name+binning).c_str(), cut2.c_str());
+    TH1F * h2 = (TH1F*)gDirectory->Get(h2_name.c_str());
+
+    TH1F * h = new TH1F(name.c_str(), "", h1->GetNbinsX() + h2->GetNbinsX(), h1->GetBinLowEdge(1), h2->GetBinLowEdge(h2->GetNbinsX()) + h2->GetBinWidth(h2->GetNbinsX()));
+    for(int i = 1; i <= h->GetNbinsX(); ++i) {
+      if(i <= h1->GetNbinsX()) h->SetBinContent(i, h1->GetBinContent(i));
+      else h->SetBinContent(i, h2->GetBinContent(i-h1->GetNbinsX()));
+    }
+
+    h->Write();
+
+    delete h;
+    delete h1;
+    delete h2;
+    delete ctemp;
+
+  }
+
+
+  void get_mva_response_hists(std::string const & all_cut, std::string const & name1, std::string const & cut1, std::string const & name2, std::string const & cut2, std::string const & method_str, std::string background = "") {   
+    
+    if(background != "") background += "_";
+
+    std::string const fname1 = name1+"_app.root";
+    std::string const fname2 = name2+"_app.root";
+
+    std::string const name_sp1 = name1+"_sp_"+background+method_str;
+    std::string const name_sp_cosmic1 = name1+"_sp_cosmic_"+background+method_str;
+    std::string const name_bnb_cosmic1 = name1+"_bnb_cosmic_"+background+method_str;
+    std::string const name_cosmic1 = name1+"_cosmic_"+background+method_str;
+
+    std::string const name_sp2 = name2+"_sp_"+background+method_str;
+    std::string const name_sp_cosmic2 = name2+"_sp_cosmic_"+background+method_str;
+    std::string const name_bnb_cosmic2 = name2+"_bnb_cosmic_"+background+method_str;
+    std::string const name_cosmic2 = name2+"_cosmic_"+background+method_str;
+
+    TFriendElement * tfe_sp1 = vertex_tree_sp->AddFriend(name_sp1.c_str(), fname1.c_str());
+    TFriendElement * tfe_sp_cosmic1 = vertex_tree_sp_cosmic->AddFriend(name_sp_cosmic1.c_str(), fname1.c_str());
+    TFriendElement * tfe_bnb_cosmic1 =  vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic1.c_str(), fname1.c_str());
+
+    TFriendElement * tfe_sp2 = vertex_tree_sp->AddFriend(name_sp2.c_str(), fname2.c_str());
+    TFriendElement * tfe_sp_cosmic2 = vertex_tree_sp_cosmic->AddFriend(name_sp_cosmic2.c_str(), fname2.c_str());
+    TFriendElement * tfe_bnb_cosmic2 = vertex_tree_bnb_cosmic->AddFriend(name_bnb_cosmic2.c_str(), fname2.c_str());    
+
+    TFriendElement * tfe_cosmic1 = nullptr;
+    TFriendElement * tfe_cosmic2 = nullptr;
+
+    if(!single_background) {
+      tfe_cosmic1 = vertex_tree_cosmic->AddFriend(name_cosmic1.c_str(), fname1.c_str());
+      tfe_cosmic2 = vertex_tree_cosmic->AddFriend(name_cosmic2.c_str(), fname2.c_str());    
+    }    
+
+    std::string const binning = "(100, -1, 1)";
+    std::string const all_cut1 = all_cut + " && " + cut1;
+    std::string const all_cut2 = all_cut + " && " + cut2;
+    
+    draw_mva_response_hist("hsp_" + method_str,
+			   vertex_tree_sp,
+			   name_sp1,
+			   name_sp2,
+			   binning,
+			   all_cut1+"&&"+signal_definition,
+			   all_cut2+"&&"+signal_definition);
+
+    draw_mva_response_hist("hbnbcosmic_" + method_str,
+			   vertex_tree_bnb_cosmic,
+			   name_bnb_cosmic1,
+			   name_bnb_cosmic2,
+			   binning,
+			   all_cut1,
+			   all_cut2);
+
+    draw_mva_response_hist("hspcosmic_" + method_str,
+			   vertex_tree_sp_cosmic,
+			   name_sp_cosmic1,
+			   name_sp_cosmic2,
+			   binning,
+			   all_cut1+"&&"+signal_definition,
+			   all_cut2+"&&"+signal_definition);
+
+  }
+
+
+  void get_mva_response_hists_all_twofiles(std::string const & all_cut, std::string const & fname1, std::string const & cut1, std::string const & fname2, std::string const & cut2, std::string const & background = "") {
+    
+    ofile = TFile::Open("tmva_mva_response_hists.root", "recreate");
+    for(method const & m : method_v) {
+      get_mva_response_hists(all_cut, fname1, cut1, fname2, cut2, m.method_str, background);
+    }
+    ofile->Close();
+
+  }
 
 
 };
@@ -1490,6 +1594,9 @@ void run_split_track(std::string const & dir, std::string name, std::string cons
       thg0.runtmva_sig_all_twofiles(all_cut, nameg0, thg0_cut, name0, th0_cut);
     }
   }
+  else if(option == "tlimit") {
+    thg0.get_mva_response_hists_all_twofiles(all_cut, nameg0, thg0_cut, name0, th0_cut, "bnb_cosmic");
+  }
   else {
     std::cout << "Invalid option\n";
     return;
@@ -1516,8 +1623,8 @@ int main(int const argc, char const * argv[]) {
 
   //variables.emplace_back("totalpe_ibg_sum", "d");
 
-  variables.emplace_back("summed_associated_reco_shower_energy", "d");
-  //variables.emplace_back("summed_associated_helper_shower_energy", "d");
+  //variables.emplace_back("summed_associated_reco_shower_energy", "d");
+  variables.emplace_back("summed_associated_helper_shower_energy", "d");
 
   variables.emplace_back("reco_nu_vtx_dist_to_closest_tpc_wall", "d");
 

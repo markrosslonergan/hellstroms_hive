@@ -230,7 +230,14 @@ void plotsupimp(std::string const & cname,
     if(h5->GetBinContent(h5->GetMaximumBin()) > ymax) ymax = h5->GetBinContent(h5->GetMaximumBin());  
   }
 
-  h->GetYaxis()->SetRangeUser(0, ymax*1.6);
+  if(logy) {
+    h->GetYaxis()->SetRangeUser(1e-5, ymax*1.6);
+    canvas->SetLogy();
+  }
+  else {
+    h->GetYaxis()->SetRangeUser(0, ymax*1.6);
+  }
+
   TLegend * l = new TLegend(0.6, 0.9, 0.9, 0.6);
   if(ifile_sp) l->AddEntry(h, "NC #Delta Rad");
   if(ifile_sp_cosmic) l->AddEntry(h5, "NC #Delta Rad + Cosmic");
@@ -251,11 +258,105 @@ void plotsupimp(std::string const & cname,
 
 
 
+void divide_hist(TCanvas * canvas, TH1 * hspc, TH1 * hsp, bool first = false) {
+  
+  std::vector<double> bin_errors;
+  for(int i = 1; i <= hspc->GetNbinsX(); ++i) {
+    double a = hspc->GetBinContent(i);
+    double b = hsp->GetBinContent(i);
+    double sa = hspc->GetBinError(i);
+    double sb = hsp->GetBinError(i);
+    if(b) bin_errors.push_back(sqrt(pow(sa/b, 2) + pow(sb*a/(b*b), 2)));
+    else bin_errors.push_back(0);
+  }
+  
+  hspc->Divide(hsp);
+  TH1 * hspce = (TH1*)hspc->Clone();
+  
+  for(int i = 1; i <= hspc->GetNbinsX(); ++i) {
+    if(bin_errors.at(i-1)) hspce->SetBinError(i, bin_errors.at(i-1));
+  }
+  
+  hspce->SetLineColor(hspc->GetLineColor());
+  hspce->SetLineWidth(hspc->GetLineWidth());
+  
+  canvas->cd();
+  if(first) hspc->Draw("hist");
+  else hspc->Draw("samehist");
+  hspce->Draw("sameep");
+  
+}
+
+
+
+void plot_efficiency(std::string const & name,
+		     std::string const & draw,
+		     std::string const & binning,
+		     std::string const & cut,
+		     std::string const & cut_eff,
+		     std::string const & title = "",
+		     std::string const & xtitle = "",
+		     std::string const & ytitle = "") {
+  
+    int color_offset = 2;
+
+    TCanvas * canvas_eff = new TCanvas(name.c_str());
+
+    vertex_tree_sp->Draw((draw+">>hsp"+binning).c_str(), (cut+"&&"+signal_definition).c_str());
+    TH1 * hsp = (TH1*)gDirectory->Get("hsp");
+    vertex_tree_sp->Draw((draw+">>hspc"+binning).c_str(), (cut_eff+"&&"+signal_definition).c_str());
+    TH1 * hspc = (TH1*)gDirectory->Get("hspc");
+    hspc->SetStats(0);
+    hspc->SetTitle(title.c_str());
+    hspc->GetXaxis()->SetTitle(xtitle.c_str());
+    hspc->GetXaxis()->CenterTitle();
+    hspc->GetYaxis()->SetTitle(ytitle.c_str());
+    hspc->GetYaxis()->CenterTitle();
+    hspc->SetLineColor(kBlue+color_offset);
+    hspc->GetYaxis()->SetRangeUser(0, 2);
+    divide_hist(canvas_eff, hspc, hsp, true);
+
+    TCanvas * ctemp = new TCanvas("ctemp");
+    vertex_tree_sp_cosmic->Draw((draw+">>hspcosmic"+binning).c_str(), (cut+"&&"+signal_definition).c_str());
+    TH1 * hspcosmic = (TH1*)gDirectory->Get("hspcosmic");
+    vertex_tree_sp_cosmic->Draw((draw+">>hspcosmicc"+binning).c_str(), (cut_eff+"&&"+signal_definition).c_str());
+    TH1 * hspcosmicc = (TH1*)gDirectory->Get("hspcosmicc");
+    hspcosmicc->SetLineColor(kCyan+color_offset);
+    divide_hist(canvas_eff, hspcosmicc, hspcosmic);
+
+    ctemp->cd();
+    vertex_tree_bnb_cosmic->Draw((draw+">>hbnbcosmic"+binning).c_str(), (cut).c_str());
+    TH1 * hbnbcosmic = (TH1*)gDirectory->Get("hbnbcosmic");
+    vertex_tree_bnb_cosmic->Draw((draw+">>hbnbcosmicc"+binning).c_str(), (cut_eff).c_str());
+    TH1 * hbnbcosmicc = (TH1*)gDirectory->Get("hbnbcosmicc");
+    hbnbcosmicc->SetLineColor(kGreen+color_offset);    
+    divide_hist(canvas_eff, hbnbcosmicc, hbnbcosmic);
+
+    TLegend * leg = new TLegend(0.6, 0.9, 0.9, 0.6);
+    leg->AddEntry(hspc, "NC #Delta Radiative");
+    leg->AddEntry(hspcosmicc, "NC #Delta Radiative + Cosmic");    
+    leg->AddEntry(hbnbcosmicc, "BNB + Cosmic");    
+    leg->Draw();
+
+    canvas_eff->Write();
+
+    delete hsp;
+    delete hspc;
+    delete hspcosmic;
+    delete hspcosmicc;
+    delete canvas_eff;
+    delete leg;
+    delete ctemp;
+
+  }
+
+
+
 void plotsupimp(std::string const dir = "") {
 
   init(dir);
   
-  std::string acut = "passed_swtrigger == 1";
+  std::string acut = "passed_swtrigger == 1 && reco_asso_showers == 1";
 
   plotsupimp("closest_asso_shower_dist_to_flashzcenter",
 	     "closest_asso_shower_dist_to_flashzcenter",
@@ -287,12 +388,23 @@ void plotsupimp(std::string const dir = "") {
 
   plotsupimp("totalpe_bbg_sum",
 	     "totalpe_bbg_sum",
-	     "(25, 0, 10)",
+	     "(25, 0, 2000)",
 	     acut,
 	     "",
 	     "",
 	     "Total Reconstructed Before-Beam PE",
 	     "Area Normalized");
+
+  plotsupimp("totalpe_bbg_sum_log",
+	     "totalpe_bbg_sum",
+	     "(25, 0, 5000)",
+	     acut,
+	     "",
+	     "",
+	     "Total Reconstructed Before-Beam PE",
+	     "Area Normalized",
+	     false,
+	     true);
 
   plotsupimp("summed_associated_reco_shower_energy",
 	     "summed_associated_reco_shower_energy",
@@ -464,5 +576,14 @@ void plotsupimp(std::string const dir = "") {
 	     "",
 	     "Longest Associated Track Length [cm]",
 	     "Area Normalized");
+
+  plot_efficiency("totalpe_cut",
+		  "true_nu_E",
+		  "(20, 0, 2.2)",
+		  acut,
+		  acut + " && totalpe_ibg_sum > 140",
+		  "Total PE in Event > 140",
+		  "True Neutrino Energy [GeV]",
+		  "Efficiency");
 
 }
