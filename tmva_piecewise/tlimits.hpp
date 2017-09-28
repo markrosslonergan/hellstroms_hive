@@ -37,7 +37,7 @@ void tlimits(std::string const & ifile_path,
 	     std::vector<method_struct> const & methods) {
   
   for(method_struct const & method : methods) {
-    std::cout << "METHOD: " << method.str << ":\n";
+    std::cout << "METHOD: " << method.str << "\n";
     tlimits(ifile_path, method);
     std::cout << "\n";
   }

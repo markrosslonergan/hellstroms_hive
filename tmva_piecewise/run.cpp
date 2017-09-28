@@ -5,6 +5,8 @@
 #include "train.hpp"
 #include "app.hpp"
 #include "merge.hpp"
+#include "get_mva_response_hists.hpp"
+#include "tlimits.hpp"
 #include "significance.hpp"
 
 
@@ -88,14 +90,16 @@ int main(int const argc, char const * argv[]) {
   std::string const identifier_trackonly = identifier + "_trackonly";
 
   std::string const all_cut = "closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140 && reco_asso_showers == 1";
-  std::string const all_cut_notrack = all_cut + " && reco_asso_tracks == 0";
-  std::string const all_cut_trackonly = all_cut + " && reco_asso_tracks > 0";
+  std::string const cut_notrack = "reco_asso_tracks == 0";
+  std::string const all_cut_notrack = all_cut + " && " + cut_notrack;
+  std::string const cut_trackonly = "reco_asso_tracks > 0";
+  std::string const all_cut_trackonly = all_cut + " && " + cut_trackonly;
 
   std::string const signal_definition = "is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
   std::string const background_definition = "!(" + signal_definition + ")";
 
   std::vector<std::pair<TTree *, std::string>> trees = {
-    std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_sp.root", "LEEPhoton/vertex_tree"), "signal"),
+    std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_sp_cosmic.root", "LEEPhoton/vertex_tree"), "signal"),
     std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "background"),
     std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "data")
   };
@@ -116,14 +120,21 @@ int main(int const argc, char const * argv[]) {
   }
   
   else if(option == "app") {
-    app(identifier_notrack, trees, tree_cuts, all_cut_notrack, variables_notrack, methods);
-    app(identifier_trackonly, trees, tree_cuts, all_cut_trackonly, variables_trackonly, methods);
-    merge(identifier+"_app.root", identifier_notrack+"_app.root", identifier_trackonly+"_app.root", trees, methods, branches, all_cut, all_cut_notrack, all_cut_trackonly);
+    app(identifier_notrack, trees, tree_cuts, cut_notrack, variables_notrack, methods);
+    app(identifier_trackonly, trees, tree_cuts, cut_trackonly, variables_trackonly, methods);
   }
 
   else if(option == "merge") {
     merge(identifier+"_app.root", identifier_notrack+"_app.root", identifier_trackonly+"_app.root", trees, methods, branches, all_cut, all_cut_notrack, all_cut_trackonly);
   }
+
+  else if(option == "getresponse") {
+    get_mva_response_hists(identifier+"_mva_response.root", identifier+"_app.root", trees, methods, branches, "(100, -1, 1)", tree_cuts, cut_notrack, cut_trackonly);
+  }
+
+  else if(option == "tlimits") {
+    tlimits(identifier+"_mva_response.root", methods);
+  }  
 
   else if(option == "sig") {
     significance(identifier+"_app.root", signal_trees, signal_weights, background_trees, background_weights);

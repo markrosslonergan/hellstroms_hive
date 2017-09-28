@@ -54,16 +54,16 @@ void app_tree(std::string const & identifier,
   }
 
   TTreeFormula * tf = new TTreeFormula("tf", cut.c_str(), tree);
-  
+
   for(method_struct const & method : methods) {
     reader->BookMVA(method.str.c_str(), ("dataset/weights/"+identifier+"_training_"+method.str+".weights.xml").c_str());
     app_tree_struct ts(otree_name+"_"+method.str, false);
     for(int i = 0; i < tree->GetEntries(); ++i) {
       tree->GetEntry(i);
-	update(tree_var_v, reader_var_v);
-	ts.mva = -999;
-	if(tf->EvalInstance()) reader->EvaluateMVA(method.str.c_str());
-	ts.tree->Fill();
+      update(tree_var_v, reader_var_v);
+      ts.mva = -999;
+      if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(method.str.c_str());
+      ts.tree->Fill();
     }
     ts.tree->Write();
   }

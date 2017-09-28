@@ -1,6 +1,7 @@
 
 
 
+std::string const signal_definition = "is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
 TFile * ofile = nullptr;
 
 
@@ -34,9 +35,9 @@ void test_app() {
   std::string const all_cut_notrack = all_cut + " && reco_asso_tracks == 0";
   std::string const all_cut_trackonly = all_cut + " && reco_asso_tracks > 0";
 
-  draw_app("all_notrack", "runtmva_app.root", all_cut_notrack, "BDTG");
-  draw_app("notrack", "runtmva_notrack_app.root", all_cut_notrack, "BDTG");
-  draw_app("all_trackonly", "runtmva_app.root", all_cut_trackonly, "BDTG");
-  draw_app("trackonly", "runtmva_trackonly_app.root", all_cut_trackonly, "BDTG");
+  draw_app("all_notrack", "runtmva_app.root", all_cut_notrack + " && " + signal_definition, "BDTG");
+  draw_app("notrack", "runtmva_notrack_app.root", all_cut_notrack + " && " + signal_definition, "BDTG");
+  draw_app("all_trackonly", "runtmva_app.root", all_cut_trackonly + " && " + signal_definition, "BDTG");
+  draw_app("trackonly", "runtmva_trackonly_app.root", all_cut_trackonly + " && " + signal_definition, "BDTG");
 
 }

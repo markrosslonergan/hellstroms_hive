@@ -71,7 +71,7 @@ TTree * merge_trees(TTree * tree1,
     cut_tree->GetEntry(i);
     tree1->GetEntry(i);
     tree2->GetEntry(i);
-    
+
     for(size_t j = 0; j < branches.size(); ++j) {
       
       if(tf->EvalInstance()) {
