@@ -1,6 +1,11 @@
 
 
 
+#ifndef METHODSTRUCT_H
+#define METHODSTRUCT_H
+
+
+
 #include "tmva/Types.h"
 
 
@@ -17,3 +22,7 @@ struct method_struct {
     option(c) {}
 
 };
+
+
+
+#endif

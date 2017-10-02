@@ -9,15 +9,19 @@
 
 
 void tlimits(std::string const & ifile_path,
-	     method_struct const & method) {
+	     method_struct const & method,
+	     double const signal_weight = 1,
+	     double const background_weight = 1,
+	     double const data_weight = 1) {
 
   object_helper oh;
   
   TH1 * signal_hist = oh.GetObject<TH1>(ifile_path, "signal_" + method.str + "_mva");
+  signal_hist->Scale(signal_weight);
   TH1 * background_hist = oh.GetObject<TH1>(ifile_path, "background_" + method.str + "_mva");
+  background_hist->Scale(background_weight);
   TH1 * data_hist = oh.GetObject<TH1>(ifile_path, "data_" + method.str + "_mva");
-
-  std::cout << signal_hist->Integral() << "\n";
+  data_hist->Scale(data_weight);
 
   TLimitDataSource * mydatasource = new TLimitDataSource(signal_hist, background_hist, data_hist);
   TConfidenceLevel * myconfidence = TLimit::ComputeLimit(mydatasource, 50000);
@@ -36,7 +40,10 @@ void tlimits(std::string const & ifile_path,
 
 
 void tlimits(std::string const & ifile_path,
-	     std::vector<method_struct> const & methods) {
+	     std::vector<method_struct> const & methods,
+	     double const signal_weight = 1,
+	     double const background_weight = 1,
+	     double const data_weight = 1) {
   
   for(method_struct const & method : methods) {
     std::cout << "METHOD: " << method.str << "\n";

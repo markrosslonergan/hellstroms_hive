@@ -35,12 +35,14 @@ public:
     auto const of_it = open_files.find(file_path);
     TFile * file = nullptr;
     if(of_it == open_files.end()) {
+      TDirectory * const tdir = gDirectory;
       file = TFile::Open(file_path.c_str());
       if(!file) {
 	std::cout << "ERROR - could not find file:\n" << file_path << "\n";
 	exit(1);
       }
       open_files.emplace(file_path, file);
+      tdir->cd();
     }
     else {
       file = of_it->second;

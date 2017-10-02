@@ -6,6 +6,7 @@
 #include "app.hpp"
 #include "merge.hpp"
 #include "get_mva_response_hists.hpp"
+#include "plot_mva_response_hists.hpp"
 #include "tlimits.hpp"
 #include "significance.hpp"
 
@@ -103,13 +104,13 @@ int main(int const argc, char const * argv[]) {
     std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "background"),
     std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "data")
   };
-
+  
   std::vector<std::string> tree_cuts = {
     all_cut + " && " + signal_definition,
     all_cut + " && " + background_definition,
     all_cut
   };
-
+  
   std::vector<std::pair<std::string, std::string>> branches = {
     {"mva", "d"}
   };
@@ -129,9 +130,13 @@ int main(int const argc, char const * argv[]) {
   }
 
   else if(option == "getresponse") {
-    get_mva_response_hists(identifier+"_mva_response.root", identifier+"_app.root", trees, methods, branches, tree_cuts, cut_notrack, cut_trackonly);
+    get_mva_response_hists(identifier+"_mva_response.root", identifier+"_app.root", trees, methods, branches, "50", tree_cuts, cut_notrack, cut_trackonly);
   }
 
+  else if(option == "plotresponse") {
+    plot_mva_response_hists(identifier+"_plot_mva_response.root", identifier+"_mva_response.root", trees, methods, branches);
+  }
+  
   else if(option == "tlimits") {
     tlimits(identifier+"_mva_response.root", methods);
   }  

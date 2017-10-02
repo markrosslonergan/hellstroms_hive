@@ -1,6 +1,10 @@
 
 
 
+#ifndef VOIDVEC_H
+#define VOIDVEC_H
+
+
 
 class void_vec {
 
@@ -65,3 +69,7 @@ public:
   }
 
 };
+
+
+
+#endif

@@ -1,10 +1,37 @@
 
 
 
+#include <string>
+
 #include "TCanvas.h"
 #include "TH1F.h"
-
 #include "TFriendElement.h"
+
+
+
+TH1 *  get_hist(std::string const & hname,
+		TTree * tree,
+		std::string const & mva_tree_name,
+		std::string const & draw,
+		std::string const & bins,
+		std::string const & cut) {
+
+  tree->Draw((mva_tree_name+"."+draw+">>"+hname).c_str(), cut.c_str());
+  TH1F * hist = (TH1F*)gDirectory->Get(hname.c_str());
+  if(hist->GetBinContent(0) > 0 || hist->GetBinContent(hist->GetNbinsX()+1) > 0) {
+    std::cout << "WARNING:\n"
+	      << __LINE__ << " " << __PRETTY_FUNCTION__ << "\n"
+	      << "Historgram " << hname << " has entries in under/overflow bins: " << hist->GetBinContent(0) << " " << hist->GetBinContent(hist->GetNbinsX()+1) << "\n";
+    tree->Draw((mva_tree_name+"."+draw+">>herror").c_str(), cut.c_str());
+    TH1F * herror = (TH1F*)gDirectory->Get("herror");
+    herror->Write();
+  }
+  std::string const binning = "(" + bins + ", " + std::to_string(hist->GetBinLowEdge(1)) + ", " + std::to_string(hist->GetBinLowEdge(hist->GetNbinsX()+1)) + ")";
+  delete hist;
+  tree->Draw((mva_tree_name+"."+draw+">>"+hname+binning).c_str(), cut.c_str());
+  return (TH1F*)gDirectory->Get(hname.c_str());
+
+}
 
 
 
@@ -12,37 +39,15 @@ void draw_mva_response_hist(std::string const & name,
 			    TTree * tree,
 			    std::string const & mva_tree_name,
 			    std::string const & draw,
+			    std::string const & bins,
 			    std::string const & all_cut,
 			    std::string const & cut1,
 			    std::string const & cut2) {
-
-  std::string binning;
   
   TCanvas * ctemp = new TCanvas("ctemp");
   
-  std::string const h1_name = "h1";
-  tree->Draw((mva_tree_name+"."+draw+">>"+h1_name+binning).c_str(), (all_cut + " && " + cut1).c_str());
-  TH1F * h1 = (TH1F*)gDirectory->Get(h1_name.c_str());
-  if(h1->GetBinContent(0) > 0 || h1->GetBinContent(h1->GetNbinsX()+1) > 0) {
-    std::cout << "WARNING:\n"
-	      << __LINE__ << " " << __PRETTY_FUNCTION__ << "\n"
-	      << "Historgram h1 has entries in under/overflow bins: " << h1->GetBinContent(0) << " " << h1->GetBinContent(h1->GetNbinsX()+1) << "\n";
-    tree->Draw((mva_tree_name+"."+draw+">>herror").c_str(), (all_cut + " && " + cut1).c_str());
-    TH1F * herror = (TH1F*)gDirectory->Get("herror");
-    herror->Write();
-  }
-  
-  std::string const h2_name = "h2";
-  tree->Draw((mva_tree_name+"."+draw+">>"+h2_name+binning).c_str(), (all_cut + " && " + cut2).c_str());
-  TH1F * h2 = (TH1F*)gDirectory->Get(h2_name.c_str());
-  if(h2->GetBinContent(0) > 0 || h2->GetBinContent(h2->GetNbinsX()+1) > 0) {
-    std::cout << "WARNING:\n"
-	      << __LINE__ << " " << __PRETTY_FUNCTION__ << "\n"
-	      << "Historgram h2 has entries in under/overflow bins: " << h2->GetBinContent(0) << " " << h2->GetBinContent(h2->GetNbinsX()+1) << "\n";
-    tree->Draw((mva_tree_name+"."+draw+">>herror").c_str(), (all_cut + " && " + cut2).c_str());
-    TH1F * herror = (TH1F*)gDirectory->Get("herror");
-    herror->Write();
-  }
+  TH1 * h1 = get_hist("h1", tree, mva_tree_name, draw, bins, all_cut + " && " + cut1);
+  TH1 * h2 = get_hist("h2", tree, mva_tree_name, draw, bins, all_cut + " && " + cut2);
   
   if(h1->GetNbinsX() != h2->GetNbinsX()) {
     std::cout << "WARNING:\n"
@@ -50,7 +55,7 @@ void draw_mva_response_hist(std::string const & name,
 	      << "Histograms have a different number of bins - h1: " << h1->GetNbinsX() << " h2: " << h2->GetNbinsX() << "\n";
   }
 
-  TH1F * h = new TH1F(name.c_str(), "", h1->GetNbinsX() + h2->GetNbinsX(), h1->GetBinLowEdge(1), h2->GetBinLowEdge(h2->GetNbinsX()) + h2->GetBinWidth(h2->GetNbinsX()));
+  TH1F * h = new TH1F(name.c_str(), "", h1->GetNbinsX() + h2->GetNbinsX(), 0, 1);
   for(int i = 1; i <= h->GetNbinsX(); ++i) {
     if(i <= h1->GetNbinsX()) h->SetBinContent(i, h1->GetBinContent(i));
     else h->SetBinContent(i, h2->GetBinContent(i-h1->GetNbinsX()));
@@ -72,6 +77,7 @@ void get_mva_response_hists(std::string const & ofile_path,
 			    std::vector<std::pair<TTree *, std::string>> const & trees,
 			    std::vector<method_struct> const & methods,
 			    std::vector<std::pair<std::string, std::string>> const & branches,
+			    std::string const & bins,
 			    std::vector<std::string> const & tree_cuts,
 			    std::string const & cut1,
 			    std::string const & cut2) {
@@ -92,9 +98,11 @@ void get_mva_response_hists(std::string const & ofile_path,
 			       p.first,
 			       tfe->GetTree()->GetName(),
 			       bp.first,
+			       bins,
 			       all_cut,
 			       cut1,
 			       cut2);
+
       }
 
     }
