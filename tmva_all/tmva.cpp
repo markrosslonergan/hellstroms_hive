@@ -1513,8 +1513,6 @@ void run_split_track(std::string const & dir, std::string name, std::string cons
     return;
   }
 
-  std::cout << "3" << std::endl;
-
   std::vector<method> methods;
   methods.push_back({TMVA::Types::kBDT, "BDTG",
 	"!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2"});
@@ -1612,8 +1610,8 @@ void run_split_track(std::string const & dir, std::string name, std::string cons
 
 int main(int const argc, char const * argv[]) {
 
-  if(argc < 3) {
-    std::cout << "Usage: option (\"all\", \"app\", \"sig\"), directory with runmv*root files\n";
+  if(argc != 4) {
+    std::cout << "Usage: name, option (\"all\", \"app\", \"sig\"), directory with runmv*root files\n";
     return 1;
   }
   
@@ -1656,13 +1654,11 @@ int main(int const argc, char const * argv[]) {
   variables_g0track.emplace_back("reco_asso_tracks", "i");
   variables_g0track.emplace_back("longest_asso_track_displacement", "d");
 
-  std::cout << "1" << std::endl;
-
   //run(argv[3], argv[1], argv[2], run_pot, "", weight, "singlebackground");
   //run_split_track(argv[3], argv[1], argv[2], run_pot, "", weight, "singlebackground");
   //run_split_track(argv[3], argv[1], argv[2], run_pot, "", true, "singlebackground");
   //run_split_track(argv[3], std::string(argv[1]), argv[2], run_pot, "closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140", weight, "singlebackground");
-  run_split_track(argv[3], std::string(argv[1]), argv[2], variables, variables_g0track, run_pot, "closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140 && reco_asso_showers == 1", weight, "singlebackground");
+  run_split_track(argv[3], argv[1], argv[2], variables, variables_g0track, run_pot, "closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140 && reco_asso_showers == 1", weight, "singlebackground");
   //run_split_track(argv[3], std::string(argv[1]), argv[2], run_pot, "", weight);
 
   return 0;

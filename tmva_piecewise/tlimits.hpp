@@ -5,35 +5,51 @@
 #include "TLimit.h"
 #include "TLimitDataSource.h"
 #include "TConfidenceLevel.h"
+#include "TGraph.h"
 
 
 
-void tlimits(std::string const & ifile_path,
-	     method_struct const & method,
-	     double const signal_weight = 1,
-	     double const background_weight = 1,
-	     double const data_weight = 1) {
+std::vector<std::pair<std::string, double>> tlimits(std::string const & ifile_path,
+						    method_struct const & method,
+						    double const run_pot = 1,
+						    double const signal_pot = 1,
+						    double const background_pot = 1,
+						    double const data_pot = 1) {
 
   object_helper oh;
   
-  TH1 * signal_hist = oh.GetObject<TH1>(ifile_path, "signal_" + method.str + "_mva");
-  signal_hist->Scale(signal_weight);
-  TH1 * background_hist = oh.GetObject<TH1>(ifile_path, "background_" + method.str + "_mva");
-  background_hist->Scale(background_weight);
-  TH1 * data_hist = oh.GetObject<TH1>(ifile_path, "data_" + method.str + "_mva");
-  data_hist->Scale(data_weight);
+  TH1 * signal_hist = oh.GetObject<TH1>(ifile_path, "ncdelta_cosmic_" + method.str + "_mva");
+  TH1 * background_hist = oh.GetObject<TH1>(ifile_path, "bnb_cosmic_background_" + method.str + "_mva");
+  TH1 * data_hist = oh.GetObject<TH1>(ifile_path, "bnb_cosmic_" + method.str + "_mva");
+
+  signal_hist->Scale(run_pot / signal_pot);
+  background_hist->Scale(run_pot / background_pot);
+  data_hist->Scale(run_pot / data_pot);
 
   TLimitDataSource * mydatasource = new TLimitDataSource(signal_hist, background_hist, data_hist);
-  TConfidenceLevel * myconfidence = TLimit::ComputeLimit(mydatasource, 50000);
-  std::cout << "  CLs    : " << myconfidence->CLs()  << std::endl;
-  std::cout << "  CLsb   : " << myconfidence->CLsb() << std::endl;
-  std::cout << "  CLb    : " << myconfidence->CLb()  << std::endl;
-  std::cout << "< CLs >  : " << myconfidence->GetExpectedCLs_b()  << std::endl;
-  std::cout << "< CLsb > : " << myconfidence->GetExpectedCLsb_b() << std::endl;
-  std::cout << "< CLb >  : " << myconfidence->GetExpectedCLb_b()  << std::endl;
+  TConfidenceLevel * myconfidence = TLimit::ComputeLimit(mydatasource, 50000);  
 
+  std::vector<std::pair<std::string, double>> results;
+  results.emplace_back("  CLs    : ", myconfidence->CLs());
+  results.emplace_back("  CLsb   : ", myconfidence->CLsb());
+  results.emplace_back("  CLb    : ", myconfidence->CLb());
+  results.emplace_back("< CLs >  : ", myconfidence->GetExpectedCLs_b());
+  results.emplace_back("< CLsb > : ", myconfidence->GetExpectedCLsb_b());
+  results.emplace_back("< CLb >  : ", myconfidence->GetExpectedCLb_b());
+
+  TCanvas * canvas = new TCanvas(method.str.c_str());
+  myconfidence->Draw();
+  TH1 * b_hist = (TH1*)gDirectory->Get("b_hist");
+  b_hist->SetName((method.str+"_"+std::string(b_hist->GetName())).c_str());
+  TH1 * sb_hist = (TH1*)gDirectory->Get("sb_hist");
+  sb_hist->SetName((method.str+"_"+std::string(sb_hist->GetName())+"_"+method.str).c_str());
+  canvas->Write();
+
+  delete canvas;
   delete myconfidence;
   delete mydatasource;
+
+  return results;
 
 }
 
@@ -41,14 +57,142 @@ void tlimits(std::string const & ifile_path,
 
 void tlimits(std::string const & ifile_path,
 	     std::vector<method_struct> const & methods,
-	     double const signal_weight = 1,
-	     double const background_weight = 1,
-	     double const data_weight = 1) {
-  
+	     double const run_pot = 1,
+	     double const signal_pot = 1,
+	     double const background_pot = 1,
+	     double const data_pot = 1) {
+
+  TFile * file = TFile::Open("tlimits.root", "recreate");
+
+  std::cout << "Run POT: " << run_pot << "\n"
+	    << "Signal POT: " << signal_pot << "\n"
+	    << "Background POT: " << background_pot << "\n"
+	    << "Data POT: " << data_pot << "\n";
+
+  std::vector< std::vector< std::pair<std::string, double> > > results;
+  std::vector< std::pair < std::string, std::vector<std::pair<double, double> > > > var_results;
   for(method_struct const & method : methods) {
-    std::cout << "METHOD: " << method.str << "\n";
-    tlimits(ifile_path, method);
+    results.push_back(tlimits(ifile_path, method, run_pot, signal_pot, background_pot, data_pot));
+  }
+
+  file->Close();
+
+  for(size_t i = 0; i < methods.size(); ++i) {
+    auto const & v = results.at(i);
+    std::cout << methods.at(i).str << "\n";
+    for(auto const & p : v) {
+      std::cout << p.first << p.second << "\n";
+    }
     std::cout << "\n";
   }
+
+}
+
+
+
+std::pair<double, double>  tlimits_var(std::string const & ifile_path,
+				       method_struct const & method,
+				       double const points,
+				       double const pot_min,
+				       double const pot_max,
+				       double const background_pot,
+				       double const data_pot) {
+  
+  std::vector<double> signal_pot_v;
+  //std::vector<double> CLs_v;
+  std::vector<double> CLsexp_v;
+
+  double const run_pot = 6.6e20;
+
+  object_helper ohb;
+  TH1 * background_hist = ohb.GetObject<TH1>(ifile_path, "bnb_cosmic_background_" + method.str + "_mva");
+  TH1 * data_hist = ohb.GetObject<TH1>(ifile_path, "bnb_cosmic_" + method.str + "_mva");
+  background_hist->Scale(run_pot / background_pot);
+  data_hist->Scale(run_pot / data_pot);
+
+  std::cout << "Method: " << method.str << "\n";
+
+  size_t closest_index = SIZE_MAX;
+  double closest_diff = DBL_MAX;
+
+  for(double signal_pot = pot_min; signal_pot <= pot_max; signal_pot += (pot_max - pot_min) / points) {
+  
+    object_helper ohs;
+    TH1 * signal_hist = ohs.GetObject<TH1>(ifile_path, "ncdelta_cosmic_" + method.str + "_mva");
+    signal_hist->Scale(run_pot / signal_pot);
+    
+    TLimitDataSource * mydatasource = new TLimitDataSource(signal_hist, background_hist, data_hist);
+    TConfidenceLevel * myconfidence = TLimit::ComputeLimit(mydatasource, 50000);
+
+    signal_pot_v.push_back(signal_pot);
+    //CLs_v.push_back(myconfidence->CLs()); 
+    CLsexp_v.push_back(myconfidence->GetExpectedCLs_b());
+
+    if(fabs(CLsexp_v.back() - 0.1) < closest_diff) {
+      closest_index = CLsexp_v.size() - 1;
+      closest_diff = fabs(CLsexp_v.back() - 0.1);
+    }
+
+    //std::cout << "Signal POT: " << signal_pot_v.back() << " " << CLs_v.back() << " " << CLsexp_v.back() << "\n";
+    
+    delete myconfidence;
+    delete mydatasource;
+    
+  }
+    
+  /*
+  TCanvas * canvas_CLs = new TCanvas((method.str+"_CLs").c_str());
+  TGraph * graph_CLs = new TGraph(signal_pot_v.size(), &signal_pot_v.front(), &CLs_v.front());
+  graph_CLs->Draw();
+  graph_CLs->SetTitle(method.str.c_str());
+  graph_CLs->GetXaxis()->SetTitle("Signal POT");
+  graph_CLs->GetXaxis()->CenterTitle();
+  graph_CLs->GetYaxis()->SetTitle("CLs");
+  graph_CLs->GetYaxis()->CenterTitle();
+  canvas_CLs->Write();
+  delete graph_CLs;
+  delete canvas_CLs;
+  */
+
+  TCanvas * canvas_CLsexp = new TCanvas((method.str+"_CLsexp").c_str());
+  TGraph * graph_CLsexp = new TGraph(signal_pot_v.size(), &signal_pot_v.front(), &CLsexp_v.front());
+  graph_CLsexp->Draw();
+  graph_CLsexp->SetTitle(method.str.c_str());
+  graph_CLsexp->GetXaxis()->SetTitle("Signal POT");
+  graph_CLsexp->GetXaxis()->CenterTitle();
+  graph_CLsexp->GetYaxis()->SetTitle("CLsexp");
+  graph_CLsexp->GetYaxis()->CenterTitle();
+  canvas_CLsexp->Write();
+  delete graph_CLsexp;
+  delete canvas_CLsexp;  
+
+  return closest_index != SIZE_MAX ? std::pair<double, double>(CLsexp_v.at(closest_index), signal_pot_v.at(closest_index)) : std::pair<double, double>(-1, -1);
+
+}
+
+
+
+void tlimits_var(std::string const & ifile_path,
+		 std::vector<method_struct> const & methods,
+		 double const points,
+		 double const pot_min,
+		 double const pot_max,
+		 double const background_pot,
+		 double const data_pot,
+		 double const signal_events_per_pot) {
+  
+  TFile * file = TFile::Open("tlimits_var.root", "recreate");
+
+  std::vector<std::pair<double, double>> results;
+
+  for(method_struct const & method : methods) {
+    results.push_back(tlimits_var(ifile_path, method, points, pot_min, pot_max, background_pot, data_pot));
+  }
+
+  for(size_t i = 0; i < methods.size(); ++i) {
+    std::cout << "Method: " << methods.at(i).str << " CLsexp: " << results.at(i).first << " Signal POT: " << results.at(i).second << " Events: " << signal_events_per_pot * results.at(i).second << "\n";
+  }
+
+  file->Close();
 
 }
