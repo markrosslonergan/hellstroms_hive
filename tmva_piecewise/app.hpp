@@ -89,5 +89,6 @@ void app(std::string const & identifier,
     app_tree(identifier, p.first, tree_cuts.at(i) + " && " + additional_cut, p.second, variables, methods);
   }
   app_ofile->Close();
+  delete app_ofile;
   
 }

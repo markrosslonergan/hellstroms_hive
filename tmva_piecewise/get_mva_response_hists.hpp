@@ -48,7 +48,7 @@ void draw_mva_response_hist(std::string const & name,
   
   TH1 * h1 = get_hist("h1", tree, mva_tree_name, draw, bins, all_cut + " && " + cut1);
   TH1 * h2 = get_hist("h2", tree, mva_tree_name, draw, bins, all_cut + " && " + cut2);
-  
+
   if(h1->GetNbinsX() != h2->GetNbinsX()) {
     std::cout << "WARNING:\n"
 	      << __LINE__ << " " << __PRETTY_FUNCTION__ << "\n"

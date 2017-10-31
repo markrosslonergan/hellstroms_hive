@@ -107,7 +107,7 @@ int main(int const argc, char const * argv[]) {
   //===========================================================================================
 
   std::vector<std::pair<TTree *, std::string>> const app_trees = {
-    std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_sp_cosmic.root", "LEEPhoton/vertex_tree"), "ncdelta"),
+    std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_sp.root", "LEEPhoton/vertex_tree"), "ncdelta"),
     std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_sp_cosmic.root", "LEEPhoton/vertex_tree"), "ncdelta_cosmic"),
     std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_background"),
     std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "bnb_cosmic")
@@ -145,38 +145,37 @@ int main(int const argc, char const * argv[]) {
   else if(option == "merge") {
     merge(identifier+"_app.root", identifier_notrack+"_app.root", identifier_trackonly+"_app.root", app_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
   }
-  
-  else if(option == "significance") {
-    std::vector<std::pair<TTree *, std::string>> const signal_significance_trees = {app_trees.at(0)};
-    std::vector<std::string> const signal_significance_tree_cuts = {tree_cuts.at(0)};
-    std::vector<std::pair<int, double>> const signal_significance_pots = {signal_training_pots.at(0)};
-    std::vector<std::pair<TTree *, std::string>> const background_significance_trees = {app_trees.at(1)};
-    std::vector<std::string> const background_significance_tree_cuts = {tree_cuts.at(1)};
-    std::vector<std::pair<int, double>> const background_significance_pots = {background_training_pots.at(0)};
-    significance(identifier+"_app.root", run_pot,
-		 signal_significance_trees, signal_significance_tree_cuts, signal_significance_pots, 
-		 background_significance_trees, background_significance_tree_cuts, background_significance_pots, 
-		 methods);
-  }
-  
+    
   else if(option == "significance_sep") {
-    std::vector<std::pair<TTree *, std::string>> const signal_significance_trees = {app_trees.at(0)};
-    std::vector<std::pair<std::string, std::string>> const signal_significance_tree_cuts = {{signal_definition + " && " + all_cut_notrack, signal_definition + " && " + all_cut_trackonly}};
-    std::vector<std::pair<int, double>> const signal_significance_pots = {signal_training_pots.at(0)};
-    std::vector<std::pair<TTree *, std::string>> const background_significance_trees = {app_trees.at(1)};
-    std::vector<std::pair<std::string, std::string>> const background_significance_tree_cuts = {{background_definition + " && " + all_cut_notrack, background_definition + " && " + all_cut_trackonly}};
-    std::vector<std::pair<int, double>> const background_significance_pots = {background_training_pots.at(0)};
+    std::vector<std::pair<TTree *, std::string>> const signal_significance_trees = {
+      std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_sp_cosmic.root", "LEEPhoton/vertex_tree"), "ncdelta_cosmic"),
+    };
+    std::vector<std::pair<std::string, std::string>> const signal_significance_tree_cuts = {
+      {signal_definition + " && " + all_cut_notrack, signal_definition + " && " + all_cut_trackonly}
+    };
+    std::vector<std::pair<int, double>> const signal_significance_pots = {
+      get_pot(dir + "/runmv_sp_cosmic.root", "LEEPhoton/get_pot")
+    };
+    std::vector<std::pair<TTree *, std::string>> const background_significance_trees = {
+      std::pair<TTree *, std::string>(oh.GetObject<TTree>(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_background"),
+    };
+    std::vector<std::pair<std::string, std::string>> const background_significance_tree_cuts = {
+      {background_definition + " && " + all_cut_notrack, background_definition + " && " + all_cut_trackonly}
+    };
+    std::vector<std::pair<int, double>> const background_significance_pots = {
+      get_pot(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/get_pot")
+    };
     significance_seperate(identifier+"_app.root", run_pot,
 			  signal_significance_trees, signal_significance_tree_cuts, signal_significance_pots, 
 			  background_significance_trees, background_significance_tree_cuts, background_significance_pots, 
 			  methods);
   }
 
-  else if(option == "getresponse_tlimits") {
+  else if(option == "get_response_tlimits") {
     get_mva_response_hists(identifier+"_mva_response.root", identifier+"_app.root", app_trees, methods, mva_branches, "50", tree_cuts, cut_notrack, cut_trackonly);
   }
 
-  else if(option == "plotresponse_tlimits") {
+  else if(option == "plot_response_tlimits") {
     plot_mva_response_hists(identifier+"_plot_mva_response.root", identifier+"_mva_response.root", app_trees, methods, mva_branches);
   }
   
@@ -185,7 +184,7 @@ int main(int const argc, char const * argv[]) {
   }  
 
   else if(option == "tlimits_var") {
-    tlimits_var(identifier+"_mva_response.root", methods, 20, 6.6e20, 12e21, background_training_pots.front().second, background_training_pots.front().second, double(signal_training_pots.front().first) / signal_training_pots.front().second);
+    tlimits_var(identifier+"_mva_response.root", methods, 6.6e20, 40, 6.6e20, 10e21, signal_training_pots.front().second, background_training_pots.front().second, background_training_pots.front().second);
   }  
 
   else {

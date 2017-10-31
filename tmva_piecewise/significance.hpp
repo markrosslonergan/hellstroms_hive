@@ -205,15 +205,15 @@ void cout_efficiency_seperate(TTree * tree, std::string const & name, TTree * tr
 	    << "Total Vertices: " << total;
   if(scale != 1)	    
     std::cout << " Scaled: " << total * scale;
-  std::cout << " Vtx/Evts: " << get_vertices_per_event(tree, tree_friend, "", -2, "", -2) << "\n"
+  std::cout << " Vtx/Evts: " << get_vertices_per_event(tree) << "\n"
 	    << "With pre-cut: " << pre_cut;
   if(scale != 1)	    
     std::cout << " Scaled: " << pre_cut * scale;
-  std::cout << " TE: " << double(pre_cut) / total * 100 << " Vtx/Evts: " << get_vertices_per_event(tree, tree_friend, tree_cut1, -2, tree_cut2, -2) << "\n"
+  std::cout << " TE: " << double(pre_cut) / total * 100 << " Vtx/Evts: " << get_vertices_per_event(tree, tree_cut1) << "\n"
 	    << "With MVA: " << mva_cut << " ";
   if(scale != 1)	    
     std::cout << " Scaled: " << mva_cut * scale;
-  std::cout << " RE: " << double(mva_cut) / pre_cut * 100 << " TE: " << double(mva_cut) / total * 100 << " Vtx/Evts: " << get_vertices_per_event(tree, tree_friend, tree_cut1, best_cut1, tree_cut2, best_cut2) << "\n";
+  std::cout << " RE: " << double(mva_cut) / pre_cut * 100 << " TE: " << double(mva_cut) / total * 100 << " Vtx/Evts: " << get_vertices_per_event(tree, tree_cut1, tree_cut2, tree_friend, best_cut1, best_cut2) << "\n";
 
 }
 

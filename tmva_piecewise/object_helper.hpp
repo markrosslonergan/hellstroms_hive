@@ -24,7 +24,10 @@ public:
 
 
   ~object_helper() {
-    for(auto const & p : open_files) p.second->Close();
+    for(auto const & p : open_files) {
+      p.second->Close();
+      delete p.second;
+    }
   }
 
 

@@ -189,6 +189,33 @@ TH1 * draw_hist(TTree * tree,
 }
 
 
+double get_scaling(std::string const & name) {
+
+  double const run_pot = 6.6e20;
+
+  if(name == "ncdelta") {
+    return run_pot / pot_sp;
+  }
+  if(name == "ncdelta_cosmic") {
+    return run_pot / pot_sp_cosmic;
+  }
+  if(name == "bnb") {
+    return run_pot / pot_bnb;
+  }
+  if(name == "bnb_cosmic") {
+    return run_pot / pot_bnb_cosmic;
+  }
+  if(name == "intime_cosmic") {
+    return run_pot * ngenbnbcosmic / ngencosmic * 10.729 / pot_bnb_cosmic;
+  }
+  else {
+    std::cout << "WARNING: could not find name: " << name << "\n";
+    return 0;
+  }
+
+}
+
+
 void plot(std::string const & cname,
 	  std::string const & draw,
 	  std::string const & binning = "",
@@ -197,16 +224,18 @@ void plot(std::string const & cname,
 	  std::string const & title = "",
 	  std::string const & xtitle = "",
 	  std::string const & ytitle = "",
+	  bool const absolute_normalization = false,
 	  bool const logx = false,
 	  bool const logy = false,
-	  bool const vertex_tree = true,
 	  int const setstats = 0,
 	  std::string const & method = "",
 	  double const mva1 = DBL_MAX,
 	  double const mva2 = DBL_MAX) {
   
   int const color_offset = 2;
-  TCanvas * canvas = new TCanvas(cname.c_str());
+  TCanvas * canvas = nullptr;
+  if(absolute_normalization) canvas = new TCanvas((cname+"_abs").c_str());
+  else canvas = new TCanvas(cname.c_str());
 
   std::map<std::string, TH1*> hist_m;
   
@@ -255,12 +284,13 @@ void plot(std::string const & cname,
       TH1 * h = p.second;
       if(ymax == -DBL_MAX) h->Draw("hist");
       else h->Draw("samehist");
-      hist_errors(h, 1./h->Integral(1,h->GetNbinsX()));
+      if(absolute_normalization) hist_errors(h, get_scaling(p.first));
+      else hist_errors(h, 1./h->Integral(1,h->GetNbinsX()));
       if(h->GetBinContent(h->GetMaximumBin()) > ymax) ymax = h->GetBinContent(h->GetMaximumBin());
     }
     
     if(logy) {
-      hfirst->GetYaxis()->SetRangeUser(1e-5, ymax*1.6);
+      hfirst->GetYaxis()->SetRangeUser(1e-5, ymax*1e7);
       canvas->SetLogy();
     }
     else {
@@ -393,7 +423,7 @@ void plot_efficiency(std::string const & name,
 
 
 
-void plot_cut(std::string const & name, std::string const & title, std::string const & cut, std::string const & method = "", double const mva1 = DBL_MAX, double const mva2 = DBL_MAX) {
+void plot_cut(std::string const & name, std::string const & title, std::string const & cut, bool const absolute_normalization = false, bool const logy = false, std::string const & method = "", double const mva1 = DBL_MAX, double const mva2 = DBL_MAX) {
 
   std::string andstr = "";
   if(cut != "") andstr = " && ";
@@ -406,9 +436,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Distance Between Associated Shower and Closest In-Time Flash Z [cm]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -422,9 +452,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Distance Between Associated Shower and Closest In-Time Flash Z [cm] (log)",
        "Area Normalized",
+       absolute_normalization,
        true,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -438,9 +468,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Total Reconstructed In-Time PE",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -454,9 +484,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Total Reconstructed Before-Beam PE",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -470,9 +500,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Total Reconstructed Before-Beam PE",
        "Area Normalized",
-       false,
+       absolute_normalization,
        true,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -486,9 +516,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Summed Associated Shower Reco Energy [GeV]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -503,9 +533,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Most Energetic Associated Shower Reco Energy [GeV]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -519,9 +549,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Summed Associated Shower Helper Energy [GeV]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -536,9 +566,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Reco Vtx Distance to Closest TPC Wall [cm]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -552,9 +582,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Most Energetic Shower #theta_{xz} [radians]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -568,9 +598,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Most Energetic Shower #theta_{yz} [radians]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -585,9 +615,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Most Energetic Shower #theta_{-y} [radians]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -601,9 +631,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Most Energetic Shower #theta_{z} [radians]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -618,9 +648,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Backwards Procted Shower Distance to TPC Wall [cm]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -634,9 +664,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title + " Plane 0",
        "Most Energetic Shower dE/dx [MeV/cm]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -650,9 +680,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title + " Plane 1",
        "Most Energetic Shower dE/dx [MeV/cm]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -666,9 +696,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title + " Plane 2",
        "Most Energetic Shower dE/dx [MeV/cm]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -682,9 +712,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Distance Between Closest Associated Shower Start and Reco Vtx [cm]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -698,9 +728,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Longest Associated Track #theta_{xz} [radians]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -714,9 +744,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Longest Associated Track #theta_{yz} [radians]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -731,9 +761,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Longest Associated Track #theta_{-y} [radians]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -747,9 +777,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Longest Associated Track #theta_{z} [radians]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -764,9 +794,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Number of Associated Tracks",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -780,9 +810,9 @@ void plot_cut(std::string const & name, std::string const & title, std::string c
        title,
        "Longest Associated Track Length [cm]",
        "Area Normalized",
+       absolute_normalization,
        false,
-       false,
-       true,
+       logy,
        0,
        method,
        mva1,
@@ -798,9 +828,14 @@ void plotsupimp(std::string const dir, std::string const friend_tree_file = "") 
   
   std::string const all_cut = "passed_swtrigger == 1 && closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140 && reco_asso_showers == 1";
 
+  /*
   plot_cut("all", "All", "");
+  plot_cut("all", "All", "", true, true);
   plot_cut("precut", "Pre-Cut", all_cut);
-  plot_cut("bdt", "BDT Response Applied", all_cut, "BDT", 0.1, 0.1);
+  plot_cut("precut", "Pre-Cut", all_cut, true, true);
+  plot_cut("bdt", "BDT Response Applied", all_cut, false, false, "BDT", 0.1, 0.1);
+  plot_cut("bdt", "BDT Response Applied", all_cut, true, true, "BDT", 0.1, 0.1);
+  */
 
   plot_efficiency("all_totalpe_cut",
 		  "true_nu_E",
@@ -812,3 +847,4 @@ void plotsupimp(std::string const dir, std::string const friend_tree_file = "") 
 		  "Efficiency");
 
 }
+
