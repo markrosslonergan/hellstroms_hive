@@ -1,4 +1,3 @@
-
 #include "object_helper.h"
 #include "train.h"
 #include "app.h"
@@ -9,7 +8,7 @@
 #include "gen_tlimits.h"
 
 
-#include "plot_bdt_variables.hpp"
+//#include "plot_bdt_variables.hpp"
 
 
 std::pair<int, double> get_pot(std::string const & file_path, std::string const & tree_path) {
@@ -26,11 +25,9 @@ std::pair<int, double> get_pot(std::string const & file_path, std::string const 
 
 }
 
-
-
-int main(int const argc, char const * argv[]) {
-
-  if(argc != 3) {
+int main (int argc, char *argv[]){
+  
+if(argc != 3) {
     std::cout << "ERROR - Required inputs:\n->Path to sample file directory\n->Option\n";
     exit(1);
   }

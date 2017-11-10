@@ -1,0 +1,33 @@
+Ok lets try figure out what each thing does
+
+"run.cpp"
+creates the executable, does a bit of setup but none of the powerhouse functions. Those are in:
+
+-->"object_helper.hpp"
+This is just a class for loading files easily, done.
+
+-->"train.hpp"
+containts one function, void train
+which when given a long list of trees, variables..etc.. does the whole training. OKi.
+
+-->"app.hpp"
+app.. applies the MVA that was trained in stage 1, on whatever data?
+
+
+-->"merge.hpp"
+-->"significance.hpp"
+
+
+-->"plot_bdt_variables.hpp"
+-->"get_mva_response_hists.hpp"
+-->"plot_mva_response_hists.hpp"
+-->"tlimits.hpp"
+
+
+
+train
+app
+merge
+significance_sep
+
+use gui 
