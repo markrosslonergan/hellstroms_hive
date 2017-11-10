@@ -6,65 +6,65 @@
 
 class void_vec {
 
-  std::vector<std::pair<void *, std::string>> pv;
-  
-public:
+	std::vector<std::pair<void *, std::string>> pv;
 
-  ~void_vec() {
-    for(std::pair<void*, std::string> & p : pv) {
-      if(p.second == typeid(int).name()) {
-	delete (int*)p.first;
-      }
-      else if(p.second == typeid(double).name()) {
-	delete (double*)p.first;
-      }
-    }
-  }
+	public:
 
-  size_t size() const {return pv.size();}
+	~void_vec() {
+		for(std::pair<void*, std::string> & p : pv) {
+			if(p.second == typeid(int).name()) {
+				delete (int*)p.first;
+			}
+			else if(p.second == typeid(double).name()) {
+				delete (double*)p.first;
+			}
+		}
+	}
 
-  void push_back(int * i) {
-    pv.push_back(std::pair<void *, std::string>(i, typeid(int).name()));
-  }
-  
-  void push_back(double * d) {
-    pv.push_back(std::pair<void *, std::string>(d, typeid(double).name()));
-  }
+	size_t size() const {return pv.size();}
 
-  std::string const & get_type(size_t const s) const {
-    return pv.at(s).second;
-  }
+	void push_back(int * i) {
+		pv.push_back(std::pair<void *, std::string>(i, typeid(int).name()));
+	}
 
-  template <class T>
-  T * at(size_t const s) const {
-    if(typeid(T).name() != get_type(s)) {
-      std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ << "\n"
-		<< "ERROR: wrong requested type\n";
-      exit(1);
-    }
-    return (T*)pv.at(s).first;
-  }
+	void push_back(double * d) {
+		pv.push_back(std::pair<void *, std::string>(d, typeid(double).name()));
+	}
 
-  template <class T>
-  T * front() const {
-    return this->at<T>(0);
-  }
+	std::string const & get_type(size_t const s) const {
+		return pv.at(s).second;
+	}
 
-  template <class T>
-  T * back() const {
-    return this->at<T>(pv.size()-1);
-  }
+	template <class T>
+		T * at(size_t const s) const {
+			if(typeid(T).name() != get_type(s)) {
+				std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ << "\n"
+					<< "ERROR: wrong requested type\n";
+				exit(1);
+			}
+			return (T*)pv.at(s).first;
+		}
 
-  void print() {
-    for(std::pair<void *, std::string> const & p : pv) {
-      if(p.second == typeid(int).name()) {
-	std::cout << *(int*)p.first << "\n";
-      }
-      else if(p.second == typeid(double).name()) {
-	std::cout << *(double*)p.first << "\n";
-      }
-    }
-  }
+	template <class T>
+		T * front() const {
+			return this->at<T>(0);
+		}
+
+	template <class T>
+		T * back() const {
+			return this->at<T>(pv.size()-1);
+		}
+
+	void print() {
+		for(std::pair<void *, std::string> const & p : pv) {
+			if(p.second == typeid(int).name()) {
+				std::cout << *(int*)p.first << "\n";
+			}
+			else if(p.second == typeid(double).name()) {
+				std::cout << *(double*)p.first << "\n";
+			}
+		}
+	}
 
 };
 

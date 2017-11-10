@@ -1,33 +1,71 @@
+###############################################################################
+ *
+ *
+ *
+ *	8888888b.           888 888             8888888b.                   
+ * 	888  "Y88b          888 888             888   Y88b                  
+ *	888    888          888 888             888    888                  
+ *	888    888  .d88b.  888 888888  8888b.  888   d88P .d88b.  .d8888b  
+ *	888    888 d8P  Y8b 888 888        "88b 8888888P" d8P  Y8b 88K      
+ *	888    888 88888888 888 888    .d888888 888 T88b  88888888 "Y8888b. 
+ *	888  .d88P Y8b.     888 Y88b.  888  888 888  T88b Y8b.          X88 
+ *	8888888P"   "Y8888  888  "Y888 "Y888888 888   T88b "Y8888   88888P' 
+ *
+ *
+ *		DeltaRes, a BDT based multivariate analysis
+ *
+ *		If you have any questions, queries or comments please contact the author;
+ *			 bobbymarkrl@nevis.columbia.edu 
+ *		or guy who messed everything up:
+ *			 markrl@nevis.columbia.edu
+ *
+ *The authors make no guarrentee of the behaviour, stability or bug-free-ness of this code.
+################################################################################
+############################## Building #######################################
+###############################################################################
+
+-->enter build directory
+cd build
+
+-->run cmake on project core directory
+cmake ..
+
+-->should produce output and makefiles, to make
+make
+
+-->and deltaRes should be in the src folder, built and ready to go.
+
+###############################################################################
+############################## Running ########################################
+###############################################################################
+Havent actually changed any code yet! so usage is the the same
+
+./deltaRes ../../../sample/mcc82 train 
+
+..etc..
+
+###############################################################################
+############################## ToDo ########################################
+###############################################################################
+(1) remove hardcoded values, cuts..etc... Maybe have a cut.xml that contains them?
+
+
+###############################################################################
+############################## LOG ########################################
+###############################################################################
+
+
+Friday Nov 10th. Mark. What I've changed:
+	(1) Split most of the XX.hpp files into a header (XX.h) which is now in /inc and a source file (CC.cxx) which is now in /src
+	(2) Renamed run.cpp to DeltaRes.cxx (All prgrams needs a catchy title, and ASCII art name..)
+	(3) Started commenting random things.
+	(4) Changed how the template<class T> in object_helper works a little to bring it more in line with c++ standards
+	(5) Renamed tlimits.hpp -> gen_tlimit.h (as was wierd there being a TLimits.h in root and a tlimits.h here)
+	(6) Moved to an "out-of-source build" centric model, so no build code or results is in same directory as source-code (saftey)
+	(7) Moved from "makefile" to "CMake", generally gives a cross-platform/computer stability and makes building faster if only small changes
+	(8) whitespacing, tap and indenting, also might hate me for that if you use emacs or something other than vim..sorry..
+
+	A lot of this wasnt "necessary" but as I was reading through, copying and commenting to learn whats happening, it seemed a good time
 Ok lets try figure out what each thing does
+	
 
-"run.cpp"
-creates the executable, does a bit of setup but none of the powerhouse functions. Those are in:
-
--->"object_helper.hpp"
-This is just a class for loading files easily, done.
-
--->"train.hpp"
-containts one function, void train
-which when given a long list of trees, variables..etc.. does the whole training. OKi.
-
--->"app.hpp"
-app.. applies the MVA that was trained in stage 1, on whatever data?
-
-
--->"merge.hpp"
--->"significance.hpp"
-
-
--->"plot_bdt_variables.hpp"
--->"get_mva_response_hists.hpp"
--->"plot_mva_response_hists.hpp"
--->"tlimits.hpp"
-
-
-
-train
-app
-merge
-significance_sep
-
-use gui 
