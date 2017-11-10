@@ -1,8 +1,6 @@
 
-
-
 run: run.cpp
-	g++ -std=c++14 `root-config --cflags` run.cpp -o run `root-config --libs` -lTMVA -lTreePlayer
+	g++ -std=c++14 `root-config --cflags` *.cxx run.cpp -o run `root-config --libs ` -I `root-config --incdir`  -lTMVA -lTreePlayer -I inc/ 
 
 clean:
 	rm run
