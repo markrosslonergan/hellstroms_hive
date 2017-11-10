@@ -15,9 +15,9 @@
  *		DeltaRes, a BDT based multivariate analysis
  *
  *		If you have any questions, queries or comments please contact the author;
- *			 bobbymarkrl@nevis.columbia.edu 
+ *			 bobby: robertmurrells@gmail.com 
  *		or guy who messed everything up:
- *			 markrl@nevis.columbia.edu
+ *			 mark: markrl@nevis.columbia.edu
  *
  *The authors make no guarrentee of the behaviour, stability or bug-free-ness of this code.
  *****************************************************************************
@@ -72,6 +72,49 @@ Friday Nov 10th. Mark. What I've changed:
 	(8) whitespacing, tap and indenting, also might hate me for that if you use emacs or something other than vim..sorry..
 
 	A lot of this wasnt "necessary" but as I was reading through, copying and commenting to learn whats happening, it seemed a good time
-Ok lets try figure out what each thing does
-	
+
+                                                    cNX;     .;llcll;.                              
+                                                   ;KN0k,   ,xo,...,ox,                             
+                                                 'o0Mk.cx. .ko       ok.                            
+                                                .kWW0'  od..ko       ok.                            
+                                               .dWMK;   .do.,xo,...,od'                             
+                                               lNN0c     .xl .;llclc,.                              
+                                              :XWo..      ,x:                                       
+                                             ,KWx.         ;x,                                      
+                                            .OMO'           cx.                                     
+                                           .xWK;            .od.                                    
+                                           oWNc              .do                                    
+                                          cNWo                .xc                                   
+                                         ;KWx.                 ,x:                                  
+                                        '0MO.                   :x,                                 
+                                       .kMK,                     lx.                                
+                                      .dWX:                      .od.                               
+                                      lNNl                        .do                               
+                                     ;KNXkoooooooooooooooooooooooooO0:                              
+                                    .''''''''''''''''''''''''''''.'.':,                             
+                                  .c0d.                             ;KNd.                           
+                                 'dl:kx.                           cOOKW0:                          
+                               .ld,  .xk'                        .oO: 'kNNx.                        
+                              ,dl.    .dO,                      .dO,   .cKWKc                       
+                            .ld'       .lO:                    .xk'      .xNNk'                     
+          ..               ;dc.          cOl                  'kx.         ;0WKl.                   
+         .o0c            .ld'             ;Od.               ,Od.           .dNWk,                  
+   .,.    .dKl.         ;d:.               'kx.             ;Oo.              ,OWXo.                
+   .xk.   'lkKd.      .oo.                  .xk'           cOc                 .lXWO,               
+    .dOlldo:.cKk.    :x:                     .dO,        .oO:                    'kWXo.             
+   'cxOXx.    ;x;  .oo.                       .lO:.     .dO,                      .cKW0;            
+ .:oc'.:Oc        :x;                          .l00l   .xk'                         'xNNd.          
+        ,o'     'do.               ...',;:lodxkOKNMNd.'OXo,'...                       :0WK:         
+              .cd;    ...';:clodxkO0XNWWWWNXK0Okxddoc..,;:ccccc::ccccc:;;,'...         .dNNx'       
+             'kXkodxO0KXNNWNXK0Okxdolcc:;''...                   ...',,;:cccccc:ccccc::;:xNMKc.     
+           .c0K00Okxdolc:;,'...                                                 ...'',;:cclddd:. .,.
+           .....                                                                .,:c:,.         .kO'
+                                                                              .ldl:;:ldc.      ,Ok. 
+                                                                             .dx.     .xd.    ;0x.  
+                                                                             'Oc       lk.   c0o.   
+                                                                              lk;     ;kc  .o0c     
+                                                                               ,lllllol'  .d0;      
+                                                                                  ...    .kO,       
+                                                                                        .ox.        
+                                                                                         ..         
 

@@ -32,12 +32,19 @@ int main (int argc, char *argv[]){
 		exit(1);
 	}
 
-	//TRAINING
-	//===========================================================================================
-
 	std::string const dir = argv[1];
 	std::string const option = argv[2];
 
+
+
+	if(option == "help" || option == "?" || option == "-h"){
+		std::cout <<"Required inputs:\n->Path to sample file directory\n->Option\n";
+		std::cout <<"Options are:\n->train\n->app\n->merge\n->significance_sep\n";
+		exit(1);
+	}
+
+	//TRAINING
+	//===========================================================================================
 	object_helper<TTree> oh;
 
 	std::vector<TTree *> const signal_training_trees = {
