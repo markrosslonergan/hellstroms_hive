@@ -24,6 +24,9 @@
  ************************* Building *****************************************
  *****************************************************************************
 
+If root was built with cmake this is trivial. otherwise will requre some compiler flags
+
+
 -->enter build directory
 cd build
 

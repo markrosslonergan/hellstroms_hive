@@ -140,7 +140,7 @@ int main (int argc, char *argv[]){
 	}
 
 	else if(option == "merge") {
-		merge(identifier+"_app.root", identifier_notrack+"_app.root", identifier_trackonly+"_app.root", app_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
+		merge(identifier+"_merged_app.root", identifier_notrack+"_app.root", identifier_trackonly+"_app.root", app_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
 	}
 
 	else if(option == "significance_sep") {
