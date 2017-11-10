@@ -1,18 +1,15 @@
 ###############################################################################
- *
- *
- *
- *	8888888b.           888 888             8888888b.                   
- * 	888  "Y88b          888 888             888   Y88b                  
- *	888    888          888 888             888    888                  
- *	888    888  .d88b.  888 888888  8888b.  888   d88P .d88b.  .d8888b  
- *	888    888 d8P  Y8b 888 888        "88b 8888888P" d8P  Y8b 88K      
- *	888    888 88888888 888 888    .d888888 888 T88b  88888888 "Y8888b. 
- *	888  .d88P Y8b.     888 Y88b.  888  888 888  T88b Y8b.          X88 
- *	8888888P"   "Y8888  888  "Y888 "Y888888 888   T88b "Y8888   88888P' 
- *
- *
- *		DeltaRes, a BDT based multivariate analysis
+ * 
+ *	8888888b.           888 888             8888888b.                888 
+ *	888  "Y88b          888 888             888   Y88b               888 
+ *	888    888          888 888             888    888               888 
+ *	888    888  .d88b.  888 888888  8888b.  888   d88P  8888b.   .d88888 
+ *	888    888 d8P  Y8b 888 888        "88b 8888888P"      "88b d88" 888 
+ *	888    888 88888888 888 888    .d888888 888 T88b   .d888888 888  888 
+ *	888  .d88P Y8b.     888 Y88b.  888  888 888  T88b  888  888 Y88b 888 
+ *	8888888P"   "Y8888  888  "Y888 "Y888888 888   T88b "Y888888  "Y88888 
+ * 									     
+ *		DeltaRad, a BDT based multivariate analysis
  *
  *		If you have any questions, queries or comments please contact the author;
  *			 bobby: robertmurrells@gmail.com 
@@ -63,7 +60,7 @@ Havent actually changed any code yet! so usage is the the same
 
 Friday Nov 10th. Mark. What I've changed:
 	(1) Split most of the XX.hpp files into a header (XX.h) which is now in /inc and a source file (CC.cxx) which is now in /src
-	(2) Renamed run.cpp to DeltaRes.cxx (All prgrams needs a catchy title, and ASCII art name..)
+	(2) Renamed run.cpp to DeltaRad.cxx (All prgrams needs a catchy title, and ASCII art name..)
 	(3) Started commenting random things.
 	(4) Changed how the template<class T> in object_helper works a little to bring it more in line with c++ standards
 	(5) Renamed tlimits.hpp -> gen_tlimit.h (as was wierd there being a TLimits.h in root and a tlimits.h here)
