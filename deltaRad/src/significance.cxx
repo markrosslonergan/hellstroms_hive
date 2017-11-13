@@ -139,7 +139,49 @@ std::vector<double> method_best_significance_seperate(std::string const & app_fi
 	double best_mva_cut = DBL_MAX;
 	double best_mva_cut2 = DBL_MAX;
 
-	for(double d = -1.5; d < 1.5; d += 0.1) {
+	//for nice plots make the 50, 25 is quicker tho
+	int nsteps = 25;//50
+	double cut_min = 999;
+	double cut_max = -999;
+
+	//Find the min and max  CUT values in the ttree, as they differ and it makes plotting hard/inconsistent
+	//there is a -999 thing that seems to be broken in GetMinimum;
+	for(size_t i = 0; i < signal_trees.size(); ++i) {
+		auto const & p = signal_trees.at(i);
+		double tmin = p.first->GetMinimum( (p.second + "_" + method + ".mva > -998").c_str());
+		double tmax = p.first->GetMaximum( (p.second + "_" + method + ".mva").c_str());
+		std::cout<<tmin<<" "<<tmax<<std::endl;
+		std::cout<<tmin<<" "<<tmax<<std::endl;
+		if( tmin <= cut_min) cut_min=tmin;
+		if( tmax >= cut_max) cut_max=tmax;
+	}
+
+	for(size_t i = 0; i < background_trees.size(); ++i) {
+		auto const & p = background_trees.at(i);
+		double tmin = p.first->GetMinimum( (p.second + "_" + method + ".mva > -998").c_str());
+		double tmax = p.first->GetMaximum( (p.second + "_" + method + ".mva").c_str());
+		std::cout<<tmin<<" "<<tmax<<std::endl;
+		if( tmin <= cut_min) cut_min=tmin;
+		if( tmax >= cut_max) cut_max=tmax;
+	}
+	std::cout<<"While on "<<method<<" max and min cut values are :"<<cut_min<<" "<<cut_max<<" respectively"<<std::endl;
+
+
+
+	
+	double step = (cut_max-cut_min)/((double)nsteps);
+
+	TFile * fout = new TFile((method+"_significance.root").c_str(),"RECREATE");	
+	TH2D * h2_sig_cut = new TH2D( (method+"_significance_2D").c_str(),  (method+"_significance_2D").c_str(),nsteps, cut_min, cut_max, nsteps, cut_min, cut_max);
+	std::vector<double> vec_sig;//some vectors to store TGraph info;
+	std::vector<double> vec_cut;	
+
+
+	
+	
+
+	for(int di=1; di<=nsteps; di++) {
+		double d  = (double)(di-1.0)*step + cut_min; ;	
 
 		double signal = 0;
 
@@ -154,8 +196,8 @@ std::vector<double> method_best_significance_seperate(std::string const & app_fi
 			auto const & p = background_trees.at(i);
 			background += p.first->GetEntries((background_tree_cuts.at(i).first + " && " + p.second + "_" + method + ".mva > " + std::to_string(d)).c_str()) * run_pot / background_pots.at(i).second;
 		}
-
-		for(double d2 = -1.5; d2 < 1.5; d2 += 0.1) {
+		for(int di2=1; di2<=nsteps; di2++) {
+			double d2  = (double)(di2-1.0)*step + cut_min; ;	
 
 			double signal2 = signal;
 
@@ -177,9 +219,50 @@ std::vector<double> method_best_significance_seperate(std::string const & app_fi
 				best_mva_cut2 = d2;
 			}
 
+
+			double signif = signal2/sqrt(signal2 + background2);
+			if(signal2+background2 ==0){
+				std::cout<<"method_best_significane_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<<d<<", cut2: "<<d2<<std::endl;
+				std::cout<<"method_best_significane_seperate || signal2: "<<signal2<<" & background2: "<<background2<<std::endl;
+			}
+
+			vec_sig.push_back(signif);
+			vec_cut.push_back(d2);
+			h2_sig_cut->SetBinContent(di,di2, signif);
 		}
 
 	}
+
+	h2_sig_cut->SetStats(false);
+	TCanvas * c_sig_cuts =  new TCanvas( (method+"_significance_cuts_colz").c_str(), (method+"_significance_cuts_colz").c_str(), 2000,1600 );
+	c_sig_cuts->Divide(2,1);
+	TPad *p1 = (TPad*)c_sig_cuts->cd(1);
+	p1->SetRightMargin(0.13);
+	h2_sig_cut->Draw("colz");
+	h2_sig_cut->GetXaxis()->SetTitle("Cut 1");
+	h2_sig_cut->GetYaxis()->SetTitle("Cut 2");
+	
+   	std::vector<double> vec_bf_cut1 = {best_mva_cut};
+   	std::vector<double> vec_bf_cut2 = {best_mva_cut2};
+	TGraph *graph_bf = new TGraph(vec_bf_cut1.size(), &vec_bf_cut1[0], &vec_bf_cut2[0]);
+	graph_bf->SetMarkerStyle(29);
+	graph_bf->SetMarkerSize(2);
+	graph_bf->SetMarkerColor(kBlack);
+	graph_bf->Draw("same p");
+ 
+
+	TGraph * graph_cut = new TGraph(vec_sig.size(), &vec_cut[0], &vec_sig[0]);
+	graph_cut->SetTitle("1D slices");
+	c_sig_cuts->cd(2);
+	graph_cut->Draw("alp");
+
+	h2_sig_cut->Write();
+	//graph_cut->Write();
+
+
+
+	c_sig_cuts->Write();
+	fout->Close();
 
 	return std::vector<double>{best_mva_cut, best_mva_cut2, best_significance};
 
@@ -252,6 +335,7 @@ void significance_seperate(std::string const & app_file_path,
 		std::vector<std::pair<int, double>> const & background_pots,
 		std::vector<method_struct> const methods) {
 
+	//for each method, loop over and extract significances
 	for(method_struct const & method : methods) {
 
 		std::vector<TTree*> signal_tree_friends;
@@ -261,12 +345,15 @@ void significance_seperate(std::string const & app_file_path,
 		std::vector<TTree*> background_tree_friends;
 		for(auto const & p : background_trees) {
 			background_tree_friends.push_back(p.first->AddFriend((p.second + "_" + method.str).c_str(), app_file_path.c_str())->GetTree());
-		}    
-
-		cout_best_cut_seperate(method_best_significance_seperate(app_file_path, run_pot, 
+		}   
+		
+		// 
+		auto best_sig_sep = method_best_significance_seperate(app_file_path, run_pot, 
 					signal_trees, signal_tree_cuts, signal_pots,
 					background_trees, background_tree_cuts, background_pots,
-					method.str),
+					method.str);
+
+		cout_best_cut_seperate(best_sig_sep,
 				run_pot,
 				signal_trees, signal_tree_cuts, signal_pots, signal_tree_friends,
 				background_trees, background_tree_cuts, background_pots, background_tree_friends,

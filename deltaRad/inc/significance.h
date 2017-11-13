@@ -16,8 +16,11 @@
 
 
 #include "TTree.h"
-
-
+#include "TFile.h"
+#include "TGraph.h"
+#include "TCanvas.h"
+#include "TH2.h"
+#include "TStyle.h"
 
 std::pair<double, double> method_best_significance(std::string const & app_file_path, 
 		double const run_pot,
