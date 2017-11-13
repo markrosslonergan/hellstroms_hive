@@ -50,7 +50,9 @@ void draw_mva_response_hists(std::string const & ifile_path,
 					<< "Different number of bins: " << hist->GetNbinsX() << " " << bins << "\n";
 			}
 		}
-		if(method=="BDTG") canvas->SetLogy();
+		if(method=="BDTG") {
+			//canvas->SetLogy();
+		}
 
 		hist->Scale(1./hist->Integral(1, hist->GetNbinsX()));
 		hist->SetLineColor(i+1);
