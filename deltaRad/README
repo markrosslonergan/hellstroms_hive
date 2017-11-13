@@ -52,10 +52,11 @@ Havent actually changed any code yet! so usage is the the same
 
 (1) remove hardcoded values, cuts..etc... Maybe have a cut.xml that contains them?
 (2) mva. weights, many are -1000?
-(3) What is the mva currently being trained on maximizing? We later on choose best cut of s/sqrt(s+b) but the BDT is trained on something different?
-(4) Seems to be some training issues with BDT,
-(5) training on enough samples?
-
+(3) running "app" should add the mva value to a copy of the original tree, not just a "app.root" containing only the mva value. (i.e should have all the other variables too)
+(4) What is the mva currently being trained on maximizing? We later on choose best cut of s/sqrt(s+b) but the BDT is trained on something different?
+(5) Seems to be some training issues with BDT,
+(6) training on enough samples?
+(7) How to make those final plots? 
 
  *****************************************************************************
  *************************    Log    *****************************************

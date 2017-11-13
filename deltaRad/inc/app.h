@@ -23,7 +23,7 @@ struct app_tree_struct {
 	int true_nu_vtx_fid_contained;
 	int reco_asso_tracks;
 	double mva;
-
+	double summed_associated_reco_shower_energy;
 	app_tree_struct(std::string const & tree_name, bool const extra = true);
 	~app_tree_struct();
 

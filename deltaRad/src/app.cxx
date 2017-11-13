@@ -8,6 +8,7 @@ app_tree_struct::app_tree_struct(std::string const & tree_name, bool const extra
 		tree->Branch("reco_asso_tracks", &reco_asso_tracks, "reco_asso_tracks/I");
 	}
 	tree->Branch("mva", &mva, "mva/D");
+	tree->Branch("summed_associated_reco_shower_energy", &summed_associated_reco_shower_energy, "summed_associated_reco_shower_energy/D");
 }
 
 app_tree_struct::~app_tree_struct() {
@@ -74,6 +75,7 @@ void app_tree(std::string const & identifier,
 			update(tree_var_v, reader_var_v);
 			ts.mva = -999;
 			if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(method.str.c_str());
+
 			ts.tree->Fill();
 		}
 		ts.tree->Write();
