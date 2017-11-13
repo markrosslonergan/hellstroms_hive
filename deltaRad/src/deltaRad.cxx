@@ -290,7 +290,7 @@ int main (int argc, char *argv[]){
 		fin_trackonly->Close();
 	}
 	else if(option == "get_response_tlimits") {
-		get_mva_response_hists(identifier+"_mva_response.root", identifier+"_app.root", app_trees, methods, mva_branches, "50", tree_cuts, cut_notrack, cut_trackonly);
+		get_mva_response_hists(identifier+"_mva_response.root", identifier+"_merged_app.root", app_trees, methods, mva_branches, "50", tree_cuts, cut_notrack, cut_trackonly);
 	}
 
 	else if(option == "plot_response_tlimits") {
