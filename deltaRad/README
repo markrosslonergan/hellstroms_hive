@@ -58,6 +58,13 @@ Havent actually changed any code yet! so usage is the the same
 (6) training on enough samples? nah definitely need more stats but thats a known thing
 (7) How to make those final plots? 
 
+NOTRACKS:
+         Signal     -- training events            : 327
+	 Background -- training events            : 1030
+TRACKONLY:
+         Signal     -- training events            : 375
+         Background -- training events            : 2638
+ 
  *****************************************************************************
  *************************    Log    *****************************************
  *****************************************************************************

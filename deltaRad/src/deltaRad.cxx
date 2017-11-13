@@ -84,18 +84,18 @@ int main (int argc, char *argv[]){
 
 	//All the necessary methods that we want to use for MVA, will stick these into an XML sometime soon
 	std::vector<method_struct> const methods {
-		{TMVA::Types::kBDT, "BDTG",
-			"!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2"},
-			{TMVA::Types::kBDT, "BDT", 
-				"!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20"},
-			{TMVA::Types::kBDT, "BDTB",
-				"!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20"},
-			{TMVA::Types::kBDT, "BDTD",
-				"!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate"},
-			{TMVA::Types::kBDT, "BDTF",
-				"!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20"},
-			{TMVA::Types::kRuleFit, "RuleFit",
-				"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02"}  
+			{TMVA::Types::kBDT, "BDTG",
+				"!H:!V:NTrees=2000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=3"}
+			,{TMVA::Types::kBDT, "BDT", 
+				"!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20"}
+		//	,{TMVA::Types::kBDT, "BDTB",
+		//		"!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20"}
+		//	,{TMVA::Types::kBDT, "BDTD",
+		//		"!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate"}
+		//	,{TMVA::Types::kBDT, "BDTF",
+		//		"!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20"}
+		//	,{TMVA::Types::kRuleFit, "RuleFit",
+		//		"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02"}  
 	};
 
 
@@ -166,7 +166,7 @@ int main (int argc, char *argv[]){
 		merge(identifier+"_merged_app.root", identifier_notrack+"_app.root", identifier_trackonly+"_app.root", app_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
 	}
 
-	else if(option == "significance_sep") {
+	else if(option == "significance_sep" || option == "sig") {
 
 		std::vector<std::pair<TTree *, std::string>> const signal_significance_trees = {
 			std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_sp_cosmic.root", "LEEPhoton/vertex_tree"), "ncdelta_cosmic"),
@@ -186,7 +186,7 @@ int main (int argc, char *argv[]){
 		std::vector<std::pair<int, double>> const background_significance_pots = {
 			get_pot(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/get_pot")
 		};
-		significance_seperate(identifier+"_app.root", run_pot,
+		significance_seperate(identifier+"_merged_app.root", run_pot,
 				signal_significance_trees, signal_significance_tree_cuts, signal_significance_pots, 
 				background_significance_trees, background_significance_tree_cuts, background_significance_pots, 
 				methods);
