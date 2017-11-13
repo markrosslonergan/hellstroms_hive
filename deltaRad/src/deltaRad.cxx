@@ -174,8 +174,11 @@ int main (int argc, char *argv[]){
 				signal_significance_trees, signal_significance_tree_cuts, signal_significance_pots, 
 				background_significance_trees, background_significance_tree_cuts, background_significance_pots, 
 				methods);
-	}
+	}else if(option == "plot"){
+			
 
+
+	}
 	else if(option == "get_response_tlimits") {
 		get_mva_response_hists(identifier+"_mva_response.root", identifier+"_app.root", app_trees, methods, mva_branches, "50", tree_cuts, cut_notrack, cut_trackonly);
 	}

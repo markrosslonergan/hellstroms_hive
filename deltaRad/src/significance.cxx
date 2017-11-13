@@ -171,7 +171,7 @@ std::vector<double> method_best_significance_seperate(std::string const & app_fi
 	
 	double step = (cut_max-cut_min)/((double)nsteps);
 
-	TFile * fout = new TFile((method+"_significance.root").c_str(),"RECREATE");	
+	TFile * fout = new TFile("runtmva_significance_contours.root","UPDATE");	
 	TH2D * h2_sig_cut = new TH2D( (method+"_significance_2D").c_str(),  (method+"_significance_2D").c_str(),nsteps, cut_min, cut_max, nsteps, cut_min, cut_max);
 	std::vector<double> vec_sig;//some vectors to store TGraph info;
 	std::vector<double> vec_cut;	
@@ -347,7 +347,7 @@ void significance_seperate(std::string const & app_file_path,
 			background_tree_friends.push_back(p.first->AddFriend((p.second + "_" + method.str).c_str(), app_file_path.c_str())->GetTree());
 		}   
 		
-		// 
+		
 		auto best_sig_sep = method_best_significance_seperate(app_file_path, run_pot, 
 					signal_trees, signal_tree_cuts, signal_pots,
 					background_trees, background_tree_cuts, background_pots,

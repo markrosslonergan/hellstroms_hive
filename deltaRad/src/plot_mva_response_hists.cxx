@@ -10,10 +10,19 @@ void draw_mva_response_hists(std::string const & ifile_path,
 	object_helper<TH1> oh;
 
 	TCanvas * canvas = new TCanvas((method+"_"+branch).c_str());
-	TLegend * legend = new TLegend(0.6, 0.9, 0.9, 0.6);
+	TLegend * legend = new TLegend(0.11, 0.65, 0.45, 0.89);
+	legend->SetLineColor(kWhite);
+	legend->SetFillStyle(0);
+	
 	double ymax = 0;
 	TH1 * first_hist = nullptr;
 	unsigned int bins = 0;
+	
+	//kWhite  = 0,   kBlack  = 1,   kGray    = 920,  kRed    = 632,  kGreen  = 416,
+	//kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
+	//kSpring = 820, kTeal   = 840, kAzure   =  860, kViolet = 880,  kPink   = 900
+
+	std::vector<int> mycol = {416-6, 800+3, 616+1, 632-7, 600-7, 432+1, 900}; 				
 
 	for(size_t i = 0; i < trees.size(); ++i) {
 		auto const & p = trees.at(i);
@@ -24,12 +33,16 @@ void draw_mva_response_hists(std::string const & ifile_path,
 			hist->GetXaxis()->SetTitle(branch.c_str());
 			hist->GetXaxis()->CenterTitle();
 			hist->GetYaxis()->SetTitle("Area Normalized");
-			hist->GetYaxis()->CenterTitle();      
+			hist->GetYaxis()->CenterTitle();   
+			hist->SetLineColor(mycol.at(i));
+			hist->SetLineWidth(2);   
 			hist->Draw("hist");
 			first_hist = hist;
 			bins = hist->GetNbinsX();
 		}
 		else {
+			hist->SetLineColor(mycol.at(i));
+			hist->SetLineWidth(2);  
 			hist->Draw("hist same");
 			if(hist->GetNbinsX() != bins) {
 				std::cout << "WARNING:\n"
