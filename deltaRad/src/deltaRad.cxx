@@ -27,15 +27,15 @@ std::pair<int, double> get_pot(std::string const & file_path, std::string const 
 
 int main (int argc, char *argv[]){
 
+	// Just some simple argument htings
+	//===========================================================================================
+
 	if(argc != 3) {
 		std::cout << "ERROR - Required inputs:\n->Path to sample file directory\n->Option\n";
 		exit(1);
 	}
-
 	std::string const dir = argv[1];
 	std::string const option = argv[2];
-
-
 
 	if(option == "help" || option == "?" || option == "-h"){
 		std::cout <<"Required inputs:\n->Path to sample file directory\n->Option\n";
@@ -43,7 +43,7 @@ int main (int argc, char *argv[]){
 		exit(1);
 	}
 
-	//TRAINING
+	// Setting up necessary variables and trees for TRAINING
 	//===========================================================================================
 	object_helper<TTree> oh;
 
@@ -61,6 +61,7 @@ int main (int argc, char *argv[]){
 		get_pot(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/get_pot")
 	};
 
+	// All the variables in the "notrack" sample
 	std::vector<std::pair<std::string, std::string>> const variables_notrack = {
 		{"summed_associated_helper_shower_energy", "d"},
 		{"reco_nu_vtx_dist_to_closest_tpc_wall", "d"},
@@ -72,6 +73,7 @@ int main (int argc, char *argv[]){
 		{"reco_shower_dedx_plane2", "d"}
 	};
 
+	// For the track sample, add to the notrack variables some more track related ones
 	std::vector<std::pair<std::string, std::string>> variables_trackonly = variables_notrack;
 	variables_trackonly.emplace_back("shortest_asso_shower_to_vert_dist", "d");
 	variables_trackonly.emplace_back("longest_asso_track_thetaxz", "d");
@@ -79,9 +81,12 @@ int main (int argc, char *argv[]){
 	variables_trackonly.emplace_back("reco_asso_tracks", "i");
 	variables_trackonly.emplace_back("longest_asso_track_displacement", "d");
 
+
+	//All the necessary methods that we want to use for MVA, will stick these into an XML sometime soon
 	std::vector<method_struct> const methods {
-		{TMVA::Types::kBDT, "BDTG", "!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2"},
-			{TMVA::Types::kBDT, "BDT",
+		{TMVA::Types::kBDT, "BDTG",
+			"!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2"},
+			{TMVA::Types::kBDT, "BDT", 
 				"!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20"},
 			{TMVA::Types::kBDT, "BDTB",
 				"!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20"},
@@ -93,10 +98,14 @@ int main (int argc, char *argv[]){
 				"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02"}  
 	};
 
+
+	//some convientant labels
 	std::string const identifier = "runtmva";
 	std::string const identifier_notrack = identifier + "_notrack";
 	std::string const identifier_trackonly = identifier + "_trackonly";
 
+
+	//And the Cuts that are definied, definitely define these in XML (and changeable by argument)
 	std::string const all_cut = "passed_swtrigger == 1 && closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140 && reco_asso_showers == 1";
 	std::string const cut_notrack = "reco_asso_tracks == 0";
 	std::string const all_cut_notrack = all_cut + " && " + cut_notrack;
@@ -106,7 +115,7 @@ int main (int argc, char *argv[]){
 	std::string const signal_definition = "is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
 	std::string const background_definition = "!(" + signal_definition + ")";
 
-	//APP
+	// defining trees and variables to do with	APP (APPLICATION)
 	//===========================================================================================
 
 	std::vector<std::pair<TTree *, std::string>> const app_trees = {
@@ -128,15 +137,22 @@ int main (int argc, char *argv[]){
 		{"mva", "d"}
 	};
 
+
 	//SIGNIFICANCE
 	//===========================================================================================
 
 	double const run_pot = 6.6e20;
 
-	//OPTIONS
+
+
+	//===========================================================================================
+	//===========================================================================================
+	//		Main flow of the program , using OPTIONS
+	//===========================================================================================
 	//===========================================================================================
 
 	if(option == "train") {
+		//training the no_track and trackonly seperately.
 		train(identifier_notrack, all_cut_notrack, signal_definition, background_definition, signal_training_trees, background_training_trees, variables_notrack, methods);
 		train(identifier_trackonly, all_cut_trackonly, signal_definition, background_definition, signal_training_trees, background_training_trees, variables_trackonly, methods);
 	}
@@ -151,7 +167,7 @@ int main (int argc, char *argv[]){
 	}
 
 	else if(option == "significance_sep") {
-		
+
 		std::vector<std::pair<TTree *, std::string>> const signal_significance_trees = {
 			std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_sp_cosmic.root", "LEEPhoton/vertex_tree"), "ncdelta_cosmic"),
 		};
@@ -175,9 +191,103 @@ int main (int argc, char *argv[]){
 				background_significance_trees, background_significance_tree_cuts, background_significance_pots, 
 				methods);
 	}else if(option == "plot"){
-			
+		//Just Some boring plotting routines for now,
 
 
+		TFile *fin_notrack = new TFile((identifier_notrack+"_training.root").c_str());
+		TFile *fin_trackonly = new TFile((identifier_trackonly+"_training.root").c_str());
+
+		std::vector<TH1F*> vec_sig_notrack;
+		std::vector<TH1F*> vec_bkg_notrack;
+
+		std::vector<TH1F*> vec_sig_trackonly;
+		std::vector<TH1F*> vec_bkg_trackonly;
+
+		TCanvas *c_trackonly = new TCanvas("all_variables_trackonly","all_variables_trackonly",520,variables_trackonly.size()*400 );		
+		c_trackonly->Divide(1,variables_trackonly.size());
+		int whichcan_trackonly=0;
+
+		TCanvas *c_notrack = new TCanvas("all_variables_notrack","all_variables_notrack",520,variables_notrack.size()*400 );		
+		c_notrack->Divide(1,variables_notrack.size());
+		int whichcan_notrack=0;
+
+		for(auto vars: variables_notrack){
+			TH1F * sig = (TH1F*)fin_notrack->Get(("dataset/InputVariables_Id/"+vars.first+"__Signal_Id").c_str());	
+			TH1F * bkg = (TH1F*)fin_notrack->Get(("dataset/InputVariables_Id/"+vars.first+"__Background_Id").c_str());	
+			vec_sig_notrack.push_back(sig);		
+			vec_bkg_notrack.push_back(bkg);		
+			TPad* p = (TPad*)c_notrack->cd(++whichcan_notrack);
+			p->SetTopMargin(0.075);
+			p->SetBottomMargin(0.075);		
+
+			sig->Scale(1.0/sig->Integral());
+			bkg->Scale(1.0/bkg->Integral());
+
+			sig->SetStats(0);
+			sig->SetTitle(vars.first.c_str());
+			sig->GetXaxis()->SetTitle(vars.first.c_str());
+			sig->GetYaxis()->SetTitle("Events");
+
+			sig->SetLineColor(kRed-6);
+			bkg->SetLineColor(kBlue-7);
+			sig->SetLineWidth(1);
+			bkg->SetLineWidth(1);
+
+			sig->Draw("hist");
+			bkg->Draw("hist same");
+			sig->SetMaximum( std::max(sig->GetMaximum(), bkg->GetMaximum())+0.01);
+
+			TLegend * pl = new TLegend(0.6,0.6,0.89,0.89);
+			pl->SetFillStyle(0);
+			pl->SetLineColor(kWhite);
+			pl->AddEntry(sig,"Signal","l");
+			pl->AddEntry(bkg,"Background","l");
+			pl->Draw();
+		} 
+
+
+		for(auto vars: variables_trackonly){
+			TH1F * sig = (TH1F*)fin_trackonly->Get(("dataset/InputVariables_Id/"+vars.first+"__Signal_Id").c_str());	
+			TH1F * bkg = (TH1F*)fin_trackonly->Get(("dataset/InputVariables_Id/"+vars.first+"__Background_Id").c_str());	
+			vec_sig_notrack.push_back(sig);		
+			vec_bkg_notrack.push_back(bkg);		
+			TPad* p = (TPad*)c_trackonly->cd(++whichcan_trackonly);
+			p->SetTopMargin(0.075);
+			p->SetBottomMargin(0.075);		
+
+
+			sig->Scale(1.0/sig->Integral());
+			bkg->Scale(1.0/bkg->Integral());
+
+			sig->SetStats(0);
+			sig->SetTitle(vars.first.c_str());
+			sig->GetXaxis()->SetTitle(vars.first.c_str());
+			sig->GetYaxis()->SetTitle("Events");
+
+			sig->SetLineColor(kRed-6);
+			bkg->SetLineColor(kBlue-7);
+			sig->SetLineWidth(1);
+			bkg->SetLineWidth(1);
+
+			sig->Draw("hist");
+			bkg->Draw("hist same");
+			sig->SetMaximum( std::max(sig->GetMaximum(), bkg->GetMaximum())+0.01);
+
+			TLegend * pl = new TLegend(0.6,0.6,0.89,0.89);
+			pl->SetFillStyle(0);
+			pl->SetLineColor(kWhite);
+			pl->AddEntry(sig,"Signal","l");
+			pl->AddEntry(bkg,"Background","l");
+			pl->Draw();
+		} 
+
+
+
+		c_notrack->SaveAs("notrack_variables.pdf","pdf");
+		c_trackonly->SaveAs("trackonly_variables.pdf","pdf");
+		//fout->Close();
+		fin_notrack->Close();
+		fin_trackonly->Close();
 	}
 	else if(option == "get_response_tlimits") {
 		get_mva_response_hists(identifier+"_mva_response.root", identifier+"_app.root", app_trees, methods, mva_branches, "50", tree_cuts, cut_notrack, cut_trackonly);

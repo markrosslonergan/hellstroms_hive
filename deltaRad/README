@@ -51,6 +51,10 @@ Havent actually changed any code yet! so usage is the the same
  *****************************************************************************
 
 (1) remove hardcoded values, cuts..etc... Maybe have a cut.xml that contains them?
+(2) mva. weights, many are -1000?
+(3) What is the mva currently being trained on maximizing? We later on choose best cut of s/sqrt(s+b) but the BDT is trained on something different?
+(4) Seems to be some training issues with BDT,
+(5) training on enough samples?
 
 
  *****************************************************************************

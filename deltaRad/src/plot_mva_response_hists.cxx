@@ -10,7 +10,7 @@ void draw_mva_response_hists(std::string const & ifile_path,
 	object_helper<TH1> oh;
 
 	TCanvas * canvas = new TCanvas((method+"_"+branch).c_str());
-	TLegend * legend = new TLegend(0.11, 0.65, 0.45, 0.89);
+	TLegend * legend = new TLegend(0.11, 0.5, 0.5, 0.89);
 	legend->SetLineColor(kWhite);
 	legend->SetFillStyle(0);
 	
