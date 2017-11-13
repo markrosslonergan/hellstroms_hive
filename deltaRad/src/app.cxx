@@ -48,6 +48,7 @@ void app_tree(std::string const & identifier,
 	std::vector<float *> reader_var_v;
 	for(std::pair<std::string, std::string> const & p : variables) {
 		if(p.second == "d") {
+
 			double * dp = new double(-1);
 			tree_var_v.push_back(dp);
 			tree->SetBranchAddress(p.first.c_str(), dp);
@@ -75,7 +76,7 @@ void app_tree(std::string const & identifier,
 			update(tree_var_v, reader_var_v);
 			ts.mva = -999;
 			if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(method.str.c_str());
-
+			
 			ts.tree->Fill();
 		}
 		ts.tree->Write();

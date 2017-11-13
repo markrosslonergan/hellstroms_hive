@@ -203,11 +203,11 @@ int main (int argc, char *argv[]){
 		std::vector<TH1F*> vec_sig_trackonly;
 		std::vector<TH1F*> vec_bkg_trackonly;
 
-		TCanvas *c_trackonly = new TCanvas("all_variables_trackonly","all_variables_trackonly",520,variables_trackonly.size()*400 );		
+		TCanvas *c_trackonly = new TCanvas("all_variables_trackonly","all_variables_trackonly",1200,variables_trackonly.size()*1000 );		
 		c_trackonly->Divide(1,variables_trackonly.size());
 		int whichcan_trackonly=0;
 
-		TCanvas *c_notrack = new TCanvas("all_variables_notrack","all_variables_notrack",520,variables_notrack.size()*400 );		
+		TCanvas *c_notrack = new TCanvas("all_variables_notrack","all_variables_notrack",1200,variables_notrack.size()*1000 );		
 		c_notrack->Divide(1,variables_notrack.size());
 		int whichcan_notrack=0;
 
@@ -230,8 +230,8 @@ int main (int argc, char *argv[]){
 
 			sig->SetLineColor(kRed-6);
 			bkg->SetLineColor(kBlue-7);
-			sig->SetLineWidth(1);
-			bkg->SetLineWidth(1);
+			sig->SetLineWidth(3);
+			bkg->SetLineWidth(3);
 
 			sig->Draw("hist");
 			bkg->Draw("hist same");
@@ -266,8 +266,8 @@ int main (int argc, char *argv[]){
 
 			sig->SetLineColor(kRed-6);
 			bkg->SetLineColor(kBlue-7);
-			sig->SetLineWidth(1);
-			bkg->SetLineWidth(1);
+			sig->SetLineWidth(3);
+			bkg->SetLineWidth(3);
 
 			sig->Draw("hist");
 			bkg->Draw("hist same");
@@ -283,9 +283,9 @@ int main (int argc, char *argv[]){
 
 
 
-		c_notrack->SaveAs("notrack_variables.pdf","pdf");
-		c_trackonly->SaveAs("trackonly_variables.pdf","pdf");
-		//fout->Close();
+		c_notrack->SaveAs("notrack_variables.png","png");
+		c_trackonly->SaveAs("trackonly_variables.png","png");
+	
 		fin_notrack->Close();
 		fin_trackonly->Close();
 	}

@@ -58,10 +58,10 @@ class void_vec {
 	void print() {
 		for(std::pair<void *, std::string> const & p : pv) {
 			if(p.second == typeid(int).name()) {
-				std::cout << *(int*)p.first << "\n";
+				std::cout <<p.second<<" "<< *(int*)p.first << "\n";
 			}
 			else if(p.second == typeid(double).name()) {
-				std::cout << *(double*)p.first << "\n";
+				std::cout <<p.second<<" "<< *(double*)p.first << "\n";
 			}
 		}
 	}
