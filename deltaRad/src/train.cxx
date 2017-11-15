@@ -29,6 +29,8 @@ void train(std::string const & identifier, std::string const & all_cut, std::str
 
 	for(std::pair<std::string, std::string> const & p : variables) dataloader->AddVariable(p.first.c_str());
 
+	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
+
 	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
 			"nTrain_Signal="+std::to_string(int(signal_entries/2))+":nTrain_Background="+std::to_string(int(background_entries/2))+":SplitMode=Random:NormMode=NumEvents:!V");
 

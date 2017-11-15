@@ -6,6 +6,7 @@
 #include "get_mva_response_hists.h"
 #include "plot_mva_response_hists.h"
 #include "gen_tlimits.h"
+#include "plotstack.h"
 
 
 //#include "plot_bdt_variables.hpp"
@@ -132,7 +133,6 @@ int main (int argc, char *argv[]){
 		all_cut
 	};
 
-	//mva branches? 
 	std::vector<std::pair<std::string, std::string>> const mva_branches = {
 		{"mva", "d"}
 	};
@@ -192,6 +192,11 @@ int main (int argc, char *argv[]){
 				methods);
 	}else if(option == "plot"){
 		//Just Some boring plotting routines for now,
+
+		std::cout<<"Starting --plotstack-- routine."<<std::endl;
+		plotstack(dir,  identifier+"_merged_app.root" );
+		std::cout<<"Ending --plotstack-- routine."<<std::endl;
+
 
 
 		TFile *fin_notrack = new TFile((identifier_notrack+"_training.root").c_str());

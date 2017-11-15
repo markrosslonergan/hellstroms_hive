@@ -76,8 +76,8 @@ void app_tree(std::string const & identifier,
 			update(tree_var_v, reader_var_v);
 			ts.mva = -999;
 			if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(method.str.c_str());
-			
 			ts.tree->Fill();
+
 		}
 		ts.tree->Write();
 	}

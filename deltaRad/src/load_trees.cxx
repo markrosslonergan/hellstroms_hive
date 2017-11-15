@@ -95,12 +95,12 @@ void load_trees::init(std::string dir, std::string const & friend_tree_file) {
 
 	if(friend_tree_file != "") {
 		std::vector<std::string> const method_v = {
-			"BDTG",
-			"BDT",
-			"BDTB",
-			"BDTD",
-			"BDTF",
-			"RuleFit"
+			"BDTG"
+			,"BDT"
+		//	,"BDTB"
+		//	,"BDTD"
+		//	,"BDTF"
+		//	,"RuleFit"
 		};
 		for(std::string const & method : method_v) {
 			friend_tree_names.push_back(std::string(vertex_tree_sp->AddFriend(("ncdelta_"+method).c_str(), friend_tree_file.c_str())->GetTree()->GetName()));
