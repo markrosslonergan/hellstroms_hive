@@ -48,8 +48,7 @@ void load_trees::init(std::string dir, std::string const & friend_tree_file) {
 		event_tree_sp = (TTree*)ifile_sp->Get((gdir+"event_tree").c_str());
 		vertex_tree_sp = (TTree*)ifile_sp->Get((gdir+"vertex_tree").c_str());  
 		TTree * pot_tree_sp = (TTree*)ifile_sp->Get((gdir+"get_pot").c_str());
-		pot_tree_sp->SetBranchAddress("pot", &pot_sp);
-		pot_tree_sp->GetEntry(0);
+		get_pot_info(pot_tree_sp, pot_sp);
 	}    
 
 	ifile_bnb = TFile::Open((dir+"runmv_bnb.root").c_str());
@@ -57,8 +56,7 @@ void load_trees::init(std::string dir, std::string const & friend_tree_file) {
 		event_tree_bnb = (TTree*)ifile_bnb->Get((gdir+"event_tree").c_str());
 		vertex_tree_bnb = (TTree*)ifile_bnb->Get((gdir+"vertex_tree").c_str());
 		TTree * pot_tree_bnb = (TTree*)ifile_bnb->Get((gdir+"get_pot").c_str());
-		pot_tree_bnb->SetBranchAddress("pot", &pot_bnb);
-		pot_tree_bnb->GetEntry(0);
+		get_pot_info(pot_tree_bnb, pot_bnb);
 	}
 
 	ifile_bnb_cosmic = TFile::Open((dir+"runmv_bnb_cosmic.root").c_str());
@@ -66,11 +64,7 @@ void load_trees::init(std::string dir, std::string const & friend_tree_file) {
 		event_tree_bnb_cosmic = (TTree*)ifile_bnb_cosmic->Get((gdir+"event_tree").c_str());
 		vertex_tree_bnb_cosmic = (TTree*)ifile_bnb_cosmic->Get((gdir+"vertex_tree").c_str());
 		TTree * pot_tree_bnb_cosmic = (TTree*)ifile_bnb_cosmic->Get((gdir+"get_pot").c_str());
-		pot_tree_bnb_cosmic->SetBranchAddress("pot", &pot_bnb_cosmic);
-		int temp_ngenbnbcosmic;
-		pot_tree_bnb_cosmic->SetBranchAddress("number_of_events", &temp_ngenbnbcosmic);
-		pot_tree_bnb_cosmic->GetEntry(0);
-		ngenbnbcosmic = temp_ngenbnbcosmic;
+		get_pot_info(pot_tree_bnb_cosmic, pot_bnb_cosmic, ngenbnbcosmic);
 	}
 
 	ifile_cosmic = TFile::Open((dir+"runmv_cosmic.root").c_str());
@@ -78,10 +72,8 @@ void load_trees::init(std::string dir, std::string const & friend_tree_file) {
 		event_tree_cosmic = (TTree*)ifile_cosmic->Get((gdir+"event_tree").c_str());
 		vertex_tree_cosmic = (TTree*)ifile_cosmic->Get((gdir+"vertex_tree").c_str());
 		TTree * pot_tree_cosmic = (TTree*)ifile_cosmic->Get((gdir+"get_pot").c_str());
-		int temp_ngencosmic;
-		pot_tree_cosmic->SetBranchAddress("number_of_events", &temp_ngencosmic);
-		pot_tree_cosmic->GetEntry(0);
-		ngencosmic = temp_ngencosmic;
+		double temp;
+		get_pot_info(pot_tree_cosmic, temp, ngencosmic);
 	}
 
 	ifile_sp_cosmic = TFile::Open((dir+"runmv_sp_cosmic.root").c_str());
@@ -89,8 +81,7 @@ void load_trees::init(std::string dir, std::string const & friend_tree_file) {
 		event_tree_sp_cosmic = (TTree*)ifile_sp_cosmic->Get((gdir+"event_tree").c_str());
 		vertex_tree_sp_cosmic = (TTree*)ifile_sp_cosmic->Get((gdir+"vertex_tree").c_str());  
 		TTree * pot_tree_sp_cosmic = (TTree*)ifile_sp_cosmic->Get((gdir+"get_pot").c_str());
-		pot_tree_sp_cosmic->SetBranchAddress("pot", &pot_sp_cosmic);
-		pot_tree_sp_cosmic->GetEntry(0);
+		get_pot_info(pot_tree_sp_cosmic, pot_sp_cosmic);
 	}
 
 	if(friend_tree_file != "") {
@@ -110,6 +101,3 @@ void load_trees::init(std::string dir, std::string const & friend_tree_file) {
 	}
 
 }
-
-
-

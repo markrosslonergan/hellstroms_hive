@@ -1,4 +1,5 @@
 #include "object_helper.h"
+#include "get_pot_info.h"
 #include "train.h"
 #include "app.h"
 #include "merge.h"
@@ -22,10 +23,7 @@ std::pair<int, double> get_pot(std::string const & file_path, std::string const 
 	TTree * pot_tree = oh.GetObject(file_path, tree_path);
 	int events = -1;
 	double pot = -1;
-	pot_tree->SetBranchAddress("number_of_events", &events);
-	pot_tree->SetBranchAddress("pot", &pot);
-	pot_tree->GetEntry(0);
-
+	get_pot_info(pot_tree, pot, events);
 	return std::pair<int, double>(events, pot);
 
 }
@@ -37,7 +35,7 @@ std::pair<int, double> get_pot(std::string const & file_path, std::string const 
 
 int main (int argc, char *argv[]){
 
-	// Just some simple argument htings
+	// Just some simple argument things
 	//===========================================================================================
 
 	std::string dir = "../../../samples/mcc82";
