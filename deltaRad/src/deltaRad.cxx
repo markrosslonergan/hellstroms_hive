@@ -8,7 +8,11 @@
 #include "plot_mva_response_hists.h"
 #include "gen_tlimits.h"
 #include "plotstack.h"
+#include "load_mva_param.h"
 
+#include "tinyxml.h"
+
+#include <getopt.h>
 
 //#include "plot_bdt_variables.hpp"
 
@@ -24,23 +28,61 @@ std::pair<int, double> get_pot(std::string const & file_path, std::string const 
 
 }
 
+
+
+
+
+
 int main (int argc, char *argv[]){
 
 	// Just some simple argument things
 	//===========================================================================================
 
-	if(argc != 3) {
-		std::cout << "ERROR - Required inputs:\n->Path to sample file directory\n->Option\n";
-		exit(1);
-	}
-	std::string const dir = argv[1];
-	std::string const option = argv[2];
+	std::string dir = "../../../samples/mcc82";
+	std::string mode_option = "train"; 
+	std::string xml = "default.xml";
 
-	if(option == "help" || option == "?" || option == "-h"){
-		std::cout <<"Required inputs:\n->Path to sample file directory\n->Option\n";
-		std::cout <<"Options are:\n->train\n->app\n->merge\n->significance_sep\n";
-		exit(1);
+
+	const struct option longopts[] = 
+	{
+		{"dir", 		required_argument, 	0, 'd'},
+		{"option",		required_argument,	0, 'o'},
+		{"xml"	,		required_argument,	0, 'x'},
+		{"help",		required_argument,	0, 'h'},
+		{0,			no_argument, 		0,  0},
+	};
+
+	//some optioni/argument stuff
+	int iarg = 0; opterr=1; int index;
+	while(iarg != -1)
+	{
+		iarg = getopt_long(argc,argv, "x:o:d:h?", longopts, &index);
+
+		switch(iarg)
+		{
+			case 'x':
+				xml = optarg;
+				break;
+			case 'o':
+				mode_option = optarg;
+				break;
+			case 'd':
+				dir = optarg;
+			case '?':
+			case 'h':
+				std::cout<<"Allowed arguments:"<<std::endl;
+				std::cout<<"\t-d\t--dir\t\tDirectory for file inputs"<<std::endl;
+				std::cout<<"\t-o\t--option\t\tOptional mode to run, train, app..etc.."<<std::endl;
+				std::cout<<"\t-x\t--xml\t\tInput .xml file for configuring what MVA/BDT & param"<<std::endl;
+				std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
+				return 0;
+		}
+
 	}
+
+
+
+
 
 	// Setting up necessary variables and trees for TRAINING
 	//===========================================================================================
@@ -82,20 +124,10 @@ int main (int argc, char *argv[]){
 
 
 	//All the necessary methods that we want to use for MVA, will stick these into an XML sometime soon
-	std::vector<method_struct> const methods {
-			{TMVA::Types::kBDT, "BDTG",
-				"!H:!V:NTrees=2000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=3"}
-			,{TMVA::Types::kBDT, "BDT", 
-				"!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20"}
-		//	,{TMVA::Types::kBDT, "BDTB",
-		//		"!H:!V:NTrees=400:BoostType=Bagging:SeparationType=GiniIndex:nCuts=20"}
-		//	,{TMVA::Types::kBDT, "BDTD",
-		//		"!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate"}
-		//	,{TMVA::Types::kBDT, "BDTF",
-		//		"!H:!V:NTrees=50:MinNodeSize=2.5%:UseFisherCuts:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=20"}
-		//	,{TMVA::Types::kRuleFit, "RuleFit",
-		//		"H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02"}  
-	};
+	
+	MVALoader xml_methods(xml);
+	std::vector<method_struct> const methods  = xml_methods.GetMethods(); 
+
 
 
 	//some convientant labels
@@ -149,22 +181,22 @@ int main (int argc, char *argv[]){
 	//===========================================================================================
 	//===========================================================================================
 
-	if(option == "train") {
+	if(mode_option == "train") {
 		//training the no_track and trackonly seperately.
 		train(identifier_notrack, all_cut_notrack, signal_definition, background_definition, signal_training_trees, background_training_trees, variables_notrack, methods);
 		train(identifier_trackonly, all_cut_trackonly, signal_definition, background_definition, signal_training_trees, background_training_trees, variables_trackonly, methods);
 	}
 
-	else if(option == "app") {
+	else if(mode_option == "app") {
 		app(identifier_notrack, app_trees, tree_cuts, all_cut_notrack, variables_notrack, methods);
 		app(identifier_trackonly, app_trees, tree_cuts, all_cut_trackonly, variables_trackonly, methods);
 	}
 
-	else if(option == "merge") {
+	else if(mode_option == "merge") {
 		merge(identifier+"_merged_app.root", identifier_notrack+"_app.root", identifier_trackonly+"_app.root", app_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
 	}
 
-	else if(option == "significance_sep" || option == "sig") {
+	else if(mode_option == "significance_sep" || mode_option == "sig") {
 
 		std::vector<std::pair<TTree *, std::string>> const signal_significance_trees = {
 			std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_sp_cosmic.root", "LEEPhoton/vertex_tree"), "ncdelta_cosmic"),
@@ -188,7 +220,7 @@ int main (int argc, char *argv[]){
 				signal_significance_trees, signal_significance_tree_cuts, signal_significance_pots, 
 				background_significance_trees, background_significance_tree_cuts, background_significance_pots, 
 				methods);
-	}else if(option == "plot"){
+	}else if(mode_option == "plot"){
 		//Just Some boring plotting routines for now,
 
 		std::cout<<"Starting --plotstack-- routine."<<std::endl;
@@ -292,24 +324,24 @@ int main (int argc, char *argv[]){
 		fin_notrack->Close();
 		fin_trackonly->Close();
 	}
-	else if(option == "get_response_tlimits") {
+	else if(mode_option == "get_response_tlimits") {
 		get_mva_response_hists(identifier+"_mva_response.root", identifier+"_merged_app.root", app_trees, methods, mva_branches, "50", tree_cuts, cut_notrack, cut_trackonly);
 	}
 
-	else if(option == "plot_response_tlimits") {
+	else if(mode_option == "plot_response_tlimits") {
 		plot_mva_response_hists(identifier+"_plot_mva_response.root", identifier+"_mva_response.root", app_trees, methods, mva_branches);
 	}
 
-	else if(option == "tlimits") {
+	else if(mode_option == "tlimits") {
 		tlimits(identifier+"_mva_response.root", methods, run_pot, signal_training_pots.front().second, background_training_pots.front().second, background_training_pots.front().second);
 	}  
 
-	else if(option == "tlimits_var") {
+	else if(mode_option == "tlimits_var") {
 		tlimits_var(identifier+"_mva_response.root", methods, 6.6e20, 40, 6.6e20, 10e21, signal_training_pots.front().second, background_training_pots.front().second, background_training_pots.front().second);
 	}  
 
 	else {
-		std::cout << "WARNING: " << option << " is an invalid option\n";
+		std::cout << "WARNING: " << mode_option << " is an invalid option\n";
 	}
 
 }

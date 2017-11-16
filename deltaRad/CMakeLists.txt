@@ -33,5 +33,10 @@ message(STATUS "OUTPUT of CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 include_directories("${PROJECT_BINARY_DIR}")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tinyxml/)
+
+add_subdirectory(tinyxml)
 add_subdirectory(src)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/xml/default.xml DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/build/src/)
 
