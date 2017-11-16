@@ -11,6 +11,9 @@
 #include "TFile.h"
 #include "TTree.h"
 
+#include "get_pot_info.h"
+
+
 
 struct load_trees {
 
@@ -37,8 +40,8 @@ struct load_trees {
 	double pot_sp_cosmic = -1;
 	double pot_bnb = -1;
 	double pot_bnb_cosmic = -1;
-	double ngenbnbcosmic = -1;
-	double ngencosmic = -1;
+	int ngenbnbcosmic = -1;
+	int ngencosmic = -1;
 
 	std::string const signal_definition;
 
