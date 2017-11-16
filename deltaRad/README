@@ -38,12 +38,15 @@ make
  *****************************************************************************
  ************************* Running   *****************************************
  *****************************************************************************
+Usage takes arguments
 
-Havent actually changed any code yet! so usage is the the same
+./deltaRes --dir ../../../sample/mcc8 --option train --xml default.xml 
 
-./deltaRes ../../../sample/mcc82 train 
-
-..etc..
+	Options are:
+	-d  --dir  : Directory with root files, default "../../../sample/mcc82"
+	-o --option : what mode to run in, train, app, sig,merge ..etc, default trian
+	-x --xml :  xml that we take the TMVA parameters from, default: "default.xml"
+	-h --help:  displays this:
 
  *****************************************************************************
  *************************    ToDo   *****************************************
