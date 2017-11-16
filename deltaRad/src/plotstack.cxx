@@ -49,7 +49,9 @@ void plot(load_trees const & lt,
 
 	TCanvas * canvas = new TCanvas(name.c_str());
 	THStack * stack = new THStack((name + "_stack").c_str(), "");
-	TLegend * leg = new TLegend(0.6, 0.9, 0.9, 0.6);
+	TLegend * leg = new TLegend(0.55, 0.89, 0.89, 0.55);
+	leg->SetLineColor(kWhite);
+
 
 	/*
 	   tree->Draw((draw+">>h_signal"+binning).c_str(), (weight + andstr + mvastr + signal_definition).c_str());
@@ -73,10 +75,16 @@ void plot(load_trees const & lt,
 	TH1 * hist_signal = (TH1*)gDirectory->Get("h_signal");
 	if(hist_signal->Integral() > 0) {
 		hist_signal->SetLineColor(1);
-		hist_signal->SetFillColor(0);
+		hist_signal->SetFillColor(kBlack);
 		hist_signal->Scale(run_pot / lt.pot_sp_cosmic);
 		stack->Add(hist_signal);
-		leg->AddEntry(hist_signal, "NC #Delta Radiative");    
+		
+	    	std::ostringstream out;
+		out << std::fixed<<std::setprecision(1) << hist_signal->Integral() ;
+
+
+
+		leg->AddEntry(hist_signal, ("NC #Delta Radiative: " + out.str()).c_str());    
 	}
 
 	for(int mode = 0; mode <= 11; ++mode) {
@@ -97,7 +105,11 @@ void plot(load_trees const & lt,
 				hist->SetLineColor(1);
 				hist->SetFillColor(im_it->second.second + ccnc);
 				stack->Add(hist);
-				leg->AddEntry(hist, (ccnc_str + " " + im_it->second.first).c_str());
+
+			    	std::ostringstream out;
+				out << std::fixed<<std::setprecision(1) << hist->Integral() ;
+
+				leg->AddEntry(hist, (ccnc_str + " " + im_it->second.first + ": "+ out.str() ).c_str());
 			}
 		}
 	}
