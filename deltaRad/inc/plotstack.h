@@ -28,6 +28,32 @@
 
 
 
+std::string double_to_string(double const d, double const precision = 2);
+
+
+
+double get_nu_weight(double const true_nu_E);
+double get_gamma_weight(double const true_gamma_E);
+
+
+
+void plotsig(load_trees const & lt,
+             double const sample_pot,
+             std::string const & name,
+             std::string const & draw,
+             std::string const & binning,
+             std::string const & weight = "",
+             std::string const & option = "",
+             std::string const & title = "",
+             std::string const & xtitle = "",
+             std::string const & ytitle = "",
+             bool const logy = false,
+             std::string const & method = "",
+             double const mva1 = DBL_MAX,
+             double const mva2 = DBL_MAX);
+
+
+
 void plot(load_trees const & lt,
 		TTree * tree,
 		double const sample_pot,
@@ -46,8 +72,104 @@ void plot(load_trees const & lt,
 
 
 
+void plotmode(load_trees const & lt,
+              TTree * tree,
+              double const sample_pot,
+              std::string const & name,
+              std::string const & draw,
+              std::string const & binning,
+              std::string const & weight = "",
+              std::string const & option = "",
+              std::string const & title = "",
+              std::string const & xtitle = "",
+              std::string const & ytitle = "",
+              bool const logy = false,
+              std::string const & method = "",
+              double const mva1 = DBL_MAX,
+              double const mva2 = DBL_MAX,
+              bool const lee = false);
 
-void plotstack(std::string const & ifile_path, std::string const & friend_tree_path);
+
+
+void plotnu(load_trees const & lt,
+	    TTree * tree,
+	    double const sample_pot,
+	    std::string const & name,
+	    std::string const & draw,
+	    std::string const & binning,
+	    std::string const & weight = "",
+	    std::string const & option = "",
+	    std::string const & title = "",
+	    std::string const & xtitle = "",
+	    std::string const & ytitle = "",
+	    bool const logy = false,
+	    std::string const & method = "",
+	    double const mva1 = DBL_MAX,
+	    double const mva2 = DBL_MAX,
+	    bool const lee = false);
+  
+
+
+void plotpi0(load_trees const & lt,
+	     TTree * tree,
+	     double const sample_pot,
+	     std::string const & name,
+	     std::string const & draw,
+	     std::string const & binning,
+	     std::string const & weight = "",
+	     std::string const & option = "",
+	     std::string const & title = "",
+	     std::string const & xtitle = "",
+	     std::string const & ytitle = "",
+	     bool const logy = false,
+	     std::string const & method = "",
+	     double const mva1 = DBL_MAX,
+	     double const mva2 = DBL_MAX,
+	     bool const lee = false);
+
+
+
+std::vector<int> get_pdg_v(TTree * tree,
+                           std::string const & pdg_str,
+                           std::string const & cut_str);
+
+
+
+void plotpdg(TTree * tree,
+             double const scaling,
+             std::string const & name,
+             std::string const & pdg_str,
+             std::string const & draw,
+             std::string const & binning,
+             std::string const & weight = "",
+             std::string const & title = "",
+             std::string const & xtitle = "",
+             std::string const & ytitle = "",
+             bool const logy = false,
+             std::string const & method = "",
+             double const mva1 = DBL_MAX,
+             double const mva2 = DBL_MAX);
+
+
+
+void plotmva(load_trees const & lt,
+             TTree * tree,
+             double const sample_pot,
+             std::string const & name,
+             std::string const & draw,
+             std::string const & binning,
+             std::string const & weight = "",
+             std::string const & option = "",
+             std::string const & title = "",
+             std::string const & xtitle = "",
+             std::string const & ytitle = "",
+             bool const logy = false,
+             std::string const & method = "");
+
+
+
+
+void plotstack(std::string const & ifile_path, std::string const & friend_tree_path = "");
 
 
 #endif

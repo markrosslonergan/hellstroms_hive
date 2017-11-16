@@ -333,7 +333,7 @@ void divide_hist(TCanvas * canvas, TH1 * hspc, TH1 * hsp, bool first = false) {
     if(b) bin_errors.push_back(sqrt(pow(sa/b, 2) + pow(sb*a/(b*b), 2)));
     else bin_errors.push_back(0);
   }
-  
+
   hspc->Divide(hsp);
   TH1 * hspce = (TH1*)hspc->Clone();
   
@@ -360,7 +360,10 @@ void plot_efficiency(std::string const & name,
 		     std::string const & cut_eff,
 		     std::string const & title = "",
 		     std::string const & xtitle = "",
-		     std::string const & ytitle = "") {
+		     std::string const & ytitle = "",
+		     std::string const & method = "",
+		     double const mva1 = DBL_MAX,
+		     double const mva2 = DBL_MAX) {
 
   std::string andstr = "";
   std::string andstreff = "";
@@ -372,8 +375,16 @@ void plot_efficiency(std::string const & name,
 
   vertex_tree_sp->Draw((draw+">>hsp_"+name+binning).c_str(), (cut+andstr+signal_definition).c_str());
   TH1 * hsp = (TH1*)gDirectory->Get(("hsp_"+name).c_str());
-  vertex_tree_sp->Draw((draw+">>hspc_"+name+binning).c_str(), (cut_eff+andstreff+signal_definition).c_str());
+  if(method != "" && (mva1 != DBL_MAX || mva2 != DBL_MAX)) {
+    vertex_tree_sp->Draw((draw+">>hspc_"+name+binning).c_str(), (cut_eff+andstreff+"((reco_asso_tracks == 0 && ncdelta_" + method + ".mva > "+std::to_string(mva1)+") || (reco_asso_tracks > 0 && ncdelta_" + method + ".mva > "+std::to_string(mva2)+")) && "+signal_definition).c_str());
+  }
+  else { 
+    vertex_tree_sp->Draw((draw+">>hspc_"+name+binning).c_str(), (cut_eff+andstreff+signal_definition).c_str());
+  }
   TH1 * hspc = (TH1*)gDirectory->Get(("hspc_"+name).c_str());
+
+  cout << hspc->Integral(0, hspc->GetNbinsX()+1) / hsp->Integral(0, hsp->GetNbinsX()+1) << "\n";
+
   hspc->SetStats(0);
   hspc->SetTitle(title.c_str());
   hspc->GetXaxis()->SetTitle(xtitle.c_str());
@@ -382,26 +393,41 @@ void plot_efficiency(std::string const & name,
   hspc->GetYaxis()->CenterTitle();
   hspc->SetLineWidth(3);
   hspc->SetLineColor(kBlue+color_offset);
-  hspc->GetYaxis()->SetRangeUser(0, 2);
   divide_hist(canvas_eff, hspc, hsp, true);
-  
+  hspc->GetYaxis()->SetRangeUser(0, 0.5);
+  double ymax = -DBL_MAX;
+  if(hspc->GetBinContent(hspc->GetMaximumBin()) > ymax) ymax = hspc->GetBinContent(hspc->GetMaximumBin());  
+
   TCanvas * ctemp = new TCanvas("ctemp");
   vertex_tree_sp_cosmic->Draw((draw+">>hspcosmic_"+name+binning).c_str(), (cut+andstr+signal_definition).c_str());
   TH1 * hspcosmic = (TH1*)gDirectory->Get(("hspcosmic_"+name).c_str());
-  vertex_tree_sp_cosmic->Draw((draw+">>hspcosmicc_"+name+binning).c_str(), (cut_eff+andstreff+signal_definition).c_str());
+  if(method != "" && (mva1 != DBL_MAX || mva2 != DBL_MAX)) {
+    vertex_tree_sp_cosmic->Draw((draw+">>hspcosmicc_"+name+binning).c_str(), (cut_eff+andstreff+"((reco_asso_tracks == 0 && ncdelta_cosmic_" + method + ".mva > "+std::to_string(mva1)+") || (reco_asso_tracks > 0 && ncdelta_cosmic_" + method + ".mva > "+std::to_string(mva2)+")) && "+signal_definition).c_str());
+  }
+  else { 
+    vertex_tree_sp_cosmic->Draw((draw+">>hspcosmicc_"+name+binning).c_str(), (cut_eff+andstreff+signal_definition).c_str());
+  }
   TH1 * hspcosmicc = (TH1*)gDirectory->Get(("hspcosmicc_"+name).c_str());
+
   hspcosmicc->SetLineWidth(3);
   hspcosmicc->SetLineColor(kCyan+color_offset);
   divide_hist(canvas_eff, hspcosmicc, hspcosmic);
-  
+  if(hspcosmicc->GetBinContent(hspcosmicc->GetMaximumBin()) > ymax) ymax = hspcosmicc->GetBinContent(hspcosmicc->GetMaximumBin());    
+
   ctemp->cd();
   vertex_tree_bnb_cosmic->Draw((draw+">>hbnbcosmic_"+name+binning).c_str(), (cut).c_str());
   TH1 * hbnbcosmic = (TH1*)gDirectory->Get(("hbnbcosmic_"+name).c_str());
-  vertex_tree_bnb_cosmic->Draw((draw+">>hbnbcosmicc_"+name+binning).c_str(), (cut_eff).c_str());
+  if(method != "" && (mva1 != DBL_MAX || mva2 != DBL_MAX)) {
+    vertex_tree_bnb_cosmic->Draw((draw+">>hbnbcosmicc_"+name+binning).c_str(), (cut_eff+andstreff+"((reco_asso_tracks == 0 && bnb_cosmic_" + method + ".mva > "+std::to_string(mva1)+") || (reco_asso_tracks > 0 && bnb_cosmic_" + method + ".mva > "+std::to_string(mva2)+"))").c_str());
+  }
+  else { 
+    vertex_tree_bnb_cosmic->Draw((draw+">>hbnbcosmicc_"+name+binning).c_str(), cut_eff.c_str());
+  }
   TH1 * hbnbcosmicc = (TH1*)gDirectory->Get(("hbnbcosmicc_"+name).c_str());
   hbnbcosmicc->SetLineWidth(3);
   hbnbcosmicc->SetLineColor(kGreen+color_offset);    
   divide_hist(canvas_eff, hbnbcosmicc, hbnbcosmic);
+  if(hbnbcosmicc->GetBinContent(hbnbcosmicc->GetMaximumBin()) > ymax) ymax = hbnbcosmicc->GetBinContent(hbnbcosmicc->GetMaximumBin());
 
   TLegend * leg = new TLegend(0.6, 0.9, 0.9, 0.6);
   leg->AddEntry(hspc, "NC #Delta Radiative");
@@ -839,12 +865,14 @@ void plotsupimp(std::string const dir, std::string const friend_tree_file = "") 
 
   plot_efficiency("all_totalpe_cut",
 		  "true_nu_E",
-		  "(20, 0, 2.2)",
-		  "reco_asso_showers == 1",
-		  "passed_swtrigger == 1 && reco_asso_showers == 1 && closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140",
-		  "Cut: Shortest Shower - Beam In-Time Flash Distance < 40 cm && Total PE in Event > 140",
+		  "(15, 0, 2.2)",
+		  "",
+		  "reco_asso_showers == 1 && passed_swtrigger == 1 && reco_asso_showers == 1 && closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140",
+		  "",
 		  "True Neutrino Energy [GeV]",
-		  "Efficiency");
+		  "Efficiency",
+		  "BDTD",
+		  0.1, 0.1);
 
 }
 
