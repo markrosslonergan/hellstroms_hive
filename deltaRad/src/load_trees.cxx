@@ -103,9 +103,9 @@ void load_trees::init(std::string dir, std::string const & friend_tree_file) {
 		//	,"RuleFit"
 		};
 		for(std::string const & method : method_v) {
-			friend_tree_names.push_back(std::string(vertex_tree_sp->AddFriend(("ncdelta_"+method).c_str(), friend_tree_file.c_str())->GetTree()->GetName()));
-			friend_tree_names.push_back(std::string(vertex_tree_sp_cosmic->AddFriend(("ncdelta_cosmic_"+method).c_str(), friend_tree_file.c_str())->GetTree()->GetName()));
-			friend_tree_names.push_back(std::string(vertex_tree_bnb_cosmic->AddFriend(("bnb_cosmic_"+method).c_str(), friend_tree_file.c_str())->GetTree()->GetName()));
+		  if(vertex_tree_sp) friend_tree_names.push_back(std::string(vertex_tree_sp->AddFriend(("ncdelta_"+method).c_str(), friend_tree_file.c_str())->GetTree()->GetName()));
+		  if(vertex_tree_sp_cosmic) friend_tree_names.push_back(std::string(vertex_tree_sp_cosmic->AddFriend(("ncdelta_cosmic_"+method).c_str(), friend_tree_file.c_str())->GetTree()->GetName()));
+		  if(vertex_tree_bnb_cosmic) friend_tree_names.push_back(std::string(vertex_tree_bnb_cosmic->AddFriend(("bnb_cosmic_"+method).c_str(), friend_tree_file.c_str())->GetTree()->GetName()));
 		}
 	}
 
