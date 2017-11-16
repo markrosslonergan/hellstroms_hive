@@ -70,6 +70,7 @@ int main (int argc, char *argv[]){
 				break;
 			case 'd':
 				dir = optarg;
+				break;
 			case '?':
 			case 'h':
 				std::cout<<"Allowed arguments:"<<std::endl;
