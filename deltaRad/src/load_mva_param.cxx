@@ -40,9 +40,9 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
 	TMVA::Types  type_instance = TMVA::Types::Instance();
 
-	while(pMVA && (std::string)pMVA->Attribute("use") == "yes")
+	while(pMVA )
 	{
-
+		if( (std::string)pMVA->Attribute("use") == "yes"){
 		std::string mva_type = pMVA->Attribute("type");
 		//for each type, find all methods to be used
 
@@ -52,8 +52,8 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
 
 		TiXmlElement *pMethod = pMVA->FirstChildElement("method");
-		while(pMethod && (std::string)pMethod->Attribute("use") == "yes"){
-
+		while(pMethod ){
+			if((std::string)pMethod->Attribute("use") == "yes"){
 
 			std::string method_type = pMethod->Attribute("type");		
 
@@ -80,13 +80,13 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 			if(isVerbose) std::cout<<" MVALoader::MVALoader || Loading a method: "<<mva_type<<"::"<<method_type<<" with params: "<<param_string<<std::endl;
 			
 
-
+			}
 			pMethod = pMethod->NextSiblingElement("method");
 
 		}//-->end method loop	
 
 
-
+		}
 		pMVA = pMVA->NextSiblingElement("mva");
 
 	}//--> end mva loop

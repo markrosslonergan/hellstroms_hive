@@ -40,10 +40,11 @@ TTree * merge_trees(TTree * tree1,
 		exit(1);
 	}
 
+	
 	void_vec branches1;
 	void_vec branches2;
 	void_vec branches_merged;
-	TTree * tree_merged = new TTree(tree_merged_name.c_str(), "");
+	TTree * tree_merged = new TTree(tree_merged_name.c_str(), "recreate");
 
 	for(std::pair<std::string, std::string> const & p : branches) {
 		if(p.second == "d") {
@@ -56,6 +57,7 @@ TTree * merge_trees(TTree * tree1,
 			std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ <<"\n"
 				<< "ERROR: invalid type: " << p.second << "\n";
 		}
+	
 	}
 
 	TTreeFormula * tf = new TTreeFormula("tf", all_cut.c_str(), cut_tree);
@@ -65,10 +67,13 @@ TTree * merge_trees(TTree * tree1,
 	for(int i = 0; i < cut_tree->GetEntries(); ++i) {
 
 		cut_tree->GetEntry(i);
+
 		tree1->GetEntry(i);
+		// malloc(): smallbin double linked list corrupted: 0x0000000001fcf020 *** THIS next line is causing it.. hmm
 		tree2->GetEntry(i);
 
 		for(size_t j = 0; j < branches.size(); ++j) {
+
 
 			if(tf->EvalInstance()) {
 
@@ -137,7 +142,7 @@ void merge(std::string const & ofile_path,
 		}
 
 	}
-
+	// malloc(): smallbin double linked list corrupted: 0x0000000001fcf020 ***
 	ofile->Close();
 
 }

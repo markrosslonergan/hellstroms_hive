@@ -82,9 +82,9 @@ void app_tree(std::string const & identifier,
 		ts.tree->Write();
 	}
 
-	delete reader;
-	delete tf;
-	for(float * f : reader_var_v) delete f;
+	//delete reader;
+	//delete tf;
+	//for(float * f : reader_var_v) delete f;
 
 }
 

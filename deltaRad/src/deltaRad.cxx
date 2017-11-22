@@ -38,7 +38,7 @@ int main (int argc, char *argv[]){
 	// Just some simple argument things
 	//===========================================================================================
 
-	std::string dir = "../../../samples/mcc82";
+	std::string dir = "../../../samples/mcc82/";
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 
@@ -119,7 +119,9 @@ int main (int argc, char *argv[]){
 	std::vector<std::pair<std::string, std::string>> variables_trackonly = variables_notrack;
 	variables_trackonly.emplace_back("shortest_asso_shower_to_vert_dist", "d");
 	variables_trackonly.emplace_back("longest_asso_track_thetaxz", "d");
+	variables_trackonly.emplace_back("cos(longest_asso_track_thetaxz)", "d");
 	variables_trackonly.emplace_back("longest_asso_track_thetayz", "d");
+	variables_trackonly.emplace_back("cos(longest_asso_track_thetayz)", "d");
 	variables_trackonly.emplace_back("reco_asso_tracks", "i");
 	variables_trackonly.emplace_back("longest_asso_track_displacement", "d");
 
@@ -156,7 +158,15 @@ int main (int argc, char *argv[]){
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_background"),
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "bnb_cosmic")
 	};
+/*
+	std::vector<std::pair<TTree *, std::string>> const app_trees = {
+		std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_sp.root", "LEEPhoton/vertex_tree"), "ncdelta"),
+		std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_sp_cosmic.root", "LEEPhoton/vertex_tree"), "ncdelta_cosmic"),
+		std::pair<TTree *, std::string>(oh.GetObject(dir + "../data/merged.root", "LEEPhotonAnalysisData/vertex_tree"), "data5e19"),
+		std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "bnb_cosmic")
+	};
 
+*/
 	std::vector<std::string> const tree_cuts = {
 		all_cut + " && " + signal_definition,
 		all_cut + " && " + signal_definition,
@@ -211,16 +221,18 @@ int main (int argc, char *argv[]){
 		std::vector<std::pair<TTree *, std::string>> const background_significance_trees = {
 			std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_background"),
 		};
+		std::vector<std::pair<TTree *, std::string>> const data5e19_significance_trees = {
+			std::pair<TTree *, std::string>(oh.GetObject(dir + "../data/merged.root", "LEEPhotonAnalysisData/vertex_tree"), "data5e19"),
+		};
+
 		std::vector<std::pair<std::string, std::string>> const background_significance_tree_cuts = {
 			{background_definition + " && " + all_cut_notrack, background_definition + " && " + all_cut_trackonly}
 		};
 		std::vector<std::pair<int, double>> const background_significance_pots = {
 			get_pot(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/get_pot")
 		};
-		significance_seperate(identifier+"_merged_app.root", run_pot,
-				signal_significance_trees, signal_significance_tree_cuts, signal_significance_pots, 
-				background_significance_trees, background_significance_tree_cuts, background_significance_pots, 
-				methods);
+		significance_seperate(identifier+"_merged_app.root", run_pot, signal_significance_trees, signal_significance_tree_cuts, signal_significance_pots, 
+				background_significance_trees, background_significance_tree_cuts, background_significance_pots,	methods);
 	}else if(mode_option == "plot"){
 		//Just Some boring plotting routines for now,
 
