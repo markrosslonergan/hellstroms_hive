@@ -854,25 +854,25 @@ void plotsupimp(std::string const dir, std::string const friend_tree_file = "") 
   
   std::string const all_cut = "passed_swtrigger == 1 && closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140 && reco_asso_showers == 1";
 
-  /*
   plot_cut("all", "All", "");
   plot_cut("all", "All", "", true, true);
   plot_cut("precut", "Pre-Cut", all_cut);
   plot_cut("precut", "Pre-Cut", all_cut, true, true);
-  plot_cut("bdt", "BDT Response Applied", all_cut, false, false, "BDT", 0.1, 0.1);
-  plot_cut("bdt", "BDT Response Applied", all_cut, true, true, "BDT", 0.1, 0.1);
-  */
 
-  plot_efficiency("all_totalpe_cut",
-		  "true_nu_E",
-		  "(15, 0, 2.2)",
-		  "",
-		  "reco_asso_showers == 1 && passed_swtrigger == 1 && reco_asso_showers == 1 && closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140",
-		  "",
-		  "True Neutrino Energy [GeV]",
-		  "Efficiency",
-		  "BDTD",
-		  0.1, 0.1);
+  if(friend_tree_file != "") {
+    plot_cut("bdt", "BDT Response Applied", all_cut, false, false, "BDT", 0.1, 0.1);
+    plot_cut("bdt", "BDT Response Applied", all_cut, true, true, "BDT", 0.1, 0.1);
+    plot_efficiency("all_totalpe_cut",
+		    "true_nu_E",
+		    "(15, 0, 2.2)",
+		    "",
+		    "reco_asso_showers == 1 && passed_swtrigger == 1 && reco_asso_showers == 1 && closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140",
+		    "",
+		    "True Neutrino Energy [GeV]",
+		    "Efficiency",
+		    "BDTD",
+		    0.1, 0.1);
+  }
 
 }
 
