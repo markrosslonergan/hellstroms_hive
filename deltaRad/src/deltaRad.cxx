@@ -9,6 +9,7 @@
 #include "gen_tlimits.h"
 #include "plotstack.h"
 #include "load_mva_param.h"
+#include "data_mc.h"
 
 #include "tinyxml.h"
 
@@ -119,9 +120,9 @@ int main (int argc, char *argv[]){
 	std::vector<std::pair<std::string, std::string>> variables_trackonly = variables_notrack;
 	variables_trackonly.emplace_back("shortest_asso_shower_to_vert_dist", "d");
 	variables_trackonly.emplace_back("longest_asso_track_thetaxz", "d");
-	variables_trackonly.emplace_back("cos(longest_asso_track_thetaxz)", "d");
+	//variables_trackonly.emplace_back("cos(longest_asso_track_thetaxz)", "d");
 	variables_trackonly.emplace_back("longest_asso_track_thetayz", "d");
-	variables_trackonly.emplace_back("cos(longest_asso_track_thetayz)", "d");
+	//variables_trackonly.emplace_back("cos(longest_asso_track_thetayz)", "d");
 	variables_trackonly.emplace_back("reco_asso_tracks", "i");
 	variables_trackonly.emplace_back("longest_asso_track_displacement", "d");
 
@@ -158,6 +159,16 @@ int main (int argc, char *argv[]){
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_background"),
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "bnb_cosmic")
 	};
+
+	std::vector<std::pair<TTree *, std::string>> const data_trees = {
+		std::pair<TTree *, std::string>(oh.GetObject(dir + "../data/data_5e19_2000f_merged.root", "LEEPhotonAnalysisData/vertex_tree"), "data")
+	};
+
+	std::vector<std::string> const data_cuts = {
+		all_cut,
+	};
+
+
 /*
 	std::vector<std::pair<TTree *, std::string>> const app_trees = {
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_sp.root", "LEEPhoton/vertex_tree"), "ncdelta"),
@@ -199,12 +210,22 @@ int main (int argc, char *argv[]){
 	}
 
 	else if(mode_option == "app") {
-		app(identifier_notrack, app_trees, tree_cuts, all_cut_notrack, variables_notrack, methods);
-		app(identifier_trackonly, app_trees, tree_cuts, all_cut_trackonly, variables_trackonly, methods);
+		app(identifier_notrack,"app", app_trees, tree_cuts, all_cut_notrack, variables_notrack, methods);
+		app(identifier_trackonly,"app", app_trees, tree_cuts, all_cut_trackonly, variables_trackonly, methods);
+	}
+	else if(mode_option == "appdata"){
+
+		app(identifier_notrack,"data",data_trees, data_cuts, all_cut_notrack, variables_notrack, methods);
+		app(identifier_trackonly,"data", data_trees, data_cuts, all_cut_trackonly, variables_trackonly, methods);
+
 	}
 
 	else if(mode_option == "merge") {
 		merge(identifier+"_merged_app.root", identifier_notrack+"_app.root", identifier_trackonly+"_app.root", app_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
+	}
+
+	else if(mode_option == "mergedata") {
+		merge(identifier+"_merged_data.root", identifier_notrack+"_data.root", identifier_trackonly+"_data.root", data_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
 	}
 
 	else if(mode_option == "significance_sep" || mode_option == "sig") {
@@ -221,9 +242,6 @@ int main (int argc, char *argv[]){
 		std::vector<std::pair<TTree *, std::string>> const background_significance_trees = {
 			std::pair<TTree *, std::string>(oh.GetObject(dir + "/runmv_bnb_cosmic.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_background"),
 		};
-		std::vector<std::pair<TTree *, std::string>> const data5e19_significance_trees = {
-			std::pair<TTree *, std::string>(oh.GetObject(dir + "../data/merged.root", "LEEPhotonAnalysisData/vertex_tree"), "data5e19"),
-		};
 
 		std::vector<std::pair<std::string, std::string>> const background_significance_tree_cuts = {
 			{background_definition + " && " + all_cut_notrack, background_definition + " && " + all_cut_trackonly}
@@ -233,6 +251,7 @@ int main (int argc, char *argv[]){
 		};
 		significance_seperate(identifier+"_merged_app.root", run_pot, signal_significance_trees, signal_significance_tree_cuts, signal_significance_pots, 
 				background_significance_trees, background_significance_tree_cuts, background_significance_pots,	methods);
+
 	}else if(mode_option == "plot"){
 		//Just Some boring plotting routines for now,
 
@@ -352,6 +371,12 @@ int main (int argc, char *argv[]){
 	else if(mode_option == "tlimits_var") {
 		tlimits_var(identifier+"_mva_response.root", methods, 6.6e20, 40, 6.6e20, 10e21, signal_training_pots.front().second, background_training_pots.front().second, background_training_pots.front().second);
 	}  
+	else if(mode_option == "test"){
+
+		new_data_mc();
+
+	}
+	
 
 	else {
 		std::cout << "WARNING: " << mode_option << " is an invalid option\n";

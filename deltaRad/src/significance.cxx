@@ -225,7 +225,7 @@ std::vector<double> method_best_significance_seperate(std::string const & app_fi
 				std::cout<<"method_best_significane_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<<d<<", cut2: "<<d2<<std::endl;
 				std::cout<<"method_best_significane_seperate || signal2: "<<signal2<<" & background2: "<<background2<<std::endl;
 			}
-
+			std::cout<<di<<" "<<di2<<" "<<signif<<std::endl;
 			vec_sig.push_back(signif);
 			vec_cut.push_back(d2);
 			h2_sig_cut->SetBinContent(di,di2, signif);

@@ -40,7 +40,7 @@ void app_tree(std::string const & identifier,
 		std::vector<std::pair<std::string, std::string>> const & variables,
 		std::vector<method_struct> const & methods);
 
-void app(std::string const & identifier, 
+void app(std::string const & identifier, std::string tag,
 		std::vector<std::pair<TTree *, std::string>> const & trees, 
 		std::vector<std::string> const & tree_cuts,
 		std::string const & additional_cut,

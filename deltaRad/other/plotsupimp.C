@@ -97,6 +97,7 @@ void init(std::string dir, std::string const & friend_tree_file = "") {
       "BDTF",
       "RuleFit"
     };
+
     for(std::string const & method : method_v) {
       friend_tree_names.push_back(std::string(vertex_tree_sp->AddFriend(("ncdelta_"+method).c_str(), friend_tree_file.c_str())->GetTree()->GetName()));
       friend_tree_names.push_back(std::string(vertex_tree_sp_cosmic->AddFriend(("ncdelta_cosmic_"+method).c_str(), friend_tree_file.c_str())->GetTree()->GetName()));
@@ -415,7 +416,7 @@ void plot_efficiency(std::string const & name,
   if(hspcosmicc->GetBinContent(hspcosmicc->GetMaximumBin()) > ymax) ymax = hspcosmicc->GetBinContent(hspcosmicc->GetMaximumBin());    
 
   ctemp->cd();
-  vertex_tree_bnb_cosmic->Draw((draw+">>hbnbcosmic_"+name+binning).c_str(), (cut).c_str());
+  vertex_tree_bnb_cosmic->Draw((draw+">> hbnbcosmic_"+name+binning).c_str(), (cut).c_str());
   TH1 * hbnbcosmic = (TH1*)gDirectory->Get(("hbnbcosmic_"+name).c_str());
   if(method != "" && (mva1 != DBL_MAX || mva2 != DBL_MAX)) {
     vertex_tree_bnb_cosmic->Draw((draw+">>hbnbcosmicc_"+name+binning).c_str(), (cut_eff+andstreff+"((reco_asso_tracks == 0 && bnb_cosmic_" + method + ".mva > "+std::to_string(mva1)+") || (reco_asso_tracks > 0 && bnb_cosmic_" + method + ".mva > "+std::to_string(mva2)+"))").c_str());
