@@ -13,12 +13,14 @@ struct bdt_variable{
 	public:
 		std::string name;
 		std::string binning;
+		std::string unit;
 		bool is_track;
 
-		bdt_variable(std::string inname, std::string inbin, bool intrack) : 
+		bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack) : 
 			name(inname), 
 			binning(inbin),
-			is_track(intrack)
+			is_track(intrack),
+			unit(inunit)
 	{};
 
 };
@@ -35,6 +37,8 @@ struct bdt_file{
 		int col;
 		bool is_data;
 		bool is_mc;
+			
+		std::string leg;
 
 		std::string friend_tree_name;
 
@@ -75,6 +79,8 @@ struct bdt_file{
 		double potbranch = 0;
 
 		if(is_mc){
+			leg = "l";
+
 			std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
 			tpot = (TTree*)f->Get(tnam_pot.c_str());
 			std::cout<<"Got POT tree"<<std::endl;
@@ -87,6 +93,7 @@ struct bdt_file{
 			pot = potbranch;
 			std::cout<<"--> value: "<<pot<<std::endl;
 		}else{
+			leg = "lp";
 			std::cout<<"--> POT is data: ";
 			pot = 4.95e19*2000.0/13671;
 			std::cout<<"--> value: "<<pot<<std::endl;
@@ -125,8 +132,26 @@ class compare_instance{
 
 		int Nfiles;
 
+		double title_size_ratio;
+		double label_size_ratio;
+		double title_offset_ratioX;
+		double title_offset_ratioY;
+
+		double title_size_upper;
+		double label_size_upper;
+		double title_offset_upper;
+
 		compare_instance(std::vector<bdt_file*> vecin, bdt_variable varin) : files(vecin), var(varin) {	
 			Nfiles = vecin.size();
+
+			title_size_ratio=0.125;
+			label_size_ratio=0.125;
+			title_offset_ratioY = 0.3 ;
+			title_offset_ratioX = 1.1;
+
+			title_size_upper=0.2;
+			label_size_upper=0.07;
+			title_offset_upper = 1.45;
 
 		}
 
@@ -231,15 +256,14 @@ class compare_instance{
 			std::cout<<"---> VERTEXCOUNT Ratio data/mc BDT: "<<" "<<vertex_count_bdt.at(0)/vertex_count_bdt.at(1)<<std::endl;
 
 
+			ymax_sel=1.25*ymax_sel;
+			ymax_pre=1.25*ymax_pre;
+			ymax_bdt=1.25*ymax_bdt;
 
-			ymax_sel=1.1*ymax_sel;
-			ymax_pre=1.1*ymax_pre;
-			ymax_bdt=1.1*ymax_bdt;
 
-
-			TLegend *lsel = new TLegend(0.5,0.5,0.89,0.89);lsel->SetLineColor(kBlack);lsel->SetFillStyle(0);
-			TLegend *lpre = new TLegend(0.5,0.5,0.89,0.89);lpre->SetLineColor(kBlack);lpre->SetFillStyle(0);
-			TLegend *lbdt = new TLegend(0.5,0.5,0.89,0.89);lbdt->SetLineColor(kBlack);lbdt->SetFillStyle(0);
+			TLegend *lsel = new TLegend(0.6,0.6,0.89,0.89);lsel->SetLineColor(kBlack);lsel->SetFillStyle(0);
+			TLegend *lpre = new TLegend(0.6,0.6,0.89,0.89);lpre->SetLineColor(kBlack);lpre->SetFillStyle(0);
+			TLegend *lbdt = new TLegend(0.6,0.6,0.89,0.89);lbdt->SetLineColor(kBlack);lbdt->SetFillStyle(0);
 
 
 			c->cd(1);
@@ -258,37 +282,39 @@ class compare_instance{
 				var_selec.at(t)->SetMarkerStyle(20);
 
 				var_selec.at(t)->Draw((files.at(t)->plot_ops+ " SAME").c_str());
-				lsel->AddEntry(var_selec.at(t), (files.at(t)->tag+" : "+ to_string_prec( var_selec.at(t)->Integral(),1)).c_str()  , "lp");
-				var_selec.at(t)->GetXaxis()->SetTitleSize(0.04);
-				var_selec.at(t)->GetXaxis()->SetLabelSize(0.04);
-				var_selec.at(t)->GetYaxis()->SetLabelSize(0.04);
-				var_selec.at(t)->GetYaxis()->SetTitleOffset(1.45);
+				lsel->AddEntry(var_selec.at(t), (files.at(t)->tag+" : "+ to_string_prec( var_selec.at(t)->Integral(),1)).c_str()  , files.at(t)->leg.c_str());
+				var_selec.at(t)->GetXaxis()->SetTitleSize(title_size_upper);
+				var_selec.at(t)->GetXaxis()->SetLabelSize(label_size_upper);
+				var_selec.at(t)->GetYaxis()->SetLabelSize(label_size_upper);
+				var_selec.at(t)->GetYaxis()->SetTitleOffset(title_offset_upper);
 			}
 
 
 			c->cd(1);          // Go back to the main canvas before defining pad1bot
 			TPad *pad1bot = new TPad("pad1bot", "pad1bot", 0, 0.05, 1, 0.3);
 			pad1bot->SetTopMargin(0);
-			pad1bot->SetBottomMargin(0.2);
+			pad1bot->SetBottomMargin(0.301);
 			pad1bot->SetGridx(); // vertical grid
 			pad1bot->Draw();
 			pad1bot->cd();       // pad1bot becomes the current pad
 			TH1* ratsel = (TH1*)var_selec.front()->Clone("rat_sel");
 			ratsel->Divide(var_selec.back());		
+			ratsel->SetLineColor(kBlack);
 			ratsel->Draw();	
 
 			ratsel->SetTitle("");
 			ratsel->GetYaxis()->SetTitle("Ratio");
-			ratsel->GetYaxis()->SetTitleOffset(0.6);
+			ratsel->GetYaxis()->SetTitleOffset(title_offset_ratioY);
+			ratsel->GetXaxis()->SetTitleOffset(title_offset_ratioX);
 
-			ratsel->GetYaxis()->SetTitleSize(0.07);
-			ratsel->GetXaxis()->SetTitleSize(0.09);
-			ratsel->GetYaxis()->SetLabelSize(0.07);
-			ratsel->GetXaxis()->SetLabelSize(0.09);
+			ratsel->GetYaxis()->SetTitleSize(title_size_ratio);
+			ratsel->GetXaxis()->SetTitleSize(title_size_ratio);
+			ratsel->GetYaxis()->SetLabelSize(label_size_ratio);
+			ratsel->GetXaxis()->SetTitle(var.unit.c_str());
+			ratsel->GetXaxis()->SetLabelSize(label_size_ratio);
 
 			var_selec.front()->GetYaxis()->SetRangeUser(0.1,ymax_sel);
 			var_selec.front()->GetYaxis()->SetTitle("Verticies");
-			var_selec.front()->GetXaxis()->SetTitle(var.name.c_str());
 
 			pad1top->cd();
 			lsel->Draw();
@@ -311,37 +337,38 @@ class compare_instance{
 				var_precut.at(t)->SetLineWidth(3);
 				var_precut.at(t)->SetMarkerStyle(20);
 				var_precut.at(t)->Draw((files.at(t)->plot_ops+" SAME").c_str());
-				lpre->AddEntry(var_precut.at(t), (files.at(t)->tag+" : "+ to_string_prec( var_precut.at(t)->Integral() ,1)).c_str()  , "lp");
+				lpre->AddEntry(var_precut.at(t), (files.at(t)->tag+" : "+ to_string_prec( var_precut.at(t)->Integral() ,1)).c_str()  , files.at(t)->leg.c_str());
 
-				var_precut.at(t)->GetXaxis()->SetTitleSize(0.04);
-				var_precut.at(t)->GetXaxis()->SetLabelSize(0.04);
-				var_precut.at(t)->GetYaxis()->SetLabelSize(0.04);
-				var_precut.at(t)->GetYaxis()->SetTitleOffset(1.45);
+				var_precut.at(t)->GetXaxis()->SetTitleSize(title_size_upper);
+				var_precut.at(t)->GetXaxis()->SetLabelSize(label_size_upper);
+				var_precut.at(t)->GetYaxis()->SetLabelSize(label_size_upper);
+				var_precut.at(t)->GetYaxis()->SetTitleOffset(title_offset_upper);
 
 			}
 			c->cd(2);          // Go back to the main canvas before defining pad1bot
 			TPad *pad2bot = new TPad("pad2bot", "pad2bot", 0, 0.05, 1, 0.3);
 			pad2bot->SetTopMargin(0);
-			pad2bot->SetBottomMargin(0.2);
+			pad2bot->SetBottomMargin(0.301);
 			pad2bot->SetGridx(); // vertical grid
 			pad2bot->Draw();
 			pad2bot->cd();       // pad2bot becomes the current pad
 			TH1* ratpre = (TH1*)var_precut.front()->Clone("rat_pre");
 			ratpre->Divide(var_precut.back());		
 			ratpre->Draw();	
+			ratpre->SetLineColor(kBlack);
 			ratpre->SetTitle("");
-			ratpre->GetXaxis()->SetTitleOffset(1.1);
 			ratpre->GetYaxis()->SetTitle("Ratio");
-			ratpre->GetYaxis()->SetTitleOffset(0.6);
+			ratpre->GetXaxis()->SetTitleOffset(title_offset_ratioX);
+			ratpre->GetYaxis()->SetTitleOffset(title_offset_ratioY);
 
-			ratpre->GetYaxis()->SetTitleSize(0.07);
-			ratpre->GetXaxis()->SetTitleSize(0.09);
-			ratpre->GetYaxis()->SetLabelSize(0.07);
-			ratpre->GetXaxis()->SetLabelSize(0.09);
+			ratpre->GetYaxis()->SetTitleSize(title_size_ratio);
+			ratpre->GetXaxis()->SetTitleSize(title_size_ratio);
+			ratpre->GetYaxis()->SetLabelSize(label_size_ratio);
+			ratpre->GetXaxis()->SetLabelSize(label_size_ratio);
+			ratpre->GetXaxis()->SetTitle(var.unit.c_str());
 
 			var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 			var_precut.front()->GetYaxis()->SetTitle("Verticies");
-			var_precut.front()->GetXaxis()->SetTitle(var.name.c_str());
 
 			pad2top->cd();
 			lpre->Draw();
@@ -364,38 +391,39 @@ class compare_instance{
 				var_bdtcut.at(t)->SetLineWidth(3);
 				var_bdtcut.at(t)->SetMarkerStyle(20);
 				var_bdtcut.at(t)->Draw((files.at(t)->plot_ops+" SAME").c_str());
-				lbdt->AddEntry(var_bdtcut.at(t), (files.at(t)->tag+" : "+ to_string_prec( var_bdtcut.at(t)->Integral(),1)).c_str()  , "lp");
+				lbdt->AddEntry(var_bdtcut.at(t), (files.at(t)->tag+" : "+ to_string_prec( var_bdtcut.at(t)->Integral(),1)).c_str()  , files.at(t)->leg.c_str());
 
-				var_bdtcut.at(t)->GetXaxis()->SetTitleSize(0.04);
-				var_bdtcut.at(t)->GetXaxis()->SetLabelSize(0.04);
-				var_bdtcut.at(t)->GetYaxis()->SetLabelSize(0.04);
-				var_bdtcut.at(t)->GetYaxis()->SetTitleOffset(1.45);
+				var_bdtcut.at(t)->GetXaxis()->SetTitleSize(title_size_upper);
+				var_bdtcut.at(t)->GetXaxis()->SetLabelSize(label_size_upper);
+				var_bdtcut.at(t)->GetYaxis()->SetLabelSize(label_size_upper);
+				var_bdtcut.at(t)->GetYaxis()->SetTitleOffset(title_offset_upper);
 
 			}
 			c->cd(3);          // Go back to the main canvas before defining pad1bot
 			TPad *pad3bot = new TPad("pad3bot", "pad3bot", 0, 0.05, 1, 0.3);
 			pad3bot->SetTopMargin(0);
-			pad3bot->SetBottomMargin(0.2);
+			pad3bot->SetBottomMargin(0.301);
 			pad3bot->SetGridx(); // vertical grid
 			pad3bot->Draw();
 			pad3bot->cd();       // pad3bot becomes the current pad
 			TH1* ratbdt = (TH1*)var_bdtcut.front()->Clone("rat_bdt");
 			ratbdt->Divide(var_bdtcut.back());		
 			ratbdt->Draw();	
+			ratbdt->SetLineColor(kBlack);
 			ratbdt->SetTitle("");
-			ratbdt->GetXaxis()->SetTitleOffset(1.1);
+			ratbdt->GetXaxis()->SetTitleOffset(title_offset_ratioX);
 			ratbdt->GetYaxis()->SetTitle("Ratio");
-			ratbdt->GetYaxis()->SetTitleOffset(0.6);
+			ratbdt->GetYaxis()->SetTitleOffset(title_offset_ratioY);
 
-			ratbdt->GetYaxis()->SetTitleSize(0.07);
-			ratbdt->GetXaxis()->SetTitleSize(0.09);
-			ratbdt->GetYaxis()->SetLabelSize(0.07);
-			ratbdt->GetXaxis()->SetLabelSize(0.09);
+			ratbdt->GetYaxis()->SetTitleSize(title_size_ratio);
+			ratbdt->GetXaxis()->SetTitleSize(title_size_ratio);
+			ratbdt->GetYaxis()->SetLabelSize(label_size_ratio);
+			ratbdt->GetXaxis()->SetLabelSize(label_size_ratio);
+			ratbdt->GetXaxis()->SetTitle(var.unit.c_str());
 
 
 			var_bdtcut.front()->GetYaxis()->SetRangeUser(0.1,ymax_bdt);
 			var_bdtcut.front()->GetYaxis()->SetTitle("Verticies");
-			var_bdtcut.front()->GetXaxis()->SetTitle(var.name.c_str());
 			pad3top->cd();
 			lbdt->Draw();
 
@@ -427,16 +455,16 @@ int new_data_mc(){
 
 	//(std::string inname, std::string inbin, bool intrack) : 
 	std::vector<bdt_variable> vars;
-	vars.push_back( bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)", false));
-	vars.push_back( bdt_variable("reco_shower_dedx_plane0","(48,0,15)", false));
-	vars.push_back( bdt_variable("longest_asso_track_displacement","(25,0,500)", true));
-	vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(25,0,10)", false));
-	vars.push_back(bdt_variable("longest_asso_track_thetayz","(25,-1.7,1.7)",true));
-	vars.push_back(bdt_variable("longest_asso_track_thetaxz","(25,-1.7,1.7)",true));
-	vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)",false));
-	vars.push_back(bdt_variable("most_energetic_shower_bp_dist_to_tpc","(25,0,1000)",false));
-	vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)",false));
-	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)",false));
+	vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Energy [GeV]", false));
+	vars.push_back(bdt_variable("reco_shower_dedx_plane0","(48,0,15)", "dE/dx [MeV/cm]",false));
+	vars.push_back(bdt_variable("longest_asso_track_displacement","(25,0,500)","Length [cm]", true));
+	vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(25,0,10)","Length [cm]" ,false));
+	vars.push_back(bdt_variable("longest_asso_track_thetayz","(25,-1.7,1.7)","Angle [rad]",true));
+	vars.push_back(bdt_variable("longest_asso_track_thetaxz","(25,-1.7,1.7)","Angle [rad]",true));
+	vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Num Tracks",false));
+	vars.push_back(bdt_variable("most_energetic_shower_bp_dist_to_tpc","(25,0,1000)","Distance [cm]",false));
+	vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance [cm]",false));
+	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Num PE",false));
 	TFile * fout = new TFile("data_mc_comparason.root","recreate");
 
 	for(auto & v: vars){
