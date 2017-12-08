@@ -10,6 +10,7 @@
 #include "plotstack.h"
 #include "load_mva_param.h"
 #include "data_mc.h"
+#include "efficiency.h"
 
 #include "tinyxml.h"
 
@@ -87,8 +88,8 @@ int main (int argc, char *argv[]){
 
 	std::string nsig = "mcc84/merged.ncdelta_v1.0.root";
 	std::string nsig_cosmic = "mcc84/merged.ncdeltacosmic_v1.0.root";
-//	std::string nsig = "mcc82/runmv_sp.root";
-//	std::string nsig_cosmic = "mcc82/runmv_sp_cosmic.root";
+	//	std::string nsig = "mcc82/runmv_sp.root";
+	//	std::string nsig_cosmic = "mcc82/runmv_sp_cosmic.root";
 
 
 
@@ -120,15 +121,15 @@ int main (int argc, char *argv[]){
 		{"most_energetic_shower_reco_startz","d"},
 		{"most_energetic_shower_reco_starty","d"},
 		{"most_energetic_shower_reco_startx","d"},
-//INF		{"most_energetic_shower_reco_thetaxz", "d"},
+		//INF		{"most_energetic_shower_reco_thetaxz", "d"},
 		{"totalpe_ibg_sum","d"},
-//INF		{"most_energetic_shower_reco_thetayz", "d"},
+		//INF		{"most_energetic_shower_reco_thetayz", "d"},
 		{"most_energetic_shower_reco_thetayx", "d"},
 		{"most_energetic_shower_reco_length","d"},
 		{"most_energetic_shower_bp_dist_to_tpc", "d"},
-//		{"most_energetic_shower_reco_dirx","d"},
-//		{"most_energetic_shower_reco_diry","d"},
-//		{"most_energetic_shower_reco_dirz","d"},
+		//		{"most_energetic_shower_reco_dirx","d"},
+		//		{"most_energetic_shower_reco_diry","d"},
+		//		{"most_energetic_shower_reco_dirz","d"},
 		{"reco_shower_dedx_plane0", "d"},
 		{"reco_shower_dedx_plane1", "d"},
 		{"reco_shower_dedx_plane2", "d"},
@@ -144,17 +145,17 @@ int main (int argc, char *argv[]){
 	variables_trackonly.emplace_back("shortest_asso_shower_to_vert_dist", "d");
 	variables_trackonly.emplace_back("longest_asso_track_thetaxz", "d");
 	//variables_trackonly.emplace_back("cos(longest_asso_track_thetaxz)", "d");
-//inf	variables_trackonly.emplace_back("longest_asso_track_thetayz", "d");
-//inf	variables_trackonly.emplace_back("longest_asso_track_thetayx", "d");
+	//inf	variables_trackonly.emplace_back("longest_asso_track_thetayz", "d");
+	//inf	variables_trackonly.emplace_back("longest_asso_track_thetayx", "d");
 	//variables_trackonly.emplace_back("cos(longest_asso_track_thetayz)", "d");
 	variables_trackonly.emplace_back("reco_asso_tracks", "i");
 	variables_trackonly.emplace_back("longest_asso_track_displacement", "d");
-//inf	variables_trackonly.emplace_back("longest_asso_track_reco_dirx","d");
-//inf	variables_trackonly.emplace_back("longest_asso_track_reco_diry","d");
+	//inf	variables_trackonly.emplace_back("longest_asso_track_reco_dirx","d");
+	//inf	variables_trackonly.emplace_back("longest_asso_track_reco_diry","d");
 	variables_trackonly.emplace_back("longest_asso_track_reco_dirz","d");
 	//variables_trackonly.emplace_back(angle_track_shower.c_str(), "d");
 	//All the necessary methods that we want to use for MVA, will stick these into an XML sometime soon
-	
+
 	MVALoader xml_methods(xml);
 	std::vector<method_struct> const methods  = xml_methods.GetMethods(); 
 
@@ -187,7 +188,7 @@ int main (int argc, char *argv[]){
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "data/merged.data5e19_v6.0.root", "LEEPhotonAnalysisData/vertex_tree"), "data"),
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "data/merged.bnbext_v3.0.root", "LEEPhotonAnalysisData/vertex_tree"), "dataext")
 	};
-	
+
 	std::vector<std::string> const tree_cuts = {
 		all_cut + " && " + signal_definition,
 		all_cut + " && " + signal_definition,
@@ -224,30 +225,30 @@ int main (int argc, char *argv[]){
 	else if(mode_option == "app") {
 		app(identifier_notrack,"app", app_trees, tree_cuts, all_cut_notrack, variables_notrack, methods);
 		app(identifier_trackonly,"app", app_trees, tree_cuts, all_cut_trackonly, variables_trackonly, methods);
-	
-/*	}else if(mode_option == "appdata"){
 
-		app(identifier_notrack,"data_BNB",data_trees, data_cuts, all_cut_notrack, variables_notrack, methods);
-		app(identifier_trackonly,"data_BNB", data_trees, data_cuts, all_cut_trackonly, variables_trackonly, methods);
+		/*	}else if(mode_option == "appdata"){
 
-	}
-	else if(mode_option == "appext"){
+			app(identifier_notrack,"data_BNB",data_trees, data_cuts, all_cut_notrack, variables_notrack, methods);
+			app(identifier_trackonly,"data_BNB", data_trees, data_cuts, all_cut_trackonly, variables_trackonly, methods);
 
-		app(identifier_notrack,"data_EXT",ext_trees, data_cuts, all_cut_notrack, variables_notrack, methods);
-		app(identifier_trackonly,"data_EXT", ext_trees, data_cuts, all_cut_trackonly, variables_trackonly, methods);
+			}
+			else if(mode_option == "appext"){
 
-*/	}
+			app(identifier_notrack,"data_EXT",ext_trees, data_cuts, all_cut_notrack, variables_notrack, methods);
+			app(identifier_trackonly,"data_EXT", ext_trees, data_cuts, all_cut_trackonly, variables_trackonly, methods);
+
+		 */	}
 	else if(mode_option == "merge") {
 		merge(identifier+"_merged_app.root", identifier_notrack+"_app.root", identifier_trackonly+"_app.root", app_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
 	}
-/*
-	else if(mode_option == "mergedata") {
-		merge(identifier+"_merged_data_BNB.root", identifier_notrack+"_data_BNB.root", identifier_trackonly+"_data_BNB.root", data_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
-	}
-	else if(mode_option == "mergeext") {
-		merge(identifier+"_merged_data_EXT.root", identifier_notrack+"_data_EXT.root", identifier_trackonly+"_data_EXT.root", ext_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
-	}
-*/
+	/*
+	   else if(mode_option == "mergedata") {
+	   merge(identifier+"_merged_data_BNB.root", identifier_notrack+"_data_BNB.root", identifier_trackonly+"_data_BNB.root", data_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
+	   }
+	   else if(mode_option == "mergeext") {
+	   merge(identifier+"_merged_data_EXT.root", identifier_notrack+"_data_EXT.root", identifier_trackonly+"_data_EXT.root", ext_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
+	   }
+	 */
 
 	else if(mode_option == "significance_sep" || mode_option == "sig") {
 
@@ -262,7 +263,7 @@ int main (int argc, char *argv[]){
 		};
 		std::vector<std::pair<TTree *, std::string>> const background_significance_trees = {
 			std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc84/merged.bnbcosmic_v2.0.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_background")
-		//	,std::pair<TTree *, std::string>(oh.GetObject(dir + "data/merged.bnbext_v2.0.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_background")
+				//	,std::pair<TTree *, std::string>(oh.GetObject(dir + "data/merged.bnbext_v2.0.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_background")
 		};
 
 		std::vector<std::pair<std::string, std::string>> const background_significance_tree_cuts = {
@@ -374,7 +375,7 @@ int main (int argc, char *argv[]){
 
 		c_notrack->SaveAs("notrack_variables.png","png");
 		c_trackonly->SaveAs("trackonly_variables.png","png");
-	
+
 		fin_notrack->Close();
 		fin_trackonly->Close();
 	}
@@ -394,10 +395,109 @@ int main (int argc, char *argv[]){
 		tlimits_var(identifier+"_mva_response.root", methods, 6.6e20, 40, 6.6e20, 10e21, signal_training_pots.front().second, background_training_pots.front().second, background_training_pots.front().second);
 	}  
 	else if(mode_option == "test"){
-		//new_data_mc();
-		run_efficiency();
+		std::string MCFRIEND = "runtmva_merged_app.root";
+
+		bdt_file *data = new bdt_file("../../../samples/data/", "merged.data5e19_v6.0.root","Data5e19","e1","LEEPhotonAnalysisData",MCFRIEND,"data",kBlue-4,true );
+		bdt_file *ext = new bdt_file("../../../samples/data/", "merged.bnbext_v3.0.root","BNBext","hist","LEEPhotonAnalysisData", MCFRIEND,"dataext",kGreen-3,true);
+
+		bdt_file *mc4 = new bdt_file("../../../samples/mcc84", "merged.bnbcosmic_v2.0.root","BNB+cosmicOverlay_8.4","hist","LEEPhoton", MCFRIEND,"bnb_cosmic",kRed-4,false);
+		bdt_file *sig = new bdt_file("../../../samples/mcc84/", "merged.ncdeltacosmic_v1.0.root","NCDelta","hist","LEEPhoton", MCFRIEND,"ncdelta_cosmic",kYellow,false);
+		//bdt_file *sig = new bdt_file("../../../samples/mcc82/", "runmv_sp_cosmic.root","LEE NCDelta","hist","LEEPhoton", MCFRIEND,"ncdelta_cosmic",kYellow,false);
+
+		mc4->leg = "f";
+		sig->leg = "f";
+		ext->leg = "f";
+
+		double N_off_events = 373820;//  136208;// v2.0;
+		double N_on_events = 544479;
+
+		data->setPOT(4.95e19);
+		ext->setPOT(4.95e19);
+
+
+		double data_scale_factor = 547616.0/N_on_events;
+		double ext_scale_factor = 1.285*(382718.0/N_off_events);//*(N_on_events/547616.0);
+		ext->scale(ext_scale_factor);
+		//	sig->scale(2.1);
+
+		std::vector<bdt_file*> vec_files = {data,ext,mc4,sig};
+		std::vector<int> which_stack = {0,1,1,1};
+
+
+		//(std::string inname, std::string inbin, bool intrack) : 
+		std::vector<bdt_variable> vars;
+
+		int level = 2;
+
+
+		if(level>=0){
+
+			vars.push_back(bdt_variable("reco_shower_dedx_plane2","(48,0,15)", "Shower dE/dx Collection Plane [MeV/cm]",false));
+			vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Reco Shower Energy [GeV]", false));
+			vars.push_back(bdt_variable("longest_asso_track_displacement","(25,0,500)","Track Length [cm]", true));
+			vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number Reco Tracks",false));
+
+		}if (level>=1){
+
+			vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Number of PE",false));
+			vars.push_back(bdt_variable("reco_asso_showers","(6,0,5)","Number of Reco Showers",false));	
+			vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from shower to flashcenter [cm]",false));
+			vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(25,0,125)","Vertex-TPC Wall Distance [cm]",false));
+			vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(25,0,10)","Photon Coversion Length [cm]" ,false));
+			vars.push_back(bdt_variable("most_energetic_shower_bp_dist_to_tpc","(25,0,1000)","Back Projected Distance from shower to TPC wall [cm]",false));
+			vars.push_back(bdt_variable("most_energetic_shower_reco_thetaxz","(25,-1.7,1.7)","Shower Angle xy [rad]",false));
+			vars.push_back(bdt_variable("most_energetic_shower_reco_thetayz","(25,-1.7,1.7)","Shower Angle yz [rad]",false));
+			vars.push_back(bdt_variable("longest_asso_track_thetayz","(25,-1.7,1.7)","Track Angle yz [rad]",true));
+			vars.push_back(bdt_variable("longest_asso_track_thetaxz","(25,-1.7,1.7)","Track Angle xz [rad]",true));
+
+		}if(level>=2){
+
+			vars.push_back(bdt_variable("summed_associated_reco_shower_energy","(25,0,0.5)","Energy [GeV]",false));
+			vars.push_back(bdt_variable("most_energetic_shower_reco_length","(25,0,125)","Distance [cm]",false));
+			vars.push_back(bdt_variable("reco_nuvertx","(25,0,300)","Distance [cm]",false));
+			vars.push_back(bdt_variable("reco_nuverty","(25,-300,+300)","Distance [cm]",false));
+			vars.push_back(bdt_variable("reco_nuvertz","(25,0,1000)","Distance [cm]",false));
+			vars.push_back(bdt_variable("reco_shower_dedx_plane0","(48,0,15)", "dE/dx [MeV/cm]",false));
+			vars.push_back(bdt_variable("reco_shower_dedx_plane1","(48,0,15)", "dE/dx [MeV/cm]",false));
+			vars.push_back(bdt_variable("totalpe_bbg_sum","(25,0,2000)","Num PE",false));
+		}
+
+		bdt_variable true_shower("delta_photon_energy","(25,0,1.0)","True Photon Energy [GeV]", false);
+
+
+		bool run_eff = true;
+		bool run_bdt_response = false;
+		bool run_full_comparason = false;
+
+		if(run_eff){
+			TFile *fout = new TFile("eff_response.root","recreate");	
+			eff_analysis eff(sig, true_shower);
+			eff.plot(fout, 0.535, 0.4925);
+
+			eff_analysis eff_reco(sig, vars.at(1));
+			eff_reco.plot(fout, 0.535, 0.4925);
+
+			fout->Close();
+		}
+		if(run_bdt_response){
+			TFile *fout0 = new TFile("bdt_response.root","recreate");	
+			bdt_response_analysis bdt(vec_files,which_stack);
+			bdt.plot_bdt_response(fout0);
+			fout0->Close();
+		}
+		if(run_full_comparason){
+			TFile * fout = new TFile("data_mc_comparason.root","recreate");
+			for(auto & v: vars){
+				compare_instance c(vec_files, v, which_stack);
+				c.plot(fout);
+
+			}
+
+			fout->Close();
+		}
+
 	}
-	
+
 
 	else {
 		std::cout << "WARNING: " << mode_option << " is an invalid option\n";
