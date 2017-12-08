@@ -140,7 +140,7 @@ std::vector<double> method_best_significance_seperate(std::string const & app_fi
 	double best_mva_cut2 = DBL_MAX;
 
 	//for nice plots make the 50, 25 is quicker tho
-	int nsteps = 25;//50
+	int nsteps = 20;//50
 	double cut_min = 999;
 	double cut_max = -999;
 
@@ -164,10 +164,12 @@ std::vector<double> method_best_significance_seperate(std::string const & app_fi
 		if( tmin <= cut_min) cut_min=tmin;
 		if( tmax >= cut_max) cut_max=tmax;
 	}
+
 	std::cout<<"While on "<<method<<" max and min cut values are :"<<cut_min<<" "<<cut_max<<" respectively"<<std::endl;
 
 
-
+	std::cout<<"While on "<<method<<" BUUUT im just going to use 0.45 and mas:"<<cut_min<<" "<<cut_max<<" respectively"<<std::endl;
+	cut_min = 0.46;
 	
 	double step = (cut_max-cut_min)/((double)nsteps);
 

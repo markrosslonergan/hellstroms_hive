@@ -1,7 +1,7 @@
 include_directories (${CMAKE_SOURCE_DIR}/inc/)
 include_directories ( ${CMAKE_SOURCE_DIR}/tinyxml/)
 
-add_library (deltaRadlib data_mc_compare.cxx load_mva_param.cxx train.cxx app.cxx merge.cxx significance.cxx gen_tlimits.cxx load_trees.cxx get_pot_info.cxx get_mva_response_hists.cxx get_vertices_per_event.cxx plot_mva_response_hists.cxx plotstack.cxx)
+add_library (deltaRadlib efficiency.cxx data_mc_compare.cxx load_mva_param.cxx train.cxx app.cxx merge.cxx significance.cxx gen_tlimits.cxx load_trees.cxx get_pot_info.cxx get_mva_response_hists.cxx get_vertices_per_event.cxx plot_mva_response_hists.cxx plotstack.cxx)
 target_link_libraries (deltaRadlib tinyxmllib ${ROOT_LIBRARIES})
 
 
