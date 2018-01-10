@@ -9,7 +9,7 @@
 #include "gen_tlimits.h"
 #include "plotstack.h"
 #include "load_mva_param.h"
-#include "data_mc.h"
+#include "data_mc_testing_suite.h"
 #include "efficiency.h"
 
 #include "tinyxml.h"
@@ -186,18 +186,25 @@ int main (int argc, char *argv[]){
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc84/merged.bnbcosmic_v2.0.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_background"),
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc84/merged.bnbcosmic_v2.0.root", "LEEPhoton/vertex_tree"), "bnb_cosmic"),
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "data/merged.data5e19_v6.0.root", "LEEPhotonAnalysisData/vertex_tree"), "data"),
-		std::pair<TTree *, std::string>(oh.GetObject(dir + "data/merged.bnbext_v3.0.root", "LEEPhotonAnalysisData/vertex_tree"), "dataext")
+		std::pair<TTree *, std::string>(oh.GetObject(dir + "data/merged.bnbext_v3.0.root", "LEEPhotonAnalysisData/vertex_tree"), "dataext"),
+		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc84/rmcm.root", "LEEPhoton/vertex_tree"), "minibefore"),
+		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc85/bnb_cosmic.hitass_1000.root", "LEEPhoton/vertex_tree"), "miniafter")
 	};
 
+
+	std::vector<std::pair<TTree *, std::string>> const app_trees_reduced = {app_trees.at(0), app_trees.at(3), app_trees.at(4), app_trees.at(5)};
 	std::vector<std::string> const tree_cuts = {
 		all_cut + " && " + signal_definition,
 		all_cut + " && " + signal_definition,
 		all_cut + " && " + background_definition,
 		all_cut,
 		all_cut,
+		all_cut,	
+		all_cut,	
 		all_cut
 	};
 
+	std::vector<std::string> const tree_cuts_reduced = {tree_cuts.at(0), tree_cuts.at(3), tree_cuts.at(4), tree_cuts.at(5)};
 	std::vector<std::pair<std::string, std::string>> const mva_branches = {
 		{"mva", "d"}
 	};
@@ -279,112 +286,17 @@ int main (int argc, char *argv[]){
 		//Just Some boring plotting routines for now,
 
 		std::cout<<"Starting --plotstack-- routine."<<std::endl;
-		plotstack(dir,  identifier+"_merged_app.root" );
+		//plotstack(dir,  identifier+"_merged_app.root" );
 		std::cout<<"Ending --plotstack-- routine."<<std::endl;
 
 
-
-		TFile *fin_notrack = new TFile((identifier_notrack+"_training.root").c_str());
-		TFile *fin_trackonly = new TFile((identifier_trackonly+"_training.root").c_str());
-
-		std::vector<TH1F*> vec_sig_notrack;
-		std::vector<TH1F*> vec_bkg_notrack;
-
-		std::vector<TH1F*> vec_sig_trackonly;
-		std::vector<TH1F*> vec_bkg_trackonly;
-
-		TCanvas *c_trackonly = new TCanvas("all_variables_trackonly","all_variables_trackonly",1200,variables_trackonly.size()*1000 );		
-		c_trackonly->Divide(1,variables_trackonly.size());
-		int whichcan_trackonly=0;
-
-		TCanvas *c_notrack = new TCanvas("all_variables_notrack","all_variables_notrack",1200,variables_notrack.size()*1000 );		
-		c_notrack->Divide(1,variables_notrack.size());
-		int whichcan_notrack=0;
-
-		for(auto vars: variables_notrack){
-			TH1F * sig = (TH1F*)fin_notrack->Get(("dataset/InputVariables_Id/"+vars.first+"__Signal_Id").c_str());	
-			TH1F * bkg = (TH1F*)fin_notrack->Get(("dataset/InputVariables_Id/"+vars.first+"__Background_Id").c_str());	
-			vec_sig_notrack.push_back(sig);		
-			vec_bkg_notrack.push_back(bkg);		
-			TPad* p = (TPad*)c_notrack->cd(++whichcan_notrack);
-			p->SetTopMargin(0.075);
-			p->SetBottomMargin(0.075);		
-
-			sig->Scale(1.0/sig->Integral());
-			bkg->Scale(1.0/bkg->Integral());
-
-			sig->SetStats(0);
-			sig->SetTitle(vars.first.c_str());
-			sig->GetXaxis()->SetTitle(vars.first.c_str());
-			sig->GetYaxis()->SetTitle("Events");
-
-			sig->SetLineColor(kRed-6);
-			bkg->SetLineColor(kBlue-7);
-			sig->SetLineWidth(3);
-			bkg->SetLineWidth(3);
-
-			sig->Draw("hist");
-			bkg->Draw("hist same");
-			sig->SetMaximum( std::max(sig->GetMaximum(), bkg->GetMaximum())+0.01);
-
-			TLegend * pl = new TLegend(0.6,0.6,0.89,0.89);
-			pl->SetFillStyle(0);
-			pl->SetLineColor(kWhite);
-			pl->AddEntry(sig,"Signal","l");
-			pl->AddEntry(bkg,"Background","l");
-			pl->Draw();
-		} 
-
-
-		for(auto vars: variables_trackonly){
-			TH1F * sig = (TH1F*)fin_trackonly->Get(("dataset/InputVariables_Id/"+vars.first+"__Signal_Id").c_str());	
-			TH1F * bkg = (TH1F*)fin_trackonly->Get(("dataset/InputVariables_Id/"+vars.first+"__Background_Id").c_str());	
-			vec_sig_notrack.push_back(sig);		
-			vec_bkg_notrack.push_back(bkg);		
-			TPad* p = (TPad*)c_trackonly->cd(++whichcan_trackonly);
-			p->SetTopMargin(0.075);
-			p->SetBottomMargin(0.075);		
-
-
-			sig->Scale(1.0/sig->Integral());
-			bkg->Scale(1.0/bkg->Integral());
-
-			sig->SetStats(0);
-			sig->SetTitle(vars.first.c_str());
-			sig->GetXaxis()->SetTitle(vars.first.c_str());
-			sig->GetYaxis()->SetTitle("Events");
-
-			sig->SetLineColor(kRed-6);
-			bkg->SetLineColor(kBlue-7);
-			sig->SetLineWidth(3);
-			bkg->SetLineWidth(3);
-
-			sig->Draw("hist");
-			bkg->Draw("hist same");
-			sig->SetMaximum( std::max(sig->GetMaximum(), bkg->GetMaximum())+0.01);
-
-			TLegend * pl = new TLegend(0.6,0.6,0.89,0.89);
-			pl->SetFillStyle(0);
-			pl->SetLineColor(kWhite);
-			pl->AddEntry(sig,"Signal","l");
-			pl->AddEntry(bkg,"Background","l");
-			pl->Draw();
-		} 
-
-
-
-		c_notrack->SaveAs("notrack_variables.png","png");
-		c_trackonly->SaveAs("trackonly_variables.png","png");
-
-		fin_notrack->Close();
-		fin_trackonly->Close();
 	}
 	else if(mode_option == "get_response_tlimits") {
-		get_mva_response_hists(identifier+"_mva_response.root", identifier+"_merged_app.root", app_trees, methods, mva_branches, "50", tree_cuts, cut_notrack, cut_trackonly);
+		get_mva_response_hists(identifier+"_mva_response.root", identifier+"_merged_app.root", app_trees_reduced, methods, mva_branches, "30", tree_cuts_reduced, cut_notrack, cut_trackonly);
 	}
 
 	else if(mode_option == "plot_response_tlimits") {
-		plot_mva_response_hists(identifier+"_plot_mva_response.root", identifier+"_mva_response.root", app_trees, methods, mva_branches);
+		plot_mva_response_hists(identifier+"_plot_mva_response.root", identifier+"_mva_response.root", app_trees_reduced, methods, mva_branches);
 	}
 
 	else if(mode_option == "tlimits") {
@@ -396,13 +308,11 @@ int main (int argc, char *argv[]){
 	}  
 	else if(mode_option == "test"){
 		std::string MCFRIEND = "runtmva_merged_app.root";
-
 		bdt_file *data = new bdt_file("../../../samples/data/", "merged.data5e19_v6.0.root","Data5e19","e1","LEEPhotonAnalysisData",MCFRIEND,"data",kBlue-4,true );
 		bdt_file *ext = new bdt_file("../../../samples/data/", "merged.bnbext_v3.0.root","BNBext","hist","LEEPhotonAnalysisData", MCFRIEND,"dataext",kGreen-3,true);
-
 		bdt_file *mc4 = new bdt_file("../../../samples/mcc84", "merged.bnbcosmic_v2.0.root","BNB+cosmicOverlay_8.4","hist","LEEPhoton", MCFRIEND,"bnb_cosmic",kRed-4,false);
-		bdt_file *sig = new bdt_file("../../../samples/mcc84/", "merged.ncdeltacosmic_v1.0.root","NCDelta","hist","LEEPhoton", MCFRIEND,"ncdelta_cosmic",kYellow,false);
-		//bdt_file *sig = new bdt_file("../../../samples/mcc82/", "runmv_sp_cosmic.root","LEE NCDelta","hist","LEEPhoton", MCFRIEND,"ncdelta_cosmic",kYellow,false);
+		bdt_file *sig = new bdt_file("../../../samples/mcc84/", "merged.ncdeltacosmic_v1.0.root","NCDeltaCosmics","hist","LEEPhoton", MCFRIEND,"ncdelta_cosmic",kOrange,false);
+		bdt_file *sig_nocosmics = new bdt_file("../../../samples/mcc84/", "merged.ncdelta_v1.0.root","NCDelta","hist","LEEPhoton", MCFRIEND,"ncdelta",kBlue-4,false);
 
 		mc4->leg = "f";
 		sig->leg = "f";
@@ -431,14 +341,13 @@ int main (int argc, char *argv[]){
 
 
 		if(level>=0){
-
+			
 			vars.push_back(bdt_variable("reco_shower_dedx_plane2","(48,0,15)", "Shower dE/dx Collection Plane [MeV/cm]",false));
 			vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Reco Shower Energy [GeV]", false));
 			vars.push_back(bdt_variable("longest_asso_track_displacement","(25,0,500)","Track Length [cm]", true));
 			vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number Reco Tracks",false));
 
 		}if (level>=1){
-
 			vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Number of PE",false));
 			vars.push_back(bdt_variable("reco_asso_showers","(6,0,5)","Number of Reco Showers",false));	
 			vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from shower to flashcenter [cm]",false));
@@ -451,7 +360,6 @@ int main (int argc, char *argv[]){
 			vars.push_back(bdt_variable("longest_asso_track_thetaxz","(25,-1.7,1.7)","Track Angle xz [rad]",true));
 
 		}if(level>=2){
-
 			vars.push_back(bdt_variable("summed_associated_reco_shower_energy","(25,0,0.5)","Energy [GeV]",false));
 			vars.push_back(bdt_variable("most_energetic_shower_reco_length","(25,0,125)","Distance [cm]",false));
 			vars.push_back(bdt_variable("reco_nuvertx","(25,0,300)","Distance [cm]",false));
@@ -465,17 +373,27 @@ int main (int argc, char *argv[]){
 		bdt_variable true_shower("delta_photon_energy","(25,0,1.0)","True Photon Energy [GeV]", false);
 
 
-		bool run_eff = true;
-		bool run_bdt_response = false;
-		bool run_full_comparason = false;
+		bool run_eff = 0;//0;//false;
+		bool run_bdt_response = 1;//false;
+		bool run_full_comparason = 0;//false;
+		bool bdt_var = 0;
+
+		if(bdt_var){
+			TFile *fout_train = new TFile("bdt_variables.root","recreate");
+			std::vector<bdt_file*> mcfiles = {sig,sig_nocosmics,mc4};
+			plot_sig_back_bdt_vars(fout_train, mcfiles, vars);
+			fout_train->Close();
+		}
+			
 
 		if(run_eff){
 			TFile *fout = new TFile("eff_response.root","recreate");	
 			eff_analysis eff(sig, true_shower);
-			eff.plot(fout, 0.535, 0.4925);
+			eff.plot(fout, 0.535, 0.495);
 
-			eff_analysis eff_reco(sig, vars.at(1));
-			eff_reco.plot(fout, 0.535, 0.4925);
+			//cant do reco with vertexing
+			//eff_analysis eff_reco(sig, vars.at(1));
+			//eff_reco.plot(fout, 0.535, 0.4925);
 
 			fout->Close();
 		}
@@ -492,11 +410,52 @@ int main (int argc, char *argv[]){
 				c.plot(fout);
 
 			}
-
 			fout->Close();
 		}
 
+	}else if(mode_option == "mini"){
+		std::string MCFRIEND = "runtmva_merged_app.root";
+		bdt_file *before = new bdt_file("../../../samples/mcc85/", "bnb_cosmic.hitass_1000.root","After","hist","LEEPhoton", MCFRIEND,"miniafter",kBlue-4,false);
+		//bdt_file *before = new bdt_file("../../../samples/mcc84/", "rmcm.root","Before","hist","LEEPhoton", MCFRIEND,"minibefore",kBlue-4,false);
+		before->setPOT(4.95e19);
+		
+		
+		bdt_variable dEdx("reco_shower_dedx_plane2","(48,0,15)", "Shower dE/dx Collection Plane [MeV/cm]",false);
+		bdt_variable recoEn("summed_associated_helper_shower_energy","(25,0,0.5)","Reco Shower Energy [GeV]", false);
+
+		std::string bdt_cut = all_cut;// + "&&"+ before->friend_tree_name + ".mva >= 0.47 ";
+
+
+		std::vector<TH1*> vech = before->getRecoMCTH1(recoEn, bdt_cut+"&& reco_asso_tracks ==0", "test", 5e19);
+		TH1* all = before->getTH1(recoEn,bdt_cut+"&& reco_asso_tracks==0","all",5e19);
+
+		TFile *fmini = new TFile("mini.root","recreate");
+		fmini->cd();
+
+		TCanvas *c = new TCanvas();
+		THStack * s = new THStack("stack","stack");
+	
+		TLegend *l = new TLegend(0.51,0.51,0.89,0.89);
+	
+		int i=0;
+		for(auto &v: vech){
+			s->Add(v);
+			double n = v->Integral();
+			double per = n/all->Integral()*100.0;
+			l->AddEntry(v,(before->recomc_names.at(i)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
+			i++;
+		}	
+
+		s->Draw("hist ");
+		//all->Draw("E1 same");	
+		l->Draw();
+
+		c->Write();
+		fmini->Close();
+	
+
 	}
+	
 
 
 	else {
