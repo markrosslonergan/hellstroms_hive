@@ -188,7 +188,7 @@ int main (int argc, char *argv[]){
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "data/merged.data5e19_v6.0.root", "LEEPhotonAnalysisData/vertex_tree"), "data"),
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "data/merged.bnbext_v3.0.root", "LEEPhotonAnalysisData/vertex_tree"), "dataext"),
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc84/rmcm.root", "LEEPhoton/vertex_tree"), "minibefore"),
-		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc85/bnb_cosmic.hitass_1000.root", "LEEPhoton/vertex_tree"), "miniafter")
+		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc86/merged.bnbcosmic_v3.0_mcc86.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_mcc86")
 	};
 
 
@@ -313,6 +313,8 @@ int main (int argc, char *argv[]){
 		bdt_file *mc4 = new bdt_file("../../../samples/mcc84", "merged.bnbcosmic_v2.0.root","BNB+cosmicOverlay_8.4","hist","LEEPhoton", MCFRIEND,"bnb_cosmic",kRed-4,false);
 		bdt_file *sig = new bdt_file("../../../samples/mcc84/", "merged.ncdeltacosmic_v1.0.root","NCDeltaCosmics","hist","LEEPhoton", MCFRIEND,"ncdelta_cosmic",kOrange,false);
 		bdt_file *sig_nocosmics = new bdt_file("../../../samples/mcc84/", "merged.ncdelta_v1.0.root","NCDelta","hist","LEEPhoton", MCFRIEND,"ncdelta",kBlue-4,false);
+		//bdt_file *mc5 = new bdt_file("../../../samples/mcc85/", "bnb_cosmic.hitass_1000.root","BNB+cosmicOverlay_8.5","hist","LEEPhoton", MCFRIEND,"miniafter",kRed-4,false);
+		bdt_file *mc6 = new bdt_file("../../../samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86.root","BNB+cosmicOverlay_8.6","hist","LEEPhoton", MCFRIEND,"bnb_cosmic_mcc86",kRed-4,false);
 
 		mc4->leg = "f";
 		sig->leg = "f";
@@ -330,7 +332,7 @@ int main (int argc, char *argv[]){
 		ext->scale(ext_scale_factor);
 		//	sig->scale(2.1);
 
-		std::vector<bdt_file*> vec_files = {data,ext,mc4,sig};
+		std::vector<bdt_file*> vec_files = {data,ext,mc6,sig};
 		std::vector<int> which_stack = {0,1,1,1};
 
 
@@ -374,8 +376,8 @@ int main (int argc, char *argv[]){
 
 
 		bool run_eff = 0;//0;//false;
-		bool run_bdt_response = 1;//false;
-		bool run_full_comparason = 0;//false;
+		bool run_bdt_response = 0;//false;
+		bool run_full_comparason = 1;//false;
 		bool bdt_var = 0;
 
 		if(bdt_var){
