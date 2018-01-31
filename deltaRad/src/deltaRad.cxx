@@ -86,8 +86,15 @@ int main (int argc, char *argv[]){
 	}
 
 
-	std::string nsig = "mcc84/merged.ncdelta_v1.0.root";
+	//std::string nsig = "mcc84/merged.ncdelta_v1.0.root";
+	//std::string nsig_cosmic = "mcc84/merged.ncdeltacosmic_v1.0.root";
+	
+	std::string nsig = "mcc86/merged.ncsignal_v1.root";
 	std::string nsig_cosmic = "mcc84/merged.ncdeltacosmic_v1.0.root";
+
+
+	std::string nbkg_cosmic = "mcc86/merged.bnbcosmic_v3.0_mcc86_withcalo.root";
+
 	//	std::string nsig = "mcc82/runmv_sp.root";
 	//	std::string nsig_cosmic = "mcc82/runmv_sp_cosmic.root";
 
@@ -105,10 +112,14 @@ int main (int argc, char *argv[]){
 	};
 
 	std::vector<TTree *> const background_training_trees = {
-		oh.GetObject(dir + "mcc84/merged.bnbcosmic_v2.0.root", "LEEPhoton/vertex_tree")
+		oh.GetObject(dir + nbkg_cosmic, "LEEPhoton/vertex_tree")
+	//	oh.GetObject(dir + "mcc86/merged.bnbcosmic_v3.0_mcc86.root", "LEEPhoton/vertex_tree")
 	};
+
+
 	std::vector<std::pair<int, double>> const background_training_pots = {
-		get_pot(dir + "mcc84/merged.bnbcosmic_v2.0.root", "LEEPhoton/get_pot")
+	//	get_pot(dir + "mcc84/merged.bnbcosmic_v2.0.root", "LEEPhoton/get_pot")
+		get_pot(dir + nbkg_cosmic, "LEEPhoton/get_pot")
 	};
 
 	// All the variables in the "notrack" sample
@@ -376,8 +387,8 @@ int main (int argc, char *argv[]){
 
 
 		bool run_eff = 0;//0;//false;
-		bool run_bdt_response = 0;//false;
-		bool run_full_comparason = 1;//false;
+		bool run_bdt_response = 1;//false;
+		bool run_full_comparason = 0;//false;
 		bool bdt_var = 0;
 
 		if(bdt_var){
