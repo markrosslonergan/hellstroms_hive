@@ -590,7 +590,7 @@ class bdt_response_analysis{
 			g_n_signal_track->Draw("alp");	
 
 			cnum->Write();	
-
+			return 0;
 		}
 
 
@@ -1459,6 +1459,7 @@ class compare_instance{
 			c_reco_truth->Write();
 			c_reco_truth->Print(("unit/"+var.name+"_recotruth.pdf").c_str(),"pdf");
 
+			return 0;
 		}
 
 
