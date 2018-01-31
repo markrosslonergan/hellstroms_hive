@@ -244,29 +244,13 @@ int main (int argc, char *argv[]){
 		app(identifier_notrack,"app", app_trees, tree_cuts, all_cut_notrack, variables_notrack, methods);
 		app(identifier_trackonly,"app", app_trees, tree_cuts, all_cut_trackonly, variables_trackonly, methods);
 
-		/*	}else if(mode_option == "appdata"){
-
-			app(identifier_notrack,"data_BNB",data_trees, data_cuts, all_cut_notrack, variables_notrack, methods);
-			app(identifier_trackonly,"data_BNB", data_trees, data_cuts, all_cut_trackonly, variables_trackonly, methods);
-
-			}
-			else if(mode_option == "appext"){
-
-			app(identifier_notrack,"data_EXT",ext_trees, data_cuts, all_cut_notrack, variables_notrack, methods);
-			app(identifier_trackonly,"data_EXT", ext_trees, data_cuts, all_cut_trackonly, variables_trackonly, methods);
-
-		 */	}
+	}
 	else if(mode_option == "merge") {
 		merge(identifier+"_merged_app.root", identifier_notrack+"_app.root", identifier_trackonly+"_app.root", app_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
 	}
-	/*
-	   else if(mode_option == "mergedata") {
-	   merge(identifier+"_merged_data_BNB.root", identifier_notrack+"_data_BNB.root", identifier_trackonly+"_data_BNB.root", data_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
-	   }
-	   else if(mode_option == "mergeext") {
-	   merge(identifier+"_merged_data_EXT.root", identifier_notrack+"_data_EXT.root", identifier_trackonly+"_data_EXT.root", ext_trees, methods, mva_branches, all_cut, cut_notrack, cut_trackonly);
-	   }
-	 */
+
+
+
 
 	else if(mode_option == "significance_sep" || mode_option == "sig") {
 
@@ -294,8 +278,8 @@ int main (int argc, char *argv[]){
 				background_significance_trees, background_significance_tree_cuts, background_significance_pots,	methods);
 
 	}else if(mode_option == "plot"){
-		//Just Some boring plotting routines for now,
 
+		//Just Some boring plotting routines for now,
 		std::cout<<"Starting --plotstack-- routine."<<std::endl;
 		//plotstack(dir,  identifier+"_merged_app.root" );
 		std::cout<<"Ending --plotstack-- routine."<<std::endl;
@@ -317,8 +301,18 @@ int main (int argc, char *argv[]){
 	else if(mode_option == "tlimits_var") {
 		tlimits_var(identifier+"_mva_response.root", methods, 6.6e20, 40, 6.6e20, 10e21, signal_training_pots.front().second, background_training_pots.front().second, background_training_pots.front().second);
 	}  
-	else if(mode_option == "test"){
+	/************************************************************************************************
+	*					UNIT TESTING
+	************************************************************************************************/
+
+
+	else if(mode_option == "unit"){
+
+		//This is the name of the MC friend containing the BDT variable
 		std::string MCFRIEND = "runtmva_merged_app.root";
+
+
+		// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, MCfriend, tag, color, is_data_bool)
 		bdt_file *data = new bdt_file("../../../samples/data/", "merged.data5e19_v6.0.root","Data5e19","e1","LEEPhotonAnalysisData",MCFRIEND,"data",kBlue-4,true );
 		bdt_file *ext = new bdt_file("../../../samples/data/", "merged.bnbext_v3.0.root","BNBext","hist","LEEPhotonAnalysisData", MCFRIEND,"dataext",kGreen-3,true);
 		bdt_file *mc4 = new bdt_file("../../../samples/mcc84", "merged.bnbcosmic_v2.0.root","BNB+cosmicOverlay_8.4","hist","LEEPhoton", MCFRIEND,"bnb_cosmic",kRed-4,false);
@@ -327,34 +321,36 @@ int main (int argc, char *argv[]){
 		//bdt_file *mc5 = new bdt_file("../../../samples/mcc85/", "bnb_cosmic.hitass_1000.root","BNB+cosmicOverlay_8.5","hist","LEEPhoton", MCFRIEND,"miniafter",kRed-4,false);
 		bdt_file *mc6 = new bdt_file("../../../samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86.root","BNB+cosmicOverlay_8.6","hist","LEEPhoton", MCFRIEND,"bnb_cosmic_mcc86",kRed-4,false);
 
+		//Set some legend options up
 		mc4->leg = "f";
 		sig->leg = "f";
 		ext->leg = "f";
 
+		/************************ POT normalization for data and ext **************/
 		double N_off_events = 373820;//  136208;// v2.0;
 		double N_on_events = 544479;
-
 		data->setPOT(4.95e19);
 		ext->setPOT(4.95e19);
-
-
 		double data_scale_factor = 547616.0/N_on_events;
 		double ext_scale_factor = 1.285*(382718.0/N_off_events);//*(N_on_events/547616.0);
 		ext->scale(ext_scale_factor);
-		//	sig->scale(2.1);
 
+
+		//A vector of bdt_files, should always be in the form {data, ext, mc,signal}
 		std::vector<bdt_file*> vec_files = {data,ext,mc6,sig};
+		//A vector to say which files to "stack" when comparing to data for data-mc comparason 
 		std::vector<int> which_stack = {0,1,1,1};
 
 
-		//(std::string inname, std::string inbin, bool intrack) : 
-		std::vector<bdt_variable> vars;
 
-		int level = 2;
+		/************************ A vector for every BDT variable we want to study **************/
+		std::vector<bdt_variable> vars;
+		//some of these take a while, so this is a quick way of running different ones for testing	
+		int level = 0;
 
 
 		if(level>=0){
-			
+			//take the form of (variablename, binning, Axis name for plotting, is_track_only?)	
 			vars.push_back(bdt_variable("reco_shower_dedx_plane2","(48,0,15)", "Shower dE/dx Collection Plane [MeV/cm]",false));
 			vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Reco Shower Energy [GeV]", false));
 			vars.push_back(bdt_variable("longest_asso_track_displacement","(25,0,500)","Track Length [cm]", true));
@@ -383,13 +379,18 @@ int main (int argc, char *argv[]){
 			vars.push_back(bdt_variable("totalpe_bbg_sum","(25,0,2000)","Num PE",false));
 		}
 
+		//might also be useful to look at true energy for efficiency
 		bdt_variable true_shower("delta_photon_energy","(25,0,1.0)","True Photon Energy [GeV]", false);
 
 
-		bool run_eff = 0;//0;//false;
-		bool run_bdt_response = 1;//false;
-		bool run_full_comparason = 0;//false;
-		bool bdt_var = 0;
+
+		//Currently this is how you choose what unit-test to run, will streamline soon
+		bool run_eff = false;
+		bool run_bdt_response = true;
+		bool run_full_comparason = false;
+		bool bdt_var = false;
+
+
 
 		if(bdt_var){
 			TFile *fout_train = new TFile("bdt_variables.root","recreate");
@@ -426,7 +427,14 @@ int main (int argc, char *argv[]){
 			fout->Close();
 		}
 
+
+
+
+
 	}else if(mode_option == "mini"){
+		//THis option is only for use during mini-retreat 2017 december
+
+
 		std::string MCFRIEND = "runtmva_merged_app.root";
 		bdt_file *before = new bdt_file("../../../samples/mcc85/", "bnb_cosmic.hitass_1000.root","After","hist","LEEPhoton", MCFRIEND,"miniafter",kBlue-4,false);
 		//bdt_file *before = new bdt_file("../../../samples/mcc84/", "rmcm.root","Before","hist","LEEPhoton", MCFRIEND,"minibefore",kBlue-4,false);
