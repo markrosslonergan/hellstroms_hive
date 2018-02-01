@@ -89,14 +89,11 @@ int main (int argc, char *argv[]){
 	//std::string nsig = "mcc84/merged.ncdelta_v1.0.root";
 	//std::string nsig_cosmic = "mcc84/merged.ncdeltacosmic_v1.0.root";
 	
-	std::string nsig = "mcc86/merged.ncsignal_v1.root";
-	std::string nsig_cosmic = "mcc84/merged.ncdeltacosmic_v1.0.root";
-
+	std::string nsig = "mcc86/merged.ncsignal_v2.0.root";
+	std::string nsig_cosmic = "mcc86/merged.ncsignal_cosmics_v2.0.root";
 
 	std::string nbkg_cosmic = "mcc86/merged.bnbcosmic_v3.0_mcc86_withcalo.root";
 
-	//	std::string nsig = "mcc82/runmv_sp.root";
-	//	std::string nsig_cosmic = "mcc82/runmv_sp_cosmic.root";
 
 
 
@@ -115,7 +112,6 @@ int main (int argc, char *argv[]){
 		oh.GetObject(dir + nbkg_cosmic, "LEEPhoton/vertex_tree")
 	//	oh.GetObject(dir + "mcc86/merged.bnbcosmic_v3.0_mcc86.root", "LEEPhoton/vertex_tree")
 	};
-
 
 	std::vector<std::pair<int, double>> const background_training_pots = {
 	//	get_pot(dir + "mcc84/merged.bnbcosmic_v2.0.root", "LEEPhoton/get_pot")
@@ -194,12 +190,11 @@ int main (int argc, char *argv[]){
 	std::vector<std::pair<TTree *, std::string>> const app_trees = {
 		std::pair<TTree *, std::string>(oh.GetObject(dir + nsig, "LEEPhoton/vertex_tree"), "ncdelta"),
 		std::pair<TTree *, std::string>(oh.GetObject(dir + nsig_cosmic, "LEEPhoton/vertex_tree"), "ncdelta_cosmic"),
-		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc84/merged.bnbcosmic_v2.0.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_background"),
-		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc84/merged.bnbcosmic_v2.0.root", "LEEPhoton/vertex_tree"), "bnb_cosmic"),
+		std::pair<TTree *, std::string>(oh.GetObject(dir + nbkg_cosmic, "LEEPhoton/vertex_tree"), "bnb_cosmic_background"),
+		std::pair<TTree *, std::string>(oh.GetObject(dir + nbkg_cosmic, "LEEPhoton/vertex_tree"), "bnb_cosmic"),
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "data/merged.data5e19_v6.0.root", "LEEPhotonAnalysisData/vertex_tree"), "data"),
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "data/merged.bnbext_v3.0.root", "LEEPhotonAnalysisData/vertex_tree"), "dataext"),
-		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc84/rmcm.root", "LEEPhoton/vertex_tree"), "minibefore"),
-		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc86/merged.bnbcosmic_v3.0_mcc86.root", "LEEPhoton/vertex_tree"), "bnb_cosmic_mcc86")
+		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc84/rmcm.root", "LEEPhoton/vertex_tree"), "minibefore")
 	};
 
 
@@ -211,8 +206,7 @@ int main (int argc, char *argv[]){
 		all_cut,
 		all_cut,
 		all_cut,	
-		all_cut,	
-		all_cut
+		all_cut	
 	};
 
 	std::vector<std::string> const tree_cuts_reduced = {tree_cuts.at(0), tree_cuts.at(3), tree_cuts.at(4), tree_cuts.at(5)};
@@ -315,14 +309,15 @@ int main (int argc, char *argv[]){
 		// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, MCfriend, tag, color, is_data_bool)
 		bdt_file *data = new bdt_file("../../../samples/data/", "merged.data5e19_v6.0.root","Data5e19","e1","LEEPhotonAnalysisData",MCFRIEND,"data",kBlue-4,true );
 		bdt_file *ext = new bdt_file("../../../samples/data/", "merged.bnbext_v3.0.root","BNBext","hist","LEEPhotonAnalysisData", MCFRIEND,"dataext",kGreen-3,true);
-		bdt_file *mc4 = new bdt_file("../../../samples/mcc84", "merged.bnbcosmic_v2.0.root","BNB+cosmicOverlay_8.4","hist","LEEPhoton", MCFRIEND,"bnb_cosmic",kRed-4,false);
-		bdt_file *sig = new bdt_file("../../../samples/mcc84/", "merged.ncdeltacosmic_v1.0.root","NCDeltaCosmics","hist","LEEPhoton", MCFRIEND,"ncdelta_cosmic",kOrange,false);
-		bdt_file *sig_nocosmics = new bdt_file("../../../samples/mcc84/", "merged.ncdelta_v1.0.root","NCDelta","hist","LEEPhoton", MCFRIEND,"ncdelta",kBlue-4,false);
+		//bdt_file *mc4 = new bdt_file("../../../samples/mcc84", "merged.bnbcosmic_v2.0.root","BNB+cosmicOverlay_8.4","hist","LEEPhoton", MCFRIEND,"bnb_cosmic",kRed-4,false);
+
+		bdt_file *sig = new bdt_file("../../../samples/", nsig_cosmic,"NCDeltaCosmics","hist","LEEPhoton", MCFRIEND,"ncdelta_cosmic",kOrange,false);
+		bdt_file *sig_nocosmics = new bdt_file("../../../samples/", nsig,"NCDelta","hist","LEEPhoton", MCFRIEND,"ncdelta",kBlue-4,false);
 		//bdt_file *mc5 = new bdt_file("../../../samples/mcc85/", "bnb_cosmic.hitass_1000.root","BNB+cosmicOverlay_8.5","hist","LEEPhoton", MCFRIEND,"miniafter",kRed-4,false);
-		bdt_file *mc6 = new bdt_file("../../../samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86.root","BNB+cosmicOverlay_8.6","hist","LEEPhoton", MCFRIEND,"bnb_cosmic_mcc86",kRed-4,false);
+		bdt_file *mc6 = new bdt_file("../../../samples/", nbkg_cosmic,"BNB+cosmicOverlay_8.6","hist","LEEPhoton", MCFRIEND,"bnb_cosmic",kRed-4,false);
 
 		//Set some legend options up
-		mc4->leg = "f";
+		mc6->leg = "f";
 		sig->leg = "f";
 		ext->leg = "f";
 
@@ -388,13 +383,13 @@ int main (int argc, char *argv[]){
 		bool run_eff = false;
 		bool run_bdt_response = true;
 		bool run_full_comparason = false;
-		bool bdt_var = false;
+		bool bdt_var = true;
 
 
 
 		if(bdt_var){
 			TFile *fout_train = new TFile("bdt_variables.root","recreate");
-			std::vector<bdt_file*> mcfiles = {sig,sig_nocosmics,mc4};
+			std::vector<bdt_file*> mcfiles = {sig,sig_nocosmics,mc6};
 			plot_sig_back_bdt_vars(fout_train, mcfiles, vars);
 			fout_train->Close();
 		}
