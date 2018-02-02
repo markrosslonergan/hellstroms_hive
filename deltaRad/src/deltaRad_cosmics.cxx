@@ -93,6 +93,7 @@ int main (int argc, char *argv[]){
 	std::string nsig_cosmic = "mcc86/merged.ncsignal_cosmics_v2.0.root";
 	std::string nbkg_cosmic = "mcc86/merged.bnbcosmic_v3.0_mcc86_withcalo.root";
 
+	std::string nbnbext = "data/merged.bnbext_v2.0.root";
 
 
 
@@ -108,21 +109,21 @@ int main (int argc, char *argv[]){
 	};
 
 	std::vector<TTree *> const background_training_trees = {
-		oh.GetObject(dir + nbkg_cosmic, "LEEPhoton/vertex_tree")
+		oh.GetObject(dir + nbnbext, "LEEPhotonAnalysisData/vertex_tree")
 	//	oh.GetObject(dir + "mcc86/merged.bnbcosmic_v3.0_mcc86.root", "LEEPhoton/vertex_tree")
 	};
 
 	std::vector<std::pair<int, double>> const background_training_pots = {
 	//	get_pot(dir + "mcc84/merged.bnbcosmic_v2.0.root", "LEEPhoton/get_pot")
-		get_pot(dir + nbkg_cosmic, "LEEPhoton/get_pot")
+	//	get_pot(dir + nbnbext, "LEEPhotonAnalysisData/get_pot")
 	};
 
 
 
 
 	//Add track dEdx tree friends :: trackdEdx_bnb_cosmics.root  trackdEdx_nsignal_cosmics.root  trackdEdx_nsignal.root
-		signal_training_trees.at(0)->AddFriend("track_dEdx_tree","../../../track_dEdx/trackdEdx_nsignal.root");			
-		background_training_trees.at(0)->AddFriend("track_dEdx_tree","../../../track_dEdx/trackdEdx_bnb_cosmics.root");			
+	//	signal_training_trees.at(0)->AddFriend("track_dEdx_tree","../../../track_dEdx/trackdEdx_nsignal.root");			
+	//	background_training_trees.at(0)->AddFriend("track_dEdx_tree","../../../track_dEdx/trackdEdx_bnb_cosmics.root");			
 
 
 
@@ -176,8 +177,8 @@ int main (int argc, char *argv[]){
 //	variables_trackonly.emplace_back("track_dEdx_tree.longest_asso_track_mean_dEdx_end","d");
 //	variables_trackonly.emplace_back("track_dEdx_tree.longest_asso_track_mean_dEdx_ratio","d");
 	//variables_trackonly.emplace_back("track_dEdx_tree.longest_asso_track_unit_dEdx","d");
-	variables_trackonly.emplace_back("track_dEdx_tree.longest_asso_track_bragg_start_parD","d");
-	variables_trackonly.emplace_back("track_dEdx_tree.longest_asso_track_bragg_start_parA","d");
+//	variables_trackonly.emplace_back("track_dEdx_tree.longest_asso_track_bragg_start_parD","d");
+//	variables_trackonly.emplace_back("track_dEdx_tree.longest_asso_track_bragg_start_parA","d");
 	variables_trackonly.emplace_back(angle_track_shower.c_str(), "d");
 	//All the necessary methods that we want to use for MVA, will stick these into an XML sometime soon
 
@@ -189,20 +190,20 @@ int main (int argc, char *argv[]){
 
 
 	//some convientant labels
-	std::string const identifier = "runtmva";
+	std::string const identifier = "cosmic";
 	std::string const identifier_notrack = identifier + "_notrack";
 	std::string const identifier_trackonly = identifier + "_trackonly";
 
 
 	//And the Cuts that are definied, definitely define these in XML (and changeable by argument)
-	std::string const all_cut = "passed_swtrigger == 1 && closest_asso_shower_dist_to_flashzcenter <= 40 && totalpe_ibg_sum > 140 && reco_asso_showers == 1";
+	std::string const all_cut = "passed_swtrigger == 1 &&  reco_asso_showers == 1";
 	std::string const cut_notrack = "reco_asso_tracks == 0";
 	std::string const all_cut_notrack = all_cut + " && " + cut_notrack;
 	std::string const cut_trackonly = "reco_asso_tracks > 0";
 	std::string const all_cut_trackonly = all_cut + " && " + cut_trackonly;
 
-	std::string const signal_definition = "is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
-	std::string const background_definition = "!(" + signal_definition + ")";
+	std::string const signal_definition = "";//"is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
+	std::string const background_definition = "";//!(" + signal_definition + ")";
 
 	// defining trees and variables to do with	APP (APPLICATION)
 	//===========================================================================================
@@ -217,10 +218,10 @@ int main (int argc, char *argv[]){
 		std::pair<TTree *, std::string>(oh.GetObject(dir + "mcc84/rmcm.root", "LEEPhoton/vertex_tree"), "minibefore")
 	};
 
-	app_trees.at(0).first->AddFriend("track_dEdx_tree","../../../track_dEdx/trackdEdx_nsignal.root");			
-	app_trees.at(1).first->AddFriend("track_dEdx_tree","../../../track_dEdx/trackdEdx_nsignal_cosmics.root");			
-	app_trees.at(2).first->AddFriend("track_dEdx_tree","../../../track_dEdx/trackdEdx_bnb_cosmics.root");			
-	app_trees.at(3).first->AddFriend("track_dEdx_tree","../../../track_dEdx/trackdEdx_bnb_cosmics.root");			
+//	app_trees.at(0).first->AddFriend("track_dEdx_tree","../../../track_dEdx/trackdEdx_nsignal.root");			
+//	app_trees.at(1).first->AddFriend("track_dEdx_tree","../../../track_dEdx/trackdEdx_nsignal_cosmics.root");			
+//	app_trees.at(2).first->AddFriend("track_dEdx_tree","../../../track_dEdx/trackdEdx_bnb_cosmics.root");			
+//	app_trees.at(3).first->AddFriend("track_dEdx_tree","../../../track_dEdx/trackdEdx_bnb_cosmics.root");			
 
 
 
@@ -229,7 +230,7 @@ int main (int argc, char *argv[]){
 	std::vector<std::string> const tree_cuts = {
 		all_cut + " && " + signal_definition,
 		all_cut + " && " + signal_definition,
-		all_cut + " && " + background_definition,
+		all_cut,
 		all_cut,
 		all_cut,
 		all_cut,	

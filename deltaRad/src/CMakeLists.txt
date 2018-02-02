@@ -9,4 +9,6 @@ message(STATUS "ROOT_LIBRARIES @: ${ROOT_LIBRARIES}")
 
 
 add_executable (deltaRad deltaRad.cxx)
+add_executable (deltaRad_cosmics deltaRad_cosmics.cxx)
 target_link_libraries (deltaRad tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
+target_link_libraries (deltaRad_cosmics tinyxmllib deltaRadlib ${ROOT_LIBRARIES})

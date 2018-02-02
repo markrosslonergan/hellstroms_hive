@@ -106,9 +106,9 @@ struct bdt_file{
 			"shower_true_origin ==1 && abs(shower_true_pdg) ==2212",
 			"shower_true_origin ==1 && abs(shower_true_pdg) ==211",
 			"shower_true_origin ==1 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11 && abs(shower_true_pdg)!=2212 && abs(shower_true_pdg)!=13 && abs(shower_true_pdg)!=211",
-			"shower_true_origin==2 && abs(shower_true_pdg)==22",
-			"shower_true_origin==2 && abs(shower_true_pdg)==11",
-			"shower_true_origin==2 && abs(shower_true_pdg)==13",
+			"shower_true_origin== 2 && abs(shower_true_pdg)==22",
+			"shower_true_origin== 2 && abs(shower_true_pdg)==11",
+			"shower_true_origin== 2 && abs(shower_true_pdg)==13",
 			"shower_true_origin ==2 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11 && abs(shower_true_pdg)!=13",
 			//			"shower_true_origin == 2 && abs(shower_true_pdg)==22",
 			//			"shower_true_origin == 2 && abs(shower_true_pdg)!=11 && shower_true_pdg!=22"
@@ -637,6 +637,7 @@ class compare_instance{
 			std::string const no_track = "reco_asso_tracks == 0";
 			std::string bdt_cut = "";
 			std::string const signal_definition = "is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
+			std::string const background_definition = "!("+signal_definition+")"; 
 
 
 			double plot_POT = 5e19;
@@ -648,6 +649,15 @@ class compare_instance{
 			//0.486784 Cut2: 0.500177
 			double mva1 = 0.535;
 			double mva2 = 0.495;//0.509117;
+
+
+
+			//Cut1: 0.508379 Cut2: 0.51241
+			//Cut1: 0.525289 Cut2: 0.53297
+			// 0.507639 Cut2: 0.515579
+			mva1 = 0.507639;
+			mva2 = 0.51557;
+
 
 			//Best significance for notrack is 0.170905 at a cut of 0.535
 			//Best significance for track is 0.162339 at a cut of 0.4925
@@ -679,7 +689,7 @@ class compare_instance{
 			std::vector<std::vector<TH1*>> reco_mc_vec_sel;
 			std::vector<std::vector<TH1*>> reco_mc_vec_pre;
 			std::vector<std::vector<TH1*>> reco_mc_vec_bdt;
-			
+
 			std::vector<TH1*> reco_mc_all_sw;
 			std::vector<TH1*> reco_mc_all_sel;
 			std::vector<TH1*> reco_mc_all_pre;
@@ -744,14 +754,15 @@ class compare_instance{
 
 
 				//Now fill the reco-mc matching vectors
-				
-				if(file->tag == "BNB+cosmicOverlay_8.6"){
-					std::vector<TH1*> reco_mc_vec_sw_tmp = file->getRecoMCTH1(var, tcuts_sw, "test_"+var.name+"_sw", file->pot);
-					TH1* reco_mc_all_sw_tmp = (TH1*)file->getTH1(var , tcuts_sw,"all_"+var.name+"_sw", file->pot);
-					
+
+				if(file->tag == "BNB+cosmicOverlay_8.6" || file->tag == "NCDeltaCosmics"){
+					std::vector<TH1*> reco_mc_vec_sw_tmp = file->getRecoMCTH1(var, tcuts_sw, "test_"+file->tag+"_"+var.name+"_sw", file->pot);
+					TH1* reco_mc_all_sw_tmp = (TH1*)file->getTH1(var , tcuts_sw,"all_"+file->tag+"_"+var.name+"_sw", file->pot);
+
 					reco_mc_vec_sw.push_back(reco_mc_vec_sw_tmp);
 					reco_mc_all_sw.push_back(reco_mc_all_sw_tmp);
 				}
+
 
 
 
@@ -770,11 +781,11 @@ class compare_instance{
 				ymax_sel = std::max(ymax_sel, var_selec.back()->GetBinContent(var_selec.back()->GetMaximumBin()) );
 
 				//Now fill the reco-mc matching vectors
-				
-				if(file->tag == "BNB+cosmicOverlay_8.6"){
-					std::vector<TH1*> reco_mc_vec_sel_tmp = file->getRecoMCTH1(var, tcuts, "test_sel_"+var.name, file->pot);
-					TH1* reco_mc_all_sel_tmp = (TH1*)file->getTH1(var , tcuts,"all_sel_"+var.name, file->pot);
-					
+
+				if(file->tag == "BNB+cosmicOverlay_8.6" || file->tag == "NCDeltaCosmics"){
+					std::vector<TH1*> reco_mc_vec_sel_tmp = file->getRecoMCTH1(var, tcuts, "test_sel_"+file->tag+"_"+var.name, file->pot);
+					TH1* reco_mc_all_sel_tmp = (TH1*)file->getTH1(var , tcuts,"all_sel_"+file->tag+"_"+var.name, file->pot);
+
 					reco_mc_vec_sel.push_back(reco_mc_vec_sel_tmp);
 					reco_mc_all_sel.push_back(reco_mc_all_sel_tmp);
 				}
@@ -802,11 +813,11 @@ class compare_instance{
 
 
 				//Now fill the reco-mc matching vectors
-				
-				if(file->tag == "BNB+cosmicOverlay_8.6"){
-					std::vector<TH1*> reco_mc_vec_pre_tmp = file->getRecoMCTH1(var, tcuts+"&&"+pre_cut, "test_pre"+var.name, file->pot);
-					TH1* reco_mc_all_pre_tmp = (TH1*)file->getTH1(var , tcuts+"&&"+pre_cut,"all_pre_"+var.name, file->pot);
-					
+
+				if(file->tag == "BNB+cosmicOverlay_8.6"|| file->tag == "NCDeltaCosmics"){
+					std::vector<TH1*> reco_mc_vec_pre_tmp = file->getRecoMCTH1(var, tcuts+"&&"+pre_cut, "test_pre_"+file->tag+"_"+var.name, file->pot);
+					TH1* reco_mc_all_pre_tmp = (TH1*)file->getTH1(var , tcuts+"&&"+pre_cut,"all_pre_"+file->tag+"_"+var.name, file->pot);
+
 					reco_mc_vec_pre.push_back(reco_mc_vec_pre_tmp);
 					reco_mc_all_pre.push_back(reco_mc_all_pre_tmp);
 				}
@@ -827,17 +838,17 @@ class compare_instance{
 
 
 				//-------------- BDT-- -------------
-				
+
 
 				c->cd(4);			
-				
+
 				std::string tbdt = "tmpbdt_"+var.name+"_"+file->tag;
 				file->tvertex->Draw((var.name+">>"+tbdt+var.binning).c_str() ,(tcuts+"&&"+pre_cut+"&&"+bdt_cut).c_str(),"goff");
 				std::cout<<"Done with draw from "<<tbdt<<std::endl;
 
 				if(file->tag == "Data5e19" ){
 					std::cout<<file->name<<std::endl;
-					file->tvertex->Scan("run_number:subrun_number:event_number:longest_asso_track_displacement:summed_associated_helper_shower_energy:reco_shower_dedx_plane2" ,(tcuts+"&&"+pre_cut+"&&"+bdt_cut).c_str() );
+					//file->tvertex->Scan("run_number:subrun_number:event_number:longest_asso_track_displacement:summed_associated_helper_shower_energy:reco_shower_dedx_plane2" ,(tcuts+"&&"+pre_cut+"&&"+bdt_cut).c_str() );
 				}
 
 				var_bdtcut.push_back(  (TH1*)gDirectory->Get(tbdt.c_str()));
@@ -846,10 +857,10 @@ class compare_instance{
 				ymax_bdt = std::max(ymax_bdt, var_bdtcut.back()->GetBinContent(var_bdtcut.back()->GetMaximumBin()) );
 
 
-				if(file->tag == "BNB+cosmicOverlay_8.6"){
-					std::vector<TH1*> reco_mc_vec_bdt_tmp = file->getRecoMCTH1(var, tcuts+"&&"+pre_cut+"&&"+bdt_cut, "test_bdt_"+var.name, file->pot);
-					TH1* reco_mc_all_bdt_tmp = (TH1*)file->getTH1(var , tcuts+"&&"+pre_cut+"&&"+bdt_cut,"all_bdt_"+var.name, file->pot);
-					
+				if(file->tag == "BNB+cosmicOverlay_8.6"|| file->tag == "NCDeltaCosmics"){
+					std::vector<TH1*> reco_mc_vec_bdt_tmp = file->getRecoMCTH1(var, tcuts+"&&"+pre_cut+"&&"+bdt_cut, "test_bdt_"+file->tag+"_"+var.name, file->pot);
+					TH1* reco_mc_all_bdt_tmp = (TH1*)file->getTH1(var , tcuts+"&&"+pre_cut+"&&"+bdt_cut,"all_bdt_"+file->tag+"_"+var.name, file->pot);
+
 					reco_mc_vec_bdt.push_back(reco_mc_vec_bdt_tmp);
 					reco_mc_all_bdt.push_back(reco_mc_all_bdt_tmp);
 				}
@@ -1324,141 +1335,150 @@ class compare_instance{
 			ceff->Write();
 			ceff->Print(("unit/"+var.name+"_eff.pdf").c_str(),"pdf");
 
-		
+
 
 
 
 			/**********************************************************************
-			*			Reco-Truth Matching section
-			*
-			**********************************************************************/
+			 *			Reco-Truth Matching section
+			 *
+			 **********************************************************************/
 			int rim = 0; //eventually loop over all files, currenlty only 1 is done.
-			
-			std::cout<<"Beginining Reco-Truth Writing section"<<std::endl;
+			std::vector<std::string> rn = {"bkg","sig"};
 
-			fout->cd();
+			std::cout<<reco_mc_vec_sw.size()<<" "<<reco_mc_all_sw.size()<<std::endl;
+			std::cout<<reco_mc_vec_sel.size()<<" "<<reco_mc_all_sel.size()<<std::endl;
+			std::cout<<reco_mc_vec_pre.size()<<" "<<reco_mc_all_pre.size()<<std::endl;
+			std::cout<<reco_mc_vec_bdt.size()<<" "<<reco_mc_all_bdt.size()<<std::endl;
 
-			TCanvas *c_reco_truth = new TCanvas(("recomc_truth_"+var.name).c_str(), ("recomc_truth_"+var.name).c_str(),1600,1600);
-			c_reco_truth->Divide(2,2);
-		
-			//******************* swtrigger	*************************
-			c_reco_truth->cd(1);
+			for(int rim =0; rim <reco_mc_vec_sw.size(); rim++){
 
-			THStack * s_reco_truth_sw = new THStack("SWtriger Only","SWtrigger Only");		
-			TLegend * l_reco_truth_sw = new TLegend(0.51,0.51,0.89,0.89);
-		
-			std::cout<<"SWtrigger, vec of size: "<<reco_mc_vec_sw.at(rim).size()<<" and all of size: "<<reco_mc_all_sw.size()<<" reco_names "<<files.at(2)->recomc_names.size()<<std::endl;
+				std::cout<<"Beginining Reco-Truth Writing section: On file # :"<<rim<<" "<<files.at(2+rim)->tag<<std::endl;
 
-			int iv=0;
-			for(auto &v: reco_mc_vec_sw.at(rim) ){
-				std::cout<<"SWtrigger, on hist #: "<<iv<<". Add to stack."<<std::endl;
-				s_reco_truth_sw->Add(v);
-				std::cout<<"SWtrigger, Calc integral."<<std::endl;
-				double n = v->Integral();
-				std::cout<<"SWtrigger, and calc percentage."<<std::endl; 
-				double per = n/reco_mc_all_sw.at(rim)->Integral()*100.0;
-				std::cout<<"SWtrigger, and add legend"<<std::endl;
-				l_reco_truth_sw->AddEntry(v   ,(files.at(2)->recomc_names.at(iv)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
-				iv++;
-			}	
+				fout->cd();
 
-		
-	
+				TCanvas *c_reco_truth = new TCanvas(("recomc_truth_"+var.name+"_"+rn.at(rim)).c_str(), ("recomc_truth_"+var.name+"_"+rn.at(rim)).c_str(),1600,1600);
+				c_reco_truth->Divide(2,2);
 
-			s_reco_truth_sw->Draw("hist");
-			l_reco_truth_sw->Draw();
+				//******************* swtrigger	*************************
+				c_reco_truth->cd(1);
 
-		//	s_reco_truth_sw->GetYaxis()->SetTitleSize(title_size_ratio);
-		//	s_reco_truth_sw->GetXaxis()->SetTitleSize(title_size_ratio);
-		///	s_reco_truth_sw->GetYaxis()->SetLabelSize(label_size_ratio);
-		//	s_reco_truth_sw->GetXaxis()->SetLabelSize(label_size_ratio);
-			s_reco_truth_sw->GetXaxis()->SetTitle(var.unit.c_str());
-			s_reco_truth_sw->GetYaxis()->SetTitle("Verticies");
-	
-			//******************* sel	*************************
-			c_reco_truth->cd(2);
+				THStack * s_reco_truth_sw = new THStack("SWtriger Only","SWtrigger Only");		
+				TLegend * l_reco_truth_sw = new TLegend(0.51,0.51,0.89,0.89);
 
-			THStack * s_reco_truth_sel = new THStack("1 Photon Selection","1 Photon Selection");		
-			TLegend * l_reco_truth_sel = new TLegend(0.51,0.51,0.89,0.89);
-		
-			int isel=0;
-			for(auto v: reco_mc_vec_sel.at(rim)){
-				s_reco_truth_sel->Add(v);
-				double n = v->Integral();
-				double per = n/reco_mc_all_sel.at(rim)->Integral()*100.0;
-				l_reco_truth_sel->AddEntry(v,(files.at(2)->recomc_names.at(isel)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
-				isel++;
-			}	
+				std::cout<<"SWtrigger, vec of size: "<<reco_mc_vec_sw.at(rim).size()<<" and all of size: "<<reco_mc_all_sw.size()<<" reco_names "<<files.at(2+rim)->recomc_names.size()<<std::endl;
 
-			s_reco_truth_sel->Draw("hist");
-			l_reco_truth_sel->Draw();
+				int iv=0;
+				for(auto &v: reco_mc_vec_sw.at(rim) ){
+					std::cout<<"SWtrigger, on hist #: "<<iv<<". Add to stack."<<std::endl;
+					s_reco_truth_sw->Add(v);
+					std::cout<<"SWtrigger, Calc integral."<<std::endl;
+					double n = v->Integral();
+					std::cout<<"SWtrigger, and calc percentage."<<std::endl; 
+					double per = n/reco_mc_all_sw.at(rim)->Integral()*100.0;
+					std::cout<<"SWtrigger, and add legend"<<std::endl;
+					l_reco_truth_sw->AddEntry(v   ,(files.at(2+rim)->recomc_names.at(iv)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
+					iv++;
+				}	
 
-		//	s_reco_truth_sel->GetYaxis()->SetTitleSize(title_size_ratio);
-		//	s_reco_truth_sel->GetXaxis()->SetTitleSize(title_size_ratio);
-		//	s_reco_truth_sel->GetYaxis()->SetLabelSize(label_size_ratio);
-		//	s_reco_truth_sel->GetXaxis()->SetLabelSize(label_size_ratio);
-			s_reco_truth_sel->GetXaxis()->SetTitle(var.unit.c_str());
-			s_reco_truth_sel->GetYaxis()->SetTitle("Verticies");
-	
+				s_reco_truth_sw->Draw("hist");
+				l_reco_truth_sw->Draw();
 
-			//******************* pre	*************************
-			c_reco_truth->cd(3);
-
-			THStack * s_reco_truth_pre = new THStack("Precuts","Precuts");		
-			TLegend * l_reco_truth_pre = new TLegend(0.51,0.51,0.89,0.89);
-		
-			int ipre=0;
-			for(auto v: reco_mc_vec_pre.at(rim)){
-				s_reco_truth_pre->Add(v);
-				double n = v->Integral();
-				double per = n/reco_mc_all_pre.at(rim)->Integral()*100.0;
-				l_reco_truth_pre->AddEntry(v,(files.at(2)->recomc_names.at(ipre)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
-				ipre++;
-			}	
-
-			s_reco_truth_pre->Draw("hist");
-			l_reco_truth_pre->Draw();
-			
-	//		s_reco_truth_pre->GetYaxis()->SetTitleSize(title_size_ratio);
-	//		s_reco_truth_pre->GetXaxis()->SetTitleSize(title_size_ratio);
-	//		s_reco_truth_pre->GetYaxis()->SetLabelSize(label_size_ratio);
-	//		s_reco_truth_pre->GetXaxis()->SetLabelSize(label_size_ratio);
-			s_reco_truth_pre->GetXaxis()->SetTitle(var.unit.c_str());
-			s_reco_truth_pre->GetYaxis()->SetTitle("Verticies");
-	
+				std::cout<<"Drawn."<<std::endl;
 
 
-			//******************* bdt	*************************
-			c_reco_truth->cd(4);
+				//	s_reco_truth_sw->GetYaxis()->SetTitleSize(title_size_ratio);
+				//	s_reco_truth_sw->GetXaxis()->SetTitleSize(title_size_ratio);
+				///	s_reco_truth_sw->GetYaxis()->SetLabelSize(label_size_ratio);
+				//	s_reco_truth_sw->GetXaxis()->SetLabelSize(label_size_ratio);
+				s_reco_truth_sw->GetXaxis()->SetTitle(var.unit.c_str());
+				s_reco_truth_sw->GetYaxis()->SetTitle("Verticies");
 
-			THStack * s_reco_truth_bdt = new THStack("BDT","BDT");		
-			TLegend * l_reco_truth_bdt = new TLegend(0.51,0.51,0.89,0.89);
-		
-			int ibdt=0;
-			for(auto v: reco_mc_vec_bdt.at(rim)){
-				s_reco_truth_bdt->Add(v);
-				double n = v->Integral();
-				double per = n/reco_mc_all_bdt.at(rim)->Integral()*100.0;
-				l_reco_truth_bdt->AddEntry(v,(files.at(2)->recomc_names.at(ibdt)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
-				ibdt++;
-			}	
+				//******************* sel	*************************
+				c_reco_truth->cd(2);
 
-			s_reco_truth_bdt->Draw("hist");
-			l_reco_truth_bdt->Draw();
+				THStack * s_reco_truth_sel = new THStack("1 Photon Selection","1 Photon Selection");		
+				TLegend * l_reco_truth_sel = new TLegend(0.51,0.51,0.89,0.89);
 
-			//s_reco_truth_bdt->GetYaxis()->SetTitleSize(title_size_ratio);
-			//s_reco_truth_bdt->GetXaxis()->SetTitleSize(title_size_ratio);
-			//s_reco_truth_bdt->GetYaxis()->SetLabelSize(label_size_ratio);
-			//s_reco_truth_bdt->GetXaxis()->SetLabelSize(label_size_ratio);
-			s_reco_truth_bdt->GetXaxis()->SetTitle(var.unit.c_str());
-			s_reco_truth_bdt->GetYaxis()->SetTitle("Verticies");
-	
+				int isel=0;
+				for(auto v: reco_mc_vec_sel.at(rim)){
+					s_reco_truth_sel->Add(v);
+					double n = v->Integral();
+					double per = n/reco_mc_all_sel.at(rim)->Integral()*100.0;
+					l_reco_truth_sel->AddEntry(v,(files.at(2+rim)->recomc_names.at(isel)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
+					isel++;
+				}	
+
+				s_reco_truth_sel->Draw("hist");
+				l_reco_truth_sel->Draw();
+
+				//	s_reco_truth_sel->GetYaxis()->SetTitleSize(title_size_ratio);
+				//	s_reco_truth_sel->GetXaxis()->SetTitleSize(title_size_ratio);
+				//	s_reco_truth_sel->GetYaxis()->SetLabelSize(label_size_ratio);
+				//	s_reco_truth_sel->GetXaxis()->SetLabelSize(label_size_ratio);
+				s_reco_truth_sel->GetXaxis()->SetTitle(var.unit.c_str());
+				s_reco_truth_sel->GetYaxis()->SetTitle("Verticies");
+
+
+				//******************* pre	*************************
+				c_reco_truth->cd(3);
+
+				THStack * s_reco_truth_pre = new THStack("Precuts","Precuts");		
+				TLegend * l_reco_truth_pre = new TLegend(0.51,0.51,0.89,0.89);
+
+				int ipre=0;
+				for(auto v: reco_mc_vec_pre.at(rim)){
+					s_reco_truth_pre->Add(v);
+					double n = v->Integral();
+					double per = n/reco_mc_all_pre.at(rim)->Integral()*100.0;
+					l_reco_truth_pre->AddEntry(v,(files.at(2+rim)->recomc_names.at(ipre)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
+					ipre++;
+				}	
+
+				s_reco_truth_pre->Draw("hist");
+				l_reco_truth_pre->Draw();
+
+				//		s_reco_truth_pre->GetYaxis()->SetTitleSize(title_size_ratio);
+				//		s_reco_truth_pre->GetXaxis()->SetTitleSize(title_size_ratio);
+				//		s_reco_truth_pre->GetYaxis()->SetLabelSize(label_size_ratio);
+				//		s_reco_truth_pre->GetXaxis()->SetLabelSize(label_size_ratio);
+				s_reco_truth_pre->GetXaxis()->SetTitle(var.unit.c_str());
+				s_reco_truth_pre->GetYaxis()->SetTitle("Verticies");
 
 
 
-			c_reco_truth->Write();
-			c_reco_truth->Print(("unit/"+var.name+"_recotruth.pdf").c_str(),"pdf");
+				//******************* bdt	*************************
+				c_reco_truth->cd(4);
 
+				THStack * s_reco_truth_bdt = new THStack("BDT","BDT");		
+				TLegend * l_reco_truth_bdt = new TLegend(0.51,0.51,0.89,0.89);
+
+				int ibdt=0;
+				for(auto v: reco_mc_vec_bdt.at(rim)){
+					s_reco_truth_bdt->Add(v);
+					double n = v->Integral();
+					double per = n/reco_mc_all_bdt.at(rim)->Integral()*100.0;
+					l_reco_truth_bdt->AddEntry(v,(files.at(2+rim)->recomc_names.at(ibdt)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
+					ibdt++;
+				}	
+
+				s_reco_truth_bdt->Draw("hist");
+				l_reco_truth_bdt->Draw();
+
+				//s_reco_truth_bdt->GetYaxis()->SetTitleSize(title_size_ratio);
+				//s_reco_truth_bdt->GetXaxis()->SetTitleSize(title_size_ratio);
+				//s_reco_truth_bdt->GetYaxis()->SetLabelSize(label_size_ratio);
+				//s_reco_truth_bdt->GetXaxis()->SetLabelSize(label_size_ratio);
+				s_reco_truth_bdt->GetXaxis()->SetTitle(var.unit.c_str());
+				s_reco_truth_bdt->GetYaxis()->SetTitle("Verticies");
+
+
+
+
+				c_reco_truth->Write();
+				c_reco_truth->Print(("unit/"+var.name+"_"+rn.at(rim)+"_recotruth.pdf").c_str(),"pdf");
+
+			}
 			return 0;
 		}
 
