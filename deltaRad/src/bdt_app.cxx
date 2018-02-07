@@ -9,7 +9,7 @@ bdt_app_tree_struct::bdt_app_tree_struct(std::string const & tree_name, bool con
 		tree->Branch("reco_asso_tracks", &reco_asso_tracks, "reco_asso_tracks/I");
 	}
 	tree->Branch("mva", &mva, "mva/D");
-	tree->Branch("summed_associated_reco_shower_energy", &summed_associated_reco_shower_energy, "summed_associated_reco_shower_energy/D");
+	//tree->Branch("summed_associated_reco_shower_energy", &summed_associated_reco_shower_energy, "summed_associated_reco_shower_energy/D");
 }
 
 bdt_app_tree_struct::~bdt_app_tree_struct() {

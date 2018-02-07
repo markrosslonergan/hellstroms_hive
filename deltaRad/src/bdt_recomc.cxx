@@ -36,6 +36,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	TH1* reco_mc_all_bdt1;
 	TH1* reco_mc_all_bdt2;
 
+	double N_selection;
+	double N_precuts;
 	double N_bdt_cosmic;
 	double N_bdt_bnb;
 
@@ -46,11 +48,12 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	//-------------- Selection -------------
 	reco_mc_vec_sel = file->getRecoMCTH1(var, file->flow.base_cuts, "sel_"+file->tag+"_"+var.name, plot_pot);
 	reco_mc_all_sel = (TH1*)file->getTH1(var, file->flow.base_cuts, "all_sel_"+file->tag+"_"+var.name, plot_pot);
-
+	N_selection = file->tvertex->GetEntries((file->flow.base_cuts).c_str())*plot_pot/file->pot*file->scale_data;
 
 	//-------------- Precuts -------------
 	reco_mc_vec_pre = file->getRecoMCTH1(var, file->flow.base_cuts+"&&"+ file->flow.pre_cuts, "pre_"+file->tag+"_"+var.name, plot_pot);
 	reco_mc_all_pre = (TH1*)file->getTH1(var , file->flow.base_cuts+"&&"+ file->flow.pre_cuts,"all_pre_"+file->tag+"_"+var.name, plot_pot);
+	N_precuts = file->tvertex->GetEntries((file->flow.base_cuts + "&&"+ file->flow.pre_cuts).c_str())*plot_pot/file->pot*file->scale_data;
 
 	//-------------- Cosmic BDT -------------
 	bdt_variable cosmicvar = file->getBDTVariable("cosmic_track");
@@ -69,6 +72,10 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	reco_mc_all_bdt2 = (TH1*)file->getTH1(var , bnbcut  ,"all_bdt2_"+file->tag+"_"+var.name, plot_pot);
 	N_bdt_bnb = file->tvertex->GetEntries(bnbcut.c_str())*plot_pot/file->pot*file->scale_data;
 
+	if(true){
+		file->tvertex->Scan("run_number:subrun_number:event_number",bnbcut.c_str());
+	}
+
 
 
 	/**********************************************************************
@@ -84,7 +91,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 		//******************* Selection	*************************
 		c_reco_truth->cd(1);
 
-		THStack * s_reco_truth_sel = new THStack("Selection","Selection");		
+		THStack * s_reco_truth_sel = new THStack("Selection",("Selection #:"+to_string_prec(N_selection,3)).c_str());		
 		TLegend * l_reco_truth_sel = new TLegend(0.51,0.51,0.89,0.89);
 
 
@@ -113,7 +120,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 		//******************* pre	*************************
 		c_reco_truth->cd(2);
 
-		THStack * s_reco_truth_pre = new THStack("Precuts","Precuts");		
+		THStack * s_reco_truth_pre = new THStack("Precuts",("Precuts #: "+ to_string_prec(N_precuts,3)).c_str());		
 		TLegend * l_reco_truth_pre = new TLegend(0.51,0.51,0.89,0.89);
 
 		int ipre=0;
@@ -174,6 +181,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 		s_reco_truth_bdt2->GetXaxis()->SetTitle(var.unit.c_str());
 		s_reco_truth_bdt2->GetYaxis()->SetTitle("Verticies");
+
 
 
 		c_reco_truth->Write();

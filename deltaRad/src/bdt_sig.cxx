@@ -34,22 +34,22 @@ which for v3.0_with calo is 2.38091e+21
 
 
 std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_cuts cosmic_cut, bdt_cuts bnb_cut){
-
+	std::cout<<"Starting to Scan Significance"<<std::endl;
 	double best_significance = 0;
 	double best_mva_cut = DBL_MAX;
 	double best_mva_cut2 = DBL_MAX;
 
 	double plot_pot = 6.6e20;
-
+//0.574667 0.523333
 	//for nice plots make the 50, 25 is quicker tho
-	int nsteps_cosmic = 15;//50
-	double cut_min_cosmic = 0.53;
-	double cut_max_cosmic = 0.55;
+	int nsteps_cosmic = 10;//50
+	double cut_min_cosmic = 0.57;
+	double cut_max_cosmic = 0.575;
 	double step_cosmic = (cut_max_cosmic-cut_min_cosmic)/((double)nsteps_cosmic);
 
-	int nsteps_bnb = 15;//50
-	double cut_min_bnb = 0.52;//0.52;
-	double cut_max_bnb = 0.535;
+	int nsteps_bnb = 10;//50
+	double cut_min_bnb = 0.518;//0.52;
+	double cut_max_bnb = 0.53;
 	double step_bnb = (cut_max_bnb-cut_min_bnb)/((double)nsteps_bnb);
 
 	TH2D * h2_sig_cut = new TH2D( "significance_2D",  "significance_2D",nsteps_cosmic, cut_min_cosmic, cut_max_cosmic, nsteps_bnb, cut_min_bnb, cut_max_bnb);
@@ -69,33 +69,15 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 			for(size_t i = 0; i < sig_files.size(); ++i) {
 				double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
 			
-
-				bdt_variable cosvar = sig_files.at(i)->getBDTVariable(cosmic_cut);
-				std::string cosmiccut = sig_files.at(i)->flow.base_cuts+"&&"+ sig_files.at(i)->flow.pre_cuts+"&&"+ cosvar.name + ">" +std::to_string(d);
-	
-				bdt_variable bnbvar = sig_files.at(i)->getBDTVariable(bnb_cut);
-				std::string bnbcut = cosmiccut + "&&" + sig_files.at(i)->flow.pre_cuts+"&&"+ bnbvar.name + ">" +std::to_string(d2);
-				
+				std::string bnbcut = sig_files.at(i)->getStageCuts(3,d,d2); 
 				signal += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
 			}
 
 			for(size_t i = 0; i < bkg_files.size(); ++i) {
 				double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
 		
-				bdt_variable cosvar = bkg_files.at(i)->getBDTVariable(cosmic_cut);
-				std::string cosmiccut = bkg_files.at(i)->flow.base_cuts+"&&" + bkg_files.at(i)->flow.pre_cuts+"&&"+ cosvar.name + ">" +std::to_string(d);
 	
-				bdt_variable bnbvar = bkg_files.at(i)->getBDTVariable(bnb_cut);
-				std::string bnbcut = cosmiccut + "&&" + bkg_files.at(i)->flow.pre_cuts+"&&"+ bnbvar.name + ">" +std::to_string(d2);
-				if(false){
-					std::cout<<bkg_files.at(i)->tag<<std::endl;
-					std::cout<<cosmiccut<<std::endl;
-					std::cout<<bnbcut<<std::endl;
-					std::cout<<bkg_files.at(i)->tvertex->GetEntries()<<std::endl;
-					std::cout<<bkg_files.at(i)->tvertex->GetEntries(bkg_files.at(i)->flow.base_cuts.c_str())<<std::endl;
-					std::cout<<bkg_files.at(i)->tvertex->GetEntries(cosmiccut.c_str())<<std::endl;
-					std::cout<<bkg_files.at(i)->tvertex->GetEntries(bnbcut.c_str())<<std::endl;
-				}
+				std::string bnbcut = bkg_files.at(i)->getStageCuts(3,d,d2); 
 				bkg.push_back(	bkg_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale);			
 
 				background += bkg.back();

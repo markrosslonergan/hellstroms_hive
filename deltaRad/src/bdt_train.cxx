@@ -10,9 +10,9 @@ int bdt_train(bdt_cuts cuts, bdt_file *signal_file, bdt_file *background_file, s
 				"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
 	TMVA::DataLoader * dataloader = new TMVA::DataLoader(("BDTxmls_"+name).c_str());
 
-	TCut all_tcut = cuts.base_cuts.c_str();
-	TCut sig_tcut = all_tcut + TCut(cuts.signal_definition.c_str());
-	TCut back_tcut = all_tcut + TCut(cuts.background_definition.c_str());
+	int bdt_precut_stage = 1;
+	TCut sig_tcut =  TCut(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
+	TCut back_tcut = TCut(background_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 
 	double signal_entries = 0;
 	dataloader->AddSignalTree(signal_file->tvertex);
@@ -27,7 +27,7 @@ int bdt_train(bdt_cuts cuts, bdt_file *signal_file, bdt_file *background_file, s
 	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
 
 	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
-			"nTrain_Signal="+std::to_string(int(signal_entries/2))+":nTrain_Background="+std::to_string(int(background_entries/2))+":SplitMode=Random:NormMode=NumEvents:!V");
+			"nTrain_Signal="+std::to_string(int(signal_entries*0.80))+":nTrain_Background="+std::to_string(int(background_entries/2))+":SplitMode=Random:NormMode=NumEvents:!V");
 
 	for(method_struct const & method : methods) factory->BookMethod(dataloader, method.type, method.str, method.option);
 

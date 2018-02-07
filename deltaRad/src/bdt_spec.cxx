@@ -18,8 +18,6 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
 		hist->GetYaxis()->SetTitle("Verticies");
 
-
-
 		stacked->Add(hist);
 	}
 
