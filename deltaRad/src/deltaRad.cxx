@@ -53,13 +53,14 @@ int main (int argc, char *argv[]){
 	std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
-
+	std::string istrack ="track";
 
 	const struct option longopts[] = 
 	{
 		{"dir", 		required_argument, 	0, 'd'},
 		{"option",		required_argument,	0, 'o'},
 		{"xml"	,		required_argument,	0, 'x'},
+		{"track",		required_argument,	0, 't'},
 		{"help",		required_argument,	0, 'h'},
 		{0,			no_argument, 		0,  0},
 	};
@@ -68,7 +69,7 @@ int main (int argc, char *argv[]){
 	int iarg = 0; opterr=1; int index;
 	while(iarg != -1)
 	{
-		iarg = getopt_long(argc,argv, "x:o:d:h?", longopts, &index);
+		iarg = getopt_long(argc,argv, "x:o:d:t:h?", longopts, &index);
 
 		switch(iarg)
 		{
@@ -81,11 +82,15 @@ int main (int argc, char *argv[]){
 			case 'd':
 				dir = optarg;
 				break;
+			case 't':
+				istrack = optarg;
+				break;
 			case '?':
 			case 'h':
 				std::cout<<"Allowed arguments:"<<std::endl;
 				std::cout<<"\t-d\t--dir\t\tDirectory for file inputs"<<std::endl;
 				std::cout<<"\t-o\t--option\t\tOptional mode to run, train, app..etc.."<<std::endl;
+				std::cout<<"\t-t\t--track\t\tQuickly run between track and notrack"<<std::endl;
 				std::cout<<"\t-x\t--xml\t\tInput .xml file for configuring what MVA/BDT & param"<<std::endl;
 				std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
 				return 0;
@@ -111,14 +116,13 @@ int main (int argc, char *argv[]){
 		//std::string new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 3 && longest_asso_track_displacement < 100 && summed_associated_helper_shower_energy > 0.05 && totalpe_ibg_sum >125"; 
 
 		//Set up cuts that we want to use
-
-		bdt_cuts bnb_track_cuts("bnb_notrack", "BNB focused BDT");
+		bdt_cuts bnb_track_cuts("bnb_"+istrack, "BNB focused BDT");
 		bnb_track_cuts.setBaseCuts("passed_swtrigger == 1 && reco_asso_showers == 1 && reco_asso_tracks >0");
 		bnb_track_cuts.setSignalDefinition("is_delta_rad == 1 && true_nu_vtx_fid_contained == 1");
 		bnb_track_cuts.setBackgroundDefinition("!(" + bnb_track_cuts.signal_definition + ")");
 		//bnb_track_cuts.setBackgroundDefinition("ccnc == 1 && shower_true_parent_pdg == 111 && !(" + bnb_track_cuts.signal_definition + ")");
 
-		bdt_cuts cosmic_track_cuts("cosmic_notrack", "Cosmic focused BDT");
+		bdt_cuts cosmic_track_cuts("cosmic_"+istrack, "Cosmic focused BDT");
 		cosmic_track_cuts.setBaseCuts("reco_asso_showers == 1 && reco_asso_tracks >0");
 		cosmic_track_cuts.setSignalDefinition("passed_swtrigger == 1 && is_delta_rad == 1 && true_nu_vtx_fid_contained == 1");
 		cosmic_track_cuts.setBackgroundDefinition("1");
