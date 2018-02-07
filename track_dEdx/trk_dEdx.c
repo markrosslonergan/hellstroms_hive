@@ -117,6 +117,7 @@ void trk_dEdx(std::string fnam, std::string namout){
 			std::vector<double> end_resrange;
 
 			if(vtrk_dEdx->size() == 0 || std::min(vtrk_resrange->front(), vtrk_resrange->back()) > start_max){
+				v_range = longest_asso_track_displacement;
 				new_tree->Fill();
 				continue;
 			}
@@ -200,6 +201,7 @@ void trk_dEdx(std::string fnam, std::string namout){
 			h_unit_dEdx->Fill( sum_dEdx/vtrk_resrange->front()  );
 			v_unit_dEdx =  sum_dEdx/vtrk_resrange->front();
 
+			if(v_range < 0){v_range = longest_asso_track_displacement;}
 
 		}
 		if(v_unit_dEdx!=v_unit_dEdx || v_unit_dEdx > max_realistic_dEdx ) v_unit_dEdx = -999;
@@ -209,6 +211,7 @@ void trk_dEdx(std::string fnam, std::string namout){
 		if(v_mean_dEdx_ratio!=v_mean_dEdx_ratio || v_mean_dEdx_ratio > max_realistic_dEdx ) v_mean_dEdx_ratio = -999;
 		if(v_bragg_start_parA!=v_bragg_start_parA || v_bragg_start_parA > max_realistic_dEdx ) v_bragg_start_parA = -1;
 		if(v_bragg_start_parD!=v_bragg_start_parD || v_bragg_start_parD > max_realistic_dEdx ) v_bragg_start_parD = -1.7;
+
 
 
 		//		std::cout<<v_mean_dEdx<<" "<<v_mean_dEdx_start<<" "<<v_mean_dEdx_end<<" "<<v_mean_dEdx_ratio<<" "<<v_unit_dEdx<<" "<<v_bragg_start_parD<<" "<<v_bragg_start_parA<<std::endl;
