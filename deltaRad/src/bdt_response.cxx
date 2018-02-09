@@ -10,6 +10,8 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	TPad *p2 = (TPad*)c->cd(2);
 
 	TLegend *leg = new TLegend(0.11, 0.69, 0.49,0.89);
+	leg->SetFillStyle(0);
+	leg->SetLineColor(kWhite);
 
 	std::vector<bdt_file*> files= {bdt_sig, bdt_bkg};
 	std::vector<std::string> which_cuts = {bdt_sig->getStageCuts(1,-9,-9), bdt_bkg->getStageCuts(1,-9,-9)};
@@ -27,14 +29,16 @@ int bdt_response::plot_bdt_response(TFile *fout){
 
 		c->cd(1);
 		h_bdt.back()->SetTitle(cut.name.c_str());
-		h_bdt.back()->SetLineWidth(1);
+		h_bdt.back()->SetLineWidth(2);
 		h_bdt.back()->Scale(1.0/h_bdt.back()->Integral() );
 		h_bdt.back()->Draw("hist same");
 		h_bdt.back()->Write();
 		std::cout<<h_bdt.back()->GetSumOfWeights()<<" "<<bdtvar.name<<std::endl;
 		h_bdt.back()->GetXaxis()->SetTitle(bdtvar.unit.c_str());
 		h_bdt.back()->GetYaxis()->SetTitle("Verticies [Unit Normalized]");
-		leg->AddEntry(h_bdt.back(),file->tag.c_str(),file->leg.c_str());
+		h_bdt.back()->GetYaxis()->SetTitleOffset(1.5);
+
+		leg->AddEntry(h_bdt.back(),file->tag.c_str(),"l");
 
 		c->cd(2);
 		p2->SetLogy();
@@ -82,18 +86,27 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	TGraph * g_bkg_eff = new TGraph( mva.size(), &mva[0], &bkg_eff[0]);
 	g_sig_eff->Draw("al");	
 	g_bkg_eff->Draw("l");	
+		
+
+	g_sig_eff->SetLineWidth(2);
+	g_bkg_eff->SetLineWidth(2);
 
 	g_sig_eff->SetLineColor(files.at(0)->col);
 	g_bkg_eff->SetLineColor(files.at(1)->col);
 
-	g_sig_eff->GetXaxis()->SetTitle(cut.identifier.c_str() );
+	g_sig_eff->GetXaxis()->SetTitle("BDT Response Cut");
 	g_sig_eff->GetYaxis()->SetTitle("Efficiency");
 	g_sig_eff->SetTitle("BDT Efficiencies");
+
+	TLegend *leff = new TLegend(0.12,0.12,0.49,0.39);
+	leff->AddEntry(g_sig_eff,"Signal Efficiency","l");
+	leff->AddEntry(g_bkg_eff,"Background Efficiency","l");
+	leff->Draw();
 
 
 	fout->cd();
 	c->Write();
-	c->SaveAs("test.pdf","pdf");
+	c->SaveAs(("response/BDT_response_"+cut.identifier+".pdf").c_str(),"pdf");
 
 	return 0;
 /*

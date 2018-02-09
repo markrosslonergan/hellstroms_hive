@@ -17,12 +17,13 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 
 	//This isnt the best idea but sure whynot
-	recomc_cols = {kRed-7, kRed+1, kOrange-3, kBlue+3, kBlue, kBlue-7, kCyan-7, kGreen+3, kGreen+1, kGreen-9, kMagenta-7, kGray};
+	recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue, kBlue-7, kCyan-7, kGreen+3, kGreen+1, kGreen-9, kMagenta-7};
 
-	recomc_names = { "BNB other #gamma", "BNB #pi^{0} #gamma","BNB electron","BNB muon","BNB proton","BNB pion","BNB other","Cosmic #gamma","Cosmic Electrons", "Cosmic Muons","Cosmic Other","other"};
+	recomc_names = { "NC #Delta Radiative #gamma", "BNB #pi^{0} #gamma","BNB Other #gamma","BNB electron","BNB muon","BNB proton","BNB pion","BNB other","Cosmic #gamma","Cosmic Electrons", "Cosmic Muons","Cosmic Other"};
 	recomc_cuts = {
-		"shower_true_pdg == 22 && shower_true_parent_pdg !=111 && shower_true_origin==1",
+		"shower_true_pdg == 22 && shower_true_parent_pdg !=111 && is_delta_rad ==1 && shower_true_origin==1",
 		"shower_true_pdg == 22 && shower_true_parent_pdg == 111 && shower_true_origin==1",
+		"shower_true_pdg == 22 && shower_true_parent_pdg != 111 && is_delta_rad!=1&& shower_true_origin==1",
 		"shower_true_origin ==1 && abs(shower_true_pdg) ==11",
 		"shower_true_origin ==1 && abs(shower_true_pdg) ==13",
 		"shower_true_origin ==1 && abs(shower_true_pdg) ==2212",
@@ -31,7 +32,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		"shower_true_origin== 2 && abs(shower_true_pdg)==22",
 		"shower_true_origin== 2 && abs(shower_true_pdg)==11",
 		"shower_true_origin== 2 && abs(shower_true_pdg)==13",
-		"shower_true_origin ==2 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11 && abs(shower_true_pdg)!=13",
+		"shower_true_origin ==2 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11 && abs(shower_true_pdg)!=13"
 		//			"shower_true_origin == 2 && abs(shower_true_pdg)==22",
 		//			"shower_true_origin == 2 && abs(shower_true_pdg)!=11 && shower_true_pdg!=22"
 	};
@@ -121,9 +122,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 
 	//This isnt the best idea but sure whynot
-	recomc_cols = {kRed,kRed-3,kRed+3,kBlue, kBlue+3, kBlue-3,kMagenta-3, kGreen, kGreen +3, kGreen -3, kYellow, kGray};
+	recomc_cols = {kRed,kRed-3,kRed+3,kBlue, kBlue+3, kBlue-3,kMagenta-3, kGreen, kGreen +3, kGreen -3, kYellow};
 
-	recomc_names = {"BNB pi0 gamma","BNB other gamma","BNB electron","BNB muon","BNB proton","BNB pion","BNB other","Cosmic Photons","Cosmic Electrons", "Cosmic Muons","Cosmic Other","other"};
+	recomc_names = {"BNB pi0 gamma","BNB other gamma","BNB electron","BNB muon","BNB proton","BNB pion","BNB other","Cosmic Photons","Cosmic Electrons", "Cosmic Muons","Cosmic Other"};
 	recomc_cuts = {"shower_true_pdg == 22 && shower_true_parent_pdg == 111 && shower_true_origin==1",
 		"shower_true_pdg == 22 && shower_true_parent_pdg !=111 && shower_true_origin==1",
 		"shower_true_origin ==1 && abs(shower_true_pdg) ==11",
@@ -134,7 +135,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		"shower_true_origin== 2 && abs(shower_true_pdg)==22",
 		"shower_true_origin== 2 && abs(shower_true_pdg)==11",
 		"shower_true_origin== 2 && abs(shower_true_pdg)==13",
-		"shower_true_origin ==2 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11 && abs(shower_true_pdg)!=13",
+		"shower_true_origin ==2 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11 && abs(shower_true_pdg)!=13"
 		//			"shower_true_origin == 2 && abs(shower_true_pdg)==22",
 		//			"shower_true_origin == 2 && abs(shower_true_pdg)!=11 && shower_true_pdg!=22"
 	};
@@ -289,7 +290,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	th1->SetStats(0);
 	th1->GetXaxis()->SetTitle(var.unit.c_str());
 	th1->GetYaxis()->SetTitle("Verticies");
-	ans_th1s.push_back(th1);
+	//ans_th1s.push_back(th1);
 
 	return ans_th1s;	
 }

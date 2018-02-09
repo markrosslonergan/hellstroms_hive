@@ -139,11 +139,11 @@ int main (int argc, char *argv[]){
 
 	bdt_flow signal_flow(bnb_cuts.base_cuts +"&&"+cosmic_cuts.signal_definition,new_precuts, cosmic_cuts.identifier,bnb_cuts.identifier);
 	bdt_flow cosmic_flow(cosmic_cuts.base_cuts,new_precuts, cosmic_cuts.identifier,bnb_cuts.identifier);
-	bdt_flow bkg_flow(bnb_cuts.base_cuts +"&&"+bnb_cuts.background_definition,new_precuts,cosmic_cuts.identifier ,bnb_cuts.identifier);
+	bdt_flow bkg_flow(bnb_cuts.base_cuts +"&&"+bnb_cuts.background_definition+"&&is_delta_rad == 0",new_precuts,cosmic_cuts.identifier ,bnb_cuts.identifier);
 
 
 	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, BDT_CUT )		
-	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_v2.0.root",	"NCDeltaSignalPure",	   "hist","LEEPhoton",  kOrange, signal_flow);
+	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_v2.0.root",	"NCDeltaSignalPure",	   "hist","LEEPhoton",  kRed-7, signal_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_cosmics_v2.0.root", "NCDeltaSignalCosmics", "hist","LEEPhoton",  kRed-7, signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(dir+"samples/mcc86/", "merged.bnb_v1.0.root",	"BNBPure",	   "hist","LEEPhoton",  kGreen-3, bkg_flow);
 	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86_withcalo.root", "BNBCosmics", "hist","LEEPhoton",  kBlue-4, bkg_flow);
@@ -169,42 +169,41 @@ int main (int argc, char *argv[]){
 	std::vector<bdt_variable> vars;
 
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2","(48,0,15)", "Shower dE/dx Collection Plane [MeV/cm]",false,"d"));
-	vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Reco Shower Energy [GeV]", false,"d"));
-	vars.push_back(bdt_variable("most_energetic_shower_reco_length","(25,0,125)","Distance [cm]",false,"d"));
+	vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Reconstructed Shower Energy [GeV]", false,"d"));
+	vars.push_back(bdt_variable("most_energetic_shower_reco_length","(25,0,125)","Shower Length [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Number of PE",false,"d"));
-	vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from shower to flashcenter [cm]",false,"d"));
+	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Total in Beam-Gate PE",false,"d"));
+	vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from Shower to Flashcenter [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(25,0,125)","Vertex-TPC Wall Distance [cm]",false,"d"));
-	vars.push_back(bdt_variable("most_energetic_shower_bp_dist_to_tpc","(25,0,1000)","Back Projected Distance from shower to TPC wall [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_nuvertx","(25,0,300)","Distance [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_nuverty","(25,-300,+300)","Distance [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_nuvertz","(25,0,1000)","Distance [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(25,0,125)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));
+	vars.push_back(bdt_variable("most_energetic_shower_bp_dist_to_tpc","(25,0,1000)","Back Projected Distance from Shower to TPC wall [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_nuvertx","(25,0,300)"," Reconstructed Vertex x-location [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_nuverty","(25,-300,+300)","Reconstructed Vertex y-location [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_nuvertz","(25,0,1000)","Reconstructed Vertex z-location [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("most_energetic_shower_reco_theta_zy:=cos(atan(most_energetic_shower_reco_diry/most_energetic_shower_reco_dirz))","(25,0,1)","Cosine Theta", true,"d"));
-	vars.push_back(bdt_variable("most_energetic_shower_reco_phi_xy:=cos(atan(most_energetic_shower_reco_diry/most_energetic_shower_reco_dirx))","(25,0,1)","Cosine Phi", true,"d"));
+	vars.push_back(bdt_variable("cos(atan(most_energetic_shower_reco_diry/most_energetic_shower_reco_dirz))","(25,0,1)","Reconstructed Shower |Cosine Theta|", true,"d"));
+	vars.push_back(bdt_variable("cos(atan(most_energetic_shower_reco_diry/most_energetic_shower_reco_dirx))","(25,0,1)","Reconstructed Shower |Cosine Phi|", true,"d"));
 
 
 
 	if(istrack=="track"){
 
-		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_range","(25,0,500)","Track Length [cm]", true,"d"));
-		vars.push_back(bdt_variable("longest_asso_track_displacement","(25,0,500)","Track Length [cm]", true,"d"));
+		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_range","(25,0,500)","Reconstructed Track Range? [cm]", true,"d"));
+		vars.push_back(bdt_variable("longest_asso_track_displacement","(25,0,500)","Reconstructed Track Length [cm]", true,"d"));
 
 		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parD", "(25,-2,2)","Bragg Parameter D", true,"d"));
-		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(25,0,10)","Photon Coversion Length [cm]" ,false,"d"));
-		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parA", "(30,0,30)","Bragg Parameter A", true,"d"));
+		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(25,0,10)","Photon Coversion Length from Reconstructed Vertex [cm]" ,false,"d"));
+		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parA", "(30,0,30)","Proton Bragg Fit Parameter", true,"d"));
 
 
-		vars.push_back(bdt_variable("longest_asso_track_theta_zy:=cos(atan(longest_asso_track_reco_diry/longest_asso_track_reco_dirz))","(25,0,1)","Cosine Theta", true,"d"));
-		vars.push_back(bdt_variable("longest_asso_track_phi_xy:=cos(atan(longest_asso_track_reco_diry/longest_asso_track_reco_dirx))","(25,0,1)","Cosine Phi", true,"d"));
+		vars.push_back(bdt_variable("cos(atan(longest_asso_track_reco_diry/longest_asso_track_reco_dirz))","(25,0,1)","Reconstructed Track |Cosine Theta|", true,"d"));
+		vars.push_back(bdt_variable("cos(atan(longest_asso_track_reco_diry/longest_asso_track_reco_dirx))","(25,0,1)","Reconstructed Track |Cosine Phi|", true,"d"));
 
 		//		vars.push_back(bdt_variable("cos(longest_asso_track_theta)","(25,-3.2,3.2)","Theta [Rad]", true,"d"));
 		//		vars.push_back(bdt_variable("cos(longest_asso_track_phi)","(25,0,0,3.2)","Phi [Degrees]", true,"d"));
 
-		vars.push_back(bdt_variable("track_shower_angle:="+angle_track_shower,	"(25,-1,1)","Cosine Track-Shower Angle ",true,"d"));
-
-		vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number Reco Tracks",false,"i"));
+		vars.push_back(bdt_variable(angle_track_shower,	"(25,0,1)","|Cosine Track-Shower Angle| ",true,"d"));
+		vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number of Reconstructed Tracks",false,"i"));
 
 	}
 
@@ -323,12 +322,12 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 
 
-		
 
-//		test.plot_recomc(ftest, bnb_cosmics, vars.at(1), fcoscut, fbnbcut);
-		//		test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable("cosmic_track") , usecut1, usecut2);
-		//		test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable("bnb_track") , usecut1, usecut2);
-		test.plot_recomc(ftest, signal_cosmics, vars.at(1), fcoscut, fbnbcut);
+
+		//test.plot_recomc(ftest, bnb_cosmics, vars.at(1), fcoscut, fbnbcut);
+			test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable("cosmic_track") , fcoscut,fbnbcut);
+			test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("bnb_track") , fcoscut,fbnbcut);
+		//test.plot_recomc(ftest, signal_cosmics, vars.at(1), fcoscut, fbnbcut);
 
 		//		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("cosmic_track"), usecut1, usecut2);
 		//		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("bnb_track"), usecut1, usecut2);
@@ -375,13 +374,71 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		obs.addToStack(bnb_cosmics);
 		obs.addToStack(intime);
 
-
-		obs.plotStacks(ftest,vars.at(1),fcoscut,fbnbcut);
-
+		//obs.plotStacks(ftest,  vars.at(1),fcoscut,fbnbcut);
+		obs.plotBDTStacks(ftest,cosmic_cuts.identifier, fcoscut, fbnbcut);
 
 	}
+	else if(mode_option == "vars"){
+		for(auto &method: TMVAmethods){
+			for(int i=0; i< bdt_files.size(); i++){
+				std::cout<<"Now adding TreeFriend: "<<cosmic_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_cuts.identifier,  cosmic_cuts.identifier+"_app"+".root");
 
-	else if(mode_option == "eff"){
+				std::cout<<"Now adding TreeFriend: "<<bnb_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_cuts.identifier,  bnb_cuts.identifier+"_app"+".root");
+			}
+		}
+
+
+		for(auto &v:vars){
+			TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_cosmo").c_str(), ("cvar_"+v.name+"_cosmo").c_str(),2000,1600);
+			c_var->Divide(2,2);
+
+
+			for(int j=0; j<4;j++){	
+
+				std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
+				std::string cut_intime = intime->getStageCuts(j,fcoscut,fbnbcut); 
+
+
+				TH1* sig = signal_pure->getTH1(v,cut_signal.c_str(),v.safe_name+"_sig_cosmo_var" ,1.0);
+				TH1* bkg = intime->getTH1(v,cut_intime.c_str(),v.safe_name+"_bkg_cosmo_var" ,1.0);
+	
+				sig->Scale(1.0/sig->Integral());			
+				bkg->Scale(1.0/bkg->Integral());			
+				sig->SetLineColor(kRed-7);
+				bkg->SetLineColor(kGreen-3);
+	
+				c_var->cd(j+1);			
+				sig->Draw("hist");
+				bkg->Draw("hist same");
+				//sig->GetXaxis()->SetTitle(v.unit.c_str());
+				sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
+				sig->GetYaxis()->SetTitleOffset(1.5);
+
+				TLegend *l = new TLegend(0.45,0.59,0.89,0.89);
+				l->SetLineColor(kWhite);
+				l->SetFillStyle(0);
+		
+				l->AddEntry(sig,"NC #Delta #gamma Signal","l");	
+				l->AddEntry(bkg,"Intime Cosmic Background","l");	
+				l->Draw();
+	
+				double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
+				sig->SetMaximum(max_height*1.1);
+
+
+
+			}
+			c_var->Print(("var/cosmic_"+v.safe_name+".pdf").c_str(),"pdf");
+		}
+
+
+
+
+
+
+	}else if(mode_option == "eff"){
 
 		for(auto &method: TMVAmethods){
 			for(int i=0; i< bdt_files.size(); i++){

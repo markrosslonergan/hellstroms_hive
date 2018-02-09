@@ -121,7 +121,9 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
   		padsell->cd();       // padsell becomes the current pad
 		l_reco_truth_sel->SetTextSize(0.0775);
 		l_reco_truth_sel->Draw();
-
+		l_reco_truth_sel->SetLineColor(kWhite);
+		l_reco_truth_sel->SetLineWidth(0);
+	
 
 
 		//******************* pre	*************************
@@ -156,6 +158,9 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
   		padprel->cd();       // padprel becomes the current pad
 		l_reco_truth_pre->SetTextSize(0.0775);
 		l_reco_truth_pre->Draw();
+		l_reco_truth_pre->SetLineColor(kWhite);
+		l_reco_truth_pre->SetLineWidth(0);
+	
 
 
 		//******************* cosmic bdt	*************************
@@ -192,6 +197,9 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
   		padbdt1l->cd();       // padbdt1l becomes the current pad
 		l_reco_truth_bdt1->SetTextSize(0.0775);
 		l_reco_truth_bdt1->Draw();
+		l_reco_truth_bdt1->SetLineColor(kWhite);
+		l_reco_truth_bdt1->SetLineWidth(0);
+	
 
 
 
@@ -230,6 +238,9 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
   		padbdt2l->cd();       // padbdt2l becomes the current pad
 		l_reco_truth_bdt2->SetTextSize(0.0775);
 		l_reco_truth_bdt2->Draw();
+		l_reco_truth_bdt2->SetLineColor(kWhite);
+		l_reco_truth_bdt2->SetLineWidth(0);
+	
 
 
 

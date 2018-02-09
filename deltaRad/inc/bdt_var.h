@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <algorithm>
 /******** Our includes *****/
 
 /******** Root includes *****/
@@ -25,6 +26,7 @@ struct bdt_variable{
 
 	public:
 		std::string name;
+		std::string safe_name;
 		std::string binning;
 		std::string unit;
 		bool is_track;
@@ -36,7 +38,14 @@ struct bdt_variable{
 			is_track(intrack),
 			unit(inunit),
 			type(intype)
-		{};
+		{
+			safe_name = name;
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '('), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ')'), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '\\'), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '/'), safe_name.end());
+		
+		};
 
 		bdt_variable(){};
 
