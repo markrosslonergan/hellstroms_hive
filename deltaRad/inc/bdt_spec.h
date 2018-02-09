@@ -26,7 +26,7 @@
 #include "TMVA/DataLoader.h"
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
-
+#include "TObject.h"
 
 class bdt_stack{
 	public:
@@ -45,7 +45,7 @@ class bdt_stack{
 
 		THStack* getStack(bdt_variable var, int level,double c1, double c2);
 
-
+		int plotStacks(TFile*f, bdt_variable var,double,double);
 
 };
 

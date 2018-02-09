@@ -38,7 +38,9 @@ void trk_dEdx(std::string fnam, std::string namout){
 	TH1D *h_mean_dEdx_ratio = new TH1D("h_mean_dEdx_ratio","h_mean_dEdx_ratio",100,0,5);
 
 	TH1D *h_bragg_start_parD = new TH1D("h_bragg_start_parD","h_brag_start_parD",100,-1.5,1);
+	TH1D *h_bragg_start_fixD = new TH1D("h_bragg_start_fixD","h_brag_start_fixD",100,0,30);
 	TH1D *h_bragg_start_parA = new TH1D("h_bragg_start_parA","h_brag_start_parA",100,0,30);
+	TH1D *h_bragg_start_fixA = new TH1D("h_bragg_start_fixA","h_brag_start_fixA",100,-1.5,1);
 
 	TH1D *h_unit_dEdx = new TH1D("h_unit_dEdx","h_unit_dEdx",100,0,20);
 	TH1D *h_range = new TH1D("h_range","h_range",100,0,500);
@@ -54,6 +56,8 @@ void trk_dEdx(std::string fnam, std::string namout){
 	double v_mean_dEdx_ratio=0;
 	double v_bragg_start_parD=0;
 	double v_bragg_start_parA=0;
+	double v_bragg_start_fixD=0;
+	double v_bragg_start_fixA=0;
 	double v_unit_dEdx = 0;
 	double v_range=0;
 
@@ -67,6 +71,9 @@ void trk_dEdx(std::string fnam, std::string namout){
 	TBranch *b_mean_dEdx_ratio = new_tree->Branch("longest_asso_track_mean_dEdx_ratio",&v_mean_dEdx_ratio,"longest_asso_track_mean_dEdx_ratio/D");
 	TBranch *b_bragg_start_parD = new_tree->Branch("longest_asso_track_bragg_start_parD",&v_bragg_start_parD,"longest_asso_track_bragg_start_parD/D");
 	TBranch *b_bragg_start_parA = new_tree->Branch("longest_asso_track_bragg_start_parA",&v_bragg_start_parA,"longest_asso_track_bragg_start_parA/D");
+//	TBranch *b_bragg_start_fixD = new_tree->Branch("longest_asso_track_bragg_start_fixD",&v_bragg_start_fixD,"longest_asso_track_bragg_start_fixD/D");
+//	TBranch *b_bragg_start_fixA = new_tree->Branch("longest_asso_track_bragg_start_fixA",&v_bragg_start_fixA,"longest_asso_track_bragg_start_fixA/D");
+	
 	TBranch *b_unit_dEdx = new_tree->Branch("longest_asso_track_unit_dEdx",&v_unit_dEdx,"longest_asso_track_unit_dEdx/D");
 	TBranch *b_range = new_tree->Branch("longest_asso_track_range",&v_range,"longest_asso_track_range/D");
 
@@ -97,6 +104,10 @@ void trk_dEdx(std::string fnam, std::string namout){
 		v_mean_dEdx_ratio=-999;
 		v_bragg_start_parD=-1.7;
 		v_bragg_start_parA=-1;
+		
+		v_bragg_start_fixA = -1.7;
+		v_bragg_start_fixD = -1;
+
 		v_unit_dEdx = -999;
 		v_range = -999;
 		v_reco_asso_tracks = reco_asso_tracks;
@@ -180,7 +191,18 @@ void trk_dEdx(std::string fnam, std::string namout){
 			v_bragg_start_parD = fit_start_bragg->Value(1);		
 			v_bragg_start_parA = fit_start_bragg->Value(0);		
 
+			/*
+			bragg->FixParameter(0,11.0);
+			TFitResultPtr fit_start_bragg_fixA = start_pts->Fit(bragg,"SWQ");	
+			h_bragg_start_fixA->Fill(fit_start_bragg_fixA->Value(1));
+			v_bragg_start_fixA = fit_start_bragg_fixA->Value(1);		
 
+			bragg->ReleaseParameter(0);
+			bragg->FixParameter(1,-0.4);
+			TFitResultPtr fit_start_bragg_fixD = start_pts->Fit(bragg,"SWQ");	
+			h_bragg_start_fixD->Fill(fit_start_bragg_fixD->Value(0));
+			v_bragg_start_fixD = fit_start_bragg_fixD->Value(0);		
+			*/
 
 
 			//Fill here some "fixed" bragg chi^2's

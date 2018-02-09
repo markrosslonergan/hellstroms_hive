@@ -29,7 +29,7 @@
 
 
 template <typename T>
-std::string to_string_prec(const T a_value, const int n = 6)
+std::string to_string_prec2(const T a_value, const int n = 6)
 {
 	std::ostringstream out;
 	out <<std::fixed<< std::setprecision(n) << a_value;
@@ -672,7 +672,7 @@ class compare_instance{
 				var_swtrig.at(t)->SetLineWidth(1);
 				var_swtrig.at(t)->SetMarkerStyle(20);
 
-				lsw->AddEntry(var_swtrig.at(t), (files.at(t)->tag+" : "+ to_string_prec( var_swtrig.at(t)->Integral(),2)).c_str()  , files.at(t)->leg.c_str());
+				lsw->AddEntry(var_swtrig.at(t), (files.at(t)->tag+" : "+ to_string_prec2( var_swtrig.at(t)->Integral(),2)).c_str()  , files.at(t)->leg.c_str());
 				if(which_stack.at(t)==0){
 					var_swtrig.at(t)->SetLineColor(files.at(t)->col);
 					var_swtrig.at(t)->Draw((files.at(t)->plot_ops+ " SAME").c_str());
@@ -766,7 +766,7 @@ class compare_instance{
 				var_selec.at(t)->SetLineWidth(1);
 				var_selec.at(t)->SetMarkerStyle(20);
 
-				lsel->AddEntry(var_selec.at(t), (files.at(t)->tag+" : "+ to_string_prec( var_selec.at(t)->Integral(),2)).c_str()  , files.at(t)->leg.c_str());
+				lsel->AddEntry(var_selec.at(t), (files.at(t)->tag+" : "+ to_string_prec2( var_selec.at(t)->Integral(),2)).c_str()  , files.at(t)->leg.c_str());
 				if(which_stack.at(t)==0){
 					var_selec.at(t)->SetLineColor(files.at(t)->col);
 					var_selec.at(t)->Draw((files.at(t)->plot_ops+ " SAME").c_str());
@@ -854,7 +854,7 @@ class compare_instance{
 				var_precut.at(t)->SetLineWidth(1);
 				var_precut.at(t)->SetMarkerStyle(20);
 
-				lpre->AddEntry(var_precut.at(t), (files.at(t)->tag+" : "+ to_string_prec( var_precut.at(t)->Integral(),2)).c_str()  , files.at(t)->leg.c_str());
+				lpre->AddEntry(var_precut.at(t), (files.at(t)->tag+" : "+ to_string_prec2( var_precut.at(t)->Integral(),2)).c_str()  , files.at(t)->leg.c_str());
 				if(which_stack.at(t)==0){
 					var_precut.at(t)->SetLineColor(files.at(t)->col);
 					var_precut.at(t)->Draw((files.at(t)->plot_ops+ " SAME").c_str());
@@ -946,7 +946,7 @@ class compare_instance{
 				var_bdtcut.at(t)->SetLineWidth(1);
 				var_bdtcut.at(t)->SetMarkerStyle(20);
 
-				lbdt->AddEntry(var_bdtcut.at(t), (files.at(t)->tag+" : "+ to_string_prec( var_bdtcut.at(t)->Integral(),2)).c_str()  , files.at(t)->leg.c_str());
+				lbdt->AddEntry(var_bdtcut.at(t), (files.at(t)->tag+" : "+ to_string_prec2( var_bdtcut.at(t)->Integral(),2)).c_str()  , files.at(t)->leg.c_str());
 				if(which_stack.at(t)==0){
 					var_bdtcut.at(t)->SetLineColor(files.at(t)->col);
 					var_bdtcut.at(t)->Draw((files.at(t)->plot_ops+ " SAME").c_str());
@@ -1135,7 +1135,7 @@ class compare_instance{
 					std::cout<<"SWtrigger, and calc percentage."<<std::endl; 
 					double per = n/reco_mc_all_sw.at(rim)->Integral()*100.0;
 					std::cout<<"SWtrigger, and add legend"<<std::endl;
-					l_reco_truth_sw->AddEntry(v   ,(files.at(2+rim)->recomc_names.at(iv)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
+					l_reco_truth_sw->AddEntry(v   ,(files.at(2+rim)->recomc_names.at(iv)+" |\t\t "+to_string_prec2(n,1)+" \t("+to_string_prec2(per,1)+"%)"  ).c_str(),"f");
 					iv++;
 				}	
 
@@ -1163,7 +1163,7 @@ class compare_instance{
 					s_reco_truth_sel->Add(v);
 					double n = v->Integral();
 					double per = n/reco_mc_all_sel.at(rim)->Integral()*100.0;
-					l_reco_truth_sel->AddEntry(v,(files.at(2+rim)->recomc_names.at(isel)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
+					l_reco_truth_sel->AddEntry(v,(files.at(2+rim)->recomc_names.at(isel)+" |\t\t "+to_string_prec2(n,1)+" \t("+to_string_prec2(per,1)+"%)"  ).c_str(),"f");
 					isel++;
 				}	
 
@@ -1189,7 +1189,7 @@ class compare_instance{
 					s_reco_truth_pre->Add(v);
 					double n = v->Integral();
 					double per = n/reco_mc_all_pre.at(rim)->Integral()*100.0;
-					l_reco_truth_pre->AddEntry(v,(files.at(2+rim)->recomc_names.at(ipre)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
+					l_reco_truth_pre->AddEntry(v,(files.at(2+rim)->recomc_names.at(ipre)+" |\t\t "+to_string_prec2(n,1)+" \t("+to_string_prec2(per,1)+"%)"  ).c_str(),"f");
 					ipre++;
 				}	
 
@@ -1216,7 +1216,7 @@ class compare_instance{
 					s_reco_truth_bdt->Add(v);
 					double n = v->Integral();
 					double per = n/reco_mc_all_bdt.at(rim)->Integral()*100.0;
-					l_reco_truth_bdt->AddEntry(v,(files.at(2+rim)->recomc_names.at(ibdt)+" |\t\t "+to_string_prec(n,1)+" \t("+to_string_prec(per,1)+"%)"  ).c_str(),"f");
+					l_reco_truth_bdt->AddEntry(v,(files.at(2+rim)->recomc_names.at(ibdt)+" |\t\t "+to_string_prec2(n,1)+" \t("+to_string_prec2(per,1)+"%)"  ).c_str(),"f");
 					ibdt++;
 				}	
 

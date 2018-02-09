@@ -99,96 +99,129 @@ int main (int argc, char *argv[]){
 	}
 
 
-	TFile * ftest = new TFile("test.root","recreate");
-//===========================================================================================
-//===========================================================================================
-//===========================================================================================
-//===========================================================================================
+	TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
+	//===========================================================================================
+	//===========================================================================================
+	//===========================================================================================
+	//===========================================================================================
 
 
 
 
-		MVALoader xml_methods(xml);
-		std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); 
-
-		//THIS IS notrack
-		std::string new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && summed_associated_helper_shower_energy > 0.05 && totalpe_ibg_sum >125"; 
-		//std::string new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 3 && longest_asso_track_displacement < 100 && summed_associated_helper_shower_energy > 0.05 && totalpe_ibg_sum >125"; 
-
-		//Set up cuts that we want to use
-		bdt_cuts bnb_track_cuts("bnb_"+istrack, "BNB focused BDT");
-		bnb_track_cuts.setBaseCuts("passed_swtrigger == 1 && reco_asso_showers == 1 && reco_asso_tracks >0");
-		bnb_track_cuts.setSignalDefinition("is_delta_rad == 1 && true_nu_vtx_fid_contained == 1");
-		bnb_track_cuts.setBackgroundDefinition("!(" + bnb_track_cuts.signal_definition + ")");
-		//bnb_track_cuts.setBackgroundDefinition("ccnc == 1 && shower_true_parent_pdg == 111 && !(" + bnb_track_cuts.signal_definition + ")");
-
-		bdt_cuts cosmic_track_cuts("cosmic_"+istrack, "Cosmic focused BDT");
-		cosmic_track_cuts.setBaseCuts("reco_asso_showers == 1 && reco_asso_tracks >0");
-		cosmic_track_cuts.setSignalDefinition("passed_swtrigger == 1 && is_delta_rad == 1 && true_nu_vtx_fid_contained == 1");
-		cosmic_track_cuts.setBackgroundDefinition("1");
-
-		bdt_flow signal_flow(bnb_track_cuts.base_cuts +"&&"+cosmic_track_cuts.signal_definition,new_precuts, cosmic_track_cuts.identifier,bnb_track_cuts.identifier);
-		bdt_flow cosmic_flow(cosmic_track_cuts.base_cuts,new_precuts, cosmic_track_cuts.identifier,bnb_track_cuts.identifier);
-		bdt_flow bkg_flow(bnb_track_cuts.base_cuts +"&&"+bnb_track_cuts.background_definition,new_precuts,cosmic_track_cuts.identifier ,bnb_track_cuts.identifier);
+	MVALoader xml_methods(xml);
+	std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); 
 
 
-		// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, BDT_CUT )		
-		bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_v2.0.root",	"NCDeltaSignalPure",	   "hist","LEEPhoton",  kRed-7, signal_flow);
-		bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_cosmics_v2.0.root", "NCDeltaSignalCosmics", "hist","LEEPhoton",  kOrange, signal_flow);
-		
-		bdt_file *bnb_pure    = new bdt_file(dir+"samples/mcc86/", "merged.bnb_v1.0.root",	"BNBPure",	   "hist","LEEPhoton",  kGreen-3, bkg_flow);
-		bdt_file *bnb_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86_withcalo.root", "BNBCosmics", "hist","LEEPhoton",  kBlue-4, bkg_flow);
-		
-		bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "merged.intime_v1.0.root" ,"IntimeCosmics","hist","LEEPhoton", kGreen-3, cosmic_flow);
-		std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
+	std::string new_precuts;
+	std::string num_track_cut = ">0";
+	if(istrack == "track"){
+		new_precuts =  "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 2 && longest_asso_track_displacement < 150 && summed_associated_helper_shower_energy > 0.05 && totalpe_ibg_sum >50";
+		num_track_cut = ">0";
+
+	}else if(istrack == "notrack"){
+		new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && summed_associated_helper_shower_energy > 0.05 && totalpe_ibg_sum > 50";
+		num_track_cut = "==0";
+	}
 
 
-		//Add Any other info in the form of FRIENDS! e.g track dEdx 
-		signal_pure->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_nsignal.root");			
-		signal_cosmics->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_nsignal_cosmics.root");			
-		bnb_pure->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb.root");			
-		bnb_cosmics->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb_cosmics.root");			
-		intime->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_intime.root");			
+	//Set up cuts that we want to use
+	bdt_cuts bnb_cuts("bnb_"+istrack, "BNB focused BDT");
+	bnb_cuts.setBaseCuts("passed_swtrigger == 1 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut);
+	bnb_cuts.setSignalDefinition("is_delta_rad == 1 && true_nu_vtx_fid_contained == 1");
+	bnb_cuts.setBackgroundDefinition("!(" + bnb_cuts.signal_definition + ")");
+	//bnb_cuts.setBackgroundDefinition("ccnc == 1 && shower_true_parent_pdg == 111 && !(" + bnb_cuts.signal_definition + ")");
+
+	bdt_cuts cosmic_cuts("cosmic_"+istrack, "Cosmic focused BDT");
+	cosmic_cuts.setBaseCuts("reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut);
+	cosmic_cuts.setSignalDefinition("passed_swtrigger == 1 && is_delta_rad == 1 && true_nu_vtx_fid_contained == 1");
+	cosmic_cuts.setBackgroundDefinition("1");
+
+
+	bdt_flow signal_flow(bnb_cuts.base_cuts +"&&"+cosmic_cuts.signal_definition,new_precuts, cosmic_cuts.identifier,bnb_cuts.identifier);
+	bdt_flow cosmic_flow(cosmic_cuts.base_cuts,new_precuts, cosmic_cuts.identifier,bnb_cuts.identifier);
+	bdt_flow bkg_flow(bnb_cuts.base_cuts +"&&"+bnb_cuts.background_definition,new_precuts,cosmic_cuts.identifier ,bnb_cuts.identifier);
+
+
+	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, BDT_CUT )		
+	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_v2.0.root",	"NCDeltaSignalPure",	   "hist","LEEPhoton",  kOrange, signal_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_cosmics_v2.0.root", "NCDeltaSignalCosmics", "hist","LEEPhoton",  kRed-7, signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir+"samples/mcc86/", "merged.bnb_v1.0.root",	"BNBPure",	   "hist","LEEPhoton",  kGreen-3, bkg_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86_withcalo.root", "BNBCosmics", "hist","LEEPhoton",  kBlue-4, bkg_flow);
+	bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "merged.intime_v1.0.root" ,"IntimeCosmics","hist","LEEPhoton", kGreen-3, cosmic_flow);
+
+	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
+
+	signal_pure->scale_data = 3.1;
+	signal_cosmics->scale_data = 3.1;
+
+	//Add Any other info in the form of FRIENDS! e.g track dEdx 
+	signal_pure->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_nsignal.root");			
+	signal_cosmics->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_nsignal_cosmics.root");			
+	bnb_pure->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb.root");			
+	bnb_cosmics->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb_cosmics.root");			
+	intime->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_intime.root");			
 
 
 
-		//Variables!
-		std::string angle_track_shower ="acos(longest_asso_track_reco_dirx*most_energetic_shower_reco_dirx+longest_asso_track_reco_diry*most_energetic_shower_reco_diry+longest_asso_track_reco_dirz*most_energetic_shower_reco_dirz)";
+	//Variables!
+	std::string angle_track_shower ="fabs(longest_asso_track_reco_dirx*most_energetic_shower_reco_dirx+longest_asso_track_reco_diry*most_energetic_shower_reco_diry+longest_asso_track_reco_dirz*most_energetic_shower_reco_dirz)";
 
-		std::vector<bdt_variable> vars;
-		vars.push_back(bdt_variable("reco_shower_dedx_plane2","(48,0,15)", "Shower dE/dx Collection Plane [MeV/cm]",false,"d"));
-		vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Reco Shower Energy [GeV]", false,"d"));
+	std::vector<bdt_variable> vars;
+
+	vars.push_back(bdt_variable("reco_shower_dedx_plane2","(48,0,15)", "Shower dE/dx Collection Plane [MeV/cm]",false,"d"));
+	vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Reco Shower Energy [GeV]", false,"d"));
+	vars.push_back(bdt_variable("most_energetic_shower_reco_length","(25,0,125)","Distance [cm]",false,"d"));
+
+	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Number of PE",false,"d"));
+	vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from shower to flashcenter [cm]",false,"d"));
+
+	vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(25,0,125)","Vertex-TPC Wall Distance [cm]",false,"d"));
+	vars.push_back(bdt_variable("most_energetic_shower_bp_dist_to_tpc","(25,0,1000)","Back Projected Distance from shower to TPC wall [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_nuvertx","(25,0,300)","Distance [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_nuverty","(25,-300,+300)","Distance [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_nuvertz","(25,0,1000)","Distance [cm]",false,"d"));
+
+	vars.push_back(bdt_variable("most_energetic_shower_reco_theta_zy:=cos(atan(most_energetic_shower_reco_diry/most_energetic_shower_reco_dirz))","(25,0,1)","Cosine Theta", true,"d"));
+	vars.push_back(bdt_variable("most_energetic_shower_reco_phi_xy:=cos(atan(most_energetic_shower_reco_diry/most_energetic_shower_reco_dirx))","(25,0,1)","Cosine Phi", true,"d"));
+
+
+
+	if(istrack=="track"){
+
+		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_range","(25,0,500)","Track Length [cm]", true,"d"));
 		vars.push_back(bdt_variable("longest_asso_track_displacement","(25,0,500)","Track Length [cm]", true,"d"));
-		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parA", "(30,0,30)","Bragg Parameter A", true,"d"));
-		vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(25,0,125)","Vertex-TPC Wall Distance [cm]",false,"d"));
-		
-		vars.push_back(bdt_variable(angle_track_shower,	"(25,0,6.3)","Track-Shower Angle [Degrees]",true,"d"));
-		vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number Reco Tracks",false,"i"));
-		vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Number of PE",false,"d"));
-		vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from shower to flashcenter [cm]",false,"d"));
-		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(25,0,10)","Photon Coversion Length [cm]" ,false,"d"));
-		vars.push_back(bdt_variable("most_energetic_shower_bp_dist_to_tpc","(25,0,1000)","Back Projected Distance from shower to TPC wall [cm]",false,"d"));
+
 		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parD", "(25,-2,2)","Bragg Parameter D", true,"d"));
-		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_mean_dEdx_end", "(25, 0,20)","Mean dEdx at MIP bit", true,"d"));
-		vars.push_back(bdt_variable("summed_associated_reco_shower_energy","(25,0,0.5)","Energy [GeV]",false,"d"));
-		vars.push_back(bdt_variable("most_energetic_shower_reco_length","(25,0,125)","Distance [cm]",false,"d"));
-		vars.push_back(bdt_variable("reco_nuvertx","(25,0,300)","Distance [cm]",false,"d"));
-		vars.push_back(bdt_variable("reco_nuverty","(25,-300,+300)","Distance [cm]",false,"d"));
-		vars.push_back(bdt_variable("reco_nuvertz","(25,0,1000)","Distance [cm]",false,"d"));
-	
-		//This batch appears to be nan or inf a lot
-		//vars.push_back(bdt_variable("most_energetic_shower_reco_thetaxz","(25,-1.7,1.7)","Shower Angle xy [rad]",false));
-		//vars.push_back(bdt_variable("most_energetic_shower_reco_thetayz","(25,-1.7,1.7)","Shower Angle yz [rad]",false));
-		//vars.push_back(bdt_variable("longest_asso_track_thetaxz","(25,-1.7,1.7)","Track Angle xz [rad]",true));
-		//vars.push_back(bdt_variable("longest_asso_track_thetayz","(25,-1.7,1.7)","Track Angle yz [rad]",true));
+		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(25,0,10)","Photon Coversion Length [cm]" ,false,"d"));
+		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parA", "(30,0,30)","Bragg Parameter A", true,"d"));
 
-		//This batch appears to be boring
-		//vars.push_back(bdt_variable("reco_shower_dedx_plane0","(48,0,15)", "dE/dx [MeV/cm]",false));
-		//vars.push_back(bdt_variable("reco_shower_dedx_plane1","(48,0,15)", "dE/dx [MeV/cm]",false));
-		//vars.push_back(bdt_variable("totalpe_bbg_sum","(25,0,2000)","Num PE",false));
 
-		//This is fixed to be 1!
-		//vars.push_back(bdt_variable("reco_asso_showers","(6,0,5)","Number of Reco Showers",false));	
+		vars.push_back(bdt_variable("longest_asso_track_theta_zy:=cos(atan(longest_asso_track_reco_diry/longest_asso_track_reco_dirz))","(25,0,1)","Cosine Theta", true,"d"));
+		vars.push_back(bdt_variable("longest_asso_track_phi_xy:=cos(atan(longest_asso_track_reco_diry/longest_asso_track_reco_dirx))","(25,0,1)","Cosine Phi", true,"d"));
+
+		//		vars.push_back(bdt_variable("cos(longest_asso_track_theta)","(25,-3.2,3.2)","Theta [Rad]", true,"d"));
+		//		vars.push_back(bdt_variable("cos(longest_asso_track_phi)","(25,0,0,3.2)","Phi [Degrees]", true,"d"));
+
+		vars.push_back(bdt_variable("track_shower_angle:="+angle_track_shower,	"(25,-1,1)","Cosine Track-Shower Angle ",true,"d"));
+
+		vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number Reco Tracks",false,"i"));
+
+	}
+
+
+	//This batch appears to be nan or inf a lot
+	//vars.push_back(bdt_variable("most_energetic_shower_reco_thetaxz","(25,-1.7,1.7)","Shower Angle xy [rad]",false));
+	//vars.push_back(bdt_variable("most_energetic_shower_reco_thetayz","(25,-1.7,1.7)","Shower Angle yz [rad]",false));
+	//vars.push_back(bdt_variable("longest_asso_track_thetaxz","(25,-1.7,1.7)","Track Angle xz [rad]",true));
+	//vars.push_back(bdt_variable("longest_asso_track_thetayz","(25,-1.7,1.7)","Track Angle yz [rad]",true));
+
+	//This batch appears to be boring
+	//vars.push_back(bdt_variable("reco_shower_dedx_plane0","(48,0,15)", "dE/dx [MeV/cm]",false));
+	//vars.push_back(bdt_variable("reco_shower_dedx_plane1","(48,0,15)", "dE/dx [MeV/cm]",false));
+	//vars.push_back(bdt_variable("totalpe_bbg_sum","(25,0,2000)","Num PE",false));
+
+	//This is fixed to be 1!
+	//vars.push_back(bdt_variable("reco_asso_showers","(6,0,5)","Number of Reco Showers",false));	
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -201,6 +234,35 @@ int main (int argc, char *argv[]){
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
 
+
+
+
+	/*
+	   Best is at track_cosmicut: 0.536655 track_bnbcut: 0.500287
+	   Best is at notrack.g_cosmicut: 0.525239 notrack_bnbcut: 0.508714
+	   track sig: 22.1861 track bkg 511.006 0.98145
+	   notrack sig: 16.8038 notrack bkg 368.859 0.874938
+Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
+	 */
+	double fcoscut;
+	double fbnbcut;
+	if(istrack == "track"){
+		fcoscut = 0.536655;
+		fbnbcut = 0.500287;
+
+	}else if(istrack == "notrack"){
+		fcoscut = 0.525239;
+		fbnbcut = 0.508714;
+	}
+
+
+
+
+
+
+
+
+
 	//===========================================================================================
 	//===========================================================================================
 	//		Main flow of the program , using OPTIONS
@@ -209,75 +271,89 @@ int main (int argc, char *argv[]){
 
 	if(mode_option == "train") {
 		std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
-		bdt_train(cosmic_track_cuts, signal_pure, intime, vars, TMVAmethods);
+		bdt_train(cosmic_cuts, signal_pure, intime, vars, TMVAmethods);
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
-		bdt_train(bnb_track_cuts, signal_pure, bnb_pure, vars, TMVAmethods);
-	
+		bdt_train(bnb_cuts, signal_pure, bnb_pure, vars, TMVAmethods);
+
 
 	}else if(mode_option == "app"){
-		//Apply! This will update cosmic_track_cuts, signal file and bkg file. As in update them PROPERLY!	
+		//Apply! This will update cosmic_cuts, signal file and bkg file. As in update them PROPERLY!	
 		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
 
-		bdt_app(cosmic_track_cuts, app_files, vars, TMVAmethods);
-		bdt_app(bnb_track_cuts, app_files, vars, TMVAmethods);
-	
+		bdt_app(cosmic_cuts, app_files, vars, TMVAmethods);
+		bdt_app(bnb_cuts, app_files, vars, TMVAmethods);
+
 
 	}
 	else if(mode_option == "response"){
 
 		for(auto &method: TMVAmethods){
 			for(int i=0; i< bdt_files.size(); i++){
-				std::cout<<"Now adding TreeFriend: "<<cosmic_track_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_track_cuts.identifier,  cosmic_track_cuts.identifier+"_app"+".root");
+				std::cout<<"Now adding TreeFriend: "<<cosmic_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_cuts.identifier,  cosmic_cuts.identifier+"_app"+".root");
 
-				std::cout<<"Now adding TreeFriend: "<<bnb_track_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_track_cuts.identifier,  bnb_track_cuts.identifier+"_app"+".root");
+				std::cout<<"Now adding TreeFriend: "<<bnb_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_cuts.identifier,  bnb_cuts.identifier+"_app"+".root");
 			}
 		}
 
 
 		//Ok print out Cosmic BDT
-		bdt_response cosmic_response(cosmic_track_cuts, signal_pure, intime);
+		bdt_response cosmic_response(cosmic_cuts, signal_pure, intime);
 		cosmic_response.plot_bdt_response(ftest);
 
-		bdt_response bnb_response(bnb_track_cuts,signal_pure, bnb_pure);
+		bdt_response bnb_response(bnb_cuts,signal_pure, bnb_pure);
 		bnb_response.plot_bdt_response(ftest);
 
-	
+	}	
+	else if(mode_option == "recomc"){
+
+		for(auto &method: TMVAmethods){
+			for(int i=0; i< bdt_files.size(); i++){
+				std::cout<<"Now adding TreeFriend: "<<cosmic_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_cuts.identifier,  cosmic_cuts.identifier+"_app"+".root");
+
+				std::cout<<"Now adding TreeFriend: "<<bnb_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_cuts.identifier,  bnb_cuts.identifier+"_app"+".root");
+			}
+		}
+
 		bdt_recomc test;
 		//plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
-		//0.538 0.525
-		double usecut1 = 0.6;
-		double usecut2= 0.5295;
 
-		test.plot_recomc(ftest, bnb_cosmics, vars.front(), usecut1, usecut2);
-//		test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable("cosmic_track") , usecut1, usecut2);
-//		test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable("bnb_track") , usecut1, usecut2);
-		test.plot_recomc(ftest, signal_cosmics, vars.front(), usecut1, usecut2);
-//		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("cosmic_track"), usecut1, usecut2);
-//		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("bnb_track"), usecut1, usecut2);
 
-//		for(int i=1; i<=4; i++){
-//			test.plot_recomc(ftest, bnb_cosmics, vars.at(i), usecut1, usecut2);
-//			test.plot_recomc(ftest, signal_cosmics, vars.at(i), usecut1, usecut2);
-//		}
+
+		
+
+//		test.plot_recomc(ftest, bnb_cosmics, vars.at(1), fcoscut, fbnbcut);
+		//		test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable("cosmic_track") , usecut1, usecut2);
+		//		test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable("bnb_track") , usecut1, usecut2);
+		test.plot_recomc(ftest, signal_cosmics, vars.at(1), fcoscut, fbnbcut);
+
+		//		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("cosmic_track"), usecut1, usecut2);
+		//		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("bnb_track"), usecut1, usecut2);
+
+		//		for(int i=1; i<=4; i++){
+		//			test.plot_recomc(ftest, bnb_cosmics, vars.at(i), usecut1, usecut2);
+		//			test.plot_recomc(ftest, signal_cosmics, vars.at(i), usecut1, usecut2);
+		//		}
 
 	}
 	else if(mode_option == "sig"){
 
 		for(auto &method: TMVAmethods){
 			for(int i=0; i< bdt_files.size(); i++){
-				std::cout<<"Now adding TreeFriend: "<<cosmic_track_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_track_cuts.identifier,  cosmic_track_cuts.identifier+"_app"+".root");
+				std::cout<<"Now adding TreeFriend: "<<cosmic_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_cuts.identifier,  cosmic_cuts.identifier+"_app"+".root");
 
-				std::cout<<"Now adding TreeFriend: "<<bnb_track_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_track_cuts.identifier,  bnb_track_cuts.identifier+"_app"+".root");
+				std::cout<<"Now adding TreeFriend: "<<bnb_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_cuts.identifier,  bnb_cuts.identifier+"_app"+".root");
 			}
 		}
 
 
-		TFile *fsig = new TFile("significance.root","recreate");
-		std::vector<double> ans = scan_significance(fsig, {signal_cosmics} , {bnb_cosmics, intime}, cosmic_track_cuts, bnb_track_cuts);
+		TFile *fsig = new TFile(("significance_"+istrack+".root").c_str(),"recreate");
+		std::vector<double> ans = scan_significance(fsig, {signal_cosmics} , {bnb_cosmics, intime}, cosmic_cuts, bnb_cuts);
 		std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
 		fsig->Close();
 
@@ -286,11 +362,11 @@ int main (int argc, char *argv[]){
 
 		for(auto &method: TMVAmethods){
 			for(int i=0; i< bdt_files.size(); i++){
-				std::cout<<"Now adding TreeFriend: "<<cosmic_track_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_track_cuts.identifier,  cosmic_track_cuts.identifier+"_app"+".root");
+				std::cout<<"Now adding TreeFriend: "<<cosmic_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_cuts.identifier,  cosmic_cuts.identifier+"_app"+".root");
 
-				std::cout<<"Now adding TreeFriend: "<<bnb_track_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_track_cuts.identifier,  bnb_track_cuts.identifier+"_app"+".root");
+				std::cout<<"Now adding TreeFriend: "<<bnb_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_cuts.identifier,  bnb_cuts.identifier+"_app"+".root");
 			}
 		}
 
@@ -299,47 +375,77 @@ int main (int argc, char *argv[]){
 		obs.addToStack(bnb_cosmics);
 		obs.addToStack(intime);
 
-		TCanvas *cobs = new TCanvas();
-		cobs->Divide(2,2);
 
-		ftest->cd();
-		THStack* s0 = obs.getStack(vars.front(),0,-9,-9);
-		THStack* s1 = obs.getStack(vars.front(),1,-9,-9);
-		THStack* s2 = obs.getStack(vars.front(),2,0.6,-9);
-		THStack* s3 = obs.getStack(vars.front(),3,0.6,0.5295);
-		cobs->cd(1);
-		s0->Draw("hist");
-		s0->GetXaxis()->SetTitle(vars.front().unit.c_str());
-		s0->GetYaxis()->SetTitle("Verticies");
-		cobs->cd(2);
-		s1->Draw("hist");
-		s1->GetXaxis()->SetTitle(vars.front().unit.c_str());
-		s1->GetYaxis()->SetTitle("Verticies");
+		obs.plotStacks(ftest,vars.at(1),fcoscut,fbnbcut);
 
-		cobs->cd(3);
-		s2->Draw("hist");
-		s2->GetXaxis()->SetTitle(vars.front().unit.c_str());
-		s2->GetYaxis()->SetTitle("Verticies");
 
-		cobs->cd(4);
-		s3->Draw("hist");
-		s3->GetXaxis()->SetTitle(vars.front().unit.c_str());
-		s3->GetYaxis()->SetTitle("Verticies");
-
-		cobs->Write();
 	}
 
+	else if(mode_option == "eff"){
+
+		for(auto &method: TMVAmethods){
+			for(int i=0; i< bdt_files.size(); i++){
+				std::cout<<"Now adding TreeFriend: "<<cosmic_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_cuts.identifier,  cosmic_cuts.identifier+"_app"+".root");
+
+				std::cout<<"Now adding TreeFriend: "<<bnb_cuts.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_cuts.identifier,  bnb_cuts.identifier+"_app"+".root");
+			}
+		}
 
 
+		double plot_pot = 6.6e20;
+
+		std::cout<<"Starting efficiency study: coscut @ "<<fcoscut<<" bnbcut@: "<<fbnbcut<<std::endl;
+
+		std::cout<<"########################################################################"<<std::endl;
+		std::cout<<"###############################Efficiency###############################"<<std::endl;
+		for(int i=0; i< bdt_files.size(); i++){
+			std::cout<<bdt_files.at(i)->tag<<std::endl;
+			std::vector<double> prev;
+			double start;
+			double sel;		
+
+			double pot_scale = (plot_pot/bdt_files.at(i)->pot )*bdt_files.at(i)->scale_data;
+			std::string gencut = "true_nu_vtx_fid_contained == 1";
+			if(bdt_files.at(i)->tag == "IntimeCosmics"){
+				gencut = "1";
+			}	
+
+			double nevents = bdt_files.at(i)->tevent->GetEntries(gencut.c_str())*pot_scale;	
+			double nv = bdt_files.at(i)->tvertex->GetEntries((gencut+"&&1").c_str())*pot_scale;	
+			double ns = bdt_files.at(i)->tvertex->GetEntries((gencut+"&&  reco_asso_showers==1 && reco_asso_tracks "+num_track_cut).c_str())*pot_scale;	
+
+			start = nevents;
+			sel = ns;
+			std::cout<<"Stage G\t\t"<<nevents<<"\t\t"<<nevents/start*100<<std::endl;
+			std::cout<<"Stage V\t\t"<<nv<<"\t\t"<<nv/start*100<<std::endl;
+			std::cout<<"Stage S\t\t"<<ns<<"\t\t"<<ns/start*100<<"\t\t"<<100<<std::endl;
+
+			for(int j=0; j <4; j++){		
+				std::string thiscut = bdt_files.at(i)->getStageCuts(j,fcoscut,fbnbcut); 
+				double nvert =bdt_files.at(i)->tvertex->GetEntries(thiscut.c_str())*pot_scale;
+				double eff =0;
+				//	if(j==0){
+				//		start = nvert;
+				//		
+				//	}
+
+				eff = nvert/start*100;
+
+				std::cout<<"Stage "<<std::to_string(j)<<"\t\t"<<nvert<<"\t\t"<<eff<<"\t\t"<<nvert/sel*100<<std::endl;	
+
+			}
+		}
 
 
-
+	}
 	else {
 		std::cout << "WARNING: " << mode_option << " is an invalid option\n";
 	}
 
 	ftest->Close();
 
-return 0;
+	return 0;
 
-}
+	}

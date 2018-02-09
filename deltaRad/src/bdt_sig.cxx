@@ -40,17 +40,38 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	double best_mva_cut2 = DBL_MAX;
 
 	double plot_pot = 6.6e20;
-//0.574667 0.523333
-	//for nice plots make the 50, 25 is quicker tho
-	int nsteps_cosmic = 10;//50
-	double cut_min_cosmic = 0.57;
-	double cut_max_cosmic = 0.575;
-	double step_cosmic = (cut_max_cosmic-cut_min_cosmic)/((double)nsteps_cosmic);
+	
 
-	int nsteps_bnb = 10;//50
-	double cut_min_bnb = 0.518;//0.52;
-	double cut_max_bnb = 0.53;
+	//for nice plots make the 50, 25 is quicker tho
+	int nsteps_cosmic = 20;//50
+	double cut_min_cosmic = 999;
+	double cut_max_cosmic = -999;
+
+	int nsteps_bnb = 20;//50
+	double cut_min_bnb = 999;//0.52;
+	double cut_max_bnb = -999;
+
+
+
+	for(size_t i = 0; i < sig_files.size(); ++i) {
+	//	double tmin_cos = sig_files.at(i)->tvertex->GetMinimum( (sig_files.at(i)->getBDTVariable(cosmic_cut).name + ">0").c_str()    );
+		double tmax_cos = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(cosmic_cut).name.c_str()    );
+		double tmax_bnb = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bnb_cut).name.c_str()    );
+
+		//if( tmin_cos <= cut_min_cosmic) cut_min_cosmic=tmin_cos;
+		if( tmax_cos >= cut_max_cosmic) cut_max_cosmic=tmax_cos;
+		if( tmax_bnb >= cut_max_bnb) cut_max_bnb=tmax_bnb;
+
+	}
+	cut_min_cosmic = cut_max_cosmic*0.82;
+	cut_min_bnb = cut_max_bnb*0.85;
+
+	std::cout<<"BNB sig scan from: "<<cut_min_bnb<<" to "<<cut_max_bnb<<std::endl;
+	std::cout<<"COSMIC sig scan from: "<<cut_min_cosmic<<" to "<<cut_max_cosmic<<std::endl;
+
+	double step_cosmic = (cut_max_cosmic-cut_min_cosmic)/((double)nsteps_cosmic);
 	double step_bnb = (cut_max_bnb-cut_min_bnb)/((double)nsteps_bnb);
+
 
 	TH2D * h2_sig_cut = new TH2D( "significance_2D",  "significance_2D",nsteps_cosmic, cut_min_cosmic, cut_max_cosmic, nsteps_bnb, cut_min_bnb, cut_max_bnb);
 	std::vector<double> vec_sig;//some vectors to store TGraph info;
@@ -71,6 +92,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 			
 				std::string bnbcut = sig_files.at(i)->getStageCuts(3,d,d2); 
 				signal += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
+
 			}
 
 			for(size_t i = 0; i < bkg_files.size(); ++i) {
@@ -86,7 +108,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 			if(signal==0){
 				 significance =0;
 			}else if(background !=0){
-				significance = signal/sqrt(signal+background);
+				significance = signal/sqrt(background);
 			}else{
 				std::cout<<"method_best_significane_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<<d<<", cut2: "<<d2<<std::endl;
 				break;
@@ -107,6 +129,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 		}
 
 	}
+		
 
 	h2_sig_cut->SetStats(false);
 	TCanvas * c_sig_cuts =  new TCanvas( "significance_cuts_colz", "significance_cuts_colz", 2000,1600 );
@@ -137,6 +160,4 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	return std::vector<double>{best_mva_cut, best_mva_cut2, best_significance};
 
 }
-
-
 

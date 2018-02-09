@@ -28,7 +28,13 @@
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
 
-
+template <typename T>
+std::string to_string_prec(const T a_value, const int n = 6)
+{
+	std::ostringstream out;
+	out <<std::fixed<< std::setprecision(n) << a_value;
+	return out.str();
+}
 
 
 struct bdt_file{

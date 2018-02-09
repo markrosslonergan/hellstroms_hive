@@ -12,7 +12,7 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	TLegend *leg = new TLegend(0.11, 0.69, 0.49,0.89);
 
 	std::vector<bdt_file*> files= {bdt_sig, bdt_bkg};
-	std::vector<std::string> which_cuts = {cut.base_cuts+"&&"+cut.signal_definition, cut.base_cuts + "&&"+ cut.background_definition};
+	std::vector<std::string> which_cuts = {bdt_sig->getStageCuts(1,-9,-9), bdt_bkg->getStageCuts(1,-9,-9)};
 	std::vector<TH1*> h_bdt;
 
 	int i=0;

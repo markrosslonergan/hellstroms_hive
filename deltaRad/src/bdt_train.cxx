@@ -27,7 +27,7 @@ int bdt_train(bdt_cuts cuts, bdt_file *signal_file, bdt_file *background_file, s
 	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
 
 	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
-			"nTrain_Signal="+std::to_string(int(signal_entries*0.80))+":nTrain_Background="+std::to_string(int(background_entries/2))+":SplitMode=Random:NormMode=NumEvents:!V");
+			"nTrain_Signal="+std::to_string(int(signal_entries*0.80))+":nTrain_Background="+std::to_string(int(background_entries*0.75))+":SplitMode=Random:NormMode=NumEvents:!V");
 
 	for(method_struct const & method : methods) factory->BookMethod(dataloader, method.type, method.str, method.option);
 
