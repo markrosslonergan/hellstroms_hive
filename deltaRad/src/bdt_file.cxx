@@ -17,7 +17,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 
 	//This isnt the best idea but sure whynot
-	recomc_cols = {kRed-7, kRed+1, kOrange-3, kBlue+3, kBlue, kBlue-7, kCyan+8, kGreen+3, kGreen+1, kGreen-9, kMagenta-7, kGray};
+	recomc_cols = {kRed-7, kRed+1, kOrange-3, kBlue+3, kBlue, kBlue-7, kCyan-7, kGreen+3, kGreen+1, kGreen-9, kMagenta-7, kGray};
 
 	recomc_names = { "BNB other #gamma", "BNB #pi^{0} #gamma","BNB electron","BNB muon","BNB proton","BNB pion","BNB other","Cosmic #gamma","Cosmic Electrons", "Cosmic Muons","Cosmic Other","other"};
 	recomc_cuts = {
