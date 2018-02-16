@@ -32,41 +32,39 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	double N_bdt_cosmic;
 	double N_bdt_bnb;
 
-	std::cout<<"Selection: "<<cut.base_cuts<<std::endl;
-
 	//REWRITE THIS USING file->getStageCuts
 
 	//-------------- Selection -------------
 	std::string selection = file->getStageCuts(0, -9, -9);
 	
-	reco_mc_vec_sel = file->getRecoMCTH1(var, selection, "sel_"+file->tag+"_"+var.name, plot_pot);
-	reco_mc_all_sel = (TH1*)file->getTH1(var, selection, "all_sel_"+file->tag+"_"+var.name, plot_pot);
+	reco_mc_vec_sel = file->getRecoMCTH1(var, selection, "sel_"+file->tag+"_"+var.safe_name, plot_pot);
+	reco_mc_all_sel = (TH1*)file->getTH1(var, selection, "all_sel_"+file->tag+"_"+var.safe_name, plot_pot);
 	N_selection = file->tvertex->GetEntries((selection).c_str())*plot_pot/file->pot*file->scale_data;
 
 	//-------------- Precuts -------------
 	std::string precut = file->getStageCuts(1, -9, -9);
 
-	reco_mc_vec_pre = file->getRecoMCTH1(var, precut , "pre_"+file->tag+"_"+var.name, plot_pot);
-	reco_mc_all_pre = (TH1*)file->getTH1(var , precut ,"all_pre_"+file->tag+"_"+var.name, plot_pot);
+	reco_mc_vec_pre = file->getRecoMCTH1(var, precut , "pre_"+file->tag+"_"+var.safe_name, plot_pot);
+	reco_mc_all_pre = (TH1*)file->getTH1(var , precut ,"all_pre_"+file->tag+"_"+var.safe_name, plot_pot);
 	N_precuts = file->tvertex->GetEntries((precut).c_str())*plot_pot/file->pot*file->scale_data;
 
 	//-------------- Cosmic BDT -------------
 	std::string cosmiccut = file->getStageCuts(2, cut_cosmic_val, -9);
 
-	reco_mc_vec_bdt1 = file->getRecoMCTH1(var, cosmiccut, "bdt1_"+file->tag+"_"+var.name, plot_pot);
-	reco_mc_all_bdt1 = (TH1*)file->getTH1(var , cosmiccut  ,"all_bdt1_"+file->tag+"_"+var.name, plot_pot);
+	reco_mc_vec_bdt1 = file->getRecoMCTH1(var, cosmiccut, "bdt1_"+file->tag+"_"+var.safe_name, plot_pot);
+	reco_mc_all_bdt1 = (TH1*)file->getTH1(var , cosmiccut  ,"all_bdt1_"+file->tag+"_"+var.safe_name, plot_pot);
 	N_bdt_cosmic = file->tvertex->GetEntries(cosmiccut.c_str())*plot_pot/file->pot*file->scale_data;
 
 
 	//-------------- BNB BDT -------------
 	std::string bnbcut = file->getStageCuts(3, cut_cosmic_val, cut_bnb_val);
 
-	reco_mc_vec_bdt2 = file->getRecoMCTH1(var, bnbcut , "bdt2_"+file->tag+"_"+var.name, plot_pot);
-	reco_mc_all_bdt2 = (TH1*)file->getTH1(var , bnbcut  ,"all_bdt2_"+file->tag+"_"+var.name, plot_pot);
+	reco_mc_vec_bdt2 = file->getRecoMCTH1(var, bnbcut , "bdt2_"+file->tag+"_"+var.safe_name, plot_pot);
+	reco_mc_all_bdt2 = (TH1*)file->getTH1(var , bnbcut  ,"all_bdt2_"+file->tag+"_"+var.safe_name, plot_pot);
 	N_bdt_bnb = file->tvertex->GetEntries(bnbcut.c_str())*plot_pot/file->pot*file->scale_data;
 
-	if(false){
-		file->tvertex->Scan("run_number:subrun_number:event_number",bnbcut.c_str());
+	if(true){
+		file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2",bnbcut.c_str());
 	}
 
 

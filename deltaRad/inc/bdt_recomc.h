@@ -8,7 +8,7 @@
 
 #include  "bdt_file.h"
 #include  "bdt_var.h"
-#include  "bdt_cuts.h"
+#include  "bdt_info.h"
 
 /******** Root includes *****/
 
@@ -31,12 +31,12 @@
 class bdt_recomc{
 	public:
 		
-		bdt_cuts cut;
+		bdt_info info;
 		std::string bdt_type;
 		bdt_file* bdt_sig;
 		bdt_file* bdt_bkg;
 
-//		bdt_recomc(bdt_cuts cutin, bdt_file* sigin, bdt_file* bkgin) : cut(cutin), bdt_sig(sigin), bdt_bkg(bkgin){	
+//		bdt_recomc(bdt_infos cutin, bdt_file* sigin, bdt_file* bkgin) : cut(cutin), bdt_sig(sigin), bdt_bkg(bkgin){	
 //			bdt_type = cut.identifier;
 //		
 //		}

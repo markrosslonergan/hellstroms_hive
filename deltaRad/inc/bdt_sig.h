@@ -8,7 +8,7 @@
 
 #include  "bdt_file.h"
 #include  "bdt_var.h"
-#include  "bdt_cuts.h"
+#include  "bdt_info.h"
 
 /******** Root includes *****/
 
@@ -30,7 +30,7 @@
 
 
 
-std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_cuts cosmic_cut, bdt_cuts bnb_cut);
+std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_cut, bdt_info bnb_cut);
 
 
 

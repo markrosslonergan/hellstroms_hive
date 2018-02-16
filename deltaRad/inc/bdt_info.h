@@ -1,5 +1,5 @@
-#ifndef BDT_CUTS_H
-#define BDT_CUTS_H
+#ifndef BDT_INFO_H
+#define BDT_INFO_H
 
 #include <vector>
 #include <string>
@@ -8,7 +8,7 @@
 
 /******** Root includes *****/
 
-struct bdt_cuts{
+struct bdt_info{
 
 	public:
 	
@@ -26,8 +26,8 @@ struct bdt_cuts{
 	std::string signal_definition;
 	std::string background_definition;
 	
-	bdt_cuts(){identifier = "null"; name = "null";};
-	bdt_cuts(std::string in_identifier, std::string in_name) : identifier(in_identifier), name(in_name), base_cuts("1"), pre_cuts("1"), mid_cuts("1"),post_cuts("1"), bdt_cosmic_cuts("1"), bdt_bnb_cuts("1"),signal_definition("1"),background_definition("1"){};
+	bdt_info(){identifier = "null"; name = "null";};
+	bdt_info(std::string in_identifier, std::string in_name) : identifier(in_identifier), name(in_name), base_cuts("1"), pre_cuts("1"), mid_cuts("1"),post_cuts("1"), bdt_cosmic_cuts("1"), bdt_bnb_cuts("1"),signal_definition("1"),background_definition("1"){};
 
 	int setName(std::string in){ identifier = in;return 0;};
 	int setBaseCuts(std::string in){ base_cuts = in; return 0;}; 

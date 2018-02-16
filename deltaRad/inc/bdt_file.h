@@ -8,7 +8,7 @@
 
 #include  "bdt_file.h"
 #include  "bdt_var.h"
-#include  "bdt_cuts.h"
+#include  "bdt_info.h"
 #include  "bdt_flow.h"
 
 /******** Root includes *****/
@@ -75,7 +75,7 @@ struct bdt_file{
 		double scale_data;
 
 		bdt_flow flow;
-		bdt_variable getBDTVariable(bdt_cuts cut);
+		bdt_variable getBDTVariable(bdt_info info);
 		bdt_variable getBDTVariable(std::string cut);
 
 		bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir,  int incol, bdt_flow inflow);	

@@ -8,7 +8,7 @@
 
 #include  "bdt_file.h"
 #include  "bdt_var.h"
-#include  "bdt_cuts.h"
+#include  "bdt_info.h"
 
 /******** Root includes *****/
 

@@ -87,13 +87,13 @@ int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::str
 
 
 
-int bdt_app(bdt_cuts cuts, std::vector<bdt_file*> files, std::vector<bdt_variable> vars, std::vector<method_struct> & method){
+int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variable> vars, std::vector<method_struct> & method){
 
-	std::string identifier = cuts.identifier;
+	std::string identifier = info.identifier;
 	
 	TFile * app_ofile = TFile::Open((identifier+"_app"+".root").c_str(), "recreate");
 	for(size_t i = 0; i < files.size(); ++i) {
-		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+cuts.identifier;
+		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
 		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow.base_cuts, bdt_response_friend_tree_name , vars, method);
 	}
 	app_ofile->Close();

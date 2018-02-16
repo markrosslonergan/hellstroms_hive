@@ -7,7 +7,7 @@ THStack* bdt_stack::getBDTStack(std::string whichbdt, int level, double cut1, do
 	for(int t=0; t<stack.size(); t++){
 		bdt_variable var = stack.at(t)->getBDTVariable(whichbdt);
 
-		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.name, plot_pot);
+		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot);
 
 		hist->SetTitle((this->name+"_"+var.name).c_str());
 		hist->SetLineColor(kBlack);
@@ -32,7 +32,7 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
 
 	for(int t=0; t<stack.size(); t++){
-		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.name, plot_pot);
+		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot);
 
 		hist->SetTitle((this->name+"_"+var.name).c_str());
 		hist->SetLineColor(kBlack);

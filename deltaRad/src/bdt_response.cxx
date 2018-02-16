@@ -4,7 +4,7 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	fout->cd();
 	
 	
-	TCanvas *c = new TCanvas(cut.identifier.c_str(),cut.identifier.c_str(),1600,1600);
+	TCanvas *c = new TCanvas(info.identifier.c_str(),info.identifier.c_str(),1600,1600);
 	c->Divide(2,2);
 	TPad *p1 = (TPad*)c->cd(1);
 	TPad *p2 = (TPad*)c->cd(2);
@@ -21,14 +21,14 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	for(auto &file: files){
 		std::cout<<"On file: "<<file->name<<" || "<<file->tag<<std::endl;
 
-		bdt_variable bdtvar = file->getBDTVariable(cut);
+		bdt_variable bdtvar = file->getBDTVariable(info);
 
 		fout->cd();
 		h_bdt.push_back((TH1*)file->getTH1(bdtvar, which_cuts.at(i), file->tag+"_"+bdtvar.name+"_"+bdt_type ,1.0));
 		h_bdt.back()->SetDirectory(0);	
 
 		c->cd(1);
-		h_bdt.back()->SetTitle(cut.name.c_str());
+		h_bdt.back()->SetTitle(info.name.c_str());
 		h_bdt.back()->SetLineWidth(2);
 		h_bdt.back()->Scale(1.0/h_bdt.back()->Integral() );
 		h_bdt.back()->Draw("hist same");
@@ -106,7 +106,7 @@ int bdt_response::plot_bdt_response(TFile *fout){
 
 	fout->cd();
 	c->Write();
-	c->SaveAs(("response/BDT_response_"+cut.identifier+".pdf").c_str(),"pdf");
+	c->SaveAs(("response/BDT_response_"+info.identifier+".pdf").c_str(),"pdf");
 
 	return 0;
 /*

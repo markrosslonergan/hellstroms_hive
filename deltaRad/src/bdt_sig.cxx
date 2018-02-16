@@ -33,7 +33,7 @@ which for v3.0_with calo is 2.38091e+21
 */
 
 
-std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_cuts cosmic_cut, bdt_cuts bnb_cut){
+std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt){
 	std::cout<<"Starting to Scan Significance"<<std::endl;
 	double best_significance = 0;
 	double best_mva_cut = DBL_MAX;
@@ -43,27 +43,27 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	
 
 	//for nice plots make the 50, 25 is quicker tho
-	int nsteps_cosmic = 20;//50
+	int nsteps_cosmic = 14;//50
 	double cut_min_cosmic = 999;
 	double cut_max_cosmic = -999;
 
-	int nsteps_bnb = 20;//50
+	int nsteps_bnb = 14;//50
 	double cut_min_bnb = 999;//0.52;
 	double cut_max_bnb = -999;
 
 
 
 	for(size_t i = 0; i < sig_files.size(); ++i) {
-	//	double tmin_cos = sig_files.at(i)->tvertex->GetMinimum( (sig_files.at(i)->getBDTVariable(cosmic_cut).name + ">0").c_str()    );
-		double tmax_cos = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(cosmic_cut).name.c_str()    );
-		double tmax_bnb = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bnb_cut).name.c_str()    );
+	//	double tmin_cos = sig_files.at(i)->tvertex->GetMinimum( (sig_files.at(i)->getBDTVariable(cosmic_focused_bdt).name + ">0").c_str()    );
+		double tmax_cos = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(cosmic_focused_bdt).name.c_str()    );
+		double tmax_bnb = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bnb_focused_bdt).name.c_str()    );
 
 		//if( tmin_cos <= cut_min_cosmic) cut_min_cosmic=tmin_cos;
 		if( tmax_cos >= cut_max_cosmic) cut_max_cosmic=tmax_cos;
 		if( tmax_bnb >= cut_max_bnb) cut_max_bnb=tmax_bnb;
 
 	}
-	cut_min_cosmic = cut_max_cosmic*0.82;
+	cut_min_cosmic = cut_max_cosmic*0.85;
 	cut_min_bnb = cut_max_bnb*0.85;
 
 	std::cout<<"BNB sig scan from: "<<cut_min_bnb<<" to "<<cut_max_bnb<<std::endl;

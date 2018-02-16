@@ -17,8 +17,22 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 
 	//This isnt the best idea but sure whynot
-	recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue, kBlue-7, kCyan-7, kGreen+3, kGreen+1, kGreen-9, kMagenta-7};
 
+	recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue, kBlue-7, kGreen+1};
+	recomc_names = { "NC #Delta Radiative #gamma", "BNB NC #pi^{0} #gamma", "BNB CC #pi^{0} #gamma", "BNB Other #gamma","BNB electron","BNB other","Cosmic"};
+	recomc_cuts = {
+		"shower_true_pdg == 22 && shower_true_parent_pdg !=111 && is_delta_rad ==1 && shower_true_origin==1",
+		"shower_true_pdg == 22 && shower_true_parent_pdg == 111 && shower_true_origin==1 && ccnc ==1",
+		"shower_true_pdg == 22 && shower_true_parent_pdg == 111 && shower_true_origin==1 && ccnc == 0",
+		"shower_true_pdg == 22 && shower_true_parent_pdg != 111 && is_delta_rad!=1&& shower_true_origin==1",
+		"shower_true_origin ==1 && abs(shower_true_pdg) ==11",
+		"shower_true_origin ==1 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11",
+		"shower_true_origin == 2"
+	};
+
+
+	/*
+	recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue, kBlue-7, kCyan-7, kGreen+3, kGreen+1, kGreen-9, kMagenta-7};
 	recomc_names = { "NC #Delta Radiative #gamma", "BNB #pi^{0} #gamma","BNB Other #gamma","BNB electron","BNB muon","BNB proton","BNB pion","BNB other","Cosmic #gamma","Cosmic Electrons", "Cosmic Muons","Cosmic Other"};
 	recomc_cuts = {
 		"shower_true_pdg == 22 && shower_true_parent_pdg !=111 && is_delta_rad ==1 && shower_true_origin==1",
@@ -36,6 +50,13 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		//			"shower_true_origin == 2 && abs(shower_true_pdg)==22",
 		//			"shower_true_origin == 2 && abs(shower_true_pdg)!=11 && shower_true_pdg!=22"
 	};
+
+	*/
+
+
+
+
+
 
 	scale_data =1.0;
 	std::cout<<"Loading : "<<name<<std::endl;
@@ -295,23 +316,21 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	return ans_th1s;	
 }
 
-bdt_variable bdt_file::getBDTVariable(bdt_cuts cut){
+bdt_variable bdt_file::getBDTVariable(bdt_info info){
 
-	if(cut.identifier =="bnb_track" || cut.identifier == "bnb_notrack"){
-		return bdt_variable(this->tag +"_"+cut.identifier+ ".mva","(75,0.3,0.62)","BNB BDT Response",false);
-	}else if(cut.identifier == "cosmic_track" || cut.identifier == "cosmic_notrack"){
-		return bdt_variable(this->tag +"_"+cut.identifier+ ".mva","(75,0.3,0.62)","Cosmic BDT Response",false);
+	if(info.identifier =="bnb_track" || info.identifier == "bnb_notrack"){
+		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(75,0.35,0.55)","BNB BDT Response",false);
+	}else if(info.identifier == "cosmic_track" || info.identifier == "cosmic_notrack"){
+		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(75,0.3,0.62)","Cosmic BDT Response",false);
 	}
-
 }
 
+bdt_variable bdt_file::getBDTVariable(std::string info){
 
-bdt_variable bdt_file::getBDTVariable(std::string cut){
-
-	if(cut =="bnb_track"|| cut=="bnb_notrack"){
-		return bdt_variable(this->tag +"_"+cut+ ".mva","(75,0.3,0.62)","BNB BDT Response",false);
-	}else if(cut == "cosmic_track"|| cut=="cosmic_notrack"){
-		return bdt_variable(this->tag +"_"+cut+ ".mva","(75,0.3,0.62)","Cosmic BDT Response",false);
+	if(info =="bnb_track"|| info=="bnb_notrack"){
+		return bdt_variable(this->tag +"_"+info+ ".mva","(75,0.35,0.55)","BNB BDT Response",false);
+	}else if(info == "cosmic_track"|| info=="cosmic_notrack"){
+		return bdt_variable(this->tag +"_"+info+ ".mva","(75,0.3,0.62)","Cosmic BDT Response",false);
 	}
 
 }

@@ -1,8 +1,8 @@
 #include "bdt_train.h"
 
-int bdt_train(bdt_cuts cuts, bdt_file *signal_file, bdt_file *background_file, std::vector<bdt_variable> variables, std::vector<method_struct> & methods){
+int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, std::vector<bdt_variable> variables, std::vector<method_struct> & methods){
 
-	std::string const name = cuts.identifier;
+	std::string const name = info.identifier;
 	TFile * outfile = TFile::Open((name+"_training.root").c_str(), "recreate");
 
 

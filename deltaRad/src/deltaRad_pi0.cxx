@@ -9,8 +9,6 @@
 #include "gen_tlimits.h"
 #include "plotstack.h"
 #include "load_mva_param.h"
-//#include "data_mc_testing_suite.h"
-//#include "efficiency.h"
 
 #include "tinyxml.h"
 
@@ -115,49 +113,48 @@ int main (int argc, char *argv[]){
 	std::string new_precuts;
 	std::string num_track_cut = ">0";
 	if(istrack == "track"){
-		new_precuts =  "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 2 && longest_asso_track_displacement < 150 && summed_associated_helper_shower_energy > 0.05 && totalpe_ibg_sum >50";
+		new_precuts =  "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 2 && longest_asso_track_displacement < 150 && totalpe_ibg_sum >50";
 		num_track_cut = ">0";
 
 	}else if(istrack == "notrack"){
-		new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && summed_associated_helper_shower_energy > 0.05 && totalpe_ibg_sum > 50";
+		new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && totalpe_ibg_sum > 50";
 		num_track_cut = "==0";
 	}
 
 
-	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+istrack, "BNB focused BDT");
-	bdt_info cosmic_bdt_info("cosmic_"+istrack, "Cosmic focused BDT");
+	//Set up 2 bdt_info structs for passing information on what BDT we are running.
+	bdt_info bnb_bdt_info("pi0bnb_"+istrack, "BNB focused BDT");
+	bdt_info cosmic_bdt_info("pi0cosmic_"+istrack, "Cosmic focused BDT");
 	
 
-	std::string base_cuts = "passed_swtrigger ==1 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
-	std::string intime_base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
+	// Our signal definition alongside any base cuts we want to make
+	std::string base_cuts = "passed_swtrigger == 1 && reco_asso_showers == 2 && reco_asso_tracks "+num_track_cut;
+	std::string cosmic_base_cuts = "reco_asso_showers == 2 && reco_asso_tracks "+num_track_cut;
 
-	std::string signal_definition = "is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
-	std::string background_definition = "is_delta_rad == 0";//"!(" + bnb_bdt_info.signal_definition + ")";
+	std::string signal_definition = "ccnc ==1 && shower_true_parent_pdg==111";
+	std::string background_definition = "!(" + signal_definition + ")";
+
+	
+	//This is a particular cut flow that a file will undergo. I.e base cuts->precuts->cosmic BDT->bnb bdt
+	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	new_precuts, 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
+	bdt_flow cosmic_flow(cosmic_base_cuts, 			new_precuts, 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
+	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts,	cosmic_bdt_info.identifier ,bnb_bdt_info.identifier);
+	bdt_flow data_flow(base_cuts ,				new_precuts,	cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
 
 
-	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	new_precuts,	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
-	bdt_flow cosmic_flow(intime_base_cuts,			new_precuts, 	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
-	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts,	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
-	bdt_flow data_flow(base_cuts ,				new_precuts,	cosmic_bdt_info.identifier, 	bnb_bdt_info.identifier);
-
-
-	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, BDT_CUT )		
-	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_v2.0.root",	"NCDeltaSignalPure",	   "hist","LEEPhoton",  kRed-7, signal_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_cosmics_v2.0.root", "NCDeltaSignalCosmics", "hist","LEEPhoton",  kRed-7, signal_flow);
+	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
+	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "merged.bnb_v1.0.root",	"NCpi0Pure",	   "hist","LEEPhoton",  kBlue-4, signal_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86_withcalo.root", "NCpi0Cosmics", "hist","LEEPhoton",  kBlue-4, signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(dir+"samples/mcc86/", "merged.bnb_v1.0.root",	"BNBPure",	   "hist","LEEPhoton",  kBlue-4, bkg_flow);
 	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86_withcalo.root", "BNBCosmics", "hist","LEEPhoton",  kBlue-4, bkg_flow);
 	bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "merged.intime_v1.0.root" ,"IntimeCosmics","hist","LEEPhoton", kGreen-3, cosmic_flow);
 
-
+	//Data based files
 	bdt_file *data5e19 = new bdt_file(dir+"samples/mcc87/", "merged.data5e19_v10.root" ,"Data5e19","hist","LEEPhotonAnalysisData", kGreen-3, data_flow);
 	bdt_file *bnbext = new bdt_file(dir+"samples/mcc87/", "merged.bnbext_v7.0.root" ,"BNBext","hist","LEEPhotonAnalysisData", kGreen-3, data_flow);
 
-
 	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
 
-	signal_pure->scale_data = 3.1;
-	signal_cosmics->scale_data = 3.1;
 
 	//Add Any other info in the form of FRIENDS! e.g track dEdx 
 	signal_pure->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_nsignal.root");			
@@ -168,9 +165,9 @@ int main (int argc, char *argv[]){
 	data5e19->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_data5e19.root");			
 	bnbext->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnbext.root");			
 
+
 	//Variables!
 	std::string angle_track_shower ="fabs(longest_asso_track_reco_dirx*most_energetic_shower_reco_dirx+longest_asso_track_reco_diry*most_energetic_shower_reco_diry+longest_asso_track_reco_dirz*most_energetic_shower_reco_dirz)";
-
 	std::vector<bdt_variable> vars;
 
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2","(48,0,15)", "Shower dE/dx Collection Plane [MeV/cm]",false,"d"));
@@ -189,16 +186,14 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("cos(atan(most_energetic_shower_reco_diry/most_energetic_shower_reco_dirz))","(25,0,1)","Reconstructed Shower |Cosine Theta|", true,"d"));
 	vars.push_back(bdt_variable("cos(atan(most_energetic_shower_reco_diry/most_energetic_shower_reco_dirx))","(25,0,1)","Reconstructed Shower |Cosine Phi|", true,"d"));
 
-
-
 	if(istrack=="track"){
 
-		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_range","(25,0,500)","Reconstructed Track Range? [cm]", true,"d"));
+//		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_range","(25,0,500)","Reconstructed Track Range? [cm]", true,"d"));
 		vars.push_back(bdt_variable("longest_asso_track_displacement","(25,0,500)","Reconstructed Track Length [cm]", true,"d"));
 
-		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parD", "(25,-2,2)","Bragg Parameter D", true,"d"));
+		//vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parD", "(25,-2,2)","Bragg Parameter D", true,"d"));
 		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(25,0,10)","Photon Coversion Length from Reconstructed Vertex [cm]" ,false,"d"));
-		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parA", "(30,0,30)","Proton Bragg Fit Parameter", true,"d"));
+	//	vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parA", "(30,0,30)","Proton Bragg Fit Parameter", true,"d"));
 
 
 		vars.push_back(bdt_variable("cos(atan(longest_asso_track_reco_diry/longest_asso_track_reco_dirz))","(25,0,1)","Reconstructed Track |Cosine Theta|", true,"d"));
@@ -218,14 +213,13 @@ int main (int argc, char *argv[]){
 	//vars.push_back(bdt_variable("most_energetic_shower_reco_thetayz","(25,-1.7,1.7)","Shower Angle yz [rad]",false));
 	//vars.push_back(bdt_variable("longest_asso_track_thetaxz","(25,-1.7,1.7)","Track Angle xz [rad]",true));
 	//vars.push_back(bdt_variable("longest_asso_track_thetayz","(25,-1.7,1.7)","Track Angle yz [rad]",true));
-
 	//This batch appears to be boring
 	//vars.push_back(bdt_variable("reco_shower_dedx_plane0","(48,0,15)", "dE/dx [MeV/cm]",false));
 	//vars.push_back(bdt_variable("reco_shower_dedx_plane1","(48,0,15)", "dE/dx [MeV/cm]",false));
 	//vars.push_back(bdt_variable("totalpe_bbg_sum","(25,0,2000)","Num PE",false));
-
 	//This is fixed to be 1!
 	//vars.push_back(bdt_variable("reco_asso_showers","(6,0,5)","Number of Reco Showers",false));	
+
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
