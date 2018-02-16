@@ -359,12 +359,12 @@ int trk_dEdx(std::string fnam, std::string namout){
 
 
 int main(){
-	//		trk_dEdx("../samples/mcc86/merged.bnbcosmic_v3.0_mcc86_withcalo.root","trackdEdx_bnb_cosmics.root");
-	//		trk_dEdx("../samples/mcc86/merged.ncsignal_cosmics_v2.0.root","trackdEdx_nsignal_cosmics.root");
-	//		trk_dEdx("../samples/mcc86/merged.ncsignal_v2.0.root","trackdEdx_nsignal.root");
+			trk_dEdx("../samples/mcc86/merged.bnbcosmic_v3.0_mcc86_withcalo.root","trackdEdx_bnb_cosmics.root");
+			trk_dEdx("../samples/mcc86/merged.ncsignal_cosmics_v2.0.root","trackdEdx_nsignal_cosmics.root");
+			trk_dEdx("../samples/mcc86/merged.ncsignal_v2.0.root","trackdEdx_nsignal.root");
 
-	//		trk_dEdx("../samples/mcc86/merged.bnb_v1.0.root","trackdEdx_bnb.root");
-	//		trk_dEdx("../samples/mcc86/merged.intime_v1.0.root","trackdEdx_intime.root");
+			trk_dEdx("../samples/mcc86/merged.bnb_v1.0.root","trackdEdx_bnb.root");
+			trk_dEdx("../samples/mcc86/merged.intime_v1.0.root","trackdEdx_intime.root");
 			trk_dEdx("../samples/mcc87/merged.data5e19_v10.root","trackdEdx_data5e19.root");
 			trk_dEdx("../samples/mcc87/merged.bnbext_v7.0.root","trackdEdx_bnbext.root");
 	return 0;
