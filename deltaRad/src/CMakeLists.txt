@@ -1,9 +1,8 @@
 include_directories (${CMAKE_SOURCE_DIR}/inc/)
 include_directories ( ${CMAKE_SOURCE_DIR}/tinyxml/)
 
-add_library (deltaRadlib bdt_spec.cxx bdt_sig.cxx bdt_recomc.cxx bdt_response.cxx bdt_app.cxx bdt_train.cxx bdt_file.cxx load_mva_param.cxx train.cxx app.cxx merge.cxx significance.cxx gen_tlimits.cxx load_trees.cxx get_pot_info.cxx get_mva_response_hists.cxx get_vertices_per_event.cxx plot_mva_response_hists.cxx plotstack.cxx)
+add_library (deltaRadlib bdt_spec.cxx bdt_sig.cxx bdt_recomc.cxx bdt_response.cxx bdt_app.cxx bdt_train.cxx bdt_file.cxx load_mva_param.cxx)
 target_link_libraries (deltaRadlib tinyxmllib ${ROOT_LIBRARIES})
-
 
 message(STATUS "ROOT_LIBRARIES @: ${ROOT_LIBRARIES}")
 
