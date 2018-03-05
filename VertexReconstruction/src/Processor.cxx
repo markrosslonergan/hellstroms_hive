@@ -48,6 +48,7 @@ void Processor::Run() {
   for(int i = 0; i < fstorage.fnumber_of_events; ++i) {
  
     fstorage.GetEvent(i);
+    if(i % 100 == 0) std::cout << "Entry: " << i << "\n";
 
     for(Analyzer * analyzer : fanalyzers) { 
       analyzer->Run();

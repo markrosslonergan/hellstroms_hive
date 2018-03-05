@@ -10,10 +10,10 @@ Storage::Storage(char const * pot_name,
 
   if(files.empty()) {
     std::cout << "Empty file list given to Storage\n";
-    return;
+    exit(1);
   }
 
-  if(!CheckFile(pot_name, meta_name, event_name, files)) return;
+  if(!CheckFile(pot_name, meta_name, event_name, files)) exit(1);
   Initialize();
 
   fpot_chain = new TChain(pot_name);
@@ -41,6 +41,12 @@ bool Storage::CheckFile(char const * pot_name,
 			std::vector<char const *> const & files) const {
 
   TFile * file = TFile::Open(files.front());
+
+  if(!file) {
+    std::cout << "File: " << files.front() << " not found\n";
+    exit(1);
+  }
+
   TTree * pot_tree = dynamic_cast<TTree*>(file->Get(pot_name));
   TTree * meta_tree = dynamic_cast<TTree*>(file->Get(meta_name));
   TTree * event_tree = dynamic_cast<TTree*>(file->Get(event_name));
@@ -215,6 +221,14 @@ void Storage::Initialize() {
   freco_shower_charge_contribution = nullptr;
   freco_shower_charge_total = nullptr;
 
+  //Pandora
+  fpfp_pdg = nullptr;
+  fpfp_vertex_X = nullptr;
+  fpfp_vertex_Y = nullptr;
+  fpfp_vertex_Z = nullptr;
+  fpfp_original_index = nullptr;
+  fpfp_children = nullptr;
+
   //Truth
   fnu_pdg = nullptr;
   fnu_energy = nullptr;
@@ -275,6 +289,22 @@ void Storage::Initialize() {
   fmctrack_PdgCode = nullptr;
   fmctrack_TrackID = nullptr;
   fmctrack_Process = nullptr;
+  fmctrack_Start_X = nullptr;
+  fmctrack_Start_Y = nullptr;
+  fmctrack_Start_Z = nullptr;
+  fmctrack_Start_T = nullptr;
+  fmctrack_Start_Px = nullptr;
+  fmctrack_Start_Py = nullptr;
+  fmctrack_Start_Pz = nullptr;
+  fmctrack_Start_E = nullptr;
+  fmctrack_End_X = nullptr;
+  fmctrack_End_Y = nullptr;
+  fmctrack_End_Z = nullptr;
+  fmctrack_End_T = nullptr;
+  fmctrack_End_Px = nullptr;
+  fmctrack_End_Py = nullptr;
+  fmctrack_End_Pz = nullptr;
+  fmctrack_End_E = nullptr;
   fmctrack_X = nullptr;
   fmctrack_Y = nullptr;
   fmctrack_Z = nullptr;
@@ -378,9 +408,11 @@ void Storage::ProcessPotChain() {
 
 void Storage::ProcessMetaChain() {
 
-  int fis_mc;
+  int is_heavy;
+  int is_mc;
 
-  fmeta_chain->SetBranchAddress("is_mc", &fis_mc);
+  fmeta_chain->SetBranchAddress("is_heavy", &is_heavy);
+  fmeta_chain->SetBranchAddress("is_mc", &is_mc);
   fmeta_chain->SetBranchAddress("swtrigger_product", &fswtrigger_product);
   fmeta_chain->SetBranchAddress("opflash_producers", &fopflash_producers);
   fmeta_chain->SetBranchAddress("hit_producers", &fhit_producers);
@@ -396,7 +428,9 @@ void Storage::ProcessMetaChain() {
 
   fmeta_chain->GetEntry(0);
 
-  if(fis_mc) fmc = true;
+  if(is_heavy) fheavy = true;
+  else fheavy = false;
+  if(is_mc) fmc = true;
   else fmc = false;
 
   if(frmcmassociation_producers->size() > 0) frmcm_bool = true;
@@ -427,10 +461,12 @@ void Storage::ProcessEventChain() {
 
   fevent_chain->SetBranchAddress("reco_opflash_producer_index", &freco_opflash_producer_index);
   fevent_chain->SetBranchAddress("reco_opflash_Time", &freco_opflash_Time);
-  fevent_chain->SetBranchAddress("reco_opflash_TimeWidth", &freco_opflash_TimeWidth);
-  fevent_chain->SetBranchAddress("reco_opflash_AbsTime", &freco_opflash_AbsTime);
-  fevent_chain->SetBranchAddress("reco_opflash_Frame", &freco_opflash_Frame);
-  //fevent_chain->SetBranchAddress("reco_opflash_PEs", &freco_opflash_PEs);
+  if(fheavy) {
+    fevent_chain->SetBranchAddress("reco_opflash_TimeWidth", &freco_opflash_TimeWidth);
+    fevent_chain->SetBranchAddress("reco_opflash_AbsTime", &freco_opflash_AbsTime);
+    fevent_chain->SetBranchAddress("reco_opflash_Frame", &freco_opflash_Frame);
+    //fevent_chain->SetBranchAddress("reco_opflash_PEs", &freco_opflash_PEs);
+  }
   fevent_chain->SetBranchAddress("reco_opflash_YCenter", &freco_opflash_YCenter);
   fevent_chain->SetBranchAddress("reco_opflash_YWidth", &freco_opflash_YWidth);
   fevent_chain->SetBranchAddress("reco_opflash_ZCenter", &freco_opflash_ZCenter);
@@ -440,23 +476,27 @@ void Storage::ProcessEventChain() {
   fevent_chain->SetBranchAddress("reco_opflash_WireCenters", &freco_opflash_WireCenters);
   fevent_chain->SetBranchAddress("reco_opflash_WireWidths", &freco_opflash_WireWidths);
   fevent_chain->SetBranchAddress("reco_opflash_TotalPE", &freco_opflash_TotalPE);
-  fevent_chain->SetBranchAddress("reco_opflash_FastToTotal", &freco_opflash_FastToTotal);
+  if(fheavy) fevent_chain->SetBranchAddress("reco_opflash_FastToTotal", &freco_opflash_FastToTotal);
 
   fevent_chain->SetBranchAddress("reco_hit_producer_index", &freco_hit_producer_index);
   fevent_chain->SetBranchAddress("reco_hit_StartTick", &freco_hit_StartTick);
   fevent_chain->SetBranchAddress("reco_hit_EndTick", &freco_hit_EndTick);
   fevent_chain->SetBranchAddress("reco_hit_PeakTime", &freco_hit_PeakTime);
-  fevent_chain->SetBranchAddress("reco_hit_SigmaPeakTime", &freco_hit_SigmaPeakTime);
-  fevent_chain->SetBranchAddress("reco_hit_RMS", &freco_hit_RMS);
-  fevent_chain->SetBranchAddress("reco_hit_PeakAmplitude", &freco_hit_PeakAmplitude);
-  fevent_chain->SetBranchAddress("reco_hit_SigmaPeakAmplitude", &freco_hit_SigmaPeakAmplitude);
+  if(fheavy) {
+    fevent_chain->SetBranchAddress("reco_hit_SigmaPeakTime", &freco_hit_SigmaPeakTime);
+    fevent_chain->SetBranchAddress("reco_hit_RMS", &freco_hit_RMS);
+    fevent_chain->SetBranchAddress("reco_hit_PeakAmplitude", &freco_hit_PeakAmplitude);
+    fevent_chain->SetBranchAddress("reco_hit_SigmaPeakAmplitude", &freco_hit_SigmaPeakAmplitude);
+  }
   fevent_chain->SetBranchAddress("reco_hit_SummedADC", &freco_hit_SummedADC);
   fevent_chain->SetBranchAddress("reco_hit_Integral", &freco_hit_Integral);
-  fevent_chain->SetBranchAddress("reco_hit_SigmaIntegral", &freco_hit_SigmaIntegral);
-  fevent_chain->SetBranchAddress("reco_hit_Multiplicity", &freco_hit_Multiplicity);
-  fevent_chain->SetBranchAddress("reco_hit_LocalIndex", &freco_hit_LocalIndex);
-  fevent_chain->SetBranchAddress("reco_hit_GoodnessOfFit", &freco_hit_GoodnessOfFit);
-  fevent_chain->SetBranchAddress("reco_hit_DegreesOfFreedom", &freco_hit_DegreesOfFreedom);
+  if(fheavy) {
+    fevent_chain->SetBranchAddress("reco_hit_SigmaIntegral", &freco_hit_SigmaIntegral);
+    fevent_chain->SetBranchAddress("reco_hit_Multiplicity", &freco_hit_Multiplicity);
+    fevent_chain->SetBranchAddress("reco_hit_LocalIndex", &freco_hit_LocalIndex);
+    fevent_chain->SetBranchAddress("reco_hit_GoodnessOfFit", &freco_hit_GoodnessOfFit);
+    fevent_chain->SetBranchAddress("reco_hit_DegreesOfFreedom", &freco_hit_DegreesOfFreedom);
+  }
   fevent_chain->SetBranchAddress("reco_hit_View", &freco_hit_View);
   fevent_chain->SetBranchAddress("reco_hit_SignalType", &freco_hit_SignalType);
   fevent_chain->SetBranchAddress("reco_hit_WireID_CryostatID", &freco_hit_WireID_CryostatID);
@@ -473,26 +513,30 @@ void Storage::ProcessEventChain() {
     fevent_chain->SetBranchAddress("reco_hit_true_isMaxIDEN", &freco_hit_true_isMaxIDEN);
     */
     fevent_chain->SetBranchAddress("reco_hit_true_numElectrons", &freco_hit_true_numElectrons);
-    fevent_chain->SetBranchAddress("reco_hit_true_energy", &freco_hit_true_energy);
+    if(fheavy) fevent_chain->SetBranchAddress("reco_hit_true_energy", &freco_hit_true_energy);
   }
 
   fevent_chain->SetBranchAddress("reco_track_producer_index", &freco_track_producer_index);
-  fevent_chain->SetBranchAddress("reco_track_NumberTrajectoryPoints", &freco_track_NumberTrajectoryPoints);
-  fevent_chain->SetBranchAddress("reco_track_NPoints", &freco_track_NPoints);
-  fevent_chain->SetBranchAddress("reco_track_FirstPoint", &freco_track_FirstPoint);
-  fevent_chain->SetBranchAddress("reco_track_LastPoint", &freco_track_LastPoint);
-  fevent_chain->SetBranchAddress("reco_track_FirstValidPoint", &freco_track_FirstValidPoint);
-  fevent_chain->SetBranchAddress("reco_track_LastValidPoint", &freco_track_LastValidPoint);
-  fevent_chain->SetBranchAddress("reco_track_CountValidPoints", &freco_track_CountValidPoints);
+  if(fheavy) {
+    fevent_chain->SetBranchAddress("reco_track_NumberTrajectoryPoints", &freco_track_NumberTrajectoryPoints);
+    fevent_chain->SetBranchAddress("reco_track_NPoints", &freco_track_NPoints);
+    fevent_chain->SetBranchAddress("reco_track_FirstPoint", &freco_track_FirstPoint);
+    fevent_chain->SetBranchAddress("reco_track_LastPoint", &freco_track_LastPoint);
+    fevent_chain->SetBranchAddress("reco_track_FirstValidPoint", &freco_track_FirstValidPoint);
+    fevent_chain->SetBranchAddress("reco_track_LastValidPoint", &freco_track_LastValidPoint);
+    fevent_chain->SetBranchAddress("reco_track_CountValidPoints", &freco_track_CountValidPoints);
+  }
   fevent_chain->SetBranchAddress("reco_track_X", &freco_track_X);
   fevent_chain->SetBranchAddress("reco_track_Y", &freco_track_Y);
   fevent_chain->SetBranchAddress("reco_track_Z", &freco_track_Z);
-  fevent_chain->SetBranchAddress("reco_track_HasMomentum", &freco_track_HasMomentum);
-  fevent_chain->SetBranchAddress("reco_track_Length", &freco_track_Length);
-  fevent_chain->SetBranchAddress("reco_track_Chi2", &freco_track_Chi2);
-  fevent_chain->SetBranchAddress("reco_track_Chi2PerNdof", &freco_track_Chi2PerNdof);
-  fevent_chain->SetBranchAddress("reco_track_Ndof", &freco_track_Ndof);
-  fevent_chain->SetBranchAddress("reco_track_ParticleId", &freco_track_ParticleId);
+  if(fheavy) {
+    fevent_chain->SetBranchAddress("reco_track_HasMomentum", &freco_track_HasMomentum);
+    fevent_chain->SetBranchAddress("reco_track_Length", &freco_track_Length);
+    fevent_chain->SetBranchAddress("reco_track_Chi2", &freco_track_Chi2);
+    fevent_chain->SetBranchAddress("reco_track_Chi2PerNdof", &freco_track_Chi2PerNdof);
+    fevent_chain->SetBranchAddress("reco_track_Ndof", &freco_track_Ndof);
+    fevent_chain->SetBranchAddress("reco_track_ParticleId", &freco_track_ParticleId);
+  }
   fevent_chain->SetBranchAddress("reco_track_Theta", &freco_track_Theta);
   fevent_chain->SetBranchAddress("reco_track_Phi", &freco_track_Phi);
   fevent_chain->SetBranchAddress("reco_track_ZenithAngle", &freco_track_ZenithAngle);
@@ -508,9 +552,11 @@ void Storage::ProcessEventChain() {
     fevent_chain->SetBranchAddress("reco_track_largest_mc_type", &freco_track_largest_mc_type);
     fevent_chain->SetBranchAddress("reco_track_largest_mc_index", &freco_track_largest_mc_index);
     fevent_chain->SetBranchAddress("reco_track_largest_ratio", &freco_track_largest_ratio);
-    fevent_chain->SetBranchAddress("reco_track_mc_type", &freco_track_mc_type);
-    fevent_chain->SetBranchAddress("reco_track_mc_index", &freco_track_mc_index);
-    fevent_chain->SetBranchAddress("reco_track_charge_contribution", &freco_track_charge_contribution);
+    if(fheavy) {
+      fevent_chain->SetBranchAddress("reco_track_mc_type", &freco_track_mc_type);
+      fevent_chain->SetBranchAddress("reco_track_mc_index", &freco_track_mc_index);
+      fevent_chain->SetBranchAddress("reco_track_charge_contribution", &freco_track_charge_contribution);
+    }
     fevent_chain->SetBranchAddress("reco_track_charge_total", &freco_track_charge_total);
   }
 
@@ -518,26 +564,32 @@ void Storage::ProcessEventChain() {
   fevent_chain->SetBranchAddress("reco_shower_Direction_x", &freco_shower_Direction_X);
   fevent_chain->SetBranchAddress("reco_shower_Direction_y", &freco_shower_Direction_Y);
   fevent_chain->SetBranchAddress("reco_shower_Direction_z", &freco_shower_Direction_Z);
-  fevent_chain->SetBranchAddress("reco_shower_DirectionErr_x", &freco_shower_DirectionErr_X);
-  fevent_chain->SetBranchAddress("reco_shower_DirectionErr_y", &freco_shower_DirectionErr_Y);
-  fevent_chain->SetBranchAddress("reco_shower_DirectionErr_z", &freco_shower_DirectionErr_Z);
+  if(fheavy) {
+    fevent_chain->SetBranchAddress("reco_shower_DirectionErr_x", &freco_shower_DirectionErr_X);
+    fevent_chain->SetBranchAddress("reco_shower_DirectionErr_y", &freco_shower_DirectionErr_Y);
+    fevent_chain->SetBranchAddress("reco_shower_DirectionErr_z", &freco_shower_DirectionErr_Z);
+  }
   fevent_chain->SetBranchAddress("reco_shower_ShowerStart_x", &freco_shower_ShowerStart_X);
   fevent_chain->SetBranchAddress("reco_shower_ShowerStart_y", &freco_shower_ShowerStart_Y);
   fevent_chain->SetBranchAddress("reco_shower_ShowerStart_z", &freco_shower_ShowerStart_Z);
-  fevent_chain->SetBranchAddress("reco_shower_ShowerStartErr_x", &freco_shower_ShowerStartErr_X);
-  fevent_chain->SetBranchAddress("reco_shower_ShowerStartErr_y", &freco_shower_ShowerStartErr_Y);
-  fevent_chain->SetBranchAddress("reco_shower_ShowerStartErr_z", &freco_shower_ShowerStartErr_Z);
-  fevent_chain->SetBranchAddress("reco_shower_Energy", &freco_shower_Energy);
-  fevent_chain->SetBranchAddress("reco_shower_EnergyErr", &freco_shower_EnergyErr);
-  fevent_chain->SetBranchAddress("reco_shower_MIPEnergy", &freco_shower_MIPEnergy);
-  fevent_chain->SetBranchAddress("reco_shower_MIPEnergyErr", &freco_shower_MIPEnergyErr);
+  if(fheavy) {
+    fevent_chain->SetBranchAddress("reco_shower_ShowerStartErr_x", &freco_shower_ShowerStartErr_X);
+    fevent_chain->SetBranchAddress("reco_shower_ShowerStartErr_y", &freco_shower_ShowerStartErr_Y);
+    fevent_chain->SetBranchAddress("reco_shower_ShowerStartErr_z", &freco_shower_ShowerStartErr_Z);
+    fevent_chain->SetBranchAddress("reco_shower_Energy", &freco_shower_Energy);
+    fevent_chain->SetBranchAddress("reco_shower_EnergyErr", &freco_shower_EnergyErr);
+    fevent_chain->SetBranchAddress("reco_shower_MIPEnergy", &freco_shower_MIPEnergy);
+    fevent_chain->SetBranchAddress("reco_shower_MIPEnergyErr", &freco_shower_MIPEnergyErr);
+  }
   fevent_chain->SetBranchAddress("reco_shower_best_plane", &freco_shower_best_plane);
   fevent_chain->SetBranchAddress("reco_shower_Length", &freco_shower_Length);
   fevent_chain->SetBranchAddress("reco_shower_OpenAngle", &freco_shower_OpenAngle);
-  fevent_chain->SetBranchAddress("reco_shower_dEdx", &freco_shower_dEdx);
-  fevent_chain->SetBranchAddress("reco_shower_dEdxErr", &freco_shower_dEdxErr);
-  fevent_chain->SetBranchAddress("reco_shower_has_open_angle", &freco_shower_has_open_angle);
-  fevent_chain->SetBranchAddress("reco_shower_has_length", &freco_shower_has_length);
+  if(fheavy) {
+    fevent_chain->SetBranchAddress("reco_shower_dEdx", &freco_shower_dEdx);
+    fevent_chain->SetBranchAddress("reco_shower_dEdxErr", &freco_shower_dEdxErr);
+    fevent_chain->SetBranchAddress("reco_shower_has_open_angle", &freco_shower_has_open_angle);
+    fevent_chain->SetBranchAddress("reco_shower_has_length", &freco_shower_has_length);
+  }
   fevent_chain->SetBranchAddress("reco_shower_to_reco_hit", &freco_shower_to_reco_hit);
   fevent_chain->SetBranchAddress("reco_shower_EnergyHelper_energy_legacy", &freco_shower_EnergyHelper_energy_legacy);
   fevent_chain->SetBranchAddress("reco_shower_EnergyHelper_energy", &freco_shower_EnergyHelper_energy);
@@ -546,11 +598,20 @@ void Storage::ProcessEventChain() {
     fevent_chain->SetBranchAddress("reco_shower_largest_mc_type", &freco_shower_largest_mc_type);
     fevent_chain->SetBranchAddress("reco_shower_largest_mc_index", &freco_shower_largest_mc_index);
     fevent_chain->SetBranchAddress("reco_shower_largest_ratio", &freco_shower_largest_ratio);
-    fevent_chain->SetBranchAddress("reco_shower_mc_type", &freco_shower_mc_type);
-    fevent_chain->SetBranchAddress("reco_shower_mc_index", &freco_shower_mc_index);
-    fevent_chain->SetBranchAddress("reco_shower_charge_contribution", &freco_shower_charge_contribution);
+    if(fheavy) {
+      fevent_chain->SetBranchAddress("reco_shower_mc_type", &freco_shower_mc_type);
+      fevent_chain->SetBranchAddress("reco_shower_mc_index", &freco_shower_mc_index);
+      fevent_chain->SetBranchAddress("reco_shower_charge_contribution", &freco_shower_charge_contribution);
+    }
     fevent_chain->SetBranchAddress("reco_shower_charge_total", &freco_shower_charge_total);
   }
+
+  fevent_chain->SetBranchAddress("pfp_pdg", &fpfp_pdg);
+  fevent_chain->SetBranchAddress("pfp_vertex_X", &fpfp_vertex_X);
+  fevent_chain->SetBranchAddress("pfp_vertex_Y", &fpfp_vertex_Y);
+  fevent_chain->SetBranchAddress("pfp_vertex_Z", &fpfp_vertex_Z);
+  fevent_chain->SetBranchAddress("pfp_original_index", &fpfp_original_index);
+  fevent_chain->SetBranchAddress("pfp_children", &fpfp_children);
 
   if(fmc) {
 
@@ -609,16 +670,34 @@ void Storage::ProcessEventChain() {
     fevent_chain->SetBranchAddress("mctrack_PdgCode", &fmctrack_PdgCode);
     fevent_chain->SetBranchAddress("mctrack_TrackID", &fmctrack_TrackID);
     fevent_chain->SetBranchAddress("mctrack_Process", &fmctrack_Process);
+    fevent_chain->SetBranchAddress("mctrack_Start_X", &fmctrack_Start_X);
+    fevent_chain->SetBranchAddress("mctrack_Start_Y", &fmctrack_Start_Y);
+    fevent_chain->SetBranchAddress("mctrack_Start_Z", &fmctrack_Start_Z);
+    fevent_chain->SetBranchAddress("mctrack_Start_T", &fmctrack_Start_T);
+    fevent_chain->SetBranchAddress("mctrack_Start_Px", &fmctrack_Start_Px);
+    fevent_chain->SetBranchAddress("mctrack_Start_Py", &fmctrack_Start_Py);
+    fevent_chain->SetBranchAddress("mctrack_Start_Pz", &fmctrack_Start_Pz);
+    fevent_chain->SetBranchAddress("mctrack_Start_E", &fmctrack_Start_E);
+    fevent_chain->SetBranchAddress("mctrack_End_X", &fmctrack_End_X);
+    fevent_chain->SetBranchAddress("mctrack_End_Y", &fmctrack_End_Y);
+    fevent_chain->SetBranchAddress("mctrack_End_Z", &fmctrack_End_Z);
+    fevent_chain->SetBranchAddress("mctrack_End_T", &fmctrack_End_T);
+    fevent_chain->SetBranchAddress("mctrack_End_Px", &fmctrack_End_Px);
+    fevent_chain->SetBranchAddress("mctrack_End_Py", &fmctrack_End_Py);
+    fevent_chain->SetBranchAddress("mctrack_End_Pz", &fmctrack_End_Pz);
+    fevent_chain->SetBranchAddress("mctrack_End_E", &fmctrack_End_E);
     fevent_chain->SetBranchAddress("mctrack_X", &fmctrack_X);
     fevent_chain->SetBranchAddress("mctrack_Y", &fmctrack_Y);
     fevent_chain->SetBranchAddress("mctrack_Z", &fmctrack_Z);
     fevent_chain->SetBranchAddress("mctrack_T", &fmctrack_T);
-    fevent_chain->SetBranchAddress("mctrack_Px", &fmctrack_Px);
-    fevent_chain->SetBranchAddress("mctrack_Py", &fmctrack_Py);
-    fevent_chain->SetBranchAddress("mctrack_Pz", &fmctrack_Pz);
-    fevent_chain->SetBranchAddress("mctrack_E", &fmctrack_E);
-    fevent_chain->SetBranchAddress("mctrack_dQdx", &fmctrack_dQdx);
-    fevent_chain->SetBranchAddress("mctrack_dEdx", &fmctrack_dEdx);
+    if(fheavy) {
+      fevent_chain->SetBranchAddress("mctrack_Px", &fmctrack_Px);
+      fevent_chain->SetBranchAddress("mctrack_Py", &fmctrack_Py);
+      fevent_chain->SetBranchAddress("mctrack_Pz", &fmctrack_Pz);
+      fevent_chain->SetBranchAddress("mctrack_E", &fmctrack_E);
+      fevent_chain->SetBranchAddress("mctrack_dQdx", &fmctrack_dQdx);
+      fevent_chain->SetBranchAddress("mctrack_dEdx", &fmctrack_dEdx);
+    }
     fevent_chain->SetBranchAddress("mctrack_MotherTrackID", &fmctrack_MotherTrackID);
     fevent_chain->SetBranchAddress("mctrack_MotherPdgCode", &fmctrack_MotherPdgCode);
     fevent_chain->SetBranchAddress("mctrack_MotherProcess", &fmctrack_MotherProcess);
@@ -662,176 +741,182 @@ void Storage::ProcessEventChain() {
     fevent_chain->SetBranchAddress("mcshower_DetProfile_Pz", &fmcshower_DetProfile_Pz);
     fevent_chain->SetBranchAddress("mcshower_DetProfile_E", &fmcshower_DetProfile_E);
     fevent_chain->SetBranchAddress("mcshower_DaughterTrackID", &fmcshower_DaughterTrackID);
-    fevent_chain->SetBranchAddress("mcshower_Charge", &fmcshower_Charge);
-    fevent_chain->SetBranchAddress("mcshower_dQdx", &fmcshower_dQdx);
+    if(fheavy) {
+      fevent_chain->SetBranchAddress("mcshower_Charge", &fmcshower_Charge);
+      fevent_chain->SetBranchAddress("mcshower_dQdx", &fmcshower_dQdx);
+    }
     fevent_chain->SetBranchAddress("mcshower_StartDir_X", &fmcshower_StartDir_X);
     fevent_chain->SetBranchAddress("mcshower_StartDir_Y", &fmcshower_StartDir_Y);
     fevent_chain->SetBranchAddress("mcshower_StartDir_Z", &fmcshower_StartDir_Z);
     if(frmcm_bool) fevent_chain->SetBranchAddress("mcshower_contributed_charge", &fmcshower_contributed_charge);
 
-    fevent_chain->SetBranchAddress("fweight_genie_ncelaxial_p1sigma", &fweight_genie_ncelaxial_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_ncelaxial_m1sigma", &fweight_genie_ncelaxial_m1sigma);
-    fweight_branch_map.emplace("genie_NCELaxial_Genie", std::vector<double *>{&fweight_genie_ncelaxial_p1sigma, &fweight_genie_ncelaxial_m1sigma});
+    if(fheavy) {
 
-    fevent_chain->SetBranchAddress("fweight_genie_nceleta_p1sigma", &fweight_genie_nceleta_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_nceleta_m1sigma", &fweight_genie_nceleta_m1sigma);
-    fweight_branch_map.emplace("genie_NCELeta_Genie", std::vector<double *>{&fweight_genie_nceleta_p1sigma, &fweight_genie_nceleta_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_ncelaxial_p1sigma", &fweight_genie_ncelaxial_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_ncelaxial_m1sigma", &fweight_genie_ncelaxial_m1sigma);
+      fweight_branch_map.emplace("genie_NCELaxial_Genie", std::vector<double *>{&fweight_genie_ncelaxial_p1sigma, &fweight_genie_ncelaxial_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_qema_p1sigma", &fweight_genie_qema_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_qema_m1sigma", &fweight_genie_qema_m1sigma);
-    fweight_branch_map.emplace("genie_QEMA_Genie", std::vector<double *>{&fweight_genie_qema_p1sigma, &fweight_genie_qema_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_nceleta_p1sigma", &fweight_genie_nceleta_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_nceleta_m1sigma", &fweight_genie_nceleta_m1sigma);
+      fweight_branch_map.emplace("genie_NCELeta_Genie", std::vector<double *>{&fweight_genie_nceleta_p1sigma, &fweight_genie_nceleta_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_qevec_p1sigma", &fweight_genie_qevec_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_qevec_m1sigma", &fweight_genie_qevec_m1sigma);
-    fweight_branch_map.emplace("genie_QEVec_Genie", std::vector<double *>{&fweight_genie_qevec_p1sigma, &fweight_genie_qevec_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_qema_p1sigma", &fweight_genie_qema_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_qema_m1sigma", &fweight_genie_qema_m1sigma);
+      fweight_branch_map.emplace("genie_QEMA_Genie", std::vector<double *>{&fweight_genie_qema_p1sigma, &fweight_genie_qema_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_ccresaxial_p1sigma", &fweight_genie_ccresaxial_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_ccresaxial_m1sigma", &fweight_genie_ccresaxial_m1sigma);
-    fweight_branch_map.emplace("genie_CCResAxial_Genie", std::vector<double *>{&fweight_genie_ccresaxial_p1sigma, &fweight_genie_ccresaxial_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_qevec_p1sigma", &fweight_genie_qevec_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_qevec_m1sigma", &fweight_genie_qevec_m1sigma);
+      fweight_branch_map.emplace("genie_QEVec_Genie", std::vector<double *>{&fweight_genie_qevec_p1sigma, &fweight_genie_qevec_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_ccresvector_p1sigma", &fweight_genie_ccresvector_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_ccresvector_m1sigma", &fweight_genie_ccresvector_m1sigma);
-    fweight_branch_map.emplace("genie_CCResVector_Genie", std::vector<double *>{&fweight_genie_ccresvector_p1sigma, &fweight_genie_ccresvector_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_ccresaxial_p1sigma", &fweight_genie_ccresaxial_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_ccresaxial_m1sigma", &fweight_genie_ccresaxial_m1sigma);
+      fweight_branch_map.emplace("genie_CCResAxial_Genie", std::vector<double *>{&fweight_genie_ccresaxial_p1sigma, &fweight_genie_ccresaxial_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_resganged_p1sigma", &fweight_genie_resganged_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_resganged_m1sigma", &fweight_genie_resganged_m1sigma);
-    fweight_branch_map.emplace("genie_ResGanged_Genie", std::vector<double *>{&fweight_genie_resganged_p1sigma, &fweight_genie_resganged_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_ccresvector_p1sigma", &fweight_genie_ccresvector_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_ccresvector_m1sigma", &fweight_genie_ccresvector_m1sigma);
+      fweight_branch_map.emplace("genie_CCResVector_Genie", std::vector<double *>{&fweight_genie_ccresvector_p1sigma, &fweight_genie_ccresvector_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_ncresaxial_p1sigma", &fweight_genie_ncresaxial_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_ncresaxial_m1sigma", &fweight_genie_ncresaxial_m1sigma);
-    fweight_branch_map.emplace("genie_NCResAxial_Genie", std::vector<double *>{&fweight_genie_ncresaxial_p1sigma, &fweight_genie_ncresaxial_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_resganged_p1sigma", &fweight_genie_resganged_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_resganged_m1sigma", &fweight_genie_resganged_m1sigma);
+      fweight_branch_map.emplace("genie_ResGanged_Genie", std::vector<double *>{&fweight_genie_resganged_p1sigma, &fweight_genie_resganged_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_ncresvector_p1sigma", &fweight_genie_ncresvector_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_ncresvector_m1sigma", &fweight_genie_ncresvector_m1sigma);
-    fweight_branch_map.emplace("genie_NCResVector_Genie", std::vector<double *>{&fweight_genie_ncresvector_p1sigma, &fweight_genie_ncresvector_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_ncresaxial_p1sigma", &fweight_genie_ncresaxial_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_ncresaxial_m1sigma", &fweight_genie_ncresaxial_m1sigma);
+      fweight_branch_map.emplace("genie_NCResAxial_Genie", std::vector<double *>{&fweight_genie_ncresaxial_p1sigma, &fweight_genie_ncresaxial_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_cohma_p1sigma", &fweight_genie_cohma_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_cohma_m1sigma", &fweight_genie_cohma_m1sigma);
-    fweight_branch_map.emplace("genie_CohMA_Genie", std::vector<double *>{&fweight_genie_cohma_p1sigma, &fweight_genie_cohma_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_ncresvector_p1sigma", &fweight_genie_ncresvector_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_ncresvector_m1sigma", &fweight_genie_ncresvector_m1sigma);
+      fweight_branch_map.emplace("genie_NCResVector_Genie", std::vector<double *>{&fweight_genie_ncresvector_p1sigma, &fweight_genie_ncresvector_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_cohr0_p1sigma", &fweight_genie_cohr0_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_cohr0_m1sigma", &fweight_genie_cohr0_m1sigma);
-    fweight_branch_map.emplace("genie_CohR0_Genie", std::vector<double *>{&fweight_genie_cohr0_p1sigma, &fweight_genie_cohr0_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_cohma_p1sigma", &fweight_genie_cohma_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_cohma_m1sigma", &fweight_genie_cohma_m1sigma);
+      fweight_branch_map.emplace("genie_CohMA_Genie", std::vector<double *>{&fweight_genie_cohma_p1sigma, &fweight_genie_cohma_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_nonresrvp1pi_p1sigma", &fweight_genie_nonresrvp1pi_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_nonresrvp1pi_m1sigma", &fweight_genie_nonresrvp1pi_m1sigma);
-    fweight_branch_map.emplace("genie_NonResRvp1pi_Genie", std::vector<double *>{&fweight_genie_nonresrvp1pi_p1sigma, &fweight_genie_nonresrvp1pi_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_cohr0_p1sigma", &fweight_genie_cohr0_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_cohr0_m1sigma", &fweight_genie_cohr0_m1sigma);
+      fweight_branch_map.emplace("genie_CohR0_Genie", std::vector<double *>{&fweight_genie_cohr0_p1sigma, &fweight_genie_cohr0_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_nonresrvbarp1pi_p1sigma", &fweight_genie_nonresrvbarp1pi_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_nonresrvbarp1pi_m1sigma", &fweight_genie_nonresrvbarp1pi_m1sigma);
-    fweight_branch_map.emplace("genie_NonResRvbarp1pi_Genie", std::vector<double *>{&fweight_genie_nonresrvbarp1pi_p1sigma, &fweight_genie_nonresrvbarp1pi_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_nonresrvp1pi_p1sigma", &fweight_genie_nonresrvp1pi_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_nonresrvp1pi_m1sigma", &fweight_genie_nonresrvp1pi_m1sigma);
+      fweight_branch_map.emplace("genie_NonResRvp1pi_Genie", std::vector<double *>{&fweight_genie_nonresrvp1pi_p1sigma, &fweight_genie_nonresrvp1pi_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_nonresrvp2pi_p1sigma", &fweight_genie_nonresrvp2pi_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_nonresrvp2pi_m1sigma", &fweight_genie_nonresrvp2pi_m1sigma);
-    fweight_branch_map.emplace("genie_NonResRvp2pi_Genie", std::vector<double *>{&fweight_genie_nonresrvp2pi_p1sigma, &fweight_genie_nonresrvp2pi_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_nonresrvbarp1pi_p1sigma", &fweight_genie_nonresrvbarp1pi_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_nonresrvbarp1pi_m1sigma", &fweight_genie_nonresrvbarp1pi_m1sigma);
+      fweight_branch_map.emplace("genie_NonResRvbarp1pi_Genie", std::vector<double *>{&fweight_genie_nonresrvbarp1pi_p1sigma, &fweight_genie_nonresrvbarp1pi_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_nonresrvbarp2pi_p1sigma", &fweight_genie_nonresrvbarp2pi_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_nonresrvbarp2pi_m1sigma", &fweight_genie_nonresrvbarp2pi_m1sigma);
-    fweight_branch_map.emplace("genie_NonResRvbarp2pi_Genie", std::vector<double *>{&fweight_genie_nonresrvbarp2pi_p1sigma, &fweight_genie_nonresrvbarp2pi_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_nonresrvp2pi_p1sigma", &fweight_genie_nonresrvp2pi_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_nonresrvp2pi_m1sigma", &fweight_genie_nonresrvp2pi_m1sigma);
+      fweight_branch_map.emplace("genie_NonResRvp2pi_Genie", std::vector<double *>{&fweight_genie_nonresrvp2pi_p1sigma, &fweight_genie_nonresrvp2pi_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_resdecaygamma_p1sigma", &fweight_genie_resdecaygamma_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_resdecaygamma_m1sigma", &fweight_genie_resdecaygamma_m1sigma);
-    fweight_branch_map.emplace("genie_ResDecayGamma_Genie", std::vector<double *>{&fweight_genie_resdecaygamma_p1sigma, &fweight_genie_resdecaygamma_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_nonresrvbarp2pi_p1sigma", &fweight_genie_nonresrvbarp2pi_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_nonresrvbarp2pi_m1sigma", &fweight_genie_nonresrvbarp2pi_m1sigma);
+      fweight_branch_map.emplace("genie_NonResRvbarp2pi_Genie", std::vector<double *>{&fweight_genie_nonresrvbarp2pi_p1sigma, &fweight_genie_nonresrvbarp2pi_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_resdecayeta_p1sigma", &fweight_genie_resdecayeta_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_resdecayeta_m1sigma", &fweight_genie_resdecayeta_m1sigma);
-    fweight_branch_map.emplace("genie_ResDecayEta_Genie", std::vector<double *>{&fweight_genie_resdecayeta_p1sigma, &fweight_genie_resdecayeta_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_resdecaygamma_p1sigma", &fweight_genie_resdecaygamma_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_resdecaygamma_m1sigma", &fweight_genie_resdecaygamma_m1sigma);
+      fweight_branch_map.emplace("genie_ResDecayGamma_Genie", std::vector<double *>{&fweight_genie_resdecaygamma_p1sigma, &fweight_genie_resdecaygamma_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_resdecaytheta_p1sigma", &fweight_genie_resdecaytheta_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_resdecaytheta_m1sigma", &fweight_genie_resdecaytheta_m1sigma);
-    fweight_branch_map.emplace("genie_ResDecayTheta_Genie", std::vector<double *>{&fweight_genie_resdecaytheta_p1sigma, &fweight_genie_resdecaytheta_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_resdecayeta_p1sigma", &fweight_genie_resdecayeta_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_resdecayeta_m1sigma", &fweight_genie_resdecayeta_m1sigma);
+      fweight_branch_map.emplace("genie_ResDecayEta_Genie", std::vector<double *>{&fweight_genie_resdecayeta_p1sigma, &fweight_genie_resdecayeta_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_nc_p1sigma", &fweight_genie_nc_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_nc_m1sigma", &fweight_genie_nc_m1sigma);
-    fweight_branch_map.emplace("genie_NC_Genie", std::vector<double *>{&fweight_genie_nc_p1sigma, &fweight_genie_nc_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_resdecaytheta_p1sigma", &fweight_genie_resdecaytheta_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_resdecaytheta_m1sigma", &fweight_genie_resdecaytheta_m1sigma);
+      fweight_branch_map.emplace("genie_ResDecayTheta_Genie", std::vector<double *>{&fweight_genie_resdecaytheta_p1sigma, &fweight_genie_resdecaytheta_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_disath_p1sigma", &fweight_genie_disath_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_disath_m1sigma", &fweight_genie_disath_m1sigma);
-    fweight_branch_map.emplace("genie_DISAth_Genie", std::vector<double *>{&fweight_genie_disath_p1sigma, &fweight_genie_disath_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_nc_p1sigma", &fweight_genie_nc_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_nc_m1sigma", &fweight_genie_nc_m1sigma);
+      fweight_branch_map.emplace("genie_NC_Genie", std::vector<double *>{&fweight_genie_nc_p1sigma, &fweight_genie_nc_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_disbth_p1sigma", &fweight_genie_disbth_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_disbth_m1sigma", &fweight_genie_disbth_m1sigma);
-    fweight_branch_map.emplace("genie_DISBth_Genie", std::vector<double *>{&fweight_genie_disbth_p1sigma, &fweight_genie_disbth_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_disath_p1sigma", &fweight_genie_disath_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_disath_m1sigma", &fweight_genie_disath_m1sigma);
+      fweight_branch_map.emplace("genie_DISAth_Genie", std::vector<double *>{&fweight_genie_disath_p1sigma, &fweight_genie_disath_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_discv1u_p1sigma", &fweight_genie_discv1u_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_discv1u_m1sigma", &fweight_genie_discv1u_m1sigma);
-    fweight_branch_map.emplace("genie_DISCv1u_Genie", std::vector<double *>{&fweight_genie_discv1u_p1sigma, &fweight_genie_discv1u_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_disbth_p1sigma", &fweight_genie_disbth_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_disbth_m1sigma", &fweight_genie_disbth_m1sigma);
+      fweight_branch_map.emplace("genie_DISBth_Genie", std::vector<double *>{&fweight_genie_disbth_p1sigma, &fweight_genie_disbth_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_discv2u_p1sigma", &fweight_genie_discv2u_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_discv2u_m1sigma", &fweight_genie_discv2u_m1sigma);
-    fweight_branch_map.emplace("genie_DISCv2u_Genie", std::vector<double *>{&fweight_genie_discv2u_p1sigma, &fweight_genie_discv2u_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_discv1u_p1sigma", &fweight_genie_discv1u_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_discv1u_m1sigma", &fweight_genie_discv1u_m1sigma);
+      fweight_branch_map.emplace("genie_DISCv1u_Genie", std::vector<double *>{&fweight_genie_discv1u_p1sigma, &fweight_genie_discv1u_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_disnucl_p1sigma", &fweight_genie_disnucl_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_disnucl_m1sigma", &fweight_genie_disnucl_m1sigma);
-    fweight_branch_map.emplace("genie_DISnucl_Genie", std::vector<double *>{&fweight_genie_disnucl_p1sigma, &fweight_genie_disnucl_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_discv2u_p1sigma", &fweight_genie_discv2u_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_discv2u_m1sigma", &fweight_genie_discv2u_m1sigma);
+      fweight_branch_map.emplace("genie_DISCv2u_Genie", std::vector<double *>{&fweight_genie_discv2u_p1sigma, &fweight_genie_discv2u_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_agkyxf_p1sigma", &fweight_genie_agkyxf_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_agkyxf_m1sigma", &fweight_genie_agkyxf_m1sigma);
-    fweight_branch_map.emplace("genie_AGKYxF_Genie", std::vector<double *>{&fweight_genie_agkyxf_p1sigma, &fweight_genie_agkyxf_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_disnucl_p1sigma", &fweight_genie_disnucl_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_disnucl_m1sigma", &fweight_genie_disnucl_m1sigma);
+      fweight_branch_map.emplace("genie_DISnucl_Genie", std::vector<double *>{&fweight_genie_disnucl_p1sigma, &fweight_genie_disnucl_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_agkypt_p1sigma", &fweight_genie_agkypt_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_agkypt_m1sigma", &fweight_genie_agkypt_m1sigma);
-    fweight_branch_map.emplace("genie_AGKYpT_Genie", std::vector<double *>{&fweight_genie_agkypt_p1sigma, &fweight_genie_agkypt_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_agkyxf_p1sigma", &fweight_genie_agkyxf_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_agkyxf_m1sigma", &fweight_genie_agkyxf_m1sigma);
+      fweight_branch_map.emplace("genie_AGKYxF_Genie", std::vector<double *>{&fweight_genie_agkyxf_p1sigma, &fweight_genie_agkyxf_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_formzone_p1sigma", &fweight_genie_formzone_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_formzone_m1sigma", &fweight_genie_formzone_m1sigma);
-    fweight_branch_map.emplace("genie_FormZone_Genie", std::vector<double *>{&fweight_genie_formzone_p1sigma, &fweight_genie_formzone_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_agkypt_p1sigma", &fweight_genie_agkypt_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_agkypt_m1sigma", &fweight_genie_agkypt_m1sigma);
+      fweight_branch_map.emplace("genie_AGKYpT_Genie", std::vector<double *>{&fweight_genie_agkypt_p1sigma, &fweight_genie_agkypt_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_fermigasmodelkf_p1sigma", &fweight_genie_fermigasmodelkf_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_fermigasmodelkf_m1sigma", &fweight_genie_fermigasmodelkf_m1sigma);
-    fweight_branch_map.emplace("genie_FermiGasModelKf_Genie", std::vector<double *>{&fweight_genie_fermigasmodelkf_p1sigma, &fweight_genie_fermigasmodelkf_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_formzone_p1sigma", &fweight_genie_formzone_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_formzone_m1sigma", &fweight_genie_formzone_m1sigma);
+      fweight_branch_map.emplace("genie_FormZone_Genie", std::vector<double *>{&fweight_genie_formzone_p1sigma, &fweight_genie_formzone_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_fermigasmodelsf_p1sigma", &fweight_genie_fermigasmodelsf_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_fermigasmodelsf_m1sigma", &fweight_genie_fermigasmodelsf_m1sigma);
-    fweight_branch_map.emplace("genie_FermiGasModelSf_Genie", std::vector<double *>{&fweight_genie_fermigasmodelsf_p1sigma, &fweight_genie_fermigasmodelsf_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_fermigasmodelkf_p1sigma", &fweight_genie_fermigasmodelkf_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_fermigasmodelkf_m1sigma", &fweight_genie_fermigasmodelkf_m1sigma);
+      fweight_branch_map.emplace("genie_FermiGasModelKf_Genie", std::vector<double *>{&fweight_genie_fermigasmodelkf_p1sigma, &fweight_genie_fermigasmodelkf_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_intranukenmfp_p1sigma", &fweight_genie_intranukenmfp_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_intranukenmfp_m1sigma", &fweight_genie_intranukenmfp_m1sigma);
-    fweight_branch_map.emplace("genie_IntraNukeNmfp_Genie", std::vector<double *>{&fweight_genie_intranukenmfp_p1sigma, &fweight_genie_intranukenmfp_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_fermigasmodelsf_p1sigma", &fweight_genie_fermigasmodelsf_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_fermigasmodelsf_m1sigma", &fweight_genie_fermigasmodelsf_m1sigma);
+      fweight_branch_map.emplace("genie_FermiGasModelSf_Genie", std::vector<double *>{&fweight_genie_fermigasmodelsf_p1sigma, &fweight_genie_fermigasmodelsf_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_intranukencex_p1sigma", &fweight_genie_intranukencex_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_intranukencex_m1sigma", &fweight_genie_intranukencex_m1sigma);
-    fweight_branch_map.emplace("genie_IntraNukeNcex_Genie", std::vector<double *>{&fweight_genie_intranukencex_p1sigma, &fweight_genie_intranukencex_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_intranukenmfp_p1sigma", &fweight_genie_intranukenmfp_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_intranukenmfp_m1sigma", &fweight_genie_intranukenmfp_m1sigma);
+      fweight_branch_map.emplace("genie_IntraNukeNmfp_Genie", std::vector<double *>{&fweight_genie_intranukenmfp_p1sigma, &fweight_genie_intranukenmfp_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_intranukenel_p1sigma", &fweight_genie_intranukenel_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_intranukenel_m1sigma", &fweight_genie_intranukenel_m1sigma);
-    fweight_branch_map.emplace("genie_IntraNukeNel_Genie", std::vector<double *>{&fweight_genie_intranukenel_p1sigma, &fweight_genie_intranukenel_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_intranukencex_p1sigma", &fweight_genie_intranukencex_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_intranukencex_m1sigma", &fweight_genie_intranukencex_m1sigma);
+      fweight_branch_map.emplace("genie_IntraNukeNcex_Genie", std::vector<double *>{&fweight_genie_intranukencex_p1sigma, &fweight_genie_intranukencex_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_intranukeninel_p1sigma", &fweight_genie_intranukeninel_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_intranukeninel_m1sigma", &fweight_genie_intranukeninel_m1sigma);
-    fweight_branch_map.emplace("genie_IntraNukeNinel_Genie", std::vector<double *>{&fweight_genie_intranukeninel_p1sigma, &fweight_genie_intranukeninel_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_intranukenel_p1sigma", &fweight_genie_intranukenel_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_intranukenel_m1sigma", &fweight_genie_intranukenel_m1sigma);
+      fweight_branch_map.emplace("genie_IntraNukeNel_Genie", std::vector<double *>{&fweight_genie_intranukenel_p1sigma, &fweight_genie_intranukenel_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_intranukenabs_p1sigma", &fweight_genie_intranukenabs_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_intranukenabs_m1sigma", &fweight_genie_intranukenabs_m1sigma);
-    fweight_branch_map.emplace("genie_IntraNukeNabs_Genie", std::vector<double *>{&fweight_genie_intranukenabs_p1sigma, &fweight_genie_intranukenabs_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_intranukeninel_p1sigma", &fweight_genie_intranukeninel_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_intranukeninel_m1sigma", &fweight_genie_intranukeninel_m1sigma);
+      fweight_branch_map.emplace("genie_IntraNukeNinel_Genie", std::vector<double *>{&fweight_genie_intranukeninel_p1sigma, &fweight_genie_intranukeninel_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_intranukenpi_p1sigma", &fweight_genie_intranukenpi_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_intranukenpi_m1sigma", &fweight_genie_intranukenpi_m1sigma);
-    fweight_branch_map.emplace("genie_IntraNukeNpi_Genie", std::vector<double *>{&fweight_genie_intranukenpi_p1sigma, &fweight_genie_intranukenpi_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_intranukenabs_p1sigma", &fweight_genie_intranukenabs_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_intranukenabs_m1sigma", &fweight_genie_intranukenabs_m1sigma);
+      fweight_branch_map.emplace("genie_IntraNukeNabs_Genie", std::vector<double *>{&fweight_genie_intranukenabs_p1sigma, &fweight_genie_intranukenabs_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_intranukepimfp_p1sigma", &fweight_genie_intranukepimfp_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_intranukepimfp_m1sigma", &fweight_genie_intranukepimfp_m1sigma);
-    fweight_branch_map.emplace("genie_IntraNukePImfp_Genie", std::vector<double *>{&fweight_genie_intranukepimfp_p1sigma, &fweight_genie_intranukepimfp_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_intranukenpi_p1sigma", &fweight_genie_intranukenpi_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_intranukenpi_m1sigma", &fweight_genie_intranukenpi_m1sigma);
+      fweight_branch_map.emplace("genie_IntraNukeNpi_Genie", std::vector<double *>{&fweight_genie_intranukenpi_p1sigma, &fweight_genie_intranukenpi_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_intranukepicex_p1sigma", &fweight_genie_intranukepicex_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_intranukepicex_m1sigma", &fweight_genie_intranukepicex_m1sigma);
-    fweight_branch_map.emplace("genie_IntraNukePIcex_Genie", std::vector<double *>{&fweight_genie_intranukepicex_p1sigma, &fweight_genie_intranukepicex_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_intranukepimfp_p1sigma", &fweight_genie_intranukepimfp_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_intranukepimfp_m1sigma", &fweight_genie_intranukepimfp_m1sigma);
+      fweight_branch_map.emplace("genie_IntraNukePImfp_Genie", std::vector<double *>{&fweight_genie_intranukepimfp_p1sigma, &fweight_genie_intranukepimfp_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_intranukepiel_p1sigma", &fweight_genie_intranukepiel_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_intranukepiel_m1sigma", &fweight_genie_intranukepiel_m1sigma);
-    fweight_branch_map.emplace("genie_IntraNukePIel_Genie", std::vector<double *>{&fweight_genie_intranukepiel_p1sigma, &fweight_genie_intranukepiel_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_intranukepicex_p1sigma", &fweight_genie_intranukepicex_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_intranukepicex_m1sigma", &fweight_genie_intranukepicex_m1sigma);
+      fweight_branch_map.emplace("genie_IntraNukePIcex_Genie", std::vector<double *>{&fweight_genie_intranukepicex_p1sigma, &fweight_genie_intranukepicex_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_intranukepiinel_p1sigma", &fweight_genie_intranukepiinel_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_intranukepiinel_m1sigma", &fweight_genie_intranukepiinel_m1sigma);
-    fweight_branch_map.emplace("genie_IntraNukePIinel_Genie", std::vector<double *>{&fweight_genie_intranukepiinel_p1sigma, &fweight_genie_intranukepiinel_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_intranukepiel_p1sigma", &fweight_genie_intranukepiel_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_intranukepiel_m1sigma", &fweight_genie_intranukepiel_m1sigma);
+      fweight_branch_map.emplace("genie_IntraNukePIel_Genie", std::vector<double *>{&fweight_genie_intranukepiel_p1sigma, &fweight_genie_intranukepiel_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_intranukepiabs_p1sigma", &fweight_genie_intranukepiabs_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_intranukepiabs_m1sigma", &fweight_genie_intranukepiabs_m1sigma);
-    fweight_branch_map.emplace("genie_IntraNukePIabs_Genie", std::vector<double *>{&fweight_genie_intranukepiabs_p1sigma, &fweight_genie_intranukepiabs_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_intranukepiinel_p1sigma", &fweight_genie_intranukepiinel_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_intranukepiinel_m1sigma", &fweight_genie_intranukepiinel_m1sigma);
+      fweight_branch_map.emplace("genie_IntraNukePIinel_Genie", std::vector<double *>{&fweight_genie_intranukepiinel_p1sigma, &fweight_genie_intranukepiinel_m1sigma});
 
-    fevent_chain->SetBranchAddress("fweight_genie_intranukepipi_p1sigma", &fweight_genie_intranukepipi_p1sigma);
-    fevent_chain->SetBranchAddress("fweight_genie_intranukepipi_m1sigma", &fweight_genie_intranukepipi_m1sigma);
-    fweight_branch_map.emplace("genie_IntraNukePIpi_Genie", std::vector<double *>{&fweight_genie_intranukepipi_p1sigma, &fweight_genie_intranukepipi_m1sigma});
+      fevent_chain->SetBranchAddress("fweight_genie_intranukepiabs_p1sigma", &fweight_genie_intranukepiabs_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_intranukepiabs_m1sigma", &fweight_genie_intranukepiabs_m1sigma);
+      fweight_branch_map.emplace("genie_IntraNukePIabs_Genie", std::vector<double *>{&fweight_genie_intranukepiabs_p1sigma, &fweight_genie_intranukepiabs_m1sigma});
+
+      fevent_chain->SetBranchAddress("fweight_genie_intranukepipi_p1sigma", &fweight_genie_intranukepipi_p1sigma);
+      fevent_chain->SetBranchAddress("fweight_genie_intranukepipi_m1sigma", &fweight_genie_intranukepipi_m1sigma);
+      fweight_branch_map.emplace("genie_IntraNukePIpi_Genie", std::vector<double *>{&fweight_genie_intranukepipi_p1sigma, &fweight_genie_intranukepipi_m1sigma});
+
+    }
 
   }    
     

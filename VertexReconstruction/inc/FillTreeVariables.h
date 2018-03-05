@@ -29,7 +29,7 @@ class FillTreeVariables {
                     std::string const & trigger_product);
   void SetupTreeBranches();
   void Fill(ParticleAssociations const & pas);
-  TTree const * GetTree() const {return fvertex_tree;}
+  void Write() const {fvertex_tree->Write();}
 
  private:
 
@@ -43,59 +43,12 @@ class FillTreeVariables {
   double FindBPDist(geoalgo::Cone_t const & cone);
   void FindRecoObjectVariables(DetectorObjects const & detos,
 			       ParticleAssociation const & pa);
-  void FillVertexTree(ParticleAssociations const & pas, size_t const pn);
-
-  /*
-  bool SinglePhotonFilter(art::Event const & e,
-                          size_t & mctruth_index);
-  bool DeltaRadFilter(art::Event const & e,
-                      size_t & mctruth_index);
-  */
+  void FillVertexTree(ParticleAssociations const & pas,
+		      size_t const pn,
+		      size_t const mct_index);
+  void FillDeltaInfo();
   void FillTruth(size_t const mct_index);
   bool PassedSWTrigger() const;
-  /*
-  void GetExitingDeltaPhotonAndNucleon(art::Event const & e,
-                                       size_t const delta_rad_mct_index,
-                                       size_t & delta_photon_index,
-                                       size_t & delta_proton_index);
-  void GetDeltaMCShowerMCTrackIndices(art::Event const & e,
-                                      size_t const delta_rad_mct_index,
-                                      size_t & delta_photon_index,
-                                      size_t & delta_mcshower_index,
-                                      size_t & delta_proton_index,
-                                      size_t & delta_mctrack_index);
-  double DistToClosestTPCWall(geoalgo::Point_t const & pos);
-  double GetShowerHelperEnergy(art::Event const & e,
-                               size_t const shower_index);
-  double GetTrackHelperEnergy(art::Event const & e,
-                              size_t const track_index);
-
-  std::pair<std::vector<double>,std::vector<double>> GetTrackCaloInfo(art::Event const & e,    size_t const track_index);
-
-
-  int GetBestShowerPlane(art::Event const & e,
-                         size_t const shower_index);
-  void FilldEdx(art::Event const & e,
-                size_t const most_energetic_associated_shower_index,
-                size_t const closest_associated_shower_index);
-  art::Ptr<simb::MCTruth> TrackIDToMCTruth(art::Event const & e, int const geant_track_id);
-  void FillShowerRecoMCMatching(art::Event const & e,
-                                size_t const most_energetic_associated_shower_index,
-                                size_t const delta_rad_mct_index,
-                                size_t const delta_mcshower_index,
-                                size_t const delta_mctrack_index);
-  void FillTrackRecoMCMatching(art::Event const & e,
-                               size_t const longest_asso_track_index,
-                               size_t const delta_rad_mct_index,
-                               size_t const delta_mcshower_index,
-                               size_t const delta_mctrack_index);
-  void FillVertexTree(art::Event const & e,
-                      ParticleAssociations const & pas,
-                      size_t const pn,
-                      size_t const delta_rad_mct_index,
-                      size_t const delta_mcshower_index,
-                      size_t const delta_mctrack_index);
-  */
 
   Storage const * fstorage;
 
@@ -213,8 +166,7 @@ class FillTreeVariables {
   std::vector<double> true_track_startz;    
   std::vector<double> true_track_endx; 
   std::vector<double> true_track_endy; 
-  std::vector<double> true_track_endz;    
-  std::vector<int> track_from_ncdeltarad_interaction;
+  std::vector<double> true_track_endz;
   std::vector<int> track_matched_to_ncdeltarad_photon;
   std::vector<int> track_matched_to_ncdeltarad_proton;
   std::vector<double> true_track_energy;
@@ -259,7 +211,6 @@ class FillTreeVariables {
   std::vector<double> true_shower_endx; 
   std::vector<double> true_shower_endy; 
   std::vector<double> true_shower_endz;
-  std::vector<int> shower_from_ncdeltarad_interaction;
   std::vector<int> shower_matched_to_ncdeltarad_photon;
   std::vector<int> shower_matched_to_ncdeltarad_proton;
   std::vector<double> true_shower_energy;

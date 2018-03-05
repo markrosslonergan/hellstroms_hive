@@ -18,11 +18,24 @@ ParticleAssociation::ParticleAssociation(std::vector<size_t> const & indices,
 
 void ParticleAssociation::PrintAssociation() const {
   
-  for(size_t i = 0; i < findices.size(); ++i)
-    std::cout << "Object index: " << findices.at(i) << std::endl;
+  for(size_t const i : findices)
+    std::cout << "Object index: " << i << std::endl;
   
-  std::cout << "\nVertex: " << fvertex << ", goodness: "
-	    << fgoodness << std::endl;
+  std::cout << "\nVertex: " << fvertex << ", goodness: " << fgoodness << std::endl;
+  
+  std::cout << "\nConnections:\n";
+  for(std::pair<size_t, size_t> const & pair : fconnected_associations) 
+    std::cout << "Association index: " << pair.first << " object index: " << pair.second << std::endl;
+  
+}
+
+
+void ParticleAssociation::PrintAssociation(DetectorObjects const & detos) const {
+  
+  for(size_t const i : findices)
+    std::cout << "Object index: " << i << " reco type: " << detos.GetRecoType(i) << " reco index: " << detos.GetDetectorObject(i).foriginal_index << std::endl;
+  
+  std::cout << "\nVertex: " << fvertex << ", goodness: " << fgoodness << std::endl;
   
   std::cout << "\nConnections:\n";
   for(std::pair<size_t, size_t> const & pair : fconnected_associations) 
@@ -199,20 +212,17 @@ void ParticleAssociations::IgnoreAssociationsConnectedTo(size_t const i) {
 
 
 void ParticleAssociations::PrintAssociations() const {
-
-  std::cout << "----------------------------------------\n\n";
   
   for(size_t i = 0; i < fassociations.size(); ++i) {
- 
-    std::cout << "Association: " << i << std::endl;
+
+    std::cout << "\n----------------------------------------\n\n"
+	      << "Association: " << i << std::endl;
     
-    fassociations.at(i).PrintAssociation();
-    
-    std::cout << std::endl;
+    fassociations.at(i).PrintAssociation(fdetos);
     
   }
-  
-  std::cout << std::endl;
+
+  std::cout << "\n----------------------------------------\n\n";
   
 }
 
@@ -227,13 +237,11 @@ void ParticleAssociations::PrintAssociations(std::vector<size_t> const & associa
 
     std::cout << "Association: " << i << std::endl;
     
-    fassociations.at(i).PrintAssociation();
+    fassociations.at(i).PrintAssociation(fdetos);
     
     std::cout << std::endl;
     
   }
-  
-  std::cout << std::endl;
   
 }
 

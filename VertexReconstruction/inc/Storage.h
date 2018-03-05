@@ -61,8 +61,8 @@ public:
   double fpot;
 
   //meta_chain
+  bool fheavy;
   bool fmc;
-
   std::string * fpot_producer;
   std::string * fswtrigger_product;
   std::vector<std::string> * fopflash_producers;
@@ -229,6 +229,14 @@ public:
   std::vector<std::vector<double>> * freco_shower_charge_contribution;
   std::vector<double> * freco_shower_charge_total;
 
+  //Pandora                                    
+  std::vector<int> * fpfp_pdg;
+  std::vector<double> * fpfp_vertex_X;
+  std::vector<double> * fpfp_vertex_Y;
+  std::vector<double> * fpfp_vertex_Z;
+  std::vector<int> * fpfp_original_index;
+  std::vector<std::vector<int>> * fpfp_children;
+
   //Truth
   std::vector<int> * fnu_pdg;
   std::vector<double> * fnu_energy;
@@ -290,6 +298,22 @@ public:
   std::vector<int> * fmctrack_PdgCode;
   std::vector<int> * fmctrack_TrackID;
   std::vector<std::string> * fmctrack_Process;
+  std::vector<double> * fmctrack_Start_X;
+  std::vector<double> * fmctrack_Start_Y;
+  std::vector<double> * fmctrack_Start_Z;
+  std::vector<double> * fmctrack_Start_T;
+  std::vector<double> * fmctrack_Start_Px;
+  std::vector<double> * fmctrack_Start_Py;
+  std::vector<double> * fmctrack_Start_Pz;
+  std::vector<double> * fmctrack_Start_E;
+  std::vector<double> * fmctrack_End_X;
+  std::vector<double> * fmctrack_End_Y;
+  std::vector<double> * fmctrack_End_Z;
+  std::vector<double> * fmctrack_End_T;
+  std::vector<double> * fmctrack_End_Px;
+  std::vector<double> * fmctrack_End_Py;
+  std::vector<double> * fmctrack_End_Pz;
+  std::vector<double> * fmctrack_End_E;
   std::vector<std::vector<double>> * fmctrack_X;
   std::vector<std::vector<double>> * fmctrack_Y;
   std::vector<std::vector<double>> * fmctrack_Z;

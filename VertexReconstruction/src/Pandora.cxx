@@ -25,12 +25,12 @@ int main(int const argc, char const * argv[]) {
 		      "pandoraCosmicHitRemoval",
 		      "simpleFlashBeam",
 		      "swtrigger");
-  //vrana->RunPandora();
+  vrana->RunPandora();
   vrana->RunVertexQuality();
   //vrana->RunFillTreeVariables();
 
   processor.AddAnalyzer(vrana);
-  processor.SetOutputFileName("VertexReconstruction.root");
+  processor.SetOutputFileName("Pandora.root");
   processor.Run();
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();

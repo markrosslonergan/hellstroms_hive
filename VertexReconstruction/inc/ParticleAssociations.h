@@ -66,6 +66,7 @@ public:
   }
   
   void PrintAssociation() const;
+  void PrintAssociation(DetectorObjects const & detos) const;
   
 };
 

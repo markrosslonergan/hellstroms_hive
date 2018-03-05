@@ -185,7 +185,6 @@ void FillTreeVariables::SetupTreeBranches() {
     fvertex_tree->Branch("true_track_endx", &true_track_endx); 
     fvertex_tree->Branch("true_track_endy", &true_track_endy); 
     fvertex_tree->Branch("true_track_endz", &true_track_endz);    
-    fvertex_tree->Branch("track_from_ncdeltarad_interaction", &track_from_ncdeltarad_interaction);
     fvertex_tree->Branch("track_matched_to_ncdeltarad_photon", &track_matched_to_ncdeltarad_photon);
     fvertex_tree->Branch("track_matched_to_ncdeltarad_proton", &track_matched_to_ncdeltarad_proton);
     fvertex_tree->Branch("true_track_energy", &true_track_energy);
@@ -203,7 +202,6 @@ void FillTreeVariables::SetupTreeBranches() {
     fvertex_tree->Branch("true_shower_endx", &true_shower_endx); 
     fvertex_tree->Branch("true_shower_endy", &true_shower_endy); 
     fvertex_tree->Branch("true_shower_endz", &true_shower_endz);    
-    fvertex_tree->Branch("shower_from_ncdeltarad_interaction", &shower_from_ncdeltarad_interaction);
     fvertex_tree->Branch("shower_matched_to_ncdeltarad_photon", &shower_matched_to_ncdeltarad_photon);
     fvertex_tree->Branch("shower_matched_to_ncdeltarad_proton", &shower_matched_to_ncdeltarad_proton);
     fvertex_tree->Branch("true_shower_energy", &true_shower_energy);
@@ -566,7 +564,6 @@ void FillTreeVariables::ResetVertex() {
   true_track_endx.clear(); 
   true_track_endy.clear(); 
   true_track_endz.clear();    
-  track_from_ncdeltarad_interaction.clear();
   track_matched_to_ncdeltarad_photon.clear();
   track_matched_to_ncdeltarad_proton.clear();
   true_track_energy.clear();
@@ -584,7 +581,6 @@ void FillTreeVariables::ResetVertex() {
   true_shower_endx.clear(); 
   true_shower_endy.clear(); 
   true_shower_endz.clear();
-  shower_from_ncdeltarad_interaction.clear();
   shower_matched_to_ncdeltarad_photon.clear();
   
   shower_matched_to_ncdeltarad_proton.clear();
@@ -625,6 +621,39 @@ void FillTreeVariables::ResetVertex() {
 }
 
 
+void FillTreeVariables::FillDeltaInfo() {
+  
+  int const delta_mct_index = fstorage->fdelta_mct_index;
+  if(delta_mct_index == -1) return;
+  int const delta_index = fstorage->fdelta_index->at(delta_mct_index);
+
+  delta_true_pdg = fstorage->fgenie_particle_PdgCode->at(delta_mct_index).at(delta_index);
+  delta_true_energy = fstorage->fgenie_particle_E->at(delta_mct_index).at(delta_index);
+  delta_photon_energy = fstorage->fgenie_particle_E->at(delta_mct_index).at(fstorage->fdelta_photon_index->at(delta_mct_index));
+  int const proton_index = fstorage->fdelta_proton_index->at(delta_mct_index);
+  if(proton_index != -1) delta_proton_energy = fstorage->fgenie_particle_E->at(delta_mct_index).at(proton_index);
+  int const mcshower_index = fstorage->fdelta_mcshower_index->at(delta_mct_index);
+  if(mcshower_index != -1) {
+    delta_mcshower_true_pdg = fstorage->fmcshower_PdgCode->at(mcshower_index);
+    delta_mcshower_true_energy = fstorage->fmcshower_Start_E->at(mcshower_index);
+    delta_mcshower_detprofile_energy = fstorage->fmcshower_DetProfile_E->at(mcshower_index);
+  }
+  int const mctrack_index = fstorage->fdelta_mctrack_index->at(delta_mct_index);
+  if(mctrack_index != -1) {
+    delta_mctrack_true_pdg = fstorage->fmctrack_PdgCode->at(mctrack_index);
+    delta_mctrack_true_energy = fstorage->fmctrack_Start_E->at(mctrack_index);
+    geoalgo::Point_t const start(fstorage->fmctrack_Start_X->at(mctrack_index),
+				 fstorage->fmctrack_Start_Y->at(mctrack_index),
+				 fstorage->fmctrack_Start_Z->at(mctrack_index));
+    geoalgo::Point_t const end(fstorage->fmctrack_End_X->at(mctrack_index),
+			       fstorage->fmctrack_End_Y->at(mctrack_index),
+			       fstorage->fmctrack_End_Z->at(mctrack_index));
+    delta_mctrack_true_length = start.Dist(end);    
+  }
+
+}
+
+
 void FillTreeVariables::FillTruth(size_t const mct_index) {
 
   nu_pdg = fstorage->fnu_pdg->at(mct_index);
@@ -651,6 +680,7 @@ void FillTreeVariables::FillTruth(size_t const mct_index) {
   std::vector<int> const & genie_particle_StatusCode = fstorage->fgenie_particle_StatusCode->at(mct_index);
   for(int i = 0; i < genie_particle_PdgCode.size(); ++i) {
     if(genie_particle_StatusCode.at(i) != 1) continue; 
+    exiting_particle_vector.push_back(genie_particle_PdgCode.at(i));
     switch(genie_particle_PdgCode.at(i)) {
     case 22:
       ++exiting_photon_number;
@@ -689,6 +719,7 @@ void FillTreeVariables::FillTruth(size_t const mct_index) {
   else is_single_photon = 0;
   if(fstorage->fis_delta_rad->at(mct_index) == 1) is_delta_rad = 1;
   else is_delta_rad = 0;
+  FillDeltaInfo();
 
   true_nu_vtx_tpc_contained = fstorage->ftrue_nu_vtx_tpc_contained->at(mct_index);
   true_nu_vtx_fid_contained = fstorage->ftrue_nu_vtx_fid_contained->at(mct_index);
@@ -765,12 +796,16 @@ void FillTreeVariables::FillTrackTruth(int const original_index) {
     true_track_endx.push_back(fstorage->fmcshower_End_X->at(mc_index));
     true_track_endy.push_back(fstorage->fmcshower_End_Y->at(mc_index)); 
     true_track_endz.push_back(fstorage->fmcshower_End_Z->at(mc_index));
-    true_track_energy.push_back(fstorage->fmcshower_Start_E->at(mc_index));
+    true_track_energy.push_back(fstorage->fmcshower_Start_E->at(mc_index) * 1e-3);
     if(delta_mct_index != -1 && mc_index == fstorage->fdelta_mcshower_index->at(delta_mct_index)) {
-      track_from_ncdeltarad_interaction.push_back(1);
       track_matched_to_ncdeltarad_photon.push_back(1);
       track_matched_to_ncdeltarad_proton.push_back(0);
     }
+    else {
+      track_matched_to_ncdeltarad_photon.push_back(-1);
+      track_matched_to_ncdeltarad_proton.push_back(-1);
+    }
+
   }
 
   else if(mc_type == 2) {
@@ -778,24 +813,27 @@ void FillTreeVariables::FillTrackTruth(int const original_index) {
     true_track_parent_pdg.push_back(fstorage->fmctrack_MotherPdgCode->at(mc_index));
     true_track_ancestor_pdg.push_back(fstorage->fmctrack_AncestorPdgCode->at(mc_index));
     true_track_origin.push_back(fstorage->fmctrack_Origin->at(mc_index));
-    true_track_startx.push_back(fstorage->fmctrack_X->at(mc_index).front());
-    true_track_starty.push_back(fstorage->fmctrack_Y->at(mc_index).front()); 
-    true_track_startz.push_back(fstorage->fmctrack_Z->at(mc_index).front());
-    true_track_endx.push_back(fstorage->fmctrack_X->at(mc_index).back());
-    true_track_endy.push_back(fstorage->fmctrack_Y->at(mc_index).back()); 
-    true_track_endz.push_back(fstorage->fmctrack_Z->at(mc_index).back());
-    true_track_energy.push_back(fstorage->fmctrack_E->at(mc_index).front());
+    true_track_startx.push_back(fstorage->fmctrack_Start_X->at(mc_index));
+    true_track_starty.push_back(fstorage->fmctrack_Start_Y->at(mc_index)); 
+    true_track_startz.push_back(fstorage->fmctrack_Start_Z->at(mc_index));
+    true_track_endx.push_back(fstorage->fmctrack_End_X->at(mc_index));
+    true_track_endy.push_back(fstorage->fmctrack_End_Y->at(mc_index)); 
+    true_track_endz.push_back(fstorage->fmctrack_End_Z->at(mc_index));
+    true_track_energy.push_back(fstorage->fmctrack_Start_E->at(mc_index) * 1e-3);
     if(delta_mct_index != -1 && mc_index == fstorage->fdelta_mctrack_index->at(delta_mct_index)) {
-      track_from_ncdeltarad_interaction.push_back(1);
       track_matched_to_ncdeltarad_photon.push_back(0);
       track_matched_to_ncdeltarad_proton.push_back(1);
     }    
+    else {
+      track_matched_to_ncdeltarad_photon.push_back(-1);
+      track_matched_to_ncdeltarad_proton.push_back(-1);
+    }
   }
 
   else if(mc_type == 3) {
     true_track_pdg.push_back(fstorage->fmcparticle_PdgCode->at(mc_index));
-    true_track_parent_pdg.push_back(-1);
-    true_track_ancestor_pdg.push_back(-1);
+    true_track_parent_pdg.push_back(0);
+    true_track_ancestor_pdg.push_back(0);
     true_track_origin.push_back(-1);
     true_track_startx.push_back(-1);
     true_track_starty.push_back(-1);
@@ -804,7 +842,22 @@ void FillTreeVariables::FillTrackTruth(int const original_index) {
     true_track_endy.push_back(-1);
     true_track_endz.push_back(-1);
     true_track_energy.push_back(-1);
-    track_from_ncdeltarad_interaction.push_back(-1);
+    track_matched_to_ncdeltarad_photon.push_back(-1);
+    track_matched_to_ncdeltarad_proton.push_back(-1);
+  }
+
+  else {
+    true_track_pdg.push_back(0);
+    true_track_parent_pdg.push_back(0);
+    true_track_ancestor_pdg.push_back(0);
+    true_track_origin.push_back(-1);
+    true_track_startx.push_back(-1);
+    true_track_starty.push_back(-1);
+    true_track_startz.push_back(-1);
+    true_track_endx.push_back(-1);
+    true_track_endy.push_back(-1);
+    true_track_endz.push_back(-1);
+    true_track_energy.push_back(-1);
     track_matched_to_ncdeltarad_photon.push_back(-1);
     track_matched_to_ncdeltarad_proton.push_back(-1);
   }
@@ -832,11 +885,15 @@ void FillTreeVariables::FillShowerTruth(int const original_index) {
     true_shower_endx.push_back(fstorage->fmcshower_End_X->at(mc_index));
     true_shower_endy.push_back(fstorage->fmcshower_End_Y->at(mc_index)); 
     true_shower_endz.push_back(fstorage->fmcshower_End_Z->at(mc_index));
-    true_shower_energy.push_back(fstorage->fmcshower_Start_E->at(mc_index));
+    true_shower_energy.push_back(fstorage->fmcshower_Start_E->at(mc_index) * 1e-3);
+    true_shower_detprofile_energy.push_back(fstorage->fmcshower_DetProfile_E->at(mc_index) * 1e-3);
     if(delta_mct_index != -1 && mc_index == fstorage->fdelta_mcshower_index->at(delta_mct_index)) {
-      shower_from_ncdeltarad_interaction.push_back(1);
       shower_matched_to_ncdeltarad_photon.push_back(1);
       shower_matched_to_ncdeltarad_proton.push_back(0);
+    }
+    else {
+      shower_matched_to_ncdeltarad_photon.push_back(-1);
+      shower_matched_to_ncdeltarad_proton.push_back(-1);
     }
   }
 
@@ -845,33 +902,54 @@ void FillTreeVariables::FillShowerTruth(int const original_index) {
     true_shower_parent_pdg.push_back(fstorage->fmctrack_MotherPdgCode->at(mc_index));
     true_shower_ancestor_pdg.push_back(fstorage->fmctrack_AncestorPdgCode->at(mc_index));
     true_shower_origin.push_back(fstorage->fmctrack_Origin->at(mc_index));
-    true_shower_startx.push_back(fstorage->fmctrack_X->at(mc_index).front());
-    true_shower_starty.push_back(fstorage->fmctrack_Y->at(mc_index).front()); 
-    true_shower_startz.push_back(fstorage->fmctrack_Z->at(mc_index).front());
-    true_shower_endx.push_back(fstorage->fmctrack_X->at(mc_index).back());
-    true_shower_endy.push_back(fstorage->fmctrack_Y->at(mc_index).back()); 
-    true_shower_endz.push_back(fstorage->fmctrack_Z->at(mc_index).back());
-    true_shower_energy.push_back(fstorage->fmctrack_E->at(mc_index).front());
+    true_shower_startx.push_back(fstorage->fmctrack_Start_X->at(mc_index));
+    true_shower_starty.push_back(fstorage->fmctrack_Start_Y->at(mc_index)); 
+    true_shower_startz.push_back(fstorage->fmctrack_Start_Z->at(mc_index));
+    true_shower_endx.push_back(fstorage->fmctrack_End_X->at(mc_index));
+    true_shower_endy.push_back(fstorage->fmctrack_End_Y->at(mc_index)); 
+    true_shower_endz.push_back(fstorage->fmctrack_End_Z->at(mc_index));
+    true_shower_energy.push_back(fstorage->fmctrack_Start_E->at(mc_index) * 1e-3);
+    true_shower_detprofile_energy.push_back(-10000);
     if(delta_mct_index != -1 && mc_index == fstorage->fdelta_mctrack_index->at(delta_mct_index)) {
-      shower_from_ncdeltarad_interaction.push_back(1);
       shower_matched_to_ncdeltarad_photon.push_back(0);
       shower_matched_to_ncdeltarad_proton.push_back(1);
     }    
+    else {
+      shower_matched_to_ncdeltarad_photon.push_back(-1);
+      shower_matched_to_ncdeltarad_proton.push_back(-1);
+    }
   }
 
   else if(mc_type == 3) {
     true_shower_pdg.push_back(fstorage->fmcparticle_PdgCode->at(mc_index));
-    true_shower_parent_pdg.push_back(-1);
-    true_shower_ancestor_pdg.push_back(-1);
+    true_shower_parent_pdg.push_back(0);
+    true_shower_ancestor_pdg.push_back(0);
     true_shower_origin.push_back(-1);
-    true_shower_startx.push_back(-1);
-    true_shower_starty.push_back(-1);
-    true_shower_startz.push_back(-1);
-    true_shower_endx.push_back(-1);
-    true_shower_endy.push_back(-1);
-    true_shower_endz.push_back(-1);
-    true_shower_energy.push_back(-1);
-    shower_from_ncdeltarad_interaction.push_back(-1);
+    true_shower_startx.push_back(-10000);
+    true_shower_starty.push_back(-10000);
+    true_shower_startz.push_back(-10000);
+    true_shower_endx.push_back(-10000);
+    true_shower_endy.push_back(-10000);
+    true_shower_endz.push_back(-10000);
+    true_shower_energy.push_back(-10000);
+    true_shower_detprofile_energy.push_back(-10000);
+    shower_matched_to_ncdeltarad_photon.push_back(-1);
+    shower_matched_to_ncdeltarad_proton.push_back(-1);
+  }
+
+  else {
+    true_shower_pdg.push_back(-1);
+    true_shower_parent_pdg.push_back(0);
+    true_shower_ancestor_pdg.push_back(0);
+    true_shower_origin.push_back(-1);
+    true_shower_startx.push_back(-10000);
+    true_shower_starty.push_back(-10000);
+    true_shower_startz.push_back(-10000);
+    true_shower_endx.push_back(-10000);
+    true_shower_endy.push_back(-10000);
+    true_shower_endz.push_back(-10000);
+    true_shower_energy.push_back(-10000);
+    true_shower_detprofile_energy.push_back(-10000);
     shower_matched_to_ncdeltarad_photon.push_back(-1);
     shower_matched_to_ncdeltarad_proton.push_back(-1);
   }
@@ -1085,7 +1163,8 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
 
 
 void FillTreeVariables::FillVertexTree(ParticleAssociations const & pas,
-				       size_t const pn) {
+				       size_t const pn,
+				       size_t const mct_index) {
   ResetVertex();
 
   DetectorObjects const & detos = pas.GetDetectorObjects();
@@ -1098,6 +1177,15 @@ void FillTreeVariables::FillVertexTree(ParticleAssociations const & pas,
   reco_nuvertx = reco_vertex.at(0);
   reco_nuverty = reco_vertex.at(1);
   reco_nuvertz = reco_vertex.at(2);
+
+  if(fmcordata) {
+    reco_true_nuvert_distx = reco_nuvertx - true_nuvertx;
+    reco_true_nuvert_disty = reco_nuverty - true_nuverty;
+    reco_true_nuvert_distz = reco_nuvertz - true_nuvertz;
+    reco_true_nuvert_dist = sqrt(reco_true_nuvert_distx*reco_true_nuvert_distx + 
+				 reco_true_nuvert_disty*reco_true_nuvert_disty + 
+				 reco_true_nuvert_distz*reco_true_nuvert_distz);
+  }
 
   reco_nu_vtx_dist_to_closest_tpc_wall = DistToClosestTPCWall(reco_vertex);
   if(ffiducial_volume.Contain(reco_vertex)) reco_nu_vtx_fid_contained = 1;
@@ -1116,9 +1204,10 @@ void FillTreeVariables::Fill(ParticleAssociations const & pas) {
 
   ResetEvent();
 
+  size_t mct_index = SIZE_MAX;
   if(fmcordata) {
+    mct_index = 0;
     std::vector<int> const & is_delta_rad = *fstorage->fis_delta_rad;
-    size_t mct_index = 0;
     for(size_t i = 0; i < is_delta_rad.size(); ++i) {
       if(is_delta_rad.at(i) == 1) {
 	mct_index = i;
@@ -1162,7 +1251,7 @@ void FillTreeVariables::Fill(ParticleAssociations const & pas) {
   }
 
   for(size_t const pn : pas.GetSelectedAssociations()) {
-    FillVertexTree(pas, pn);
+    FillVertexTree(pas, pn, mct_index);
   } 
 
 }

@@ -2,6 +2,7 @@
 #include <iomanip>
 
 
+
 struct tree_new {
 
   tree_new(TTree * tree) :
@@ -210,7 +211,7 @@ struct tree_new {
     fvertex_tree->SetBranchAddress("true_track_endx", &true_track_endx); 
     fvertex_tree->SetBranchAddress("true_track_endy", &true_track_endy); 
     fvertex_tree->SetBranchAddress("true_track_endz", &true_track_endz);    
-    fvertex_tree->SetBranchAddress("track_from_ncdeltarad_interaction", &track_from_ncdeltarad_interaction);
+    //fvertex_tree->SetBranchAddress("track_from_ncdeltarad_interaction", &track_from_ncdeltarad_interaction);
     fvertex_tree->SetBranchAddress("track_matched_to_ncdeltarad_photon", &track_matched_to_ncdeltarad_photon);
     fvertex_tree->SetBranchAddress("track_matched_to_ncdeltarad_proton", &track_matched_to_ncdeltarad_proton);
     fvertex_tree->SetBranchAddress("true_track_energy", &true_track_energy);
@@ -228,7 +229,7 @@ struct tree_new {
     fvertex_tree->SetBranchAddress("true_shower_endx", &true_shower_endx); 
     fvertex_tree->SetBranchAddress("true_shower_endy", &true_shower_endy); 
     fvertex_tree->SetBranchAddress("true_shower_endz", &true_shower_endz);    
-    fvertex_tree->SetBranchAddress("shower_from_ncdeltarad_interaction", &shower_from_ncdeltarad_interaction);
+    //fvertex_tree->SetBranchAddress("shower_from_ncdeltarad_interaction", &shower_from_ncdeltarad_interaction);
     fvertex_tree->SetBranchAddress("shower_matched_to_ncdeltarad_photon", &shower_matched_to_ncdeltarad_photon);
     fvertex_tree->SetBranchAddress("shower_matched_to_ncdeltarad_proton", &shower_matched_to_ncdeltarad_proton);
     fvertex_tree->SetBranchAddress("true_shower_energy", &true_shower_energy);
@@ -806,8 +807,9 @@ void checkvv(std::vector<std::vector<double>> const * v1,
 }
 
 
-void checkv(std::vector<double> const * v1,
-	    std::vector<double> const * v2) {
+template <class T>
+void checkv(std::vector<T> const * v1,
+	    std::vector<T> const * v2) {
 
   if(v1->size() != v2->size()) cout << "checkv\n";
   
@@ -851,6 +853,7 @@ void test_variables(char const * name1, char const * name2) {
 
     if(i == 0) {
 
+      /*
       cout << tn.tracknumber << " " << to.tracknumber << "\n";
       cout << tn.showernumber << " " << to.showernumber << "\n";
       cout << tn.passed_swtrigger << " " << to.passed_swtrigger << "\n";
@@ -887,6 +890,7 @@ void test_variables(char const * name1, char const * name2) {
 	cout << tn.reco_shower_disty->at(si) << " " << to.most_energetic_shower_reco_disty << "\n";
 	cout << tn.reco_shower_distz->at(si) << " " << to.most_energetic_shower_reco_distz << "\n";
       }
+      */
 
     }
 
@@ -920,8 +924,8 @@ void test_variables(char const * name1, char const * name2) {
       if(fabs(tn.reco_track_thetayz->at(ti) - to.longest_asso_track_thetayz) > prec) cout << "longest_asso_track_thetayz\n";
       if(tn.reco_track_phi->at(ti) != to.longest_asso_track_phi) cout << "longest_asso_track_phi\n";
       if(tn.reco_track_theta->at(ti) != to.longest_asso_track_theta) cout << "longest_asso_track_theta\n";
-      checkv(&tn.reco_track_calo_dEdx->at(ti), to.longest_asso_track_calo_dEdx);
-      checkv(&tn.reco_track_calo_resrange->at(ti), to.longest_asso_track_calo_resrange);
+      checkv<double>(&tn.reco_track_calo_dEdx->at(ti), to.longest_asso_track_calo_dEdx);
+      checkv<double>(&tn.reco_track_calo_resrange->at(ti), to.longest_asso_track_calo_resrange);
     }
     if(tn.closest_asso_shower_dist_to_flashzcenter != to.closest_asso_shower_dist_to_flashzcenter) cout << "closest_asso_shower_dist_to_flashzcenter\n";
     if(tn.reco_asso_showers == 1) {
@@ -960,10 +964,135 @@ void test_variables(char const * name1, char const * name2) {
       if(tn.reco_shower_diry->at(si) != to.most_energetic_shower_reco_diry) cout << "most_energetic_shower_reco_diry\n";
       if(tn.reco_shower_dirz->at(si) != to.most_energetic_shower_reco_dirz) cout << "most_energetic_shower_reco_dirz\n";
       */
+      if(fabs(tn.reco_shower_helper_energy->at(si) - to.most_energetic_shower_helper_energy) > prec) {
+	cout << "most_energetic_shower_helper_energy\n";
+	cout << tn.reco_shower_helper_energy->at(si) << " " << to.most_energetic_shower_helper_energy << "\n";
+      } 
+      if(tn.reco_shower_bp_dist_to_tpc->at(si) != to.most_energetic_shower_bp_dist_to_tpc) cout << "most_energetic_shower_bp_dist_to_tpc\n";
+      if(tn.reco_shower_dedx_plane0->at(si) != to.reco_shower_dedx_plane0) cout << "reco_shower_dedx_plane0\n";
+      if(tn.reco_shower_dedx_plane1->at(si) != to.reco_shower_dedx_plane1) cout << "reco_shower_dedx_plane1\n";
+      if(tn.reco_shower_dedx_plane2->at(si) != to.reco_shower_dedx_plane2) cout << "reco_shower_dedx_plane2\n";
+      if(tn.reco_shower_dist_to_closest_flashzcenter->at(si) != to.closest_asso_shower_dist_to_flashzcenter) cout << "closest_asso_shower_dist_to_flashzcenter\n";
+      if(tn.shortest_asso_shower_to_vert_dist != to.shortest_asso_shower_to_vert_dist) cout << "shortest_asso_shower_to_vert_dist\n";
+      if(fabs(tn.summed_associated_helper_shower_energy - to.summed_associated_helper_shower_energy) > prec) {
+	cout << "summed_associated_helper_shower_energy\n";
+	cout << tn.summed_associated_helper_shower_energy << " " << to.summed_associated_helper_shower_energy << "\n";
+      }
 
     }
     
-    
+    if(tn.nu_pdg != to.nu_pdg) cout << "nu_pdg\n";
+    if(tn.nu_energy != to.nu_energy) cout << "nu_energy\n";
+    if(tn.lep_pdg != to.lep_pdg) cout << "lep_pdg\n";
+    if(tn.lep_energy != to.lep_energy) cout << "lep_energy\n";
+    if(tn.ccnc != to.ccnc) cout << "ccnc\n";
+    if(tn.mode != to.mode) cout << "mode\n";
+    if(tn.interaction_type != to.interaction_type) cout << "interaction_type\n";
+    if(tn.exiting_photon_number != to.exiting_photon_number) cout << "to.exiting_photon_number\n";
+    if(tn.exiting_proton_number != to.exiting_proton_number) cout << "to.exiting_proton_number\n"; 
+    if(tn.exiting_neutron_number != to.exiting_neutron_number) cout << "to.exiting_neutron_number\n"; 
+    if(tn.exiting_electron_number != to.exiting_electron_number) cout << "to.exiting_electron_number\n"; 
+    if(tn.exiting_antielectron_number != to.exiting_antielectron_number) cout << "to.exiting_antielectron_number\n"; 
+    if(tn.exiting_muon_number != to.exiting_muon_number) cout << "to.exiting_muon_number\n"; 
+    if(tn.exiting_antimuon_number != to.exiting_antimuon_number) cout << "to.exiting_antimuon_number\n"; 
+    if(tn.exiting_piplus_number != to.exiting_piplus_number) cout << "to.exiting_piplus_number\n"; 
+    if(tn.exiting_piminus_number != to.exiting_piminus_number) cout << "to.exiting_piminus_number\n"; 
+    if(tn.exiting_pi0_number != to.exiting_pi0_number) cout << "to.exiting_pi0_number\n"; 
+    if(tn.total_exiting_particles != to.total_exiting_particles) cout << "to.total_exiting_particles\n"; 
+    checkv<int>(tn.exiting_particle_vector, to.exiting_particle_vector);
+    if(tn.is_single_photon != to.is_single_photon) cout << "to.is_single_photon\n";
+    if(tn.is_delta_rad != to.is_delta_rad) cout << "to.is_delta_rad\n";
+    if(tn.delta_true_pdg != to.delta_true_pdg) {
+      cout << "to.delta_true_pdg\n";
+      cout << tn.delta_true_pdg << " " << to.delta_true_pdg << "\n";
+    } 
+    if(tn.delta_true_energy != to.delta_true_energy) {
+      cout << "to.delta_true_energy\n";
+      cout << tn.delta_true_energy << " " << to.delta_true_energy << "\n";
+    }
+    if(tn.delta_photon_energy != to.delta_photon_energy) cout << "to.delta_photon_energy\n";
+    if(tn.delta_proton_energy != to.delta_proton_energy) cout << "to.delta_proton_energy\n";
+    if(tn.delta_mcshower_true_pdg != to.delta_mcshower_true_pdg) cout << "to.delta_mcshower_true_pdg\n";
+    if(tn.delta_mcshower_true_energy != to.delta_mcshower_true_energy) cout << "to.delta_mcshower_true_energy\n";
+    if(tn.delta_mcshower_detprofile_energy != to.delta_mcshower_detprofile_energy) cout << "to.delta_mcshower_detprofile_energy\n";
+    if(tn.delta_mctrack_true_pdg != to.delta_mctrack_true_pdg) cout << "to.delta_mctrack_true_pdg\n";
+    if(tn.delta_mctrack_true_energy != to.delta_mctrack_true_energy) cout << "to.delta_mctrack_true_energy\n";
+    if(tn.delta_mctrack_true_length != to.delta_mctrack_true_length) cout << "to.delta_mctrack_true_length\n";
+    if(tn.mctracknumber != to.mctracknumber) cout << "to.mctracknumber\n";
+    if(tn.mcshowernumber != to.mcshowernumber) cout << "to.mcshowernumber\n";
+    if(tn.true_nuvertx != to.true_nuvertx) cout << "to.true_nuvertx\n";
+    if(tn.true_nuverty != to.true_nuverty) cout << "to.true_nuverty\n";
+    if(tn.true_nuvertz != to.true_nuvertz) cout << "to.true_nuvertz\n";
+    if(tn.true_nu_E != to.true_nu_E) cout << "to.true_nu_E\n";
+    if(fabs(tn.reco_true_nuvert_dist - to.reco_true_nuvert_dist) > prec) {
+      cout << "to.reco_true_nuvert_dist\n";
+      cout << tn.reco_true_nuvert_dist << " " << to.reco_true_nuvert_dist << "\n";
+    }
+    if(tn.reco_true_nuvert_distx != to.reco_true_nuvert_distx) cout << "to.reco_true_nuvert_distx\n";
+    if(tn.reco_true_nuvert_disty != to.reco_true_nuvert_disty) cout << "to.reco_true_nuvert_disty\n";
+    if(tn.reco_true_nuvert_distz != to.reco_true_nuvert_distz) cout << "to.reco_true_nuvert_distz\n";
+    if(tn.true_nu_vtx_tpc_contained != to.true_nu_vtx_tpc_contained) cout << "to.true_nu_vtx_tpc_contained\n";
+    if(tn.true_nu_vtx_fid_contained != to.true_nu_vtx_fid_contained) cout << "to.true_nu_vtx_fid_contained\n";
+
+    if(ti != -1) {
+      if(tn.true_track_matching_ratio->at(ti) != to.longest_asso_track_matching_ratio) cout << "to.longest_asso_track_matching_ratio\n";
+      if(tn.true_track_pdg->at(ti) != to.longest_asso_track_true_pdg) cout << "to.longest_asso_track_true_pdg\n";
+      if(tn.true_track_parent_pdg->at(ti) != to.longest_asso_track_true_parent_pdg) cout << "to.longest_asso_track_true_parent_pdg\n";
+      if(tn.true_track_ancestor_pdg->at(ti) != to.longest_asso_track_true_ancestor_pdg) cout << "to.longest_asso_track_true_ancestor_pdg\n";
+      if(tn.true_track_origin->at(ti) != to.longest_asso_track_true_origin) cout << "to.longest_asso_track_true_origin\n";
+      if(tn.true_track_startx->at(ti) != to.longest_asso_track_true_startx) {
+	cout << "to.longest_asso_track_true_startx\n";
+	cout << tn.true_track_startx->at(ti) << " " << to.longest_asso_track_true_startx << "\n";
+      }
+      if(tn.true_track_starty->at(ti) != to.longest_asso_track_true_starty) cout << "to.longest_asso_track_true_starty\n";
+      if(tn.true_track_startz->at(ti) != to.longest_asso_track_true_startz) cout << "to.longest_asso_track_true_startz\n";
+      if(tn.true_track_endx->at(ti) != to.longest_asso_track_true_endx) cout << "to.longest_asso_track_true_endx\n";
+      if(tn.true_track_endy->at(ti) != to.longest_asso_track_true_endy) cout << "to.longest_asso_track_true_endy\n";
+      if(tn.true_track_endz->at(ti) != to.longest_asso_track_true_endz) cout << "to.longest_asso_track_true_endz\n";
+      /*
+      if(tn.track_from_ncdeltarad_interaction->at(ti) != to.longest_asso_track_from_ncdeltarad_interaction) {
+	cout << "to.longest_asso_track_from_ncdeltarad_interaction\n";
+	cout << tn.track_from_ncdeltarad_interaction->at(ti) << " " << to.longest_asso_track_from_ncdeltarad_interaction << "\n";
+      }
+      */
+      if(tn.true_track_energy->at(ti) != to.longest_asso_track_true_energy) cout << "to.longest_asso_track_true_energy\n";
+      if(tn.reco_asso_showers == 1) {
+	if(tn.true_shower_pdg->at(si) != to.shower_true_pdg) {
+	  cout << "to.shower_true_pdg\n";
+	  cout << tn.true_shower_pdg->at(si) << " " << to.shower_true_pdg << "\n";
+	}
+	if(tn.true_shower_parent_pdg->at(si) != to.shower_true_parent_pdg) {
+	  cout << "to.shower_true_parent_pdg\n";
+	  cout << tn.true_shower_parent_pdg->at(si) << " " << to.shower_true_parent_pdg << "\n";
+	}
+
+	if(tn.true_shower_ancestor_pdg->at(si) != to.shower_true_ancestor_pdg) cout << "to.shower_true_ancestor_pdg\n";
+	if(tn.true_shower_origin->at(si) == to.shower_true_origin) {
+	  if(tn.true_shower_startx->at(si) != to.shower_true_startx) {
+	    cout << "to.shower_true_startx\n";
+	    cout << tn.true_shower_startx->at(si) << " " << to.shower_true_startx << "\n";
+	  }
+	  if(tn.true_shower_starty->at(si) != to.shower_true_starty) cout << "to.shower_true_starty\n";
+	  if(tn.true_shower_startz->at(si) != to.shower_true_startz) cout << "to.shower_true_startz\n";
+	  if(tn.true_shower_endx->at(si) != to.shower_true_endx) cout << "to.shower_true_endx\n";
+	  if(tn.true_shower_endy->at(si) != to.shower_true_endy) cout << "to.shower_true_endy\n";
+	  if(tn.true_shower_endz->at(si) != to.shower_true_endz) cout << "to.shower_true_endz\n";
+	  if(tn.true_shower_energy->at(si) != to.shower_true_energy) {
+	    cout << "to.shower_true_energy\n";
+	    cout << tn.true_shower_energy->at(si) << " " << to.shower_true_energy << "\n";
+	  }
+	  /*
+	  if(tn.true_shower_detprofile_energy->at(si) != to.shower_detprofile_energy) {
+	    cout << "to.shower_detprofile_energy\n";
+	    cout << tn.true_shower_detprofile_energy->at(si) << " " << to.shower_detprofile_energy << "\n";
+	  }
+	  */
+	}
+
+      }
+
+    }
+
   }
 
 
