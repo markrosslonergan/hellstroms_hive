@@ -14,7 +14,7 @@ class Processor {
   Processor(char const * pot_name,
 	    char const * meta_name,
 	    char const * event_name,
-	    std::vector<char const *> const & files = std::vector<char const *>());
+	    std::vector<char const *> const & files = {});
   ~Processor();
 
   void AddAnalyzer(Analyzer * analyzer);

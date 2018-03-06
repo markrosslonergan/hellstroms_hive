@@ -100,13 +100,7 @@ void VertexQuality::SetupVertexQualityTreeClosest(TTree * const tree) {
 
 void VertexQuality::SetupVertexQualityTreeClosest() {
 
-  if(!fvertex_tree_event) {
-    std::string name;
-    if(fname != "") name = fname + "_vertex_quality_tree_closest";
-    else name = "vertex_quality_tree_closest";
-    fvertex_tree_event = new TTree(name.c_str(), "");
-  }
-
+  if(!fvertex_tree_event) fvertex_tree_event = new TTree("vertex_quality_tree_closest", "");
   SetupVertexQualityTreeClosest(fvertex_tree_event);
 
 }
@@ -150,13 +144,7 @@ void VertexQuality::SetupVertexQualityTreeSignal(TTree * tree) {
 
 void VertexQuality::SetupVertexQualityTreeSignal() {
 
-  if(!fvertex_tree_event_signal) {
-    std::string name;
-    if(fname != "") name = fname + "_vertex_quality_tree_signal";
-    else name = "vertex_quality_tree_signal";
-    fvertex_tree_event_signal = new TTree(name.c_str(), "");
-  }
-
+  if(!fvertex_tree_event_signal) fvertex_tree_event_signal = new TTree("vertex_quality_tree_signal", "");
   SetupVertexQualityTreeSignal(fvertex_tree_event_signal);
 
 }

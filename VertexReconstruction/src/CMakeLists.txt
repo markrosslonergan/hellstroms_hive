@@ -19,3 +19,6 @@ target_link_libraries (RunVertexQuality VertexReconstructionlib ${ROOT_LIBRARIES
 
 add_executable (GetPermutationFiles GetPermutationFiles.cxx GetPermutations.cxx)
 target_link_libraries (GetPermutationFiles ${ROOT_LIBRARIES})
+
+add_executable (RunEvaluateVertexQuality RunEvaluateVertexQuality.cxx EvaluateVertexQuality.cxx)
+target_link_libraries (RunEvaluateVertexQuality ${ROOT_LIBRARIES})
