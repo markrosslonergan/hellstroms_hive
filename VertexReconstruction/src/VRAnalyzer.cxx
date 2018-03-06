@@ -3,7 +3,7 @@
 #include "VRAnalyzer.h"
 
 
-VRAnalyzer::VRAnalyzer(std::string const & name) :
+VRAnalyzer::VRAnalyzer(std::string const & name, VertexQuality * vq) :
   fname(name),
   fverbose(false),
   fstart_prox(-10000),
@@ -11,9 +11,8 @@ VRAnalyzer::VRAnalyzer(std::string const & name) :
   fmax_bp_dist(-10000),
   fcpoa_vert_prox(-10000),
   fcpoa_trackend_prox(-10000),
-  frun_vertex_quality(false),
   frun_fill_tree_variables(false),
-  fvq(name) {}
+  fvq(vq) {}
 
 
 void VRAnalyzer::SetVerbose(bool const verbose) {
@@ -33,8 +32,8 @@ void VRAnalyzer::SetProducers(std::string const & track_producer,
   fopflash_producer = opflash_producer;
   fswtrigger_product = trigger_product;
 
-  fvq.SetProducers(ftrack_producer,
-		   fshower_producer);
+  fvq->SetProducers(ftrack_producer,
+		    fshower_producer);
 
 }
 
@@ -59,11 +58,6 @@ void VRAnalyzer::RunPandora(bool const run_pandora) {
 }
 
 
-void VRAnalyzer::RunVertexQuality(bool const run_vertex_quality) {
-  frun_vertex_quality = run_vertex_quality;
-}
-
-
 void VRAnalyzer::RunFillTreeVariables(bool const run_fill_tree_variables) {
   frun_fill_tree_variables = run_fill_tree_variables;
 }
@@ -73,13 +67,8 @@ void VRAnalyzer::Initialize() {
 
   fmcordata = fstorage->fmc;
 
-  if(frun_vertex_quality) {
-    fvq.SetStorage(fstorage);
-    fvq.SetParameters(fstart_prox,
-		      fshower_prox,
-		      fmax_bp_dist,
-		      fcpoa_vert_prox,
-		      fcpoa_trackend_prox);
+  if(fvq) {
+    fvq->SetStorage(fstorage);
   }
 
   if(frun_fill_tree_variables) {
@@ -405,9 +394,14 @@ void VRAnalyzer::Run() {
     vb.Run(pas);
   }
 
-  if(frun_vertex_quality) {
+  if(fvq) {
     if(fstorage->frmcm_bool) {
-      fvq.RunSig(pas);
+      fvq->SetParameters(fstart_prox,
+			 fshower_prox,
+			 fmax_bp_dist,
+			 fcpoa_vert_prox,
+			 fcpoa_trackend_prox);
+      fvq->RunSig(pas);
     }
     else {
       std::cout << "Asked to run VertexQuality using file with no reco - mc matching\n";
@@ -426,7 +420,6 @@ void VRAnalyzer::Finalize() {
   if(fofile) {
 
     if(frun_fill_tree_variables) fftv.Write();
-    if(frun_vertex_quality && fstorage->frmcm_bool) fvq.Write();    
 
   }
 

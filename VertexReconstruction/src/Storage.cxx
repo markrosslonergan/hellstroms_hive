@@ -52,7 +52,7 @@ bool Storage::CheckFile(char const * pot_name,
   TTree * event_tree = dynamic_cast<TTree*>(file->Get(event_name));
 
   if(!pot_tree || !meta_tree || !event_tree) {
-    std::cout << "Could not find a tree\n";
+    std::cout << __PRETTY_FUNCTION__ << "\nCould not find a tree\n";
     return false;
   }
 

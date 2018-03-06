@@ -26,7 +26,6 @@ int main(int const argc, char const * argv[]) {
 		      "simpleFlashBeam",
 		      "swtrigger");
   //vrana->RunPandora();
-  vrana->RunVertexQuality();
   vrana->RunFillTreeVariables();
 
   processor.AddAnalyzer(vrana);

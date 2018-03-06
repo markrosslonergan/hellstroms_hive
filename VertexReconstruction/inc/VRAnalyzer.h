@@ -16,7 +16,7 @@ class VRAnalyzer : public Analyzer {
 
  public:
 
-  VRAnalyzer(std::string const & name = "vrana");
+  VRAnalyzer(std::string const & name = "vrana", VertexQuality * vq = nullptr);
 
   void SetVerbose(bool const verbose = true);
   void SetProducers(std::string const & track_producer,
@@ -30,7 +30,7 @@ class VRAnalyzer : public Analyzer {
 		      double const cpoa_vert_prox,
 		      double const cpoa_trackend_prox);
   void RunPandora(bool const run_pandora = true);
-  void RunVertexQuality(bool const run_vertex_quality = true);
+
   void RunFillTreeVariables(bool const run_fill_tree_variables = true);
 
   void Initialize();
@@ -77,10 +77,10 @@ class VRAnalyzer : public Analyzer {
   double fcpoa_trackend_prox;
 
   bool frun_pandora;
-  bool frun_vertex_quality;
   bool frun_fill_tree_variables;
 
-  VertexQuality fvq;
+  VertexQuality * fvq;
+
   FillTreeVariables fftv;
 
 };

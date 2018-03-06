@@ -6,6 +6,9 @@
 #include <iostream>
 #include <vector>
 
+#include "TFile.h"
+#include "TTree.h"
+
 
 class Permutations {
   
@@ -19,7 +22,15 @@ class Permutations {
   void AddParameter(std::string const & name,
 		    double const set_value);
 
-  std::vector<std::vector<double>> const & Get();  
+  void Get();
+
+  std::vector<std::vector<double>> const & GetV(); 
+
+  void WriteFile(std::string const & file_name,
+		 std::pair<size_t, size_t> const & index_range);
+  void GetFiles(std::string const & file_name, int const job_number = 1);
+  void ReadFile(char const * file_name, std::vector<std::vector<double>>& permutation_v);
+ 
   void Check();
   std::string GetString(size_t const i);
 

@@ -16,13 +16,8 @@ class VertexQuality {
 
  public:
 
-  VertexQuality();
-  VertexQuality(std::string const & name);
-  ~VertexQuality() {
-    if(fvertex_tree) delete fvertex_tree;
-    if(fvertex_tree_event) delete fvertex_tree_event;
-    if(fvertex_tree_event_signal) delete fvertex_tree_event_signal;
-  }
+  VertexQuality(std::string const & name = "VertexQuality");
+  ~VertexQuality();
 
   void SetProducers(std::string const & track_producer,
 		    std::string const & shower_producer);
@@ -35,20 +30,18 @@ class VertexQuality {
 
   void SetStorage(Storage const * storage);
 
-  void SetupVertexQualityTreeClosest();
-  void SetupVertexQualityTreeSignal();
   void RunClosest(ParticleAssociations const & pas,
 		  bool const track_only = false);
   void RunSig(ParticleAssociations const & pas,
 	      bool const track_only = false);
-  void Write() const {
-    if(fvertex_tree) fvertex_tree->Write();
-    if(fvertex_tree_event) fvertex_tree_event->Write();
-    if(fvertex_tree_event_signal) fvertex_tree_event_signal->Write();
-  }
+  void Write() const;
 
  private:
 
+  void SetupVertexQualityTreeClosest(TTree * const tree);
+  void SetupVertexQualityTreeClosest();
+  void SetupVertexQualityTreeSignal(TTree * const tree);
+  void SetupVertexQualityTreeSignal();
   void GetTrueObjects(size_t const mct_index,
 		      std::vector<size_t> & mctrack_v,
 		      std::vector<size_t> & mcshower_v,
@@ -79,6 +72,10 @@ class VertexQuality {
   TTree * fvertex_tree;
   TTree * fvertex_tree_event;
   TTree * fvertex_tree_event_signal;
+
+  bool fdelete_vertex_tree;
+  bool fdelete_vertex_tree_event;
+  bool fdelete_vertex_tree_event_signal;
 
   double fstart_prox;
   double fshower_prox;

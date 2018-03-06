@@ -31,7 +31,7 @@ void Permutations::AddParameter(std::string const & name,
 }
 
 
-std::vector<std::vector<double>> const & Permutations::Get() {
+void Permutations::Get() {
 
   bool continue_bool;
   std::vector<double> parameters = parameter_min;
@@ -56,8 +56,94 @@ std::vector<std::vector<double>> const & Permutations::Get() {
     if(continue_bool) permutation_v.push_back(parameters);
   } while(continue_bool);
 
+}
+
+
+std::vector<std::vector<double>> const & Permutations::GetV() {
+
+  Get();
   return permutation_v;
-  
+
+}
+
+
+void Permutations::WriteFile(std::string const & file_name,
+			     std::pair<size_t, size_t> const & index_range) {
+
+  TFile * file = TFile::Open(file_name.c_str(), "recreate");  
+  TTree * tree = new TTree("permutation_tree", "");
+
+  std::vector<double> parameter_values(parameter_name.size(), 0);
+  for(size_t i = 0; i < parameter_values.size(); ++i) {
+    tree->Branch(parameter_name.at(i).c_str(), &parameter_values.at(i), (parameter_name.at(i) + "/D").c_str());
+  }
+
+  for(std::vector<double> const & permutation : permutation_v) {
+    for(size_t i = 0; i < parameter_values.size(); ++i) {
+      parameter_values.at(i) = permutation.at(i);
+    }
+    tree->Fill();
+  }
+
+  tree->Write();
+  file->Close();
+
+}
+
+
+void Permutations::GetFiles(std::string const & file_name, int const job_number) {
+
+  Get();
+
+  size_t const job_inc = permutation_v.size() / job_number;
+  size_t job_mod = permutation_v.size() % job_number;
+  int index = -1;
+  std::vector<std::pair<size_t, size_t>> index_v;
+
+  for(size_t i = 0; i < job_number; ++i) {
+    ++index;
+    size_t min = index;
+    index += job_inc - 1;
+    if(job_mod > 0) {
+      ++index;
+      --job_mod;
+    }
+    index_v.push_back({min, index});
+  }
+
+  for(size_t i = 0; i < index_v.size(); ++i)
+    WriteFile(file_name + "_" + std::to_string(i) + ".root", index_v.at(i));
+
+}
+
+
+void Permutations::ReadFile(char const * file_name,
+			    std::vector<std::vector<double>> & permutation_v) {
+
+  TFile * file = TFile::Open(file_name);
+  if(!file) {
+    std::cout << "Could not open " << file_name << "\n";
+    exit(1);
+  }
+  TTree * tree = (TTree*)file->Get("permutation_tree");
+  if(!tree) {
+    std::cout << "Could not find permutation_tree\n";
+    exit(1);
+  }
+
+  TObjArray * branches = tree->GetListOfBranches();
+  std::vector<double> parameters(branches->GetEntries(), -10000);
+  for(int i = 0; i < branches->GetEntries(); ++i) {
+    tree->SetBranchAddress(branches->At(i)->GetName(), &parameters.at(i));
+  }
+
+  for(int i = 0; i < tree->GetEntries(); ++i) {
+    tree->GetEntry(i);
+    permutation_v.push_back(parameters);
+  }
+
+  file->Close();
+
 }
 
 

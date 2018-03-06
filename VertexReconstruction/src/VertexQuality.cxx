@@ -3,17 +3,23 @@
 #include "VertexQuality.h"
 
 
-VertexQuality::VertexQuality() :
-  fvertex_tree(nullptr),
-  fvertex_tree_event(nullptr),
-  fvertex_tree_event_signal(nullptr) {}
-
-
 VertexQuality::VertexQuality(std::string const & name) :
   fname(name),
   fvertex_tree(nullptr),
   fvertex_tree_event(nullptr),
-  fvertex_tree_event_signal(nullptr) {}
+  fvertex_tree_event_signal(nullptr),
+  fdelete_vertex_tree(true),
+  fdelete_vertex_tree_event(true),
+  fdelete_vertex_tree_event_signal(true) {}
+
+
+VertexQuality::~VertexQuality() {
+
+  if(fvertex_tree && fdelete_vertex_tree) delete fvertex_tree;
+  if(fvertex_tree_event && fdelete_vertex_tree_event) delete fvertex_tree_event;
+  if(fvertex_tree_event_signal && fdelete_vertex_tree_event_signal) delete fvertex_tree_event_signal;
+
+}
 
 
 void VertexQuality::SetStorage(Storage const * const storage) {
@@ -58,84 +64,100 @@ void VertexQuality::SetParameters(double const start_prox,
 }
 
 
+void VertexQuality::SetupVertexQualityTreeClosest(TTree * const tree) {
+  
+  tree->Branch("start_prox", &fstart_prox, "start_prox/D");
+  tree->Branch("shower_prox", &fshower_prox, "shower_prox/D");
+  tree->Branch("max_bp_dist", &fmax_bp_dist, "max_bp_dist/D");
+  tree->Branch("cpoa_vert_prox", &fcpoa_vert_prox, "cpoa_vert_prox/D");
+  tree->Branch("cpoa_trackend_prox", &fcpoa_trackend_prox, "cpoa_trackend_prox/D");
+
+  tree->Branch("reco_vertex_present", &freco_vertex_present, "reco_vertex_present/I");
+  tree->Branch("tpc_volume_contained", &ftpc_volume_contained, "tpc_volume_contained/I");
+
+  tree->Branch("dist", &fdist, "dist/D");
+  tree->Branch("distx", &fdistx, "distx/D");
+  tree->Branch("disty", &fdisty, "disty/D");
+  tree->Branch("distz", &fdistz, "distz/D");
+
+  tree->Branch("true_track_total", &ftrue_track_total, "true_track_total/I");
+  tree->Branch("true_shower_total", &ftrue_shower_total, "true_shower_total/I");
+  tree->Branch("reco_track_total", &freco_track_total, "reco_track_total/I");
+  tree->Branch("reco_shower_total", &freco_shower_total, "reco_shower_total/I");
+  tree->Branch("correct_track_total", &fcorrect_track_total, "correct_track_total/I");
+  tree->Branch("correct_shower_total", &fcorrect_shower_total, "correct_shower_total/I");
+
+  tree->Branch("track_matching_ratio_v", &ftrack_matching_ratio_v);
+  tree->Branch("track_true_pdg_v", &ftrack_true_pdg_v);
+  tree->Branch("track_true_origin_v", &ftrack_true_origin_v);
+
+  tree->Branch("shower_matching_ratio_v", &fshower_matching_ratio_v);
+  tree->Branch("shower_true_pdg_v", &fshower_true_pdg_v);
+  tree->Branch("shower_true_origin_v", &fshower_true_origin_v);
+
+}
+
+
 void VertexQuality::SetupVertexQualityTreeClosest() {
 
-  std::string name;
-  if(fname != "") name = fname + "_vertex_quality_tree_closest";
-  else name = "vertex_quality_tree_closest";
-  
-  fvertex_tree_event = new TTree(name.c_str(), "");
+  if(!fvertex_tree_event) {
+    std::string name;
+    if(fname != "") name = fname + "_vertex_quality_tree_closest";
+    else name = "vertex_quality_tree_closest";
+    fvertex_tree_event = new TTree(name.c_str(), "");
+  }
 
-  fvertex_tree_event->Branch("start_prox", &fstart_prox, "start_prox/D");
-  fvertex_tree_event->Branch("shower_prox", &fshower_prox, "shower_prox/D");
-  fvertex_tree_event->Branch("max_bp_dist", &fmax_bp_dist, "max_bp_dist/D");
-  fvertex_tree_event->Branch("cpoa_vert_prox", &fcpoa_vert_prox, "cpoa_vert_prox/D");
-  fvertex_tree_event->Branch("cpoa_trackend_prox", &fcpoa_trackend_prox, "cpoa_trackend_prox/D");
+  SetupVertexQualityTreeClosest(fvertex_tree_event);
 
-  fvertex_tree_event->Branch("reco_vertex_present", &freco_vertex_present, "reco_vertex_present/I");
-  fvertex_tree_event->Branch("tpc_volume_contained", &ftpc_volume_contained, "tpc_volume_contained/I");
+}
 
-  fvertex_tree_event->Branch("dist", &fdist, "dist/D");
-  fvertex_tree_event->Branch("distx", &fdistx, "distx/D");
-  fvertex_tree_event->Branch("disty", &fdisty, "disty/D");
-  fvertex_tree_event->Branch("distz", &fdistz, "distz/D");
 
-  fvertex_tree_event->Branch("true_track_total", &ftrue_track_total, "true_track_total/I");
-  fvertex_tree_event->Branch("true_shower_total", &ftrue_shower_total, "true_shower_total/I");
-  fvertex_tree_event->Branch("reco_track_total", &freco_track_total, "reco_track_total/I");
-  fvertex_tree_event->Branch("reco_shower_total", &freco_shower_total, "reco_shower_total/I");
-  fvertex_tree_event->Branch("correct_track_total", &fcorrect_track_total, "correct_track_total/I");
-  fvertex_tree_event->Branch("correct_shower_total", &fcorrect_shower_total, "correct_shower_total/I");
+void VertexQuality::SetupVertexQualityTreeSignal(TTree * tree) {
 
-  fvertex_tree_event->Branch("track_matching_ratio_v", &ftrack_matching_ratio_v);
-  fvertex_tree_event->Branch("track_true_pdg_v", &ftrack_true_pdg_v);
-  fvertex_tree_event->Branch("track_true_origin_v", &ftrack_true_origin_v);
+  tree->Branch("start_prox", &fstart_prox, "start_prox/D");
+  tree->Branch("shower_prox", &fshower_prox, "shower_prox/D");
+  tree->Branch("max_bp_dist", &fmax_bp_dist, "max_bp_dist/D");
+  tree->Branch("cpoa_vert_prox", &fcpoa_vert_prox, "cpoa_vert_prox/D");
+  tree->Branch("cpoa_trackend_prox", &fcpoa_trackend_prox, "cpoa_trackend_prox/D");
 
-  fvertex_tree_event->Branch("shower_matching_ratio_v", &fshower_matching_ratio_v);
-  fvertex_tree_event->Branch("shower_true_pdg_v", &fshower_true_pdg_v);
-  fvertex_tree_event->Branch("shower_true_origin_v", &fshower_true_origin_v);
+  tree->Branch("reco_vertex_present", &freco_vertex_present, "reco_vertex_present/I");
+  tree->Branch("is_nc_delta_rad", &fis_nc_delta_rad, "is_nc_delta_rad/I");
+  tree->Branch("nc_delta_rad_split_shower", &fnc_delta_rad_split_shower, "nc_delta_rad_split_shower/I");
+  tree->Branch("tpc_volume_contained", &ftpc_volume_contained, "tpc_volume_contained/I");
+
+  tree->Branch("dist", &fdist, "dist/D");
+  tree->Branch("distx", &fdistx, "distx/D");
+  tree->Branch("disty", &fdisty, "disty/D");
+  tree->Branch("distz", &fdistz, "distz/D");
+
+  tree->Branch("true_track_total", &ftrue_track_total, "true_track_total/I");
+  tree->Branch("true_shower_total", &ftrue_shower_total, "true_shower_total/I");
+  tree->Branch("reco_track_total", &freco_track_total, "reco_track_total/I");
+  tree->Branch("reco_shower_total", &freco_shower_total, "reco_shower_total/I");
+  tree->Branch("correct_track_total", &fcorrect_track_total, "correct_track_total/I");
+  tree->Branch("correct_shower_total", &fcorrect_shower_total, "correct_shower_total/I");
+
+  tree->Branch("track_matching_ratio_v", &ftrack_matching_ratio_v);
+  tree->Branch("track_true_pdg_v", &ftrack_true_pdg_v);
+  tree->Branch("track_true_origin_v", &ftrack_true_origin_v);
+
+  tree->Branch("shower_matching_ratio_v", &fshower_matching_ratio_v);
+  tree->Branch("shower_true_pdg_v", &fshower_true_pdg_v);
+  tree->Branch("shower_true_origin_v", &fshower_true_origin_v);
 
 }
 
 
 void VertexQuality::SetupVertexQualityTreeSignal() {
 
-  std::string name;
-  if(fname != "") name = fname + "_vertex_quality_tree_signal";
-  else name = "vertex_quality_tree_signal";
+  if(!fvertex_tree_event_signal) {
+    std::string name;
+    if(fname != "") name = fname + "_vertex_quality_tree_signal";
+    else name = "vertex_quality_tree_signal";
+    fvertex_tree_event_signal = new TTree(name.c_str(), "");
+  }
 
-  fvertex_tree_event_signal = new TTree(name.c_str(), "");
-
-  fvertex_tree_event_signal->Branch("start_prox", &fstart_prox, "start_prox/D");
-  fvertex_tree_event_signal->Branch("shower_prox", &fshower_prox, "shower_prox/D");
-  fvertex_tree_event_signal->Branch("max_bp_dist", &fmax_bp_dist, "max_bp_dist/D");
-  fvertex_tree_event_signal->Branch("cpoa_vert_prox", &fcpoa_vert_prox, "cpoa_vert_prox/D");
-  fvertex_tree_event_signal->Branch("cpoa_trackend_prox", &fcpoa_trackend_prox, "cpoa_trackend_prox/D");
-
-  fvertex_tree_event_signal->Branch("reco_vertex_present", &freco_vertex_present, "reco_vertex_present/I");
-  fvertex_tree_event_signal->Branch("is_nc_delta_rad", &fis_nc_delta_rad, "is_nc_delta_rad/I");
-  fvertex_tree_event_signal->Branch("nc_delta_rad_split_shower", &fnc_delta_rad_split_shower, "nc_delta_rad_split_shower/I");
-  fvertex_tree_event_signal->Branch("tpc_volume_contained", &ftpc_volume_contained, "tpc_volume_contained/I");
-
-  fvertex_tree_event_signal->Branch("dist", &fdist, "dist/D");
-  fvertex_tree_event_signal->Branch("distx", &fdistx, "distx/D");
-  fvertex_tree_event_signal->Branch("disty", &fdisty, "disty/D");
-  fvertex_tree_event_signal->Branch("distz", &fdistz, "distz/D");
-
-  fvertex_tree_event_signal->Branch("true_track_total", &ftrue_track_total, "true_track_total/I");
-  fvertex_tree_event_signal->Branch("true_shower_total", &ftrue_shower_total, "true_shower_total/I");
-  fvertex_tree_event_signal->Branch("reco_track_total", &freco_track_total, "reco_track_total/I");
-  fvertex_tree_event_signal->Branch("reco_shower_total", &freco_shower_total, "reco_shower_total/I");
-  fvertex_tree_event_signal->Branch("correct_track_total", &fcorrect_track_total, "correct_track_total/I");
-  fvertex_tree_event_signal->Branch("correct_shower_total", &fcorrect_shower_total, "correct_shower_total/I");
-
-  fvertex_tree_event_signal->Branch("track_matching_ratio_v", &ftrack_matching_ratio_v);
-  fvertex_tree_event_signal->Branch("track_true_pdg_v", &ftrack_true_pdg_v);
-  fvertex_tree_event_signal->Branch("track_true_origin_v", &ftrack_true_origin_v);
-
-  fvertex_tree_event_signal->Branch("shower_matching_ratio_v", &fshower_matching_ratio_v);
-  fvertex_tree_event_signal->Branch("shower_true_pdg_v", &fshower_true_pdg_v);
-  fvertex_tree_event_signal->Branch("shower_true_origin_v", &fshower_true_origin_v);
+  SetupVertexQualityTreeSignal(fvertex_tree_event_signal);
 
 }
 
@@ -499,5 +521,14 @@ void VertexQuality::RunSig(ParticleAssociations const & pas,
     }
 
   }
+
+}
+
+
+void VertexQuality::Write() const {
+
+  if(fvertex_tree) fvertex_tree->Write();
+  if(fvertex_tree_event) fvertex_tree_event->Write();
+  if(fvertex_tree_event_signal) fvertex_tree_event_signal->Write();
 
 }
