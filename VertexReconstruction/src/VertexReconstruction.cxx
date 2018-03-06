@@ -10,7 +10,7 @@
 
 int main(int const argc, char const * argv[]) {
 
-  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+  time_t start = time(0);
 
   Processor processor("FillLightEvent/pot_tree",
 		      "FillLightEvent/meta_tree",
@@ -27,15 +27,13 @@ int main(int const argc, char const * argv[]) {
 		      "swtrigger");
   //vrana->RunPandora();
   vrana->RunVertexQuality();
-  //vrana->RunFillTreeVariables();
+  vrana->RunFillTreeVariables();
 
   processor.AddAnalyzer(vrana);
   processor.SetOutputFileName("VertexReconstruction.root");
   processor.Run();
 
-  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-  std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "\n";
+  std::cout << difftime(time(0), start) << "\n";
   
   return 0;
 

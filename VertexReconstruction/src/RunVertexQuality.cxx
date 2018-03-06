@@ -11,16 +11,17 @@
 
 int main(int const argc, char const * argv[]) {
 
-  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+  time_t start = time(0);
 
   /*
   Permutations permutations;
-  permutations.AddParameter("start_prox", 3, 1, 4);
-  permutations.AddParameter("shower_prox", 3, 5, 20);
-  permutations.AddParameter("max_bp_dist", 50);
+  permutations.AddParameter("start_prox", 4);
+  permutations.AddParameter("shower_prox", 11, 4, 48);
+  permutations.AddParameter("max_bp_dist", 11, 4, 48);
   permutations.AddParameter("cpoa_vert_prox", 13);
-  permutations.AddParameter("cpoa_trackend_prox", 9, 1, 10);
+  permutations.AddParameter("cpoa_trackend_prox", 10);
   std::vector<std::vector<double>> const & permutation_v = permutations.Get();
+  permutations.Check();
   */
 
   Permutations permutations;
@@ -52,9 +53,7 @@ int main(int const argc, char const * argv[]) {
   processor.SetOutputFileName("RunVertexQuality.root");
   processor.Run();
 
-  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-  std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "\n";
+  std::cout << difftime(time(0), start) << "\n";  
   
   return 0;
 
