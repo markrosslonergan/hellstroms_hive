@@ -2,10 +2,10 @@
 
 mail=""
 workdir=`pwd`
-gridfile=rungrid_test.sh
+gridfile=rungrid.sh
 
-SCRATCH=/pnfs/uboone/scratch/users/rmurrell
-OUTPUT=$SCRATCH/vertex_quality_output
+PERMUTATIONS=/pnfs/uboone/resilient/users/rmurrell/vertex_quality_input/permutations
+OUTPUT=/pnfs/uboone/scratch/users/rmurrell/vertex_quality_output
 if [ ! -d "$OUTPUT" ]; then
     mkdir $OUTPUT
 fi
@@ -14,4 +14,4 @@ if test "$(ls -A "$OUTPUT")"; then
     exit 0
 fi
 
-jobsub_submit -G uboone --OS=SL6 --expected-lifetime='8h' --resource-provides=usage_model=DEDICATED,OPPORTUNISTIC,OFFSITE -N 1 ${mail} file://${workdir}/$gridfile ${file##*/}
+jobsub_submit -G uboone --OS=SL6 --expected-lifetime='8h' --resource-provides=usage_model=DEDICATED,OPPORTUNISTIC,OFFSITE -N `ls $PERMUTATIONS | wc -l` ${mail} file://${workdir}/$gridfile ${file##*/}

@@ -22,6 +22,10 @@ int main(int const argc, char const * argv[]) {
   std::vector<std::vector<double>> permutation_v;
   Permutations permutations;
   permutations.ReadFile(argv[1], permutation_v);
+  if(permutation_v.front().size() != 5) {
+    std::cout << "ERROR: requires exactly 5 parameters per permutation\n";
+    return 1;
+  }
 
   Processor processor("FillLightEvent/pot_tree",
 		      "FillLightEvent/meta_tree",
@@ -46,7 +50,7 @@ int main(int const argc, char const * argv[]) {
   processor.Run();
   vq.Write();
   
-  std::cout << difftime(time(0), start) << "\n";  
+  std::cout << "Wall time: " << difftime(time(0), start) << "\n";  
 
   return 0;
 

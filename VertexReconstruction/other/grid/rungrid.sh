@@ -1,4 +1,4 @@
-#!/bin/bash                                                                    
+#!/bin/bash                                          
 
 
 umask +w
@@ -12,36 +12,36 @@ echo "PROCESS " ${PROCESS} >> $log
 echo >> $log
 
 
-USER=rmurrell
+RES=/pnfs/uboone/resilient/users/rmurrell
+SCRATCH=/pnfs/uboone/scratch/users/rmurrell
+VIN=vertex_quality_input
+VOUT=vertex_quality_output
+
 EXEC=RunVertexQuality
-INPUT_PERM_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/scratch/users/rmurrell/vertex_quality_input/permutations_0.root
-INPUT_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/scratch/users/rmurrell/vertex_quality_input/FillLightEvent_1.root
+INPUT_PERM_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/rmurrell/vertex_quality_input/permutations/permutations_$PROCESS.root
+INPUT_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/rmurrell/vertex_quality_input/light_event_files/le_nc_delta_rad_cosmic_200.root
 
 
-setup uboonecode v06_26_01_10 -q e10:prof
+echo setup uboonecode v06_26_01_10 -q e10:prof >>$log
+setup uboonecode v06_26_01_10 -q e10:prof >> $log 2>&1
+echo >> $log
 
+echo ifdh cp -D $RES/$VIN/$EXEC $CONDOR_DIR_INPUT >> $log
+ifdh cp -D $RES/$VIN/$EXEC $CONDOR_DIR_INPUT >> $log 2>&1
+echo >> $log
 
-SCRATCH=/pnfs/uboone/scratch/users/$USER
-#CONDOR_DIR_INPUT=$SCRATCH/vertex_quality_input
-GRID_DIR=$SCRATCH/vertex_quality_input
-#echo ifdh cp -D $GRID_DIR/$EXEC $CONDOR_DIR_INPUT >> $log
-#ifdh cp -D $SCRATCH/$GRID_DIR/$EXEC $CONDOR_DIR_INPUT >> $log 2>&1
-echo cp $GRID_DIR/$EXEC $PWD >> $log
-cp $GRID_DIR/$EXEC $PWD >> $log 2>&1
+echo chmod 777 $CONDOR_DIR_INPUT/$EXEC >> $log
+chmod 777 $CONDOR_DIR_INPUT/$EXEC >> $log 2>&1
+echo >> $log
+
+echo $CONDOR_DIR_INPUT/$EXEC $INPUT_PERM_FILE $INPUT_FILE >> $log
+$CONDOR_DIR_INPUT/$EXEC $INPUT_PERM_FILE $INPUT_FILE >> $log 2>&1
 echo >> $log
 
 
-echo ./$CONDOR_DIR_INPUT/$EXEC $INPUT_FILE >> $log
-#$CONDOR_DIR_INPUT/$EXEC $INPUT_PERM_FILE $INPUT_FILE
-$PWD/$EXEC $INPUT_PERM_FILE $INPUT_FILE >> $log 2>&1
+echo ifdh mkdir $SCRATCH/$VOUT/$PROCESS >> $log
+ifdh mkdir $SCRATCH/$VOUT/$PROCESS >> $log 2>&1
 echo >> $log
-
-
-OUT=vertex_quality_output
-echo ifdh mkdir $SCRATCH/$OUT/$PROCESS >> $log
-ifdh mkdir $SCRATCH/$OUT/$PROCESS >> $log 2>&1
-echo >> $log
-
 
 ofile=$PWD/$EXEC.root
 echo Output file: $ofile >> $log
@@ -50,13 +50,12 @@ ls $ofile >> $log 2>&1
 if [ $? -eq 0 ];
 then
     chmod 777 $ofile
-    echo ifdh cp -D $ofile $SCRATCH/$OUT/$PROCESS >> $log
-    ifdh cp -D $ofile $SCRATCH/$OUT/$PROCESS >> $log 2>&1
+    echo ifdh cp $ofile $SCRATCH/$VOUT/$PROCESS/$EXEC$PROCESS.root >> $log
+    ifdh cp $ofile $SCRATCH/$VOUT/$PROCESS/$EXEC$PROCESS.root >> $log 2>&1
 else 
     echo $ofile not found >> $log
 fi
 echo >> $log
 
-
-echo ifdh cp -D $PWD/$log $SCRATCH/$OUT/$PROCESS >> $log
-ifdh cp -D $PWD/$log $SCRATCH/$OUT/$PROCESS
+echo ifdh cp -D $PWD/$log $SCRATCH/$VOUT/$PROCESS >> $log
+ifdh cp -D $PWD/$log $SCRATCH/$VOUT/$PROCESS
