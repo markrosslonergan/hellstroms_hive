@@ -1,0 +1,17 @@
+#!/bin/bash
+
+mail=""
+workdir=`pwd`
+gridfile=rungrid_test.sh
+
+SCRATCH=/pnfs/uboone/scratch/users/rmurrell
+OUTPUT=$SCRATCH/vertex_quality_output
+if [ ! -d "$OUTPUT" ]; then
+    mkdir $OUTPUT
+fi
+if test "$(ls -A "$OUTPUT")"; then
+    echo "$OUTPUT not empty"
+    exit 0
+fi
+
+jobsub_submit -G uboone --OS=SL6 --expected-lifetime='8h' --resource-provides=usage_model=DEDICATED,OPPORTUNISTIC,OFFSITE -N 1 ${mail} file://${workdir}/$gridfile ${file##*/}
