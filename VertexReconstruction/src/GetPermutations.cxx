@@ -78,9 +78,10 @@ void Permutations::WriteFile(std::string const & file_name,
     tree->Branch(parameter_name.at(i).c_str(), &parameter_values.at(i), (parameter_name.at(i) + "/D").c_str());
   }
 
-  for(std::vector<double> const & permutation : permutation_v) {
-    for(size_t i = 0; i < parameter_values.size(); ++i) {
-      parameter_values.at(i) = permutation.at(i);
+  for(size_t i = index_range.first; i <= index_range.second; ++i) {
+    std::vector<double> const & permutation = permutation_v.at(i);
+    for(size_t j = 0; j < parameter_values.size(); ++j) {
+      parameter_values.at(j) = permutation.at(j);
     }
     tree->Fill();
   }
