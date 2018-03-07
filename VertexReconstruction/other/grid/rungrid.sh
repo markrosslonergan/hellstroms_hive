@@ -18,13 +18,28 @@ VIN=vertex_quality_input
 VOUT=vertex_quality_output
 
 EXEC=RunVertexQuality
-INPUT_PERM_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/rmurrell/vertex_quality_input/permutations/permutations_$PROCESS.root
-INPUT_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/rmurrell/vertex_quality_input/light_event_files/le_nc_delta_rad_cosmic_200.root
+PERM_FILE=permutations_$PROCESS.root
+FILE=le_nc_delta_rad_cosmic_1.root
+#INPUT_PERM_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/rmurrell/vertex_quality_input/permutations/$PERM_FILE
+#INPUT_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/rmurrell/vertex_quality_input/light_event_files/$FILE
+INPUT_PERM_FILE=/pnfs/uboone/resilient/users/rmurrell/vertex_quality_input/permutations/$PERM_FILE
+INPUT_FILE=/pnfs/uboone/resilient/users/rmurrell/vertex_quality_input/light_event_files/$FILE
 
 
 echo setup uboonecode v06_26_01_10 -q e10:prof >>$log
 setup uboonecode v06_26_01_10 -q e10:prof >> $log 2>&1
 echo >> $log
+
+
+#
+echo ifdh cp -D $INPUT_PERM_FILE $CONDOR_DIR_INPUT >> $log
+ifdh cp -D ifdh cp -D $INPUT_PERM_FILE $CONDOR_DIR_INPUT >> $log 2>&1
+echo >> $log
+echo ifdh cp -D $INPUT_FILE $CONDOR_DIR_INPUT >> $log
+ifdh cp -D ifdh cp -D $INPUT_FILE $CONDOR_DIR_INPUT >> $log 2>&1
+echo >> $log
+#
+
 
 echo ifdh cp -D $RES/$VIN/$EXEC $CONDOR_DIR_INPUT >> $log
 ifdh cp -D $RES/$VIN/$EXEC $CONDOR_DIR_INPUT >> $log 2>&1
@@ -34,8 +49,8 @@ echo chmod 777 $CONDOR_DIR_INPUT/$EXEC >> $log
 chmod 777 $CONDOR_DIR_INPUT/$EXEC >> $log 2>&1
 echo >> $log
 
-echo $CONDOR_DIR_INPUT/$EXEC $INPUT_PERM_FILE $INPUT_FILE >> $log
-$CONDOR_DIR_INPUT/$EXEC $INPUT_PERM_FILE $INPUT_FILE >> $log 2>&1
+echo $CONDOR_DIR_INPUT/$EXEC $CONDOR_DIR_INPUT/$PERM_FILE $CONDOR_DIR_INPUT/$FILE >> $log
+$CONDOR_DIR_INPUT/$EXEC $CONDOR_DIR_INPUT/$PERM_FILE $CONDOR_DIR_INPUT/$FILE >> $log 2>&1
 echo >> $log
 
 
