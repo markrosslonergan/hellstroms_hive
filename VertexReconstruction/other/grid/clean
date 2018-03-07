@@ -1,0 +1,3 @@
+#!/bin/bash
+
+rm -rf /pnfs/uboone/scratch/users/rmurrell/vertex_quality_output/*
