@@ -14,7 +14,7 @@ int main(int const argc, char const * argv[]) {
   permutations.AddParameter("max_bp_dist", 3, 4, 16);
   permutations.AddParameter("cpoa_vert_prox", 13);
   permutations.AddParameter("cpoa_trackend_prox", 10);
-  permutations.GetFiles("/Users/Bobby/rootfiles/temp/permutations", 2);
+  permutations.GetFiles("/Users/Bobby/rootfiles/permutations", 2);
   
   return 0;
 

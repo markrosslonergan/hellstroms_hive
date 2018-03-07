@@ -102,14 +102,19 @@ void EvaluateVertexQuality::SetupChain() {
 }
 
 
+
 void EvaluateVertexQuality::Run() {
+
+  fpermutation_v.clear();
 
   for(int i = 0; i < fvq_chain->GetEntries(); ++i) {
 
     fvq_chain->GetEntry(i);
 
-    std::cout << fstart_prox << " " << fshower_prox << " " << fmax_bp_dist << " " << fcpoa_vert_prox << " " << fcpoa_trackend_prox << "\n";
+    
 
   }
+
+  std::cout << fpermutation_v.size() << "\n";
 
 }

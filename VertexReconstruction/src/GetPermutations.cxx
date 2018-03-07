@@ -117,9 +117,8 @@ void Permutations::GetFiles(std::string const & file_name, int const job_number)
 }
 
 
-void Permutations::ReadFile(char const * file_name,
-			    std::vector<std::vector<double>> & permutation_v) {
-
+std::vector<std::vector<double>> const & Permutations::ReadFile(char const * file_name) {
+      
   TFile * file = TFile::Open(file_name);
   if(!file) {
     std::cout << "Could not open " << file_name << "\n";
@@ -130,11 +129,16 @@ void Permutations::ReadFile(char const * file_name,
     std::cout << "Could not find permutation_tree\n";
     exit(1);
   }
+  if(tree->GetEntries() == 0) {
+    std::cout << "Empty permutation_tree\n";
+    exit(1);
+  }
 
   TObjArray * branches = tree->GetListOfBranches();
   std::vector<double> parameters(branches->GetEntries(), -10000);
   for(int i = 0; i < branches->GetEntries(); ++i) {
     tree->SetBranchAddress(branches->At(i)->GetName(), &parameters.at(i));
+    parameter_name.push_back(branches->At(i)->GetName());
   }
 
   for(int i = 0; i < tree->GetEntries(); ++i) {
@@ -143,6 +147,28 @@ void Permutations::ReadFile(char const * file_name,
   }
 
   file->Close();
+
+  return permutation_v;
+
+}
+
+
+void Permutations::WritePermutationTreeToFile() {
+
+  TTree * tree = new TTree("permutation_tree", "");
+
+  std::vector<double> parameters(parameter_name.size(), -10000);
+  for(int i = 0; i < parameter_name.size(); ++i) {
+    tree->Branch(parameter_name.at(i).c_str(), &parameters.at(i), (parameter_name.at(i) + "/D").c_str());
+  }
+
+  for(std::vector<double> const & permutation : permutation_v) {
+    for(size_t i = 0; i < parameters.size(); ++i) parameters.at(i) = permutation.at(i);
+    tree->Fill();
+  }
+
+  tree->Write();
+  delete tree;
 
 }
 

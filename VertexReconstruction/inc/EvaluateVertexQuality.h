@@ -27,6 +27,9 @@ class EvaluateVertexQuality {
   void Initialize();
   void AddFiles(std::vector<char const *> const & files);  
   void SetupChain();
+  bool FillPermutationV(bool & not_consecutive);
+
+  std::vector<std::vector<double>> fpermutation_v;
 
   TChain * fvq_chain;
 
