@@ -174,6 +174,7 @@ class FillTreeVariables {
   double closest_asso_shower_dist_to_flashzcenter;
 
   int most_energetic_shower_index;
+  int second_most_energetic_shower_index;
   std::vector<double> reco_shower_startx;
   std::vector<double> reco_shower_starty;
   std::vector<double> reco_shower_startz;

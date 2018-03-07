@@ -32,8 +32,10 @@ void VRAnalyzer::SetProducers(std::string const & track_producer,
   fopflash_producer = opflash_producer;
   fswtrigger_product = trigger_product;
 
-  fvq->SetProducers(ftrack_producer,
-		    fshower_producer);
+  if(fvq) {
+    fvq->SetProducers(ftrack_producer,
+		      fshower_producer);
+  }
 
 }
 

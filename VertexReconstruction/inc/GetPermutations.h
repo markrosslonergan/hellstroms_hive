@@ -29,7 +29,8 @@ class Permutations {
   void WriteFile(std::string const & file_name,
 		 std::pair<size_t, size_t> const & index_range);
   void GetFiles(std::string const & file_name, int const job_number = 1);
-  void ReadFile(char const * file_name, std::vector<std::vector<double>>& permutation_v);
+  std::vector<std::vector<double>> const & ReadFile(char const * file_name);
+  void WritePermutationTreeToFile();
  
   void Check();
   std::string GetString(size_t const i);

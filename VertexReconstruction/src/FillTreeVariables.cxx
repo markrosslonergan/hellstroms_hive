@@ -92,6 +92,7 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("closest_asso_shower_dist_to_flashzcenter", &closest_asso_shower_dist_to_flashzcenter, "closest_asso_shower_dist_to_flashzcenter/D");
 
   fvertex_tree->Branch("most_energetic_shower_index", &most_energetic_shower_index);
+  fvertex_tree->Branch("second_most_energetic_shower_index", &second_most_energetic_shower_index);
   fvertex_tree->Branch("reco_shower_startx", &reco_shower_startx);
   fvertex_tree->Branch("reco_shower_starty", &reco_shower_starty);
   fvertex_tree->Branch("reco_shower_startz", &reco_shower_startz);
@@ -590,6 +591,7 @@ void FillTreeVariables::ResetVertex() {
   closest_asso_shower_dist_to_flashzcenter = -1;
 
   most_energetic_shower_index = -1;
+  second_most_energetic_shower_index = -1;
   reco_shower_startx.clear();
   reco_shower_starty.clear();
   reco_shower_startz.clear();
@@ -1050,6 +1052,7 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
   std::vector<double> const & reco_shower_energy = *fstorage->freco_shower_EnergyHelper_energy_legacy;
 
   double most_shower_energy = 0;
+  double second_most_shower_energy = 0;
   double longest_asso_track_length = 0;
 
   summed_associated_helper_shower_energy = 0;
@@ -1104,12 +1107,22 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
       }
       if(helper_energy > most_shower_energy) {
 	if(fverbose) std::cout << "\t\tYes\n";
+	second_most_shower_energy = most_shower_energy;
+	second_most_energetic_shower_index = most_energetic_shower_index;
 	most_shower_energy = helper_energy;
 	most_energetic_shower_index = reco_asso_showers;
       }
-      else if(most_energetic_shower_index == SIZE_MAX) {
+      else if(helper_energy > second_most_shower_energy) {
+	second_most_shower_energy = helper_energy;
+	second_most_energetic_shower_index = reco_asso_showers;	
+      }
+      else if(most_energetic_shower_index == -1) {
 	most_shower_energy = -1;
 	most_energetic_shower_index = reco_asso_showers;
+      }
+      else if(second_most_energetic_shower_index == -1) {
+	second_most_shower_energy = -1;
+	second_most_energetic_shower_index = reco_asso_showers;
       }
 
       double const flash_dist = ShowerZDistToClosestFlash(original_index);
