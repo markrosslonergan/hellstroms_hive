@@ -16,10 +16,10 @@ RES=/pnfs/uboone/resilient/users/rmurrell
 SCRATCH=/pnfs/uboone/scratch/users/rmurrell
 VIN=vertex_quality_input
 VOUT=vertex_quality_output
+makeupdir=makeup
 
 EXEC=RunVertexQuality
-INPUT_PERM_FILE=permutations_$PROCESS.root
-INPUT_FILE=le_nc_delta_rad_cosmic_200.root
+INPUT_FILE=le_nc_delta_rad_cosmic_1.root
 #INPUT_PERM_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/rmurrell/vertex_quality_input/permutations/$PERM_FILE
 #INPUT_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/rmurrell/vertex_quality_input/light_event_files/$FILE
 
@@ -30,15 +30,22 @@ echo >> $log
 
 
 #
-PERM_DIR=permutations
+
 EVENTD_DIR=light_event_files
-echo ifdh cp -D $RES/$VIN/$PERM_DIR/$INPUT_PERM_FILE $CONDOR_DIR_INPUT >> $log
-ifdh cp -D $RES/$VIN/$PERM_DIR/$INPUT_PERM_FILE $CONDOR_DIR_INPUT >> $log 2>&1
+echo ifdh cp -D $RES/$VIN/$makeupdir/$PROCESS/perm*root $CONDOR_DIR_INPUT >> $log
+ifdh cp -D $RES/$VIN/$makeupdir/$PROCESS/perm*root $CONDOR_DIR_INPUT >> $log 2>&1
 echo >> $log
 echo ifdh cp -D $RES/$VIN/$EVENT_DIR/$INPUT_FILE $CONDOR_DIR_INPUT >> $log
 ifdh cp -D $RES/$VIN/$EVENT_DIR/$INPUT_FILE $CONDOR_DIR_INPUT >> $log 2>&1
 echo >> $log
 #
+
+
+INPUT_PERM_FILE=$(basename $CONDOR_DIR_INPUT/perm*root)
+tmp=${INPUT_PERM_FILE#*_}
+oldprocess=${tmp%.*}
+mv $log log${oldprocess}.txt
+log=log${oldprocess}.txt
 
 
 echo ifdh cp -D $RES/$VIN/$EXEC $CONDOR_DIR_INPUT >> $log
@@ -54,8 +61,8 @@ $CONDOR_DIR_INPUT/$EXEC $CONDOR_DIR_INPUT/$INPUT_PERM_FILE $CONDOR_DIR_INPUT/$IN
 echo >> $log
 
 
-echo ifdh mkdir $SCRATCH/$VOUT/$PROCESS >> $log
-ifdh mkdir $SCRATCH/$VOUT/$PROCESS >> $log 2>&1
+echo ifdh mkdir $SCRATCH/$VOUT/$oldprocess >> $log
+ifdh mkdir $SCRATCH/$VOUT/$oldprocess >> $log 2>&1
 echo >> $log
 
 ofile=$PWD/$EXEC.root
@@ -65,12 +72,12 @@ ls $ofile >> $log 2>&1
 if [ $? -eq 0 ];
 then
     chmod 777 $ofile
-    echo ifdh cp $ofile $SCRATCH/$VOUT/$PROCESS/$EXEC$PROCESS.root >> $log
-    ifdh cp $ofile $SCRATCH/$VOUT/$PROCESS/$EXEC$PROCESS.root >> $log 2>&1
+    echo ifdh cp $ofile $SCRATCH/$VOUT/$oldprocess/$EXEC$oldprocess.root >> $log
+    ifdh cp $ofile $SCRATCH/$VOUT/$oldprocess/$EXEC$oldprocess.root >> $log 2>&1
 else 
     echo $ofile not found >> $log
 fi
 echo >> $log
 
-echo ifdh cp -D $PWD/$log $SCRATCH/$VOUT/$PROCESS >> $log
-ifdh cp -D $PWD/$log $SCRATCH/$VOUT/$PROCESS
+echo ifdh cp -D $PWD/$log $SCRATCH/$VOUT/$oldprocess >> $log
+ifdh cp -D $PWD/$log $SCRATCH/$VOUT/$oldprocess
