@@ -4,6 +4,7 @@
 
 
 EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
+					     char const * perm_name,
 					     std::vector<char const *> const & files) {
   
   if(files.empty()) {
@@ -12,9 +13,11 @@ EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
   }
       
   if(!CheckFile(vq_name, files)) exit(1);
+  if(!CheckFile(perm_name, files)) exit(1);
   Initialize();
 
   fvq_chain = new TChain(vq_name);
+  fperm_chain = new TChain(perm_name);
 
   AddFiles(files);
   SetupChain();
@@ -63,6 +66,7 @@ void EvaluateVertexQuality::AddFiles(std::vector<char const *> const & files) {
 
   for(char const * file : files) {
     fvq_chain->Add(file);
+    fperm_chain->Add(file);
   }
 
 }
@@ -114,7 +118,5 @@ void EvaluateVertexQuality::Run() {
     
 
   }
-
-  std::cout << fpermutation_v.size() << "\n";
 
 }

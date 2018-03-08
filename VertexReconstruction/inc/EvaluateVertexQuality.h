@@ -16,6 +16,7 @@ class EvaluateVertexQuality {
  public:
 
   EvaluateVertexQuality(char const * vq_name,
+			char const * perm_name,
 			std::vector<char const *> const & files = {});
 
   void Run();
@@ -32,6 +33,7 @@ class EvaluateVertexQuality {
   std::vector<std::vector<double>> fpermutation_v;
 
   TChain * fvq_chain;
+  TChain * fperm_chain;
 
   double fstart_prox;
   double fshower_prox;

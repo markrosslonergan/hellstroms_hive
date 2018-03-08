@@ -16,6 +16,7 @@ int main(int const argc, char const * argv[]) {
   }
 
   EvaluateVertexQuality evq("vertex_quality_tree_signal",
+			    "permutation_tree",
 			    {argv + 1, argv + argc});
   evq.Run();
   
