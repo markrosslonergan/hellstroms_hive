@@ -9,6 +9,9 @@
 
 #include "TChain.h"
 #include "TFile.h"
+#include "TCanvas.h"
+#include "TH1.h"
+#include "TGraph.h"
 
 
 class EvaluateVertexQuality {
@@ -18,19 +21,41 @@ class EvaluateVertexQuality {
   EvaluateVertexQuality(char const * vq_name,
 			char const * perm_name,
 			std::vector<char const *> const & files = {});
+  ~EvaluateVertexQuality();
 
+  void SetOutputFile(char const * file_name);
   void Run();
 
  private:
 
   bool CheckFile(char const * vq_name,
+		 char const * perm_name,
 		 std::vector<char const *> const & files) const;
   void Initialize();
   void AddFiles(std::vector<char const *> const & files);  
-  void SetupChain();
-  bool FillPermutationV(bool & not_consecutive);
+  void FillPermutationV();
+  void SetupVQChain();
+  std::string GetPermString(std::vector<double> const & permutation);
+  double DrawHist(std::string const & draw,
+		  std::string const & binning,
+		  std::string const & weight);
+  void GetBestPermutations(std::vector<std::vector<double>> & drawn_values,
+			   std::vector<std::pair<double, int>> & max_results);
+  std::vector<size_t> FindPermutations(std::vector<double> const & best_permutation, size_t const parameter_index);
+  void PlotParameters(std::vector<std::vector<double>> const & drawn_values,
+		      std::vector<std::pair<double, int>> const & max_results);
+  void PlotGraph(std::vector<double> const & drawn_value_v, 
+		 std::vector<size_t> const & plot_permutations, 
+		 size_t const draw_vec_index, 
+		 size_t const parameter_index);
+  void DrawGraphs();
 
+  std::vector<std::vector<std::string>> fdraw_vec;
+  std::vector<std::string> fparameter_name;
   std::vector<std::vector<double>> fpermutation_v;
+  std::vector<TGraph *> fgraph_v;
+
+  TFile * foutput_file;
 
   TChain * fvq_chain;
   TChain * fperm_chain;

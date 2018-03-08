@@ -18,6 +18,7 @@ int main(int const argc, char const * argv[]) {
   EvaluateVertexQuality evq("vertex_quality_tree_signal",
 			    "permutation_tree",
 			    {argv + 1, argv + argc});
+  evq.SetOutputFile("RunEvaluateVertexQuality.root");
   evq.Run();
   
   std::cout << "Wall time: " << difftime(time(0), start) << "\n";  
