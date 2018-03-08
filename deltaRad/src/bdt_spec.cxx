@@ -27,6 +27,60 @@ THStack* bdt_stack::getBDTStack(std::string whichbdt, int level, double cut1, do
 }
 
 
+TH1* bdt_stack::getBDTSum(std::string whichbdt, int level, double cut1, double cut2){
+	
+	bdt_variable var = stack.at(0)->getBDTVariable(whichbdt);
+
+	TH1* summed = (TH1*)stack.at(0)->getTH1(var, stack.at(0)->getStageCuts(level,cut1, cut2), "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
+
+	for(int t=1; t<stack.size(); t++){
+
+		bdt_variable varo = stack.at(t)->getBDTVariable(whichbdt);
+
+		TH1* hist = (TH1*)stack.at(t)->getTH1(varo, stack.at(t)->getStageCuts(level,cut1, cut2), "summed_"+std::to_string(t)+"_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot);
+		summed->Add(hist);
+	}
+
+		summed->SetTitle((this->name+"_"+var.name).c_str());
+		summed->SetLineColor(kBlack);
+		summed->SetStats(0);
+		summed->SetLineWidth(1);
+
+		summed->GetXaxis()->SetTitle(var.unit.c_str());
+		summed->GetYaxis()->SetTitle("Verticies");
+
+
+
+	return summed;	
+		
+}
+
+
+
+TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
+
+	TH1* summed = (TH1*)stack.at(0)->getTH1(var, stack.at(0)->getStageCuts(level,cut1, cut2), "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
+
+	for(int t=1; t<stack.size(); t++){
+		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "summed_"+std::to_string(t)+"_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot);
+		summed->Add(hist);
+	}
+
+		summed->SetTitle((this->name+"_"+var.name).c_str());
+		summed->SetLineColor(kBlack);
+		summed->SetStats(0);
+		summed->SetLineWidth(1);
+
+		summed->GetXaxis()->SetTitle(var.unit.c_str());
+		summed->GetYaxis()->SetTitle("Verticies");
+
+
+
+	return summed;	
+		
+}
+
+
 THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cut2){
 
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());

@@ -63,7 +63,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	reco_mc_all_bdt2 = (TH1*)file->getTH1(var , bnbcut  ,"all_bdt2_"+file->tag+"_"+var.safe_name, plot_pot);
 	N_bdt_bnb = file->tvertex->GetEntries(bnbcut.c_str())*plot_pot/file->pot*file->scale_data;
 
-	if(true){
+	if(false){
 		file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2",bnbcut.c_str());
 	}
 

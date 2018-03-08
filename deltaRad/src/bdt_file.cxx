@@ -18,7 +18,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 	//This isnt the best idea but sure whynot
 
-	recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue, kBlue-7, kGreen+1};
+	recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue,  kGreen+1,kBlue-7};
 	recomc_names = { "NC #Delta Radiative #gamma", "BNB NC #pi^{0} #gamma", "BNB CC #pi^{0} #gamma", "BNB Other #gamma","BNB electron","BNB other","Cosmic"};
 	recomc_cuts = {
 		"shower_true_pdg == 22 && shower_true_parent_pdg !=111 && is_delta_rad ==1 && shower_true_origin==1",
@@ -109,10 +109,17 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			std::cout<<"--> POT is MC: ";
 			std::cout<<"--> value: "<<pot<<std::endl;
 		}
-	}else{
+	}
+	if(tag == "Data5e19"){
 		leg = "lp";
 		std::cout<<"--> POT is data: ";
-		pot = 4.95e19*7131/13671;// 376954.0/382718.0;//7131/13671;
+		pot = 4.36e19*189251.0/192043.0; //7131/13671;// 376954.0/382718.0;//7131/13671;
+		std::cout<<"--> value: "<<pot<<std::endl;
+	}
+	if(tag == "BNBext"){
+		leg = "lp";
+		std::cout<<"--> POT is data: ";
+		pot = 4.36e19*189251.0/192043.0; //7131/13671;// 376954.0/382718.0;//7131/13671;
 		std::cout<<"--> value: "<<pot<<std::endl;
 	}
 
@@ -251,6 +258,7 @@ TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, 
 
 TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
 
+	std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 	TCanvas *ctmp = new TCanvas();
 	this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
 	std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
@@ -319,18 +327,18 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 bdt_variable bdt_file::getBDTVariable(bdt_info info){
 
 	if(info.identifier =="bnb_track" || info.identifier == "bnb_notrack"){
-		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(75,0.35,0.55)","BNB BDT Response",false);
+		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.35,0.55)","BNB BDT Response",false);
 	}else if(info.identifier == "cosmic_track" || info.identifier == "cosmic_notrack"){
-		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(75,0.3,0.62)","Cosmic BDT Response",false);
+		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
 	}
 }
 
 bdt_variable bdt_file::getBDTVariable(std::string info){
 
 	if(info =="bnb_track"|| info=="bnb_notrack"){
-		return bdt_variable(this->tag +"_"+info+ ".mva","(75,0.35,0.55)","BNB BDT Response",false);
+		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.35,0.55)","BNB BDT Response",false);
 	}else if(info == "cosmic_track"|| info=="cosmic_notrack"){
-		return bdt_variable(this->tag +"_"+info+ ".mva","(75,0.3,0.62)","Cosmic BDT Response",false);
+		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
 	}
 
 }
@@ -376,6 +384,13 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 			bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
 			ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2);
 			break;
+			}
+		case 4:{
+			bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
+			bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
+			ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2) +"&&" +flow.post_cuts;
+			break;
+
 			}
 
 		default:

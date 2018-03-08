@@ -121,10 +121,10 @@ int main (int argc, char *argv[]){
 
 	
 	//This is a particular cut flow that a file will undergo. I.e base cuts->precuts->cosmic BDT->bnb bdt
-	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	new_precuts, 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
-	bdt_flow cosmic_flow(cosmic_base_cuts, 			new_precuts, 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
-	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts,	cosmic_bdt_info.identifier ,bnb_bdt_info.identifier);
-	bdt_flow data_flow(base_cuts ,				new_precuts,	cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
+	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	new_precuts,"", 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
+	bdt_flow cosmic_flow(cosmic_base_cuts, 			new_precuts,"", 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
+	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts,"",	cosmic_bdt_info.identifier ,bnb_bdt_info.identifier);
+	bdt_flow data_flow(base_cuts ,				new_precuts,"",	cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
 
 
 	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
