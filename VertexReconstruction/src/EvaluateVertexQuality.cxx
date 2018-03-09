@@ -150,8 +150,6 @@ double EvaluateVertexQuality::DrawHist(std::string const & draw,
   fvq_chain->Draw((draw + ">>h" + binning).c_str(), weight.c_str());
   TH1 * h = (TH1*)gDirectory->Get("h");
   double const mean = h->GetMean();
-  std::cout << std::setprecision(14);
-  std::cout << h->GetEntries() << "\n";
   delete h;
   delete canvas;
   return mean;
@@ -195,7 +193,7 @@ void EvaluateVertexQuality::GetBestPermutations(std::vector<std::vector<double>>
       std::string modified_weight = perm_weight;
       if(!draw_weight.empty()) modified_weight += " && " + draw_weight;
       double const result = DrawHist(draw.at(0), draw.at(1), modified_weight);
-      std::cout << i << " " << permutation.at(0) << " " << permutation.at(1) << " " << permutation.at(2) << " "<< permutation.at(3) << " "<< permutation.at(4) << " "<< result << "\n";
+      std::cout << result << " " << modified_weight << "\n";
       drawn_values.at(j).push_back(result);
       if(result > max_results.at(j).first) {
 	max_results.at(j).first = result;
@@ -240,14 +238,11 @@ void EvaluateVertexQuality::PlotGraph(std::vector<double> const & drawn_value_v,
 				      size_t const draw_vec_index, 
 				      size_t const parameter_index) {
 
-  std::cout << fparameter_name.at(parameter_index) << "\n";
   TGraph * graph = new TGraph();
   for(size_t i = 0; i < plot_permutations.size(); ++i) {
     size_t const index = plot_permutations.at(i);
     graph->SetPoint(i, fpermutation_v.at(index).at(parameter_index), drawn_value_v.at(index));
-    std::cout << i << " " << fpermutation_v.at(index).at(parameter_index) << " " << drawn_value_v.at(index) << "\n";
   }
-  std::cout << "\n";
 
   std::vector<std::string> const & titles = fdraw_vec.at(draw_vec_index);
   
@@ -318,6 +313,6 @@ void EvaluateVertexQuality::Run() {
   PlotParameters(drawn_values,
 		 max_results);
 
-  //DrawGraphs();
+  DrawGraphs();
 
 }

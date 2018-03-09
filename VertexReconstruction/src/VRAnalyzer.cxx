@@ -402,7 +402,7 @@ void VRAnalyzer::Run() {
 			 fshower_prox,
 			 fmax_bp_dist,
 			 fcpoa_vert_prox,
-			 fcpoa_trackend_prox);
+			 fcpoa_trackend_prox);      
       fvq->RunSig(pas);
     }
     else {

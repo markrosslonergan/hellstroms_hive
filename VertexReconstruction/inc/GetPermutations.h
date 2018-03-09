@@ -24,6 +24,8 @@ class Permutations {
 
   void Get();
 
+  void SetParameterNames(std::vector<std::string> const & names);
+  void AddPermutation(std::vector<double> const & permutation);
   std::vector<std::vector<double>> const & GetV(); 
 
   void WriteFile(std::string const & file_name,

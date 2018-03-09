@@ -59,9 +59,22 @@ void Permutations::Get() {
 }
 
 
+void Permutations::SetParameterNames(std::vector<std::string> const & names) {
+
+  parameter_name = names;
+
+}
+
+
+void Permutations::AddPermutation(std::vector<double> const & permutation) {
+
+  permutation_v.push_back(permutation);
+
+}
+
+
 std::vector<std::vector<double>> const & Permutations::GetV() {
 
-  Get();
   return permutation_v;
 
 }
@@ -93,8 +106,6 @@ void Permutations::WriteFile(std::string const & file_name,
 
 
 void Permutations::GetFiles(std::string const & file_name, int const job_number) {
-
-  Get();
 
   size_t const job_inc = permutation_v.size() / job_number;
   size_t job_mod = permutation_v.size() % job_number;
