@@ -33,14 +33,19 @@ int main(int const argc, char const * argv[]) {
   processor.SetOutputFileName("RunVertexQuality.root");
   permutations.WritePermutationTreeToFile();
 
+  std::string const track_producer = "pandoraNu";
+  std::string const shower_producer = "pandoraNu";
+
   VertexQuality vq;
+  vq.RunSig();
+  vq.SetProducers(track_producer, shower_producer);
 
   for(size_t i = 0; i < permutation_v.size(); ++i) {
     std::vector<double> const & parameters = permutation_v.at(i);
     VRAnalyzer * vrana = new VRAnalyzer("varana_" + std::to_string(i), &vq);
     vrana->SetVBVariables(parameters.at(0), parameters.at(1), parameters.at(2), parameters.at(3), parameters.at(4));
-    vrana->SetProducers("pandoraNu",
-			"pandoraNu",
+    vrana->SetProducers(track_producer,
+			shower_producer,
 			"pandoraCosmicHitRemoval",
 			"simpleFlashBeam",
 			"swtrigger");

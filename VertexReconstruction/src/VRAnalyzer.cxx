@@ -11,6 +11,7 @@ VRAnalyzer::VRAnalyzer(std::string const & name, VertexQuality * vq) :
   fmax_bp_dist(-10000),
   fcpoa_vert_prox(-10000),
   fcpoa_trackend_prox(-10000),
+  frun_pandora(false),
   frun_fill_tree_variables(false),
   fvq(vq) {}
 
@@ -31,11 +32,6 @@ void VRAnalyzer::SetProducers(std::string const & track_producer,
   fhit_producer = hit_producer;
   fopflash_producer = opflash_producer;
   fswtrigger_product = trigger_product;
-
-  if(fvq) {
-    fvq->SetProducers(ftrack_producer,
-		      fshower_producer);
-  }
 
 }
 
@@ -395,7 +391,7 @@ void VRAnalyzer::Run() {
     AddShowers(pas.GetDetectorObjects(), "pandoraNu");
     vb.Run(pas);
   }
-
+  
   if(fvq) {
     if(fstorage->frmcm_bool) {
       fvq->SetParameters(fstart_prox,
@@ -403,7 +399,7 @@ void VRAnalyzer::Run() {
 			 fmax_bp_dist,
 			 fcpoa_vert_prox,
 			 fcpoa_trackend_prox);      
-      fvq->RunSig(pas);
+      fvq->Run(pas);
     }
     else {
       std::cout << "Asked to run VertexQuality using file with no reco - mc matching\n";

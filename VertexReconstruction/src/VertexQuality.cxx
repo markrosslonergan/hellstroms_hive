@@ -7,17 +7,34 @@ VertexQuality::VertexQuality(std::string const & name) :
   fname(name),
   fvertex_tree(nullptr),
   fvertex_tree_event(nullptr),
+  frun_closest(false),
   fvertex_tree_event_signal(nullptr),
-  fdelete_vertex_tree(true),
-  fdelete_vertex_tree_event(true),
-  fdelete_vertex_tree_event_signal(true) {}
+  frun_sig(false) {}
 
 
 VertexQuality::~VertexQuality() {
 
-  if(fvertex_tree && fdelete_vertex_tree) delete fvertex_tree;
-  if(fvertex_tree_event && fdelete_vertex_tree_event) delete fvertex_tree_event;
-  if(fvertex_tree_event_signal && fdelete_vertex_tree_event_signal) delete fvertex_tree_event_signal;
+  if(fvertex_tree) delete fvertex_tree;
+  if(fvertex_tree_event) delete fvertex_tree_event;
+  if(fvertex_tree_event_signal) delete fvertex_tree_event_signal;
+
+}
+
+
+void VertexQuality::RunClosest() {
+
+  if(!fvertex_tree_event) fvertex_tree_event = new TTree("vertex_quality_tree_closest", "");
+  SetupVertexQualityTreeClosest(fvertex_tree_event);
+  frun_closest = true;
+
+}
+
+
+void VertexQuality::RunSig() {
+
+  fvertex_tree_event_signal = new TTree("vertex_quality_tree_signal", "");
+  SetupVertexQualityTreeSignal(fvertex_tree_event_signal);
+  frun_sig = true;
 
 }
 
@@ -98,14 +115,6 @@ void VertexQuality::SetupVertexQualityTreeClosest(TTree * const tree) {
 }
 
 
-void VertexQuality::SetupVertexQualityTreeClosest() {
-
-  if(!fvertex_tree_event) fvertex_tree_event = new TTree("vertex_quality_tree_closest", "");
-  SetupVertexQualityTreeClosest(fvertex_tree_event);
-
-}
-
-
 void VertexQuality::SetupVertexQualityTreeSignal(TTree * tree) {
 
   tree->Branch("start_prox", &fstart_prox, "start_prox/D");
@@ -138,14 +147,6 @@ void VertexQuality::SetupVertexQualityTreeSignal(TTree * tree) {
   tree->Branch("shower_matching_ratio_v", &fshower_matching_ratio_v);
   tree->Branch("shower_true_pdg_v", &fshower_true_pdg_v);
   tree->Branch("shower_true_origin_v", &fshower_true_origin_v);
-
-}
-
-
-void VertexQuality::SetupVertexQualityTreeSignal() {
-
-  if(!fvertex_tree_event_signal) fvertex_tree_event_signal = new TTree("vertex_quality_tree_signal", "");
-  SetupVertexQualityTreeSignal(fvertex_tree_event_signal);
 
 }
 
@@ -389,8 +390,6 @@ void VertexQuality::FillTree(TTree * tree,
 
 void VertexQuality::RunClosest(ParticleAssociations const & pas,
 			       bool const track_only) {
-
-  if(!fvertex_tree_event) SetupVertexQualityTreeClosest();
   
   std::vector<ParticleAssociation> const & pa_v = pas.GetAssociations();
   std::vector<size_t> const * asso_v;
@@ -453,8 +452,6 @@ void VertexQuality::RunClosest(ParticleAssociations const & pas,
 void VertexQuality::RunSig(ParticleAssociations const & pas,
                            bool const track_only) {
 
-  if(!fvertex_tree_event_signal) SetupVertexQualityTreeSignal();
-
   DetectorObjects const & detos = pas.GetDetectorObjects();
 
   std::vector<double> const & true_nuvertx = *fstorage->ftrue_nuvertx;
@@ -509,6 +506,15 @@ void VertexQuality::RunSig(ParticleAssociations const & pas,
     }
 
   }
+
+}
+
+
+void VertexQuality::Run(ParticleAssociations const & pas,
+			bool const track_only) {
+
+  if(frun_closest) RunClosest(pas, track_only);
+  if(frun_sig) RunSig(pas, track_only);
 
 }
 

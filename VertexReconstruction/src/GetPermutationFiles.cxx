@@ -15,6 +15,13 @@ int main(int const argc, char const * argv[]) {
   permutations.AddParameter("cpoa_vert_prox", 13);
   permutations.AddParameter("cpoa_trackend_prox", 10);
   permutations.Get();
+
+  /*
+  permutations.SetParameterNames({"start_prox", "shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"});
+  permutations.AddPermutation({4, 4, 4, 13, 10});
+  permutations.AddPermutation({4, 4, 24, 13, 10});
+  */
+
   permutations.GetFiles("permutations", 10);
   permutations.Check();
   
