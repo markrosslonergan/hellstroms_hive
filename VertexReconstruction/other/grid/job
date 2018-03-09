@@ -72,8 +72,8 @@ elif [ "$1" == "makeup" ]; then
 
 elif [ "$1" == "clean" ]; then
 
+    echo rm -rf /pnfs/uboone/scratch/users/rmurrell/vertex_quality_output/*
     rm -rf /pnfs/uboone/scratch/users/rmurrell/vertex_quality_output/*
-
 
 else
  

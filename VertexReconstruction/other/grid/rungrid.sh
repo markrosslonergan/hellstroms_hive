@@ -31,7 +31,7 @@ echo >> $log
 
 #
 PERM_DIR=permutations
-EVENTD_DIR=light_event_files
+EVENT_DIR=light_event_files
 echo ifdh cp -D $RES/$VIN/$PERM_DIR/$INPUT_PERM_FILE $CONDOR_DIR_INPUT >> $log
 ifdh cp -D $RES/$VIN/$PERM_DIR/$INPUT_PERM_FILE $CONDOR_DIR_INPUT >> $log 2>&1
 echo >> $log
