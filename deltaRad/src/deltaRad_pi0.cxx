@@ -88,13 +88,12 @@ int main (int argc, char *argv[]){
 	//===========================================================================================
 	//===========================================================================================
 
-
-
-
+	
 	MVALoader xml_methods(xml);
 	std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); 
 
 
+	//Define the precuts, depending on if you want to use track or notrack	
 	std::string new_precuts;
 	std::string num_track_cut = ">0";
 	if(istrack == "track"){
@@ -120,11 +119,11 @@ int main (int argc, char *argv[]){
 	std::string background_definition = "!(" + signal_definition + ")";
 
 	
-	//This is a particular cut flow that a file will undergo. I.e base cuts->precuts->cosmic BDT->bnb bdt
+	//This is a particular cut flow that a file will undergo. I.e base cuts, precuts, postcuts, and then the name of the Cosmic BDT and bnb bdt
 	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	new_precuts,"", 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
 	bdt_flow cosmic_flow(cosmic_base_cuts, 			new_precuts,"", 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
-	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts,"",	cosmic_bdt_info.identifier ,bnb_bdt_info.identifier);
-	bdt_flow data_flow(base_cuts ,				new_precuts,"",	cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
+	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts,"",		cosmic_bdt_info.identifier ,bnb_bdt_info.identifier);
+	bdt_flow data_flow(base_cuts ,				new_precuts,"",		cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
 
 
 	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
@@ -192,20 +191,6 @@ int main (int argc, char *argv[]){
 
 	}
 
-
-	//This batch appears to be nan or inf a lot
-	//vars.push_back(bdt_variable("most_energetic_shower_reco_thetaxz","(25,-1.7,1.7)","Shower Angle xy [rad]",false));
-	//vars.push_back(bdt_variable("most_energetic_shower_reco_thetayz","(25,-1.7,1.7)","Shower Angle yz [rad]",false));
-	//vars.push_back(bdt_variable("longest_asso_track_thetaxz","(25,-1.7,1.7)","Track Angle xz [rad]",true));
-	//vars.push_back(bdt_variable("longest_asso_track_thetayz","(25,-1.7,1.7)","Track Angle yz [rad]",true));
-	//This batch appears to be boring
-	//vars.push_back(bdt_variable("reco_shower_dedx_plane0","(48,0,15)", "dE/dx [MeV/cm]",false));
-	//vars.push_back(bdt_variable("reco_shower_dedx_plane1","(48,0,15)", "dE/dx [MeV/cm]",false));
-	//vars.push_back(bdt_variable("totalpe_bbg_sum","(25,0,2000)","Num PE",false));
-	//This is fixed to be 1!
-	//vars.push_back(bdt_variable("reco_asso_showers","(6,0,5)","Number of Reco Showers",false));	
-
-
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	for(auto &f: bdt_files){
@@ -215,8 +200,6 @@ int main (int argc, char *argv[]){
 	}
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-
-
 
 
 
