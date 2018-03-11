@@ -159,7 +159,7 @@ int main (int argc, char *argv[]){
 	bnbext->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnbext.root");			
 
 	//Variables!
-	std::string angle_track_shower ="fabs(longest_asso_track_reco_dirx*most_energetic_shower_reco_dirx+longest_asso_track_reco_diry*most_energetic_shower_reco_diry+longest_asso_track_reco_dirz*most_energetic_shower_reco_dirz)";
+	std::string angle_track_shower ="longest_asso_track_reco_dirx*most_energetic_shower_reco_dirx+longest_asso_track_reco_diry*most_energetic_shower_reco_diry+longest_asso_track_reco_dirz*most_energetic_shower_reco_dirz";
 
 	std::vector<bdt_variable> vars;
 
@@ -176,8 +176,8 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("reco_nuverty","(25,-300,+300)","Reconstructed Vertex y-location [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_nuvertz","(25,0,1000)","Reconstructed Vertex z-location [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("cos(atan(most_energetic_shower_reco_diry/most_energetic_shower_reco_dirz))","(25,0,1)","Reconstructed Shower |Cosine Theta|", true,"d"));
-	vars.push_back(bdt_variable("cos(atan(most_energetic_shower_reco_diry/most_energetic_shower_reco_dirx))","(25,0,1)","Reconstructed Shower |Cosine Phi|", true,"d"));
+	vars.push_back(bdt_variable("cos(atan2(most_energetic_shower_reco_diry,most_energetic_shower_reco_dirz))","(25,-1,1)","Reconstructed Shower - Cosine Theta", true,"d"));
+	vars.push_back(bdt_variable("cos(atan2(most_energetic_shower_reco_diry,most_energetic_shower_reco_dirx))","(25,-1,1)","Reconstructed Shower - Cosine Phi", true,"d"));
 
 
 
@@ -191,13 +191,13 @@ int main (int argc, char *argv[]){
 		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parA", "(30,0,30)","Proton Bragg Fit Parameter", true,"d"));
 
 
-		vars.push_back(bdt_variable("cos(atan(longest_asso_track_reco_diry/longest_asso_track_reco_dirz))","(25,0,1)","Reconstructed Track |Cosine Theta|", true,"d"));
-		vars.push_back(bdt_variable("cos(atan(longest_asso_track_reco_diry/longest_asso_track_reco_dirx))","(25,0,1)","Reconstructed Track |Cosine Phi|", true,"d"));
+		vars.push_back(bdt_variable("cos(atan2(longest_asso_track_reco_diry,longest_asso_track_reco_dirz))","(25,-1,1)","Reconstructed Track - Cosine Theta", true,"d"));
+		vars.push_back(bdt_variable("cos(atan2(longest_asso_track_reco_diry,longest_asso_track_reco_dirx))","(25,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));
 
 		//		vars.push_back(bdt_variable("cos(longest_asso_track_theta)","(25,-3.2,3.2)","Theta [Rad]", true,"d"));
 		//		vars.push_back(bdt_variable("cos(longest_asso_track_phi)","(25,0,0,3.2)","Phi [Degrees]", true,"d"));
 
-		vars.push_back(bdt_variable(angle_track_shower,	"(25,0,1)","|Cosine Track-Shower Angle| ",true,"d"));
+		vars.push_back(bdt_variable(angle_track_shower,	"(25,-1,1)","Cosine Track-Shower Angle ",true,"d"));
 		vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number of Reconstructed Tracks",false,"i"));
 
 	}
@@ -422,6 +422,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 			tdatamc.plotStacks(ftest,  v,fcoscut,fbnbcut);
 			tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
+
 		}
 	
 		datamc.plotBDTStacks(ftest, bnb_bdt_info.identifier ,fcoscut,fbnbcut);
