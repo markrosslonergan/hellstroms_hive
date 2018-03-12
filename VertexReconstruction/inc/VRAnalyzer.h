@@ -31,6 +31,7 @@ class VRAnalyzer : public Analyzer {
 		      double const cpoa_trackend_prox);
   void RunPandora(bool const run_pandora = true);
 
+  void GetPOT(bool const get_pot = true);
   void RunFillTreeVariables(bool const run_fill_tree_variables = true);
 
   void Initialize();
@@ -58,6 +59,7 @@ class VRAnalyzer : public Analyzer {
   void PrintPandoraRec(size_t const pfp_index,
 		       std::string indent = "");
   void FillWPandora(ParticleAssociations & pas);
+  void FillPOTTree();
 
   std::string fname;
 
@@ -77,6 +79,7 @@ class VRAnalyzer : public Analyzer {
   double fcpoa_trackend_prox;
 
   bool frun_pandora;
+  bool fget_pot;
   bool frun_fill_tree_variables;
 
   VertexQuality * fvq;
