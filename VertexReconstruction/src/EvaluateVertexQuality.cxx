@@ -206,7 +206,6 @@ void EvaluateVertexQuality::GetBestWorstPermutations(std::vector<std::vector<dou
       std::string modified_weight = perm_weight;
       if(!draw_weight.empty()) modified_weight += " && " + draw_weight;
       double const result = DrawHist(draw.at(0), draw.at(1), modified_weight);
-      std::cout << i+1 << "/" << fpermutation_v.size() << " " << result << " " << modified_weight << "\n";
       drawn_values.at(j).push_back(result);
       if(result > max_results.at(j).first) {
 	max_results.at(j).first = result;

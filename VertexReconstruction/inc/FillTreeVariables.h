@@ -142,8 +142,8 @@ class FillTreeVariables {
   int reco_asso_showers;
 
   int longest_asso_track_index;
+  /*
   std::vector<double> reco_track_length;
-  double reco_track_length_arr[100];
   std::vector<double> reco_track_dirx;
   std::vector<double> reco_track_diry;
   std::vector<double> reco_track_dirz;
@@ -152,8 +152,18 @@ class FillTreeVariables {
   std::vector<double> reco_track_thetayz;
   std::vector<double> reco_track_phi;
   std::vector<double> reco_track_theta;
+  */
   std::vector<std::vector<double>> reco_track_calo_dEdx;
   std::vector<std::vector<double>> reco_track_calo_resrange;
+  double reco_track_length[100];
+  double reco_track_dirx[100];
+  double reco_track_diry[100];
+  double reco_track_dirz[100];
+  double reco_track_thetayx[100];
+  double reco_track_thetaxz[100];
+  double reco_track_thetayz[100];
+  double reco_track_phi[100];
+  double reco_track_theta[100];
 
   std::vector<double> true_track_matching_ratio;
   std::vector<int> true_track_index;
@@ -176,6 +186,7 @@ class FillTreeVariables {
 
   int most_energetic_shower_index;
   int second_most_energetic_shower_index;
+  /*
   std::vector<double> reco_shower_startx;
   std::vector<double> reco_shower_starty;
   std::vector<double> reco_shower_startz;
@@ -199,6 +210,30 @@ class FillTreeVariables {
   std::vector<double> reco_shower_dedx_plane1;
   std::vector<double> reco_shower_dedx_plane2;
   std::vector<double> reco_shower_dist_to_closest_flashzcenter;
+  */
+  double reco_shower_startx[100];
+  double reco_shower_starty[100];
+  double reco_shower_startz[100];
+  double reco_shower_dist[100];
+  double reco_shower_distx[100];
+  double reco_shower_disty[100];
+  double reco_shower_distz[100];
+  double reco_shower_thetayx[100];
+  double reco_shower_thetaxz[100];
+  double reco_shower_thetayz[100];
+  double reco_shower_width0[100];
+  double reco_shower_width1[100];
+  double reco_shower_opening_angle[100];
+  double reco_shower_length[100];
+  double reco_shower_dirx[100];
+  double reco_shower_diry[100];
+  double reco_shower_dirz[100];
+  double reco_shower_helper_energy[100];
+  double reco_shower_bp_dist_to_tpc[100];
+  double reco_shower_dedx_plane0[100];
+  double reco_shower_dedx_plane1[100];
+  double reco_shower_dedx_plane2[100];
+  double reco_shower_dist_to_closest_flashzcenter[100];
 
   std::vector<double> true_shower_matching_ratio;
   std::vector<int> true_shower_index;

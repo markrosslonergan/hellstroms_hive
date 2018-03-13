@@ -11,6 +11,8 @@
 
 #include "GeoAABox.h"
 
+#include "EvaluateVertexQuality.h"
+
 
 class VertexQuality {
 
@@ -21,7 +23,8 @@ class VertexQuality {
 
   void SetProducers(std::string const & track_producer,
 		    std::string const & shower_producer);
-
+  void AddPermutations(std::vector<std::vector<double>> const & permutation_v);
+  void AddParameterToDraw(std::vector<std::string> const & param);
   void SetParameters(double const start_prox,
                      double const shower_prox,
                      double const max_bp_dist,
@@ -33,8 +36,9 @@ class VertexQuality {
   void RunSig();
   void Run(ParticleAssociations const & pas,
 	   bool const track_only = false);
+  void Evaluate();
   void Write() const;
-
+  
  private:
 
   void RunClosest(ParticleAssociations const & pas,
@@ -42,7 +46,6 @@ class VertexQuality {
   void RunSig(ParticleAssociations const & pas,
 	      bool const track_only);
   void SetupVertexQualityTreeClosest(TTree * const tree);
-  void SetupVertexQualityTreeClosest();
   void SetupVertexQualityTreeSignal(TTree * const tree);
   void GetTrueObjects(size_t const mct_index,
 		      std::vector<size_t> & mctrack_v,
@@ -58,10 +61,12 @@ class VertexQuality {
 		geoalgo::Point_t const & true_nu_vtx,
 		std::vector<size_t> const & track_v,
 		std::vector<size_t> const & shower_v);
+  void SetupEvalTree();
 
   std::string fname;
   std::string ftrack_producer;
   std::string fshower_producer;
+  std::vector<std::vector<std::string>> fdraw_vec;
 
   Storage const * fstorage;
 
@@ -71,7 +76,6 @@ class VertexQuality {
 
   geoalgo::AABox ftpc_volume;
 
-  TTree * fvertex_tree;
   TTree * fvertex_tree_event;
   bool frun_closest;
   TTree * fvertex_tree_event_signal;
@@ -107,6 +111,8 @@ class VertexQuality {
   std::vector<double> fshower_matching_ratio_v;
   std::vector<int> fshower_true_pdg_v;
   std::vector<int> fshower_true_origin_v;
+
+  std::vector<std::vector<double>> fpermutation_v;
 
 };
 
