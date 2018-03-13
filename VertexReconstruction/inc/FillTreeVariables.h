@@ -142,8 +142,8 @@ class FillTreeVariables {
   int reco_asso_showers;
 
   int longest_asso_track_index;
-  //std::vector<double> reco_track_length;
-  double reco_track_length[1000];
+  std::vector<double> reco_track_length;
+  double reco_track_length_arr[100];
   std::vector<double> reco_track_dirx;
   std::vector<double> reco_track_diry;
   std::vector<double> reco_track_dirz;
