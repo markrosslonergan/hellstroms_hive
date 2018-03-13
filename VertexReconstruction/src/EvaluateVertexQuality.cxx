@@ -28,7 +28,8 @@ EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
 EvaluateVertexQuality::~EvaluateVertexQuality() {
 
   delete fvq_chain;
-  for(TGraph * graph : fgraph_v) delete graph; 
+  for(std::vector<TGraph *> const & graph_v : fgraph_v) 
+    for(TGraph * graph : graph_v) delete graph; 
 
 }
 
@@ -142,6 +143,14 @@ void EvaluateVertexQuality::SetOutputFile(char const * file_name) {
 }
 
 
+void EvaluateVertexQuality::AddParameterToDraw(std::vector<std::string> const & param) {
+
+  fdraw_vec.push_back(param);
+  fgraph_v.push_back({});
+
+}
+
+
 double EvaluateVertexQuality::DrawHist(std::string const & draw,
 				       std::string const & binning,
 				       std::string const & weight) {
@@ -170,8 +179,9 @@ std::string EvaluateVertexQuality::GetPermString(std::vector<double> const & per
 }
 
 
-void EvaluateVertexQuality::GetBestPermutations(std::vector<std::vector<double>> & drawn_values,
-						std::vector<std::pair<double, int>> & max_results) {
+void EvaluateVertexQuality::GetBestWorstPermutations(std::vector<std::vector<double>> & drawn_values,
+						     std::vector<std::pair<double, int>> & max_results,
+						     std::vector<std::pair<double, int>> & min_results) {
   
   drawn_values.clear();
   drawn_values.reserve(fdraw_vec.size());
@@ -181,6 +191,8 @@ void EvaluateVertexQuality::GetBestPermutations(std::vector<std::vector<double>>
   }
   max_results.clear();
   max_results.resize(fdraw_vec.size(), {0, 0});
+  min_results.clear();
+  min_results.resize(fdraw_vec.size(), {0, 0});
 
   for(size_t i = 0; i < fpermutation_v.size(); ++i) {
 
@@ -188,17 +200,23 @@ void EvaluateVertexQuality::GetBestPermutations(std::vector<std::vector<double>>
     std::string const perm_weight = GetPermString(permutation);
 
     for(size_t j = 0; j < fdraw_vec.size(); ++j) {
+
       std::vector<std::string> const & draw = fdraw_vec.at(j);
       std::string const & draw_weight = draw.at(2);
       std::string modified_weight = perm_weight;
       if(!draw_weight.empty()) modified_weight += " && " + draw_weight;
       double const result = DrawHist(draw.at(0), draw.at(1), modified_weight);
-      std::cout << result << " " << modified_weight << "\n";
+
       drawn_values.at(j).push_back(result);
       if(result > max_results.at(j).first) {
 	max_results.at(j).first = result;
 	max_results.at(j).second = i;
       }
+      if(result < min_results.at(j).first) {
+	min_results.at(j).first = result;
+	min_results.at(j).second = i;
+      }
+
     }
 
   }
@@ -236,7 +254,8 @@ std::vector<size_t> EvaluateVertexQuality::FindPermutations(std::vector<double> 
 void EvaluateVertexQuality::PlotGraph(std::vector<double> const & drawn_value_v, 
 				      std::vector<size_t> const & plot_permutations, 
 				      size_t const draw_vec_index, 
-				      size_t const parameter_index) {
+				      size_t const parameter_index,
+				      std::string const & title_suffix) {
 
   TGraph * graph = new TGraph();
   for(size_t i = 0; i < plot_permutations.size(); ++i) {
@@ -248,28 +267,29 @@ void EvaluateVertexQuality::PlotGraph(std::vector<double> const & drawn_value_v,
   
   graph->SetName((fdraw_vec.at(draw_vec_index).at(3) + "_" + fparameter_name.at(parameter_index)).c_str());
   graph->SetMarkerStyle(8);
-  graph->SetTitle(titles.at(4).c_str());
+  graph->SetTitle((titles.at(4) + " " + title_suffix).c_str());
   graph->GetXaxis()->SetTitle(fparameter_name.at(parameter_index).c_str());
   graph->GetXaxis()->CenterTitle();
   graph->GetYaxis()->SetTitle(titles.at(5).c_str());
   graph->GetYaxis()->CenterTitle();
 
-  fgraph_v.push_back(graph);
+  fgraph_v.at(draw_vec_index).push_back(graph);
 
 }
 
 
 void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double>> const & drawn_values,
-					   std::vector<std::pair<double, int>> const & max_results) {
+					   std::vector<std::pair<double, int>> const & results,
+					   std::string const & title_suffix) {
 
   for(size_t i = 0; i < fdraw_vec.size(); ++i) {
 
-    std::vector<double> const & best_permutation = fpermutation_v.at(max_results.at(i).second);
+    std::vector<double> const & best_permutation = fpermutation_v.at(results.at(i).second);
 
     for(size_t j = 0; j < fparameter_name.size(); ++j) {
 
       std::vector<size_t> const plot_permutations = FindPermutations(best_permutation, j);
-      PlotGraph(drawn_values.at(i), plot_permutations, i, j);
+      PlotGraph(drawn_values.at(i), plot_permutations, i, j, title_suffix);
 
     }
 
@@ -280,11 +300,13 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double>> cons
 
 void EvaluateVertexQuality::DrawGraphs() {
 
-  for(TGraph * graph : fgraph_v) {
-    TCanvas * canvas = new TCanvas((std::string(graph->GetName()) + "_canvas").c_str());
-    graph->Draw("ap");
-    canvas->Write();
-    delete canvas;
+  for(std::vector<TGraph *> const & graph_v : fgraph_v) {
+    for(TGraph * graph : graph_v) {
+      TCanvas * canvas = new TCanvas((std::string(graph->GetName()) + "_canvas").c_str());
+      graph->Draw("ap");
+      canvas->Write();
+      delete canvas;
+    }
   }
 
 }
@@ -296,22 +318,21 @@ void EvaluateVertexQuality::Run() {
     std::cout << "ERROR no output file set\n";
     exit(1);
   }
-   
-  /*
-  fdraw_vec.push_back({"correct_shower_total / reco_shower_total", "", "tpc_volume_contained == 1",
-	"cleanliness", "", "Cleanliness"});
-  */
-  fdraw_vec.push_back({"correct_shower_total / true_shower_total", "", "tpc_volume_contained == 1",
-	"completeness", "", "Completeness"});
-  
+     
   std::vector<std::vector<double>> drawn_values;
   std::vector<std::pair<double, int>> max_results;
+  std::vector<std::pair<double, int>> min_results;
 
-  GetBestPermutations(drawn_values,
-		      max_results); 
+  GetBestWorstPermutations(drawn_values,
+			   max_results,
+			   min_results); 
 
   PlotParameters(drawn_values,
-		 max_results);
+		 max_results,
+		 "Maximized");
+  PlotParameters(drawn_values,
+		 min_results,
+		 "Minimized");
 
   DrawGraphs();
 

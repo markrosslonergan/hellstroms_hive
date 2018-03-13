@@ -29,7 +29,6 @@ setup uboonecode v06_26_01_10 -q e10:prof >> $log 2>&1
 echo >> $log
 
 
-#
 PERM_DIR=permutations
 EVENT_DIR=light_event_files
 echo ifdh cp -D $RES/$VIN/$PERM_DIR/$INPUT_PERM_FILE $CONDOR_DIR_INPUT >> $log
@@ -38,7 +37,6 @@ echo >> $log
 echo ifdh cp -D $RES/$VIN/$EVENT_DIR/$INPUT_FILE $CONDOR_DIR_INPUT >> $log
 ifdh cp -D $RES/$VIN/$EVENT_DIR/$INPUT_FILE $CONDOR_DIR_INPUT >> $log 2>&1
 echo >> $log
-#
 
 
 echo ifdh cp -D $RES/$VIN/$EXEC $CONDOR_DIR_INPUT >> $log

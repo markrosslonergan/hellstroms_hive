@@ -8,8 +8,8 @@ target_link_libraries (VertexReconstructionlib GeoAlgolib ${ROOT_LIBRARIES})
 
 message(STATUS "ROOT_LIBRARIES @: ${ROOT_LIBRARIES}")
 
-add_executable (VertexReconstruction VertexReconstruction.cxx)
-target_link_libraries (VertexReconstruction VertexReconstructionlib ${ROOT_LIBRARIES})
+add_executable (RunVertexReconstruction RunVertexReconstruction.cxx)
+target_link_libraries (RunVertexReconstruction VertexReconstructionlib ${ROOT_LIBRARIES})
 
 add_executable (Pandora Pandora.cxx)
 target_link_libraries (Pandora VertexReconstructionlib ${ROOT_LIBRARIES})
