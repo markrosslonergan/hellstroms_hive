@@ -77,7 +77,20 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("reco_asso_showers", &reco_asso_showers, "reco_asso_showers/I");
 
   fvertex_tree->Branch("longest_asso_track_index", &longest_asso_track_index, "longest_asso_track_index/I");
+  /*
   fvertex_tree->Branch("reco_track_displacement", &reco_track_length);
+  fvertex_tree->Branch("reco_track_dirx", &reco_track_dirx);
+  fvertex_tree->Branch("reco_track_diry", &reco_track_diry);
+  fvertex_tree->Branch("reco_track_dirz", &reco_track_dirz);
+  fvertex_tree->Branch("reco_track_thetayx", &reco_track_thetayx);
+  fvertex_tree->Branch("reco_track_thetaxz", &reco_track_thetaxz);
+  fvertex_tree->Branch("reco_track_thetayz", &reco_track_thetayz);
+  fvertex_tree->Branch("reco_track_phi", &reco_track_phi);
+  fvertex_tree->Branch("reco_track_theta", &reco_track_theta);
+  fvertex_tree->Branch("reco_track_calo_dEdx", &reco_track_calo_dEdx);
+  fvertex_tree->Branch("reco_track_calo_resrange", &reco_track_calo_resrange);
+  */
+  fvertex_tree->Branch("reco_track_displacement", &reco_track_length, "reco_track_displacement[reco_asso_tracks]");
   fvertex_tree->Branch("reco_track_dirx", &reco_track_dirx);
   fvertex_tree->Branch("reco_track_diry", &reco_track_diry);
   fvertex_tree->Branch("reco_track_dirz", &reco_track_dirz);
@@ -540,7 +553,7 @@ void FillTreeVariables::ResetVertex() {
 
   // Should be 21+xx "longest" vars 
   longest_asso_track_index = -1;
-  reco_track_length.clear();
+  //reco_track_length.clear();
   reco_track_dirx.clear();
   reco_track_diry.clear();
   reco_track_dirz.clear();
@@ -1078,7 +1091,7 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
 	longest_asso_track_length = track_length;
       }
 
-      reco_track_length.push_back(track_length);
+      reco_track_length[reco_asso_tracks] = track_length;
       reco_track_dirx.push_back(fstorage->freco_track_VertexDirection_X->at(original_index));
       reco_track_diry.push_back(fstorage->freco_track_VertexDirection_Y->at(original_index));
       reco_track_dirz.push_back(fstorage->freco_track_VertexDirection_Z->at(original_index));
