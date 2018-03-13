@@ -20,7 +20,7 @@ Storage::Storage(char const * pot_name,
   fevent_chain = new TChain(event_name);
 
   for(char const * file : files) {
-    if(!CheckFile(pot_name, meta_name, event_name, file)) continue;
+    //if(!CheckFile(pot_name, meta_name, event_name, file)) continue;
     fpot_chain->Add(file);
     fmeta_chain->Add(file);
     fevent_chain->Add(file);
