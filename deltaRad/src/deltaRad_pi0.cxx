@@ -32,8 +32,9 @@ int main (int argc, char *argv[]){
 
 	// Just some simple argument things
 	//===========================================================================================
+	std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
 
-	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
+//	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
@@ -139,9 +140,6 @@ int main (int argc, char *argv[]){
 	//bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "merged.intime_v1.0.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "VR_bnb_cosmic_200.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 
-	//Data based files
-	//bdt_file *data5e19 = new bdt_file(dir+"samples/mcc87/", "merged.data5e19_v10.root" ,"Data5e19","hist","LEEPhotonAnalysisData", kGreen-3, data_flow);
-	//bdt_file *bnbext = new bdt_file(dir+"samples/mcc87/", "merged.bnbext_v7.0.root" ,"BNBext","hist","LEEPhotonAnalysisData", kGreen-3, data_flow);
 
 	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
 
@@ -152,6 +150,10 @@ int main (int argc, char *argv[]){
 	bnb_pure->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb.root");			
 	bnb_cosmics->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb_cosmics.root");			
 	intime->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_intime.root");			
+<<<<<<< HEAD
+//	data5e19->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_data5e19.root");			
+//	bnbext->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnbext.root");			
+=======
 	//data5e19->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_data5e19.root");			
 	//bnbext->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnbext.root");			
     */
@@ -546,11 +548,9 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		}
 
 
-	}*/
-    /*
-	else if(mode_option == "effdata"){
-		//std::vector<bdt_file*> data_files = {data5e19, bnbext};
-
+	}
+/*	else if(mode_option == "effdata"){
+		std::vector<bdt_file*> data_files = {data5e19, bnbext};
 		for(auto &method: TMVAmethods){
 			for(int i=0; i< data_files.size(); i++){
 				std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<data_files.at(i)->tag<<std::endl;

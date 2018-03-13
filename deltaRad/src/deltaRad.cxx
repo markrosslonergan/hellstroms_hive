@@ -126,14 +126,14 @@ int main (int argc, char *argv[]){
 	std::string signal_definition = "is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
 	std::string background_definition = "is_delta_rad == 0";//"!(" + bnb_bdt_info.signal_definition + ")";
 
-
+	// takes 5 arguments ( 
 	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	new_precuts+"&& passed_swtrigger ==1",	postcuts,cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
 	bdt_flow cosmic_flow(intime_base_cuts,			new_precuts , postcuts,	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
 	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts+ "&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
 	bdt_flow data_flow(base_cuts ,				new_precuts+"&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier, 	bnb_bdt_info.identifier);
 
 
-	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, BDT_CUT )		
+	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, BDT_CUT )		
 	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_v2.0.root",	"NCDeltaSignalPure",	   "hist","LEEPhoton",  kRed-7, signal_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_cosmics_v2.0.root", "NCDeltaSignalCosmics", "hist","LEEPhoton",  kRed-7, signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(dir+"samples/mcc86/", "merged.bnb_v1.0.root",	"BNBPure",	   "hist","LEEPhoton",  kBlue-4, bkg_flow);
