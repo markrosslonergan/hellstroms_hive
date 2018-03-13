@@ -14,20 +14,19 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	TCut sig_tcut =  TCut(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 	TCut back_tcut = TCut(background_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 
-	double signal_entries = 0;
 	dataloader->AddSignalTree(signal_file->tvertex);
-	signal_entries += signal_file->tvertex->GetEntries(sig_tcut);
+	int signal_entries = signal_file->tvertex->GetEntries(sig_tcut);
 
-	double background_entries = 0;
 	dataloader->AddBackgroundTree(background_file->tvertex);
-	background_entries += background_file->tvertex->GetEntries(back_tcut);
+	int background_entries = background_file->tvertex->GetEntries(back_tcut);
 
 	for(bdt_variable &var: variables) dataloader->AddVariable(var.name.c_str());
 
 	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
 
 	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
-			"nTrain_Signal="+std::to_string(int(signal_entries*0.80))+":nTrain_Background="+std::to_string(int(background_entries*0.75))+":SplitMode=Random:NormMode=NumEvents:!V");
+			//"nTrain_Signal="+std::to_string(signal_entries)+":nTrain_Background="+std::to_string(background_entries)+":SplitMode=Random:NormMode=NumEvents:!V");
+			"SplitMode=Random:NormMode=NumEvents:!V");
 
 	for(method_struct const & method : methods) factory->BookMethod(dataloader, method.type, method.str, method.option);
 
