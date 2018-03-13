@@ -65,6 +65,7 @@ struct bdt_file{
 		std::string leg;
 
 
+        int numberofevents;
 		double pot;
 
 		TFile *f;
