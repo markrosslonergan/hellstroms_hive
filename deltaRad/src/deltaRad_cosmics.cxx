@@ -42,7 +42,7 @@ int main (int argc, char *argv[]){
 	// Just some simple argument things
 	//===========================================================================================
 
-	std::string dir = "../../../samples/";
+	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/samples/";
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 

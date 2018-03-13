@@ -68,9 +68,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		exit(EXIT_FAILURE);
 	}
 
-	std::string tnam_event = root_dir+"/"+"event_tree";
-	std::string tnam = root_dir+"/"+"vertex_tree";
-	std::string tnam_pot = root_dir+"/"+"get_pot";
+	std::string tnam_event = root_dir+"event_tree";
+	std::string tnam = root_dir+"vertex_tree";
+	std::string tnam_pot = root_dir+"pot_tree";
 
 	std::cout<<"Getting vertex tree"<<std::endl;
 	tvertex = (TTree*)f->Get(tnam.c_str());
@@ -78,6 +78,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	std::cout<<"Got vertex tree"<<std::endl;
 
 	double potbranch = 0;
+    double numbranch = 0;
 
 	if(is_mc){
 		if(tag == "IntimeCosmics"){
@@ -97,14 +98,18 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			leg = "l";
 			std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
 			tpot = (TTree*)f->Get(tnam_pot.c_str());
+            tpot->SetBranchAddress("number_of_events", &numbranch);
 			tpot->SetBranchAddress("pot",&potbranch);
 
 			std::cout<<"Set the POT branch"<<std::endl;
+            int tmpnum = 0;
 			double tmppot=0;
 			for(int i=0; i<tpot->GetEntries(); i++){
 				tpot->GetEntry(i);
+                tmpnum += numbranch;
 				tmppot += potbranch;
 			}
+            numberofevents = tmpnum;
 			pot=tmppot;
 			std::cout<<"--> POT is MC: ";
 			std::cout<<"--> value: "<<pot<<std::endl;
@@ -178,9 +183,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		exit(EXIT_FAILURE);
 	}
 
-	std::string tnam_event = root_dir+"/"+"event_tree";
-	std::string tnam = root_dir+"/"+"vertex_tree";
-	std::string tnam_pot = root_dir+"/"+"get_pot";
+	std::string tnam_event = root_dir+"event_tree";
+	std::string tnam = root_dir+"vertex_tree";
+	std::string tnam_pot = root_dir+"pot_tree";
 
 	std::cout<<"Getting vertex tree"<<std::endl;
 	tvertex = (TTree*)f->Get(tnam.c_str());
