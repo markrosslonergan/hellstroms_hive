@@ -13,14 +13,19 @@ Storage::Storage(char const * pot_name,
     exit(1);
   }
 
-  if(!CheckFile(pot_name, meta_name, event_name, files)) exit(1);
   Initialize();
 
   fpot_chain = new TChain(pot_name);
   fmeta_chain = new TChain(meta_name);
   fevent_chain = new TChain(event_name);
 
-  AddFiles(files);
+  for(char const * file : files) {
+    //if(!CheckFile(pot_name, meta_name, event_name, file)) continue;
+    fpot_chain->Add(file);
+    fmeta_chain->Add(file);
+    fevent_chain->Add(file);
+  }
+
   SetupChains();
 
 }
@@ -38,27 +43,37 @@ Storage::~Storage() {
 bool Storage::CheckFile(char const * pot_name,
 			char const * meta_name,
 			char const * event_name,
-			std::vector<char const *> const & files) const {
+			char const * const file_name) const {
 
-  TFile * file = TFile::Open(files.front());
+  TFile * file = TFile::Open(file_name);
 
   if(!file) {
-    std::cout << "File: " << files.front() << " not found\n";
-    exit(1);
+    std::cout << "File: " << file_name << " not found\n";
+    return false;
   }
 
   TTree * pot_tree = dynamic_cast<TTree*>(file->Get(pot_name));
   TTree * meta_tree = dynamic_cast<TTree*>(file->Get(meta_name));
   TTree * event_tree = dynamic_cast<TTree*>(file->Get(event_name));
 
-  if(!pot_tree || !meta_tree || !event_tree) {
-    std::cout << __PRETTY_FUNCTION__ << "\nCould not find a tree\n";
-    return false;
+  bool result = true;
+
+  if(!pot_tree) {
+    std::cout << "Could not find: " << pot_name << " in " << file_name << "\n";
+    result = false;
+  }
+  if(!meta_tree) { 
+    std::cout << "Could not find: " << meta_name << " in " << file_name << "\n";
+    result = false;
+  }
+  if(!event_tree) {
+    std::cout << "Could not find: " << event_name << " in " << file_name << "\n";
+    result = false;
   }
 
   file->Close();
 
-  return true;
+  return result;
 
 }
 
@@ -365,17 +380,6 @@ void Storage::Initialize() {
   fmcshower_StartDir_Y = nullptr;
   fmcshower_StartDir_Z = nullptr;
   fmcshower_contributed_charge = nullptr;
-
-}
-
-
-void Storage::AddFiles(std::vector<char const *> const & files) {
-
-  for(char const * file : files) {
-    fpot_chain->Add(file);
-    fmeta_chain->Add(file);
-    fevent_chain->Add(file);
-  }
 
 }
 

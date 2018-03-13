@@ -5,7 +5,6 @@
 
 VertexQuality::VertexQuality(std::string const & name) :
   fname(name),
-  fvertex_tree(nullptr),
   fvertex_tree_event(nullptr),
   frun_closest(false),
   fvertex_tree_event_signal(nullptr),
@@ -14,7 +13,6 @@ VertexQuality::VertexQuality(std::string const & name) :
 
 VertexQuality::~VertexQuality() {
 
-  if(fvertex_tree) delete fvertex_tree;
   if(fvertex_tree_event) delete fvertex_tree_event;
   if(fvertex_tree_event_signal) delete fvertex_tree_event_signal;
 
@@ -62,6 +60,20 @@ void VertexQuality::SetProducers(std::string const & track_producer,
 
   ftrack_producer = track_producer;
   fshower_producer = shower_producer;
+
+}
+
+
+void VertexQuality::AddPermutations(std::vector<std::vector<double>> const & permutation_v) {
+
+  fpermutation_v = permutation_v;
+
+}
+
+
+void VertexQuality::AddParameterToDraw(std::vector<std::string> const & param) {
+
+  fdraw_vec.push_back(param);
 
 }
 
@@ -519,9 +531,22 @@ void VertexQuality::Run(ParticleAssociations const & pas,
 }
 
 
+void VertexQuality::SetupEvalTree() {
+
+  
+
+};
+
+
+void VertexQuality::Evaluate() {
+
+  SetupEvalTree();
+
+}
+
+
 void VertexQuality::Write() const {
 
-  if(fvertex_tree) fvertex_tree->Write();
   if(fvertex_tree_event) fvertex_tree_event->Write();
   if(fvertex_tree_event_signal) fvertex_tree_event_signal->Write();
 

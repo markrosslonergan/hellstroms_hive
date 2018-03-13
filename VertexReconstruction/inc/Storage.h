@@ -25,9 +25,8 @@ private:
   bool CheckFile(char const * pot_name,
 		 char const * meta_name,
 		 char const * event_name,
-		 std::vector<char const *> const & files) const;
+		 char const * const file) const;
   void Initialize();
-  void AddFiles(std::vector<char const *> const & files);
   void SetupChains();
   void ProcessPotChain();
   void ProcessMetaChain();

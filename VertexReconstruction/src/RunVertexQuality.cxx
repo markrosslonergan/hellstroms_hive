@@ -40,6 +40,13 @@ int main(int const argc, char const * argv[]) {
   vq.RunSig();
   vq.SetProducers(track_producer, shower_producer);
 
+  vq.AddParameterToDraw({"correct_shower_total / true_shower_total", "", "tpc_volume_contained == 1",
+	"completeness", "", "Completeness"});
+  vq.AddParameterToDraw({"correct_shower_total / reco_shower_total", "", "tpc_volume_contained == 1",
+	"cleanliness", "", "Cleanliness"});
+  
+  vq.AddPermutations(permutation_v);
+
   for(size_t i = 0; i < permutation_v.size(); ++i) {
     std::vector<double> const & parameters = permutation_v.at(i);
     VRAnalyzer * vrana = new VRAnalyzer("varana_" + std::to_string(i), &vq);
@@ -53,6 +60,7 @@ int main(int const argc, char const * argv[]) {
   }
 
   processor.Run();
+  vq.Evaluate();
   vq.Write();
   
   std::cout << "Wall time: " << difftime(time(0), start) << "\n";  
