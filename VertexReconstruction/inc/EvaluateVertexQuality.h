@@ -24,6 +24,7 @@ class EvaluateVertexQuality {
   ~EvaluateVertexQuality();
 
   void SetOutputFile(char const * file_name);
+  void AddParameterToDraw(std::vector<std::string> const & param);
   void Run();
 
  private:
@@ -39,21 +40,24 @@ class EvaluateVertexQuality {
   double DrawHist(std::string const & draw,
 		  std::string const & binning,
 		  std::string const & weight);
-  void GetBestPermutations(std::vector<std::vector<double>> & drawn_values,
-			   std::vector<std::pair<double, int>> & max_results);
+  void GetBestWorstPermutations(std::vector<std::vector<double>> & drawn_values,
+				std::vector<std::pair<double, int>> & max_results,
+				std::vector<std::pair<double, int>> & min_results);
   std::vector<size_t> FindPermutations(std::vector<double> const & best_permutation, size_t const parameter_index);
   void PlotParameters(std::vector<std::vector<double>> const & drawn_values,
-		      std::vector<std::pair<double, int>> const & max_results);
+		      std::vector<std::pair<double, int>> const & max_results,
+		      std::string const & title_suffix);
   void PlotGraph(std::vector<double> const & drawn_value_v, 
 		 std::vector<size_t> const & plot_permutations, 
 		 size_t const draw_vec_index, 
-		 size_t const parameter_index);
+		 size_t const parameter_index,
+		 std::string const & title_suffix);
   void DrawGraphs();
 
   std::vector<std::vector<std::string>> fdraw_vec;
   std::vector<std::string> fparameter_name;
   std::vector<std::vector<double>> fpermutation_v;
-  std::vector<TGraph *> fgraph_v;
+  std::vector<std::vector<TGraph *>> fgraph_v;
 
   TFile * foutput_file;
 

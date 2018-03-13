@@ -12,12 +12,15 @@ VRAnalyzer::VRAnalyzer(std::string const & name, VertexQuality * vq) :
   fcpoa_vert_prox(-10000),
   fcpoa_trackend_prox(-10000),
   frun_pandora(false),
+  fget_pot(false),
   frun_fill_tree_variables(false),
   fvq(vq) {}
 
 
 void VRAnalyzer::SetVerbose(bool const verbose) {
+
   fverbose = verbose;
+
 }
 
 
@@ -52,18 +55,50 @@ void VRAnalyzer::SetVBVariables(double const start_prox,
 
 
 void VRAnalyzer::RunPandora(bool const run_pandora) {
+
   frun_pandora = run_pandora;
+
+}
+
+
+void VRAnalyzer::GetPOT(bool const get_pot) {
+
+  fget_pot = get_pot;
+
 }
 
 
 void VRAnalyzer::RunFillTreeVariables(bool const run_fill_tree_variables) {
+
   frun_fill_tree_variables = run_fill_tree_variables;
+
+}
+
+
+void VRAnalyzer::FillPOTTree() {
+
+  TTree * pot_tree = new TTree("pot_tree", "");
+
+  int number_of_events = fstorage->fnumber_of_events;
+  double pot = fstorage->fpot;
+
+  pot_tree->Branch("number_of_events", &number_of_events, "number_of_events/I");
+  pot_tree->Branch("pot", &pot, "pot/D");
+
+  pot_tree->Fill();
+  pot_tree->Write();
+  delete pot_tree;
+
 }
 
 
 void VRAnalyzer::Initialize() {
 
   fmcordata = fstorage->fmc;
+
+  if(fget_pot) {
+    FillPOTTree();
+  }
 
   if(fvq) {
     fvq->SetStorage(fstorage);

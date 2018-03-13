@@ -37,7 +37,7 @@ if [ "$1" == "submit" ]; then
 elif [ "$1" == "check" ]; then
 
     if [ -d $makeupdir ]; then
-	rm -r $makeupdir
+	rm -rf $makeupdir
     fi
     mkdir $makeupdir
 
@@ -48,13 +48,12 @@ elif [ "$1" == "check" ]; then
 	if [ ! -d $OUTPUT/$i ]; then
 	    echo "Directory $i not found!"
 	    missing=true
-	#elif [ ! -f $OUTPUT/$i/RunVertexQuality$i.root ]; then
-	#    echo "RunVertexQuality$i.root not found!"
-	#    missing=true
+	elif [ ! -f $OUTPUT/$i/RunVertexQuality$i.root ]; then
+	    echo "RunVertexQuality$i.root not found!"
+	    missing=true
 	fi
 	if [ "$missing" == true ]; then
-	    mkdir $makeupdir/$increment
-	    touch $makeupdir/$increment/permutations_$i.root
+	    echo permutations_$i.root > $makeupdir/$increment.txt
 	    ((increment++))
 	fi 	
     done 
@@ -66,6 +65,16 @@ elif [ "$1" == "makeup" ]; then
 	echo "Run check"
 	exit 1
     fi
+
+    for file in `ls $makeupdir`; do
+	pfile=$(head -1 $makeupdir/$file)
+	pdir=${pfile##*_}
+	pdir=${pdir%.*}
+	echo $OUTPUT/$pdir
+	if [ -d "$OUTPUT/$pdir" ]; then
+	    rm -r $OUTPUT/$pdir
+	fi
+    done
 
     jobsub_submit -G uboone --OS=SL6 --expected-lifetime='8h' --resource-provides=usage_model=DEDICATED,OPPORTUNISTIC,OFFSITE -N `ls $makeupdir | wc -l` ${mail} file://${workdir}/$gridfilemu ${file##*/}
     

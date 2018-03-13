@@ -26,10 +26,11 @@ int main(int const argc, char const * argv[]) {
 		      "simpleFlashBeam",
 		      "swtrigger");
   //vrana->RunPandora();
+  vrana->GetPOT();
   vrana->RunFillTreeVariables();
 
   processor.AddAnalyzer(vrana);
-  processor.SetOutputFileName("VertexReconstruction.root");
+  processor.SetOutputFileName("RunVertexReconstruction.root");
   processor.Run();
 
   std::cout << "Wall time: " << difftime(time(0), start) << "\n";
