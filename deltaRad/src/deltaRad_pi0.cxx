@@ -32,9 +32,9 @@ int main (int argc, char *argv[]){
 
 	// Just some simple argument things
 	//===========================================================================================
-	std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
+	//std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
 
-//	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
+	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
@@ -131,14 +131,14 @@ int main (int argc, char *argv[]){
 
 
 	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
-	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "VR_bnb_cosmic_200.root",	"NCpi0Pure",	   "hist","",  kBlue-4, signal_flow);
+	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "VR_bnb_cosmic_200_arr.root",	"NCpi0Pure",	   "hist","",  kBlue-4, signal_flow);
 	//bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86_withcalo.root", "NCpi0Cosmics", "hist","",  kBlue-4, signal_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc86/", "VR_bnb_cosmic_200.root", "NCpi0Cosmics", "hist","",  kBlue-4, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir+"samples/mcc86/", "VR_bnb_cosmic_200.root",	"BNBPure",	   "hist","",  kBlue-4, bkg_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc86/", "VR_bnb_cosmic_200_arr.root", "NCpi0Cosmics", "hist","",  kBlue-4, signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir+"samples/mcc86/", "VR_bnb_cosmic_200_arr.root",	"BNBPure",	   "hist","",  kBlue-4, bkg_flow);
 	//bdt_file *bnb_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86_withcalo.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/mcc86/", "VR_bnb_cosmic_200.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/mcc86/", "VR_bnb_cosmic_200_arr.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
 	//bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "merged.intime_v1.0.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
-	bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "VR_bnb_cosmic_200.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
+	bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "VR_bnb_cosmic_200_arr.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 
 
 	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
@@ -150,10 +150,8 @@ int main (int argc, char *argv[]){
 	bnb_pure->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb.root");			
 	bnb_cosmics->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb_cosmics.root");			
 	intime->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_intime.root");			
-<<<<<<< HEAD
 //	data5e19->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_data5e19.root");			
 //	bnbext->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnbext.root");			
-=======
 	//data5e19->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_data5e19.root");			
 	//bnbext->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnbext.root");			
     */
@@ -163,16 +161,18 @@ int main (int argc, char *argv[]){
 	std::string angle_track_shower1 ="fabs(reco_track_dirx[longest_asso_track_index]*reco_shower_dirx[0]+reco_track_diry[longest_asso_track_index]*reco_shower_diry[0]+reco_track_dirz[longest_asso_track_index]*reco_shower_dirz[0])";
 	std::string angle_track_shower2 ="fabs(reco_track_dirx[longest_asso_track_index]*reco_shower_dirx[1]+reco_track_diry[longest_asso_track_index]*reco_shower_diry[1]+reco_track_dirz[longest_asso_track_index]*reco_shower_dirz[1])";
 	std::string angle_shower1_shower2 ="reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz[0]*reco_shower_dirz[1]";
+    
+	std::string angle_track_shower1 ="fabs(reco_track_dirx[longest_asso_track_index]*reco_shower_dirx[most_energetic_shower_index]+reco_track_diry[longest_asso_track_index]*reco_shower_diry[most_energetic_shower_index]+reco_track_dirz[longest_asso_track_index]*reco_shower_dirz[most_energetic_shower_index])";
+	std::string angle_track_shower2 ="fabs(reco_track_dirx[longest_asso_track_index]*reco_shower_dirx[second_most_energetic_shower_index]+reco_track_diry[longest_asso_track_index]*reco_shower_diry[second_most_energetic_shower_index]+reco_track_dirz[longest_asso_track_index]*reco_shower_dirz[second_most_energetic_shower_index])";
+	//std::string angle_shower1_shower2 ="reco_shower_dirx[most_energetic_shower_index]*reco_shower_dirx[second_most_energetic_shower_index]+reco_shower_diry[most_energetic_shower_index]*reco_shower_diry[second_most_energetic_shower_index]+reco_shower_dirz[most_energetic_shower_index]*reco_shower_dirz[second_most_energetic_shower_index]";
+	std::string angle_shower1_shower2 ="fabs(reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz[0]*reco_shower_dirz[1])";
     std::vector<bdt_variable> vars;
-
+    
 	//vars.push_back(bdt_variable("reco_shower_dedx_plane2","(48,0,15)", "Shower dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[0]","(48,0,15)", "Shower dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[1]","(48,0,15)", "Shower dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Reconstructed Shower Energy [GeV]", false,"d"));
 	//vars.push_back(bdt_variable("most_energetic_shower_reco_length","(25,0,125)","Shower Length [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_length[0]","(25,0,125)","Shower Length [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_length[1]","(25,0,125)","Shower Length [cm]",false,"d"));
-    vars.push_back(bdt_variable(angle_shower1_shower2, "(20, -1, 1)", "Cosine of Opening Angle", false, "d"));
 
 	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Total in Beam-Gate PE",false,"d"));
 	vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from Shower to Flashcenter [cm]",false,"d"));
@@ -196,8 +196,9 @@ int main (int argc, char *argv[]){
 
 //		vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_range","(25,0,500)","Reconstructed Track Range? [cm]", true,"d"));
 		//vars.push_back(bdt_variable("longest_asso_track_displacement","(25,0,500)","Reconstructed Track Length [cm]", true,"d"));
+        
 		vars.push_back(bdt_variable("reco_track_displacement[longest_asso_track_index]","(25,0,500)","Reconstructed Track Length [cm]", true,"d"));
-
+        
 		//vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parD", "(25,-2,2)","Bragg Parameter D", true,"d"));
 		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(25,0,10)","Photon Coversion Length from Reconstructed Vertex [cm]" ,false,"d"));
 	//	vars.push_back(bdt_variable("track_dEdx_tree.longest_asso_track_bragg_start_parA", "(30,0,30)","Proton Bragg Fit Parameter", true,"d"));
@@ -210,11 +211,12 @@ int main (int argc, char *argv[]){
 
 		//		vars.push_back(bdt_variable("cos(longest_asso_track_theta)","(25,-3.2,3.2)","Theta [Rad]", true,"d"));
 		//		vars.push_back(bdt_variable("cos(longest_asso_track_phi)","(25,0,0,3.2)","Phi [Degrees]", true,"d"));
-
+        
 		vars.push_back(bdt_variable(angle_track_shower1,	"(25,0,1)","|Cosine Track-Shower Angle (Most Energetic)| ",true,"d"));
 		vars.push_back(bdt_variable(angle_track_shower2,	"(25,0,1)","|Cosine Track-Shower Angle (Second Most Energetic)| ",true,"d"));
 		vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number of Reconstructed Tracks",false,"i"));
-
+        
+        
 	}
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -266,7 +268,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	//===========================================================================================
 
 	if(mode_option == "train") {
-		//std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
+		std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
 		bdt_train(cosmic_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
 		bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
