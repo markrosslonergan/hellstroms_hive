@@ -532,7 +532,6 @@ void Storage::ProcessEventChain() {
     fevent_chain->SetBranchAddress("reco_track_LastValidPoint", &freco_track_LastValidPoint);
     fevent_chain->SetBranchAddress("reco_track_CountValidPoints", &freco_track_CountValidPoints);
   }
-  std::cout << "setup reco_track_X\n";
   fevent_chain->SetBranchAddress("reco_track_X", &freco_track_X);
   fevent_chain->SetBranchAddress("reco_track_Y", &freco_track_Y);
   fevent_chain->SetBranchAddress("reco_track_Z", &freco_track_Z);

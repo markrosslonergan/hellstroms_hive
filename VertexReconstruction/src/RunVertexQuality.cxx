@@ -44,6 +44,8 @@ int main(int const argc, char const * argv[]) {
 	"completeness", "", "Completeness"});
   vq.AddParameterToDraw({"correct_shower_total / reco_shower_total", "", "tpc_volume_contained == 1",
 	"cleanliness", "", "Cleanliness"});
+  vq.AddParameterToDraw({"(correct_shower_total / reco_shower_total) * (correct_shower_total / true_shower_total)", "", "tpc_volume_contained == 1",
+	"combined", "", "Combined"});
   
   vq.AddPermutations(permutation_v);
 

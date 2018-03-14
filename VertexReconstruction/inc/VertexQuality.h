@@ -61,7 +61,9 @@ class VertexQuality {
 		geoalgo::Point_t const & true_nu_vtx,
 		std::vector<size_t> const & track_v,
 		std::vector<size_t> const & shower_v);
-  TTree * SetupEvalTree(std::vector<std::vector<double>> & drawn_values);
+  TTree * SetupEvalTree(std::vector<std::vector<double>> & drawn_values,
+			std::vector<std::pair<double, int>> & max_results,
+			std::vector<std::pair<double, int>> & min_results);
   std::string GetPermString(std::vector<double> const & permutation);
   double DrawHist(std::string const & draw,
 		  std::string const & binning,

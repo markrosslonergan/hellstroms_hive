@@ -543,18 +543,16 @@ void VertexQuality::Run(ParticleAssociations const & pas,
 }
 
 
-TTree * VertexQuality::SetupEvalTree(std::vector<std::vector<double>> & drawn_values) {
+TTree * VertexQuality::SetupEvalTree(std::vector<std::vector<double>> & drawn_values,
+				     std::vector<std::pair<double, int>> & max_results,
+				     std::vector<std::pair<double, int>> & min_results) {
   
-  TTree * draw_tree = new TTree("draw_tree", "");
-
-  draw_tree->Branch("draw_vec", &fdraw_vec);
-  draw_tree->Fill();
-  draw_tree->Write();
-  delete draw_tree;
-
   TTree * eval_tree = new TTree("eval_tree", "");
+  eval_tree->Branch("permutation_v", &fpermutation_v);
+  eval_tree->Branch("draw_vec", &fdraw_vec);
   eval_tree->Branch("drawn_values", &drawn_values);
-
+  eval_tree->Branch("max_results", &max_results);
+  eval_tree->Branch("min_results", &min_results);
   return eval_tree;
 
 };
@@ -600,9 +598,9 @@ void VertexQuality::GetBestWorstPermutations(std::vector<std::vector<double>> & 
     drawn_values.back().reserve(fpermutation_v.size());
   }
   max_results.clear();
-  max_results.resize(fdraw_vec.size(), {0, 0});
+  max_results.resize(fdraw_vec.size(), {0, -1});
   min_results.clear();
-  min_results.resize(fdraw_vec.size(), {DBL_MAX, 0});
+  min_results.resize(fdraw_vec.size(), {DBL_MAX, -1});
 
   for(size_t i = 0; i < fpermutation_v.size(); ++i) {
 
@@ -671,7 +669,9 @@ void VertexQuality::Evaluate() {
   std::vector<std::pair<double, int>> max_results;
   std::vector<std::pair<double, int>> min_results;
   
-  TTree * eval_tree = SetupEvalTree(drawn_values);
+  TTree * eval_tree = SetupEvalTree(drawn_values,
+				    max_results,
+				    min_results);
 
   GetBestWorstPermutations(drawn_values,
 			   max_results,
