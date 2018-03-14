@@ -7,21 +7,28 @@ VertexQuality::VertexQuality(std::string const & name) :
   fname(name),
   fvertex_tree_event(nullptr),
   frun_closest(false),
-  fvertex_tree_event_signal(nullptr),
-  frun_sig(false) {}
+  frun_sig(false) {
+
+  fparameter_name = {"start_prox", "shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"};
+
+}
 
 
 VertexQuality::~VertexQuality() {
 
   if(fvertex_tree_event) delete fvertex_tree_event;
-  if(fvertex_tree_event_signal) delete fvertex_tree_event_signal;
 
 }
 
 
 void VertexQuality::RunClosest() {
 
-  if(!fvertex_tree_event) fvertex_tree_event = new TTree("vertex_quality_tree_closest", "");
+  if(frun_sig) {
+    std::cout << "Already running sig\n";
+    return;
+  }
+
+  fvertex_tree_event = new TTree("vertex_quality_tree_closest", "");
   SetupVertexQualityTreeClosest(fvertex_tree_event);
   frun_closest = true;
 
@@ -30,8 +37,13 @@ void VertexQuality::RunClosest() {
 
 void VertexQuality::RunSig() {
 
-  fvertex_tree_event_signal = new TTree("vertex_quality_tree_signal", "");
-  SetupVertexQualityTreeSignal(fvertex_tree_event_signal);
+  if(frun_closest) {
+    std::cout << "Already running closest\n";
+    return;
+  }  
+
+  fvertex_tree_event = new TTree("vertex_quality_tree_signal", "");
+  SetupVertexQualityTreeSignal(fvertex_tree_event);
   frun_sig = true;
 
 }
@@ -514,7 +526,7 @@ void VertexQuality::RunSig(ParticleAssociations const & pas,
       fis_nc_delta_rad = 0;
       if(!signal_vertex) continue;
       fis_nc_delta_rad = 1;
-      FillTree(fvertex_tree_event_signal, pas, i, true_nu_vtx, track_v, shower_v);
+      FillTree(fvertex_tree_event, pas, i, true_nu_vtx, track_v, shower_v);
     }
 
   }
@@ -531,16 +543,148 @@ void VertexQuality::Run(ParticleAssociations const & pas,
 }
 
 
-void VertexQuality::SetupEvalTree() {
-
+TTree * VertexQuality::SetupEvalTree(std::vector<std::vector<double>> & drawn_values) {
   
+  TTree * draw_tree = new TTree("draw_tree", "");
+
+  draw_tree->Branch("draw_vec", &fdraw_vec);
+  draw_tree->Fill();
+  draw_tree->Write();
+  delete draw_tree;
+
+  TTree * eval_tree = new TTree("eval_tree", "");
+  eval_tree->Branch("drawn_values", &drawn_values);
+
+  return eval_tree;
 
 };
 
 
+std::string VertexQuality::GetPermString(std::vector<double> const & permutation) {
+
+  std::string result;
+  for(size_t i = 0; i < permutation.size(); ++i) {
+    result += fparameter_name.at(i) + " == " + std::to_string(permutation.at(i));
+    if(i != permutation.size() - 1) result += " && ";
+  }
+
+  return result;
+
+}
+
+
+double VertexQuality::DrawHist(std::string const & draw,
+			       std::string const & binning,
+			       std::string const & weight) {
+  
+  TCanvas * canvas = new TCanvas("temp");
+  fvertex_tree_event->Draw((draw + ">>h" + binning).c_str(), weight.c_str());
+  TH1 * h = (TH1*)gDirectory->Get("h");
+  double const mean = h->GetMean();
+  delete h;
+  delete canvas;
+  return mean;
+
+}
+
+
+
+void VertexQuality::GetBestWorstPermutations(std::vector<std::vector<double>> & drawn_values,
+					     std::vector<std::pair<double, int>> & max_results,
+					     std::vector<std::pair<double, int>> & min_results) {
+  
+  drawn_values.clear();
+  drawn_values.reserve(fdraw_vec.size());
+  for(size_t i = 0; i < fdraw_vec.size(); ++i) {
+    drawn_values.push_back({});
+    drawn_values.back().reserve(fpermutation_v.size());
+  }
+  max_results.clear();
+  max_results.resize(fdraw_vec.size(), {0, 0});
+  min_results.clear();
+  min_results.resize(fdraw_vec.size(), {DBL_MAX, 0});
+
+  for(size_t i = 0; i < fpermutation_v.size(); ++i) {
+
+    std::vector<double> const & permutation = fpermutation_v.at(i);
+    std::string const perm_weight = GetPermString(permutation);
+
+    for(size_t j = 0; j < fdraw_vec.size(); ++j) {
+
+      std::vector<std::string> const & draw = fdraw_vec.at(j);
+      std::string const & draw_weight = draw.at(2);
+      std::string modified_weight = perm_weight;
+      if(!draw_weight.empty()) modified_weight += " && " + draw_weight;
+      double const result = DrawHist(draw.at(0), draw.at(1), modified_weight);
+      drawn_values.at(j).push_back(result);
+      if(result > max_results.at(j).first) {
+	max_results.at(j).first = result;
+	max_results.at(j).second = i;
+      }
+      if(result < min_results.at(j).first) {
+	min_results.at(j).first = result;
+	min_results.at(j).second = i;
+      }
+
+    }
+
+  }
+
+}
+
+
+void VertexQuality::Print(std::vector<std::vector<double>> const & drawn_values,
+			  std::vector<std::pair<double, int>> const & max_results,
+			  std::vector<std::pair<double, int>> const & min_results) const {
+  
+  std::cout << "\n";
+  for(size_t i = 0; i < drawn_values.size(); ++i) {
+    std::vector<std::string> const & draw = fdraw_vec.at(i);
+    std::vector<double> const & drawn_value = drawn_values.at(i);
+    for(std::string const & option : draw) std::cout << option << " ";
+    std::cout << "\n";
+    for(size_t j = 0; j < fpermutation_v.size(); ++j) {
+      std::vector<double> const & permutation = fpermutation_v.at(j);
+      std::cout << "Drawn value: " << drawn_value.at(j);
+      for(size_t k = 0; k < permutation.size(); ++k) std::cout << " " << fparameter_name.at(k) << ": " << permutation.at(k);
+      std::cout << "\n";
+    }
+    std::cout << "\nmax: " << max_results.at(i).first << " " << max_results.at(i).second << "\n"
+	      << "min: " << min_results.at(i).first << " " << min_results.at(i).second << "\n\n";
+  }
+
+}
+
+
 void VertexQuality::Evaluate() {
 
-  SetupEvalTree();
+  if(fdraw_vec.empty()) {
+    std::cout << "No evaluation requested\n";
+    return;
+  }
+  if(fpermutation_v.empty()) {
+    std::cout << "No permuations found\n";
+    return;
+  }
+
+  std::vector<std::vector<double>> drawn_values;
+  std::vector<std::pair<double, int>> max_results;
+  std::vector<std::pair<double, int>> min_results;
+  
+  TTree * eval_tree = SetupEvalTree(drawn_values);
+
+  GetBestWorstPermutations(drawn_values,
+			   max_results,
+			   min_results);   
+
+  Print(drawn_values,
+	max_results,
+	min_results);
+
+  eval_tree->Fill();
+  eval_tree->Write();
+
+  delete eval_tree;
 
 }
 
@@ -548,6 +692,6 @@ void VertexQuality::Evaluate() {
 void VertexQuality::Write() const {
 
   if(fvertex_tree_event) fvertex_tree_event->Write();
-  if(fvertex_tree_event_signal) fvertex_tree_event_signal->Write();
+  else std::cout << "WARNING: call to write vertex quality tree with nullptr\n";
 
 }

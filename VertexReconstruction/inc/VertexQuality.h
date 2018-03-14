@@ -61,12 +61,23 @@ class VertexQuality {
 		geoalgo::Point_t const & true_nu_vtx,
 		std::vector<size_t> const & track_v,
 		std::vector<size_t> const & shower_v);
-  void SetupEvalTree();
+  TTree * SetupEvalTree(std::vector<std::vector<double>> & drawn_values);
+  std::string GetPermString(std::vector<double> const & permutation);
+  double DrawHist(std::string const & draw,
+		  std::string const & binning,
+		  std::string const & weight);
+  void GetBestWorstPermutations(std::vector<std::vector<double>> & drawn_values,
+				std::vector<std::pair<double, int>> & max_results,
+				std::vector<std::pair<double, int>> & min_results);
+  void Print(std::vector<std::vector<double>> const & drawn_values,
+	     std::vector<std::pair<double, int>> const & max_results,
+	     std::vector<std::pair<double, int>> const & min_results) const;
 
   std::string fname;
   std::string ftrack_producer;
   std::string fshower_producer;
   std::vector<std::vector<std::string>> fdraw_vec;
+  std::vector<std::string> fparameter_name;
 
   Storage const * fstorage;
 
@@ -78,7 +89,6 @@ class VertexQuality {
 
   TTree * fvertex_tree_event;
   bool frun_closest;
-  TTree * fvertex_tree_event_signal;
   bool frun_sig;
 
   double fstart_prox;
