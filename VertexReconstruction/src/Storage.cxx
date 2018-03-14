@@ -482,42 +482,44 @@ void Storage::ProcessEventChain() {
   fevent_chain->SetBranchAddress("reco_opflash_TotalPE", &freco_opflash_TotalPE);
   if(fheavy) fevent_chain->SetBranchAddress("reco_opflash_FastToTotal", &freco_opflash_FastToTotal);
 
-  fevent_chain->SetBranchAddress("reco_hit_producer_index", &freco_hit_producer_index);
-  fevent_chain->SetBranchAddress("reco_hit_StartTick", &freco_hit_StartTick);
-  fevent_chain->SetBranchAddress("reco_hit_EndTick", &freco_hit_EndTick);
-  fevent_chain->SetBranchAddress("reco_hit_PeakTime", &freco_hit_PeakTime);
   if(fheavy) {
-    fevent_chain->SetBranchAddress("reco_hit_SigmaPeakTime", &freco_hit_SigmaPeakTime);
-    fevent_chain->SetBranchAddress("reco_hit_RMS", &freco_hit_RMS);
-    fevent_chain->SetBranchAddress("reco_hit_PeakAmplitude", &freco_hit_PeakAmplitude);
-    fevent_chain->SetBranchAddress("reco_hit_SigmaPeakAmplitude", &freco_hit_SigmaPeakAmplitude);
-  }
-  fevent_chain->SetBranchAddress("reco_hit_SummedADC", &freco_hit_SummedADC);
-  fevent_chain->SetBranchAddress("reco_hit_Integral", &freco_hit_Integral);
-  if(fheavy) {
-    fevent_chain->SetBranchAddress("reco_hit_SigmaIntegral", &freco_hit_SigmaIntegral);
-    fevent_chain->SetBranchAddress("reco_hit_Multiplicity", &freco_hit_Multiplicity);
-    fevent_chain->SetBranchAddress("reco_hit_LocalIndex", &freco_hit_LocalIndex);
-    fevent_chain->SetBranchAddress("reco_hit_GoodnessOfFit", &freco_hit_GoodnessOfFit);
-    fevent_chain->SetBranchAddress("reco_hit_DegreesOfFreedom", &freco_hit_DegreesOfFreedom);
-  }
-  fevent_chain->SetBranchAddress("reco_hit_View", &freco_hit_View);
-  fevent_chain->SetBranchAddress("reco_hit_SignalType", &freco_hit_SignalType);
-  fevent_chain->SetBranchAddress("reco_hit_WireID_CryostatID", &freco_hit_WireID_CryostatID);
-  fevent_chain->SetBranchAddress("reco_hit_WireID_TPCID", &freco_hit_WireID_TPCID);
-  fevent_chain->SetBranchAddress("reco_hit_WireID_PlaneID", &freco_hit_WireID_PlaneID);
-  fevent_chain->SetBranchAddress("reco_hit_WireID_WireID", &freco_hit_WireID_WireID);
-  if(frmcm_bool) {
-    fevent_chain->SetBranchAddress("reco_hit_mc_type", &freco_hit_mc_type);
-    fevent_chain->SetBranchAddress("reco_hit_mc_index", &freco_hit_mc_index);
-    /*
-    fevent_chain->SetBranchAddress("reco_hit_true_ideFraction", &freco_hit_true_ideFraction);
-    fevent_chain->SetBranchAddress("reco_hit_true_isMaxIDE", &freco_hit_true_isMaxIDE);
-    fevent_chain->SetBranchAddress("reco_hit_true_ideNFraction", &freco_hit_true_ideNFraction);
-    fevent_chain->SetBranchAddress("reco_hit_true_isMaxIDEN", &freco_hit_true_isMaxIDEN);
-    */
-    fevent_chain->SetBranchAddress("reco_hit_true_numElectrons", &freco_hit_true_numElectrons);
-    if(fheavy) fevent_chain->SetBranchAddress("reco_hit_true_energy", &freco_hit_true_energy);
+    fevent_chain->SetBranchAddress("reco_hit_producer_index", &freco_hit_producer_index);
+    fevent_chain->SetBranchAddress("reco_hit_StartTick", &freco_hit_StartTick);
+    fevent_chain->SetBranchAddress("reco_hit_EndTick", &freco_hit_EndTick);
+    fevent_chain->SetBranchAddress("reco_hit_PeakTime", &freco_hit_PeakTime);
+    if(fheavy) {
+      fevent_chain->SetBranchAddress("reco_hit_SigmaPeakTime", &freco_hit_SigmaPeakTime);
+      fevent_chain->SetBranchAddress("reco_hit_RMS", &freco_hit_RMS);
+      fevent_chain->SetBranchAddress("reco_hit_PeakAmplitude", &freco_hit_PeakAmplitude);
+      fevent_chain->SetBranchAddress("reco_hit_SigmaPeakAmplitude", &freco_hit_SigmaPeakAmplitude);
+    }
+    fevent_chain->SetBranchAddress("reco_hit_SummedADC", &freco_hit_SummedADC);
+    fevent_chain->SetBranchAddress("reco_hit_Integral", &freco_hit_Integral);
+    if(fheavy) {
+      fevent_chain->SetBranchAddress("reco_hit_SigmaIntegral", &freco_hit_SigmaIntegral);
+      fevent_chain->SetBranchAddress("reco_hit_Multiplicity", &freco_hit_Multiplicity);
+      fevent_chain->SetBranchAddress("reco_hit_LocalIndex", &freco_hit_LocalIndex);
+      fevent_chain->SetBranchAddress("reco_hit_GoodnessOfFit", &freco_hit_GoodnessOfFit);
+      fevent_chain->SetBranchAddress("reco_hit_DegreesOfFreedom", &freco_hit_DegreesOfFreedom);
+    }
+    fevent_chain->SetBranchAddress("reco_hit_View", &freco_hit_View);
+    fevent_chain->SetBranchAddress("reco_hit_SignalType", &freco_hit_SignalType);
+    fevent_chain->SetBranchAddress("reco_hit_WireID_CryostatID", &freco_hit_WireID_CryostatID);
+    fevent_chain->SetBranchAddress("reco_hit_WireID_TPCID", &freco_hit_WireID_TPCID);
+    fevent_chain->SetBranchAddress("reco_hit_WireID_PlaneID", &freco_hit_WireID_PlaneID);
+    fevent_chain->SetBranchAddress("reco_hit_WireID_WireID", &freco_hit_WireID_WireID);
+    if(frmcm_bool) {
+      fevent_chain->SetBranchAddress("reco_hit_mc_type", &freco_hit_mc_type);
+      fevent_chain->SetBranchAddress("reco_hit_mc_index", &freco_hit_mc_index);
+      /*
+	fevent_chain->SetBranchAddress("reco_hit_true_ideFraction", &freco_hit_true_ideFraction);
+	fevent_chain->SetBranchAddress("reco_hit_true_isMaxIDE", &freco_hit_true_isMaxIDE);
+	fevent_chain->SetBranchAddress("reco_hit_true_ideNFraction", &freco_hit_true_ideNFraction);
+	fevent_chain->SetBranchAddress("reco_hit_true_isMaxIDEN", &freco_hit_true_isMaxIDEN);
+      */
+      fevent_chain->SetBranchAddress("reco_hit_true_numElectrons", &freco_hit_true_numElectrons);
+      if(fheavy) fevent_chain->SetBranchAddress("reco_hit_true_energy", &freco_hit_true_energy);
+    }
   }
 
   fevent_chain->SetBranchAddress("reco_track_producer_index", &freco_track_producer_index);
@@ -530,6 +532,7 @@ void Storage::ProcessEventChain() {
     fevent_chain->SetBranchAddress("reco_track_LastValidPoint", &freco_track_LastValidPoint);
     fevent_chain->SetBranchAddress("reco_track_CountValidPoints", &freco_track_CountValidPoints);
   }
+  std::cout << "setup reco_track_X\n";
   fevent_chain->SetBranchAddress("reco_track_X", &freco_track_X);
   fevent_chain->SetBranchAddress("reco_track_Y", &freco_track_Y);
   fevent_chain->SetBranchAddress("reco_track_Z", &freco_track_Z);
