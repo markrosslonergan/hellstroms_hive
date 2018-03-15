@@ -546,7 +546,6 @@ void VertexQuality::Run(ParticleAssociations const & pas,
 TTree * VertexQuality::SetupEvalTree(std::vector<std::vector<double>> & drawn_values) {
   
   TTree * eval_tree = new TTree("eval_tree", "");
-  //eval_tree->Branch("permutation_v", &fpermutation_v);
   eval_tree->Branch("draw_vec", &fdraw_vec);
   eval_tree->Branch("drawn_values", &drawn_values);
   return eval_tree;

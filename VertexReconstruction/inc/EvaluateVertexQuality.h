@@ -12,6 +12,8 @@
 #include "TCanvas.h"
 #include "TH1.h"
 #include "TGraph.h"
+#include "TLegend.h"
+#include "TMath.h"
 
 
 class EvaluateVertexQuality {
@@ -55,14 +57,18 @@ class EvaluateVertexQuality {
   std::vector<size_t> FindPermutations(std::vector<double> const & best_permutation, size_t const parameter_index);
   void PlotParameters(std::vector<std::vector<double>> const & drawn_values,
 		      std::vector<std::pair<double, int>> const & max_results,
-		      std::string const & title_suffix);
+		      std::string const & title_suffix,
+		      std::string const & name_suffix);
   void PlotGraph(std::vector<double> const & drawn_value_v, 
 		 std::vector<size_t> const & plot_permutations, 
 		 size_t const draw_vec_index, 
 		 size_t const parameter_index,
-		 std::string const & title_suffix);
+		 std::string const & title_suffix,
+		 std::string const & name_suffix);
   void DrawGraphs();
+  void DrawGraphsSupimp();
 
+  std::map<std::string, int> fcolor_map;
   std::vector<std::vector<std::string>> fdraw_vec;
   std::vector<std::string> fparameter_name;
   std::vector<std::vector<double>> fpermutation_v;
