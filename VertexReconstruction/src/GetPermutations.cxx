@@ -33,6 +33,8 @@ void Permutations::AddParameter(std::string const & name,
 
 void Permutations::Get() {
 
+  if(parameter_min.empty()) return;
+
   bool continue_bool;
   std::vector<double> parameters = parameter_min;
   for(size_t i = 0; i < parameter_set.size(); ++i) {
