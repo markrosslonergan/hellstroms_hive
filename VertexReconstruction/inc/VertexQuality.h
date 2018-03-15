@@ -61,15 +61,15 @@ class VertexQuality {
 		geoalgo::Point_t const & true_nu_vtx,
 		std::vector<size_t> const & track_v,
 		std::vector<size_t> const & shower_v);
-  TTree * SetupEvalTree(std::vector<std::vector<double>> & drawn_values);
+  TTree * SetupEvalTree(std::vector<std::vector<std::vector<double>>> & drawn_values);
   std::string GetPermString(std::vector<double> const & permutation);
-  double DrawHist(std::string const & draw,
-		  std::string const & binning,
-		  std::string const & weight);
-  void GetBestWorstPermutations(std::vector<std::vector<double>> & drawn_values,
+  std::vector<double> DrawHist(std::string const & draw,
+			       std::string const & binning,
+			       std::string const & weight);
+  void GetBestWorstPermutations(std::vector<std::vector<std::vector<double>>> & drawn_values,
 				std::vector<std::pair<double, int>> & max_results,
 				std::vector<std::pair<double, int>> & min_results);
-  void Print(std::vector<std::vector<double>> const & drawn_values,
+  void Print(std::vector<std::vector<std::vector<double>>> const & drawn_values,
 	     std::vector<std::pair<double, int>> const & max_results,
 	     std::vector<std::pair<double, int>> const & min_results) const;
 
