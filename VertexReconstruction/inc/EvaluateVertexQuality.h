@@ -108,8 +108,6 @@ class EvaluateVertexQuality {
   std::vector<std::vector<std::string>> * feval_draw_vec;
   std::vector<std::vector<double>> * feval_permutation_v;
   std::vector<std::vector<double>> * fdrawn_values;
-  std::vector<std::pair<double, int>> * fmax_results;
-  std::vector<std::pair<double, int>> * fmin_results;
 
 };
 

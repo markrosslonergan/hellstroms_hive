@@ -90,8 +90,6 @@ void EvaluateVertexQuality::Initialize() {
   feval_draw_vec = nullptr;
   feval_permutation_v = nullptr;
   fdrawn_values = nullptr;
-  fmax_results = nullptr;
-  fmin_results = nullptr;
 
 }
 
@@ -165,8 +163,6 @@ void EvaluateVertexQuality::SetupEvalChain() {
   feval_chain->SetBranchAddress("draw_vec", &feval_draw_vec);
   feval_chain->SetBranchAddress("permutation_v", &feval_permutation_v);
   feval_chain->SetBranchAddress("drawn_values", &fdrawn_values);
-  feval_chain->SetBranchAddress("max_results", &fmax_results);
-  feval_chain->SetBranchAddress("min_results", &fmin_results);
 
 }
 

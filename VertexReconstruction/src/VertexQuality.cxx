@@ -543,16 +543,12 @@ void VertexQuality::Run(ParticleAssociations const & pas,
 }
 
 
-TTree * VertexQuality::SetupEvalTree(std::vector<std::vector<double>> & drawn_values,
-				     std::vector<std::pair<double, int>> & max_results,
-				     std::vector<std::pair<double, int>> & min_results) {
+TTree * VertexQuality::SetupEvalTree(std::vector<std::vector<double>> & drawn_values) {
   
   TTree * eval_tree = new TTree("eval_tree", "");
-  eval_tree->Branch("permutation_v", &fpermutation_v);
+  //eval_tree->Branch("permutation_v", &fpermutation_v);
   eval_tree->Branch("draw_vec", &fdraw_vec);
   eval_tree->Branch("drawn_values", &drawn_values);
-  eval_tree->Branch("max_results", &max_results);
-  eval_tree->Branch("min_results", &min_results);
   return eval_tree;
 
 };
@@ -669,9 +665,7 @@ void VertexQuality::Evaluate() {
   std::vector<std::pair<double, int>> max_results;
   std::vector<std::pair<double, int>> min_results;
   
-  TTree * eval_tree = SetupEvalTree(drawn_values,
-				    max_results,
-				    min_results);
+  TTree * eval_tree = SetupEvalTree(drawn_values);
 
   GetBestWorstPermutations(drawn_values,
 			   max_results,
