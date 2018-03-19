@@ -8,10 +8,10 @@
 #include "ParticleAssociations.h"
 
 #include "TTree.h"
+#include "TCanvas.h"
+#include "TH1.h"
 
 #include "GeoAABox.h"
-
-#include "EvaluateVertexQuality.h"
 
 
 class VertexQuality {
@@ -21,10 +21,11 @@ class VertexQuality {
   VertexQuality(std::string const & name = "VertexQuality");
   ~VertexQuality();
 
+  std::vector<std::string> const & GetPerformanceQuantities();
   void SetProducers(std::string const & track_producer,
 		    std::string const & shower_producer);
   void AddPermutations(std::vector<std::vector<double>> const & permutation_v);
-  void AddParameterToDraw(std::vector<std::string> const & param);
+  void AddPerformanceMetric(std::vector<std::string> const & param);
   void SetParameters(double const start_prox,
                      double const shower_prox,
                      double const max_bp_dist,
@@ -36,6 +37,23 @@ class VertexQuality {
   void RunSig();
   void Run(ParticleAssociations const & pas,
 	   bool const track_only = false);
+  std::vector<double> DrawHist(TTree * tree,
+			       std::string const & draw,
+			       std::string const & binning,
+			       std::string const & weight) const;
+  void GetDrawnValues(TTree * tree,
+		      std::vector<std::vector<double>> const & permutation_v,
+		      std::vector<std::vector<std::string>> const & draw_vec,
+		      std::vector<std::vector<std::vector<double>>> & drawn_values,
+		      std::vector<std::pair<double, int>> & max_results,
+		      std::vector<std::pair<double, int>> & min_results,
+		      bool const fill_drawn_values = true) const;
+  
+  void Print(std::vector<std::vector<double>> const & permutation_v,
+	     std::vector<std::vector<std::string>> const & draw_vec,
+	     std::vector<std::vector<std::vector<double>>> const & drawn_values,
+	     std::vector<std::pair<double, int>> const & max_results,
+	     std::vector<std::pair<double, int>> const & min_results) const;
   void Evaluate();
   void Write() const;
   
@@ -62,21 +80,12 @@ class VertexQuality {
 		std::vector<size_t> const & track_v,
 		std::vector<size_t> const & shower_v);
   TTree * SetupEvalTree(std::vector<std::vector<std::vector<double>>> & drawn_values);
-  std::string GetPermString(std::vector<double> const & permutation);
-  std::vector<double> DrawHist(std::string const & draw,
-			       std::string const & binning,
-			       std::string const & weight);
-  void GetBestWorstPermutations(std::vector<std::vector<std::vector<double>>> & drawn_values,
-				std::vector<std::pair<double, int>> & max_results,
-				std::vector<std::pair<double, int>> & min_results);
-  void Print(std::vector<std::vector<std::vector<double>>> const & drawn_values,
-	     std::vector<std::pair<double, int>> const & max_results,
-	     std::vector<std::pair<double, int>> const & min_results) const;
-
+  std::string GetPermString(std::vector<double> const & permutation) const;
   std::string fname;
   std::string ftrack_producer;
   std::string fshower_producer;
   std::vector<std::vector<std::string>> fdraw_vec;
+  std::vector<std::string> fperformance_quantities;
   std::vector<std::string> fparameter_name;
 
   Storage const * fstorage;

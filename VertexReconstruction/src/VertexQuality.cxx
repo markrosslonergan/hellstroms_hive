@@ -9,6 +9,7 @@ VertexQuality::VertexQuality(std::string const & name) :
   frun_closest(false),
   frun_sig(false) {
 
+  fperformance_quantities = {"mean", "ratio_eq_1"};
   fparameter_name = {"start_prox", "shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"};
 
 }
@@ -17,6 +18,13 @@ VertexQuality::VertexQuality(std::string const & name) :
 VertexQuality::~VertexQuality() {
 
   if(fvertex_tree_event) delete fvertex_tree_event;
+
+}
+
+
+std::vector<std::string> const & VertexQuality::GetPerformanceQuantities() {
+
+  return fperformance_quantities;
 
 }
 
@@ -83,7 +91,7 @@ void VertexQuality::AddPermutations(std::vector<std::vector<double>> const & per
 }
 
 
-void VertexQuality::AddParameterToDraw(std::vector<std::string> const & param) {
+void VertexQuality::AddPerformanceMetric(std::vector<std::string> const & param) {
 
   fdraw_vec.push_back(param);
 
@@ -553,7 +561,7 @@ TTree * VertexQuality::SetupEvalTree(std::vector<std::vector<std::vector<double>
 };
 
 
-std::string VertexQuality::GetPermString(std::vector<double> const & permutation) {
+std::string VertexQuality::GetPermString(std::vector<double> const & permutation) const {
   
   std::string result;
   for(size_t i = 0; i < permutation.size(); ++i) {
@@ -566,14 +574,15 @@ std::string VertexQuality::GetPermString(std::vector<double> const & permutation
 }
 
 
-std::vector<double> VertexQuality::DrawHist(std::string const & draw,
+std::vector<double> VertexQuality::DrawHist(TTree * tree,
+					    std::string const & draw,
 					    std::string const & binning,
-					    std::string const & weight) {
+					    std::string const & weight) const {
   
   std::vector<double> results;
 
   TCanvas * canvas = new TCanvas("temp");
-  fvertex_tree_event->Draw((draw + ">>h" + binning).c_str(), weight.c_str());
+  tree->Draw((draw + ">>h" + binning).c_str(), weight.c_str());
   TH1 * h = (TH1*)gDirectory->Get("h");
 
   results.push_back(h->GetMean());
@@ -588,34 +597,41 @@ std::vector<double> VertexQuality::DrawHist(std::string const & draw,
 
 
 
-void VertexQuality::GetBestWorstPermutations(std::vector<std::vector<std::vector<double> > > & drawn_values,
-					     std::vector<std::pair<double, int>> & max_results,
-					     std::vector<std::pair<double, int>> & min_results) {
+void VertexQuality::GetDrawnValues(TTree * tree,
+				   std::vector<std::vector<double>> const & permutation_v,
+				   std::vector<std::vector<std::string>> const & draw_vec,
+				   std::vector<std::vector<std::vector<double> > > & drawn_values,
+				   std::vector<std::pair<double, int>> & max_results,
+				   std::vector<std::pair<double, int>> & min_results,
+				   bool const fill_drawn_values) const {
   
-  drawn_values.clear();
-  drawn_values.reserve(fdraw_vec.size());
-  for(size_t i = 0; i < fdraw_vec.size(); ++i) {
-    drawn_values.push_back({});
-    drawn_values.back().reserve(fpermutation_v.size());
+  if(fill_drawn_values) {
+    drawn_values.clear();
+    drawn_values.reserve(draw_vec.size());
+    for(size_t i = 0; i < draw_vec.size(); ++i) {
+      drawn_values.push_back({});
+      drawn_values.back().reserve(permutation_v.size());
+    }
   }
   max_results.clear();
-  max_results.resize(fdraw_vec.size(), {0, -1});
+  max_results.resize(draw_vec.size(), {0, -1});
   min_results.clear();
-  min_results.resize(fdraw_vec.size(), {DBL_MAX, -1});
+  min_results.resize(draw_vec.size(), {DBL_MAX, -1});
 
-  for(size_t i = 0; i < fpermutation_v.size(); ++i) {
+  for(size_t i = 0; i < permutation_v.size(); ++i) {
 
-    std::vector<double> const & permutation = fpermutation_v.at(i);
+    std::vector<double> const & permutation = permutation_v.at(i);
     std::string const perm_weight = GetPermString(permutation);
 
-    for(size_t j = 0; j < fdraw_vec.size(); ++j) {
+    for(size_t j = 0; j < draw_vec.size(); ++j) {
 
-      std::vector<std::string> const & draw = fdraw_vec.at(j);
+      std::vector<std::string> const & draw = draw_vec.at(j);
       std::string const & draw_weight = draw.at(2);
       std::string modified_weight = perm_weight;
       if(!draw_weight.empty()) modified_weight += " && " + draw_weight;
-      drawn_values.at(j).push_back(DrawHist(draw.at(0), draw.at(1), modified_weight));
-      double const result = drawn_values.at(j).back().at(0);
+
+      if(fill_drawn_values) drawn_values.at(j).push_back(DrawHist(tree, draw.at(0), draw.at(1), modified_weight));
+      double const result = drawn_values.at(j).back().front();
       if(result > max_results.at(j).first) {
 	max_results.at(j).first = result;
 	max_results.at(j).second = i;
@@ -632,25 +648,33 @@ void VertexQuality::GetBestWorstPermutations(std::vector<std::vector<std::vector
 }
 
 
-void VertexQuality::Print(std::vector<std::vector<std::vector<double> > > const & drawn_values,
+void VertexQuality::Print(std::vector<std::vector<double>> const & permutation_v,
+			  std::vector<std::vector<std::string>> const & draw_vec,
+			  std::vector<std::vector<std::vector<double> > > const & drawn_values,
 			  std::vector<std::pair<double, int>> const & max_results,
 			  std::vector<std::pair<double, int>> const & min_results) const {
   
   std::cout << "\n";
   for(size_t i = 0; i < drawn_values.size(); ++i) {
-    std::vector<std::string> const & draw = fdraw_vec.at(i);
+    std::vector<std::string> const & draw = draw_vec.at(i);
     std::vector<std::vector<double>> const & drawn_value = drawn_values.at(i);
     for(std::string const & option : draw) std::cout << option << " | ";
     std::cout << "\n";
-    for(size_t j = 0; j < fpermutation_v.size(); ++j) {
-      std::vector<double> const & permutation = fpermutation_v.at(j);
+    /*
+    for(size_t j = 0; j < permutation_v.size(); ++j) {
+      std::vector<double> const & permutation = permutation_v.at(j);
       std::cout << "Drawn value: ";
       for(double const d : drawn_value.at(j)) std::cout << d << " ";
       for(size_t k = 0; k < permutation.size(); ++k) std::cout << fparameter_name.at(k) << ": " << permutation.at(k) << " ";
       std::cout << "\n";
     }
-    std::cout << "\nmax: " << max_results.at(i).first << " " << max_results.at(i).second << "\n"
-	      << "min: " << min_results.at(i).first << " " << min_results.at(i).second << "\n\n";
+    */
+    std::cout << "\nmax: " << max_results.at(i).first;;
+    for(double const value : permutation_v.at(max_results.at(i).second)) std::cout << " " << value;
+    std::cout << "\nmin: " << min_results.at(i).first;
+    for(double const value : permutation_v.at(min_results.at(i).second)) std::cout << " " << value;
+    std::cout << "\n\n";
+
   }
 
 }
@@ -664,7 +688,7 @@ void VertexQuality::Evaluate() {
   }
   if(fpermutation_v.empty()) {
     std::cout << "No permuations found\n";
-    return;
+    fpermutation_v.push_back({0, 0, 0, 0, 0});
   }
 
   std::vector<std::vector<std::vector<double> > > drawn_values;
@@ -672,14 +696,18 @@ void VertexQuality::Evaluate() {
   std::vector<std::pair<double, int> > min_results;
   
   TTree * eval_tree = SetupEvalTree(drawn_values);
-  std::vector<std::string> performance_quantities = {"mean", "ratio_eq_1"};
-  eval_tree->Branch("performance_quantities", &performance_quantities);
+  eval_tree->Branch("performance_quantities", &fperformance_quantities);
 
-  GetBestWorstPermutations(drawn_values,
-			   max_results,
-			   min_results);   
+  GetDrawnValues(fvertex_tree_event,
+		 fpermutation_v,
+		 fdraw_vec,
+		 drawn_values,
+		 max_results,
+		 min_results);   
 
-  Print(drawn_values,
+  Print(fpermutation_v,
+	fdraw_vec,
+	drawn_values,
 	max_results,
 	min_results);
 
