@@ -12,6 +12,8 @@
 #include "TCanvas.h"
 #include "TH1.h"
 #include "TGraph.h"
+#include "TLegend.h"
+#include "TMath.h"
 
 
 class EvaluateVertexQuality {
@@ -20,6 +22,7 @@ class EvaluateVertexQuality {
 
   EvaluateVertexQuality(char const * vq_name,
 			char const * perm_name,
+			char const * eval_name,
 			std::vector<char const *> const & files = {});
   ~EvaluateVertexQuality();
 
@@ -31,11 +34,13 @@ class EvaluateVertexQuality {
 
   bool CheckFile(char const * vq_name,
 		 char const * perm_name,
+		 char const * eval_name,
 		 std::vector<char const *> const & files) const;
   void Initialize();
   void AddFiles(std::vector<char const *> const & files);  
   void FillPermutationV();
   void SetupVQChain();
+  void SetupEvalChain();
   std::string GetPermString(std::vector<double> const & permutation);
   double DrawHist(std::string const & draw,
 		  std::string const & binning,
@@ -43,17 +48,27 @@ class EvaluateVertexQuality {
   void GetBestWorstPermutations(std::vector<std::vector<double>> & drawn_values,
 				std::vector<std::pair<double, int>> & max_results,
 				std::vector<std::pair<double, int>> & min_results);
+  void Print(std::vector<std::vector<double>> const & drawn_values,
+	     std::vector<std::pair<double, int>> const & max_results,
+	     std::vector<std::pair<double, int>> const & min_results) const;
+  void GetEval(std::vector<std::vector<double>> & drawn_values,
+	       std::vector<std::pair<double, int>> & max_results,
+	       std::vector<std::pair<double, int>> & min_results);
   std::vector<size_t> FindPermutations(std::vector<double> const & best_permutation, size_t const parameter_index);
   void PlotParameters(std::vector<std::vector<double>> const & drawn_values,
 		      std::vector<std::pair<double, int>> const & max_results,
-		      std::string const & title_suffix);
+		      std::string const & title_suffix,
+		      std::string const & name_suffix);
   void PlotGraph(std::vector<double> const & drawn_value_v, 
 		 std::vector<size_t> const & plot_permutations, 
 		 size_t const draw_vec_index, 
 		 size_t const parameter_index,
-		 std::string const & title_suffix);
+		 std::string const & title_suffix,
+		 std::string const & name_suffix);
   void DrawGraphs();
+  void DrawGraphsSupimp();
 
+  std::map<std::string, int> fcolor_map;
   std::vector<std::vector<std::string>> fdraw_vec;
   std::vector<std::string> fparameter_name;
   std::vector<std::vector<double>> fpermutation_v;
@@ -63,6 +78,7 @@ class EvaluateVertexQuality {
 
   TChain * fvq_chain;
   TChain * fperm_chain;
+  TChain * feval_chain;
 
   double fstart_prox;
   double fshower_prox;
@@ -94,6 +110,10 @@ class EvaluateVertexQuality {
   std::vector<double> * fshower_matching_ratio_v;
   std::vector<int> * fshower_true_pdg_v;
   std::vector<int> * fshower_true_origin_v;
+
+  std::vector<std::vector<std::string>> * feval_draw_vec;
+  std::vector<std::vector<double>> * feval_permutation_v;
+  std::vector<std::vector<double>> * fdrawn_values;
 
 };
 

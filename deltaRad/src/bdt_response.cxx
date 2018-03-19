@@ -14,18 +14,25 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	leg->SetLineColor(kWhite);
 
 	std::vector<bdt_file*> files= {bdt_sig, bdt_bkg};
-	std::vector<std::string> which_cuts = {bdt_sig->getStageCuts(1,-9,-9), bdt_bkg->getStageCuts(1,-9,-9)};
+	std::vector<std::string> which_cuts = {bdt_sig->getStageCuts(0,-9,-9), bdt_bkg->getStageCuts(0,-9,-9)};
+//	std::vector<std::string> which_cuts = {"1", bdt_bkg->getStageCuts(0,-9,-9)};
 	std::vector<TH1*> h_bdt;
+    
 
+	std::cout<<"CUTS: "<<which_cuts.size()<<" "<<which_cuts.at(0)<<" "<<which_cuts.at(1)<<std::endl;
 	int i=0;
 	for(auto &file: files){
 		std::cout<<"On file: "<<file->name<<" || "<<file->tag<<std::endl;
 
-		bdt_variable bdtvar = file->getBDTVariable(info);
-
+		bdt_variable bdtvar = file->getBDTVariable(info.identifier);
+		std::string saf = file->tag+"_"+bdtvar.safe_name+"_"+bdt_type;
+		std::cout<<"saf: "<<saf<<std::endl;
 		fout->cd();
-		h_bdt.push_back((TH1*)file->getTH1(bdtvar, which_cuts.at(i), file->tag+"_"+bdtvar.name+"_"+bdt_type ,1.0));
+          	std::cout<<"About to get TH1"<<std::endl;
+		h_bdt.push_back( file->getTH1(bdtvar, which_cuts.at(i), saf ,1.0));
 		h_bdt.back()->SetDirectory(0);	
+
+		std::cout<<"EVENTS: "<<h_bdt.back()->Integral()<<std::endl;
 
 		c->cd(1);
 		h_bdt.back()->SetTitle(info.name.c_str());
@@ -45,9 +52,15 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		h_bdt.back()->Draw("hist same");
 		i++;
 	}
+	std::cout<<"DONE:"<<std::endl;
 	c->cd(1);
 	leg->Draw();
 
+	fout->cd();
+	c->Write();
+	c->Print(("response/BDT_response_"+info.identifier+".pdf").c_str(),"pdf");
+	//c->Print(("response/BDT_response_"+info.identifier+".png").c_str(),"png");
+	return 0;
 
 
 	std::vector<double> mva;
@@ -84,9 +97,8 @@ int bdt_response::plot_bdt_response(TFile *fout){
 
 	TGraph * g_sig_eff = new TGraph( mva.size(), &mva[0], &sig_eff[0]);
 	TGraph * g_bkg_eff = new TGraph( mva.size(), &mva[0], &bkg_eff[0]);
-	g_sig_eff->Draw("al");	
-	g_bkg_eff->Draw("l");	
-		
+//	g_sig_eff->Draw("al");	
+//	g_bkg_eff->Draw("l");	
 
 	g_sig_eff->SetLineWidth(2);
 	g_bkg_eff->SetLineWidth(2);
@@ -101,12 +113,13 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	TLegend *leff = new TLegend(0.12,0.12,0.49,0.39);
 	leff->AddEntry(g_sig_eff,"Signal Efficiency","l");
 	leff->AddEntry(g_bkg_eff,"Background Efficiency","l");
-	leff->Draw();
+//	leff->Draw();
 
 
 	fout->cd();
 	c->Write();
 	c->SaveAs(("response/BDT_response_"+info.identifier+".pdf").c_str(),"pdf");
+	c->SaveAs(("response/BDT_response_"+info.identifier+".png").c_str(),"png");
 
 	return 0;
 /*

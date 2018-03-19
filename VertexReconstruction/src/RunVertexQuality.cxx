@@ -40,10 +40,32 @@ int main(int const argc, char const * argv[]) {
   vq.RunSig();
   vq.SetProducers(track_producer, shower_producer);
 
-  vq.AddParameterToDraw({"correct_shower_total / true_shower_total", "", "tpc_volume_contained == 1",
+  std::string const weight = "tpc_volume_contained == 1 && is_nc_delta_rad == 1";
+  std::string const ratio_binning = "(101, 0, 1.01)";
+
+  vq.AddParameterToDraw({"correct_track_total / true_track_total", ratio_binning, weight,
+	"track_completeness", "", "Track Completeness"});
+  vq.AddParameterToDraw({"correct_track_total / reco_track_total", ratio_binning, weight,
+	"track_cleanliness", "", "Track Cleanliness"});
+  vq.AddParameterToDraw({"(correct_track_total / reco_track_total) * (correct_track_total / true_track_total)", ratio_binning, weight,
+	"track_combined", "", "Track Combined"});
+
+  vq.AddParameterToDraw({"correct_shower_total / true_shower_total", ratio_binning, weight,
+	"shower_completeness", "", "Shower Completeness"});
+  vq.AddParameterToDraw({"correct_shower_total / reco_shower_total", ratio_binning, weight,
+	"shower_cleanliness", "", "Shower Cleanliness"});
+  vq.AddParameterToDraw({"(correct_shower_total / reco_shower_total) * (correct_shower_total / true_shower_total)", ratio_binning, weight,
+	"shower_combined", "", "Shower Combined"});
+
+  vq.AddParameterToDraw({"(correct_track_total + correct_shower_total) / (true_track_total + true_shower_total)", ratio_binning, weight,
 	"completeness", "", "Completeness"});
-  vq.AddParameterToDraw({"correct_shower_total / reco_shower_total", "", "tpc_volume_contained == 1",
+  vq.AddParameterToDraw({"(correct_track_total + correct_shower_total) / (reco_track_total + reco_shower_total)", ratio_binning, weight,
 	"cleanliness", "", "Cleanliness"});
+  vq.AddParameterToDraw({"(correct_track_total + correct_shower_total) / (true_track_total + true_shower_total) * (correct_track_total + correct_shower_total) / (reco_track_total + reco_shower_total)", ratio_binning, weight,
+	"combined", "", "Combined"});
+  
+  vq.AddParameterToDraw({"dist", "", weight,
+	"dist", "", "Distance"});  
   
   vq.AddPermutations(permutation_v);
 

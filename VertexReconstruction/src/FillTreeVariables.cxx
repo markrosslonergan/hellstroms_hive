@@ -1060,7 +1060,7 @@ double FillTreeVariables::FindBPDist(geoalgo::Cone_t const & cone) {
   geoalgo::Point_t const & start = cone.Start();
   geoalgo::Point_t const & dir = cone.Dir();
 
-  if(ftpc_volume.Contain(start) && start.at(0) != 0 && start.at(1) != 0 && start.at(2) != 0) {
+  if(ftpc_volume.Contain(start)) {
     std::vector<geoalgo::Point_t> const pv = falgo.Intersection(ftpc_volume, cone, true);
     if(pv.empty()) {
       std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ << "\nERROR: shower backwards projection does not intersect with tpc boundary:\n"

@@ -20,6 +20,7 @@
 #include "bdt_file.h"
 #include "bdt_datamc.h"
 #include "bdt_var.h"
+#include "bdt_precalc.h"
 #include "bdt_info.h"
 #include "bdt_train.h"
 #include "bdt_app.h"
@@ -134,11 +135,11 @@ int main (int argc, char *argv[]){
 
 
 	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, BDT_CUT )		
-	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_v2.0.root",	"NCDeltaSignalPure",	   "hist","LEEPhoton",  kRed-7, signal_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_cosmics_v2.0.root", "NCDeltaSignalCosmics", "hist","LEEPhoton",  kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir+"samples/mcc86/", "merged.bnb_v1.0.root",	"BNBPure",	   "hist","LEEPhoton",  kBlue-4, bkg_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86_withcalo.root", "BNBCosmics", "hist","LEEPhoton",  kBlue-4, bkg_flow);
-	bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "merged.intime_v1.0.root" ,"IntimeCosmics","hist","LEEPhoton", kGreen-3, cosmic_flow);
+	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_v2.0.root",	"NCDeltaSignalPure",	   "hist","LEEPhoton/",  kRed-7, signal_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.ncsignal_cosmics_v2.0.root", "NCDeltaSignalCosmics", "hist","LEEPhoton/",  kRed-7, signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir+"samples/mcc86/", "merged.bnb_v1.0.root",	"BNBPure",	   "hist","LEEPhoton/",  kBlue-4, bkg_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86_withcalo.root", "BNBCosmics", "hist","LEEPhoton/",  kBlue-4, bkg_flow);
+	bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "merged.intime_v1.0.root" ,"IntimeCosmics","hist","LEEPhoton/", kGreen-3, cosmic_flow);
 
 	bdt_file *data5e19 = new bdt_file(dir+"samples/mcc87/", "merged.data5e19_v10.root" ,"Data5e19","E1","LEEPhotonAnalysisData", kBlack, data_flow);
 	bdt_file *bnbext = new bdt_file(dir+"samples/mcc87/", "merged.bnbext_v7.0.root" ,"BNBext","E1","LEEPhotonAnalysisData", kBlack, data_flow);
@@ -647,6 +648,10 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			}
 		}
 
+
+	} else if(mode_option == "precalc"){
+		bdt_precalc pre(signal_pure);
+		pre.addTrackInfo();
 
 	}
 

@@ -13,8 +13,8 @@ int main(int const argc, char const * argv[]) {
   permutations.AddParameter("start_prox", 4);
   permutations.AddParameter("shower_prox", 9, 4, 40);
   permutations.AddParameter("max_bp_dist", 9, 4, 40);
-  permutations.AddParameter("cpoa_vert_prox", 3, 3, 12);
-  permutations.AddParameter("cpoa_trackend_prox", 3, 3, 12);
+  permutations.AddParameter("cpoa_vert_prox", 5, 2, 12);
+  permutations.AddParameter("cpoa_trackend_prox", 5, 2, 12);
 
   /*
   permutations.AddParameter("start_prox", 4);
@@ -32,7 +32,7 @@ int main(int const argc, char const * argv[]) {
   permutations.AddPermutation({4, 4, 24, 13, 10});
   */
 
-  permutations.GetFiles("permutations", 160);
+  permutations.GetFiles("permutations", 360);
   permutations.Check();
   
   return 0;
