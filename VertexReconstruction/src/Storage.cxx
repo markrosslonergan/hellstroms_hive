@@ -444,6 +444,11 @@ void Storage::ProcessMetaChain() {
 
 void Storage::ProcessEventChain() {
 
+  //if(fnumber_of_events ==0){
+//	fnumber_of_events = fevent_chain->GetEntries();
+  // }
+ 
+
   fevent_chain->SetBranchAddress("opflash_producer_indices", &fopflash_producer_indices);
   fevent_chain->SetBranchAddress("hit_producer_indices", &fhit_producer_indices);
   fevent_chain->SetBranchAddress("track_producer_indices", &ftrack_producer_indices);
