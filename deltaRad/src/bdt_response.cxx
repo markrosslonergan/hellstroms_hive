@@ -16,6 +16,7 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	std::vector<bdt_file*> files= {bdt_sig, bdt_bkg};
 	std::vector<std::string> which_cuts = {bdt_sig->getStageCuts(1,-9,-9), bdt_bkg->getStageCuts(1,-9,-9)};
 	std::vector<TH1*> h_bdt;
+    
 
 	int i=0;
 	for(auto &file: files){
@@ -24,7 +25,10 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		bdt_variable bdtvar = file->getBDTVariable(info);
 
 		fout->cd();
-		h_bdt.push_back((TH1*)file->getTH1(bdtvar, which_cuts.at(i), file->tag+"_"+bdtvar.name+"_"+bdt_type ,1.0));
+           std::cout<<"About to get TH1"<<std::endl;
+           TH1 * ttmp = file->getTH1(bdtvar, which_cuts.at(i), file->tag+"_"+bdtvar.safe_unit+"_"+bdt_type ,1.0);
+           std::cout<<"Got TH1"<<std::endl;
+		h_bdt.push_back(ttmp);
 		h_bdt.back()->SetDirectory(0);	
 
 		c->cd(1);

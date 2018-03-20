@@ -33,6 +33,8 @@ void Permutations::AddParameter(std::string const & name,
 
 void Permutations::Get() {
 
+  if(parameter_min.empty()) return;
+
   bool continue_bool;
   std::vector<double> parameters = parameter_min;
   for(size_t i = 0; i < parameter_set.size(); ++i) {
@@ -131,6 +133,8 @@ void Permutations::GetFiles(std::string const & file_name, int const job_number)
 
 std::vector<std::vector<double>> const & Permutations::ReadFile(char const * file_name) {
       
+  TDirectory * current = gDirectory;
+
   TFile * file = TFile::Open(file_name);
   if(!file) {
     std::cout << "Could not open " << file_name << "\n";
@@ -159,6 +163,7 @@ std::vector<std::vector<double>> const & Permutations::ReadFile(char const * fil
   }
 
   file->Close();
+  current->cd();
 
   return permutation_v;
 

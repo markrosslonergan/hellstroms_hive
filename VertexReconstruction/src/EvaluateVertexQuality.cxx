@@ -3,11 +3,63 @@
 #include "EvaluateVertexQuality.h"
 
 
+EvaluateVertexQuality::GraphAesthetics::GraphAesthetics(std::string const ilegend_name,
+							int const icolor,
+							int const imarker_type,
+							int const ipandora_line) :
+  legend_name(ilegend_name),
+  color(icolor),
+  marker_type(imarker_type),
+  pandora_line(ipandora_line) {}
+  
+
+EvaluateVertexQuality::PlotHelper::PlotHelper(std::string const & imetric_to_study,
+					      std::vector<std::string> const & imethod,
+					      std::vector<std::string> const & imetrics_to_draw,
+					      std::vector<std::string> const & iparameters_to_draw,
+					      std::vector<std::string> const & iperformance_quantities) :
+  metric_to_study(imetric_to_study, SIZE_MAX),
+  method(imethod) {
+    
+  for(std::string const & str : imetrics_to_draw) metrics_to_draw.emplace(str, SIZE_MAX);
+  for(std::string const & str : iparameters_to_draw) parameters_to_draw.emplace(str, SIZE_MAX);
+  for(std::string const & str : iperformance_quantities) performance_quantities.emplace(str, SIZE_MAX);
+  
+}
+
+
+EvaluateVertexQuality::PlotHelper::~PlotHelper() {
+
+  for(TGraph * graph : graph_v) delete graph;
+  
+}
+
+
+void EvaluateVertexQuality::PlotHelper::Print() {
+
+  std::cout << "metric_to_study: " << metric_to_study.first << " " << metric_to_study.second << "\nmethods:\n";
+  for(auto const & str : method) std::cout << "\t" << str << "\nmetrics_to_draw:\n";
+  for(auto const & p : metrics_to_draw) std::cout << "\t" << p.first << " " << p.second << "\n";
+  std::cout << "parameters_to_draw:\n";
+  for(auto const & p : parameters_to_draw) std::cout << "\t" << p.first << " " << p.second << "\n";
+  std::cout << "performance_quantities:\n";
+  for(auto const & p : performance_quantities) std::cout << "\t" << p.first << " " << p.second << "\n";  
+  std::cout << "\n";
+
+}
+
+
 EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
 					     char const * perm_name,
 					     char const * eval_name,
-					     std::vector<char const *> const & files) {
-  
+					     std::vector<char const *> const & files) :
+  fpandora_file(nullptr),
+  fpandora_tree(nullptr),
+  foutput_file(nullptr),
+  fvq_chain(new TChain(vq_name)),
+  fperm_chain(new TChain(perm_name)),
+  feval_chain(new TChain(eval_name)) {
+
   if(files.empty()) {
     std::cout << "Empty file list given to Storage\n";
     exit(1);
@@ -16,25 +68,39 @@ EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
   if(!CheckFile(vq_name, perm_name, eval_name, files)) exit(1);
   Initialize();
 
-  fvq_chain = new TChain(vq_name);
-  fperm_chain = new TChain(perm_name);
-  feval_chain = new TChain(eval_name);
-
   AddFiles(files);
   FillPermutationV();
   SetupVQChain();
   SetupEvalChain();
 
-  fcolor_map = {{"completeness", kRed}, {"cleanliness", kBlue}, {"combined", kMagenta}};
+  fmethod_map = {{"max", "Maximized"},
+		 {"min", "Minimized"}};
+
+  fxtitle_map = {{"start_prox", "start_prox"},
+		 {"shower_prox", "Maximum Shower Impact Parameter [cm]"},
+		 {"max_bp_dist", "Maximum Shower Backwards Projection Distance [cm]"},
+		 {"cpoa_vert_prox", "cpoa_vert_prox"},
+		 {"cpoa_trackend_prox", "cpoa_trackend_prox"}};
+
+  fgraph_aesthetic_map = {{"completeness", {"Completeness", kRed, 8}},
+			  {"shower_completeness", {"Shower Completeness", kRed+1, 23, 2}},
+			  {"track_completeness", {"Track Completeness", kBlue+1, 33, 2}},
+			  {"cleanliness", {"Cleanliness", kBlue, 8}}, 
+			  {"shower_cleanliness", {"Shower Cleanliness", kGreen+2, 23, 2}}, 
+			  {"track_cleanliness", {"Track Cleanliness", kMagenta+1, 33, 2}}, 
+			  {"combined", {"Combined", kMagenta, 8}},
+			  {"shower_combined", {"Shower Combined", kMagenta, 23}},
+			  {"track_combined", {"Track Combined", kMagenta, 33}},
+			  {"dist", {"Reco - True Distance [cm]", kGreen, 8}}};
 
 }
 
 
 EvaluateVertexQuality::~EvaluateVertexQuality() {
 
+  if(fpandora_file) fpandora_file->Close();
+  if(foutput_file) foutput_file->Close();
   delete fvq_chain;
-  for(std::vector<TGraph *> const & graph_v : fgraph_v) 
-    for(TGraph * graph : graph_v) delete graph; 
 
 }
 
@@ -69,7 +135,6 @@ bool EvaluateVertexQuality::CheckFile(char const * vq_name,
   }
   if(!eval_tree) {
     std::cout << "Could not find: " << eval_name << " in " << file_name << "\n";
-    result = false;
   }
 
   file->Close();
@@ -90,15 +155,44 @@ void EvaluateVertexQuality::Initialize() {
   fshower_true_origin_v = nullptr;
 
   feval_draw_vec = nullptr;
+  feval_performance_quantities = nullptr;
   feval_permutation_v = nullptr;
   fdrawn_values = nullptr;
 
 }
 
 
+TFile * EvaluateVertexQuality::LookForPandoraFile(char const * file_name) {
+
+  TFile * file = TFile::Open(file_name);
+
+  if(!file) {
+    std::cout << "File: " << file_name << " not found\n";
+    exit(1);
+  }
+
+  if(!file->GetListOfKeys()->Contains("permutation_tree")) {
+    fpandora_tree = dynamic_cast<TTree*>(file->Get(fvq_chain->GetName()));
+    if(!fpandora_tree) std::cout << "WARNING: could not find pandora tree " << fvq_chain->GetName() << "\n";
+    return file;
+  }
+
+  file->Close();
+  return nullptr;
+
+}
+
+
 void EvaluateVertexQuality::AddFiles(std::vector<char const *> const & files) {
 
-  for(char const * file : files) {
+  fpandora_file = LookForPandoraFile(files.back());  
+
+  size_t end;
+  if(fpandora_file) end = files.size() - 1;
+  else end = files.size();
+  
+  for(size_t i = 0; i < end; ++i) {
+    char const * file = files.at(i);
     fvq_chain->Add(file);
     fperm_chain->Add(file);
     feval_chain->Add(file);
@@ -112,14 +206,17 @@ void EvaluateVertexQuality::FillPermutationV() {
   TObjArray * branches = fperm_chain->GetListOfBranches();
   std::vector<double> parameters(branches->GetEntries(), -10000);
   for(int i = 0; i < branches->GetEntries(); ++i) {
-    fparameter_name.push_back(branches->At(i)->GetName());
-    fperm_chain->SetBranchAddress(branches->At(i)->GetName(), &parameters.at(i));
+    char const * name = branches->At(i)->GetName();
+    fparameter_name.push_back(name);
+    fperm_chain->SetBranchAddress(name, &parameters.at(i));
   }
 
   for(int i = 0; i < fperm_chain->GetEntries(); ++i) {
     fperm_chain->GetEntry(i);
     fpermutation_v.push_back(parameters);
   }
+
+  fvq.AddPermutations(fpermutation_v);
 
   delete fperm_chain;
 
@@ -163,6 +260,7 @@ void EvaluateVertexQuality::SetupVQChain() {
 void EvaluateVertexQuality::SetupEvalChain() {
 
   feval_chain->SetBranchAddress("draw_vec", &feval_draw_vec);
+  feval_chain->SetBranchAddress("performance_quantities", &feval_performance_quantities);
   feval_chain->SetBranchAddress("drawn_values", &fdrawn_values);
 
 }
@@ -175,25 +273,21 @@ void EvaluateVertexQuality::SetOutputFile(char const * file_name) {
 }
 
 
-void EvaluateVertexQuality::AddParameterToDraw(std::vector<std::string> const & param) {
+void EvaluateVertexQuality::AddPerformanceMetric(std::vector<std::string> const & param) {
 
   fdraw_vec.push_back(param);
-  fgraph_v.push_back({});
+  fdraw_vec_names.push_back(param.at(3));
 
 }
 
 
-double EvaluateVertexQuality::DrawHist(std::string const & draw,
-				       std::string const & binning,
-				       std::string const & weight) {
+void EvaluateVertexQuality::AddToDraw(std::string const & metric_to_study,
+				      std::vector<std::string> const & method,
+				      std::vector<std::string> const & metrics_to_draw,
+				      std::vector<std::string> const & parameters_to_draw,
+				      std::vector<std::string> const & performance_quantities) {
   
-  TCanvas * canvas = new TCanvas("temp");
-  fvq_chain->Draw((draw + ">>h" + binning).c_str(), weight.c_str());
-  TH1 * h = (TH1*)gDirectory->Get("h");
-  double const mean = h->GetMean();
-  delete h;
-  delete canvas;
-  return mean;
+  fplot_helper_v.push_back({metric_to_study, method, metrics_to_draw, parameters_to_draw, performance_quantities});
 
 }
 
@@ -211,57 +305,15 @@ std::string EvaluateVertexQuality::GetPermString(std::vector<double> const & per
 }
 
 
-void EvaluateVertexQuality::GetBestWorstPermutations(std::vector<std::vector<double>> & drawn_values,
-						     std::vector<std::pair<double, int>> & max_results,
-						     std::vector<std::pair<double, int>> & min_results) {
-  
-  drawn_values.clear();
-  drawn_values.reserve(fdraw_vec.size());
-  for(size_t i = 0; i < fdraw_vec.size(); ++i) {
-    drawn_values.push_back({});
-    drawn_values.back().reserve(fpermutation_v.size());
-  }
-  max_results.clear();
-  max_results.resize(fdraw_vec.size(), {0, -1});
-  min_results.clear();
-  min_results.resize(fdraw_vec.size(), {DBL_MAX, -1});
-
-  for(size_t i = 0; i < fpermutation_v.size(); ++i) {
-
-    std::vector<double> const & permutation = fpermutation_v.at(i);
-    std::string const perm_weight = GetPermString(permutation);
-
-    for(size_t j = 0; j < fdraw_vec.size(); ++j) {
-
-      std::vector<std::string> const & draw = fdraw_vec.at(j);
-      std::string const & draw_weight = draw.at(2);
-      std::string modified_weight = perm_weight;
-      if(!draw_weight.empty()) modified_weight += " && " + draw_weight;
-      double const result = DrawHist(draw.at(0), draw.at(1), modified_weight);
-      drawn_values.at(j).push_back(result);
-      if(result > max_results.at(j).first) {
-	max_results.at(j).first = result;
-	max_results.at(j).second = i;
-      }
-      if(result < min_results.at(j).first) {
-	min_results.at(j).first = result;
-	min_results.at(j).second = i;
-      }
-
-    }
-
-  }
-
-}
-
-
-std::vector<size_t> EvaluateVertexQuality::FindPermutations(std::vector<double> const & best_permutation, size_t const parameter_index) {
+std::vector<size_t> EvaluateVertexQuality::FindPermutations(std::vector<std::vector<double>> const & permutation_v,
+							    std::vector<double> const & best_permutation, 
+							    size_t const parameter_index) {
 
   std::vector<size_t> result;
 
-  for(size_t i = 0; i < fpermutation_v.size(); ++i) {
+  for(size_t i = 0; i < permutation_v.size(); ++i) {
 
-    std::vector<double> const & permutation = fpermutation_v.at(i);
+    std::vector<double> const & permutation = permutation_v.at(i);
 
     bool pass = true;
 
@@ -282,149 +334,69 @@ std::vector<size_t> EvaluateVertexQuality::FindPermutations(std::vector<double> 
 }
 
 
-void EvaluateVertexQuality::PlotGraph(std::vector<double> const & drawn_value_v, 
-				      std::vector<size_t> const & plot_permutations, 
-				      size_t const draw_vec_index, 
-				      size_t const parameter_index,
-				      std::string const & title_suffix,
-				      std::string const & name_suffix) {
+void EvaluateVertexQuality::GetEvalInfo() {
 
-  TGraph * graph = new TGraph();
-  for(size_t i = 0; i < plot_permutations.size(); ++i) {
-    size_t const index = plot_permutations.at(i);
-    graph->SetPoint(i, fpermutation_v.at(index).at(parameter_index), drawn_value_v.at(index));
+  if(feval_chain->GetEntries() == 0) {
+    std::cout << "WARNING: eval_tree empty\n";
+    return;
   }
 
-  std::vector<std::string> const & titles = fdraw_vec.at(draw_vec_index);
-  std::string const & drawn_name = fdraw_vec.at(draw_vec_index).at(3);
+  feval_chain->GetEntry(0);
 
-  graph->SetName((drawn_name + "_" + fparameter_name.at(parameter_index) + "_" + name_suffix).c_str());
-  graph->SetMarkerStyle(8);
- 
-  std::string title;
-  if(titles.at(4).empty()) title = title_suffix;
-  else title = titles.at(4) + " " + title_suffix;
-  graph->SetTitle(title.c_str());
-
-  graph->GetXaxis()->SetTitle(fparameter_name.at(parameter_index).c_str());
-  graph->GetXaxis()->CenterTitle();
-  graph->GetYaxis()->SetTitle(titles.at(5).c_str());
-  graph->GetYaxis()->CenterTitle();
-
-  graph->SetFillColor(0);
-  graph->SetLineColor(0);
-  auto const cm_it = fcolor_map.find(drawn_name);
-  if(cm_it == fcolor_map.end()) std::cout << "WARNING: no color for " << drawn_name << "\n";
-  else graph->SetMarkerColor(cm_it->second);
-
-  fgraph_v.at(draw_vec_index).push_back(graph);
-
-}
-
-
-void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double>> const & drawn_values,
-					   std::vector<std::pair<double, int>> const & results,
-					   std::string const & title_suffix,
-					   std::string const & name_suffix) {
-
-  for(size_t i = 0; i < fdraw_vec.size(); ++i) {
-
-    std::string const modified_title_suffix = title_suffix + " " + fdraw_vec.at(i).at(5);
-    std::string const modified_name_suffix = name_suffix + "_" + fdraw_vec.at(i).at(3);
-    std::vector<double> const & best_permutation = fpermutation_v.at(results.at(i).second);
-
-    for(size_t j = 0; j < fparameter_name.size(); ++j) {
-
-      std::vector<size_t> const plot_permutations = FindPermutations(best_permutation, j);
-      for(size_t k = 0; k < fdraw_vec.size(); ++k) PlotGraph(drawn_values.at(k), plot_permutations, k, j, modified_title_suffix, modified_name_suffix);
-
-    }
-
+  for(size_t i = 0; i < feval_draw_vec->size(); ++i) {
+    AddPerformanceMetric(feval_draw_vec->at(i));
   }
 
-}
-
-
-void EvaluateVertexQuality::DrawGraphs() {
-
-  for(std::vector<TGraph *> const & graph_v : fgraph_v) {
-    for(TGraph * graph : graph_v) {
-      TCanvas * canvas = new TCanvas((std::string(graph->GetName()) + "_canvas").c_str());
-      graph->Draw("ap");
-      canvas->Write();
-      delete canvas;
-    }
+  std::vector<std::string> const & vq_pq = fvq.GetPerformanceQuantities();
+  if(vq_pq.size() != feval_performance_quantities->size()) {
+    std::cout << "WARNING: performance quantities in file differ from those in vertex quality class\n";
   }
-
-}
-
-
-void EvaluateVertexQuality::DrawGraphsSupimp() {
-
-  if(fgraph_v.empty()) return;
-  size_t const drawn_graphs = fgraph_v.front().size();
-
-  for(size_t i = 0; i < drawn_graphs; ++i) {
-    TCanvas * canvas = new TCanvas((std::string(fgraph_v.front().at(i)->GetName()) + "_canvas").c_str());
-    TLegend * legend = new TLegend(0.6, 0.9, 0.9, 0.6);
-    TGraph * first_graph = nullptr;
-    double ymin = DBL_MAX;
-    double ymax = 0;
-    for(size_t j = 0; j < fgraph_v.size(); ++j) {
-      TGraph * graph = fgraph_v.at(j).at(i);
-      if(j == 0) {
-	first_graph = graph;
-	graph->Draw("ap");
+  else {
+    for(size_t i = 0; i < vq_pq.size(); ++i) {
+      std::string const & performance_quantity = vq_pq.at(i); 
+      if(performance_quantity != feval_performance_quantities->at(i)) {
+	std::cout << "WARNING: performance quantities in file differ from those in vertex quality class\n";
       }
-      else graph->Draw("p");
-      double const gmin = TMath::MinElement(graph->GetN(), graph->GetY());
-      double const gmax = TMath::MaxElement(graph->GetN(), graph->GetY());
-      if(gmin < ymin) ymin = gmin;
-      if(gmax > ymax) ymax = gmax;
-      legend->AddEntry(graph, fdraw_vec.at(j).at(5).c_str());
     }
-    if(first_graph) first_graph->GetYaxis()->SetRangeUser(ymin*0.9, ymax*1.1);
-    legend->Draw();
-    canvas->Write();
-    delete canvas; 
-    delete legend;
   }
 
 }
 
 
-void EvaluateVertexQuality::GetEval(std::vector<std::vector<double>> & drawn_values,
+void EvaluateVertexQuality::GetEval(std::vector<std::vector<std::vector<double> > > & drawn_values,
 				    std::vector<std::pair<double, int>> & max_results,
 				    std::vector<std::pair<double, int>> & min_results) {
 
+  drawn_values.clear();
+  max_results.clear();
+  min_results.clear();
   fdraw_vec.clear();
-  
+
+  GetEvalInfo();
+
   for(int i = 0; i < feval_chain->GetEntries(); ++i) {
 
     feval_chain->GetEntry(i);
 
     if(i == 0) {
-      for(size_t j = 0; j < feval_draw_vec->size(); ++j) AddParameterToDraw(feval_draw_vec->at(j));
       drawn_values.resize(fdrawn_values->size(), {});
       max_results.resize(fdrawn_values->size(), {0, -1});
       min_results.resize(fdrawn_values->size(), {DBL_MAX, -1});
     }
 
     for(size_t j = 0; j < fdrawn_values->size(); ++j) {
-
       drawn_values.at(j).insert(drawn_values.at(j).end(), fdrawn_values->at(j).begin(), fdrawn_values->at(j).end());
-
     }
 
   }
 
   for(size_t i = 0; i < drawn_values.size(); ++i) {
 
-    std::vector<double> const & v = drawn_values.at(i);
+    std::vector<std::vector<double>> const & v = drawn_values.at(i);
 
     for(size_t j = 0; j < v.size(); ++j) {
 
-      double const value = v.at(j);
+      double const value = v.at(j).front();
 
       if(value > max_results.at(i).first) {
 	max_results.at(i).first = value;
@@ -442,68 +414,328 @@ void EvaluateVertexQuality::GetEval(std::vector<std::vector<double>> & drawn_val
 }
 
 
-void EvaluateVertexQuality::Print(std::vector<std::vector<double>> const & drawn_values,
-				  std::vector<std::pair<double, int>> const & max_results,
-				  std::vector<std::pair<double, int>> const & min_results) const {
-  
-  std::cout << "\n";
-  for(size_t i = 0; i < drawn_values.size(); ++i) {
-    std::vector<std::string> const & draw = fdraw_vec.at(i);
-    std::vector<double> const & drawn_value = drawn_values.at(i);
-    for(std::string const & option : draw) std::cout << option << " | ";
-    std::cout << draw.size() << "\n";
-    std::cout << "\n";
-    /*
-    for(size_t j = 0; j < fpermutation_v.size(); ++j) {
-      std::vector<double> const & permutation = fpermutation_v.at(j);
-      std::cout << "Drawn value: " << drawn_value.at(j);
-      for(size_t k = 0; k < permutation.size(); ++k) std::cout << " " << fparameter_name.at(k) << ": " << permutation.at(k);
-      std::cout << "\n";
+void EvaluateVertexQuality::GetPandoraMetrics() {
+
+  for(std::vector<std::string> const & draw : fdraw_vec) {
+
+    fpandora_drawn_values.push_back(fvq.DrawHist(fpandora_tree, draw.at(0), draw.at(1), draw.at(2).c_str()));    
+
+  }  
+
+}
+
+
+void EvaluateVertexQuality::ProcessDrawOption(std::vector<std::string> const & input,
+					      std::map<std::string, size_t> & output) {
+
+  for(size_t i = 0; i < input.size(); ++i) {
+    std::string const & quantity = input.at(i);
+    auto const pq_it = output.find(quantity);
+    if(pq_it != output.end()) pq_it->second = i;
+  }
+
+  for(auto it = output.begin(); it != output.end();) {
+ 
+    if(it->second != SIZE_MAX) {
+      ++it;
+      continue;
     }
-    */
-    std::cout << "\nmax: " << max_results.at(i).first << " " << max_results.at(i).second << "\n"
-	      << "min: " << min_results.at(i).first << " " << min_results.at(i).second << "\n\n";
+
+    std::cout << "WARNING: could not find " << it->first << "\n";
+
+    it = output.erase(it);
+
   }
 
 }
 
 
-void EvaluateVertexQuality::Run() {
+void EvaluateVertexQuality::CheckPlotHelperV() {
+
+  for(auto it = fplot_helper_v.begin(); it != fplot_helper_v.end();) {
+        
+    PlotHelper & ph = *it;
+    
+    std::map<std::string, size_t> temp;
+    temp.emplace(ph.metric_to_study);
+    ProcessDrawOption(fdraw_vec_names, temp);
+    if(!temp.empty()) ph.metric_to_study.second = temp.begin()->second;
+    
+    if(ph.metric_to_study.second == SIZE_MAX) {
+      it = fplot_helper_v.erase(it);
+      continue;
+    }
+    
+    ProcessDrawOption(fdraw_vec_names, ph.metrics_to_draw);
+    ProcessDrawOption(fparameter_name, ph.parameters_to_draw);
+    if(feval_performance_quantities) ProcessDrawOption(*feval_performance_quantities, ph.performance_quantities);
+    else ProcessDrawOption(fvq.GetPerformanceQuantities(), ph.performance_quantities);
+    
+    ++it;
+    
+  }
+  
+
+}
+
+
+TGraph * EvaluateVertexQuality::PlotGraph(PlotHelper const & ph,
+					  std::string const & method,
+					  std::vector<std::vector<double>> const & permutation_v,
+					  std::vector<size_t> const & plot_permutations, 
+					  std::vector<std::vector<std::vector<double> > > const & drawn_values, 
+					  size_t const draw_vec_index, 
+					  size_t const parameter_index,
+					  size_t const performance_quantity_index) {
+
+  TGraph * graph = new TGraph();
+  for(size_t i = 0; i < plot_permutations.size(); ++i) {
+    size_t const index = plot_permutations.at(i);
+    graph->SetPoint(i, permutation_v.at(index).at(parameter_index), drawn_values.at(draw_vec_index).at(index).at(performance_quantity_index));
+  }
+
+  std::vector<std::string> const & titles = fdraw_vec.at(draw_vec_index);
+  std::string const & drawn_name = fdraw_vec.at(draw_vec_index).at(3);
+
+  graph->SetName((method + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_plot_" + drawn_name + "_var_" + fparameter_name.at(parameter_index)).c_str());
+  graph->SetMarkerStyle(8);
+  
+  std::string title;
+  std::string title_suffix = fdraw_vec.at(ph.metric_to_study.second).at(5);
+  auto const mm_it = fmethod_map.find(method);
+  if(mm_it == fmethod_map.end()) std::cout << "WARINING: no title found for " << method << "\n";
+  else title_suffix += " " + mm_it->second;
+  if(titles.at(4).empty()) title = title_suffix;
+  else title = titles.at(4) + " " + title_suffix;
+  graph->SetTitle(title.c_str());
+
+  auto const xtm_it = fxtitle_map.find(fparameter_name.at(parameter_index));
+  if(xtm_it == fxtitle_map.end()) {
+    std::cout << "WARINING: no xtitle found for " << fparameter_name.at(parameter_index) << "\n";
+    graph->GetXaxis()->SetTitle(fparameter_name.at(parameter_index).c_str());
+  }
+  else {
+    graph->GetXaxis()->SetTitle(xtm_it->second.c_str());
+  }
+  graph->GetXaxis()->CenterTitle();
+  
+  graph->GetYaxis()->SetTitle(titles.at(5).c_str());
+  graph->GetYaxis()->CenterTitle();
+
+  graph->SetFillColor(0);
+  graph->SetLineColor(0);
+  auto const cm_it = fgraph_aesthetic_map.find(drawn_name);
+  if(cm_it == fgraph_aesthetic_map.end()) std::cout << "WARNING: no GA for " << drawn_name << "\n";
+  else {
+    graph->SetMarkerColor(cm_it->second.color);
+    graph->SetMarkerStyle(cm_it->second.marker_type);
+  }
+
+  return graph;
+
+}
+
+
+void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > const & permutation_v,
+					   std::vector<std::vector<std::vector<double> > > const & drawn_values,
+					   std::vector<std::pair<double, int>> const & results,
+					   std::string const & method) {
+
+  for(PlotHelper & ph : fplot_helper_v) {
+
+    if(std::find(ph.method.begin(), ph.method.end(), method) == ph.method.end()) continue; 
+
+    size_t const ph_index = ph.metric_to_study.second;
+
+    std::string title_suffix;
+    auto const mm_it = fmethod_map.find(method);
+    if(mm_it != fmethod_map.end()) title_suffix = mm_it->second + " ";
+    else std::cout << "WARNING: no title for " << method << "\n";
+    std::string const modified_title_suffix = title_suffix + fdraw_vec.at(ph_index).at(5);
+    std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).second);    
+
+    std::map<std::string, size_t> const & metrics_to_draw = ph.metrics_to_draw;
+    std::map<std::string, size_t> const & parameters_to_draw = ph.parameters_to_draw;
+    std::map<std::string, size_t> const & performance_quantities = ph.performance_quantities;
+
+    for(auto const & ptd : parameters_to_draw) {
+ 
+      int const parameter_index = ptd.second;
+      std::vector<size_t> const plot_permutations = FindPermutations(permutation_v, best_permutation, parameter_index);
+
+      for(auto const & pq : performance_quantities) {
+     
+	TCanvas * canvas = new TCanvas((method + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_var_" + fparameter_name.at(parameter_index)).c_str());
+
+	TGraph * first_graph = nullptr;
+
+	double ymin = DBL_MAX;
+	double ymax = 0;
+	
+	TLegend * legend = new TLegend(0.6, 0.9, 0.9, 0.6);
+	std::vector<TGraph *> line_handler;
+
+	for(auto const & mtd : metrics_to_draw) {
+	  
+	  TGraph * graph = PlotGraph(ph, method, permutation_v, plot_permutations, drawn_values, mtd.second, parameter_index, pq.second);	  
+
+	  if(!first_graph) {
+	    graph->Draw("ap");
+	    graph->GetYaxis()->SetTitle("");
+	    first_graph = graph;
+	  }
+	  else graph->Draw("p");
+	  
+	  double const xmin = TMath::MinElement(graph->GetN(), graph->GetX());
+	  double const xmax = TMath::MaxElement(graph->GetN(), graph->GetX());
+
+	  double const gymin = TMath::MinElement(graph->GetN(), graph->GetY());
+	  double const gymax = TMath::MaxElement(graph->GetN(), graph->GetY());
+	  
+	  if(gymin < ymin) ymin = gymin;
+	  if(gymax > ymax) ymax = gymax;
+
+	  auto const cm_it = fgraph_aesthetic_map.find(mtd.first);
+	  if(cm_it == fgraph_aesthetic_map.end()) std::cout << "WARNING: no GA for " << mtd.first << "\n";
+	  else legend->AddEntry(graph, cm_it->second.legend_name.c_str());
+	  
+	  if(fpandora_tree) {
+	    double arrx[2] = {xmin, xmax};
+	    double const ypandora = fpandora_drawn_values.at(mtd.second).at(pq.second);
+	    double arry[2] = {ypandora, ypandora};
+	    TGraph * line = new TGraph(2, arrx, arry);
+	    line->SetLineColor(graph->GetMarkerColor());
+	    line->SetLineStyle(cm_it->second.pandora_line);
+	    line->SetLineWidth(2);
+	    line->SetMarkerColor(graph->GetMarkerColor());
+	    line->SetFillColor(0);
+	    line->Draw("l");
+	    legend->AddEntry(line, (std::string("Pandora ") + cm_it->second.legend_name).c_str());
+	    line_handler.push_back(line);
+	    if(ypandora < ymin) ymin = ypandora;
+	    else if(ypandora > ymax) ymax = ypandora;
+	  }
+
+	  ph.graph_v.push_back(graph);
+	  
+	}
+
+	if(first_graph) {
+	  
+	  first_graph->GetYaxis()->SetRangeUser(ymin*0.9, ymax*1.1);
+	  legend->Draw();
+	  canvas->Write();
+	  for(TGraph * line : line_handler) delete line;
+	  
+	}
+	
+	delete legend;
+	delete canvas; 
+	
+      }
+      
+    } 
+    
+  }
+
+}
+
+
+void EvaluateVertexQuality::DrawGraphs() {
+
+  for(PlotHelper const & ph : fplot_helper_v) {
+
+    for(TGraph * graph : ph.graph_v) {
+
+      TCanvas * canvas = new TCanvas((std::string(graph->GetName()) + "_canvas\n").c_str());
+      graph->Draw("ap");
+      canvas->Write();
+      delete canvas;
+
+    }
+
+  }
+  
+}
+
+
+void EvaluateVertexQuality::Run(std::vector<double> const & input_permutation) {
 
   if(!foutput_file) {
     std::cout << "ERROR no output file set\n";
     exit(1);
   }
      
-  std::vector<std::vector<double>> drawn_values;
+  std::vector<std::vector<std::vector<double>>> drawn_values;
   std::vector<std::pair<double, int>> max_results;
   std::vector<std::pair<double, int>> min_results;
 
-  if(feval_chain) {
-    GetEval(drawn_values,
-	    max_results,
-	    min_results);
+  std::vector<std::vector<double>> permutation_v;
+  if(!input_permutation.empty()) {
+    for(size_t const i : FindPermutations(fpermutation_v, input_permutation, 1)) 
+      permutation_v.push_back(fpermutation_v.at(i));
+    fvq.GetDrawnValues(fvq_chain, permutation_v, fdraw_vec, drawn_values, max_results, min_results);
   }
   else {
-    GetBestWorstPermutations(drawn_values,
-			     max_results,
-			     min_results); 
-  } 
+    permutation_v = fpermutation_v;
+    GetEval(drawn_values, max_results, min_results);
+  }
+  for(std::vector<std::string> const & performance_metric : fdraw_vec) fvq.AddPerformanceMetric(performance_metric);
 
-  Print(drawn_values,
-	max_results,
-	min_results);
+  if(fpandora_tree) GetPandoraMetrics();
 
-  PlotParameters(drawn_values,
-		 max_results,
-		 "Maximized",
-		 "max");
-  PlotParameters(drawn_values,
-		 min_results,
-		 "Minimized",
-		 "min");
+  //fvq.Print(permutation_v, fdraw_vec, drawn_values, max_results, min_results);
 
-  //DrawGraphs();
-  DrawGraphsSupimp();
+  CheckPlotHelperV();
+  PlotParameters(permutation_v, drawn_values, max_results, "max");
+  PlotParameters(permutation_v, drawn_values, min_results, "min");
+
+  //Hack();
+
+}
+
+
+void EvaluateVertexQuality::Hack() {
+
+  TDirectory * current = gDirectory;
+
+  TFile * pfile = TFile::Open("RunVertexQualityPandora.root");
+  TTree * ptree = (TTree*)pfile->Get("vertex_quality_tree_signal");
+
+  current->cd();
+
+  TCanvas * canvas = new TCanvas("hack");
+  std::string binning = "(40, 0, 400)";
+  std::string weight = "start_prox == 4 && shower_prox == 40 && max_bp_dist == 40 && cpoa_vert_prox == 12 && cpoa_trackend_prox == 12";
+  fvq_chain->Draw(("dist>>h"+binning).c_str(), ("tpc_volume_contained == 1 && is_nc_delta_rad == 1 && reco_track_total > 0 && nc_delta_rad_split_shower == 1 && " + weight).c_str());
+  ptree->Draw(("dist>>h2"+binning).c_str(), "tpc_volume_contained == 1 && is_nc_delta_rad == 1 && (reco_track_total > 0 || reco_shower_total > 1) && nc_delta_rad_split_shower == 1");
+
+  TLegend * leg = new TLegend(0.6, 0.9, 0.9, 0.6);
+
+  TH1 * h = (TH1*)gDirectory->Get("h");
+  h->SetLineColor(kBlue);
+
+  TH1 * h2 = (TH1*)gDirectory->Get("h2");
+  h2->SetLineColor(kRed);
+
+  leg->AddEntry(h, "VB");
+  leg->AddEntry(h2, "Pandora");
+
+  h->Scale(1./h->GetEntries());
+  h2->Scale(1./h2->GetEntries());
+
+  std::cout << "vb: " << h->GetEntries() << " p: " << h2->GetEntries() << "\n";
+
+  h->Draw("hist");
+  h2->Draw("samehist");
+  
+  h->SetStats(0);
+  h->GetXaxis()->SetTitle("Reco - True Vertex Distance [cm]");
+  h->GetYaxis()->SetRangeUser(0, 0.6);
+  leg->Draw();
+
+  canvas->Write();
+
+  delete canvas;
 
 }

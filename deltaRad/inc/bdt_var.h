@@ -29,6 +29,7 @@ struct bdt_variable{
 		std::string safe_name;
 		std::string binning;
 		std::string unit;
+		std::string safe_unit;
 		bool is_track;
 		std::string type;
 
@@ -44,7 +45,27 @@ struct bdt_variable{
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ')'), safe_name.end());
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '\\'), safe_name.end());
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '/'), safe_name.end());
-		
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '['), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ']'), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '+'), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '-'), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '*'), safe_name.end());
+	
+           	safe_unit = unit;
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ' '), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '('), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ')'), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '\\'), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '/'), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '['), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ']'), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '+'), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '-'), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '*'), safe_unit.end());
+	
+
+
+
 		};
 
 		bdt_variable(){};

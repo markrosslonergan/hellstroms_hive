@@ -14,9 +14,47 @@
 #include "TGraph.h"
 #include "TLegend.h"
 #include "TMath.h"
+#include "TLine.h"
+
+#include "VertexQuality.h"
 
 
 class EvaluateVertexQuality {
+
+  struct GraphAesthetics {
+
+    GraphAesthetics(std::string const ilegend_name,
+		    int const icolor,
+		    int const imarker_type,
+		    int const ipandora_line = 1);
+
+    std::string legend_name;
+    int color;
+    int marker_type;
+    int pandora_line;
+
+  };
+
+  struct PlotHelper {
+
+    PlotHelper(std::string const & imetric_to_study,
+	       std::vector<std::string> const & method,	
+	       std::vector<std::string> const & imetrics_to_draw,
+	       std::vector<std::string> const & iparameters_to_draw,
+	       std::vector<std::string> const & iperformance_quantities);
+    ~PlotHelper();
+
+    void Print();
+
+    std::pair<std::string, size_t> metric_to_study;
+    std::vector<std::string> method;
+    std::map<std::string, size_t> metrics_to_draw;
+    std::map<std::string, size_t> parameters_to_draw;
+    std::map<std::string, size_t> performance_quantities;
+
+    std::vector<TGraph *> graph_v;
+
+  };
 
  public:
 
@@ -27,8 +65,14 @@ class EvaluateVertexQuality {
   ~EvaluateVertexQuality();
 
   void SetOutputFile(char const * file_name);
-  void AddParameterToDraw(std::vector<std::string> const & param);
-  void Run();
+  void AddToDraw(std::string const & metric_to_study,
+		 std::vector<std::string> const & method,
+		 std::vector<std::string> const & metrics_to_draw,
+		 std::vector<std::string> const & parameters_to_draw,
+		 std::vector<std::string> const & performance_quantities);
+  void AddPerformanceMetric(std::vector<std::string> const & params);
+  void Run(std::vector<double> const & input_permutation = {});
+  void Hack();
 
  private:
 
@@ -37,42 +81,54 @@ class EvaluateVertexQuality {
 		 char const * eval_name,
 		 std::vector<char const *> const & files) const;
   void Initialize();
+  TFile *  LookForPandoraFile(char const * file_name);
   void AddFiles(std::vector<char const *> const & files);  
   void FillPermutationV();
   void SetupVQChain();
   void SetupEvalChain();
   std::string GetPermString(std::vector<double> const & permutation);
-  double DrawHist(std::string const & draw,
-		  std::string const & binning,
-		  std::string const & weight);
-  void GetBestWorstPermutations(std::vector<std::vector<double>> & drawn_values,
-				std::vector<std::pair<double, int>> & max_results,
-				std::vector<std::pair<double, int>> & min_results);
-  void Print(std::vector<std::vector<double>> const & drawn_values,
-	     std::vector<std::pair<double, int>> const & max_results,
-	     std::vector<std::pair<double, int>> const & min_results) const;
-  void GetEval(std::vector<std::vector<double>> & drawn_values,
+  void GetEvalInfo();
+  void GetEval(std::vector<std::vector<std::vector<double>>> & drawn_values,
 	       std::vector<std::pair<double, int>> & max_results,
 	       std::vector<std::pair<double, int>> & min_results);
-  std::vector<size_t> FindPermutations(std::vector<double> const & best_permutation, size_t const parameter_index);
-  void PlotParameters(std::vector<std::vector<double>> const & drawn_values,
-		      std::vector<std::pair<double, int>> const & max_results,
-		      std::string const & title_suffix,
-		      std::string const & name_suffix);
-  void PlotGraph(std::vector<double> const & drawn_value_v, 
-		 std::vector<size_t> const & plot_permutations, 
-		 size_t const draw_vec_index, 
-		 size_t const parameter_index,
-		 std::string const & title_suffix,
-		 std::string const & name_suffix);
+  void GetPandoraMetrics();
+  void CheckPlotHelperV();
+  void ProcessDrawOption(std::vector<std::string> const & input,
+			 std::map<std::string, size_t> & output);
+  std::vector<size_t> FindPermutations(std::vector<std::vector<double>> const & permutation_v, 
+				       std::vector<double> const & best_permutation, 
+				       size_t const parameter_index);
+  void PlotParameters(std::vector<std::vector<double> > const & permutation_v,
+		      std::vector<std::vector<std::vector<double> > > const & drawn_values,
+		      std::vector<std::pair<double, int>> const & results,
+		      std::string const & method);
+  TGraph * PlotGraph(PlotHelper const & ph,
+		     std::string const & method,
+		     std::vector<std::vector<double>> const & permutation_v,
+		     std::vector<size_t> const & plot_permutations,
+		     std::vector<std::vector<std::vector<double>>> const & drawn_value_v, 
+		     size_t const draw_vec_index, 
+		     size_t const parameter_index,
+		     size_t const performance_quantity_index);
   void DrawGraphs();
   void DrawGraphsSupimp();
 
-  std::map<std::string, int> fcolor_map;
+  std::unordered_map<std::string, std::string> fmethod_map;
+  std::unordered_map<std::string, std::string> fxtitle_map;
+  std::unordered_map<std::string, GraphAesthetics> fgraph_aesthetic_map;
+
   std::vector<std::vector<std::string>> fdraw_vec;
+  std::vector<std::string> fdraw_vec_names;
   std::vector<std::string> fparameter_name;
   std::vector<std::vector<double>> fpermutation_v;
-  std::vector<std::vector<TGraph *>> fgraph_v;
+
+  std::vector<PlotHelper> fplot_helper_v;
+
+  VertexQuality fvq;
+
+  TFile * fpandora_file;
+  TTree * fpandora_tree;
+  std::vector<std::vector<double>> fpandora_drawn_values;
 
   TFile * foutput_file;
 
@@ -112,8 +168,9 @@ class EvaluateVertexQuality {
   std::vector<int> * fshower_true_origin_v;
 
   std::vector<std::vector<std::string>> * feval_draw_vec;
+  std::vector<std::string> * feval_performance_quantities;
   std::vector<std::vector<double>> * feval_permutation_v;
-  std::vector<std::vector<double>> * fdrawn_values;
+  std::vector<std::vector<std::vector<double>>> * fdrawn_values;
 
 };
 
