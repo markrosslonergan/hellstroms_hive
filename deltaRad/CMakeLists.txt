@@ -4,6 +4,7 @@ project (DeltaRad)
 set (DeltaRad_VERSION_MAJOR 1)
 set (DeltaRad_VERSION_MINOR 0)
 
+
 if (CMAKE_VERSION VERSION_LESS "3.1")
     if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
           set (CMAKE_CXX_FLAGS "--std=c++14 ${CMAKE_CXX_FLAGS}")

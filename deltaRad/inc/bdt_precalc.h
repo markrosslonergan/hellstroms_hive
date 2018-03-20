@@ -10,8 +10,10 @@
 #include  "bdt_var.h"
 #include  "bdt_info.h"
 
+#include "TruncMean.h"
 /******** Root includes *****/
-
+#include "TFitResult.h"
+#include "TF1.h"
 #include "TTreeFormula.h"
 #include "TFile.h"
 #include "TCanvas.h"
@@ -27,6 +29,7 @@
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
 
+int addPreFriends(bdt_file* filein,std::string which);
 
 class bdt_precalc{
 	public:
@@ -39,8 +42,9 @@ class bdt_precalc{
 		//This will actually
 		~bdt_precalc(){ friend_file_out->Close();}
 
-int add(std::string which );
-int addTrackInfo();
+int gen(std::string which );
+int genTrackInfo();
+
 
 
 };

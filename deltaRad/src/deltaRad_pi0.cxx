@@ -25,6 +25,7 @@
 #include "bdt_sig.h"
 #include "bdt_spec.h"
 
+#include "bdt_precalc.h"
 
 
 
@@ -633,8 +634,15 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	}
     */
+	 else if(mode_option == "precalc"){
+		bdt_precalc pre(bnb_pure);
+		pre.genTrackInfo();
 
-	else {
+		addPreFriends(bnb_pure,"track");
+		
+
+	
+	}  else {
 		std::cout << "WARNING: " << mode_option << " is an invalid option\n";
 	}
 

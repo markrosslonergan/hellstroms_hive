@@ -651,7 +651,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	} else if(mode_option == "precalc"){
 		bdt_precalc pre(signal_pure);
-		pre.addTrackInfo();
+		pre.genTrackInfo();
 
 	}
 
