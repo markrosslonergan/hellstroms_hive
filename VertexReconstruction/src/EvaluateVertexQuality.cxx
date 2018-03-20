@@ -3,14 +3,50 @@
 #include "EvaluateVertexQuality.h"
 
 
-EvaluateVertexQuality::plot_helper::plot_helper(std::string const & imetric_to_study,
-						std::vector<std::string> const & imetrics_to_draw,
-						std::vector<std::string> const & iparameters_to_draw,
-						std::vector<std::string> const & iperformance_quantities) :
-  metric_to_study(imetric_to_study),
-  metrics_to_draw(imetrics_to_draw),
-  parameters_to_draw(iparameters_to_draw),
-  performance_quantities(iperformance_quantities) {}
+EvaluateVertexQuality::GraphAesthetics::GraphAesthetics(std::string const ilegend_name,
+							int const icolor,
+							int const imarker_type,
+							int const ipandora_line) :
+  legend_name(ilegend_name),
+  color(icolor),
+  marker_type(imarker_type),
+  pandora_line(ipandora_line) {}
+  
+
+EvaluateVertexQuality::PlotHelper::PlotHelper(std::string const & imetric_to_study,
+					      std::vector<std::string> const & imethod,
+					      std::vector<std::string> const & imetrics_to_draw,
+					      std::vector<std::string> const & iparameters_to_draw,
+					      std::vector<std::string> const & iperformance_quantities) :
+  metric_to_study(imetric_to_study, SIZE_MAX),
+  method(imethod) {
+    
+  for(std::string const & str : imetrics_to_draw) metrics_to_draw.emplace(str, SIZE_MAX);
+  for(std::string const & str : iparameters_to_draw) parameters_to_draw.emplace(str, SIZE_MAX);
+  for(std::string const & str : iperformance_quantities) performance_quantities.emplace(str, SIZE_MAX);
+  
+}
+
+
+EvaluateVertexQuality::PlotHelper::~PlotHelper() {
+
+  for(TGraph * graph : graph_v) delete graph;
+  
+}
+
+
+void EvaluateVertexQuality::PlotHelper::Print() {
+
+  std::cout << "metric_to_study: " << metric_to_study.first << " " << metric_to_study.second << "\nmethods:\n";
+  for(auto const & str : method) std::cout << "\t" << str << "\nmetrics_to_draw:\n";
+  for(auto const & p : metrics_to_draw) std::cout << "\t" << p.first << " " << p.second << "\n";
+  std::cout << "parameters_to_draw:\n";
+  for(auto const & p : parameters_to_draw) std::cout << "\t" << p.first << " " << p.second << "\n";
+  std::cout << "performance_quantities:\n";
+  for(auto const & p : performance_quantities) std::cout << "\t" << p.first << " " << p.second << "\n";  
+  std::cout << "\n";
+
+}
 
 
 EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
@@ -37,22 +73,25 @@ EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
   SetupVQChain();
   SetupEvalChain();
 
+  fmethod_map = {{"max", "Maximized"},
+		 {"min", "Minimized"}};
+
   fxtitle_map = {{"start_prox", "start_prox"},
 		 {"shower_prox", "Maximum Shower Impact Parameter [cm]"},
 		 {"max_bp_dist", "Maximum Shower Backwards Projection Distance [cm]"},
 		 {"cpoa_vert_prox", "cpoa_vert_prox"},
 		 {"cpoa_trackend_prox", "cpoa_trackend_prox"}};
 
-  fgraph_aesthetic_map = {{"completeness", kRed},
-			  {"shower_completeness", kRed},
-			  {"track_completeness", kRed},
-			  {"cleanliness", kBlue}, 
-			  {"shower_cleanliness", kBlue}, 
-			  {"track_cleanliness", kBlue}, 
-			  {"combined", kMagenta},
-			  {"shower_combined", kMagenta},
-			  {"track_combined", kMagenta},
-			  {"dist", kGreen}};
+  fgraph_aesthetic_map = {{"completeness", {"Completeness", kRed, 8}},
+			  {"shower_completeness", {"Shower Completeness", kRed+1, 23, 2}},
+			  {"track_completeness", {"Track Completeness", kBlue+1, 33, 2}},
+			  {"cleanliness", {"Cleanliness", kBlue, 8}}, 
+			  {"shower_cleanliness", {"Shower Cleanliness", kGreen+2, 23, 2}}, 
+			  {"track_cleanliness", {"Track Cleanliness", kMagenta+1, 33, 2}}, 
+			  {"combined", {"Combined", kMagenta, 8}},
+			  {"shower_combined", {"Shower Combined", kMagenta, 23}},
+			  {"track_combined", {"Track Combined", kMagenta, 33}},
+			  {"dist", {"Reco - True Distance [cm]", kGreen, 8}}};
 
 }
 
@@ -62,8 +101,6 @@ EvaluateVertexQuality::~EvaluateVertexQuality() {
   if(fpandora_file) fpandora_file->Close();
   if(foutput_file) foutput_file->Close();
   delete fvq_chain;
-  for(std::vector<TGraph *> const & graph_v : fgraph_v) 
-    for(TGraph * graph : graph_v) delete graph; 
 
 }
 
@@ -239,16 +276,18 @@ void EvaluateVertexQuality::SetOutputFile(char const * file_name) {
 void EvaluateVertexQuality::AddPerformanceMetric(std::vector<std::string> const & param) {
 
   fdraw_vec.push_back(param);
+  fdraw_vec_names.push_back(param.at(3));
 
 }
 
 
 void EvaluateVertexQuality::AddToDraw(std::string const & metric_to_study,
+				      std::vector<std::string> const & method,
 				      std::vector<std::string> const & metrics_to_draw,
 				      std::vector<std::string> const & parameters_to_draw,
 				      std::vector<std::string> const & performance_quantities) {
   
-  plot_helper_v.push_back({metric_to_study, metrics_to_draw, parameters_to_draw, performance_quantities});
+  fplot_helper_v.push_back({metric_to_study, method, metrics_to_draw, parameters_to_draw, performance_quantities});
 
 }
 
@@ -387,57 +426,85 @@ void EvaluateVertexQuality::GetPandoraMetrics() {
 
 
 void EvaluateVertexQuality::ProcessDrawOption(std::vector<std::string> const & input,
-					      std::unordered_map<std::string, size_t> & output) {
+					      std::map<std::string, size_t> & output) {
 
   for(size_t i = 0; i < input.size(); ++i) {
     std::string const & quantity = input.at(i);
     auto const pq_it = output.find(quantity);
     if(pq_it != output.end()) pq_it->second = i;
   }
-  for(auto const & p : output) {
-    if(p.second != SIZE_MAX) continue;
-    std::cout << "WARNING: performance quantity " << p.first << " not found\n";
-  }    
+
+  for(auto it = output.begin(); it != output.end();) {
+ 
+    if(it->second != SIZE_MAX) {
+      ++it;
+      continue;
+    }
+
+    std::cout << "WARNING: could not find " << it->first << "\n";
+
+    it = output.erase(it);
+
+  }
 
 }
 
 
-void EvaluateVertexQuality::ProcessDrawOptions() {
+void EvaluateVertexQuality::CheckPlotHelperV() {
 
-  std::vector<std::string> draw_str;
-  for(std::vector<std::string> const & draw_vec : fdraw_vec) draw_str.push_back(draw_vec.at(3));
-  ProcessDrawOption(draw_str, finput_metric_study);
-  ProcessDrawOption(draw_str, finput_metric_draw);
-  ProcessDrawOption(fparameter_name, finput_parameter_names);
-  if(feval_performance_quantities) ProcessDrawOption(*feval_performance_quantities, finput_performance_quantities);
-  else ProcessDrawOption(fvq.GetPerformanceQuantities(), finput_performance_quantities);
+  for(auto it = fplot_helper_v.begin(); it != fplot_helper_v.end();) {
+        
+    PlotHelper & ph = *it;
+    
+    std::map<std::string, size_t> temp;
+    temp.emplace(ph.metric_to_study);
+    ProcessDrawOption(fdraw_vec_names, temp);
+    if(!temp.empty()) ph.metric_to_study.second = temp.begin()->second;
+    
+    if(ph.metric_to_study.second == SIZE_MAX) {
+      it = fplot_helper_v.erase(it);
+      continue;
+    }
+    
+    ProcessDrawOption(fdraw_vec_names, ph.metrics_to_draw);
+    ProcessDrawOption(fparameter_name, ph.parameters_to_draw);
+    if(feval_performance_quantities) ProcessDrawOption(*feval_performance_quantities, ph.performance_quantities);
+    else ProcessDrawOption(fvq.GetPerformanceQuantities(), ph.performance_quantities);
+    
+    ++it;
+    
+  }
+  
 
 }
 
 
-
-void EvaluateVertexQuality::PlotGraph(std::vector<std::vector<double>> const & permutation_v,
-				      std::vector<size_t> const & plot_permutations, 
-				      std::vector<std::vector<double>> const & drawn_value_v, 
-				      size_t const draw_vec_index, 
-				      size_t const parameter_index,
-				      size_t const performance_quantity_index,
-				      std::string const & title_suffix,
-				      std::string const & name_suffix) {
+TGraph * EvaluateVertexQuality::PlotGraph(PlotHelper const & ph,
+					  std::string const & method,
+					  std::vector<std::vector<double>> const & permutation_v,
+					  std::vector<size_t> const & plot_permutations, 
+					  std::vector<std::vector<std::vector<double> > > const & drawn_values, 
+					  size_t const draw_vec_index, 
+					  size_t const parameter_index,
+					  size_t const performance_quantity_index) {
 
   TGraph * graph = new TGraph();
   for(size_t i = 0; i < plot_permutations.size(); ++i) {
     size_t const index = plot_permutations.at(i);
-    graph->SetPoint(i, permutation_v.at(index).at(parameter_index), drawn_value_v.at(index).at(performance_quantity_index));
+    graph->SetPoint(i, permutation_v.at(index).at(parameter_index), drawn_values.at(draw_vec_index).at(index).at(performance_quantity_index));
   }
 
   std::vector<std::string> const & titles = fdraw_vec.at(draw_vec_index);
   std::string const & drawn_name = fdraw_vec.at(draw_vec_index).at(3);
 
-  graph->SetName(("plot_" + drawn_name + "_var_" + fparameter_name.at(parameter_index) + "_" + name_suffix).c_str());
+  graph->SetName((method + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_plot_" + drawn_name + "_var_" + fparameter_name.at(parameter_index)).c_str());
   graph->SetMarkerStyle(8);
-
+  
   std::string title;
+  std::string title_suffix = fdraw_vec.at(ph.metric_to_study.second).at(5);
+  auto const mm_it = fmethod_map.find(method);
+  if(mm_it == fmethod_map.end()) std::cout << "WARINING: no title found for " << method << "\n";
+  else title_suffix += " " + mm_it->second;
   if(titles.at(4).empty()) title = title_suffix;
   else title = titles.at(4) + " " + title_suffix;
   graph->SetTitle(title.c_str());
@@ -458,10 +525,13 @@ void EvaluateVertexQuality::PlotGraph(std::vector<std::vector<double>> const & p
   graph->SetFillColor(0);
   graph->SetLineColor(0);
   auto const cm_it = fgraph_aesthetic_map.find(drawn_name);
-  if(cm_it == fgraph_aesthetic_map.end()) std::cout << "WARNING: no color for " << drawn_name << "\n";
-  else graph->SetMarkerColor(cm_it->second);
+  if(cm_it == fgraph_aesthetic_map.end()) std::cout << "WARNING: no GA for " << drawn_name << "\n";
+  else {
+    graph->SetMarkerColor(cm_it->second.color);
+    graph->SetMarkerStyle(cm_it->second.marker_type);
+  }
 
-  fgraph_v.back().push_back(graph);
+  return graph;
 
 }
 
@@ -469,92 +539,103 @@ void EvaluateVertexQuality::PlotGraph(std::vector<std::vector<double>> const & p
 void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > const & permutation_v,
 					   std::vector<std::vector<std::vector<double> > > const & drawn_values,
 					   std::vector<std::pair<double, int>> const & results,
-					   std::string const & title_suffix,
-					   std::string const & name_suffix) {
+					   std::string const & method) {
 
-  for(auto const & imsp : finput_metric_study) {
+  for(PlotHelper & ph : fplot_helper_v) {
 
-    if(imsp.second == SIZE_MAX) continue;
+    if(std::find(ph.method.begin(), ph.method.end(), method) == ph.method.end()) continue; 
 
-    fgraph_v.push_back({});
+    size_t const ph_index = ph.metric_to_study.second;
 
-    std::string const modified_title_suffix = title_suffix + " " + fdraw_vec.at(imsp.second).at(5);
-    std::string const modified_name_suffix = name_suffix + "_" + fdraw_vec.at(imsp.second).at(3);
-    std::vector<double> const & best_permutation = permutation_v.at(results.at(imsp.second).second);
+    std::string title_suffix;
+    auto const mm_it = fmethod_map.find(method);
+    if(mm_it != fmethod_map.end()) title_suffix = mm_it->second + " ";
+    else std::cout << "WARNING: no title for " << method << "\n";
+    std::string const modified_title_suffix = title_suffix + fdraw_vec.at(ph_index).at(5);
+    std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).second);    
 
-    for(auto const & ipnp : finput_parameter_names) {
+    std::map<std::string, size_t> const & metrics_to_draw = ph.metrics_to_draw;
+    std::map<std::string, size_t> const & parameters_to_draw = ph.parameters_to_draw;
+    std::map<std::string, size_t> const & performance_quantities = ph.performance_quantities;
 
-      int const parameter_index = ipnp.second;
-      if(parameter_index == SIZE_MAX) continue;
+    for(auto const & ptd : parameters_to_draw) {
+ 
+      int const parameter_index = ptd.second;
       std::vector<size_t> const plot_permutations = FindPermutations(permutation_v, best_permutation, parameter_index);
-      
-      for(auto const & imsd : finput_metric_draw) {
 
-	if(imsd.second == SIZE_MAX) {
-	  fgraph_v.back().push_back(nullptr); 
-	  continue;
+      for(auto const & pq : performance_quantities) {
+     
+	TCanvas * canvas = new TCanvas((method + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_var_" + fparameter_name.at(parameter_index)).c_str());
+
+	TGraph * first_graph = nullptr;
+
+	double ymin = DBL_MAX;
+	double ymax = 0;
+	
+	TLegend * legend = new TLegend(0.6, 0.9, 0.9, 0.6);
+	std::vector<TGraph *> line_handler;
+
+	for(auto const & mtd : metrics_to_draw) {
+	  
+	  TGraph * graph = PlotGraph(ph, method, permutation_v, plot_permutations, drawn_values, mtd.second, parameter_index, pq.second);	  
+
+	  if(!first_graph) {
+	    graph->Draw("ap");
+	    graph->GetYaxis()->SetTitle("");
+	    first_graph = graph;
+	  }
+	  else graph->Draw("p");
+	  
+	  double const xmin = TMath::MinElement(graph->GetN(), graph->GetX());
+	  double const xmax = TMath::MaxElement(graph->GetN(), graph->GetX());
+
+	  double const gymin = TMath::MinElement(graph->GetN(), graph->GetY());
+	  double const gymax = TMath::MaxElement(graph->GetN(), graph->GetY());
+	  
+	  if(gymin < ymin) ymin = gymin;
+	  if(gymax > ymax) ymax = gymax;
+
+	  auto const cm_it = fgraph_aesthetic_map.find(mtd.first);
+	  if(cm_it == fgraph_aesthetic_map.end()) std::cout << "WARNING: no GA for " << mtd.first << "\n";
+	  else legend->AddEntry(graph, cm_it->second.legend_name.c_str());
+	  
+	  if(fpandora_tree) {
+	    double arrx[2] = {xmin, xmax};
+	    double const ypandora = fpandora_drawn_values.at(mtd.second).at(pq.second);
+	    double arry[2] = {ypandora, ypandora};
+	    TGraph * line = new TGraph(2, arrx, arry);
+	    line->SetLineColor(graph->GetMarkerColor());
+	    line->SetLineStyle(cm_it->second.pandora_line);
+	    line->SetLineWidth(2);
+	    line->SetMarkerColor(graph->GetMarkerColor());
+	    line->SetFillColor(0);
+	    line->Draw("l");
+	    legend->AddEntry(line, (std::string("Pandora ") + cm_it->second.legend_name).c_str());
+	    line_handler.push_back(line);
+	    if(ypandora < ymin) ymin = ypandora;
+	    else if(ypandora > ymax) ymax = ypandora;
+	  }
+
+	  ph.graph_v.push_back(graph);
+	  
 	}
 
-	std::cout << imsd.first << " " << imsd.second << "\n";
-
-	for(auto const & ipqp : finput_performance_quantities) {
-
-	  if(ipqp.second == SIZE_MAX) continue;
-	  PlotGraph(permutation_v, plot_permutations, drawn_values.at(imsd.second), imsd.second, parameter_index, ipqp.second, modified_title_suffix, modified_name_suffix + "_" + ipqp.first);
-
+	if(first_graph) {
+	  
+	  first_graph->GetYaxis()->SetRangeUser(ymin*0.9, ymax*1.1);
+	  legend->Draw();
+	  canvas->Write();
+	  for(TGraph * line : line_handler) delete line;
+	  
 	}
-
+	
+	delete legend;
+	delete canvas; 
+	
       }
-
-    }
-
-  }
-
-}
-
-
-void EvaluateVertexQuality::PlotParametersOld(std::vector<std::vector<double> > const & permutation_v,
-					      std::vector<std::vector<std::vector<double> > > const & drawn_values,
-					      std::vector<std::pair<double, int>> const & results,
-					      std::string const & title_suffix,
-					      std::string const & name_suffix) {
-
-  for(auto const & imsp : finput_metric_study) {
-
-    if(imsp.second == SIZE_MAX) continue;
-
-    fgraph_v.push_back({});
-
-    std::string const modified_title_suffix = title_suffix + " " + fdraw_vec.at(imsp.second).at(5);
-    std::string const modified_name_suffix = name_suffix + "_" + fdraw_vec.at(imsp.second).at(3);
-    std::vector<double> const & best_permutation = permutation_v.at(results.at(imsp.second).second);
-
-    for(auto const & ipnp : finput_parameter_names) {
-
-      int const parameter_index = ipnp.second;
-      if(parameter_index == SIZE_MAX) continue;
-      std::vector<size_t> const plot_permutations = FindPermutations(permutation_v, best_permutation, parameter_index);
       
-      for(auto const & imsd : finput_metric_draw) {
-
-	if(imsd.second == SIZE_MAX) {
-	  fgraph_v.back().push_back(nullptr); 
-	  continue;
-	}
-
-	std::cout << imsd.first << " " << imsd.second << "\n";
-
-	for(auto const & ipqp : finput_performance_quantities) {
-
-	  if(ipqp.second == SIZE_MAX) continue;
-	  PlotGraph(permutation_v, plot_permutations, drawn_values.at(imsd.second), imsd.second, parameter_index, ipqp.second, modified_title_suffix, modified_name_suffix + "_" + ipqp.first);
-
-	}
-
-      }
-
-    }
-
+    } 
+    
   }
 
 }
@@ -562,88 +643,19 @@ void EvaluateVertexQuality::PlotParametersOld(std::vector<std::vector<double> > 
 
 void EvaluateVertexQuality::DrawGraphs() {
 
-  for(std::vector<TGraph *> const & graph_v : fgraph_v) {
-    for(TGraph * graph : graph_v) {
-      TCanvas * canvas = new TCanvas((std::string(graph->GetName()) + "_canvas").c_str());
+  for(PlotHelper const & ph : fplot_helper_v) {
+
+    for(TGraph * graph : ph.graph_v) {
+
+      TCanvas * canvas = new TCanvas((std::string(graph->GetName()) + "_canvas\n").c_str());
       graph->Draw("ap");
       canvas->Write();
       delete canvas;
-    }
-  }
-
-}
-
-
-void EvaluateVertexQuality::DrawGraphsSupimp() {
-
-  for(size_t i = 0; i < fgraph_v.size(); ++i) {
-
-    TCanvas * canvas = nullptr;
-    TGraph * first_graph = nullptr;
-
-    double ymin = DBL_MAX;
-    double ymax = 0;
-
-    TLegend * legend = new TLegend(0.6, 0.9, 0.9, 0.6);
-    std::vector<TLine *> line_handler;
-
-    for(size_t j = 0; j < fgraph_v.at(i).size(); ++j) {
-
-      TGraph * graph = fgraph_v.at(i).at(j);
-      if(!graph) continue;
-      if(!canvas) {
-	canvas = new TCanvas((std::string(graph->GetName()) + "_canvas").c_str());
-	graph->GetYaxis()->SetTitle("");
-	graph->Draw("ap");
-	first_graph = graph;
-      }
-
-      else graph->Draw("p");
-   
-      double const gmin = TMath::MinElement(graph->GetN(), graph->GetY());
-      double const gmax = TMath::MaxElement(graph->GetN(), graph->GetY());
-
-      if(gmin < ymin) ymin = gmin;
-      if(gmax > ymax) ymax = gmax;
-
-      legend->AddEntry(graph, fdraw_vec.at(j).at(5).c_str());
-
-      double const xmin = TMath::MinElement(graph->GetN(), graph->GetX());
-      double const xmax = TMath::MaxElement(graph->GetN(), graph->GetX());
-
-      if(fpandora_tree) {
-	////////////////////////////HERE
-	std::cout << graph->GetName() << "\n";
-	for(std::string const & str : fdraw_vec.at(j)) {
-	  std::cout << str << " ";
-	}
-	std::cout  << "\n" << fpandora_drawn_values.at(j).at(0) << "\n";
-
-	TLine * line = new TLine(xmin, fpandora_drawn_values.at(j).at(0), xmax, fpandora_drawn_values.at(j).at(0));
-	line->SetLineColor(graph->GetMarkerColor());
-	line->Draw();
-	legend->AddEntry(line, (std::string("Pandora ") + fdraw_vec.at(j).at(5)).c_str());
-	line_handler.push_back(line);
-      }
 
     }
-
-    std::cout << "\n";
-
-    if(canvas) {
- 
-      first_graph->GetYaxis()->SetRangeUser(ymin*0.9, ymax*1.1);
-      legend->Draw();
-      canvas->Write();
-      delete canvas; 
-      for(TLine * line : line_handler) delete line;
-
-    }
-
-    delete legend;
 
   }
-
+  
 }
 
 
@@ -674,13 +686,10 @@ void EvaluateVertexQuality::Run(std::vector<double> const & input_permutation) {
 
   //fvq.Print(permutation_v, fdraw_vec, drawn_values, max_results, min_results);
 
-  ProcessDrawOptions();
+  CheckPlotHelperV();
+  PlotParameters(permutation_v, drawn_values, max_results, "max");
+  PlotParameters(permutation_v, drawn_values, min_results, "min");
 
-  PlotParameters(permutation_v, drawn_values, max_results, "Maximized", "max");
-  //PlotParameters(drawn_values, min_results, "Minimized", "min");
-
-  //DrawGraphs();
-  DrawGraphsSupimp();
   //Hack();
 
 }
