@@ -115,6 +115,10 @@ void VertexQuality::SetParameters(double const start_prox,
 
 void VertexQuality::SetupVertexQualityTreeClosest(TTree * const tree) {
   
+  tree->Branch("run_number", &frun_number, "run_number/I");
+  tree->Branch("subrun_number", &fsubrun_number, "subrun_number/I");
+  tree->Branch("event_number", &fevent_number, "event_number/I");
+
   tree->Branch("start_prox", &fstart_prox, "start_prox/D");
   tree->Branch("shower_prox", &fshower_prox, "shower_prox/D");
   tree->Branch("max_bp_dist", &fmax_bp_dist, "max_bp_dist/D");
@@ -148,6 +152,10 @@ void VertexQuality::SetupVertexQualityTreeClosest(TTree * const tree) {
 
 
 void VertexQuality::SetupVertexQualityTreeSignal(TTree * tree) {
+
+  tree->Branch("run_number", &frun_number, "run_number/I");
+  tree->Branch("subrun_number", &fsubrun_number, "subrun_number/I");
+  tree->Branch("event_number", &fevent_number, "event_number/I");
 
   tree->Branch("start_prox", &fstart_prox, "start_prox/D");
   tree->Branch("shower_prox", &fshower_prox, "shower_prox/D");
@@ -287,12 +295,36 @@ void VertexQuality::GetTrueRecoObjects(size_t const mct_index,
 	    std::find(mcparticle_v.begin(), mcparticle_v.end(), reco_shower_mc_index) != mcparticle_v.end()) {
       shower_v.push_back(i);
     }
+    
   }
 
 }
 
 
-void VertexQuality::Reset() {
+void VertexQuality::ResetEvent() {
+
+  frun_number = -10000;
+  fsubrun_number = -10000;
+  fevent_number = -10000;
+
+  freco_vertex_present = -1;
+
+}
+
+
+void VertexQuality::ResetMCTruth() {
+
+  fis_nc_delta_rad = -1;
+  fnc_delta_rad_split_shower = -1;
+  ftpc_volume_contained = -1;
+
+  ftrue_track_total = -1;
+  ftrue_shower_total = -1;  
+
+}
+
+
+void VertexQuality::ResetVertex() {
 
   fdist = -10000;
   fdistx = -10000;
@@ -322,7 +354,11 @@ void VertexQuality::FillTree(TTree * tree,
                              std::vector<size_t> const & track_v,
                              std::vector<size_t> const & shower_v) {
 
-  Reset();
+  ResetVertex();
+
+  frun_number = fstorage->frun_number;
+  fsubrun_number = fstorage->fsubrun_number;
+  fevent_number = fstorage->fevent_number;
 
   if(pa_index == SIZE_MAX) {
     tree->Fill();
@@ -423,6 +459,9 @@ void VertexQuality::FillTree(TTree * tree,
 void VertexQuality::RunClosest(ParticleAssociations const & pas,
 			       bool const track_only) {
   
+  ResetEvent();
+  ResetMCTruth();
+
   std::vector<ParticleAssociation> const & pa_v = pas.GetAssociations();
   std::vector<size_t> const * asso_v;
   if(track_only) asso_v = &pas.GetAssociationIndices();
@@ -484,6 +523,8 @@ void VertexQuality::RunClosest(ParticleAssociations const & pas,
 void VertexQuality::RunSig(ParticleAssociations const & pas,
                            bool const track_only) {
 
+  ResetEvent();
+
   DetectorObjects const & detos = pas.GetDetectorObjects();
 
   std::vector<double> const & true_nuvertx = *fstorage->ftrue_nuvertx;
@@ -493,6 +534,8 @@ void VertexQuality::RunSig(ParticleAssociations const & pas,
   std::vector<int> const & reco_shower_largest_mc_index = *fstorage->freco_shower_largest_mc_index;
 
   for(size_t mct_index = 0; mct_index < true_nuvertx.size(); ++mct_index) {
+
+    ResetMCTruth();
 
     size_t exiting_photon_index = SIZE_MAX;
     ftpc_volume_contained = 0;
@@ -585,8 +628,14 @@ std::vector<double> VertexQuality::DrawHist(TTree * tree,
   tree->Draw((draw + ">>h" + binning).c_str(), weight.c_str());
   TH1 * h = (TH1*)gDirectory->Get("h");
 
-  results.push_back(h->GetMean());
-  results.push_back(double(h->GetBinContent(h->GetNbinsX())) / h->GetEntries());
+  if(h->GetEntries() == 0){
+    results.push_back(-DBL_MAX);
+    results.push_back(-DBL_MAX);
+  }
+  else {
+    results.push_back(h->GetMean());
+    results.push_back(double(h->GetBinContent(h->GetNbinsX())) / h->GetEntries());
+  }
 
   delete h;
   delete canvas;
@@ -596,13 +645,36 @@ std::vector<double> VertexQuality::DrawHist(TTree * tree,
 }
 
 
+void VertexQuality::GetMinMax(int const permutation_index,
+			      std::vector<double> const & results,
+			      std::vector<std::pair<double, int> > & max_results,
+			      std::vector<std::pair<double, int> > & min_results) const {
+
+  for(size_t k = 0; k < results.size(); ++k) {
+
+    double const result = results.at(k);
+    
+    if(result > max_results.at(k).first) {
+      max_results.at(k).first = result;
+      max_results.at(k).second = permutation_index;
+    }
+    
+    if(result < min_results.at(k).first) {
+      min_results.at(k).first = result;
+      min_results.at(k).second = permutation_index;
+    }
+    
+  }
+
+}
+
 
 void VertexQuality::GetDrawnValues(TTree * tree,
 				   std::vector<std::vector<double>> const & permutation_v,
 				   std::vector<std::vector<std::string>> const & draw_vec,
 				   std::vector<std::vector<std::vector<double> > > & drawn_values,
-				   std::vector<std::pair<double, int>> & max_results,
-				   std::vector<std::pair<double, int>> & min_results,
+				   std::vector<std::vector<std::pair<double, int> > > & max_results,
+				   std::vector<std::vector<std::pair<double, int> > > & min_results,
 				   bool const fill_drawn_values) const {
   
   if(fill_drawn_values) {
@@ -613,10 +685,11 @@ void VertexQuality::GetDrawnValues(TTree * tree,
       drawn_values.back().reserve(permutation_v.size());
     }
   }
+
   max_results.clear();
-  max_results.resize(draw_vec.size(), {0, -1});
+  max_results.resize(draw_vec.size(), {fperformance_quantities.size(), {0, -1}});
   min_results.clear();
-  min_results.resize(draw_vec.size(), {DBL_MAX, -1});
+  min_results.resize(draw_vec.size(), {fperformance_quantities.size(), {DBL_MAX, -1}});
 
   for(size_t i = 0; i < permutation_v.size(); ++i) {
 
@@ -631,15 +704,22 @@ void VertexQuality::GetDrawnValues(TTree * tree,
       if(!draw_weight.empty()) modified_weight += " && " + draw_weight;
 
       if(fill_drawn_values) drawn_values.at(j).push_back(DrawHist(tree, draw.at(0), draw.at(1), modified_weight));
-      double const result = drawn_values.at(j).back().front();
-      if(result > max_results.at(j).first) {
-	max_results.at(j).first = result;
-	max_results.at(j).second = i;
+      std::vector<double> const & results = drawn_values.at(j).back();
+
+      if(results.size() != max_results.at(j).size()) {
+	std::cout << "WARNING: results size != max_results size\n";
+	continue;
       }
-      if(result < min_results.at(j).first) {
-	min_results.at(j).first = result;
-	min_results.at(j).second = i;
+
+      if(results.size() != min_results.at(j).size()) {
+	std::cout << "WARNING: results size != min_results size\n";
+	continue;
       }
+
+      GetMinMax(i,
+		results,
+		max_results.at(j),
+		min_results.at(j));
 
     }
 
@@ -651,8 +731,8 @@ void VertexQuality::GetDrawnValues(TTree * tree,
 void VertexQuality::Print(std::vector<std::vector<double>> const & permutation_v,
 			  std::vector<std::vector<std::string>> const & draw_vec,
 			  std::vector<std::vector<std::vector<double> > > const & drawn_values,
-			  std::vector<std::pair<double, int>> const & max_results,
-			  std::vector<std::pair<double, int>> const & min_results) const {
+			  std::vector<std::vector<std::pair<double, int> > > const & max_results,
+			  std::vector<std::vector<std::pair<double, int> > > const & min_results) const {
   
   std::cout << "\n";
   for(size_t i = 0; i < drawn_values.size(); ++i) {
@@ -669,11 +749,22 @@ void VertexQuality::Print(std::vector<std::vector<double>> const & permutation_v
       std::cout << "\n";
     }
     */
-    std::cout << "\nmax: " << max_results.at(i).first;;
-    for(double const value : permutation_v.at(max_results.at(i).second)) std::cout << " " << value;
-    std::cout << "\nmin: " << min_results.at(i).first;
-    for(double const value : permutation_v.at(min_results.at(i).second)) std::cout << " " << value;
-    std::cout << "\n\n";
+    for(size_t j = 0; j < fperformance_quantities.size(); ++j) {
+      std::cout << fperformance_quantities.at(j) << "\n";
+      if(max_results.at(i).at(j).second != -1) {
+	std::cout << "max: " << max_results.at(i).at(j).first;
+	for(double const value : permutation_v.at(max_results.at(i).at(j).second)) std::cout << " " << value;
+      }
+      else std::cout << "No max value found";
+      std::cout << "\n";
+      if(min_results.at(i).at(j).second != -1) {
+	std::cout << "min: " << min_results.at(i).at(j).first;
+	for(double const value : permutation_v.at(min_results.at(i).at(j).second)) std::cout << " " << value;
+      }
+      else std::cout << "No min value found";
+      std::cout << "\n";
+    }
+    std::cout << "\n";
 
   }
 
@@ -692,8 +783,8 @@ void VertexQuality::Evaluate() {
   }
 
   std::vector<std::vector<std::vector<double> > > drawn_values;
-  std::vector<std::pair<double, int> > max_results;
-  std::vector<std::pair<double, int> > min_results;
+  std::vector<std::vector<std::pair<double, int> > > max_results;
+  std::vector<std::vector<std::pair<double, int> > > min_results;
   
   TTree * eval_tree = SetupEvalTree(drawn_values);
   eval_tree->Branch("performance_quantities", &fperformance_quantities);

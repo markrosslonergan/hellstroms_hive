@@ -364,8 +364,8 @@ void EvaluateVertexQuality::GetEvalInfo() {
 
 
 void EvaluateVertexQuality::GetEval(std::vector<std::vector<std::vector<double> > > & drawn_values,
-				    std::vector<std::pair<double, int>> & max_results,
-				    std::vector<std::pair<double, int>> & min_results) {
+				    std::vector<std::vector<std::pair<double, int> > > & max_results,
+				    std::vector<std::vector<std::pair<double, int> > > & min_results) {
 
   drawn_values.clear();
   max_results.clear();
@@ -374,14 +374,16 @@ void EvaluateVertexQuality::GetEval(std::vector<std::vector<std::vector<double> 
 
   GetEvalInfo();
 
+  std::vector<std::string> const & vq_pq = fvq.GetPerformanceQuantities();
+
   for(int i = 0; i < feval_chain->GetEntries(); ++i) {
 
     feval_chain->GetEntry(i);
 
     if(i == 0) {
       drawn_values.resize(fdrawn_values->size(), {});
-      max_results.resize(fdrawn_values->size(), {0, -1});
-      min_results.resize(fdrawn_values->size(), {DBL_MAX, -1});
+      max_results.resize(fdrawn_values->size(), {vq_pq.size(), {0, -1}});
+      min_results.resize(fdrawn_values->size(), {vq_pq.size(), {DBL_MAX, -1}});
     }
 
     for(size_t j = 0; j < fdrawn_values->size(); ++j) {
@@ -392,20 +394,14 @@ void EvaluateVertexQuality::GetEval(std::vector<std::vector<std::vector<double> 
 
   for(size_t i = 0; i < drawn_values.size(); ++i) {
 
-    std::vector<std::vector<double>> const & v = drawn_values.at(i);
+    for(size_t j = 0; j < drawn_values.at(i).size(); ++j) {
+      
+      std::vector<double> const & results = drawn_values.at(i).at(j);
 
-    for(size_t j = 0; j < v.size(); ++j) {
-
-      double const value = v.at(j).front();
-
-      if(value > max_results.at(i).first) {
-	max_results.at(i).first = value;
-	max_results.at(i).second = j;
-      }
-      if(value < min_results.at(i).first) {
-	min_results.at(i).first = value;
-	min_results.at(i).second = j;
-      }
+      fvq.GetMinMax(j,
+		    results,
+		    max_results.at(i),
+		    min_results.at(i));
 
     }
 
@@ -538,7 +534,7 @@ TGraph * EvaluateVertexQuality::PlotGraph(PlotHelper const & ph,
 
 void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > const & permutation_v,
 					   std::vector<std::vector<std::vector<double> > > const & drawn_values,
-					   std::vector<std::pair<double, int>> const & results,
+					   std::vector<std::vector<std::pair<double, int> > > const & results,
 					   std::string const & method) {
 
   for(PlotHelper & ph : fplot_helper_v) {
@@ -552,20 +548,21 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
     if(mm_it != fmethod_map.end()) title_suffix = mm_it->second + " ";
     else std::cout << "WARNING: no title for " << method << "\n";
     std::string const modified_title_suffix = title_suffix + fdraw_vec.at(ph_index).at(5);
-    std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).second);    
 
     std::map<std::string, size_t> const & metrics_to_draw = ph.metrics_to_draw;
     std::map<std::string, size_t> const & parameters_to_draw = ph.parameters_to_draw;
     std::map<std::string, size_t> const & performance_quantities = ph.performance_quantities;
 
-    for(auto const & ptd : parameters_to_draw) {
- 
-      int const parameter_index = ptd.second;
-      std::vector<size_t> const plot_permutations = FindPermutations(permutation_v, best_permutation, parameter_index);
+    for(auto const & pq : performance_quantities) {
 
-      for(auto const & pq : performance_quantities) {
-     
-	TCanvas * canvas = new TCanvas((method + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_var_" + fparameter_name.at(parameter_index)).c_str());
+      std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).at(pq.second).second);
+      
+      for(auto const & ptd : parameters_to_draw) {
+ 
+	int const parameter_index = ptd.second;
+	std::vector<size_t> const plot_permutations = FindPermutations(permutation_v, best_permutation, parameter_index);
+	
+	TCanvas * canvas = new TCanvas((method + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_" + pq.first + "_var_" + fparameter_name.at(parameter_index)).c_str());
 
 	TGraph * first_graph = nullptr;
 
@@ -667,8 +664,8 @@ void EvaluateVertexQuality::Run(std::vector<double> const & input_permutation) {
   }
      
   std::vector<std::vector<std::vector<double>>> drawn_values;
-  std::vector<std::pair<double, int>> max_results;
-  std::vector<std::pair<double, int>> min_results;
+  std::vector<std::vector<std::pair<double, int>>> max_results;
+  std::vector<std::vector<std::pair<double, int>>> min_results;
 
   std::vector<std::vector<double>> permutation_v;
   if(!input_permutation.empty()) {

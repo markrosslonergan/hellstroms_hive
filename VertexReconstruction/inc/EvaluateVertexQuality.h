@@ -89,8 +89,8 @@ class EvaluateVertexQuality {
   std::string GetPermString(std::vector<double> const & permutation);
   void GetEvalInfo();
   void GetEval(std::vector<std::vector<std::vector<double>>> & drawn_values,
-	       std::vector<std::pair<double, int>> & max_results,
-	       std::vector<std::pair<double, int>> & min_results);
+	       std::vector<std::vector<std::pair<double, int>>> & max_results,
+	       std::vector<std::vector<std::pair<double, int>>> & min_results);
   void GetPandoraMetrics();
   void CheckPlotHelperV();
   void ProcessDrawOption(std::vector<std::string> const & input,
@@ -100,7 +100,7 @@ class EvaluateVertexQuality {
 				       size_t const parameter_index);
   void PlotParameters(std::vector<std::vector<double> > const & permutation_v,
 		      std::vector<std::vector<std::vector<double> > > const & drawn_values,
-		      std::vector<std::pair<double, int>> const & results,
+		      std::vector<std::vector<std::pair<double, int>>> const & results,
 		      std::string const & method);
   TGraph * PlotGraph(PlotHelper const & ph,
 		     std::string const & method,
