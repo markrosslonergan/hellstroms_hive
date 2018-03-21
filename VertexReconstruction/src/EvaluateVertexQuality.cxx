@@ -91,7 +91,7 @@ EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
 			  {"combined", {"Combined", kMagenta, 8}},
 			  {"shower_combined", {"Shower Combined", kMagenta, 23}},
 			  {"track_combined", {"Track Combined", kMagenta, 33}},
-			  {"dist", {"Reco - True Distance [cm]", kGreen, 8}}};
+			  {"dist", {"Reco - True Distance [cm]", kBlack, 8, 2}}};
 
 }
 
