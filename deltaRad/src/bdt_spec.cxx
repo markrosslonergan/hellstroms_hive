@@ -116,6 +116,8 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		THStack* s2 = this->getStack(var,2,c1,-9);
 		THStack* s3 = this->getStack(var,3,c1, c2);
 
+		std::cout<<"1"<<std::endl;
+
 		cobs->cd(1);
 		s0->Draw("hist");
 		s0->SetTitle("Selection");
@@ -134,6 +136,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		l0->SetLineColor(kWhite);
 		l0->SetTextSize(0.03);
 		
+		std::cout<<"2"<<std::endl;
 		cobs->cd(2);
 		s1->Draw("hist");
 		s1->SetTitle("Precuts");
@@ -154,6 +157,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		l1->SetTextSize(0.03);
 
 
+		std::cout<<"3"<<std::endl;
 
 
 		cobs->cd(3);
@@ -201,6 +205,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 
 
+		std::cout<<"5"<<std::endl;
 		
 
 		cobs->Write();
@@ -229,6 +234,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, doubl
 		bdt_variable var = this->stack.at(0)->getBDTVariable(whichbdt);
 
 
+		std::cout<<"4"<<std::endl;
 		TPad*p0 = (TPad*)cobs->cd(1);
 		p0->SetLogy();
 		s0->Draw("hist");
@@ -251,6 +257,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, doubl
 		l0->SetLineColor(kWhite);
 		l0->SetTextSize(0.03);
 	
+		std::cout<<"1"<<std::endl;
 		TPad*p1 = (TPad*)cobs->cd(2);
 		p1->SetLogy();	
 		s1->Draw("hist");
@@ -277,6 +284,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, doubl
 
 
 
+		std::cout<<"2"<<std::endl;
 	
 		TPad*p2 = (TPad*)cobs->cd(3);
 		p2->SetLogy();		
@@ -302,6 +310,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, doubl
 		l2->SetTextSize(0.03);
 
 
+		std::cout<<"3"<<std::endl;
 
 	
 		TPad*p3 = (TPad*)cobs->cd(4);
@@ -328,6 +337,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, doubl
 
 
 
+		std::cout<<"4"<<std::endl;
 		
 
 		cobs->Write();

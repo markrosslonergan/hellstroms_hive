@@ -25,6 +25,7 @@
 #include "bdt_sig.h"
 #include "bdt_spec.h"
 
+#include "bdt_precalc.h"
 
 
 
@@ -32,9 +33,9 @@ int main (int argc, char *argv[]){
 
 	// Just some simple argument things
 	//===========================================================================================
-	//std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
+	std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
 
-	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
+	//std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
@@ -117,31 +118,33 @@ int main (int argc, char *argv[]){
 	
 
 	// Our signal definition alongside any base cuts we want to make
-	std::string base_cuts = "passed_swtrigger == 1 && reco_asso_showers == 2 && reco_asso_tracks " + num_track_cut;
+	std::string base_cuts = "reco_asso_showers == 2 && reco_asso_tracks " + num_track_cut;
 	std::string cosmic_base_cuts = "reco_asso_showers == 2 && reco_asso_tracks " + num_track_cut;
 
-	std::string signal_definition = "ccnc==1 &&true_shower_parent_pdg[second_most_energetic_shower_index]==111&& true_shower_parent_pdg[most_energetic_shower_index]==111";
+	std::string signal_definition = "ccnc==1 &&true_shower_parent_pdg[second_most_energetic_shower_index]==111";
 	std::string background_definition = "!(" + signal_definition + ")";
 
 	
 	//This is a particular cut flow that a file will undergo. I.e base cuts, precuts, postcuts, and then the name of the Cosmic BDT and bnb bdt
-	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	new_precuts,"", 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
-	bdt_flow cosmic_flow(cosmic_base_cuts, 			new_precuts,"", 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
-	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts,"",		cosmic_bdt_info.identifier ,bnb_bdt_info.identifier);
-	bdt_flow data_flow(base_cuts ,				new_precuts,"",		cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
+	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	new_precuts,"1", 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
+	bdt_flow cosmic_flow(cosmic_base_cuts, 			new_precuts,"1", 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
+	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts,"1",		cosmic_bdt_info.identifier ,bnb_bdt_info.identifier);
+	bdt_flow data_flow(base_cuts ,				new_precuts,"1",		cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
 
 
 	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
-	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "VR_bnb_2000.root",	"NCpi0Pure",	   "hist","",  kBlue-4, signal_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc86/", "merged_bnbcosmic_mcc88_v1.0.root", "NCpi0Cosmics", "hist","",  kBlue-4, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir+"samples/mcc86/", "merged_bnbcosmic_mcc88_v1.0.root",	"BNBPure",	   "hist","",  kRed-6, bkg_flow);
+
+	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "VR_bnb_2000.root",		     "NCpi0Pure", "hist","",  kBlue-4, signal_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir+"samples/bnbcosmic/", "merged_bnbcosmic_mcc88_v1.0.root", "NCpi0Cosmics", "hist","",  kBlue-4, signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir+"samples/bnbcosmic/", "merged_bnbcosmic_mcc88_v1.0.root",	"BNBPure",	   "hist","",  kRed-6, bkg_flow);
 	//bdt_file *bnb_cosmics = new bdt_file(dir+"samples/mcc86/", "merged.bnbcosmic_v3.0_mcc86_withcalo.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/mcc86/", "merged_bnbcosmic_mcc88_v1.0.root", "BNBCosmics", "hist","",  kRed-6, bkg_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/bnbcosmic/", "merged_bnbcosmic_mcc88_v1.0.root", "BNBCosmics", "hist","",  kRed-6, bkg_flow);
+
 	//bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "merged.intime_v1.0.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "VR_bnb_cosmic_2000.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 
 
-	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
+	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics};
 
     /*
 	//Add Any other info in the form of FRIENDS! e.g track dEdx 
@@ -150,17 +153,14 @@ int main (int argc, char *argv[]){
 	bnb_pure->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb.root");			
 	bnb_cosmics->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb_cosmics.root");			
 	intime->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_intime.root");			
-<<<<<<< HEAD
 //	data5e19->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_data5e19.root");			
 //	bnbext->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnbext.root");			
-=======
 	//data5e19->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_data5e19.root");			
 	//bnbext->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnbext.root");			
     */
 
 
 	//Variables!
-    
 	std::string angle_track_shower1 ="(reco_track_dirx[longest_asso_track_index]*reco_shower_dirx[most_energetic_shower_index]+reco_track_diry[longest_asso_track_index]*reco_shower_diry[most_energetic_shower_index]+reco_track_dirz[longest_asso_track_index]*reco_shower_dirz[most_energetic_shower_index])";
 	std::string angle_track_shower2 ="(reco_track_dirx[longest_asso_track_index]*reco_shower_dirx[second_most_energetic_shower_index]+reco_track_diry[longest_asso_track_index]*reco_shower_diry[second_most_energetic_shower_index]+reco_track_dirz[longest_asso_track_index]*reco_shower_dirz[second_most_energetic_shower_index])";
 	//std::string angle_shower1_shower2 ="reco_shower_dirx[most_energetic_shower_index]*reco_shower_dirx[second_most_energetic_shower_index]+reco_shower_diry[most_energetic_shower_index]*reco_shower_diry[second_most_energetic_shower_index]+reco_shower_dirz[most_energetic_shower_index]*reco_shower_dirz[second_most_energetic_shower_index]";
@@ -283,19 +283,12 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	double fcoscut;
 	double fbnbcut;
 	if(istrack == "track"){
-		fcoscut = 0.53842;
-		fbnbcut = 0.505593;
-
+		fcoscut = 0.3;
+		fbnbcut = 0.3;
 	}else if(istrack == "notrack"){
-		fcoscut = 0.525239;
-		fbnbcut = 0.508714;
+		fcoscut = 0.3;
+		fbnbcut = 0.3;
 	}
-
-
-
-
-
-
 
 
 
@@ -315,9 +308,9 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	}else if(mode_option == "app"){
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
 		//std::vector<bdt_file*> app_files = {data5e19,bnbext,signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
-		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
-		bdt_app(cosmic_bdt_info, app_files, vars, TMVAmethods);
+		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, signal_cosmics, bnb_cosmics}; 
 		bdt_app(bnb_bdt_info, app_files, vars, TMVAmethods);
+		bdt_app(cosmic_bdt_info, app_files, vars, TMVAmethods);
 	}
 	else if(mode_option == "response"){
 
@@ -330,7 +323,6 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
 			}
 		}
-
 
 		//Ok print out Cosmic BDT
 	//	bdt_response cosmic_response(cosmic_bdt_info, signal_pure, intime);
@@ -442,7 +434,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
             // Note: changed 4 to 2, because we don't have cosmics yet
 			for(int j=0; j<2;j++){	
-                std::cout<<v.name<<" "<<j<<std::endl;
+               		        std::cout<<v.name<<" "<<j<<std::endl;
 				std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
 				std::string cut_bnb = bnb_pure->getStageCuts(j,fcoscut,fbnbcut); 
 
@@ -466,7 +458,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 				l->SetLineColor(kWhite);
 				l->SetFillStyle(0);
 		
-				l->AddEntry(sig,"NC #Delta #gamma Signal","l");	
+				l->AddEntry(sig,"NC #pi^{0} Signal","l");	
 				l->AddEntry(bkg,"BNB Background","l");	
 				l->Draw();
 	
@@ -642,8 +634,15 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	}
     */
+	 else if(mode_option == "precalc"){
+		bdt_precalc pre(bnb_pure);
+		pre.genTrackInfo();
 
-	else {
+		addPreFriends(bnb_pure,"track");
+		
+
+	
+	}  else {
 		std::cout << "WARNING: " << mode_option << " is an invalid option\n";
 	}
 
