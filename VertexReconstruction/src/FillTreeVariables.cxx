@@ -1263,15 +1263,15 @@ void FillTreeVariables::Fill(ParticleAssociations const & pas) {
 
   size_t mct_index = SIZE_MAX;
   if(fmcordata) {
-    mct_index = 0;
     std::vector<int> const & is_delta_rad = *fstorage->fis_delta_rad;
+    if(!is_delta_rad.empty()) mct_index = 0;
     for(size_t i = 0; i < is_delta_rad.size(); ++i) {
       if(is_delta_rad.at(i) == 1) {
 	mct_index = i;
 	break;
       }
     }
-    FillTruth(mct_index);
+    if(mct_index != SIZE_MAX) FillTruth(mct_index);
     mctracknumber = fstorage->fmctrack_Origin->size();
     mcshowernumber = fstorage->fmcshower_Origin->size();
   }
