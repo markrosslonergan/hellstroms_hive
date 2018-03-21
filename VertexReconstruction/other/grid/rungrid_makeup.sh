@@ -48,14 +48,15 @@ echo OLDPROCESS: $OLDPROCESS >> $log
 #log=log_$OLDPROCESS.txt >> $log
 
 
-echo ifdh mkdir $SCRATCH/$VOUT/$OLDPROCESS >> $log
-if [ -d "$SCRATCH/$VOUT/$OLDPROCESS" ]; then
-    echo "Directory: $SCRATCH/$VOUT/$OLDPROCESS already exists, exiting" >> $log
-    ifdh cp -D $PWD/$log $SCRATCH/$VOUT/$OLDPROCESS
-    exit 1
-else
+echo Check dir: $SCRATCH/$VOUT/$OLDPROCESS >> $log
+if [ ! -d "$SCRATCH/$VOUT/$OLDPROCESS" ]; then
     echo ifdh mkdir $SCRATCH/$VOUT/$OLDPROCESS >> $log
     ifdh mkdir $SCRATCH/$VOUT/$OLDPROCESS >> $log 2>&1
+elif [ -f "$SCRATCH/$VOUT/$OLDPROCESS/${EXEC}${OLDPROCESS}.root" ]; then
+    echo "File: $SCRATCH/$VOUT/$OLDPROCESS/${EXEC}${OLDPROCESS}.root already exists, exiting" >> $log
+    ifdh cp -D $PWD/$log $SCRATCH/$VOUT/$OLDPROCESS
+    #ifdh cp -D $PWD/$log $SCRATCH/$VOUT
+    exit 1;
 fi
 echo >> $log
 
@@ -87,8 +88,7 @@ ofile=$PWD/$EXEC.root
 echo Output file: $ofile >> $log
 echo >> $log
 ls $ofile >> $log 2>&1
-if [ $? -eq 0 ];
-then
+if [ $? -eq 0 ]; then
     chmod 777 $ofile
     echo ifdh cp $ofile $SCRATCH/$VOUT/$OLDPROCESS/$EXEC$OLDPROCESS.root >> $log
     ifdh cp $ofile $SCRATCH/$VOUT/$OLDPROCESS/$EXEC$OLDPROCESS.root >> $log 2>&1
@@ -99,3 +99,4 @@ echo >> $log
 
 
 ifdh cp -D $PWD/$log $SCRATCH/$VOUT/$OLDPROCESS
+#ifdh cp -D $PWD/$log $SCRATCH/$VOUT
