@@ -50,6 +50,13 @@ int main(int const argc, char const * argv[]) {
 		parameters,
 		performance_quantity);
 
+  evq.AddToDraw({"dist"},
+		{"min"},
+		{"dist"},
+		parameters,
+		performance_quantity);
+
+
   /*  
   std::string const weight = "tpc_volume_contained == 1 && is_nc_delta_rad == 1 && nc_delta_rad_split_shower == 1";
 

@@ -78,7 +78,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	std::cout<<"Got vertex tree"<<std::endl;
 
 	double potbranch = 0;
-    double numbranch = 0;
+    	int  numbranch = 0;
 
 	if(is_mc){
 		if(tag == "IntimeCosmics"){
@@ -98,7 +98,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			leg = "l";
 			std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
 			tpot = (TTree*)f->Get(tnam_pot.c_str());
-            tpot->SetBranchAddress("number_of_events", &numbranch);
+            		tpot->SetBranchAddress("number_of_events", &numbranch);
 			tpot->SetBranchAddress("pot",&potbranch);
 
 			std::cout<<"Set the POT branch"<<std::endl;
@@ -106,7 +106,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			double tmppot=0;
 			for(int i=0; i<tpot->GetEntries(); i++){
 				tpot->GetEntry(i);
-                tmpnum += numbranch;
+                tmpnum += (double)numbranch;
 				tmppot += potbranch;
 			}
             numberofevents = tmpnum;
@@ -152,7 +152,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	is_data(indata),
 	is_mc(!indata)
 {
-
 
 	//This isnt the best idea but sure whynot
 	recomc_cols = {kRed,kRed-3,kRed+3,kBlue, kBlue+3, kBlue-3,kMagenta-3, kGreen, kGreen +3, kGreen -3, kYellow};
@@ -268,8 +267,10 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 	this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
 	std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
+
 	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
 	th1->Scale(this->scale_data*plot_POT/this->pot);
+	std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
 	th1->SetLineColor(col);
 	th1->SetLineWidth(1);
 	th1->SetStats(0);
@@ -331,20 +332,20 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 
 bdt_variable bdt_file::getBDTVariable(bdt_info info){
 
-	if(info.identifier =="bnb_track" || info.identifier == "bnb_notrack"){
-		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.35,0.55)","BNB BDT Response",false);
-	}else if(info.identifier == "cosmic_track" || info.identifier == "cosmic_notrack"){
-		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
+	if(info.identifier =="bnb_track" || info.identifier == "bnb_notrack" || info.identifier=="pi0bnb_track" || info.identifier=="pi0bnb_notrack"){
+		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.35,0.55)","BNB BDT Response",false,"d");
+	}else if(info.identifier == "cosmic_track" || info.identifier == "cosmic_notrack"  || info.identifier=="pi0cosmic_track" || info.identifier=="pi0cosmic_notrack"){
+		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false,"d");
 	}
 }
 
 bdt_variable bdt_file::getBDTVariable(std::string info){
-
-	if(info =="bnb_track"|| info=="bnb_notrack"){
-		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.35,0.55)","BNB BDT Response",false);
-	}else if(info == "cosmic_track"|| info=="cosmic_notrack"){
-		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
-	}
+	std::cout<<"getBDTVariable: "<<info<<std::endl;
+	if(info =="bnb_track"|| info=="bnb_notrack" || info=="pi0bnb_track" || info=="pi0bnb_notrack"){
+		return bdt_variable(this->tag +"_"+info+ ".mva","(35,0.25,0.45)","BNB BDT Response",false,"d");
+	}else if(info == "cosmic_track"|| info=="cosmic_notrack"  || info=="pi0cosmic_track" || info=="pi0cosmic_notrack"){
+		return bdt_variable(this->tag +"_"+info+ ".mva","(35,0.25,0.45)","Cosmic BDT Response",false,"d");
+	}else return bdt_variable(this->tag +"_"+info+ ".mva","(35,0.25,0.45)","Cosmic BDT Response",false,"d");
 
 }
 
@@ -376,7 +377,7 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 			break;
 		case 1:
 			ans = flow.base_cuts + "&&"+ flow.pre_cuts;
-				break;
+			break;
 		case 2:
 			{
 			bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		

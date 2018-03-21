@@ -41,6 +41,7 @@ elif [ "$1" == "check" ]; then
     fi
     mkdir $makeupdir
 
+    good_files=0
     increment=0
 
     for i in `seq 0 $((jobnumber-1))`; do
@@ -55,8 +56,12 @@ elif [ "$1" == "check" ]; then
 	if [ "$missing" == true ]; then
 	    echo permutations_$i.root > $makeupdir/$increment.txt
 	    ((increment++))
-	fi 	
+	else
+	    ((good_files++))
+	fi
     done 
+
+    echo "Good files: $good_files / $jobnumber"
     
 
 elif [ "$1" == "makeup" ]; then
@@ -76,7 +81,7 @@ elif [ "$1" == "makeup" ]; then
 	fi
     done
 
-    jobsub_submit -G uboone --OS=SL6 --expected-lifetime='8h' --resource-provides=usage_model=DEDICATED,OPPORTUNISTIC,OFFSITE -N `ls $makeupdir | wc -l` ${mail} file://${workdir}/$gridfilemu ${file##*/}
+    jobsub_submit -G uboone --OS=SL6 --expected-lifetime='24h' --memory='4000MB' --resource-provides=usage_model=DEDICATED,OPPORTUNISTIC,OFFSITE -N `ls $makeupdir | wc -l` ${mail} file://${workdir}/$gridfilemu ${file##*/}
     
 
 elif [ "$1" == "clean" ]; then
@@ -86,7 +91,7 @@ elif [ "$1" == "clean" ]; then
 
 else
  
-    echo "Unknown parameter"
+    echo "Unknown input argument $1"
     exit 1
 
 
