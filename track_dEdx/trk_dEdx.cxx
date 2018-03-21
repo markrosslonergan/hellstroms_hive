@@ -89,6 +89,7 @@ int trk_dEdx(std::string fnam, std::string namout){
 	double v_mean_dEdx_start=0;
 	double v_mean_dEdx_end=0;
 	double v_mean_dEdx_ratio=0;
+
 	double v_bragg_start_parD=0;
 	double v_bragg_start_parA=0;
 	double v_bragg_start_trunc_parD=0;
@@ -103,7 +104,6 @@ int trk_dEdx(std::string fnam, std::string namout){
 	int v_reco_asso_tracks = 0;
 
 	TBranch *b_reco_asso_tracks = new_tree->Branch("reco_asso_tracks",&v_reco_asso_tracks,"reco_asso_tracks/I");
-
 	TBranch *b_mean_dEdx = new_tree->Branch("longest_asso_track_mean_dEdx",&v_mean_dEdx,"longest_asso_track_mean_dEdx/D");
 	TBranch *b_mean_dEdx_start = new_tree->Branch("longest_asso_track_mean_dEdx_start",&v_mean_dEdx_start,"longest_asso_track_mean_dEdx_start/D");
 	TBranch *b_mean_dEdx_end = new_tree->Branch("longest_asso_track_mean_dEdx_end",&v_mean_dEdx_end,"longest_asso_track_mean_dEdx_end/D");

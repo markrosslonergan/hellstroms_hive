@@ -21,14 +21,45 @@ int main(int const argc, char const * argv[]) {
 			    {argv + 1, argv + argc});
   evq.SetOutputFile("RunEvaluateVertexQuality.root");
 
-  std::string const weight = "tpc_volume_contained == 1 && is_nc_delta_rad == 1 && nc_delta_rad_split_shower == 1";
+  std::vector<std::string> const method = {"max"};
+  std::vector<std::string> const metrics_to_draw = {"track_cleanliness", "track_completeness", "shower_completeness", "shower_cleanliness"};
+  std::vector<std::string> const parameters = {"shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"};
+  std::vector<std::string> const performance_quantity = {"mean"};
 
   evq.AddToDraw({"shower_completeness"},
-		{"track_cleanliness", "track_completeness", "shower_completeness", "shower_cleanliness"},
-		{"shower_prox"},
-		{"mean"});
+		method,
+		metrics_to_draw,
+		parameters,
+		performance_quantity);
+
+  evq.AddToDraw({"shower_cleanliness"},
+		method,
+		metrics_to_draw,
+		parameters,
+		performance_quantity);
+
+  evq.AddToDraw({"track_completeness"},
+		method,
+		metrics_to_draw,
+		parameters,
+		performance_quantity);
+
+  evq.AddToDraw({"track_cleanliness"},
+		method,
+		metrics_to_draw,
+		parameters,
+		performance_quantity);
+
+  evq.AddToDraw({"dist"},
+		{"min"},
+		{"dist"},
+		parameters,
+		performance_quantity);
+
 
   /*  
+  std::string const weight = "tpc_volume_contained == 1 && is_nc_delta_rad == 1 && nc_delta_rad_split_shower == 1";
+
   evq.AddPerformanceMetric({"correct_track_total / true_track_total", "", weight + " && true_track_total > 0",
 	"track_completeness", "", "Track Completeness"});
   evq.AddPerformanceMetric({"correct_track_total / reco_track_total", "", weight + " && reco_track_total > 0",

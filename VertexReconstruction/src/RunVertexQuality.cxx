@@ -44,20 +44,20 @@ int main(int const argc, char const * argv[]) {
   vq.AddPerformanceMetric({"correct_track_total / reco_track_total", ratio_binning, weight + " && reco_track_total > 0",
 	"track_cleanliness", "", "Track Cleanliness"});
   
-  vq.AddPerformanceMetric({"correct_shower_total / true_shower_total", ratio_binning, weight,
+  vq.AddPerformanceMetric({"correct_shower_total / true_shower_total", ratio_binning, weight + " && true_shower_total > 0",
 	"shower_completeness", "", "Shower Completeness"});
-  vq.AddPerformanceMetric({"correct_shower_total / reco_shower_total", ratio_binning, weight,
+  vq.AddPerformanceMetric({"correct_shower_total / reco_shower_total", ratio_binning, weight + " && reco_shower_total > 0",
 	"shower_cleanliness", "", "Shower Cleanliness"});
   
   vq.AddPerformanceMetric({"(correct_track_total + correct_shower_total) / (true_track_total + true_shower_total)", 
 	ratio_binning, 
-	weight + " && (true_track_total + true_shower_total)",
+	weight + " && (true_track_total + true_shower_total) > 0",
 	"completeness",
 	"",
 	"Completeness"});
   vq.AddPerformanceMetric({"(correct_track_total + correct_shower_total) / (reco_track_total + reco_shower_total)",
 	ratio_binning,
-	weight + " && (reco_track_total + reco_shower_total)",
+	weight + " && (reco_track_total + reco_shower_total) > 0",
 	"cleanliness",
 	"",
 	"Cleanliness"});

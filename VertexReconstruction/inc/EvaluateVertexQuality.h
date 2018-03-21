@@ -21,17 +21,38 @@
 
 class EvaluateVertexQuality {
 
-  struct plot_helper {
+  struct GraphAesthetics {
 
-    plot_helper(std::string const & imetric_to_study,
-		std::vector<std::string> const & imetrics_to_draw,
-		std::vector<std::string> const & iparameters_to_draw,
-		std::vector<std::string> const & iperformance_quantities);
+    GraphAesthetics(std::string const ilegend_name,
+		    int const icolor,
+		    int const imarker_type,
+		    int const ipandora_line = 1);
 
-    std::string const metric_to_study;
-    std::vector<std::string> const metrics_to_draw;
-    std::vector<std::string> const parameters_to_draw;
-    std::vector<std::string> const performance_quantities;
+    std::string legend_name;
+    int color;
+    int marker_type;
+    int pandora_line;
+
+  };
+
+  struct PlotHelper {
+
+    PlotHelper(std::string const & imetric_to_study,
+	       std::vector<std::string> const & method,	
+	       std::vector<std::string> const & imetrics_to_draw,
+	       std::vector<std::string> const & iparameters_to_draw,
+	       std::vector<std::string> const & iperformance_quantities);
+    ~PlotHelper();
+
+    void Print();
+
+    std::pair<std::string, size_t> metric_to_study;
+    std::vector<std::string> method;
+    std::map<std::string, size_t> metrics_to_draw;
+    std::map<std::string, size_t> parameters_to_draw;
+    std::map<std::string, size_t> performance_quantities;
+
+    std::vector<TGraph *> graph_v;
 
   };
 
@@ -45,6 +66,7 @@ class EvaluateVertexQuality {
 
   void SetOutputFile(char const * file_name);
   void AddToDraw(std::string const & metric_to_study,
+		 std::vector<std::string> const & method,
 		 std::vector<std::string> const & metrics_to_draw,
 		 std::vector<std::string> const & parameters_to_draw,
 		 std::vector<std::string> const & performance_quantities);
@@ -70,46 +92,37 @@ class EvaluateVertexQuality {
 	       std::vector<std::pair<double, int>> & max_results,
 	       std::vector<std::pair<double, int>> & min_results);
   void GetPandoraMetrics();
+  void CheckPlotHelperV();
   void ProcessDrawOption(std::vector<std::string> const & input,
-			 std::unordered_map<std::string, size_t> & output);
-  void ProcessDrawOptions();
+			 std::map<std::string, size_t> & output);
   std::vector<size_t> FindPermutations(std::vector<std::vector<double>> const & permutation_v, 
 				       std::vector<double> const & best_permutation, 
 				       size_t const parameter_index);
-  void PlotParameters(std::vector<std::vector<double>> const & permutation_v,
-		      std::vector<std::vector<std::vector<double>>> const & drawn_values,
-		      std::vector<std::pair<double, int>> const & max_results,
-		      std::string const & title_suffix,
-		      std::string const & name_suffix);
-  void PlotParametersOld(std::vector<std::vector<double> > const & permutation_v,
-			 std::vector<std::vector<std::vector<double> > > const & drawn_values,
-			 std::vector<std::pair<double, int>> const & results,
-			 std::string const & title_suffix,
-			 std::string const & name_suffix);
-  void PlotGraph(std::vector<std::vector<double>> const & permutation_v,
-		 std::vector<size_t> const & plot_permutations,
-		 std::vector<std::vector<double>> const & drawn_value_v, 
-		 size_t const draw_vec_index, 
-		 size_t const parameter_index,
-		 size_t const performance_quantity_index,
-		 std::string const & title_suffix,
-		 std::string const & name_suffix);
+  void PlotParameters(std::vector<std::vector<double> > const & permutation_v,
+		      std::vector<std::vector<std::vector<double> > > const & drawn_values,
+		      std::vector<std::pair<double, int>> const & results,
+		      std::string const & method);
+  TGraph * PlotGraph(PlotHelper const & ph,
+		     std::string const & method,
+		     std::vector<std::vector<double>> const & permutation_v,
+		     std::vector<size_t> const & plot_permutations,
+		     std::vector<std::vector<std::vector<double>>> const & drawn_value_v, 
+		     size_t const draw_vec_index, 
+		     size_t const parameter_index,
+		     size_t const performance_quantity_index);
   void DrawGraphs();
   void DrawGraphsSupimp();
 
+  std::unordered_map<std::string, std::string> fmethod_map;
   std::unordered_map<std::string, std::string> fxtitle_map;
-  std::unordered_map<std::string, int> fgraph_aesthetic_map;
+  std::unordered_map<std::string, GraphAesthetics> fgraph_aesthetic_map;
 
   std::vector<std::vector<std::string>> fdraw_vec;
-  std::unordered_map<std::string, size_t> finput_metric_study;
-  std::unordered_map<std::string, size_t> finput_metric_draw;
-  std::unordered_map<std::string, size_t> finput_performance_quantities;
-  std::unordered_map<std::string, size_t> finput_parameter_names;
+  std::vector<std::string> fdraw_vec_names;
   std::vector<std::string> fparameter_name;
   std::vector<std::vector<double>> fpermutation_v;
-  std::vector<std::vector<TGraph *>> fgraph_v;
 
-  std::vector<plot_helper> plot_helper_v;
+  std::vector<PlotHelper> fplot_helper_v;
 
   VertexQuality fvq;
 
