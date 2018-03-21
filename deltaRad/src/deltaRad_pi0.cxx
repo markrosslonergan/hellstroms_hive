@@ -134,6 +134,9 @@ int main (int argc, char *argv[]){
 
 	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
 
+	bdt_file *newsig = new bdt_file(dir+"samples/vectored/","vertexed_ncdeltarad_mcc88_v3.0.root","NewSig","hist","",kBlue-4, signal_flow);
+
+
 	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc86/", "VR_bnb_2000.root",		     "NCpi0Pure", "hist","",  kBlue-4, signal_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir+"samples/bnbcosmic/", "merged_bnbcosmic_mcc88_v1.0.root", "NCpi0Cosmics", "hist","",  kBlue-4, signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(dir+"samples/bnbcosmic/", "merged_bnbcosmic_mcc88_v1.0.root",	"BNBPure",	   "hist","",  kRed-6, bkg_flow);
@@ -635,10 +638,10 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	}
     */
 	 else if(mode_option == "precalc"){
-		bdt_precalc pre(bnb_pure);
+		bdt_precalc pre(newsig);
 		pre.genTrackInfo();
 
-		addPreFriends(bnb_pure,"track");
+//		addPreFriends(bnb_pure,"track");
 		
 
 	
