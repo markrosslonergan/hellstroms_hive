@@ -41,19 +41,23 @@ class VertexQuality {
 			       std::string const & draw,
 			       std::string const & binning,
 			       std::string const & weight) const;
+  void GetMinMax(int const permutation_index,
+		 std::vector<double> const & results,
+		 std::vector<std::pair<double, int> > & max_results,
+		 std::vector<std::pair<double, int> > & min_results) const;
   void GetDrawnValues(TTree * tree,
 		      std::vector<std::vector<double>> const & permutation_v,
 		      std::vector<std::vector<std::string>> const & draw_vec,
 		      std::vector<std::vector<std::vector<double>>> & drawn_values,
-		      std::vector<std::pair<double, int>> & max_results,
-		      std::vector<std::pair<double, int>> & min_results,
+		      std::vector<std::vector<std::pair<double, int>>> & max_results,
+		      std::vector<std::vector<std::pair<double, int>>> & min_results,
 		      bool const fill_drawn_values = true) const;
   
   void Print(std::vector<std::vector<double>> const & permutation_v,
 	     std::vector<std::vector<std::string>> const & draw_vec,
 	     std::vector<std::vector<std::vector<double>>> const & drawn_values,
-	     std::vector<std::pair<double, int>> const & max_results,
-	     std::vector<std::pair<double, int>> const & min_results) const;
+	     std::vector<std::vector<std::pair<double, int>>> const & max_results,
+	     std::vector<std::vector<std::pair<double, int>>> const & min_results) const;
   void Evaluate();
   void Write() const;
   
@@ -72,7 +76,10 @@ class VertexQuality {
   void GetTrueRecoObjects(size_t const mct_index,
 			  std::vector<size_t> & track_v,
 			  std::vector<size_t> & shower_v);
-  void Reset();
+  void ResetEvent();
+  void ResetMCTruth();
+  void ResetVertex();
+
   void FillTree(TTree * tree,
 		ParticleAssociations const & pas,
 		size_t const pa_index,
@@ -99,6 +106,10 @@ class VertexQuality {
   TTree * fvertex_tree_event;
   bool frun_closest;
   bool frun_sig;
+
+  int frun_number;
+  int fsubrun_number;
+  int fevent_number;
 
   double fstart_prox;
   double fshower_prox;

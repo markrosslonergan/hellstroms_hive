@@ -31,7 +31,7 @@ if [ "$1" == "submit" ]; then
 	exit 0
     fi
 
-    jobsub_submit -G uboone --OS=SL6 --expected-lifetime='8h' --resource-provides=usage_model=DEDICATED,OPPORTUNISTIC,OFFSITE -N $jobnumber ${mail} file://${workdir}/$gridfile ${file##*/}
+    jobsub_submit -G uboone --OS=SL6 --expected-lifetime='8h' --resource-provides=usage_model=DEDICATED,OPPORTUNISTIC,OFFSITE --append_condor_requirements='(TARGET.HAS_CVMFS_uboone_opensciencegrid_org==true)' -N $jobnumber ${mail} file://${workdir}/$gridfile ${file##*/}
 
 
 elif [ "$1" == "check" ]; then
@@ -81,7 +81,7 @@ elif [ "$1" == "makeup" ]; then
 	fi
     done
 
-    jobsub_submit -G uboone --OS=SL6 --expected-lifetime='24h' --memory='4000MB' --resource-provides=usage_model=DEDICATED,OPPORTUNISTIC,OFFSITE -N `ls $makeupdir | wc -l` ${mail} file://${workdir}/$gridfilemu ${file##*/}
+    jobsub_submit -G uboone --OS=SL6 --expected-lifetime='24h' --memory='4000MB' --resource-provides=usage_model=DEDICATED,OPPORTUNISTIC,OFFSITE -N --append_condor_requirements='(TARGET.HAS_CVMFS_uboone_opensciencegrid_org==true)' `ls $makeupdir | wc -l` ${mail} file://${workdir}/$gridfilemu ${file##*/}
     
 
 elif [ "$1" == "clean" ]; then
