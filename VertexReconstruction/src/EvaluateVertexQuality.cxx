@@ -475,6 +475,24 @@ void EvaluateVertexQuality::CheckPlotHelperV() {
 }
 
 
+std::string EvaluateVertexQuality::GetTitle(PlotHelper const & ph,
+					    std::string const & method) const {
+
+  std::vector<std::string> const & titles = fdraw_vec.at(ph.metric_to_study.second);
+
+  std::string title;
+  std::string title_suffix = titles.at(5);
+  auto const mm_it = fmethod_map.find(method);
+  if(mm_it == fmethod_map.end()) std::cout << "WARINING: no title found for " << method << "\n";
+  else title_suffix += " " + mm_it->second;
+  if(titles.at(4).empty()) title = title_suffix;
+  else title = titles.at(4) + " " + title_suffix;
+
+  return title;
+
+}
+
+
 TGraph * EvaluateVertexQuality::PlotGraph(PlotHelper const & ph,
 					  std::string const & method,
 					  std::vector<std::vector<double>> const & permutation_v,
@@ -496,14 +514,7 @@ TGraph * EvaluateVertexQuality::PlotGraph(PlotHelper const & ph,
   graph->SetName((method + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_plot_" + drawn_name + "_var_" + fparameter_name.at(parameter_index)).c_str());
   graph->SetMarkerStyle(8);
   
-  std::string title;
-  std::string title_suffix = fdraw_vec.at(ph.metric_to_study.second).at(5);
-  auto const mm_it = fmethod_map.find(method);
-  if(mm_it == fmethod_map.end()) std::cout << "WARINING: no title found for " << method << "\n";
-  else title_suffix += " " + mm_it->second;
-  if(titles.at(4).empty()) title = title_suffix;
-  else title = titles.at(4) + " " + title_suffix;
-  graph->SetTitle(title.c_str());
+  graph->SetTitle((GetTitle(ph, method)).c_str());
 
   auto const xtm_it = fxtitle_map.find(fparameter_name.at(parameter_index));
   if(xtm_it == fxtitle_map.end()) {
@@ -532,6 +543,91 @@ TGraph * EvaluateVertexQuality::PlotGraph(PlotHelper const & ph,
 }
 
 
+TH1 * EvaluateVertexQuality::DrawHist(TTree * tree,
+				      std::string const & name,
+				      std::string const & draw,
+				      std::string const & binning,
+				      std::string const & weight,
+				      std::string const & opt,
+				      std::string const & title,
+				      std::string const & xtitle,
+				      std::string const & ytitle) const {
+  
+  tree->Draw((draw+">>"+name+binning).c_str(), weight.c_str(), opt.c_str());
+
+  TH1 * h = (TH1*)gDirectory->Get(name.c_str());
+  h->SetStats(0);
+  h->SetTitle(title.c_str());
+  h->GetXaxis()->SetTitle(xtitle.c_str());
+  h->GetXaxis()->CenterTitle();
+  h->GetYaxis()->SetTitle(ytitle.c_str());
+  h->GetYaxis()->CenterTitle(); 
+
+  h->Scale(1./h->GetEntries());
+
+  h->SetLineWidth(3);
+  
+  return h;
+
+}
+
+
+void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
+				     std::string const & method,
+				     std::string const & pq,
+				     std::string const & draw,
+				     std::string const & binning,
+				     std::string const & weight,
+				     std::string const & best_permutation) const {
+
+  TCanvas * canvas = new TCanvas(("dist_" + method + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_" + pq).c_str());
+  std::string const title = GetTitle(ph, method);
+  std::string weight_modified = fdraw_vec.at(ph.metric_to_study.second).at(2);
+  if(weight != "") weight_modified + " && " + weight;
+
+  TH1 * h = DrawHist(fvq_chain,
+		     "h",
+		     draw,
+		     binning,
+		     weight_modified + " && " + best_permutation,
+		     "hist",
+		     title,
+		     "True - Reco Vertex Distance [cm]",
+		     "Number of Vertices");
+
+  TH1 * hp = nullptr;
+  TLegend * legend = nullptr;
+
+  if(fpandora_tree) {
+
+    hp = DrawHist(fpandora_tree,
+		  "hp",
+		  draw,
+		  binning,
+		  weight_modified,
+		  "histsame",
+		  title,
+		  "True - Reco Vertex Distance [cm]",
+		  "Number of Vertices");
+    
+    hp->SetLineColor(kRed);
+    hp->SetLineStyle(2);
+
+    legend = new TLegend(0.6, 0.9, 0.9, 0.6);
+    legend->AddEntry(h, "Vertex Builder");
+    legend->AddEntry(hp, "Pandora");
+
+  }
+
+  if(legend) legend->Draw();
+  canvas->Write();
+  delete canvas;
+  delete h;
+  if(hp) delete hp;
+  
+}
+
+
 void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > const & permutation_v,
 					   std::vector<std::vector<std::vector<double> > > const & drawn_values,
 					   std::vector<std::vector<std::pair<double, int> > > const & results,
@@ -556,6 +652,7 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
     for(auto const & pq : performance_quantities) {
 
       std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).at(pq.second).second);
+      DrawHist(ph, method, pq.first, "dist", "(20, 0, 300)", "reco_shower_total + reco_track_total > 1", fvq.GetPermString(best_permutation));
       
       for(auto const & ptd : parameters_to_draw) {
  
@@ -681,58 +778,10 @@ void EvaluateVertexQuality::Run(std::vector<double> const & input_permutation) {
 
   if(fpandora_tree) GetPandoraMetrics();
 
-  //fvq.Print(permutation_v, fdraw_vec, drawn_values, max_results, min_results);
+  fvq.Print(permutation_v, fdraw_vec, drawn_values, max_results, min_results);
 
   CheckPlotHelperV();
   PlotParameters(permutation_v, drawn_values, max_results, "max");
   PlotParameters(permutation_v, drawn_values, min_results, "min");
-
-  //Hack();
-
-}
-
-
-void EvaluateVertexQuality::Hack() {
-
-  TDirectory * current = gDirectory;
-
-  TFile * pfile = TFile::Open("RunVertexQualityPandora.root");
-  TTree * ptree = (TTree*)pfile->Get("vertex_quality_tree_signal");
-
-  current->cd();
-
-  TCanvas * canvas = new TCanvas("hack");
-  std::string binning = "(40, 0, 400)";
-  std::string weight = "start_prox == 4 && shower_prox == 40 && max_bp_dist == 40 && cpoa_vert_prox == 12 && cpoa_trackend_prox == 12";
-  fvq_chain->Draw(("dist>>h"+binning).c_str(), ("tpc_volume_contained == 1 && is_nc_delta_rad == 1 && reco_track_total > 0 && nc_delta_rad_split_shower == 1 && " + weight).c_str());
-  ptree->Draw(("dist>>h2"+binning).c_str(), "tpc_volume_contained == 1 && is_nc_delta_rad == 1 && (reco_track_total > 0 || reco_shower_total > 1) && nc_delta_rad_split_shower == 1");
-
-  TLegend * leg = new TLegend(0.6, 0.9, 0.9, 0.6);
-
-  TH1 * h = (TH1*)gDirectory->Get("h");
-  h->SetLineColor(kBlue);
-
-  TH1 * h2 = (TH1*)gDirectory->Get("h2");
-  h2->SetLineColor(kRed);
-
-  leg->AddEntry(h, "VB");
-  leg->AddEntry(h2, "Pandora");
-
-  h->Scale(1./h->GetEntries());
-  h2->Scale(1./h2->GetEntries());
-
-  std::cout << "vb: " << h->GetEntries() << " p: " << h2->GetEntries() << "\n";
-
-  h->Draw("hist");
-  h2->Draw("samehist");
-  
-  h->SetStats(0);
-  h->GetXaxis()->SetTitle("Reco - True Vertex Distance [cm]");
-  h->GetYaxis()->SetRangeUser(0, 0.6);
-  leg->Draw();
-
-  canvas->Write();
-
-  delete canvas;
 
 }

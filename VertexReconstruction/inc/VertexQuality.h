@@ -45,6 +45,7 @@ class VertexQuality {
 		 std::vector<double> const & results,
 		 std::vector<std::pair<double, int> > & max_results,
 		 std::vector<std::pair<double, int> > & min_results) const;
+  std::string GetPermString(std::vector<double> const & permutation) const;
   void GetDrawnValues(TTree * tree,
 		      std::vector<std::vector<double>> const & permutation_v,
 		      std::vector<std::vector<std::string>> const & draw_vec,
@@ -87,7 +88,6 @@ class VertexQuality {
 		std::vector<size_t> const & track_v,
 		std::vector<size_t> const & shower_v);
   TTree * SetupEvalTree(std::vector<std::vector<std::vector<double>>> & drawn_values);
-  std::string GetPermString(std::vector<double> const & permutation) const;
   std::string fname;
   std::string ftrack_producer;
   std::string fshower_producer;
