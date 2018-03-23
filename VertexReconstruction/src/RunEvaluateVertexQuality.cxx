@@ -24,7 +24,7 @@ int main(int const argc, char const * argv[]) {
   std::vector<std::string> const method = {"max"};
   std::vector<std::string> const metrics_to_draw = {"track_cleanliness", "track_completeness", "shower_completeness", "shower_cleanliness"};
   std::vector<std::string> const parameters = {"shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"};
-  std::vector<std::string> const performance_quantity = {"mean"};
+  std::vector<std::string> const performance_quantity = {"mean", "ratio_eq_1"};
 
   evq.AddToDraw({"shower_completeness"},
 		method,
@@ -54,7 +54,7 @@ int main(int const argc, char const * argv[]) {
 		{"min"},
 		{"dist"},
 		parameters,
-		performance_quantity);
+	        {"mean"});
 
 
   /*  

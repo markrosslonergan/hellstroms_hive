@@ -55,7 +55,6 @@ if [ ! -d "$SCRATCH/$VOUT/$OLDPROCESS" ]; then
 elif [ -f "$SCRATCH/$VOUT/$OLDPROCESS/${EXEC}${OLDPROCESS}.root" ]; then
     echo "File: $SCRATCH/$VOUT/$OLDPROCESS/${EXEC}${OLDPROCESS}.root already exists, exiting" >> $log
     ifdh cp -D $PWD/$log $SCRATCH/$VOUT/$OLDPROCESS
-    #ifdh cp -D $PWD/$log $SCRATCH/$VOUT
     exit 1;
 fi
 echo >> $log

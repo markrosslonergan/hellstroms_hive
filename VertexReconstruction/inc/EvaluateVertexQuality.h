@@ -72,7 +72,6 @@ class EvaluateVertexQuality {
 		 std::vector<std::string> const & performance_quantities);
   void AddPerformanceMetric(std::vector<std::string> const & params);
   void Run(std::vector<double> const & input_permutation = {});
-  void Hack();
 
  private:
 
@@ -89,8 +88,8 @@ class EvaluateVertexQuality {
   std::string GetPermString(std::vector<double> const & permutation);
   void GetEvalInfo();
   void GetEval(std::vector<std::vector<std::vector<double>>> & drawn_values,
-	       std::vector<std::pair<double, int>> & max_results,
-	       std::vector<std::pair<double, int>> & min_results);
+	       std::vector<std::vector<std::pair<double, int>>> & max_results,
+	       std::vector<std::vector<std::pair<double, int>>> & min_results);
   void GetPandoraMetrics();
   void CheckPlotHelperV();
   void ProcessDrawOption(std::vector<std::string> const & input,
@@ -98,10 +97,28 @@ class EvaluateVertexQuality {
   std::vector<size_t> FindPermutations(std::vector<std::vector<double>> const & permutation_v, 
 				       std::vector<double> const & best_permutation, 
 				       size_t const parameter_index);
+  TH1 * DrawHist(TTree * tree,
+		 std::string const & name,
+		 std::string const & draw,
+		 std::string const & binning,
+		 std::string const & weight,
+		 std::string const & opt,
+		 std::string const & title = "",
+		 std::string const & xtitle = "",
+		 std::string const & ytitle = "") const;
+  void DrawHist(PlotHelper const & ph,
+		std::string const & method,
+		std::string const & pq,
+		std::string const & draw,
+		std::string const & binning,
+		std::string const & weight,
+		std::string const & best_permutation) const;
   void PlotParameters(std::vector<std::vector<double> > const & permutation_v,
 		      std::vector<std::vector<std::vector<double> > > const & drawn_values,
-		      std::vector<std::pair<double, int>> const & results,
+		      std::vector<std::vector<std::pair<double, int>>> const & results,
 		      std::string const & method);
+  std::string GetTitle(PlotHelper const & ph,
+		       std::string const & method) const;
   TGraph * PlotGraph(PlotHelper const & ph,
 		     std::string const & method,
 		     std::vector<std::vector<double>> const & permutation_v,
@@ -129,6 +146,7 @@ class EvaluateVertexQuality {
   TFile * fpandora_file;
   TTree * fpandora_tree;
   std::vector<std::vector<double>> fpandora_drawn_values;
+  
 
   TFile * foutput_file;
 
