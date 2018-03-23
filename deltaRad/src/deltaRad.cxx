@@ -102,24 +102,21 @@ int main (int argc, char *argv[]){
 	std::string new_precuts;
 	std::string num_track_cut = "==1";
 	if(istrack == "track"){
-		new_precuts =  "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 2 && longest_asso_track_displacement < 150 && summed_associated_helper_shower_energy > 0.05 && totalpe_ibg_sum >50";
+		new_precuts =  "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 2 && reco_rack_displacement[0] < 150 &&  reco_shower_energy[0] > 0.05 && totalpe_ibg_sum >50";
 		num_track_cut = "==1";
 
 	}else if(istrack == "notrack"){
-		new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && summed_associated_helper_shower_energy > 0.05 && totalpe_ibg_sum > 50";
+		new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && reco_shower_energy[0] > 0.05 && totalpe_ibg_sum > 50";
 		num_track_cut = "==0";
 	}
 
 
 
 	std::string postcuts = {"reco_asso_tracks == 1 "};//
-//&& fabs(cos(atan(longest_asso_track_reco_diry/longest_asso_track_reco_dirz))) > 0.4  && fabs(cos(atan(most_energetic_shower_reco_diry/most_energetic_shower_reco_dirz))) > 0.4  "};//"most_energetic_shower_bp_dist_to_tpc > 30 &&most_energetic_shower_bp_dist_to_tpc < 400 && reco_asso_tracks ==1 &&reco_shower_dedx_plane2 < 5 && track_dEdx_tree.longest_asso_track_bragg_start_parD > -0.5 &&track_dEdx_tree.longest_asso_track_bragg_start_parD < 0.25 "};
-//"closest_asso_shower_dist_to_flashzcenter < 75 &&cos(atan(longest_asso_track_reco_diry/longest_asso_track_reco_dirz)) > 0.5  &&cos(atan(most_energetic_shower_reco_diry/most_energetic_shower_reco_dirz)) > 0.5  && 
 
 	//Set up some info about the BDTs to pass along
 	bdt_info bnb_bdt_info("bnb_"+istrack, "BNB focused BDT");
 	bdt_info cosmic_bdt_info("cosmic_"+istrack, "Cosmic focused BDT");
-
 
 	std::string base_cuts = "totalpe_ibg_sum > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 	std::string intime_base_cuts = "totalpe_ibg_sum > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
@@ -131,35 +128,38 @@ int main (int argc, char *argv[]){
 	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	new_precuts+"&& passed_swtrigger ==1",	postcuts,cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
 	bdt_flow cosmic_flow(intime_base_cuts,			new_precuts , postcuts,	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
 	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts+ "&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
+	bdt_flow bkg_pure_flow(base_cuts +"&&"+background_definition+"&& shower_true_origin==1" ,new_precuts+ "&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
 	bdt_flow data_flow(base_cuts ,				new_precuts+"&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier, 	bnb_bdt_info.identifier);
 
 
 	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, BDT_CUT )		
 	bdt_file *signal_pure    = new bdt_file(dir+"samples/vectored/", "vertexed_ncdeltarad_mcc88_v3.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir+"samples/vectored/", "vertexed_ncdeltaradcosmics_mcc88_v1.0.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir+"samples/vectored/", "vertexed_bnbcosmic_mcc88_v2.0.root",	"BNBPure",	   "hist","",  kBlue-4, bkg_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir+"samples/vectored/", "vertexed_bnbcosmic_mcc88_v2.0.root",	"BNBPure",	   "hist","",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/vectored/", "vertexed_bnbcosmic_mcc88_v2.0.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
-
-	bdt_file *intime = new bdt_file(dir+"samples/mcc86/", "merged.intime_v1.0.root" ,"IntimeCosmics","hist","LEEPhoton/", kGreen-3, cosmic_flow);
-
+	bdt_file *intime = new bdt_file(dir+"samples/vectored/", "vertexed_intime_v2.0_mcc88.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
+	
 	//Data files
-	bdt_file *data5e19 = new bdt_file(dir+"samples/mcc87/", "merged.data5e19_v10.root" ,"Data5e19","E1","LEEPhotonAnalysisData", kBlack, data_flow);
-	bdt_file *bnbext = new bdt_file(dir+"samples/mcc87/", "merged.bnbext_v7.0.root" ,"BNBext","E1","LEEPhotonAnalysisData", kBlack, data_flow);
+//	bdt_file *data5e19 =new bdt_file(dir+"samples/mcc87/", "merged.data5e19_v10.root" ,"Data5e19","E1","LEEPhotonAnalysisData/", kBlack, data_flow);
+//	bdt_file *bnbext = new bdt_file(dir+"samples/mcc87/", "merged.bnbext_v7.0.root" ,"BNBext","E1","LEEPhotonAnalysisData/", kBlack, data_flow);
 
+	bdt_file *data5e19    = new bdt_file(dir+"samples/vectored/", "vertexed_ncdeltarad_mcc88_v3.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_flow);
+	bdt_file *bnbext    = new bdt_file(dir+"samples/vectored/", "vertexed_ncdeltarad_mcc88_v3.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_flow);
 
-	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime, data5e19,bnbext};
+	//std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime, data5e19,bnbext};
+	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
 
 	signal_pure->scale_data = 3.1;
 	signal_cosmics->scale_data = 3.1;
 
-	//Add Any other info in the form of FRIENDS! e.g track dEdx 
-	signal_pure->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_nsignal.root");			
-	signal_cosmics->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_nsignal_cosmics.root");			
-	bnb_pure->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb.root");			
-	bnb_cosmics->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb_cosmics.root");			
-	intime->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_intime.root");			
-	data5e19->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_data5e19.root");			
-	bnbext->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnbext.root");			
+
+
+	//you get access to these with track_info.XXX
+	for(auto &f: bdt_files){
+		//addPreFriends(f,"track");
+	}
+
+
 
 	//Variables!
 	std::string angle_track_shower ="longest_asso_track_reco_dirx*most_energetic_shower_reco_dirx+longest_asso_track_reco_diry*most_energetic_shower_reco_diry+longest_asso_track_reco_dirz*most_energetic_shower_reco_dirz";
@@ -223,8 +223,8 @@ int main (int argc, char *argv[]){
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	for(auto &f: bdt_files){
-		std::cout<<"Loading "<<f->tag<<"\t with "<<f->tevent->GetEntries()<<"\t events and "<<f->tvertex->GetEntries()<<"\t verticies."<<std::endl;
-		std::cout<<"POT of file loaded is: "<<f->pot<<"\t\t which is pot/event: "<<f->tevent->GetEntries()/f->pot<<std::endl;
+		std::cout<<"Loading "<<f->tag<<"\t with "<<f->tvertex->GetEntries()<<"\t verticies."<<std::endl;
+		std::cout<<"POT of file loaded is: "<<f->pot<<"\t\t "<<std::endl;
 		std::cout<<"Scale factor is then: "<<f->scale_data<<std::endl;
 	}
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -276,7 +276,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	}else if(mode_option == "app"){
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
-		std::vector<bdt_file*> app_files = {data5e19,bnbext,signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
+		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
 		bdt_app(cosmic_bdt_info, app_files, vars, TMVAmethods);
 		bdt_app(bnb_bdt_info, app_files, vars, TMVAmethods);
 	}
@@ -575,7 +575,9 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 				gencut = "1";
 			}	
 
-			double nevents = bdt_files.at(i)->tevent->GetEntries(gencut.c_str())*pot_scale;	
+			std::cout<<"THIS BREAKS AT THE MOMENT"<<std::endl;
+			exit(EXIT_FAILURE);
+			double nevents =0;// bdt_files.at(i)->tevent->GetEntries(gencut.c_str())*pot_scale;	
 			double nv = bdt_files.at(i)->tvertex->GetEntries((gencut+"&&1").c_str())*pot_scale;	
 			double ns = bdt_files.at(i)->tvertex->GetEntries((gencut+"&&  reco_asso_showers==1 && reco_asso_tracks "+num_track_cut).c_str())*pot_scale;	
 
@@ -630,7 +632,9 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			double pot_scale = 1.0;// (plot_pot/data_files.at(i)->pot )*data_files.at(i)->scale_data;
 			std::string gencut = "1";
 
-			double nevents = data_files.at(i)->tevent->GetEntries(gencut.c_str())*pot_scale;	
+			std::cout<<"THIS BREAKS AT THE MOMENT"<<std::endl;
+			exit(EXIT_FAILURE);
+			double nevents = 0;//data_files.at(i)->tevent->GetEntries(gencut.c_str())*pot_scale;	
 			double nv = data_files.at(i)->tvertex->GetEntries((gencut+"&&1").c_str())*pot_scale;	
 			double ns = data_files.at(i)->tvertex->GetEntries((gencut+"&&  reco_asso_showers==1 && reco_asso_tracks "+num_track_cut).c_str())*pot_scale;	
 
@@ -652,9 +656,10 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 
 	} else if(mode_option == "precalc"){
-		bdt_precalc pre(signal_pure);
-		pre.genTrackInfo();
-
+		for(auto &f: bdt_files){
+			bdt_precalc pre(f);
+			pre.genTrackInfo();
+		}
 	}
 
 	else {

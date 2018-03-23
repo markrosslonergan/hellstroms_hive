@@ -74,7 +74,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 	std::cout<<"Getting vertex tree"<<std::endl;
 	tvertex = (TTree*)f->Get(tnam.c_str());
-	tevent = (TTree*)f->Get(tnam_event.c_str());
+	//tevent = (TTree*)f->Get(tnam_event.c_str());
 	std::cout<<"Got vertex tree"<<std::endl;
 
 	double potbranch = 0;
@@ -188,7 +188,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 	std::cout<<"Getting vertex tree"<<std::endl;
 	tvertex = (TTree*)f->Get(tnam.c_str());
-	tevent = (TTree*)f->Get(tnam_event.c_str());
+	//tevent = (TTree*)f->Get(tnam_event.c_str());
 	std::cout<<"Got vertex tree"<<std::endl;
 
 	double potbranch = 0;
