@@ -1070,12 +1070,12 @@ double FillTreeVariables::ShowerZDistToClosestFlash(int const shower_index) {
 
 double FillTreeVariables::FindBPDist(geoalgo::Cone_t const & cone) {
 
-  double result = -10000;
+  double result = -1;
 
   geoalgo::Point_t const & start = cone.Start();
   geoalgo::Point_t const & dir = cone.Dir();
 
-  if(ftpc_volume.Contain(start)) {
+  if(ftpc_volume.Contain(start) && start.at(0) != 0 && start.at(1) != 0 && start.at(2) != 0) {
     std::vector<geoalgo::Point_t> const pv = falgo.Intersection(ftpc_volume, cone, true);
     if(pv.empty()) {
       std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ << "\nERROR: shower backwards projection does not intersect with tpc boundary:\n"
