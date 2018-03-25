@@ -128,7 +128,7 @@ int main (int argc, char *argv[]){
 	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	new_precuts+"&& passed_swtrigger ==1",	postcuts,cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
 	bdt_flow cosmic_flow(intime_base_cuts,			new_precuts , postcuts,	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
 	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts+ "&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
-	bdt_flow bkg_pure_flow(base_cuts +"&&"+background_definition+"&& shower_true_origin==1" ,new_precuts+ "&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
+	bdt_flow bkg_pure_flow(base_cuts +"&&"+background_definition+"&& true_shower_origin[0]==1" ,new_precuts+ "&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
 	bdt_flow data_flow(base_cuts ,				new_precuts+"&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier, 	bnb_bdt_info.identifier);
 
 
@@ -156,7 +156,7 @@ int main (int argc, char *argv[]){
 
 	//you get access to these with track_info.XXX
 	for(auto &f: bdt_files){
-		//addPreFriends(f,"track");
+		addPreFriends(f,"track");
 	}
 
 
@@ -167,16 +167,14 @@ int main (int argc, char *argv[]){
 	std::string track_mom  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"+-1.0 ";
 
 	std::string invariant_mass = "sqrt(1.0+2.0*("+reco_track_energy+"+*reco_shower_helper_energy[0]-"+track_mom+"*"+shower_mom+"*"+angle_track_shower+"))";
-
-
-
+	
 	std::vector<bdt_variable> vars;
 
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[0]","(40,0,9)", "Shower dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_helper_energy[0]","(25,0,0.6)","Reconstructed Shower Energy [GeV]", false,"d"));
 	vars.push_back(bdt_variable("reco_shower_length[0]","(25,0,125)","Shower Length [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Total in Beam-Gate PE",false,"d"));
+//	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Total in Beam-Gate PE",false,"d"));
 	vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from Shower to Flashcenter [cm]",false,"d"));
 
 	vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(25,0,125)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));
@@ -187,7 +185,6 @@ int main (int argc, char *argv[]){
 
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0],reco_shower_dirz[0]))","(25,-1,1)","Reconstructed Shower - Cosine Theta", true,"d"));
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0], reco_shower_dirx[0]))","(25,-1,1)","Reconstructed Shower - Cosine Phi", true,"d"));
-
 
 
 	if(istrack=="track"){
@@ -308,8 +305,6 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		//plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
 
 
-
-
 		test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable("bnb_track") , fcoscut,fbnbcut);
 		test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable("cosmic_track") , fcoscut,fbnbcut);
 		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("bnb_track") , fcoscut,fbnbcut);
@@ -400,6 +395,17 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	}else if(mode_option == "vars"){
 
+		for(auto &method: TMVAmethods){
+			for(int i=0; i< bdt_files.size(); i++){
+				std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_app"+".root");
+
+				std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
+				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
+			}
+		}
+
+
 		
 		for(auto &v:vars){
 			TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_bnb").c_str(), ("cvar_"+v.name+"_bnb").c_str(),2000,1600);
@@ -445,7 +451,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		}
 
 
-		if(false){
+		if(true){
 
 
 
