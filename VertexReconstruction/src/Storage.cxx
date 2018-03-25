@@ -943,7 +943,7 @@ void Storage::GetProducerMap(std::vector<std::string> const & producers,
   for(size_t i = 0; i < producers.size(); ++i) {
     std::string const & producer_name = producers.at(i);
 
-    std::cout<<i<<" PP: "<<producer_name<<" "<<producer_indices.size()<<" "<<std::endl;
+  //  std::cout<<i<<" PP: "<<producer_name<<" "<<producer_indices.size()<<" "<<std::endl;
     int const ending_index = producer_indices.at(i);
     producer_map[producer_name] = std::make_pair(starting_index, ending_index);
     starting_index = ending_index;

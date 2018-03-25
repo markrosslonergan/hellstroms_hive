@@ -801,8 +801,8 @@ bool FillTreeVariables::PassedSWTrigger() const {
   auto const ext_it = std::find(algo_v.begin(), algo_v.end(), ext_str);
 
   if(int_it == algo_v.end() && ext_it == algo_v.end()) {
-    std::cout << "function: " << __PRETTY_FUNCTION__ << " line: " << __LINE__ << std::endl
-	      << "Found neither swtrigger\n";
+    	//	std::cout << "function: " << __PRETTY_FUNCTION__ << " line: " << __LINE__ << std::endl
+	 //    << "Found neither swtrigger\n";
     return false;
   }
   else if(int_it != algo_v.end()) {
@@ -1082,7 +1082,12 @@ double FillTreeVariables::FindBPDist(geoalgo::Cone_t const & cone) {
 		<< "start: " << start << " dir: " << dir << "\n";
       exit(1);
     }
-    else if(pv.size() > 1) {
+    else if(pv.size() == 2){
+	if (pv.front().at(0) == start.at(0) && pv.front().at(0) == start.at(0) && pv.front().at(0) == start.at(0)){
+		result = pv.back().Dist(start);
+	} 
+    }
+    else if(pv.size() >2 ) {
       std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ << "\nERROR: shower backwards projection intersects tpc boundary more than once:\n"
 		<< "start: " << start << " dir: " << dir << "\n"
 		<< "intersections: ";
