@@ -216,7 +216,6 @@ int main (int argc, char *argv[]){
 		vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(25,0,20)","Track PIDA",true,"d"));
 
 		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(25,0,10)","Photon Coversion Length from Reconstructed Vertex [cm]" ,false,"d"));
-
 		vars.push_back(bdt_variable(invariant_mass,"(100,0,3)","Invariant Mass",true,"d"));	
 
 		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[0],reco_track_dirz[0]))","(25,-1,1)","Reconstructed Track - Cosine Theta", true,"d"));
@@ -289,11 +288,11 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	if(mode_option == "train") {
 		std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
-		//bdt_train(cosmic_bdt_info, signal_pure, intime, vars, TMVAmethods);
+		bdt_train(cosmic_bdt_info, signal_pure, intime, vars, TMVAmethods);
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
-		bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
+		//bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
 		std::cout<<"**********************Starting NCpi0 BDT Training*************************"<<std::endl;
-		bdt_train(ncpi0_bdt_info, signal_pure, ncpi0, vars,TMVAmethods);
+		//bdt_train(ncpi0_bdt_info, signal_pure, ncpi0, vars,TMVAmethods);
 
 	}else if(mode_option == "app"){
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
