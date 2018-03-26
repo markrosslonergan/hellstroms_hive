@@ -4,6 +4,8 @@
 
 
 FillTreeVariables::FillTreeVariables() :
+  fmc(false),
+  frmcm_bool(false),
   fwire_plane(2),
   fverbose(false),
   fvertex_tree(nullptr) {}
@@ -17,7 +19,6 @@ FillTreeVariables::~FillTreeVariables() {
 
 
 void FillTreeVariables::SetProducers(Storage const * storage,
-				     bool const mcordata,
                                      std::string const & track_producer,
                                      std::string const & shower_producer,
                                      std::string const & hit_producer,
@@ -39,7 +40,8 @@ void FillTreeVariables::SetProducers(Storage const * storage,
 				    -foffset+fstorage->fDetHalfHeight,
 				    -foffset+fstorage->fDetLength);
 
-  fmcordata = mcordata;
+  fmc = fstorage->fmc;
+  frmcm_bool = fstorage->frmcm_bool;
   ftrack_producer = track_producer;
   fshower_producer = shower_producer;
   fhit_producer = hit_producer;
@@ -156,7 +158,7 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("shortest_asso_shower_to_vert_dist", &shortest_asso_shower_to_vert_dist, "shortest_asso_shower_to_vert_dist/D");
   fvertex_tree->Branch("summed_associated_helper_shower_energy", &summed_associated_helper_shower_energy, "summed_associated_helper_shower_energy/D");
 
-  if(fmcordata) {
+  if(fmc) {
 
     fvertex_tree->Branch("nu_pdg", &nu_pdg, "nu_pdg/I");
     fvertex_tree->Branch("nu_energy", &nu_energy, "nu_energy/D");
@@ -1132,7 +1134,7 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
       reco_track_calo_dEdx.push_back(fstorage->freco_track_EnergyHelper_dedx->at(original_index));
       reco_track_calo_resrange.push_back(fstorage->freco_track_EnergyHelper_resrange->at(original_index));
 
-      FillTrackTruth(original_index);
+      if(fmc && frmcm_bool) FillTrackTruth(original_index);
 
       ++reco_asso_tracks;
       
@@ -1206,7 +1208,7 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
 	reco_shower_dist_to_closest_flashzcenter[reco_asso_showers] = flash_dist;
       }	
 
-      FillShowerTruth(original_index);
+      if(fmc && frmcm_bool) FillShowerTruth(original_index);
 
       ++reco_asso_showers;
 
@@ -1235,7 +1237,7 @@ void FillTreeVariables::FillVertexTree(ParticleAssociations const & pas,
   reco_nuverty = reco_vertex.at(1);
   reco_nuvertz = reco_vertex.at(2);
 
-  if(fmcordata) {
+  if(fmc) {
     reco_true_nuvert_distx = reco_nuvertx - true_nuvertx;
     reco_true_nuvert_disty = reco_nuverty - true_nuverty;
     reco_true_nuvert_distz = reco_nuvertz - true_nuvertz;
@@ -1262,7 +1264,7 @@ void FillTreeVariables::Fill(ParticleAssociations const & pas) {
   ResetEvent();
 
   size_t mct_index = SIZE_MAX;
-  if(fmcordata) {
+  if(fmc) {
     std::vector<int> const & is_delta_rad = *fstorage->fis_delta_rad;
     if(!is_delta_rad.empty()) mct_index = 0;
     for(size_t i = 0; i < is_delta_rad.size(); ++i) {

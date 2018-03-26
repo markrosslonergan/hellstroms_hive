@@ -107,7 +107,6 @@ void VRAnalyzer::Initialize() {
   if(frun_fill_tree_variables) {
     fftv.SetVerbose(fverbose);
     fftv.SetProducers(fstorage,
-		      fstorage->fmc,
 		      ftrack_producer,
 		      fshower_producer,
 		      fhit_producer,
