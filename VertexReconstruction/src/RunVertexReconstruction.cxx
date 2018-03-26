@@ -1,5 +1,4 @@
 
-
 #include <iostream>
 #include <time.h>
 
@@ -24,7 +23,8 @@ int main(int const argc, char const * argv[]) {
 		      "pandoraNu",
 		      "pandoraCosmicHitRemoval",
 		      "simpleFlashBeam",
-		      "swtrigger");
+		      //"swtrigger");
+		      "daq");
   //vrana->RunPandora();
   vrana->GetPOT();
   vrana->RunFillTreeVariables();

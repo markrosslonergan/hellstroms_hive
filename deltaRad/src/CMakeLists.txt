@@ -6,7 +6,6 @@ target_link_libraries (deltaRadlib tinyxmllib ${ROOT_LIBRARIES})
 
 message(STATUS "ROOT_LIBRARIES @: ${ROOT_LIBRARIES}")
 
-
 add_executable (deltaRad deltaRad.cxx)
 add_executable (deltaRad_pi0 deltaRad_pi0.cxx)
 target_link_libraries (deltaRad tinyxmllib deltaRadlib ${ROOT_LIBRARIES})

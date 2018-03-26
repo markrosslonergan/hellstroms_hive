@@ -340,12 +340,12 @@ bdt_variable bdt_file::getBDTVariable(bdt_info info){
 }
 
 bdt_variable bdt_file::getBDTVariable(std::string info){
-	std::cout<<"getBDTVariable: "<<info<<std::endl;
+	//std::cout<<"getBDTVariable: "<<info<<std::endl;
 	if(info =="bnb_track"|| info=="bnb_notrack" || info=="pi0bnb_track" || info=="pi0bnb_notrack"){
-		return bdt_variable(this->tag +"_"+info+ ".mva","(35,0.25,0.45)","BNB BDT Response",false,"d");
+		return bdt_variable(this->tag +"_"+info+ ".mva","(100,0.4,0.6)","BNB BDT Response",false,"d");
 	}else if(info == "cosmic_track"|| info=="cosmic_notrack"  || info=="pi0cosmic_track" || info=="pi0cosmic_notrack"){
-		return bdt_variable(this->tag +"_"+info+ ".mva","(35,0.25,0.45)","Cosmic BDT Response",false,"d");
-	}else return bdt_variable(this->tag +"_"+info+ ".mva","(35,0.25,0.45)","Cosmic BDT Response",false,"d");
+		return bdt_variable(this->tag +"_"+info+ ".mva","(100,0.4,0.6)","Cosmic BDT Response",false,"d");
+	}else return bdt_variable(this->tag +"_"+info+ ".mva","(100,0.25,0.45)","Cosmic BDT Response",false,"d");
 
 }
 
