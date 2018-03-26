@@ -21,7 +21,6 @@ class FillTreeVariables {
 
   void SetVerbose(bool const verbose = true) {fverbose = verbose;}
   void SetProducers(Storage const * storage,
-		    bool const mcordata,
                     std::string const & track_producer,
                     std::string const & shower_producer,
                     std::string const & hit_producer,
@@ -52,7 +51,8 @@ class FillTreeVariables {
 
   Storage const * fstorage;
 
-  bool fmcordata;
+  bool fmc;
+  bool frmcm_bool;
   std::string ftrack_producer;
   std::string fswtrigger_product;
   std::string fshower_producer;

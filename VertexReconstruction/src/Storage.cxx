@@ -513,7 +513,7 @@ void Storage::ProcessEventChain() {
     fevent_chain->SetBranchAddress("reco_hit_WireID_TPCID", &freco_hit_WireID_TPCID);
     fevent_chain->SetBranchAddress("reco_hit_WireID_PlaneID", &freco_hit_WireID_PlaneID);
     fevent_chain->SetBranchAddress("reco_hit_WireID_WireID", &freco_hit_WireID_WireID);
-    if(frmcm_bool) {
+    if(fmc && frmcm_bool) {
       fevent_chain->SetBranchAddress("reco_hit_mc_type", &freco_hit_mc_type);
       fevent_chain->SetBranchAddress("reco_hit_mc_index", &freco_hit_mc_index);
       /*
@@ -559,7 +559,7 @@ void Storage::ProcessEventChain() {
   fevent_chain->SetBranchAddress("reco_track_EnergyHelper_resrange", &freco_track_EnergyHelper_resrange);
   fevent_chain->SetBranchAddress("reco_track_EnergyHelper_dedx", &freco_track_EnergyHelper_dedx);
   fevent_chain->SetBranchAddress("reco_track_EnergyHelper_energy", &freco_track_EnergyHelper_energy);
-  if(frmcm_bool) {
+  if(fmc && frmcm_bool) {
     fevent_chain->SetBranchAddress("reco_track_largest_mc_type", &freco_track_largest_mc_type);
     fevent_chain->SetBranchAddress("reco_track_largest_mc_index", &freco_track_largest_mc_index);
     fevent_chain->SetBranchAddress("reco_track_largest_ratio", &freco_track_largest_ratio);
@@ -605,7 +605,7 @@ void Storage::ProcessEventChain() {
   fevent_chain->SetBranchAddress("reco_shower_EnergyHelper_energy_legacy", &freco_shower_EnergyHelper_energy_legacy);
   fevent_chain->SetBranchAddress("reco_shower_EnergyHelper_energy", &freco_shower_EnergyHelper_energy);
   fevent_chain->SetBranchAddress("reco_shower_EnergyHelper_dedx", &freco_shower_EnergyHelper_dedx);
-  if(frmcm_bool) { 
+  if(fmc && frmcm_bool) { 
     fevent_chain->SetBranchAddress("reco_shower_largest_mc_type", &freco_shower_largest_mc_type);
     fevent_chain->SetBranchAddress("reco_shower_largest_mc_index", &freco_shower_largest_mc_index);
     fevent_chain->SetBranchAddress("reco_shower_largest_ratio", &freco_shower_largest_ratio);
@@ -715,7 +715,7 @@ void Storage::ProcessEventChain() {
     fevent_chain->SetBranchAddress("mctrack_AncestorTrackID", &fmctrack_AncestorTrackID);
     fevent_chain->SetBranchAddress("mctrack_AncestorPdgCode", &fmctrack_AncestorPdgCode);
     fevent_chain->SetBranchAddress("mctrack_AncestorProcess", &fmctrack_AncestorProcess);
-    if(frmcm_bool) fevent_chain->SetBranchAddress("mctrack_contributed_charge", &fmctrack_contributed_charge);
+    if(fmc && frmcm_bool) fevent_chain->SetBranchAddress("mctrack_contributed_charge", &fmctrack_contributed_charge);
 
     fevent_chain->SetBranchAddress("mcshower_Origin", &fmcshower_Origin);
     fevent_chain->SetBranchAddress("mcshower_PdgCode", &fmcshower_PdgCode);
@@ -759,7 +759,7 @@ void Storage::ProcessEventChain() {
     fevent_chain->SetBranchAddress("mcshower_StartDir_X", &fmcshower_StartDir_X);
     fevent_chain->SetBranchAddress("mcshower_StartDir_Y", &fmcshower_StartDir_Y);
     fevent_chain->SetBranchAddress("mcshower_StartDir_Z", &fmcshower_StartDir_Z);
-    if(frmcm_bool) fevent_chain->SetBranchAddress("mcshower_contributed_charge", &fmcshower_contributed_charge);
+    if(fmc && frmcm_bool) fevent_chain->SetBranchAddress("mcshower_contributed_charge", &fmcshower_contributed_charge);
 
     if(fheavy) {
 
