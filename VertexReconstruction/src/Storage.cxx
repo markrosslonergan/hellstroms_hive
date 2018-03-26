@@ -444,6 +444,11 @@ void Storage::ProcessMetaChain() {
 
 void Storage::ProcessEventChain() {
 
+  //if(fnumber_of_events ==0){
+//	fnumber_of_events = fevent_chain->GetEntries();
+  // }
+ 
+
   fevent_chain->SetBranchAddress("opflash_producer_indices", &fopflash_producer_indices);
   fevent_chain->SetBranchAddress("hit_producer_indices", &fhit_producer_indices);
   fevent_chain->SetBranchAddress("track_producer_indices", &ftrack_producer_indices);
@@ -937,6 +942,8 @@ void Storage::GetProducerMap(std::vector<std::string> const & producers,
   int starting_index = 0;
   for(size_t i = 0; i < producers.size(); ++i) {
     std::string const & producer_name = producers.at(i);
+
+  //  std::cout<<i<<" PP: "<<producer_name<<" "<<producer_indices.size()<<" "<<std::endl;
     int const ending_index = producer_indices.at(i);
     producer_map[producer_name] = std::make_pair(starting_index, ending_index);
     starting_index = ending_index;

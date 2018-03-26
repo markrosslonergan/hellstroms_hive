@@ -699,15 +699,25 @@ void FillTreeVariables::FillDeltaInfo() {
 
 
 void FillTreeVariables::FillTruth(size_t const mct_index) {
+	int de = 0;
 
+	std::cout<<"Mark: "<<++de<<std::endl;
+	std::cout<<fstorage->fnu_pdg->size()<<std::endl;
   nu_pdg = fstorage->fnu_pdg->at(mct_index);
+	std::cout<<"Mark: "<<++de<<std::endl;
   nu_energy = fstorage->fnu_energy->at(mct_index);
+	std::cout<<"Mark: "<<++de<<std::endl;
   lep_pdg = fstorage->flep_pdg->at(mct_index);
+	std::cout<<"Mark: "<<++de<<std::endl;
   lep_energy = fstorage->flep_energy->at(mct_index);
+	std::cout<<"Mark: "<<++de<<std::endl;
   ccnc = fstorage->fccnc->at(mct_index);
+	std::cout<<"Mark: "<<++de<<std::endl;
   mode = fstorage->fmode->at(mct_index);
+	std::cout<<"Mark: "<<++de<<std::endl;
   interaction_type = fstorage->finteraction_type->at(mct_index);
 
+	std::cout<<"Mark: "<<++de<<std::endl;
   exiting_photon_number = 0;
   exiting_proton_number = 0;
   exiting_neutron_number = 0;
@@ -720,6 +730,7 @@ void FillTreeVariables::FillTruth(size_t const mct_index) {
   exiting_pi0_number = 0;
   total_exiting_particles = 0;
 
+	std::cout<<"Mark: "<<++de<<std::endl;
   std::vector<int> const & genie_particle_PdgCode = fstorage->fgenie_particle_PdgCode->at(mct_index);
   std::vector<int> const & genie_particle_StatusCode = fstorage->fgenie_particle_StatusCode->at(mct_index);
   for(int i = 0; i < genie_particle_PdgCode.size(); ++i) {
@@ -759,19 +770,23 @@ void FillTreeVariables::FillTruth(size_t const mct_index) {
     }
     ++total_exiting_particles;
   }
+	std::cout<<"Mark: "<<++de<<std::endl;
   if(exiting_photon_number == 1) is_single_photon = 1;
   else is_single_photon = 0;
   if(fstorage->fis_delta_rad->at(mct_index) == 1) is_delta_rad = 1;
   else is_delta_rad = 0;
   FillDeltaInfo();
 
+	std::cout<<"Mark: "<<++de<<std::endl;
   true_nu_vtx_tpc_contained = fstorage->ftrue_nu_vtx_tpc_contained->at(mct_index);
   true_nu_vtx_fid_contained = fstorage->ftrue_nu_vtx_fid_contained->at(mct_index);
 
+	std::cout<<"Mark: "<<++de<<std::endl;
   true_nuvertx = fstorage->ftrue_nuvertx->at(mct_index);
   true_nuverty = fstorage->ftrue_nuverty->at(mct_index);
   true_nuvertz = fstorage->ftrue_nuvertz->at(mct_index);
 
+	std::cout<<"Mark: "<<++de<<std::endl;
   true_nu_E = fstorage->ftrue_nu_E->at(mct_index);
 
 }
@@ -788,8 +803,8 @@ bool FillTreeVariables::PassedSWTrigger() const {
   auto const ext_it = std::find(algo_v.begin(), algo_v.end(), ext_str);
 
   if(int_it == algo_v.end() && ext_it == algo_v.end()) {
-    std::cout << "function: " << __PRETTY_FUNCTION__ << " line: " << __LINE__ << std::endl
-	      << "Found neither swtrigger\n";
+    	//	std::cout << "function: " << __PRETTY_FUNCTION__ << " line: " << __LINE__ << std::endl
+	 //    << "Found neither swtrigger\n";
     return false;
   }
   else if(int_it != algo_v.end()) {
@@ -1069,7 +1084,12 @@ double FillTreeVariables::FindBPDist(geoalgo::Cone_t const & cone) {
 		<< "start: " << start << " dir: " << dir << "\n";
       exit(1);
     }
-    else if(pv.size() > 1) {
+    else if(pv.size() == 2){
+	if (pv.front().at(0) == start.at(0) && pv.front().at(0) == start.at(0) && pv.front().at(0) == start.at(0)){
+		result = pv.back().Dist(start);
+	} 
+    }
+    else if(pv.size() >2 ) {
       std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ << "\nERROR: shower backwards projection intersects tpc boundary more than once:\n"
 		<< "start: " << start << " dir: " << dir << "\n"
 		<< "intersections: ";
