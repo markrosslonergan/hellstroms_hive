@@ -33,7 +33,7 @@ int main(int const argc, char const * argv[]) {
   std::string const shower_producer = "pandoraNu";
 
   VertexQuality vq;
-  vq.FillEventTree();
+  //vq.FillEventTree();
   vq.RunShowerMatch();
   vq.SetProducers(track_producer, shower_producer);
 
