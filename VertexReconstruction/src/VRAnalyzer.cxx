@@ -339,10 +339,28 @@ void VRAnalyzer::FillWPandoraTrackRec(ParticleAssociations & pas,
   if(associated_track_indices.size() == 1) secondary_vertex = GetSecondaryTrackPandoraVertex(pas, associated_track_indices.front(), vertex);
   else if(associated_track_indices.size() > 1) secondary_vertex = GetSecondaryTrackPandoraVertex(pas, associated_track_indices, vertex);
 
-  pas.AddAssociation(associated_indices, {}, secondary_vertex, 0);
+  pas.AddAssociation(associated_indices, {}, secondary_vertex);
   
   for(int const s : pfp_children.at(pfp_index)) {
     if(abs(pfp_pdg.at(s)) == 13 && pfp_original_index.at(s) != -1) FillWPandoraTrackRec(pas, s, secondary_vertex);
+  }
+
+}
+
+
+void VRAnalyzer::FillLoneShowers(ParticleAssociations & pas,
+				 std::vector<size_t> const & associated_showers) {
+
+  DetectorObjects const & detos = pas.GetDetectorObjects();
+  auto & shower_indices = fstorage->GetShowerIndices(fshower_producer);
+
+  std::vector<double> const & reco_shower_ShowerStart_X = *fstorage->freco_shower_ShowerStart_X;
+  std::vector<double> const & reco_shower_ShowerStart_Y = *fstorage->freco_shower_ShowerStart_Y;
+  std::vector<double> const & reco_shower_ShowerStart_Z = *fstorage->freco_shower_ShowerStart_Z;
+
+  for(size_t i = shower_indices.first; i < shower_indices.second; ++i) {
+    if(std::find(associated_showers.begin(), associated_showers.end(), i) != associated_showers.end()) continue;
+    pas.AddAssociation({detos.GetShowerIndexFromOriginalIndex(i)}, {}, {reco_shower_ShowerStart_X.at(i), reco_shower_ShowerStart_Y.at(i), reco_shower_ShowerStart_Z.at(i)});
   }
 
 }
@@ -358,6 +376,8 @@ void VRAnalyzer::FillWPandora(ParticleAssociations & pas) {
   std::vector<double> const & pfp_vertex_Z = *fstorage->fpfp_vertex_Z;
   std::vector<int> const & pfp_original_index = *fstorage->fpfp_original_index;
   std::vector<std::vector<int>> const & pfp_children = *fstorage->fpfp_children;
+
+  std::vector<size_t> associated_showers;
 
   for(size_t i = 0; i < pfp_pdg.size(); ++i) {
 
@@ -383,6 +403,7 @@ void VRAnalyzer::FillWPandora(ParticleAssociations & pas) {
       }
       else if(abs(dpdg) == 11) {
 	associated_indices.push_back(detos.GetShowerIndexFromOriginalIndex(original_index));
+	associated_showers.push_back(original_index);
       }	
       else std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ << "\nWarning: pfp pdg: " << dpdg << "\n";
 
@@ -392,12 +413,8 @@ void VRAnalyzer::FillWPandora(ParticleAssociations & pas) {
 
   }
 
-  /*
-  std::cout << "===================================\n";
-  std::cout << fstorage->fevent_number << "\n";
-  PrintPandoraRec();
-  pas.PrintAssociations();
-  */
+  FillLoneShowers(pas,
+		  associated_showers);
 
   pas.GetShowerAssociations();
 

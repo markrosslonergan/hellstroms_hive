@@ -15,7 +15,7 @@ int main(int const argc, char const * argv[]) {
     return 1;
   }
 
-  EvaluateVertexQuality evq("vertex_quality_tree_signal",
+  EvaluateVertexQuality evq("vertex_quality_tree_shower_match",
 			    "permutation_tree",
 			    "eval_tree",
 			    {argv + 1, argv + argc});

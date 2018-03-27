@@ -160,7 +160,6 @@ class EvaluateVertexQuality {
   double fcpoa_vert_prox;
   double fcpoa_trackend_prox;
 
-  int freco_vertex_present;
   int fis_nc_delta_rad;
   int fnc_delta_rad_split_shower;
   int ftpc_volume_contained;

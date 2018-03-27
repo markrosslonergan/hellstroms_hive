@@ -231,7 +231,6 @@ void EvaluateVertexQuality::SetupVQChain() {
   fvq_chain->SetBranchAddress("cpoa_vert_prox", &fcpoa_vert_prox);
   fvq_chain->SetBranchAddress("cpoa_trackend_prox", &fcpoa_trackend_prox);
 
-  fvq_chain->SetBranchAddress("reco_vertex_present", &freco_vertex_present);
   fvq_chain->SetBranchAddress("tpc_volume_contained", &ftpc_volume_contained);
 
   fvq_chain->SetBranchAddress("dist", &fdist);

@@ -37,23 +37,40 @@ void Processor::SetOutputFileName(char const * name) {
 }
 
 
-void Processor::Run() {
+void Processor::RunEvent(int const entry) {
+
+  fstorage.GetEvent(entry);
+  
+  for(Analyzer * analyzer : fanalyzers) { 
+    analyzer->Run();
+  }
+
+}
+
+
+void Processor::Run(int const entry) {
 
   if(fofile) fofile->cd();
   for(Analyzer * analyzer : fanalyzers) { 
     analyzer->SetOutputFile(fofile);
     analyzer->Initialize();
   }  
+
+  if(entry < 0) {
   
-  for(int i = 0; i < fstorage.fnumber_of_events; ++i) {
+    for(int i = 0; i < fstorage.fnumber_of_events; ++i) {
 
-    fstorage.GetEvent(i);
-    if(i % 100 == 0) std::cout << "Entry: " << i << "\n";
-
-    for(Analyzer * analyzer : fanalyzers) { 
-      analyzer->Run();
+      if(i % 100 == 0) std::cout << "Entry: " << i << "\n";      
+      RunEvent(i);
+      
     }
- 
+
+  }
+
+  else {
+
+    RunEvent(entry);
+
   }
 
   for(Analyzer * analyzer : fanalyzers) { 

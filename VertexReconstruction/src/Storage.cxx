@@ -26,6 +26,15 @@ Storage::Storage(char const * pot_name,
     fevent_chain->Add(file);
   }
 
+  if(fmeta_chain->GetEntries() == 0) {
+    std::cout << "ERROR: empty meta chain in storage\n";
+    exit(1);
+  }
+  if(fevent_chain->GetEntries() == 0) {
+    std::cout << "ERROR: empty event chain in storage\n";
+    exit(1);
+  }
+
   SetupChains();
 
 }
@@ -83,6 +92,8 @@ void Storage::Initialize() {
   fnumber_of_events = 0;
   fpot = 0;
 
+  fcurrent_entry = -1;
+  
   fpot_producer = nullptr;
   fswtrigger_product = nullptr;
   fopflash_producers = nullptr;
@@ -942,8 +953,6 @@ void Storage::GetProducerMap(std::vector<std::string> const & producers,
   int starting_index = 0;
   for(size_t i = 0; i < producers.size(); ++i) {
     std::string const & producer_name = producers.at(i);
-
-  //  std::cout<<i<<" PP: "<<producer_name<<" "<<producer_indices.size()<<" "<<std::endl;
     int const ending_index = producer_indices.at(i);
     producer_map[producer_name] = std::make_pair(starting_index, ending_index);
     starting_index = ending_index;
@@ -953,6 +962,8 @@ void Storage::GetProducerMap(std::vector<std::string> const & producers,
 
 
 void Storage::GetEvent(int const i) {
+
+  fcurrent_entry = i;
 
   fevent_chain->GetEntry(i);
 

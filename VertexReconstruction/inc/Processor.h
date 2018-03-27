@@ -20,7 +20,8 @@ class Processor {
   void AddAnalyzer(Analyzer * analyzer);
   void SetOutputFileName(char const * name);
 
-  void Run();
+  void RunEvent(int const entry);
+  void Run(int const entry = -1);
 
  private:
 

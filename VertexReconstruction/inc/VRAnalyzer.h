@@ -52,6 +52,8 @@ class VRAnalyzer : public Analyzer {
   geoalgo::Point_t GetSecondaryTrackPandoraVertex(ParticleAssociations const & pas,
 						  std::vector<size_t> const & associated_indices,
 						  geoalgo::Point_t const & vertex);
+  void FillLoneShowers(ParticleAssociations & pas,
+		       std::vector<size_t> const & associated_showers);
   void FillWPandoraTrackRec(ParticleAssociations & pas,
 			    size_t const pfp_index,
 			    geoalgo::Point_t const & vertex);
