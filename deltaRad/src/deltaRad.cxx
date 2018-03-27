@@ -289,19 +289,19 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	if(mode_option == "train") {
 		std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
-		//bdt_train(cosmic_bdt_info, signal_pure, intime, vars, TMVAmethods);
+		bdt_train(cosmic_bdt_info, signal_pure, intime, vars, TMVAmethods);
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
 		bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
 		std::cout<<"**********************Starting NCpi0 BDT Training*************************"<<std::endl;
-		bdt_train(ncpi0_bdt_info, signal_pure, ncpi0, vars,TMVAmethods);
+		//bdt_train(ncpi0_bdt_info, signal_pure, ncpi0, vars,TMVAmethods);
 
 	}else if(mode_option == "app"){
 
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
-		//std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics, ncpi0}; 
-		std::vector<bdt_file*> app_files = {signal_pure, intime}; 
+		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
 		bdt_app(cosmic_bdt_info, app_files, vars, TMVAmethods);
-		//bdt_app(bnb_bdt_info, app_files, vars, TMVAmethods);
+		bdt_app(bnb_bdt_info, app_files, vars, TMVAmethods);
+		
 		//bdt_app(ncpi0_bdt_info, app_files, vars, TMVAmethods);
 	}
 	else if(mode_option == "response"){
@@ -315,6 +315,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
 			}
 		}
+	
 		//Ok print out Cosmic BDT
 		bdt_response cosmic_response(cosmic_bdt_info, signal_pure, intime);
 		cosmic_response.plot_bdt_response(ftest);

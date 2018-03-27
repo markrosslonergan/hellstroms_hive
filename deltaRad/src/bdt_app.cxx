@@ -78,10 +78,14 @@ int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::str
 	for(method_struct const & method : methods) {
 		reader->BookMVA(method.str.c_str(), ("BDTxmls_"+identifier+"/weights/"+identifier+"_"+method.str+".weights.xml").c_str());
 		bdt_app_tree_struct ts(otree_name, false);
+	
+		int N = tree->GetEntries();
 
-		for(int i = 0; i < tree->GetEntries(); ++i) {
+		for(int i = 0; i < N; ++i) {
 			tree->GetEntry(i);
 			//bdt_app_update(tree_var_v, reader_var_v);
+			if(i%25000==0){std::cout<<i<<"/"<<N<<std::endl;}
+
 			bdt_app_update_formula(tree_formulas_v, reader_var_v);
 			ts.mva = -999;
 			if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(method.str.c_str());
@@ -104,6 +108,7 @@ int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variabl
 	
 	TFile * app_ofile = TFile::Open((identifier+"_app"+".root").c_str(), "recreate");
 	for(size_t i = 0; i < files.size(); ++i) {
+		std::cout<<"On file: "<<files.at(i)->tag<<std::endl;
 		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
 		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow.base_cuts, bdt_response_friend_tree_name , vars, method);
 	}
