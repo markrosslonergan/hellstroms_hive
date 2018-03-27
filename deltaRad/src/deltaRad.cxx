@@ -317,6 +317,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
 			}
 		}
+	
 		//Ok print out Cosmic BDT
 		bdt_response cosmic_response(cosmic_bdt_info, signal_pure, intime);
 		cosmic_response.plot_bdt_response(ftest);
