@@ -300,10 +300,10 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	}else if(mode_option == "app"){
 
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
-		//std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics, ncpi0}; 
-		std::vector<bdt_file*> app_files = {signal_pure, intime}; 
+		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics, ncpi0}; 
+		//std::vector<bdt_file*> app_files = {signal_pure, intime}; 
 		bdt_app(cosmic_bdt_info, app_files, vars, TMVAmethods);
-		//bdt_app(bnb_bdt_info, app_files, vars, TMVAmethods);
+		bdt_app(bnb_bdt_info, app_files, vars, TMVAmethods);
 		//bdt_app(ncpi0_bdt_info, app_files, vars, TMVAmethods);
 	}
 	else if(mode_option == "response"){
