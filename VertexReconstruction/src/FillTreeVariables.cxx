@@ -4,6 +4,8 @@
 
 
 FillTreeVariables::FillTreeVariables() :
+  fmc(false),
+  frmcm_bool(false),
   fwire_plane(2),
   fverbose(false),
   fvertex_tree(nullptr) {}
@@ -17,7 +19,6 @@ FillTreeVariables::~FillTreeVariables() {
 
 
 void FillTreeVariables::SetProducers(Storage const * storage,
-				     bool const mcordata,
                                      std::string const & track_producer,
                                      std::string const & shower_producer,
                                      std::string const & hit_producer,
@@ -39,7 +40,8 @@ void FillTreeVariables::SetProducers(Storage const * storage,
 				    -foffset+fstorage->fDetHalfHeight,
 				    -foffset+fstorage->fDetLength);
 
-  fmcordata = mcordata;
+  fmc = fstorage->fmc;
+  frmcm_bool = fstorage->frmcm_bool;
   ftrack_producer = track_producer;
   fshower_producer = shower_producer;
   fhit_producer = hit_producer;
@@ -156,7 +158,7 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("shortest_asso_shower_to_vert_dist", &shortest_asso_shower_to_vert_dist, "shortest_asso_shower_to_vert_dist/D");
   fvertex_tree->Branch("summed_associated_helper_shower_energy", &summed_associated_helper_shower_energy, "summed_associated_helper_shower_energy/D");
 
-  if(fmcordata) {
+  if(fmc) {
 
     fvertex_tree->Branch("nu_pdg", &nu_pdg, "nu_pdg/I");
     fvertex_tree->Branch("nu_energy", &nu_energy, "nu_energy/D");
@@ -697,25 +699,15 @@ void FillTreeVariables::FillDeltaInfo() {
 
 
 void FillTreeVariables::FillTruth(size_t const mct_index) {
-	int de = 0;
 
-	std::cout<<"Mark: "<<++de<<std::endl;
-	std::cout<<fstorage->fnu_pdg->size()<<std::endl;
   nu_pdg = fstorage->fnu_pdg->at(mct_index);
-	std::cout<<"Mark: "<<++de<<std::endl;
   nu_energy = fstorage->fnu_energy->at(mct_index);
-	std::cout<<"Mark: "<<++de<<std::endl;
   lep_pdg = fstorage->flep_pdg->at(mct_index);
-	std::cout<<"Mark: "<<++de<<std::endl;
   lep_energy = fstorage->flep_energy->at(mct_index);
-	std::cout<<"Mark: "<<++de<<std::endl;
   ccnc = fstorage->fccnc->at(mct_index);
-	std::cout<<"Mark: "<<++de<<std::endl;
   mode = fstorage->fmode->at(mct_index);
-	std::cout<<"Mark: "<<++de<<std::endl;
   interaction_type = fstorage->finteraction_type->at(mct_index);
 
-	std::cout<<"Mark: "<<++de<<std::endl;
   exiting_photon_number = 0;
   exiting_proton_number = 0;
   exiting_neutron_number = 0;
@@ -728,7 +720,6 @@ void FillTreeVariables::FillTruth(size_t const mct_index) {
   exiting_pi0_number = 0;
   total_exiting_particles = 0;
 
-	std::cout<<"Mark: "<<++de<<std::endl;
   std::vector<int> const & genie_particle_PdgCode = fstorage->fgenie_particle_PdgCode->at(mct_index);
   std::vector<int> const & genie_particle_StatusCode = fstorage->fgenie_particle_StatusCode->at(mct_index);
   for(int i = 0; i < genie_particle_PdgCode.size(); ++i) {
@@ -768,23 +759,19 @@ void FillTreeVariables::FillTruth(size_t const mct_index) {
     }
     ++total_exiting_particles;
   }
-	std::cout<<"Mark: "<<++de<<std::endl;
   if(exiting_photon_number == 1) is_single_photon = 1;
   else is_single_photon = 0;
   if(fstorage->fis_delta_rad->at(mct_index) == 1) is_delta_rad = 1;
   else is_delta_rad = 0;
   FillDeltaInfo();
 
-	std::cout<<"Mark: "<<++de<<std::endl;
   true_nu_vtx_tpc_contained = fstorage->ftrue_nu_vtx_tpc_contained->at(mct_index);
   true_nu_vtx_fid_contained = fstorage->ftrue_nu_vtx_fid_contained->at(mct_index);
 
-	std::cout<<"Mark: "<<++de<<std::endl;
   true_nuvertx = fstorage->ftrue_nuvertx->at(mct_index);
   true_nuverty = fstorage->ftrue_nuverty->at(mct_index);
   true_nuvertz = fstorage->ftrue_nuvertz->at(mct_index);
 
-	std::cout<<"Mark: "<<++de<<std::endl;
   true_nu_E = fstorage->ftrue_nu_E->at(mct_index);
 
 }
@@ -1076,10 +1063,10 @@ double FillTreeVariables::FindBPDist(geoalgo::Cone_t const & cone) {
   geoalgo::Point_t const & dir = cone.Dir();
 
   if(ftpc_volume.Contain(start) && start.at(0) != 0 && start.at(1) != 0 && start.at(2) != 0) {
-    std::vector<geoalgo::Point_t> const pv = falgo.Intersection(ftpc_volume, cone, true);
+    std::vector<geoalgo::Point_t> const pv = falgo.Intersection(ftpc_volume, geoalgo::HalfLine(start, dir * -1), true);
     if(pv.empty()) {
       std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ << "\nERROR: shower backwards projection does not intersect with tpc boundary:\n"
-		<< "start: " << start << " dir: " << dir << "\n";
+		<< "start: " << start << " dir: " << dir * -1 << "\n";
       exit(1);
     }
     else if(pv.size() == 2){
@@ -1089,7 +1076,7 @@ double FillTreeVariables::FindBPDist(geoalgo::Cone_t const & cone) {
     }
     else if(pv.size() >2 ) {
       std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ << "\nERROR: shower backwards projection intersects tpc boundary more than once:\n"
-		<< "start: " << start << " dir: " << dir << "\n"
+		<< "start: " << start << " dir: " << dir * -1 << "\n"
 		<< "intersections: ";
       for(geoalgo::Point_t const & p : pv) {
 	std::cout << p << " ";
@@ -1152,7 +1139,7 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
       reco_track_calo_dEdx.push_back(fstorage->freco_track_EnergyHelper_dedx->at(original_index));
       reco_track_calo_resrange.push_back(fstorage->freco_track_EnergyHelper_resrange->at(original_index));
 
-      FillTrackTruth(original_index);
+      if(fmc && frmcm_bool) FillTrackTruth(original_index);
 
       ++reco_asso_tracks;
       
@@ -1226,7 +1213,7 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
 	reco_shower_dist_to_closest_flashzcenter[reco_asso_showers] = flash_dist;
       }	
 
-      FillShowerTruth(original_index);
+      if(fmc && frmcm_bool) FillShowerTruth(original_index);
 
       ++reco_asso_showers;
 
@@ -1255,7 +1242,7 @@ void FillTreeVariables::FillVertexTree(ParticleAssociations const & pas,
   reco_nuverty = reco_vertex.at(1);
   reco_nuvertz = reco_vertex.at(2);
 
-  if(fmcordata) {
+  if(fmc) {
     reco_true_nuvert_distx = reco_nuvertx - true_nuvertx;
     reco_true_nuvert_disty = reco_nuverty - true_nuverty;
     reco_true_nuvert_distz = reco_nuvertz - true_nuvertz;
@@ -1282,7 +1269,7 @@ void FillTreeVariables::Fill(ParticleAssociations const & pas) {
   ResetEvent();
 
   size_t mct_index = SIZE_MAX;
-  if(fmcordata) {
+  if(fmc) {
     std::vector<int> const & is_delta_rad = *fstorage->fis_delta_rad;
     if(!is_delta_rad.empty()) mct_index = 0;
     for(size_t i = 0; i < is_delta_rad.size(); ++i) {
