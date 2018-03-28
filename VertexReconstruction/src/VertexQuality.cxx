@@ -7,7 +7,7 @@ VertexQuality::VertexQuality(std::string const & name) :
   fname(name),
   fvertex_tree(nullptr),
   frun_shower_match(false),
-  ffill_event_tree(false) {
+  fevent_tree(nullptr) {
 
   fperformance_quantities = {"mean", "ratio_eq_1"};
   fparameter_name = {"start_prox", "shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"};
@@ -25,7 +25,22 @@ VertexQuality::~VertexQuality() {
 
 void VertexQuality::FillEventTree(bool const fill_event_tree) {
 
-  ffill_event_tree = fill_event_tree;
+  fevent_tree = new TTree("event_tree_shower_match", "");
+  
+  fevent_tree->Branch("run_number", &frun_number, "run_number/I");
+  fevent_tree->Branch("subrun_number", &fsubrun_number, "subrun_number/I");
+  fevent_tree->Branch("event_number", &fevent_number, "event_number/I");
+  
+  fevent_tree->Branch("start_prox", &fstart_prox, "start_prox/D");
+  fevent_tree->Branch("shower_prox", &fshower_prox, "shower_prox/D");
+  fevent_tree->Branch("max_bp_dist", &fmax_bp_dist, "max_bp_dist/D");
+  fevent_tree->Branch("cpoa_vert_prox", &fcpoa_vert_prox, "cpoa_vert_prox/D");
+  fevent_tree->Branch("cpoa_trackend_prox", &fcpoa_trackend_prox, "cpoa_trackend_prox/D");
+  
+  fevent_tree->Branch("true_nu_vtx_number", &ftrue_nu_vtx_number, "true_nu_vtx_number/I");
+  fevent_tree->Branch("reco_vtx_number", &freco_vtx_number, "reco_vtx_number/I");
+  fevent_tree->Branch("tpc_volume_contained", &ftpc_volume_contained, "tpc_volume_contained/I");
+  fevent_tree->Branch("true_associated_shower", &ftrue_associated_shower, "true_associated_shower/I");
 
 }
 
@@ -38,27 +53,6 @@ std::vector<std::string> const & VertexQuality::GetPerformanceQuantities() {
 
 
 void VertexQuality::RunShowerMatch() {
-
-  if(ffill_event_tree) {
-   
-    fevent_tree = new TTree("event_tree_shower_match", "");
-    
-    fevent_tree->Branch("run_number", &frun_number, "run_number/I");
-    fevent_tree->Branch("subrun_number", &fsubrun_number, "subrun_number/I");
-    fevent_tree->Branch("event_number", &fevent_number, "event_number/I");
-    
-    fevent_tree->Branch("start_prox", &fstart_prox, "start_prox/D");
-    fevent_tree->Branch("shower_prox", &fshower_prox, "shower_prox/D");
-    fevent_tree->Branch("max_bp_dist", &fmax_bp_dist, "max_bp_dist/D");
-    fevent_tree->Branch("cpoa_vert_prox", &fcpoa_vert_prox, "cpoa_vert_prox/D");
-    fevent_tree->Branch("cpoa_trackend_prox", &fcpoa_trackend_prox, "cpoa_trackend_prox/D");
-    
-    fevent_tree->Branch("true_nu_vtx_number", &ftrue_nu_vtx_number, "true_nu_vtx_number/I");
-    fevent_tree->Branch("reco_vtx_number", &freco_vtx_number, "reco_vtx_number/I");
-    fevent_tree->Branch("tpc_volume_contained", &ftpc_volume_contained, "tpc_volume_contained/I");
-    fevent_tree->Branch("true_associated_shower", &ftrue_associated_shower, "true_associated_shower/I");
-
-  }
 
   fvertex_tree = new TTree("vertex_quality_tree_shower_match", "");
   SetupVertexQualityTree(fvertex_tree);

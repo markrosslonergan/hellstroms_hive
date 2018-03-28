@@ -104,7 +104,6 @@ class VertexQuality {
   TTree * fvertex_tree;
 
   bool frun_shower_match;
-  bool ffill_event_tree;
 
   int frun_number;
   int fsubrun_number;
