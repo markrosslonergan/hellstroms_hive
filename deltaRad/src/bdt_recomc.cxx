@@ -48,7 +48,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	reco_mc_all_pre = (TH1*)file->getTH1(var , precut ,"all_pre_"+file->tag+"_"+var.safe_name, plot_pot);
 	N_precuts = file->tvertex->GetEntries((precut).c_str())*plot_pot/file->pot*file->scale_data;
 
-	//-------------- Cosmic BDT -------------
+	//-------------- Cosmic BDT ------------- 
 	std::string cosmiccut = file->getStageCuts(2, cut_cosmic_val, -9);
 
 	reco_mc_vec_bdt1 = file->getRecoMCTH1(var, cosmiccut, "bdt1_"+file->tag+"_"+var.safe_name, plot_pot);

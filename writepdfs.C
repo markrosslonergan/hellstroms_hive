@@ -1,6 +1,3 @@
-
-
-
 void writepdfs(std::string const c, std::string dir = "") {
 
   if(dir != "") dir += "/";

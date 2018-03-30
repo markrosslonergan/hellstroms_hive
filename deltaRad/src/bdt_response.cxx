@@ -1,6 +1,10 @@
 #include "bdt_response.h"
 
 int bdt_response::plot_bdt_response(TFile *fout){
+    if (!fout) {
+        std::cout << "Bad file in BDT response" << std::endl;
+        return 1;
+    }
 	fout->cd();
 	
 	
@@ -33,11 +37,20 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		h_bdt.back()->SetDirectory(0);	
 
 		std::cout<<"EVENTS: "<<h_bdt.back()->Integral()<<std::endl;
+           TH1 * ttmp = file->getTH1(bdtvar, which_cuts.at(i), file->tag+"_"+bdtvar.safe_unit+"_"+bdt_type ,1.0);
+		h_bdt.push_back(ttmp);
+		h_bdt.back()->SetDirectory(0);	
 
+        std::cout << "Variable: " << bdtvar.name << std::endl;
+        std::cout << "Cuts: " << which_cuts.at(i) << std::endl;
+        std::cout << "Sum of weights: " << ttmp->GetSumOfWeights() << std::endl;
+        std::cout << "No. entries: " << ttmp->GetEntries() << std::endl;
 		c->cd(1);
 		h_bdt.back()->SetTitle(info.name.c_str());
 		h_bdt.back()->SetLineWidth(2);
+        std::cout << "Integral: " << h_bdt.back()->Integral() << std::endl;
 		h_bdt.back()->Scale(1.0/h_bdt.back()->Integral() );
+        std::cout << "Sum of weights after scaling: " << h_bdt.back()->GetSumOfWeights() << std::endl;
 		h_bdt.back()->Draw("hist same");
 		h_bdt.back()->Write();
 		std::cout<<h_bdt.back()->GetSumOfWeights()<<" "<<bdtvar.name<<std::endl;
@@ -51,8 +64,11 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		p2->SetLogy();
 		h_bdt.back()->Draw("hist same");
 		i++;
+        std::cout << "Done loop with " << file->name << " and " << bdtvar.name << std::endl;
 	}
 	std::cout<<"DONE:"<<std::endl;
+    std::cout << "Finished loop" << std::endl;
+    std::cout << "Finished loop" << std::endl;
 	c->cd(1);
 	leg->Draw();
 
@@ -424,6 +440,7 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	return 0;
 
 
-*/
+
 return 0;
+*/
 }

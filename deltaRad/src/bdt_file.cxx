@@ -17,8 +17,10 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 
 	//This isnt the best idea but sure whynot
-
+    // Because it doesn't work for NC pi0 selection, that's why
+    
 	recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue,  kGreen+1,kBlue-7};
+    /* 
 	recomc_names = { "NC #Delta Radiative #gamma", "BNB NC #pi^{0} #gamma", "BNB CC #pi^{0} #gamma", "BNB Other #gamma","BNB electron","BNB other","Cosmic"};
 	recomc_cuts = {
 		"shower_true_pdg == 22 && shower_true_parent_pdg !=111 && is_delta_rad ==1 && shower_true_origin==1",
@@ -28,6 +30,30 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		"shower_true_origin ==1 && abs(shower_true_pdg) ==11",
 		"shower_true_origin ==1 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11",
 		"shower_true_origin == 2"
+	};
+    */
+	
+    
+    // Edited version for NC pi0 selection
+    recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0} #gamma", "Cosmic", "Other"};
+    //recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0} #gamma", "BNB NC #Delta Radiative #gamma", "BNB Electron","BNB other","Cosmic"};
+	recomc_cuts = {
+        // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
+		"true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_pdg[second_most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] == 111 && true_shower_parent_pdg[second_most_energetic_shower_index] == 111 && ccnc == 1",
+        // CC pi0's. This should be a large background. Same as signal, but with ccnc==0 (CC interaction)     
+		"true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_pdg[second_most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] == 111 && true_shower_parent_pdg[second_most_energetic_shower_index] == 111 && ccnc == 0",
+        /*
+        // Delta radiative is now considered a (very small) background
+	    "true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] != 111 && is_delta_rad == 1 && true_shower_origin==1",
+        // Check if either shower came from electron
+		"true_shower_origin[most_energetic_shower_index] ==1 && true_shower_origin[second_most_energetic_shower_index]==1 && (abs(true_shower_pdg[most_energetic_shower_index]) ==11 || abs(true_shower_pdg[second_most_energetic_shower_index])==11)",
+        // Check for cases where either associated photon shower didn't come from pi0
+		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1 && abs(true_shower_pdg[most_energetic_shower_index])!=11 && abs(true_shower_pdg[second_most_energetic_shower_index])!=11",
+        */
+        // Check if either shower is cosmic in origin
+		"(true_shower_origin[most_energetic_shower_index] == 2 || true_shower_origin[second_most_energetic_shower_index] == 2) && (true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22) && (true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111)",
+        // Other
+		"!(true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_pdg[second_most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] == 111 && true_shower_parent_pdg[second_most_energetic_shower_index] == 111) && !(true_shower_origin[most_energetic_shower_index] == 2 || true_shower_origin[second_most_energetic_shower_index] == 2) && !(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22) && !(true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111)",
 	};
 
 
@@ -154,6 +180,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 {
 
 	//This isnt the best idea but sure whynot
+    /*
 	recomc_cols = {kRed,kRed-3,kRed+3,kBlue, kBlue+3, kBlue-3,kMagenta-3, kGreen, kGreen +3, kGreen -3, kYellow};
 
 	recomc_names = {"BNB pi0 gamma","BNB other gamma","BNB electron","BNB muon","BNB proton","BNB pion","BNB other","Cosmic Photons","Cosmic Electrons", "Cosmic Muons","Cosmic Other"};
@@ -171,6 +198,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		//			"shower_true_origin == 2 && abs(shower_true_pdg)==22",
 		//			"shower_true_origin == 2 && abs(shower_true_pdg)!=11 && shower_true_pdg!=22"
 	};
+    */
 
 	scale_data =1.0;
 	std::cout<<"Loading : "<<name<<std::endl;
@@ -332,20 +360,56 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 
 bdt_variable bdt_file::getBDTVariable(bdt_info info){
 
-	if(info.identifier =="bnb_track" || info.identifier == "bnb_notrack" || info.identifier=="pi0bnb_track" || info.identifier=="pi0bnb_notrack"){
-		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.35,0.55)","BNB BDT Response",false,"d");
-	}else if(info.identifier == "cosmic_track" || info.identifier == "cosmic_notrack"  || info.identifier=="pi0cosmic_track" || info.identifier=="pi0cosmic_notrack"){
-		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false,"d");
+    std::cout << "In getBDTVariable with bdt_info info, bdt_info = " << info.identifier << std::endl;
+	if(info.identifier =="bnb_track" || info.identifier == "bnb_notrack"){
+        std::cout << "Identifier bnb_track or bnb_notrack" << std::endl;
+		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.35,0.55)","BNB BDT Response",false);
+	}else if(info.identifier == "cosmic_track" || info.identifier == "cosmic_notrack"){
+        std::cout << "Identifier cosmic_track or cosmic_notrack" << std::endl;
+		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
 	}
+    // Add cases for pi0 selection
+    else if(info.identifier == "pi0cosmic_track" || info.identifier == "pi0cosmic_notrack") {
+		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(1000,-1100.,-900)","Cosmic BDT Response",false);
+    }       
+    else if(info.identifier == "pi0bnb_track" || info.identifier == "pi0bnb_notrack") {
+		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(1000,-1100.,-900)","BNB BDT Response",false);
+    }
+    else {
+        std::cout << "Bad identifier in bdt_variable" << std::endl;
+    }       
 }
 
 bdt_variable bdt_file::getBDTVariable(std::string info){
 	//std::cout<<"getBDTVariable: "<<info<<std::endl;
-	if(info =="bnb_track"|| info=="bnb_notrack" || info=="pi0bnb_track" || info=="pi0bnb_notrack"){
-		return bdt_variable(this->tag +"_"+info+ ".mva","(100,0.4,0.6)","BNB BDT Response",false,"d");
-	}else if(info == "cosmic_track"|| info=="cosmic_notrack"  || info=="pi0cosmic_track" || info=="pi0cosmic_notrack"){
-		return bdt_variable(this->tag +"_"+info+ ".mva","(100,0.4,0.6)","Cosmic BDT Response",false,"d");
-	}else return bdt_variable(this->tag +"_"+info+ ".mva","(100,0.25,0.45)","Cosmic BDT Response",false,"d");
+    std::cout << "In getBDTVariable with std::string info, bdt_info = " << info << std::endl;
+	if(info =="bnb_track" || info == "bnb_notrack"){
+        std::cout << "Identifier bnb_track or bnb_notrack" << std::endl;
+		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.35,0.55)","BNB BDT Response",false);
+	}else if(info == "cosmic_track" || info == "cosmic_notrack"){
+        std::cout << "Identifier cosmic_track or cosmic_notrack" << std::endl;
+		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
+	}
+    // Add cases for pi0 selection
+    else if(info == "pi0bnb_track" || info == "pi0bnb_notrack") {
+        std::cout << "Identified pi0cosmic_track" << std::endl;
+		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
+    }       
+    else if(info == "pi0cosmic_track" || info == "pi0cosmic_notrack") {
+        std::cout << "Identified pi0cosmic_track" << std::endl;
+		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
+    }       
+    else {
+        std::cout << "Bad identifier in bdt_variable" << std::endl;
+    }       
+
+    /*
+	if(info =="bnb_track"|| info=="bnb_notrack"){
+		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.35,0.55)","BNB BDT Response",false);
+	}else if(info == "cosmic_track"|| info=="cosmic_notrack"){
+		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
+	}
+    */
 
 }
 

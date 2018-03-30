@@ -16,16 +16,12 @@ bdt_app_tree_struct::~bdt_app_tree_struct() {
 	delete tree;
 }
 
-
-
-
 void bdt_app_update_formula( std::vector<TTreeFormula*> & tfv, std::vector<float *> & rvv) {
 
 	for(size_t i = 0; i < tfv.size(); ++i) {
 		*rvv.at(i) = tfv.at(i)->EvalInstance();
 	}
 }
-
 
 void bdt_app_update(void_vec const & tvv, std::vector<float *> & rvv) {
 
@@ -48,7 +44,6 @@ int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::str
 	void_vec tree_var_v;
 	std::vector<float *> reader_var_v;
 	std::vector<TTreeFormula*> tree_formulas_v;
-
 	for(bdt_variable &p : vars) {
 		/*
 		if(p.type == "d") {
@@ -66,8 +61,10 @@ int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::str
 			std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ <<"\n"
 				<< "ERROR: invalid type: " << p.type << "\n";
 		}
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 		*/	
-		tree_formulas_v.push_back( new TTreeFormula(p.safe_name.c_str(), p.name.c_str() ,tree));
+        tree_formulas_v.push_back(new TTreeFormula(p.safe_name.c_str(), p.name.c_str() ,tree));
 		reader_var_v.push_back(new float(-1));
 		reader->AddVariable(p.name.c_str(), reader_var_v.back());
 	}
@@ -79,19 +76,30 @@ int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::str
 		reader->BookMVA(method.str.c_str(), ("BDTxmls_"+identifier+"/weights/"+identifier+"_"+method.str+".weights.xml").c_str());
 		bdt_app_tree_struct ts(otree_name, false);
 	
-		int N = tree->GetEntries();
-
-		for(int i = 0; i < N; ++i) {
+        int N = tree->GetEntries();
+        for(int i = 0; i < N; ++i) {
+            tree->GetEntry(i);
+            //bdt_app_update(tree_var_v, reader_var_v);
+            if(i%25000==0){std::cout<<i<<"/"<<N<<std::endl;}
+            bdt_app_update_formula(tree_formulas_v, reader_var_v);
+            ts.mva = -999;
+            if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(method.str.c_str());
+            ts.tree->Fill();
+        }
+        /*
+		for(int i = 0; i < tree->GetEntries(); ++i) {
 			tree->GetEntry(i);
-			//bdt_app_update(tree_var_v, reader_var_v);
-			if(i%25000==0){std::cout<<i<<"/"<<N<<std::endl;}
-
-			bdt_app_update_formula(tree_formulas_v, reader_var_v);
+			bdt_app_update_formula(tree_var_v, reader_var_v);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 			ts.mva = -999;
 			if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(method.str.c_str());
 			ts.tree->Fill();
 
 		}
+        */
 		ts.tree->Write();
 	}
 
