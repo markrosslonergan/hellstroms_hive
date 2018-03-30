@@ -41,7 +41,8 @@ class EvaluateVertexQuality {
 	       std::vector<std::string> const & method,	
 	       std::vector<std::string> const & imetrics_to_draw,
 	       std::vector<std::string> const & iparameters_to_draw,
-	       std::vector<std::string> const & iperformance_quantities);
+	       std::vector<std::string> const & iperformance_quantities,
+	       std::string const & iname = "");
     ~PlotHelper();
 
     void Print();
@@ -51,6 +52,7 @@ class EvaluateVertexQuality {
     std::map<std::string, size_t> metrics_to_draw;
     std::map<std::string, size_t> parameters_to_draw;
     std::map<std::string, size_t> performance_quantities;
+    std::string name;
 
     std::vector<TGraph *> graph_v;
 
@@ -69,7 +71,8 @@ class EvaluateVertexQuality {
 		 std::vector<std::string> const & method,
 		 std::vector<std::string> const & metrics_to_draw,
 		 std::vector<std::string> const & parameters_to_draw,
-		 std::vector<std::string> const & performance_quantities);
+		 std::vector<std::string> const & performance_quantities,
+		 std::string const & name = "");
   void AddPerformanceMetric(std::vector<std::string> const & params);
   void Run(std::vector<double> const & input_permutation = {});
 

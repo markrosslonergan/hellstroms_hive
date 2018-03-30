@@ -65,19 +65,22 @@ int main(int const argc, char const * argv[]) {
 		method,
 		{"completeness", "cleanliness", "combined"},
 		parameters,
-		performance_quantity);
+		performance_quantity,
+		"total");
 
   evq.AddToDraw({"combined"},
 		method,
 		{"track_completeness", "track_cleanliness", "track_combined"},
 		parameters,
-		performance_quantity);
+		performance_quantity,
+		"track");
 
   evq.AddToDraw({"combined"},
 		method,
 		{"shower_completeness", "shower_cleanliness", "shower_combined"},
 		parameters,
-		performance_quantity);
+		performance_quantity,
+		"shower");
 
   /*  
   std::string const weight = "tpc_volume_contained == 1 && is_nc_delta_rad == 1 && nc_delta_rad_split_shower == 1";

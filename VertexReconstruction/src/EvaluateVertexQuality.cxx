@@ -17,9 +17,11 @@ EvaluateVertexQuality::PlotHelper::PlotHelper(std::string const & imetric_to_stu
 					      std::vector<std::string> const & imethod,
 					      std::vector<std::string> const & imetrics_to_draw,
 					      std::vector<std::string> const & iparameters_to_draw,
-					      std::vector<std::string> const & iperformance_quantities) :
+					      std::vector<std::string> const & iperformance_quantities,
+					      std::string const & iname) :
   metric_to_study(imetric_to_study, SIZE_MAX),
-  method(imethod) {
+  method(imethod),
+  name(iname) {
     
   for(std::string const & str : imetrics_to_draw) metrics_to_draw.emplace(str, SIZE_MAX);
   for(std::string const & str : iparameters_to_draw) parameters_to_draw.emplace(str, SIZE_MAX);
@@ -287,9 +289,10 @@ void EvaluateVertexQuality::AddToDraw(std::string const & metric_to_study,
 				      std::vector<std::string> const & method,
 				      std::vector<std::string> const & metrics_to_draw,
 				      std::vector<std::string> const & parameters_to_draw,
-				      std::vector<std::string> const & performance_quantities) {
+				      std::vector<std::string> const & performance_quantities,
+				      std::string const & name) {
   
-  fplot_helper_v.push_back({metric_to_study, method, metrics_to_draw, parameters_to_draw, performance_quantities});
+  fplot_helper_v.push_back({metric_to_study, method, metrics_to_draw, parameters_to_draw, performance_quantities, name});
 
 }
 
@@ -703,7 +706,9 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 	int const parameter_index = ptd.second;
 	std::vector<size_t> const plot_permutations = FindPermutations(permutation_v, best_permutation, parameter_index);
 	
-	TCanvas * canvas = new TCanvas((method + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_" + pq.first + "_var_" + fparameter_name.at(parameter_index)).c_str());
+	std::string canvas_name = method + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_" + pq.first + "_var_" + fparameter_name.at(parameter_index);
+	if(ph.name != "") canvas_name = ph.name + "_" + canvas_name;
+	TCanvas * canvas = new TCanvas(canvas_name.c_str());
 
 	TGraph * first_graph = nullptr;
 
