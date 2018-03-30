@@ -100,9 +100,9 @@ int main (int argc, char *argv[]){
     std::string num_track_cut;
 	if(istrack == "track"){
 	    num_track_cut = " == 1 ";
-        //new_precuts = "1";
+        new_precuts = "1";
         // Minimum shower energy cut in GeV
-        new_precuts = "reco_shower_helper_energy[second_most_energetic_shower_index] > 0.05 "; 
+        //new_precuts = "reco_shower_helper_energy[second_most_energetic_shower_index] > 0.03 "; 
 
 	}else if(istrack == "notrack"){
 		//new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && totalpe_ibg_sum > 50";
@@ -120,15 +120,15 @@ int main (int argc, char *argv[]){
 	std::string base_cuts = "reco_asso_showers == 2 && reco_asso_tracks " + num_track_cut;
 	std::string cosmic_base_cuts = "reco_asso_showers == 2 && reco_asso_tracks " + num_track_cut;
     // Signal: NC interaction, two photons from parent pi0, BNB interaction
-	std::string signal_definition = "ccnc==1 &&true_shower_parent_pdg[second_most_energetic_shower_index]==111&& true_shower_parent_pdg[most_energetic_shower_index]==111&& true_shower_origin==1";
+	std::string signal_definition = "ccnc==1 &&true_shower_parent_pdg[second_most_energetic_shower_index]==111&& true_shower_parent_pdg[most_energetic_shower_index]==111&& true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1";
 	std::string background_definition = "!(" + signal_definition + ")";
 
 	
 	//This is a particular cut flow that a file will undergo. I.e base cuts, precuts, postcuts, and then the name of the Cosmic BDT and bnb bdt
-	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	new_precuts,"1", 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
-	bdt_flow cosmic_flow(cosmic_base_cuts, 			new_precuts,"1", 	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
-	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts,"1",		cosmic_bdt_info.identifier ,bnb_bdt_info.identifier);
-	bdt_flow data_flow(base_cuts ,				new_precuts,"1",		cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
+	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	    new_precuts,     "1", 	    cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
+	bdt_flow cosmic_flow(cosmic_base_cuts, 			            new_precuts,     "1", 	    cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
+	bdt_flow bkg_flow(   base_cuts +"&&"+background_definition, new_precuts,     "1",		cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
+	bdt_flow data_flow(  base_cuts ,				            new_precuts,     "1",		cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
 
 	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
 
@@ -137,14 +137,14 @@ int main (int argc, char *argv[]){
 	//bdt_file *s3 = new bdt_file(dir+"samples/vectored/","vertexed_ncdeltaradcosmics_mcc88_v1.0.root","TESTNCDeltaRadCosmics","hist","",kBlue-4, signal_flow);
 
 	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
-	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc87", "vertexed_ncpi0cosmic_mcc88_v1.0.root",	"NCpi0Pure",	   "hist","",  kBlue-4, signal_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc87", "vertexed_ncpi0cosmic_mcc88_v1.0.root", "NCpi0Cosmics", "hist","",  kBlue-4, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir+"samples/mcc87", "vertexed_bnbcosmic_mcc88_v2.0.root",	"BNBPure",	   "hist","",  kRed-6, bkg_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/mcc87", "vertexed_bnbcosmic_mcc88_v2.0.root", "BNBCosmics", "hist","",  kRed-6, bkg_flow);
-	bdt_file *intime = new bdt_file(dir+"samples/mcc87", "vertexed_intime_v2.0_mcc88.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
+	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc87", "vertexed_ncpi0cosmic_mcc88_v1.0.root", "NCpi0Pure",	 "hist", "",  kBlue-4,  signal_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc87", "vertexed_ncpi0cosmic_mcc88_v1.0.root", "NCpi0Cosmics", "hist", "",  kBlue-4,  signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(   dir+"samples/mcc87", "vertexed_bnbcosmic_mcc88_v2.0.root",	 "BNBPure",	     "hist", "",  kRed-6,   bkg_flow);
+	bdt_file *bnb_cosmics = new bdt_file(   dir+"samples/mcc87", "vertexed_bnbcosmic_mcc88_v2.0.root",   "BNBCosmics",   "hist", "",  kRed-6,   bkg_flow);
+	bdt_file *intime = new bdt_file(        dir+"samples/mcc87", "vertexed_intime_v2.0_mcc88.root" ,     "IntimeCosmics","hist", "",  kGreen-3, cosmic_flow);
     // Data files
-	bdt_file *data5e19 = new bdt_file(dir+"samples/data", "vertexed_data5e19_v10.root" ,"Data5e19","hist ep","", kBlack, data_flow);
-	bdt_file *bnbext = new bdt_file(dir+"samples/bnbext", "vertexed_bnbext_mcc88_v8.0.root" ,"BNBext","hist","", kBlack, data_flow);
+	bdt_file *data5e19 = new bdt_file(dir+"samples/data",   "vertexed_data5e19_v10.root",      "Data5e19", "hist ep", "", kBlack, data_flow);
+	bdt_file *bnbext = new bdt_file(  dir+"samples/bnbext", "vertexed_bnbext_mcc88_v8.0.root", "BNBext",   "hist ep", "", kBlack, data_flow);
 
 	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
 
@@ -234,8 +234,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	double fcoscut;
 	double fbnbcut;
 	if(istrack == "track"){
-		fcoscut = 0.3;
-		fbnbcut = 0.3;
+		fcoscut = 0.48;
+		fbnbcut = 0.46;
 	}else if(istrack == "notrack"){
 		fcoscut = 0.3;
 		fbnbcut = 0.3;
@@ -258,7 +258,9 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	}else if(mode_option == "app"){
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
 		//std::vector<bdt_file*> app_files = {data5e19,bnbext,signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
-		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, signal_cosmics, bnb_cosmics}; 
+		//std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
+        std::cout << "Mark test " << signal_pure->tvertex->GetEntries((base_cuts+"&&"+signal_definition).c_str()) << std::endl;
+		std::vector<bdt_file*> app_files = {signal_pure};
 		bdt_app(bnb_bdt_info, app_files, vars, TMVAmethods);
 		bdt_app(cosmic_bdt_info, app_files, vars, TMVAmethods);
 	}

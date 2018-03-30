@@ -61,8 +61,6 @@ int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::str
 			std::cout << __LINE__ << " " << __PRETTY_FUNCTION__ <<"\n"
 				<< "ERROR: invalid type: " << p.type << "\n";
 		}
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 		*/	
         tree_formulas_v.push_back(new TTreeFormula(p.safe_name.c_str(), p.name.c_str() ,tree));
 		reader_var_v.push_back(new float(-1));
@@ -90,10 +88,6 @@ int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::str
 		for(int i = 0; i < tree->GetEntries(); ++i) {
 			tree->GetEntry(i);
 			bdt_app_update_formula(tree_var_v, reader_var_v);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 			ts.mva = -999;
 			if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(method.str.c_str());
 			ts.tree->Fill();
