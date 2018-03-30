@@ -99,28 +99,6 @@ int main(int argc, char* argv[])
 		POTscale = 5e19/6.6e20;	
 	}
 
-	if(false){
-	SBNspec delta_spec("../../delta_BDT_new", xml);
-	delta_spec.calcFullVector();
-	delta_spec.ScaleAll(POTscale);
-	delta_spec.calcFullVector();
-
-	SBNspec bkg_spec = delta_spec;
-	bkg_spec.calcFullVector();
-	bkg_spec.Scale("signal",0.0);
-	bkg_spec.calcFullVector();
-
-
-	TMatrixD Mempty(delta_spec.fullVec.size(), delta_spec.fullVec.size());
-	SBNchi test_chi(bkg_spec, Mempty);
-		
-	//again create a SBNchi from this spectra
-
-	std::cout<<"6 DOF: chi^2 "<<test_chi.CalcChi(delta_spec)<<std::endl;
-
-	return 0;
-	}
-
 
 	/*************************************************************
 	 *************************************************************
@@ -136,12 +114,15 @@ int main(int argc, char* argv[])
 	//SBNspec delta_spec("../../delta_BDT_onebin", xml);
 
 
-	SBNspec delta_spec("../../delta_BDT_new", xml);
+	SBNspec delta_spec("../../delta_BDT", xml);
 	delta_spec.calcFullVector();
-	delta_spec.ScaleAll(POTscale/3.1);
+	delta_spec.ScaleAll(POTscale);
 	delta_spec.calcFullVector();
+	delta_spec.Scale("signal",3*2);
+	delta_spec.Scale("bkg",0.5);
 
 	SBNspec bkg_spec = delta_spec;
+	//Starts as delta_sec! no need to scale bkg again
 	bkg_spec.calcFullVector();
 	bkg_spec.Scale("signal",0.0);
 	bkg_spec.calcFullVector();
@@ -162,73 +143,70 @@ int main(int argc, char* argv[])
 	}
 	
 
-	int numMC = 60000;
+	int numMC = 1000000;
 
 	TRandom3 * rangen= new TRandom3(0);
 
 
 	bool printed = false;
 
-	double modmax=20;
-	if(pot==19){
-		modmax=62;
-	}
-
-
-
-	for (double true_mod = 0.0; true_mod< modmax; true_mod+=0.50){
+	double modmax = 7;
+	for (double true_mod = 0.8; true_mod< modmax; true_mod+=0.4){
 
 		SBNspec sig_spec = delta_spec;	
-		sig_spec.Scale("signal", true_mod); // this is now the "prediction" 
+		SBNspec bkg_spec_scaled = bkg_spec;	
+		sig_spec.ScaleAll(true_mod); // this is now the "prediction" 
+		bkg_spec_scaled.ScaleAll(true_mod); // this is now the "prediction" 
+
+
 
 		double stot = sig_spec.getTotalEvents();
-		double btot = bkg_spec.getTotalEvents();
-	
+		double stot_sigonly = sig_spec.hist.at(0).GetSumOfWeights();
+		double btot = bkg_spec_scaled.getTotalEvents();
+		std::cout<<"NUM@: "<<true_mod<<" "<<stot_sigonly<<" "<<btot<<" "<<stot_sigonly/sqrt(btot+stot_sigonly)<<std::endl;
 
-		SBNchi test_chi(sig_spec, Mempty);
-		//test_chi.setStatOnly(true);
+		SBNchi test_chi(bkg_spec_scaled, Mempty);
+		test_chi.setStatOnly(true);
 
-		
 		//step one, find median bkg only
-		TH1D bkg_pdf = test_chi.toyMC_varyInput(&bkg_spec, numMC);
-		std::vector<double> q = {0.1, 1-0.68, 0.5, 0.68, 0.9};
+		TH1D sig_pdf = test_chi.toyMC_varyInput(&sig_spec, numMC);
+		
+		std::vector<double> q = {0.05, 1-0.68, 0.5, 0.68, 0.95};
 		std::vector<double> x(q.size());	
-		bkg_pdf.ComputeIntegral(); // just a precaution
-		bkg_pdf.GetQuantiles(q.size(), &x[0], &q[0]);
+		sig_pdf.ComputeIntegral(); // just a precaution
+		sig_pdf.GetQuantiles(q.size(), &x[0], &q[0]);
 		std::cout<<true_mod<<" BKG Quantile: "<<x[0]<<" "<<x[1]<<" "<<x[2]<<std::endl;
 
 		//Gotten medians ..etc..
-
 		//std::vector<double> xrev = x;
 		//std::reverse(std::begin(xrev), std::end(xrev));
 
-		std::vector<double> pval = test_chi.toyMC_varyInput_getpval(&sig_spec, numMC, x);
+		std::vector<double> pval = test_chi.toyMC_varyInput_getpval(&bkg_spec_scaled, numMC, x);
 		
 		//lets do CLs
 		for(int p=0; p<pval.size();p++){
-			vec_CLmine.at(p).push_back(1-pval.at(p));
+			double signif = sqrt(2)*TMath::ErfInverse(1-pval.at(p));
+			vec_CLmine.at(p).push_back(signif);
+			std::cout<<"Hi!" <<true_mod<<" Quantile: "<<x[p]<<" p: "<<1-pval.at(p)<<" sig: "<<signif<<std::endl;
 			vec_CLs.at(p).push_back(pval.at(p)/(1-q.at(p)) );
 		}
 
-		if(true_mod > 1){
-		std::cout<<"NUMBER @ scale : "<<true_mod<<"\t"<< pval.at(0)/(1-q.at(0))<<"\tsig: "<<stot<<"\tbkg: "<<btot<<"\tsig_only "<<stot-btot<<"\t\ts/sqrt(s+b): "<<(stot-btot)/sqrt(stot)<<std::endl;
-		}
 		ven.push_back(true_mod);
 
 	
-		if(!printed &&  pval.at(0)/(1-q.at(0)) < 0.9){
+		if(false&&!printed &&  pval.at(0)/(1-q.at(0)) < 0.9){
 			sig_spec.writeOut("printed.root");	
 			printed = true;
 			TFile * fp = new TFile("printed2.root","recreate");
 			fp->cd();
 			TCanvas *cp=new TCanvas();
-			bkg_pdf.SetLineColor(kBlue-6);
+			//bkg_pdf.SetLineColor(kBlue-6);
 			
 			TH1D sig_pdf=test_chi.toyMC_varyInput(&sig_spec,numMC);
 			sig_pdf.SetLineColor(kRed-6);
 			sig_pdf.Draw();
 		
-			bkg_pdf.Draw("same");	
+			//bkg_pdf.Draw("same");	
 			cp->Write();	
 			fp->Close();
 			
@@ -239,97 +217,18 @@ int main(int argc, char* argv[])
 	
 
 	}
-	ven.push_back(modmax);
+	ven.push_back(modmax+5);
 	for(int i=0; i< vec_CLs.size(); i++){
-		vec_CLs.at(i).push_back(0);
-		vec_CLmine.at(i).push_back(0);
+	//	vec_CLs.at(i).push_back(0);
+	//	vec_CLmine.at(i).push_back(vec_CLmine.at(i).back() );
+		vec_CLmine.at(i).push_back(0.0 );
+
 	}
 
-	TFile *f = new TFile("bound.root","recreate");
-	
-	//*************************************************
-	//CLs
-
-	std::vector<TGraph*> v_g_CLs;
-	for(auto CL: vec_CLs){
-		v_g_CLs.push_back( new TGraph(ven.size(), &ven[0], &CL[0]));
-	}
-	
-	TCanvas *c0 = new TCanvas("CLs");
-	TPad * p = (TPad*)c0->cd();
-	p->SetLogy();
+	TFile *f = new TFile("bound_pot_scale.root","recreate");
 	
 	int med = 2;
-	
-	v_g_CLs.at(0)->Draw("afp");
-	v_g_CLs.at(0)->Draw("lp");
-	v_g_CLs.at(0)->SetFillColor(kYellow-7);
-	v_g_CLs.at(0)->SetTitle("CLs Exclusion Limit");
-
-
-	v_g_CLs.at(med)->SetLineWidth(3);
-	v_g_CLs.at(med)->SetLineStyle(2);
-
-	v_g_CLs.at(1)->SetFillColor(kGreen+1);
-	v_g_CLs.at(2)->SetFillColor(kGreen+1);
-
-
-	v_g_CLs.at(3)->SetFillColor(kYellow-7);
-	v_g_CLs.at(4)->SetFillColor(kWhite);
-
-	for(int i=0; i<v_g_CLs.size(); i++){
-	//for(int i=v_g_CLs.size()-1; i>=0; i--){
-		v_g_CLs.at(i)->SetLineWidth(2);
-		v_g_CLs.at(i)->Draw("fp same");
-		v_g_CLs.at(i)->Draw("lp same");
-	}
-
-
-
-	TLine * l3 = new TLine(3.0, 0.001, 3.0,1);  l3->SetLineStyle(1);l3->SetLineColor(kBlack); 	
-	l3->SetLineWidth(2);
-
-	TText *t3 = new TText(2.2, 0.008,"LEE (x3)"); t3->SetTextColor(kBlack);//t90->SetTextSize(0.12);
-	t3->SetTextAngle(-90);
-	t3->Draw();
-	l3->Draw();
-	
-
-	TLine * l90 = new TLine(1, 0.1, modmax-4,  0.1); l90->SetLineStyle(1);l90->SetLineColor(kRed);
-	TLine * l95 = new TLine(1, 0.05, modmax-4, 0.05);l95->SetLineStyle(2);l95->SetLineColor(kRed);
-	TLine * l99 = new TLine(1, 0.01, modmax-4, 0.01);l99->SetLineStyle(3);l99->SetLineColor(kRed);
-
-	TText *t90 = new TText(modmax-8, 0.1*0.9,"90\% C.L"); t90->SetTextAlign(13); t90->SetTextColor(kRed);//t90->SetTextSize(0.12);
-	TText *t95 = new TText(modmax-8, 0.05*0.9,"95\% C.L"); t95->SetTextAlign(13); t95->SetTextColor(kRed);     // t95->SetTextSize(0.12);
-	TText *t99 = new TText(modmax-8, 0.01*0.9,"99\% C.L"); t99->SetTextAlign(13); t99->SetTextColor(kRed);    //t99->SetTextSize(0.12);
-
-	t90->Draw();
-	t99->Draw();
-	t95->Draw();
-	l90->Draw();
-	l99->Draw();
-	l95->Draw();
-
-	v_g_CLs.front()->GetXaxis()->SetRangeUser(1,modmax-1);
-	v_g_CLs.front()->GetXaxis()->SetTitle("#sigma_{1 #gamma} enhancement");
-	v_g_CLs.front()->GetYaxis()->SetTitle("CLs");
-
-	p->RedrawAxis();
-
-	TLegend * l2 = new TLegend(0.6,0.7,0.89,0.89);
-	l2->SetLineColor(kWhite);	
-
-
-	l2->AddEntry(v_g_CLs.at(0),"95\% Experiments" , "f");
-	l2->AddEntry(v_g_CLs.at(2), "Median Experiment", "l");
-	l2->AddEntry(v_g_CLs.at(1), "68\% Experiments", "f");
-	l2->Draw();
-
-
-	c0->Write();
-
-
-	//******************************************************
+		//******************************************************
 
 	//Normal
 
@@ -347,44 +246,48 @@ int main(int argc, char* argv[])
 	v_g_CLmine.at(med)->Draw("afp");
 	v_g_CLmine.at(med)->Draw("lp same");
 	v_g_CLmine.at(med)->SetFillColor(kGreen+1);
-	v_g_CLmine.at(med)->SetTitle("CL Exclusion Limit");
+	v_g_CLmine.at(med)->SetTitle("Discovery Significance");
 
 	v_g_CLmine.at(med)->SetLineWidth(3);
 	v_g_CLmine.at(med)->SetLineStyle(2);
-	
+
 	v_g_CLmine.at(3)->SetFillColor(kGreen+1);
 	v_g_CLmine.at(4)->SetFillColor(kYellow-7);
 
 	v_g_CLmine.at(1)->SetFillColor(kYellow-7);
 	v_g_CLmine.at(0)->SetFillColor(kWhite);
 
+
 	for(int i=v_g_CLmine.size()-1; i>=0; i--){
+	//for(int i=med-1; i>=0; i--){
 		v_g_CLmine.at(i)->SetLineWidth(2);
 		v_g_CLmine.at(i)->Draw("fp same");
 		v_g_CLmine.at(i)->Draw("lp same");
 	}
 
+	TLine * lb90 = new TLine(1, 1, modmax-4,  1); lb90->SetLineStyle(1);lb90->SetLineColor(kRed);
+	TLine * lb95 = new TLine(1, 2, modmax-4, 2); lb95->SetLineStyle(2);lb95->SetLineColor(kRed);
+	TLine * lb99 = new TLine(1, 3, modmax-4, 3); lb99->SetLineStyle(3);lb99->SetLineColor(kRed);
+	TLine * lb4 = new TLine(1, 4, modmax-4, 4); lb4->SetLineStyle(3);lb4->SetLineColor(kRed);
 
+	TText *tb90 = new TText(modmax-5, 1-0.1,"1 sigma"); tb90->SetTextAlign(13); tb90->SetTextColor(kRed);//tb90->SetTextSize(0.12);
+	TText *tb95 = new TText(modmax-5, 2-0.1,"2 sigma"); tb95->SetTextAlign(13); tb95->SetTextColor(kRed);     // tb95->SetTextSize(0.12);
+	TText *tb99 = new TText(modmax-5, 3-0.1,"3 sigma"); tb99->SetTextAlign(13); tb99->SetTextColor(kRed);    //tb99->SetTextSize(0.12);
+	TText *tb4 = new TText(modmax-5, 4-0.1,"4 sigma"); tb99->SetTextAlign(13); tb4->SetTextColor(kRed);    //tb99->SetTextSize(0.12);
 
-	TLine * lb90 = new TLine(1, 1-0.1, modmax-4,  1-0.1); lb90->SetLineStyle(1);lb90->SetLineColor(kRed);
-	TLine * lb95 = new TLine(1, 1-0.05, modmax-4, 1-0.05);lb95->SetLineStyle(2);lb95->SetLineColor(kRed);
-	TLine * lb99 = new TLine(1, 1-0.01, modmax-4, 1-0.01);lb99->SetLineStyle(3);lb99->SetLineColor(kRed);
-
-	TText *tb90 = new TText(modmax-8, 1-0.1,"90\% C.L"); tb90->SetTextAlign(13); tb90->SetTextColor(kRed);//tb90->SetTextSize(0.12);
-	TText *tb95 = new TText(modmax-8, 1-0.05,"95\% C.L"); tb95->SetTextAlign(13); tb95->SetTextColor(kRed);     // tb95->SetTextSize(0.12);
-	TText *tb99 = new TText(modmax-8, 1-0.01,"99\% C.L"); tb99->SetTextAlign(13); tb99->SetTextColor(kRed);    //tb99->SetTextSize(0.12);
-
-	tb90->Draw();
-	tb99->Draw();
-	tb95->Draw();
+//	tb90->Draw();
+//	tb99->Draw();
+//	tb95->Draw();
+//	tb4->Draw();
 	lb90->Draw();
 	lb99->Draw();
 	lb95->Draw();
+	lb4->Draw();
 
-	v_g_CLmine.at(med)->GetXaxis()->SetRangeUser(1,modmax-3);
-	v_g_CLmine.at(med)->GetYaxis()->SetRangeUser(0.8,1.11);
-	v_g_CLmine.at(med)->GetXaxis()->SetTitle("#sigma_{1 #gamma} enhancement");
-	v_g_CLmine.at(med)->GetYaxis()->SetTitle("CL Exclusion");
+	v_g_CLmine.at(med)->GetXaxis()->SetRangeUser(1,modmax-4);
+	v_g_CLmine.at(med)->GetYaxis()->SetRangeUser(0,5);
+	v_g_CLmine.at(med)->GetXaxis()->SetTitle("POT Scaling [6.6e20 POT]");
+	v_g_CLmine.at(med)->GetYaxis()->SetTitle("Discovery Significance");
 
 	p1->RedrawAxis();
 
@@ -395,7 +298,7 @@ int main(int argc, char* argv[])
 	TGraph * tmp = (TGraph*)v_g_CLmine.at(med)->Clone("tmp");
 	tmp->SetLineStyle(1);
 
-	l1->AddEntry(v_g_CLmine.at(1), "90\% Experiments", "f");
+	l1->AddEntry(v_g_CLmine.at(1), "95\% Experiments", "f");
 	l1->AddEntry(v_g_CLmine.at(med), "Median Experiment", "l"); //color fill has to be like this
 	l1->AddEntry(tmp,"68\% Experiments" , "f");
 	l1->Draw();

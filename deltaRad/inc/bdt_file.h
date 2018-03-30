@@ -42,6 +42,7 @@ struct bdt_file{
 		std::string dir;
 		std::string name;
 		std::string tag;
+		std::string plot_name;
 		std::string plot_ops;
 		std::string root_dir;
 		
@@ -64,6 +65,7 @@ struct bdt_file{
 
 		std::string leg;
 
+		int rebin;	
 
         int numberofevents;
 		double pot;
@@ -90,9 +92,11 @@ struct bdt_file{
 		
 		TH1* getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
 
+		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
 
 		std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
+		std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 
 		int addFriend(std::string in_friend_tree_nam, std::string in_friend_file);
 
@@ -101,6 +105,7 @@ struct bdt_file{
 
 		std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
 	
+		int addPlotName(std::string plotin);
 };
 
 
