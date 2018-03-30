@@ -14,6 +14,7 @@
 /******** Root includes *****/
 
 #include "TTreeFormula.h"
+#include "TText.h"
 #include "TFile.h"
 #include "TCanvas.h"
 #include "TPad.h"
