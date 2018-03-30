@@ -5,9 +5,9 @@
 
 VertexQuality::VertexQuality(std::string const & name) :
   fname(name),
-  fvertex_tree_event(nullptr),
-  frun_closest(false),
-  frun_sig(false) {
+  fvertex_tree(nullptr),
+  frun_shower_match(false),
+  fevent_tree(nullptr) {
 
   fperformance_quantities = {"mean", "ratio_eq_1"};
   fparameter_name = {"start_prox", "shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"};
@@ -17,7 +17,30 @@ VertexQuality::VertexQuality(std::string const & name) :
 
 VertexQuality::~VertexQuality() {
 
-  if(fvertex_tree_event) delete fvertex_tree_event;
+  if(fevent_tree) delete fevent_tree;
+  if(fvertex_tree) delete fvertex_tree;
+
+}
+
+
+void VertexQuality::FillEventTree(bool const fill_event_tree) {
+
+  fevent_tree = new TTree("event_tree_shower_match", "");
+  
+  fevent_tree->Branch("run_number", &frun_number, "run_number/I");
+  fevent_tree->Branch("subrun_number", &fsubrun_number, "subrun_number/I");
+  fevent_tree->Branch("event_number", &fevent_number, "event_number/I");
+  
+  fevent_tree->Branch("start_prox", &fstart_prox, "start_prox/D");
+  fevent_tree->Branch("shower_prox", &fshower_prox, "shower_prox/D");
+  fevent_tree->Branch("max_bp_dist", &fmax_bp_dist, "max_bp_dist/D");
+  fevent_tree->Branch("cpoa_vert_prox", &fcpoa_vert_prox, "cpoa_vert_prox/D");
+  fevent_tree->Branch("cpoa_trackend_prox", &fcpoa_trackend_prox, "cpoa_trackend_prox/D");
+  
+  fevent_tree->Branch("true_nu_vtx_number", &ftrue_nu_vtx_number, "true_nu_vtx_number/I");
+  fevent_tree->Branch("reco_vtx_number", &freco_vtx_number, "reco_vtx_number/I");
+  fevent_tree->Branch("tpc_volume_contained", &ftpc_volume_contained, "tpc_volume_contained/I");
+  fevent_tree->Branch("true_associated_shower", &ftrue_associated_shower, "true_associated_shower/I");
 
 }
 
@@ -29,30 +52,11 @@ std::vector<std::string> const & VertexQuality::GetPerformanceQuantities() {
 }
 
 
-void VertexQuality::RunClosest() {
+void VertexQuality::RunShowerMatch() {
 
-  if(frun_sig) {
-    std::cout << "Already running sig\n";
-    return;
-  }
-
-  fvertex_tree_event = new TTree("vertex_quality_tree_closest", "");
-  SetupVertexQualityTreeClosest(fvertex_tree_event);
-  frun_closest = true;
-
-}
-
-
-void VertexQuality::RunSig() {
-
-  if(frun_closest) {
-    std::cout << "Already running closest\n";
-    return;
-  }  
-
-  fvertex_tree_event = new TTree("vertex_quality_tree_signal", "");
-  SetupVertexQualityTreeSignal(fvertex_tree_event);
-  frun_sig = true;
+  fvertex_tree = new TTree("vertex_quality_tree_shower_match", "");
+  SetupVertexQualityTree(fvertex_tree);
+  frun_shower_match = true;
 
 }
 
@@ -113,45 +117,7 @@ void VertexQuality::SetParameters(double const start_prox,
 }
 
 
-void VertexQuality::SetupVertexQualityTreeClosest(TTree * const tree) {
-  
-  tree->Branch("run_number", &frun_number, "run_number/I");
-  tree->Branch("subrun_number", &fsubrun_number, "subrun_number/I");
-  tree->Branch("event_number", &fevent_number, "event_number/I");
-
-  tree->Branch("start_prox", &fstart_prox, "start_prox/D");
-  tree->Branch("shower_prox", &fshower_prox, "shower_prox/D");
-  tree->Branch("max_bp_dist", &fmax_bp_dist, "max_bp_dist/D");
-  tree->Branch("cpoa_vert_prox", &fcpoa_vert_prox, "cpoa_vert_prox/D");
-  tree->Branch("cpoa_trackend_prox", &fcpoa_trackend_prox, "cpoa_trackend_prox/D");
-
-  tree->Branch("reco_vertex_present", &freco_vertex_present, "reco_vertex_present/I");
-  tree->Branch("tpc_volume_contained", &ftpc_volume_contained, "tpc_volume_contained/I");
-
-  tree->Branch("dist", &fdist, "dist/D");
-  tree->Branch("distx", &fdistx, "distx/D");
-  tree->Branch("disty", &fdisty, "disty/D");
-  tree->Branch("distz", &fdistz, "distz/D");
-
-  tree->Branch("true_track_total", &ftrue_track_total, "true_track_total/I");
-  tree->Branch("true_shower_total", &ftrue_shower_total, "true_shower_total/I");
-  tree->Branch("reco_track_total", &freco_track_total, "reco_track_total/I");
-  tree->Branch("reco_shower_total", &freco_shower_total, "reco_shower_total/I");
-  tree->Branch("correct_track_total", &fcorrect_track_total, "correct_track_total/I");
-  tree->Branch("correct_shower_total", &fcorrect_shower_total, "correct_shower_total/I");
-
-  tree->Branch("track_matching_ratio_v", &ftrack_matching_ratio_v);
-  tree->Branch("track_true_pdg_v", &ftrack_true_pdg_v);
-  tree->Branch("track_true_origin_v", &ftrack_true_origin_v);
-
-  tree->Branch("shower_matching_ratio_v", &fshower_matching_ratio_v);
-  tree->Branch("shower_true_pdg_v", &fshower_true_pdg_v);
-  tree->Branch("shower_true_origin_v", &fshower_true_origin_v);
-
-}
-
-
-void VertexQuality::SetupVertexQualityTreeSignal(TTree * tree) {
+void VertexQuality::SetupVertexQualityTree(TTree * tree) {
 
   tree->Branch("run_number", &frun_number, "run_number/I");
   tree->Branch("subrun_number", &fsubrun_number, "subrun_number/I");
@@ -163,7 +129,8 @@ void VertexQuality::SetupVertexQualityTreeSignal(TTree * tree) {
   tree->Branch("cpoa_vert_prox", &fcpoa_vert_prox, "cpoa_vert_prox/D");
   tree->Branch("cpoa_trackend_prox", &fcpoa_trackend_prox, "cpoa_trackend_prox/D");
 
-  tree->Branch("reco_vertex_present", &freco_vertex_present, "reco_vertex_present/I");
+  tree->Branch("true_nu_vtx_number", &ftrue_nu_vtx_number, "true_nu_vtx_number/I");
+  tree->Branch("true_associated_shower", &ftrue_associated_shower, "true_associated_shower/I");
   tree->Branch("is_nc_delta_rad", &fis_nc_delta_rad, "is_nc_delta_rad/I");
   tree->Branch("nc_delta_rad_split_shower", &fnc_delta_rad_split_shower, "nc_delta_rad_split_shower/I");
   tree->Branch("tpc_volume_contained", &ftpc_volume_contained, "tpc_volume_contained/I");
@@ -303,33 +270,41 @@ void VertexQuality::GetTrueRecoObjects(size_t const mct_index,
 
 void VertexQuality::ResetEvent() {
 
-  frun_number = -10000;
-  fsubrun_number = -10000;
-  fevent_number = -10000;
+  int const unset = -10000;
 
-  freco_vertex_present = -1;
+  frun_number = unset;
+  fsubrun_number = unset;
+  fevent_number = unset;
+
+  ftrue_nu_vtx_number = unset;
+  freco_vtx_number = unset;
+  ftrue_associated_shower = unset;
 
 }
 
 
 void VertexQuality::ResetMCTruth() {
 
-  fis_nc_delta_rad = -1;
-  fnc_delta_rad_split_shower = -1;
-  ftpc_volume_contained = -1;
+  int const unset = -10000;
 
-  ftrue_track_total = -1;
-  ftrue_shower_total = -1;  
+  fis_nc_delta_rad = unset;
+  fnc_delta_rad_split_shower = unset;
+  ftpc_volume_contained = unset;
+
+  ftrue_track_total = unset;
+  ftrue_shower_total = unset;  
 
 }
 
 
 void VertexQuality::ResetVertex() {
 
-  fdist = -10000;
-  fdistx = -10000;
-  fdisty = -10000;
-  fdistz = -10000;
+  int const unset = -10000;
+
+  fdist = unset;
+  fdistx = unset;
+  fdisty = unset;
+  fdistz = unset;
 
   freco_track_total = 0;
   freco_shower_total = 0;
@@ -355,10 +330,6 @@ void VertexQuality::FillTree(TTree * tree,
                              std::vector<size_t> const & shower_v) {
 
   ResetVertex();
-
-  frun_number = fstorage->frun_number;
-  fsubrun_number = fstorage->fsubrun_number;
-  fevent_number = fstorage->fevent_number;
 
   if(pa_index == SIZE_MAX) {
     tree->Fill();
@@ -456,74 +427,14 @@ void VertexQuality::FillTree(TTree * tree,
 }
 
 
-void VertexQuality::RunClosest(ParticleAssociations const & pas,
-			       bool const track_only) {
-  
-  ResetEvent();
-  ResetMCTruth();
-
-  std::vector<ParticleAssociation> const & pa_v = pas.GetAssociations();
-  std::vector<size_t> const * asso_v;
-  if(track_only) asso_v = &pas.GetAssociationIndices();
-  else asso_v = &pas.GetSelectedAssociations();    
-
-  if(!asso_v->empty()) freco_vertex_present = 1;
-  else {
-    freco_vertex_present = 0;
-    return;
-  }
-
-  std::vector<double> const & true_nuvertx = *fstorage->ftrue_nuvertx;
-  std::vector<double> const & true_nuverty = *fstorage->ftrue_nuverty;
-  std::vector<double> const & true_nuvertz = *fstorage->ftrue_nuvertz;
-
-  std::vector<std::vector<size_t>> track_vv(true_nuvertx.size());
-  std::vector<std::vector<size_t>> shower_vv(true_nuvertx.size());
-  std::vector<geoalgo::Point_t> true_nu_vertices;
-  for(size_t i = 0; i < true_nuvertx.size(); ++i) {
-    GetTrueRecoObjects(i, track_vv.at(i), shower_vv.at(i));
-    true_nu_vertices.push_back({true_nuvertx.at(i), true_nuverty.at(i), true_nuvertz.at(i)});
-  }
-
-  std::vector<size_t> closest_true_indices;
-  for(size_t i = 0; i < asso_v->size(); ++i) {
-
-    size_t const pa_index = asso_v->at(i);
-    double smallest_dist = DBL_MAX;
-    size_t closest_true_index = SIZE_MAX;
-    for(size_t j = 0; j < true_nuvertx.size(); ++j) {
-      
-      double const dist = true_nu_vertices.at(j).Dist(pa_v.at(pa_index).GetRecoVertex());
-      if(dist < smallest_dist) {
-	smallest_dist = dist;
-	closest_true_index = j;
-      }
-      
-    }
-    
-    closest_true_indices.push_back(closest_true_index);
-
-  }
-
-  for(size_t const i : closest_true_indices) {
-
-    ftpc_volume_contained = 0;
-    if(ftpc_volume.Contain(true_nu_vertices.at(i))) ftpc_volume_contained = 1;
-
-    ftrue_track_total = track_vv.at(i).size();
-    ftrue_shower_total = shower_vv.at(i).size();
-
-    FillTree(fvertex_tree_event, pas, i, true_nu_vertices.at(i), track_vv.at(i), shower_vv.at(i));
-
-  }
-
-}
-
-
-void VertexQuality::RunSig(ParticleAssociations const & pas,
-                           bool const track_only) {
+void VertexQuality::RunShowerMatch(ParticleAssociations const & pas,
+				   bool const track_only) {
 
   ResetEvent();
+
+  frun_number = fstorage->frun_number;
+  fsubrun_number = fstorage->fsubrun_number;
+  fevent_number = fstorage->fevent_number;
 
   DetectorObjects const & detos = pas.GetDetectorObjects();
 
@@ -532,29 +443,25 @@ void VertexQuality::RunSig(ParticleAssociations const & pas,
   std::vector<double> const & true_nuvertz = *fstorage->ftrue_nuvertz;
   auto & shower_indices = fstorage->GetShowerIndices(fshower_producer);
   std::vector<int> const & reco_shower_largest_mc_index = *fstorage->freco_shower_largest_mc_index;
+  std::vector<int> const & reco_shower_largest_mc_type = *fstorage->freco_shower_largest_mc_type;
+
+  ftrue_nu_vtx_number = true_nuvertx.size();
+  freco_vtx_number = pas.GetSelectedAssociations().size();
+  ftrue_associated_shower = 0;
+ 
+  bool tpc_volume_contained = false;
 
   for(size_t mct_index = 0; mct_index < true_nuvertx.size(); ++mct_index) {
 
     ResetMCTruth();
 
-    size_t exiting_photon_index = SIZE_MAX;
     ftpc_volume_contained = 0;
 
-    if(!fstorage->fis_delta_rad->at(mct_index)) continue;
-    int const mc_index = fstorage->fdelta_mcshower_index->at(mct_index);
-    if(mct_index == -1) continue;
-
-    std::vector<size_t> delta_shower_indices;
-    for(size_t i = shower_indices.first; i < shower_indices.second; ++i) {
-      if(reco_shower_largest_mc_index.at(i) != mc_index) continue;
-      delta_shower_indices.push_back(i);
-    }
-    fnc_delta_rad_split_shower = 0;
-    if(delta_shower_indices.empty()) continue;
-    fnc_delta_rad_split_shower = delta_shower_indices.size();
-
     geoalgo::Point_t const true_nu_vtx = {true_nuvertx.at(mct_index), true_nuverty.at(mct_index), true_nuvertz.at(mct_index)};
-    if(ftpc_volume.Contain(true_nu_vtx)) ftpc_volume_contained = 1;
+    if(ftpc_volume.Contain(true_nu_vtx)) {
+      ftpc_volume_contained = 1;
+      tpc_volume_contained = true;
+    }
 
     std::vector<size_t> track_v;
     std::vector<size_t> shower_v;
@@ -562,34 +469,45 @@ void VertexQuality::RunSig(ParticleAssociations const & pas,
     ftrue_track_total = track_v.size();
     ftrue_shower_total = shower_v.size();
 
+    int const mc_index = fstorage->fdelta_mcshower_index->at(mct_index);
+    std::vector<size_t> delta_shower_indices;
+    for(size_t i = shower_indices.first; i < shower_indices.second; ++i) {
+      if(reco_shower_largest_mc_index.at(i) == mc_index && reco_shower_largest_mc_type.at(i) == fstorage->fmc_type_shower) delta_shower_indices.push_back(i);
+    }
+    fnc_delta_rad_split_shower = delta_shower_indices.size();
+
     std::vector<ParticleAssociation> const & pa_v = pas.GetAssociations();
     for(size_t const i : pas.GetSelectedAssociations()) {
       ParticleAssociation const & pa = pa_v.at(i);
-      bool signal_vertex = false;
+      bool bnb_shower = false;
+      fis_nc_delta_rad = 0;
       for(size_t const n : pa.GetObjectIndices()) {
 	if(detos.GetRecoType(n) != detos.fshower_reco_type) continue;
 	size_t const original_index = detos.GetDetectorObject(n).foriginal_index;
-	auto const si_it = std::find(delta_shower_indices.begin(), delta_shower_indices.end(), original_index);
-	if(si_it == delta_shower_indices.end()) continue;
-	signal_vertex = true;
-	break;
+	if(fis_nc_delta_rad == 0 && std::find(delta_shower_indices.begin(), delta_shower_indices.end(), original_index) != delta_shower_indices.end()) fis_nc_delta_rad = 1;
+	if(!bnb_shower && std::find(shower_v.begin(), shower_v.end(), original_index) != shower_v.end()) bnb_shower = true;
       }
-      fis_nc_delta_rad = 0;
-      if(!signal_vertex) continue;
-      fis_nc_delta_rad = 1;
-      FillTree(fvertex_tree_event, pas, i, true_nu_vtx, track_v, shower_v);
-    }
+      if(!bnb_shower) {
+	if(fis_nc_delta_rad) std::cout << "WARNING: not BNB shower tagged as NC Delta rad, entry: " << fstorage->fcurrent_entry << " event number: " << fstorage->fevent_number << "\n";
+	continue;
+      }
+      FillTree(fvertex_tree, pas, i, true_nu_vtx, track_v, shower_v);
+    }    
 
   }
 
+  if(ftrue_shower_total > 0) ftrue_associated_shower = 1;
+  if(tpc_volume_contained) ftpc_volume_contained = 1;
+  if(fevent_tree) fevent_tree->Fill();
+
 }
+
 
 
 void VertexQuality::Run(ParticleAssociations const & pas,
 			bool const track_only) {
 
-  if(frun_closest) RunClosest(pas, track_only);
-  if(frun_sig) RunSig(pas, track_only);
+  if(frun_shower_match) RunShowerMatch(pas, track_only);
 
 }
 
@@ -789,7 +707,7 @@ void VertexQuality::Evaluate() {
   TTree * eval_tree = SetupEvalTree(drawn_values);
   eval_tree->Branch("performance_quantities", &fperformance_quantities);
 
-  GetDrawnValues(fvertex_tree_event,
+  GetDrawnValues(fvertex_tree,
 		 fpermutation_v,
 		 fdraw_vec,
 		 drawn_values,
@@ -812,7 +730,8 @@ void VertexQuality::Evaluate() {
 
 void VertexQuality::Write() const {
 
-  if(fvertex_tree_event) fvertex_tree_event->Write();
+  if(fevent_tree) fevent_tree->Write();
+  if(fvertex_tree) fvertex_tree->Write();
   else std::cout << "WARNING: call to write vertex quality tree with nullptr\n";
 
 }

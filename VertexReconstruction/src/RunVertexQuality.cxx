@@ -33,10 +33,12 @@ int main(int const argc, char const * argv[]) {
   std::string const shower_producer = "pandoraNu";
 
   VertexQuality vq;
-  vq.RunSig();
+  //vq.FillEventTree();
+  vq.RunShowerMatch();
   vq.SetProducers(track_producer, shower_producer);
 
-  std::string const weight = "tpc_volume_contained == 1 && is_nc_delta_rad == 1 && nc_delta_rad_split_shower == 1";
+  //std::string const weight = "tpc_volume_contained == 1 && is_nc_delta_rad == 1 && nc_delta_rad_split_shower == 1";
+  std::string const weight = "tpc_volume_contained == 1";
   std::string const ratio_binning = "(101, 0, 1.01)";
 
   vq.AddPerformanceMetric({"correct_track_total / true_track_total", ratio_binning, weight + " && true_track_total > 0",

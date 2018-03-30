@@ -88,6 +88,7 @@ public:
   int frun_number;
   int fsubrun_number;
   int fevent_number;
+  int fcurrent_entry;
 
   //Software Trigger
   //std::vector<int> fswtrigger_producer_index;
