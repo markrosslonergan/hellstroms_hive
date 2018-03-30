@@ -129,7 +129,6 @@ int main (int argc, char *argv[]){
 	
 	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1 && track_matched_to_ncdeltarad_proton[0]==1";
 
-	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1";
 	std::string true_bkg    = "true_shower_origin[0]==1";
 	if(istrack == "track"){
 		true_signal = true_signal+ "&& track_matched_to_ncdeltarad_proton[0]==1";
