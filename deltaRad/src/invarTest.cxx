@@ -116,9 +116,9 @@ int main (int argc, char *argv[]){
 	std::string postcuts = {"reco_asso_tracks == 1 "};//
 
 	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+istrack, "BNB focused BDT");
-	bdt_info cosmic_bdt_info("cosmic_"+istrack, "Cosmic focused BDT");
-	bdt_info ncpi0_bdt_info("ncpi0_"+istrack, "NCPi0 focused BDT");
+	bdt_info bnb_bdt_info("bnb_"+istrack, "BNB focused BDT","(65,0.2,0.7)");
+	bdt_info cosmic_bdt_info("cosmic_"+istrack, "Cosmic focused BDT","(65,0.2,0.7)");
+	bdt_info ncpi0_bdt_info("ncpi0_"+istrack, "NCPi0 focused BDT","(65,0.2,0.7)");
 
 
 	//std::string base_cuts = "totalpe_ibg_sum > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
@@ -130,16 +130,22 @@ int main (int argc, char *argv[]){
 	
 	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1 && track_matched_to_ncdeltarad_proton[0]==1";
 
+	std::string true_bkg    = "true_shower_origin[0]==1";
+	if(istrack == "track"){
+		true_signal = true_signal+ "&& track_matched_to_ncdeltarad_proton[0]==1";
+		true_bkg = true_bkg +"&& true_track_origin[0]==1";
+	}
+
+
 	// takes 5 arguments ( 
-	bdt_flow signal_pure_flow(base_cuts +"&&"+signal_definition +"&&" + true_signal,	new_precuts+"&& passed_swtrigger ==1",	postcuts,cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
-	bdt_flow signal_flow(base_cuts +"&&"+signal_definition +"&&totalpe_ibg_sum >0",	new_precuts+"&& passed_swtrigger ==1",	postcuts,cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
-	bdt_flow cosmic_flow(intime_base_cuts,			new_precuts, postcuts,	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
-	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,new_precuts+ "&& passed_swtrigger ==1 &&totalpe_ibg_sum >0",postcuts,	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
-	bdt_flow bkg_pure_flow(base_cuts +"&&"+background_definition+"&& true_shower_origin[0]==1 &&totalpe_ibg_sum >0" ,new_precuts+ "&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
+	bdt_flow signal_pure_flow(base_cuts +"&&"+signal_definition +"&&"+ true_signal,	new_precuts+"&& passed_swtrigger ==1",	postcuts,cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow signal_flow(base_cuts +"&&"+signal_definition ,	new_precuts+"&& passed_swtrigger ==1  ",	postcuts,cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow cosmic_flow(intime_base_cuts, new_precuts , postcuts,	cosmic_bdt_info,bnb_bdt_info);
+	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,	new_precuts+ "&& passed_swtrigger ==1 ",postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow bkg_pure_flow(base_cuts +"&&"+background_definition+"&&"+ true_bkg ,new_precuts+ "&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
-	bdt_flow data_flow(base_cuts ,	new_precuts+"&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier, 	bnb_bdt_info.identifier);
-
-	bdt_flow ncpi0_flow(base_cuts + " && true_shower_origin[0]==1 && true_track_origin[0]==1 && totalpe_ibg_sum > 0 ", new_precuts +"&& passed_swtrigger ==1",postcuts, cosmic_bdt_info.identifier, ncpi0_bdt_info.identifier); 
+	bdt_flow data_flow(base_cuts,				new_precuts+"&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
+	bdt_flow ncpi0_flow(base_cuts + " &&" + true_bkg + "&& totalpe_ibg_sum >0 ", new_precuts +"&& passed_swtrigger ==1",postcuts, cosmic_bdt_info, ncpi0_bdt_info); 
 
 
 	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, BDT_CUT )		

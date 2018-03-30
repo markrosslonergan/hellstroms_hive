@@ -44,13 +44,13 @@ class bdt_stack{
 		}
 
 		THStack* getStack(bdt_variable var, int level,double c1, double c2);
-		THStack* getBDTStack(std::string, int level,double c1, double c2);
+		THStack* getBDTStack(bdt_info, int level,double c1, double c2);
 		
 		TH1* getSum(bdt_variable, int level, double c1, double c2);
-		TH1* getBDTSum(std::string which, int level, double c1, double c2);
+		TH1* getBDTSum(bdt_info which, int level, double c1, double c2);
 
 		int plotStacks(TFile*f, bdt_variable var,double,double);
-		int plotBDTStacks(TFile*f, std::string,double,double);
+		int plotBDTStacks(TFile*f, bdt_info,double,double);
 
 };
 

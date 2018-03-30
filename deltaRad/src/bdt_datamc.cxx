@@ -148,7 +148,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 }
 
 
-int bdt_datamc::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, double c2){
+int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c2){
 	TCanvas *cobs = new TCanvas("","",900,800);
 	cobs->cd();
 	//cobs->Divide(2,1,0.0025,0.0000001);
@@ -189,7 +189,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, doub
 		bdt_variable dvar = data_file->getBDTVariable(whichbdt);
 
 		TH1* summed = mc_stack->getBDTSum(whichbdt, k,c1,c2);
-		TH1* data = data_file->getTH1(dvar, data_cuts.at(k), std::to_string(k)+"_"+whichbdt+"_"+data_file->tag+"_"+dvar.safe_name, plot_pot);
+		TH1* data = data_file->getTH1(dvar, data_cuts.at(k), std::to_string(k)+"_"+whichbdt.identifier+"_"+data_file->tag+"_"+dvar.safe_name, plot_pot);
 
 
 		//cobs->cd(k+1);
@@ -281,7 +281,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, doub
 
 
 	cobs->Write();
-	cobs->SaveAs(("datamc/"+data_file->tag+"_BDTVAR_"+whichbdt+".pdf").c_str(),"pdf");
+	cobs->SaveAs(("datamc/"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+".pdf").c_str(),"pdf");
 	//cobs->SaveAs(("datamc/"+var.name+".png").c_str(),"png");
 
 	return 0;

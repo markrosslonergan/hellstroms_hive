@@ -33,6 +33,10 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	double N_bdt_bnb;
 
 	//REWRITE THIS USING file->getStageCuts
+	file->recomc_cols = recomc_cols;
+	file->recomc_cuts = recomc_cuts;
+	file->recomc_names = recomc_names;
+	
 
 	//-------------- All Verticies -------------
 	std::string selection = file->getStageCuts(0, -9, -9);
@@ -101,7 +105,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 			std::cout<<"SWtrigger, and calc percentage."<<std::endl; 
 			double per = n/reco_mc_all_sel->Integral()*100.0;
 			std::cout<<"SWtrigger, and add legend"<<std::endl;
-			l_reco_truth_sel->AddEntry(v,("#splitline{"+ file->recomc_names.at(iv)+"}{#bf{"+to_string_prec(n,2)+"}     ("+to_string_prec(per,1)+"%)}"  ).c_str(),"f");
+			l_reco_truth_sel->AddEntry(v,("#splitline{"+ recomc_names.at(iv)+"}{#bf{"+to_string_prec(n,2)+"}     ("+to_string_prec(per,1)+"%)}"  ).c_str(),"f");
 			iv++;
 		}	
 
@@ -140,7 +144,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 			s_reco_truth_pre->Add(v);
 			double n = v->Integral();
 			double per = n/reco_mc_all_pre->Integral()*100.0;
-			l_reco_truth_pre->AddEntry(v,("#splitline{"+ file->recomc_names.at(ipre)+"}{#bf{"+to_string_prec(n,2)+"}     ("+to_string_prec(per,1)+"%)}"  ).c_str(),"f");
+			l_reco_truth_pre->AddEntry(v,("#splitline{"+ recomc_names.at(ipre)+"}{#bf{"+to_string_prec(n,2)+"}     ("+to_string_prec(per,1)+"%)}"  ).c_str(),"f");
 			ipre++;
 		}	
 
@@ -178,7 +182,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 			s_reco_truth_bdt1->Add(v);
 			double n = v->Integral();
 			double per = n/reco_mc_all_bdt1->Integral()*100.0;
-			l_reco_truth_bdt1->AddEntry(v,("#splitline{"+ file->recomc_names.at(ibdt1)+"}{#bf{"+to_string_prec(n,2)+"}     ("+to_string_prec(per,1)+"%)}"  ).c_str(),"f");
+			l_reco_truth_bdt1->AddEntry(v,("#splitline{"+ recomc_names.at(ibdt1)+"}{#bf{"+to_string_prec(n,2)+"}     ("+to_string_prec(per,1)+"%)}"  ).c_str(),"f");
 			ibdt1++;
 		}	
 
@@ -218,7 +222,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 			s_reco_truth_bdt2->Add(v);
 			double n = v->Integral();
 			double per = n/reco_mc_all_bdt2->Integral()*100.0;
-			l_reco_truth_bdt2->AddEntry(v,("#splitline{"+ file->recomc_names.at(ibdt2)+"}{#bf{"+to_string_prec(n,2)+"}     ("+to_string_prec(per,1)+"%)}"  ).c_str(),"f");
+			l_reco_truth_bdt2->AddEntry(v,("#splitline{"+ recomc_names.at(ibdt2)+"}{#bf{"+to_string_prec(n,2)+"}     ("+to_string_prec(per,1)+"%)}"  ).c_str(),"f");
 			ibdt2++;
 		}	
 

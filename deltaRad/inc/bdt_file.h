@@ -55,6 +55,8 @@ struct bdt_file{
 		std::vector<std::string> friend_files;
 		std::vector<std::string> friend_names;
 		
+		//These are now passed into bdt_recomc as they should be really.
+		//Still used here (in get recomcbdts) but are filled from bdt_reco not in constructor.
 		std::vector<std::string> recomc_cuts;
 		std::vector<std::string> recomc_names;
 		std::vector<int> recomc_cols;
@@ -79,12 +81,13 @@ struct bdt_file{
 
 		bdt_flow flow;
 		bdt_variable getBDTVariable(bdt_info info);
-		bdt_variable getBDTVariable(std::string cut);
+		//legacy code, and damned lazy too
+		//bdt_variable getBDTVariable(std::string cut);
 
 		bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir,  int incol, bdt_flow inflow);	
 		
-		//legacy code
-		bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, std::string infriend, std::string infriendtree, int incol, bool indata);	
+		//legacy code OBSOLETE
+		//bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, std::string infriend, std::string infriendtree, int incol, bool indata);	
 
 
 		int scale(double scalein);

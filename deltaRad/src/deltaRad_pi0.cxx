@@ -111,9 +111,10 @@ int main (int argc, char *argv[]){
 	}
 
 
-	//Set up 2 bdt_info structs for passing information on what BDT we are running.
-	bdt_info bnb_bdt_info("pi0bnb_"+istrack, "BNB focused BDT");
-	bdt_info cosmic_bdt_info("pi0cosmic_"+istrack, "Cosmic focused BDT");
+	//Set up 2 bdt_info structs for passing information on what BDT we are running. 
+	//MARK: Now with added binning here, so bdt_file->GetBDTvariable() is much simpler!
+	bdt_info bnb_bdt_info("pi0bnb_"+istrack, "BNB focused BDT", "(65,0.35,0.55)");
+	bdt_info cosmic_bdt_info("pi0cosmic_"+istrack, "Cosmic focused BDT", "(65,0.2,0.62)");
 	
 
 	// Our signal definition alongside any base cuts we want to make
@@ -125,10 +126,10 @@ int main (int argc, char *argv[]){
 
 	
 	//This is a particular cut flow that a file will undergo. I.e base cuts, precuts, postcuts, and then the name of the Cosmic BDT and bnb bdt
-	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	    new_precuts,     "1", 	    cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
-	bdt_flow cosmic_flow(cosmic_base_cuts, 			            new_precuts,     "1", 	    cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
-	bdt_flow bkg_flow(   base_cuts +"&&"+background_definition, new_precuts,     "1",		cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
-	bdt_flow data_flow(  base_cuts ,				            new_precuts,     "1",		cosmic_bdt_info.identifier, bnb_bdt_info.identifier);
+	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	    new_precuts,     "1", 	    cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow cosmic_flow(cosmic_base_cuts, 			            new_precuts,     "1", 	    cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow bkg_flow(   base_cuts +"&&"+background_definition, new_precuts,     "1",		cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow data_flow(  base_cuts ,				            new_precuts,     "1",		cosmic_bdt_info, bnb_bdt_info);
 
 	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
 
@@ -296,15 +297,49 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			}
 		}
 
+	//First off, what MC catagories do you want to stack?
+    	std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "NC BNB Background", "CC BNB Background", "Cosmic Background"};
+	//How are they defined, cutwise?
+	std::vector<std::string> recomc_cuts = {
+        // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
+		"true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_pdg[second_most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] == 111 && true_shower_parent_pdg[second_most_energetic_shower_index] == 111 && ccnc == 1 && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1",
+		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && ccnc == 1 && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1",
+		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && ccnc == 0 && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1",
+		"true_shower_origin[most_energetic_shower_index]==2 && true_shower_origin[second_most_energetic_shower_index]==2",
+        /* 
+        // CC pi0's. This should be a large background. Same as signal, but with ccnc==0 (CC interaction)     
+		"true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_pdg[second_most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] == 111 && true_shower_parent_pdg[second_most_energetic_shower_index] == 111 && ccnc == 0",
+        
+        // Delta radiative is now considered a (very small) background
+	    "true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] != 111 && is_delta_rad == 1 && true_shower_origin==1",
+        // Check if either shower came from electron
+		"true_shower_origin[most_energetic_shower_index] ==1 && true_shower_origin[second_most_energetic_shower_index]==1 && (abs(true_shower_pdg[most_energetic_shower_index]) ==11 || abs(true_shower_pdg[second_most_energetic_shower_index])==11)",
+        // Check for cases where either associated photon shower didn't come from pi0
+		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1 && abs(true_shower_pdg[most_energetic_shower_index])!=11 && abs(true_shower_pdg[second_most_energetic_shower_index])!=11",
+        
+        // Check if either shower is cosmic in origin
+		"(true_shower_origin[most_energetic_shower_index] == 2 || true_shower_origin[second_most_energetic_shower_index] == 2) && (true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22) && (true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111)",
+        // Other
+		"!(true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_pdg[second_most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] == 111 && true_shower_parent_pdg[second_most_energetic_shower_index] == 111) && !(true_shower_origin[most_energetic_shower_index] == 2 || true_shower_origin[second_most_energetic_shower_index] == 2) && !(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22) && !(true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111)",
+        */
+	};
+
+	//and what colors
+	std::vector<int> recomc_cols = {kRed-7, kRed+1, kGreen+1, kBlue+3};
+
+
+
+
+
+
         std::cout << "Done adding TreeFiends" << std::endl;
-		bdt_recomc test;
+		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols);
 		//plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
 
 
 
-
-	//test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable("bnb_track") , fcoscut,fbnbcut);
-	//test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("bnb_track") , fcoscut,fbnbcut);
+	//test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable(bnb_bdt_info) , fcoscut,fbnbcut);
+	//test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable(cosmic_bdt_info) , fcoscut,fbnbcut);
 
 		int h=0;
 		for(auto &v:vars){
@@ -316,8 +351,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	//test.plot_recomc(ftest, bnb_cosmics, vars.at(1), fcoscut, fbnbcut);
 					//test.plot_recomc(ftest, signal_cosmics, vars.at(1), fcoscut, fbnbcut);
 
-		//		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("cosmic_track"), usecut1, usecut2);
-		//		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("bnb_track"), usecut1, usecut2);
+		//		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable(cosmic_bdt_info), usecut1, usecut2);
+		//		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable(bnb_bdt_info), usecut1, usecut2);
 
 		//		for(int i=1; i<=4; i++){
 		//			test.plot_recomc(ftest, bnb_cosmics, vars.at(i), usecut1, usecut2);
@@ -366,7 +401,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			obs.plotStacks(ftest,  v,fcoscut,fbnbcut);
 		}
         std::cout << "Finished obs.plotStacks" << std::endl;
-		obs.plotBDTStacks(ftest,bnb_bdt_info.identifier, fcoscut, fbnbcut);
+		obs.plotBDTStacks(ftest,bnb_bdt_info, fcoscut, fbnbcut);
         std::cout << "Done" << std::endl;
 
 	}

@@ -16,226 +16,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 {
 
 	plot_name = tag;
-	//This isnt the best idea but sure whynot
-    // Because it doesn't work for NC pi0 selection, that's why
-    
-	//recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue,  kGreen+1,kBlue-7};
-	recomc_cols = {kRed-7, kRed+1, kGreen+1, kBlue+3};
-    /* 
-	recomc_names = { "NC #Delta Radiative #gamma", "BNB NC #pi^{0} #gamma", "BNB CC #pi^{0} #gamma", "BNB Other #gamma","BNB electron","BNB other","Cosmic"};
-	recomc_cuts = {
-		"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] !=111 && is_delta_rad ==1 && true_shower_origin[0]==1",
-		"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc ==1",
-		"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc == 0",
-		"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] != 111 && is_delta_rad!=1&& true_shower_origin[0]==1",
-		"true_shower_origin[0] ==1 && abs(true_shower_pdg[0]) ==11",
-		"true_shower_origin[0] ==1 && true_shower_pdg[0] !=22 && abs(true_shower_pdg[0]) !=11",
-		"true_shower_origin[0] == 2"
-	};
-    */
-	
-    
-    // Edited version for NC pi0 selection
-    //recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0} #gamma", "Cosmic", "Other"};
-    //recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0} #gamma", "BNB NC #Delta Radiative #gamma", "BNB Electron","BNB other","Cosmic"};
-    recomc_names = {"BNB NC #pi^{0}", "NC BNB Background", "CC BNB Background", "Cosmic Background"};
-	recomc_cuts = {
-        // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
-		"true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_pdg[second_most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] == 111 && true_shower_parent_pdg[second_most_energetic_shower_index] == 111 && ccnc == 1 && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1",
-		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && ccnc == 1 && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1",
-		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && ccnc == 0 && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1",
-		"true_shower_origin[most_energetic_shower_index]==2 && true_shower_origin[second_most_energetic_shower_index]==2",
-        /* 
-        // CC pi0's. This should be a large background. Same as signal, but with ccnc==0 (CC interaction)     
-		"true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_pdg[second_most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] == 111 && true_shower_parent_pdg[second_most_energetic_shower_index] == 111 && ccnc == 0",
-        
-        // Delta radiative is now considered a (very small) background
-	    "true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] != 111 && is_delta_rad == 1 && true_shower_origin==1",
-        // Check if either shower came from electron
-		"true_shower_origin[most_energetic_shower_index] ==1 && true_shower_origin[second_most_energetic_shower_index]==1 && (abs(true_shower_pdg[most_energetic_shower_index]) ==11 || abs(true_shower_pdg[second_most_energetic_shower_index])==11)",
-        // Check for cases where either associated photon shower didn't come from pi0
-		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1 && abs(true_shower_pdg[most_energetic_shower_index])!=11 && abs(true_shower_pdg[second_most_energetic_shower_index])!=11",
-        
-        // Check if either shower is cosmic in origin
-		"(true_shower_origin[most_energetic_shower_index] == 2 || true_shower_origin[second_most_energetic_shower_index] == 2) && (true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22) && (true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111)",
-        // Other
-		"!(true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_pdg[second_most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] == 111 && true_shower_parent_pdg[second_most_energetic_shower_index] == 111) && !(true_shower_origin[most_energetic_shower_index] == 2 || true_shower_origin[second_most_energetic_shower_index] == 2) && !(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22) && !(true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111)",
-        */
-	};
 
-
-	/*
-	   recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue, kBlue-7, kCyan-7, kGreen+3, kGreen+1, kGreen-9, kMagenta-7};
-	   recomc_names = { "NC #Delta Radiative #gamma", "BNB #pi^{0} #gamma","BNB Other #gamma","BNB electron","BNB muon","BNB proton","BNB pion","BNB other","Cosmic #gamma","Cosmic Electrons", "Cosmic Muons","Cosmic Other"};
-	   recomc_cuts = {
-	   "shower_true_pdg == 22 && shower_true_parent_pdg !=111 && is_delta_rad ==1 && shower_true_origin==1",
-	   "shower_true_pdg == 22 && shower_true_parent_pdg == 111 && shower_true_origin==1",
-	   "shower_true_pdg == 22 && shower_true_parent_pdg != 111 && is_delta_rad!=1&& shower_true_origin==1",
-	   "shower_true_origin ==1 && abs(shower_true_pdg) ==11",
-	   "shower_true_origin ==1 && abs(shower_true_pdg) ==13",
-	   "shower_true_origin ==1 && abs(shower_true_pdg) ==2212",
-	   "shower_true_origin ==1 && abs(shower_true_pdg) ==211",
-	   "shower_true_origin ==1 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11 && abs(shower_true_pdg)!=2212 && abs(shower_true_pdg)!=13 && abs(shower_true_pdg)!=211",
-	   "shower_true_origin== 2 && abs(shower_true_pdg)==22",
-	   "shower_true_origin== 2 && abs(shower_true_pdg)==11",
-	   "shower_true_origin== 2 && abs(shower_true_pdg)==13",
-	   "shower_true_origin ==2 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11 && abs(shower_true_pdg)!=13"
-//			"shower_true_origin == 2 && abs(shower_true_pdg)==22",
-//			"shower_true_origin == 2 && abs(shower_true_pdg)!=11 && shower_true_pdg!=22"
-};
-
-	 */
-
-
-
-
-
-
-scale_data =1.0;
-std::cout<<"Loading : "<<name<<std::endl;
-f = new TFile((dir+"/"+name).c_str(), "read");	
-
-
-if(!f->IsOpen() || !f){
-	std::cout<<"ERROR: didnt open file right: "<<dir<<"/"<<name<<std::endl;
-	exit(EXIT_FAILURE);
-}
-
-std::string tnam_event = root_dir+"event_tree";
-std::string tnam = root_dir+"vertex_tree";
-std::string tnam_pot = root_dir+"pot_tree";
-
-std::cout<<"Getting vertex tree"<<std::endl;
-tvertex = (TTree*)f->Get(tnam.c_str());
-//tevent = (TTree*)f->Get(tnam_event.c_str());
-std::cout<<"Got vertex tree"<<std::endl;
-
-double potbranch = 0;
-int  numbranch = 0;
-
-if(is_mc){
-	if(tag == "IntimeCosmics"){
-		std::cout<<"Getting POT for CosmicIntime: "<<std::endl;
-		//Found in 
-		double intime_modifier = 10.279;
-		
-		double N_gen_bnb = 2153450.0;
-		double N_gen_cos = 991885.0;
-		double frac_job_worked = 5.0/9.0;
-
-		double pot_bnb_cosmic = 2.172e+21;
-		double pot_plot = 6.6e20;
-
-		pot = pot_plot; 
-		this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos*frac_job_worked)*pot_plot/pot_bnb_cosmic;
-		std::cout<<"--> value: "<<pot<<" with scale factor: "<<scale_data<<std::endl;
-	}else{
-		leg = "l";
-		std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
-		tpot = (TTree*)f->Get(tnam_pot.c_str());
-		tpot->SetBranchAddress("number_of_events", &numbranch);
-		tpot->SetBranchAddress("pot",&potbranch);
-
-		std::cout<<"Set the POT branch"<<std::endl;
-		int tmpnum = 0;
-		double tmppot=0;
-		for(int i=0; i<tpot->GetEntries(); i++){
-			tpot->GetEntry(i);
-			tmpnum += (double)numbranch;
-			tmppot += potbranch;
-		}
-		numberofevents = tmpnum;
-		pot=tmppot;
-		std::cout<<"--> POT is MC: ";
-		std::cout<<"--> value: "<<pot<<std::endl;
-	}
-}
-if(tag == "Data5e19"){
-	leg = "lp";
-	double Nworked = 190991;
-	double Nsamweb = 191131;
-
-	std::cout<<"--> POT is data: From Zarkos tool..";
-	pot = 4.879e+19*Nworked/Nsamweb; //7131/13671;// 376954.0/382718.0;//7131/13671;
-	std::cout<<"--> value: "<<pot<<std::endl;
-}
-if(tag == "BNBext"){
-	leg = "lp";
-	double sca = 1.23;//from 1.23
-	//https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
-
-	double exta=38713062.0;
-	double extb=581923.0;
-
-	double spill=10893847.0; 
-
-	double Nworked = 852486.0;
-	double Nsamweb = 463273 + 521026;
-
-
-	//data
-	double NworkedD = 190991.0;
-	double NsamwebD = 191131.0;
-	double datanorm = 4.879e+19*NworkedD/NsamwebD; //7131/13671;// 376954.0/382718.0;//7131/13671;
-
-	double mod = 5.0/9.0*spill/(exta);//spill/(exta+extb);
-
-
-	std::cout<<"--> POT is data: From Zarkos tool..";
-	pot =datanorm/mod*Nworked/Nsamweb; //7131/13671;// 376954.0/382718.0;//7131/13671;
-	std::cout<<"--> value: "<<pot<<std::endl;
-
-}
-
-std::cout<<"---> VERTEXCOUNT: "<<tag<<" "<<tvertex->GetEntries()*5e19/pot<<std::endl;
-
-std::cout<<"Done!"<<std::endl;
-
-
-
-
-};
-
-int bdt_file::addPlotName(std::string plotin){
-	plot_name = plotin;
-return 0;
-}
-
-
-
-bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, std::string infriend, std::string infriendtree, int incol, bool indata) :
-	dir(indir),
-	name(inname),
-	tag(intag),
-	root_dir(inrootdir),
-	friend_tree_file(infriend),
-	friend_tree_name(infriendtree),
-	plot_ops(inops),
-	col(incol),
-	is_data(indata),
-	is_mc(!indata)
-{
-
-	//This isnt the best idea but sure whynot
-    /*
-	recomc_cols = {kRed,kRed-3,kRed+3,kBlue, kBlue+3, kBlue-3,kMagenta-3, kGreen, kGreen +3, kGreen -3, kYellow};
-
-	recomc_names = {"BNB pi0 gamma","BNB other gamma","BNB electron","BNB muon","BNB proton","BNB pion","BNB other","Cosmic Photons","Cosmic Electrons", "Cosmic Muons","Cosmic Other"};
-	recomc_cuts = {"shower_true_pdg == 22 && shower_true_parent_pdg == 111 && shower_true_origin==1",
-		"shower_true_pdg == 22 && shower_true_parent_pdg !=111 && shower_true_origin==1",
-		"shower_true_origin ==1 && abs(shower_true_pdg) ==11",
-		"shower_true_origin ==1 && abs(shower_true_pdg) ==13",
-		"shower_true_origin ==1 && abs(shower_true_pdg) ==2212",
-		"shower_true_origin ==1 && abs(shower_true_pdg) ==211",
-		"shower_true_origin ==1 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11 && abs(shower_true_pdg)!=2212 && abs(shower_true_pdg)!=13 && abs(shower_true_pdg)!=211",
-		"shower_true_origin== 2 && abs(shower_true_pdg)==22",
-		"shower_true_origin== 2 && abs(shower_true_pdg)==11",
-		"shower_true_origin== 2 && abs(shower_true_pdg)==13",
-		"shower_true_origin ==2 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11 && abs(shower_true_pdg)!=13"
-			//			"shower_true_origin == 2 && abs(shower_true_pdg)==22",
-			//			"shower_true_origin == 2 && abs(shower_true_pdg)!=11 && shower_true_pdg!=22"
-	};
-    */
 
 	scale_data =1.0;
 	std::cout<<"Loading : "<<name<<std::endl;
@@ -257,44 +38,96 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	std::cout<<"Got vertex tree"<<std::endl;
 
 	double potbranch = 0;
+	int  numbranch = 0;
 
 	if(is_mc){
-		leg = "l";
-		std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
-		tpot = (TTree*)f->Get(tnam_pot.c_str());
-		tpot->SetBranchAddress("pot",&potbranch);
+		if(tag == "IntimeCosmics"){
+			std::cout<<"Getting POT for CosmicIntime: "<<std::endl;
+			//Found in 
+			double intime_modifier = 10.279;
 
-		std::cout<<"Set the POT branch"<<std::endl;
-		double tmppot=0;
-		for(int i=0; i<tpot->GetEntries(); i++){
-			tpot->GetEntry(i);
-			tmppot += potbranch;
+			double N_gen_bnb = 2153450.0;
+			double N_gen_cos = 991885.0;
+			double frac_job_worked = 5.0/9.0;
+
+			double pot_bnb_cosmic = 2.172e+21;
+			double pot_plot = 6.6e20;
+
+			pot = pot_plot; 
+			this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos*frac_job_worked)*pot_plot/pot_bnb_cosmic;
+			std::cout<<"--> value: "<<pot<<" with scale factor: "<<scale_data<<std::endl;
+		}else{
+			leg = "l";
+			std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
+			tpot = (TTree*)f->Get(tnam_pot.c_str());
+			tpot->SetBranchAddress("number_of_events", &numbranch);
+			tpot->SetBranchAddress("pot",&potbranch);
+
+			std::cout<<"Set the POT branch"<<std::endl;
+			int tmpnum = 0;
+			double tmppot=0;
+			for(int i=0; i<tpot->GetEntries(); i++){
+				tpot->GetEntry(i);
+				tmpnum += (double)numbranch;
+				tmppot += potbranch;
+			}
+			numberofevents = tmpnum;
+			pot=tmppot;
+			std::cout<<"--> POT is MC: ";
+			std::cout<<"--> value: "<<pot<<std::endl;
 		}
-		pot=tmppot;
-		std::cout<<"--> POT is MC: ";
+	}
+	if(tag == "Data5e19"){
+		leg = "lp";
+		double Nworked = 190991;
+		double Nsamweb = 191131;
+
+		std::cout<<"--> POT is data: From Zarkos tool..";
+		pot = 4.879e+19*Nworked/Nsamweb; //7131/13671;// 376954.0/382718.0;//7131/13671;
 		std::cout<<"--> value: "<<pot<<std::endl;
-	}else{
-		//leg = "lp";
-		//std::cout<<"--> POT is data: ";
-		//pot = 4.95e19*7131/13671;// 376954.0/382718.0;//7131/13671;
-		//std::cout<<"--> value: "<<pot<<std::endl;
+	}
+	if(tag == "BNBext"){
+		leg = "lp";
+		double sca = 1.23;//from 1.23
+		//https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
+
+		double exta=38713062.0;
+		double extb=581923.0;
+
+		double spill=10893847.0; 
+
+		double Nworked = 852486.0;
+		double Nsamweb = 463273 + 521026;
+
+
+		//data
+		double NworkedD = 190991.0;
+		double NsamwebD = 191131.0;
+		double datanorm = 4.879e+19*NworkedD/NsamwebD; //7131/13671;// 376954.0/382718.0;//7131/13671;
+
+		double mod = 5.0/9.0*spill/(exta);//spill/(exta+extb);
+
+
+		std::cout<<"--> POT is data: From Zarkos tool..";
+		pot =datanorm/mod*Nworked/Nsamweb; //7131/13671;// 376954.0/382718.0;//7131/13671;
+		std::cout<<"--> value: "<<pot<<std::endl;
+
 	}
 
 	std::cout<<"---> VERTEXCOUNT: "<<tag<<" "<<tvertex->GetEntries()*5e19/pot<<std::endl;
 
-	std::cout<<"Getting friend trees!"<<std::endl;
-
-	std::string method = "BDT";
-	if(is_mc){
-		friend_tree_name =  std::string(tvertex->AddFriend((friend_tree_name+"_"+method).c_str(), friend_tree_file.c_str())->GetTree()->GetName());
-	}else{
-		friend_tree_name =  std::string(tvertex->AddFriend((friend_tree_name+"_"+method).c_str(), friend_tree_file.c_str())->GetTree()->GetName());
-	}
-
 	std::cout<<"Done!"<<std::endl;
 
 
+
+
 };
+
+int bdt_file::addPlotName(std::string plotin){
+	plot_name = plotin;
+	return 0;
+}
+
 
 
 
@@ -339,7 +172,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 
 	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
 	th1->Scale(this->scale_data*plot_POT/this->pot);
-//	std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
+	//	std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
 	if(rebin>1) th1->Rebin(rebin);
 	th1->SetLineColor(col);
 	th1->SetLineWidth(1);
@@ -407,60 +240,10 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 }
 
 bdt_variable bdt_file::getBDTVariable(bdt_info info){
-
-    std::cout << "In getBDTVariable with bdt_info info, bdt_info = " << info.identifier << std::endl;
-	if(info.identifier =="bnb_track" || info.identifier == "bnb_notrack"){
-        std::cout << "Identifier bnb_track or bnb_notrack" << std::endl;
-		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.35,0.55)","BNB BDT Response",false);
-	}else if(info.identifier == "cosmic_track" || info.identifier == "cosmic_notrack"){
-        std::cout << "Identifier cosmic_track or cosmic_notrack" << std::endl;
-		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
-	}
-    // Add cases for pi0 selection
-    // Previous binning: (1000, -1100, -900)
-    else if(info.identifier == "pi0cosmic_track" || info.identifier == "pi0cosmic_notrack") {
-		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65, 0.2, 0.7)","Cosmic BDT Response",false);
-    }       
-    else if(info.identifier == "pi0bnb_track" || info.identifier == "pi0bnb_notrack") {
-		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65, 0.2, 0.7)","BNB BDT Response",false);
-    }
-    else {
-        std::cout << "Bad identifier in bdt_variable" << std::endl;
-    }       
+	return bdt_variable(this->tag +"_"+info.identifier+ ".mva", info.binning, info.name+" Response" ,false);
 }
 
-bdt_variable bdt_file::getBDTVariable(std::string info){
-	//std::cout<<"getBDTVariable: "<<info<<std::endl;
-    std::cout << "In getBDTVariable with std::string info, bdt_info = " << info << std::endl;
-	if(info =="bnb_track" || info == "bnb_notrack"){
-        std::cout << "Identifier bnb_track or bnb_notrack" << std::endl;
-		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.35,0.55)","BNB BDT Response",false);
-	}else if(info == "cosmic_track" || info == "cosmic_notrack"){
-        std::cout << "Identifier cosmic_track or cosmic_notrack" << std::endl;
-		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
-	}
-    // Add cases for pi0 selection
-    else if(info == "pi0bnb_track" || info == "pi0bnb_notrack") {
-        std::cout << "Identified pi0cosmic_track" << std::endl;
-		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.2,0.7)","Cosmic BDT Response",false);
-    }       
-    else if(info == "pi0cosmic_track" || info == "pi0cosmic_notrack") {
-        std::cout << "Identified pi0cosmic_track" << std::endl;
-		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.2,0.7)","Cosmic BDT Response",false);
-    }       
-    else {
-        std::cout << "Bad identifier in bdt_variable" << std::endl;
-    }       
 
-    /*
-	if(info =="bnb_track"|| info=="bnb_notrack"){
-		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.35,0.55)","BNB BDT Response",false);
-	}else if(info == "cosmic_track"|| info=="cosmic_notrack"){
-		return bdt_variable(this->tag +"_"+info+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
-	}
-    */
-
-}
 
 
 bdt_file::~bdt_file(){
@@ -490,36 +273,36 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 			break;
 		case 1:
 			ans = flow.base_cuts + "&&"+ flow.pre_cuts;
-            std::cout << "Stage 1 cuts: " << ans << std::endl;
+			std::cout << "Stage 1 cuts: " << ans << std::endl;
 			break;
 		case 2: {
-			bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
-			ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1);
-            std::cout << "Stage 2 cuts: " << ans << std::endl;
-			break;
-	    }
+				bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
+				ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1);
+				std::cout << "Stage 2 cuts: " << ans << std::endl;
+				break;
+			}
 
 		case 3: {
-			bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
-			bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
-			ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2);
-            std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
-            std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
-            std::cout << "Stage 3 cuts: " << ans << std::endl;
-			break;
-		}
+				bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
+				bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
+				ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2);
+				std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
+				std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
+				std::cout << "Stage 3 cuts: " << ans << std::endl;
+				break;
+			}
 		case 4: {
-			bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
-			bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
-            std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
-            std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
-			ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2) +"&&" +flow.post_cuts;
-            std::cout << "Stage 4 cuts: " << ans << std::endl;
-			break;
-        }
+				bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
+				bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
+				std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
+				std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
+				ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2) +"&&" +flow.post_cuts;
+				std::cout << "Stage 4 cuts: " << ans << std::endl;
+				break;
+			}
 		default: 
-		       ans = "1";
-		       break;
+			ans = "1";
+			break;
 
 	}	
 	return ans;

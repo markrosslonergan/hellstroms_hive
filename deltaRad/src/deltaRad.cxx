@@ -37,8 +37,8 @@ int main (int argc, char *argv[]){
 	// Just some simple argument things
 	//===========================================================================================
 
-	//std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
-	std::string dir = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
+	std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
+	//std::string dir = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
@@ -115,9 +115,9 @@ int main (int argc, char *argv[]){
 	std::string postcuts = {"reco_asso_tracks == 1 "};//
 
 	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+istrack, "BNB focused BDT");
-	bdt_info cosmic_bdt_info("cosmic_"+istrack, "Cosmic focused BDT");
-	bdt_info ncpi0_bdt_info("ncpi0_"+istrack, "NCPi0 focused BDT");
+	bdt_info bnb_bdt_info("bnb_"+istrack, "BNB focused BDT","(65,0.2,0.7)");
+	bdt_info cosmic_bdt_info("cosmic_"+istrack, "Cosmic focused BDT","(65,0.2,0.7)");
+	bdt_info ncpi0_bdt_info("ncpi0_"+istrack, "NCPi0 focused BDT","(65,0.2,0.7)");
 
 
 	//std::string base_cuts = "totalpe_ibg_sum > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
@@ -137,14 +137,14 @@ int main (int argc, char *argv[]){
 
 
 	// takes 5 arguments ( 
-	bdt_flow signal_pure_flow(base_cuts +"&&"+signal_definition +"&&"+ true_signal,	new_precuts+"&& passed_swtrigger ==1",	postcuts,cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
-	bdt_flow signal_flow(base_cuts +"&&"+signal_definition ,	new_precuts+"&& passed_swtrigger ==1  ",	postcuts,cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
-	bdt_flow cosmic_flow(intime_base_cuts, new_precuts , postcuts,	cosmic_bdt_info.identifier,bnb_bdt_info.identifier);
-	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,	new_precuts+ "&& passed_swtrigger ==1 ",postcuts,	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
-	bdt_flow bkg_pure_flow(base_cuts +"&&"+background_definition+"&&"+ true_bkg ,new_precuts+ "&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier,	bnb_bdt_info.identifier);
+	bdt_flow signal_pure_flow(base_cuts +"&&"+signal_definition +"&&"+ true_signal,	new_precuts+"&& passed_swtrigger ==1",	postcuts,cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow signal_flow(base_cuts +"&&"+signal_definition ,	new_precuts+"&& passed_swtrigger ==1  ",	postcuts,cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow cosmic_flow(intime_base_cuts, new_precuts , postcuts,	cosmic_bdt_info,bnb_bdt_info);
+	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,	new_precuts+ "&& passed_swtrigger ==1 ",postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow bkg_pure_flow(base_cuts +"&&"+background_definition+"&&"+ true_bkg ,new_precuts+ "&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
-	bdt_flow data_flow(base_cuts,				new_precuts+"&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info.identifier, 	bnb_bdt_info.identifier);
-	bdt_flow ncpi0_flow(base_cuts + " &&" + true_bkg + "&& totalpe_ibg_sum >0 ", new_precuts +"&& passed_swtrigger ==1",postcuts, cosmic_bdt_info.identifier, ncpi0_bdt_info.identifier); 
+	bdt_flow data_flow(base_cuts,				new_precuts+"&& passed_swtrigger ==1",postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
+	bdt_flow ncpi0_flow(base_cuts + " &&" + true_bkg + "&& totalpe_ibg_sum >0 ", new_precuts +"&& passed_swtrigger ==1",postcuts, cosmic_bdt_info, ncpi0_bdt_info); 
 
 
 	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, BDT_CUT )		
@@ -359,16 +359,30 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
 			}
 		}
+		std::vector<int> recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue,  kGreen+1,kBlue-7};
+		std::vector<std::string> recomc_names = { "NC #Delta Radiative #gamma", "BNB NC #pi^{0} #gamma", "BNB CC #pi^{0} #gamma", "BNB Other #gamma","BNB electron","BNB other","Cosmic"};
+		std::vector<std::string> 	recomc_cuts = {
+		"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] !=111 && is_delta_rad ==1 && true_shower_origin[0]==1",
+		"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc ==1",
+		"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc == 0",
+		"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] != 111 && is_delta_rad!=1&& true_shower_origin[0]==1",
+		"true_shower_origin[0] ==1 && abs(true_shower_pdg[0]) ==11",
+		"true_shower_origin[0] ==1 && true_shower_pdg[0] !=22 && abs(true_shower_pdg[0]) !=11",
+		"true_shower_origin[0] == 2"
+		};
+
+
 
 
 		bdt_recomc test;
 		//plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
 
 
-		test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable("bnb_track") , fcoscut,fbnbcut);
-		test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable("cosmic_track") , fcoscut,fbnbcut);
-		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("bnb_track") , fcoscut,fbnbcut);
-		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("cosmic_track") , fcoscut,fbnbcut);
+		test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable(bnb_bdt_info) , fcoscut,fbnbcut);
+		return 0;
+		test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable(cosmic_bdt_info) , fcoscut,fbnbcut);
+		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable(bnb_bdt_info) , fcoscut,fbnbcut);
+		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable(cosmic_bdt_info) , fcoscut,fbnbcut);
 		
 		int h=0;
 		for(auto &v:vars){
@@ -377,16 +391,6 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			h++;
 			//if (h > 0) break;  
 		}	
-		//test.plot_recomc(ftest, bnb_cosmics, vars.at(1), fcoscut, fbnbcut);
-		//test.plot_recomc(ftest, signal_cosmics, vars.at(1), fcoscut, fbnbcut);
-
-		//		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("cosmic_track"), usecut1, usecut2);
-		//		test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable("bnb_track"), usecut1, usecut2);
-
-		//		for(int i=1; i<=4; i++){
-		//			test.plot_recomc(ftest, bnb_cosmics, vars.at(i), usecut1, usecut2);
-		//			test.plot_recomc(ftest, signal_cosmics, vars.at(i), usecut1, usecut2);
-		//		}
 
 	}
 	else if(mode_option == "sig"){
@@ -436,8 +440,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			//if (ip >1) return 0;
 			return 0;
 		}
-		obs.plotBDTStacks(ftest,bnb_bdt_info.identifier, fcoscut, fbnbcut);
-		obs.plotBDTStacks(ftest,cosmic_bdt_info.identifier, fcoscut, fbnbcut);
+		obs.plotBDTStacks(ftest, bnb_bdt_info, fcoscut, fbnbcut);
+		obs.plotBDTStacks(ftest, cosmic_bdt_info, fcoscut, fbnbcut);
 
 
 	}else if(mode_option == "datamc"){
@@ -487,12 +491,12 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		bdt_datamc datamc2(bnbext, obs2);	
 		//bdt_datamc datamc3(overlay, obs3);	
 
-	//	datamc.plotBDTStacks(ftest, bnb_bdt_info.identifier ,fcoscut,fbnbcut);
-	//	datamc.plotBDTStacks(ftest, cosmic_bdt_info.identifier ,fcoscut,fbnbcut);
-	//	datamc2.plotBDTStacks(ftest, bnb_bdt_info.identifier ,fcoscut,fbnbcut);
-		datamc2.plotBDTStacks(ftest, cosmic_bdt_info.identifier ,fcoscut,fbnbcut);
-		//datamc3.plotBDTStacks(ftest, bnb_bdt_info.identifier ,fcoscut,fbnbcut);
-		//datamc3.plotBDTStacks(ftest, cosmic_bdt_info.identifier ,fcoscut,fbnbcut);
+	//	datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+	//	datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+	//	datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+		datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+		//datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+		//datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 
 
 

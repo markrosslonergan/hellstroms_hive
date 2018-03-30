@@ -30,7 +30,7 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	for(auto &file: files){
 		std::cout<<"On file: "<<file->name<<" || "<<file->tag<<std::endl;
 
-		bdt_variable bdtvar = file->getBDTVariable(info.identifier);
+		bdt_variable bdtvar = file->getBDTVariable(info);
 		std::string saf = file->tag+"_"+bdtvar.safe_name+"_"+bdt_type;
 		std::cout<<"saf: "<<saf<<std::endl;
 		fout->cd();

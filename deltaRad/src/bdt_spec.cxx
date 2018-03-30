@@ -1,6 +1,6 @@
 #include "bdt_spec.h"
 
-THStack* bdt_stack::getBDTStack(std::string whichbdt, int level, double cut1, double cut2){
+THStack* bdt_stack::getBDTStack(bdt_info whichbdt, int level, double cut1, double cut2){
 
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
 
@@ -27,7 +27,7 @@ THStack* bdt_stack::getBDTStack(std::string whichbdt, int level, double cut1, do
 }
 
 
-TH1* bdt_stack::getBDTSum(std::string whichbdt, int level, double cut1, double cut2){
+TH1* bdt_stack::getBDTSum(bdt_info whichbdt, int level, double cut1, double cut2){
 	
 	bdt_variable var = stack.at(0)->getBDTVariable(whichbdt);
 
@@ -237,7 +237,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 
 
-int bdt_stack::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, double c2){
+int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c2){
 		TCanvas *cobs = new TCanvas("","",1800,1600);
 		cobs->Divide(2,2,0.0025,0.0000001);
 		double plot_pot=6.6e20;
