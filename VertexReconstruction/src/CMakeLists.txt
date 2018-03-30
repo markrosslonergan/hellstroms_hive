@@ -17,6 +17,9 @@ target_link_libraries (Pandora VertexReconstructionlib ${ROOT_LIBRARIES})
 add_executable (RunVertexQuality RunVertexQuality.cxx VVDict.cxx)
 target_link_libraries (RunVertexQuality VertexReconstructionlib ${ROOT_LIBRARIES})
 
+add_executable (PrintVertexQuality PrintVertexQuality.cxx VVDict.cxx)
+target_link_libraries (PrintVertexQuality ${ROOT_LIBRARIES})
+
 add_executable (GetPermutationFiles GetPermutationFiles.cxx GetPermutations.cxx)
 target_link_libraries (GetPermutationFiles ${ROOT_LIBRARIES})
 

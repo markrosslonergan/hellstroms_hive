@@ -21,6 +21,7 @@ class VertexQuality {
   VertexQuality(std::string const & name = "VertexQuality");
   ~VertexQuality();
 
+  void FillEventTree(bool const fill_event_tree = true);
   std::vector<std::string> const & GetPerformanceQuantities();
   void SetProducers(std::string const & track_producer,
 		    std::string const & shower_producer);
@@ -33,8 +34,7 @@ class VertexQuality {
                      double const cpoa_trackend_prox);
 
   void SetStorage(Storage const * storage);
-  void RunClosest();
-  void RunSig();
+  void RunShowerMatch();
   void Run(ParticleAssociations const & pas,
 	   bool const track_only = false);
   std::vector<double> DrawHist(TTree * tree,
@@ -64,12 +64,9 @@ class VertexQuality {
   
  private:
 
-  void RunClosest(ParticleAssociations const & pas,
-		  bool const track_only);
-  void RunSig(ParticleAssociations const & pas,
-	      bool const track_only);
-  void SetupVertexQualityTreeClosest(TTree * const tree);
-  void SetupVertexQualityTreeSignal(TTree * const tree);
+  void RunShowerMatch(ParticleAssociations const & pas,
+		      bool const track_only);
+  void SetupVertexQualityTree(TTree * const tree);
   void GetTrueObjects(size_t const mct_index,
 		      std::vector<size_t> & mctrack_v,
 		      std::vector<size_t> & mcshower_v,
@@ -103,9 +100,10 @@ class VertexQuality {
 
   geoalgo::AABox ftpc_volume;
 
-  TTree * fvertex_tree_event;
-  bool frun_closest;
-  bool frun_sig;
+  TTree * fevent_tree;
+  TTree * fvertex_tree;
+
+  bool frun_shower_match;
 
   int frun_number;
   int fsubrun_number;
@@ -117,7 +115,9 @@ class VertexQuality {
   double fcpoa_vert_prox;
   double fcpoa_trackend_prox;
 
-  int freco_vertex_present;
+  int ftrue_nu_vtx_number;
+  int freco_vtx_number;
+  int ftrue_associated_shower;
   int fis_nc_delta_rad;
   int fnc_delta_rad_split_shower;
   int ftpc_volume_contained;
