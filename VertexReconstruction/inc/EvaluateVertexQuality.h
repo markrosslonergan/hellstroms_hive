@@ -86,10 +86,13 @@ class EvaluateVertexQuality {
   void SetupVQChain();
   void SetupEvalChain();
   std::string GetPermString(std::vector<double> const & permutation);
+  size_t GetIndex(std::vector<std::vector<double>> const & vv,
+		  std::vector<double> const & v);
   void GetEvalInfo();
   void GetEval(std::vector<std::vector<std::vector<double>>> & drawn_values,
 	       std::vector<std::vector<std::pair<double, int>>> & max_results,
-	       std::vector<std::vector<std::pair<double, int>>> & min_results);
+	       std::vector<std::vector<std::pair<double, int>>> & min_results,
+	       size_t const permutation_index = SIZE_MAX);
   void GetPandoraMetrics();
   void CheckPlotHelperV();
   void ProcessDrawOption(std::vector<std::string> const & input,
@@ -132,6 +135,7 @@ class EvaluateVertexQuality {
 
   std::unordered_map<std::string, std::string> fmethod_map;
   std::unordered_map<std::string, std::string> fxtitle_map;
+  std::unordered_map<std::string, std::string> fytitle_map;
   std::unordered_map<std::string, GraphAesthetics> fgraph_aesthetic_map;
 
   std::vector<std::vector<std::string>> fdraw_vec;

@@ -22,10 +22,14 @@ int main(int const argc, char const * argv[]) {
   evq.SetOutputFile("RunEvaluateVertexQuality.root");
 
   std::vector<std::string> const method = {"max"};
-  std::vector<std::string> const metrics_to_draw = {"track_cleanliness", "track_completeness", "shower_completeness", "shower_cleanliness"};
-  std::vector<std::string> const parameters = {"shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"};
-  std::vector<std::string> const performance_quantity = {"mean", "ratio_eq_1"};
+  //std::vector<std::string> const metrics_to_draw = {"track_cleanliness", "track_completeness", "shower_completeness", "shower_cleanliness"};
+  std::vector<std::string> const metrics_to_draw = {"completeness", "cleanliness", "combined"};
+  //std::vector<std::string> const parameters = {"shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"};
+  std::vector<std::string> const parameters = {"shower_prox"};
+  //std::vector<std::string> const performance_quantity = {"mean", "ratio_eq_1"};
+  std::vector<std::string> const performance_quantity = {"ratio_eq_1"};
 
+  /*
   evq.AddToDraw({"shower_completeness"},
 		method,
 		metrics_to_draw,
@@ -55,7 +59,25 @@ int main(int const argc, char const * argv[]) {
 		{"dist"},
 		parameters,
 	        {"mean"});
+  */
 
+  evq.AddToDraw({"combined"},
+		method,
+		{"completeness", "cleanliness", "combined"},
+		parameters,
+		performance_quantity);
+
+  evq.AddToDraw({"combined"},
+		method,
+		{"track_completeness", "track_cleanliness", "track_combined"},
+		parameters,
+		performance_quantity);
+
+  evq.AddToDraw({"combined"},
+		method,
+		{"shower_completeness", "shower_cleanliness", "shower_combined"},
+		parameters,
+		performance_quantity);
 
   /*  
   std::string const weight = "tpc_volume_contained == 1 && is_nc_delta_rad == 1 && nc_delta_rad_split_shower == 1";
@@ -72,7 +94,8 @@ int main(int const argc, char const * argv[]) {
   */
 
   //evq.Run({4, 40, 40, 12, 12});
-  evq.Run();
+  evq.Run({4, 30, 100, 25, 5});
+  //evq.Run();
    
   std::cout << "Wall time: " << difftime(time(0), start) << "\n";  
 

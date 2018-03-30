@@ -82,16 +82,19 @@ EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
 		 {"cpoa_vert_prox", "cpoa_vert_prox"},
 		 {"cpoa_trackend_prox", "cpoa_trackend_prox"}};
 
+  fytitle_map = {{"mean", "Mean"},
+		 {"ratio_eq_1", "Ratio of Good Vertices"}};
+
   fgraph_aesthetic_map = {{"completeness", {"Completeness", kRed, 8}},
-			  {"shower_completeness", {"Shower Completeness", kRed+1, 23, 2}},
-			  {"track_completeness", {"Track Completeness", kBlue+1, 33, 2}},
+			  {"shower_completeness", {"Shower Completeness", kRed, 23}},
+			  {"track_completeness", {"Track Completeness", kRed, 33}},
 			  {"cleanliness", {"Cleanliness", kBlue, 8}}, 
-			  {"shower_cleanliness", {"Shower Cleanliness", kGreen+2, 23, 2}}, 
-			  {"track_cleanliness", {"Track Cleanliness", kMagenta+1, 33, 2}}, 
+			  {"shower_cleanliness", {"Shower Cleanliness", kBlue, 23}}, 
+			  {"track_cleanliness", {"Track Cleanliness", kBlue, 33}}, 
 			  {"combined", {"Combined", kMagenta, 8}},
 			  {"shower_combined", {"Shower Combined", kMagenta, 23}},
 			  {"track_combined", {"Track Combined", kMagenta, 33}},
-			  {"dist", {"Reco - True Distance [cm]", kBlack, 8, 2}}};
+			  {"dist", {"Reco - True Distance [cm]", kBlack, 8}}};
 
 }
 
@@ -333,6 +336,32 @@ std::vector<size_t> EvaluateVertexQuality::FindPermutations(std::vector<std::vec
 }
 
 
+size_t EvaluateVertexQuality::GetIndex(std::vector<std::vector<double>> const & vv,
+				       std::vector<double> const & v) {
+  
+  for(size_t i = 0; i < vv.size(); ++i) {
+    
+    std::vector<double> const & vf = vv.at(i);
+    bool match = true;
+
+    for(size_t j = 0; j < v.size(); ++j) {
+
+      if(vf.at(j) != v.at(j)) {
+	match = false;
+	break;
+      }
+
+    }
+
+    if(match) return i;
+
+  }
+
+  return SIZE_MAX;
+
+}
+
+
 void EvaluateVertexQuality::GetEvalInfo() {
 
   if(feval_chain->GetEntries() == 0) {
@@ -364,7 +393,8 @@ void EvaluateVertexQuality::GetEvalInfo() {
 
 void EvaluateVertexQuality::GetEval(std::vector<std::vector<std::vector<double> > > & drawn_values,
 				    std::vector<std::vector<std::pair<double, int> > > & max_results,
-				    std::vector<std::vector<std::pair<double, int> > > & min_results) {
+				    std::vector<std::vector<std::pair<double, int> > > & min_results,
+				    size_t const permutation_index) {
 
   drawn_values.clear();
   max_results.clear();
@@ -393,15 +423,30 @@ void EvaluateVertexQuality::GetEval(std::vector<std::vector<std::vector<double> 
 
   for(size_t i = 0; i < drawn_values.size(); ++i) {
 
-    for(size_t j = 0; j < drawn_values.at(i).size(); ++j) {
-      
-      std::vector<double> const & results = drawn_values.at(i).at(j);
+    if(permutation_index == SIZE_MAX) {
+       
+      for(size_t j = 0; j < drawn_values.at(i).size(); ++j) {
+	
+	std::vector<double> const & results = drawn_values.at(i).at(j);
+	
+	fvq.GetMinMax(j,
+		      results,
+		      max_results.at(i),
+		      min_results.at(i));
+	
+      }
 
-      fvq.GetMinMax(j,
+    }
+
+    else {
+
+      std::vector<double> const & results = drawn_values.at(i).at(permutation_index);
+      
+      fvq.GetMinMax(permutation_index,
 		    results,
 		    max_results.at(i),
-		    min_results.at(i));
-
+		    min_results.at(i));      
+      
     }
 
   }
@@ -524,7 +569,7 @@ TGraph * EvaluateVertexQuality::PlotGraph(PlotHelper const & ph,
     graph->GetXaxis()->SetTitle(xtm_it->second.c_str());
   }
   graph->GetXaxis()->CenterTitle();
-  
+
   graph->GetYaxis()->SetTitle(titles.at(5).c_str());
   graph->GetYaxis()->CenterTitle();
 
@@ -673,9 +718,22 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 	  TGraph * graph = PlotGraph(ph, method, permutation_v, plot_permutations, drawn_values, mtd.second, parameter_index, pq.second);	  
 
 	  if(!first_graph) {
+
 	    graph->Draw("ap");
-	    graph->GetYaxis()->SetTitle("");
+
+	    std::string const & performance_quantity = fvq.GetPerformanceQuantities().at(pq.second);
+	    auto const ytm_it = fytitle_map.find(performance_quantity);
+	    if(ytm_it == fytitle_map.end()) {
+	      std::cout << "WARINING: no ytitle found for " << performance_quantity << "\n";
+	      graph->GetYaxis()->SetTitle(performance_quantity.c_str());
+	    }
+	    else {
+	      graph->GetYaxis()->SetTitle(ytm_it->second.c_str());
+	    }
+	    graph->GetYaxis()->CenterTitle();
+
 	    first_graph = graph;
+
 	  }
 	  else graph->Draw("p");
 	  
@@ -763,24 +821,24 @@ void EvaluateVertexQuality::Run(std::vector<double> const & input_permutation) {
   std::vector<std::vector<std::pair<double, int>>> max_results;
   std::vector<std::vector<std::pair<double, int>>> min_results;
 
-  std::vector<std::vector<double>> permutation_v;
+  size_t permutation_index = SIZE_MAX;
   if(!input_permutation.empty()) {
-    for(size_t const i : FindPermutations(fpermutation_v, input_permutation, 1)) 
-      permutation_v.push_back(fpermutation_v.at(i));
-    fvq.GetDrawnValues(fvq_chain, permutation_v, fdraw_vec, drawn_values, max_results, min_results);
+    permutation_index = GetIndex(fpermutation_v, input_permutation);
+    if(permutation_index == SIZE_MAX) {
+      std::cout << "ERROR: " << __PRETTY_FUNCTION__
+		<< "\nCould not find input permutation, exiting\n";
+      exit(1);
+    }
   }
-  else {
-    permutation_v = fpermutation_v;
-    GetEval(drawn_values, max_results, min_results);
-  }
+  GetEval(drawn_values, max_results, min_results, permutation_index);
   for(std::vector<std::string> const & performance_metric : fdraw_vec) fvq.AddPerformanceMetric(performance_metric);
 
   if(fpandora_tree) GetPandoraMetrics();
 
-  fvq.Print(permutation_v, fdraw_vec, drawn_values, max_results, min_results);
+  fvq.Print(fpermutation_v, fdraw_vec, drawn_values, max_results, min_results);
 
   CheckPlotHelperV();
-  PlotParameters(permutation_v, drawn_values, max_results, "max");
-  PlotParameters(permutation_v, drawn_values, min_results, "min");
+  PlotParameters(fpermutation_v, drawn_values, max_results, "max");
+  PlotParameters(fpermutation_v, drawn_values, min_results, "min");
 
 }
