@@ -35,7 +35,6 @@ int main (int argc, char *argv[]){
 	//===========================================================================================
 	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
 
-	//std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
@@ -163,12 +162,14 @@ int main (int argc, char *argv[]){
 	//std::string angle_shower1_shower2 ="reco_shower_dirx[most_energetic_shower_index]*reco_shower_dirx[second_most_energetic_shower_index]+reco_shower_diry[most_energetic_shower_index]*reco_shower_diry[second_most_energetic_shower_index]+reco_shower_dirz[most_energetic_shower_index]*reco_shower_dirz[second_most_energetic_shower_index]";
 	std::string angle_shower1_shower2 ="reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz[0]*reco_shower_dirz[1]";
     // Calculate invariant mass for two massless particles
-    std::string E1 = "reco_shower_helper_energy[0]"; 
-    std::string E2 = "reco_shower_helper_energy[1]"; 
+    std::string E1 = "reco_shower_helper_energy[most_energetic_shower_index]"; 
+    std::string E2 = "reco_shower_helper_energy[second_most_energetic_shower_index]"; 
     std::string invMass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+angle_shower1_shower2+"))";
     
     std::vector<bdt_variable> vars;
 
+    //vars.push_back(bdt_variable("most_energetic_shower_index", "(8, -1, 6)", "Most Energetic Shower Index", false, "i"));
+    //vars.push_back(bdt_variable("second_most_energetic_shower_index", "(8, -1, 6)", "Second Most Energetic Shower Index", false, "i"));
     vars.push_back(bdt_variable(invMass, "(20, 0., 0.5)", "Shower Invariant Mass [GeV/c]", false, "d"));
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[most_energetic_shower_index]","(48,0,15)", "Shower 1 dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[second_most_energetic_shower_index]","(48,0,15)", "Shower 2 dE/dx Collection Plane [MeV/cm]",false,"d"));
@@ -270,8 +271,6 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	}	
 	else if(mode_option == "recomc"){
-
-	
 
 	//First off, what MC catagories do you want to stack?
     	std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "NC BNB Background", "CC BNB Background", "Cosmic Background"};

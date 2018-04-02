@@ -28,6 +28,9 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 			"nTrain_Signal="+std::to_string(signal_entries-2000)+":nTrain_Background="+std::to_string(background_entries-2000)+":SplitMode=Random:NormMode=NumEvents:!V");
 //			"SplitMode=Random:NormMode=NumEvents:!V");
 
+    //factory.PrepareTrainingAndTestTree(ROOT.TCut(),"NormMode=EqualNumEvents:SplitMode=Block:nTrain_Signal=%s:nTest_Signal=%s:nTrain_Background=%s:nTest_Background=%s"%(nTrain_Signal,nTest_Signal,nTrain_Background,nTest_Background))
+
+
 	for(method_struct const & method : methods) factory->BookMethod(dataloader, method.type, method.str, method.option);
 
 	factory->TrainAllMethods();

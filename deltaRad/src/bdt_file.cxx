@@ -1,8 +1,5 @@
 #include "bdt_file.h"
 
-
-
-
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
 	dir(indir),
 	name(inname),
