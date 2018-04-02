@@ -230,8 +230,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	double fcoscut;
 	double fbnbcut;
 	if(istrack == "track"){
-		fcoscut = 0.48;
-		fbnbcut = 0.46;
+		fcoscut = 0.49;
+		fbnbcut = 0.47;
 	}else if(istrack == "notrack"){
 		fcoscut = 0.3;
 		fbnbcut = 0.3;
@@ -255,8 +255,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
 		//std::vector<bdt_file*> app_files = {data5e19,bnbext,signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
 		//std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
-        std::cout << "Mark test " << signal_pure->tvertex->GetEntries((base_cuts+"&&"+signal_definition).c_str()) << std::endl;
-		std::vector<bdt_file*> app_files = {signal_pure};
+		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics};
 		bdt_app(bnb_bdt_info, app_files, vars, TMVAmethods);
 		bdt_app(cosmic_bdt_info, app_files, vars, TMVAmethods);
 	}
