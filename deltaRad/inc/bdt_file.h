@@ -10,6 +10,7 @@
 #include  "bdt_var.h"
 #include  "bdt_info.h"
 #include  "bdt_flow.h"
+#include  "method_struct.h"
 
 /******** Root includes *****/
 
@@ -102,7 +103,8 @@ struct bdt_file{
 		std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 
 		int addFriend(std::string in_friend_tree_nam, std::string in_friend_file);
-
+		int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
+		
 		~bdt_file();
 
 

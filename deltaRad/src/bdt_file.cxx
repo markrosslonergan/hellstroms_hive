@@ -255,16 +255,31 @@ bdt_file::~bdt_file(){
 int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_file){
 	friend_files.push_back(in_friend_file);
 	friend_names.push_back(in_friend_tree_nam);
-
+	
 	tvertex->AddFriend(friend_names.back().c_str(), friend_files.back().c_str());
 
 
 	return 0;
 }
 
+int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods){
+
+		for(auto &method: TMVAmethods){
+			
+				std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+				this->addFriend(this->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_app"+".root");
+
+				std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+				this->addFriend(this->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
+		}
+	
+	return 0;
+}
 
 
 std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
+
+	bool verbose = false;
 
 	std::string ans;
 	switch(stage) {
@@ -273,12 +288,12 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 			break;
 		case 1:
 			ans = flow.base_cuts + "&&"+ flow.pre_cuts;
-			std::cout << "Stage 1 cuts: " << ans << std::endl;
+			if(verbose)std::cout << "Stage 1 cuts: " << ans << std::endl;
 			break;
 		case 2: {
 				bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
 				ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1);
-				std::cout << "Stage 2 cuts: " << ans << std::endl;
+				if(verbose)std::cout << "Stage 2 cuts: " << ans << std::endl;
 				break;
 			}
 
@@ -286,18 +301,18 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 				bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
 				bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
 				ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2);
-				std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
-				std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
-				std::cout << "Stage 3 cuts: " << ans << std::endl;
+				if(verbose)std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
+				if(verbose)std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
+				if(verbose)std::cout << "Stage 3 cuts: " << ans << std::endl;
 				break;
 			}
 		case 4: {
 				bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
 				bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
-				std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
-				std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
+				if(verbose)std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
+				if(verbose)std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
 				ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2) +"&&" +flow.post_cuts;
-				std::cout << "Stage 4 cuts: " << ans << std::endl;
+				if(verbose)std::cout << "Stage 4 cuts: " << ans << std::endl;
 				break;
 			}
 		default: 

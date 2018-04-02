@@ -94,7 +94,6 @@ int main (int argc, char *argv[]){
 	MVALoader xml_methods(xml);
 	std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); 
 
-
 	//Define the precuts, depending on if you want to use track or notrack	
 	std::string new_precuts;
     std::string num_track_cut;
@@ -120,7 +119,7 @@ int main (int argc, char *argv[]){
 	// Our signal definition alongside any base cuts we want to make
 	std::string base_cuts = "reco_asso_showers == 2 && reco_asso_tracks " + num_track_cut;
 	std::string cosmic_base_cuts = "reco_asso_showers == 2 && reco_asso_tracks " + num_track_cut;
-    // Signal: NC interaction, two photons from parent pi0, BNB interaction
+        //Signal: NC interaction, two photons from parent pi0, BNB interaction
 	std::string signal_definition = "ccnc==1 &&true_shower_parent_pdg[second_most_energetic_shower_index]==111&& true_shower_parent_pdg[most_energetic_shower_index]==111&& true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1";
 	std::string background_definition = "!(" + signal_definition + ")";
 
@@ -131,36 +130,31 @@ int main (int argc, char *argv[]){
 	bdt_flow bkg_flow(   base_cuts +"&&"+background_definition, new_precuts,     "1",		cosmic_bdt_info, bnb_bdt_info);
 	bdt_flow data_flow(  base_cuts ,				            new_precuts,     "1",		cosmic_bdt_info, bnb_bdt_info);
 
-	// BDT files, in the form (location, rootfilt, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
-
-	//bdt_file *s1 = new bdt_file(dir+"samples/vectored/","vertexed_ncdeltarad_mcc88_v3.0.root","TESTNCDeltaRad","hist","",kBlue-4, signal_flow);
-	//bdt_file *s2 = new bdt_file(dir+"samples/vectored/","vertexed_bnbcosmic_mcc88_v2.0.root","TESTBNBCosmics","hist","",kBlue-4, signal_flow);
-	//bdt_file *s3 = new bdt_file(dir+"samples/vectored/","vertexed_ncdeltaradcosmics_mcc88_v1.0.root","TESTNCDeltaRadCosmics","hist","",kBlue-4, signal_flow);
-
 	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
 	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc87", "vertexed_ncpi0cosmic_mcc88_v1.0.root", "NCpi0Pure",	 "hist", "",  kBlue-4,  signal_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc87", "vertexed_ncpi0cosmic_mcc88_v1.0.root", "NCpi0Cosmics", "hist", "",  kBlue-4,  signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(   dir+"samples/mcc87", "vertexed_bnbcosmic_mcc88_v2.0.root",	 "BNBPure",	     "hist", "",  kRed-6,   bkg_flow);
 	bdt_file *bnb_cosmics = new bdt_file(   dir+"samples/mcc87", "vertexed_bnbcosmic_mcc88_v2.0.root",   "BNBCosmics",   "hist", "",  kRed-6,   bkg_flow);
 	bdt_file *intime = new bdt_file(        dir+"samples/mcc87", "vertexed_intime_v2.0_mcc88.root" ,     "IntimeCosmics","hist", "",  kGreen-3, cosmic_flow);
-    // Data files
+	    // Data files
 	bdt_file *data5e19 = new bdt_file(dir+"samples/data",   "vertexed_data5e19_v10.root",      "Data5e19", "hist ep", "", kBlack, data_flow);
 	bdt_file *bnbext = new bdt_file(  dir+"samples/bnbext", "vertexed_bnbext_mcc88_v8.0.root", "BNBext",   "hist ep", "", kBlack, data_flow);
 
 	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
 
-    /*
-	//Add Any other info in the form of FRIENDS! e.g track dEdx 
-	signal_pure->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_nsignal.root");			
-	signal_cosmics->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_nsignal_cosmics.root");			
-	bnb_pure->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb.root");			
-	bnb_cosmics->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnb_cosmics.root");			
-	intime->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_intime.root");			
-//	data5e19->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_data5e19.root");			
-//	bnbext->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnbext.root");			
-	//data5e19->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_data5e19.root");			
-	//bnbext->addFriend("track_dEdx_tree",dir+"track_dEdx/trackdEdx_bnbext.root");			
-    */
+
+	//you get access to these with track_info.XXX
+	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+	std::cout<<"Going to add any precomputed tree friends, or any trained BDT responses   "<<std::endl;
+	std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
+	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+	for(auto &f: bdt_files){
+		addPreFriends(f,"track");
+		f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
+	}
+	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+
 
 
 	//Variables!
@@ -267,16 +261,6 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	}
 	else if(mode_option == "response"){
 
-		for(auto &method: TMVAmethods){
-			for(int i=0; i< bdt_files.size(); i++){
-				std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_app"+".root");
-
-				std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
-			}
-		}
-
 		//Ok print out Cosmic BDT
 	//	bdt_response cosmic_response(cosmic_bdt_info, signal_pure, intime);
 	//	cosmic_response.plot_bdt_response(ftest);
@@ -287,15 +271,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	}	
 	else if(mode_option == "recomc"){
 
-		for(auto &method: TMVAmethods){
-			for(int i=0; i< bdt_files.size(); i++){
-				std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_app"+".root");
-
-				std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
-			}
-		}
+	
 
 	//First off, what MC catagories do you want to stack?
     	std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "NC BNB Background", "CC BNB Background", "Cosmic Background"};
@@ -362,15 +338,6 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	}
 	else if(mode_option == "sig"){
 
-		for(auto &method: TMVAmethods){
-			for(int i=0; i< bdt_files.size(); i++){
-				std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_app"+".root");
-
-				std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
-			}
-		}
 
 
 		TFile *fsig = new TFile(("significance_"+istrack+".root").c_str(),"recreate");
@@ -381,15 +348,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	}else if(mode_option == "stack"){
 
-		for(auto &method: TMVAmethods){
-			for(int i=0; i< bdt_files.size(); i++){
-				std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_app"+".root");
-
-				std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
-			}
-		}
+		
 
 		bdt_stack obs("obs");
 		obs.addToStack(signal_cosmics);
@@ -406,16 +365,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	}
 	else if(mode_option == "vars"){
-		
-        for(auto &method: TMVAmethods){
-			for(int i=0; i< bdt_files.size(); i++){
-				std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_app"+".root");
-
-				std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<bdt_files.at(i)->tag<<std::endl;
-				bdt_files.at(i)->addFriend(bdt_files.at(i)->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
-			}
-		}
+	
 
 
 
