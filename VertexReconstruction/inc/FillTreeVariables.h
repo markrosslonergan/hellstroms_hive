@@ -30,6 +30,10 @@ class FillTreeVariables {
   void Fill(ParticleAssociations const & pas);
   void Write() const {fvertex_tree->Write();}
 
+  void SetDetectorObjects(DetectorObjects const * detos) {
+    fdetos = detos;
+  }
+ 
  private:
 
   void ResetEvent();
@@ -42,6 +46,8 @@ class FillTreeVariables {
   double FindBPDist(geoalgo::Cone_t const & cone);
   void FindRecoObjectVariables(DetectorObjects const & detos,
 			       ParticleAssociation const & pa);
+  
+  void FindAllObjectsNearby(DetectorObjects const & detos, ParticleAssociation const & pa);
   void FillVertexTree(ParticleAssociations const & pas,
 		      size_t const pn,
 		      size_t const mct_index);
@@ -50,6 +56,9 @@ class FillTreeVariables {
   bool PassedSWTrigger() const;
 
   Storage const * fstorage;
+  DetectorObjects const * fdetos;
+
+ 
 
   bool fmc;
   bool frmcm_bool;
@@ -155,6 +164,10 @@ class FillTreeVariables {
   */
   std::vector<std::vector<double>> reco_track_calo_dEdx;
   std::vector<std::vector<double>> reco_track_calo_resrange;
+  
+  std::vector<double> all_reco_tracks_dist_from_vertex;
+  std::vector<double> all_reco_showers_dist_from_vertex;
+
   double reco_track_length[100];
   double reco_track_dirx[100];
   double reco_track_diry[100];
