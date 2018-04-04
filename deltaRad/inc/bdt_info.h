@@ -15,6 +15,10 @@ struct bdt_info{
 	//some convientant labels
 	std::string identifier;
 	std::string name;
+	
+	std::string binning;
+
+
 
 	std::string base_cuts ;
  	std::string pre_cuts;
@@ -26,8 +30,8 @@ struct bdt_info{
 	std::string signal_definition;
 	std::string background_definition;
 	
-	bdt_info(){identifier = "null"; name = "null";};
-	bdt_info(std::string in_identifier, std::string in_name) : identifier(in_identifier), name(in_name), base_cuts("1"), pre_cuts("1"), mid_cuts("1"),post_cuts("1"), bdt_cosmic_cuts("1"), bdt_bnb_cuts("1"),signal_definition("1"),background_definition("1"){};
+	bdt_info(){identifier = "null"; name = "null"; binning = "null";};
+	bdt_info(std::string in_identifier, std::string in_name, std::string in_bin) : identifier(in_identifier), name(in_name), binning(in_bin), base_cuts("1"), pre_cuts("1"), mid_cuts("1"),post_cuts("1"), bdt_cosmic_cuts("1"), bdt_bnb_cuts("1"),signal_definition("1"),background_definition("1"){};
 
 	int setName(std::string in){ identifier = in;return 0;};
 	int setBaseCuts(std::string in){ base_cuts = in; return 0;}; 

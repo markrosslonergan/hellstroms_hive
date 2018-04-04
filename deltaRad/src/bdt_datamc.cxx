@@ -1,11 +1,11 @@
 #include "bdt_datamc.h"
 
 int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
-	TCanvas *cobs = new TCanvas("","",1800,1600);
-	cobs->Divide(2,2,0.0025,0.0000001);
+	TCanvas *cobs = new TCanvas("","",900,800);
+	//TCanvas *cobs = new TCanvas("","",1800,1600);
+	//cobs->Divide(2,2,0.0025,0.0000001);
+
 	double plot_pot=5e19;
-
-
 
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
@@ -44,13 +44,13 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	std::vector<TH1*> vec_th1s = {sh0,sh1,sh2,sh3};	
 	std::vector<std::string> data_cuts = {dat_cut_0, dat_cut_1, dat_cut_2, dat_cut_3};
 	std::vector<TH1*> data_th1s = {d0,d1,d2,d3};
-	std::vector<std::string> stage_name = {"Selection","PreCuts","Cosmic BDT","BNB BDT"};
+	std::vector<std::string> stage_name = {"All Verticies","Pre-Selection","Post Cosmic BDT","Post BNB BDT"};
 
 
-
-
-	for(int k = 0; k<4; k++){
-		cobs->cd(k+1);
+	//for(int k = 0; k<4; k++){
+	for(int k = 1; k<2; k++){
+		//cobs->cd(k+1);
+		cobs->cd();
 		TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 		pad0top->SetBottomMargin(0); // Upper and lower plot are joined
 		pad0top->Draw();             // Draw the upper pad: pad2top
@@ -58,7 +58,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 		double rmin = 0;
 		double rmax = 2;
-		if(k==0){rmin=0.5; rmax = 1.5;}
+		if(k==0 || k == 1){rmin=0.5; rmax = 1.49;}
 
 
 		vec_stacks.at(k)->SetMaximum(vec_th1s.at(k)->GetMaximum()*1.4);
@@ -71,19 +71,25 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		vec_stacks.at(k)->SetMaximum(vec_th1s.at(k)->GetMaximum()*1.4);
 		vec_stacks.at(k)->SetMinimum(0.0001);
 	
+		TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
+		l0->SetNColumns(2);
+		double NeventsStack = 0;
 
-		TLegend *l0 = new TLegend(0.49,0.49,0.89,0.89);
 		for(auto &f: mc_stack->stack){
 			double Nevents = f->tvertex->GetEntries( f->getStageCuts(k,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+			NeventsStack+=Nevents;
 			auto h1 = new TH1F(("tmp"+stage_name.at(k)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
 			h1->SetFillColor(f->col);
 			h1->SetLineColor(kBlack);
-			l0->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+			l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
 
 		data_th1s.at(k)->SetMarkerStyle(20);
+		data_th1s.at(k)->SetLineColor(kBlack);
 		data_th1s.at(k)->Draw("same E1");
+
 		double NdatEvents = data_file->tvertex->GetEntries(data_cuts.at(k).c_str())*(plot_pot/data_file->pot )*data_file->scale_data;
+
 		l0->AddEntry(data_th1s.at(k),("#splitline{"+data_file->tag+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
 
 		l0->Draw();
@@ -92,8 +98,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		l0->SetFillStyle(0);
 		l0->SetTextSize(0.03);
 
-
-		cobs->cd(k+1);	
+		//cobs->cd(k+1);	
+		cobs->cd();
 		TPad *pad0bot = new TPad(("padbot_"+stage_name.at(k)).c_str(),("padbot_"+stage_name.at(k)).c_str(), 0, 0.05, 1, 0.35);
 		pad0bot->SetTopMargin(0);
 		pad0bot->SetBottomMargin(0.351);
@@ -102,7 +108,6 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		pad0bot->cd();       // pad0bot becomes the current pad
 
 		TH1* ratpre = (TH1*)data_th1s.at(k)->Clone(("ratio_"+stage_name.at(k)).c_str());
-
 		ratpre->Divide(vec_th1s.at(k));		
 		ratpre->SetFillColor(kYellow);
 		ratpre->Draw("E1");	
@@ -121,6 +126,14 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		ratpre->GetYaxis()->SetLabelSize(label_size_ratio);
 		ratpre->GetXaxis()->SetLabelSize(label_size_ratio);
 		ratpre->GetXaxis()->SetTitle(var.unit.c_str());
+
+	   std::string mean = "Avg: "+to_string_prec(NdatEvents/NeventsStack*100,1)+ "%";
+	   TText *t = new TText(0.11,1.3,mean.c_str());
+  	   t->SetTextColor(kRed-7);
+  	   //t->SetTextFont(43);
+	   t->SetTextSize(0.12);
+  	   t->Draw("same");
+
 		//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 		//var_precut.front()->GetYaxis()->SetTitle("Verticies");
 
@@ -135,9 +148,10 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 }
 
 
-int bdt_datamc::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, double c2){
-	TCanvas *cobs = new TCanvas("","",1800,1600);
-	cobs->Divide(2,2,0.0025,0.0000001);
+int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c2){
+	TCanvas *cobs = new TCanvas("","",900,800);
+	cobs->cd();
+	//cobs->Divide(2,1,0.0025,0.0000001);
 	double plot_pot=5e19;
 
 
@@ -147,7 +161,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, doub
 	double title_offset_ratioY = 0.3 ;
 	double title_offset_ratioX = 1.1;
 
-	double title_size_upper=0.15;
+	double title_size_upper=0.149;
 	double label_size_upper=0.05;
 	double title_offset_upper = 1.45;
 
@@ -170,17 +184,16 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, doub
 	std::vector<std::string> stage_name = {"Selection","PreCuts","Cosmic BDT","BNB BDT"};
 
 
-
-
-	for(int k = 0; k<4; k++){
+	for(int k = 0; k<1; k++){
 		std::cout<<"On stage: "<<k<<" of bdt_datamc::plotBDTStacks."<<std::endl;	
 		bdt_variable dvar = data_file->getBDTVariable(whichbdt);
 
 		TH1* summed = mc_stack->getBDTSum(whichbdt, k,c1,c2);
-		TH1* data = data_file->getTH1(dvar, data_cuts.at(k), std::to_string(k)+"_"+whichbdt+"_"+data_file->tag+"_"+dvar.safe_name, plot_pot);
+		TH1* data = data_file->getTH1(dvar, data_cuts.at(k), std::to_string(k)+"_"+whichbdt.identifier+"_"+data_file->tag+"_"+dvar.safe_name, plot_pot);
 
 
-		cobs->cd(k+1);
+		//cobs->cd(k+1);
+		cobs->cd();
 		TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 		pad0top->SetLogy();
 		pad0top->SetBottomMargin(0); // Upper and lower plot are joined
@@ -194,13 +207,20 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, doub
 		vec_stacks.at(k)->GetXaxis()->SetTitle(dvar.unit.c_str());
 		vec_stacks.at(k)->GetYaxis()->SetTitle("Verticies");
 		vec_stacks.at(k)->GetYaxis()->SetTitleOffset(1.5);
-		vec_stacks.at(k)->SetMaximum(summed->GetMaximum()*1.45);
+		vec_stacks.at(k)->SetMaximum(summed->GetMaximum()*10);
 //		vec_stacks.at(k)->SetMinimum(0.0001);
 
-		TLegend *l0 = new TLegend(0.11,0.54,0.54,0.89);
+		TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
+		l0->SetNColumns(2);
+
+		double NeventsStack = 0;
+
+
 		for(auto &f: mc_stack->stack){
 			double Nevents = f->tvertex->GetEntries( f->getStageCuts(k,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 			auto h1 = new TH1F(("tmp"+stage_name.at(k)+dvar.name+f->tag).c_str(),"TLegend Example",200,-10,10);
+
+			NeventsStack+=Nevents;
 			h1->SetFillColor(f->col);
 			h1->SetLineColor(kBlack);
 			l0->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
@@ -218,6 +238,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, doub
 		l0->SetTextSize(0.03);
 
 		cobs->cd(k+1);	
+		cobs->cd();
 		TPad *pad0bot = new TPad(("padbot_"+stage_name.at(k)).c_str(),("padbot_"+stage_name.at(k)).c_str(), 0, 0.05, 1, 0.35);
 		pad0bot->SetTopMargin(0);
 		pad0bot->SetBottomMargin(0.351);
@@ -248,12 +269,19 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, std::string whichbdt,double c1, doub
 		//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 		//var_precut.front()->GetYaxis()->SetTitle("Verticies");
 
+	   std::string mean = "Avg: "+to_string_prec(NdatEvents/NeventsStack*100,1)+ "%";
+	   TText *t = new TText(0.241,1.3,mean.c_str());
+  	   t->SetTextColor(kRed-7);
+  	   //t->SetTextFont(43);
+	   t->SetTextSize(0.12);
+  	   //t->Draw("same");
+
 
 	}
 
 
 	cobs->Write();
-	cobs->SaveAs(("datamc/"+data_file->tag+"_BDTVAR_"+whichbdt+".pdf").c_str(),"pdf");
+	cobs->SaveAs(("datamc/"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+".pdf").c_str(),"pdf");
 	//cobs->SaveAs(("datamc/"+var.name+".png").c_str(),"png");
 
 	return 0;

@@ -28,6 +28,8 @@
 #include "TFriendElement.h"
 
 
+
+
 class bdt_recomc{
 	public:
 		
@@ -36,11 +38,17 @@ class bdt_recomc{
 		bdt_file* bdt_sig;
 		bdt_file* bdt_bkg;
 
+		std::vector<std::string> recomc_cuts;
+		std::vector<std::string> recomc_names;
+		std::vector<int> recomc_cols;
+
+
 //		bdt_recomc(bdt_infos cutin, bdt_file* sigin, bdt_file* bkgin) : cut(cutin), bdt_sig(sigin), bdt_bkg(bkgin){	
 //			bdt_type = cut.identifier;
 //		
 //		}
 		bdt_recomc(){};
+		bdt_recomc(std::vector<std::string> namein, std::vector<std::string> cutsin, std::vector<int> incols) : recomc_cuts(cutsin), recomc_names(namein), recomc_cols(incols) {};
 
 		int plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val);
 
