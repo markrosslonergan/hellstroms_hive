@@ -992,7 +992,7 @@ std::pair<int, int> const & Storage::GetIndices(std::string const & producer,
   auto const it = producer_map.find(producer);
 
   if(it == producer_map.end()) {
-    std::cout << "Could not find opflash producer : " << producer << "\n";
+    std::cout << "Could not find producer : " << producer << "\n";
     exit(1);
   }
 

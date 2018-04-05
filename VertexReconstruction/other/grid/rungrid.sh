@@ -18,9 +18,10 @@ VIN=vertex_quality_input
 VOUT=vertex_quality_output
 
 EXEC=RunVertexQuality
+VVDICT=VVDict_rdict.pcm
 INPUT_PERM_FILE=permutations_$PROCESS.root
-INPUT_FILE=le_bnb_cosmic_200.root
-#INPUT_FILE=le_nc_delta_rad_cosmic_200.root
+#INPUT_FILE=le_bnb_cosmic_200.root
+INPUT_FILE=le_nc_delta_rad_cosmic_200.root
 #INPUT_PERM_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/rmurrell/vertex_quality_input/permutations/$PERM_FILE
 #INPUT_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/rmurrell/vertex_quality_input/light_event_files/$FILE
 
@@ -42,6 +43,10 @@ echo >> $log
 
 echo ifdh cp -D $RES/$VIN/$EXEC $CONDOR_DIR_INPUT >> $log
 ifdh cp -D $RES/$VIN/$EXEC $CONDOR_DIR_INPUT >> $log 2>&1
+echo >> $log
+
+echo ifdh cp -D $RES/$VIN/$VVDICT $PWD >> $log
+ifdh cp -D $RES/$VIN/$VVDICT $PWD >> $log 2>&1
 echo >> $log
 
 echo chmod 777 $CONDOR_DIR_INPUT/$EXEC >> $log
