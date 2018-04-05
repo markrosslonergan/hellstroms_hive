@@ -79,11 +79,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	}
 	if(tag == "Data5e19"){
 		leg = "lp";
-		double Nworked = 190991;
-		double Nsamweb = 191131;
+		double Nworked = 191046;// pot_tree->Scan() 
+		double Nsamweb = 191131;// samweb list-definition-files XXX --summary --fileinfo
 
 		std::cout<<"--> POT is data: From Zarkos tool..";
-		pot = 4.879e+19*Nworked/Nsamweb; //7131/13671;// 376954.0/382718.0;//7131/13671;
+		//4.885e+19
+		//4.879e+19
+		//4.932e+19
+		//4.938e+19
+		pot = 4.879e+19*Nworked/Nsamweb; 
 		std::cout<<"--> value: "<<pot<<std::endl;
 	}
 	if(tag == "BNBext"){

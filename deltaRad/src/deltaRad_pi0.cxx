@@ -96,7 +96,7 @@ int main (int argc, char *argv[]){
 
 	//Define the precuts, depending on if you want to use track or notrack	
 	std::string new_precuts;
-    std::string num_track_cut;
+    	std::string num_track_cut;
 	if(istrack == "track"){
 	    num_track_cut = " == 1 ";
         new_precuts = "1";
@@ -108,7 +108,6 @@ int main (int argc, char *argv[]){
 		new_precuts = "1";
 		num_track_cut = "==0";
 	}
-
 
 	//Set up 2 bdt_info structs for passing information on what BDT we are running. 
 	//MARK: Now with added binning here, so bdt_file->GetBDTvariable() is much simpler!

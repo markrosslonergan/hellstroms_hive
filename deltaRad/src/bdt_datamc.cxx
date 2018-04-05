@@ -127,7 +127,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		ratpre->GetXaxis()->SetLabelSize(label_size_ratio);
 		ratpre->GetXaxis()->SetTitle(var.unit.c_str());
 
-	   std::string mean = "Avg: "+to_string_prec(NdatEvents/NeventsStack*100,1)+ "%";
+	   std::string mean = "Norm: "+to_string_prec(NdatEvents/NeventsStack*100,1)+ "%";
 	   TText *t = new TText(0.11,1.3,mean.c_str());
   	   t->SetTextColor(kRed-7);
   	   //t->SetTextFont(43);
@@ -142,7 +142,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 
 	cobs->Write();
-	cobs->SaveAs(("datamc/"+data_file->tag+"_"+var.safe_name+".pdf").c_str(),"pdf");
+	cobs->SaveAs(("datamc/"+data_file->tag+"_"+var.safe_unit+".pdf").c_str(),"pdf");
 
 	return 0;
 }
@@ -181,10 +181,10 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	std::vector<THStack*> vec_stacks = {s0,s1,s2,s3};	
 	std::vector<std::string> data_cuts = {dat_cut_0, dat_cut_1, dat_cut_2, dat_cut_3};
 
-	std::vector<std::string> stage_name = {"Selection","PreCuts","Cosmic BDT","BNB BDT"};
 
+	std::vector<std::string> stage_name = {"All Verticies","Pre-Selection","Post Cosmic BDT","Post BNB BDT"};
 
-	for(int k = 0; k<1; k++){
+	for(int k = 1; k<2; k++){
 		std::cout<<"On stage: "<<k<<" of bdt_datamc::plotBDTStacks."<<std::endl;	
 		bdt_variable dvar = data_file->getBDTVariable(whichbdt);
 
@@ -208,6 +208,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		vec_stacks.at(k)->GetYaxis()->SetTitle("Verticies");
 		vec_stacks.at(k)->GetYaxis()->SetTitleOffset(1.5);
 		vec_stacks.at(k)->SetMaximum(summed->GetMaximum()*10);
+		vec_stacks.at(k)->SetMinimum(0.1);
 //		vec_stacks.at(k)->SetMinimum(0.0001);
 
 		TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
@@ -223,7 +224,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 			NeventsStack+=Nevents;
 			h1->SetFillColor(f->col);
 			h1->SetLineColor(kBlack);
-			l0->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+			l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
 
 		data->SetMarkerStyle(20);
@@ -259,8 +260,8 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		ratpre->GetYaxis()->SetTitle("Ratio");
 		ratpre->GetXaxis()->SetTitleOffset(title_offset_ratioX);
 		ratpre->GetYaxis()->SetTitleOffset(title_offset_ratioY);
-		ratpre->SetMinimum(0.5);	
-		ratpre->SetMaximum(1.5);
+		ratpre->SetMinimum(0.0);	
+		ratpre->SetMaximum(1.99);
 		ratpre->GetYaxis()->SetTitleSize(title_size_ratio);
 		ratpre->GetXaxis()->SetTitleSize(title_size_ratio);
 		ratpre->GetYaxis()->SetLabelSize(label_size_ratio);
@@ -269,7 +270,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 		//var_precut.front()->GetYaxis()->SetTitle("Verticies");
 
-	   std::string mean = "Avg: "+to_string_prec(NdatEvents/NeventsStack*100,1)+ "%";
+	   std::string mean = "Norm: "+to_string_prec(NdatEvents/NeventsStack*100,1)+ "%";
 	   TText *t = new TText(0.241,1.3,mean.c_str());
   	   t->SetTextColor(kRed-7);
   	   //t->SetTextFont(43);

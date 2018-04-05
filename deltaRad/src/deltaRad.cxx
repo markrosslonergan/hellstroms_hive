@@ -115,14 +115,14 @@ int main (int argc, char *argv[]){
 	std::string postcuts = {"reco_asso_tracks == 1 "};//
 
 	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+istrack, "BNB focused BDT","(65,0.2,0.7)");
-	bdt_info cosmic_bdt_info("cosmic_"+istrack, "Cosmic focused BDT","(65,0.2,0.7)");
-	bdt_info ncpi0_bdt_info("ncpi0_"+istrack, "NCPi0 focused BDT","(65,0.2,0.7)");
+	bdt_info bnb_bdt_info("bnb_"+istrack, "BNB focused BDT","(50,0.25,0.6)");
+	bdt_info cosmic_bdt_info("cosmic_"+istrack, "Cosmic focused BDT","(50,0.275,0.725)");
+	bdt_info ncpi0_bdt_info("ncpi0_"+istrack, "NCPi0 focused BDT","(50,0.2,0.50)");
 
 
 	//std::string base_cuts = "totalpe_ibg_sum > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
-	std::string base_cuts = "totalpe_ibg_sum > 30 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
-	std::string intime_base_cuts = "totalpe_ibg_sum > 30 &&"+base_cuts; ;//"reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
+	std::string base_cuts = "totalpe_ibg_sum > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
+	std::string intime_base_cuts = "totalpe_ibg_sum > 0 &&"+base_cuts; ;//"reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 
 	std::string signal_definition = "is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
 	std::string background_definition = "is_delta_rad == 0";
@@ -164,7 +164,7 @@ int main (int argc, char *argv[]){
 	bdt_file *overlay = new bdt_file(dir+"samples/vectored/", "vertexed_overlay_mcc88_v1.0.root",	"BNBOverlay",	   "hist","",  kMagenta-3, bkg_flow);
 
 
-	bdt_file *data5e19    = new bdt_file(dir+"samples/vectored/", "vertexed_data5e19_v10.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
+	bdt_file *data5e19    = new bdt_file(dir+"samples/vectored/", "vertexed_data5e19_v11.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
 	bdt_file *bnbext    = new bdt_file(dir+"samples/vectored/", "vertexed_bnbext_mcc88_v8.0.root",	"BNBext",	"E1p","",  kBlack, data_flow);
 
 	//std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime, data5e19,bnbext};
@@ -220,47 +220,47 @@ int main (int argc, char *argv[]){
 
 	std::vector<bdt_variable> vars;
 
-	vars.push_back(bdt_variable("reco_shower_dedx_plane2[0]","(80,0,9)", "Shower dE/dx Collection Plane [MeV/cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_helper_energy[0]","(80,0,0.6)","Reconstructed Shower Energy [GeV]", false,"d"));
-	vars.push_back(bdt_variable("reco_shower_length[0]","(80,0,125)","Shower Length [cm]",false,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(50,-1,32)","Track Bragg A",true,"d"));
+	vars.push_back(bdt_variable("totalpe_ibg_sum","(50,0,15000)","Total in Beam-Gate PE",false,"d"));
+	vars.push_back(bdt_variable("reco_shower_dedx_plane2[0]","(50,0,6)", "Shower dE/dx Collection Plane [MeV/cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_shower_helper_energy[0]","(50,0,0.4)","Reconstructed Shower Energy [GeV]", false,"d"));
+	vars.push_back(bdt_variable("reco_shower_length[0]","(50,0,100)","Shower Length [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("reco_shower_opening_angle[0]","(80,0,1)","Shower Opening Angle",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_opening_angle[0]*reco_shower_length[0]","(80,0,20)","Shower Area",false,"d"));
-	//	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Total in Beam-Gate PE",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_dist_to_closest_flashzcenter[0]","(80,0,600)","Distance from Shower to Flashcenter [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_shower_opening_angle[0]","(50,0,0.8)","Shower Opening Angle",false,"d"));
+	vars.push_back(bdt_variable("reco_shower_opening_angle[0]*reco_shower_length[0]","(50,0,15)","Shower Area",false,"d"));
+	vars.push_back(bdt_variable("reco_shower_dist_to_closest_flashzcenter[0]","(50,0,400)","Distance from Shower to Flashcenter [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(80,0,125)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[0]","(120,0,800)","Back Projected Distance from Shower to TPC wall [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_nuvertx","(80,0,300)"," Reconstructed Vertex x-location [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_nuverty","(80,-125,+125)","Reconstructed Vertex y-location [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_nuvertz","(80,0,1000)","Reconstructed Vertex z-location [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(50,0,120)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[0]","(50,0,550)","Back Projected Distance from Shower to TPC wall [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_nuvertx","(50,0,250)"," Reconstructed Vertex X pos [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_nuverty","(50,-110,+110)","Reconstructed Vertex Y pos [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_nuvertz","(50,0,1050)","Reconstructed Vertex Z pos [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0],reco_shower_dirz[0]))","(80,-1,1)","Reconstructed Shower - Cosine Theta", true,"d"));
-	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0], reco_shower_dirx[0]))","(80,-1,1)","Reconstructed Shower - Cosine Phi", true,"d"));
+	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0],reco_shower_dirz[0]))","(50,-1,1)","Reconstructed Shower - Cosine Theta", true,"d"));
+	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0], reco_shower_dirx[0]))","(50,-1,1)","Reconstructed Shower - Cosine Phi", true,"d"));
 
 
 	if(istrack=="track"){
 
-		vars.push_back(bdt_variable("track_info.reco_track_range[0]","(80,0,300)","Reconstructed Track Range [cm]", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_kinetic[0]","(80,0,1.5)","Reconstructed Track Kinetic Energy [cm]", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_range[0]","(50,0,150)","Reconstructed Track Range [cm]", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_kinetic[0]","(50,0,1)","Reconstructed Track Kinetic Energy [cm]", true,"d"));
 
-		vars.push_back(bdt_variable("reco_track_displacement[0]","(80,0,300)","Reconstructed Track Displacement [cm]", true,"d"));
+		vars.push_back(bdt_variable("reco_track_displacement[0]","(50,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
 
-		vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(120,0,15)","Mean Track dE/dx", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_end_mean_dEdx[0]", "(120,0,15)","Mean End Track dE/dx", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]", "(120,0,15)","Mean Start Track dE/dx", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(80,0,5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(80,0,20)","Track PIDA",true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(80,0,20)","Track Bragg A",true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(50,0,12)","Mean Track dE/dx", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_end_mean_dEdx[0]", "(50,0,12)","Mean End Track dE/dx", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]", "(50,0,12)","Mean Start Track dE/dx", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(50,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(50,0,20)","Track PIDA",true,"d"));
 
-		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(80,0,22)","Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
+		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(50,0,18)","Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
 
-		vars.push_back(bdt_variable(invariant_mass,"(80,1,2.5)","Invariant Mass",true,"d"));	
+		vars.push_back(bdt_variable(invariant_mass,"(50,1,2.5)","Invariant Mass",true,"d"));	
 
-		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[0],reco_track_dirz[0]))","(80,-1,1)","Reconstructed Track - Cosine Theta", true,"d"));
-		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[0],reco_track_dirx[0]))","(80,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));
+		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[0],reco_track_dirz[0]))","(50,-1,1)","Reconstructed Track - Cosine Theta", true,"d"));
+		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[0],reco_track_dirx[0]))","(50,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));
 
-		vars.push_back(bdt_variable(angle_track_shower,	"(80,-1,1)","Cosine Track-Shower Angle ",true,"d"));
+		vars.push_back(bdt_variable(angle_track_shower,	"(50,-1,1)","Cosine Track-Shower Angle ",true,"d"));
 		//vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number of Reconstructed Tracks",false,"i"));
 
 	}
@@ -439,27 +439,24 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		int ip=0;
 		for(auto &v:vars){
 			ip++;
-			break;	
-			//bdt_datamc tdatamc(data5e19, obs);	
-			bdt_datamc tdatamc2(bnbext, obs2);	
+			bdt_datamc tdatamc(data5e19, obs);	
+			//bdt_datamc tdatamc2(bnbext, obs2);	
 			//bdt_datamc tdatamc3(overlay, obs3);	
 
-			//tdatamc.plotStacks(ftest,  v,fcoscut,fbnbcut);
-			tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
+			tdatamc.plotStacks(ftest,  v ,fcoscut,fbnbcut);
+			//tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
 			//tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
-
-			//return 0;	
-			
+		return 0;	
 
 		}
 		bdt_datamc datamc(data5e19, obs);	
-		bdt_datamc datamc2(bnbext, obs2);	
+		//bdt_datamc datamc2(bnbext, obs2);	
 		//bdt_datamc datamc3(overlay, obs3);	
 
-	//	datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-	//	datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+		datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+		datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 	//	datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-		datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+	//	datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 		//datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
 		//datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 
@@ -677,7 +674,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	} else if(mode_option == "precalc"){
 
-		std::vector<bdt_file*> bdt_filesB = {overlay, data5e19, bnbext};
+		std::vector<bdt_file*> bdt_filesB = {data5e19};
 		for(auto &f: bdt_filesB){
 			bdt_precalc pre(f);
 			pre.genTrackInfo();
