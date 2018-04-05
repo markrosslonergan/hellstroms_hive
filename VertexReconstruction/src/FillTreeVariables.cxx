@@ -102,6 +102,10 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("reco_track_calo_dEdx", &reco_track_calo_dEdx);
   fvertex_tree->Branch("reco_track_calo_resrange", &reco_track_calo_resrange);
 
+
+  fvertex_tree->Branch("all_reco_tracks_dist_from_vertex", &all_reco_tracks_dist_from_vertex);
+  fvertex_tree->Branch("all_reco_showers_dist_from_vertex", &all_reco_showers_dist_from_vertex);
+
   fvertex_tree->Branch("closest_asso_shower_dist_to_flashzcenter", &closest_asso_shower_dist_to_flashzcenter, "closest_asso_shower_dist_to_flashzcenter/D");
 
   fvertex_tree->Branch("most_energetic_shower_index", &most_energetic_shower_index);
@@ -591,6 +595,9 @@ void FillTreeVariables::ResetVertex() {
   */
   reco_track_calo_dEdx.clear();
   reco_track_calo_resrange.clear();
+
+  all_reco_showers_dist_from_vertex.clear();
+  all_reco_tracks_dist_from_vertex.clear();
 
   true_track_matching_ratio.clear();
   true_track_index.clear();
@@ -1092,6 +1099,31 @@ double FillTreeVariables::FindBPDist(geoalgo::Cone_t const & cone) {
 }
 
 
+void FillTreeVariables::FindAllObjectsNearby(DetectorObjects const & detos, ParticleAssociation const & pa){
+
+  geoalgo::Point_t const & reco_vertex = pa.GetRecoVertex();
+
+ for(size_t const i : detos.GetTrackIndices()) {
+
+	geoalgo::Trajectory const & traj = detos.GetTrack(i).ftrajectory;
+        double const dist_to_reco_vertex = std::min( traj.front().Dist(reco_vertex), traj.back().Dist(reco_vertex));
+	all_reco_tracks_dist_from_vertex.push_back(dist_to_reco_vertex);
+ }
+ 
+ for(size_t const i : detos.GetShowerIndices()){
+
+      geoalgo::Cone_t const & shower_cone = detos.GetShower(i).fcone;
+      geoalgo::Point_t const & shower_start = shower_cone.Start();
+	
+      double const dist_to_reco_vertex = shower_start.Dist(reco_vertex);
+      all_reco_showers_dist_from_vertex.push_back(dist_to_reco_vertex);
+   }
+
+
+}
+
+
+
 void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
 						ParticleAssociation const & pa) {
 
@@ -1106,6 +1138,8 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
   closest_asso_shower_dist_to_flashzcenter = DBL_MAX;
 
   shortest_asso_shower_to_vert_dist = DBL_MAX;
+
+
 
   for(size_t const n : pa.GetObjectIndices()) {
 
@@ -1257,6 +1291,7 @@ void FillTreeVariables::FillVertexTree(ParticleAssociations const & pas,
 
   if(fverbose) std::cout << "Find various track and shower variables\n";
   FindRecoObjectVariables(detos, pa);
+  FindAllObjectsNearby(detos, pa);
   if(fverbose) std::cout << "Most energetic shower index: " << most_energetic_shower_index << "\n";
 
   fvertex_tree->Fill();

@@ -37,8 +37,8 @@ int main (int argc, char *argv[]){
 	// Just some simple argument things
 	//===========================================================================================
 
-	std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
-	//std::string dir = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
+	//std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
+	std::string dir = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
@@ -164,7 +164,7 @@ int main (int argc, char *argv[]){
 	bdt_file *overlay = new bdt_file(dir+"samples/vectored/", "vertexed_overlay_mcc88_v1.0.root",	"BNBOverlay",	   "hist","",  kMagenta-3, bkg_flow);
 
 
-	bdt_file *data5e19    = new bdt_file(dir+"samples/vectored/", "vertexed_data5e19_v10.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
+	bdt_file *data5e19    = new bdt_file(dir+"samples/vectored/", "vertexed_data5e19_v11.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
 	bdt_file *bnbext    = new bdt_file(dir+"samples/vectored/", "vertexed_bnbext_mcc88_v8.0.root",	"BNBext",	"E1p","",  kBlack, data_flow);
 
 	//std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime, data5e19,bnbext};
@@ -327,8 +327,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	}else if(mode_option == "app"){
 
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
-		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
-		//std::vector<bdt_file*> app_files = {signal_pure, intime}; 
+		//std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
+		//std::vector<bdt_file*> app_files = {data5e19, intime}; 
 		bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
 		bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
 //		bdt_app(ncpi0_bdt_info, app_files, vars, TMVAmethods);
@@ -677,7 +677,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	} else if(mode_option == "precalc"){
 
-		std::vector<bdt_file*> bdt_filesB = {overlay, data5e19, bnbext};
+		std::vector<bdt_file*> bdt_filesB = {data5e19};
 		for(auto &f: bdt_filesB){
 			bdt_precalc pre(f);
 			pre.genTrackInfo();
