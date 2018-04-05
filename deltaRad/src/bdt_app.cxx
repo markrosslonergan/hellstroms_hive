@@ -75,15 +75,24 @@ int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::str
 		bdt_app_tree_struct ts(otree_name, false);
 	
         int N = tree->GetEntries();
+        std::cout << "Beginning loop for " << method.str << std::endl;
+        std::cout << "############################################" << std::endl;
         for(int i = 0; i < N; ++i) {
             tree->GetEntry(i);
             //bdt_app_update(tree_var_v, reader_var_v);
-            if(i%25000==0){std::cout<<i<<"/"<<N<<std::endl;}
+            if(i%25000==0){
+                std::cout<<i<<"/"<<N<<std::endl;
+            }
             bdt_app_update_formula(tree_formulas_v, reader_var_v);
             ts.mva = -999;
-            if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(method.str.c_str());
+            if(tf->EvalInstance()) {
+                ts.mva = reader->EvaluateMVA(method.str.c_str());
+                std::cout << "Found EvaluateMVA(method.str.c_str()) = " << ts.mva << std::endl;
+            }
             ts.tree->Fill();
         }
+		ts.tree->Write();
+    }
         /*
 		for(int i = 0; i < tree->GetEntries(); ++i) {
 			tree->GetEntry(i);
@@ -94,8 +103,7 @@ int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::str
 
 		}
         */
-		ts.tree->Write();
-	}
+	
 
 	//delete reader;
 	//delete tf;
