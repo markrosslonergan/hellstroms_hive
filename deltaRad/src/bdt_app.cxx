@@ -75,7 +75,7 @@ int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::str
 		bdt_app_tree_struct ts(otree_name, false);
 	
         int N = tree->GetEntries();
-        std::cout << "Beginning loop for " << method.str << std::endl;
+        std::cout << "Beginning loop for " << identifier << std::endl;
         std::cout << "############################################" << std::endl;
         for(int i = 0; i < N; ++i) {
             tree->GetEntry(i);
