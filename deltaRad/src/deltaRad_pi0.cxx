@@ -124,10 +124,10 @@ int main (int argc, char *argv[]){
 
 	
 	//This is a particular cut flow that a file will undergo. I.e base cuts, precuts, postcuts, and then the name of the Cosmic BDT and bnb bdt
-	bdt_flow signal_flow(base_cuts +"&&"+signal_definition,	    new_precuts,     "1", 	    cosmic_bdt_info, bnb_bdt_info);
-	bdt_flow cosmic_flow(cosmic_base_cuts, 			            new_precuts,     "1", 	    cosmic_bdt_info, bnb_bdt_info);
-	bdt_flow bkg_flow(   base_cuts +"&&"+background_definition, new_precuts,     "1",		cosmic_bdt_info, bnb_bdt_info);
-	bdt_flow data_flow(  base_cuts ,				            new_precuts,     "1",		cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow signal_flow(base_cuts, signal_definition,	    new_precuts,     "1", 	    cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow cosmic_flow(cosmic_base_cuts,"1",	            new_precuts,     "1", 	    cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow bkg_flow(   base_cuts , background_definition, new_precuts,     "1",		cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow data_flow(  base_cuts , "1",   	            new_precuts,     "1",		cosmic_bdt_info, bnb_bdt_info);
 
 	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
 	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc87", "vertexed_ncpi0cosmic_mcc88_v1.0.root", "NCpi0Pure",	 "hist", "",  kBlue-4,  signal_flow);

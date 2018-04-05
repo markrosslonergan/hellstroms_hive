@@ -37,8 +37,8 @@ int main (int argc, char *argv[]){
 	// Just some simple argument things
 	//===========================================================================================
 
-	//std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
-	std::string dir = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
+	std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
+	//std::string dir = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";

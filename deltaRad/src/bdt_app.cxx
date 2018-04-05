@@ -16,7 +16,9 @@ bdt_app_tree_struct::~bdt_app_tree_struct() {
 	delete tree;
 }
 
-void bdt_app_update_formula( std::vector<TTreeFormula*> & tfv, std::vector<float *> & rvv) {
+
+
+void bdt_app_update_formula(std::vector<TTreeFormula*> & tfv, std::vector<float *> & rvv) {
 
 	for(size_t i = 0; i < tfv.size(); ++i) {
 		*rvv.at(i) = tfv.at(i)->EvalInstance();
@@ -35,15 +37,20 @@ void bdt_app_update(void_vec const & tvv, std::vector<float *> & rvv) {
 	}
 }
 
+void bdt_topological_update(std::vector<double*> *topv){
+
+
+}
 		
 
-int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::string otree_name, std::vector<bdt_variable> vars, std::vector<method_struct> const & methods) {
+int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::string otree_name, std::vector<bdt_variable> vars, std::vector<method_struct> const & methods) {
 
 	TMVA::Reader * reader = new TMVA::Reader("!Color:!Silent");
 
 	void_vec tree_var_v;
 	std::vector<float *> reader_var_v;
 	std::vector<TTreeFormula*> tree_formulas_v;
+
 	for(bdt_variable &p : vars) {
 		/*
 		if(p.type == "d") {
@@ -67,8 +74,8 @@ int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::str
 		reader->AddVariable(p.name.c_str(), reader_var_v.back());
 	}
 
-
-	TTreeFormula * tf = new TTreeFormula("tf", cut.c_str(), tree);
+	TTreeFormula * tf_defi = new TTreeFormula("tdeff", flow.definition_cuts.c_str(), tree);
+	TTreeFormula * tf_topo = new TTreeFormula("topp", flow.topological_cuts.c_str(), tree);
 
 	for(method_struct const & method : methods) {
 		reader->BookMVA(method.str.c_str(), ("BDTxmls_"+identifier+"/weights/"+identifier+"_"+method.str+".weights.xml").c_str());
@@ -76,12 +83,16 @@ int bdt_app_tree(std::string identifier, TTree * tree, std::string cut, std::str
 	
         int N = tree->GetEntries();
         for(int i = 0; i < N; ++i) {
+            if(i%50000==0){std::cout<<i<<"/"<<N<<std::endl;}
             tree->GetEntry(i);
-            //bdt_app_update(tree_var_v, reader_var_v);
-            if(i%25000==0){std::cout<<i<<"/"<<N<<std::endl;}
-            bdt_app_update_formula(tree_formulas_v, reader_var_v);
-            ts.mva = -999;
-            if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(method.str.c_str());
+	    ts.mva = -999;	
+	    if(tf_topo->EvalInstance()){
+          	 bdt_app_update_formula(tree_formulas_v, reader_var_v);
+          	 if(tf_defi->EvalInstance()) {
+			ts.mva = reader->EvaluateMVA(method.str.c_str());
+		}
+	    }
+
             ts.tree->Fill();
         }
         /*
@@ -112,7 +123,7 @@ int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variabl
 	for(size_t i = 0; i < files.size(); ++i) {
 		std::cout<<"On file: "<<files.at(i)->tag<<std::endl;
 		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
-		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow.base_cuts, bdt_response_friend_tree_name , vars, method);
+		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
 	}
 	app_ofile->Close();
 	delete app_ofile;
