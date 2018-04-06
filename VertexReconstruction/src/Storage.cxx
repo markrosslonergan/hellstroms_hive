@@ -20,7 +20,6 @@ Storage::Storage(char const * pot_name,
   fevent_chain = new TChain(event_name);
 
   for(char const * file : files) {
-    //if(!CheckFile(pot_name, meta_name, event_name, file)) continue;
     fpot_chain->Add(file);
     fmeta_chain->Add(file);
     fevent_chain->Add(file);
@@ -455,11 +454,6 @@ void Storage::ProcessMetaChain() {
 
 void Storage::ProcessEventChain() {
 
-  //if(fnumber_of_events ==0){
-//	fnumber_of_events = fevent_chain->GetEntries();
-  // }
- 
-
   fevent_chain->SetBranchAddress("opflash_producer_indices", &fopflash_producer_indices);
   fevent_chain->SetBranchAddress("hit_producer_indices", &fhit_producer_indices);
   fevent_chain->SetBranchAddress("track_producer_indices", &ftrack_producer_indices);
@@ -574,11 +568,11 @@ void Storage::ProcessEventChain() {
     fevent_chain->SetBranchAddress("reco_track_largest_mc_type", &freco_track_largest_mc_type);
     fevent_chain->SetBranchAddress("reco_track_largest_mc_index", &freco_track_largest_mc_index);
     fevent_chain->SetBranchAddress("reco_track_largest_ratio", &freco_track_largest_ratio);
-    if(fheavy) {
+    //if(fheavy) {
       fevent_chain->SetBranchAddress("reco_track_mc_type", &freco_track_mc_type);
       fevent_chain->SetBranchAddress("reco_track_mc_index", &freco_track_mc_index);
       fevent_chain->SetBranchAddress("reco_track_charge_contribution", &freco_track_charge_contribution);
-    }
+      //}
     fevent_chain->SetBranchAddress("reco_track_charge_total", &freco_track_charge_total);
   }
 

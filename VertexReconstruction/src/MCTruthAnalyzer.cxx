@@ -57,6 +57,16 @@ void MCTruthAnalyzer::Run() {
 
   }
 
+  std::vector<std::vector<int>> const & reco_shower_mc_index = *fstorage->freco_shower_mc_index;
+  std::cout << reco_shower_mc_index.size() << "\n";
+  for(size_t i = 0; i < reco_shower_mc_index.size(); ++i) {
+    for(auto const & v : reco_shower_mc_index.at(i)) {
+      std::cout << v << " ";
+    }
+    std::cout << "\n";
+  }
+  std::cout << "\n";
+
 }
 
 
