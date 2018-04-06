@@ -1,6 +1,10 @@
 #include "bdt_response.h"
 
 int bdt_response::plot_bdt_response(TFile *fout){
+    if (!fout) {
+        std::cout << "Bad file in BDT response" << std::endl;
+        return 1;
+    }
 	fout->cd();
 	
 	
@@ -9,22 +13,24 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	TPad *p1 = (TPad*)c->cd(1);
 	TPad *p2 = (TPad*)c->cd(2);
 
-	TLegend *leg = new TLegend(0.11, 0.69, 0.49,0.89);
+	TLegend *leg = new TLegend(0.13, 0.79, 0.89,0.89);
 	leg->SetFillStyle(0);
 	leg->SetLineColor(kWhite);
+	leg->SetLineWidth(0);
+	leg->SetNColumns(2);
 
 	std::vector<bdt_file*> files= {bdt_sig, bdt_bkg};
 	std::vector<std::string> which_cuts = {bdt_sig->getStageCuts(0,-9,-9), bdt_bkg->getStageCuts(0,-9,-9)};
 //	std::vector<std::string> which_cuts = {"1", bdt_bkg->getStageCuts(0,-9,-9)};
 	std::vector<TH1*> h_bdt;
-    
+	std::vector<TH1*> h_bdt_log;
 
 	std::cout<<"CUTS: "<<which_cuts.size()<<" "<<which_cuts.at(0)<<" "<<which_cuts.at(1)<<std::endl;
 	int i=0;
 	for(auto &file: files){
 		std::cout<<"On file: "<<file->name<<" || "<<file->tag<<std::endl;
 
-		bdt_variable bdtvar = file->getBDTVariable(info.identifier);
+		bdt_variable bdtvar = file->getBDTVariable(info);
 		std::string saf = file->tag+"_"+bdtvar.safe_name+"_"+bdt_type;
 		std::cout<<"saf: "<<saf<<std::endl;
 		fout->cd();
@@ -33,11 +39,20 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		h_bdt.back()->SetDirectory(0);	
 
 		std::cout<<"EVENTS: "<<h_bdt.back()->Integral()<<std::endl;
+           TH1 * ttmp = file->getTH1(bdtvar, which_cuts.at(i), file->tag+"_"+bdtvar.safe_unit+"_"+bdt_type ,1.0);
+		h_bdt.push_back(ttmp);
+		h_bdt.back()->SetDirectory(0);	
 
+        std::cout << "Variable: " << bdtvar.name << std::endl;
+        std::cout << "Cuts: " << which_cuts.at(i) << std::endl;
+        std::cout << "Sum of weights: " << ttmp->GetSumOfWeights() << std::endl;
+        std::cout << "No. entries: " << ttmp->GetEntries() << std::endl;
 		c->cd(1);
 		h_bdt.back()->SetTitle(info.name.c_str());
 		h_bdt.back()->SetLineWidth(2);
+        std::cout << "Integral: " << h_bdt.back()->Integral() << std::endl;
 		h_bdt.back()->Scale(1.0/h_bdt.back()->Integral() );
+        std::cout << "Sum of weights after scaling: " << h_bdt.back()->GetSumOfWeights() << std::endl;
 		h_bdt.back()->Draw("hist same");
 		h_bdt.back()->Write();
 		std::cout<<h_bdt.back()->GetSumOfWeights()<<" "<<bdtvar.name<<std::endl;
@@ -45,22 +60,39 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		h_bdt.back()->GetYaxis()->SetTitle("Verticies [Unit Normalized]");
 		h_bdt.back()->GetYaxis()->SetTitleOffset(1.5);
 
-		leg->AddEntry(h_bdt.back(),file->tag.c_str(),"l");
+		h_bdt.back()->SetFillColor(file->col);
+		if(i==0) h_bdt.back()->SetFillStyle(3445);
+		if(i==1)h_bdt.back()->SetFillStyle(3454);
+		h_bdt.back()->SetMaximum( h_bdt.back()->GetMaximum()*1.3 );
+
 
 		c->cd(2);
 		p2->SetLogy();
-		h_bdt.back()->Draw("hist same");
+		h_bdt_log.push_back( (TH1*)h_bdt.back()->Clone(("log"+file->tag).c_str()));
+		h_bdt_log.back()->Draw("hist same");
+		h_bdt_log.back()->SetMaximum( h_bdt_log.back()->GetMaximum()*10 );
+
 		i++;
+        std::cout << "Done loop with " << file->name << " and " << bdtvar.name << std::endl;
 	}
+	for(int i=files.size()-1; i>=0; i--){
+		leg->AddEntry(h_bdt.at(i),files.at(i)->plot_name.c_str(),"lf");
+	}
+
+
 	std::cout<<"DONE:"<<std::endl;
+    std::cout << "Finished loop" << std::endl;
+    std::cout << "Finished loop" << std::endl;
 	c->cd(1);
+	leg->Draw();
+	c->cd(2);
 	leg->Draw();
 
 	fout->cd();
-	c->Write();
-	c->Print(("response/BDT_response_"+info.identifier+".pdf").c_str(),"pdf");
+//	c->Write();
+//	c->Print(("response/BDT_response_"+info.identifier+".pdf").c_str(),"pdf");
 	//c->Print(("response/BDT_response_"+info.identifier+".png").c_str(),"png");
-	return 0;
+	//return 0;
 
 
 	std::vector<double> mva;
@@ -97,8 +129,8 @@ int bdt_response::plot_bdt_response(TFile *fout){
 
 	TGraph * g_sig_eff = new TGraph( mva.size(), &mva[0], &sig_eff[0]);
 	TGraph * g_bkg_eff = new TGraph( mva.size(), &mva[0], &bkg_eff[0]);
-//	g_sig_eff->Draw("al");	
-//	g_bkg_eff->Draw("l");	
+	g_sig_eff->Draw("al");	
+	g_bkg_eff->Draw("l");	
 
 	g_sig_eff->SetLineWidth(2);
 	g_bkg_eff->SetLineWidth(2);
@@ -113,13 +145,13 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	TLegend *leff = new TLegend(0.12,0.12,0.49,0.39);
 	leff->AddEntry(g_sig_eff,"Signal Efficiency","l");
 	leff->AddEntry(g_bkg_eff,"Background Efficiency","l");
-//	leff->Draw();
+	leff->Draw();
 
 
 	fout->cd();
 	c->Write();
 	c->SaveAs(("response/BDT_response_"+info.identifier+".pdf").c_str(),"pdf");
-	c->SaveAs(("response/BDT_response_"+info.identifier+".png").c_str(),"png");
+//	c->SaveAs(("response/BDT_response_"+info.identifier+".png").c_str(),"png");
 
 	return 0;
 /*
@@ -424,6 +456,7 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	return 0;
 
 
-*/
+
 return 0;
+*/
 }

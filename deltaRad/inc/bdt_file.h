@@ -10,6 +10,7 @@
 #include  "bdt_var.h"
 #include  "bdt_info.h"
 #include  "bdt_flow.h"
+#include  "method_struct.h"
 
 /******** Root includes *****/
 
@@ -42,6 +43,7 @@ struct bdt_file{
 		std::string dir;
 		std::string name;
 		std::string tag;
+		std::string plot_name;
 		std::string plot_ops;
 		std::string root_dir;
 		
@@ -54,6 +56,8 @@ struct bdt_file{
 		std::vector<std::string> friend_files;
 		std::vector<std::string> friend_names;
 		
+		//These are now passed into bdt_recomc as they should be really.
+		//Still used here (in get recomcbdts) but are filled from bdt_reco not in constructor.
 		std::vector<std::string> recomc_cuts;
 		std::vector<std::string> recomc_names;
 		std::vector<int> recomc_cols;
@@ -64,6 +68,7 @@ struct bdt_file{
 
 		std::string leg;
 
+		int rebin;	
 
         int numberofevents;
 		double pot;
@@ -77,12 +82,13 @@ struct bdt_file{
 
 		bdt_flow flow;
 		bdt_variable getBDTVariable(bdt_info info);
-		bdt_variable getBDTVariable(std::string cut);
+		//legacy code, and damned lazy too
+		//bdt_variable getBDTVariable(std::string cut);
 
 		bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir,  int incol, bdt_flow inflow);	
 		
-		//legacy code
-		bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, std::string infriend, std::string infriendtree, int incol, bool indata);	
+		//legacy code OBSOLETE
+		//bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, std::string infriend, std::string infriendtree, int incol, bool indata);	
 
 
 		int scale(double scalein);
@@ -90,17 +96,21 @@ struct bdt_file{
 		
 		TH1* getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
 
+		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
 
 		std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
+		std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 
 		int addFriend(std::string in_friend_tree_nam, std::string in_friend_file);
-
+		int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
+		
 		~bdt_file();
 
 
 		std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
 	
+		int addPlotName(std::string plotin);
 };
 
 

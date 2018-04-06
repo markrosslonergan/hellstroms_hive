@@ -1,0 +1,101 @@
+commit 7042a7825de52d5a52a123b618572d47a23861a4
+Author: Robert Murrells <robertmurrells@gmail.com>
+Date:   Wed Mar 28 04:25:54 2018 -0500
+
+    Fixed bug in vertex quality
+
+commit 3dd768c23fc1d903eb1037614b0a177ea3664e92
+Author: Bobby <bobby@Bobbys-MacBook-Pro.local>
+Date:   Tue Mar 27 22:58:41 2018 +0100
+
+    and another one
+
+commit a18e81fbf855067056a5bb90a285b66fd252cb4f
+Author: Bobby <bobby@Bobbys-MacBook-Pro.local>
+Date:   Tue Mar 27 22:56:57 2018 +0100
+
+    forgot new file
+
+commit 8f91387fb7cb947e47b9782bbde67d89b7afa3a9
+Merge: f58341d 0b25689
+Author: Bobby <bobby@Bobbys-MacBook-Pro.local>
+Date:   Tue Mar 27 22:53:29 2018 +0100
+
+    Merge branch 'master' of github.com:/markrosslonergan/hellstroms_hive
+
+commit f58341de14090cd8cab5b1f4f7af8b190df3a93e
+Author: Bobby <bobby@Bobbys-MacBook-Pro.local>
+Date:   Tue Mar 27 22:53:21 2018 +0100
+
+    Changed method for vertex quality
+
+commit 0b25689f06537401b9933b807f1f0c3d4bbd26c5
+Author: markrosslonergan <markrosslonergan@gmail.com>
+Date:   Mon Mar 26 23:10:35 2018 -0400
+
+    Added bdtapp modules
+
+commit 97dec9f5a2f92950469e87257aa1fce2d25cd475
+Merge: abf4c78 cb11351
+Author: markrosslonergan <markrosslonergan@gmail.com>
+Date:   Mon Mar 26 16:48:10 2018 -0400
+
+    Merge branch 'master' of https://github.com/markrosslonergan/hellstroms_hive
+
+commit abf4c78336dafcb5daf17e2efa9b84ccdfcfc665
+Merge: e53ef52 7cd3adb
+Author: markrosslonergan <markrosslonergan@gmail.com>
+Date:   Mon Mar 26 16:47:31 2018 -0400
+
+    Added a new TTreeFormula basedd bdt_add
+
+commit cb11351393b23ea1e635d1b95a2a2e688e6272ee
+Author: Bobby <bobby@Bobbys-MacBook-Pro.local>
+Date:   Mon Mar 26 15:35:04 2018 +0100
+
+    Fixed shower dist to tpc wall
+
+commit 1514b1ade47ea035bdf26cfc8d4f263e0180659c
+Author: Bobby <bobby@Bobbys-MacBook-Pro.local>
+Date:   Mon Mar 26 14:27:19 2018 +0100
+
+    Removing cout statements
+
+commit b9b351c3bcc339e678df0a01db1ac155a795a612
+Merge: 5b8961a 7cd3adb
+Author: Bobby <bobby@Bobbys-MacBook-Pro.local>
+Date:   Mon Mar 26 10:57:25 2018 +0100
+
+    Merge branch 'master' of github.com:/markrosslonergan/hellstroms_hive
+
+commit 5b8961a217ba88139707ec9a4ff8cd4835194e3a
+Author: Bobby <bobby@Bobbys-MacBook-Pro.local>
+Date:   Mon Mar 26 10:57:14 2018 +0100
+
+    Vertexing for data should work now
+
+commit e53ef52b8187edf562d98e1e409e20d39890f1ef
+Author: markrosslonergan <markrosslonergan@gmail.com>
+Date:   Sun Mar 25 19:16:38 2018 -0400
+
+    hrm
+
+commit 7cd3adb213f513f51bf3f70524be612feb591757
+Author: Mark Ross-Lonergan <markrosslonergan@gmail.com>
+Date:   Sun Mar 25 18:16:12 2018 -0500
+
+    fixed som variabe bugs
+
+commit 697f94326b5f2774541c6306857d14453f2c28e8
+Author: Mark Ross-Lonergan <markrosslonergan@gmail.com>
+Date:   Sun Mar 25 13:05:54 2018 -0500
+
+    deltarad: cosmic training on all samples, not just intime
+
+commit 66ace59a26eb7c317a5e0c8bfa5b60bd299ddd77
+Merge: 02a4b60 4fa3197
+Author: Mark Ross-Lonergan <markrosslonergan@gmail.com>
+Date:   Sat Mar 24 00:12:06 2018 -0500
+
+    Merge branch 'master' of https://github.com/markrosslonergan/hellstroms_hive
+

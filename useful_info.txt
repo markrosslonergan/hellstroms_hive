@@ -1,0 +1,9 @@
+######### Passing rates ##############
+To get the number of verticies you can just take any bdt_file class and directly access its vertex_tree by 
+    $ file->tvertex->GetEntries() 
+If you want to use a cut you can do 
+    $ file->tvertex->GetEntries("reco_asso_shower==1") 
+If you want to grab the exact cuts you have already defined in the bdt_flow you can do somethng like: 
+    $ std::string cuts = file->getStageCuts( N_stage, cosmic_cut, bnb_cut) 
+    $ file->tvertex->GetEntries( cuts.c_str()) 
+Where Nstage is 0,1,2,3 for allverticies,precuts,cosmic bdt, bnbbdt
