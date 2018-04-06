@@ -43,16 +43,10 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		h_bdt.push_back(ttmp);
 		h_bdt.back()->SetDirectory(0);	
 
-        std::cout << "Variable: " << bdtvar.name << std::endl;
-        std::cout << "Cuts: " << which_cuts.at(i) << std::endl;
-        std::cout << "Sum of weights: " << ttmp->GetSumOfWeights() << std::endl;
-        std::cout << "No. entries: " << ttmp->GetEntries() << std::endl;
 		c->cd(1);
 		h_bdt.back()->SetTitle(info.name.c_str());
 		h_bdt.back()->SetLineWidth(2);
-        std::cout << "Integral: " << h_bdt.back()->Integral() << std::endl;
 		h_bdt.back()->Scale(1.0/h_bdt.back()->Integral() );
-        std::cout << "Sum of weights after scaling: " << h_bdt.back()->GetSumOfWeights() << std::endl;
 		h_bdt.back()->Draw("hist same");
 		h_bdt.back()->Write();
 		std::cout<<h_bdt.back()->GetSumOfWeights()<<" "<<bdtvar.name<<std::endl;
@@ -81,8 +75,6 @@ int bdt_response::plot_bdt_response(TFile *fout){
 
 
 	std::cout<<"DONE:"<<std::endl;
-    std::cout << "Finished loop" << std::endl;
-    std::cout << "Finished loop" << std::endl;
 	c->cd(1);
 	leg->Draw();
 	c->cd(2);

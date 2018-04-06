@@ -119,8 +119,8 @@ int main (int argc, char *argv[]){
 	std::string base_cuts = "reco_asso_showers == 2 && reco_asso_tracks " + num_track_cut;
 	std::string cosmic_base_cuts = "reco_asso_showers == 2 && reco_asso_tracks " + num_track_cut;
         //Signal: NC interaction, two photons from parent pi0, BNB interaction
-	//std::string signal_definition = "ccnc==1";
-	std::string signal_definition = "ccnc==1 &&true_shower_parent_pdg[second_most_energetic_shower_index]==111&& true_shower_parent_pdg[most_energetic_shower_index]==111&& true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1";
+	std::string signal_definition = "ccnc==1 && true_shower_pdg[most_energetic_shower_index]==22 && true_shower_parent_pdg[most_energetic_shower_index]==111 && true_shower_origin[most_energetic_shower_index]==1";
+	//std::string signal_definition = "ccnc==1 &&true_shower_parent_pdg[second_most_energetic_shower_index]==111&& true_shower_parent_pdg[most_energetic_shower_index]==111&& true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1";
 	std::string background_definition = "!(" + signal_definition + ")";
 
 	
@@ -158,55 +158,55 @@ int main (int argc, char *argv[]){
 
 
 	//Variables!
-	std::string angle_track_shower1 ="(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])";
-	std::string angle_track_shower2 ="(reco_track_dirx[0]*reco_shower_dirx[1]+reco_track_diry[0]*reco_shower_diry[1]+reco_track_dirz[0]*reco_shower_dirz[1])";
+	std::string angle_track_shower1 ="(reco_track_dirx[longest_asso_track_index]*reco_shower_dirx[most_energetic_shower_index]+reco_track_diry[longest_asso_track_index]*reco_shower_diry[most_energetic_shower_index]+reco_track_dirz[longest_asso_track_index]*reco_shower_dirz[most_energetic_shower_index])";
+	std::string angle_track_shower2 ="(reco_track_dirx[longest_asso_track_index]*reco_shower_dirx[second_most_energetic_shower_index]+reco_track_diry[longest_asso_track_index]*reco_shower_diry[second_most_energetic_shower_index]+reco_track_dirz[longest_asso_track_index]*reco_shower_dirz[second_most_energetic_shower_index])";
 	//std::string angle_shower1_shower2 ="reco_shower_dirx[most_energetic_shower_index]*reco_shower_dirx[second_most_energetic_shower_index]+reco_shower_diry[most_energetic_shower_index]*reco_shower_diry[second_most_energetic_shower_index]+reco_shower_dirz[most_energetic_shower_index]*reco_shower_dirz[second_most_energetic_shower_index]";
 	std::string angle_shower1_shower2 ="reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz[0]*reco_shower_dirz[1]";
 
     std::string E1 = "reco_shower_helper_energy[most_energetic_shower_index]"; 
     std::string E2 = "reco_shower_helper_energy[second_most_energetic_shower_index]"; 
     // Invariant mass for two massless particles
-    std::string invMass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+angle_shower1_shower2+"))";
+    //std::string invMass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+angle_shower1_shower2+"))";
     
     std::vector<bdt_variable> vars;
 
     //vars.push_back(bdt_variable("most_energetic_shower_index", "(4, 0, 4)", "Most Energetic Shower Index", false, "i"));
-    //vars.push_back(bdt_variable("second_most_energetic_shower_index", "(8, -1, 6)", "Second Most Energetic Shower Index", false, "i"));
-    vars.push_back(bdt_variable(invMass, "(20, 0., 0.5)", "Shower Invariant Mass [GeV/c]", false, "d"));
-	vars.push_back(bdt_variable("reco_shower_dedx_plane2[0]","(48,0,15)", "Shower 1 dE/dx Collection Plane [MeV/cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_dedx_plane2[1]","(48,0,15)", "Shower 2 dE/dx Collection Plane [MeV/cm]",false,"d"));
+    //vars.push_back(bdt_variable("second_most_energetic_shower_index", "(5, -1, 4)", "Second Most Energetic Shower Index", false, "i"));
+    vars.push_back(bdt_variable("sqrt(2.0*"+E1+"*"+E2+"*(1.0-reco_shower_dirx[most_energetic_shower_index]*reco_shower_dirx[second_most_energetic_shower_index]+reco_shower_diry[most_energetic_shower_index]*reco_shower_diry[second_most_energetic_shower_index]+reco_shower_dirz[most_energetic_shower_index]*reco_shower_dirz[second_most_energetic_shower_index]))", "(20, 0., 0.5)", "Shower Invariant Mass [GeV/c]", false, "d"));
+	vars.push_back(bdt_variable("reco_shower_dedx_plane2[most_energetic_shower_index]","(48,0,15)", "Shower 1 dE/dx Collection Plane [MeV/cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_shower_dedx_plane2[second_most_energetic_shower_index]","(48,0,15)", "Shower 2 dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Summed Shower Energy [GeV]", false,"d"));
-	vars.push_back(bdt_variable("reco_shower_length[0]","(25,0,125)","Most Energetic Shower Length [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_length[1]","(25,0,125)","Least Energetic Shower Length [cm]",false,"d"));
-    vars.push_back(bdt_variable(angle_shower1_shower2, "(50, -1, 1)", "Opening Angle between Showers", false, "d"));
-    vars.push_back(bdt_variable(E1, "(50, 0, 1)", "Most Energetic Shower Energy", false, "d"));
-    vars.push_back(bdt_variable(E2, "(50, 0, 1)", "Second Most Energetic Shower Energy", false, "d"));
+	vars.push_back(bdt_variable("reco_shower_length[most_energetic_shower_index]","(25,0,125)","Most Energetic Shower Length [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_shower_length[second_most_energetic_shower_index]","(25,0,125)","Least Energetic Shower Length [cm]",false,"d"));
+    vars.push_back(bdt_variable("reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz[0]*reco_shower_dirz[1]","(50, -1, 1)", "Opening Angle between Showers", false, "d"));
+    //vars.push_back(bdt_variable(E1, "(50, 0, 1)", "Most Energetic Shower Energy", false, "d"));
+    //vars.push_back(bdt_variable(E2, "(50, 0, 1)", "Second Most Energetic Shower Energy", false, "d"));
+    vars.push_back(bdt_variable("reco_shower_helper_energy[most_energetic_shower_index]", "(50, 0, 1)", "Most Energetic Shower Energy", false, "d"));
+    vars.push_back(bdt_variable("reco_shower_helper_energy[second_most_energetic_shower_index]", "(50, 0, 1)", "Second Most Energetic Shower Energy", false, "d"));
 
 	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Total in Beam-Gate PE",false,"d"));
 	vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from Shower to Flashcenter [cm]",false,"d"));
 
 	vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(25,0,125)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[0]","(25,0,1000)","Back Projected Distance from Shower 1 to TPC wall [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[1]","(25,0,1000)","Back Projected Distance from Shower 2 to TPC wall [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[most_energetic_shower_index]","(25,0,1000)","Back Projected Distance from Shower 1 to TPC wall [cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[second_most_energetic_shower_index]","(25,0,1000)","Back Projected Distance from Shower 2 to TPC wall [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_nuvertx","(25,0,300)"," Reconstructed Vertex x-location [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_nuverty","(25,-300,+300)","Reconstructed Vertex y-location [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_nuvertz","(25,0,1000)","Reconstructed Vertex z-location [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0],reco_shower_dirz[0]))","(50,-1,1)","Reconstructed Shower 1 |Cosine Theta|", true,"d"));
-	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0],reco_shower_dirx[0]))","(50,-1,1)","Reconstructed Shower 1 |Cosine Phi|", true,"d"));
-	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[1],reco_shower_dirz[1]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Theta|", true,"d"));
-	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[1],reco_shower_dirx[1]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Phi|", true,"d"));
+	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[most_energetic_shower_index],reco_shower_dirz[most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 1 |Cosine Theta|", true,"d"));
+	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[most_energetic_shower_index],reco_shower_dirx[most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 1 |Cosine Phi|", true,"d"));
+	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirz[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Theta|", true,"d"));
+	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirx[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Phi|", true,"d"));
     
 	if(istrack=="track"){ 
-		vars.push_back(bdt_variable("reco_track_displacement[0]","(25,0,500)","Reconstructed Track Length [cm]", true,"d"));
+		vars.push_back(bdt_variable("reco_track_displacement[longest_asso_track_index]","(25,0,500)","Reconstructed Track Length [cm]", true,"d"));
 		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(50,0,20)","Closest Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
-		vars.push_back(bdt_variable("atan2(reco_track_diry[0],reco_track_dirz[0])","(50,0,3.14)","Reconstructed Track Theta", true,"d"));
-		vars.push_back(bdt_variable("atan2(reco_track_diry[0],reco_track_dirx[0])","(50,0,3.14)","Reconstructed Track Phi", true,"d"));
+		vars.push_back(bdt_variable("atan2(reco_track_diry[longest_asso_track_index],reco_track_dirz[longest_asso_track_index])","(50,0,3.14)","Reconstructed Track Theta", true,"d"));
+		vars.push_back(bdt_variable("atan2(reco_track_diry[longest_asso_track_index],reco_track_dirx[longest_asso_track_index])","(50,0,3.14)","Reconstructed Track Phi", true,"d"));
  
 		vars.push_back(bdt_variable(angle_track_shower1,	"(50,-1,1)","|Cosine Track-Shower Angle (Most Energetic)| ",true,"d"));
 		vars.push_back(bdt_variable(angle_track_shower2,	"(50,-1,1)","|Cosine Track-Shower Angle (Second Most Energetic)| ",true,"d"));
-        //vars.push_back(bdt_variable("longest_asso_track_index", "(4,-1,3)", "Longest Asso. Track Index", true, "i"));
-		//vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number of Reconstructed Tracks",false,"i")); 
 	}
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -235,8 +235,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	double fcoscut;
 	double fbnbcut;
 	if(istrack == "track"){
-		fcoscut = 0.49;
-		fbnbcut = 0.47;
+		fcoscut = 0.566594;
+		fbnbcut = 0.535958;
 	}else if(istrack == "notrack"){
 		fcoscut = 0.3;
 		fbnbcut = 0.3;

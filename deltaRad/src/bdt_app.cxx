@@ -76,9 +76,8 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 		reader->BookMVA(method.str.c_str(), ("BDTxmls_"+identifier+"/weights/"+identifier+"_"+method.str+".weights.xml").c_str());
 		bdt_app_tree_struct ts(otree_name, false);
 	
+        int passed = 0;
         int N = tree->GetEntries();
-        std::cout << "Beginning loop for " << identifier << std::endl;
-        std::cout << "############################################" << std::endl;
         for(int i = 0; i < N; ++i) {
             tree->GetEntry(i);
             //bdt_app_update(tree_var_v, reader_var_v);
@@ -91,12 +90,13 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
             
                 if(tf_definition->EvalInstance()) {
                     ts.mva = reader->EvaluateMVA(method.str.c_str());
-                    std::cout << "Found EvaluateMVA(method.str.c_str()) = " << ts.mva << std::endl;
+                    passed++;
                 }
             }
             ts.tree->Fill();
         }
 		ts.tree->Write();
+        std::cout << "Number of events passed: " << passed << std::endl;
     }
         /*
 		for(int i = 0; i < tree->GetEntries(); ++i) {
