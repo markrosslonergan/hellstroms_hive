@@ -14,12 +14,8 @@ struct bdt_info{
 	
 	//some convientant labels
 	std::string identifier;
-	std::string name;
-	
+	std::string name;	
 	std::string binning;
-
-
-
 	std::string base_cuts ;
  	std::string pre_cuts;
 	std::string bdt_cosmic_cuts;
@@ -45,9 +41,5 @@ struct bdt_info{
 	int setBackgroundDefinition(std::string in){ background_definition = in; return 0;}; 
 
 };
-
-
-
-
 
 #endif
