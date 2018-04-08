@@ -328,8 +328,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
 		//std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
-		//std::vector<bdt_file*> app_files = {data5e19, intime}; 
-		bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
+		std::vector<bdt_file*> app_files = {data5e19}; 
+//		bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
 		bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
 //		bdt_app(ncpi0_bdt_info, app_files, vars, TMVAmethods);
 	}

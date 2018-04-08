@@ -103,6 +103,9 @@ class FillTreeVariables {
   int total_exiting_particles;
   std::vector<int> exiting_particle_vector;
 
+  int  pi0_class_number;
+
+
   int is_single_photon;
   int is_delta_rad;
   int delta_true_pdg;
