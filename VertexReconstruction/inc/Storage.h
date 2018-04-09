@@ -182,6 +182,10 @@ public:
   std::vector<std::vector<double>> * freco_track_EnergyHelper_resrange;
   std::vector<std::vector<double>> * freco_track_EnergyHelper_dedx;
   std::vector<double> * freco_track_EnergyHelper_energy;
+  std::vector<double> * freco_track_EnergyHelperNew_energy_legacy;
+  std::vector<std::vector<double>> * freco_track_EnergyHelperNew_energy;
+  std::vector<std::vector<double>> * freco_track_EnergyHelperNew_energy_from_dedx;
+  std::vector<std::vector<double>> * freco_track_EnergyHelperNew_dedx;
   //Reco - MC matching
   std::vector<int> * freco_track_largest_mc_type;
   std::vector<int> * freco_track_largest_mc_index;
@@ -220,6 +224,9 @@ public:
   std::vector<double> * freco_shower_EnergyHelper_energy_legacy;
   std::vector<std::vector<double>> * freco_shower_EnergyHelper_energy;
   std::vector<std::vector<double>> * freco_shower_EnergyHelper_dedx;
+  std::vector<double> * freco_shower_EnergyHelperNew_energy_legacy;
+  std::vector<std::vector<double>> * freco_shower_EnergyHelperNew_energy;
+  std::vector<std::vector<double>> * freco_shower_EnergyHelperNew_dedx;
   //Reco - MC matching
   std::vector<int> * freco_shower_largest_mc_type;
   std::vector<int> * freco_shower_largest_mc_index;
