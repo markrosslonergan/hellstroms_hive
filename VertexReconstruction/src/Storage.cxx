@@ -614,11 +614,11 @@ void Storage::ProcessEventChain() {
     fevent_chain->SetBranchAddress("reco_shower_largest_mc_type", &freco_shower_largest_mc_type);
     fevent_chain->SetBranchAddress("reco_shower_largest_mc_index", &freco_shower_largest_mc_index);
     fevent_chain->SetBranchAddress("reco_shower_largest_ratio", &freco_shower_largest_ratio);
-    if(fheavy) {
+    //if(fheavy) {
       fevent_chain->SetBranchAddress("reco_shower_mc_type", &freco_shower_mc_type);
       fevent_chain->SetBranchAddress("reco_shower_mc_index", &freco_shower_mc_index);
       fevent_chain->SetBranchAddress("reco_shower_charge_contribution", &freco_shower_charge_contribution);
-    }
+      //}
     fevent_chain->SetBranchAddress("reco_shower_charge_total", &freco_shower_charge_total);
   }
 
