@@ -199,6 +199,10 @@ void Storage::Initialize() {
   freco_track_EnergyHelper_resrange = nullptr;
   freco_track_EnergyHelper_dedx = nullptr;
   freco_track_EnergyHelper_energy = nullptr;
+  freco_track_EnergyHelperNew_energy_legacy = nullptr;
+  freco_track_EnergyHelperNew_energy = nullptr;
+  freco_track_EnergyHelperNew_energy_from_dedx = nullptr;
+  freco_track_EnergyHelperNew_dedx = nullptr;
   //Reco - MC matching
   freco_track_largest_mc_type = nullptr;
   freco_track_largest_mc_index = nullptr;
@@ -237,6 +241,9 @@ void Storage::Initialize() {
   freco_shower_EnergyHelper_energy_legacy = nullptr;
   freco_shower_EnergyHelper_energy = nullptr;
   freco_shower_EnergyHelper_dedx = nullptr;
+  freco_shower_EnergyHelperNew_energy_legacy = nullptr;
+  freco_shower_EnergyHelperNew_energy = nullptr;
+  freco_shower_EnergyHelperNew_dedx = nullptr;
   //Reco - MC matching
   freco_shower_largest_mc_type = nullptr;
   freco_shower_largest_mc_index = nullptr;
@@ -564,6 +571,11 @@ void Storage::ProcessEventChain() {
   fevent_chain->SetBranchAddress("reco_track_EnergyHelper_resrange", &freco_track_EnergyHelper_resrange);
   fevent_chain->SetBranchAddress("reco_track_EnergyHelper_dedx", &freco_track_EnergyHelper_dedx);
   fevent_chain->SetBranchAddress("reco_track_EnergyHelper_energy", &freco_track_EnergyHelper_energy);
+  fevent_chain->SetBranchAddress("reco_track_EnergyHelperNew_energy_legacy", &freco_track_EnergyHelperNew_energy_legacy);
+  fevent_chain->SetBranchAddress("reco_track_EnergyHelperNew_energy", &freco_track_EnergyHelperNew_energy);
+  fevent_chain->SetBranchAddress("reco_track_EnergyHelperNew_energy_from_dedx", &freco_track_EnergyHelperNew_energy_from_dedx);
+  fevent_chain->SetBranchAddress("reco_track_EnergyHelperNew_dedx", &freco_track_EnergyHelperNew_dedx);
+
   if(fmc && frmcm_bool) {
     fevent_chain->SetBranchAddress("reco_track_largest_mc_type", &freco_track_largest_mc_type);
     fevent_chain->SetBranchAddress("reco_track_largest_mc_index", &freco_track_largest_mc_index);
@@ -610,6 +622,9 @@ void Storage::ProcessEventChain() {
   fevent_chain->SetBranchAddress("reco_shower_EnergyHelper_energy_legacy", &freco_shower_EnergyHelper_energy_legacy);
   fevent_chain->SetBranchAddress("reco_shower_EnergyHelper_energy", &freco_shower_EnergyHelper_energy);
   fevent_chain->SetBranchAddress("reco_shower_EnergyHelper_dedx", &freco_shower_EnergyHelper_dedx);
+  fevent_chain->SetBranchAddress("reco_shower_EnergyHelperNew_energy_legacy", &freco_shower_EnergyHelperNew_energy_legacy);
+  fevent_chain->SetBranchAddress("reco_shower_EnergyHelperNew_energy", &freco_shower_EnergyHelperNew_energy);
+  fevent_chain->SetBranchAddress("reco_shower_EnergyHelperNew_dedx", &freco_shower_EnergyHelperNew_dedx);
   if(fmc && frmcm_bool) { 
     fevent_chain->SetBranchAddress("reco_shower_largest_mc_type", &freco_shower_largest_mc_type);
     fevent_chain->SetBranchAddress("reco_shower_largest_mc_index", &freco_shower_largest_mc_index);
