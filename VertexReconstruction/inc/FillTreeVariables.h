@@ -242,10 +242,14 @@ class FillTreeVariables {
   double reco_shower_diry[100];
   double reco_shower_dirz[100];
   double reco_shower_helper_energy[100];
+  double reco_shower_helpernew_energy[100];
   double reco_shower_bp_dist_to_tpc[100];
   double reco_shower_dedx_plane0[100];
   double reco_shower_dedx_plane1[100];
   double reco_shower_dedx_plane2[100];
+  double reco_shower_dedxnew_plane0[100];
+  double reco_shower_dedxnew_plane1[100];
+  double reco_shower_dedxnew_plane2[100];
   double reco_shower_dist_to_closest_flashzcenter[100];
 
   std::vector<double> true_shower_matching_ratio;

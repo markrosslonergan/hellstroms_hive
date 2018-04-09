@@ -153,10 +153,14 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("reco_shower_diry", &reco_shower_diry, "reco_shower_diry[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_dirz", &reco_shower_dirz, "reco_shower_dirz[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_helper_energy", &reco_shower_helper_energy, "reco_shower_helper_energy[reco_asso_showers]/D");
+  fvertex_tree->Branch("reco_shower_helpernew_energy", &reco_shower_helpernew_energy, "reco_shower_helpernew_energy[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_bp_dist_to_tpc", &reco_shower_bp_dist_to_tpc, "reco_shower_bp_dist_to_tpc[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_dedx_plane0", &reco_shower_dedx_plane0, "reco_shower_dedx_plane0[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_dedx_plane1", &reco_shower_dedx_plane1, "reco_shower_dedx_plane1[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_dedx_plane2", &reco_shower_dedx_plane2, "reco_shower_dedx_plane2[reco_asso_showers]/D");
+  fvertex_tree->Branch("reco_shower_dedxnew_plane0", &reco_shower_dedxnew_plane0, "reco_shower_dedxnew_plane0[reco_asso_showers]/D");
+  fvertex_tree->Branch("reco_shower_dedxnew_plane1", &reco_shower_dedxnew_plane1, "reco_shower_dedxnew_plane1[reco_asso_showers]/D");
+  fvertex_tree->Branch("reco_shower_dedxnew_plane2", &reco_shower_dedxnew_plane2, "reco_shower_dedxnew_plane2[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_dist_to_closest_flashzcenter", &reco_shower_dist_to_closest_flashzcenter, "reco_shower_dist_to_closest_flashzcenter[reco_asso_showers]/D");
 
   fvertex_tree->Branch("shortest_asso_shower_to_vert_dist", &shortest_asso_shower_to_vert_dist, "shortest_asso_shower_to_vert_dist/D");
@@ -1129,6 +1133,7 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
 
   geoalgo::Point_t const & reco_vertex = pa.GetRecoVertex();
   std::vector<double> const & reco_shower_energy = *fstorage->freco_shower_EnergyHelper_energy_legacy;
+  std::vector<double> const & reco_shower_newenergy = *fstorage->freco_shower_EnergyHelperNew_energy_legacy;
 
   double most_shower_energy = 0;
   double second_most_shower_energy = 0;
@@ -1239,11 +1244,16 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
 	reco_shower_diry[reco_asso_showers] = shower_dir.at(1);
 	reco_shower_dirz[reco_asso_showers] = shower_dir.at(2);
 	reco_shower_helper_energy[reco_asso_showers] = reco_shower_energy.at(original_index);
+	reco_shower_helpernew_energy[reco_asso_showers] = reco_shower_newenergy.at(original_index);
 	reco_shower_bp_dist_to_tpc[reco_asso_showers] = FindBPDist(shower_cone);
 	std::vector<double> const & dedx = fstorage->freco_shower_EnergyHelper_dedx->at(original_index);
 	reco_shower_dedx_plane0[reco_asso_showers] = dedx.at(0);
 	reco_shower_dedx_plane1[reco_asso_showers] = dedx.at(1);
 	reco_shower_dedx_plane2[reco_asso_showers] = dedx.at(2);
+	std::vector<double> const & dedxnew = fstorage->freco_shower_EnergyHelperNew_dedx->at(original_index);
+	reco_shower_dedxnew_plane0[reco_asso_showers] = dedxnew.at(0);
+	reco_shower_dedxnew_plane1[reco_asso_showers] = dedxnew.at(1);
+	reco_shower_dedxnew_plane2[reco_asso_showers] = dedxnew.at(2);
 	reco_shower_dist_to_closest_flashzcenter[reco_asso_showers] = flash_dist;
       }	
 
@@ -1268,9 +1278,6 @@ void FillTreeVariables::FillVertexTree(ParticleAssociations const & pas,
   DetectorObjects const & detos = pas.GetDetectorObjects();
   ParticleAssociation const & pa = pas.GetAssociations().at(pn);
   geoalgo::Point_t const & reco_vertex = pa.GetRecoVertex();
-
-  std::vector<std::vector<double>> const & reco_shower_energy = *fstorage->freco_shower_Energy;
-  std::vector<double> const & reco_shower_helper_energy = *fstorage->freco_shower_EnergyHelper_energy_legacy;
 
   reco_nuvertx = reco_vertex.at(0);
   reco_nuverty = reco_vertex.at(1);
