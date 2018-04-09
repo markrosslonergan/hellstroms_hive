@@ -25,7 +25,7 @@ private:
   bool CheckFile(char const * pot_name,
 		 char const * meta_name,
 		 char const * event_name,
-		 char const * const file) const;
+		 char const * const file);
   void Initialize();
   void SetupChains();
   void ProcessPotChain();
