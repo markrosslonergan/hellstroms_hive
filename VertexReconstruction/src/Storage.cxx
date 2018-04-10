@@ -421,7 +421,7 @@ void Storage::SetupChains() {
 
 void Storage::ProcessPotChain() {
 
-  int total_number_of_events;
+  int total_number_of_events = 0;
   int number_of_events;
   double pot;
 
@@ -430,11 +430,11 @@ void Storage::ProcessPotChain() {
 
   for(int i = 0; i < fpot_chain->GetEntries(); ++i) {
     fpot_chain->GetEntry(i);
-    fnumber_of_events += number_of_events;
+    total_number_of_events += number_of_events;
     fpot += pot;
   }
 
-  if(total_number_of_events != fnumber_of_events) std::cout << "WARNING: number of events in POT tree != number of events in event tree, don't trust POT\n";
+  if(total_number_of_events != fnumber_of_events) std::cout << "WARNING: number of events in POT tree: " << total_number_of_events << " != number of events in event tree: " << fnumber_of_events << ", don't trust POT\n";
 
 }
 
