@@ -74,27 +74,38 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 		reader->AddVariable(p.name.c_str(), reader_var_v.back());
 	}
 
-	TTreeFormula * tf_defi = new TTreeFormula("tdeff", flow.definition_cuts.c_str(), tree);
-	TTreeFormula * tf_topo = new TTreeFormula("topp", flow.topological_cuts.c_str(), tree);
+
+	//TTreeFormula * tf = new TTreeFormula("tf", cut.c_str(), tree);
+	TTreeFormula * tf_topological = new TTreeFormula("tf_top", flow.topological_cuts.c_str(), tree);
+	TTreeFormula * tf_definition = new TTreeFormula("tf_def", flow.definition_cuts.c_str(), tree);
 
 	for(method_struct const & method : methods) {
 		reader->BookMVA(method.str.c_str(), ("BDTxmls_"+identifier+"/weights/"+identifier+"_"+method.str+".weights.xml").c_str());
 		bdt_app_tree_struct ts(otree_name, false);
 	
         int N = tree->GetEntries();
+        std::cout << "Beginning loop for " << identifier << std::endl;
+        std::cout << "############################################" << std::endl;
         for(int i = 0; i < N; ++i) {
             if(i%50000==0){std::cout<<i<<"/"<<N<<std::endl;}
             tree->GetEntry(i);
-	    ts.mva = -999;	
-	    if(tf_topo->EvalInstance()){
-          	 bdt_app_update_formula(tree_formulas_v, reader_var_v);
-          	 if(tf_defi->EvalInstance()) {
-			ts.mva = reader->EvaluateMVA(method.str.c_str());
-		}
-	    }
-
+            //bdt_app_update(tree_var_v, reader_var_v);
+            ts.mva = -999;
+            if(i%25000==0){
+                std::cout<<i<<"/"<<N<<std::endl;
+            }
+            if(tf_topological->EvalInstance()) {
+                bdt_app_update_formula(tree_formulas_v, reader_var_v);
+            
+                if(tf_definition->EvalInstance()) {
+                    ts.mva = reader->EvaluateMVA(method.str.c_str());
+                    std::cout << "Found EvaluateMVA(method.str.c_str()) = " << ts.mva << std::endl;
+                }
+            }
             ts.tree->Fill();
         }
+		ts.tree->Write();
+    }
         /*
 		for(int i = 0; i < tree->GetEntries(); ++i) {
 			tree->GetEntry(i);
@@ -105,8 +116,7 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 
 		}
         */
-		ts.tree->Write();
-	}
+	
 
 	//delete reader;
 	//delete tf;

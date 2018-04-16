@@ -6,6 +6,7 @@
 #include "void_vec.h"
 
 #include "bdt_var.h"
+#include "bdt_flow.h"
 #include "bdt_file.h"
 #include "bdt_info.h"
 #include "bdt_flow.h"
