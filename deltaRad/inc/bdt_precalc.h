@@ -44,6 +44,7 @@ class bdt_precalc{
 
 int gen(std::string which );
 int genTrackInfo();
+int genPi0Info();
 
 
 

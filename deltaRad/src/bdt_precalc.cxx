@@ -334,3 +334,84 @@ int bdt_precalc::genTrackInfo(){
 
 
 
+int bdt_precalc::genPi0Info(){
+
+
+	TTree * friend_tree = new TTree("pi0_info","pi0_info");
+
+	//Some branches for some basic info
+	//	double asso_r
+	int reco_asso_tracks = 0;
+	int reco_asso_showers = 0;
+	int pi0_class_number = 0;
+	//std::vector<double> longest_asso_track_displacement = 0;	
+	std::vector<double> *vall_reco_tracks= 0;
+	std::vector<double> *vall_reco_showers= 0;
+
+	TBranch *ballt = 0;
+	TBranch *balls = 0;
+
+	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
+	file->tvertex->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
+	file->tvertex->SetBranchAddress("all_reco_tracks_dist_from_vert",&vall_reco_tracks,&ballt);
+	file->tvertex->SetBranchAddress("all_reco_showers_dist_from_vert",&vall_reco_showers,&balls);
+	file->tvertex->SetBranchAddress("pi0_class_number",&pi0_class_number);
+	// New branches for FRIEND TREEEE 
+
+
+	double v_pi0_class_number=0;
+	int reco_showers_within_10 = 0;
+	int reco_showers_within_20 = 0;
+	int reco_showers_within_30 = 0;
+	
+	int reco_tracks_within_10 = 0;
+	int reco_tracks_within_20 = 0;
+	int reco_tracks_within_30 = 0;
+
+
+	int NN = file->tvertex->GetEntries();
+	for(int i=0; i< file->tvertex->GetEntries(); i++){
+
+		file->tvertex->GetEntry(i);
+
+		v_pi0_class_number = pi0_class_number;
+
+		for(int j=0; j< vall_reco_tracks->size(); j++){
+			if(vall_reco_tracks->at(j) < 10){
+				reco_tracks_within_10 ++;
+				reco_tracks_within_20 ++;
+				reco_tracks_within_30 ++;
+			}else if(vall_reco_tracks->at(j) < 20){
+				reco_tracks_within_20 ++;
+				reco_tracks_within_30 ++;
+			}else if(vall_reco_tracks->at(j) < 30){
+				reco_tracks_within_30 ++;
+			}	
+		}
+		
+		for(int j=0; j< vall_reco_showers->size(); j++){
+			if(vall_reco_showers->at(j) < 10){
+				reco_showers_within_10 ++;
+				reco_showers_within_20 ++;
+				reco_showers_within_30 ++;
+			}else if(vall_reco_showers->at(j) < 20){
+				reco_showers_within_20 ++;
+				reco_showers_within_30 ++;
+			}else if(vall_reco_showers->at(j) < 30){
+				reco_showers_within_30 ++;
+			}	
+		}
+		
+
+		friend_tree->Fill();
+
+	}
+	friend_file_out->cd();
+	friend_tree->Write();
+
+
+	return 0;
+}
+
+
+
