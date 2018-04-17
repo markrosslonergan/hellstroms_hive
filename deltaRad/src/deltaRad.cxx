@@ -155,15 +155,11 @@ int main (int argc, char *argv[]){
 	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/vectored/", "vertexed_bnbcosmic_mcc88_v2.0.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
 
 	bdt_file *intime = new bdt_file(dir+"samples/vectored/", "vertexed_intime_v2.0_mcc88.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
-	bdt_file *ncpi0 = new bdt_file(dir+"samples/vectored/", "vertexed_ncpi0cosmic_mcc88_v1.0.root" ,"NCpi0","hist","", kGreen-3, ncpi0_flow);
+	//bdt_file *ncpi0 = new bdt_file(dir+"samples/vectored/", "vertexed_ncpi0cosmic_mcc88_v1.0.root" ,"NCpi0","hist","", kGreen-3, ncpi0_flow);
 
 
 	//Data files
-	//	bdt_file *data5e19 =new bdt_file(dir+"samples/mcc87/", "merged.data5e19_v10.root" ,"Data5e19","E1","LEEPhotonAnalysisData/", kBlack, data_flow);
-	//	bdt_file *bnbext = new bdt_file(dir+"samples/mcc87/", "merged.bnbext_v7.0.root" ,"BNBext","E1","LEEPhotonAnalysisData/", kBlack, data_flow);
 	bdt_file *overlay = new bdt_file(dir+"samples/vectored/", "vertexed_overlay_mcc88_v1.0.root",	"BNBOverlay",	   "hist","",  kMagenta-3, bkg_flow);
-
-
 	bdt_file *data5e19    = new bdt_file(dir+"samples/vectored/", "vertexed_data5e19_v11.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
 	bdt_file *bnbext    = new bdt_file(dir+"samples/vectored/", "vertexed_bnbext_mcc88_v8.0.root",	"BNBext",	"E1p","",  kBlack, data_flow);
 
