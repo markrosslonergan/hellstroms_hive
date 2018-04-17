@@ -90,7 +90,11 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("reco_track_phi", &reco_track_phi);
   fvertex_tree->Branch("reco_track_theta", &reco_track_theta);
   */
+  
   fvertex_tree->Branch("reco_track_displacement", &reco_track_length, "reco_track_displacement[reco_asso_tracks]/D");
+  fvertex_tree->Branch("reco_track_energy", &reco_track_energy, "reco_track_energy[reco_asso_tracks]/D");
+  fvertex_tree->Branch("reco_track_energy_new_legacy", &reco_track_energy_new_legacy, "reco_track_energy_new_legacy[reco_asso_tracks]/D");
+
   fvertex_tree->Branch("reco_track_dirx", &reco_track_dirx, "reco_track_dirx[reco_asso_tracks]/D");
   fvertex_tree->Branch("reco_track_diry", &reco_track_diry, "reco_track_diry[reco_asso_tracks]/D");
   fvertex_tree->Branch("reco_track_dirz", &reco_track_dirz, "reco_track_dirz[reco_asso_tracks]/D");
@@ -100,8 +104,11 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("reco_track_phi", &reco_track_phi, "reco_track_phi[reco_asso_tracks]/D");
   fvertex_tree->Branch("reco_track_theta", &reco_track_theta, "reco_track_theta[reco_asso_tracks]/D");
   fvertex_tree->Branch("reco_track_calo_dEdx", &reco_track_calo_dEdx);
+  fvertex_tree->Branch("reco_track_calo_dEdxnew", &reco_track_calo_dEdxnew);
   fvertex_tree->Branch("reco_track_calo_resrange", &reco_track_calo_resrange);
 
+  fvertex_tree->Branch("reco_track_energy_new", &reco_track_energy_new);
+  fvertex_tree->Branch("reco_track_energy_from_dEdx", &reco_track_energy_from_dEdx);
 
   fvertex_tree->Branch("all_reco_tracks_dist_from_vertex", &all_reco_tracks_dist_from_vertex);
   fvertex_tree->Branch("all_reco_showers_dist_from_vertex", &all_reco_showers_dist_from_vertex);
@@ -601,7 +608,11 @@ void FillTreeVariables::ResetVertex() {
   reco_track_phi.clear();
   reco_track_theta.clear();
   */
+  reco_track_energy_new.clear();
+  reco_track_energy_from_dEdx.clear();
+  
   reco_track_calo_dEdx.clear();
+  reco_track_calo_dEdxnew.clear();
   reco_track_calo_resrange.clear();
 
   all_reco_showers_dist_from_vertex.clear();
@@ -1227,7 +1238,11 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
       }
 
       if(reco_asso_tracks < 100) {
+
 	reco_track_length[reco_asso_tracks] = track_length;
+	reco_track_energy[reco_asso_tracks] = fstorage->freco_track_EnergyHelper_energy->at(original_index);
+	reco_track_energy_new_legacy[reco_asso_tracks] = fstorage->freco_track_EnergyHelperNew_energy_legacy->at(original_index);
+	
 	reco_track_dirx[reco_asso_tracks] = fstorage->freco_track_VertexDirection_X->at(original_index);
 	reco_track_diry[reco_asso_tracks] = fstorage->freco_track_VertexDirection_Y->at(original_index);
 	reco_track_dirz[reco_asso_tracks] = fstorage->freco_track_VertexDirection_Z->at(original_index);
@@ -1237,7 +1252,11 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
 	reco_track_theta[reco_asso_tracks] = fstorage->freco_track_Theta->at(original_index);
 	reco_track_phi[reco_asso_tracks] = fstorage->freco_track_Phi->at(original_index);
       }
+
+      reco_track_energy_from_dEdx.push_back(fstorage->freco_track_EnergyHelperNew_energy_from_dedx->at(original_index));
+      reco_track_energy_new.push_back(fstorage->freco_track_EnergyHelperNew_energy->at(original_index));
       reco_track_calo_dEdx.push_back(fstorage->freco_track_EnergyHelper_dedx->at(original_index));
+      reco_track_calo_dEdxnew.push_back(fstorage->freco_track_EnergyHelperNew_dedx->at(original_index));
       reco_track_calo_resrange.push_back(fstorage->freco_track_EnergyHelper_resrange->at(original_index));
 
       if(fmc && frmcm_bool) FillTrackTruth(original_index);
