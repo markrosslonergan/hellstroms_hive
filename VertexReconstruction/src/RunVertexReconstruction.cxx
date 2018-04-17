@@ -49,7 +49,7 @@ int main(int const argc, char const * argv[]) {
   
 
   processor.AddAnalyzer(vrana);
-  processor.SetOutputFileName(("RunVertexReconstruction_"+timestamp+"_"+broken_down_first_file.back()+".root").c_str());
+  processor.SetOutputFileName(("RunVertexReconstruction_"+timestamp+"_"+broken_down_first_file.at(broken_down_first_file.size()-2)+"_"+broken_down_first_file.back()+".root").c_str());
   processor.Run();
 
   std::cout << "Wall time: " << difftime(time(0), start) << "\n";
