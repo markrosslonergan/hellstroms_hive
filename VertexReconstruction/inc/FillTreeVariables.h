@@ -103,6 +103,9 @@ class FillTreeVariables {
   int total_exiting_particles;
   std::vector<int> exiting_particle_vector;
 
+  int  pi0_class_number;
+
+
   int is_single_photon;
   int is_delta_rad;
   int delta_true_pdg;
@@ -162,13 +165,19 @@ class FillTreeVariables {
   std::vector<double> reco_track_phi;
   std::vector<double> reco_track_theta;
   */
+  std::vector<std::vector<double>> reco_track_calo_dEdxnew;
   std::vector<std::vector<double>> reco_track_calo_dEdx;
   std::vector<std::vector<double>> reco_track_calo_resrange;
+  
+  std::vector<std::vector<double>> reco_track_energy_new;
+  std::vector<std::vector<double>> reco_track_energy_from_dEdx;
   
   std::vector<double> all_reco_tracks_dist_from_vertex;
   std::vector<double> all_reco_showers_dist_from_vertex;
 
   double reco_track_length[100];
+  double reco_track_energy[100];
+  double reco_track_energy_new_legacy[100];
   double reco_track_dirx[100];
   double reco_track_diry[100];
   double reco_track_dirz[100];
