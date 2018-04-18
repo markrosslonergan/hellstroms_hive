@@ -148,11 +148,11 @@ int main (int argc, char *argv[]){
 
 
 	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, BDT_CUT )		
-	bdt_file *signal_pure    = new bdt_file(dir+"samples/vectored/", "vertexed_ncdeltaradcosmics_mcc88_v1.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
+	bdt_file *signal_pure    = new bdt_file(dir+"samples/vectored/NCDR_bf/ncdeltaradcosmics", "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v2.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
 	//bdt_file *signal_pure    = new bdt_file(dir+"samples/vectored/", "vertexed_ncdeltarad_mcc88_v3.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir+"samples/vectored/", "vertexed_ncdeltaradcosmics_mcc88_v1.0.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir+"samples/vectored/", "vertexed_bnbcosmic_mcc88_v2.0.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/vectored/", "vertexed_bnbcosmic_mcc88_v2.0.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir+"samples/vectored/NCDR_bf/ncdeltaradcosmics", "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v2.0.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir+"samples/vectored/NCDR_bf/bnbcosmics", "vertexed_bnbcosmics_mcc8.9_fresh_v1.0.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir+"samples/vectored/NCDR_bf/bnbcosmics", "vertexed_bnbcosmics_mcc8.9_fresh_v1.0.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
 
 	bdt_file *intime = new bdt_file(dir+"samples/vectored/", "vertexed_intime_v2.0_mcc88.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	bdt_file *ncpi0 = new bdt_file(dir+"samples/vectored/", "vertexed_ncpi0cosmic_mcc88_v1.0.root" ,"NCpi0","hist","", kGreen-3, ncpi0_flow);
@@ -262,6 +262,10 @@ int main (int argc, char *argv[]){
 
 		vars.push_back(bdt_variable(angle_track_shower,	"(50,-1,1)","Cosine Track-Shower Angle ",true,"d"));
 		//vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number of Reconstructed Tracks",false,"i"));
+
+		//NEW variables for tracks
+		vars.push_back(bdt_var
+
 
 	}
 
@@ -674,10 +678,12 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	} else if(mode_option == "precalc"){
 
-		std::vector<bdt_file*> bdt_filesB = {data5e19};
+		std::vector<bdt_file*> bdt_filesB = {signal_pure};
 		for(auto &f: bdt_filesB){
 			bdt_precalc pre(f);
 			pre.genTrackInfo();
+			//pre.genNewTrackInfo();
+			pre.genPi0Info();
 		}
 	}
 

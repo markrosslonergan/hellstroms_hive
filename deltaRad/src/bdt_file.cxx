@@ -71,7 +71,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			numberofevents = tmpnum;
 			pot=tmppot;
 			std::cout<<"--> POT is MC: ";
-			std::cout<<"--> value: "<<pot<<std::endl;
+			std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
 		}
 	}
 	if(tag == "Data5e19"){
