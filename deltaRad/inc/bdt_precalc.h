@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <algorithm>
 /******** Our includes *****/
 
 #include  "bdt_file.h"
