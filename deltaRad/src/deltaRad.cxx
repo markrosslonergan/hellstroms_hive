@@ -100,19 +100,20 @@ int main (int argc, char *argv[]){
 
 	MVALoader xml_methods(xml);
 	std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); 
-
+	// X 0 to 256 Y -117 to 117 Z 0 to 1036
+	// 10 cm from all sides, and 20cm from the top.
+	std::string fiducial_vertex = "reco_nuvertx > 10 && reco_nuvertx < 246 && reco_nuverty > -107 && reco_nuverty < 97 && reco_nuvertz > 10 && reco_nuvertz < 1026";
 
 	std::string new_precuts;
 	std::string num_track_cut = "==1";
 	if(istrack == "track"){
-		new_precuts =  "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 1 && reco_track_displacement[0] < 100 &&  reco_shower_helper_energy[0] > 0.03 && track_info.reco_track_good_calo[0]>0";
+		new_precuts =  "reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 2 && reco_track_displacement[0] < 100 &&  reco_shower_helper_energy[0] > 0.05 && track_info.reco_track_good_calo[0]>0 && "+ fiducial_vertex;
 		num_track_cut = "== 1";
 
 	}else if(istrack == "notrack"){
-		new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && reco_shower_helper_energy[0] > 0.03 ";
+		new_precuts = "reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 10 && reco_shower_helper_energy[0] > 0.05 &&" + fiducial_vertex;
 		num_track_cut = "== 0";
 	}
-
 
 	std::string postcuts = {"reco_asso_tracks == 1 "};//
 
@@ -127,8 +128,9 @@ int main (int argc, char *argv[]){
 	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 	std::string signal_definition = "is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
 	std::string background_definition = "is_delta_rad == 0";
-	
-	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1 && track_matched_to_ncdeltarad_proton[0]==1";
+
+	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
+	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1 && track_matched_to_ncdeltarad_proton[0]==1 && pi0_info.num_reco_showers_within_10cm_vertex==0";
 
 	std::string true_bkg    = "true_shower_origin[0]==1";
 	if(istrack == "track"){
@@ -138,13 +140,13 @@ int main (int argc, char *argv[]){
 
 
 	// takes 5 arguments ( 
-	bdt_flow signal_pure_flow(base_cuts +"&&"+signal_definition +"&&"+ true_signal,	new_precuts,	postcuts,cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow signal_flow(base_cuts +"&&"+signal_definition ,	new_precuts,	postcuts,cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow cosmic_flow(base_cuts, new_precuts , postcuts,	cosmic_bdt_info,bnb_bdt_info);
-	bdt_flow bkg_flow(base_cuts +"&&"+background_definition,	new_precuts,postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow bkg_pure_flow(base_cuts +"&&"+background_definition+"&&"+ true_bkg ,new_precuts,postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow signal_pure_flow(base_cuts, signal_definition +"&&"+ true_signal,	new_precuts,	postcuts,cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow signal_flow(base_cuts, signal_definition ,	new_precuts,	postcuts,cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow cosmic_flow(base_cuts,"1", new_precuts , postcuts,	cosmic_bdt_info,bnb_bdt_info);
+	bdt_flow bkg_flow(base_cuts,background_definition,	new_precuts,postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow bkg_pure_flow(base_cuts,background_definition+"&&"+ true_bkg ,new_precuts,postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
-	bdt_flow data_flow(base_cuts,				new_precuts,postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
+	bdt_flow data_flow(base_cuts,"1",				new_precuts,postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 	//bdt_flow ncpi0_flow(base_cuts + " &&" + true_bkg , new_precuts,postcuts, cosmic_bdt_info, ncpi0_bdt_info); 
 
 
@@ -156,7 +158,6 @@ int main (int argc, char *argv[]){
 
 	bdt_file *intime = new bdt_file(dir, "vertexed_intime_mcc8.9_fresh_v1.0.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//bdt_file *ncpi0 = new bdt_file(dir+"samples/vectored/", "vertexed_ncpi0cosmic_mcc88_v1.0.root" ,"NCpi0","hist","", kGreen-3, ncpi0_flow);
-
 
 	//Data files
 	bdt_file *overlay = new bdt_file(dir2+"samples/vectored/", "vertexed_overlay_mcc88_v1.0.root",	"BNBOverlay",	   "hist","",  kMagenta-3, bkg_flow);
@@ -240,7 +241,8 @@ int main (int argc, char *argv[]){
 
 	vars.push_back(bdt_variable("reco_shower_helpernew_energy[0]","(50,0,0.4)","Reconstructed Shower Energy (NEW) [GeV]", false,"d"));
 	vars.push_back(bdt_variable("reco_shower_dedxnew_plane2[0]","(50,0,6)", "Shower dE/dx Collection Plane (NEW) [MeV/cm]",false,"d"));
-
+	
+	//vars.push_back(bdt_variable("pi0_info.num_reco_showers_within_10cm_vertex","(10,0,10)","Num Showers within 10cm",false,"i"));
 
 	if(istrack=="track"){
 
@@ -347,8 +349,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
 		//std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
-		std::vector<bdt_file*> app_files = {data5e19}; 
-//		bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
+		std::vector<bdt_file*> app_files = { signal_cosmics}; 
+		//bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
 		bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
 //		bdt_app(ncpi0_bdt_info, app_files, vars, TMVAmethods);
 	}
@@ -693,13 +695,13 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	} else if(mode_option == "precalc"){
 
-		//std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime};
-		std::vector<bdt_file*> bdt_filesB = {bnb_pure};
+		std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime, bnb_cosmics, signal_cosmics};
+		//std::vector<bdt_file*> bdt_filesB = {bnb_pure};
 		for(auto &f: bdt_filesB){
 			bdt_precalc pre(f);
-			pre.genTrackInfo();
+			//pre.genTrackInfo();
 			//pre.genNewTrackInfo();
-			//pre.genPi0Info();
+			pre.genPi0Info();
 		}
 	}
 

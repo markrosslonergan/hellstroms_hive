@@ -707,7 +707,7 @@ int bdt_precalc::genPi0Info(){
 	TBranch *b_pi0_class_number = friend_tree->Branch("pi0_class_number",&v_pi0_class_number);
 	
 	int NN = file->tvertex->GetEntries();
-	for(int i=0; i< 10000; i++){//file->tvertex->GetEntries(); i++){
+	for(int i=0; i< file->tvertex->GetEntries(); i++){
 
 		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
 		reco_showers_within_10 = 0;
