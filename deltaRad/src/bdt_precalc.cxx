@@ -177,12 +177,12 @@ int bdt_precalc::genTrackInfo(){
 					std::vector<double> ax = bx;
 					ay.erase(ay.begin());
 					ax.erase(ax.begin());
-					
+
 
 					done = true;
 					std::cout<<"Got Done! "<<dra<<std::endl;
 					//Some Truncated Mean Testing
-					
+
 					TGraph * gb = new TGraph(bx.size(),&bx[0], &by[0]);
 					TGraph * ga = new TGraph(ax.size(),&ax[0], &ay[0]);
 					TCanvas *c = new TCanvas();
@@ -199,7 +199,7 @@ int bdt_precalc::genTrackInfo(){
 					gb->GetYaxis()->SetTitle("dE/dx [MeV/cm]");
 
 					dra++;
-	
+
 					c->SaveAs(("truncpics/muon_"+std::to_string(dra)+".png").c_str(),"png");
 
 
@@ -208,13 +208,13 @@ int bdt_precalc::genTrackInfo(){
 				//Check to make sure the vectors are filled in the right order. (Just for bragg variable!)
 				std::vector<double> brag_c_resrange = c_resrange;	
 				std::vector<double> brag_trunc_dEdx = trunc_dEdx;	
-			
+
 				if(brag_c_resrange.front() < brag_c_resrange.back()){
 					std::reverse(brag_c_resrange.begin(),brag_c_resrange.end());
 					std::reverse(brag_trunc_dEdx.begin(),brag_trunc_dEdx.end());
 				}
 				for(int j=0; j< brag_trunc_dEdx.size(); j++){
-				//		if(brag_c_resrange.at(j) ==0) brag_c_resrange.at(j)=0.001;
+					//		if(brag_c_resrange.at(j) ==0) brag_c_resrange.at(j)=0.001;
 				}
 				while( brag_c_resrange.back()==0){
 					brag_c_resrange.pop_back();
@@ -222,26 +222,31 @@ int bdt_precalc::genTrackInfo(){
 
 				}
 
+				if(brag_c_resrange.size()>1){
 
-				std::vector<double> params = {15.0, -0.4};
-				TF1 *bragg = new TF1("bragg", bragg_fnc, brag_c_resrange.front(), brag_c_resrange.back(), params.size());
-				bragg->SetParameters(&params[0]);
-				bragg->SetParNames("bragg_A","bragg_b");
-				bragg->SetParLimits(0, 0.01, 30.0);
-				//bragg->SetParLimits(1, -1.5, 1);
-				bragg->FixParameter(1,-0.42);
+					std::vector<double> params = {15.0, -0.4};
+					TF1 *bragg = new TF1("bragg", bragg_fnc, brag_c_resrange.front(), brag_c_resrange.back(), params.size());
+					bragg->SetParameters(&params[0]);
+					bragg->SetParNames("bragg_A","bragg_b");
+					bragg->SetParLimits(0, 0.01, 30.0);
+					//bragg->SetParLimits(1, -1.5, 1);
+					bragg->FixParameter(1,-0.42);
 
-				TGraph * pts = new TGraph(brag_trunc_dEdx.size(), &brag_c_resrange[0],&brag_trunc_dEdx[0] );
-	//			TFitResultPtr fit_bragg = pts->Fit(bragg,"SQ");	
-				TFitResultPtr fit_bragg = pts->Fit(bragg,"SWNQ");	
-				v_bragg_parD = fit_bragg->Value(1);		
-				v_bragg_parA = fit_bragg->Value(0);		
-				
-			
-				if(!fit_bragg->IsValid()){
-					std::cout<<"ERROR: fit result is not valid: status code: "<<fit_bragg->Status()<<" "<<std::endl;
-					std::cout<<c_resrange.size()<<" "<<trunc_dEdx.size()<<std::endl;
-					exit(EXIT_FAILURE);
+					TGraph * pts = new TGraph(brag_trunc_dEdx.size(), &brag_c_resrange[0],&brag_trunc_dEdx[0] );
+					//			TFitResultPtr fit_bragg = pts->Fit(bragg,"SQ");	
+					TFitResultPtr fit_bragg = pts->Fit(bragg,"SWNQ");	
+					v_bragg_parD = fit_bragg->Value(1);		
+					v_bragg_parA = fit_bragg->Value(0);		
+
+
+					if(!fit_bragg->IsValid()){
+						std::cout<<"ERROR: fit result is not valid: status code: "<<fit_bragg->Status()<<" "<<std::endl;
+						std::cout<<c_resrange.size()<<" "<<trunc_dEdx.size()<<std::endl;
+						exit(EXIT_FAILURE);
+					}
+
+				}else{
+					v_track_good_calo.push_back(0);
 				}
 
 				double pida_sum=0;
@@ -385,7 +390,7 @@ int bdt_precalc::genPi0Info(){
 	int reco_showers_within_10 = 0;
 	int reco_showers_within_20 = 0;
 	int reco_showers_within_30 = 0;
-	
+
 	int reco_tracks_within_10 = 0;
 	int reco_tracks_within_20 = 0;
 	int reco_tracks_within_30 = 0;
@@ -398,7 +403,7 @@ int bdt_precalc::genPi0Info(){
 	TBranch *b_reco_tracks_within_30 = friend_tree->Branch("num_reco_tracks_within_30cm_vertex",&reco_tracks_within_30);
 
 	TBranch *b_pi0_class_number = friend_tree->Branch("pi0_class_number",&v_pi0_class_number);
-	
+
 	int NN = file->tvertex->GetEntries();
 	for(int i=0; i< 10000; i++){//file->tvertex->GetEntries(); i++){
 
@@ -426,7 +431,7 @@ int bdt_precalc::genPi0Info(){
 				reco_tracks_within_30 ++;
 			}	
 		}
-		
+
 		for(int j=0; j< vall_reco_showers->size(); j++){
 			if(vall_reco_showers->at(j) < 10){
 				reco_showers_within_10 ++;
@@ -439,7 +444,7 @@ int bdt_precalc::genPi0Info(){
 				reco_showers_within_30 ++;
 			}	
 		}
-		
+
 
 		friend_tree->Fill();
 
@@ -449,7 +454,7 @@ int bdt_precalc::genPi0Info(){
 
 
 	return 0;
-}
+	}
 
 
 
