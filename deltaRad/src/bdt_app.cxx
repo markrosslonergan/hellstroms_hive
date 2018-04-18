@@ -69,7 +69,7 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 				<< "ERROR: invalid type: " << p.type << "\n";
 		}
 		*/	
-        tree_formulas_v.push_back(new TTreeFormula(p.safe_name.c_str(), p.name.c_str() ,tree));
+       	        tree_formulas_v.push_back(new TTreeFormula(p.safe_name.c_str(), p.name.c_str() ,tree));
 		reader_var_v.push_back(new float(-1));
 		reader->AddVariable(p.name.c_str(), reader_var_v.back());
 	}
@@ -99,7 +99,7 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
             
                 if(tf_definition->EvalInstance()) {
                     ts.mva = reader->EvaluateMVA(method.str.c_str());
-                    std::cout << "Found EvaluateMVA(method.str.c_str()) = " << ts.mva << std::endl;
+                    //std::cout << "Found EvaluateMVA(method.str.c_str()) = " << ts.mva << std::endl;
                 }
             }
             ts.tree->Fill();
