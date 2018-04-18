@@ -236,6 +236,12 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0], reco_shower_dirx[0]))","(50,-1,1)","Reconstructed Shower - Cosine Phi", true,"d"));
 
 
+	//New Variables for Showers!
+
+	vars.push_back(bdt_variable("reco_shower_helpernew_energy[0]","(50,0,0.4)","Reconstructed Shower Energy (NEW) [GeV]", false,"d"));
+	vars.push_back(bdt_variable("reco_shower_dedxnew_plane2[0]","(50,0,6)", "Shower dE/dx Collection Plane (NEW) [MeV/cm]",false,"d"));
+
+
 	if(istrack=="track"){
 
 		vars.push_back(bdt_variable("track_info.reco_track_range[0]","(50,0,150)","Reconstructed Track Range [cm]", true,"d"));
@@ -260,8 +266,15 @@ int main (int argc, char *argv[]){
 		//vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number of Reconstructed Tracks",false,"i"));
 
 		//NEW variables for tracks
-		vars.push_back(bdt_var
+		vars.push_back(bdt_variable("reco_track_energy[0]", "(50,0,2)","Track Energy (0ld)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_new_legacy[0]", "(50,0,2)","Track Energy (New -Best Plane)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_new[0][0]", "(50,0,2)","Track Energy (New -Plane 0)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_new[0][1]", "(50,0,2)","Track Energy (New -Plane 1)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_new[0][2]", "(50,0,2)","Track Energy (New -Plane 2)",true, "d"));
 
+		vars.push_back(bdt_variable("reco_track_energy_from_dEdx[0][0]", "(50,0,2)","Track Energy (dEdx - Plane 0)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_from_dEdx[0][1]", "(50,0,2)","Track Energy (dEdx - Plane 1)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_from_dEdx[0][2]", "(50,0,2)","Track Energy (dEdx - Plane 2)",true, "d"));
 
 	}
 
