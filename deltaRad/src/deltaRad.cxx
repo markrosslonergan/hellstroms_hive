@@ -39,7 +39,8 @@ int main (int argc, char *argv[]){
 
 	//std::string dir = "/home/mark/work/uBooNE/photon/tmva/";
 	std::string dir2 = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
-	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed/";
+	std::string dir = "/uboone/app/users/markrl/single_photon_fresh_13April/working_dir/hellstroms_hive/samples/fresh_NCDR_bf/";
+
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
@@ -148,12 +149,12 @@ int main (int argc, char *argv[]){
 
 
 	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, BDT_CUT )		
-	bdt_file *signal_pure    = new bdt_file(dir+"ncdeltaradcosmics/NCDR_bf", "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v2.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir+"ncdeltaradcosmics/NCDR_bf", "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v2.0.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir+"bnbcosmic/NCDR_bf", "vertexed_bnbcosmics_mcc8.9_fresh_v2.0.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir+"bnbcosmic/NCDR_bf", "vertexed_bnbcosmics_mcc8.9_fresh_v2.0.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
+	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v2.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v2.0.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_mcc8.9_fresh_v2.0.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_mcc8.9_fresh_v2.0.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
 
-	bdt_file *intime = new bdt_file(dir+"intime/NCDR_bf/", "vertexed_intime_mcc8.9_fresh_v1.0.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
+	bdt_file *intime = new bdt_file(dir, "vertexed_intime_mcc8.9_fresh_v1.0.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//bdt_file *ncpi0 = new bdt_file(dir+"samples/vectored/", "vertexed_ncpi0cosmic_mcc88_v1.0.root" ,"NCpi0","hist","", kGreen-3, ncpi0_flow);
 
 
@@ -188,11 +189,11 @@ int main (int argc, char *argv[]){
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	for(auto &f: bdt_files){
 		addPreFriends(f,"track");
+		addPreFriends(f,"pi0");
 		f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 	}
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-
 
 
 	//Adding plot names
@@ -235,6 +236,12 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0], reco_shower_dirx[0]))","(50,-1,1)","Reconstructed Shower - Cosine Phi", true,"d"));
 
 
+	//New Variables for Showers!
+
+	vars.push_back(bdt_variable("reco_shower_helpernew_energy[0]","(50,0,0.4)","Reconstructed Shower Energy (NEW) [GeV]", false,"d"));
+	vars.push_back(bdt_variable("reco_shower_dedxnew_plane2[0]","(50,0,6)", "Shower dE/dx Collection Plane (NEW) [MeV/cm]",false,"d"));
+
+
 	if(istrack=="track"){
 
 		vars.push_back(bdt_variable("track_info.reco_track_range[0]","(50,0,150)","Reconstructed Track Range [cm]", true,"d"));
@@ -259,7 +266,15 @@ int main (int argc, char *argv[]){
 		//vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number of Reconstructed Tracks",false,"i"));
 
 		//NEW variables for tracks
+		vars.push_back(bdt_variable("reco_track_energy[0]", "(50,0,2)","Track Energy (0ld)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_new_legacy[0]", "(50,0,2)","Track Energy (New -Best Plane)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_new[0][0]", "(50,0,2)","Track Energy (New -Plane 0)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_new[0][1]", "(50,0,2)","Track Energy (New -Plane 1)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_new[0][2]", "(50,0,2)","Track Energy (New -Plane 2)",true, "d"));
 
+		vars.push_back(bdt_variable("reco_track_energy_from_dEdx[0][0]", "(50,0,2)","Track Energy (dEdx - Plane 0)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_from_dEdx[0][1]", "(50,0,2)","Track Energy (dEdx - Plane 1)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_from_dEdx[0][2]", "(50,0,2)","Track Energy (dEdx - Plane 2)",true, "d"));
 
 	}
 
@@ -321,6 +336,12 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
 		std::cout<<"**********************Starting NCpi0 BDT Training*************************"<<std::endl;
 //		bdt_train(ncpi0_bdt_info, signal_pure, ncpi0, vars,TMVAmethods);
+
+
+
+
+
+
 
 	}else if(mode_option == "app"){
 
@@ -672,7 +693,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	} else if(mode_option == "precalc"){
 
-		std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime};
+		//std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime};
+		std::vector<bdt_file*> bdt_filesB = {bnb_pure};
 		for(auto &f: bdt_filesB){
 			bdt_precalc pre(f);
 			pre.genTrackInfo();
