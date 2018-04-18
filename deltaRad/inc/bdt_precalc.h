@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <algorithm>
 /******** Our includes *****/
 
 #include  "bdt_file.h"
@@ -37,7 +38,7 @@ class bdt_precalc{
 	TFile *friend_file_out;
 	//pass in a bdt_file and it calculates stuff and add's it as friends!
 		bdt_precalc(bdt_file* in) : file(in) {
-		friend_file_out = new TFile((file->tag+"_friends.root").c_str(),"recreate");	
+		friend_file_out = new TFile((file->tag+"_friends.root").c_str(),"update");	
 		};
 		//This will actually
 		~bdt_precalc(){ friend_file_out->Close();}
