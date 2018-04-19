@@ -387,6 +387,9 @@ int bdt_precalc::genPi0Info(){
 
 
 	double v_pi0_class_number=0;
+	std::vector<int> vec_reco_showers_within;
+	std::vector<int> vec_reco_tracks_within;
+
 	int reco_showers_within_10 = 0;
 	int reco_showers_within_20 = 0;
 	int reco_showers_within_30 = 0;
@@ -394,6 +397,9 @@ int bdt_precalc::genPi0Info(){
 	int reco_tracks_within_10 = 0;
 	int reco_tracks_within_20 = 0;
 	int reco_tracks_within_30 = 0;
+
+	TBranch *b_vec_showers = friend_tree->Branch("num_reco_showers_within_Xcm_vertex",&vec_reco_showers_within);
+	TBranch *b_vec_tracks = friend_tree->Branch("num_reco_tracks_within_Xcm_vertex",&vec_reco_tracks_within);
 
 	TBranch *b_reco_showers_within_10 = friend_tree->Branch("num_reco_showers_within_10cm_vertex",&reco_showers_within_10);
 	TBranch *b_reco_showers_within_20 = friend_tree->Branch("num_reco_showers_within_20cm_vertex",&reco_showers_within_20);
@@ -419,7 +425,35 @@ int bdt_precalc::genPi0Info(){
 		file->tvertex->GetEntry(i);
 		v_pi0_class_number = pi0_class_number;
 
+
+
+
+		for(double c=1; c<32.0; c=c+2.0){
+			vec_reco_showers_within.push_back(0);
+			vec_reco_tracks_within.push_back(0);
+
+
+			for(int j=0; j< vall_reco_tracks->size(); j++){
+				
+				if(vall_reco_tracks->at(j)<c){
+					vec_reco_tracks_within.back()++;
+				}
+			}
+
+
+			for(int j=0; j< vall_reco_showers->size(); j++){
+				
+				if(vall_reco_showers->at(j)<c){
+					vec_reco_showers_within.back()++;
+				}	
+			}
+		}
+
+
+
 		for(int j=0; j< vall_reco_tracks->size(); j++){
+
+
 			if(vall_reco_tracks->at(j) < 10){
 				reco_tracks_within_10 ++;
 				reco_tracks_within_20 ++;
@@ -448,13 +482,16 @@ int bdt_precalc::genPi0Info(){
 
 		friend_tree->Fill();
 
+		vec_reco_showers_within.clear();
+		vec_reco_tracks_within.clear();
+
 	}
 	friend_file_out->cd();
 	friend_tree->Write();
 
 
 	return 0;
-	}
+}
 
 
 

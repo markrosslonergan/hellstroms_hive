@@ -37,10 +37,10 @@ int main (int argc, char *argv[]){
 	// Just some simple argument things
 	//===========================================================================================
 
-	//std::string dir2 = "/home/mark/work/uBooNE/photon/tmva/";
-	//std::string dir = "/home/mark/work/uBooNE/photon/tmva/samples/fresh_NCDR_bf/";
-	std::string dir2 = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
-	std::string dir = "/uboone/app/users/markrl/single_photon_fresh_13April/working_dir/hellstroms_hive/samples/fresh_NCDR_bf/";
+	std::string dir2 = "/home/mark/work/uBooNE/photon/tmva/";
+	std::string dir = "/home/mark/work/uBooNE/photon/tmva/samples/fresh_NCDR_bf/";
+	//std::string dir2 = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
+	//std::string dir = "/uboone/app/users/markrl/single_photon_fresh_13April/working_dir/hellstroms_hive/samples/fresh_NCDR_bf/";
 
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
@@ -715,13 +715,13 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	} else if(mode_option == "precalc"){
 
 		//std::vector<bdt_file*> bdt_filesB = {bnb_pure};
-		//std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime};
-		std::vector<bdt_file*> bdt_filesB = {signal_pure};
+		std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime};
+		//std::vector<bdt_file*> bdt_filesB = {signal_pure};
 		for(auto &f: bdt_filesB){
 			bdt_precalc pre(f);
 			//pre.genTrackInfo();
-			//pre.genNewTrackInfo();
 			pre.genPi0Info();
+			//pre.genNewTrackInfo();
 		}
 	}
 
