@@ -256,7 +256,7 @@ int main (int argc, char *argv[]){
 		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]", "(50,0,12)","Mean Start Track dE/dx", true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(50,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(50,0,20)","Track PIDA",true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(50,-1,32)","Track Bragg A",true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(50,0,20)","Track Bragg A",true,"d"));
 
 		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(50,0,18)","Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
 
@@ -269,7 +269,7 @@ int main (int argc, char *argv[]){
 
 		//NEW variables for tracks
 		vars.push_back(bdt_variable("reco_track_energy[0]", "(50,0,2)","Track Energy (0ld)",true, "d"));
-		vars.push_back(bdt_variable("reco_track_energy_new_legacy[0]", "(50,0,2)","Track Energy (New -Best Plane)",true, "d"));
+		vars.push_back(bdt_variable("reco_track_energy_new_legacy[0]", "(50,0,1)","Track Energy (New -Best Plane)",true, "d"));
 		vars.push_back(bdt_variable("reco_track_energy_new[0][0]", "(50,0,2)","Track Energy (New -Plane 0)",true, "d"));
 		vars.push_back(bdt_variable("reco_track_energy_new[0][1]", "(50,0,2)","Track Energy (New -Plane 1)",true, "d"));
 		vars.push_back(bdt_variable("reco_track_energy_new[0][2]", "(50,0,2)","Track Energy (New -Plane 2)",true, "d"));
@@ -507,7 +507,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
 
 			for(auto &v:vars){
-				TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_cosmo").c_str(), ("cvar_"+v.name+"_cosmo").c_str(),2000,1600);
+				TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_cosmo").c_str(), ("cvar_"+v.name+"_cosmo").c_str(),2200,1200);
 				c_var->Divide(2,1);
 				c_var->cd();
 
@@ -563,7 +563,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 
 			for(auto &v:vars){
-				TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_bnb").c_str(), ("cvar_"+v.name+"_bnb").c_str(),2000,1600);
+				TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_bnb").c_str(), ("cvar_"+v.name+"_bnb").c_str(),2200,1200);
 				c_var->Divide(2,1);
 				c_var->cd();
 
