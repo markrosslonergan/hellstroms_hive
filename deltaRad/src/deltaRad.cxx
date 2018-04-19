@@ -124,14 +124,14 @@ int main (int argc, char *argv[]){
 	//bdt_info ncpi0_bdt_info("ncpi0_"+istrack, "NCPi0 focused BDT","(50,0.2,0.50)");
 
 	// apply with PE
-	std::string base_cuts = "totalpe_ibg_sum > 20 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
+	//std::string base_cuts = "totalpe_ibg_sum > 20 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 	// and train without PE
-	//std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
+	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 	std::string signal_definition = "is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
 	std::string background_definition = "is_delta_rad == 0";
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1 && track_matched_to_ncdeltarad_proton[0]==1 && pi0_info.num_reco_showers_within_10cm_vertex==0";
+	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1 && track_matched_to_ncdeltarad_proton[0]==1 ";
 
 	std::string true_bkg    = "true_shower_origin[0]==1";
 	if(istrack == "track"){
@@ -212,10 +212,10 @@ int main (int argc, char *argv[]){
 	//Variables!
 	std::string angle_track_shower ="(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])";
 	std::string shower_mom = "reco_shower_helper_energy[0]"; 
-	std::string reco_track_energy = "track_info.reco_track_kinetic[0]+1.0";
-	std::string track_mom  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"-1.0)";
+	std::string reco_track_energy = "reco_track_energy_new_legacy[0]+0.938272";
+	std::string track_mom  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"-0.938272)";
 
-	std::string invariant_mass = "sqrt(1.0+2.0*("+reco_track_energy+"*reco_shower_helper_energy[0]-"+track_mom+"*"+shower_mom+"*"+angle_track_shower+"))";
+	std::string invariant_mass = "0.938272*0.938272+2.0*("+reco_track_energy+"*reco_shower_helper_energy[0]-"+track_mom+"*"+shower_mom+"*"+angle_track_shower+")";
 
 	std::vector<bdt_variable> vars;
 
@@ -504,13 +504,14 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	}else if(mode_option == "vars"){
 
+			std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
 
 			for(auto &v:vars){
 				TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_cosmo").c_str(), ("cvar_"+v.name+"_cosmo").c_str(),2000,1600);
-				//c_var->Divide(2,2);
+				c_var->Divide(2,1);
 				c_var->cd();
 
-				for(int j=0; j<1;j++){	
+				for(int j=0; j<2;j++){	
 
 					std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
 					std::string cut_intime = intime->getStageCuts(j,fcoscut,fbnbcut); 
@@ -532,8 +533,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 					sig->SetFillStyle(3445);
 					bkg->SetFillStyle(3454);
 
-					sig->SetTitle(" ");
-					c_var->cd();			
+					sig->SetTitle(title.at(j).c_str());
+					c_var->cd(j+1);			
 
 					sig->Draw("hist");
 					bkg->Draw("hist same");
@@ -563,10 +564,10 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 			for(auto &v:vars){
 				TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_bnb").c_str(), ("cvar_"+v.name+"_bnb").c_str(),2000,1600);
-				//c_var->Divide(2,2);
+				c_var->Divide(2,1);
 				c_var->cd();
 
-				for(int j=0; j<1;j++){	
+				for(int j=0; j<2;j++){	
 
 					std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
 					std::string cut_bnb = bnb_pure->getStageCuts(j,fcoscut,fbnbcut); 
@@ -587,8 +588,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 					sig->SetFillStyle(3445);
 					bkg->SetFillStyle(3454);
 
-					sig->SetTitle(" ");
-					c_var->cd();			
+					sig->SetTitle(title.at(j).c_str());
+					c_var->cd(j+1);			
 
 					sig->Draw("hist");
 					sig->SetMaximum(sig->GetMaximum()*1.25);
