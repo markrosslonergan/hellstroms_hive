@@ -132,7 +132,7 @@ int main (int argc, char *argv[]){
 		num_track_cut = "== 0";
 	}
 
-	std::string postcuts = {"reco_asso_tracks == 1 "};//
+	std::string postcuts = "1";//
 
 	//Set up some info about the BDTs to pass along
 	bdt_info bnb_bdt_info("bnb_"+istrack, "BNB focused BDT","(50,0.25,0.6)");
@@ -147,7 +147,7 @@ int main (int argc, char *argv[]){
 	std::string background_definition = "is_delta_rad == 0";
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1 && track_matched_to_ncdeltarad_proton[0]==1 ";
+	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1";
 
 	std::string true_bkg    = "true_shower_origin[0]==1";
 	if(istrack == "track"){
