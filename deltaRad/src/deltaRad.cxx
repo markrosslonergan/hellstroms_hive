@@ -242,7 +242,6 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("reco_shower_opening_angle[0]","(50,0,0.8)","Shower Opening Angle",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_dist_to_closest_flashzcenter[0]","(50,0,400)","Distance from Shower to Flashcenter [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("reco_shower_opening_angle[0]*reco_shower_length[0]","(50,0,15)","Shower Area",false,"d"));
 	vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(50,0,120)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[0]","(50,0,550)","Back Projected Distance from Shower to TPC wall [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_nuvertx","(50,0,250)"," Reconstructed Vertex X pos [cm]",false,"d"));
@@ -284,9 +283,10 @@ int main (int argc, char *argv[]){
 				}
 
 	
-	if(mode_option != "train"){
+	if(mode_option != "train" && mode_option != "app"){
 	//We don't want to train using these variables, but we would like to plot them just to see how things are
 	
+	vars.push_back(bdt_variable("reco_shower_opening_angle[0]*reco_shower_length[0]","(50,0,15)","Shower Area",false,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_range[0]","(50,0,150)","Reconstructed Track Range [cm]", true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_kinetic[0]","(50,0,1)","Reconstructed Track Kinetic Energy [cm]", true,"d"));
 		vars.push_back(bdt_variable("reco_track_energy_new[0][0]", "(50,0,2)","Track Energy (New -Plane 0)",true, "d"));
