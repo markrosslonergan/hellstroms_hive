@@ -124,14 +124,14 @@ int main (int argc, char *argv[]){
 	//bdt_info ncpi0_bdt_info("ncpi0_"+istrack, "NCPi0 focused BDT","(50,0.2,0.50)");
 
 	// apply with PE
-	std::string base_cuts = "totalpe_ibg_sum > 20 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
+	//std::string base_cuts = "totalpe_ibg_sum > 20 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 	// and train without PE
-	//std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
+	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 	std::string signal_definition = "is_delta_rad == 1 && true_nu_vtx_fid_contained == 1";
 	std::string background_definition = "is_delta_rad == 0";
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1 && track_matched_to_ncdeltarad_proton[0]==1 && pi0_info.num_reco_showers_within_10cm_vertex==0";
+	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1 && track_matched_to_ncdeltarad_proton[0]==1 ";
 
 	std::string true_bkg    = "true_shower_origin[0]==1";
 	if(istrack == "track"){
@@ -239,11 +239,11 @@ int main (int argc, char *argv[]){
 
 	//New Variables for Showers!
 
-	vars.push_back(bdt_variable("reco_shower_helpernew_energy[0]","(50,0,0.4)","Reconstructed Shower Energy (NEW) [GeV]", false,"d"));
-	vars.push_back(bdt_variable("reco_shower_dedxnew_plane2[0]","(50,0,6)", "Shower dE/dx Collection Plane (NEW) [MeV/cm]",false,"d"));
+	//vars.push_back(bdt_variable("reco_shower_helpernew_energy[0]","(50,0,0.4)","Reconstructed Shower Energy (NEW) [GeV]", false,"d"));
+	//vars.push_back(bdt_variable("reco_shower_dedxnew_plane2[0]","(50,0,6)", "Shower dE/dx Collection Plane (NEW) [MeV/cm]",false,"d"));
 	
-	//vars.push_back(bdt_variable("pi0_info.num_reco_showers_within_10cm_vertex","(10,0,10)","Num Showers within 10cm",false,"i"));
 
+	vars.push_back(bdt_variable("pi0_info.num_reco_showers_within_10cm_vertex","(10,0,10)","Num Showers within 10cm",false,"i"));
 	if(istrack=="track"){
 
 		vars.push_back(bdt_variable("track_info.reco_track_range[0]","(50,0,150)","Reconstructed Track Range [cm]", true,"d"));
@@ -293,7 +293,6 @@ int main (int argc, char *argv[]){
 		vars.push_back(bdt_variable("pi0_info.num_reco_tracks_within_30cm_vertex","(10,0,10)","Num tracks within 30cm",false,"i"));
 
 		vars.push_back(bdt_variable("reco_asso_tracks","(5,0,4)","Number of Reconstructed Tracks",false,"i"));
-		vars.push_back(bdt_variable("pi0_info.num_reco_showers_within_10cm_vertex","(10,0,10)","Num Showers within 10cm",false,"i"));
 		vars.push_back(bdt_variable("pi0_info.pi0_class_number","(52,-1,50)","Pi0 Class Number",false,"i"));
 	}
 
@@ -715,13 +714,12 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	} else if(mode_option == "precalc"){
 
 		//std::vector<bdt_file*> bdt_filesB = {bnb_pure};
-		//std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime};
-		std::vector<bdt_file*> bdt_filesB = {signal_pure};
+		std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime};
+		//std::vector<bdt_file*> bdt_filesB = {signal_pure};
 		for(auto &f: bdt_filesB){
 			bdt_precalc pre(f);
-			//pre.genTrackInfo();
-			//pre.genNewTrackInfo();
-			pre.genPi0Info();
+			pre.genTrackInfo();
+			//pre.genPi0Info();
 		}
 	}
 
