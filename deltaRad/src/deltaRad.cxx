@@ -37,14 +37,17 @@ int main (int argc, char *argv[]){
 	// Just some simple argument things
 	//===========================================================================================
 
-	//std::string dir2 = "/home/mark/work/uBooNE/photon/tmva/";
-	//std::string dir = "/home/mark/work/uBooNE/photon/tmva/samples/fresh_NCDR_bf/";
+//	std::string dir2 = "/home/mark/work/uBooNE/photon/tmva/";
+//	std::string dir = "/home/mark/work/uBooNE/photon/tmva/samples/fresh_NCDR_bf/";
 	std::string dir2 = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
 	std::string dir = "/uboone/app/users/markrl/single_photon_fresh_13April/working_dir/hellstroms_hive/samples/fresh_NCDR_bf/";
 
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
+	
+	bool run_cosmic = true;
+	bool run_bnb = true;
 
 	const struct option longopts[] = 
 	{
@@ -53,6 +56,8 @@ int main (int argc, char *argv[]){
 		{"xml"	,		required_argument,	0, 'x'},
 		{"track",		required_argument,	0, 't'},
 		{"help",		required_argument,	0, 'h'},
+		{"cosmic",		no_argument,		0, 'c'},
+		{"bnb",			no_argument,		0, 'b'},
 		{0,			no_argument, 		0,  0},
 	};
 
@@ -60,10 +65,18 @@ int main (int argc, char *argv[]){
 	int iarg = 0; opterr=1; int index;
 	while(iarg != -1)
 	{
-		iarg = getopt_long(argc,argv, "x:o:d:t:h?", longopts, &index);
+		iarg = getopt_long(argc,argv, "cbx:o:d:t:h?", longopts, &index);
 
 		switch(iarg)
 		{
+			case 'c':
+				run_cosmic = true;
+				run_bnb = false;
+				break;
+			case 'b':
+				run_bnb = true;
+				run_cosmic = false;	
+				break;
 			case 'x':
 				xml = optarg;
 				break;
@@ -83,6 +96,9 @@ int main (int argc, char *argv[]){
 				std::cout<<"\t-o\t--option\t\tOptional mode to run, train, app..etc.."<<std::endl;
 				std::cout<<"\t-t\t--track\t\tQuickly run between track and notrack"<<std::endl;
 				std::cout<<"\t-x\t--xml\t\tInput .xml file for configuring what MVA/BDT & param"<<std::endl;
+
+				std::cout<<"\t-c\t--cosmic\t\t Run only cosmic training/app"<<std::endl;
+				std::cout<<"\t-b\t--bnb\t\t Run only BNB training/app"<<std::endl;
 				std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
 				return 0;
 		}
@@ -212,10 +228,10 @@ int main (int argc, char *argv[]){
 	//Variables!
 	std::string angle_track_shower ="(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])";
 	std::string shower_mom = "reco_shower_helper_energy[0]"; 
-	std::string reco_track_energy = "track_info.reco_track_kinetic[0]+1.0";
-	std::string track_mom  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"-1.0)";
+	std::string reco_track_energy = "reco_track_energy_new_legacy[0]+0.938272";
+	std::string track_mom  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"-0.938272)";
 
-	std::string invariant_mass = "sqrt(1.0+2.0*("+reco_track_energy+"*reco_shower_helper_energy[0]-"+track_mom+"*"+shower_mom+"*"+angle_track_shower+"))";
+	std::string invariant_mass = "0.938272*0.938272+2.0*("+reco_track_energy+"*reco_shower_helper_energy[0]-"+track_mom+"*"+shower_mom+"*"+angle_track_shower+")";
 
 	std::vector<bdt_variable> vars;
 
@@ -224,9 +240,9 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("reco_shower_length[0]","(50,0,100)","Shower Length [cm]",false,"d"));
 
 	vars.push_back(bdt_variable("reco_shower_opening_angle[0]","(50,0,0.8)","Shower Opening Angle",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_opening_angle[0]*reco_shower_length[0]","(50,0,15)","Shower Area",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_dist_to_closest_flashzcenter[0]","(50,0,400)","Distance from Shower to Flashcenter [cm]",false,"d"));
 
+	vars.push_back(bdt_variable("reco_shower_opening_angle[0]*reco_shower_length[0]","(50,0,15)","Shower Area",false,"d"));
 	vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(50,0,120)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[0]","(50,0,550)","Back Projected Distance from Shower to TPC wall [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_nuvertx","(50,0,250)"," Reconstructed Vertex X pos [cm]",false,"d"));
@@ -236,18 +252,14 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0],reco_shower_dirz[0]))","(50,-1,1)","Reconstructed Shower - Cosine Theta", true,"d"));
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0], reco_shower_dirx[0]))","(50,-1,1)","Reconstructed Shower - Cosine Phi", true,"d"));
 
-
 	//New Variables for Showers!
-
 	//vars.push_back(bdt_variable("reco_shower_helpernew_energy[0]","(50,0,0.4)","Reconstructed Shower Energy (NEW) [GeV]", false,"d"));
 	//vars.push_back(bdt_variable("reco_shower_dedxnew_plane2[0]","(50,0,6)", "Shower dE/dx Collection Plane (NEW) [MeV/cm]",false,"d"));
 	
 
 	vars.push_back(bdt_variable("pi0_info.num_reco_showers_within_10cm_vertex","(10,0,10)","Num Showers within 10cm",false,"i"));
-	if(istrack=="track"){
 
-		vars.push_back(bdt_variable("track_info.reco_track_range[0]","(50,0,150)","Reconstructed Track Range [cm]", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_kinetic[0]","(50,0,1)","Reconstructed Track Kinetic Energy [cm]", true,"d"));
+	if(istrack=="track"){
 
 		vars.push_back(bdt_variable("reco_track_displacement[0]","(50,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
 
@@ -268,8 +280,15 @@ int main (int argc, char *argv[]){
 		vars.push_back(bdt_variable(angle_track_shower,	"(50,-1,1)","Cosine Track-Shower Angle ",true,"d"));
 
 		//NEW variables for tracks
-		vars.push_back(bdt_variable("reco_track_energy[0]", "(50,0,2)","Track Energy (0ld)",true, "d"));
 		vars.push_back(bdt_variable("reco_track_energy_new_legacy[0]", "(50,0,2)","Track Energy (New -Best Plane)",true, "d"));
+				}
+
+	
+	if(mode_option != "train"){
+	//We don't want to train using these variables, but we would like to plot them just to see how things are
+	
+		vars.push_back(bdt_variable("track_info.reco_track_range[0]","(50,0,150)","Reconstructed Track Range [cm]", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_kinetic[0]","(50,0,1)","Reconstructed Track Kinetic Energy [cm]", true,"d"));
 		vars.push_back(bdt_variable("reco_track_energy_new[0][0]", "(50,0,2)","Track Energy (New -Plane 0)",true, "d"));
 		vars.push_back(bdt_variable("reco_track_energy_new[0][1]", "(50,0,2)","Track Energy (New -Plane 1)",true, "d"));
 		vars.push_back(bdt_variable("reco_track_energy_new[0][2]", "(50,0,2)","Track Energy (New -Plane 2)",true, "d"));
@@ -278,11 +297,7 @@ int main (int argc, char *argv[]){
 		vars.push_back(bdt_variable("reco_track_energy_from_dEdx[0][1]", "(50,0,2)","Track Energy (dEdx - Plane 1)",true, "d"));
 		vars.push_back(bdt_variable("reco_track_energy_from_dEdx[0][2]", "(50,0,2)","Track Energy (dEdx - Plane 2)",true, "d"));
 
-	}
-
-	
-	if(mode_option != "train"){
-	//We don't want to train using these variables, but we would like to plot them just to see how things are
+		vars.push_back(bdt_variable("reco_track_energy[0]", "(50,0,2)","Track Energy (0ld)",true, "d"));
 		vars.push_back(bdt_variable("totalpe_ibg_sum","(50,0,15000)","Total in Beam-Gate PE",false,"d"));
 		vars.push_back(bdt_variable("totalpe_bbg_sum","(50,0,15000)","Total Before Beam-Gate PE",false,"d"));
 		vars.push_back(bdt_variable("pi0_info.num_reco_showers_within_20cm_vertex","(10,0,10)","Num Showers within 20cm",false,"i"));
@@ -348,9 +363,9 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	if(mode_option == "train") {
 		std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
-		bdt_train(cosmic_bdt_info, signal_pure, intime, vars, TMVAmethods);
+		if(run_cosmic) bdt_train(cosmic_bdt_info, signal_pure, intime, vars, TMVAmethods);
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
-		bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
+		if(run_bnb) bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
 		std::cout<<"**********************Starting NCpi0 BDT Training*************************"<<std::endl;
 //		bdt_train(ncpi0_bdt_info, signal_pure, ncpi0, vars,TMVAmethods);
 
@@ -363,11 +378,11 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	}else if(mode_option == "app"){
 
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
-		//std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
-		std::vector<bdt_file*> app_files = { signal_cosmics}; 
-		//bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
-		bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
-//		bdt_app(ncpi0_bdt_info, app_files, vars, TMVAmethods);
+		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
+		if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
+		if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
+
+
 	}
 	else if(mode_option == "response"){
 
@@ -503,13 +518,14 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	}else if(mode_option == "vars"){
 
+			std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
 
 			for(auto &v:vars){
 				TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_cosmo").c_str(), ("cvar_"+v.name+"_cosmo").c_str(),2000,1600);
-				//c_var->Divide(2,2);
+				c_var->Divide(2,1);
 				c_var->cd();
 
-				for(int j=0; j<1;j++){	
+				for(int j=0; j<2;j++){	
 
 					std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
 					std::string cut_intime = intime->getStageCuts(j,fcoscut,fbnbcut); 
@@ -531,8 +547,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 					sig->SetFillStyle(3445);
 					bkg->SetFillStyle(3454);
 
-					sig->SetTitle(" ");
-					c_var->cd();			
+					sig->SetTitle(title.at(j).c_str());
+					c_var->cd(j+1);			
 
 					sig->Draw("hist");
 					bkg->Draw("hist same");
@@ -562,10 +578,10 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 			for(auto &v:vars){
 				TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_bnb").c_str(), ("cvar_"+v.name+"_bnb").c_str(),2000,1600);
-				//c_var->Divide(2,2);
+				c_var->Divide(2,1);
 				c_var->cd();
 
-				for(int j=0; j<1;j++){	
+				for(int j=0; j<2;j++){	
 
 					std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
 					std::string cut_bnb = bnb_pure->getStageCuts(j,fcoscut,fbnbcut); 
@@ -586,8 +602,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 					sig->SetFillStyle(3445);
 					bkg->SetFillStyle(3454);
 
-					sig->SetTitle(" ");
-					c_var->cd();			
+					sig->SetTitle(title.at(j).c_str());
+					c_var->cd(j+1);			
 
 					sig->Draw("hist");
 					sig->SetMaximum(sig->GetMaximum()*1.25);
@@ -718,8 +734,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		//std::vector<bdt_file*> bdt_filesB = {signal_pure};
 		for(auto &f: bdt_filesB){
 			bdt_precalc pre(f);
-			pre.genTrackInfo();
-			//pre.genPi0Info();
+			//pre.genTrackInfo();
+			pre.genPi0Info();
 		}
 	}
 
