@@ -129,7 +129,7 @@ int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variabl
 
 	std::string identifier = info.identifier;
 	
-	TFile * app_ofile = TFile::Open((identifier+"_app"+".root").c_str(), "recreate");
+	TFile * app_ofile = TFile::Open((identifier+"_app"+".root").c_str(), "update");
 	for(size_t i = 0; i < files.size(); ++i) {
 		std::cout<<"On file: "<<files.at(i)->tag<<std::endl;
 		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;

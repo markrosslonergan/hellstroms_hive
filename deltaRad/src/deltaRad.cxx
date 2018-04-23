@@ -119,16 +119,16 @@ int main (int argc, char *argv[]){
 	std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); 
 	// X 0 to 256 Y -117 to 117 Z 0 to 1036
 	// 10 cm from all sides, and 20cm from the top.
-	std::string fiducial_vertex = "reco_nuvertx > 10 && reco_nuvertx < 246 && reco_nuverty > -107 && reco_nuverty < 97 && reco_nuvertz > 10 && reco_nuvertz < 1026";
+	std::string fiducial_vertex = "reco_nuvertx > 10 && reco_nuvertx < 246 && reco_nuverty > -107 && reco_nuverty < 97 && reco_nuvertz > 10 && reco_nuvertz < 1026 ";
 
 	std::string new_precuts;
 	std::string num_track_cut = "==1";
 	if(istrack == "track"){
-		new_precuts =  "reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 2 && reco_track_displacement[0] < 100 &&  reco_shower_helper_energy[0] > 0.05 && track_info.reco_track_good_calo[0]>0 && "+ fiducial_vertex;
+		new_precuts =  "track_info.reco_track_mean_dEdx[0] > 1 && reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 20 && shortest_asso_shower_to_vert_dist > 2 && reco_track_displacement[0] < 100 &&  reco_shower_helper_energy[0] > 0.1 && track_info.reco_track_good_calo[0]>0 && shortest_asso_shower_to_vert_dist < 64 && reco_shower_opening_angle[0]> 0.1 && "+ fiducial_vertex;
 		num_track_cut = "== 1";
 
 	}else if(istrack == "notrack"){
-		new_precuts = "reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 10 && reco_shower_helper_energy[0] > 0.05 &&" + fiducial_vertex;
+		new_precuts = "reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 20 && reco_shower_opening_angle > 0.1 && reco_shower_helper_energy[0] > 0.1 &&" + fiducial_vertex;
 		num_track_cut = "== 0";
 	}
 
@@ -179,11 +179,11 @@ int main (int argc, char *argv[]){
 
 	//Data files
 	bdt_file *overlay = new bdt_file(dir2+"samples/vectored/", "vertexed_overlay_mcc88_v1.0.root",	"BNBOverlay",	   "hist","",  kMagenta-3, bkg_flow);
-	bdt_file *data5e19    = new bdt_file(dir2+"samples/vectored/", "vertexed_data5e19_v11.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
+	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_mcc8.9_fresh_v2.0.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
 	bdt_file *bnbext    = new bdt_file(dir2+"samples/vectored/", "vertexed_bnbext_mcc88_v8.0.root",	"BNBext",	"E1p","",  kBlack, data_flow);
 
 	//std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime, data5e19,bnbext};
-	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
+	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime, data5e19};
 
 	signal_pure->scale_data = 3.1;
 	signal_cosmics->scale_data = 3.1;
@@ -239,11 +239,13 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("reco_shower_helper_energy[0]","(50,0,0.4)","Reconstructed Shower Energy [GeV]", false,"d"));
 	vars.push_back(bdt_variable("reco_shower_length[0]","(50,0,100)","Shower Length [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("reco_shower_opening_angle[0]","(50,0,0.8)","Shower Opening Angle",false,"d"));
+	//vars.push_back(bdt_variable("reco_shower_opening_angle[0]","(50,0,0.8)","Shower Opening Angle",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_dist_to_closest_flashzcenter[0]","(50,0,400)","Distance from Shower to Flashcenter [cm]",false,"d"));
 
+	//THIS IS NEEDED TO BE EXACTLY HERE FOR NOTRACK
+	//vars.push_back(bdt_variable("reco_shower_opening_angle[0]*reco_shower_length[0]","(50,0,15)","Shower Area",false,"d"));
 	vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(50,0,120)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[0]","(50,0,550)","Back Projected Distance from Shower to TPC wall [cm]",false,"d"));
+	//vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[0]","(50,0,550)","Back Projected Distance from Shower to TPC wall [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_nuvertx","(50,0,250)"," Reconstructed Vertex X pos [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_nuverty","(50,-110,+110)","Reconstructed Vertex Y pos [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_nuvertz","(50,0,1050)","Reconstructed Vertex Z pos [cm]",false,"d"));
@@ -263,11 +265,11 @@ int main (int argc, char *argv[]){
 		vars.push_back(bdt_variable("reco_track_displacement[0]","(50,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
 
 		vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(50,0,12)","Mean Track dE/dx", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_end_mean_dEdx[0]", "(50,0,12)","Mean End Track dE/dx", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]", "(50,0,12)","Mean Start Track dE/dx", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(50,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(50,0,20)","Track PIDA",true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(50,-1,32)","Track Bragg A",true,"d"));
+//		vars.push_back(bdt_variable("track_info.reco_track_end_mean_dEdx[0]", "(50,0,12)","Mean End Track dE/dx", true,"d"));
+//		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]", "(50,0,12)","Mean Start Track dE/dx", true,"d"));
+//		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(50,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
+//		vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(50,0,20)","Track PIDA",true,"d"));
+		//vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(50,-1,32)","Track Bragg A",true,"d"));
 
 		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(50,0,18)","Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
 
@@ -285,8 +287,9 @@ int main (int argc, char *argv[]){
 	
 	if(mode_option != "train" && mode_option != "app"){
 	//We don't want to train using these variables, but we would like to plot them just to see how things are
-	
-	vars.push_back(bdt_variable("reco_shower_opening_angle[0]*reco_shower_length[0]","(50,0,15)","Shower Area",false,"d"));
+
+
+		//Hmm. This is needed in track..	
 		vars.push_back(bdt_variable("track_info.reco_track_range[0]","(50,0,150)","Reconstructed Track Range [cm]", true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_kinetic[0]","(50,0,1)","Reconstructed Track Kinetic Energy [cm]", true,"d"));
 		vars.push_back(bdt_variable("reco_track_energy_new[0][0]", "(50,0,2)","Track Energy (New -Plane 0)",true, "d"));
@@ -371,17 +374,18 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 
 
-
+	return 0;
 
 
 
 	}else if(mode_option == "app"){
 
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
-		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
+		std::vector<bdt_file*> app_files = {data5e19}; 
 		if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
 		if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
 
+	return 0;
 
 	}
 	else if(mode_option == "response"){
@@ -730,8 +734,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	} else if(mode_option == "precalc"){
 
 		//std::vector<bdt_file*> bdt_filesB = {bnb_pure};
-		std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime};
-		//std::vector<bdt_file*> bdt_filesB = {signal_pure};
+		//std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime};
+		std::vector<bdt_file*> bdt_filesB = {data5e19};
 		for(auto &f: bdt_filesB){
 			bdt_precalc pre(f);
 			//pre.genTrackInfo();
