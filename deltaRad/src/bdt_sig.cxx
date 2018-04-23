@@ -66,11 +66,11 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	cut_min_cosmic = cut_max_cosmic*0.8;
 	cut_min_bnb = cut_max_bnb*0.8;
 
-	cut_max_cosmic =cut_max_cosmic*1.02;
-	cut_max_bnb =cut_max_bnb*1.02;
+	cut_max_cosmic =cut_max_cosmic*0.98;
+	cut_max_bnb =cut_max_bnb*0.98;
 
-	//cut_min_cosmic = 0.57; cut_max_cosmic = 0.62;
-	//cut_min_bnb = 0.52; cut_max_bnb = 0.56;
+	cut_min_cosmic = 0.54; cut_max_cosmic = 0.56;
+	cut_min_bnb = 0.52; cut_max_bnb = 0.53;
 
 
 	std::cout<<"BNB sig scan from: "<<cut_min_bnb<<" to "<<cut_max_bnb<<std::endl;

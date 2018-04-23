@@ -308,7 +308,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	std::vector<int> recomc_cols = {kRed-7, kRed+1, kGreen+1, kBlue+3};
 
         std::cout << "Done adding TreeFiends" << std::endl;
-		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols);
+		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols,istrack);
 		//plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val)
 
 	//test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable(bnb_bdt_info) , fcoscut,fbnbcut);

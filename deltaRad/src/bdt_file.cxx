@@ -43,15 +43,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			//Found in 
 			double intime_modifier = 10.279;
 
-			double N_gen_bnb = 2153450.0;
-			double N_gen_cos = 991885.0;
-			double frac_job_worked = 1.0;//5.0/9.0;
+			//Guarrenteed for fresh_mcc8.9
+			double N_gen_bnb = 2146800.0;
+			double N_gen_cos = 991914.0;
 
-			double pot_bnb_cosmic = 2.172e+21;
+			double pot_bnb_cosmic = 2.16562e+21;
 			double pot_plot = 6.6e20;
 
 			pot = pot_plot; 
-			this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos*frac_job_worked)*pot_plot/pot_bnb_cosmic;
+			this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos)*pot_plot/pot_bnb_cosmic;
 			std::cout<<"--> value: "<<pot<<" with scale factor: "<<scale_data<<std::endl;
 		}else{
 			leg = "l";
@@ -76,7 +76,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	}
 	if(tag == "Data5e19"){
 		leg = "lp";
-		double Nworked = 191046;// pot_tree->Scan() 
+		double Nworked = 189578;// pot_tree->Scan() 
 		double Nsamweb = 191131;// samweb list-definition-files XXX --summary --fileinfo
 
 		std::cout<<"--> POT is data: From Zarkos tool..";
@@ -202,11 +202,13 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	for(int i=0; i< recomc_cuts.size(); i++){
 		std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
 		TCanvas *ctmp = new TCanvas();
-		this->tvertex->Draw((var.name+">>"+nam+"_"+recomc_names.at(i)+ var.binning).c_str() , (cuts+"&&"+recomc_cuts.at(i)).c_str(),"goff");
+		this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , (cuts+"&&"+recomc_cuts.at(i)).c_str(),"goff");
+		std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
+		//gDirectory->ls();
 
-		TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+recomc_names.at(i)).c_str()) ;
+		TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+std::to_string(i)).c_str()) ;
 		th1->Scale(this->scale_data*plot_POT/this->pot);
-		if(rebin >1 )th1->Rebin(rebin);
+		if(rebin > 1 ) th1->Rebin(rebin);
 		th1->SetFillColor(recomc_cols.at(i));
 		th1->SetLineColor(kBlack);
 		th1->SetLineWidth(1);
@@ -280,7 +282,7 @@ int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,  
 
 std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 
-	bool verbose = false;
+	bool verbose = true;
 
 	std::string ans;
 	switch(stage) {

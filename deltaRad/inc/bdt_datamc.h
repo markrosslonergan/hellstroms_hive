@@ -32,11 +32,16 @@
 
 class bdt_datamc{
 	public:
-		
+	
+
+	
 		bdt_file* data_file;
 		bdt_stack *mc_stack;
 
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {};
+		std::string tag;
+
+		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";};
+		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin,std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {};
 
 
 		int plotStacks(TFile*f, bdt_variable var,double,double);
