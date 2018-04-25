@@ -78,11 +78,19 @@ EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
   fmethod_map = {{"max", "Maximized"},
 		 {"min", "Minimized"}};
 
+  /*
   fxtitle_map = {{"start_prox", "start_prox"},
 		 {"shower_prox", "Maximum Shower Impact Parameter [cm]"},
 		 {"max_bp_dist", "Maximum Shower Backwards Projection Distance [cm]"},
 		 {"cpoa_vert_prox", "cpoa_vert_prox"},
 		 {"cpoa_trackend_prox", "cpoa_trackend_prox"}};
+  */
+
+  fxtitle_map = {{"start_prox", "t_{max} [cm]"},
+		 {"shower_prox", "s_{max} [cm]"},
+		 {"max_bp_dist", "bp_{max} [cm]"},
+		 {"cpoa_vert_prox", "a_{max} [cm]"},
+		 {"cpoa_trackend_prox", "t_{vert} [cm]"}};
 
   fytitle_map = {{"mean", "Mean"},
 		 {"ratio_eq_1", "Ratio of Good Vertices"}};
@@ -93,10 +101,15 @@ EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
 			  {"cleanliness", {"Cleanliness", kBlue, 8}}, 
 			  {"shower_cleanliness", {"Shower Cleanliness", kBlue, 23}}, 
 			  {"track_cleanliness", {"Track Cleanliness", kBlue, 33}}, 
-			  {"combined", {"Combined", kMagenta, 8}},
-			  {"shower_combined", {"Shower Combined", kMagenta, 23}},
-			  {"track_combined", {"Track Combined", kMagenta, 33}},
-			  {"dist", {"Reco - True Distance [cm]", kBlack, 8}}};
+			  /*
+			  {"combined", {"Combined", kBlack, 8}},
+			  {"shower_combined", {"Shower Combined", kBlack, 23}},
+			  {"track_combined", {"Track Combined", kBlack, 33}},
+			  */
+			  {"combined", {"cpq", kBlack, 8}},
+			  {"shower_combined", {"Shower cpq", kBlack, 23}},
+			  {"track_combined", {"Track cpq", kBlack, 33}},
+			  {"dist", {"Reco - True Distance [cm]", kMagenta, 8}}};
 
 }
 
@@ -599,7 +612,7 @@ TH1 * EvaluateVertexQuality::DrawHist(TTree * tree,
 				      std::string const & title,
 				      std::string const & xtitle,
 				      std::string const & ytitle) const {
-  
+
   tree->Draw((draw+">>"+name+binning).c_str(), weight.c_str(), opt.c_str());
 
   TH1 * h = (TH1*)gDirectory->Get(name.c_str());
@@ -620,17 +633,18 @@ TH1 * EvaluateVertexQuality::DrawHist(TTree * tree,
 
 
 void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
-				     std::string const & method,
+				     std::string const & name,
 				     std::string const & pq,
 				     std::string const & draw,
 				     std::string const & binning,
 				     std::string const & weight,
-				     std::string const & best_permutation) const {
+				     std::string const & best_permutation,
+				     std::string const & title) const {
 
-  TCanvas * canvas = new TCanvas(("dist_" + method + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_" + pq).c_str());
-  std::string const title = GetTitle(ph, method);
+  TCanvas * canvas = new TCanvas(("dist_" + name + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_" + pq).c_str());
+  //std::string const title = GetTitle(ph, method);
   std::string weight_modified = fdraw_vec.at(ph.metric_to_study.second).at(2);
-  if(weight != "") weight_modified + " && " + weight;
+  if(weight != "") weight_modified += " && " + weight;
 
   TH1 * h = DrawHist(fvq_chain,
 		     "h",
@@ -640,7 +654,9 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 		     "hist",
 		     title,
 		     "True - Reco Vertex Distance [cm]",
-		     "Number of Vertices");
+		     "Area Normalized");
+
+  double ymax = h->GetBinContent(h->GetMaximumBin());
 
   TH1 * hp = nullptr;
   TLegend * legend = nullptr;
@@ -655,16 +671,20 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 		  "histsame",
 		  title,
 		  "True - Reco Vertex Distance [cm]",
-		  "Number of Vertices");
+		  "Area Normalized");
     
     hp->SetLineColor(kRed);
     hp->SetLineStyle(2);
-
+    
     legend = new TLegend(0.6, 0.9, 0.9, 0.6);
-    legend->AddEntry(h, "Vertex Builder");
-    legend->AddEntry(hp, "Pandora");
+    legend->AddEntry(h, ("Vertex Builder, mean: " + std::to_string(int(h->GetMean()))).c_str());
+    legend->AddEntry(hp, ("Pandora, mean: " + std::to_string(int(hp->GetMean()))).c_str());
+
+    if(hp->GetBinContent(hp->GetMaximumBin()) > ymax) ymax = hp->GetBinContent(hp->GetMaximumBin());
 
   }
+
+  h->GetYaxis()->SetRangeUser(0, 1.1*ymax);
 
   if(legend) legend->Draw();
   canvas->Write();
@@ -698,8 +718,12 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 
     for(auto const & pq : performance_quantities) {
 
+      //std::string const title = "BNB Maximized";
+      std::string const title = "NC #Delta Radiative Maximized";
+
       std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).at(pq.second).second);
-      DrawHist(ph, method, pq.first, "dist", "(20, 0, 300)", "reco_shower_total + reco_track_total > 1", fvq.GetPermString(best_permutation));
+      DrawHist(ph, "0track_" + method, pq.first, "dist", "(60, 0, 300)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks");
+      DrawHist(ph, "ntrack_" + method, pq.first, "dist", "(60, 0, 300)", "reco_track_total > 0", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks");
       
       for(auto const & ptd : parameters_to_draw) {
  
@@ -715,7 +739,7 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 	double ymin = DBL_MAX;
 	double ymax = 0;
 	
-	TLegend * legend = new TLegend(0.6, 0.9, 0.9, 0.6);
+	TLegend * legend = new TLegend(0.6, 0.9, 0.9, 0.7);
 	std::vector<TGraph *> line_handler;
 
 	for(auto const & mtd : metrics_to_draw) {
@@ -725,7 +749,9 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 	  if(!first_graph) {
 
 	    graph->Draw("ap");
-
+	    graph->SetTitle(title.c_str());
+	    
+	    /*
 	    std::string const & performance_quantity = fvq.GetPerformanceQuantities().at(pq.second);
 	    auto const ytm_it = fytitle_map.find(performance_quantity);
 	    if(ytm_it == fytitle_map.end()) {
@@ -735,6 +761,9 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 	    else {
 	      graph->GetYaxis()->SetTitle(ytm_it->second.c_str());
 	    }
+	    */
+
+	    graph->GetYaxis()->SetTitle("");
 	    graph->GetYaxis()->CenterTitle();
 
 	    first_graph = graph;
@@ -778,7 +807,8 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 
 	if(first_graph) {
 	  
-	  first_graph->GetYaxis()->SetRangeUser(ymin*0.9, ymax*1.1);
+	  //first_graph->GetYaxis()->SetRangeUser(ymin*0.9, ymax*1.1);
+	  first_graph->GetYaxis()->SetRangeUser(ymin*0.9, 1.1);
 	  legend->Draw();
 	  canvas->Write();
 	  for(TGraph * line : line_handler) delete line;
