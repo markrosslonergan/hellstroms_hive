@@ -45,7 +45,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 			double N_gen_bnb = 2153450.0;
 			double N_gen_cos = 991885.0;
-			double frac_job_worked = 5.0/9.0;
+			double frac_job_worked = 1.0;//5.0/9.0;
 
 			double pot_bnb_cosmic = 2.172e+21;
 			double pot_plot = 6.6e20;
@@ -71,7 +71,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			numberofevents = tmpnum;
 			pot=tmppot;
 			std::cout<<"--> POT is MC: ";
-			std::cout<<"--> value: "<<pot<<std::endl;
+			std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
 		}
 	}
 	if(tag == "Data5e19"){

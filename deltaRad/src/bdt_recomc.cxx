@@ -42,6 +42,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	std::string selection = file->getStageCuts(0, -9, -9);
 	
 	reco_mc_vec_sel = file->getRecoMCTH1(var, selection, "sel_"+file->tag+"_"+var.safe_name, plot_pot);
+	std::cout<<"TEST "<<reco_mc_vec_sel.size()<<std::endl;
+
 	reco_mc_all_sel = (TH1*)file->getTH1(var, selection, "all_sel_"+file->tag+"_"+var.safe_name, plot_pot);
 	N_selection = file->tvertex->GetEntries((selection).c_str())*plot_pot/file->pot*file->scale_data;
 
@@ -54,20 +56,23 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 	//-------------- Cosmic BDT ------------- 
 	std::string cosmiccut = file->getStageCuts(2, cut_cosmic_val, -9);
+	int cosmic_rebin = 1;
+	if(do_rebin) cosmic_rebin =2;
 
-	reco_mc_vec_bdt1 = file->getRecoMCTH1(var, cosmiccut, "bdt1_"+file->tag+"_"+var.safe_name, plot_pot,2);
+	reco_mc_vec_bdt1 = file->getRecoMCTH1(var, cosmiccut, "bdt1_"+file->tag+"_"+var.safe_name, plot_pot,cosmic_rebin);
 	reco_mc_all_bdt1 = (TH1*)file->getTH1(var , cosmiccut  ,"all_bdt1_"+file->tag+"_"+var.safe_name, plot_pot);
 	N_bdt_cosmic = file->tvertex->GetEntries(cosmiccut.c_str())*plot_pot/file->pot*file->scale_data;
 
 
 	//-------------- BNB BDT -------------
 	std::string bnbcut = file->getStageCuts(3, cut_cosmic_val, cut_bnb_val);
-
-	reco_mc_vec_bdt2 = file->getRecoMCTH1(var, bnbcut , "bdt2_"+file->tag+"_"+var.safe_name, plot_pot,4);
+	int bnb_rebin=1;
+	if(do_rebin) bnb_rebin=4;
+	reco_mc_vec_bdt2 = file->getRecoMCTH1(var, bnbcut , "bdt2_"+file->tag+"_"+var.safe_name, plot_pot,bnb_rebin);
 	reco_mc_all_bdt2 = (TH1*)file->getTH1(var , bnbcut  ,"all_bdt2_"+file->tag+"_"+var.safe_name, plot_pot);
 	N_bdt_bnb = file->tvertex->GetEntries(bnbcut.c_str())*plot_pot/file->pot*file->scale_data;
 
-	if(true){
+	if(false){
 		file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]",bnbcut.c_str());
 	}
 
@@ -112,6 +117,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 		s_reco_truth_sel->Draw("hist");
 		std::cout<<"Drawn."<<std::endl;
 
+		
+std::cout<<"1"<<std::endl;
 		s_reco_truth_sel->GetXaxis()->SetTitle(var.unit.c_str());
 		s_reco_truth_sel->GetYaxis()->SetTitle("Verticies");
 		s_reco_truth_sel->GetYaxis()->SetTitleOffset(1.5);
@@ -127,6 +134,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 		l_reco_truth_sel->SetLineWidth(0);
 	
 
+std::cout<<"2"<<std::endl;
 
 		//******************* pre	*************************
 		c_reco_truth->cd(2);
@@ -164,6 +172,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 		l_reco_truth_pre->SetLineWidth(0);
 	
 
+std::cout<<"3"<<std::endl;
 
 		//******************* cosmic bdt	*************************
 		c_reco_truth->cd(3);
@@ -226,6 +235,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 			ibdt2++;
 		}	
 
+std::cout<<"5"<<std::endl;
 		s_reco_truth_bdt2->Draw("hist");
 
 		s_reco_truth_bdt2->GetXaxis()->SetTitle(var.unit.c_str());
