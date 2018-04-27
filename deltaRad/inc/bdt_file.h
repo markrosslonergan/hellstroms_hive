@@ -75,6 +75,9 @@ struct bdt_file{
 
 		TFile *f;
 		TTree *tvertex;
+		//copy tvertex into topovertex, but with topological cut.
+		TTree *topovertex;
+
 		TTree *tevent;
 		TTree *tpot;
 
