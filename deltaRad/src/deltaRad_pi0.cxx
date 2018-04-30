@@ -34,6 +34,7 @@ int main (int argc, char *argv[]){
 	// Just some simple argument things
 	//===========================================================================================
 	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
+    std::string sample_dir_mcc88 = dir+"samples/mcc88";
 
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
@@ -116,27 +117,29 @@ int main (int argc, char *argv[]){
 	
 
 	// Our signal definition alongside any base cuts we want to make
-	std::string base_cuts = "reco_asso_showers == 2 && reco_asso_tracks " + num_track_cut;
-	std::string cosmic_base_cuts = "reco_asso_showers == 2 && reco_asso_tracks " + num_track_cut;
-        //Signal: NC interaction, two photons from parent pi0, BNB interaction
-	std::string signal_definition = "ccnc==1 && true_shower_pdg[most_energetic_shower_index]==22 && true_shower_parent_pdg[most_energetic_shower_index]==111 && true_shower_origin[most_energetic_shower_index]==1";
-	//std::string signal_definition = "ccnc==1 &&true_shower_parent_pdg[second_most_energetic_shower_index]==111&& true_shower_parent_pdg[most_energetic_shower_index]==111&& true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1";
+    // UPDATE 4/30/18: base cuts now done externally in attempt to work
+    // around array issue. Cuts kept here to avoid code breaking
+	std::string base_cuts = "1";
+	std::string cosmic_base_cuts = "1";
+
+    //Signal: NC interaction, two photons from parent pi0, BNB interaction
+	std::string signal_definition = "ccnc==1 &&true_shower_parent_pdg[second_most_energetic_shower_index]==111&& true_shower_parent_pdg[most_energetic_shower_index]==111&& true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1";
 	std::string background_definition = "!(" + signal_definition + ")";
 
 	
 	//This is a particular cut flow that a file will undergo. I.e base cuts, precuts, postcuts, and then the name of the Cosmic BDT and bnb bdt
-	bdt_flow signal_flow( base_cuts, signal_definition,	    new_precuts,     "1", 	    cosmic_bdt_info, bnb_bdt_info);
-	bdt_flow cosmic_flow( cosmic_base_cuts, "1",  			            new_precuts,     "1", 	    cosmic_bdt_info, bnb_bdt_info);
-	bdt_flow bkg_flow(    base_cuts, background_definition,    new_precuts,     "1",		cosmic_bdt_info, bnb_bdt_info);
-	bdt_flow data_flow(   base_cuts ,	"1", 			                new_precuts,     "1",		cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow signal_flow( base_cuts,        signal_definition,	    new_precuts, "1", cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow cosmic_flow( cosmic_base_cuts, "1",  			        new_precuts, "1", cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow bkg_flow(    base_cuts,        background_definition,  new_precuts, "1", cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow data_flow(   base_cuts ,	    "1", 			        new_precuts, "1", cosmic_bdt_info, bnb_bdt_info);
 
 	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
-	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc87", "vertexed_ncpi0cosmic_mcc88_v1.0.root", "NCpi0Pure",	 "hist", "",  kBlue-4,  signal_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc87", "vertexed_ncpi0cosmic_mcc88_v1.0.root", "NCpi0Cosmics", "hist", "",  kBlue-4,  signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(   dir+"samples/mcc87", "vertexed_bnbcosmic_mcc88_v2.0.root",	 "BNBPure",	     "hist", "",  kRed-6,   bkg_flow);
-	bdt_file *bnb_cosmics = new bdt_file(   dir+"samples/mcc87", "vertexed_bnbcosmic_mcc88_v2.0.root",   "BNBCosmics",   "hist", "",  kRed-6,   bkg_flow);
-	bdt_file *intime = new bdt_file(        dir+"samples/mcc87", "vertexed_intime_v2.0_mcc88.root" ,     "IntimeCosmics","hist", "",  kGreen-3, cosmic_flow);
-	    // Data files
+	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0cosmic_mcc88_v1.0_PRECUT_2g1p.root", "NCpi0Pure",	 "hist", "",  kBlue-4,  signal_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0cosmic_mcc88_v1.0_PRECUT_2g1p.root", "NCpi0Cosmics", "hist", "",  kBlue-4,  signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(   dir+"samples/mcc88", "vertexed_bnbcosmic_mcc88_v2.0_PRECUT_2g1p.root",	 "BNBPure",	     "hist", "",  kRed-6,   bkg_flow);
+	bdt_file *bnb_cosmics = new bdt_file(   dir+"samples/mcc88", "vertexed_bnbcosmic_mcc88_v2.0_PRECUT_2g1p.root",   "BNBCosmics",   "hist", "",  kRed-6,   bkg_flow);
+	bdt_file *intime = new bdt_file(        dir+"samples/mcc88", "vertexed_intime_v4.0_mcc88_PRECUT_2g1p.root" ,     "IntimeCosmics","hist", "",  kGreen-3, cosmic_flow);
+	// Data files
 	bdt_file *data5e19 = new bdt_file(dir+"samples/data",   "vertexed_data5e19_v10.root",      "Data5e19", "hist ep", "", kBlack, data_flow);
 	bdt_file *bnbext = new bdt_file(  dir+"samples/bnbext", "vertexed_bnbext_mcc88_v8.0.root", "BNBext",   "hist ep", "", kBlack, data_flow);
 
