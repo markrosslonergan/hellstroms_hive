@@ -19,7 +19,6 @@
 #include "TMVA/Reader.h"
 
 struct bdt_app_tree_struct {
-
 	TTree * tree;
 	int is_delta_rad;
 	int true_nu_vtx_fid_contained;
@@ -28,7 +27,6 @@ struct bdt_app_tree_struct {
 	double summed_associated_reco_shower_energy;
 	bdt_app_tree_struct(std::string const & tree_name, bool const extra = true);
 	~bdt_app_tree_struct();
-
 };
 
 

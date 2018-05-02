@@ -71,6 +71,8 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 	//TTreeFormula * tf = new TTreeFormula("tf", cut.c_str(), tree);
 	TTreeFormula * tf_topological = new TTreeFormula("tf_top", flow.topological_cuts.c_str(), tree);
 	TTreeFormula * tf_definition = new TTreeFormula("tf_def", flow.definition_cuts.c_str(), tree);
+    std::cout << "Toplogical cuts: " << flow.topological_cuts.c_str() << std::endl;
+    std::cout << "Definition cuts: " << flow.definition_cuts.c_str() << std::endl;
 
 	for(method_struct const & method : methods) {
 		reader->BookMVA(method.str.c_str(), ("BDTxmls_"+identifier+"/weights/"+identifier+"_"+method.str+".weights.xml").c_str());

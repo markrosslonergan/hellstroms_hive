@@ -123,7 +123,7 @@ int main (int argc, char *argv[]){
 	std::string cosmic_base_cuts = "1";
 
     //Signal: NC interaction, two photons from parent pi0, BNB interaction
-	std::string signal_definition = "ccnc==1 &&true_shower_parent_pdg[second_most_energetic_shower_index]==111&& true_shower_parent_pdg[most_energetic_shower_index]==111&& true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1";
+	std::string signal_definition = "ccnc==1 && true_shower_parent_pdg[most_energetic_shower_index]==111 && true_shower_parent_pdg[second_most_energetic_shower_index]==111 && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1";
 	std::string background_definition = "!(" + signal_definition + ")";
 
 	
