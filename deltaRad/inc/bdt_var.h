@@ -36,8 +36,8 @@ struct bdt_variable{
 		bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack, std::string intype) : 
 			name(inname), 
 			binning(inbin),
-			is_track(intrack),
 			unit(inunit),
+			is_track(intrack),
 			type(intype)
 		{
 			safe_name = name;

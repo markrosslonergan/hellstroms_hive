@@ -8,6 +8,8 @@
 
 int main(int const argc, char const * argv[]) {
 
+  //example: ./src/RunEvaluateVertexQuality ~/rootfiles/vertex_quality/bnb_cosmic_large/* ~/rootfiles/vertex_quality/RunVertexQualityPandoraBNB.root
+
   time_t start = time(0);
 
   if(argc < 2) {
@@ -22,10 +24,10 @@ int main(int const argc, char const * argv[]) {
   evq.SetOutputFile("RunEvaluateVertexQuality.root");
 
   std::vector<std::string> const method = {"max"};
-  //std::vector<std::string> const metrics_to_draw = {"track_cleanliness", "track_completeness", "shower_completeness", "shower_cleanliness"};
-  std::vector<std::string> const metrics_to_draw = {"completeness", "cleanliness", "combined"};
-  //std::vector<std::string> const parameters = {"shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"};
-  std::vector<std::string> const parameters = {"shower_prox"};
+  std::vector<std::string> const metrics_to_draw = {"track_cleanliness", "track_completeness", "shower_completeness", "shower_cleanliness"};
+  //std::vector<std::string> const metrics_to_draw = {"completeness", "cleanliness", "combined"};
+  std::vector<std::string> const parameters = {"shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"};
+  //std::vector<std::string> const parameters = {"shower_prox"};
   //std::vector<std::string> const performance_quantity = {"mean", "ratio_eq_1"};
   std::vector<std::string> const performance_quantity = {"ratio_eq_1"};
 
