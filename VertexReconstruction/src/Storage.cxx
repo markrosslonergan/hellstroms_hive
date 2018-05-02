@@ -434,7 +434,7 @@ void Storage::ProcessPotChain() {
     fpot += pot;
   }
 
-  if(total_number_of_events != fnumber_of_events) std::cout << "WARNING: number of events in POT tree: " << total_number_of_events << " != number of events in event tree: " << fnumber_of_events << ", don't trust POT\n";
+  if(total_number_of_events != fnumber_of_events) std::cout << "WARNING: number of events in POT tree: " << total_number_of_events << " != number of events in event tree: " << fnumber_of_events << ", don't trust POT: " << fpot << "\n";
 
 }
 
