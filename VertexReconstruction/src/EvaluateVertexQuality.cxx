@@ -751,7 +751,6 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 	    graph->Draw("ap");
 	    graph->SetTitle(title.c_str());
 	    
-	    /*
 	    std::string const & performance_quantity = fvq.GetPerformanceQuantities().at(pq.second);
 	    auto const ytm_it = fytitle_map.find(performance_quantity);
 	    if(ytm_it == fytitle_map.end()) {
@@ -761,9 +760,7 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 	    else {
 	      graph->GetYaxis()->SetTitle(ytm_it->second.c_str());
 	    }
-	    */
 
-	    graph->GetYaxis()->SetTitle("");
 	    graph->GetYaxis()->CenterTitle();
 
 	    first_graph = graph;
