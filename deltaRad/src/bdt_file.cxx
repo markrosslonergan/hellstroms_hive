@@ -33,8 +33,8 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	tvertex = (TTree*)f->Get(tnam.c_str());
 	//tevent = (TTree*)f->Get(tnam_event.c_str());
 	std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
-	topovertex = (TTree*)tvertex->CopyTree(flow.topological_cuts.c_str());
-	std::cout<<"Copied to topological tree: "<<topovertex->GetEntries()<<std::endl;
+	//topovertex = (TTree*)tvertex->CopyTree(flow.topological_cuts.c_str());
+	//std::cout<<"Copied to topological tree: "<<topovertex->GetEntries()<<std::endl;
 
 	double potbranch = 0;
 	int  numbranch = 0;
