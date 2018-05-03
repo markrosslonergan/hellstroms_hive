@@ -45,7 +45,7 @@ int main(int const argc, char const * argv[]) {
   vrana->RunPandora();
   vrana->GetPOT();
   vrana->RunFillTreeVariables();
-  vrana->RunVerticesPerEvent();
+  //vrana->RunVerticesPerEvent();
   
 
   processor.AddAnalyzer(vrana);
