@@ -19,8 +19,12 @@ bdt_app_tree_struct::~bdt_app_tree_struct() {
 void bdt_app_update_formula( std::vector<TTreeFormula*> & tfv, std::vector<float *> & rvv) {
 
 	for(size_t i = 0; i < tfv.size(); ++i) {
+		 //This line must be here. see https://sft.its.cern.ch/jira/browse/ROOT-7465
+		 tfv.at(i)->GetNdata();
+
 		*rvv.at(i) = tfv.at(i)->EvalInstance();
 	}
+	  
 }
 
 void bdt_app_update(void_vec const & tvv, std::vector<float *> & rvv) {
@@ -67,12 +71,35 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 		reader->AddVariable(p.name.c_str(), reader_var_v.back());
 	}
 
+	/*
+	int shr1_index = 0;
+	int shr2_index = 0;
+	float f1 =0;
+	float f2=0;
+
+	int oshr1_index = 0;
+	int oshr2_index = 0;
+	std::vector<int> *of =0;
+        TBranch *bvpx = 0;
+
+	TTreeFormula *t1 = new TTreeFormula("i1","most_energetic_shower_index",tree);
+	TTreeFormula *t2 = new TTreeFormula("i2","second_most_energetic_shower_index",tree);
+
+	TTreeFormula *t3 = new TTreeFormula("i3","true_shower_parent_pdg[most_energetic_shower_index]",tree);
+	TTreeFormula *t4 = new TTreeFormula("i4","true_shower_parent_pdg[second_most_energetic_shower_index]",tree);
+
+	std::cout<<"GetNdata: "<<t3->GetNdata()<<" "<<t4->GetNdata()<<std::endl;
+	
+	tree->SetBranchAddress("most_energetic_shower_index",&oshr1_index);	
+	tree->SetBranchAddress("second_most_energetic_shower_index",&oshr2_index);	
+	tree->SetBranchAddress("true_shower_parent_pdg",&of,&bvpx);
+	*/
 
 	//TTreeFormula * tf = new TTreeFormula("tf", cut.c_str(), tree);
 	TTreeFormula * tf_topological = new TTreeFormula("tf_top", flow.topological_cuts.c_str(), tree);
 	TTreeFormula * tf_definition = new TTreeFormula("tf_def", flow.definition_cuts.c_str(), tree);
-    std::cout << "Toplogical cuts: " << flow.topological_cuts.c_str() << std::endl;
-    std::cout << "Definition cuts: " << flow.definition_cuts.c_str() << std::endl;
+        std::cout << "Toplogical cuts: " << flow.topological_cuts.c_str() << std::endl;
+        std::cout << "Definition cuts: " << flow.definition_cuts.c_str() << std::endl;
 
 	for(method_struct const & method : methods) {
 		reader->BookMVA(method.str.c_str(), ("BDTxmls_"+identifier+"/weights/"+identifier+"_"+method.str+".weights.xml").c_str());
@@ -87,17 +114,32 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
             if(i%25000==0){
                 std::cout<<i<<"/"<<N<<std::endl;
             }
+	
+	
+	   /* std::cout<<"TTreeFormula:\t"<<t1->EvalInstance()<<" "<<t2->EvalInstance()<<" "<<t3->EvalInstance()<<" "<<t4->EvalInstance()<<std::endl;	
+	    std::cout<<"DIRECT:\t\t"<<oshr1_index<<" "<<oshr2_index<<" "<<of->at(oshr1_index)<<" "<<of->at(oshr2_index)<<std::endl;	
+	
+	    if(t3->EvalInstance() == 111 && t4->EvalInstance() == 111){
+		std::cout<<"Should Pass: check next line"<<std::endl;
+	    }
+	   */
+
+	    //These two lines must be here. or FAIL. see https://sft.its.cern.ch/jira/browse/ROOT-7465
+	    tf_topological->GetNdata();
+	    tf_definition->GetNdata();
+
             if(tf_topological->EvalInstance()) {
-                bdt_app_update_formula(tree_formulas_v, reader_var_v);
+            	bdt_app_update_formula(tree_formulas_v, reader_var_v);
             
                 if(tf_definition->EvalInstance()) {
+		//std::cout<<"Pass Defin"<<std::endl;
                     ts.mva = reader->EvaluateMVA(method.str.c_str());
                     passed++;
                 }
             }
             ts.tree->Fill();
         }
-		ts.tree->Write();
+	ts.tree->Write();
         std::cout << "Number of events passed: " << passed << std::endl;
     }
         /*

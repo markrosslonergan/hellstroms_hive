@@ -36,6 +36,8 @@ int main (int argc, char *argv[]){
 	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
     std::string sample_dir_mcc88 = dir+"samples/mcc88";
 
+	dir = "/uboone/app/users/markrl/single_photon_fresh_13April/working_dir/hellstroms_hive/";
+
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
@@ -122,8 +124,8 @@ int main (int argc, char *argv[]){
 	std::string base_cuts = "1";
 	std::string cosmic_base_cuts = "1";
 
-    //Signal: NC interaction, two photons from parent pi0, BNB interaction
-	std::string signal_definition = "ccnc==1 && true_shower_parent_pdg[most_energetic_shower_index]==111 && true_shower_parent_pdg[second_most_energetic_shower_index]==111 && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1";
+    	//Signal: NC interaction, two photons from parent pi0, BNB interaction
+	std::string signal_definition = "ccnc==1 && true_shower_parent_pdg[most_energetic_shower_index]==111 && true_shower_parent_pdg[second_most_energetic_shower_index]==111 && true_shower_origin[0]==1 && true_shower_origin[1]==1 ";
 	std::string background_definition = "!(" + signal_definition + ")";
 
 	
@@ -224,6 +226,8 @@ int main (int argc, char *argv[]){
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
+	
+	
 
 
 	/*
@@ -265,11 +269,12 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		//std::vector<bdt_file*> app_files = {data5e19,bnbext,signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
 		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
 		bdt_app(bnb_bdt_info, app_files, vars, TMVAmethods);
+
 	}else if(mode_option == "app_cosmic"){
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
 
 		//std::vector<bdt_file*> app_files = {data5e19,bnbext,signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
-		std::vector<bdt_file*> app_files = {signal_pure, bnb_pure, intime, signal_cosmics, bnb_cosmics}; 
+		std::vector<bdt_file*> app_files = {signal_pure}; 
 		bdt_app(cosmic_bdt_info, app_files, vars, TMVAmethods);
 	}
 
