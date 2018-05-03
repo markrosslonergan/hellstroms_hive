@@ -34,9 +34,6 @@ int main (int argc, char *argv[]){
 	// Just some simple argument things
 	//===========================================================================================
 	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
-    std::string sample_dir_mcc88 = dir+"samples/mcc88";
-
-	dir = "/uboone/app/users/markrl/single_photon_fresh_13April/working_dir/hellstroms_hive/";
 
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
