@@ -120,15 +120,22 @@ int main (int argc, char *argv[]){
 	// X 0 to 256 Y -117 to 117 Z 0 to 1036
 	// 10 cm from all sides, and 20cm from the top.
 	std::string fiducial_vertex = "reco_nuvertx > 10 && reco_nuvertx < 246 && reco_nuverty > -107 && reco_nuverty < 97 && reco_nuvertz > 10 && reco_nuvertz < 1026 ";
+	std::string fiducial_shower_start = "reco_shower_startx[0] > 10 && reco_shower_startx[0] < 246 && reco_shower_starty[0] > -107 && reco_shower_starty[0] < 97 && reco_shower_startz[0] > 10 && reco_shower_startz[0] < 1026";
+	std::string fiducial_shower_end = "reco_shower_startx[0]+reco_shower_dirx[0]*reco_shower_length[0] > 10 && reco_shower_startx[0]+reco_shower_dirx[0]*reco_shower_length[0] < 246 && reco_shower_starty[0]+reco_shower_diry[0]*reco_shower_length[0] > -107 && reco_shower_starty[0]+reco_shower_diry[0]*reco_shower_length[0] < 97 && reco_shower_startz[0]+reco_shower_dirz[0]*reco_shower_length[0] > 10 && reco_shower_startz[0]+reco_shower_dirz[0]*reco_shower_length[0] < 1026";
+	std::string fiducial_track_start = "reco_nuvertx[0] > 10 && reco_nuvertx[0] < 246 && reco_nuverty[0] > -107 && reco_nuverty[0] < 97 && reco_nuvertz[0] > 10 && reco_nuvertz[0] < 1026";
+	std::string fiducial_track_end = "reco_nuvertx[0]+reco_track_dirx[0]*reco_track_displacement[0] > 10 && reco_nuvertx[0]+reco_track_dirx[0]*reco_track_displacement[0] < 246 && reco_nuverty[0]+reco_track_diry[0]*reco_track_displacement[0] > -107 && reco_nuverty[0]+reco_track_diry[0]*reco_track_displacement[0] < 97 && reco_nuvertz[0]+reco_track_dirz[0]*reco_track_displacement[0] > 10 && reco_nuvertz[0]+reco_track_dirz[0]*reco_track_displacement[0] < 1026";
+
+	std::string fiducial_cut = fiducial_vertex;//+"&&"+fiducial_shower_start+"&&"+fiducial_shower_end;
 
 	std::string new_precuts;
 	std::string num_track_cut = "==1";
 	if(istrack == "track"){
-		new_precuts =  "track_info.reco_track_mean_dEdx[0] > 1 && reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 20 && shortest_asso_shower_to_vert_dist > 2 && reco_track_displacement[0] < 100 &&  reco_shower_helper_energy[0] > 0.1 && track_info.reco_track_good_calo[0]>0 && shortest_asso_shower_to_vert_dist < 64 && reco_shower_opening_angle[0]> 0.1 && "+ fiducial_vertex;
+		//fiducial_cut =  fiducial_cut +"&&"+ fiducial_track_start+"&&"+fiducial_track_end;
+		new_precuts =  "reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 2 && reco_track_displacement[0] < 100 &&  reco_shower_helper_energy[0] > 0.05 && track_info.reco_track_good_calo[0]>0 && "+ fiducial_cut;
 		num_track_cut = "== 1";
 
 	}else if(istrack == "notrack"){
-		new_precuts = "reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 20 && reco_shower_opening_angle > 0.1 && reco_shower_helper_energy[0] > 0.1 &&" + fiducial_vertex;
+		new_precuts = "reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 10 && reco_shower_helper_energy[0] > 0.05 &&" + fiducial_cut;
 		num_track_cut = "== 0";
 	}
 
