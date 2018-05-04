@@ -42,10 +42,10 @@ int main(int const argc, char const * argv[]) {
 		      "simpleFlashBeam",
 		      //"swtrigger");
 		      "daq");
-  //vrana->RunPandora();
+  vrana->RunPandora();
   vrana->GetPOT();
   vrana->RunFillTreeVariables();
-
+  //vrana->RunVerticesPerEvent();
   
 
   processor.AddAnalyzer(vrana);
