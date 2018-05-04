@@ -124,11 +124,11 @@ int main (int argc, char *argv[]){
 	std::string new_precuts;
 	std::string num_track_cut = "==1";
 	if(istrack == "track"){
-		new_precuts =  "track_info.reco_track_mean_dEdx[0] > 1 && reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 20 && shortest_asso_shower_to_vert_dist > 2 && reco_track_displacement[0] < 100 &&  reco_shower_helper_energy[0] > 0.1 && track_info.reco_track_good_calo[0]>0 && shortest_asso_shower_to_vert_dist < 64 && reco_shower_opening_angle[0]> 0.1 && "+ fiducial_vertex;
+		new_precuts =  "reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 2 && reco_track_displacement[0] < 100 &&  reco_shower_helper_energy[0] > 0.05 && track_info.reco_track_good_calo[0]>0 && "+ fiducial_vertex;
 		num_track_cut = "== 1";
 
 	}else if(istrack == "notrack"){
-		new_precuts = "reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 20 && reco_shower_opening_angle > 0.1 && reco_shower_helper_energy[0] > 0.1 &&" + fiducial_vertex;
+		new_precuts = "reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 10  && reco_shower_helper_energy[0] > 0.05 &&" + fiducial_vertex;
 		num_track_cut = "== 0";
 	}
 
@@ -157,7 +157,7 @@ int main (int argc, char *argv[]){
 	}
 
 	if(mode_option == "datamc"){
-		new_precuts = new_precuts + "&& totalpe_ibg_sum > 20";
+		//new_precuts = new_precuts + "&& totalpe_ibg_sum > 20";
 	}
 
 	// takes 5 arguments ( 
@@ -187,10 +187,10 @@ int main (int argc, char *argv[]){
 	//Data files
 	bdt_file *overlay = new bdt_file(dir2+"samples/vectored/", "vertexed_overlay_mcc88_v1.0.root",	"BNBOverlay",	   "hist","",  kMagenta-3, bkg_flow);
 	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_mcc8.9_fresh_v2.0.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
-	bdt_file *bnbext    = new bdt_file(dir2+"samples/vectored/", "vertexed_bnbext_mcc88_v8.0.root",	"BNBext",	"E1p","",  kBlack, data_flow);
+	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_mcc8.9_fresh_v1.0.root",	"BNBext",	"E1p","",  kBlack, data_flow);
 
 	//std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime, data5e19,bnbext};
-	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime, data5e19};
+	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime, data5e19, bnbext};
 
 	signal_pure->scale_data = 3.1;
 	signal_cosmics->scale_data = 3.1;
@@ -319,6 +319,26 @@ int main (int argc, char *argv[]){
 		//	vars.push_back(bdt_variable("pi0_info.pi0_class_number","(52,-1,50)","Pi0 Class Number",false,"i"));
 	}
 
+	std::vector<bdt_variable> vars2;
+	if(mode_option == "vars" || mode_option == "stack"){
+		vars2.push_back(bdt_variable("reco_shower_startx[0]","(50,0,250)"," Shower Start X pos [cm]",false,"d"));
+		vars2.push_back(bdt_variable("reco_shower_starty[0]","(50,-110,+110)","Shower Start Y pos [cm]",false,"d"));
+		vars2.push_back(bdt_variable("reco_shower_startz[0]","(50,0,1050)","Shower Start Z pos [cm]",false,"d"));
+	
+		vars2.push_back(bdt_variable("reco_shower_startx[0] + reco_shower_dirx[0]*reco_shower_length[0]","(50,0,250)"," Shower End X pos [cm]",false,"d"));
+		vars2.push_back(bdt_variable("reco_shower_starty[0] + reco_shower_diry[0]*reco_shower_length[0]","(50,-110,+110)","Shower End Y pos [cm]",false,"d"));
+		vars2.push_back(bdt_variable("reco_shower_startz[0] + reco_shower_dirz[0]*reco_shower_length[0]","(50,0,1050)","Shower End Z pos [cm]",false,"d"));
+		
+	}
+
+
+	if(mode_option == "recomc"){
+
+		vars2.push_back(bdt_variable("reco_true_nuvert_dist","(50,0,450)","Distance from Reco to Truth Vertex [cm]",false,"d"));
+	
+
+	}	
+
 
 	//This batch appears to be nan or inf a lot
 	//vars.push_back(bdt_variable("most_energetic_shower_reco_thetaxz","(25,-1.7,1.7)","Shower Angle xy [rad]",false));
@@ -430,6 +450,9 @@ int main (int argc, char *argv[]){
 		//plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
 
 
+
+
+
 		if(false){
 			if(run_cosmic){
 				test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable(cosmic_bdt_info) , fcoscut,fbnbcut);
@@ -444,9 +467,10 @@ int main (int argc, char *argv[]){
 		}
 
 		int h=0;
-		for(auto &v:vars){
+		for(auto &v:vars2){
+			test.setRebin(false);
 			if(v.name == "pi0_info.num_reco_showers_within_10cm_vertex") test.setRebin(false);
-			//test.plot_recomc(ftest, signal_cosmics, v, fcoscut, fbnbcut);
+			test.plot_recomc(ftest, signal_cosmics, v, fcoscut, fbnbcut);
 			test.plot_recomc(ftest, bnb_cosmics, v, fcoscut, fbnbcut);
 			if(v.name == "pi0_info.num_reco_showers_within_10cm_vertex") test.setRebin(true);
 			h++;
@@ -463,21 +487,21 @@ int main (int argc, char *argv[]){
 
 
 	}else if(mode_option == "stack"){
-
 		bdt_stack obs(istrack+"_stack");
 		obs.addToStack(signal_cosmics);
 		obs.addToStack(bnb_cosmics);
 		obs.addToStack(intime);
+
+		int ip=0;
+		for(auto &v:vars2){
+			ip++;
+			obs.plotStacks(ftest,  v ,fcoscut,fbnbcut);
+		}
+
+			return 0;
 		obs.plotBDTStacks(ftest, bnb_bdt_info, fcoscut, fbnbcut);
 		obs.plotBDTStacks(ftest, cosmic_bdt_info, fcoscut, fbnbcut);
 		return 0;
-
-		int ip=0;
-		for(auto &v:vars){
-			ip++;
-			obs.plotStacks(ftest,  vars.at(1) ,fcoscut,fbnbcut);
-			return 0;
-		}
 
 	}else if(mode_option == "datamc"){
 
@@ -499,23 +523,25 @@ int main (int argc, char *argv[]){
 
 		int ip=0;
 		for(auto &v:vars){
+			break;
 			ip++;
 			bdt_datamc tdatamc(data5e19, obs, istrack);	
-			//bdt_datamc tdatamc2(bnbext, obs2);	
+			bdt_datamc tdatamc2(bnbext, obs2, istrack);	
 			//bdt_datamc tdatamc3(overlay, obs3);	
-			tdatamc.plotStacks(ftest,  vars.at(21) ,fcoscut,fbnbcut);
-			//tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
+			tdatamc.plotStacks(ftest,  v ,fcoscut,fbnbcut);
+			tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
 			//tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
 			return 0;
 		}
+		
 		bdt_datamc datamc(data5e19, obs, istrack);	
-		//bdt_datamc datamc2(bnbext, obs2);	
+		bdt_datamc datamc2(bnbext, obs2, istrack);	
 		//bdt_datamc datamc3(overlay, obs3);	
 
 		datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
 		datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-		//	datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-		//	datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+		datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+		datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 		//datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
 		//datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 

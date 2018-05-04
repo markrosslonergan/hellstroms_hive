@@ -76,41 +76,41 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	}
 	if(tag == "Data5e19"){
 		leg = "lp";
-		double Nworked = 189578;// pot_tree->Scan() 
-		double Nsamweb = 191131;// samweb list-definition-files XXX --summary --fileinfo
-
-		std::cout<<"--> POT is data: From Zarkos tool..";
-		//4.885e+19
-		//4.879e+19
-		//4.932e+19
-		//4.938e+19
-		pot = 4.879e+19*Nworked/Nsamweb; 
+		pot = 4.79e19;// tor860_wcut
 		std::cout<<"--> value: "<<pot<<std::endl;
 	}
 	if(tag == "BNBext"){
+		std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
+		tpot = (TTree*)f->Get(tnam_pot.c_str());
+		tpot->SetBranchAddress("number_of_events", &numbranch);
+		tpot->SetBranchAddress("pot",&potbranch);
+
+		std::cout<<"Set the POT branch"<<std::endl;
+		int tmpnum = 0;
+		double tmppot=0;
+		for(int i=0; i<tpot->GetEntries(); i++){
+			tpot->GetEntry(i);
+			tmpnum += (double)numbranch;
+		}
+		numberofevents = tmpnum;
+		std::cout<<"BNBEXT number of events: "<<numberofevents<<std::endl;
+
+
 		leg = "lp";
 		double sca = 1.23;//from 1.23
 		//https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
 
-		double exta=38713062.0;
-		double extb=581923.0;
-
-		double spill=10893847.0; 
-
-		double Nworked = 852486.0;
-		double Nsamweb = 463273 + 521026;
+		double ext=47613881.0; //External spills in each sample (EXT)
+		double spill_on=10677928.0;//This number in data zarko  (E1DCNT_wcut)
 
 
-		//data
-		double NworkedD = 190991.0;
-		double NsamwebD = 191131.0;
-		double datanorm = 4.879e+19*NworkedD/NsamwebD; //7131/13671;// 376954.0/382718.0;//7131/13671;
+		double datanorm =4.79e19;// rot860_wcut run-subrunlist;
 
-		double mod = 5.0/9.0*spill/(exta);//spill/(exta+extb);
+		double mod = spill_on/ext;
 
 
 		std::cout<<"--> POT is data: From Zarkos tool..";
-		pot =datanorm/mod*Nworked/Nsamweb; //7131/13671;// 376954.0/382718.0;//7131/13671;
+		pot =datanorm/mod;
 		std::cout<<"--> value: "<<pot<<std::endl;
 
 	}

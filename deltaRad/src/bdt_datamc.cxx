@@ -62,10 +62,10 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		pad0top->cd();               // pad2top becomes the current pad
 
 		double rmin = 0;
-		double rmax = 2;
+		double rmax = 3;
 		int data_rebin = 1;
 		if(k==0 || k == 1){
-			rmin=0.5; rmax = 1.49;
+			rmin=0.25; rmax = 1.749;
 		}else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=4;};
 		
 
@@ -123,8 +123,11 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		TH1* ratpre = (TH1*)data_th1s.at(k)->Clone(("ratio_"+stage_name.at(k)).c_str());
 		vec_th1s.at(k)->Rebin(data_rebin);
 		ratpre->Divide(vec_th1s.at(k));		
-		ratpre->SetFillColor(kYellow);
-		ratpre->Draw("E1");	
+		ratpre->SetFillColor(kGray+1);
+		ratpre->SetMarkerStyle(2);
+		ratpre->SetFillStyle(3144);
+		ratpre->Draw("E2");	
+
 
 		TLine *line = new TLine(ratpre->GetXaxis()->GetXmin(),1.0,ratpre->GetXaxis()->GetXmax(),1.0 );
 		line->Draw("same");
@@ -134,7 +137,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		ratpre->GetXaxis()->SetTitleOffset(title_offset_ratioX);
 		ratpre->GetYaxis()->SetTitleOffset(title_offset_ratioY);
 		ratpre->SetMinimum(rmin);	
-		ratpre->SetMaximum(ratpre->GetMaximum()*1.1);
+		ratpre->SetMaximum(rmax);//ratpre->GetMaximum()*1.1);
 		ratpre->GetYaxis()->SetTitleSize(title_size_ratio);
 		ratpre->GetXaxis()->SetTitleSize(title_size_ratio);
 		ratpre->GetYaxis()->SetLabelSize(label_size_ratio);
@@ -274,8 +277,10 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		TH1* ratpre = (TH1*)data->Clone(("ratio_"+stage_name.at(k)).c_str());
 
 		ratpre->Divide(summed);		
-		ratpre->SetFillColor(kYellow);
-		ratpre->Draw("E1");	
+		ratpre->SetFillColor(kGray+1);
+		ratpre->SetMarkerStyle(2);
+		ratpre->SetFillStyle(3144);
+		ratpre->Draw("E2");	
 
 		TLine *line = new TLine(ratpre->GetXaxis()->GetXmin(),1.0,ratpre->GetXaxis()->GetXmax(),1.0 );
 		line->Draw("same");
