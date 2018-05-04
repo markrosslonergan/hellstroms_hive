@@ -103,7 +103,7 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
 		hist->GetYaxis()->SetTitle("Verticies");
 
-		std::cout<<"HAT: "<<stack.at(t)->tag<<std::endl;
+		std::cout<<"HAT: "<<level<<" "<<stack.at(t)->tag<<std::endl;
 		for(int k=1; k< hist->GetNbinsX(); k++){
 			std::cout<<hist->GetBinContent(k)<<" ";
 		}
@@ -227,7 +227,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		
 
 		cobs->Write();
-		cobs->SaveAs(("stack/"+var.safe_unit+".pdf").c_str(),"pdf");
+		cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+".pdf").c_str(),"pdf");
 		//cobs->SaveAs(("stack/"+var.name+".png").c_str(),"png");
 
 	return 0;
@@ -362,7 +362,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		
 
 		cobs->Write();
-		cobs->SaveAs(("stack/response_"+var.safe_unit+".pdf").c_str(),"pdf");
+		cobs->SaveAs(("stack/"+this->name+ "_response_"+var.safe_unit+".pdf").c_str(),"pdf");
 
 	return 0;
 }

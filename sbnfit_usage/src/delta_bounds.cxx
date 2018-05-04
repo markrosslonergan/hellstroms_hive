@@ -136,9 +136,9 @@ int main(int argc, char* argv[])
 	//SBNspec delta_spec("../../delta_BDT_onebin", xml);
 
 
-	SBNspec delta_spec("../../delta_BDT_new", xml);
+	SBNspec delta_spec("../../delta_BDT_comb", xml);
 	delta_spec.calcFullVector();
-	delta_spec.ScaleAll(POTscale/3.1);
+	delta_spec.Scale("signal",POTscale/3.1);
 	delta_spec.calcFullVector();
 
 	SBNspec bkg_spec = delta_spec;
@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
 
 	bool printed = false;
 
-	double modmax=20;
+	double modmax=14;
 	if(pot==19){
 		modmax=62;
 	}
@@ -245,7 +245,7 @@ int main(int argc, char* argv[])
 		vec_CLmine.at(i).push_back(0);
 	}
 
-	TFile *f = new TFile("bound.root","recreate");
+	TFile *f = new TFile("bound_90_root.root","recreate");
 	
 	//*************************************************
 	//CLs
@@ -289,19 +289,19 @@ int main(int argc, char* argv[])
 	TLine * l3 = new TLine(3.0, 0.001, 3.0,1);  l3->SetLineStyle(1);l3->SetLineColor(kBlack); 	
 	l3->SetLineWidth(2);
 
-	TText *t3 = new TText(2.2, 0.008,"LEE (x3)"); t3->SetTextColor(kBlack);//t90->SetTextSize(0.12);
+	TText *t3 = new TText(2.6, 0.008,"LEE (x3)"); t3->SetTextColor(kBlack);//t90->SetTextSize(0.12);
 	t3->SetTextAngle(-90);
 	t3->Draw();
 	l3->Draw();
 	
 
-	TLine * l90 = new TLine(1, 0.1, modmax-4,  0.1); l90->SetLineStyle(1);l90->SetLineColor(kRed);
-	TLine * l95 = new TLine(1, 0.05, modmax-4, 0.05);l95->SetLineStyle(2);l95->SetLineColor(kRed);
-	TLine * l99 = new TLine(1, 0.01, modmax-4, 0.01);l99->SetLineStyle(3);l99->SetLineColor(kRed);
+	TLine * l90 = new TLine(1, 0.1, modmax-1,  0.1); l90->SetLineStyle(1);l90->SetLineColor(kRed);
+	TLine * l95 = new TLine(1, 0.05, modmax-1, 0.05);l95->SetLineStyle(2);l95->SetLineColor(kRed);
+	TLine * l99 = new TLine(1, 0.01, modmax-1, 0.01);l99->SetLineStyle(3);l99->SetLineColor(kRed);
 
-	TText *t90 = new TText(modmax-8, 0.1*0.9,"90\% C.L"); t90->SetTextAlign(13); t90->SetTextColor(kRed);//t90->SetTextSize(0.12);
-	TText *t95 = new TText(modmax-8, 0.05*0.9,"95\% C.L"); t95->SetTextAlign(13); t95->SetTextColor(kRed);     // t95->SetTextSize(0.12);
-	TText *t99 = new TText(modmax-8, 0.01*0.9,"99\% C.L"); t99->SetTextAlign(13); t99->SetTextColor(kRed);    //t99->SetTextSize(0.12);
+	TText *t90 = new TText(modmax-3, 0.1*0.9,"90\% C.L"); t90->SetTextAlign(13); t90->SetTextColor(kRed);//t90->SetTextSize(0.12);
+	TText *t95 = new TText(modmax-3, 0.05*0.9,"95\% C.L"); t95->SetTextAlign(13); t95->SetTextColor(kRed);     // t95->SetTextSize(0.12);
+	TText *t99 = new TText(modmax-3, 0.01*0.9,"99\% C.L"); t99->SetTextAlign(13); t99->SetTextColor(kRed);    //t99->SetTextSize(0.12);
 
 	t90->Draw();
 	t99->Draw();
