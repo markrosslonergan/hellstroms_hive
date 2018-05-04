@@ -40,7 +40,7 @@ int main (int argc, char *argv[]){
 	//	std::string dir2 = "/home/mark/work/uBooNE/photon/tmva/";
 	//	std::string dir = "/home/mark/work/uBooNE/photon/tmva/samples/fresh_NCDR_bf/";
 	std::string dir2 = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
-	std::string dir = "/uboone/app/users/markrl/single_photon_fresh_13April/working_dir/hellstroms_hive/samples/fresh_NCDR_bf/";
+	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v2/";
 
 	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
@@ -48,6 +48,7 @@ int main (int argc, char *argv[]){
 
 	bool run_cosmic = true;
 	bool run_bnb = true;
+	int number = 0;
 
 	const struct option longopts[] = 
 	{
@@ -56,6 +57,7 @@ int main (int argc, char *argv[]){
 		{"xml"	,		required_argument,	0, 'x'},
 		{"track",		required_argument,	0, 't'},
 		{"help",		required_argument,	0, 'h'},
+		{"number",		required_argument,	0, 'n'},
 		{"cosmic",		no_argument,		0, 'c'},
 		{"bnb",			no_argument,		0, 'b'},
 		{0,			no_argument, 		0,  0},
@@ -65,10 +67,15 @@ int main (int argc, char *argv[]){
 	int iarg = 0; opterr=1; int index;
 	while(iarg != -1)
 	{
-		iarg = getopt_long(argc,argv, "cbx:o:d:t:h?", longopts, &index);
+		iarg = getopt_long(argc,argv, "cbx:o:d:t:n:h?", longopts, &index);
 
 		switch(iarg)
 		{
+			case 'n':
+				number = strtof(optarg,NULL);
+				run_bnb = false;
+				break;
+
 			case 'c':
 				run_cosmic = true;
 				run_bnb = false;
@@ -131,7 +138,7 @@ int main (int argc, char *argv[]){
 	std::string num_track_cut = "==1";
 	if(istrack == "track"){
 		//fiducial_cut =  fiducial_cut +"&&"+ fiducial_track_start+"&&"+fiducial_track_end;
-		new_precuts =  "reco_shower_bp_dist_to_tpc[0] > 10 && reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 2 && reco_track_displacement[0] < 100 &&  reco_shower_helper_energy[0] > 0.05 && track_info.reco_track_good_calo[0]>0 && "+ fiducial_cut;
+		new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && shortest_asso_shower_to_vert_dist > 2 && reco_track_displacement[0] < 80 &&  reco_shower_helper_energy[0] > 0.05 && track_info.reco_track_good_calo[0]>0 && "+ fiducial_cut;
 		num_track_cut = "== 1";
 
 	}else if(istrack == "notrack"){
@@ -175,19 +182,19 @@ int main (int argc, char *argv[]){
 
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v2.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v2.0.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
+	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v3.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v3.0.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
 
-	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_mcc8.9_fresh_v2.0.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_mcc8.9_fresh_v2.0.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
 
-	bdt_file *intime = new bdt_file(dir, "vertexed_intime_mcc8.9_fresh_v1.0.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
+	bdt_file *intime = new bdt_file(dir, "vertexed_intime_mcc8.9_fresh_v2.0.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//bdt_file *ncpi0 = new bdt_file(dir+"samples/vectored/", "vertexed_ncpi0cosmic_mcc88_v1.0.root" ,"NCpi0","hist","", kGreen-3, ncpi0_flow);
 
 	//Data files
-	bdt_file *overlay = new bdt_file(dir2+"samples/vectored/", "vertexed_overlay_mcc88_v1.0.root",	"BNBOverlay",	   "hist","",  kMagenta-3, bkg_flow);
-	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_mcc8.9_fresh_v2.0.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
-	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_mcc8.9_fresh_v1.0.root",	"BNBext",	"E1p","",  kBlack, data_flow);
+	//bdt_file *overlay = new bdt_file(dir2+"samples/vectored/", "vertexed_overlay_mcc88_v1.0.root",	"BNBOverlay",	   "hist","",  kMagenta-3, bkg_flow);
+	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_mcc8.9_fresh_v3.0.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
+	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_mcc8.9_fresh_v2.0.root",	"BNBext",	"E1p","",  kBlack, data_flow);
 
 	//std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime, data5e19,bnbext};
 	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime, data5e19, bnbext};
@@ -252,7 +259,7 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("reco_shower_dist_to_closest_flashzcenter[0]","(50,0,400)","Distance from Shower to Flashcenter [cm]",false,"d"));
 
 	//THIS IS NEEDED TO BE EXACTLY HERE FOR NOTRACK
-	vars.push_back(bdt_variable("reco_shower_opening_angle[0]*reco_shower_length[0]","(50,0,15)","Shower Area",false,"d"));
+	//vars.push_back(bdt_variable("reco_shower_opening_angle[0]*reco_shower_length[0]","(50,0,15)","Shower Area",false,"d"));
 	vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(50,0,120)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[0]","(50,0,550)","Back Projected Distance from Shower to TPC wall [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_nuvertx","(50,0,250)"," Reconstructed Vertex X pos [cm]",false,"d"));
@@ -296,7 +303,6 @@ int main (int argc, char *argv[]){
 
 	if(mode_option != "train" && mode_option != "app"){
 		//We don't want to train using these variables, but we would like to plot them just to see how things are
-
 
 		//Hmm. This is needed in track..	
 		vars.push_back(bdt_variable("track_info.reco_track_range[0]","(50,0,150)","Reconstructed Track Range [cm]", true,"d"));
@@ -669,17 +675,28 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 				gencut = "1";
 			}	
 
-			std::cout<<"THIS BREAKS AT THE MOMENT"<<std::endl;
-			exit(EXIT_FAILURE);
-			double nevents =0;// bdt_files.at(i)->tevent->GetEntries(gencut.c_str())*pot_scale;	
+			//std::cout<<"THIS BREAKS AT THE MOMENT"<<std::endl;
+			//exit(EXIT_FAILURE);
+			double nevents = bdt_files.at(i)->tevent->GetEntries(gencut.c_str())*pot_scale;	
 			double nv = bdt_files.at(i)->tvertex->GetEntries((gencut+"&&1").c_str())*pot_scale;	
 			double ns = bdt_files.at(i)->tvertex->GetEntries((gencut+"&&  reco_asso_showers==1 && reco_asso_tracks "+num_track_cut).c_str())*pot_scale;	
+			
 
 			start = nevents;
 			sel = ns;
 			std::cout<<"Stage G\t\t"<<nevents<<"\t\t"<<nevents/start*100<<std::endl;
 			std::cout<<"Stage V\t\t"<<nv<<"\t\t"<<nv/start*100<<std::endl;
 			std::cout<<"Stage S\t\t"<<ns<<"\t\t"<<ns/start*100<<"\t\t"<<100<<std::endl;
+
+
+			for(int m=0; m< bdt_files.at(i)->flow.vec_pre_cuts.size(); m++){
+				std::string thiscut = bdt_files.at(i)->flow.vec_pre_cuts.at(m)+"&&"+bdt_files.at(i)->getStageCuts(0,fcoscut,fbnbcut);
+				double np = bdt_files.at(i)->tvertex->GetEntries(thiscut.c_str())*pot_scale;
+				std::cout<<bdt_files.at(m)->flow.vec_pre_cuts.at(m)<<" "<<np<<std::endl;
+			}
+
+
+
 
 			for(int j=0; j <5; j++){		
 				std::string thiscut = bdt_files.at(i)->getStageCuts(j,fcoscut,fbnbcut); 
@@ -742,13 +759,20 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	} else if(mode_option == "precalc"){
 
-		//std::vector<bdt_file*> bdt_filesB = {bnb_pure};
-		//std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime};
-		std::vector<bdt_file*> bdt_filesB = {bnbext};
+		//std::vector<bdt_file*> bdt_filesB = {bnb_pure,signal_pure};
+		//std::vector<bdt_file*> bdt_filesB = {intime, data5e19, bnbext};
+		std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime, data5e19, bnbext};
+		//std::vector<bdt_file*> bdt_filesB = {bnbext};
+	
+			bdt_precalc pre1(bdt_filesB.at(number));
+			//pre1.genTrackInfo();
+			pre1.genPi0Info();
+		return 0;
+
 		for(auto &f: bdt_filesB){
 			bdt_precalc pre(f);
-			pre.genTrackInfo();
-			//pre.genPi0Info();
+			//pre.genTrackInfo();
+			pre.genPi0Info();
 		}
 	}
 

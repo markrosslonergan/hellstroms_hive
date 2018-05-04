@@ -123,10 +123,9 @@ int bdt_precalc::genTrackInfo(){
 				std::vector<double> c_resrange;
 				std::vector<double> c_dEdx;
 
-
-
-				//Hard kill any silly dEdx
-				for(int k=0; k < vtrk_resrange->at(s).size(); k++){
+				//Hard kill any silly dEdx, Dropping first and last point
+				if(vtrk_resrange->at(s).size()>1){
+				for(int k=1; k < vtrk_resrange->at(s).size()-1; k++){
 
 					bool is_sensible =vtrk_dEdx->at(s).at(k) < max_realistic_dEdx; 
 					bool is_nan =vtrk_dEdx->at(s).at(k) != vtrk_dEdx->at(s).at(k); 
@@ -138,7 +137,7 @@ int bdt_precalc::genTrackInfo(){
 						c_dEdx.push_back(vtrk_dEdx->at(s).at(k));
 					}
 				}
-
+				}
 				//If we dont have enough hits, move to next track and tag this track as "BAD"
 				if(c_dEdx.size() < min_realistic_hits ){
 					v_track_range.push_back(-999);
@@ -242,6 +241,11 @@ int bdt_precalc::genTrackInfo(){
 					if(!fit_bragg->IsValid()){
 						std::cout<<"ERROR: fit result is not valid: status code: "<<fit_bragg->Status()<<" "<<std::endl;
 						std::cout<<c_resrange.size()<<" "<<trunc_dEdx.size()<<std::endl;
+						for(int m=0;m<c_resrange.size(); m++){
+
+						std::cout<<c_resrange.at(m)<<" "<<trunc_dEdx.at(m)<<std::endl;
+						}		
+
 						exit(EXIT_FAILURE);
 					}
 
