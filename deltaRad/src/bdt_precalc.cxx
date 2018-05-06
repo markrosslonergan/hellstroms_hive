@@ -434,7 +434,7 @@ int bdt_precalc::genPi0Info(){
 
 
 			for(int j=0; j< vall_reco_tracks->size(); j++){
-				
+
 				if(vall_reco_tracks->at(j)<c){
 					vec_reco_tracks_within.back()++;
 				}
@@ -442,7 +442,7 @@ int bdt_precalc::genPi0Info(){
 
 
 			for(int j=0; j< vall_reco_showers->size(); j++){
-				
+
 				if(vall_reco_showers->at(j)<c){
 					vec_reco_showers_within.back()++;
 				}	
@@ -492,6 +492,176 @@ int bdt_precalc::genPi0Info(){
 
 	return 0;
 }
+
+
+
+int bdt_precalc::genBNBcorrectionInfo(){
+
+	TTree * friend_tree = new TTree("bnbcorrection_info","bnbcorrection_info");
+	int nu_pdg = 0;
+	double true_nu_E = 0;
+	file->tvertex->SetBranchAddress("nu_pdg", &nu_pdg);
+	file->tvertex->SetBranchAddress("true_nu_E", &true_nu_E);
+	// New branches for FRIEND TREEEE 
+	double weight=0;
+	TBranch *b_weight = friend_tree->Branch("weight",&weight);
+
+	TFile *f_bnbcorr = new TFile("bnbcorr.root","recreate");
+
+
+	TFile *f_old = new TFile("../../bnbcorrection/bnb_oldflux_volAVTPC.root","read");
+	TH1F* h_mu_nue_old = (TH1F*)f_old->Get("h_mu_nue");
+	TH1F* h_mu_nuebar_old = (TH1F*)f_old->Get("h_mu_nuebar");
+	TH1F* h_mu_numu_old = (TH1F*)f_old->Get("h_mu_numu");
+	TH1F* h_mu_numubar_old = (TH1F*)f_old->Get("h_mu_numubar");
+
+	TH1F* h_pi_nue_old = (TH1F*)f_old->Get("h_pi_nue");
+	TH1F* h_pi_nuebar_old = (TH1F*)f_old->Get("h_pi_nuebar");
+	TH1F* h_pi_numu_old = (TH1F*)f_old->Get("h_pi_numu");
+	TH1F* h_pi_numubar_old = (TH1F*)f_old->Get("h_pi_numubar");
+
+	TH1F* h_k0_nue_old = (TH1F*)f_old->Get("h_k0_nue");
+	TH1F* h_k0_nuebar_old = (TH1F*)f_old->Get("h_k0_nuebar");
+	TH1F* h_k0_numu_old = (TH1F*)f_old->Get("h_k0_numu");
+	TH1F* h_k0_numubar_old = (TH1F*)f_old->Get("h_k0_numubar");
+
+	TH1F* h_k_nue_old = (TH1F*)f_old->Get("h_k_nue");
+	TH1F* h_k_nuebar_old = (TH1F*)f_old->Get("h_k_nuebar");
+	TH1F* h_k_numu_old = (TH1F*)f_old->Get("h_k_numu");
+	TH1F* h_k_numubar_old = (TH1F*)f_old->Get("h_k_numubar");
+
+	TH1F* h_nue_old = (TH1F*)h_mu_nue_old->Clone("h_nue_old");
+	h_nue_old->Add(h_pi_nue_old);
+	h_nue_old->Add(h_k0_nue_old);
+	h_nue_old->Add(h_k_nue_old);
+
+	TH1F* h_nuebar_old = (TH1F*)h_mu_nuebar_old->Clone("h_nuebar_old");
+	h_nuebar_old->Add(h_pi_nuebar_old);
+	h_nuebar_old->Add(h_k0_nuebar_old);
+	h_nuebar_old->Add(h_k_nuebar_old);
+
+	TH1F* h_numu_old = (TH1F*)h_mu_numu_old->Clone("h_numu_old");
+	h_numu_old->Add(h_pi_numu_old);
+	h_numu_old->Add(h_k0_numu_old);
+	h_numu_old->Add(h_k_numu_old);
+
+	TH1F* h_numubar_old = (TH1F*)h_mu_numubar_old->Clone("h_numubar_old");
+	h_numubar_old->Add(h_pi_numubar_old);
+	h_numubar_old->Add(h_k0_numubar_old);
+	h_numubar_old->Add(h_k_numubar_old);
+
+
+
+
+	TFile *f_new = new TFile("../../bnbcorrection/bnb_newflux_volAVTPC.root","read");
+	TH1F* h_mu_nue_new = (TH1F*)f_new->Get("h_mu_nue");
+	TH1F* h_mu_nuebar_new = (TH1F*)f_new->Get("h_mu_nuebar");
+	TH1F* h_mu_numu_new = (TH1F*)f_new->Get("h_mu_numu");
+	TH1F* h_mu_numubar_new = (TH1F*)f_new->Get("h_mu_numubar");
+
+	TH1F* h_pi_nue_new = (TH1F*)f_new->Get("h_pi_nue");
+	TH1F* h_pi_nuebar_new = (TH1F*)f_new->Get("h_pi_nuebar");
+	TH1F* h_pi_numu_new = (TH1F*)f_new->Get("h_pi_numu");
+	TH1F* h_pi_numubar_new = (TH1F*)f_new->Get("h_pi_numubar");
+
+	TH1F* h_k0_nue_new = (TH1F*)f_new->Get("h_k0_nue");
+	TH1F* h_k0_nuebar_new = (TH1F*)f_new->Get("h_k0_nuebar");
+	TH1F* h_k0_numu_new = (TH1F*)f_new->Get("h_k0_numu");
+	TH1F* h_k0_numubar_new = (TH1F*)f_new->Get("h_k0_numubar");
+
+	TH1F* h_k_nue_new = (TH1F*)f_new->Get("h_k_nue");
+	TH1F* h_k_nuebar_new = (TH1F*)f_new->Get("h_k_nuebar");
+	TH1F* h_k_numu_new = (TH1F*)f_new->Get("h_k_numu");
+	TH1F* h_k_numubar_new = (TH1F*)f_new->Get("h_k_numubar");
+
+	TH1F* h_nue_new = (TH1F*)h_mu_nue_new->Clone("h_nue_new");
+	h_nue_new->Add(h_pi_nue_new);
+	h_nue_new->Add(h_k0_nue_new);
+	h_nue_new->Add(h_k_nue_new);
+
+	TH1F* h_nuebar_new = (TH1F*)h_mu_nuebar_new->Clone("h_nuebar_new");
+	h_nuebar_new->Add(h_pi_nuebar_new);
+	h_nuebar_new->Add(h_k0_nuebar_new);
+	h_nuebar_new->Add(h_k_nuebar_new);
+
+	TH1F* h_numu_new = (TH1F*)h_mu_numu_new->Clone("h_numu_new");
+	h_numu_new->Add(h_pi_numu_new);
+	h_numu_new->Add(h_k0_numu_new);
+	h_numu_new->Add(h_k_numu_new);
+
+	TH1F* h_numubar_new = (TH1F*)h_mu_numubar_new->Clone("h_numubar_new");
+	h_numubar_new->Add(h_pi_numubar_new);
+	h_numubar_new->Add(h_k0_numubar_new);
+	h_numubar_new->Add(h_k_numubar_new);
+
+
+
+	TH1F * h_nue_ratio = (TH1F*)h_nue_new->Clone("h_nue_ratio");
+	h_nue_ratio->Divide(h_nue_old);
+
+	TH1F * h_nuebar_ratio = (TH1F*)h_nuebar_new->Clone("h_nuebar_ratio");
+	h_nuebar_ratio->Divide(h_nuebar_old);
+
+	TH1F * h_numu_ratio = (TH1F*)h_numu_new->Clone("h_numu_ratio");
+	h_numu_ratio->Divide(h_numu_old);
+
+	TH1F * h_numubar_ratio = (TH1F*)h_numubar_new->Clone("h_numubar_ratio");
+	h_numubar_ratio->Divide(h_numubar_old);
+
+
+
+	
+
+
+
+	int NN = file->tvertex->GetEntries();
+	for(int i=0; i< NN; i++){
+		file->tvertex->GetEntry(i);
+		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
+
+		weight = 1.0;
+
+
+
+		if(nu_pdg == 12){
+			int thisbin = h_nue_ratio->GetXaxis()->FindBin(true_nu_E);	
+			weight = h_nue_ratio->GetBinContent(thisbin);
+		}else if(nu_pdg == -12){
+			int thisbin = h_nuebar_ratio->GetXaxis()->FindBin(true_nu_E);	
+			weight = h_nuebar_ratio->GetBinContent(thisbin);
+		}else if(nu_pdg == 14){
+			int thisbin = h_numu_ratio->GetXaxis()->FindBin(true_nu_E);	
+			weight = h_numu_ratio->GetBinContent(thisbin);
+		}else if(nu_pdg == -14){
+			int thisbin = h_numubar_ratio->GetXaxis()->FindBin(true_nu_E);	
+			weight = h_numubar_ratio->GetBinContent(thisbin);
+		}else{
+			weight = 1.0;
+		}
+
+
+
+		friend_tree->Fill();
+
+
+	}
+
+	friend_file_out->cd();
+	friend_tree->Write();
+
+
+
+	f_bnbcorr->cd();
+	h_nue_ratio->Write();
+	h_nuebar_ratio->Write();
+	h_numu_ratio->Write();
+	h_numubar_ratio->Write();
+	f_bnbcorr->Close();
+
+
+	return 0;
+}
+
 
 
 

@@ -47,6 +47,8 @@ int gen(std::string which );
 int genTrackInfo();
 int genNewTrackInfo();
 int genPi0Info();
+int genBNBcorrectionInfo();
+
 
 
 

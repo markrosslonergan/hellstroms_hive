@@ -29,6 +29,8 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	std::string tnam = root_dir+"vertex_tree";
 	std::string tnam_pot = root_dir+"pot_tree";
 
+	weight_branch = "1";
+
 	std::cout<<"Getting vertex tree"<<std::endl;
 	tvertex = (TTree*)f->Get(tnam.c_str());
 	//tevent = (TTree*)f->Get(tnam_event.c_str());
@@ -72,6 +74,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			pot=tmppot;
 			std::cout<<"--> POT is MC: ";
 			std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+
+			weight_branch = "bnbcorrection_info.weight";
+
 		}
 	}
 	if(tag == "Data5e19"){
@@ -129,8 +134,12 @@ int bdt_file::addPlotName(std::string plotin){
 	return 0;
 }
 
-
-
+double bdt_file::GetEntries(std::string cuts){
+	TCanvas *ctmp = new TCanvas();
+	this->tvertex->Draw("reco_asso_showers>>random" ,(cuts+this->weight_branch).c_str(),"goff");
+	TH1* th1 = (TH1*)gDirectory->Get("random") ;
+	return th1->GetSumOfWeights();
+}
 
 int bdt_file::scale(double scalein){
 	scale_data = scalein;
