@@ -433,8 +433,8 @@ int main (int argc, char *argv[]){
 
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
 		std::vector<bdt_file*> app_files = {bnbext}; 
-		if(run_cosmic) bdt_app(cosmic_bdt_info, app_files, vars, TMVAmethods);
-		if(run_bnb)    bdt_app(bnb_bdt_info, app_files, vars, TMVAmethods);
+		if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
+		if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
 
 		return 0;
 
