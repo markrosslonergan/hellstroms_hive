@@ -198,7 +198,7 @@ int main (int argc, char *argv[]){
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	for(auto &f: bdt_files){
-		std::cout<<"Loading "<<f->tag<<"\t with "<<f->tvertex->GetEntries()<<"\t verticies."<<std::endl;
+		std::cout<<"Loading "<<f->tag<<"\t with "<<f->GetEntries()<<"\t verticies."<<std::endl;
 		std::cout<<"POT of file loaded is: "<<f->pot<<"\t\t "<<std::endl;
 		std::cout<<"Scale factor is then: "<<f->scale_data<<std::endl;
 	}
@@ -689,8 +689,8 @@ int main (int argc, char *argv[]){
 			}	
 
 			double nevents = bdt_files.at(i)->numberofevents*pot_scale;	
-			double nv = bdt_files.at(i)->tvertex->GetEntries((gencut+"&&1").c_str())*pot_scale;	
-			double ns = bdt_files.at(i)->tvertex->GetEntries( bdt_files.at(i)->getStageCuts(0,fcoscut,fbnbcut).c_str())*pot_scale;	
+			double nv = bdt_files.at(i)->GetEntries((gencut+"&&1").c_str())*pot_scale;	
+			double ns = bdt_files.at(i)->GetEntries( bdt_files.at(i)->getStageCuts(0,fcoscut,fbnbcut).c_str())*pot_scale;	
 
 			start = nevents;
 			sel = ns;
@@ -700,7 +700,7 @@ int main (int argc, char *argv[]){
 
 			for(int j=0; j <5; j++){		
 				std::string thiscut = bdt_files.at(i)->getStageCuts(j,fcoscut,fbnbcut); 
-				double nvert =bdt_files.at(i)->tvertex->GetEntries(thiscut.c_str())*pot_scale;
+				double nvert =bdt_files.at(i)->GetEntries(thiscut.c_str())*pot_scale;
 				double eff =0;
 				//	if(j==0){
 				//		start = nvert;
@@ -715,7 +715,7 @@ int main (int argc, char *argv[]){
 			std::cout<<std::endl;
 			for(int j=0; j <5; j++){		
 				std::string thiscut = bdt_files.at(i)->getStageCuts(j,fcoscut,fbnbcut); 
-				double nvert =bdt_files.at(i)->tvertex->GetEntries(thiscut.c_str())*pot_scale;
+				double nvert =bdt_files.at(i)->GetEntries(thiscut.c_str())*pot_scale;
 				double eff =0;
 				//	if(j==0){
 				//		start = nvert;
@@ -750,8 +750,8 @@ int main (int argc, char *argv[]){
 			std::string gencut = "1";
 
 			double nevents = 0;//data_files.at(i)->tevent->GetEntries(gencut.c_str())*pot_scale;	
-			double nv = data_files.at(i)->tvertex->GetEntries((gencut+"&&1").c_str())*pot_scale;	
-			double ns = data_files.at(i)->tvertex->GetEntries((gencut+"&&  reco_asso_showers==1 && reco_asso_tracks "+num_track_cut).c_str())*pot_scale;	
+			double nv = data_files.at(i)->GetEntries((gencut+"&&1").c_str())*pot_scale;	
+			double ns = data_files.at(i)->GetEntries((gencut+"&&  reco_asso_showers==1 && reco_asso_tracks "+num_track_cut).c_str())*pot_scale;	
 
 			start = nevents;
 			sel = ns;
@@ -761,7 +761,7 @@ int main (int argc, char *argv[]){
 
 			for(int j=0; j <4; j++){		
 				std::string thiscut = data_files.at(i)->getStageCuts(j,fcoscut,fbnbcut); 
-				double nvert =data_files.at(i)->tvertex->GetEntries(thiscut.c_str())*pot_scale;
+				double nvert =data_files.at(i)->GetEntries(thiscut.c_str())*pot_scale;
 				double eff =0;
 				eff = nvert/start*100;
 				std::cout<<"Stage "<<std::to_string(j)<<"\t\t"<<nvert<<"\t\t"<<eff<<"\t\t"<<nvert/sel*100<<std::endl;	
@@ -774,11 +774,12 @@ int main (int argc, char *argv[]){
 
 		//std::vector<bdt_file*> bdt_filesB = {bnb_pure};
 		//std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime};
-		std::vector<bdt_file*> bdt_filesB = {data5e19};
+		std::vector<bdt_file*> bdt_filesB = {signal_pure};
 		for(auto &f: bdt_filesB){
 			bdt_precalc pre(f);
 			//pre.genTrackInfo();
-			pre.genPi0Info();
+			//pre.genPi0Info();
+			pre.genBNBcorrectionInfo();
 		}
 	}
 

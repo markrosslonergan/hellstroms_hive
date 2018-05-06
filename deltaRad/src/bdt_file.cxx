@@ -120,7 +120,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 	}
 
-	std::cout<<"---> VERTEXCOUNT: "<<tag<<" "<<tvertex->GetEntries()*5e19/pot<<std::endl;
+	std::cout<<"---> VERTEXCOUNT: "<<tag<<" "<<this->GetEntries()*5e19/pot<<std::endl;
 
 	std::cout<<"Done!"<<std::endl;
 
@@ -133,10 +133,12 @@ int bdt_file::addPlotName(std::string plotin){
 	plot_name = plotin;
 	return 0;
 }
-
+double bdt_file::GetEntries(){
+	return this->GetEntries("1");
+}
 double bdt_file::GetEntries(std::string cuts){
 	TCanvas *ctmp = new TCanvas();
-	this->tvertex->Draw("reco_asso_showers>>random" ,(cuts+this->weight_branch).c_str(),"goff");
+	this->tvertex->Draw("reco_asso_showers>>random" ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
 	TH1* th1 = (TH1*)gDirectory->Get("random") ;
 	return th1->GetSumOfWeights();
 }
@@ -152,7 +154,7 @@ int bdt_file::setPOT(double inpot){
 TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
 
 	TCanvas *ctmp = new TCanvas();
-	this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
+	this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
 	std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
 	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
@@ -176,7 +178,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 
 	std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 	TCanvas *ctmp = new TCanvas();
-	this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
+	this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
 	std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
 
@@ -211,7 +213,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	for(int i=0; i< recomc_cuts.size(); i++){
 		std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
 		TCanvas *ctmp = new TCanvas();
-		this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , (cuts+"&&"+recomc_cuts.at(i)).c_str(),"goff");
+		this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
 		std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
 		//gDirectory->ls();
 
@@ -235,7 +237,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	//recomc_names.push_back(other);
 
 	TCanvas *ctmp = new TCanvas();
-	this->tvertex->Draw((var.name+">>"+nam+"_"+other+ var.binning).c_str() , other_cuts.c_str(),"goff");
+	this->tvertex->Draw((var.name+">>"+nam+"_"+other+ var.binning).c_str() , ("("+other_cuts+")*"+this->weight_branch).c_str(),"goff");
 
 
 	TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+other).c_str()) ;

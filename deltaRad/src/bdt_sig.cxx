@@ -98,7 +98,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 				double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
 			
 				std::string bnbcut = sig_files.at(i)->getStageCuts(3,d,d2); 
-				signal += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
+				signal += sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
 
 			}
 
@@ -107,7 +107,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 		
 	
 				std::string bnbcut = bkg_files.at(i)->getStageCuts(3,d,d2); 
-				bkg.push_back(	bkg_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale);			
+				bkg.push_back(	bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
 
 				background += bkg.back();
 			}
