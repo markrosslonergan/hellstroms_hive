@@ -122,7 +122,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 	}
 
-	std::cout<<"---> VERTEXCOUNT: "<<tag<<" "<<this->GetEntries()*5e19/pot<<std::endl;
+	std::cout<<"---> VERTEXCOUNT: "<<tag<<" "<<tvertex->GetEntries()*5e19/pot<<std::endl;
 
 	std::cout<<"Done!"<<std::endl;
 

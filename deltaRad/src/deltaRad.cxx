@@ -210,7 +210,7 @@ int main (int argc, char *argv[]){
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	for(auto &f: bdt_files){
-		std::cout<<"Loading "<<f->tag<<"\t with "<<f->GetEntries()<<"\t verticies."<<std::endl;
+		std::cout<<"Loading "<<f->tag<<"\t with "<<f->tvertex->GetEntries()<<"\t verticies. (unweighted)"<<std::endl;
 		std::cout<<"POT of file loaded is: "<<f->pot<<"\t\t "<<std::endl;
 		std::cout<<"Scale factor is then: "<<f->scale_data<<std::endl;
 	}
@@ -229,6 +229,7 @@ int main (int argc, char *argv[]){
 		for(auto &f: bdt_files){
 			addPreFriends(f,"track");
 			addPreFriends(f,"pi0");
+			addPreFriends(f,"bnbcorrection");
 			f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 		}
 	}
@@ -713,7 +714,7 @@ int main (int argc, char *argv[]){
 
 				double nevents = bdt_files.at(i)->numberofevents*pot_scale;	
 				double nv = bdt_files.at(i)->GetEntries((gencut+"&&1").c_str())*pot_scale;	
-				double ns = bdt_files.at(i)-->GetEntries( bdt_files.at(i)->getStageCuts(0,fcoscut,fbnbcut).c_str())*pot_scale;	
+				double ns = bdt_files.at(i)->GetEntries( bdt_files.at(i)->getStageCuts(0,fcoscut,fbnbcut).c_str())*pot_scale;	
 
 				start = nevents;
 				sel = ns;
@@ -816,16 +817,17 @@ int main (int argc, char *argv[]){
 			std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime, data5e19, bnbext};
 			//std::vector<bdt_file*> bdt_filesB = {bnbext};
 
-			bdt_precalc pre1(bdt_filesB.at(number));
+			//bdt_precalc pre1(bdt_filesB.at(number));
 			//pre1.genTrackInfo();
-			pre1.genBNBcorrectionInfo();
-			pre1.genPi0Info();
-			return 0;
+			
+			//pre1.genBNBcorrectionInfo();
+			//pre1.genPi0Info();
 
-			for(auto &f: bdt_filesB){
+			for(auto &f: bdt_files){
 				bdt_precalc pre(f);
+				pre.genBNBcorrectionInfo();
 				//pre.genTrackInfo();
-				pre.genPi0Info();
+				//pre.genPi0Info();
 			}
 		}
 
