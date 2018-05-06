@@ -34,7 +34,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	std::cout<<"Getting vertex tree"<<std::endl;
 	tvertex = (TTree*)f->Get(tnam.c_str());
 	//tevent = (TTree*)f->Get(tnam_event.c_str());
-	std::cout<<"Got vertex tree"<<std::endl;
+	std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
+	//topovertex = (TTree*)tvertex->CopyTree(flow.topological_cuts.c_str());
+	//std::cout<<"Copied to topological tree: "<<topovertex->GetEntries()<<std::endl;
 
 	double potbranch = 0;
 	int  numbranch = 0;
@@ -293,7 +295,7 @@ int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,  
 
 std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 
-	bool verbose = true;
+	bool verbose = false;
 
 	std::string ans;
 	switch(stage) {

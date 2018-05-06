@@ -123,7 +123,7 @@ int main (int argc, char *argv[]){
 	std::string background_definition = "!(" + signal_definition + ")";
 
 	
-	//This is a particular cut flow that a file will undergo. I.e base cuts, precuts, postcuts, and then the name of the Cosmic BDT and bnb bdt
+	//This is a particular cut flow that a file will undergo. I.e topological_cuts,other  base cuts, precuts, postcuts, and then the of the Cosmic BDT and bnb bdt
 	bdt_flow signal_flow( base_cuts, signal_definition,	    new_precuts,     "1", 	    cosmic_bdt_info, bnb_bdt_info);
 	bdt_flow cosmic_flow( cosmic_base_cuts, "1",  			            new_precuts,     "1", 	    cosmic_bdt_info, bnb_bdt_info);
 	bdt_flow bkg_flow(    base_cuts, background_definition,    new_precuts,     "1",		cosmic_bdt_info, bnb_bdt_info);
