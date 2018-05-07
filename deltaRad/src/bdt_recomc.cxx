@@ -1,8 +1,5 @@
 #include "bdt_recomc.h"
 
-
-
-
 int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
 
 	double title_size_ratio=0.1;
