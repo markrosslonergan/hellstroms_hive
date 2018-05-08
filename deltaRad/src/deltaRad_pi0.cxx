@@ -373,50 +373,49 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		obs.plotBDTStacks(ftest,bnb_bdt_info, fcoscut, fbnbcut);
         std::cout << "Done" << std::endl;
 
-	} 
-    
+	}     
     else if(mode_option == "datamc"){
 
 
-		bdt_stack *obs = new bdt_stack("obs");
-		obs->plot_pot = 5e19;
-		obs->addToStack(signal_cosmics);
-		obs->addToStack(bnb_cosmics);
-		obs->addToStack(intime);
+			bdt_stack *obs = new bdt_stack(istrack+"_datamc");
+			obs->plot_pot = 5e19;
+			obs->addToStack(signal_cosmics);
+			obs->addToStack(bnb_cosmics);
+			obs->addToStack(intime);
 
-		bdt_stack *obs2 = new bdt_stack("obs2");
-		obs2->plot_pot = 5e19;
-		obs2->addToStack(intime);
+			bdt_stack *obs2 = new bdt_stack(istrack+"_extintime");
+			obs2->plot_pot = 5e19;
+			obs2->addToStack(intime);
 
-		bdt_stack *obs3 = new bdt_stack("obs3");
-		obs3->plot_pot = 5e19;
-		obs3->addToStack(bnb_cosmics);
+			bdt_stack *obs3 = new bdt_stack(istrack+"_overlaymc");
+			obs3->plot_pot = 5e19;
+			obs3->addToStack(bnb_cosmics);
 
-		int ip=0;
-		for(auto &v:vars){
-			ip++;
-			break;	
-			//bdt_datamc tdatamc(data5e19, obs);	
-			bdt_datamc tdatamc2(bnbext, obs2);	
-			//bdt_datamc tdatamc3(overlay, obs3);	
 
-			//tdatamc.plotStacks(ftest,  v,fcoscut,fbnbcut);
-			tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
-			//tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
+			int ip=0;
+			for(auto &v:vars){
+				break;
+				ip++;
+				bdt_datamc tdatamc(data5e19, obs, istrack);
+				bdt_datamc tdatamc2(bnbext, obs2, istrack);
+				//bdt_datamc tdatamc3(overlay, obs3);
+				tdatamc.plotStacks(ftest,  v ,fcoscut,fbnbcut);
+				tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
+				//tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
+				return 0;
 
-			//return 0;	
-		}
-		bdt_datamc datamc(data5e19, obs);	
-		bdt_datamc datamc2(bnbext, obs2);	
-		//bdt_datamc datamc3(overlay, obs3);	
+			}
 
-	//	datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-	//	datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-	//	datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-		datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-		//datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-		//datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+			bdt_datamc datamc(data5e19, obs, istrack);
+			bdt_datamc datamc2(bnbext, obs2, istrack);
+			//bdt_datamc datamc3(overlay, obs3);
 
+			datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+			datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+			datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+			datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+			//datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+			//datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
     } 
     
     else if(mode_option == "vars"){

@@ -184,7 +184,9 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		bdt_variable dvar = data_file->getBDTVariable(whichbdt);
 
 		TH1* summed = mc_stack->getBDTSum(whichbdt, k,c1,c2);
+
 		TH1* data = data_file->getTH1(dvar, data_cuts.at(k), std::to_string(k)+"_"+whichbdt.identifier+"_"+data_file->tag+"_"+dvar.safe_name, plot_pot);
+        std::cout << "Got data" << std::endl;
 
 
 		//cobs->cd(k+1);
