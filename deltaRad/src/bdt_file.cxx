@@ -148,7 +148,7 @@ TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, 
 	th1->SetLineWidth(1);
 	th1->SetStats(0);
 	th1->GetXaxis()->SetTitle(var.unit.c_str());
-	th1->GetYaxis()->SetTitle("Verticies");
+	th1->GetYaxis()->SetTitle("Vertices");
 
 
 	return th1;
@@ -163,7 +163,8 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 
 	std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 	TCanvas *ctmp = new TCanvas();
-	this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
+	//this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
+	this->tvertex->Draw((var.name+">"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
 	std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
 
@@ -175,7 +176,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 	th1->SetLineWidth(1);
 	th1->SetStats(0);
 	th1->GetXaxis()->SetTitle(var.unit.c_str());
-	th1->GetYaxis()->SetTitle("Verticies");
+	th1->GetYaxis()->SetTitle("Vertices");
 	th1->SetDirectory(0);	
 
 	return th1;

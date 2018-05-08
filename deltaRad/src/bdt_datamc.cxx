@@ -37,9 +37,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	TH1 * d1 = data_file->getTH1(var, dat_cut_1, "d1_"+data_file->tag+"_"+var.safe_name, plot_pot);
 	TH1 * d2 = data_file->getTH1(var, dat_cut_2, "d2_"+data_file->tag+"_"+var.safe_name, plot_pot);
 	TH1 * d3 = data_file->getTH1(var, dat_cut_3, "d3_"+data_file->tag+"_"+var.safe_name, plot_pot);
-
-
-
+    
 	std::vector<THStack*> vec_stacks = {s0,s1,s2,s3};	
 	std::vector<TH1*> vec_th1s = {sh0,sh1,sh2,sh3};	
 	std::vector<std::string> data_cuts = {dat_cut_0, dat_cut_1, dat_cut_2, dat_cut_3};
@@ -136,8 +134,6 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 		//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 		//var_precut.front()->GetYaxis()->SetTitle("Verticies");
-
-
 	}
 
 
@@ -154,8 +150,6 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	//cobs->Divide(2,1,0.0025,0.0000001);
 	double plot_pot=5e19;
 
-
-
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
 	double title_offset_ratioY = 0.3 ;
@@ -164,7 +158,6 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	double title_size_upper=0.149;
 	double label_size_upper=0.05;
 	double title_offset_upper = 1.45;
-
 
 	ftest->cd();
 	THStack* s0 = mc_stack->getBDTStack(whichbdt,0,-9,-9);

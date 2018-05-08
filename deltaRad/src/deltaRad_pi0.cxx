@@ -24,7 +24,7 @@
 #include "bdt_recomc.h"
 #include "bdt_sig.h"
 #include "bdt_spec.h"
-#include "bdt_datamc.h"
+//#include "bdt_datamc.h"
 
 #include "bdt_precalc.h"
 
@@ -367,13 +367,15 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 		for(auto &v:vars){
             std::cout << "In obs.plotStacks loop" << std::endl;
-			obs.plotStacks(ftest,  v,fcoscut,fbnbcut);
+			obs.plotStacks(ftest, v, fcoscut, fbnbcut);
 		}
         std::cout << "Finished obs.plotStacks" << std::endl;
 		obs.plotBDTStacks(ftest,bnb_bdt_info, fcoscut, fbnbcut);
         std::cout << "Done" << std::endl;
 
-	} else if(mode_option == "datamc"){
+	} 
+    /*
+    else if(mode_option == "datamc"){
 
 
 		bdt_stack *obs = new bdt_stack("obs");
@@ -390,7 +392,6 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		obs3->plot_pot = 5e19;
 		obs3->addToStack(bnb_cosmics);
 
-
 		int ip=0;
 		for(auto &v:vars){
 			ip++;
@@ -404,8 +405,6 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			//tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
 
 			//return 0;	
-			
-
 		}
 		bdt_datamc datamc(data5e19, obs);	
 		bdt_datamc datamc2(bnbext, obs2);	
@@ -418,7 +417,9 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		//datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
 		//datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 
-    }else if(mode_option == "vars"){
+    } 
+    */
+    else if(mode_option == "vars"){
 
 		for(auto &v:vars){
 			TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_bnb").c_str(), ("cvar_"+v.name+"_bnb").c_str(),2000,1600);
