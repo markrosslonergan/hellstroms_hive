@@ -289,38 +289,37 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	else if(mode_option == "recomc"){
 
 	//First off, what MC catagories do you want to stack?
-    	std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0}","NC BNB Background", "CC BNB Background", "Cosmic Background", "Other"};
+    	std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0}","NC BNB Background", "CC BNB Background", "NC #Delta Radiative", "Cosmic Background", "Other Cosmic"};
 	//How are they defined, cutwise?
 	std::vector<std::string> recomc_cuts = {
         // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
 		"ccnc == 1 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1",
         // CC pi0 background
 		"ccnc == 0 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1",
-        // Other NC BNB events where either (a) one of the showers isn't photon-induced, or (b) one doens't come from pi0
+        // Other NC BNB events where either (a) one of the showers isn't photon-induced, or (b) one doesn't come from pi0
 		"(true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && ccnc == 1 && true_shower_origin[0]==1 && true_shower_origin[1]==1",
         // Same as previous, but for CC events
 		"(true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && ccnc == 0 && true_shower_origin[0]==1 && true_shower_origin[1]==1",
+        // Delta radiative is now considered a (very small) background
+	    "reco_asso_showers==1 && true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] != 111 && is_delta_rad == 1 && true_shower_origin==1",
         // Cosmics
 		"true_shower_origin[0]==2 && true_shower_origin[1]==2",
+        // Other. For now, just case where one shower is cosmic, but not both
+		"(true_shower_origin[0]==2 || true_shower_origin[1]==2) && !(true_shower_origin[0]==2 && true_shower_origin[1]==2)", 
         // Other; defined as "!" versions of above
-		"!(true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111) && !(true_shower_origin[0] == 2 || true_shower_origin[1] == 2)"  
+		//"!(true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111) && !(true_shower_origin[0] == 2 && true_shower_origin[1] == 2)"  
          
         /* 
-        // Delta radiative is now considered a (very small) background
-	    "true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] != 111 && is_delta_rad == 1 && true_shower_origin==1",
         // Check if either shower came from electron
 		"true_shower_origin[most_energetic_shower_index] ==1 && true_shower_origin[second_most_energetic_shower_index]==1 && (abs(true_shower_pdg[most_energetic_shower_index]) ==11 || abs(true_shower_pdg[second_most_energetic_shower_index])==11)",
         // Check for cases where either associated photon shower didn't come from pi0
-		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1 && abs(true_shower_pdg[most_energetic_shower_index])!=11 && abs(true_shower_pdg[second_most_energetic_shower_index])!=11",
-        
-        // Check if either shower is cosmic in origin
-		"(true_shower_origin[most_energetic_shower_index] == 2 || true_shower_origin[second_most_energetic_shower_index] == 2) && (true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22) && (true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111)",
+		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1 && abs(true_shower_pdg[most_energetic_shower_index])!=11 && abs(true_shower_pdg[second_most_energetic_shower_index])!=11", 
         */
 	};
 
     
 	//and what colors
-	std::vector<int> recomc_cols = {kRed-7, kRed+1, kGreen+1, kBlue+3, kMagenta+1, kAzure+1};
+	std::vector<int> recomc_cols = {kRed-7, kRed+1, kMagenta+1, kBlue+3, kPink+1, kGreen+1, kGreen+3};
 
         std::cout << "Done adding TreeFiends" << std::endl;
 		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols);
