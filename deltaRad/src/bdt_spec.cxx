@@ -86,8 +86,8 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
 	int stack_rebin = 1;
-	if(level ==2) stack_rebin=2;
-	if(level ==3) stack_rebin=4;
+	//if(level ==2) stack_rebin=2;
+	//if(level ==3) stack_rebin=4;
 
 	for(int t=0; t<stack.size(); t++){
 		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin);

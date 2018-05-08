@@ -47,7 +47,11 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 
 	//for(int k = 0; k<4; k++){
-	for(int k = 1; k<2; k++){
+    // Change k to number of stage
+    //{   
+        int k = 2;
+        std::cout << k << std::endl;
+        //std::string stageNum = std::to_string(k);
 		//cobs->cd(k+1);
 		cobs->cd();
 		TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
@@ -135,11 +139,11 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 		//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 		//var_precut.front()->GetYaxis()->SetTitle("Verticies");
-	}
+	//}
 
 
 	cobs->Write();
-	cobs->SaveAs(("datamc/"+data_file->tag+"_"+var.safe_name+".pdf").c_str(),"pdf");
+	cobs->SaveAs(("datamc/"+data_file->tag+"_"+var.safe_name+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
 
 	return 0;
 }

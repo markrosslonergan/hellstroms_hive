@@ -119,8 +119,8 @@ int main (int argc, char *argv[]){
 	// Our signal definition alongside any base cuts we want to make
     // UPDATE 4/30/18: base cuts now done externally in attempt to work
     // around array issue. Cuts kept here to avoid code breaking
-	std::string base_cuts = "1";
-	std::string cosmic_base_cuts = "1";
+	std::string base_cuts = "reco_asso_showers==2 && reco_asso_tracks==1";
+	std::string cosmic_base_cuts = "reco_asso_showers==2 && reco_asso_tracks==1";
 
     // Signal: NC interaction, two photons from parent pi0, BNB interaction
     // Can use 0 and 1 for indices. Since two showers are already selected,
@@ -375,7 +375,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
         std::cout << "Done" << std::endl;
 
 	}     
-    /*
+    
     else if(mode_option == "datamc"){
 
 
@@ -383,7 +383,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			obs->plot_pot = 5e19;
 			obs->addToStack(signal_cosmics);
 			obs->addToStack(bnb_cosmics);
-			obs->addToStack(intime);
+            bnbext->col=kGreen-3;
+			obs->addToStack(bnbext);
 
 			bdt_stack *obs2 = new bdt_stack(istrack+"_extintime");
 			obs2->plot_pot = 5e19;
@@ -396,20 +397,20 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 			int ip=0;
 			for(auto &v:vars){
-				break;
+				//break;
 				ip++;
-				bdt_datamc tdatamc(data5e19, obs, istrack);
-				bdt_datamc tdatamc2(bnbext, obs2, istrack);
+				bdt_datamc tdatamc(data5e19, obs);
+				//bdt_datamc tdatamc2(bnbext, obs2);
 				//bdt_datamc tdatamc3(overlay, obs3);
 				tdatamc.plotStacks(ftest,  v ,fcoscut,fbnbcut);
-				tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
+				//tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
 				//tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
 				return 0;
 
 			}
 
-			bdt_datamc datamc(data5e19, obs, istrack);
-			bdt_datamc datamc2(bnbext, obs2, istrack);
+			bdt_datamc datamc(data5e19, obs);
+			bdt_datamc datamc2(bnbext, obs2);
 			//bdt_datamc datamc3(overlay, obs3);
 
 			datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
@@ -419,7 +420,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			//datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
 			//datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
     } 
-    */
+    
     
     else if(mode_option == "vars"){
 
