@@ -24,7 +24,7 @@
 #include "bdt_recomc.h"
 #include "bdt_sig.h"
 #include "bdt_spec.h"
-//#include "bdt_datamc.h"
+#include "bdt_datamc.h"
 
 #include "bdt_precalc.h"
 
@@ -374,7 +374,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
         std::cout << "Done" << std::endl;
 
 	} 
-    /*
+    
     else if(mode_option == "datamc"){
 
 
@@ -418,7 +418,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		//datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 
     } 
-    */
+    
     else if(mode_option == "vars"){
 
 		for(auto &v:vars){

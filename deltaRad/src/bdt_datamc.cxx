@@ -1,6 +1,7 @@
 #include "bdt_datamc.h"
 
 int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
+    std::cout << "Plotting stack" << std::endl;
 	TCanvas *cobs = new TCanvas("","",900,800);
 	//TCanvas *cobs = new TCanvas("","",1800,1600);
 	//cobs->Divide(2,2,0.0025,0.0000001);
@@ -145,6 +146,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 
 int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c2){
+    std::cout << "Plotting BDT stacks" << std::endl;
 	TCanvas *cobs = new TCanvas("","",900,800);
 	cobs->cd();
 	//cobs->Divide(2,1,0.0025,0.0000001);

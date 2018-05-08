@@ -23,7 +23,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	//recomc_cols = {kRed-7, kRed+1, kGreen+1, kBlue+3};
     /* 
 	recomc_names = { "NC #Delta Radiative #gamma", "BNB NC #pi^{0} #gamma", "BNB CC #pi^{0} #gamma", "BNB Other #gamma","BNB electron","BNB other","Cosmic"};
-	recomc_cuts = {
+	recomc_cuts = 
 		"shower_true_pdg == 22 && shower_true_parent_pdg !=111 && is_delta_rad ==1 && shower_true_origin==1",
 		"shower_true_pdg == 22 && shower_true_parent_pdg == 111 && shower_true_origin==1 && ccnc ==1",
 		"shower_true_pdg == 22 && shower_true_parent_pdg == 111 && shower_true_origin==1 && ccnc == 0",
@@ -31,14 +31,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		"shower_true_origin ==1 && abs(shower_true_pdg) ==11",
 		"shower_true_origin ==1 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11",
 		"shower_true_origin == 2"
-	};
-    */
+        */
+	
+    
 	
     /*****************************************************
       THIS HAS ALL BEEN MOVED TO deltaRad_pi0.cxx
     *****************************************************/
     // Edited version for NC pi0 selection
-    /*
+    
     recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0} #gamma", "Cosmic", "Other"};
     recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0} #gamma", "BNB NC #Delta Radiative #gamma", "BNB Electron","BNB other","Cosmic"};
     recomc_names = {"BNB NC #pi^{0}", "NC BNB Background", "CC BNB Background", "Cosmic Background"};
@@ -63,8 +64,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		"(true_shower_origin[most_energetic_shower_index] == 2 || true_shower_origin[second_most_energetic_shower_index] == 2) && (true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22) && (true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111)",
         // Other
 		"!(true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_pdg[second_most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] == 111 && true_shower_parent_pdg[second_most_energetic_shower_index] == 111) && !(true_shower_origin[most_energetic_shower_index] == 2 || true_shower_origin[second_most_energetic_shower_index] == 2) && !(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22) && !(true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111)",
-        */
+        
 	};
+    
 
 
 	/*
@@ -357,7 +359,6 @@ bdt_variable bdt_file::getBDTVariable(bdt_info info){
 		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65,0.2,0.62)","Cosmic BDT Response",false);
 	}
     // Add cases for pi0 selection
-    // Previous binning: (1000, -1100, -900)
     else if(info.identifier == "pi0cosmic_track" || info.identifier == "pi0cosmic_notrack") {
 		return bdt_variable(this->tag +"_"+info.identifier+ ".mva","(65, 0.2, 0.7)","Cosmic BDT Response",false);
     }       
