@@ -24,6 +24,7 @@
 #include "bdt_recomc.h"
 #include "bdt_sig.h"
 #include "bdt_spec.h"
+#include "bdt_datamc.h"
 
 #include "bdt_precalc.h"
 
@@ -236,12 +237,12 @@ int main (int argc, char *argv[]){
 Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	 */
 
-		//0.53842 0.505593 1.21062
+    // Determined from first two numbers in output of "./deltaRad_pi0 -o sig"
 	double fcoscut;
 	double fbnbcut;
 	if(istrack == "track"){
-		fcoscut = 0.566594;
-		fbnbcut = 0.535958;
+		fcoscut = 0.546398;
+		fbnbcut = 0.505593;
 	}else if(istrack == "notrack"){
 		fcoscut = 0.3;
 		fbnbcut = 0.3;
@@ -289,7 +290,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	else if(mode_option == "recomc"){
 
 	//First off, what MC catagories do you want to stack?
-    	std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0}","NC BNB Background", "CC BNB Background", "NC #Delta Radiative", "Cosmic Background", "Other Cosmic"};
+    	std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0}","NC BNB Background", "CC BNB Background", "NC #Delta Radiative", "Two Cosmic Showers", "One Cosmic Shower"};
 	//How are they defined, cutwise?
 	std::vector<std::string> recomc_cuts = {
         // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
@@ -333,6 +334,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
             test.plot_recomc(ftest, signal_cosmics, v, fcoscut, fbnbcut);
             test.plot_recomc(ftest, bnb_cosmics, v, fcoscut, fbnbcut);
             h++;
+            std::cout << "h = " << h << std::endl;
             if (h > 1) break;  
 		}	
     }  
@@ -371,8 +373,52 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		obs.plotBDTStacks(ftest,bnb_bdt_info, fcoscut, fbnbcut);
         std::cout << "Done" << std::endl;
 
-	}
-	else if(mode_option == "vars"){
+	} else if(mode_option == "datamc"){
+
+
+		bdt_stack *obs = new bdt_stack("obs");
+		obs->plot_pot = 5e19;
+		obs->addToStack(signal_cosmics);
+		obs->addToStack(bnb_cosmics);
+		obs->addToStack(intime);
+
+		bdt_stack *obs2 = new bdt_stack("obs2");
+		obs2->plot_pot = 5e19;
+		obs2->addToStack(intime);
+
+		bdt_stack *obs3 = new bdt_stack("obs3");
+		obs3->plot_pot = 5e19;
+		obs3->addToStack(bnb_cosmics);
+
+
+		int ip=0;
+		for(auto &v:vars){
+			ip++;
+			break;	
+			//bdt_datamc tdatamc(data5e19, obs);	
+			bdt_datamc tdatamc2(bnbext, obs2);	
+			//bdt_datamc tdatamc3(overlay, obs3);	
+
+			//tdatamc.plotStacks(ftest,  v,fcoscut,fbnbcut);
+			tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
+			//tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
+
+			//return 0;	
+			
+
+		}
+		bdt_datamc datamc(data5e19, obs);	
+		bdt_datamc datamc2(bnbext, obs2);	
+		//bdt_datamc datamc3(overlay, obs3);	
+
+	//	datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+	//	datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+	//	datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+		datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+		//datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+		//datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+
+    }else if(mode_option == "vars"){
 
 		for(auto &v:vars){
 			TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_bnb").c_str(), ("cvar_"+v.name+"_bnb").c_str(),2000,1600);

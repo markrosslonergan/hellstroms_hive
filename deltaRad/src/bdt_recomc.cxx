@@ -35,7 +35,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	file->recomc_names = recomc_names;
 	
 
-	//-------------- All Verticies -------------
+	//-------------- All Vertices -------------
 	std::string selection = file->getStageCuts(0, -9, -9);
 	
 	reco_mc_vec_sel = file->getRecoMCTH1(var, selection, "sel_"+file->tag+"_"+var.safe_name, plot_pot);

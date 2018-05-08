@@ -20,7 +20,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     // Because it doesn't work for NC pi0 selection, that's why
     
 	//recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue,  kGreen+1,kBlue-7};
-	recomc_cols = {kRed-7, kRed+1, kGreen+1, kBlue+3};
+	//recomc_cols = {kRed-7, kRed+1, kGreen+1, kBlue+3};
     /* 
 	recomc_names = { "NC #Delta Radiative #gamma", "BNB NC #pi^{0} #gamma", "BNB CC #pi^{0} #gamma", "BNB Other #gamma","BNB electron","BNB other","Cosmic"};
 	recomc_cuts = {
@@ -34,10 +34,13 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	};
     */
 	
-    
+    /*****************************************************
+      THIS HAS ALL BEEN MOVED TO deltaRad_pi0.cxx
+    *****************************************************/
     // Edited version for NC pi0 selection
-    //recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0} #gamma", "Cosmic", "Other"};
-    //recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0} #gamma", "BNB NC #Delta Radiative #gamma", "BNB Electron","BNB other","Cosmic"};
+    /*
+    recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0} #gamma", "Cosmic", "Other"};
+    recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0} #gamma", "BNB NC #Delta Radiative #gamma", "BNB Electron","BNB other","Cosmic"};
     recomc_names = {"BNB NC #pi^{0}", "NC BNB Background", "CC BNB Background", "Cosmic Background"};
 	recomc_cuts = {
         // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
@@ -45,7 +48,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && ccnc == 1 && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1",
 		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && ccnc == 0 && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1",
 		"true_shower_origin[most_energetic_shower_index]==2 && true_shower_origin[second_most_energetic_shower_index]==2",
-        /* 
+         
         // CC pi0's. This should be a large background. Same as signal, but with ccnc==0 (CC interaction)     
 		"true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_pdg[second_most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] == 111 && true_shower_parent_pdg[second_most_energetic_shower_index] == 111 && ccnc == 0",
         
@@ -185,28 +188,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	is_data(indata),
 	is_mc(!indata)
 {
-
-	//This isnt the best idea but sure whynot
-    /*
-	recomc_cols = {kRed,kRed-3,kRed+3,kBlue, kBlue+3, kBlue-3,kMagenta-3, kGreen, kGreen +3, kGreen -3, kYellow};
-
-	recomc_names = {"BNB pi0 gamma","BNB other gamma","BNB electron","BNB muon","BNB proton","BNB pion","BNB other","Cosmic Photons","Cosmic Electrons", "Cosmic Muons","Cosmic Other"};
-	recomc_cuts = {"shower_true_pdg == 22 && shower_true_parent_pdg == 111 && shower_true_origin==1",
-		"shower_true_pdg == 22 && shower_true_parent_pdg !=111 && shower_true_origin==1",
-		"shower_true_origin ==1 && abs(shower_true_pdg) ==11",
-		"shower_true_origin ==1 && abs(shower_true_pdg) ==13",
-		"shower_true_origin ==1 && abs(shower_true_pdg) ==2212",
-		"shower_true_origin ==1 && abs(shower_true_pdg) ==211",
-		"shower_true_origin ==1 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11 && abs(shower_true_pdg)!=2212 && abs(shower_true_pdg)!=13 && abs(shower_true_pdg)!=211",
-		"shower_true_origin== 2 && abs(shower_true_pdg)==22",
-		"shower_true_origin== 2 && abs(shower_true_pdg)==11",
-		"shower_true_origin== 2 && abs(shower_true_pdg)==13",
-		"shower_true_origin ==2 && shower_true_pdg !=22 && abs(shower_true_pdg) !=11 && abs(shower_true_pdg)!=13"
-		//			"shower_true_origin == 2 && abs(shower_true_pdg)==22",
-		//			"shower_true_origin == 2 && abs(shower_true_pdg)!=11 && shower_true_pdg!=22"
-	};
-    */
-
 	scale_data =1.0;
 	std::cout<<"Loading : "<<name<<std::endl;
 	f = new TFile((dir+"/"+name).c_str(), "read");	
@@ -310,7 +291,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 	th1->SetLineWidth(1);
 	th1->SetStats(0);
 	th1->GetXaxis()->SetTitle(var.unit.c_str());
-	th1->GetYaxis()->SetTitle("Verticies");
+	th1->GetYaxis()->SetTitle("Vertices");
 	th1->SetDirectory(0);	
 
 	return th1;
@@ -449,12 +430,12 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 			break;
 		case 1:
 			ans = flow.base_cuts + "&&"+ flow.pre_cuts;
-            std::cout << "Stage 1 cuts: " << ans << std::endl;
+            //std::cout << "Stage 1 cuts: " << ans << std::endl;
 			break;
 		case 2: {
 			bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
 			ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1);
-            std::cout << "Stage 2 cuts: " << ans << std::endl;
+            //std::cout << "Stage 2 cuts: " << ans << std::endl;
 			break;
 	    }
 
@@ -462,18 +443,18 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 			bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
 			bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
 			ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2);
-            std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
-            std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
-            std::cout << "Stage 3 cuts: " << ans << std::endl;
+            //std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
+            //std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
+            //std::cout << "Stage 3 cuts: " << ans << std::endl;
 			break;
 		}
 		case 4: {
 			bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
 			bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
-            std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
-            std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
+            //std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
+            //std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
 			ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2) +"&&" +flow.post_cuts;
-            std::cout << "Stage 4 cuts: " << ans << std::endl;
+            //std::cout << "Stage 4 cuts: " << ans << std::endl;
 			break;
         }
 
