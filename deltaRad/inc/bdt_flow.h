@@ -25,9 +25,28 @@ struct bdt_flow{
 		std::string mid_cuts;
 		std::string post_cuts;
 
+		std::vector<std::string> vec_pre_cuts;
+
 		bdt_flow(){};	
-		bdt_flow(std::string inbase, std::string inpre, std::string inpost, bdt_info incos, bdt_info inbnb) : base_cuts(inbase), pre_cuts(inpre), post_cuts(inpost),bdt_cosmic_cuts(incos), bdt_bnb_cuts(inbnb) {};	
-		bdt_flow(std::string intop, std::string indef, std::string inpre, std::string inpost, bdt_info incos, bdt_info inbnb) : topological_cuts(intop),  definition_cuts(indef), pre_cuts(inpre), post_cuts(inpost),bdt_cosmic_cuts(incos), bdt_bnb_cuts(inbnb) {base_cuts = topological_cuts+"&&"+definition_cuts;};	
+		bdt_flow(std::string intop, std::string indef, std::string inpre, std::string inpost, bdt_info incos, bdt_info inbnb) : topological_cuts(intop),  definition_cuts(indef), pre_cuts(inpre), post_cuts(inpost),bdt_cosmic_cuts(incos), bdt_bnb_cuts(inbnb) {
+
+			base_cuts = topological_cuts+"&&"+definition_cuts;
+
+			std::string s = pre_cuts;
+			std::string delimiter = "&&";
+
+			size_t pos = 0;
+			std::string token;
+			while ((pos = s.find(delimiter)) != std::string::npos) {
+				token = s.substr(0, pos);
+				s.erase(0, pos + delimiter.length());
+				//std::cout<<token<<std::endl;
+				vec_pre_cuts.push_back(token);
+			}
+			//grab last one
+			vec_pre_cuts.push_back(s);
+
+		};	
 
 
 };

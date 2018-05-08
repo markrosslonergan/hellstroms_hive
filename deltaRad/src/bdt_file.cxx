@@ -29,10 +29,14 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	std::string tnam = root_dir+"vertex_tree";
 	std::string tnam_pot = root_dir+"pot_tree";
 
+	weight_branch = "1";
+
 	std::cout<<"Getting vertex tree"<<std::endl;
 	tvertex = (TTree*)f->Get(tnam.c_str());
 	//tevent = (TTree*)f->Get(tnam_event.c_str());
-	std::cout<<"Got vertex tree"<<std::endl;
+	std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
+	//topovertex = (TTree*)tvertex->CopyTree(flow.topological_cuts.c_str());
+	//std::cout<<"Copied to topological tree: "<<topovertex->GetEntries()<<std::endl;
 
 	double potbranch = 0;
 	int  numbranch = 0;
@@ -43,15 +47,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			//Found in 
 			double intime_modifier = 10.279;
 
-			double N_gen_bnb = 2153450.0;
-			double N_gen_cos = 991885.0;
-			double frac_job_worked = 1.0;//5.0/9.0;
+			//Guarrenteed for fresh_mcc8.9
+			double N_gen_bnb = 2146800.0;
+			double N_gen_cos = 991914.0;
 
-			double pot_bnb_cosmic = 2.172e+21;
+			double pot_bnb_cosmic = 2.16562e+21;
 			double pot_plot = 6.6e20;
 
 			pot = pot_plot; 
-			this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos*frac_job_worked)*pot_plot/pot_bnb_cosmic;
+			this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos)*pot_plot/pot_bnb_cosmic;
 			std::cout<<"--> value: "<<pot<<" with scale factor: "<<scale_data<<std::endl;
 		}else{
 			leg = "l";
@@ -72,45 +76,48 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			pot=tmppot;
 			std::cout<<"--> POT is MC: ";
 			std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+
+			weight_branch = "bnbcorrection_info.weight";
+
 		}
 	}
 	if(tag == "Data5e19"){
 		leg = "lp";
-		double Nworked = 191046;// pot_tree->Scan() 
-		double Nsamweb = 191131;// samweb list-definition-files XXX --summary --fileinfo
-
-		std::cout<<"--> POT is data: From Zarkos tool..";
-		//4.885e+19
-		//4.879e+19
-		//4.932e+19
-		//4.938e+19
-		pot = 4.879e+19*Nworked/Nsamweb; 
+		pot = 4.79e19;// tor860_wcut
 		std::cout<<"--> value: "<<pot<<std::endl;
 	}
 	if(tag == "BNBext"){
+		std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
+		tpot = (TTree*)f->Get(tnam_pot.c_str());
+		tpot->SetBranchAddress("number_of_events", &numbranch);
+		tpot->SetBranchAddress("pot",&potbranch);
+
+		std::cout<<"Set the POT branch"<<std::endl;
+		int tmpnum = 0;
+		double tmppot=0;
+		for(int i=0; i<tpot->GetEntries(); i++){
+			tpot->GetEntry(i);
+			tmpnum += (double)numbranch;
+		}
+		numberofevents = tmpnum;
+		std::cout<<"BNBEXT number of events: "<<numberofevents<<std::endl;
+
+
 		leg = "lp";
 		double sca = 1.23;//from 1.23
 		//https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
 
-		double exta=38713062.0;
-		double extb=581923.0;
-
-		double spill=10893847.0; 
-
-		double Nworked = 852486.0;
-		double Nsamweb = 463273 + 521026;
+		double ext=47613881.0; //External spills in each sample (EXT)
+		double spill_on=10677928.0;//This number in data zarko  (E1DCNT_wcut)
 
 
-		//data
-		double NworkedD = 190991.0;
-		double NsamwebD = 191131.0;
-		double datanorm = 4.879e+19*NworkedD/NsamwebD; //7131/13671;// 376954.0/382718.0;//7131/13671;
+		double datanorm =4.79e19;// rot860_wcut run-subrunlist;
 
-		double mod = 5.0/9.0*spill/(exta);//spill/(exta+extb);
+		double mod = spill_on/ext;
 
 
 		std::cout<<"--> POT is data: From Zarkos tool..";
-		pot =datanorm/mod*Nworked/Nsamweb; //7131/13671;// 376954.0/382718.0;//7131/13671;
+		pot =datanorm/mod;
 		std::cout<<"--> value: "<<pot<<std::endl;
 
 	}
@@ -128,9 +135,15 @@ int bdt_file::addPlotName(std::string plotin){
 	plot_name = plotin;
 	return 0;
 }
-
-
-
+double bdt_file::GetEntries(){
+	return this->GetEntries("1");
+}
+double bdt_file::GetEntries(std::string cuts){
+	TCanvas *ctmp = new TCanvas();
+	this->tvertex->Draw("reco_asso_showers>>random" ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+	TH1* th1 = (TH1*)gDirectory->Get("random") ;
+	return th1->GetSumOfWeights();
+}
 
 int bdt_file::scale(double scalein){
 	scale_data = scalein;
@@ -143,7 +156,7 @@ int bdt_file::setPOT(double inpot){
 TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
 
 	TCanvas *ctmp = new TCanvas();
-	this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
+	this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
 	std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
 	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
@@ -167,7 +180,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 
 	std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 	TCanvas *ctmp = new TCanvas();
-	this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
+	this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
 	std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
 
@@ -202,11 +215,13 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	for(int i=0; i< recomc_cuts.size(); i++){
 		std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
 		TCanvas *ctmp = new TCanvas();
-		this->tvertex->Draw((var.name+">>"+nam+"_"+recomc_names.at(i)+ var.binning).c_str() , (cuts+"&&"+recomc_cuts.at(i)).c_str(),"goff");
+		this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
+		std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
+		//gDirectory->ls();
 
-		TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+recomc_names.at(i)).c_str()) ;
+		TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+std::to_string(i)).c_str()) ;
 		th1->Scale(this->scale_data*plot_POT/this->pot);
-		if(rebin >1 )th1->Rebin(rebin);
+		if(rebin > 1 ) th1->Rebin(rebin);
 		th1->SetFillColor(recomc_cols.at(i));
 		th1->SetLineColor(kBlack);
 		th1->SetLineWidth(1);
@@ -224,7 +239,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	//recomc_names.push_back(other);
 
 	TCanvas *ctmp = new TCanvas();
-	this->tvertex->Draw((var.name+">>"+nam+"_"+other+ var.binning).c_str() , other_cuts.c_str(),"goff");
+	this->tvertex->Draw((var.name+">>"+nam+"_"+other+ var.binning).c_str() , ("("+other_cuts+")*"+this->weight_branch).c_str(),"goff");
 
 
 	TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+other).c_str()) ;

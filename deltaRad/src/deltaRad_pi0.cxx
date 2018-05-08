@@ -123,7 +123,7 @@ int main (int argc, char *argv[]){
 	std::string background_definition = "!(" + signal_definition + ")";
 
 	
-	//This is a particular cut flow that a file will undergo. I.e base cuts, precuts, postcuts, and then the name of the Cosmic BDT and bnb bdt
+	//This is a particular cut flow that a file will undergo. I.e topological_cuts,other  base cuts, precuts, postcuts, and then the of the Cosmic BDT and bnb bdt
 	bdt_flow signal_flow( base_cuts, signal_definition,	    new_precuts,     "1", 	    cosmic_bdt_info, bnb_bdt_info);
 	bdt_flow cosmic_flow( cosmic_base_cuts, "1",  			            new_precuts,     "1", 	    cosmic_bdt_info, bnb_bdt_info);
 	bdt_flow bkg_flow(    base_cuts, background_definition,    new_precuts,     "1",		cosmic_bdt_info, bnb_bdt_info);
@@ -308,7 +308,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	std::vector<int> recomc_cols = {kRed-7, kRed+1, kGreen+1, kBlue+3};
 
         std::cout << "Done adding TreeFiends" << std::endl;
-		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols);
+		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols,istrack);
 		//plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val)
 
 	//test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable(bnb_bdt_info) , fcoscut,fbnbcut);

@@ -47,6 +47,7 @@ struct bdt_file{
 		std::string plot_ops;
 		std::string root_dir;
 		
+		std::string weight_branch;
 
 		//This is slightly deprecisated
 		std::string friend_tree_file;
@@ -75,6 +76,9 @@ struct bdt_file{
 
 		TFile *f;
 		TTree *tvertex;
+		//copy tvertex into topovertex, but with topological cut.
+		TTree *topovertex;
+
 		TTree *tevent;
 		TTree *tpot;
 
@@ -96,6 +100,8 @@ struct bdt_file{
 		
 		TH1* getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
 
+		double GetEntries(std::string cuts);
+		double GetEntries();
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
 

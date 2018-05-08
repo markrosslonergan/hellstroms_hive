@@ -20,13 +20,14 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	leg->SetNColumns(2);
 
 	std::vector<bdt_file*> files= {bdt_sig, bdt_bkg};
-	std::vector<std::string> which_cuts = {bdt_sig->getStageCuts(0,-9,-9), bdt_bkg->getStageCuts(0,-9,-9)};
-	//	std::vector<std::string> which_cuts = {"1", bdt_bkg->getStageCuts(0,-9,-9)};
+	std::vector<std::string> which_cuts = {bdt_sig->getStageCuts(1,-9,-9), bdt_bkg->getStageCuts(1,-9,-9)};
+	//std::vector<std::string> which_cuts = {"1", bdt_bkg->getStageCuts(0,-9,-9)};
 	std::vector<TH1*> h_bdt;
 	std::vector<TH1*> h_bdt_log;
 
 	std::cout<<"CUTS: "<<which_cuts.size()<<" "<<which_cuts.at(0)<<" "<<which_cuts.at(1)<<std::endl;
 	int i=0;
+
 	for(auto &file: files){
 		std::cout<<"On file: "<<file->name<<" || "<<file->tag<<std::endl;
 
@@ -35,11 +36,11 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		std::cout<<"saf: "<<saf<<std::endl;
 		fout->cd();
 		std::cout<<"About to get TH1"<<std::endl;
-		h_bdt.push_back( file->getTH1(bdtvar, which_cuts.at(i), saf ,1.0));
-		h_bdt.back()->SetDirectory(0);	
+		//h_bdt.push_back( file->getTH1(bdtvar, which_cuts.at(i), saf , 1.0));
+		//h_bdt.back()->SetDirectory(0);	
 
-		std::cout<<"EVENTS: "<<h_bdt.back()->Integral()<<std::endl;
-		TH1 * ttmp = file->getTH1(bdtvar, which_cuts.at(i), file->tag+"_"+bdtvar.safe_unit+"_"+bdt_type ,1.0);
+		//std::cout<<"EVENTS: "<<h_bdt.back()->Integral()<<std::endl;
+		TH1 * ttmp = (TH1*)file->getTH1(bdtvar, which_cuts.at(i), file->tag+"_"+bdtvar.safe_unit+"_"+bdt_type ,1.0);
 		h_bdt.push_back(ttmp);
 		h_bdt.back()->SetDirectory(0);	
 
@@ -101,8 +102,8 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	std::vector<double> sig_eff;
 	std::vector<double> sig_purity;
 
-	TH1* sig = h_bdt.at(0);
-	TH1* bkg = h_bdt.at(1);
+	TH1* sig = (TH1*)h_bdt.at(0)->Clone("sig");
+	TH1* bkg = (TH1*)h_bdt.at(1)->Clone("bkg");
 
 	double bkgleft = 0.0;
 	double sigleft = 0.0;
