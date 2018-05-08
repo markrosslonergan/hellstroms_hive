@@ -168,7 +168,7 @@ int main (int argc, char *argv[]){
 		true_bkg = true_bkg +"&& true_track_origin[0]==1";
 	}
 
-	if(mode_option == "datamc" || mode_option == "eff"){
+	if(mode_option == "datamc" || mode_option == "eff" || mode_option == "sig"){
 		new_precuts = new_precuts + "&& totalpe_ibg_sum > 20";
 	}
 
