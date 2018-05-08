@@ -146,7 +146,7 @@ int main (int argc, char *argv[]){
 	bdt_file *data5e19 = new bdt_file(dir+"samples/data",   "vertexed_data5e19_v11.root",      "Data5e19", "hist ep", "", kBlack, data_flow);
 	bdt_file *bnbext = new bdt_file(  dir+"samples/bnbext", "vertexed_bnbext_mcc88_v8.0.root", "BNBext",   "hist ep", "", kBlack, data_flow);
 
-	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
+	std::vector<bdt_file*> bdt_files = {data5e19, bnbext, signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
 
 
 	//you get access to these with track_info.XXX
@@ -185,6 +185,7 @@ int main (int argc, char *argv[]){
     vars.push_back(bdt_variable(angle_shower1_shower2,"(50, -1, 1)", "Angle between Showers", false, "d"));
     //vars.push_back(bdt_variable(E1, "(50, 0, 1)", "Most Energetic Shower Energy", false, "d"));
     //vars.push_back(bdt_variable(E2, "(50, 0, 1)", "Second Most Energetic Shower Energy", false, "d"));
+    vars.push_back(bdt_variable(invMass,"(50, 0.03, 0.5)", "Two-shower Invariant Mass [GeV]", false, "d"));
     vars.push_back(bdt_variable("reco_shower_helper_energy[most_energetic_shower_index]", "(50, 0, 1)", "Most Energetic Shower Energy", false, "d"));
     vars.push_back(bdt_variable("reco_shower_helper_energy[second_most_energetic_shower_index]", "(50, 0, 1)", "Second Most Energetic Shower Energy", false, "d"));
 
@@ -241,8 +242,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	double fcoscut;
 	double fbnbcut;
 	if(istrack == "track"){
-		fcoscut = 0.546398;
-		fbnbcut = 0.505593;
+		fcoscut = 0.547014;
+		fbnbcut = 0.521707;
 	}else if(istrack == "notrack"){
 		fcoscut = 0.3;
 		fbnbcut = 0.3;
@@ -374,6 +375,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
         std::cout << "Done" << std::endl;
 
 	}     
+    /*
     else if(mode_option == "datamc"){
 
 
@@ -417,6 +419,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			//datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
 			//datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
     } 
+    */
     
     else if(mode_option == "vars"){
 
