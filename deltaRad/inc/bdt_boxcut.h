@@ -1,5 +1,5 @@
-#ifndef BDT_DATAMC_H
-#define BDT_DATAMC_H
+#ifndef BDT_BOXCUT_H
+#define BDT_BOXCUT_H
 
 #include <vector>
 #include <string>
@@ -14,7 +14,6 @@
 /******** Root includes *****/
 
 #include "TTreeFormula.h"
-#include "TText.h"
 #include "TFile.h"
 #include "TCanvas.h"
 #include "TPad.h"
@@ -30,22 +29,19 @@
 #include "TFriendElement.h"
 
 
-class bdt_datamc{
+
+
+class bdt_boxcut{
 	public:
-	
+		std::string core_cuts;	
+		std::string tag;	
+		bdt_stack* mc_stack;
+		std::vector<std::string> boxcuts;
+		std::vector<bdt_variable> vars;	
 
-	
-		bdt_file* data_file;
-		bdt_stack *mc_stack;
+		bdt_boxcut(std::string intag, bdt_stack * stackin, std::vector<std::string> inbox, std::vector<bdt_variable> invars) : tag(intag), mc_stack(stackin), boxcuts(inbox), vars(invars){ core_cuts = "1";};
 
-		std::string tag;
-
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";};
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin,std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {};
-
-
-		int plotStacks(TFile*f, bdt_variable var,double,double);
-		int plotBDTStacks(TFile*f, bdt_info,double,double);
+		int doCuts(TFile *ftest);
 
 
 };

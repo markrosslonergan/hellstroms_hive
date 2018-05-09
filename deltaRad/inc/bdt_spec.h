@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <algorithm> //for sorter
+
 /******** Our includes *****/
 
 #include  "bdt_file.h"
@@ -52,6 +54,7 @@ class bdt_stack{
 		int plotStacks(TFile*f, bdt_variable var,double,double);
 		int plotBDTStacks(TFile*f, bdt_info,double,double);
 
+		int makeSBNspec(std::string tag, bdt_variable var, double, double, std::vector<std::string> hist_names);
 };
 
 

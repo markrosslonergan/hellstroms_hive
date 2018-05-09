@@ -37,7 +37,6 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	file->recomc_cuts = recomc_cuts;
 	file->recomc_names = recomc_names;
 	
-
 	//-------------- All Verticies -------------
 	std::string selection = file->getStageCuts(0, -9, -9);
 	
@@ -73,7 +72,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	reco_mc_all_bdt2 = (TH1*)file->getTH1(var , bnbcut  ,"all_bdt2_"+file->tag+"_"+var.safe_name, plot_pot);
 	N_bdt_bnb = file->GetEntries(bnbcut.c_str())*plot_pot/file->pot*file->scale_data;
 
-	if(true){
+	if(false){
 		file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]",bnbcut.c_str());
 	}
 
@@ -149,7 +148,7 @@ std::cout<<"2"<<std::endl;
 		TLegend * l_reco_truth_pre = new TLegend(0.11,0.11,0.89,0.89);
 
 		int ipre=0;
-		for(auto v: reco_mc_vec_pre){
+		for(auto &v: reco_mc_vec_pre){
 			s_reco_truth_pre->Add(v);
 			double n = v->Integral();
 			double per = n/reco_mc_all_pre->Integral()*100.0;
@@ -188,7 +187,7 @@ std::cout<<"3"<<std::endl;
 		TLegend * l_reco_truth_bdt1 = new TLegend(0.11,0.11,0.89,0.89);
 
 		int ibdt1=0;
-		for(auto v: reco_mc_vec_bdt1){
+		for(auto &v: reco_mc_vec_bdt1){
 			s_reco_truth_bdt1->Add(v);
 			double n = v->Integral();
 			double per = n/reco_mc_all_bdt1->Integral()*100.0;
@@ -228,7 +227,7 @@ std::cout<<"3"<<std::endl;
 		TLegend * l_reco_truth_bdt2 = new TLegend(0.11,0.11,0.89,0.89);
 
 		int ibdt2=0;
-		for(auto v: reco_mc_vec_bdt2){
+		for(auto &v: reco_mc_vec_bdt2){
 			s_reco_truth_bdt2->Add(v);
 			double n = v->Integral();
 			double per = n/reco_mc_all_bdt2->Integral()*100.0;
@@ -259,7 +258,7 @@ std::cout<<"5"<<std::endl;
 
 
 		c_reco_truth->Write();
-		c_reco_truth->Print(("unit/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth.pdf").c_str(),"pdf");
+		c_reco_truth->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth.pdf").c_str(),"pdf");
 
 	return 0;
 }

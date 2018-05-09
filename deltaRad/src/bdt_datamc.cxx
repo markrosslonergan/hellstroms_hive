@@ -5,7 +5,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	//TCanvas *cobs = new TCanvas("","",1800,1600);
 	//cobs->Divide(2,2,0.0025,0.0000001);
 
-	double plot_pot=5e19;
+	double plot_pot=4.801e19;
 
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
@@ -65,7 +65,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		double rmax = 3;
 		int data_rebin = 1;
 		if(k==0 || k == 1){
-			rmin=0.25; rmax = 1.749;
+			rmin=0.3; rmax = 1.499;
 		}else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=4;};
 		
 
@@ -90,6 +90,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 			NeventsStack+=Nevents;
 			auto h1 = new TH1F(("tmp"+stage_name.at(k)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
 			h1->SetFillColor(f->col);
+			h1->SetFillStyle(f->fillstyle);
 			h1->SetLineColor(kBlack);
 			l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
@@ -121,8 +122,10 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		pad0bot->cd();       // pad0bot becomes the current pad
 
 		TH1* ratpre = (TH1*)data_th1s.at(k)->Clone(("ratio_"+stage_name.at(k)).c_str());
+		ratpre->Sumw2();
 		vec_th1s.at(k)->Rebin(data_rebin);
 		ratpre->Divide(vec_th1s.at(k));		
+
 		ratpre->SetFillColor(kGray+1);
 		ratpre->SetMarkerStyle(2);
 		ratpre->SetFillStyle(3144);
@@ -145,7 +148,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		ratpre->GetXaxis()->SetTitle(var.unit.c_str());
 
 	   std::string mean = "Norm: "+to_string_prec(NdatEvents/NeventsStack*100,1)+ "%";
-	   TText *t = new TText(0.11,1.3,mean.c_str());
+	   TText *t = new TText(0.14,0.9,mean.c_str());
+	   t->SetNDC();
   	   t->SetTextColor(kRed-7);
   	   //t->SetTextFont(43);
 	   t->SetTextSize(0.12);
@@ -166,7 +170,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 	std::cout<<"Writing pdf."<<std::endl;
 	cobs->Write();
-	cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+".pdf").c_str(),"pdf");
+	cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_"+var.safe_unit+".pdf").c_str(),"pdf");
 
 	return 0;
 }
@@ -176,7 +180,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	TCanvas *cobs = new TCanvas("","",900,800);
 	cobs->cd();
 	cobs->Divide(2,1,0.0025,0.0000001);
-	double plot_pot=5e19;
+	double plot_pot=4.801e19;
 
 
 
@@ -211,7 +215,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	//for(int k = 0; k<2; k++){
 	//for(int k = 0; k<1; k++){
 	{
-		int k=1;
+		int k=2;
 		std::cout<<"On stage: "<<k<<" of bdt_datamc::plotBDTStacks."<<std::endl;	
 		bdt_variable dvar = data_file->getBDTVariable(whichbdt);
 
@@ -250,6 +254,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
 			NeventsStack+=Nevents;
 			h1->SetFillColor(f->col);
+			h1->SetFillStyle(f->fillstyle);
 			h1->SetLineColor(kBlack);
 			l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
@@ -257,7 +262,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		data->SetMarkerStyle(20);
 		data->Draw("same E1");
 		double NdatEvents = data_file->GetEntries(data_cuts.at(k).c_str())*(plot_pot/data_file->pot )*data_file->scale_data;
-		l0->AddEntry(data,("#splitline{"+data_file->tag+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
+		l0->AddEntry(data,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
 
 		l0->Draw();
 		l0->SetLineWidth(0);
@@ -311,12 +316,11 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
 
 	cobs->Write();
-	cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+".pdf").c_str(),"pdf");
+	cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+".pdf").c_str(),"pdf");
 	//cobs->SaveAs(("datamc/"+var.name+".png").c_str(),"png");
 
 	return 0;
 }
-
 
 
 

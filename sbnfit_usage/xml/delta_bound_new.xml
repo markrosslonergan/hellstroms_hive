@@ -5,12 +5,13 @@
 
 <detector name="uBooNE" use="1" />
 
-<channel name="singlephoton" use="1" numbins="6">
+<channel name="singlephoton" use="1" numbins="3">
 	<bins 
-		edges="0.0 0.15 0.30 0.45 0.60 0.8 1.0" 
+		edges="0.0 0.15 0.30 0.45 " 
 		/>
 	<subchannel name="signal" use="1" osc="0"/>
 	<subchannel name="bkg" use="1" osc="0"/>
+	<subchannel name="intime" use="1" osc="0"/>
 </channel>
 
 

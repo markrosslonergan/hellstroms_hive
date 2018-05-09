@@ -13,6 +13,8 @@
 
 #include "TTree.h"
 
+#include <unordered_map>
+
 
 class MCTruthAnalyzer : public Analyzer {
 
@@ -28,13 +30,8 @@ class MCTruthAnalyzer : public Analyzer {
   
   TTree * ftree;
 
-  int fstatus;
-  int fpdg;
-
-  double fnux_dist;
-  double fnuy_dist;
-  double fnuz_dist;
-  
+  int fpi0_statuscode;
+     
 };
 
 

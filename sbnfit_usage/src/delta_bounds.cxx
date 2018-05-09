@@ -136,10 +136,19 @@ int main(int argc, char* argv[])
 	//SBNspec delta_spec("../../delta_BDT_onebin", xml);
 
 
-	SBNspec delta_spec("../../delta_BDT_comb", xml);
+	SBNspec delta_spec("../../delta_BDT_1track", xml);
+	SBNspec delta_spec2("../../delta_BDT_0track", xml);
+
 	delta_spec.calcFullVector();
 	delta_spec.Scale("signal",POTscale/3.1);
 	delta_spec.calcFullVector();
+
+	delta_spec2.calcFullVector();
+	delta_spec2.Scale("signal",POTscale/3.1);
+	delta_spec2.calcFullVector();
+
+	delta_spec.Add(&delta_spec2);
+	delta_spec.writeOut("check.root");
 
 	SBNspec bkg_spec = delta_spec;
 	bkg_spec.calcFullVector();
@@ -169,7 +178,7 @@ int main(int argc, char* argv[])
 
 	bool printed = false;
 
-	double modmax=14;
+	double modmax=15;
 	if(pot==19){
 		modmax=62;
 	}
@@ -210,9 +219,7 @@ int main(int argc, char* argv[])
 			vec_CLs.at(p).push_back(pval.at(p)/(1-q.at(p)) );
 		}
 
-		if(true_mod > 1){
 		std::cout<<"NUMBER @ scale : "<<true_mod<<"\t"<< pval.at(0)/(1-q.at(0))<<"\tsig: "<<stot<<"\tbkg: "<<btot<<"\tsig_only "<<stot-btot<<"\t\ts/sqrt(s+b): "<<(stot-btot)/sqrt(stot)<<std::endl;
-		}
 		ven.push_back(true_mod);
 
 	
@@ -245,7 +252,7 @@ int main(int argc, char* argv[])
 		vec_CLmine.at(i).push_back(0);
 	}
 
-	TFile *f = new TFile("bound_90_root.root","recreate");
+	TFile *f = new TFile("bound_CLs.root","recreate");
 	
 	//*************************************************
 	//CLs
@@ -313,7 +320,7 @@ int main(int argc, char* argv[])
 	v_g_CLs.front()->GetXaxis()->SetRangeUser(1,modmax-1);
 	v_g_CLs.front()->GetXaxis()->SetTitle("#sigma_{1 #gamma} enhancement");
 	v_g_CLs.front()->GetYaxis()->SetTitle("CLs");
-
+	c0->Update();
 	p->RedrawAxis();
 
 	TLegend * l2 = new TLegend(0.6,0.7,0.89,0.89);
