@@ -4,12 +4,12 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	dir(indir),
 	name(inname),
 	tag(intag),
-	root_dir(inrootdir),
 	plot_ops(inops),
+	root_dir(inrootdir),
 	col(incol),
+	flow(inflow),
 	is_data("false"),
-	is_mc("true"),
-	flow(inflow)
+	is_mc("true")
 {
 
 	plot_name = tag;
@@ -30,6 +30,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	std::string tnam_pot = root_dir+"pot_tree";
 
 	weight_branch = "1";
+	fillstyle = 1001;
 
 	std::cout<<"Getting vertex tree"<<std::endl;
 	tvertex = (TTree*)f->Get(tnam.c_str());
@@ -83,7 +84,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	}
 	if(tag == "Data5e19"){
 		leg = "lp";
-		pot = 4.79e19;// tor860_wcut
+		pot = 4.801e19;// tor860_wcut
 		std::cout<<"--> value: "<<pot<<std::endl;
 	}
 	if(tag == "BNBext"){
@@ -107,11 +108,11 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		double sca = 1.23;//from 1.23
 		//https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
 
-		double ext=47613881.0; //External spills in each sample (EXT)
-		double spill_on=10677928.0;//This number in data zarko  (E1DCNT_wcut)
+		double ext=47953078.0; //External spills in each sample (EXT)
+		double spill_on=10702983.0;//This number in data zarko  (E1DCNT_wcut)
 
 
-		double datanorm =4.79e19;// rot860_wcut run-subrunlist;
+		double datanorm =4.801e19;// rot860_wcut run-subrunlist;
 
 		double mod = spill_on/ext;
 
@@ -135,14 +136,23 @@ int bdt_file::addPlotName(std::string plotin){
 	plot_name = plotin;
 	return 0;
 }
+
 double bdt_file::GetEntries(){
 	return this->GetEntries("1");
 }
+
 double bdt_file::GetEntries(std::string cuts){
-	TCanvas *ctmp = new TCanvas();
-	this->tvertex->Draw("reco_asso_showers>>random" ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
-	TH1* th1 = (TH1*)gDirectory->Get("random") ;
-	return th1->GetSumOfWeights();
+	TRandom3 *rangen = new TRandom3();
+	std::string namr = std::to_string(rangen->Uniform(10000));
+
+	//TCanvas *ctmp = new TCanvas();
+	this->tvertex->Draw(("reco_asso_showers>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+	TH1* th1 = (TH1*)gDirectory->Get(namr.c_str()) ;
+	double ans = th1->GetSumOfWeights();
+	delete th1;
+
+	return ans;
+
 }
 
 int bdt_file::scale(double scalein){
@@ -185,6 +195,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 
 
 	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
+	th1->Sumw2();
 	th1->Scale(this->scale_data*plot_POT/this->pot);
 	//	std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
 	if(rebin>1) th1->Rebin(rebin);
@@ -212,6 +223,12 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 
 	std::cout<<"getRecoMCTH1 || size of names: "<<recomc_names.size()<<" "<<recomc_cuts.size()<<" "<<recomc_cols.size()<<std::endl;
 
+	
+	std::vector<TH1*> to_sort;
+	std::vector<double> integral_sorter;
+
+
+
 	for(int i=0; i< recomc_cuts.size(); i++){
 		std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
 		TCanvas *ctmp = new TCanvas();
@@ -228,11 +245,20 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 		th1->SetStats(0);
 		th1->GetXaxis()->SetTitle(var.unit.c_str());
 		th1->GetYaxis()->SetTitle("Verticies");
-		ans_th1s.push_back(th1);
 
 		other_cuts = other_cuts+ " && " +"!("+recomc_cuts.at(i)+")";	
 
+		to_sort.push_back(th1);
+		integral_sorter.push_back(th1->GetSumOfWeights());
+		
 	}
+		
+	ans_th1s = to_sort;
+	//for (int i: sort_indexes(integral_sorter)) {
+		//ans_th1s.push_back( to_sort.at(i));	
+		//legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
+	//}
+
 
 	//Should fix this soon
 	//recomc_cuts.push_back(other_cuts +"&& shower_true_origin != -1");

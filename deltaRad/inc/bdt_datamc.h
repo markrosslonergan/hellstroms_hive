@@ -48,7 +48,6 @@ class bdt_datamc{
 		int plotBDTStacks(TFile*f, bdt_info,double,double);
 
 
-
 };
 
 
