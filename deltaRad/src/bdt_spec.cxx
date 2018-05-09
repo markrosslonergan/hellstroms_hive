@@ -101,7 +101,7 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 		hist->Scale();		
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Verticies");
+		hist->GetYaxis()->SetTitle("Vertices");
 
 		std::cout<<"HAT: "<<stack.at(t)->tag<<std::endl;
 		for(int k=1; k< hist->GetNbinsX(); k++){
@@ -131,9 +131,9 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 		cobs->cd(1);
 		s0->Draw("hist");
-		s0->SetTitle("All Verticies");
+		s0->SetTitle("All Vertices");
 		s0->GetXaxis()->SetTitle(var.unit.c_str());
-		s0->GetYaxis()->SetTitle("Verticies");
+		s0->GetYaxis()->SetTitle("Vertices");
 		s0->GetYaxis()->SetTitleOffset(1.5);
 		s0->SetMaximum(s0->GetMaximum()*1.3);
 		TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);

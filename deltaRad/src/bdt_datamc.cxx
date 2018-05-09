@@ -46,10 +46,9 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	std::vector<std::string> stage_name = {"All Verticies","Pre-Selection","Post Cosmic BDT","Post BNB BDT"};
 
 
-	//for(int k = 0; k<4; k++){
-    // Change k to number of stage
-    //{   
-        int k = 2;
+	for(int k = 0; k<4; k++){
+    // Change k to number of stage if not using for loop
+    //int k = 0;
         std::cout << k << std::endl;
         //std::string stageNum = std::to_string(k);
 		//cobs->cd(k+1);
@@ -63,13 +62,12 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		double rmax = 2;
 		if(k==0 || k == 1){rmin=0.5; rmax = 1.49;}
 
-
 		vec_stacks.at(k)->SetMaximum(vec_th1s.at(k)->GetMaximum()*1.4);
 		vec_stacks.at(k)->SetMinimum(0.0001);
 		vec_stacks.at(k)->Draw("hist");
 		vec_stacks.at(k)->SetTitle(stage_name.at(k).c_str());
 		vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
-		vec_stacks.at(k)->GetYaxis()->SetTitle("Verticies");
+		vec_stacks.at(k)->GetYaxis()->SetTitle("Vertices");
 		vec_stacks.at(k)->GetYaxis()->SetTitleOffset(1.5);
 		vec_stacks.at(k)->SetMaximum(vec_th1s.at(k)->GetMaximum()*1.4);
 		vec_stacks.at(k)->SetMinimum(0.0001);
@@ -82,8 +80,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 			double Nevents = f->tvertex->GetEntries( f->getStageCuts(k,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 			NeventsStack+=Nevents;
 			auto h1 = new TH1F(("tmp"+stage_name.at(k)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
-			h1->SetFillColor(f->col);
-			h1->SetLineColor(kBlack);
+            h1->SetFillColor(f->col);
+            h1->SetLineColor(kBlack);
 			l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
 
@@ -139,11 +137,12 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 		//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 		//var_precut.front()->GetYaxis()->SetTitle("Verticies");
-	//}
+	
 
 
-	cobs->Write();
-	cobs->SaveAs(("datamc/"+data_file->tag+"_"+var.safe_name+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
+        cobs->Write();
+        cobs->SaveAs(("datamc/"+data_file->tag+"_"+var.safe_name+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
+    }
 
 	return 0;
 }

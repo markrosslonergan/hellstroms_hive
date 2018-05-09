@@ -99,9 +99,9 @@ int main (int argc, char *argv[]){
     std::string num_track_cut;
 	if(istrack == "track"){
 	    num_track_cut = " == 1 ";
-        new_precuts = "1";
+        //new_precuts = "1";
         // Minimum shower energy cut in GeV
-        //new_precuts = "reco_shower_helper_energy[second_most_energetic_shower_index] > 0.03 "; 
+        new_precuts = "reco_shower_helper_energy[second_most_energetic_shower_index] > 0.03 "; 
 
 	}else if(istrack == "notrack"){
 		//new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && totalpe_ibg_sum > 50";
@@ -137,6 +137,7 @@ int main (int argc, char *argv[]){
 	bdt_flow data_flow(   base_cuts ,	    "1", 			        new_precuts, "1", cosmic_bdt_info, bnb_bdt_info);
 
 	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
+    /*
 	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0cosmic_mcc88_v1.0_PRECUT_2g1p.root", "NCpi0Pure",	 "hist", "",  kBlue-4,  signal_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0cosmic_mcc88_v1.0_PRECUT_2g1p.root", "NCpi0Cosmics", "hist", "",  kBlue-4,  signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(   dir+"samples/mcc88", "vertexed_bnbcosmic_mcc88_v2.0_PRECUT_2g1p.root",	 "BNBPure",	     "hist", "",  kRed-6,   bkg_flow);
@@ -145,6 +146,21 @@ int main (int argc, char *argv[]){
 	// Data files
 	bdt_file *data5e19 = new bdt_file(dir+"samples/data",   "vertexed_data5e19_v11.root",      "Data5e19", "hist ep", "", kBlack, data_flow);
 	bdt_file *bnbext = new bdt_file(  dir+"samples/bnbext", "vertexed_bnbext_mcc88_v8.0.root", "BNBext",   "hist ep", "", kBlack, data_flow);
+    */
+    
+    /*//////////////////////////////////////////////////////
+      NEW TEST FILES
+    ///////////////////////////////////////////////////// */
+    
+	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0_fltr_mcc8.9_fresh_v1.0.root", "NCpi0Pure",	   "hist", "",  kBlue-4,  signal_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0_fltr_mcc8.9_fresh_v1.0.root", "NCpi0Cosmics", "hist", "",  kBlue-4,  signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(   dir+"samples/mcc88", "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBPure",	   "hist", "",  kRed-6,   bkg_flow);
+	bdt_file *bnb_cosmics = new bdt_file(   dir+"samples/mcc88", "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBCosmics",   "hist", "",  kRed-6,   bkg_flow);
+	bdt_file *intime = new bdt_file(        dir+"samples/mcc88", "vertexed_intime_mcc8.9_fresh_v2.0.root",     "IntimeCosmics","hist", "",  kGreen-3, cosmic_flow);
+	// Data files
+	bdt_file *data5e19 = new bdt_file(dir+"samples/data",   "vertexed_data5e19_mcc8.9_fresh_v3.0.root", "Data5e19", "hist ep", "", kBlack, data_flow);
+	bdt_file *bnbext = new bdt_file(  dir+"samples/bnbext", "vertexed_bnbext_mcc8.9_fresh_v2.0.root",   "BNBext",   "hist ep", "", kBlack, data_flow);
+    
 
 	std::vector<bdt_file*> bdt_files = {data5e19, bnbext, signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
 
@@ -242,8 +258,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	double fcoscut;
 	double fbnbcut;
 	if(istrack == "track"){
-		fcoscut = 0.547014;
-		fbnbcut = 0.521707;
+		fcoscut = 0.561669;
+		fbnbcut = 0.543367;
 	}else if(istrack == "notrack"){
 		fcoscut = 0.3;
 		fbnbcut = 0.3;
@@ -309,19 +325,14 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
         // Other. For now, just case where one shower is cosmic, but not both
 		"(true_shower_origin[0]==2 || true_shower_origin[1]==2) && !(true_shower_origin[0]==2 && true_shower_origin[1]==2)", 
         // Other; defined as "!" versions of above
-		//"!(true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111) && !(true_shower_origin[0] == 2 && true_shower_origin[1] == 2)"  
          
-        /* 
-        // Check if either shower came from electron
-		"true_shower_origin[most_energetic_shower_index] ==1 && true_shower_origin[second_most_energetic_shower_index]==1 && (abs(true_shower_pdg[most_energetic_shower_index]) ==11 || abs(true_shower_pdg[second_most_energetic_shower_index])==11)",
-        // Check for cases where either associated photon shower didn't come from pi0
-		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1 && abs(true_shower_pdg[most_energetic_shower_index])!=11 && abs(true_shower_pdg[second_most_energetic_shower_index])!=11", 
-        */
 	};
 
     
 	//and what colors
-	std::vector<int> recomc_cols = {kRed-7, kRed+1, kMagenta+1, kBlue+3, kPink+1, kGreen+1, kGreen+3};
+    //{kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue,  kGreen+1,kBlue-7}
+	//std::vector<int> recomc_cols = {kRed-7, kRed+1, kMagenta+1, kBlue+3, kPink+1, kGreen+1, kGreen+3};
+	std::vector<int> recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue, kGreen+1, kBlue-7};
 
         std::cout << "Done adding TreeFiends" << std::endl;
 		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols);
@@ -361,6 +372,9 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 
 	}else if(mode_option == "stack"){
+        signal_cosmics->col=kRed-7;
+        bnb_cosmics->col=kBlue;
+        bnbext->col=kGreen+2;
 		bdt_stack obs("obs");
 		obs.addToStack(signal_cosmics);
 		obs.addToStack(bnb_cosmics);
@@ -374,52 +388,51 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		obs.plotBDTStacks(ftest,bnb_bdt_info, fcoscut, fbnbcut);
         std::cout << "Done" << std::endl;
 
-	}     
-    
-    else if(mode_option == "datamc"){
+	}else if(mode_option == "datamc"){
+
+        signal_cosmics->col=kRed-7;
+        bnb_cosmics->col=kBlue;
+        bnbext->col=kGreen+2;
+        bdt_stack *obs = new bdt_stack(istrack+"_datamc");
+        obs->plot_pot = 5e19;
+        obs->addToStack(signal_cosmics);
+        obs->addToStack(bnb_cosmics);
+        obs->addToStack(bnbext);
+
+        bdt_stack *obs2 = new bdt_stack(istrack+"_extintime");
+        obs2->plot_pot = 5e19;
+        obs2->addToStack(intime);
+
+        bdt_stack *obs3 = new bdt_stack(istrack+"_overlaymc");
+        obs3->plot_pot = 5e19;
+        obs3->addToStack(bnb_cosmics);
 
 
-			bdt_stack *obs = new bdt_stack(istrack+"_datamc");
-			obs->plot_pot = 5e19;
-			obs->addToStack(signal_cosmics);
-			obs->addToStack(bnb_cosmics);
-            bnbext->col=kGreen-3;
-			obs->addToStack(bnbext);
+        int ip=0;
+        for(auto &v:vars){
+            //break;
+            ip++;
+            bdt_datamc tdatamc(data5e19, obs);
+            //bdt_datamc tdatamc2(bnbext, obs2);
+            //bdt_datamc tdatamc3(overlay, obs3);
+            tdatamc.plotStacks(ftest,  v ,fcoscut,fbnbcut);
+            //tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
+            //tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
+            return 0;
 
-			bdt_stack *obs2 = new bdt_stack(istrack+"_extintime");
-			obs2->plot_pot = 5e19;
-			obs2->addToStack(intime);
+        }
 
-			bdt_stack *obs3 = new bdt_stack(istrack+"_overlaymc");
-			obs3->plot_pot = 5e19;
-			obs3->addToStack(bnb_cosmics);
+        bdt_datamc datamc(data5e19, obs);
+        bdt_datamc datamc2(bnbext, obs2);
+        //bdt_datamc datamc3(overlay, obs3);
 
-
-			int ip=0;
-			for(auto &v:vars){
-				//break;
-				ip++;
-				bdt_datamc tdatamc(data5e19, obs);
-				//bdt_datamc tdatamc2(bnbext, obs2);
-				//bdt_datamc tdatamc3(overlay, obs3);
-				tdatamc.plotStacks(ftest,  v ,fcoscut,fbnbcut);
-				//tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
-				//tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
-				return 0;
-
-			}
-
-			bdt_datamc datamc(data5e19, obs);
-			bdt_datamc datamc2(bnbext, obs2);
-			//bdt_datamc datamc3(overlay, obs3);
-
-			datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-			datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-			datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-			datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-			//datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-			//datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-    } 
+        datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+        datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+        datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+        datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+        //datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+        //datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+} 
     
     
     else if(mode_option == "vars"){
