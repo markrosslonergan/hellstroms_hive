@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <numeric>
 #include <iostream>
 #include <algorithm>
 /******** Our includes *****/
