@@ -38,7 +38,6 @@ class bdt_response{
 
 		bdt_response(bdt_info infoin, bdt_file* sigin, bdt_file* bkgin) : info(infoin), bdt_sig(sigin), bdt_bkg(bkgin){	
 			bdt_type = info.identifier;
-		
 		}
 
 

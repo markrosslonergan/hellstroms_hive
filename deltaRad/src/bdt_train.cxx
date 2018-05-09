@@ -32,8 +32,8 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
 
 	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
-			//"nTrain_Signal="+std::to_string(2000/*signal_entries-2000*/)+":nTrain_Background="+std::to_string(background_entries-2000)+":SplitMode=Random:NormMode=NumEvents:!V");
-			"SplitMode=Random:NormMode=NumEvents:!V");
+			"nTrain_Signal="+std::to_string(signal_entries-10000)+":nTrain_Background="+std::to_string(background_entries-2000)+":SplitMode=Random:NormMode=NumEvents:!V");
+			//"SplitMode=Random:NormMode=NumEvents:!V");
 
     //factory.PrepareTrainingAndTestTree(ROOT.TCut(),"NormMode=EqualNumEvents:SplitMode=Block:nTrain_Signal=%s:nTest_Signal=%s:nTrain_Background=%s:nTest_Background=%s"%(nTrain_Signal,nTest_Signal,nTrain_Background,nTest_Background))
 

@@ -136,10 +136,19 @@ int main(int argc, char* argv[])
 	//SBNspec delta_spec("../../delta_BDT_onebin", xml);
 
 
-	SBNspec delta_spec("../../delta_BDT_new", xml);
+	SBNspec delta_spec("../../delta_BDT_1track", xml);
+	SBNspec delta_spec2("../../delta_BDT_0track", xml);
+
 	delta_spec.calcFullVector();
-	delta_spec.ScaleAll(POTscale/3.1);
+	delta_spec.Scale("signal",POTscale/3.1);
 	delta_spec.calcFullVector();
+
+	delta_spec2.calcFullVector();
+	delta_spec2.Scale("signal",POTscale/3.1);
+	delta_spec2.calcFullVector();
+
+	delta_spec.Add(&delta_spec2);
+	delta_spec.writeOut("check.root");
 
 	SBNspec bkg_spec = delta_spec;
 	bkg_spec.calcFullVector();
@@ -169,7 +178,7 @@ int main(int argc, char* argv[])
 
 	bool printed = false;
 
-	double modmax=20;
+	double modmax=15;
 	if(pot==19){
 		modmax=62;
 	}
@@ -210,9 +219,7 @@ int main(int argc, char* argv[])
 			vec_CLs.at(p).push_back(pval.at(p)/(1-q.at(p)) );
 		}
 
-		if(true_mod > 1){
 		std::cout<<"NUMBER @ scale : "<<true_mod<<"\t"<< pval.at(0)/(1-q.at(0))<<"\tsig: "<<stot<<"\tbkg: "<<btot<<"\tsig_only "<<stot-btot<<"\t\ts/sqrt(s+b): "<<(stot-btot)/sqrt(stot)<<std::endl;
-		}
 		ven.push_back(true_mod);
 
 	
@@ -245,7 +252,7 @@ int main(int argc, char* argv[])
 		vec_CLmine.at(i).push_back(0);
 	}
 
-	TFile *f = new TFile("bound.root","recreate");
+	TFile *f = new TFile("bound_CLs.root","recreate");
 	
 	//*************************************************
 	//CLs
@@ -289,19 +296,19 @@ int main(int argc, char* argv[])
 	TLine * l3 = new TLine(3.0, 0.001, 3.0,1);  l3->SetLineStyle(1);l3->SetLineColor(kBlack); 	
 	l3->SetLineWidth(2);
 
-	TText *t3 = new TText(2.2, 0.008,"LEE (x3)"); t3->SetTextColor(kBlack);//t90->SetTextSize(0.12);
+	TText *t3 = new TText(2.6, 0.008,"LEE (x3)"); t3->SetTextColor(kBlack);//t90->SetTextSize(0.12);
 	t3->SetTextAngle(-90);
 	t3->Draw();
 	l3->Draw();
 	
 
-	TLine * l90 = new TLine(1, 0.1, modmax-4,  0.1); l90->SetLineStyle(1);l90->SetLineColor(kRed);
-	TLine * l95 = new TLine(1, 0.05, modmax-4, 0.05);l95->SetLineStyle(2);l95->SetLineColor(kRed);
-	TLine * l99 = new TLine(1, 0.01, modmax-4, 0.01);l99->SetLineStyle(3);l99->SetLineColor(kRed);
+	TLine * l90 = new TLine(1, 0.1, modmax-1,  0.1); l90->SetLineStyle(1);l90->SetLineColor(kRed);
+	TLine * l95 = new TLine(1, 0.05, modmax-1, 0.05);l95->SetLineStyle(2);l95->SetLineColor(kRed);
+	TLine * l99 = new TLine(1, 0.01, modmax-1, 0.01);l99->SetLineStyle(3);l99->SetLineColor(kRed);
 
-	TText *t90 = new TText(modmax-8, 0.1*0.9,"90\% C.L"); t90->SetTextAlign(13); t90->SetTextColor(kRed);//t90->SetTextSize(0.12);
-	TText *t95 = new TText(modmax-8, 0.05*0.9,"95\% C.L"); t95->SetTextAlign(13); t95->SetTextColor(kRed);     // t95->SetTextSize(0.12);
-	TText *t99 = new TText(modmax-8, 0.01*0.9,"99\% C.L"); t99->SetTextAlign(13); t99->SetTextColor(kRed);    //t99->SetTextSize(0.12);
+	TText *t90 = new TText(modmax-3, 0.1*0.9,"90\% C.L"); t90->SetTextAlign(13); t90->SetTextColor(kRed);//t90->SetTextSize(0.12);
+	TText *t95 = new TText(modmax-3, 0.05*0.9,"95\% C.L"); t95->SetTextAlign(13); t95->SetTextColor(kRed);     // t95->SetTextSize(0.12);
+	TText *t99 = new TText(modmax-3, 0.01*0.9,"99\% C.L"); t99->SetTextAlign(13); t99->SetTextColor(kRed);    //t99->SetTextSize(0.12);
 
 	t90->Draw();
 	t99->Draw();
@@ -313,7 +320,7 @@ int main(int argc, char* argv[])
 	v_g_CLs.front()->GetXaxis()->SetRangeUser(1,modmax-1);
 	v_g_CLs.front()->GetXaxis()->SetTitle("#sigma_{1 #gamma} enhancement");
 	v_g_CLs.front()->GetYaxis()->SetTitle("CLs");
-
+	c0->Update();
 	p->RedrawAxis();
 
 	TLegend * l2 = new TLegend(0.6,0.7,0.89,0.89);

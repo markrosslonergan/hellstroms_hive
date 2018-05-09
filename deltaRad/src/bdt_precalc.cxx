@@ -48,7 +48,6 @@ int bdt_precalc::genTrackInfo(){
 	file->tvertex->SetBranchAddress("reco_track_calo_resrange",&vtrk_resrange,&bresrange);
 	file->tvertex->SetBranchAddress("true_track_pdg",&true_track_pdg,&btrackpdg);
 
-
 	// New branches for FRIEND TREEEE 
 	double v_bragg_parA=0;
 	double v_bragg_parD=0;
@@ -74,7 +73,7 @@ int bdt_precalc::genTrackInfo(){
 	TBranch *b_bragg_parA = friend_tree->Branch("reco_track_braggA",&v_track_braggA);
 	TBranch *b_kinetic = friend_tree->Branch("reco_track_kinetic",&v_track_kinetic);
 	TBranch *b_good_calo = friend_tree->Branch("reco_track_good_calo",&v_track_good_calo);
-	//TBranch *b_bragg_parD = friend_tree->Branch("bragg_parD",&v_bragg_parD);
+
 
 
 	//Truncated Mean Testing
@@ -124,10 +123,9 @@ int bdt_precalc::genTrackInfo(){
 				std::vector<double> c_resrange;
 				std::vector<double> c_dEdx;
 
-
-
-				//Hard kill any silly dEdx
-				for(int k=0; k < vtrk_resrange->at(s).size(); k++){
+				//Hard kill any silly dEdx, Dropping first and last point
+				if(vtrk_resrange->at(s).size()>1){
+				for(int k=1; k < vtrk_resrange->at(s).size()-1; k++){
 
 					bool is_sensible =vtrk_dEdx->at(s).at(k) < max_realistic_dEdx; 
 					bool is_nan =vtrk_dEdx->at(s).at(k) != vtrk_dEdx->at(s).at(k); 
@@ -139,7 +137,7 @@ int bdt_precalc::genTrackInfo(){
 						c_dEdx.push_back(vtrk_dEdx->at(s).at(k));
 					}
 				}
-
+				}
 				//If we dont have enough hits, move to next track and tag this track as "BAD"
 				if(c_dEdx.size() < min_realistic_hits ){
 					v_track_range.push_back(-999);
@@ -178,12 +176,12 @@ int bdt_precalc::genTrackInfo(){
 					std::vector<double> ax = bx;
 					ay.erase(ay.begin());
 					ax.erase(ax.begin());
-					
+
 
 					done = true;
 					std::cout<<"Got Done! "<<dra<<std::endl;
 					//Some Truncated Mean Testing
-					
+
 					TGraph * gb = new TGraph(bx.size(),&bx[0], &by[0]);
 					TGraph * ga = new TGraph(ax.size(),&ax[0], &ay[0]);
 					TCanvas *c = new TCanvas();
@@ -200,27 +198,60 @@ int bdt_precalc::genTrackInfo(){
 					gb->GetYaxis()->SetTitle("dE/dx [MeV/cm]");
 
 					dra++;
-	
+
 					c->SaveAs(("truncpics/muon_"+std::to_string(dra)+".png").c_str(),"png");
 
 
 				}
 
+				//Check to make sure the vectors are filled in the right order. (Just for bragg variable!)
+				std::vector<double> brag_c_resrange = c_resrange;	
+				std::vector<double> brag_trunc_dEdx = trunc_dEdx;	
+
+				if(brag_c_resrange.front() < brag_c_resrange.back()){
+					std::reverse(brag_c_resrange.begin(),brag_c_resrange.end());
+					std::reverse(brag_trunc_dEdx.begin(),brag_trunc_dEdx.end());
+				}
+				for(int j=0; j< brag_trunc_dEdx.size(); j++){
+					//		if(brag_c_resrange.at(j) ==0) brag_c_resrange.at(j)=0.001;
+				}
+				while( brag_c_resrange.back()==0){
+					brag_c_resrange.pop_back();
+					brag_trunc_dEdx.pop_back();
+
+				}
+
+				if(brag_c_resrange.size()>1){
+
+					std::vector<double> params = {15.0, -0.4};
+					TF1 *bragg = new TF1("bragg", bragg_fnc, brag_c_resrange.front(), brag_c_resrange.back(), params.size());
+					bragg->SetParameters(&params[0]);
+					bragg->SetParNames("bragg_A","bragg_b");
+					bragg->SetParLimits(0, 0.01, 30.0);
+					//bragg->SetParLimits(1, -1.5, 1);
+					bragg->FixParameter(1,-0.42);
+
+					TGraph * pts = new TGraph(brag_trunc_dEdx.size(), &brag_c_resrange[0],&brag_trunc_dEdx[0] );
+					//			TFitResultPtr fit_bragg = pts->Fit(bragg,"SQ");	
+					TFitResultPtr fit_bragg = pts->Fit(bragg,"SWNQ");	
+					v_bragg_parD = fit_bragg->Value(1);		
+					v_bragg_parA = fit_bragg->Value(0);		
 
 
-				std::vector<double> params = {15.0, -0.4};
-				TF1 *bragg = new TF1("bragg", bragg_fnc, c_resrange.front(), c_resrange.back(), params.size());
-				bragg->SetParameters(&params[0]);
-				bragg->SetParNames("bragg_A","bragg_b");
-				bragg->SetParLimits(0, 0, 30.0);
-				bragg->SetParLimits(1, -1.5, 1);
-				bragg->FixParameter(1,-0.42);
+					if(!fit_bragg->IsValid()){
+						std::cout<<"ERROR: fit result is not valid: status code: "<<fit_bragg->Status()<<" "<<std::endl;
+						std::cout<<c_resrange.size()<<" "<<trunc_dEdx.size()<<std::endl;
+						for(int m=0;m<c_resrange.size(); m++){
 
-				TGraph * pts = new TGraph(trunc_dEdx.size(), &c_resrange[0],&trunc_dEdx[0] );
-				TFitResultPtr fit_bragg = pts->Fit(bragg,"SQ");	
-				v_bragg_parD = fit_bragg->Value(1);		
-				v_bragg_parA = fit_bragg->Value(0);		
+						std::cout<<c_resrange.at(m)<<" "<<trunc_dEdx.at(m)<<std::endl;
+						}		
 
+						exit(EXIT_FAILURE);
+					}
+
+				}else{
+					v_track_good_calo.push_back(0);
+				}
 
 				double pida_sum=0;
 
@@ -331,6 +362,310 @@ int bdt_precalc::genTrackInfo(){
 
 	return 0;
 }
+
+
+
+int bdt_precalc::genPi0Info(){
+
+
+	TTree * friend_tree = new TTree("pi0_info","pi0_info");
+
+	//Some branches for some basic info
+	//	double asso_r
+	int reco_asso_tracks = 0;
+	int reco_asso_showers = 0;
+	int pi0_class_number = 0;
+	//std::vector<double> longest_asso_track_displacement = 0;	
+	std::vector<double> *vall_reco_tracks= 0;
+	std::vector<double> *vall_reco_showers= 0;
+
+	TBranch *ballt = 0;
+	TBranch *balls = 0;
+
+	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
+	file->tvertex->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
+	file->tvertex->SetBranchAddress("all_reco_tracks_dist_from_vertex",&vall_reco_tracks,&ballt);
+	file->tvertex->SetBranchAddress("all_reco_showers_dist_from_vertex",&vall_reco_showers,&balls);
+	file->tvertex->SetBranchAddress("pi0_class_number",&pi0_class_number);
+	// New branches for FRIEND TREEEE 
+
+
+	double v_pi0_class_number=0;
+	std::vector<int> vec_reco_showers_within;
+	std::vector<int> vec_reco_tracks_within;
+
+	int reco_showers_within_10 = 0;
+	int reco_showers_within_20 = 0;
+	int reco_showers_within_30 = 0;
+
+	int reco_tracks_within_10 = 0;
+	int reco_tracks_within_20 = 0;
+	int reco_tracks_within_30 = 0;
+
+	TBranch *b_vec_showers = friend_tree->Branch("num_reco_showers_within_Xcm_vertex",&vec_reco_showers_within);
+	TBranch *b_vec_tracks = friend_tree->Branch("num_reco_tracks_within_Xcm_vertex",&vec_reco_tracks_within);
+
+	TBranch *b_reco_showers_within_10 = friend_tree->Branch("num_reco_showers_within_10cm_vertex",&reco_showers_within_10);
+	TBranch *b_reco_showers_within_20 = friend_tree->Branch("num_reco_showers_within_20cm_vertex",&reco_showers_within_20);
+	TBranch *b_reco_showers_within_30 = friend_tree->Branch("num_reco_showers_within_30cm_vertex",&reco_showers_within_30);
+	TBranch *b_reco_tracks_within_10 = friend_tree->Branch("num_reco_tracks_within_10cm_vertex",&reco_tracks_within_10);
+	TBranch *b_reco_tracks_within_20 = friend_tree->Branch("num_reco_tracks_within_20cm_vertex",&reco_tracks_within_20);
+	TBranch *b_reco_tracks_within_30 = friend_tree->Branch("num_reco_tracks_within_30cm_vertex",&reco_tracks_within_30);
+
+	TBranch *b_pi0_class_number = friend_tree->Branch("pi0_class_number",&v_pi0_class_number);
+
+	int NN = file->tvertex->GetEntries();
+	for(int i=0; i< file->tvertex->GetEntries(); i++){
+
+		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
+		reco_showers_within_10 = 0;
+		reco_showers_within_20 = 0;
+		reco_showers_within_30 = 0;
+
+		reco_tracks_within_10 = 0;
+		reco_tracks_within_20 = 0;
+		reco_tracks_within_30 = 0;
+
+		file->tvertex->GetEntry(i);
+		v_pi0_class_number = pi0_class_number;
+
+
+
+
+		for(double c=1; c<32.0; c=c+2.0){
+			vec_reco_showers_within.push_back(0);
+			vec_reco_tracks_within.push_back(0);
+
+
+			for(int j=0; j< vall_reco_tracks->size(); j++){
+
+				if(vall_reco_tracks->at(j)<c){
+					vec_reco_tracks_within.back()++;
+				}
+			}
+
+
+			for(int j=0; j< vall_reco_showers->size(); j++){
+
+				if(vall_reco_showers->at(j)<c){
+					vec_reco_showers_within.back()++;
+				}	
+			}
+		}
+
+
+
+		for(int j=0; j< vall_reco_tracks->size(); j++){
+
+
+			if(vall_reco_tracks->at(j) < 10){
+				reco_tracks_within_10 ++;
+				reco_tracks_within_20 ++;
+				reco_tracks_within_30 ++;
+			}else if(vall_reco_tracks->at(j) < 20){
+				reco_tracks_within_20 ++;
+				reco_tracks_within_30 ++;
+			}else if(vall_reco_tracks->at(j) < 30){
+				reco_tracks_within_30 ++;
+			}	
+		}
+
+		for(int j=0; j< vall_reco_showers->size(); j++){
+			if(vall_reco_showers->at(j) < 10){
+				reco_showers_within_10 ++;
+				reco_showers_within_20 ++;
+				reco_showers_within_30 ++;
+			}else if(vall_reco_showers->at(j) < 20){
+				reco_showers_within_20 ++;
+				reco_showers_within_30 ++;
+			}else if(vall_reco_showers->at(j) < 30){
+				reco_showers_within_30 ++;
+			}	
+		}
+
+
+		friend_tree->Fill();
+
+		vec_reco_showers_within.clear();
+		vec_reco_tracks_within.clear();
+
+	}
+	friend_file_out->cd();
+	friend_tree->Write();
+
+
+	return 0;
+}
+
+
+
+int bdt_precalc::genBNBcorrectionInfo(){
+
+	TTree * friend_tree = new TTree("bnbcorrection_info","bnbcorrection_info");
+	int nu_pdg = 0;
+	double true_nu_E = 0;
+	file->tvertex->SetBranchAddress("nu_pdg", &nu_pdg);
+	file->tvertex->SetBranchAddress("true_nu_E", &true_nu_E);
+	// New branches for FRIEND TREEEE 
+	double weight=0;
+	TBranch *b_weight = friend_tree->Branch("weight",&weight);
+
+	TFile *f_bnbcorr = new TFile("bnbcorr.root","recreate");
+
+
+	TFile *f_old = new TFile("../../bnbcorrection/bnb_oldflux_volAVTPC.root","read");
+	TH1F* h_mu_nue_old = (TH1F*)f_old->Get("h_mu_nue");
+	TH1F* h_mu_nuebar_old = (TH1F*)f_old->Get("h_mu_nuebar");
+	TH1F* h_mu_numu_old = (TH1F*)f_old->Get("h_mu_numu");
+	TH1F* h_mu_numubar_old = (TH1F*)f_old->Get("h_mu_numubar");
+
+	TH1F* h_pi_nue_old = (TH1F*)f_old->Get("h_pi_nue");
+	TH1F* h_pi_nuebar_old = (TH1F*)f_old->Get("h_pi_nuebar");
+	TH1F* h_pi_numu_old = (TH1F*)f_old->Get("h_pi_numu");
+	TH1F* h_pi_numubar_old = (TH1F*)f_old->Get("h_pi_numubar");
+
+	TH1F* h_k0_nue_old = (TH1F*)f_old->Get("h_k0_nue");
+	TH1F* h_k0_nuebar_old = (TH1F*)f_old->Get("h_k0_nuebar");
+	TH1F* h_k0_numu_old = (TH1F*)f_old->Get("h_k0_numu");
+	TH1F* h_k0_numubar_old = (TH1F*)f_old->Get("h_k0_numubar");
+
+	TH1F* h_k_nue_old = (TH1F*)f_old->Get("h_k_nue");
+	TH1F* h_k_nuebar_old = (TH1F*)f_old->Get("h_k_nuebar");
+	TH1F* h_k_numu_old = (TH1F*)f_old->Get("h_k_numu");
+	TH1F* h_k_numubar_old = (TH1F*)f_old->Get("h_k_numubar");
+
+	TH1F* h_nue_old = (TH1F*)h_mu_nue_old->Clone("h_nue_old");
+	h_nue_old->Add(h_pi_nue_old);
+	h_nue_old->Add(h_k0_nue_old);
+	h_nue_old->Add(h_k_nue_old);
+
+	TH1F* h_nuebar_old = (TH1F*)h_mu_nuebar_old->Clone("h_nuebar_old");
+	h_nuebar_old->Add(h_pi_nuebar_old);
+	h_nuebar_old->Add(h_k0_nuebar_old);
+	h_nuebar_old->Add(h_k_nuebar_old);
+
+	TH1F* h_numu_old = (TH1F*)h_mu_numu_old->Clone("h_numu_old");
+	h_numu_old->Add(h_pi_numu_old);
+	h_numu_old->Add(h_k0_numu_old);
+	h_numu_old->Add(h_k_numu_old);
+
+	TH1F* h_numubar_old = (TH1F*)h_mu_numubar_old->Clone("h_numubar_old");
+	h_numubar_old->Add(h_pi_numubar_old);
+	h_numubar_old->Add(h_k0_numubar_old);
+	h_numubar_old->Add(h_k_numubar_old);
+
+
+
+
+	TFile *f_new = new TFile("../../bnbcorrection/bnb_newflux_volAVTPC.root","read");
+	TH1F* h_mu_nue_new = (TH1F*)f_new->Get("h_mu_nue");
+	TH1F* h_mu_nuebar_new = (TH1F*)f_new->Get("h_mu_nuebar");
+	TH1F* h_mu_numu_new = (TH1F*)f_new->Get("h_mu_numu");
+	TH1F* h_mu_numubar_new = (TH1F*)f_new->Get("h_mu_numubar");
+
+	TH1F* h_pi_nue_new = (TH1F*)f_new->Get("h_pi_nue");
+	TH1F* h_pi_nuebar_new = (TH1F*)f_new->Get("h_pi_nuebar");
+	TH1F* h_pi_numu_new = (TH1F*)f_new->Get("h_pi_numu");
+	TH1F* h_pi_numubar_new = (TH1F*)f_new->Get("h_pi_numubar");
+
+	TH1F* h_k0_nue_new = (TH1F*)f_new->Get("h_k0_nue");
+	TH1F* h_k0_nuebar_new = (TH1F*)f_new->Get("h_k0_nuebar");
+	TH1F* h_k0_numu_new = (TH1F*)f_new->Get("h_k0_numu");
+	TH1F* h_k0_numubar_new = (TH1F*)f_new->Get("h_k0_numubar");
+
+	TH1F* h_k_nue_new = (TH1F*)f_new->Get("h_k_nue");
+	TH1F* h_k_nuebar_new = (TH1F*)f_new->Get("h_k_nuebar");
+	TH1F* h_k_numu_new = (TH1F*)f_new->Get("h_k_numu");
+	TH1F* h_k_numubar_new = (TH1F*)f_new->Get("h_k_numubar");
+
+	TH1F* h_nue_new = (TH1F*)h_mu_nue_new->Clone("h_nue_new");
+	h_nue_new->Add(h_pi_nue_new);
+	h_nue_new->Add(h_k0_nue_new);
+	h_nue_new->Add(h_k_nue_new);
+
+	TH1F* h_nuebar_new = (TH1F*)h_mu_nuebar_new->Clone("h_nuebar_new");
+	h_nuebar_new->Add(h_pi_nuebar_new);
+	h_nuebar_new->Add(h_k0_nuebar_new);
+	h_nuebar_new->Add(h_k_nuebar_new);
+
+	TH1F* h_numu_new = (TH1F*)h_mu_numu_new->Clone("h_numu_new");
+	h_numu_new->Add(h_pi_numu_new);
+	h_numu_new->Add(h_k0_numu_new);
+	h_numu_new->Add(h_k_numu_new);
+
+	TH1F* h_numubar_new = (TH1F*)h_mu_numubar_new->Clone("h_numubar_new");
+	h_numubar_new->Add(h_pi_numubar_new);
+	h_numubar_new->Add(h_k0_numubar_new);
+	h_numubar_new->Add(h_k_numubar_new);
+
+
+
+	TH1F * h_nue_ratio = (TH1F*)h_nue_new->Clone("h_nue_ratio");
+	h_nue_ratio->Divide(h_nue_old);
+
+	TH1F * h_nuebar_ratio = (TH1F*)h_nuebar_new->Clone("h_nuebar_ratio");
+	h_nuebar_ratio->Divide(h_nuebar_old);
+
+	TH1F * h_numu_ratio = (TH1F*)h_numu_new->Clone("h_numu_ratio");
+	h_numu_ratio->Divide(h_numu_old);
+
+	TH1F * h_numubar_ratio = (TH1F*)h_numubar_new->Clone("h_numubar_ratio");
+	h_numubar_ratio->Divide(h_numubar_old);
+
+
+
+	
+
+
+
+	int NN = file->tvertex->GetEntries();
+	for(int i=0; i< NN; i++){
+		file->tvertex->GetEntry(i);
+		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
+
+		weight = 1.0;
+
+
+
+		if(nu_pdg == 12){
+			int thisbin = h_nue_ratio->GetXaxis()->FindBin(true_nu_E);	
+			weight = h_nue_ratio->GetBinContent(thisbin);
+		}else if(nu_pdg == -12){
+			int thisbin = h_nuebar_ratio->GetXaxis()->FindBin(true_nu_E);	
+			weight = h_nuebar_ratio->GetBinContent(thisbin);
+		}else if(nu_pdg == 14){
+			int thisbin = h_numu_ratio->GetXaxis()->FindBin(true_nu_E);	
+			weight = h_numu_ratio->GetBinContent(thisbin);
+		}else if(nu_pdg == -14){
+			int thisbin = h_numubar_ratio->GetXaxis()->FindBin(true_nu_E);	
+			weight = h_numubar_ratio->GetBinContent(thisbin);
+		}else{
+			weight = 1.0;
+		}
+
+
+
+		friend_tree->Fill();
+
+
+	}
+
+	friend_file_out->cd();
+	friend_tree->Write();
+
+
+
+	f_bnbcorr->cd();
+	h_nue_ratio->Write();
+	h_nuebar_ratio->Write();
+	h_numu_ratio->Write();
+	h_numubar_ratio->Write();
+	f_bnbcorr->Close();
+
+
+	return 0;
+}
+
 
 
 

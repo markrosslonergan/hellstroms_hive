@@ -96,7 +96,7 @@ int main (int argc, char *argv[]){
 
 	//Define the precuts, depending on if you want to use track or notrack	
 	std::string new_precuts;
-    std::string num_track_cut;
+    	std::string num_track_cut;
 	if(istrack == "track"){
 	    num_track_cut = " == 1 ";
         //new_precuts = "1";
@@ -108,7 +108,6 @@ int main (int argc, char *argv[]){
 		new_precuts = "1";
 		num_track_cut = "==0";
 	}
-
 
 	//Set up 2 bdt_info structs for passing information on what BDT we are running. 
 	//MARK: Now with added binning here, so bdt_file->GetBDTvariable() is much simpler!
@@ -170,9 +169,13 @@ int main (int argc, char *argv[]){
 	std::cout<<"Going to add any precomputed tree friends, or any trained BDT responses   "<<std::endl;
 	std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-	for(auto &f: bdt_files){
-		//addPreFriends(f,"track");
-		f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
+	if(mode_option != "precalc"){
+		for(auto &f: bdt_files){
+			addPreFriends(f,"track");
+			//addPreFriends(f,"pi0");
+			addPreFriends(f,"bnbcorrection");
+			f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
+		}
 	}
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -221,10 +224,15 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirx[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Phi|", true,"d"));
     
 	if(istrack=="track"){ 
-		vars.push_back(bdt_variable("reco_track_displacement[longest_asso_track_index]","(25,0,500)","Reconstructed Track Length [cm]", true,"d"));
+		vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
+
+		vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(52,0,12)","Mean Track dE/dx", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(52,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(52,0,24)","Track PIDA",true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(52,0,25)","Track Bragg A",true,"d"));
 		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(50,0,20)","Closest Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
-		vars.push_back(bdt_variable("atan2(reco_track_diry[longest_asso_track_index],reco_track_dirz[longest_asso_track_index])","(50,0,3.14)","Reconstructed Track Theta", true,"d"));
-		vars.push_back(bdt_variable("atan2(reco_track_diry[longest_asso_track_index],reco_track_dirx[longest_asso_track_index])","(50,0,3.14)","Reconstructed Track Phi", true,"d"));
+		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[longest_asso_track_index],reco_track_dirz[longest_asso_track_index]))","(50,-1.0, 1.0)","Reconstructed Track Cosine Theta", true,"d"));
+		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[longest_asso_track_index],reco_track_dirx[longest_asso_track_index]))","(50,-1.0, 1.0)","Reconstructed Track Cosine Phi", true,"d"));
  
 		vars.push_back(bdt_variable(angle_track_shower1,	"(50,-1,1)","|Cosine Track-Shower Angle (Most Energetic)| ",true,"d"));
 		vars.push_back(bdt_variable(angle_track_shower2,	"(50,-1,1)","|Cosine Track-Shower Angle (Second Most Energetic)| ",true,"d"));
@@ -335,7 +343,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	std::vector<int> recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue, kGreen+1, kBlue-7};
 
         std::cout << "Done adding TreeFiends" << std::endl;
-		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols);
+		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols,istrack);
 		//plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val)
 
 	//test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable(bnb_bdt_info) , fcoscut,fbnbcut);
@@ -392,7 +400,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
         signal_cosmics->col=kRed-7;
         bnb_cosmics->col=kBlue;
-        bnbext->col=kGreen+2;
+        bnbext->col=kGreen-3;
+	    bnbext->fillstyle = 3333;
         bdt_stack *obs = new bdt_stack(istrack+"_datamc");
         obs->plot_pot = 5e19;
         obs->addToStack(signal_cosmics);
@@ -433,8 +442,130 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
         //datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
         //datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 } 
+    else if(mode_option == "vars"){
+
+			std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
+
+			if(true){
+				for(auto &v:vars){
+					TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_cosmo").c_str(), ("cvar_"+v.name+"_cosmo").c_str(),2200,1200);
+					c_var->Divide(2,1);
+					c_var->cd();
+
+					for(int j=0; j<2;j++){	
+
+						std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
+						std::string cut_intime = intime->getStageCuts(j,fcoscut,fbnbcut); 
+
+
+						TH1* sig = signal_pure->getTH1(v,cut_signal.c_str(),v.safe_name+"_sig_cosmo_var" ,1.0);
+						TH1* bkg = intime->getTH1(v,cut_intime.c_str(),v.safe_name+"_bkg_cosmo_var" ,1.0);
+
+						sig->Scale(1.0/sig->Integral());			
+						bkg->Scale(1.0/bkg->Integral());			
+						sig->SetLineColor(kRed-7);
+						bkg->SetLineColor(kGreen-3);
+						sig->SetLineWidth(2);
+						bkg->SetLineWidth(2);
+
+
+						sig->SetFillColor(kRed-7);
+						bkg->SetFillColor(kGreen-3);
+						sig->SetFillStyle(3445);
+						bkg->SetFillStyle(3454);
+
+						sig->SetTitle(title.at(j).c_str());
+						c_var->cd(j+1);			
+
+						sig->Draw("hist");
+						bkg->Draw("hist same");
+						//sig->GetXaxis()->SetTitle(v.unit.c_str());
+						sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
+						sig->GetYaxis()->SetTitleOffset(1.5);
+
+						TLegend *l = new TLegend(0.11,0.75,0.89,0.89);
+						l->SetLineColor(kWhite);
+						l->SetFillStyle(0);
+						l->SetNColumns(2);
+
+						l->AddEntry(sig,"NC #Delta #gamma Signal","lf");	
+						l->AddEntry(bkg,"Intime Cosmic Background","lf");	
+						l->Draw();
+						double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
+						sig->SetMaximum(max_height*1.3);
+
+
+
+					}
+					c_var->Print(("var/"+istrack+"_cosmic_"+v.safe_unit+".pdf").c_str(),"pdf");
+                    return 0;
+				}
+
+			}
+			if(true){
+				for(auto &v:vars){
+					TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_bnb").c_str(), ("cvar_"+v.name+"_bnb").c_str(),2200,1200);
+					c_var->Divide(2,1);
+					c_var->cd();
+
+					for(int j=0; j<2;j++){	
+
+						std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
+						std::string cut_bnb = bnb_pure->getStageCuts(j,fcoscut,fbnbcut); 
+
+
+						TH1* sig = signal_pure->getTH1(v,cut_signal.c_str(),v.safe_name+"_sig_bnb_var" ,1.0);
+						TH1* bkg = bnb_pure->getTH1(v,cut_bnb.c_str(),v.safe_name+"_bkg_bnb_var" ,1.0);
+
+						sig->Scale(1.0/sig->Integral());			
+						bkg->Scale(1.0/bkg->Integral());			
+						sig->SetLineColor(kRed-7);
+						bkg->SetLineColor(kBlue-4);
+						sig->SetLineWidth(2);
+						bkg->SetLineWidth(2);
+
+						sig->SetFillColor(kRed-7);
+						bkg->SetFillColor(kBlue-4);
+						sig->SetFillStyle(3445);
+						bkg->SetFillStyle(3454);
+
+						sig->SetTitle(title.at(j).c_str());
+						c_var->cd(j+1);			
+
+						sig->Draw("hist");
+						sig->SetMaximum(sig->GetMaximum()*1.25);
+						bkg->Draw("hist same");
+						//sig->GetXaxis()->SetTitle(v.unit.c_str());
+						sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
+						sig->GetYaxis()->SetTitleOffset(1.5);
+
+						TLegend *l = new TLegend(0.11,0.75,0.89,0.89);
+						l->SetLineColor(kWhite);
+						l->SetFillStyle(0);
+						l->SetNColumns(2);
+
+						l->AddEntry(sig,"NC #Delta #gamma Signal","lf");	
+						l->AddEntry(bkg,"BNB Backgrounds","lf");	
+						l->Draw();
+
+						double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
+						sig->SetMaximum(max_height*1.1);
+
+
+
+					}
+					c_var->Print(("var/"+istrack+"_bnb_"+v.safe_unit+".pdf").c_str(),"pdf");
+				}
+			}
+    }
+
+
+
+                    
+                
+
     
-    
+                        /*
     else if(mode_option == "vars"){
 
 		for(auto &v:vars){
@@ -519,9 +650,10 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
                 c_var->Print(("var/cosmic_"+v.safe_name+".png").c_str(),"png");
             }
 		}
+                    */
 
 
-	}/*else if(mode_option == "eff"){
+	/*else if(mode_option == "eff"){
 
 		for(auto &method: TMVAmethods){
 			for(int i=0; i< bdt_files.size(); i++){
@@ -630,16 +762,16 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	}
     */
-    /*
-	 else if(mode_option == "precalc"){
-		//bdt_precalc pre1(s1);pre1.genTrackInfo();
-	bdt_precalc pre2(s2);pre2.genTrackInfo();
-	//	bdt_precalc pre3(s3);pre3.genTrackInfo();
+    else if(mode_option == "precalc"){
 
-//		addPreFriends(bnb_pure,"track");
-
-    }
-    */
+			std::vector<bdt_file*> precalc_files = {signal_cosmics};
+			for(auto &f: precalc_files){
+				bdt_precalc pre(f);
+				pre.genBNBcorrectionInfo();
+			    pre.genTrackInfo();
+			    //pre.genPi0Info();
+			}
+		}
 		  
     else {
 		std::cout << "WARNING: " << mode_option << " is an invalid option\n";

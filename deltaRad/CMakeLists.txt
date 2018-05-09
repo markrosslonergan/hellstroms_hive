@@ -23,7 +23,7 @@ execute_process(COMMAND "root-config" "--cflags" "--libs" OUTPUT_VARIABLE rootcf
 execute_process(COMMAND "root-config" "--incdir" OUTPUT_VARIABLE ROOT_INCDIR)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  ${ROOTXTRAS} ")
 
-set (CMAKE_CXX_FLAGS "-std=c++1y ${CMAKE_CXX_FLAGS}")
+#set (CMAKE_CXX_FLAGS "-std=c++1y ${CMAKE_CXX_FLAGS}")
 message(STATUS "OUTPUT of CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 include_directories("${PROJECT_BINARY_DIR}")

@@ -15,6 +15,7 @@ THStack* bdt_stack::getBDTStack(bdt_info whichbdt, int level, double cut1, doubl
 		hist->SetLineWidth(1);
 		//hist->SetMarkerStyle(20);
 		hist->SetFillColor(stack.at(t)->col);
+		hist->SetFillStyle(stack.at(t)->fillstyle);
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
 		hist->GetYaxis()->SetTitle("Verticies");
@@ -54,6 +55,19 @@ TH1* bdt_stack::getBDTSum(bdt_info whichbdt, int level, double cut1, double cut2
 }
 
 
+int bdt_stack::makeSBNspec(std::string tagin, bdt_variable var, double c1, double c2, std::vector<std::string> hist_names){
+	TFile *f = new TFile((tagin+".root").c_str(),"recreate");
+	
+	for(int t=0; t<stack.size(); t++){
+
+		TH1D* hist = (TH1D*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(3,c1, c2), hist_names.at(t), plot_pot, 25);
+		f->cd();	
+		hist->Write();
+	}	
+
+	return 0;
+}
+
 
 TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 
@@ -89,28 +103,54 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 	//if(level ==2) stack_rebin=2;
 	//if(level ==3) stack_rebin=4;
 
+	/*
+
+	to_sort.push_back(&h);
+	l_to_sort.push_back(tmp);
+	integral_sorter.push_back(total_events);	
+
+	for (int i: sort_indexes(integral_sorter)) {
+		hs->Add(to_sort.at(i));	
+		legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
+	}
+
+	*/
+
+	std::vector<TH1*> to_sort;
+	std::vector<double> integral_sorter;
+
 	for(int t=0; t<stack.size(); t++){
 		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin);
-
 		hist->SetTitle((this->name+"_"+var.name).c_str());
 		hist->SetLineColor(kBlack);
 		hist->SetStats(0);
 		hist->SetLineWidth(1);
 		//hist->SetMarkerStyle(20);
 		hist->SetFillColor(stack.at(t)->col);
+		hist->SetFillStyle(stack.at(t)->fillstyle);
 		hist->Scale();		
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Vertices");
-
-		std::cout<<"HAT: "<<stack.at(t)->tag<<std::endl;
-		for(int k=1; k< hist->GetNbinsX(); k++){
-			std::cout<<hist->GetBinContent(k)<<" ";
-		}
-
+		hist->GetYaxis()->SetTitle("Verticies");
+		
+		
+		to_sort.push_back(hist);
+		integral_sorter.push_back(hist->GetSumOfWeights());
 
 		stacked->Add(hist);
+
+		//std::cout<<"HAT: "<<level<<" "<<stack.at(t)->tag<<std::endl;
+		//for(int k=1; k< hist->GetNbinsX(); k++){
+		//	std::cout<<hist->GetBinContent(k)<<" ";
+		//}
+
 	}
+	
+	for (int i: sort_indexes(integral_sorter)) {
+		//stacked->Add(to_sort.at(i));	
+		//legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
+	}
+
 
 	return stacked;	
 		
@@ -137,12 +177,15 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		s0->GetYaxis()->SetTitleOffset(1.5);
 		s0->SetMaximum(s0->GetMaximum()*1.3);
 		TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
+		std::vector<TH1F*> v0s;		
+
 		for(auto &f: this->stack){
-			double Nevents = f->tvertex->GetEntries( f->getStageCuts(0,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
-			auto h1 = new TH1F(("tmp1"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
-			h1->SetFillColor(f->col);
-			h1->SetLineColor(kBlack);
-			l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+			double Nevents = f->GetEntries( f->getStageCuts(0,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+			cobs->cd(1);
+			v0s.push_back( new TH1F(("tmp1"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10));
+			v0s.back()->SetFillColor(f->col);
+			v0s.back()->SetLineColor(kBlack);
+			l0->AddEntry(v0s.back(),("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
 		l0->Draw();
 		l0->SetLineColor(kWhite);
@@ -159,14 +202,15 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		s1->SetMaximum(s1->GetMaximum()*1.3);
 		TLegend *l1 = new TLegend(0.11,0.72,0.89,0.89);
 		for(auto &f: this->stack){
+			double Nevents = f->GetEntries( f->getStageCuts(1,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+			cobs->cd(2);
 			auto h1 = new TH1F(("tmp2"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 			h1->SetFillColor(f->col);
 			h1->SetLineColor(kBlack);
 
-			double Nevents = f->tvertex->GetEntries( f->getStageCuts(1,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 			l1->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
-		l1->Draw();
+		l1->Draw("same");
 		l1->SetLineColor(kWhite);
 		l1->SetTextSize(0.03);
 		l1->SetNColumns(2);
@@ -185,11 +229,12 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		TLegend *l2 = new TLegend(0.11,0.72,0.89,0.89);
 		for(auto &f: this->stack){
 
+			double Nevents = f->GetEntries( f->getStageCuts(2,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+			cobs->cd(3);
 			auto h1 = new TH1F(("tmp3"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 			h1->SetFillColor(f->col);
 			h1->SetLineColor(kBlack);
 
-			double Nevents = f->tvertex->GetEntries( f->getStageCuts(2,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 			l2->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
 		l2->Draw();
@@ -208,11 +253,12 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		s3->SetMaximum(s3->GetMaximum()*1.3);
 		TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);
 		for(auto &f: this->stack){
+			double Nevents = f->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+
+			cobs->cd(4);
 			auto h1 = new TH1F(("tmp4"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 			h1->SetFillColor(f->col);
 			h1->SetLineColor(kBlack);
-
-			double Nevents = f->tvertex->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 			l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
 		l3->Draw();
@@ -221,13 +267,11 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		l3->SetNColumns(2);
 
 
-
-
 		std::cout<<"5"<<std::endl;
 		
 
 		cobs->Write();
-		cobs->SaveAs(("stack/"+var.safe_unit+".pdf").c_str(),"pdf");
+		cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+".pdf").c_str(),"pdf");
 		//cobs->SaveAs(("stack/"+var.name+".png").c_str(),"png");
 
 	return 0;
@@ -264,7 +308,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
 
 		for(auto &f: this->stack){
-			double Nevents = f->tvertex->GetEntries( f->getStageCuts(0,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+			double Nevents = f->GetEntries( f->getStageCuts(0,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 			auto h1 = new TH1F(("tmp1"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 			h1->SetFillColor(f->col);
 			h1->SetLineColor(kBlack);
@@ -293,7 +337,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 			h1->SetFillColor(f->col);
 			h1->SetLineColor(kBlack);
 
-			double Nevents = f->tvertex->GetEntries( f->getStageCuts(1,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+			double Nevents = f->GetEntries( f->getStageCuts(1,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 			l1->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
 		l1->Draw();
@@ -322,7 +366,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 			h1->SetLineColor(kBlack);
 
 
-			double Nevents = f->tvertex->GetEntries( f->getStageCuts(2,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+			double Nevents = f->GetEntries( f->getStageCuts(2,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 			l2->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
 		l2->Draw();
@@ -349,7 +393,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 			h1->SetFillColor(f->col);
 			h1->SetLineColor(kBlack);
 
-			double Nevents = f->tvertex->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+			double Nevents = f->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 			l3->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
 		l3->Draw();
@@ -362,7 +406,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		
 
 		cobs->Write();
-		cobs->SaveAs(("stack/response_"+var.safe_unit+".pdf").c_str(),"pdf");
+		cobs->SaveAs(("stack/"+this->name+ "_response_"+var.safe_unit+".pdf").c_str(),"pdf");
 
 	return 0;
 }

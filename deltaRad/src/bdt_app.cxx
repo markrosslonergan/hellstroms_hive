@@ -16,7 +16,9 @@ bdt_app_tree_struct::~bdt_app_tree_struct() {
 	delete tree;
 }
 
-void bdt_app_update_formula( std::vector<TTreeFormula*> & tfv, std::vector<float *> & rvv) {
+
+
+void bdt_app_update_formula(std::vector<TTreeFormula*> & tfv, std::vector<float *> & rvv) {
 
 	for(size_t i = 0; i < tfv.size(); ++i) {
 		 //This line must be here. see https://sft.its.cern.ch/jira/browse/ROOT-7465
@@ -39,6 +41,10 @@ void bdt_app_update(void_vec const & tvv, std::vector<float *> & rvv) {
 	}
 }
 
+void bdt_topological_update(std::vector<double*> *topv){
+
+
+}
 		
 
 int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::string otree_name, std::vector<bdt_variable> vars, std::vector<method_struct> const & methods) {
@@ -48,6 +54,7 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 	void_vec tree_var_v;
 	std::vector<float *> reader_var_v;
 	std::vector<TTreeFormula*> tree_formulas_v;
+
 	for(bdt_variable &p : vars) {
 		/*
 		if(p.type == "d") {
@@ -66,7 +73,7 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 				<< "ERROR: invalid type: " << p.type << "\n";
 		}
 		*/	
-        tree_formulas_v.push_back(new TTreeFormula(p.safe_name.c_str(), p.name.c_str() ,tree));
+       	        tree_formulas_v.push_back(new TTreeFormula(p.safe_name.c_str(), p.name.c_str() ,tree));
 		reader_var_v.push_back(new float(-1));
 		reader->AddVariable(p.name.c_str(), reader_var_v.back());
 	}
@@ -108,6 +115,7 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
         int passed = 0;
         int N = tree->GetEntries();
         for(int i = 0; i < N; ++i) {
+            if(i%50000==0){std::cout<<i<<"/"<<N<<std::endl;}
             tree->GetEntry(i);
             //bdt_app_update(tree_var_v, reader_var_v);
             ts.mva = -999;
@@ -165,7 +173,7 @@ int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variabl
 
 	std::string identifier = info.identifier;
 	
-	TFile * app_ofile = TFile::Open((identifier+"_app"+".root").c_str(), "recreate");
+	TFile * app_ofile = TFile::Open((identifier+"_app"+".root").c_str(), "update");
 	for(size_t i = 0; i < files.size(); ++i) {
 		std::cout<<"On file: "<<files.at(i)->tag<<std::endl;
 		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
