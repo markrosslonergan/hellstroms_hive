@@ -4,12 +4,12 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	dir(indir),
 	name(inname),
 	tag(intag),
-	root_dir(inrootdir),
 	plot_ops(inops),
+	root_dir(inrootdir),
 	col(incol),
+	flow(inflow),
 	is_data("false"),
-	is_mc("true"),
-	flow(inflow)
+	is_mc("true")
 {
 
 	plot_name = tag;
@@ -29,10 +29,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	std::string tnam = root_dir+"vertex_tree";
 	std::string tnam_pot = root_dir+"pot_tree";
 
+	weight_branch = "1";
+	fillstyle = 1001;
+
 	std::cout<<"Getting vertex tree"<<std::endl;
 	tvertex = (TTree*)f->Get(tnam.c_str());
 	//tevent = (TTree*)f->Get(tnam_event.c_str());
-	std::cout<<"Got vertex tree"<<std::endl;
+	std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
+	//topovertex = (TTree*)tvertex->CopyTree(flow.topological_cuts.c_str());
+	//std::cout<<"Copied to topological tree: "<<topovertex->GetEntries()<<std::endl;
 
 	double potbranch = 0;
 	int  numbranch = 0;
@@ -43,15 +48,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			//Found in 
 			double intime_modifier = 10.279;
 
-			double N_gen_bnb = 2153450.0;
-			double N_gen_cos = 991885.0;
-			double frac_job_worked = 5.0/9.0;
+			//Guarrenteed for fresh_mcc8.9
+			double N_gen_bnb = 2146800.0;
+			double N_gen_cos = 991914.0;
 
-			double pot_bnb_cosmic = 2.172e+21;
+			double pot_bnb_cosmic = 2.16562e+21;
 			double pot_plot = 6.6e20;
 
 			pot = pot_plot; 
-			this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos*frac_job_worked)*pot_plot/pot_bnb_cosmic;
+			this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos)*pot_plot/pot_bnb_cosmic;
 			std::cout<<"--> value: "<<pot<<" with scale factor: "<<scale_data<<std::endl;
 		}else{
 			leg = "l";
@@ -71,42 +76,50 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			numberofevents = tmpnum;
 			pot=tmppot;
 			std::cout<<"--> POT is MC: ";
-			std::cout<<"--> value: "<<pot<<std::endl;
+			std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+
+			//comment back in when made NCpi0 friend trees
+			//weight_branch = "bnbcorrection_info.weight";
+
 		}
 	}
 	if(tag == "Data5e19"){
 		leg = "lp";
-		double Nworked = 190991;
-		double Nsamweb = 191131;
-
-		std::cout<<"--> POT is data: From Zarkos tool..";
-		pot = 4.879e+19*Nworked/Nsamweb; //7131/13671;// 376954.0/382718.0;//7131/13671;
+		pot = 4.801e19;// tor860_wcut
 		std::cout<<"--> value: "<<pot<<std::endl;
 	}
 	if(tag == "BNBext"){
+		std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
+		tpot = (TTree*)f->Get(tnam_pot.c_str());
+		tpot->SetBranchAddress("number_of_events", &numbranch);
+		tpot->SetBranchAddress("pot",&potbranch);
+
+		std::cout<<"Set the POT branch"<<std::endl;
+		int tmpnum = 0;
+		double tmppot=0;
+		for(int i=0; i<tpot->GetEntries(); i++){
+			tpot->GetEntry(i);
+			tmpnum += (double)numbranch;
+		}
+		numberofevents = tmpnum;
+		std::cout<<"BNBEXT number of events: "<<numberofevents<<std::endl;
+
+
 		leg = "lp";
 		double sca = 1.23;//from 1.23
 		//https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
 
-		double exta=38713062.0;
-		double extb=581923.0;
-
-		double spill=10893847.0; 
-
-		double Nworked = 852486.0;
-		double Nsamweb = 463273 + 521026;
+		double ext=47953078.0; //External spills in each sample (EXT)
+		double spill_on=10702983.0;//This number in data zarko  (E1DCNT_wcut)
 
 
-		//data
-		double NworkedD = 190991.0;
-		double NsamwebD = 191131.0;
-		double datanorm = 4.879e+19*NworkedD/NsamwebD; //7131/13671;// 376954.0/382718.0;//7131/13671;
+		double datanorm =4.801e19;// rot860_wcut run-subrunlist;
 
-		double mod = 5.0/9.0*spill/(exta);//spill/(exta+extb);
+		double mod = spill_on/ext;
 
 
 		std::cout<<"--> POT is data: From Zarkos tool..";
-		pot =datanorm/mod*Nworked/Nsamweb; //7131/13671;// 376954.0/382718.0;//7131/13671;
+		pot =datanorm/mod;
 		std::cout<<"--> value: "<<pot<<std::endl;
 
 	}
@@ -125,8 +138,23 @@ int bdt_file::addPlotName(std::string plotin){
 	return 0;
 }
 
+double bdt_file::GetEntries(){
+	return this->GetEntries("1");
+}
 
+double bdt_file::GetEntries(std::string cuts){
+	TRandom3 *rangen = new TRandom3();
+	std::string namr = std::to_string(rangen->Uniform(10000));
 
+	//TCanvas *ctmp = new TCanvas();
+	this->tvertex->Draw(("reco_asso_showers>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+	TH1* th1 = (TH1*)gDirectory->Get(namr.c_str()) ;
+	double ans = th1->GetSumOfWeights();
+	delete th1;
+
+	return ans;
+
+}
 
 int bdt_file::scale(double scalein){
 	scale_data = scalein;
@@ -139,7 +167,7 @@ int bdt_file::setPOT(double inpot){
 TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
 
 	TCanvas *ctmp = new TCanvas();
-	this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
+	this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
 	std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
 	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
@@ -163,11 +191,12 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 
 	std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 	TCanvas *ctmp = new TCanvas();
-	this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
+	this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
 	std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
 
 	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
+	th1->Sumw2();
 	th1->Scale(this->scale_data*plot_POT/this->pot);
 	//	std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
 	if(rebin>1) th1->Rebin(rebin);
@@ -195,32 +224,49 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 
 	std::cout<<"getRecoMCTH1 || size of names: "<<recomc_names.size()<<" "<<recomc_cuts.size()<<" "<<recomc_cols.size()<<std::endl;
 
+	
+	std::vector<TH1*> to_sort;
+	std::vector<double> integral_sorter;
+
+
+
 	for(int i=0; i< recomc_cuts.size(); i++){
 		std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
 		TCanvas *ctmp = new TCanvas();
-		this->tvertex->Draw((var.name+">>"+nam+"_"+recomc_names.at(i)+ var.binning).c_str() , (cuts+"&&"+recomc_cuts.at(i)).c_str(),"goff");
+		this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
+		std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
+		//gDirectory->ls();
 
-		TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+recomc_names.at(i)).c_str()) ;
+		TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+std::to_string(i)).c_str()) ;
 		th1->Scale(this->scale_data*plot_POT/this->pot);
-		if(rebin >1 )th1->Rebin(rebin);
+		if(rebin > 1 ) th1->Rebin(rebin);
 		th1->SetFillColor(recomc_cols.at(i));
 		th1->SetLineColor(kBlack);
 		th1->SetLineWidth(1);
 		th1->SetStats(0);
 		th1->GetXaxis()->SetTitle(var.unit.c_str());
 		th1->GetYaxis()->SetTitle("Verticies");
-		ans_th1s.push_back(th1);
 
 		other_cuts = other_cuts+ " && " +"!("+recomc_cuts.at(i)+")";	
 
+		to_sort.push_back(th1);
+		integral_sorter.push_back(th1->GetSumOfWeights());
+		
 	}
+		
+	ans_th1s = to_sort;
+	//for (int i: sort_indexes(integral_sorter)) {
+		//ans_th1s.push_back( to_sort.at(i));	
+		//legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
+	//}
+
 
 	//Should fix this soon
 	//recomc_cuts.push_back(other_cuts +"&& shower_true_origin != -1");
 	//recomc_names.push_back(other);
 
 	TCanvas *ctmp = new TCanvas();
-	this->tvertex->Draw((var.name+">>"+nam+"_"+other+ var.binning).c_str() , other_cuts.c_str(),"goff");
+	this->tvertex->Draw((var.name+">>"+nam+"_"+other+ var.binning).c_str() , ("("+other_cuts+")*"+this->weight_branch).c_str(),"goff");
 
 
 	TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+other).c_str()) ;

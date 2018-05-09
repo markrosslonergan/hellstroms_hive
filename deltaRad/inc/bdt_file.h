@@ -3,7 +3,9 @@
 
 #include <vector>
 #include <string>
+#include <numeric>
 #include <iostream>
+#include <algorithm>
 /******** Our includes *****/
 
 #include  "bdt_file.h"
@@ -38,6 +40,21 @@ std::string to_string_prec(const T a_value, const int n = 6)
 }
 
 
+template <typename T>
+std::vector<size_t> sort_indexes(const std::vector<T> &v) {
+
+  // initialize original index locations
+  std::vector<size_t> idx(v.size());
+  iota(idx.begin(), idx.end(), 0);
+
+  // sort indexes based on comparing values in v
+  sort(idx.begin(), idx.end(),
+       [&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
+
+  return idx;
+}
+
+
 struct bdt_file{
 	public:
 		std::string dir;
@@ -47,6 +64,7 @@ struct bdt_file{
 		std::string plot_ops;
 		std::string root_dir;
 		
+		std::string weight_branch;
 
 		//This is slightly deprecisated
 		std::string friend_tree_file;
@@ -63,6 +81,8 @@ struct bdt_file{
 		std::vector<int> recomc_cols;
 
 		int col;
+		int fillstyle;
+
 		bool is_data;
 		bool is_mc;
 
@@ -75,6 +95,9 @@ struct bdt_file{
 
 		TFile *f;
 		TTree *tvertex;
+		//copy tvertex into topovertex, but with topological cut.
+		TTree *topovertex;
+
 		TTree *tevent;
 		TTree *tpot;
 
@@ -96,6 +119,8 @@ struct bdt_file{
 		
 		TH1* getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
 
+		double GetEntries(std::string cuts);
+		double GetEntries();
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
 

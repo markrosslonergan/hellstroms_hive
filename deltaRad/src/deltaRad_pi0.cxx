@@ -96,7 +96,7 @@ int main (int argc, char *argv[]){
 
 	//Define the precuts, depending on if you want to use track or notrack	
 	std::string new_precuts;
-    std::string num_track_cut;
+    	std::string num_track_cut;
 	if(istrack == "track"){
 	    num_track_cut = " == 1 ";
         new_precuts = "1";
@@ -108,7 +108,6 @@ int main (int argc, char *argv[]){
 		new_precuts = "1";
 		num_track_cut = "==0";
 	}
-
 
 	//Set up 2 bdt_info structs for passing information on what BDT we are running. 
 	//MARK: Now with added binning here, so bdt_file->GetBDTvariable() is much simpler!
@@ -324,7 +323,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	std::vector<int> recomc_cols = {kRed-7, kRed+1, kMagenta+1, kBlue+3, kPink+1, kGreen+1, kGreen+3};
 
         std::cout << "Done adding TreeFiends" << std::endl;
-		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols);
+		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols,istrack);
 		//plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val)
 
 	//test.plot_recomc(ftest, bnb_cosmics, bnb_cosmics->getBDTVariable(bnb_bdt_info) , fcoscut,fbnbcut);

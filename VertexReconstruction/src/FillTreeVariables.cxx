@@ -90,18 +90,35 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("reco_track_phi", &reco_track_phi);
   fvertex_tree->Branch("reco_track_theta", &reco_track_theta);
   */
+  
   fvertex_tree->Branch("reco_track_displacement", &reco_track_length, "reco_track_displacement[reco_asso_tracks]/D");
+  fvertex_tree->Branch("reco_track_energy", &reco_track_energy, "reco_track_energy[reco_asso_tracks]/D");
+  fvertex_tree->Branch("reco_track_energy_new_legacy", &reco_track_energy_new_legacy, "reco_track_energy_new_legacy[reco_asso_tracks]/D");
+
+  fvertex_tree->Branch("reco_track_is_flipped", &reco_track_is_flipped, "reco_track_is_flipped[reco_asso_tracks]/I");
+  fvertex_tree->Branch("reco_track_startx", &reco_track_startx, "reco_track_startx[reco_asso_tracks]/D");
+  fvertex_tree->Branch("reco_track_starty", &reco_track_starty, "reco_track_starty[reco_asso_tracks]/D");
+  fvertex_tree->Branch("reco_track_startz", &reco_track_startz, "reco_track_startz[reco_asso_tracks]/D");
+  fvertex_tree->Branch("reco_track_endx", &reco_track_endx, "reco_track_endx[reco_asso_tracks]/D");
+  fvertex_tree->Branch("reco_track_endy", &reco_track_endy, "reco_track_endy[reco_asso_tracks]/D");
+  fvertex_tree->Branch("reco_track_endz", &reco_track_endz, "reco_track_endz[reco_asso_tracks]/D");
   fvertex_tree->Branch("reco_track_dirx", &reco_track_dirx, "reco_track_dirx[reco_asso_tracks]/D");
   fvertex_tree->Branch("reco_track_diry", &reco_track_diry, "reco_track_diry[reco_asso_tracks]/D");
   fvertex_tree->Branch("reco_track_dirz", &reco_track_dirz, "reco_track_dirz[reco_asso_tracks]/D");
+  fvertex_tree->Branch("reco_track_vertdirx", &reco_track_vertdirx, "reco_track_vertdirx[reco_asso_tracks]/D");
+  fvertex_tree->Branch("reco_track_vertdiry", &reco_track_vertdiry, "reco_track_vertdiry[reco_asso_tracks]/D");
+  fvertex_tree->Branch("reco_track_vertdirz", &reco_track_vertdirz, "reco_track_vertdirz[reco_asso_tracks]/D");
   fvertex_tree->Branch("reco_track_thetayx", &reco_track_thetayx, "reco_track_thetayx[reco_asso_tracks]/D");
   fvertex_tree->Branch("reco_track_thetaxz", &reco_track_thetaxz, "reco_track_thetaxz[reco_asso_tracks]/D");
   fvertex_tree->Branch("reco_track_thetayz", &reco_track_thetayz, "reco_track_thetayz[reco_asso_tracks]/D");
-  fvertex_tree->Branch("reco_track_phi", &reco_track_phi, "reco_track_phi[reco_asso_tracks]/D");
-  fvertex_tree->Branch("reco_track_theta", &reco_track_theta, "reco_track_theta[reco_asso_tracks]/D");
+  //fvertex_tree->Branch("reco_track_phi", &reco_track_phi, "reco_track_phi[reco_asso_tracks]/D");
+  //fvertex_tree->Branch("reco_track_theta", &reco_track_theta, "reco_track_theta[reco_asso_tracks]/D");
   fvertex_tree->Branch("reco_track_calo_dEdx", &reco_track_calo_dEdx);
+  fvertex_tree->Branch("reco_track_calo_dEdxnew", &reco_track_calo_dEdxnew);
   fvertex_tree->Branch("reco_track_calo_resrange", &reco_track_calo_resrange);
 
+  fvertex_tree->Branch("reco_track_energy_new", &reco_track_energy_new);
+  fvertex_tree->Branch("reco_track_energy_from_dEdx", &reco_track_energy_from_dEdx);
 
   fvertex_tree->Branch("all_reco_tracks_dist_from_vertex", &all_reco_tracks_dist_from_vertex);
   fvertex_tree->Branch("all_reco_showers_dist_from_vertex", &all_reco_showers_dist_from_vertex);
@@ -138,6 +155,9 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("reco_shower_startx", &reco_shower_startx, "reco_shower_startx[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_starty", &reco_shower_starty, "reco_shower_starty[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_startz", &reco_shower_startz, "reco_shower_startz[reco_asso_showers]/D");
+  fvertex_tree->Branch("reco_shower_endx", &reco_shower_endx, "reco_shower_endx[reco_asso_showers]/D");
+  fvertex_tree->Branch("reco_shower_endy", &reco_shower_endy, "reco_shower_endy[reco_asso_showers]/D");
+  fvertex_tree->Branch("reco_shower_endz", &reco_shower_endz, "reco_shower_endz[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_dist", &reco_shower_dist, "reco_shower_dist[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_distx", &reco_shower_distx, "reco_shower_distx[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_disty", &reco_shower_disty, "reco_shower_disty[reco_asso_showers]/D");
@@ -153,10 +173,14 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("reco_shower_diry", &reco_shower_diry, "reco_shower_diry[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_dirz", &reco_shower_dirz, "reco_shower_dirz[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_helper_energy", &reco_shower_helper_energy, "reco_shower_helper_energy[reco_asso_showers]/D");
+  fvertex_tree->Branch("reco_shower_helpernew_energy", &reco_shower_helpernew_energy, "reco_shower_helpernew_energy[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_bp_dist_to_tpc", &reco_shower_bp_dist_to_tpc, "reco_shower_bp_dist_to_tpc[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_dedx_plane0", &reco_shower_dedx_plane0, "reco_shower_dedx_plane0[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_dedx_plane1", &reco_shower_dedx_plane1, "reco_shower_dedx_plane1[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_dedx_plane2", &reco_shower_dedx_plane2, "reco_shower_dedx_plane2[reco_asso_showers]/D");
+  fvertex_tree->Branch("reco_shower_dedxnew_plane0", &reco_shower_dedxnew_plane0, "reco_shower_dedxnew_plane0[reco_asso_showers]/D");
+  fvertex_tree->Branch("reco_shower_dedxnew_plane1", &reco_shower_dedxnew_plane1, "reco_shower_dedxnew_plane1[reco_asso_showers]/D");
+  fvertex_tree->Branch("reco_shower_dedxnew_plane2", &reco_shower_dedxnew_plane2, "reco_shower_dedxnew_plane2[reco_asso_showers]/D");
   fvertex_tree->Branch("reco_shower_dist_to_closest_flashzcenter", &reco_shower_dist_to_closest_flashzcenter, "reco_shower_dist_to_closest_flashzcenter[reco_asso_showers]/D");
 
   fvertex_tree->Branch("shortest_asso_shower_to_vert_dist", &shortest_asso_shower_to_vert_dist, "shortest_asso_shower_to_vert_dist/D");
@@ -197,6 +221,8 @@ void FillTreeVariables::SetupTreeBranches() {
     fvertex_tree->Branch("delta_mctrack_true_pdg", &delta_mctrack_true_pdg, "delta_mctrack_true_pdg/I");
     fvertex_tree->Branch("delta_mctrack_true_energy", &delta_mctrack_true_energy, "delta_mctrack_true_energy/D");
     fvertex_tree->Branch("delta_mctrack_true_length", &delta_mctrack_true_length, "delta_mctrack_true_length/D");    
+
+    fvertex_tree->Branch("pi0_class_number", &pi0_class_number, "pi0_class_number/I");    
 
     fvertex_tree->Branch("mctracknumber", &mctracknumber, "mctracknumber/I");
     fvertex_tree->Branch("mcshowernumber", &mcshowernumber, "mcshowernumber/I");
@@ -575,6 +601,8 @@ void FillTreeVariables::ResetVertex() {
   reco_asso_tracks = 0;
   reco_asso_showers = 0;
 
+  pi0_class_number = 0;
+
   reco_true_nuvert_dist = -1;
   reco_true_nuvert_distx = -10000;
   reco_true_nuvert_disty = -10000;
@@ -593,7 +621,11 @@ void FillTreeVariables::ResetVertex() {
   reco_track_phi.clear();
   reco_track_theta.clear();
   */
+  reco_track_energy_new.clear();
+  reco_track_energy_from_dEdx.clear();
+  
   reco_track_calo_dEdx.clear();
+  reco_track_calo_dEdxnew.clear();
   reco_track_calo_resrange.clear();
 
   all_reco_showers_dist_from_vertex.clear();
@@ -925,6 +957,8 @@ void FillTreeVariables::FillShowerTruth(int const original_index) {
   true_shower_matched_to.push_back(mc_type);
   int const delta_mct_index = fstorage->fdelta_mct_index;
 
+  pi0_class_number = 0;
+
   if(mc_type == 1) {
     true_shower_pdg.push_back(fstorage->fmcshower_PdgCode->at(mc_index));
     true_shower_parent_pdg.push_back(fstorage->fmcshower_MotherPdgCode->at(mc_index));
@@ -945,6 +979,64 @@ void FillTreeVariables::FillShowerTruth(int const original_index) {
     else {
       shower_matched_to_ncdeltarad_photon.push_back(-1);
       shower_matched_to_ncdeltarad_proton.push_back(-1);
+    }
+
+    if(true_shower_parent_pdg.back() == 111){	
+	pi0_class_number = -1;
+	int shower_mother_trackID =fstorage->fmcshower_MotherTrackID->at(mc_index);
+
+	geoalgo::Point_t main_start(fstorage->fmcshower_Start_X->at(mc_index),fstorage->fmcshower_Start_Y->at(mc_index),fstorage->fmcshower_Start_Z->at(mc_index)     );
+	geoalgo::Point_t main_end(fstorage->fmcshower_End_X->at(mc_index),fstorage->fmcshower_End_Y->at(mc_index),fstorage->fmcshower_End_Z->at(mc_index)     );
+
+
+
+
+    	for(int i=0; i< fstorage->fmcshower_MotherPdgCode->size(); i++){
+		if(i==mc_index) continue;
+		
+			//std::cout<<fstorage->fmcshower_MotherPdgCode->size()<<" "<<fstorage->fmcshower_MotherTrackID->size()<<" "<<fstorage->fmcshower_Start_E->size()<<" "<<fstorage->fmcshower_Start_X->size()<<" "<<fstorage->fmcshower_Start_Y->size()<<" "<<fstorage->fmcshower_Start_Z->size()<<std::endl;
+		if( fstorage->fmcshower_MotherTrackID->at(i) == shower_mother_trackID && fstorage->fmcshower_MotherPdgCode->at(i) == 111 ){
+			//This is a shower from same pion
+			geoalgo::Point_t s_start(fstorage->fmcshower_Start_X->at(i),fstorage->fmcshower_Start_Y->at(i),fstorage->fmcshower_Start_Z->at(i)     );
+			geoalgo::Point_t s_end(fstorage->fmcshower_End_X->at(i),fstorage->fmcshower_End_Y->at(i),fstorage->fmcshower_End_Z->at(i)     );
+
+			
+			bool is_recod = false;
+			int reco_track_or_shower=-1;
+			int reco_index = -1;
+			double reco_strength=-1;
+			//Was the shower reco'd as a shower?
+			// Need to have reco_shower_mc_index in the FillLightTree then
+				for(int k=0; k<fstorage->freco_shower_largest_mc_index->size(); k++){
+					if(fstorage->freco_shower_largest_mc_index->at(k) == i) {
+						is_recod = true;
+						reco_index = k;
+						reco_track_or_shower = fstorage->freco_shower_largest_mc_type->at(k);
+						reco_strength = fstorage->freco_shower_largest_ratio->at(k);		
+					}
+				}
+
+
+			if(  	!ffiducial_volume.Contain(s_start) && 	!ffiducial_volume.Contain(s_end)){
+				pi0_class_number = 10;
+			} else 	if(!ftpc_volume.Contain(s_start) && 	!ftpc_volume.Contain(s_end)){
+				pi0_class_number = 11;
+			}else if(is_recod && reco_track_or_shower == 2 ){
+				pi0_class_number  = 30;
+			}else if(is_recod && reco_track_or_shower == 1){
+				if( s_start.Dist(main_start) < 5 && s_end.Dist(main_end) < 10){
+					pi0_class_number = 40;
+				} else if(fstorage->fmcshower_DetProfile_E->at(i)*1e-3 < 0.05){
+					pi0_class_number = 41;
+				}else {
+					pi0_class_number =42;
+				}
+
+			}
+		}		
+	
+				
+   	 }
     }
   }
 
@@ -1118,8 +1210,6 @@ void FillTreeVariables::FindAllObjectsNearby(DetectorObjects const & detos, Part
       double const dist_to_reco_vertex = shower_start.Dist(reco_vertex);
       all_reco_showers_dist_from_vertex.push_back(dist_to_reco_vertex);
    }
-
-
 }
 
 
@@ -1129,6 +1219,7 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
 
   geoalgo::Point_t const & reco_vertex = pa.GetRecoVertex();
   std::vector<double> const & reco_shower_energy = *fstorage->freco_shower_EnergyHelper_energy_legacy;
+  std::vector<double> const & reco_shower_newenergy = *fstorage->freco_shower_EnergyHelperNew_energy_legacy;
 
   double most_shower_energy = 0;
   double second_most_shower_energy = 0;
@@ -1139,7 +1230,7 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
 
   shortest_asso_shower_to_vert_dist = DBL_MAX;
 
-
+  geoalgo::Point_t const & vertex = pa.GetRecoVertex();
 
   for(size_t const n : pa.GetObjectIndices()) {
 
@@ -1160,17 +1251,56 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
       }
 
       if(reco_asso_tracks < 100) {
+	
+	geoalgo::Point_t track_start(fstorage->freco_track_X->at(original_index).front(),
+				     fstorage->freco_track_Y->at(original_index).front(),
+				     fstorage->freco_track_Z->at(original_index).front());
+	geoalgo::Point_t track_end(fstorage->freco_track_X->at(original_index).back(),
+				   fstorage->freco_track_Y->at(original_index).back(),
+				   fstorage->freco_track_Z->at(original_index).back());
+
+	int flipped = 0;
+	double dists = track_start.Dist(vertex);
+	if(track_end.Dist(vertex) < dists) {
+	  flipped = 1;
+	  std::swap(track_start, track_end);
+	}
+
+	geoalgo::Vector_t track_dir = (track_end - track_start);
+	track_dir.Normalize();
+	
 	reco_track_length[reco_asso_tracks] = track_length;
-	reco_track_dirx[reco_asso_tracks] = fstorage->freco_track_VertexDirection_X->at(original_index);
-	reco_track_diry[reco_asso_tracks] = fstorage->freco_track_VertexDirection_Y->at(original_index);
-	reco_track_dirz[reco_asso_tracks] = fstorage->freco_track_VertexDirection_Z->at(original_index);
-	reco_track_thetayx[reco_asso_tracks] = atan(reco_track_diry[reco_asso_tracks]/reco_track_dirx[reco_asso_tracks]);
-	reco_track_thetaxz[reco_asso_tracks] = atan(reco_track_dirx[reco_asso_tracks]/reco_track_dirz[reco_asso_tracks]);
-	reco_track_thetayz[reco_asso_tracks] = atan(reco_track_diry[reco_asso_tracks]/reco_track_dirz[reco_asso_tracks]);
-	reco_track_theta[reco_asso_tracks] = fstorage->freco_track_Theta->at(original_index);
-	reco_track_phi[reco_asso_tracks] = fstorage->freco_track_Phi->at(original_index);
+	reco_track_energy[reco_asso_tracks] = fstorage->freco_track_EnergyHelper_energy->at(original_index);
+	reco_track_energy_new_legacy[reco_asso_tracks] = fstorage->freco_track_EnergyHelperNew_energy_legacy->at(original_index);
+
+	reco_track_is_flipped[reco_asso_tracks] = flipped;
+ 	reco_track_startx[reco_asso_tracks] = track_start.at(0);
+	reco_track_starty[reco_asso_tracks] = track_start.at(1);
+	reco_track_startz[reco_asso_tracks] = track_start.at(2);
+	reco_track_endx[reco_asso_tracks] = track_end.at(0);
+	reco_track_endy[reco_asso_tracks] = track_end.at(1);
+	reco_track_endz[reco_asso_tracks] = track_end.at(2);
+	reco_track_dirx[reco_asso_tracks] = track_dir.at(0);
+	reco_track_diry[reco_asso_tracks] = track_dir.at(1);
+	reco_track_dirz[reco_asso_tracks] = track_dir.at(2);
+	reco_track_vertdirx[reco_asso_tracks] = fstorage->freco_track_VertexDirection_X->at(original_index);
+	reco_track_vertdiry[reco_asso_tracks] = fstorage->freco_track_VertexDirection_Y->at(original_index);
+	reco_track_vertdirz[reco_asso_tracks] = fstorage->freco_track_VertexDirection_Z->at(original_index);
+	reco_track_thetayx[reco_asso_tracks] = atan2(reco_track_diry[reco_asso_tracks], reco_track_dirx[reco_asso_tracks]);
+	reco_track_thetaxz[reco_asso_tracks] = atan2(reco_track_dirx[reco_asso_tracks], reco_track_dirz[reco_asso_tracks]);
+	reco_track_thetayz[reco_asso_tracks] = atan2(reco_track_diry[reco_asso_tracks], reco_track_dirz[reco_asso_tracks]);
+	//reco_track_theta[reco_asso_tracks] = fstorage->freco_track_Theta->at(original_index);
+	//reco_track_phi[reco_asso_tracks] = fstorage->freco_track_Phi->at(original_index);
       }
+
+      else {
+	std::cout << __PRETTY_FUNCTION__ << "\nWARNING: more than 100 associated tracks\n";
+      }
+
+      reco_track_energy_from_dEdx.push_back(fstorage->freco_track_EnergyHelperNew_energy_from_dedx->at(original_index));
+      reco_track_energy_new.push_back(fstorage->freco_track_EnergyHelperNew_energy->at(original_index));
       reco_track_calo_dEdx.push_back(fstorage->freco_track_EnergyHelper_dedx->at(original_index));
+      reco_track_calo_dEdxnew.push_back(fstorage->freco_track_EnergyHelperNew_dedx->at(original_index));
       reco_track_calo_resrange.push_back(fstorage->freco_track_EnergyHelper_resrange->at(original_index));
 
       if(fmc && frmcm_bool) FillTrackTruth(original_index);
@@ -1216,14 +1346,19 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
 	shortest_asso_shower_to_vert_dist = shower_dist;
       }
 
-      geoalgo::Cone_t const & shower_cone = detos.GetShower(n).fcone;
-      geoalgo::Point_t const & shower_start = shower_cone.Start();
-      geoalgo::Point_t const & shower_dir = shower_cone.Dir();
-
       if(reco_asso_showers < 100) {
+
+	geoalgo::Cone_t const & shower_cone = detos.GetShower(n).fcone;
+	geoalgo::Point_t const & shower_start = shower_cone.Start();
+	geoalgo::Point_t const & shower_dir = shower_cone.Dir();
+	geoalgo::Point_t const & shower_end = shower_start + (shower_dir * shower_cone.Length());
+
 	reco_shower_startx[reco_asso_showers] = shower_start.at(0);
 	reco_shower_starty[reco_asso_showers] = shower_start.at(1);
 	reco_shower_startz[reco_asso_showers] = shower_start.at(2);
+	reco_shower_endx[reco_asso_showers] = shower_end.at(0);
+	reco_shower_endy[reco_asso_showers] = shower_end.at(1);
+	reco_shower_endz[reco_asso_showers] = shower_end.at(2);
 	reco_shower_dist[reco_asso_showers] = shower_start.Dist(reco_vertex);
 	reco_shower_distx[reco_asso_showers] = shower_start.at(0) - reco_nuvertx;
 	reco_shower_disty[reco_asso_showers] = shower_start.at(1) - reco_nuverty;
@@ -1239,11 +1374,16 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
 	reco_shower_diry[reco_asso_showers] = shower_dir.at(1);
 	reco_shower_dirz[reco_asso_showers] = shower_dir.at(2);
 	reco_shower_helper_energy[reco_asso_showers] = reco_shower_energy.at(original_index);
+	reco_shower_helpernew_energy[reco_asso_showers] = reco_shower_newenergy.at(original_index);
 	reco_shower_bp_dist_to_tpc[reco_asso_showers] = FindBPDist(shower_cone);
 	std::vector<double> const & dedx = fstorage->freco_shower_EnergyHelper_dedx->at(original_index);
 	reco_shower_dedx_plane0[reco_asso_showers] = dedx.at(0);
 	reco_shower_dedx_plane1[reco_asso_showers] = dedx.at(1);
 	reco_shower_dedx_plane2[reco_asso_showers] = dedx.at(2);
+	std::vector<double> const & dedxnew = fstorage->freco_shower_EnergyHelperNew_dedx->at(original_index);
+	reco_shower_dedxnew_plane0[reco_asso_showers] = dedxnew.at(0);
+	reco_shower_dedxnew_plane1[reco_asso_showers] = dedxnew.at(1);
+	reco_shower_dedxnew_plane2[reco_asso_showers] = dedxnew.at(2);
 	reco_shower_dist_to_closest_flashzcenter[reco_asso_showers] = flash_dist;
       }	
 
@@ -1268,9 +1408,6 @@ void FillTreeVariables::FillVertexTree(ParticleAssociations const & pas,
   DetectorObjects const & detos = pas.GetDetectorObjects();
   ParticleAssociation const & pa = pas.GetAssociations().at(pn);
   geoalgo::Point_t const & reco_vertex = pa.GetRecoVertex();
-
-  std::vector<std::vector<double>> const & reco_shower_energy = *fstorage->freco_shower_Energy;
-  std::vector<double> const & reco_shower_helper_energy = *fstorage->freco_shower_EnergyHelper_energy_legacy;
 
   reco_nuvertx = reco_vertex.at(0);
   reco_nuverty = reco_vertex.at(1);
