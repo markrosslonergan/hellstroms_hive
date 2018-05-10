@@ -92,7 +92,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 		c_reco_truth->cd(1);
 
    		TPad *padsel = new TPad("padsel", "padsel", 0, 0, 0.7, 1.0);
-   		padsel->SetRightMargin(0); // Upper and lower plot are joined
+   		if(is_log) padsel->SetLogy();
+		padsel->SetRightMargin(0); // Upper and lower plot are joined
    		padsel->Draw();             // Draw the upper pad: padsel
   		padsel->cd();               // padsel becomes the current pad
 
@@ -140,6 +141,7 @@ std::cout<<"2"<<std::endl;
 		c_reco_truth->cd(2);
 
    		TPad *padpre = new TPad("padpre", "padpre", 0, 0, 0.7, 1.0);
+   		if(is_log) padpre->SetLogy();
    		padpre->SetRightMargin(0); // Upper and lower plot are joined
    		padpre->Draw();             // Draw the upper pad: padpre
   		padpre->cd();               // padpre becomes the current pad
@@ -178,6 +180,7 @@ std::cout<<"3"<<std::endl;
 		c_reco_truth->cd(3);
 
    		TPad *padbdt1 = new TPad("padbdt1", "padbdt1", 0, 0, 0.7, 1.0);
+   		if(is_log) padbdt1->SetLogy();
    		padbdt1->SetRightMargin(0); // Upper and lower plot are joined
    		padbdt1->Draw();             // Draw the upper pad: padbdt1
   		padbdt1->cd();               // padbdt1 becomes the current pad
@@ -217,7 +220,9 @@ std::cout<<"3"<<std::endl;
 		//******************* BNB bdt	*************************
 		c_reco_truth->cd(4);
 
+   		if(is_log) padsel->SetLogy();
    		TPad *padbdt2 = new TPad("padbdt2", "padbdt2", 0, 0, 0.7, 1.0);
+   		if(is_log) padbdt2->SetLogy();
    		padbdt2->SetRightMargin(0); // Upper and lower plot are joined
    		padbdt2->Draw();             // Draw the upper pad: padbdt2
   		padbdt2->cd();               // padbdt2 becomes the current pad

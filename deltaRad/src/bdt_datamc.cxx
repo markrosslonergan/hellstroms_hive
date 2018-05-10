@@ -215,7 +215,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	//for(int k = 0; k<2; k++){
 	//for(int k = 0; k<1; k++){
 	{
-		int k=2;
+		int k=1;
 		std::cout<<"On stage: "<<k<<" of bdt_datamc::plotBDTStacks."<<std::endl;	
 		bdt_variable dvar = data_file->getBDTVariable(whichbdt);
 
@@ -281,7 +281,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
 		TH1* ratpre = (TH1*)data->Clone(("ratio_"+stage_name.at(k)).c_str());
 
-		ratpre->Divide(summed);		
+		ratpre->Divide(data,summed);		
 		ratpre->SetFillColor(kGray+1);
 		ratpre->SetMarkerStyle(2);
 		ratpre->SetFillStyle(3144);
@@ -303,6 +303,20 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		ratpre->GetXaxis()->SetTitle(dvar.unit.c_str());
 		//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 		//var_precut.front()->GetYaxis()->SetTitle("Verticies");
+
+		
+		TH1* sys = (TH1*)data->Clone(("sys"+stage_name.at(k)).c_str());
+		for(int i=0; i<summed->GetNbinsX(); i++){
+			//summed->SetBinError(i, summed->GetBinError(i)+10.0);
+			//summed->SetBinError(i, sqrt(  pow(summed->GetBinError(i),2.0)+pow(summed->GetBinContent(i)*0.2,2.0) ));
+		}
+		sys->Divide(summed);
+	
+		sys->SetFillColor(kYellow);
+		sys->SetFillStyle(3144);
+	//	sys->Draw("E2 same");
+	//	ratpre->Draw("E2 same");
+		
 
 	   std::string mean = "Norm: "+to_string_prec(NdatEvents/NeventsStack*100,1)+ "%";
 	   TText *t = new TText(0.241,1.3,mean.c_str());
