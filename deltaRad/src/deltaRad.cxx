@@ -151,7 +151,7 @@ int main (int argc, char *argv[]){
 	std::string min_conversion_cut = "shortest_asso_shower_to_vert_dist > 1";
 	std::string track_direction_cut = "track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0] >= 1.0";
 	std::string back_to_back_cut = angle_track_shower+" > -0.95 && " + angle_track_shower + "< 0.95";
-
+	std::string pe_cut = "totalpe_ibg_sum > 20";
 
 	std::vector<std::string> vec_precuts;
 
@@ -159,12 +159,18 @@ int main (int argc, char *argv[]){
 		fiducial_cut =  fiducial_cut;// +"&&"+ fiducial_track_end;
 		new_precuts = fiducial_cut + " &&" + track_length_cut +"&&"+ min_energy_cut +"&&" + min_conversion_cut + "&&"+ good_calo_cut +"&&" + track_direction_cut + "&&"+ back_to_back_cut;
 		num_track_cut = "== 1";
-		vec_precuts = {fiducial_cut, track_length_cut, min_energy_cut, min_conversion_cut, good_calo_cut, track_direction_cut, back_to_back_cut};
+		if(mode_option != "train" && mode_option != "app"){
+			vec_precuts = {pe_cut, fiducial_cut, track_length_cut, min_energy_cut, min_conversion_cut, good_calo_cut, track_direction_cut, back_to_back_cut};
+		}else{
+			vec_precuts = {pe_cut, fiducial_cut, track_length_cut, min_energy_cut, min_conversion_cut, good_calo_cut, track_direction_cut, back_to_back_cut};
+
+		}
 
 	}else if(istrack == "notrack"){
 		new_precuts = fiducial_cut+ "&&" + min_energy_cut ;
 		num_track_cut = "== 0";
 		vec_precuts = {fiducial_cut, min_energy_cut};
+		if(mode_option != "train" && mode_option != "app") vec_precuts = {pe_cut, fiducial_cut, min_energy_cut};
 	}
 
 
@@ -843,10 +849,10 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 			//break;
 			}
 
-		std::vector<std::string> sname = {"Generated","Vertexed","Topological\\n Selection"};
-		for(int i=0; i< pres.back().size(); i++){
-			sname.push_back( std::to_string(i));
-		}
+		std::vector<std::string> sname = {"Generated","Vertexed","Topological","Total PE cut","Fiducial cut","Total PE $>20$","Track $< 100$cm","Reco $E_{\\gamma}$ $> 30$MeV","Shower gap $> 1$cm","Good calo cut","Flipped track cut","Back-to-back cut"};
+	//	for(int i=0; i< pres.back().size(); i++){
+	//		sname.push_back( std::to_string(i));
+	//	}
 		sname.push_back("All Precuts");
 		sname.push_back("Cosmic BDT");
 		sname.push_back("BNB BDT");
@@ -859,15 +865,15 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 			std::cout<<sname.at(i);
 			for(int j=0; j< eff_files.size(); j++){
 				
-				if(i>2 && i < 2+pres.back().size() ){
+				if(i>2 && i < 3+pres.back().size() ){
 					double num = effs.at(j).at(i);
 					double per  = num/effs.at(j).at(0)*100.0;
 					double single_per = pres.at(j).at(i-3)/effs.at(j).at(2)*100.0;
 
-				 std::cout<<"& "<<num<<" & "<<to_string_prec(per,1)<<" \\\% & ("<<to_string_prec(single_per,1)<<" \\\%)";
+				 std::cout<<"&"<<num<<"&"<<to_string_prec(per,1)<<"\\\%&("<<to_string_prec(single_per,1)<<"\\\%)";
 				
 }else{
-				 std::cout<<"& "<<effs.at(j).at(i)<<" & "<<to_string_prec(effs.at(j).at(i)/effs.at(j).at(0)*100.0,1)<<" \\\%  & ";
+				 std::cout<<"&"<<effs.at(j).at(i)<<"&"<<to_string_prec(effs.at(j).at(i)/effs.at(j).at(0)*100.0,1)<<"\\\%&";
 				}
 
 	
