@@ -54,11 +54,12 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		std::cout << "Integral: " << h_bdt.back()->Integral() << std::endl;
 		h_bdt.back()->Scale(1.0/h_bdt.back()->Integral() );
 		std::cout << "Sum of weights after scaling: " << h_bdt.back()->GetSumOfWeights() << std::endl;
+		//h_bdt.back()->GetYaxis()->SetRangeUser(0, 0.12);
 		h_bdt.back()->Draw("hist same");
 		h_bdt.back()->Write();
 		std::cout<<h_bdt.back()->GetSumOfWeights()<<" "<<bdtvar.name<<std::endl;
 		h_bdt.back()->GetXaxis()->SetTitle(bdtvar.unit.c_str());
-		h_bdt.back()->GetYaxis()->SetTitle("Verticies [Unit Normalized]");
+		h_bdt.back()->GetYaxis()->SetTitle("Vertices [Unit Normalized]");
 		h_bdt.back()->GetYaxis()->SetTitleOffset(1.5);
 
 		std::cout<<"On file "<<file->tag<<" is color "<<file->col<<std::endl;
@@ -83,7 +84,6 @@ int bdt_response::plot_bdt_response(TFile *fout){
 
 
 	std::cout<<"DONE:"<<std::endl;
-	std::cout << "Finished loop" << std::endl;
 	std::cout << "Finished loop" << std::endl;
 	c->cd(1);
 	leg->Draw();
@@ -183,8 +183,8 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	TGraph * notrack_signif; std::vector<double> mva_notrack;
 	TGraph * track_signif;  std::vector<double> mva_track;
 
-	std::vector<std::vector<double>> n_verticies_afterbdt_track;
-	std::vector<std::vector<double>> n_verticies_afterbdt_notrack;
+	std::vector<std::vector<double>> n_vertices_afterbdt_track;
+	std::vector<std::vector<double>> n_vertices_afterbdt_notrack;
 
 	double best_sig_mva_track=-99;
 	double best_sig_track=-99;
@@ -216,18 +216,18 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	bdt_response_track.back()->Scale(file->scale_data*plot_POT/file->pot);
 
 
-	double n_verticies_after_precuts_notrack = bdt_response_notrack.back()->GetSumOfWeights();
-	double n_verticies_after_precuts_track = bdt_response_track.back()->GetSumOfWeights();
+	double n_vertices_after_precuts_notrack = bdt_response_notrack.back()->GetSumOfWeights();
+	double n_vertices_after_precuts_track = bdt_response_track.back()->GetSumOfWeights();
 
-	std::cout<<"RATES: "<<file->tag<<" NoTrack: "<<n_verticies_after_precuts_notrack<<" track: "<<n_verticies_after_precuts_track<<std::endl;
+	std::cout<<"RATES: "<<file->tag<<" NoTrack: "<<n_vertices_after_precuts_notrack<<" track: "<<n_verticies_after_precuts_track<<std::endl;
 
 	std::vector<double> vec_mva_notrack;
 	std::vector<double> vec_mva_track;
 	std::vector<double> eff_notrack;
 	std::vector<double> eff_track;
 
-	std::vector<double> n_verticies_file_track;
-	std::vector<double> n_verticies_file_notrack;
+	std::vector<double> n_vertices_file_track;
+	std::vector<double> n_vertices_file_notrack;
 
 	for(double mva_notrack =mvastart; mva_notrack<mvastop; mva_notrack+=mvastep){
 		std::cout<<"NoTrack BDT efficienciys, on "<<mva_notrack<<std::endl;
@@ -236,11 +236,11 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		file->tvertex->Draw((file->friend_tree_name+".mva >>"+ file->tag+std::to_string(mva_notrack)+ "bdt_0(40,0.28,0.55)").c_str() ,(cuts +"&& reco_asso_tracks == 0" +"&&"+ bdt_cut).c_str(),"goff");
 		TH1* tmp = (TH1*)gDirectory->Get((file->tag+std::to_string(mva_notrack)+"bdt_0").c_str() );
 		tmp->Scale(file->scale_data*plot_POT/file->pot);
-		eff_notrack.push_back(tmp->GetSumOfWeights()/n_verticies_after_precuts_notrack );	
+		eff_notrack.push_back(tmp->GetSumOfWeights()/n_vertices_after_precuts_notrack );	
 
-		n_verticies_file_notrack.push_back(tmp->GetSumOfWeights());
+		n_vertices_file_notrack.push_back(tmp->GetSumOfWeights());
 	}
-	n_verticies_afterbdt_notrack.push_back(n_verticies_file_notrack);
+	n_vertices_afterbdt_notrack.push_back(n_verticies_file_notrack);
 
 	TGraph * geff_notrack = new TGraph(vec_mva_notrack.size(),&vec_mva_notrack[0],&eff_notrack[0]);
 
@@ -253,11 +253,11 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		file->tvertex->Draw((file->friend_tree_name+".mva >>"+ file->tag+std::to_string(mva_track)+ "bdt_0(40,0.28,0.55)").c_str() ,(cuts +"&& reco_asso_tracks >0" +"&&"+ bdt_cut).c_str(),"goff");
 		TH1* tmp = (TH1*)gDirectory->Get((file->tag+std::to_string(mva_track)+"bdt_0").c_str() );
 		tmp->Scale(file->scale_data*plot_POT/file->pot);
-		eff_track.push_back(tmp->GetSumOfWeights()/n_verticies_after_precuts_track );	
+		eff_track.push_back(tmp->GetSumOfWeights()/n_vertices_after_precuts_track );	
 
-		n_verticies_file_track.push_back(tmp->GetSumOfWeights());
+		n_vertices_file_track.push_back(tmp->GetSumOfWeights());
 	}
-	n_verticies_afterbdt_track.push_back(n_verticies_file_track);
+	n_vertices_afterbdt_track.push_back(n_verticies_file_track);
 
 	TGraph * geff_track = new TGraph(vec_mva_track.size(),&vec_mva_track[0],&eff_track[0]);
 
@@ -277,8 +277,8 @@ std::vector<double> num_signal_track;
 std::vector<double> num_signal_notrack;
 
 for(int j=0; j<mva_notrack.size(); j++){
-	double n_signal = n_verticies_afterbdt_notrack.at(3).at(j);
-	double n_bkg = n_verticies_afterbdt_notrack.at(1).at(j)+n_verticies_afterbdt_notrack.at(2).at(j);
+	double n_signal = n_vertices_afterbdt_notrack.at(3).at(j);
+	double n_bkg = n_vertices_afterbdt_notrack.at(1).at(j)+n_verticies_afterbdt_notrack.at(2).at(j);
 	if(n_signal == 0.0){
 		sig_notrack.push_back(0.0);
 	}else{
@@ -292,8 +292,8 @@ for(int j=0; j<mva_notrack.size(); j++){
 
 }	
 for(int j=0; j<mva_track.size(); j++){
-	double n_signal = n_verticies_afterbdt_track.at(3).at(j);
-	double n_bkg = n_verticies_afterbdt_track.at(1).at(j)+n_verticies_afterbdt_track.at(2).at(j);
+	double n_signal = n_vertices_afterbdt_track.at(3).at(j);
+	double n_bkg = n_vertices_afterbdt_track.at(1).at(j)+n_verticies_afterbdt_track.at(2).at(j);
 
 	if(n_signal == 0.0){
 		sig_track.push_back(0.0);
@@ -330,7 +330,7 @@ bdt_response_notrack.at(0)->SetStats(0);
 bdt_response_notrack.at(0)->SetLineWidth(1);
 bdt_response_notrack.at(0)->SetMarkerStyle(20);
 bdt_response_notrack.at(0)->GetXaxis()->SetTitle("BDT Response");
-bdt_response_notrack.at(0)->GetYaxis()->SetTitle("Verticies");
+bdt_response_notrack.at(0)->GetYaxis()->SetTitle("vertices");
 
 for(int t=Nfiles-1; t>= 0; t--){
 	std::cout<<"On file: "<<t<<" of notrack "<<std::endl;
@@ -366,7 +366,7 @@ bdt_response_track.at(0)->SetStats(0);
 bdt_response_track.at(0)->SetLineWidth(1);
 bdt_response_track.at(0)->SetMarkerStyle(20);
 bdt_response_track.at(0)->GetXaxis()->SetTitle("BDT Response");
-bdt_response_track.at(0)->GetYaxis()->SetTitle("Verticies");
+bdt_response_track.at(0)->GetYaxis()->SetTitle("vertices");
 
 
 
