@@ -282,7 +282,8 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 }
 
 bdt_variable bdt_file::getBDTVariable(bdt_info info){
-	return bdt_variable(this->tag +"_"+info.identifier+ ".mva", info.binning, info.name+" Response" ,false);
+	return bdt_variable(this->tag +"_"+info.identifier+ ".mva", info.binning, info.name+" Response" ,false,"d");
+	
 }
 
 
@@ -305,7 +306,7 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
 }
 
 int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods){
-
+		topo_name = bnb_bdt_info.topo_name; 
 		for(auto &method: TMVAmethods){
 			
 				std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;

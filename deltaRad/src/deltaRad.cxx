@@ -181,6 +181,7 @@ int main (int argc, char *argv[]){
 	bdt_info cosmic_bdt_info("cosmic_"+istrack, "Cosmic focused BDT","(52,0.3,0.7)");
 	//bdt_info ncpi0_bdt_info("ncpi0_"+istrack, "NCPi0 focused BDT","(50,0.2,0.50)");
 
+
 	// apply with PE
 	//std::string base_cuts = "totalpe_ibg_sum > 20 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 	// and train without PE
@@ -195,6 +196,12 @@ int main (int argc, char *argv[]){
 	if(istrack == "track"){
 		true_signal = true_signal+ "&& track_matched_to_ncdeltarad_proton[0]==1";
 		true_bkg = true_bkg +"&& true_track_origin[0]==1";
+
+		bnb_bdt_info.setTopoName("1#gamma1p");
+		cosmic_bdt_info.setTopoName("1#gamma1p");
+	}else{
+		bnb_bdt_info.setTopoName("1#gamma 0p");
+		cosmic_bdt_info.setTopoName("1#gamma 0p");
 	}
 
 	if(mode_option != "train" && mode_option !="vars" ){
@@ -424,21 +431,21 @@ int main (int argc, char *argv[]){
 	//Best Fit Significance: 0.540882 0.527059 1.01866
 	//Best Fit Significance: 0.564 0.521 1.63638
 
-/*
-*************************** TrackOnly *********************
-Best is at track_cosmicut: 0.564 track_bnbcut: 0.521
-track sig: 11.3775 track bkg 48.3415 1.63639
-*************************** NoTrackOnly *********************
-Best is at notrack_cosmicut: 0.540882 notrack_bnbcut: 0.527059
-notrack sig: 19.4657 notrack bkg 365.157 1.01866
-*************************** Combined *********************
-Best is at track_cosmicut: 0.564 track_bnbcut: 0.516
-Best is at notrack.g_cosmicut: 0.551176 notrack_bnbcut: 0.538824
-track sig: 16.7411 track bkg 114.767 1.5627
-notrack sig: 7.71812 notrack bkg 88.0266 0.82263
+	/*
+	 *************************** TrackOnly *********************
+	 Best is at track_cosmicut: 0.564 track_bnbcut: 0.521
+	 track sig: 11.3775 track bkg 48.3415 1.63639
+	 *************************** NoTrackOnly *********************
+	 Best is at notrack_cosmicut: 0.540882 notrack_bnbcut: 0.527059
+	 notrack sig: 19.4657 notrack bkg 365.157 1.01866
+	 *************************** Combined *********************
+	 Best is at track_cosmicut: 0.564 track_bnbcut: 0.516
+	 Best is at notrack.g_cosmicut: 0.551176 notrack_bnbcut: 0.538824
+	 track sig: 16.7411 track bkg 114.767 1.5627
+	 notrack sig: 7.71812 notrack bkg 88.0266 0.82263
 Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
-*/
+	 */
 	double fcoscut;
 	double fbnbcut;
 	if(istrack == "track"){
@@ -529,330 +536,332 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 				test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable(bnb_bdt_info) , fcoscut,fbnbcut);
 			}
 
+			test.is_log = false;
 		}
 		if(number==0){
-		int h=0;
-		for(auto &v:vars){
-			test.setRebin(true);
-			if(v.name == "pi0_info.num_reco_showers_within_10cm_vertex") test.setRebin(false);
-			test.plot_recomc(ftest, signal_cosmics, v, fcoscut, fbnbcut);
-			test.plot_recomc(ftest, bnb_cosmics, v, fcoscut, fbnbcut);
-			if(v.name == "pi0_info.num_reco_showers_within_10cm_vertex") test.setRebin(true);
-			h++;
-		}	
+			int h=0;
+			for(auto &v:vars){
+				test.setRebin(true);
+				if(v.name == "pi0_info.num_reco_showers_within_10cm_vertex") test.setRebin(false);
+				test.plot_recomc(ftest, signal_cosmics, v, fcoscut, fbnbcut);
+				test.plot_recomc(ftest, bnb_cosmics, v, fcoscut, fbnbcut);
+				if(v.name == "pi0_info.num_reco_showers_within_10cm_vertex") test.setRebin(true);
+				h++;
+			}	
 		}
 
 	}
-		else if(mode_option == "sig"){
+	else if(mode_option == "sig"){
 
 
-			TFile *fsig = new TFile(("significance_"+istrack+".root").c_str(),"recreate");
-			std::vector<double> ans = scan_significance(fsig, {signal_cosmics} , {bnb_cosmics, intime}, cosmic_bdt_info, bnb_bdt_info);
-			std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
-			fsig->Close();
+		TFile *fsig = new TFile(("significance_"+istrack+".root").c_str(),"recreate");
+		std::vector<double> ans = scan_significance(fsig, {signal_cosmics} , {bnb_cosmics, intime}, cosmic_bdt_info, bnb_bdt_info);
+		std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
+		fsig->Close();
 
 
-		}else if(mode_option == "stack"){
-			bdt_stack obs(istrack+"_stack");
-			obs.addToStack(signal_cosmics);
-			obs.addToStack(bnb_cosmics);
-			obs.addToStack(intime);
+	}else if(mode_option == "stack"){
+		bdt_stack obs(istrack+"_stack");
+		obs.addToStack(signal_cosmics);
+		obs.addToStack(bnb_cosmics);
+		obs.addToStack(intime);
 
-			int ip=0;
-			for(auto &v:vars){
-				ip++;
-				obs.plotStacks(ftest,  v ,fcoscut,fbnbcut);
-			}
+		int ip=0;
+		for(auto &v:vars){
+			ip++;
+			obs.plotStacks(ftest,  v ,fcoscut,fbnbcut);
+			if(number==1) return 0;
+		}
 
-			obs.plotBDTStacks(ftest, bnb_bdt_info, fcoscut, fbnbcut);
-			obs.plotBDTStacks(ftest, cosmic_bdt_info, fcoscut, fbnbcut);
-			return 0;
+		obs.plotBDTStacks(ftest, bnb_bdt_info, fcoscut, fbnbcut);
+		obs.plotBDTStacks(ftest, cosmic_bdt_info, fcoscut, fbnbcut);
+		return 0;
 
-		}else if(mode_option == "datamc"){
-	
+	}else if(mode_option == "datamc"){
 
 
-			bdt_stack *obs = new bdt_stack(istrack+"_datamc");
-			obs->plot_pot =4.801e19;
-			obs->addToStack(signal_cosmics);
-			obs->addToStack(bnb_cosmics);
-			obs->addToStack(intime);
 
-			bdt_stack *obs2 = new bdt_stack(istrack+"_extintime");
-			obs2->plot_pot = 4.801e19;
-			obs2->addToStack(intime);
+		bdt_stack *obs = new bdt_stack(istrack+"_datamc");
+		obs->plot_pot =4.801e19;
+		obs->addToStack(signal_cosmics);
+		obs->addToStack(bnb_cosmics);
+		obs->addToStack(intime);
 
-			bdt_stack *obs3 = new bdt_stack(istrack+"_twodata");
-			obs3->plot_pot = 4.801e19;
-			obs3->addToStack(signal_cosmics);
-			obs3->addToStack(bnb_cosmics);
-			bnbext->col = intime->col;	
-			bnbext->fillstyle = 3333;
-			obs3->addToStack(bnbext);
+		bdt_stack *obs2 = new bdt_stack(istrack+"_extintime");
+		obs2->plot_pot = 4.801e19;
+		obs2->addToStack(intime);
 
-			int ip=0;
-			for(auto &v:vars){
-				ip++;
-				if(number==0){
-					bdt_datamc datamc(data5e19, obs, istrack);	
-					datamc.plotStacks(ftest,  v ,fcoscut,fbnbcut);
-				}
-				if(number ==1){
-					bdt_datamc datamc2(bnbext, obs2, istrack);	
-					datamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
-				}
-				if(number==2){
-					//bdt_datamc t2datamc(data5e19, obs3, istrack+"_bump");	
-					bdt_datamc t2datamc(data5e19, obs3, istrack+"_2data");	
-					t2datamc.plotStacks(ftest, vars.at(1),fcoscut,fbnbcut);
-				}
-			return 0;
-			}
-			
-			bdt_datamc datamc(data5e19, obs, istrack);	
-			bdt_datamc datamc2(bnbext, obs2, istrack);	
-			bdt_datamc datamc3(data5e19, obs3, istrack+"_2data");	
-			
-			if(number==2){
-				datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-				datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-			}
+		bdt_stack *obs3 = new bdt_stack(istrack+"_twodata");
+		obs3->plot_pot = 4.801e19;
+		obs3->addToStack(signal_cosmics);
+		obs3->addToStack(bnb_cosmics);
+		bnbext->col = intime->col;	
+		bnbext->fillstyle = 3333;
+		obs3->addToStack(bnbext);
+
+		int ip=0;
+		for(auto &v:vars){
+			ip++;
 			if(number==0){
-				datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-				datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+				bdt_datamc datamc(data5e19, obs, istrack);	
+				datamc.plotStacks(ftest,  v ,fcoscut,fbnbcut);
 			}
-			if(number==1){
-				datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-				datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+			if(number ==1){
+				bdt_datamc datamc2(bnbext, obs2, istrack);	
+				datamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
 			}
+			if(number==2){
+				//bdt_datamc t2datamc(data5e19, obs3, istrack+"_bump");	
+				bdt_datamc t2datamc(data5e19, obs3, istrack+"_2data");	
+				t2datamc.plotStacks(ftest, vars.at(1),fcoscut,fbnbcut);
+			}
+			return 0;
+		}
+
+		bdt_datamc datamc(data5e19, obs, istrack);	
+		bdt_datamc datamc2(bnbext, obs2, istrack);	
+		bdt_datamc datamc3(data5e19, obs3, istrack+"_2data");	
+
+		if(number==2){
+			datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+			datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+		}
+		if(number==0){
+			datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+			datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+		}
+		if(number==1){
+			datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+			datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+		}
 
 
-		}else if(mode_option == "vars"){
+	}else if(mode_option == "vars"){
 
-			std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
+		std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
 
-			if(run_cosmic){
-				for(auto &v:vars){
-					TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_cosmo").c_str(), ("cvar_"+v.name+"_cosmo").c_str(),2200,1200);
-					c_var->Divide(2,1);
-					c_var->cd();
+		if(run_cosmic){
+			for(auto &v:vars){
+				TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_cosmo").c_str(), ("cvar_"+v.name+"_cosmo").c_str(),2200,1200);
+				c_var->Divide(2,1);
+				c_var->cd();
 
-					for(int j=0; j<2;j++){	
+				for(int j=0; j<2;j++){	
 
-						std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
-						std::string cut_intime = intime->getStageCuts(j,fcoscut,fbnbcut); 
-
-
-						TH1* sig = signal_pure->getTH1(v,cut_signal.c_str(),v.safe_name+"_sig_cosmo_var" ,1.0);
-						TH1* bkg = intime->getTH1(v,cut_intime.c_str(),v.safe_name+"_bkg_cosmo_var" ,1.0);
-
-						sig->Scale(1.0/sig->Integral());			
-						bkg->Scale(1.0/bkg->Integral());			
-						sig->SetLineColor(kRed-7);
-						bkg->SetLineColor(kGreen-3);
-						sig->SetLineWidth(2);
-						bkg->SetLineWidth(2);
+					std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
+					std::string cut_intime = intime->getStageCuts(j,fcoscut,fbnbcut); 
 
 
-						sig->SetFillColor(kRed-7);
-						bkg->SetFillColor(kGreen-3);
-						sig->SetFillStyle(3445);
-						bkg->SetFillStyle(3454);
+					TH1* sig = signal_pure->getTH1(v,cut_signal.c_str(),v.safe_name+"_sig_cosmo_var" ,1.0);
+					TH1* bkg = intime->getTH1(v,cut_intime.c_str(),v.safe_name+"_bkg_cosmo_var" ,1.0);
 
-						sig->SetTitle(title.at(j).c_str());
-						c_var->cd(j+1);			
-
-						sig->Draw("hist");
-						bkg->Draw("hist same");
-						//sig->GetXaxis()->SetTitle(v.unit.c_str());
-						sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
-						sig->GetYaxis()->SetTitleOffset(1.5);
-
-						TLegend *l = new TLegend(0.11,0.75,0.89,0.89);
-						l->SetLineColor(kWhite);
-						l->SetFillStyle(0);
-						l->SetNColumns(2);
-
-						l->AddEntry(sig,"NC #Delta #gamma Signal","lf");	
-						l->AddEntry(bkg,"Intime Cosmic Background","lf");	
-						l->Draw();
-
-						double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
-						sig->SetMaximum(max_height*1.3);
+					sig->Scale(1.0/sig->Integral());			
+					bkg->Scale(1.0/bkg->Integral());			
+					sig->SetLineColor(kRed-7);
+					bkg->SetLineColor(kGreen-3);
+					sig->SetLineWidth(2);
+					bkg->SetLineWidth(2);
 
 
+					sig->SetFillColor(kRed-7);
+					bkg->SetFillColor(kGreen-3);
+					sig->SetFillStyle(3445);
+					bkg->SetFillStyle(3454);
 
-					}
-					c_var->Print(("var/"+istrack+"_cosmic_"+v.safe_unit+".pdf").c_str(),"pdf");
+					sig->SetTitle(title.at(j).c_str());
+					c_var->cd(j+1);			
+
+					sig->Draw("hist");
+					bkg->Draw("hist same");
+					//sig->GetXaxis()->SetTitle(v.unit.c_str());
+					sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
+					sig->GetYaxis()->SetTitleOffset(1.5);
+
+					TLegend *l = new TLegend(0.11,0.75,0.89,0.89);
+					l->SetLineColor(kWhite);
+					l->SetFillStyle(0);
+					l->SetNColumns(2);
+
+					l->AddEntry(sig,"NC #Delta #gamma Signal","lf");	
+					l->AddEntry(bkg,"Intime Cosmic Background","lf");	
+					l->Draw();
+
+					double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
+					sig->SetMaximum(max_height*1.3);
+
+
+
 				}
-
+				c_var->Print(("var/"+istrack+"_cosmic_"+v.safe_unit+".pdf").c_str(),"pdf");
 			}
-			if(run_bnb){
-				for(auto &v:vars){
-					TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_bnb").c_str(), ("cvar_"+v.name+"_bnb").c_str(),2200,1200);
-					c_var->Divide(2,1);
-					c_var->cd();
 
-					for(int j=0; j<2;j++){	
+		}
+		if(run_bnb){
+			for(auto &v:vars){
+				TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_bnb").c_str(), ("cvar_"+v.name+"_bnb").c_str(),2200,1200);
+				c_var->Divide(2,1);
+				c_var->cd();
 
-						std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
-						std::string cut_bnb = bnb_pure->getStageCuts(j,fcoscut,fbnbcut); 
+				for(int j=0; j<2;j++){	
 
-
-						TH1* sig = signal_pure->getTH1(v,cut_signal.c_str(),v.safe_name+"_sig_bnb_var" ,1.0);
-						TH1* bkg = bnb_pure->getTH1(v,cut_bnb.c_str(),v.safe_name+"_bkg_bnb_var" ,1.0);
-
-						sig->Scale(1.0/sig->Integral());			
-						bkg->Scale(1.0/bkg->Integral());			
-						sig->SetLineColor(kRed-7);
-						bkg->SetLineColor(kBlue-4);
-						sig->SetLineWidth(2);
-						bkg->SetLineWidth(2);
-
-						sig->SetFillColor(kRed-7);
-						bkg->SetFillColor(kBlue-4);
-						sig->SetFillStyle(3445);
-						bkg->SetFillStyle(3454);
-
-						sig->SetTitle(title.at(j).c_str());
-						c_var->cd(j+1);			
-
-						sig->Draw("hist");
-						sig->SetMaximum(sig->GetMaximum()*1.25);
-						bkg->Draw("hist same");
-						//sig->GetXaxis()->SetTitle(v.unit.c_str());
-						sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
-						sig->GetYaxis()->SetTitleOffset(1.5);
-
-						TLegend *l = new TLegend(0.11,0.75,0.89,0.89);
-						l->SetLineColor(kWhite);
-						l->SetFillStyle(0);
-						l->SetNColumns(2);
-
-						l->AddEntry(sig,"NC #Delta #gamma Signal","lf");	
-						l->AddEntry(bkg,"BNB Backgrounds","lf");	
-						l->Draw();
-
-						double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
-						sig->SetMaximum(max_height*1.1);
+					std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
+					std::string cut_bnb = bnb_pure->getStageCuts(j,fcoscut,fbnbcut); 
 
 
+					TH1* sig = signal_pure->getTH1(v,cut_signal.c_str(),v.safe_name+"_sig_bnb_var" ,1.0);
+					TH1* bkg = bnb_pure->getTH1(v,cut_bnb.c_str(),v.safe_name+"_bkg_bnb_var" ,1.0);
 
-					}
-					c_var->Print(("var/"+istrack+"_bnb_"+v.safe_unit+".pdf").c_str(),"pdf");
+					sig->Scale(1.0/sig->Integral());			
+					bkg->Scale(1.0/bkg->Integral());			
+					sig->SetLineColor(kRed-7);
+					bkg->SetLineColor(kBlue-4);
+					sig->SetLineWidth(2);
+					bkg->SetLineWidth(2);
+
+					sig->SetFillColor(kRed-7);
+					bkg->SetFillColor(kBlue-4);
+					sig->SetFillStyle(3445);
+					bkg->SetFillStyle(3454);
+
+					sig->SetTitle(title.at(j).c_str());
+					c_var->cd(j+1);			
+
+					sig->Draw("hist");
+					sig->SetMaximum(sig->GetMaximum()*1.25);
+					bkg->Draw("hist same");
+					//sig->GetXaxis()->SetTitle(v.unit.c_str());
+					sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
+					sig->GetYaxis()->SetTitleOffset(1.5);
+
+					TLegend *l = new TLegend(0.11,0.75,0.89,0.89);
+					l->SetLineColor(kWhite);
+					l->SetFillStyle(0);
+					l->SetNColumns(2);
+
+					l->AddEntry(sig,"NC #Delta #gamma Signal","lf");	
+					l->AddEntry(bkg,"BNB Backgrounds","lf");	
+					l->Draw();
+
+					double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
+					sig->SetMaximum(max_height*1.1);
+
+
+
 				}
+				c_var->Print(("var/"+istrack+"_bnb_"+v.safe_unit+".pdf").c_str(),"pdf");
+			}
+		}
+
+
+
+
+
+
+
+	} else if(mode_option == "eff"){
+
+		double plot_pot = 6.6e20;
+		std::cout<<"Starting efficiency study: coscut @ "<<fcoscut<<" bnbcut@: "<<fbnbcut<<std::endl;
+
+		std::cout<<"########################################################################"<<std::endl;
+		std::cout<<"###############################Efficiency###############################"<<std::endl;
+
+
+		TFile * feff = new TFile(("Eff_"+istrack+".root").c_str(),"recreate");
+		TCanvas *ceff = new TCanvas();		
+		ceff->cd();
+
+		std::vector<double> eff_sig;
+
+		std::vector<bdt_file*> eff_files = {signal_cosmics, bnb_cosmics, intime};
+		std::vector<std::vector<double>> effs;
+		std::vector<std::vector<double>> pres;
+
+		for(int i=0; i< eff_files.size(); i++){
+			std::vector<double> tmp;
+			effs.push_back(tmp);
+			pres.push_back(tmp);
+
+			std::cout<<eff_files.at(i)->tag<<std::endl;
+			std::vector<double> prev;
+			double start;
+			double sel;		
+
+			double pot_scale = (plot_pot/eff_files.at(i)->pot )*eff_files.at(i)->scale_data;
+			std::string gencut = "1";
+			if(eff_files.at(i)->tag == "IntimeCosmics" || eff_files.at(i)->tag == "Data5e19" || eff_files.at(i)->tag == "BNBext"){
+				gencut = "1";
+			}	
+
+			double nevents = eff_files.at(i)->numberofevents*pot_scale;	
+			double nv = eff_files.at(i)->GetEntries((gencut+"&&1").c_str())*pot_scale;	
+			double ns = eff_files.at(i)->GetEntries( eff_files.at(i)->getStageCuts(0,fcoscut,fbnbcut).c_str())*pot_scale;	
+
+			start = nevents;
+			sel = ns;
+			std::cout<<"Stage Gen\t\t"<<nevents<<"\t\t"<<nevents/start*100<<std::endl;
+			std::cout<<"Stage Vertex\t\t"<<nv<<"\t\t"<<nv/start*100<<std::endl;
+			std::cout<<"Stage Topo\t\t"<<ns<<"\t\t"<<ns/start*100<<"\t\t"<<100<<std::endl;
+
+			if(eff_files.at(i)->tag=="NCDeltaRadCosmics"){
+				eff_sig.push_back(nevents/start*100);
+				eff_sig.push_back(ns/start*100);
 			}
 
+			effs.back().push_back(nevents);
+			effs.back().push_back(nv);
+			effs.back().push_back(ns);
 
+			for(int m=0; m< eff_files.at(i)->flow.vec_pre_cuts.size(); m++){
+				std::string thiscut = eff_files.at(i)->flow.vec_pre_cuts.at(m)+"&&"+eff_files.at(i)->getStageCuts(0,fcoscut,fbnbcut);
+				double np = eff_files.at(i)->GetEntries(thiscut.c_str())*pot_scale;
+				std::cout<<"Precut: "<<eff_files.at(i)->flow.vec_pre_cuts.at(m)<<"\t||\t"<<np<<"\t("<<np/ns*100<<")\%"<<std::endl;
+				pres.back().push_back(np);
+			}
 
-
-
-
-
-		} else if(mode_option == "eff"){
-
-			double plot_pot = 6.6e20;
-			std::cout<<"Starting efficiency study: coscut @ "<<fcoscut<<" bnbcut@: "<<fbnbcut<<std::endl;
-
-			std::cout<<"########################################################################"<<std::endl;
-			std::cout<<"###############################Efficiency###############################"<<std::endl;
-
-
-			TFile * feff = new TFile(("Eff_"+istrack+".root").c_str(),"recreate");
-			TCanvas *ceff = new TCanvas();		
-			ceff->cd();
-			
-			std::vector<double> eff_sig;
-
-			std::vector<bdt_file*> eff_files = {signal_cosmics, bnb_cosmics, intime};
-			std::vector<std::vector<double>> effs;
-			std::vector<std::vector<double>> pres;
-
-			for(int i=0; i< eff_files.size(); i++){
-				std::vector<double> tmp;
-				effs.push_back(tmp);
-				pres.push_back(tmp);
-
-				std::cout<<eff_files.at(i)->tag<<std::endl;
-				std::vector<double> prev;
-				double start;
-				double sel;		
-
-				double pot_scale = (plot_pot/eff_files.at(i)->pot )*eff_files.at(i)->scale_data;
-				std::string gencut = "1";
-				if(eff_files.at(i)->tag == "IntimeCosmics" || eff_files.at(i)->tag == "Data5e19" || eff_files.at(i)->tag == "BNBext"){
-					gencut = "1";
-				}	
-
-				double nevents = eff_files.at(i)->numberofevents*pot_scale;	
-				double nv = eff_files.at(i)->GetEntries((gencut+"&&1").c_str())*pot_scale;	
-				double ns = eff_files.at(i)->GetEntries( eff_files.at(i)->getStageCuts(0,fcoscut,fbnbcut).c_str())*pot_scale;	
-
-				start = nevents;
-				sel = ns;
-				std::cout<<"Stage Gen\t\t"<<nevents<<"\t\t"<<nevents/start*100<<std::endl;
-				std::cout<<"Stage Vertex\t\t"<<nv<<"\t\t"<<nv/start*100<<std::endl;
-				std::cout<<"Stage Topo\t\t"<<ns<<"\t\t"<<ns/start*100<<"\t\t"<<100<<std::endl;
+			std::cout<<"One by One"<<std::endl;
+			std::string thiscut = eff_files.at(i)->getStageCuts(0,fcoscut,fbnbcut);
+			for(int m=0; m< eff_files.at(i)->flow.vec_pre_cuts.size(); m++){
+				thiscut += "&&"+ eff_files.at(i)->flow.vec_pre_cuts.at(m);
+				double np = eff_files.at(i)->GetEntries(thiscut.c_str())*pot_scale;
+				std::cout<<" + "<<eff_files.at(i)->flow.vec_pre_cuts.at(m)<<"\t||\t"<<np<<"\t("<<np/ns*100<<")\%"<<std::endl;
 
 				if(eff_files.at(i)->tag=="NCDeltaRadCosmics"){
-					eff_sig.push_back(nevents/start*100);
-					eff_sig.push_back(ns/start*100);
+					eff_sig.push_back(np/start*100);
 				}
-				
-				effs.back().push_back(nevents);
-				effs.back().push_back(nv);
-				effs.back().push_back(ns);
+				effs.back().push_back(np);
 
-				for(int m=0; m< eff_files.at(i)->flow.vec_pre_cuts.size(); m++){
-					std::string thiscut = eff_files.at(i)->flow.vec_pre_cuts.at(m)+"&&"+eff_files.at(i)->getStageCuts(0,fcoscut,fbnbcut);
-					double np = eff_files.at(i)->GetEntries(thiscut.c_str())*pot_scale;
-					std::cout<<"Precut: "<<eff_files.at(i)->flow.vec_pre_cuts.at(m)<<"\t||\t"<<np<<"\t("<<np/ns*100<<")\%"<<std::endl;
-					pres.back().push_back(np);
-				}
-
-				std::cout<<"One by One"<<std::endl;
-				std::string thiscut = eff_files.at(i)->getStageCuts(0,fcoscut,fbnbcut);
-				for(int m=0; m< eff_files.at(i)->flow.vec_pre_cuts.size(); m++){
-					thiscut += "&&"+ eff_files.at(i)->flow.vec_pre_cuts.at(m);
-					double np = eff_files.at(i)->GetEntries(thiscut.c_str())*pot_scale;
-					std::cout<<" + "<<eff_files.at(i)->flow.vec_pre_cuts.at(m)<<"\t||\t"<<np<<"\t("<<np/ns*100<<")\%"<<std::endl;
-
-					if(eff_files.at(i)->tag=="NCDeltaRadCosmics"){
-						eff_sig.push_back(np/start*100);
-					}
-					effs.back().push_back(np);
-
-				}
-
-					if(eff_files.at(i)->tag=="NCDeltaRadCosmics"){
-						eff_sig.push_back(  eff_files.at(i)->GetEntries(eff_files.at(i)->getStageCuts(2,fcoscut,fbnbcut).c_str())*pot_scale/start*100);
-						eff_sig.push_back(  eff_files.at(i)->GetEntries(eff_files.at(i)->getStageCuts(3,fcoscut,fbnbcut).c_str())*pot_scale/start*100);
-					}
-
-
-				for(int j=1; j <4; j++){		
-					std::string thiscut = eff_files.at(i)->getStageCuts(j,fcoscut,fbnbcut); 
-					double nvert =eff_files.at(i)->GetEntries(thiscut.c_str())*pot_scale;
-					double eff =0;
-					//	if(j==0){
-					//		start = nvert;
-					//		
-					//	}
-
-					eff = nvert/start*100;
-					effs.back().push_back(nvert);
-					std::cout<<nvert<<"\t("<<nvert/sel*100<<" \%)"<<" ";	
-				}
-
-				std::cout<<std::endl;
-			
-			//break;
 			}
 
+			if(eff_files.at(i)->tag=="NCDeltaRadCosmics"){
+				eff_sig.push_back(  eff_files.at(i)->GetEntries(eff_files.at(i)->getStageCuts(2,fcoscut,fbnbcut).c_str())*pot_scale/start*100);
+				eff_sig.push_back(  eff_files.at(i)->GetEntries(eff_files.at(i)->getStageCuts(3,fcoscut,fbnbcut).c_str())*pot_scale/start*100);
+			}
+
+
+			for(int j=1; j <4; j++){		
+				std::string thiscut = eff_files.at(i)->getStageCuts(j,fcoscut,fbnbcut); 
+				double nvert =eff_files.at(i)->GetEntries(thiscut.c_str())*pot_scale;
+				double eff =0;
+				//	if(j==0){
+				//		start = nvert;
+				//		
+				//	}
+
+				eff = nvert/start*100;
+				effs.back().push_back(nvert);
+				std::cout<<nvert<<"\t("<<nvert/sel*100<<" \%)"<<" ";	
+			}
+
+			std::cout<<std::endl;
+
+			//break;
+		}
+
 		std::vector<std::string> sname = {"Generated","Vertexed","Topological","Total PE cut","Fiducial cut","Total PE $>20$","Track $< 100$cm","Reco $E_{\\gamma}$ $> 30$MeV","Shower gap $> 1$cm","Good calo cut","Flipped track cut","Back-to-back cut"};
-	//	for(int i=0; i< pres.back().size(); i++){
-	//		sname.push_back( std::to_string(i));
-	//	}
+		//	for(int i=0; i< pres.back().size(); i++){
+		//		sname.push_back( std::to_string(i));
+		//	}
 		sname.push_back("All Precuts");
 		sname.push_back("Cosmic BDT");
 		sname.push_back("BNB BDT");
@@ -864,26 +873,26 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 		for(int i=0; i< effs.back().size();i++){
 			std::cout<<sname.at(i);
 			for(int j=0; j< eff_files.size(); j++){
-				
+
 				if(i>2 && i < 3+pres.back().size() ){
 					double num = effs.at(j).at(i);
 					double per  = num/effs.at(j).at(0)*100.0;
 					double single_per = pres.at(j).at(i-3)/effs.at(j).at(2)*100.0;
 
-				 std::cout<<"&"<<num<<"&"<<to_string_prec(per,1)<<"\\\%&("<<to_string_prec(single_per,1)<<"\\\%)";
-				
-}else{
-				 std::cout<<"&"<<effs.at(j).at(i)<<"&"<<to_string_prec(effs.at(j).at(i)/effs.at(j).at(0)*100.0,1)<<"\\\%&";
+					std::cout<<"&"<<num<<"&"<<to_string_prec(per,1)<<"\\\%&("<<to_string_prec(single_per,1)<<"\\\%)";
+
+				}else{
+					std::cout<<"&"<<effs.at(j).at(i)<<"&"<<to_string_prec(effs.at(j).at(i)/effs.at(j).at(0)*100.0,1)<<"\\\%&";
 				}
 
-	
+
 			}
 			std::cout<<"\\\\"<<std::endl;
 			if(i==2 || (effs.back().size()-i) == 4)std::cout<<"\\hline"<<std::endl;
 
 		}	
 		std::cout<<"\\hline"<<std::endl;
-		
+
 		std::cout<<"\\end{tabular}"<<std::endl;
 		std::cout<<"\\end{table}"<<std::endl;
 
@@ -904,7 +913,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 		for(int i=0; i< eff_sig.size(); i++){ eff_num.push_back((double)i);}
 		std::reverse(eff_sig.begin(),eff_sig.end());
 		TGraph *g_eff_sig = new TGraph(eff_sig.size(),&eff_sig[0],&eff_num[0]);
-		
+
 		ceff->cd();
 		g_eff_sig->Draw("alp");
 		ceff->Write();
@@ -912,67 +921,67 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 		feff->Close();
 
 
-		}
-		else if(mode_option == "effdata"){
-			std::vector<bdt_file*> data_files = {data5e19, bnbext};
+	}
+	else if(mode_option == "effdata"){
+		std::vector<bdt_file*> data_files = {data5e19, bnbext};
 
 
 
-			std::cout<<"Starting efficiency study: coscut @ "<<fcoscut<<" bnbcut@: "<<fbnbcut<<std::endl;
+		std::cout<<"Starting efficiency study: coscut @ "<<fcoscut<<" bnbcut@: "<<fbnbcut<<std::endl;
 
-			std::cout<<"########################################################################"<<std::endl;
-			std::cout<<"###############################Efficiency###############################"<<std::endl;
-			for(int i=0; i< data_files.size(); i++){
-				std::cout<<data_files.at(i)->tag<<std::endl;
-				std::vector<double> prev;
-				double start;
-				double sel;		
+		std::cout<<"########################################################################"<<std::endl;
+		std::cout<<"###############################Efficiency###############################"<<std::endl;
+		for(int i=0; i< data_files.size(); i++){
+			std::cout<<data_files.at(i)->tag<<std::endl;
+			std::vector<double> prev;
+			double start;
+			double sel;		
 
-				double pot_scale = 1.0;// (plot_pot/data_files.at(i)->pot )*data_files.at(i)->scale_data;
-				std::string gencut = "1";
+			double pot_scale = 1.0;// (plot_pot/data_files.at(i)->pot )*data_files.at(i)->scale_data;
+			std::string gencut = "1";
 
 			double nevents = 0;//data_files.at(i)->tevent->GetEntries(gencut.c_str())*pot_scale;	
 			double nv = data_files.at(i)->GetEntries((gencut+"&&1").c_str())*pot_scale;	
 			double ns = data_files.at(i)->GetEntries((gencut+"&&  reco_asso_showers==1 && reco_asso_tracks "+num_track_cut).c_str())*pot_scale;	
 
-				start = nevents;
-				sel = ns;
-				std::cout<<"Stage G\t\t"<<nevents<<"\t\t"<<nevents/start*100<<std::endl;
-				std::cout<<"Stage V\t\t"<<nv<<"\t\t"<<nv/start*100<<std::endl;
-				std::cout<<"Stage S\t\t"<<ns<<"\t\t"<<ns/start*100<<"\t\t"<<100<<std::endl;
+			start = nevents;
+			sel = ns;
+			std::cout<<"Stage G\t\t"<<nevents<<"\t\t"<<nevents/start*100<<std::endl;
+			std::cout<<"Stage V\t\t"<<nv<<"\t\t"<<nv/start*100<<std::endl;
+			std::cout<<"Stage S\t\t"<<ns<<"\t\t"<<ns/start*100<<"\t\t"<<100<<std::endl;
 
-				for(int j=0; j <4; j++){		
-					std::string thiscut = data_files.at(i)->getStageCuts(j,fcoscut,fbnbcut); 
-					double nvert =data_files.at(i)->GetEntries(thiscut.c_str())*pot_scale;
-					double eff =2;
-					eff = nvert/start*100;
-					std::cout<<"Stage "<<std::to_string(j)<<"\t\t"<<nvert<<"\t\t"<<eff<<"\t\t"<<nvert/sel*100<<std::endl;	
-					if(j==3){data_files.at(i)->tvertex->Scan( "run_number:subrun_number:event_number:reco_shower_dedx_plane2",thiscut.c_str());};
-				}
-			}
-
-
-		} else if(mode_option == "precalc"){
-
-			//std::vector<bdt_file*> bdt_filesB = {bnb_pure,signal_pure};
-			//std::vector<bdt_file*> bdt_filesB = {intime, data5e19, bnbext};
-			std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime, data5e19, bnbext};
-			//std::vector<bdt_file*> bdt_filesB = {bnbext};
-
-			//bdt_precalc pre1(bdt_filesB.at(number));
-			//pre1.genTrackInfo();
-			
-			//pre1.genBNBcorrectionInfo();
-			//pre1.genPi0Info();
-
-			for(auto &f: bdt_files){
-				bdt_precalc pre(f);
-				pre.genBNBcorrectionInfo();
-				//pre.genTrackInfo();
-				//pre.genPi0Info();
+			for(int j=0; j <4; j++){		
+				std::string thiscut = data_files.at(i)->getStageCuts(j,fcoscut,fbnbcut); 
+				double nvert =data_files.at(i)->GetEntries(thiscut.c_str())*pot_scale;
+				double eff =2;
+				eff = nvert/start*100;
+				std::cout<<"Stage "<<std::to_string(j)<<"\t\t"<<nvert<<"\t\t"<<eff<<"\t\t"<<nvert/sel*100<<std::endl;	
+				if(j==3){data_files.at(i)->tvertex->Scan( "run_number:subrun_number:event_number:reco_shower_dedx_plane2",thiscut.c_str());};
 			}
 		}
-		else if(mode_option == "sbnfit"){
+
+
+	} else if(mode_option == "precalc"){
+
+		//std::vector<bdt_file*> bdt_filesB = {bnb_pure,signal_pure};
+		//std::vector<bdt_file*> bdt_filesB = {intime, data5e19, bnbext};
+		std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime, data5e19, bnbext};
+		//std::vector<bdt_file*> bdt_filesB = {bnbext};
+
+		//bdt_precalc pre1(bdt_filesB.at(number));
+		//pre1.genTrackInfo();
+
+		//pre1.genBNBcorrectionInfo();
+		//pre1.genPi0Info();
+
+		for(auto &f: bdt_files){
+			bdt_precalc pre(f);
+			pre.genBNBcorrectionInfo();
+			//pre.genTrackInfo();
+			//pre.genPi0Info();
+		}
+	}
+	else if(mode_option == "sbnfit"){
 
 		bdt_stack *obs = new bdt_stack(istrack+"_datamc");
 		//obs->plot_pot =  6.6e20;
@@ -992,7 +1001,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 
 
-		}else if( mode_option =="test"){
+	}else if( mode_option =="test"){
 
 		std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
 		std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
@@ -1017,72 +1026,72 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 
 
-				test.plot_recomc(ftest, bnb_cosmics, vars.at(1) , fcoscut,fbnbcut);
+		test.plot_recomc(ftest, bnb_cosmics, vars.at(1) , fcoscut,fbnbcut);
 
 
 
-		}else if(mode_option == "boxcut"){
-			TFile * fout = new TFile("box.root","recreate");
+	}else if(mode_option == "boxcut"){
+		TFile * fout = new TFile("box.root","recreate");
 
-			std::vector<std::string> boxcuts;
-	
-			boxcuts.push_back("reco_shower_dedx_plane2[0]>2"); // reco_shower_dedx_plane2[0]
-			boxcuts.push_back("reco_shower_helper_energy[0]>0.2"); // reco_shower_helper_energy[0]
-			boxcuts.push_back("1"); // reco_shower_length[0]
-			boxcuts.push_back("1"); // reco_shower_opening_angle[0]
-			boxcuts.push_back("reco_shower_dist_to_closest_flashzcenter[0]<100"); // reco_shower_dist_to_closest_flashzcenter[0e	
-			boxcuts.push_back(fiducial_vertex); // reco_nu_vtx_dust to closset wal
-			boxcuts.push_back("1"); // showe bp to wall
-			boxcuts.push_back("1"); // vrtx X
-			boxcuts.push_back("1"); // vrt Y
-			boxcuts.push_back("1"); //vert z
-			boxcuts.push_back("cos(atan2(reco_shower_diry[0],reco_shower_dirz[0]))> 0.6"); // shower cos theta
-			boxcuts.push_back("cos(atan2(reco_shower_diry[0],reco_shower_dirx[0]))> 0.6"); // shower cos phi
-			boxcuts.push_back("1"); //shower end x
-			boxcuts.push_back("1"); // shower end y
-			boxcuts.push_back("1"); // showr end z
-			boxcuts.push_back("1"); //pi0num near 
-			boxcuts.push_back("reco_track_displacement[0]<100"); //  track length
-			boxcuts.push_back("track_info.reco_track_mean_dEdx[0]>2"); // mean dedx
-			boxcuts.push_back("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]> 1"); //  ratio mean
-			boxcuts.push_back("track_info.reco_track_PIDA[0] >  10"); // pida
-			boxcuts.push_back("track_info.reco_track_braggA[0]> 10"); // brag A
-			boxcuts.push_back("shortest_asso_shower_to_vert_dist[0]>1"); // photon conversion
-			boxcuts.push_back("1"); //  invariant mass
-			boxcuts.push_back("cos(atan2(reco_track_diry[0],reco_track_dirz[0]))>0"); // track theta
-			boxcuts.push_back("1"); // track theta
-			boxcuts.push_back(angle_track_shower+">-0.95 && "+ angle_track_shower +"<0.95"); //  track showr angle
-			boxcuts.push_back("1"); // track end x
-			boxcuts.push_back("1"); // track end y
-			boxcuts.push_back("1"); //  track end z
-			boxcuts.push_back("1"); // track eneryy
+		std::vector<std::string> boxcuts;
 
-			bdt_stack *obs3 = new bdt_stack(istrack+"_box");
-			obs3->plot_pot = 6.6e20;
-			obs3->addToStack(signal_cosmics);
-			obs3->addToStack(bnb_cosmics);
-			bnbext->col = intime->col;	
-			bnbext->fillstyle = 3333;
-			obs3->addToStack(bnbext);
+		boxcuts.push_back("reco_shower_dedx_plane2[0]>2"); // reco_shower_dedx_plane2[0]
+		boxcuts.push_back("reco_shower_helper_energy[0]>0.2"); // reco_shower_helper_energy[0]
+		boxcuts.push_back("1"); // reco_shower_length[0]
+		boxcuts.push_back("1"); // reco_shower_opening_angle[0]
+		boxcuts.push_back("reco_shower_dist_to_closest_flashzcenter[0]<100"); // reco_shower_dist_to_closest_flashzcenter[0e	
+		boxcuts.push_back(fiducial_vertex); // reco_nu_vtx_dust to closset wal
+		boxcuts.push_back("1"); // showe bp to wall
+		boxcuts.push_back("1"); // vrtx X
+		boxcuts.push_back("1"); // vrt Y
+		boxcuts.push_back("1"); //vert z
+		boxcuts.push_back("cos(atan2(reco_shower_diry[0],reco_shower_dirz[0]))> 0.6"); // shower cos theta
+		boxcuts.push_back("cos(atan2(reco_shower_diry[0],reco_shower_dirx[0]))> 0.6"); // shower cos phi
+		boxcuts.push_back("1"); //shower end x
+		boxcuts.push_back("1"); // shower end y
+		boxcuts.push_back("1"); // showr end z
+		boxcuts.push_back("1"); //pi0num near 
+		boxcuts.push_back("reco_track_displacement[0]<100"); //  track length
+		boxcuts.push_back("track_info.reco_track_mean_dEdx[0]>2"); // mean dedx
+		boxcuts.push_back("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]> 1"); //  ratio mean
+		boxcuts.push_back("track_info.reco_track_PIDA[0] >  10"); // pida
+		boxcuts.push_back("track_info.reco_track_braggA[0]> 10"); // brag A
+		boxcuts.push_back("shortest_asso_shower_to_vert_dist[0]>1"); // photon conversion
+		boxcuts.push_back("1"); //  invariant mass
+		boxcuts.push_back("cos(atan2(reco_track_diry[0],reco_track_dirz[0]))>0"); // track theta
+		boxcuts.push_back("1"); // track theta
+		boxcuts.push_back(angle_track_shower+">-0.95 && "+ angle_track_shower +"<0.95"); //  track showr angle
+		boxcuts.push_back("1"); // track end x
+		boxcuts.push_back("1"); // track end y
+		boxcuts.push_back("1"); //  track end z
+		boxcuts.push_back("1"); // track eneryy
 
-
-			
-			bdt_boxcut BOX("boxcut", obs3, boxcuts, vars);
-			BOX.core_cuts = "totalpe_ibg_sum > 20 && track_info.reco_track_good_calo[0]>0";
-			BOX.doCuts(fout);
+		bdt_stack *obs3 = new bdt_stack(istrack+"_box");
+		obs3->plot_pot = 6.6e20;
+		obs3->addToStack(signal_cosmics);
+		obs3->addToStack(bnb_cosmics);
+		bnbext->col = intime->col;	
+		bnbext->fillstyle = 3333;
+		obs3->addToStack(bnbext);
 
 
+
+		bdt_boxcut BOX("boxcut", obs3, boxcuts, vars);
+		BOX.core_cuts = "totalpe_ibg_sum > 20 && track_info.reco_track_good_calo[0]>0";
+		BOX.doCuts(fout);
 
 
 
 
 
-		}else {
-			std::cout << "WARNING: " << mode_option << " is an invalid option\n";
-		}
 
-		ftest->Close();
 
-		return 0;
-
+	}else {
+		std::cout << "WARNING: " << mode_option << " is an invalid option\n";
 	}
+
+	ftest->Close();
+
+	return 0;
+
+}

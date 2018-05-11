@@ -1,7 +1,6 @@
 #include "bdt_datamc.h"
 
 int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
-	TCanvas *cobs = new TCanvas("","",900,800);
 	//TCanvas *cobs = new TCanvas("","",1800,1600);
 	//cobs->Divide(2,2,0.0025,0.0000001);
 
@@ -51,9 +50,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 
 	//for(int k = 0; k<4; k++){
-	//for(int k = 0; k<1; k++){
-		{
-		int k=1;
+	for(int k = 1; k<4; k++){
+		TCanvas *cobs = new TCanvas("","",900,800);
 	//	cobs->cd(k+1);
 		cobs->cd();
 		TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
@@ -77,7 +75,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
 		vec_stacks.at(k)->GetYaxis()->SetTitle("Verticies");
 		vec_stacks.at(k)->GetYaxis()->SetTitleOffset(1.5);
-		vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum()*1.4));
+		vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum())*1.4);
 		vec_stacks.at(k)->SetMinimum(0.0001);
 	
 
@@ -112,6 +110,21 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		l0->SetFillStyle(0);
 		l0->SetTextSize(0.03);
 
+		TLatex latex;
+  		latex.SetTextSize(0.06);
+		latex.SetTextAlign(13);  //align at top
+		latex.SetNDC();
+		latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
+		TLatex pottex;
+  		pottex.SetTextSize(0.06);
+		pottex.SetTextAlign(13);  //align at top
+		pottex.SetNDC();
+		std::string pot_draw = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+		
+		pottex.DrawLatex(.7,.65, pot_draw.c_str());
+
+
+		
 		//cobs->cd(k+1);	
 		cobs->cd();
 		TPad *pad0bot = new TPad(("padbot_"+stage_name.at(k)).c_str(),("padbot_"+stage_name.at(k)).c_str(), 0, 0.05, 1, 0.35);
@@ -159,6 +172,12 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		//var_precut.front()->GetYaxis()->SetTitle("Verticies");
 
 
+
+		std::cout<<"Writing pdf."<<std::endl;
+		cobs->Write();
+		cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
+
+
 	}
 
 
@@ -166,11 +185,6 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist",dat_cut_3.c_str());
 
 	}
-
-
-	std::cout<<"Writing pdf."<<std::endl;
-	cobs->Write();
-	cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_"+var.safe_unit+".pdf").c_str(),"pdf");
 
 	return 0;
 }
@@ -213,9 +227,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	std::vector<std::string> stage_name = {"All Verticies","Pre-Selection","Post Cosmic BDT","Post BNB BDT"};
 
 	//for(int k = 0; k<2; k++){
-	//for(int k = 0; k<1; k++){
-	{
-		int k=1;
+	for(int k = 1; k<3; k++){
 		std::cout<<"On stage: "<<k<<" of bdt_datamc::plotBDTStacks."<<std::endl;	
 		bdt_variable dvar = data_file->getBDTVariable(whichbdt);
 
@@ -269,6 +281,20 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		l0->SetLineColor(0);
 		l0->SetFillStyle(0);
 		l0->SetTextSize(0.03);
+
+		TLatex latex;
+  		latex.SetTextSize(0.06);
+		latex.SetTextAlign(13);  //align at top
+		latex.SetNDC();
+		latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
+		TLatex pottex;
+  		pottex.SetTextSize(0.06);
+		pottex.SetTextAlign(13);  //align at top
+		pottex.SetNDC();
+		std::string pot_draw = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+		
+		pottex.DrawLatex(.7,.65, pot_draw.c_str());
+
 
 		//cobs->cd(k+1);	
 		cobs->cd();
@@ -326,12 +352,12 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
   	   //t->Draw("same");
 
 
-	}
-
-
 	cobs->Write();
-	cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+".pdf").c_str(),"pdf");
+	cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
 	//cobs->SaveAs(("datamc/"+var.name+".png").c_str(),"png");
+
+
+	}
 
 	return 0;
 }

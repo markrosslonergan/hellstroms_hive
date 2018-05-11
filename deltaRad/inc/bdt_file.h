@@ -22,6 +22,7 @@
 #include "TH1.h"
 #include "TH1D.h"
 #include "TLegend.h"
+#include "TLatex.h"
 #include "THStack.h"
 #include "TGraph.h"
 #include "TLine.h"
@@ -64,6 +65,8 @@ struct bdt_file{
 		std::string root_dir;
 		
 		std::string weight_branch;
+
+		std::string topo_name;
 
 		//This is slightly deprecisated
 		std::string friend_tree_file;

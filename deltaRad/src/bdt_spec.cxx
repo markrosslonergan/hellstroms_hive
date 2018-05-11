@@ -191,7 +191,24 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		l0->SetLineColor(kWhite);
 		l0->SetTextSize(0.03);
 		l0->SetNColumns(2);
-		
+	
+		TLatex latexsel;
+  		latexsel.SetTextSize(0.05);
+		latexsel.SetTextAlign(13);  //align at top
+		latexsel.SetNDC();
+		latexsel.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+		TLatex pottensel;
+  		pottensel.SetTextSize(0.05);
+		pottensel.SetTextAlign(13);  //align at top
+		pottensel.SetNDC();
+		std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		pottensel.DrawLatex(.66,.75, pot_draw_sel.c_str());
+
+
+	
+
+
+	
 		std::cout<<"2"<<std::endl;
 		cobs->cd(2);
 		s1->Draw("hist");
@@ -214,6 +231,24 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		l1->SetLineColor(kWhite);
 		l1->SetTextSize(0.03);
 		l1->SetNColumns(2);
+
+
+		TLatex latexpre;
+  		latexpre.SetTextSize(0.05);
+		latexpre.SetTextAlign(13);  //align at top
+		latexpre.SetNDC();
+		latexpre.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+		TLatex pottenpre;
+  		pottenpre.SetTextSize(0.05);
+		pottenpre.SetTextAlign(13);  //align at top
+		pottenpre.SetNDC();
+		std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		pottenpre.DrawLatex(.66,.75, pot_draw_pre.c_str());
+
+
+	
+
+
 
 
 		std::cout<<"3"<<std::endl;
@@ -243,6 +278,22 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		l2->SetNColumns(2);
 
 	
+		TLatex latexbdt1;
+  		latexbdt1.SetTextSize(0.05);
+		latexbdt1.SetTextAlign(13);  //align at top
+		latexbdt1.SetNDC();
+		latexbdt1.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+		TLatex pottenbdt1;
+  		pottenbdt1.SetTextSize(0.05);
+		pottenbdt1.SetTextAlign(13);  //align at top
+		pottenbdt1.SetNDC();
+		std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		pottenbdt1.DrawLatex(.66,.75, pot_draw_bdt1.c_str());
+
+
+	
+
+
 
 		cobs->cd(4);
 		s3->Draw("hist");
@@ -265,6 +316,21 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		l3->SetLineColor(kWhite);
 		l3->SetTextSize(0.03);
 		l3->SetNColumns(2);
+
+		TLatex latexbdt2;
+  		latexbdt2.SetTextSize(0.05);
+		latexbdt2.SetTextAlign(13);  //align at top
+		latexbdt2.SetNDC();
+		latexbdt2.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+		TLatex pottenbdt2;
+  		pottenbdt2.SetTextSize(0.05);
+		pottenbdt2.SetTextAlign(13);  //align at top
+		pottenbdt2.SetNDC();
+		std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
+
+
+	
 
 
 		std::cout<<"5"<<std::endl;
@@ -320,6 +386,22 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		l0->SetTextSize(0.03);
 		l0->SetNColumns(2);
 
+		TLatex latexsel;
+  		latexsel.SetTextSize(0.05);
+		latexsel.SetTextAlign(13);  //align at top
+		latexsel.SetNDC();
+		latexsel.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+		TLatex pottensel;
+  		pottensel.SetTextSize(0.05);
+		pottensel.SetTextAlign(13);  //align at top
+		pottensel.SetNDC();
+		std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		pottensel.DrawLatex(.66,.75, pot_draw_sel.c_str());
+
+
+	
+
+
 	
 		std::cout<<"1"<<std::endl;
 		TPad*p1 = (TPad*)cobs->cd(2);
@@ -345,6 +427,22 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		l1->SetTextSize(0.03);
 		l1->SetNColumns(2);
 
+
+
+		TLatex latexpre;
+  		latexpre.SetTextSize(0.05);
+		latexpre.SetTextAlign(13);  //align at top
+		latexpre.SetNDC();
+		latexpre.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+		TLatex pottenpre;
+  		pottenpre.SetTextSize(0.05);
+		pottenpre.SetTextAlign(13);  //align at top
+		pottenpre.SetNDC();
+		std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		pottenpre.DrawLatex(.66,.75, pot_draw_pre.c_str());
+
+
+	
 
 
 
@@ -373,6 +471,22 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		l2->SetLineColor(kWhite);
 		l2->SetTextSize(0.03);
 		l2->SetNColumns(2);
+
+		TLatex latexbdt1;
+  		latexbdt1.SetTextSize(0.05);
+		latexbdt1.SetTextAlign(13);  //align at top
+		latexbdt1.SetNDC();
+		latexbdt1.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+		TLatex pottenbdt1;
+  		pottenbdt1.SetTextSize(0.05);
+		pottenbdt1.SetTextAlign(13);  //align at top
+		pottenbdt1.SetNDC();
+		std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		pottenbdt1.DrawLatex(.66,.75, pot_draw_bdt1.c_str());
+
+
+	
+
 
 
 		std::cout<<"3"<<std::endl;
@@ -404,6 +518,22 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 
 		std::cout<<"4"<<std::endl;
 		
+		TLatex latexbdt2;
+  		latexbdt2.SetTextSize(0.05);
+		latexbdt2.SetTextAlign(13);  //align at top
+		latexbdt2.SetNDC();
+		latexbdt2.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+		TLatex pottenbdt2;
+  		pottenbdt2.SetTextSize(0.05);
+		pottenbdt2.SetTextAlign(13);  //align at top
+		pottenbdt2.SetNDC();
+		std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
+
+
+	
+
+
 
 		cobs->Write();
 		cobs->SaveAs(("stack/"+this->name+ "_response_"+var.safe_unit+".pdf").c_str(),"pdf");

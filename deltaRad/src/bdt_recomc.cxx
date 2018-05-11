@@ -124,6 +124,20 @@ std::cout<<"1"<<std::endl;
 		s_reco_truth_sel->GetYaxis()->SetTitle("Verticies");
 		s_reco_truth_sel->GetYaxis()->SetTitleOffset(1.5);
 
+		TLatex latexsel;
+  		latexsel.SetTextSize(0.05);
+		latexsel.SetTextAlign(13);  //align at top
+		latexsel.SetNDC();
+		latexsel.DrawLatex(.5,.89,file->topo_name.c_str());
+		TLatex pottensel;
+  		pottensel.SetTextSize(0.05);
+		pottensel.SetTextAlign(13);  //align at top
+		pottensel.SetNDC();
+		std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		pottensel.DrawLatex(.7,.89, pot_draw_sel.c_str());
+
+
+
 		c_reco_truth->cd(1);          // Go back to the main canvas before defining pad2
 	        TPad *padsell = new TPad("padsell", "padsell", 0.7, 0, 1, 1);
    		padsell->SetBottomMargin(0.2);
@@ -163,6 +177,20 @@ std::cout<<"2"<<std::endl;
 		s_reco_truth_pre->GetYaxis()->SetTitle("Verticies");
 		s_reco_truth_pre->GetYaxis()->SetTitleOffset(1.5);
 	
+		TLatex latexpre;
+  		latexpre.SetTextSize(0.05);
+		latexpre.SetTextAlign(13);  //align at top
+		latexpre.SetNDC();
+		latexpre.DrawLatex(.5,.89,file->topo_name.c_str());
+		TLatex pottenpre;
+  		pottenpre.SetTextSize(0.05);
+		pottenpre.SetTextAlign(13);  //align at top
+		pottenpre.SetNDC();
+		std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		pottenpre.DrawLatex(.7,.89, pot_draw_pre.c_str());
+
+
+
    		c_reco_truth->cd(2);          // Go back to the main canvas before defining pad2
 	        TPad *padprel = new TPad("padprel", "padprel", 0.7, 0, 1, 1);
    		padprel->SetBottomMargin(0.2);
@@ -204,6 +232,20 @@ std::cout<<"3"<<std::endl;
 		s_reco_truth_bdt1->GetYaxis()->SetTitle("Verticies");
 		s_reco_truth_bdt1->GetYaxis()->SetTitleOffset(1.5);
 	
+		TLatex latexbdt1;
+  		latexbdt1.SetTextSize(0.05);
+		latexbdt1.SetTextAlign(13);  //align at top
+		latexbdt1.SetNDC();
+		latexbdt1.DrawLatex(.5,.89,file->topo_name.c_str());
+		TLatex pottenbdt1;
+  		pottenbdt1.SetTextSize(0.05);
+		pottenbdt1.SetTextAlign(13);  //align at top
+		pottenbdt1.SetNDC();
+		std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		pottenbdt1.DrawLatex(.7,.89, pot_draw_bdt1.c_str());
+
+
+
 		c_reco_truth->cd(3);          // Go back to the main canvas before defining pad2
 	        TPad *padbdt1l = new TPad("padbdt1l", "padbdt1l", 0.7, 0, 1, 1);
    		padbdt1l->SetBottomMargin(0.2);
@@ -214,7 +256,7 @@ std::cout<<"3"<<std::endl;
 		l_reco_truth_bdt1->SetLineColor(kWhite);
 		l_reco_truth_bdt1->SetLineWidth(0);
 	
-
+		
 
 
 		//******************* BNB bdt	*************************
@@ -246,6 +288,19 @@ std::cout<<"5"<<std::endl;
 		s_reco_truth_bdt2->GetXaxis()->SetTitle(var.unit.c_str());
 		s_reco_truth_bdt2->GetYaxis()->SetTitle("Verticies");
 		s_reco_truth_bdt2->GetYaxis()->SetTitleOffset(1.5);
+
+		TLatex latexbdt2;
+  		latexbdt2.SetTextSize(0.05);
+		latexbdt2.SetTextAlign(13);  //align at top
+		latexbdt2.SetNDC();
+		latexbdt2.DrawLatex(.5,.89,file->topo_name.c_str());
+		TLatex pottenbdt2;
+  		pottenbdt2.SetTextSize(0.05);
+		pottenbdt2.SetTextAlign(13);  //align at top
+		pottenbdt2.SetNDC();
+		std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		pottenbdt2.DrawLatex(.7,.89, pot_draw_bdt2.c_str());
+
 
 	
 		c_reco_truth->cd(4);          // Go back to the main canvas before defining pad2
