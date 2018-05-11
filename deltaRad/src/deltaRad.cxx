@@ -39,9 +39,9 @@ int main (int argc, char *argv[]){
 	//===========================================================================================
 
 	std::string dir2 = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
-	//std::string dir = "/uboone/data/users/markross/vertexed_v2";//"/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v2/";
+	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v2/";
 	//std::string dir2 = "/home/mark/work/uBooNE/photon/tmva/";
-	std::string dir = "/home/mark/work/uBooNE/photon/tmva/samples/fresh_NCDR_bf_v2";
+	//std::string dir = "/home/mark/work/uBooNE/photon/tmva/samples/fresh_NCDR_bf_v2";
 
 	std::string mode_option = "fake"; 
 	std::string xml = "default.xml";
@@ -188,7 +188,7 @@ int main (int argc, char *argv[]){
 	bdt_flow bkg_pure_flow(base_cuts,background_definition+"&&"+ true_bkg ,new_precuts,postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
 	bdt_flow data_flow(base_cuts,"1",	new_precuts, postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
-	//bdt_flow ncpi0_flow(base_cuts + " &&" + true_bkg , new_precuts,postcuts, cosmic_bdt_info, ncpi0_bdt_info); 
+	bdt_flow ncpi0_flow(base_cuts, "1" , new_precuts,postcuts, cosmic_bdt_info, bnb_bdt_info); 
 
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
@@ -200,6 +200,7 @@ int main (int argc, char *argv[]){
 
 	bdt_file *intime = new bdt_file(dir, "vertexed_intime_mcc8.9_fresh_v2.0.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//bdt_file *ncpi0 = new bdt_file(dir+"samples/vectored/", "vertexed_ncpi0cosmic_mcc88_v1.0.root" ,"NCpi0","hist","", kGreen-3, ncpi0_flow);
+	bdt_file *ncpi0 = new bdt_file(dir, "vertexed_ncpi0_fltr_mcc8.9_fresh_v1.0.root" ,"NCpi0Pure","hist","", kGreen-3, ncpi0_flow);
 
 	//Data files
 	//bdt_file *overlay = new bdt_file(dir2+"samples/vectored/", "vertexed_overlay_mcc88_v1.0.root",	"BNBOverlay",	   "hist","",  kMagenta-3, bkg_flow);
@@ -884,7 +885,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 			//std::vector<bdt_file*> bdt_filesB = {bnb_pure,signal_pure};
 			//std::vector<bdt_file*> bdt_filesB = {intime, data5e19, bnbext};
-			std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime, data5e19, bnbext};
+			std::vector<bdt_file*> bdt_filesB = {ncpi0};
 			//std::vector<bdt_file*> bdt_filesB = {bnbext};
 
 			//bdt_precalc pre1(bdt_filesB.at(number));
@@ -893,10 +894,10 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 			//pre1.genBNBcorrectionInfo();
 			//pre1.genPi0Info();
 
-			for(auto &f: bdt_files){
+			for(auto &f: bdt_filesB){
 				bdt_precalc pre(f);
-				pre.genBNBcorrectionInfo();
-				//pre.genTrackInfo();
+				//pre.genBNBcorrectionInfo();
+				pre.genTrackInfo();
 				//pre.genPi0Info();
 			}
 		}
@@ -913,18 +914,6 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 		std::vector<std::string> hnam = {"nu_uBooNE_singlephoton_signal","nu_uBooNE_singlephoton_bkg","nu_uBooNE_singlephoton_intime","nu_uBooNE_singlephoton_data"};
 		//std::vector<std::string> hnam = {"nu_uBooNE_singlephoton_signal","nu_uBooNE_singlephoton_bkg","nu_uBooNE_singlephoton_intime"};
 		obs->makeSBNspec("test", vars.at(1), fcoscut, fbnbcut,hnam );
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
