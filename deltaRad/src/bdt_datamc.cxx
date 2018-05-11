@@ -207,7 +207,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	std::vector<std::string> data_cuts = {dat_cut_0, dat_cut_1, dat_cut_2, dat_cut_3};
 
 
-	std::vector<std::string> stage_name = {"All Verticies","Pre-Selection","Post Cosmic BDT","Post BNB BDT"};
+	std::vector<std::string> stage_name = {"All Vertices","Pre-Selection","Post Cosmic BDT","Post BNB BDT"};
 
     int k = 0;
 	for (k = 0; k < 4; k++) {
@@ -308,14 +308,10 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		t->SetTextSize(0.12);
 		//t->Draw("same");
 
-
-	
-
-
-	cobs->Write();
-	//cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+".png").c_str(),"png");
-	cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
-	//cobs->SaveAs(("datamc/"+var.name+".png").c_str(),"png");
+        cobs->Write();
+        //cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+".png").c_str(),"png");
+        cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
+        //cobs->SaveAs(("datamc/"+var.name+".png").c_str(),"png");
     }
 
 	return 0;

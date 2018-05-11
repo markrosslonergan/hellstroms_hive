@@ -112,8 +112,8 @@ int main (int argc, char *argv[]){
 
 	//Set up 2 bdt_info structs for passing information on what BDT we are running. 
 	//MARK: Now with added binning here, so bdt_file->GetBDTvariable() is much simpler!
-	bdt_info bnb_bdt_info("pi0bnb_"+istrack, "BNB focused BDT", "(65,0.35,0.60)");
-	bdt_info cosmic_bdt_info("pi0cosmic_"+istrack, "Cosmic focused BDT", "(65,0.2,0.62)");
+	bdt_info bnb_bdt_info("pi0bnb_"+istrack, "BNB focused BDT", "(50,0.37,0.57)");
+	bdt_info cosmic_bdt_info("pi0cosmic_"+istrack, "Cosmic focused BDT", "(50,0.3,0.67)");
 	
 
 	// Our signal definition alongside any base cuts we want to make
@@ -398,24 +398,25 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
         std::cout << "Done" << std::endl;
 
 	}else if(mode_option == "datamc"){
-
-        signal_cosmics->col=kRed-7;
-        bnb_cosmics->col=kBlue;
+        
+        //signal_cosmics->col=kRed-7;
+        //bnb_cosmics->col=kBlue;
         bnbext->col=kGreen-3;
 	    bnbext->fillstyle = 3333;
         bdt_stack *obs = new bdt_stack(istrack+"_datamc");
-        obs->plot_pot = 5e19;
+        //obs->plot_pot = 5e19;
+        obs->plot_pot = 4.801e19;
         obs->addToStack(signal_cosmics);
         obs->addToStack(bnb_cosmics);
         obs->addToStack(bnbext);
 
-        bdt_stack *obs2 = new bdt_stack(istrack+"_extintime");
-        obs2->plot_pot = 5e19;
-        obs2->addToStack(intime);
+        //bdt_stack *obs2 = new bdt_stack(istrack+"_extintime");
+        //obs2->plot_pot = 5e19;
+        //obs2->addToStack(intime);
 
         bdt_stack *obs3 = new bdt_stack(istrack+"_overlaymc");
         obs3->plot_pot = 5e19;
-        obs3->addToStack(bnb_cosmics);
+        obs3->addToStack(bnbext);
 
 
         int ip=0;
@@ -423,27 +424,29 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
         //for(auto &v = vars.at(2); v < 100; v++ ) {
             //break;
             ip++;
-            //bdt_datamc tdatamc(data5e19, obs);
-            bdt_datamc tdatamc2(bnbext, obs2);
-            //bdt_datamc tdatamc3(overlay, obs3);
-            //tdatamc.plotStacks(ftest,  vars.at(7) ,fcoscut,fbnbcut);
+            bdt_datamc tdatamc(data5e19, obs);
+            //bdt_datamc tdatamc2(bnbext, obs2);
+            bdt_datamc tdatamc3(data5e19, obs3);
+            //tdatamc.plotStacks(ftest,  v,fcoscut,fbnbcut);
+            tdatamc.plotStacks(ftest,  vars.at(6),fcoscut,fbnbcut);
             //tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
             //tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
             //return 0;
 
         //}
 
-        //bdt_datamc datamc(data5e19, obs);
-        bdt_datamc datamc2(bnbext, obs2);
-        //bdt_datamc datamc3(overlay, obs3);
+        bdt_datamc datamc(data5e19, obs);
+        //bdt_datamc datamc2(bnbext, obs2);
+        bdt_datamc datamc3(data5e19, obs3);
 
-        //datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-        //datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-        datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-        datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+        datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+        datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+        //datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+        //datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
         //datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
         //datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 } 
+
     else if(mode_option == "vars"){
 
 			std::vector<std::string> title = {"All Vertices","Pre-Selection Cuts"};
