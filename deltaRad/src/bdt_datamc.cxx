@@ -165,10 +165,10 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
         cobs->Write();
         //cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
-        cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+"_stage_"+std::to_string(k)+".png").c_str(),"png");
+        cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
         // To avoid renaming everything in the technote
         if (k ==1 )
-	        cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+".png").c_str(),"png"); 
+	        cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+".pdf").c_str(),"pdf"); 
     }
 
 	return 0;
@@ -314,7 +314,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
 	cobs->Write();
 	//cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+".png").c_str(),"png");
-	cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+"_stage_"+std::to_string(k)+".png").c_str(),"png");
+	cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
 	//cobs->SaveAs(("datamc/"+var.name+".png").c_str(),"png");
     }
 
