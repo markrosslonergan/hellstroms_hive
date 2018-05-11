@@ -50,6 +50,7 @@ int main (int argc, char *argv[]){
 	bool run_cosmic = true;
 	bool run_bnb = true;
 	int number = 0;
+	bool response_only = false;
 
 	const struct option longopts[] = 
 	{
@@ -58,7 +59,6 @@ int main (int argc, char *argv[]){
 		{"xml"	,		required_argument,	0, 'x'},
 		{"track",		required_argument,	0, 't'},
 		{"help",		required_argument,	0, 'h'},
-		{"boxcut",		no_argument,	0, 'f'},
 		{"number",		required_argument,	0, 'n'},
 		{"cosmic",		no_argument,		0, 'c'},
 		{"bnb",			no_argument,		0, 'b'},
@@ -69,12 +69,12 @@ int main (int argc, char *argv[]){
 	int iarg = 0; opterr=1; int index;
 	while(iarg != -1)
 	{
-		iarg = getopt_long(argc,argv, "cbx:o:d:t:n:fh?", longopts, &index);
+		iarg = getopt_long(argc,argv, "cbx:o:d:t:n:rh?", longopts, &index);
 
 		switch(iarg)
 		{
-			case 'f':
-				mode_option = "boxcut";
+			case 'r':
+				response_only = true;;
 				break;
 			case 'n':
 				number = strtof(optarg,NULL);
@@ -149,20 +149,20 @@ int main (int argc, char *argv[]){
 	std::string track_length_cut = "reco_track_displacement[0]<100";
 	std::string min_energy_cut = "reco_shower_helper_energy[0]>0.03 ";
 	std::string min_conversion_cut = "shortest_asso_shower_to_vert_dist > 1";
-	std::string track_direction_cut = "track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0] >= 1.0";
-	std::string back_to_back_cut = angle_track_shower+" > -0.95 && " + angle_track_shower + "< 0.95";
+	std::string track_direction_cut = "track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0] >= 0.925";
+	std::string back_to_back_cut = angle_track_shower+" > -0.95 &&"  + angle_track_shower + "< 0.95";
 	std::string pe_cut = "totalpe_ibg_sum > 20";
 
 	std::vector<std::string> vec_precuts;
 
 	if(istrack == "track"){
-		fiducial_cut =  fiducial_cut;// +"&&"+ fiducial_track_end;
+		fiducial_cut =  fiducial_cut;
 		new_precuts = fiducial_cut + " &&" + track_length_cut +"&&"+ min_energy_cut +"&&" + min_conversion_cut + "&&"+ good_calo_cut +"&&" + track_direction_cut + "&&"+ back_to_back_cut;
 		num_track_cut = "== 1";
-		if(mode_option != "train" && mode_option != "app"){
+		if(mode_option != "train" && mode_option != "app" && mode_option !="vars"){
 			vec_precuts = {pe_cut, fiducial_cut, track_length_cut, min_energy_cut, min_conversion_cut, good_calo_cut, track_direction_cut, back_to_back_cut};
 		}else{
-			vec_precuts = {pe_cut, fiducial_cut, track_length_cut, min_energy_cut, min_conversion_cut, good_calo_cut, track_direction_cut, back_to_back_cut};
+			vec_precuts = {fiducial_cut, track_length_cut, min_energy_cut, min_conversion_cut, good_calo_cut, track_direction_cut, back_to_back_cut};
 
 		}
 
@@ -170,7 +170,7 @@ int main (int argc, char *argv[]){
 		new_precuts = fiducial_cut+ "&&" + min_energy_cut ;
 		num_track_cut = "== 0";
 		vec_precuts = {fiducial_cut, min_energy_cut};
-		if(mode_option != "train" && mode_option != "app") vec_precuts = {pe_cut, fiducial_cut, min_energy_cut};
+		if(mode_option != "train" && mode_option != "app" && mode_option != "vars") vec_precuts = {pe_cut, fiducial_cut, min_energy_cut};
 	}
 
 
@@ -200,11 +200,11 @@ int main (int argc, char *argv[]){
 		bnb_bdt_info.setTopoName("1#gamma1p");
 		cosmic_bdt_info.setTopoName("1#gamma1p");
 	}else{
-		bnb_bdt_info.setTopoName("1#gamma 0p");
-		cosmic_bdt_info.setTopoName("1#gamma 0p");
+		bnb_bdt_info.setTopoName("1#gamma0p");
+		cosmic_bdt_info.setTopoName("1#gamma0p");
 	}
 
-	if(mode_option != "train" && mode_option !="vars" ){
+	if(mode_option != "train" && mode_option !="vars" && mode_option !="app"){
 		new_precuts = "totalpe_ibg_sum > 20 &&" +new_precuts;
 	}
 
@@ -450,7 +450,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 	double fbnbcut;
 	if(istrack == "track"){
 		fcoscut = 0.564;
-		fbnbcut =0.521;//0.5175;
+		fbnbcut = 0.521; 
 
 
 	}else if(istrack == "notrack"){
@@ -599,42 +599,41 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 		bnbext->fillstyle = 3333;
 		obs3->addToStack(bnbext);
 
-		int ip=0;
-		for(auto &v:vars){
-			ip++;
-			if(number==0){
-				bdt_datamc datamc(data5e19, obs, istrack);	
-				datamc.plotStacks(ftest,  v ,fcoscut,fbnbcut);
+		int ip=0;	
+		if(!response_only){
+			for(auto &v:vars){
+				ip++;
+				if(number==0){
+					bdt_datamc datamc(data5e19, obs, istrack);	
+					datamc.plotStacks(ftest,  v ,fcoscut,fbnbcut);
+				}
+				if(number ==1){
+					bdt_datamc datamc2(bnbext, obs2, istrack);	
+					datamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
+				}
+				if(number==2){
+					bdt_datamc t2datamc(data5e19, obs3, istrack+"_2data");	
+					t2datamc.plotStacks(ftest, vars.at(1),fcoscut,fbnbcut);
+				}
 			}
-			if(number ==1){
-				bdt_datamc datamc2(bnbext, obs2, istrack);	
-				datamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
-			}
+		}else{
+			bdt_datamc datamc(data5e19, obs, istrack);	
+			bdt_datamc datamc2(bnbext, obs2, istrack);	
+			bdt_datamc datamc3(data5e19, obs3, istrack+"_2data");	
+
 			if(number==2){
-				//bdt_datamc t2datamc(data5e19, obs3, istrack+"_bump");	
-				bdt_datamc t2datamc(data5e19, obs3, istrack+"_2data");	
-				t2datamc.plotStacks(ftest, vars.at(1),fcoscut,fbnbcut);
+				datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+				datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 			}
-			return 0;
+			if(number==0){
+				datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+				datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+			}
+			if(number==1){
+				datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+				datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+			}
 		}
-
-		bdt_datamc datamc(data5e19, obs, istrack);	
-		bdt_datamc datamc2(bnbext, obs2, istrack);	
-		bdt_datamc datamc3(data5e19, obs3, istrack+"_2data");	
-
-		if(number==2){
-			datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-			datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-		}
-		if(number==0){
-			datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-			datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-		}
-		if(number==1){
-			datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-			datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-		}
-
 
 	}else if(mode_option == "vars"){
 
@@ -686,6 +685,13 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 					l->AddEntry(bkg,"Intime Cosmic Background","lf");	
 					l->Draw();
 
+					TLatex latex;
+					latex.SetTextSize(0.06);
+					latex.SetTextAlign(13);  //align at top
+					latex.SetNDC();
+					latex.DrawLatex(.7,.71, bnb_bdt_info.topo_name.c_str());
+
+
 					double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
 					sig->SetMaximum(max_height*1.3);
 
@@ -693,6 +699,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 				}
 				c_var->Print(("var/"+istrack+"_cosmic_"+v.safe_unit+".pdf").c_str(),"pdf");
+				if(number==1) return 0;
 			}
 
 		}
@@ -742,6 +749,12 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 					l->AddEntry(bkg,"BNB Backgrounds","lf");	
 					l->Draw();
 
+					TLatex latex;
+					latex.SetTextSize(0.06);
+					latex.SetTextAlign(13);  //align at top
+					latex.SetNDC();
+					latex.DrawLatex(.7,.71, bnb_bdt_info.topo_name.c_str());
+
 					double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
 					sig->SetMaximum(max_height*1.1);
 
@@ -749,6 +762,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 				}
 				c_var->Print(("var/"+istrack+"_bnb_"+v.safe_unit+".pdf").c_str(),"pdf");
+				if(number==1) return 0;
 			}
 		}
 
