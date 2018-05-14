@@ -4,17 +4,27 @@
 
 
 PandoraAnalyzer::PandoraAnalyzer() :
-  ftree(new TTree("PandoraAnalyzer_tree", "")) {
+  fvertex_tree(new TTree("vertex_tree", "")),
+  ftrack_tree(new TTree("track_tree", "")) {
 
-  ftree->Branch("dist", &dist, "dist/D");
-  ftree->Branch("distx", &distx, "distx/D");
-  ftree->Branch("disty", &disty, "disty/D");
-  ftree->Branch("distz", &distz, "distz/D");
+  fvertex_tree->Branch("dist", &fdist, "dist/D");
+  fvertex_tree->Branch("distx", &fdistx, "distx/D");
+  fvertex_tree->Branch("disty", &fdisty, "disty/D");
+  fvertex_tree->Branch("distz", &fdistz, "distz/D");
+
+  ftrack_tree->Branch("start_dist", &fstart_dist, "start_dist/D");
+  ftrack_tree->Branch("start_distx", &fstart_distx, "start_distx/D");
+  ftrack_tree->Branch("start_disty", &fstart_disty, "start_disty/D");
+  ftrack_tree->Branch("start_distz", &fstart_distz, "start_distz/D");
+  ftrack_tree->Branch("end_dist", &fend_dist, "end_dist/D");
+  ftrack_tree->Branch("end_distx", &fend_distx, "end_distx/D");
+  ftrack_tree->Branch("end_disty", &fend_disty, "end_disty/D");
+  ftrack_tree->Branch("end_distz", &fend_distz, "end_distz/D");
   
 }
 
 
-void PandoraAnalyzer::Run() {
+void PandoraAnalyzer::FillVertexTree() {
 
   std::vector<double> const & true_nuvertx = *fstorage->ftrue_nuvertx;
   std::vector<double> const & true_nuverty = *fstorage->ftrue_nuverty;
@@ -41,26 +51,96 @@ void PandoraAnalyzer::Run() {
 
     geoalgo::Point_t const reco_vert(pfp_vertex_X.at(i), pfp_vertex_Y.at(i), pfp_vertex_Z.at(i));
 
-    double closest_dist = DBL_MAX;
+    fdist = DBL_MAX;
 
     for(size_t j = 0; j < true_nuvert_v.size(); ++j) {
 
       geoalgo::Point_t const & true_nuvert = true_nuvert_v.at(j);
 
-      dist = true_nuvert.Dist(reco_vert);
+      double dist = true_nuvert.Dist(reco_vert);
 
-      if(dist < closest_dist) {
-	closest_dist = dist;
-	distx = true_nuvert.at(0) - reco_vert.at(0);
-	disty = true_nuvert.at(1) - reco_vert.at(1);
-	distz = true_nuvert.at(2) - reco_vert.at(2);
+      if(dist < fdist) {
+	fdist = dist;
+	fdistx = true_nuvert.at(0) - reco_vert.at(0);
+	fdisty = true_nuvert.at(1) - reco_vert.at(1);
+	fdistz = true_nuvert.at(2) - reco_vert.at(2);
       }
 
     }
 
-    ftree->Fill();
+    fvertex_tree->Fill();
 
   }
+
+}
+
+
+void PandoraAnalyzer::FillTrackTree() {
+
+  std::vector<int> const & reco_track_largest_mc_type = *fstorage->freco_track_largest_mc_type;
+  std::vector<int> const & reco_track_largest_mc_index = *fstorage->freco_track_largest_mc_index;
+  std::vector<std::vector<double>> const & reco_track_X = *fstorage->freco_track_X;
+  std::vector<std::vector<double>> const & reco_track_Y = *fstorage->freco_track_Y;
+  std::vector<std::vector<double>> const & reco_track_Z = *fstorage->freco_track_Z;
+
+  std::vector<std::vector<double>> const & mctrack_X = *fstorage->fmctrack_X;
+  std::vector<std::vector<double>> const & mctrack_Y = *fstorage->fmctrack_Y;
+  std::vector<std::vector<double>> const & mctrack_Z = *fstorage->fmctrack_Z;  
+
+  for(size_t i = 0; i < reco_track_largest_mc_type.size(); ++i) {
+
+    if(reco_track_largest_mc_type.at(i) != 2) continue;
+    int const mc_index = reco_track_largest_mc_index.at(i);
+    if(mctrack_X.at(mc_index).empty()) continue;
+
+    geoalgo::Point_t const reco_track_start(reco_track_X.at(i).front(), reco_track_Y.at(i).front(), reco_track_Z.at(i).front());
+    geoalgo::Point_t const reco_track_end(reco_track_X.at(i).back(), reco_track_Y.at(i).back(), reco_track_Z.at(i).back());
+
+    geoalgo::Point_t const mctrack_start(mctrack_X.at(mc_index).front(), mctrack_Y.at(mc_index).front(), mctrack_Z.at(mc_index).front());
+    geoalgo::Point_t const mctrack_end(mctrack_X.at(mc_index).back(), mctrack_Y.at(mc_index).back(), mctrack_Z.at(mc_index).back());
+
+    double const distss = reco_track_start.Dist(mctrack_start);
+    double const distes = reco_track_end.Dist(mctrack_start);
+
+    if(distss <= distes) {
+
+      fstart_dist = distss;
+      fstart_distx = mctrack_start.at(0) - reco_track_start.at(0);
+      fstart_disty = mctrack_start.at(1) - reco_track_start.at(1);
+      fstart_distz = mctrack_start.at(2) - reco_track_start.at(2);
+
+      fend_dist = reco_track_end.Dist(mctrack_end);
+      fend_distx = mctrack_end.at(0) - reco_track_end.at(0);
+      fend_disty = mctrack_end.at(1) - reco_track_end.at(1);
+      fend_distz = mctrack_end.at(2) - reco_track_end.at(2);
+
+    }
+
+    else {
+
+      fstart_dist = distes;
+      fstart_distx = mctrack_start.at(0) - reco_track_end.at(0);
+      fstart_disty = mctrack_start.at(1) - reco_track_end.at(1);
+      fstart_distz = mctrack_start.at(2) - reco_track_end.at(2);
+
+      fend_dist = reco_track_start.Dist(mctrack_end);
+      fend_distx = mctrack_end.at(0) - reco_track_start.at(0);
+      fend_disty = mctrack_end.at(1) - reco_track_start.at(1);
+      fend_distz = mctrack_end.at(2) - reco_track_start.at(2);
+
+    }
+
+    ftrack_tree->Fill();
+
+  }
+
+}
+
+
+void PandoraAnalyzer::Run() {
+
+  FillVertexTree();
+  FillTrackTree();
 
 }
 
@@ -68,7 +148,8 @@ void PandoraAnalyzer::Run() {
 void PandoraAnalyzer::Finalize() {
 
   if(fofile) {
-    if(ftree) ftree->Write();
+    if(fvertex_tree) fvertex_tree->Write();
+    if(ftrack_tree) ftrack_tree->Write();
   }
 
 }

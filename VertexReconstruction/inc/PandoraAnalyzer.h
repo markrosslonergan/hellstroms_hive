@@ -27,12 +27,24 @@ class PandoraAnalyzer : public Analyzer {
 
  private:
 
-  TTree * ftree;
+  void FillVertexTree();
+  void FillTrackTree();
 
-  double dist;
-  double distx;
-  double disty;
-  double distz;
+  TTree * fvertex_tree;
+  double fdist;
+  double fdistx;
+  double fdisty;
+  double fdistz;
+
+  TTree * ftrack_tree;
+  double fstart_dist;
+  double fstart_distx;
+  double fstart_disty;
+  double fstart_distz;
+  double fend_dist;
+  double fend_distx;
+  double fend_disty;
+  double fend_distz;
   
 };
 
