@@ -1,11 +1,10 @@
 #include "bdt_datamc.h"
 
 int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
-	TCanvas *cobs = new TCanvas("","",900,800);
 	//TCanvas *cobs = new TCanvas("","",1800,1600);
 	//cobs->Divide(2,2,0.0025,0.0000001);
 
-	double plot_pot=5e19;
+	double plot_pot=4.801e19;
 
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
@@ -51,9 +50,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 
 	//for(int k = 0; k<4; k++){
-	//for(int k = 0; k<1; k++){
-		{
-		int k=1;
+	for(int k = 1; k<4; k++){
+		TCanvas *cobs = new TCanvas("","",900,800);
 	//	cobs->cd(k+1);
 		cobs->cd();
 		TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
@@ -65,7 +63,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		double rmax = 3;
 		int data_rebin = 1;
 		if(k==0 || k == 1){
-			rmin=0.25; rmax = 1.749;
+			rmin=0.3; rmax = 1.499;
 		}else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=4;};
 		
 
@@ -77,7 +75,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
 		vec_stacks.at(k)->GetYaxis()->SetTitle("Verticies");
 		vec_stacks.at(k)->GetYaxis()->SetTitleOffset(1.5);
-		vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum()*1.4));
+		vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum())*1.4);
 		vec_stacks.at(k)->SetMinimum(0.0001);
 	
 
@@ -90,6 +88,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 			NeventsStack+=Nevents;
 			auto h1 = new TH1F(("tmp"+stage_name.at(k)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
 			h1->SetFillColor(f->col);
+			h1->SetFillStyle(f->fillstyle);
 			h1->SetLineColor(kBlack);
 			l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
@@ -111,6 +110,21 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		l0->SetFillStyle(0);
 		l0->SetTextSize(0.03);
 
+		TLatex latex;
+  		latex.SetTextSize(0.06);
+		latex.SetTextAlign(13);  //align at top
+		latex.SetNDC();
+		latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
+		TLatex pottex;
+  		pottex.SetTextSize(0.06);
+		pottex.SetTextAlign(13);  //align at top
+		pottex.SetNDC();
+		std::string pot_draw = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+		
+		pottex.DrawLatex(.7,.65, pot_draw.c_str());
+
+
+		
 		//cobs->cd(k+1);	
 		cobs->cd();
 		TPad *pad0bot = new TPad(("padbot_"+stage_name.at(k)).c_str(),("padbot_"+stage_name.at(k)).c_str(), 0, 0.05, 1, 0.35);
@@ -121,8 +135,10 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		pad0bot->cd();       // pad0bot becomes the current pad
 
 		TH1* ratpre = (TH1*)data_th1s.at(k)->Clone(("ratio_"+stage_name.at(k)).c_str());
+		ratpre->Sumw2();
 		vec_th1s.at(k)->Rebin(data_rebin);
 		ratpre->Divide(vec_th1s.at(k));		
+
 		ratpre->SetFillColor(kGray+1);
 		ratpre->SetMarkerStyle(2);
 		ratpre->SetFillStyle(3144);
@@ -145,7 +161,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		ratpre->GetXaxis()->SetTitle(var.unit.c_str());
 
 	   std::string mean = "Norm: "+to_string_prec(NdatEvents/NeventsStack*100,1)+ "%";
-	   TText *t = new TText(0.11,1.3,mean.c_str());
+	   TText *t = new TText(0.14,0.9,mean.c_str());
+	   t->SetNDC();
   	   t->SetTextColor(kRed-7);
   	   //t->SetTextFont(43);
 	   t->SetTextSize(0.12);
@@ -153,6 +170,12 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 		//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 		//var_precut.front()->GetYaxis()->SetTitle("Verticies");
+
+
+
+		std::cout<<"Writing pdf."<<std::endl;
+		cobs->Write();
+		cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
 
 
 	}
@@ -163,11 +186,6 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 	}
 
-
-	std::cout<<"Writing pdf."<<std::endl;
-	cobs->Write();
-	cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+".pdf").c_str(),"pdf");
-
 	return 0;
 }
 
@@ -176,7 +194,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	TCanvas *cobs = new TCanvas("","",900,800);
 	cobs->cd();
 	cobs->Divide(2,1,0.0025,0.0000001);
-	double plot_pot=5e19;
+	double plot_pot=4.801e19;
 
 
 
@@ -209,9 +227,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	std::vector<std::string> stage_name = {"All Verticies","Pre-Selection","Post Cosmic BDT","Post BNB BDT"};
 
 	//for(int k = 0; k<2; k++){
-	//for(int k = 0; k<1; k++){
-	{
-		int k=1;
+	for(int k = 1; k<4; k++){
 		std::cout<<"On stage: "<<k<<" of bdt_datamc::plotBDTStacks."<<std::endl;	
 		bdt_variable dvar = data_file->getBDTVariable(whichbdt);
 
@@ -250,6 +266,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
 			NeventsStack+=Nevents;
 			h1->SetFillColor(f->col);
+			h1->SetFillStyle(f->fillstyle);
 			h1->SetLineColor(kBlack);
 			l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
@@ -257,13 +274,27 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		data->SetMarkerStyle(20);
 		data->Draw("same E1");
 		double NdatEvents = data_file->GetEntries(data_cuts.at(k).c_str())*(plot_pot/data_file->pot )*data_file->scale_data;
-		l0->AddEntry(data,("#splitline{"+data_file->tag+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
+		l0->AddEntry(data,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
 
 		l0->Draw();
 		l0->SetLineWidth(0);
 		l0->SetLineColor(0);
 		l0->SetFillStyle(0);
 		l0->SetTextSize(0.03);
+
+		TLatex latex;
+  		latex.SetTextSize(0.06);
+		latex.SetTextAlign(13);  //align at top
+		latex.SetNDC();
+		latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
+		TLatex pottex;
+  		pottex.SetTextSize(0.06);
+		pottex.SetTextAlign(13);  //align at top
+		pottex.SetNDC();
+		std::string pot_draw = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+		
+		pottex.DrawLatex(.7,.65, pot_draw.c_str());
+
 
 		//cobs->cd(k+1);	
 		cobs->cd();
@@ -276,7 +307,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
 		TH1* ratpre = (TH1*)data->Clone(("ratio_"+stage_name.at(k)).c_str());
 
-		ratpre->Divide(summed);		
+		ratpre->Divide(data,summed);		
 		ratpre->SetFillColor(kGray+1);
 		ratpre->SetMarkerStyle(2);
 		ratpre->SetFillStyle(3144);
@@ -299,6 +330,20 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 		//var_precut.front()->GetYaxis()->SetTitle("Verticies");
 
+		
+		TH1* sys = (TH1*)data->Clone(("sys"+stage_name.at(k)).c_str());
+		for(int i=0; i<summed->GetNbinsX(); i++){
+			//summed->SetBinError(i, summed->GetBinError(i)+10.0);
+			//summed->SetBinError(i, sqrt(  pow(summed->GetBinError(i),2.0)+pow(summed->GetBinContent(i)*0.2,2.0) ));
+		}
+		sys->Divide(summed);
+	
+		sys->SetFillColor(kYellow);
+		sys->SetFillStyle(3144);
+	//	sys->Draw("E2 same");
+	//	ratpre->Draw("E2 same");
+		
+
 	   std::string mean = "Norm: "+to_string_prec(NdatEvents/NeventsStack*100,1)+ "%";
 	   TText *t = new TText(0.241,1.3,mean.c_str());
   	   t->SetTextColor(kRed-7);
@@ -307,16 +352,15 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
   	   //t->Draw("same");
 
 
-	}
-
-
 	cobs->Write();
-	cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+".pdf").c_str(),"pdf");
+	cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
 	//cobs->SaveAs(("datamc/"+var.name+".png").c_str(),"png");
+
+
+	}
 
 	return 0;
 }
-
 
 
 

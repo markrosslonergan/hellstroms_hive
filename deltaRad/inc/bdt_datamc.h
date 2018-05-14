@@ -37,16 +37,15 @@ class bdt_datamc{
 	
 		bdt_file* data_file;
 		bdt_stack *mc_stack;
-
 		std::string tag;
 
 		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";};
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin,std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {};
+		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {};
+		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {};
 
 
 		int plotStacks(TFile*f, bdt_variable var,double,double);
 		int plotBDTStacks(TFile*f, bdt_info,double,double);
-
 
 
 };
