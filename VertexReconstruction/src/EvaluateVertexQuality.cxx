@@ -623,8 +623,6 @@ TH1 * EvaluateVertexQuality::DrawHist(TTree * tree,
   h->GetYaxis()->SetTitle(ytitle.c_str());
   h->GetYaxis()->CenterTitle(); 
 
-  h->Scale(1./h->GetEntries());
-
   h->SetLineWidth(3);
   
   return h;
@@ -651,11 +649,12 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 		     draw,
 		     binning,
 		     weight_modified + " && " + best_permutation,
-		     "hist",
+		     "",
 		     title,
 		     "True - Reco Vertex Distance [cm]",
 		     "Area Normalized");
 
+  h->Scale(1./h->Integral(0, h->GetNbinsX()+1));
   double ymax = h->GetBinContent(h->GetMaximumBin());
 
   TH1 * hp = nullptr;
@@ -668,17 +667,25 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 		  draw,
 		  binning,
 		  weight_modified,
-		  "histsame",
+		  "",
 		  title,
 		  "True - Reco Vertex Distance [cm]",
 		  "Area Normalized");
-    
+
+    hp->Scale(1./hp->Integral(0, hp->GetNbinsX()+1));    
     hp->SetLineColor(kRed);
     hp->SetLineStyle(2);
-    
+
+    TH1 * hm = DrawHist(fvq_chain, "hm", draw, "(100, 0, 1100)", weight_modified + " && " + best_permutation);
+    double const vbmean = hm->GetMean();
+    delete hm;
+    TH1 * hpm = DrawHist(fpandora_tree, "hpm", draw, "(100, 0, 1100)", weight_modified);
+    double const pmean = hpm->GetMean();
+    delete hpm;
+
     legend = new TLegend(0.6, 0.9, 0.9, 0.6);
-    legend->AddEntry(h, ("Vertex Builder, mean: " + std::to_string(int(h->GetMean()))).c_str());
-    legend->AddEntry(hp, ("Pandora, mean: " + std::to_string(int(hp->GetMean()))).c_str());
+    legend->AddEntry(h, ("Vertex Builder - mean: " + std::to_string(int(vbmean))).c_str());
+    legend->AddEntry(hp, ("Pandora - mean: " + std::to_string(int(pmean))).c_str());
 
     if(hp->GetBinContent(hp->GetMaximumBin()) > ymax) ymax = hp->GetBinContent(hp->GetMaximumBin());
 
@@ -686,6 +693,8 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 
   h->GetYaxis()->SetRangeUser(0, 1.1*ymax);
 
+  h->Draw("hist");
+  hp->Draw("histsame");
   if(legend) legend->Draw();
   canvas->Write();
   delete canvas;
@@ -718,12 +727,15 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 
     for(auto const & pq : performance_quantities) {
 
-      std::string const title = "BNB Maximized";
+      //std::string const title = "BNB Maximized";
       //std::string const title = "NC #Delta Radiative Maximized";
-
+      //std::string const title = "BNB Events";
+      std::string const title = "NC #Delta Radiative Events";
+      std::string const bins = "(40, 0, 100)";
+      
       std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).at(pq.second).second);
-      DrawHist(ph, "0track_" + method, pq.first, "dist", "(40, 0, 10)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks");
-      DrawHist(ph, "ntrack_" + method, pq.first, "dist", "(40, 0, 10)", "reco_track_total > 0", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks");
+      DrawHist(ph, "0track_" + method, pq.first, "dist", bins, "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks");
+      DrawHist(ph, "ntrack_" + method, pq.first, "dist", bins, "reco_track_total > 0", fvq.GetPermString(best_permutation), title + " N > 0 Associated Tracks");
       
       for(auto const & ptd : parameters_to_draw) {
  

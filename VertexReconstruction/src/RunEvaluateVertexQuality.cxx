@@ -98,8 +98,8 @@ int main(int const argc, char const * argv[]) {
 	"shower_cleanliness", "", "Shower Cleanliness"});
   */
 
-  //evq.Run({4, 40, 40, 12, 12});
-  evq.Run({4, 30, 100, 25, 5});
+  //evq.Run({4, 40, 40, 12, 12}); //Max BNB params
+  evq.Run({4, 30, 100, 25, 5}); //Max Delta params
   //evq.Run();
    
   std::cout << "Wall time: " << difftime(time(0), start) << "\n";  
