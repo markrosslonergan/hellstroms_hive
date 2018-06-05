@@ -6,6 +6,8 @@
 
 #include <vector>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 #include "TChain.h"
 #include "TFile.h"
@@ -16,6 +18,8 @@
 #include "TMath.h"
 #include "TLine.h"
 #include "TTreeFormula.h"
+#include "TPaveText.h"
+#include "TLegendEntry.h"
 
 #include "VertexQuality.h"
 

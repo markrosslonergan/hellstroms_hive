@@ -620,8 +620,10 @@ TH1 * EvaluateVertexQuality::DrawHist(TTree * tree,
   h->SetTitle(title.c_str());
   h->GetXaxis()->SetTitle(xtitle.c_str());
   h->GetXaxis()->CenterTitle();
+  h->GetXaxis()->SetTitleOffset(1.3);
   h->GetYaxis()->SetTitle(ytitle.c_str());
   h->GetYaxis()->CenterTitle(); 
+  h->GetYaxis()->SetTitleOffset(1.3);
 
   h->SetLineWidth(3);
   
@@ -677,15 +679,26 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
     hp->SetLineStyle(2);
 
     TH1 * hm = DrawHist(fvq_chain, "hm", draw, "(100, 0, 1100)", weight_modified + " && " + best_permutation);
-    double const vbmean = hm->GetMean();
-    delete hm;
+    //TH1 * hm = DrawHist(fvq_chain, "hm", draw, "(5, 0, 5)", weight_modified + " && " + best_permutation);
+    //double const vbval = hm->Integral(0, hm->GetNbinsX()) / hm->GetEntries();
     TH1 * hpm = DrawHist(fpandora_tree, "hpm", draw, "(100, 0, 1100)", weight_modified);
-    double const pmean = hpm->GetMean();
-    delete hpm;
-
+    //TH1 * hpm = DrawHist(fpandora_tree, "hpm", draw, "(5, 0, 5)", weight_modified);
+    //double const pval = hpm->Integral(0, hpm->GetNbinsX()) / hpm->GetEntries();
+    
     legend = new TLegend(0.6, 0.9, 0.9, 0.6);
-    legend->AddEntry(h, ("Vertex Builder - mean: " + std::to_string(int(vbmean))).c_str());
-    legend->AddEntry(hp, ("Pandora - mean: " + std::to_string(int(pmean))).c_str());
+    legend->SetHeader("Mean [cm]", "c");
+    //dynamic_cast<TLegendEntry*>(legend->GetListOfPrimitives()->First())->SetTextAlign(-22);
+    std::stringstream stream, streamerr;
+    stream << std::setprecision(2) << hm->GetMean();
+    streamerr << std::setprecision(2) << hm->GetRMS() / sqrt(hm->GetEntries());
+    legend->AddEntry(h, ("VertexBuilder: " + stream.str()).c_str());
+    stream.clear(); stream.str(""); streamerr.clear(); streamerr.str("");
+    stream << std::setprecision(2) << hpm->GetMean();
+    streamerr << std::setprecision(2) << hpm->GetRMS() / sqrt(hpm->GetEntries());
+    legend->AddEntry(hp, ("Pandora: " + stream.str()).c_str());
+
+    delete hm;
+    delete hpm;
 
     if(hp->GetBinContent(hp->GetMaximumBin()) > ymax) ymax = hp->GetBinContent(hp->GetMaximumBin());
 
@@ -693,14 +706,35 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 
   h->GetYaxis()->SetRangeUser(0, 1.1*ymax);
 
+  TPaveText * text = new TPaveText(0.6, 0.5, 0.8, 0.4, "blNDC");
+  text->AddText("MicroBooNE Simulation Preliminary");
+  text->SetFillStyle(0);
+  text->SetLineColor(0);
+  text->SetTextColor(kRed);
+  text->SetBorderSize(1);
+
+  /*
+  TPaveText * text2 = new TPaveText(0.6, 0.4, 0.8, 0.3, "blNDC");
+  text2->AddText("Simulation");
+  text2->SetFillStyle(0);
+  text2->SetLineColor(0);
+  text2->SetBorderSize(1);
+  */
+
   h->Draw("hist");
   hp->Draw("histsame");
   if(legend) legend->Draw();
+  text->Draw();
+  //text2->Draw();
+  
   canvas->Write();
   delete canvas;
   delete h;
   if(hp) delete hp;
-  
+  if(legend) delete legend;
+  delete text;
+  //delete text2;
+
 }
 
 

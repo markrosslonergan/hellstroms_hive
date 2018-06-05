@@ -5,7 +5,8 @@
 
 PandoraAnalyzer::PandoraAnalyzer() :
   fvertex_tree(new TTree("vertex_tree", "")),
-  ftrack_tree(new TTree("track_tree", "")) {
+  ftrack_tree(new TTree("track_tree", "")),
+  fshower_tree(new TTree("shower_tree", "")) {
 
   fvertex_tree->Branch("dist", &fdist, "dist/D");
   fvertex_tree->Branch("distx", &fdistx, "distx/D");
@@ -20,7 +21,15 @@ PandoraAnalyzer::PandoraAnalyzer() :
   ftrack_tree->Branch("end_distx", &fend_distx, "end_distx/D");
   ftrack_tree->Branch("end_disty", &fend_disty, "end_disty/D");
   ftrack_tree->Branch("end_distz", &fend_distz, "end_distz/D");
-  
+
+  fshower_tree->Branch("startx", &fstartx, "startx/D");
+  fshower_tree->Branch("starty", &fstarty, "starty/D");
+  fshower_tree->Branch("startz", &fstartz, "startz/D");
+  fshower_tree->Branch("true_pdg", &ftrue_pdg, "true_pdg/I");
+  fshower_tree->Branch("true_startx", &ftrue_startx, "true_startx");
+  fshower_tree->Branch("true_starty", &ftrue_starty, "true_starty");
+  fshower_tree->Branch("true_startz", &ftrue_startz, "true_startz");
+
 }
 
 
@@ -137,10 +146,51 @@ void PandoraAnalyzer::FillTrackTree() {
 }
 
 
+void PandoraAnalyzer::FillShowerTree() {
+
+  std::vector<double> const & true_nuvertx = *fstorage->ftrue_nuvertx;
+  std::vector<double> const & true_nuverty = *fstorage->ftrue_nuverty;
+  std::vector<double> const & true_nuvertz = *fstorage->ftrue_nuvertz;
+
+  std::vector<geoalgo::Point_t> true_nuvert;
+
+  for(size_t mct_index = 0; mct_index < true_nuvertx.size(); ++mct_index) {
+    true_nuvert.push_back({true_nuvertx.at(mct_index), true_nuverty.at(mct_index), true_nuvertz.at(mct_index)});
+  }
+
+  std::vector<double> const & reco_shower_ShowerStart_X = *fstorage->freco_shower_ShowerStart_X;
+  std::vector<double> const & reco_shower_ShowerStart_Y = *fstorage->freco_shower_ShowerStart_Y;
+  std::vector<double> const & reco_shower_ShowerStart_Z = *fstorage->freco_shower_ShowerStart_Z;
+  std::vector<int> const & reco_shower_largest_mc_type = *fstorage->freco_shower_largest_mc_type;
+  std::vector<int> const & reco_shower_largest_mc_index = *fstorage->freco_shower_largest_mc_index;
+
+  auto & shower_indices = fstorage->GetShowerIndices("pandoraNu");
+  for(size_t reco_shower_index = shower_indices.first; reco_shower_index < shower_indices.second; ++reco_shower_index) {
+
+    fstartx = reco_shower_ShowerStart_X.at(reco_shower_index);
+    fstarty = reco_shower_ShowerStart_Y.at(reco_shower_index);
+    fstartz = reco_shower_ShowerStart_Z.at(reco_shower_index);
+
+    int const mc_type = reco_shower_largest_mc_type.at(reco_shower_index);
+
+    if(mc_type == 1) {
+      
+    }
+
+    fshower_tree->Fill();
+
+  }
+
+}
+
+
 void PandoraAnalyzer::Run() {
 
   FillVertexTree();
   FillTrackTree();
+  FillShowerTree();
+
+  exit(0);
 
 }
 
@@ -150,6 +200,7 @@ void PandoraAnalyzer::Finalize() {
   if(fofile) {
     if(fvertex_tree) fvertex_tree->Write();
     if(ftrack_tree) ftrack_tree->Write();
+    if(fshower_tree) fshower_tree->Write();
   }
 
 }

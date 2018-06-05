@@ -70,6 +70,7 @@ int main(int const argc, char const * argv[]) {
 		performance_quantity,
 		"total");
 
+  /*
   evq.AddToDraw({"combined"},
 		method,
 		{"track_completeness", "track_cleanliness", "track_combined"},
@@ -83,6 +84,7 @@ int main(int const argc, char const * argv[]) {
 		parameters,
 		performance_quantity,
 		"shower");
+  */
 
   /*  
   std::string const weight = "tpc_volume_contained == 1 && is_nc_delta_rad == 1 && nc_delta_rad_split_shower == 1";

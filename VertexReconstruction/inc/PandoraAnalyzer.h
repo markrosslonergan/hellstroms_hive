@@ -29,6 +29,7 @@ class PandoraAnalyzer : public Analyzer {
 
   void FillVertexTree();
   void FillTrackTree();
+  void FillShowerTree();
 
   TTree * fvertex_tree;
   double fdist;
@@ -46,6 +47,15 @@ class PandoraAnalyzer : public Analyzer {
   double fend_disty;
   double fend_distz;
   
+  TTree * fshower_tree;
+  double fstartx;
+  double fstarty;
+  double fstartz;
+  double ftrue_pdg;
+  double ftrue_startx;
+  double ftrue_starty;
+  double ftrue_startz;
+
 };
 
 
