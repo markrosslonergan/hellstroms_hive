@@ -620,10 +620,10 @@ TH1 * EvaluateVertexQuality::DrawHist(TTree * tree,
   h->SetTitle(title.c_str());
   h->GetXaxis()->SetTitle(xtitle.c_str());
   h->GetXaxis()->CenterTitle();
+  h->GetXaxis()->SetTitleOffset(1.3);
   h->GetYaxis()->SetTitle(ytitle.c_str());
   h->GetYaxis()->CenterTitle(); 
-
-  h->Scale(1./h->GetEntries());
+  h->GetYaxis()->SetTitleOffset(1.3);
 
   h->SetLineWidth(3);
   
@@ -651,11 +651,12 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 		     draw,
 		     binning,
 		     weight_modified + " && " + best_permutation,
-		     "hist",
+		     "",
 		     title,
 		     "True - Reco Vertex Distance [cm]",
 		     "Area Normalized");
 
+  h->Scale(1./h->Integral(0, h->GetNbinsX()+1));
   double ymax = h->GetBinContent(h->GetMaximumBin());
 
   TH1 * hp = nullptr;
@@ -668,17 +669,36 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 		  draw,
 		  binning,
 		  weight_modified,
-		  "histsame",
+		  "",
 		  title,
 		  "True - Reco Vertex Distance [cm]",
 		  "Area Normalized");
-    
+
+    hp->Scale(1./hp->Integral(0, hp->GetNbinsX()+1));    
     hp->SetLineColor(kRed);
     hp->SetLineStyle(2);
+
+    TH1 * hm = DrawHist(fvq_chain, "hm", draw, "(100, 0, 1100)", weight_modified + " && " + best_permutation);
+    //TH1 * hm = DrawHist(fvq_chain, "hm", draw, "(5, 0, 5)", weight_modified + " && " + best_permutation);
+    //double const vbval = hm->Integral(0, hm->GetNbinsX()) / hm->GetEntries();
+    TH1 * hpm = DrawHist(fpandora_tree, "hpm", draw, "(100, 0, 1100)", weight_modified);
+    //TH1 * hpm = DrawHist(fpandora_tree, "hpm", draw, "(5, 0, 5)", weight_modified);
+    //double const pval = hpm->Integral(0, hpm->GetNbinsX()) / hpm->GetEntries();
     
     legend = new TLegend(0.6, 0.9, 0.9, 0.6);
-    legend->AddEntry(h, ("Vertex Builder, mean: " + std::to_string(int(h->GetMean()))).c_str());
-    legend->AddEntry(hp, ("Pandora, mean: " + std::to_string(int(hp->GetMean()))).c_str());
+    legend->SetHeader("Mean [cm]", "c");
+    //dynamic_cast<TLegendEntry*>(legend->GetListOfPrimitives()->First())->SetTextAlign(-22);
+    std::stringstream stream, streamerr;
+    stream << std::setprecision(2) << hm->GetMean();
+    streamerr << std::setprecision(2) << hm->GetRMS() / sqrt(hm->GetEntries());
+    legend->AddEntry(h, ("VertexBuilder: " + stream.str()).c_str());
+    stream.clear(); stream.str(""); streamerr.clear(); streamerr.str("");
+    stream << std::setprecision(2) << hpm->GetMean();
+    streamerr << std::setprecision(2) << hpm->GetRMS() / sqrt(hpm->GetEntries());
+    legend->AddEntry(hp, ("Pandora: " + stream.str()).c_str());
+
+    delete hm;
+    delete hpm;
 
     if(hp->GetBinContent(hp->GetMaximumBin()) > ymax) ymax = hp->GetBinContent(hp->GetMaximumBin());
 
@@ -686,12 +706,35 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 
   h->GetYaxis()->SetRangeUser(0, 1.1*ymax);
 
+  TPaveText * text = new TPaveText(0.6, 0.5, 0.8, 0.4, "blNDC");
+  text->AddText("MicroBooNE Simulation Preliminary");
+  text->SetFillStyle(0);
+  text->SetLineColor(0);
+  text->SetTextColor(kRed);
+  text->SetBorderSize(1);
+
+  /*
+  TPaveText * text2 = new TPaveText(0.6, 0.4, 0.8, 0.3, "blNDC");
+  text2->AddText("Simulation");
+  text2->SetFillStyle(0);
+  text2->SetLineColor(0);
+  text2->SetBorderSize(1);
+  */
+
+  h->Draw("hist");
+  hp->Draw("histsame");
   if(legend) legend->Draw();
+  text->Draw();
+  //text2->Draw();
+  
   canvas->Write();
   delete canvas;
   delete h;
   if(hp) delete hp;
-  
+  if(legend) delete legend;
+  delete text;
+  //delete text2;
+
 }
 
 
@@ -718,12 +761,15 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 
     for(auto const & pq : performance_quantities) {
 
-      std::string const title = "BNB Maximized";
+      //std::string const title = "BNB Maximized";
       //std::string const title = "NC #Delta Radiative Maximized";
-
+      //std::string const title = "BNB Events";
+      std::string const title = "NC #Delta Radiative Events";
+      std::string const bins = "(40, 0, 100)";
+      
       std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).at(pq.second).second);
-      DrawHist(ph, "0track_" + method, pq.first, "dist", "(40, 0, 10)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks");
-      DrawHist(ph, "ntrack_" + method, pq.first, "dist", "(40, 0, 10)", "reco_track_total > 0", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks");
+      DrawHist(ph, "0track_" + method, pq.first, "dist", bins, "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks");
+      DrawHist(ph, "ntrack_" + method, pq.first, "dist", bins, "reco_track_total > 0", fvq.GetPermString(best_permutation), title + " N > 0 Associated Tracks");
       
       for(auto const & ptd : parameters_to_draw) {
  
