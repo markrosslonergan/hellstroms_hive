@@ -82,6 +82,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 		}
 	}
+
+	if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure"){
+		double volTPC = 101510.0;
+		double  volTPCActive=  86698.6;
+		numberofevents = numberofevents*volTPCActive/volTPC;
+	}
+
+
+
 	if(tag == "Data5e19"){
 		leg = "lp";
 		pot = 4.801e19;// tor860_wcut
@@ -367,4 +376,36 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 }
 
 
+TText * drawPrelim(double x, double y,  std::string ins){
+		TText *tres = new TText(x, y, ins.c_str());
+		tres->SetTextColor(kBlack);
+		tres->SetNDC();
+		return tres;
+}
 
+
+
+TText * drawPrelim(double x, double y, double s, std::string ins){
+		TText *tres = new TText(x, y, ins.c_str());
+		tres->SetTextColor(kBlack);
+		tres->SetTextSize(s);
+		tres->SetNDC();
+		return tres;
+}
+
+
+
+TText * drawPrelim(double x, double y, double s){
+		TText *tres = new TText(x, y,"MicroBooNE Preliminary");
+		tres->SetTextColor(kBlack);
+		tres->SetTextSize(s);
+		tres->SetNDC();
+		return tres;
+}
+
+TText * drawPrelim(double x, double y){
+		TText *tres = new TText(x, y,"MicroBooNE Preliminary");
+		tres->SetTextColor(kBlack);//t90->SetTextSize(0.12);
+		tres->SetNDC();
+		return tres;
+}
