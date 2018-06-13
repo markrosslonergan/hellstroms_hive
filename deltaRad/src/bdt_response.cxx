@@ -7,6 +7,17 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	}
 	fout->cd();
 
+	double title_size_ratio=0.1;
+	double label_size_ratio=0.1;
+	double title_offset_ratioY = 0.3 ;
+	double title_offset_ratioX = 1.1;
+
+	double title_size_upper=0.15;
+	double label_size_upper=0.05;
+	double title_offset_upper = 1.45;
+
+
+
 
 	TCanvas *c = new TCanvas(info.identifier.c_str(),info.identifier.c_str(),1600,1600);
 	c->Divide(2,2);
@@ -49,6 +60,7 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		std::cout << "Sum of weights: " << ttmp->GetSumOfWeights() << std::endl;
 		std::cout << "No. entries: " << ttmp->GetEntries() << std::endl;
 		c->cd(1);
+	
 		h_bdt.back()->SetTitle(info.name.c_str());
 		h_bdt.back()->SetLineWidth(2);
 		std::cout << "Integral: " << h_bdt.back()->Integral() << std::endl;
@@ -59,23 +71,27 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		std::cout<<h_bdt.back()->GetSumOfWeights()<<" "<<bdtvar.name<<std::endl;
 		h_bdt.back()->GetXaxis()->SetTitle(bdtvar.unit.c_str());
 		h_bdt.back()->GetYaxis()->SetTitle("Verticies [Unit Normalized]");
-		h_bdt.back()->GetYaxis()->SetTitleOffset(1.5);
+		h_bdt.back()->GetYaxis()->SetTitleOffset(1.25);
+		h_bdt.back()->GetYaxis()->SetTitleSize(0.035);
 
 		std::cout<<"On file "<<file->tag<<" is color "<<file->col<<std::endl;
 		h_bdt.back()->SetFillColor(file->col);
 		if(i==0)h_bdt.back()->SetFillStyle(3445);
 		if(i==1)h_bdt.back()->SetFillStyle(3454);
 		h_bdt.back()->SetMaximum( h_bdt.back()->GetMaximum()*1.3 );
-
+		//p1->SaveAs(("response/BDT_response_nonlog_"+info.identifier+".pdf").c_str(),"pdf");
 
 		c->cd(2);
 		p2->SetLogy();
 		h_bdt_log.push_back( (TH1*)h_bdt.back()->Clone(("log"+file->tag).c_str()));
 		h_bdt_log.back()->Draw("hist same");
-		h_bdt_log.back()->SetMaximum( h_bdt_log.back()->GetMaximum()*10 );
+		h_bdt_log.back()->SetMaximum( h_bdt_log.back()->GetMaximum()*7 );
+		//p2->SaveAs(("response/BDT_response_log_"+info.identifier+".pdf").c_str(),"pdf");
+
 
 		i++;
 		std::cout << "Done loop with " << file->name << " and " << bdtvar.name << std::endl;
+
 	}
 	for(int i=files.size()-1; i>=0; i--){
 		leg->AddEntry(h_bdt.at(i), files.at(i)->plot_name.c_str(),"lf");
@@ -154,6 +170,64 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	c->Write();
 	c->SaveAs(("response/BDT_response_"+info.identifier+".pdf").c_str(),"pdf");
 	//	c->SaveAs(("response/BDT_response_"+info.identifier+".png").c_str(),"png");
+
+
+	
+
+	TCanvas *c_simple = new TCanvas(info.identifier.c_str(),info.identifier.c_str(),1600,1300);
+	c_simple->cd();
+	TPad *pad0top = new TPad(("pad0top_"), ("pad0top_"), 0, 0.35, 1, 1.0);
+	pad0top->SetBottomMargin(0); // Upper and lower plot are joined
+	pad0top->Draw();             // Draw the upper pad: pad2top
+	pad0top->cd();               // pad2top becomes the current pad
+	pad0top->SetLogy();
+	
+	h_bdt_log.front()->Draw("hist same");
+	h_bdt_log.back()->Draw("hist same");
+	h_bdt_log.front()->SetMinimum(1.1*1e-4);
+	h_bdt_log.front()->SetMinimum(1.1*1e-4);
+	leg->Draw();
+
+
+
+	c_simple->cd();
+	TPad *pad0bot = new TPad(("padbot_"),("padbot_"), 0, 0.05, 1, 0.35);
+	pad0bot->SetTopMargin(0);
+	pad0bot->SetBottomMargin(0.21);
+	pad0bot->SetGridy();
+pad0bot->SetGridx(); // vertical grid
+	pad0bot->Draw();
+	pad0bot->cd();       // pad0bot becomes the current pad
+	pad0bot->SetLogy();
+	g_sig_eff->Draw("al");
+	g_sig_eff->SetTitle("");
+	g_sig_eff->GetXaxis()->SetTitle("BDT Response");
+	g_sig_eff->SetMaximum(1.0);
+	g_sig_eff->SetMinimum(0.0001);
+	g_bkg_eff->Draw("l");
+	//leff->Draw();
+
+	g_sig_eff->GetXaxis()->SetTitleOffset(title_offset_ratioX);
+	g_sig_eff->GetYaxis()->SetTitleOffset(title_offset_ratioY*1.2);
+	g_sig_eff->GetYaxis()->SetTitleSize(title_size_ratio);
+	g_sig_eff->GetXaxis()->SetTitleSize(title_size_ratio);
+	g_sig_eff->GetYaxis()->SetLabelSize(label_size_ratio);
+	g_sig_eff->GetXaxis()->SetLabelSize(label_size_ratio);
+	
+	TLatex latex;
+	latex.SetTextSize(0.24);
+	latex.SetTextAlign(13);  //align at top
+	latex.SetNDC();
+	latex.DrawLatex(.15,.433,bdt_sig->topo_name.c_str());
+
+	TText *pre = drawPrelim(0.13,0.86,0.1,"MicroBooNE Simulation Preliminary");
+	pre->Draw();
+
+
+
+	c_simple->SaveAs(("response/BDT_response_SIMPLE_"+info.identifier+".pdf").c_str(), "pdf");
+
+
 
 	return 0;
 	/*
