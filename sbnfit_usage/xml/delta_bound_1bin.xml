@@ -9,8 +9,10 @@
 	<bins 
 		edges="0.0 0.60" 
 		/>
-	<subchannel name="signal" use="1" osc="0"/>
-	<subchannel name="bkg" use="1" osc="0"/>
+	<subchannel name="tracksig" use="1" osc="0"/>
+	<subchannel name="notracksig" use="1" osc="0"/>
+	<subchannel name="trackbkg" use="1" osc="0"/>
+	<subchannel name="notrackbkg" use="1" osc="0"/>
 </channel>
 
 

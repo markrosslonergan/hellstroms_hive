@@ -6,6 +6,8 @@
 
 #include <vector>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 #include "TChain.h"
 #include "TFile.h"
@@ -15,6 +17,9 @@
 #include "TLegend.h"
 #include "TMath.h"
 #include "TLine.h"
+#include "TTreeFormula.h"
+#include "TPaveText.h"
+#include "TLegendEntry.h"
 
 #include "VertexQuality.h"
 
@@ -106,9 +111,9 @@ class EvaluateVertexQuality {
   TH1 * DrawHist(TTree * tree,
 		 std::string const & name,
 		 std::string const & draw,
-		 std::string const & binning,
-		 std::string const & weight,
-		 std::string const & opt,
+		 std::string const & binning = "",
+		 std::string const & weight = "",
+		 std::string const & opt = "",
 		 std::string const & title = "",
 		 std::string const & xtitle = "",
 		 std::string const & ytitle = "") const;

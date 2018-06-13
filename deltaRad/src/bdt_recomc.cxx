@@ -72,8 +72,41 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	reco_mc_all_bdt2 = (TH1*)file->getTH1(var , bnbcut  ,"all_bdt2_"+file->tag+"_"+var.safe_name, plot_pot);
 	N_bdt_bnb = file->GetEntries(bnbcut.c_str())*plot_pot/file->pot*file->scale_data;
 
+
+	reco_mc_all_sel->SetLineColor(kBlack);
+	reco_mc_all_sel->SetFillStyle(3002);
+	reco_mc_all_sel->SetFillColor(kGray+3);
+	reco_mc_all_sel->SetLineWidth(1);
+
+	reco_mc_all_pre->SetLineColor(kBlack);
+	reco_mc_all_pre->SetFillStyle(3002);
+	reco_mc_all_pre->SetFillColor(kGray+3);
+	reco_mc_all_pre->SetLineWidth(1);
+
+	reco_mc_all_bdt1->SetLineColor(kBlack);
+	reco_mc_all_bdt1->SetFillStyle(3002);
+	reco_mc_all_bdt1->SetFillColor(kGray+3);
+	reco_mc_all_bdt1->SetLineWidth(1);
+	reco_mc_all_bdt1->Rebin(2);
+
+	reco_mc_all_bdt2->SetLineColor(kBlack);
+	reco_mc_all_bdt2->SetFillStyle(3002);
+	reco_mc_all_bdt2->SetFillColor(kGray+3);
+	reco_mc_all_bdt2->SetLineWidth(1);
+	reco_mc_all_bdt2->Rebin(4);
+
+
+
+
+
+
 	if(false){
-		file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]",bnbcut.c_str());
+		//file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]",bnbcut.c_str());
+		double all = file->GetEntries(precut);
+		double red = file->GetEntries(precut+"&& true_track_pdg==2212"); 
+		std::cout<<"BNBCOSMICS FINAL: "<<all<<" "<<red<<" "<<red/all*100<<std::endl;
+		std::cout<<"BNBCOSMICS FINAL: "<<all<<" "<<red<<" "<<red/all*100<<std::endl;
+		return 0;
 	}
 
 
@@ -98,7 +131,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
   		padsel->cd();               // padsel becomes the current pad
 
 
-		THStack * s_reco_truth_sel = new THStack("All Verticies",("All Verticies Total:"+to_string_prec(N_selection,3)).c_str());		
+		THStack * s_reco_truth_sel = new THStack("All Verticies",("All Verticies Total:"+to_string_prec(N_selection,1)).c_str());		
 		TLegend * l_reco_truth_sel = new TLegend(0.11,0.11,0.89,0.89);
 
 
@@ -116,6 +149,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 		}	
 
 		s_reco_truth_sel->Draw("hist");
+		reco_mc_all_sel->Draw("E2 same");
 		std::cout<<"Drawn."<<std::endl;
 
 		
@@ -135,6 +169,9 @@ std::cout<<"1"<<std::endl;
 		pottensel.SetNDC();
 		std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 		pottensel.DrawLatex(.7,.89, pot_draw_sel.c_str());
+	
+		TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation Preliminary");
+		tsel->Draw();
 
 
 
@@ -160,7 +197,7 @@ std::cout<<"2"<<std::endl;
    		padpre->Draw();             // Draw the upper pad: padpre
   		padpre->cd();               // padpre becomes the current pad
 
-		THStack * s_reco_truth_pre = new THStack("Pre-Selection",("Pre-Selection Total: "+ to_string_prec(N_precuts,3)).c_str());		
+		THStack * s_reco_truth_pre = new THStack("Pre-Selection",("Pre-Selection Total: "+ to_string_prec(N_precuts,1)).c_str());		
 		TLegend * l_reco_truth_pre = new TLegend(0.11,0.11,0.89,0.89);
 
 		int ipre=0;
@@ -173,6 +210,7 @@ std::cout<<"2"<<std::endl;
 		}	
 
 		s_reco_truth_pre->Draw("hist");
+		reco_mc_all_pre->Draw("E2 same");
 		s_reco_truth_pre->GetXaxis()->SetTitle(var.unit.c_str());
 		s_reco_truth_pre->GetYaxis()->SetTitle("Verticies");
 		s_reco_truth_pre->GetYaxis()->SetTitleOffset(1.5);
@@ -188,6 +226,10 @@ std::cout<<"2"<<std::endl;
 		pottenpre.SetNDC();
 		std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 		pottenpre.DrawLatex(.7,.89, pot_draw_pre.c_str());
+
+	
+		TText *tpre = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation Preliminary");
+		tpre->Draw();
 
 
 
@@ -214,7 +256,7 @@ std::cout<<"3"<<std::endl;
   		padbdt1->cd();               // padbdt1 becomes the current pad
 
 
-		THStack * s_reco_truth_bdt1 = new THStack("Post Cosmic BDT",("Post Cosmic BDT: Cut @ "+to_string_prec(cut_cosmic_val,2)+" Total: "+to_string_prec(N_bdt_cosmic,3)).c_str());		
+		THStack * s_reco_truth_bdt1 = new THStack("Post Cosmic BDT",("Post Cosmic BDT: Cut @ "+to_string_prec(cut_cosmic_val,2)+" Total: "+to_string_prec(N_bdt_cosmic,1)).c_str());		
 		TLegend * l_reco_truth_bdt1 = new TLegend(0.11,0.11,0.89,0.89);
 
 		int ibdt1=0;
@@ -227,6 +269,7 @@ std::cout<<"3"<<std::endl;
 		}	
 
 		s_reco_truth_bdt1->Draw("hist");
+		reco_mc_all_bdt1->Draw("E2 same");
 
 		s_reco_truth_bdt1->GetXaxis()->SetTitle(var.unit.c_str());
 		s_reco_truth_bdt1->GetYaxis()->SetTitle("Verticies");
@@ -243,6 +286,10 @@ std::cout<<"3"<<std::endl;
 		pottenbdt1.SetNDC();
 		std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 		pottenbdt1.DrawLatex(.7,.89, pot_draw_bdt1.c_str());
+	
+		TText *tbdt1 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation Preliminary");
+		tbdt1->Draw();
+
 
 
 
@@ -270,7 +317,7 @@ std::cout<<"3"<<std::endl;
   		padbdt2->cd();               // padbdt2 becomes the current pad
 
 
-		THStack * s_reco_truth_bdt2 = new THStack("Post BNB BDT",("Post BNB BDT: Cut @ "+to_string_prec(cut_bnb_val,2)+ " Total: "+to_string_prec(N_bdt_bnb,3)).c_str());		
+		THStack * s_reco_truth_bdt2 = new THStack("Post BNB BDT",("Post BNB BDT: Cut @ "+to_string_prec(cut_bnb_val,2)+ " Total: "+to_string_prec(N_bdt_bnb,1)).c_str());		
 		TLegend * l_reco_truth_bdt2 = new TLegend(0.11,0.11,0.89,0.89);
 
 		int ibdt2=0;
@@ -284,6 +331,8 @@ std::cout<<"3"<<std::endl;
 
 std::cout<<"5"<<std::endl;
 		s_reco_truth_bdt2->Draw("hist");
+		s_reco_truth_bdt2->SetMaximum(s_reco_truth_bdt2->GetMaximum()*1.2);
+		reco_mc_all_bdt2->Draw("E2 same");
 
 		s_reco_truth_bdt2->GetXaxis()->SetTitle(var.unit.c_str());
 		s_reco_truth_bdt2->GetYaxis()->SetTitle("Verticies");
@@ -300,6 +349,10 @@ std::cout<<"5"<<std::endl;
 		pottenbdt2.SetNDC();
 		std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 		pottenbdt2.DrawLatex(.7,.89, pot_draw_bdt2.c_str());
+	
+		TText *tbdt2 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation Preliminary");
+		tbdt2->Draw();
+
 
 
 	

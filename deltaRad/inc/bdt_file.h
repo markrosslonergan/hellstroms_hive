@@ -31,6 +31,7 @@
 #include "TMVA/DataLoader.h"
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
+#include "TText.h"
 
 template <typename T>
 std::string to_string_prec(const T a_value, const int n = 6)
@@ -54,6 +55,11 @@ std::vector<size_t> sort_indexes(const std::vector<T> &v) {
 
   return idx;
 }
+
+TText * drawPrelim(double x, double y);
+TText * drawPrelim(double x, double y,double s);
+TText * drawPrelim(double x, double y,double s, std::string in);
+TText * drawPrelim(double x, double y, std::string in);
 
 
 struct bdt_file{
