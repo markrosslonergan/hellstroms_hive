@@ -1,16 +1,3 @@
-/*#include "object_helper.h"
-#include "get_pot_info.h"
-#include "train.h"
-#include "app.h"
-#include "merge.h"
-#include "significance.h"
-#include "get_mva_response_hists.h"
-#include "plot_mva_response_hists.h"
-#include "gen_tlimits.h"
-#include "plotstack.h"*/
-//#include "data_mc_testing_suite.h"
-//#include "efficiency.h"
-
 #include "load_mva_param.h"
 #include "tinyxml.h"
 
@@ -37,11 +24,8 @@ int main (int argc, char *argv[]){
 
 	// Just some simple argument things
 	//===========================================================================================
-
-	//std::string dir2 = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
 	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v2/";
-	//std::string dir2 = "/home/mark/work/uBooNE/photon/tmva/";
-	//std::string dir = "/home/mark/work/uBooNE/photon/tmva/samples/fresh_NCDR_bf_v2";
+
 
 	std::string mode_option = "fake"; 
 	std::string xml = "default.xml";
@@ -226,6 +210,8 @@ int main (int argc, char *argv[]){
 	bdt_flow bkg_flow(base_cuts,background_definition, vec_precuts,postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow bkg_pure_flow(base_cuts,background_definition+"&&"+ true_bkg ,vec_precuts,postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow data_flow(base_cuts,"1",	vec_precuts, postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
+	
+
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
 	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltarad_mcc8.9_fresh_v1.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
 	//bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v3.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
