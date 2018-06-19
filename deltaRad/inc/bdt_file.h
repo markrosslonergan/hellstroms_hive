@@ -6,6 +6,7 @@
 #include <numeric>
 #include <iostream>
 #include <algorithm>
+#include <numeric>
 /******** Our includes *****/
 
 #include  "bdt_file.h"
