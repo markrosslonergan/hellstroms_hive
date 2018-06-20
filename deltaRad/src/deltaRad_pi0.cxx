@@ -449,7 +449,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
     else if(mode_option == "vars"){
 
-			std::vector<std::string> title = {"All Vertices","Pre-Selection Cuts"};
+			std::vector<std::string> title = {"All Vertices","Pre-Selection Cuts", "Post Cosmic BDT", "Post BNB BDT"};
 
 			if(true){
 				for(auto &v:vars){
@@ -457,7 +457,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 					c_var->Divide(2,1);
 					c_var->cd();
 
-					for(int j=0; j<2;j++){	
+					for(int j=0; j<4;j++){	
 
 						std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
 						std::string cut_intime = intime->getStageCuts(j,fcoscut,fbnbcut); 
@@ -512,7 +512,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 					c_var->Divide(2,1);
 					c_var->cd();
 
-					for(int j=0; j<2;j++){	
+					for(int j=0; j<4;j++){	
 
 						std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
 						std::string cut_bnb = bnb_pure->getStageCuts(j,fcoscut,fbnbcut); 
@@ -554,9 +554,6 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 						double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
 						sig->SetMaximum(max_height*1.1);
-
-
-
 					}
 					c_var->Print(("var/"+istrack+"_bnb_"+v.safe_unit+".pdf").c_str(),"pdf");
 				}
