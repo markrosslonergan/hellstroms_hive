@@ -29,6 +29,7 @@
 #include "TMVA/DataLoader.h"
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
+#include "TLorentzVector.h"
 
 int addPreFriends(bdt_file* filein,std::string which);
 

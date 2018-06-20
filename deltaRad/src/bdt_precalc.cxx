@@ -376,8 +376,8 @@ int bdt_precalc::genPi0Info(){
 	int reco_asso_showers = 0;
 	int pi0_class_number = 0;
 	//std::vector<double> longest_asso_track_displacement = 0;	
-	std::vector<double> *vall_reco_tracks= 0;
-	std::vector<double> *vall_reco_showers= 0;
+	std::vector<double> *vall_reco_tracks = 0;
+	std::vector<double> *vall_reco_showers = 0;
 
 	TBranch *ballt = 0;
 	TBranch *balls = 0;

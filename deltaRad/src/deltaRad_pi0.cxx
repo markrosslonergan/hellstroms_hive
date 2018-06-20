@@ -183,16 +183,18 @@ int main (int argc, char *argv[]){
 
 
 
-	//Variables!
+	// Define BDT variables, starting with some convenient strings
 	std::string angle_track_shower1 ="(reco_track_dirx[longest_asso_track_index]*reco_shower_dirx[most_energetic_shower_index]+reco_track_diry[longest_asso_track_index]*reco_shower_diry[most_energetic_shower_index]+reco_track_dirz[longest_asso_track_index]*reco_shower_dirz[most_energetic_shower_index])";
 	std::string angle_track_shower2 ="(reco_track_dirx[longest_asso_track_index]*reco_shower_dirx[second_most_energetic_shower_index]+reco_track_diry[longest_asso_track_index]*reco_shower_diry[second_most_energetic_shower_index]+reco_track_dirz[longest_asso_track_index]*reco_shower_dirz[second_most_energetic_shower_index])";
 	std::string angle_shower1_shower2 ="reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz[0]*reco_shower_dirz[1]";
-
     std::string E1 = "reco_shower_helper_energy[most_energetic_shower_index]"; 
     std::string E2 = "reco_shower_helper_energy[second_most_energetic_shower_index]"; 
     // Invariant mass for two massless particles
     std::string invMass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+angle_shower1_shower2+"))";
-    
+    // Pion momentum components
+    std::string p_pi_x = E1+"*reco_shower_dirx[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirx[second_most_energetic_shower_index]";
+    std::string p_pi_y = E1+"*reco_shower_diry[most_energetic_shower_index]"+"+"+E2+"*reco_shower_diry[second_most_energetic_shower_index]";
+    std::string p_pi_z = E1+"*reco_shower_dirz[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirz[second_most_energetic_shower_index]";
     std::vector<bdt_variable> vars;
 
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[most_energetic_shower_index]","(48,0,15)", "Shower 1 dE/dx Collection Plane [MeV/cm]",false,"d"));
@@ -204,6 +206,7 @@ int main (int argc, char *argv[]){
     vars.push_back(bdt_variable(invMass,"(50, 0.03, 0.5)", "Two-shower Invariant Mass [GeV]", false, "d"));
     vars.push_back(bdt_variable("reco_shower_helper_energy[most_energetic_shower_index]", "(50, 0, 1)", "Most Energetic Shower Energy", false, "d"));
     vars.push_back(bdt_variable("reco_shower_helper_energy[second_most_energetic_shower_index]", "(50, 0, 1)", "Second Most Energetic Shower Energy", false, "d"));
+    vars.push_back(bdt_variable("sqrt("+p_pi_x+"*"+p_pi_x+"+"+p_pi_y+"*"+p_pi_y+"+"+p_pi_z+"*"+p_pi_z+")", "(100, 100, 1500)", "Reconstructed Pion Momentum[MeV]", false, "d"));
 
 	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Total in Beam-Gate PE",false,"d"));
 	vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from Shower to Flashcenter [cm]",false,"d"));
@@ -316,27 +319,26 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	}	
 	else if(mode_option == "recomc"){
 
-	//First off, what MC catagories do you want to stack?
+	    // First off, what MC catagories do you want to stack?
     	std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0}","NC BNB Background", "CC BNB Background", "NC #Delta Radiative", "Two Cosmic Showers", "One Cosmic Shower"};
-	//How are they defined, cutwise?
-	std::vector<std::string> recomc_cuts = {
+	    // How are they defined, cutwise?
         // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
-		"ccnc == 1 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1",
+        std::string signal = "ccnc == 1 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1";
         // CC pi0 background
-		"ccnc == 0 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1",
+        std::string bkg1 = "ccnc == 0 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1"; 
         // Other NC BNB events where either (a) one of the showers isn't photon-induced, or (b) one doesn't come from pi0
-		"(true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && ccnc == 1 && true_shower_origin[0]==1 && true_shower_origin[1]==1",
+        std::string bkg2 = "(true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && ccnc == 1 && true_shower_origin[0]==1 && true_shower_origin[1]==1";
         // Same as previous, but for CC events
-		"(true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && ccnc == 0 && true_shower_origin[0]==1 && true_shower_origin[1]==1",
+        std::string bkg3 = "(true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && ccnc == 0 && true_shower_origin[0]==1 && true_shower_origin[1]==1";
         // Delta radiative is now considered a (very small) background
-	    "reco_asso_showers==1 && true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] != 111 && is_delta_rad == 1 && true_shower_origin==1",
+        std::string bkg4 = "reco_asso_showers==1 && true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] != 111 && is_delta_rad == 1 && true_shower_origin==1";
         // Cosmics
-		"true_shower_origin[0]==2 && true_shower_origin[1]==2",
+        std::string bkg5 = "true_shower_origin[0]==2 && true_shower_origin[1]==2";
         // Other. For now, just case where one shower is cosmic, but not both
-		"(true_shower_origin[0]==2 || true_shower_origin[1]==2) && !(true_shower_origin[0]==2 && true_shower_origin[1]==2)", 
+        std::string bkg6 = "(true_shower_origin[0]==2 || true_shower_origin[1]==2) && !(true_shower_origin[0]==2 && true_shower_origin[1]==2)";
         // Other; defined as "!" versions of above
-         
-	};
+        std::string other = "!("+signal+"&&"+bkg1+"&&"+bkg2+"&&"+bkg3+"&&"+bkg4+"&&"+bkg5+"&&"+bkg6+")";
+	    std::vector<std::string> recomc_cuts = {signal, bkg1,bkg2, bkg3, bkg4, bkg5, bkg6, other};
 
     
 	//and what colors
