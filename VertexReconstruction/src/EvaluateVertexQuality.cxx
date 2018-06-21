@@ -723,7 +723,7 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
   */
 
   h->Draw("hist");
-  hp->Draw("histsame");
+  if(hp) hp->Draw("histsame");
   if(legend) legend->Draw();
   text->Draw();
   //text2->Draw();

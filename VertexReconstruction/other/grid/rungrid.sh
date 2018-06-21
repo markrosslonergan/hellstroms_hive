@@ -12,8 +12,11 @@ echo "PROCESS " ${PROCESS} >> $log
 echo >> $log
 
 
-RES=/pnfs/uboone/resilient/users/rmurrell
-SCRATCH=/pnfs/uboone/scratch/users/rmurrell
+USER=rmurrell
+
+
+RES=/pnfs/uboone/resilient/users/$USER
+SCRATCH=/pnfs/uboone/scratch/users/$USER
 VIN=vertex_quality_input
 VOUT=vertex_quality_output
 
@@ -21,9 +24,10 @@ EXEC=RunVertexQuality
 VVDICT=VVDict_rdict.pcm
 INPUT_PERM_FILE=permutations_$PROCESS.root
 #INPUT_FILE=le_bnb_cosmic_200.root
-INPUT_FILE=le_nc_delta_rad_cosmic_200.root
-#INPUT_PERM_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/rmurrell/vertex_quality_input/permutations/$PERM_FILE
-#INPUT_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/rmurrell/vertex_quality_input/light_event_files/$FILE
+#INPUT_FILE=le_nc_delta_rad_cosmic_200.root
+INPUT_FILE=le_nc_delta_rad_cosmic_1.root
+#INPUT_PERM_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/$USER/vertex_quality_input/permutations/$PERM_FILE
+#INPUT_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/$USER/vertex_quality_input/light_event_files/$FILE
 
 
 echo setup uboonecode v06_26_01_10 -q e10:prof >>$log
