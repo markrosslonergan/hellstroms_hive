@@ -639,9 +639,10 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 				     std::string const & binning,
 				     std::string const & weight,
 				     std::string const & best_permutation,
-				     std::string const & title) const {
+				     std::string const & title,
+				     std::string const & xtitle) const {
 
-  TCanvas * canvas = new TCanvas(("dist_" + name + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_" + pq).c_str());
+  TCanvas * canvas = new TCanvas((name + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_" + pq).c_str());
   //std::string const title = GetTitle(ph, method);
   std::string weight_modified = fdraw_vec.at(ph.metric_to_study.second).at(2);
   if(weight != "") weight_modified += " && " + weight;
@@ -653,7 +654,7 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 		     weight_modified + " && " + best_permutation,
 		     "",
 		     title,
-		     "True - Reco Vertex Distance [cm]",
+		     xtitle,
 		     "Area Normalized");
 
   h->Scale(1./h->Integral(0, h->GetNbinsX()+1));
@@ -678,10 +679,10 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
     hp->SetLineColor(kRed);
     hp->SetLineStyle(2);
 
-    TH1 * hm = DrawHist(fvq_chain, "hm", draw, "(100, 0, 1100)", weight_modified + " && " + best_permutation);
+    TH1 * hm = DrawHist(fvq_chain, "hm", draw, "(100, -1100, 1100)", weight_modified + " && " + best_permutation);
     //TH1 * hm = DrawHist(fvq_chain, "hm", draw, "(5, 0, 5)", weight_modified + " && " + best_permutation);
     //double const vbval = hm->Integral(0, hm->GetNbinsX()) / hm->GetEntries();
-    TH1 * hpm = DrawHist(fpandora_tree, "hpm", draw, "(100, 0, 1100)", weight_modified);
+    TH1 * hpm = DrawHist(fpandora_tree, "hpm", draw, "(100, -1100, 1100)", weight_modified);
     //TH1 * hpm = DrawHist(fpandora_tree, "hpm", draw, "(5, 0, 5)", weight_modified);
     //double const pval = hpm->Integral(0, hpm->GetNbinsX()) / hpm->GetEntries();
     
@@ -690,11 +691,11 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
     //dynamic_cast<TLegendEntry*>(legend->GetListOfPrimitives()->First())->SetTextAlign(-22);
     std::stringstream stream, streamerr;
     stream << std::setprecision(2) << hm->GetMean();
-    streamerr << std::setprecision(2) << hm->GetRMS() / sqrt(hm->GetEntries());
+    //streamerr << std::setprecision(2) << hm->GetRMS() / sqrt(hm->GetEntries());
     legend->AddEntry(h, ("VertexBuilder: " + stream.str()).c_str());
     stream.clear(); stream.str(""); streamerr.clear(); streamerr.str("");
     stream << std::setprecision(2) << hpm->GetMean();
-    streamerr << std::setprecision(2) << hpm->GetRMS() / sqrt(hpm->GetEntries());
+    //streamerr << std::setprecision(2) << hpm->GetRMS() / sqrt(hpm->GetEntries());
     legend->AddEntry(hp, ("Pandora: " + stream.str()).c_str());
 
     delete hm;
@@ -706,12 +707,12 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 
   h->GetYaxis()->SetRangeUser(0, 1.1*ymax);
 
-  TPaveText * text = new TPaveText(0.6, 0.5, 0.8, 0.4, "blNDC");
+  TPaveText * text = new TPaveText(0.6, 0.6, 0.9, 0.3, "blNDC");
   text->AddText("MicroBooNE Simulation Preliminary");
   text->SetFillStyle(0);
-  text->SetLineColor(0);
+  //text->SetLineColor(0);
   text->SetTextColor(kRed);
-  text->SetBorderSize(1);
+  text->SetBorderSize(0);
 
   /*
   TPaveText * text2 = new TPaveText(0.6, 0.4, 0.8, 0.3, "blNDC");
@@ -765,11 +766,19 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
       //std::string const title = "NC #Delta Radiative Maximized";
       //std::string const title = "BNB Events";
       std::string const title = "NC #Delta Radiative Events";
-      std::string const bins = "(40, 0, 100)";
-      
+     
       std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).at(pq.second).second);
-      DrawHist(ph, "0track_" + method, pq.first, "dist", bins, "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks");
-      DrawHist(ph, "ntrack_" + method, pq.first, "dist", bins, "reco_track_total > 0", fvq.GetPermString(best_permutation), title + " N > 0 Associated Tracks");
+      /*
+      DrawHist(ph, "dist_0track_" + method, pq.first, "dist", "(100, 0, 100)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance [cm]");
+      DrawHist(ph, "distx_0track_" + method, pq.first, "distx", "(200, -100, 100)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance (X-axis) [cm]");
+      DrawHist(ph, "disty_0track_" + method, pq.first, "disty", "(200, -100, 100)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance (Y-axis) [cm]");
+      DrawHist(ph, "distz_0track_" + method, pq.first, "distz", "(200, -200, 200)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance (Z-axis) [cm]");
+      */
+
+      DrawHist(ph, "dist_1track_" + method, pq.first, "dist", "(100, 0, 100)", "reco_track_total == 1", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance [cm]");
+      DrawHist(ph, "distx_1track_" + method, pq.first, "distx", "(200, -50, 50)", "reco_track_total == 1", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance (X-axis) [cm]");
+      DrawHist(ph, "disty_1track_" + method, pq.first, "disty", "(200, -50, 50)", "reco_track_total == 1", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance (Y-axis) [cm]");
+      DrawHist(ph, "distz_1track_" + method, pq.first, "distz", "(200, -50, 50)", "reco_track_total == 1", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance (Z-axis) [cm]");
       
       for(auto const & ptd : parameters_to_draw) {
  
