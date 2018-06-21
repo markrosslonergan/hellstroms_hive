@@ -308,6 +308,7 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
 	friend_files.push_back(in_friend_file);
 	friend_names.push_back(in_friend_tree_nam);
 	
+	std::cout<<"Now adding TreeFriend: "<<in_friend_tree_nam<<" from file: "<<in_friend_file<<std::endl;
 	tvertex->AddFriend(friend_names.back().c_str(), friend_files.back().c_str());
 
 
