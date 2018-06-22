@@ -245,7 +245,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 		th1->SetLineWidth(1);
 		th1->SetStats(0);
 		th1->GetXaxis()->SetTitle(var.unit.c_str());
-		th1->GetYaxis()->SetTitle("Verticies");
+		th1->GetYaxis()->SetTitle("Vertices");
 
 		other_cuts = other_cuts+ " && " +"!("+recomc_cuts.at(i)+")";	
 
@@ -276,7 +276,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	th1->SetLineWidth(1);
 	th1->SetStats(0);
 	th1->GetXaxis()->SetTitle(var.unit.c_str());
-	th1->GetYaxis()->SetTitle("Verticies");
+	th1->GetYaxis()->SetTitle("Vertices");
 	//ans_th1s.push_back(th1);
 
 	return ans_th1s;	

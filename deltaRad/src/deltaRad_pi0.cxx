@@ -770,9 +770,9 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			std::vector<bdt_file*> precalc_files = {signal_cosmics};
 			for(auto &f: precalc_files){
 				bdt_precalc pre(f);
-				pre.genBNBcorrectionInfo();
-			    pre.genTrackInfo();
-			    //pre.genPi0Info();
+				//pre.genBNBcorrectionInfo();
+			    //pre.genTrackInfo();
+			    pre.genPi0BoostAngle();
 			}
 		}
 		  

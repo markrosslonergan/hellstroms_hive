@@ -363,36 +363,83 @@ int bdt_precalc::genTrackInfo(){
 	return 0;
 }
 
+// Function to calculate the pi0 -> 2gamma decay angle, relative to boost vector
+int bdt_precalc::genPi0BoostAngle() {
+    TTree *friend_tree = new TTree("pi0_boost", "pi0_boost");
+    int most_energetic_shower_index = 0;
+    int second_most_energetic_shower_index = 1;
+    double reco_shower_helper_energy = 0.;
+    double reco_shower_dirx = 0.;
+    double reco_shower_diry = 0.;
+    double reco_shower_dirz = 0.;
+    std::vector<double> *vall_gamma_decays = 0; // Might not need this?
 
+    // Get necessary info from BDT files
+    file->tvertex->SetBranchAddress("most_energetic_shower_index", &most_energetic_shower_index);
+    file->tvertex->SetBranchAddress("second_most_energetic_shower_index", &second_most_energetic_shower_index);
+    file->tvertex->SetBranchAddress("reco_shower_helper_energy", &reco_shower_helper_energy);
+    file->tvertex->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx);
+    file->tvertex->SetBranchAddress("reco_shower_diry", &reco_shower_diry);
+    file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz);
+
+    // Convenient strings for pion momentum components
+    std::string E1 = "reco_shower_helper_energy[most_energetic_shower_index]"; 
+    std::string E2 = "reco_shower_helper_energy[second_most_energetic_shower_index]"; 
+    std::string p_pi_x = E1+"*reco_shower_dirx[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirx[second_most_energetic_shower_index]";
+    std::string p_pi_y = E1+"*reco_shower_diry[most_energetic_shower_index]"+"+"+E2+"*reco_shower_diry[second_most_energetic_shower_index]";
+    std::string p_pi_z = E1+"*reco_shower_dirz[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirz[second_most_energetic_shower_index]";
+
+    TLorentzVector p_pi;
+    double gamma_decay_angle = 0.;
+
+    // Friend tree branches
+    TBranch *b_gamma_decay_angle = friend_tree->Branch("reco_gamma_decay_angle", &gamma_decay_angle);
+
+	int NN = file->tvertex->GetEntries();
+	for(int i=0; i< file->tvertex->GetEntries(); i++) {
+
+		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
+
+		file->tvertex->GetEntry(i);
+
+		friend_tree->Fill();
+
+
+	}
+
+	friend_file_out->cd();
+	friend_tree->Write();
+
+    return 0;
+}
 
 int bdt_precalc::genPi0Info(){
-
-
 	TTree * friend_tree = new TTree("pi0_info","pi0_info");
 
-	//Some branches for some basic info
-	//	double asso_r
+	// Some branches for some basic info
+	// double asso_r
 	int reco_asso_tracks = 0;
 	int reco_asso_showers = 0;
 	int pi0_class_number = 0;
-	//std::vector<double> longest_asso_track_displacement = 0;	
 	std::vector<double> *vall_reco_tracks = 0;
 	std::vector<double> *vall_reco_showers = 0;
 
 	TBranch *ballt = 0;
 	TBranch *balls = 0;
 
+    // Get variables from BDT files (name of branch, pointer to some variable)
 	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
 	file->tvertex->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
 	file->tvertex->SetBranchAddress("all_reco_tracks_dist_from_vertex",&vall_reco_tracks,&ballt);
 	file->tvertex->SetBranchAddress("all_reco_showers_dist_from_vertex",&vall_reco_showers,&balls);
+    //file->tvertex->SetBranchAddress("all_gamma_decay_angles", &vall_gamma_decays);
 	file->tvertex->SetBranchAddress("pi0_class_number",&pi0_class_number);
-	// New branches for FRIEND TREEEE 
 
-
+	// New branches for FRIEND TREE 
 	double v_pi0_class_number=0;
 	std::vector<int> vec_reco_showers_within;
 	std::vector<int> vec_reco_tracks_within;
+    std::vector<double> vec_gamma_decay_angles;
 
 	int reco_showers_within_10 = 0;
 	int reco_showers_within_20 = 0;
@@ -404,14 +451,12 @@ int bdt_precalc::genPi0Info(){
 
 	TBranch *b_vec_showers = friend_tree->Branch("num_reco_showers_within_Xcm_vertex",&vec_reco_showers_within);
 	TBranch *b_vec_tracks = friend_tree->Branch("num_reco_tracks_within_Xcm_vertex",&vec_reco_tracks_within);
-
 	TBranch *b_reco_showers_within_10 = friend_tree->Branch("num_reco_showers_within_10cm_vertex",&reco_showers_within_10);
 	TBranch *b_reco_showers_within_20 = friend_tree->Branch("num_reco_showers_within_20cm_vertex",&reco_showers_within_20);
 	TBranch *b_reco_showers_within_30 = friend_tree->Branch("num_reco_showers_within_30cm_vertex",&reco_showers_within_30);
 	TBranch *b_reco_tracks_within_10 = friend_tree->Branch("num_reco_tracks_within_10cm_vertex",&reco_tracks_within_10);
 	TBranch *b_reco_tracks_within_20 = friend_tree->Branch("num_reco_tracks_within_20cm_vertex",&reco_tracks_within_20);
 	TBranch *b_reco_tracks_within_30 = friend_tree->Branch("num_reco_tracks_within_30cm_vertex",&reco_tracks_within_30);
-
 	TBranch *b_pi0_class_number = friend_tree->Branch("pi0_class_number",&v_pi0_class_number);
 
 	int NN = file->tvertex->GetEntries();
@@ -428,9 +473,6 @@ int bdt_precalc::genPi0Info(){
 
 		file->tvertex->GetEntry(i);
 		v_pi0_class_number = pi0_class_number;
-
-
-
 
 		for(double c=1; c<32.0; c=c+2.0){
 			vec_reco_showers_within.push_back(0);
