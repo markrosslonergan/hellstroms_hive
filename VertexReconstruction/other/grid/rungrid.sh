@@ -21,7 +21,7 @@ VIN=vertex_quality_input
 VOUT=vertex_quality_output
 
 EXEC=RunVertexQuality
-VVDICT=VVDict_rdict.pcm
+VVDICT=libVVDict_rdict.pcm
 INPUT_PERM_FILE=permutations_$PROCESS.root
 #INPUT_FILE=le_bnb_cosmic_200.root
 #INPUT_FILE=le_nc_delta_rad_cosmic_200.root
