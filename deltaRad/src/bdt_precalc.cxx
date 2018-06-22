@@ -368,43 +368,48 @@ int bdt_precalc::genPi0BoostAngle() {
     TTree *friend_tree = new TTree("pi0_boost", "pi0_boost");
     int most_energetic_shower_index = 0;
     int second_most_energetic_shower_index = 1;
-    double reco_shower_helper_energy = 0.;
-    double reco_shower_dirx = 0.;
-    double reco_shower_diry = 0.;
-    double reco_shower_dirz = 0.;
-    std::vector<double> *vall_gamma_decays = 0; // Might not need this?
+    double E, E1, E2;
+    double px, py, pz, px1, py1, pz1, px2, py2, pz2;
+    double reco_shower1_dirx = 0.;
+    double reco_shower1_diry = 0.;
+    double reco_shower1_dirz = 0.;
+    double reco_shower2_dirx = 0.;
+    double reco_shower2_diry = 0.;
+    double reco_shower2_dirz = 0.;
 
     // Get necessary info from BDT files
     file->tvertex->SetBranchAddress("most_energetic_shower_index", &most_energetic_shower_index);
     file->tvertex->SetBranchAddress("second_most_energetic_shower_index", &second_most_energetic_shower_index);
-    file->tvertex->SetBranchAddress("reco_shower_helper_energy", &reco_shower_helper_energy);
+    file->tvertex->SetBranchAddress("reco_shower_helper_energy", &E);
     file->tvertex->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx);
     file->tvertex->SetBranchAddress("reco_shower_diry", &reco_shower_diry);
     file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz);
 
-    // Convenient strings for pion momentum components
-    std::string E1 = "reco_shower_helper_energy[most_energetic_shower_index]"; 
-    std::string E2 = "reco_shower_helper_energy[second_most_energetic_shower_index]"; 
-    std::string p_pi_x = E1+"*reco_shower_dirx[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirx[second_most_energetic_shower_index]";
-    std::string p_pi_y = E1+"*reco_shower_diry[most_energetic_shower_index]"+"+"+E2+"*reco_shower_diry[second_most_energetic_shower_index]";
-    std::string p_pi_z = E1+"*reco_shower_dirz[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirz[second_most_energetic_shower_index]";
-
     TLorentzVector p_pi;
     double gamma_decay_angle = 0.;
 
-    // Friend tree branches
+    // Friend tree branch
     TBranch *b_gamma_decay_angle = friend_tree->Branch("reco_gamma_decay_angle", &gamma_decay_angle);
 
 	int NN = file->tvertex->GetEntries();
 	for(int i=0; i< file->tvertex->GetEntries(); i++) {
-
 		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
 
 		file->tvertex->GetEntry(i);
+        Int_t shower1 = most_energetic_shower_index;
+        Int_t shower2 = second_most_energetic_shower_index;
+        px1 = E[shower1];
+        //px = px1 + px2;
+        //py = py1 + py2;
+        //pz = pz1 + pz2;
+        //E = E1 + E2;
+        
+        //p_pi.SetPxPyPzE(px, py, pz, E);
+        //TVector3 boostVec = p_pi.BoostVector();
+        //p_pi.Boost(boostVec);
+        //gamma_decay_angle = p_pi.Angle(boostVec);
 
 		friend_tree->Fill();
-
-
 	}
 
 	friend_file_out->cd();
