@@ -366,21 +366,18 @@ int bdt_precalc::genTrackInfo(){
 // Function to calculate the pi0 -> 2gamma decay angle, relative to boost vector
 int bdt_precalc::genPi0BoostAngle() {
     TTree *friend_tree = new TTree("pi0_boost", "pi0_boost");
-    int most_energetic_shower_index = 0;
-    int second_most_energetic_shower_index = 1;
-    double E, E1, E2;
-    double px, py, pz, px1, py1, pz1, px2, py2, pz2;
-    double reco_shower1_dirx = 0.;
-    double reco_shower1_diry = 0.;
-    double reco_shower1_dirz = 0.;
-    double reco_shower2_dirx = 0.;
-    double reco_shower2_diry = 0.;
-    double reco_shower2_dirz = 0.;
+    Int_t most_energetic_shower_index;
+    Int_t second_most_energetic_shower_index;
+    double shower_energies[3];//, E1[3], E2[3]; // 3 possible shower indices (for some reason)
+    double px, py, pz, px1, py1, pz1, px2, py2, pz2, E_pi;
+    double reco_shower_dirx[3];
+    double reco_shower_diry[3];
+    double reco_shower_dirz[3];
 
     // Get necessary info from BDT files
     file->tvertex->SetBranchAddress("most_energetic_shower_index", &most_energetic_shower_index);
     file->tvertex->SetBranchAddress("second_most_energetic_shower_index", &second_most_energetic_shower_index);
-    file->tvertex->SetBranchAddress("reco_shower_helper_energy", &E);
+    file->tvertex->SetBranchAddress("reco_shower_helper_energy", &shower_energies);
     file->tvertex->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx);
     file->tvertex->SetBranchAddress("reco_shower_diry", &reco_shower_diry);
     file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz);
@@ -396,18 +393,22 @@ int bdt_precalc::genPi0BoostAngle() {
 		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
 
 		file->tvertex->GetEntry(i);
-        Int_t shower1 = most_energetic_shower_index;
-        Int_t shower2 = second_most_energetic_shower_index;
-        px1 = E[shower1];
-        //px = px1 + px2;
-        //py = py1 + py2;
-        //pz = pz1 + pz2;
-        //E = E1 + E2;
+        // Set momentum four-vector
+        px1 = shower_energies[most_energetic_shower_index]*reco_shower_dirx[most_energetic_shower_index];
+        py1 = shower_energies[most_energetic_shower_index]*reco_shower_diry[most_energetic_shower_index];
+        pz1 = shower_energies[most_energetic_shower_index]*reco_shower_dirz[most_energetic_shower_index];
+        px2 = shower_energies[second_most_energetic_shower_index]*reco_shower_dirx[second_most_energetic_shower_index];
+        py2 = shower_energies[second_most_energetic_shower_index]*reco_shower_diry[second_most_energetic_shower_index];
+        pz2 = shower_energies[second_most_energetic_shower_index]*reco_shower_dirz[second_most_energetic_shower_index];
+        px = px1 + px2;
+        py = py1 + py2;
+        pz = pz1 + pz2;
+        E_pi = shower_energies[most_energetic_shower_index] + shower_energies[second_most_energetic_shower_index];
         
-        //p_pi.SetPxPyPzE(px, py, pz, E);
-        //TVector3 boostVec = p_pi.BoostVector();
-        //p_pi.Boost(boostVec);
-        //gamma_decay_angle = p_pi.Angle(boostVec);
+        p_pi.SetPxPyPzE(px, py, pz, E_pi);
+        TVector3 boostVec = p_pi.BoostVector();
+        p_pi.Boost(boostVec);
+        gamma_decay_angle = p_pi.Angle(boostVec);
 
 		friend_tree->Fill();
 	}
