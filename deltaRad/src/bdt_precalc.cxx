@@ -366,53 +366,100 @@ int bdt_precalc::genTrackInfo(){
 // Function to calculate the pi0 -> 2gamma decay angle, relative to boost vector
 int bdt_precalc::genPi0BoostAngle() {
     TTree *friend_tree = new TTree("pi0_boost", "pi0_boost");
-    Int_t most_energetic_shower_index;
-    Int_t second_most_energetic_shower_index;
-    double shower_energies[3];//, E1[3], E2[3]; // 3 possible shower indices (for some reason)
-    double px, py, pz, px1, py1, pz1, px2, py2, pz2, E_pi;
-    double reco_shower_dirx[3];
-    double reco_shower_diry[3];
-    double reco_shower_dirz[3];
+    int most_energetic_shower_index;
+    int second_most_energetic_shower_index;
+    double px, py, pz, px1, py1, pz1, px2, py2, pz2, E1, E2, E_pi;
+    double reco_shower_helper_energy[2] ={0};
+    double reco_shower_dirx[2] = {0};
+    double reco_shower_diry[2] = {0};
+    double reco_shower_dirz[2] = {0};
+    //double reco_shower_diry1, reco_shower_diry2;
+    //double reco_shower_dirz1, reco_shower_dirz2;
 
     // Get necessary info from BDT files
     file->tvertex->SetBranchAddress("most_energetic_shower_index", &most_energetic_shower_index);
     file->tvertex->SetBranchAddress("second_most_energetic_shower_index", &second_most_energetic_shower_index);
-    file->tvertex->SetBranchAddress("reco_shower_helper_energy", &shower_energies);
+    file->tvertex->SetBranchAddress("reco_shower_helper_energy", &reco_shower_helper_energy);
     file->tvertex->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx);
     file->tvertex->SetBranchAddress("reco_shower_diry", &reco_shower_diry);
     file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz);
 
     TLorentzVector p_pi;
+    TVector3 preBoost;
     double gamma_decay_angle = 0.;
 
     // Friend tree branch
     TBranch *b_gamma_decay_angle = friend_tree->Branch("reco_gamma_decay_angle", &gamma_decay_angle);
 
+    std::ofstream myfile;
+    myfile.open("output_pi0Boost.txt");
+    int numCut = 0;
 	int NN = file->tvertex->GetEntries();
 	for(int i=0; i< file->tvertex->GetEntries(); i++) {
 		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
-
 		file->tvertex->GetEntry(i);
+
         // Set momentum four-vector
-        px1 = shower_energies[most_energetic_shower_index]*reco_shower_dirx[most_energetic_shower_index];
-        py1 = shower_energies[most_energetic_shower_index]*reco_shower_diry[most_energetic_shower_index];
-        pz1 = shower_energies[most_energetic_shower_index]*reco_shower_dirz[most_energetic_shower_index];
-        px2 = shower_energies[second_most_energetic_shower_index]*reco_shower_dirx[second_most_energetic_shower_index];
-        py2 = shower_energies[second_most_energetic_shower_index]*reco_shower_diry[second_most_energetic_shower_index];
-        pz2 = shower_energies[second_most_energetic_shower_index]*reco_shower_dirz[second_most_energetic_shower_index];
+        /*
+        E1 = reco_shower_helper_energy[most_energetic_shower_index];
+        E2 = reco_shower_helper_energy[second_most_energetic_shower_index];
+        px1 = reco_shower_helper_energy[most_energetic_shower_index]*reco_shower_dirx[most_energetic_shower_index];
+        py1 = reco_shower_helper_energy[most_energetic_shower_index]*reco_shower_diry[most_energetic_shower_index];
+        pz1 = reco_shower_helper_energy[most_energetic_shower_index]*reco_shower_dirz[most_energetic_shower_index];
+        px2 = reco_shower_helper_energy[second_most_energetic_shower_index]*reco_shower_dirx[second_most_energetic_shower_index];
+        py2 = reco_shower_helper_energy[second_most_energetic_shower_index]*reco_shower_diry[second_most_energetic_shower_index];
+        pz2 = reco_shower_helper_energy[second_most_energetic_shower_index]*reco_shower_dirz[second_most_energetic_shower_index];
+        */
+        
+        E1 = reco_shower_helper_energy[most_energetic_shower_index]; // *1000 to conver to MeV (from GeV)
+        E2 = reco_shower_helper_energy[second_most_energetic_shower_index];
+        if (E1 < E2) myfile << "Energies out of order!" << std::endl;
+        if (E2 < 0.030) {
+            myfile << "Subleading shower energy " << E2 << " < 30 MeV" << std::endl;
+            numCut++;
+            continue; // Subleading shower at least 30 MeV
+        }
+        E_pi = E1 + E2; 
+        myfile << "E1 = " << E1 << std::endl;
+        myfile << "E2 = " << E2 << std::endl;
+        px1 = E1*reco_shower_dirx[most_energetic_shower_index]; 
+        py1 = E1*reco_shower_diry[most_energetic_shower_index];
+        pz1 = E1*reco_shower_dirz[most_energetic_shower_index];
+        px2 = E2*reco_shower_dirx[second_most_energetic_shower_index]; 
+        py2 = E2*reco_shower_diry[second_most_energetic_shower_index];
+        pz2 = E2*reco_shower_dirz[second_most_energetic_shower_index];
+         
         px = px1 + px2;
         py = py1 + py2;
         pz = pz1 + pz2;
-        E_pi = shower_energies[most_energetic_shower_index] + shower_energies[second_most_energetic_shower_index];
-        
+        E_pi = E1 + E2;        
         p_pi.SetPxPyPzE(px, py, pz, E_pi);
+        preBoost = p_pi.Vect();
+        myfile << "Pion, pre-boost:" << std::endl;
+        myfile << "\t (" << p_pi.Px() << ", " 
+                         << p_pi.Py() << ", " 
+                         << p_pi.Pz() << ", " 
+                         << p_pi.E()  << ")" << std::endl;
         TVector3 boostVec = p_pi.BoostVector();
+        myfile << "BoostVec:" << std::endl;
+        myfile << "\t (" << boostVec.X() << ", " 
+                         << boostVec.Y() << ", " 
+                         << boostVec.Z() << ")" << std::endl;
         p_pi.Boost(boostVec);
+        myfile << "Pion, post-boost:" << std::endl;
+        myfile << "\t (" << p_pi.Px() << ", " 
+                         << p_pi.Py() << ", " 
+                         << p_pi.Pz() << ", " 
+                         << p_pi.E()  << ")" << std::endl;
         gamma_decay_angle = p_pi.Angle(boostVec);
 
+        myfile << "decay angle = " << gamma_decay_angle << std::endl;
+        myfile << "-----------------------------------------------------------" << std::endl;
+        
 		friend_tree->Fill();
 	}
 
+    myfile << "No. cut events: " << numCut << std::endl;
 	friend_file_out->cd();
 	friend_tree->Write();
 
