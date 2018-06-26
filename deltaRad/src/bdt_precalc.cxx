@@ -373,8 +373,6 @@ int bdt_precalc::genPi0BoostAngle() {
     double reco_shower_dirx[2] = {0};
     double reco_shower_diry[2] = {0};
     double reco_shower_dirz[2] = {0};
-    //double reco_shower_diry1, reco_shower_diry2;
-    //double reco_shower_dirz1, reco_shower_dirz2;
 
     // Get necessary info from BDT files
     file->tvertex->SetBranchAddress("most_energetic_shower_index", &most_energetic_shower_index);
@@ -399,26 +397,12 @@ int bdt_precalc::genPi0BoostAngle() {
 		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
 		file->tvertex->GetEntry(i);
 
-        // Set momentum four-vector
-        /*
-        E1 = reco_shower_helper_energy[most_energetic_shower_index];
-        E2 = reco_shower_helper_energy[second_most_energetic_shower_index];
-        px1 = reco_shower_helper_energy[most_energetic_shower_index]*reco_shower_dirx[most_energetic_shower_index];
-        py1 = reco_shower_helper_energy[most_energetic_shower_index]*reco_shower_diry[most_energetic_shower_index];
-        pz1 = reco_shower_helper_energy[most_energetic_shower_index]*reco_shower_dirz[most_energetic_shower_index];
-        px2 = reco_shower_helper_energy[second_most_energetic_shower_index]*reco_shower_dirx[second_most_energetic_shower_index];
-        py2 = reco_shower_helper_energy[second_most_energetic_shower_index]*reco_shower_diry[second_most_energetic_shower_index];
-        pz2 = reco_shower_helper_energy[second_most_energetic_shower_index]*reco_shower_dirz[second_most_energetic_shower_index];
-        */
-        
-        E1 = reco_shower_helper_energy[most_energetic_shower_index]; // *1000 to conver to MeV (from GeV)
-        E2 = reco_shower_helper_energy[second_most_energetic_shower_index];
-        if (E1 < E2) myfile << "Energies out of order!" << std::endl;
+        E1 = reco_shower_helper_energy[most_energetic_shower_index]; 
+        E2 = reco_shower_helper_energy[second_most_energetic_shower_index]; 
+        // Ensure subleading shower at least 30 MeV
         if (E2 < 0.030) {
-            myfile << "Subleading shower energy " << E2 << " < 30 MeV" << std::endl;
             numCut++;
-            continue; // Subleading shower at least 30 MeV
-        }
+            continue;         } 
         E_pi = E1 + E2; 
         myfile << "E1 = " << E1 << std::endl;
         myfile << "E2 = " << E2 << std::endl;
@@ -434,24 +418,25 @@ int bdt_precalc::genPi0BoostAngle() {
         pz = pz1 + pz2;
         E_pi = E1 + E2;        
         p_pi.SetPxPyPzE(px, py, pz, E_pi);
-        preBoost = p_pi.Vect();
         myfile << "Pion, pre-boost:" << std::endl;
         myfile << "\t (" << p_pi.Px() << ", " 
                          << p_pi.Py() << ", " 
                          << p_pi.Pz() << ", " 
                          << p_pi.E()  << ")" << std::endl;
-        TVector3 boostVec = p_pi.BoostVector();
+
+        TVector3 boostVec = p_pi.BoostVector(); 
         myfile << "BoostVec:" << std::endl;
         myfile << "\t (" << boostVec.X() << ", " 
                          << boostVec.Y() << ", " 
                          << boostVec.Z() << ")" << std::endl;
-        p_pi.Boost(boostVec);
+                         
+        p_pi.Boost(-boostVec);
         myfile << "Pion, post-boost:" << std::endl;
         myfile << "\t (" << p_pi.Px() << ", " 
                          << p_pi.Py() << ", " 
                          << p_pi.Pz() << ", " 
                          << p_pi.E()  << ")" << std::endl;
-        gamma_decay_angle = p_pi.Angle(boostVec);
+        gamma_decay_angle = cos(p_pi.Angle(boostVec));
 
         myfile << "decay angle = " << gamma_decay_angle << std::endl;
         myfile << "-----------------------------------------------------------" << std::endl;
@@ -460,6 +445,7 @@ int bdt_precalc::genPi0BoostAngle() {
 	}
 
     myfile << "No. cut events: " << numCut << std::endl;
+    myfile << "Efficiency: " << (double)(NN-numCut)/NN << std::endl;
 	friend_file_out->cd();
 	friend_tree->Write();
 

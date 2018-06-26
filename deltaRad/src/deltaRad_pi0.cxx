@@ -50,7 +50,7 @@ int main (int argc, char *argv[]){
 		{0,			no_argument, 		0,  0},
 	};
 
-	//some optioni/argument stuff
+	// Some optional argument stuff
 	int iarg = 0; opterr=1; int index;
 	while(iarg != -1)
 	{
