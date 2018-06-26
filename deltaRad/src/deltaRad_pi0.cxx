@@ -136,22 +136,7 @@ int main (int argc, char *argv[]){
 	bdt_flow bkg_flow(    base_cuts,        background_definition,  new_precuts, "1", cosmic_bdt_info, bnb_bdt_info);
 	bdt_flow data_flow(   base_cuts ,	    "1", 			        new_precuts, "1", cosmic_bdt_info, bnb_bdt_info);
 
-	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
-    /*
-	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0cosmic_mcc88_v1.0_PRECUT_2g1p.root", "NCpi0Pure",	 "hist", "",  kBlue-4,  signal_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0cosmic_mcc88_v1.0_PRECUT_2g1p.root", "NCpi0Cosmics", "hist", "",  kBlue-4,  signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(   dir+"samples/mcc88", "vertexed_bnbcosmic_mcc88_v2.0_PRECUT_2g1p.root",	 "BNBPure",	     "hist", "",  kRed-6,   bkg_flow);
-	bdt_file *bnb_cosmics = new bdt_file(   dir+"samples/mcc88", "vertexed_bnbcosmic_mcc88_v2.0_PRECUT_2g1p.root",   "BNBCosmics",   "hist", "",  kRed-6,   bkg_flow);
-	bdt_file *intime = new bdt_file(        dir+"samples/mcc88", "vertexed_intime_v4.0_mcc88_PRECUT_2g1p.root" ,     "IntimeCosmics","hist", "",  kGreen-3, cosmic_flow);
-	// Data files
-	bdt_file *data5e19 = new bdt_file(dir+"samples/data",   "vertexed_data5e19_v11.root",      "Data5e19", "hist ep", "", kBlack, data_flow);
-	bdt_file *bnbext = new bdt_file(  dir+"samples/bnbext", "vertexed_bnbext_mcc88_v8.0.root", "BNBext",   "hist ep", "", kBlack, data_flow);
-    */
-    
-    /*//////////////////////////////////////////////////////
-      NEW TEST FILES
-    ///////////////////////////////////////////////////// */
-    
+	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, bdt_flow ) 
 	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0_fltr_mcc8.9_fresh_v1.0.root", "NCpi0Pure",	   "hist", "",  kRed-7,   signal_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0_fltr_mcc8.9_fresh_v1.0.root", "NCpi0Cosmics", "hist", "",  kRed-7,   signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(   dir+"samples/mcc88", "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBPure",	   "hist", "",  kBlue-4,  bkg_flow);
@@ -173,7 +158,7 @@ int main (int argc, char *argv[]){
 	if(mode_option != "precalc"){
 		for(auto &f: bdt_files){
 			addPreFriends(f,"track");
-			//addPreFriends(f,"pi0");
+			addPreFriends(f,"pi0");
 			addPreFriends(f,"bnbcorrection");
 			f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 		}
@@ -197,6 +182,7 @@ int main (int argc, char *argv[]){
     std::string p_pi_z = E1+"*reco_shower_dirz[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirz[second_most_energetic_shower_index]";
     std::vector<bdt_variable> vars;
 
+    vars.push_back(bdt_variable("sqrt("+p_pi_x+"*"+p_pi_x+"+"+p_pi_y+"*"+p_pi_y+"+"+p_pi_z+"*"+p_pi_z+")", "(100, 100, 1500)", "Reconstructed Pion Momentum[MeV]", true, "d"));
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[most_energetic_shower_index]","(48,0,15)", "Shower 1 dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[second_most_energetic_shower_index]","(48,0,15)", "Shower 2 dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Summed Shower Energy [GeV]", false,"d"));
@@ -206,7 +192,6 @@ int main (int argc, char *argv[]){
     vars.push_back(bdt_variable(invMass,"(50, 0.03, 0.5)", "Two-shower Invariant Mass [GeV]", false, "d"));
     vars.push_back(bdt_variable("reco_shower_helper_energy[most_energetic_shower_index]", "(50, 0, 1)", "Most Energetic Shower Energy", false, "d"));
     vars.push_back(bdt_variable("reco_shower_helper_energy[second_most_energetic_shower_index]", "(50, 0, 1)", "Second Most Energetic Shower Energy", false, "d"));
-    vars.push_back(bdt_variable("sqrt("+p_pi_x+"*"+p_pi_x+"+"+p_pi_y+"*"+p_pi_y+"+"+p_pi_z+"*"+p_pi_z+")", "(100, 100, 1500)", "Reconstructed Pion Momentum[MeV]", false, "d"));
 
 	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Total in Beam-Gate PE",false,"d"));
 	vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from Shower to Flashcenter [cm]",false,"d"));
@@ -222,6 +207,7 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[most_energetic_shower_index],reco_shower_dirx[most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 1 |Cosine Phi|", true,"d"));
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirz[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Theta|", true,"d"));
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirx[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Phi|", true,"d"));
+    vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma Angle (CM Frame)", true, "d"));
     
 	if(istrack=="track"){ 
 		vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
@@ -767,7 +753,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
     */
     else if(mode_option == "precalc"){
 
-			std::vector<bdt_file*> precalc_files = {signal_cosmics};
+			std::vector<bdt_file*> precalc_files = {signal_pure};
 			for(auto &f: precalc_files){
 				bdt_precalc pre(f);
                 // Only uncomment one calcluation at a time, otherwise memory leaks!

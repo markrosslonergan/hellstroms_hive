@@ -11,13 +11,6 @@ int addPreFriends(bdt_file* filein,std::string which){
 }
 
 
-
-int bdt_precalc::gen(std::string which ){
-
-
-
-}
-
 int bdt_precalc::genTrackInfo(){
 
 	//Some constants, not chosen for any huge reason
@@ -365,7 +358,7 @@ int bdt_precalc::genTrackInfo(){
 
 // Function to calculate the pi0 -> 2gamma decay angle, relative to boost vector
 int bdt_precalc::genPi0BoostAngle() {
-    TTree *friend_tree = new TTree("pi0_boost", "pi0_boost");
+    TTree *friend_tree = new TTree("pi0_info", "pi0_info");
     int most_energetic_shower_index;
     int second_most_energetic_shower_index;
     double px, py, pz, px1, py1, pz1, px2, py2, pz2, E1, E2, E_pi;
@@ -391,7 +384,6 @@ int bdt_precalc::genPi0BoostAngle() {
 
     std::ofstream myfile;
     myfile.open("output_pi0Boost.txt");
-    int numCut = 0;
 	int NN = file->tvertex->GetEntries();
 	for(int i=0; i< file->tvertex->GetEntries(); i++) {
 		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
@@ -399,10 +391,6 @@ int bdt_precalc::genPi0BoostAngle() {
 
         E1 = reco_shower_helper_energy[most_energetic_shower_index]; 
         E2 = reco_shower_helper_energy[second_most_energetic_shower_index]; 
-        // Ensure subleading shower at least 30 MeV
-        if (E2 < 0.030) {
-            numCut++;
-            continue;         } 
         E_pi = E1 + E2; 
         myfile << "E1 = " << E1 << std::endl;
         myfile << "E2 = " << E2 << std::endl;
@@ -444,8 +432,6 @@ int bdt_precalc::genPi0BoostAngle() {
 		friend_tree->Fill();
 	}
 
-    myfile << "No. cut events: " << numCut << std::endl;
-    myfile << "Efficiency: " << (double)(NN-numCut)/NN << std::endl;
 	friend_file_out->cd();
 	friend_tree->Write();
 
