@@ -12,8 +12,11 @@ echo "PROCESS " ${PROCESS} >> $log
 echo >> $log
 
 
-RES=/pnfs/uboone/resilient/users/rmurrell
-SCRATCH=/pnfs/uboone/scratch/users/rmurrell
+USER=rmurrell
+
+
+RES=/pnfs/uboone/resilient/users/$USER
+SCRATCH=/pnfs/uboone/scratch/users/$USER
 VIN=vertex_quality_input
 VOUT=vertex_quality_output
 
