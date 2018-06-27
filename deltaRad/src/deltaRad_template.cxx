@@ -136,7 +136,6 @@ int main (int argc, char *argv[]){
 	std::string back_to_back_cut = angle_track_shower+" > -0.95 &&"  + angle_track_shower + "< 0.95";
 	std::string pe_cut = "totalpe_ibg_sum > 20";
 
-
 	//Set up some info about the BDTs to pass along
 	bdt_info bnb_bdt_info("bnb_"+run_tag, "BNB focused BDT","(56,0.37,0.565)");
 	bdt_info cosmic_bdt_info("cosmic_"+run_tag, "Cosmic focused BDT","(56,0.3,0.65)");
@@ -148,7 +147,7 @@ int main (int argc, char *argv[]){
 	//Right now, for this example, we have 1 shower 1 track only
 	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks==1";
 	std::string signal_definition = "is_delta_rad == 1";
-	std::string background_definition = "is_delta_rad == 0";
+	std::string background_definition = "!("+signal_definition+")";
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
 	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1 && track_matched_to_ncdeltarad_proton[0]==1";
