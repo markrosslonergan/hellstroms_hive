@@ -1,7 +1,4 @@
 #include "bdt_sig.h"
-
-
-
 /*
 How do I normalize..
 
@@ -131,7 +128,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 				 significance =0;
 			}else if(background !=0){
                 // Calculate E*P
-				significance = signal/(signal+background)*signal/total_sig*100;
+				significance = signal/(signal+background)*signal/total_sig*100; // E*P
 				//significance = signal/sqrt(background);
 			}else{
 				std::cout<<"method_best_significane_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<<d<<", cut2: "<<d2<<std::endl;

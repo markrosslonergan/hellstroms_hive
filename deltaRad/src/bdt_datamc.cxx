@@ -47,12 +47,15 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	std::vector<TH1*> vec_th1s = {sh0,sh1,sh2,sh3};	
 	std::vector<std::string> data_cuts = {dat_cut_0, dat_cut_1, dat_cut_2, dat_cut_3};
 	std::vector<TH1*> data_th1s = {d0,d1,d2,d3};
-	std::vector<std::string> stage_name = {"All Verticies","Pre-Selection","Post Cosmic BDT","Post BNB BDT"};
+	std::vector<std::string> stage_name = {"All Vertices","Pre-Selection","Post Cosmic BDT","Post BNB BDT"};
 
 
-	{
-		int k=1;
-		//	cobs->cd(k+1);
+	for(int k = 0; k<4; k++){
+    // Change k to number of stage if not using for loop
+    //int k = 0;
+        std::cout << k << std::endl;
+        //std::string stageNum = std::to_string(k);
+		//cobs->cd(k+1);
 		cobs->cd();
 		TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 		pad0top->SetBottomMargin(0); // Upper and lower plot are joined
@@ -67,13 +70,12 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		}else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=4;};
 
 
-
 		vec_stacks.at(k)->SetMaximum(vec_th1s.at(k)->GetMaximum()*1.4);
 		vec_stacks.at(k)->SetMinimum(0.0001);
 		vec_stacks.at(k)->Draw("hist");
 		vec_stacks.at(k)->SetTitle(stage_name.at(k).c_str());
 		vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
-		vec_stacks.at(k)->GetYaxis()->SetTitle("Verticies");
+		vec_stacks.at(k)->GetYaxis()->SetTitle("Vertices");
 		vec_stacks.at(k)->GetYaxis()->SetTitleOffset(1.5);
 		vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum()*1.4));
 		vec_stacks.at(k)->SetMinimum(0.0001);
@@ -93,7 +95,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 			l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
 
-		data_th1s.at(k)->Rebin(data_rebin);
+		//data_th1s.at(k)->Rebin(data_rebin);
 		data_th1s.at(k)->SetMarkerStyle(20);
 		data_th1s.at(k)->SetLineColor(kBlack);
 		data_th1s.at(k)->Draw("same E1");
@@ -121,7 +123,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 		TH1* ratpre = (TH1*)data_th1s.at(k)->Clone(("ratio_"+stage_name.at(k)).c_str());
 		ratpre->Sumw2();
-		vec_th1s.at(k)->Rebin(data_rebin);
+		//vec_th1s.at(k)->Rebin(data_rebin);
 		ratpre->Divide(vec_th1s.at(k));		
 
 		ratpre->SetFillColor(kGray+1);
@@ -152,20 +154,22 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		//t->SetTextFont(43);
 		t->SetTextSize(0.12);
 		t->Draw("same");
-	}
+	
 	//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 	//var_precut.front()->GetYaxis()->SetTitle("Verticies");
-
 
 	if(false){
 		data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist",dat_cut_3.c_str());
 
 	}
 
-
-	std::cout<<"Writing pdf."<<std::endl;
-	cobs->Write();
-	cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+".pdf").c_str(),"pdf");
+        cobs->Write();
+        //cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
+        cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
+        // To avoid renaming everything in the technote
+        if (k ==1 )
+	        cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+".pdf").c_str(),"pdf"); 
+    }
 
 	return 0;
 }
@@ -203,10 +207,10 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	std::vector<std::string> data_cuts = {dat_cut_0, dat_cut_1, dat_cut_2, dat_cut_3};
 
 
-	std::vector<std::string> stage_name = {"All Verticies","Pre-Selection","Post Cosmic BDT","Post BNB BDT"};
+	std::vector<std::string> stage_name = {"All Vertices","Pre-Selection","Post Cosmic BDT","Post BNB BDT"};
 
-	{
-		int k=2;
+    int k = 0;
+	for (k = 0; k < 4; k++) {
 		std::cout<<"On stage: "<<k<<" of bdt_datamc::plotBDTStacks."<<std::endl;	
 		bdt_variable dvar = data_file->getBDTVariable(whichbdt);
 
@@ -229,7 +233,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		vec_stacks.at(k)->Draw("hist");
 		vec_stacks.at(k)->SetTitle(stage_name.at(k).c_str());
 		vec_stacks.at(k)->GetXaxis()->SetTitle(dvar.unit.c_str());
-		vec_stacks.at(k)->GetYaxis()->SetTitle("Verticies");
+		vec_stacks.at(k)->GetYaxis()->SetTitle("Vertices");
 		vec_stacks.at(k)->GetYaxis()->SetTitleOffset(1.5);
 		vec_stacks.at(k)->SetMaximum(summed->GetMaximum()*10);
 		vec_stacks.at(k)->SetMinimum(0.1);
@@ -295,7 +299,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		ratpre->GetXaxis()->SetLabelSize(label_size_ratio);
 		ratpre->GetXaxis()->SetTitle(dvar.unit.c_str());
 		//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
-		//var_precut.front()->GetYaxis()->SetTitle("Verticies");
+		//var_precut.front()->GetYaxis()->SetTitle("Vertices");
 
 		std::string mean = "Norm: "+to_string_prec(NdatEvents/NeventsStack*100,1)+ "%";
 		TText *t = new TText(0.241,1.3,mean.c_str());
@@ -304,13 +308,11 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		t->SetTextSize(0.12);
 		//t->Draw("same");
 
-
-	}
-
-
-	cobs->Write();
-	cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+".pdf").c_str(),"pdf");
-	//cobs->SaveAs(("datamc/"+var.name+".png").c_str(),"png");
+        cobs->Write();
+        //cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+".png").c_str(),"png");
+        cobs->SaveAs(("datamc2/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
+        //cobs->SaveAs(("datamc/"+var.name+".png").c_str(),"png");
+    }
 
 	return 0;
 }

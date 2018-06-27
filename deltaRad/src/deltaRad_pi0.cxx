@@ -50,7 +50,7 @@ int main (int argc, char *argv[]){
 		{0,			no_argument, 		0,  0},
 	};
 
-	//some optioni/argument stuff
+	// Some optional argument stuff
 	int iarg = 0; opterr=1; int index;
 	while(iarg != -1)
 	{
@@ -96,12 +96,13 @@ int main (int argc, char *argv[]){
 
 	//Define the precuts, depending on if you want to use track or notrack	
 	std::string new_precuts;
-    	std::string num_track_cut;
+	std::string fiducial_vertex = "reco_nuvertx > 10 && reco_nuvertx < 246 && reco_nuverty > -107 && reco_nuverty < 97 && reco_nuvertz > 10 && reco_nuvertz < 1026 ";
+    std::string num_track_cut;
 	if(istrack == "track"){
 	    num_track_cut = " == 1 ";
-        new_precuts = "1";
+        //new_precuts = "1";
         // Minimum shower energy cut in GeV
-        //new_precuts = "reco_shower_helper_energy[second_most_energetic_shower_index] > 0.03 "; 
+        new_precuts = "reco_shower_helper_energy[second_most_energetic_shower_index] > 0.03 && track_info.reco_track_good_calo[0]>0 && track_info.reco_track_mean_dEdx[0] > 1 &&"+fiducial_vertex; 
 
 	}else if(istrack == "notrack"){
 		//new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && totalpe_ibg_sum > 50";
@@ -111,8 +112,8 @@ int main (int argc, char *argv[]){
 
 	//Set up 2 bdt_info structs for passing information on what BDT we are running. 
 	//MARK: Now with added binning here, so bdt_file->GetBDTvariable() is much simpler!
-	bdt_info bnb_bdt_info("pi0bnb_"+istrack, "BNB focused BDT", "(65,0.35,0.60)");
-	bdt_info cosmic_bdt_info("pi0cosmic_"+istrack, "Cosmic focused BDT", "(65,0.2,0.62)");
+	bdt_info bnb_bdt_info("pi0bnb_"+istrack, "BNB focused BDT", "(50,0.37,0.57)");
+	bdt_info cosmic_bdt_info("pi0cosmic_"+istrack, "Cosmic focused BDT", "(50,0.3,0.67)");
 	
 
 	// Our signal definition alongside any base cuts we want to make
@@ -135,15 +136,16 @@ int main (int argc, char *argv[]){
 	bdt_flow bkg_flow(    base_cuts,        background_definition,  new_precuts, "1", cosmic_bdt_info, bnb_bdt_info);
 	bdt_flow data_flow(   base_cuts ,	    "1", 			        new_precuts, "1", cosmic_bdt_info, bnb_bdt_info);
 
-	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, bdt_flow )		
-	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0cosmic_mcc88_v1.0_PRECUT_2g1p.root", "NCpi0Pure",	 "hist", "",  kBlue-4,  signal_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0cosmic_mcc88_v1.0_PRECUT_2g1p.root", "NCpi0Cosmics", "hist", "",  kBlue-4,  signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(   dir+"samples/mcc88", "vertexed_bnbcosmic_mcc88_v2.0_PRECUT_2g1p.root",	 "BNBPure",	     "hist", "",  kRed-6,   bkg_flow);
-	bdt_file *bnb_cosmics = new bdt_file(   dir+"samples/mcc88", "vertexed_bnbcosmic_mcc88_v2.0_PRECUT_2g1p.root",   "BNBCosmics",   "hist", "",  kRed-6,   bkg_flow);
-	bdt_file *intime = new bdt_file(        dir+"samples/mcc88", "vertexed_intime_v4.0_mcc88_PRECUT_2g1p.root" ,     "IntimeCosmics","hist", "",  kGreen-3, cosmic_flow);
+	// BDT files, in the form (location, rootfile, name, hisotgram_options, tfile_folder, tag, color, bdt_flow ) 
+	bdt_file *signal_pure    = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0_fltr_mcc8.9_fresh_v1.0.root", "NCpi0Pure",	   "hist", "",  kRed-7,   signal_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir+"samples/mcc88", "vertexed_ncpi0_fltr_mcc8.9_fresh_v1.0.root", "NCpi0Cosmics", "hist", "",  kRed-7,   signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(   dir+"samples/mcc88", "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBPure",	   "hist", "",  kBlue-4,  bkg_flow);
+	bdt_file *bnb_cosmics = new bdt_file(   dir+"samples/mcc88", "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBCosmics",   "hist", "",  kBlue-4,  bkg_flow);
+	bdt_file *intime = new bdt_file(        dir+"samples/mcc88", "vertexed_intime_mcc8.9_fresh_v2.0.root",     "IntimeCosmics","hist", "",  kGreen-3, cosmic_flow);
 	// Data files
-	bdt_file *data5e19 = new bdt_file(dir+"samples/data",   "vertexed_data5e19_v11.root",      "Data5e19", "hist ep", "", kBlack, data_flow);
-	bdt_file *bnbext = new bdt_file(  dir+"samples/bnbext", "vertexed_bnbext_mcc88_v8.0.root", "BNBext",   "hist ep", "", kBlack, data_flow);
+	bdt_file *data5e19 = new bdt_file(dir+"samples/data",   "vertexed_data5e19_mcc8.9_fresh_v3.0.root", "Data5e19", "hist ep", "", kBlack, data_flow);
+	bdt_file *bnbext = new bdt_file(  dir+"samples/bnbext", "vertexed_bnbext_mcc8.9_fresh_v2.0.root",   "BNBext",   "hist ep", "", kBlack, data_flow);
+    
 
 	std::vector<bdt_file*> bdt_files = {data5e19, bnbext, signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime};
 
@@ -151,39 +153,42 @@ int main (int argc, char *argv[]){
 	//you get access to these with track_info.XXX
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"Going to add any precomputed tree friends, or any trained BDT responses   "<<std::endl;
-	std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
+	std::cout<<"If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-	for(auto &f: bdt_files){
-		//addPreFriends(f,"track");
-		f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
+	if(mode_option != "precalc"){
+		for(auto &f: bdt_files){
+			addPreFriends(f,"track");
+			addPreFriends(f,"pi0");
+			addPreFriends(f,"bnbcorrection");
+			f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
+		}
 	}
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
 
 
-	//Variables!
+	// Define BDT variables, starting with some convenient strings
 	std::string angle_track_shower1 ="(reco_track_dirx[longest_asso_track_index]*reco_shower_dirx[most_energetic_shower_index]+reco_track_diry[longest_asso_track_index]*reco_shower_diry[most_energetic_shower_index]+reco_track_dirz[longest_asso_track_index]*reco_shower_dirz[most_energetic_shower_index])";
 	std::string angle_track_shower2 ="(reco_track_dirx[longest_asso_track_index]*reco_shower_dirx[second_most_energetic_shower_index]+reco_track_diry[longest_asso_track_index]*reco_shower_diry[second_most_energetic_shower_index]+reco_track_dirz[longest_asso_track_index]*reco_shower_dirz[second_most_energetic_shower_index])";
 	std::string angle_shower1_shower2 ="reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz[0]*reco_shower_dirz[1]";
-	//std::string angle_shower1_shower2 ="reco_shower_dirx[most_energetic_shower_index]*reco_shower_dirx[second_most_energetic_shower_index]+reco_shower_diry[most_energetic_shower_index]*reco_shower_diry[second_most_energetic_shower_index]+reco_shower_dirz[most_energetic_shower_index]*reco_shower_dirz[second_most_energetic_shower_index]";
-
     std::string E1 = "reco_shower_helper_energy[most_energetic_shower_index]"; 
     std::string E2 = "reco_shower_helper_energy[second_most_energetic_shower_index]"; 
     // Invariant mass for two massless particles
     std::string invMass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+angle_shower1_shower2+"))";
-    
+    // Pion momentum components
+    std::string p_pi_x = E1+"*reco_shower_dirx[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirx[second_most_energetic_shower_index]";
+    std::string p_pi_y = E1+"*reco_shower_diry[most_energetic_shower_index]"+"+"+E2+"*reco_shower_diry[second_most_energetic_shower_index]";
+    std::string p_pi_z = E1+"*reco_shower_dirz[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirz[second_most_energetic_shower_index]";
     std::vector<bdt_variable> vars;
 
-    //vars.push_back(bdt_variable("sqrt(2.0*"+E1+"*"+E2+"*(1.0-reco_shower_dirx[most_energetic_shower_index]*reco_shower_dirx[second_most_energetic_shower_index]+reco_shower_diry[most_energetic_shower_index]*reco_shower_diry[second_most_energetic_shower_index]+reco_shower_dirz[most_energetic_shower_index]*reco_shower_dirz[second_most_energetic_shower_index]))", "(20, 0., 0.5)", "Shower Invariant Mass [GeV/c]", false, "d"));
+    vars.push_back(bdt_variable("sqrt("+p_pi_x+"*"+p_pi_x+"+"+p_pi_y+"*"+p_pi_y+"+"+p_pi_z+"*"+p_pi_z+")", "(100, 100, 1500)", "Reconstructed Pion Momentum[MeV]", true, "d"));
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[most_energetic_shower_index]","(48,0,15)", "Shower 1 dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[second_most_energetic_shower_index]","(48,0,15)", "Shower 2 dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Summed Shower Energy [GeV]", false,"d"));
 	vars.push_back(bdt_variable("reco_shower_length[most_energetic_shower_index]","(25,0,125)","Most Energetic Shower Length [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_length[second_most_energetic_shower_index]","(25,0,125)","Least Energetic Shower Length [cm]",false,"d"));
     vars.push_back(bdt_variable(angle_shower1_shower2,"(50, -1, 1)", "Angle between Showers", false, "d"));
-    //vars.push_back(bdt_variable(E1, "(50, 0, 1)", "Most Energetic Shower Energy", false, "d"));
-    //vars.push_back(bdt_variable(E2, "(50, 0, 1)", "Second Most Energetic Shower Energy", false, "d"));
     vars.push_back(bdt_variable(invMass,"(50, 0.03, 0.5)", "Two-shower Invariant Mass [GeV]", false, "d"));
     vars.push_back(bdt_variable("reco_shower_helper_energy[most_energetic_shower_index]", "(50, 0, 1)", "Most Energetic Shower Energy", false, "d"));
     vars.push_back(bdt_variable("reco_shower_helper_energy[second_most_energetic_shower_index]", "(50, 0, 1)", "Second Most Energetic Shower Energy", false, "d"));
@@ -202,12 +207,18 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[most_energetic_shower_index],reco_shower_dirx[most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 1 |Cosine Phi|", true,"d"));
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirz[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Theta|", true,"d"));
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirx[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Phi|", true,"d"));
+    vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma Angle (CM Frame)", true, "d"));
     
 	if(istrack=="track"){ 
-		vars.push_back(bdt_variable("reco_track_displacement[longest_asso_track_index]","(25,0,500)","Reconstructed Track Length [cm]", true,"d"));
+		vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
+
+		vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(52,0,12)","Mean Track dE/dx", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(52,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(52,0,24)","Track PIDA",true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(52,0,25)","Track Bragg A",true,"d"));
 		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(50,0,20)","Closest Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
-		vars.push_back(bdt_variable("atan2(reco_track_diry[longest_asso_track_index],reco_track_dirz[longest_asso_track_index])","(50,0,3.14)","Reconstructed Track Theta", true,"d"));
-		vars.push_back(bdt_variable("atan2(reco_track_diry[longest_asso_track_index],reco_track_dirx[longest_asso_track_index])","(50,0,3.14)","Reconstructed Track Phi", true,"d"));
+		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[longest_asso_track_index],reco_track_dirz[longest_asso_track_index]))","(50,-1.0, 1.0)","Reconstructed Track Cosine Theta", true,"d"));
+		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[longest_asso_track_index],reco_track_dirx[longest_asso_track_index]))","(50,-1.0, 1.0)","Reconstructed Track Cosine Phi", true,"d"));
  
 		vars.push_back(bdt_variable(angle_track_shower1,	"(50,-1,1)","|Cosine Track-Shower Angle (Most Energetic)| ",true,"d"));
 		vars.push_back(bdt_variable(angle_track_shower2,	"(50,-1,1)","|Cosine Track-Shower Angle (Second Most Energetic)| ",true,"d"));
@@ -241,8 +252,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	double fcoscut;
 	double fbnbcut;
 	if(istrack == "track"){
-		fcoscut = 0.547014;
-		fbnbcut = 0.521707;
+		fcoscut = 0.54;
+		fbnbcut = 0.515;
 	}else if(istrack == "notrack"){
 		fcoscut = 0.3;
 		fbnbcut = 0.3;
@@ -284,43 +295,42 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	//	cosmic_response.plot_bdt_response(ftest);
         
 		bdt_response bnb_response(bnb_bdt_info, signal_pure, bnb_pure);
+		bdt_response cosmic_response(cosmic_bdt_info, signal_pure, intime);
+        signal_pure->plot_name = "NC #pi^{0}";
+        bnb_pure->plot_name = "BNB";
+        intime->plot_name = "Intime Corsika Cosmics";
 		bnb_response.plot_bdt_response(ftest);
+        cosmic_response.plot_bdt_response(ftest);
 
 	}	
 	else if(mode_option == "recomc"){
 
-	//First off, what MC catagories do you want to stack?
+	    // First off, what MC catagories do you want to stack?
     	std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0}","NC BNB Background", "CC BNB Background", "NC #Delta Radiative", "Two Cosmic Showers", "One Cosmic Shower"};
-	//How are they defined, cutwise?
-	std::vector<std::string> recomc_cuts = {
+	    // How are they defined, cutwise?
         // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
-		"ccnc == 1 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1",
+        std::string signal = "ccnc == 1 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1";
         // CC pi0 background
-		"ccnc == 0 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1",
+        std::string bkg1 = "ccnc == 0 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1"; 
         // Other NC BNB events where either (a) one of the showers isn't photon-induced, or (b) one doesn't come from pi0
-		"(true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && ccnc == 1 && true_shower_origin[0]==1 && true_shower_origin[1]==1",
+        std::string bkg2 = "(true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && ccnc == 1 && true_shower_origin[0]==1 && true_shower_origin[1]==1";
         // Same as previous, but for CC events
-		"(true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && ccnc == 0 && true_shower_origin[0]==1 && true_shower_origin[1]==1",
+        std::string bkg3 = "(true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && ccnc == 0 && true_shower_origin[0]==1 && true_shower_origin[1]==1";
         // Delta radiative is now considered a (very small) background
-	    "reco_asso_showers==1 && true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] != 111 && is_delta_rad == 1 && true_shower_origin==1",
+        std::string bkg4 = "reco_asso_showers==1 && true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] != 111 && is_delta_rad == 1 && true_shower_origin==1";
         // Cosmics
-		"true_shower_origin[0]==2 && true_shower_origin[1]==2",
+        std::string bkg5 = "true_shower_origin[0]==2 && true_shower_origin[1]==2";
         // Other. For now, just case where one shower is cosmic, but not both
-		"(true_shower_origin[0]==2 || true_shower_origin[1]==2) && !(true_shower_origin[0]==2 && true_shower_origin[1]==2)", 
+        std::string bkg6 = "(true_shower_origin[0]==2 || true_shower_origin[1]==2) && !(true_shower_origin[0]==2 && true_shower_origin[1]==2)";
         // Other; defined as "!" versions of above
-		//"!(true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111) && !(true_shower_origin[0] == 2 && true_shower_origin[1] == 2)"  
-         
-        /* 
-        // Check if either shower came from electron
-		"true_shower_origin[most_energetic_shower_index] ==1 && true_shower_origin[second_most_energetic_shower_index]==1 && (abs(true_shower_pdg[most_energetic_shower_index]) ==11 || abs(true_shower_pdg[second_most_energetic_shower_index])==11)",
-        // Check for cases where either associated photon shower didn't come from pi0
-		"(true_shower_pdg[most_energetic_shower_index] != 22 || true_shower_pdg[second_most_energetic_shower_index] != 22 || true_shower_parent_pdg[most_energetic_shower_index] != 111 || true_shower_parent_pdg[second_most_energetic_shower_index] != 111) && true_shower_origin[most_energetic_shower_index]==1 && true_shower_origin[second_most_energetic_shower_index]==1 && abs(true_shower_pdg[most_energetic_shower_index])!=11 && abs(true_shower_pdg[second_most_energetic_shower_index])!=11", 
-        */
-	};
+        std::string other = "!("+signal+"&&"+bkg1+"&&"+bkg2+"&&"+bkg3+"&&"+bkg4+"&&"+bkg5+"&&"+bkg6+")";
+	    std::vector<std::string> recomc_cuts = {signal, bkg1,bkg2, bkg3, bkg4, bkg5, bkg6, other};
 
     
 	//and what colors
-	std::vector<int> recomc_cols = {kRed-7, kRed+1, kMagenta+1, kBlue+3, kPink+1, kGreen+1, kGreen+3};
+    //{kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue,  kGreen+1,kBlue-7}
+	//std::vector<int> recomc_cols = {kRed-7, kRed+1, kMagenta+1, kBlue+3, kPink+1, kGreen+1, kGreen+3};
+	std::vector<int> recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue, kGreen+1, kBlue-7};
 
         std::cout << "Done adding TreeFiends" << std::endl;
 		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols,istrack);
@@ -334,7 +344,6 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
             test.plot_recomc(ftest, signal_cosmics, v, fcoscut, fbnbcut);
             test.plot_recomc(ftest, bnb_cosmics, v, fcoscut, fbnbcut);
             h++;
-            std::cout << "h = " << h << std::endl;
             if (h > 1) break;  
 		}	
     }  
@@ -360,6 +369,9 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 
 	}else if(mode_option == "stack"){
+        signal_cosmics->col=kRed-7;
+        bnb_cosmics->col=kBlue;
+        bnbext->col=kGreen+2;
 		bdt_stack obs("obs");
 		obs.addToStack(signal_cosmics);
 		obs.addToStack(bnb_cosmics);
@@ -373,54 +385,176 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		obs.plotBDTStacks(ftest,bnb_bdt_info, fcoscut, fbnbcut);
         std::cout << "Done" << std::endl;
 
-	}     
-    
-    else if(mode_option == "datamc"){
+	}else if(mode_option == "datamc"){
+        
+        //signal_cosmics->col=kRed-7;
+        //bnb_cosmics->col=kBlue;
+        bnbext->col=kGreen-3;
+	    bnbext->fillstyle = 3333;
+        bdt_stack *obs = new bdt_stack(istrack+"_datamc");
+        //obs->plot_pot = 5e19;
+        obs->plot_pot = 4.801e19;
+        obs->addToStack(signal_cosmics);
+        obs->addToStack(bnb_cosmics);
+        obs->addToStack(bnbext);
+
+        //bdt_stack *obs2 = new bdt_stack(istrack+"_extintime");
+        //obs2->plot_pot = 5e19;
+        //obs2->addToStack(intime);
+
+        bdt_stack *obs3 = new bdt_stack(istrack+"_overlaymc");
+        obs3->plot_pot = 5e19;
+        obs3->addToStack(bnbext);
 
 
-			bdt_stack *obs = new bdt_stack(istrack+"_datamc");
-			obs->plot_pot = 5e19;
-			obs->addToStack(signal_cosmics);
-			obs->addToStack(bnb_cosmics);
-            bnbext->col=kGreen-3;
-			obs->addToStack(bnbext);
+        int ip=0;
+        //for(auto &v:vars){
+        //for(auto &v = vars.at(2); v < 100; v++ ) {
+            //break;
+            ip++;
+            bdt_datamc tdatamc(data5e19, obs);
+            //bdt_datamc tdatamc2(bnbext, obs2);
+            bdt_datamc tdatamc3(data5e19, obs3);
+            //tdatamc.plotStacks(ftest,  v,fcoscut,fbnbcut);
+            tdatamc.plotStacks(ftest,  vars.at(6),fcoscut,fbnbcut);
+            //tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
+            //tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
+            //return 0;
 
-			bdt_stack *obs2 = new bdt_stack(istrack+"_extintime");
-			obs2->plot_pot = 5e19;
-			obs2->addToStack(intime);
+        //}
 
-			bdt_stack *obs3 = new bdt_stack(istrack+"_overlaymc");
-			obs3->plot_pot = 5e19;
-			obs3->addToStack(bnb_cosmics);
+        bdt_datamc datamc(data5e19, obs);
+        //bdt_datamc datamc2(bnbext, obs2);
+        bdt_datamc datamc3(data5e19, obs3);
+
+        datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+        datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+        //datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+        //datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+        //datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+        //datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+} 
+
+    else if(mode_option == "vars"){
+
+			std::vector<std::string> title = {"All Vertices","Pre-Selection Cuts", "Post Cosmic BDT", "Post BNB BDT"};
+
+			if(true){
+				for(auto &v:vars){
+					TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_cosmo").c_str(), ("cvar_"+v.name+"_cosmo").c_str(),2200,1200);
+					c_var->Divide(2,1);
+					c_var->cd();
+
+					for(int j=0; j<4;j++){	
+
+						std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
+						std::string cut_intime = intime->getStageCuts(j,fcoscut,fbnbcut); 
 
 
-			int ip=0;
-			for(auto &v:vars){
-				//break;
-				ip++;
-				bdt_datamc tdatamc(data5e19, obs);
-				//bdt_datamc tdatamc2(bnbext, obs2);
-				//bdt_datamc tdatamc3(overlay, obs3);
-				tdatamc.plotStacks(ftest,  v ,fcoscut,fbnbcut);
-				//tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
-				//tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
-				return 0;
+						TH1* sig = signal_pure->getTH1(v,cut_signal.c_str(),v.safe_name+"_sig_cosmo_var" ,1.0);
+						TH1* bkg = intime->getTH1(v,cut_intime.c_str(),v.safe_name+"_bkg_cosmo_var" ,1.0);
+
+						sig->Scale(1.0/sig->Integral());			
+						bkg->Scale(1.0/bkg->Integral());			
+						sig->SetLineColor(kRed-7);
+						bkg->SetLineColor(kGreen-3);
+						sig->SetLineWidth(2);
+						bkg->SetLineWidth(2);
+
+
+						sig->SetFillColor(kRed-7);
+						bkg->SetFillColor(kGreen-3);
+						sig->SetFillStyle(3445);
+						bkg->SetFillStyle(3454);
+
+						sig->SetTitle(title.at(j).c_str());
+						c_var->cd(j+1);			
+
+						sig->Draw("hist");
+						bkg->Draw("hist same");
+						//sig->GetXaxis()->SetTitle(v.unit.c_str());
+						sig->GetYaxis()->SetTitle("Vertices [Area Normalized]");
+						sig->GetYaxis()->SetTitleOffset(1.5);
+
+						TLegend *l = new TLegend(0.11,0.75,0.89,0.89);
+						l->SetLineColor(kWhite);
+						l->SetFillStyle(0);
+						l->SetNColumns(2);
+
+						l->AddEntry(sig,"NC #pi^{0} Signal","lf");	
+						l->AddEntry(bkg,"Intime Cosmic Background","lf");	
+						l->Draw();
+						double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
+						sig->SetMaximum(max_height*1.3);
+
+
+
+					}
+					c_var->Print(("var/"+istrack+"_cosmic_"+v.safe_unit+".pdf").c_str(),"pdf");
+				}
 
 			}
+			if(true){
+				for(auto &v:vars){
+					TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_bnb").c_str(), ("cvar_"+v.name+"_bnb").c_str(),2200,1200);
+					c_var->Divide(2,1);
+					c_var->cd();
 
-			bdt_datamc datamc(data5e19, obs);
-			bdt_datamc datamc2(bnbext, obs2);
-			//bdt_datamc datamc3(overlay, obs3);
+					for(int j=0; j<4;j++){	
 
-			datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-			datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-			datamc2.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-			datamc2.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-			//datamc3.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-			//datamc3.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-    } 
+						std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
+						std::string cut_bnb = bnb_pure->getStageCuts(j,fcoscut,fbnbcut); 
+
+
+						TH1* sig = signal_pure->getTH1(v,cut_signal.c_str(),v.safe_name+"_sig_bnb_var" ,1.0);
+						TH1* bkg = bnb_pure->getTH1(v,cut_bnb.c_str(),v.safe_name+"_bkg_bnb_var" ,1.0);
+
+						sig->Scale(1.0/sig->Integral());			
+						bkg->Scale(1.0/bkg->Integral());			
+						sig->SetLineColor(kRed-7);
+						bkg->SetLineColor(kBlue-4);
+						sig->SetLineWidth(2);
+						bkg->SetLineWidth(2);
+
+						sig->SetFillColor(kRed-7);
+						bkg->SetFillColor(kBlue-4);
+						sig->SetFillStyle(3445);
+						bkg->SetFillStyle(3454);
+
+						sig->SetTitle(title.at(j).c_str());
+						c_var->cd(j+1);			
+
+						sig->Draw("hist");
+						sig->SetMaximum(sig->GetMaximum()*1.25);
+						bkg->Draw("hist same");
+						//sig->GetXaxis()->SetTitle(v.unit.c_str());
+						sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
+						sig->GetYaxis()->SetTitleOffset(1.5);
+
+						TLegend *l = new TLegend(0.11,0.75,0.89,0.89);
+						l->SetLineColor(kWhite);
+						l->SetFillStyle(0);
+						l->SetNColumns(2);
+
+						l->AddEntry(sig,"NC #pi^{0} Signal","lf");	
+						l->AddEntry(bkg,"BNB Backgrounds","lf");	
+						l->Draw();
+
+						double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
+						sig->SetMaximum(max_height*1.1);
+					}
+					c_var->Print(("var/"+istrack+"_bnb_"+v.safe_unit+".pdf").c_str(),"pdf");
+				}
+			}
+    }
+
+
+
+                    
+                
+
     
-    
+                        /*
     else if(mode_option == "vars"){
 
 		for(auto &v:vars){
@@ -505,9 +639,10 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
                 c_var->Print(("var/cosmic_"+v.safe_name+".png").c_str(),"png");
             }
 		}
+                    */
 
 
-	}/*else if(mode_option == "eff"){
+	/*else if(mode_option == "eff"){
 
 		for(auto &method: TMVAmethods){
 			for(int i=0; i< bdt_files.size(); i++){
@@ -616,16 +751,17 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	}
     */
-    /*
-	 else if(mode_option == "precalc"){
-		//bdt_precalc pre1(s1);pre1.genTrackInfo();
-	bdt_precalc pre2(s2);pre2.genTrackInfo();
-	//	bdt_precalc pre3(s3);pre3.genTrackInfo();
+    else if(mode_option == "precalc"){
 
-//		addPreFriends(bnb_pure,"track");
-
-    }
-    */
+			std::vector<bdt_file*> precalc_files = {signal_pure};
+			for(auto &f: precalc_files){
+				bdt_precalc pre(f);
+                // Only uncomment one calcluation at a time, otherwise memory leaks!
+				//pre.genBNBcorrectionInfo();
+			    //pre.genTrackInfo();
+			    pre.genPi0BoostAngle();
+			}
+		}
 		  
     else {
 		std::cout << "WARNING: " << mode_option << " is an invalid option\n";

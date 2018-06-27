@@ -79,7 +79,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
 
 			//comment back in when made NCpi0 friend trees
-			//weight_branch = "bnbcorrection_info.weight";
+			weight_branch = "bnbcorrection_info.weight";
 
 		}
 	}
@@ -245,7 +245,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 		th1->SetLineWidth(1);
 		th1->SetStats(0);
 		th1->GetXaxis()->SetTitle(var.unit.c_str());
-		th1->GetYaxis()->SetTitle("Verticies");
+		th1->GetYaxis()->SetTitle("Vertices");
 
 		other_cuts = other_cuts+ " && " +"!("+recomc_cuts.at(i)+")";	
 
@@ -276,14 +276,14 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	th1->SetLineWidth(1);
 	th1->SetStats(0);
 	th1->GetXaxis()->SetTitle(var.unit.c_str());
-	th1->GetYaxis()->SetTitle("Verticies");
+	th1->GetYaxis()->SetTitle("Vertices");
 	//ans_th1s.push_back(th1);
 
 	return ans_th1s;	
 }
 
 bdt_variable bdt_file::getBDTVariable(bdt_info info){
-	return bdt_variable(this->tag +"_"+info.identifier+ ".mva", info.binning, info.name+" Response" ,false);
+	return bdt_variable(this->tag +"_"+info.identifier+ ".mva", info.binning, info.name+" Response" ,false, "d");
 }
 
 
