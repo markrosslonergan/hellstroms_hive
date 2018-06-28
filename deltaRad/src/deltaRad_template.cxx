@@ -17,7 +17,7 @@
 #include "bdt_boxcut.h"
 #include "bdt_spec.h"
 
-
+#include <sys/stat.h> //for line 518 "Create a folder for pdf."
 
 
 int main (int argc, char *argv[]){
@@ -26,7 +26,7 @@ int main (int argc, char *argv[]){
 	//===========================================================================================
 
 	//This is the default base directory that data files are stored in, shouldn't need to change unless we update the vertexing
-	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v2/";
+	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v2/"; //Detaulf directory of root files (MC).
 
 
 	std::string mode_option = "fake"; 
@@ -51,7 +51,8 @@ int main (int argc, char *argv[]){
 		{"cosmic",		no_argument,		0, 'c'},
 		{"bnb",			no_argument,		0, 'b'},
 		{0,			no_argument, 		0,  0},
-	};
+	};//./deltaRad --option === ./deltaRad.cxx -o
+
 
 	int iarg = 0; opterr=1; int index;
 	while(iarg != -1)
@@ -117,9 +118,8 @@ int main (int argc, char *argv[]){
 	//===========================================================================================
 
 	//Most TMVA arguments are loaded in here via XML
-	MVALoader xml_methods(xml);
-	std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); 
-
+	MVALoader xml_methods(xml);//multiple variable analysis MVA;  
+	std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); //./deltaRad --xml default.xml   read the "variabls" given in the files. default.xml is the default one.
 
 	//A couple of variable definitions for convienance
 	std::string angle_track_shower ="(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])";
@@ -130,30 +130,33 @@ int main (int argc, char *argv[]){
 	
 	std::string good_calo_cut = "track_info.reco_track_good_calo[0]>0 && track_info.reco_track_mean_dEdx[0] > 1";
 	std::string track_length_cut = "reco_track_displacement[0]<100";
-	std::string min_energy_cut = "reco_shower_helper_energy[0]>0.03 ";
-	std::string min_conversion_cut = "shortest_asso_shower_to_vert_dist > 1";
+	std::string min_energy_cut = "reco_shower_helper_energy[0]>0.03";
+	//std::string min_conversion_cut = "shortest_asso_shower_to_vert_dist > 1";
 	std::string track_direction_cut = "track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0] >= 0.925";
 	std::string back_to_back_cut = angle_track_shower+" > -0.95 &&"  + angle_track_shower + "< 0.95";
 	std::string pe_cut = "totalpe_ibg_sum > 20";
 
 
-	//Set up some info about the BDTs to pass along
+	//New pre-cut for single_electron selection.
+	std::string min_conversion_cut = "shortest_asso_shower_to_vert_dist < 20";// 150 for including all events.
+
+
+	//Set up some info about the BDTs to pass along; bdt_info is the type of variable. This stores information of the bdt: name, location, ariables... 
 	bdt_info bnb_bdt_info("bnb_"+run_tag, "BNB focused BDT","(56,0.37,0.565)");
 	bdt_info cosmic_bdt_info("cosmic_"+run_tag, "Cosmic focused BDT","(56,0.3,0.65)");
 
-	bnb_bdt_info.setTopoName("1#gamma1p");
-	cosmic_bdt_info.setTopoName("1#gamma1p");
+	bnb_bdt_info.setTopoName("1e1p");//name of the output plots.
+	cosmic_bdt_info.setTopoName("1e1p");
 	
 
 	//Right now, for this example, we have 1 shower 1 track only
-	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks==1";
-	std::string signal_definition = "is_delta_rad == 1";
-	std::string background_definition = "is_delta_rad == 0";
+	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks == 1"; //1 shower and track in each vertex.
+	std::string signal_definition = "((nu_pdg == 12 && lep_pdg == 11)||(nu_pdg == -12 && lep_pdg == -11))";//it means it select nu_e&e- event or anti-nu_e&e+ event.
+	std::string background_definition = "abs(nu_pdg) != 12";//events that contains no nu_e or anti-nu_e
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1 && track_matched_to_ncdeltarad_proton[0]==1";
+	std::string true_signal    = "true_shower_origin[0]==1 && true_track_origin[0]==1";
 	std::string true_bkg    = "true_shower_origin[0]==1 && true_track_origin[0]==1";
-
 
 	//This is a vector each containing a precut, they are all added together to make the whole "precut"
 	std::vector<std::string> vec_precuts;
@@ -162,12 +165,12 @@ int main (int argc, char *argv[]){
 	if(mode_option != "train" && mode_option != "app" && mode_option !="vars" && mode_option!="response"){
 		vec_precuts = {pe_cut, fiducial_cut, track_length_cut, min_energy_cut, min_conversion_cut, good_calo_cut, track_direction_cut, back_to_back_cut};
 	}else{
-		vec_precuts = {fiducial_cut, track_length_cut, min_energy_cut, min_conversion_cut, good_calo_cut, track_direction_cut, back_to_back_cut};
+		vec_precuts = {fiducial_cut, track_length_cut, min_energy_cut, min_conversion_cut, good_calo_cut, track_direction_cut, back_to_back_cut}; //see line 124-138
 	}
 
 
 	//We dont currently use postcuts,  but in theory we can here
-	std::string postcuts = "1";
+	std::string postcuts = "1";//1 means pass, not doing it.
 
 
 
@@ -177,9 +180,9 @@ int main (int argc, char *argv[]){
 	//***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
 	//***************************************************************************************************/
 	// Pass in the following (base cuts, definition cuts, vector of precuts, postcuts, cosmid_bdt_info, bnb_bdt_info)
-	// This flow corresponds to 
-	// stage (0) just the basecuts and definition cuts
-	// stage (1) After applying ALL precuts
+	// This flow corresponds to  
+	// stage (0) just the basecuts and definition cuts; All Vertices
+	// stage (1) After applying ALL precuts; Pre-selection
 	// stage (2) After applying the BDT cosmic cut
 	// stage (3) After applying the BDT BNB cuts
 	// stage (4) After applying ALL postcuts
@@ -200,29 +203,27 @@ int main (int argc, char *argv[]){
 	// 2nd argument, is the filename
 	// 3rd argument, is a unique TAG that is used in saving information
 	// 4th argument, is any plotting arguments for root plotting subrutines
-	// 5th argument, is any internal directory in the rootfile
+	// 5th argument, is any internal directory in the rootfile; blank, nothing.
 	// 6th argument, is a color (in roots TColor wheel) that it is plotted with
-	// 7th argument, is the bdt_flow that the file g 
-
-	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v3.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v3.0.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
+	// 7th argument, is the bdt_flow that the file g ; a function (cut) applied to each sample.
+//IntrinsicNue change to IntrinsicNue
+	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_intrinsicnuecosmics_mcc8.9_fresh_v1.0.root",	"IntrinsicNue",	   "hist","",  kRed-7, signal_pure_flow);//change this for single electron, this one apply signal_pure_flow. label them as "NCDeltaRad".
+	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_intrinsicnuecosmics_mcc8.9_fresh_v1.0.root", "IntrinsicNueCosmics", "hist","",  kRed-7, signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
 	bdt_file *intime = new bdt_file(dir, "vertexed_intime_mcc8.9_fresh_v2.0.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_mcc8.9_fresh_v3.0.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
 	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_mcc8.9_fresh_v2.0.root",	"BNBext",	"E1p","",  kBlack, data_flow);
 
+
+    
 	//For conviencance fill a vector with pointers to all the files to loop over.
 	std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext};
 
-	//The LEE signal is bigger than the SM signal by this factor. 
-	signal_pure->scale_data = 3.1;
-	signal_cosmics->scale_data = 3.1;
-
 
 	//In plots, the bdt_file TAG will be used for labels/etc. Here we can add a "plotting name" which is a prettier string for plotting purposes only. If missing revert to tag
-	signal_pure->addPlotName("NC Delta Radiative");
-	signal_cosmics->addPlotName("LEE NC #Delta Rad w/ Corsika");
+	signal_pure->addPlotName("CC #nu_e Intrinsics");//NAME the plot.
+	signal_cosmics->addPlotName("LEE CC #nu_e Intrinsics w/ Corsika");
 	bnb_pure->addPlotName("BNB Backgrounds");
 	bnb_cosmics->addPlotName("BNB w/ Corsika");
 	intime->addPlotName("Intime Corsika cosmics");
@@ -249,7 +250,7 @@ int main (int argc, char *argv[]){
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	if(mode_option != "precalc"){
 		for(auto &f: bdt_files){
-			addPreFriends(f,run_tag);
+			addPreFriends(f,"track");
 			addPreFriends(f,"pi0");
 			addPreFriends(f,"bnbcorrection");
 			f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
@@ -263,7 +264,7 @@ int main (int argc, char *argv[]){
 	//The order of the variables in the vector vars is important. Each variable information is stored in a class (see inc/bdt_variable.h) that is constructed with the following
 	//bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack, std::string intype) : 
 	//1st argument, the variable as a string usable by root's TTrees
-	//2nd argument, the binning with which to plot said variable (num bins, min max)
+	//2nd argument, the binning with which to plot said variable (num bins, min, max)
 	//3rd argument, a human readable label w/ units
 	//4th argument, if the variable is track like only (a bit obsolete here)
 	//5th argument, is the variable double "d" or integer "i"
@@ -271,13 +272,14 @@ int main (int argc, char *argv[]){
 	std::vector<bdt_variable> vars;
 
 	//Just a few strings for simplier variable names
-	std::string shower_mom = "reco_shower_helper_energy[0]"; 
+/*	std::string shower_mom = "reco_shower_helper_energy[0]"; 
 	std::string reco_track_energy = "reco_track_energy_new_legacy[0]+0.938272"; //assuming a proton
 	std::string track_mom  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"-0.938272*0.938272)";
 	std::string invariant_mass = "0.938272*0.938272+2.0*("+reco_track_energy+"*reco_shower_helper_energy[0]-"+track_mom+"*"+shower_mom+"*"+angle_track_shower+")";//of proton photon pair
+*/
 
-
-	vars.push_back(bdt_variable("reco_shower_dedx_plane2[0]","(52,0,7)", "Shower dE/dx Collection Plane [MeV/cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_shower_dedx_plane2[0]","(52,0,7)", "Shower dE/dx Collection Plane [MeV/cm]",false,"d"));//52 beams from 0 to 7. True for track, flase for shower.d for double, i for integer.
+	
 	vars.push_back(bdt_variable("reco_shower_helper_energy[0]","(52,0,0.6)","Reconstructed Shower Energy [GeV]", false,"d"));
 	vars.push_back(bdt_variable("reco_shower_length[0]","(52,0,100)","Shower Length [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_opening_angle[0]","(52,0,0.8)","Shower Opening Angle",false,"d"));
@@ -292,7 +294,7 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("reco_shower_endx[0]","(52,0,250)"," Reconstructed Shower End X pos [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_endy[0]","(52,-110,+110)","Reconstructed Shower End Y pos [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_endz[0]","(52,0,1050)","Reconstructed Shower End Z pos [cm]",false,"d"));
-	vars.push_back(bdt_variable("pi0_info.num_reco_showers_within_10cm_vertex","(10,0,10)","Num Showers within 10cm",false,"i"));
+	//vars.push_back(bdt_variable("pi0_info.num_reco_showers_within_10cm_vertex","(10,0,10)","Num Showers within 10cm",false,"i"));
 
 	//track like ones
 	vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
@@ -300,22 +302,35 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(52,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
 	vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(52,0,24)","Track PIDA",true,"d"));
 	vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(52,0,25)","Track Bragg A",true,"d"));
-	vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(52,0,30)","Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
-	vars.push_back(bdt_variable(invariant_mass,"(52,1,2.5)","Invariant Mass",true,"d"));	
+	//vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(52,0,30)","Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
+	////vars.push_back(bdt_variable(invariant_mass,"(52,1,2.5)","Invariant Mass",true,"d"));//delete this one.
 	vars.push_back(bdt_variable("cos(atan2(reco_track_diry[0],reco_track_dirz[0]))","(52,-1,1)","Reconstructed Track - Cosine Theta", true,"d"));
-	vars.push_back(bdt_variable("cos(atan2(reco_track_diry[0],reco_track_dirx[0]))","(52,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));
+	//vars.push_back(bdt_variable("cos(atan2(reco_track_diry[0],reco_track_dirx[0]))","(52,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));
 	vars.push_back(bdt_variable(angle_track_shower,	"(52,-1,1)","Cosine Track-Shower Angle ",true,"d"));
 	vars.push_back(bdt_variable("reco_track_endx[0]","(52,0,250)"," Reconstructed Track End X pos [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_track_endy[0]","(52,-110,+110)","Reconstructed Track End Y pos [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_track_endz[0]","(52,0,1050)","Reconstructed Track End Z pos [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_track_energy_new_legacy[0]", "(52,0,1)","Track Energy (Best Plane)",true, "d"));
 
+//Add some variables:
+	
+	//vars.push_back(bdt_variable("reco_shower_helper_energy[0]", "(52,0,1)","Reconstructed Shower Energy [GeV]",true, "d"));
 
+	vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(52,0,20)","Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));//changes value only
+
+	vars.push_back(bdt_variable("(min ( (reco_track_endz[0]-reco_shower_startz[0]),(reco_track_startz[0]-reco_shower_startz[0])))","(52,-100,50)",
+			"Distance of a Track Ahead of Shower[cm]",true,"d"));//only works well on z-direction.
+
+//go to line 29 for variables.
+	
  
 
 	//Once you have trained and studied the bdt outputs, here you can fix the value of the BDT cut (stage 2 and 3)
-	double fcoscut = 0.546841;
-	double fbnbcut = 0.518333;
+	double fcoscut = 0.5419;//found by -o sig
+	double fbnbcut = 0.4992;
+	
+	signal_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
+	bnb_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
 
 
 	//===========================================================================================
@@ -355,16 +370,16 @@ int main (int argc, char *argv[]){
 			bnb_response.plot_bdt_response(ftest);
 		}
 	}	
-	else if(mode_option == "recomc"){
+	else if(mode_option == "recomc"){//Labels backgrounds, adjust the name and values of true signal events.
 
 		std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
-		std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
+		std::vector<std::string> recomc_names = {"CC #nu_e Intrinsic", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
 
 
 		std::string  nue = "abs(true_shower_pdg[0]) ==11 && abs(nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)";
 		std::string  michel = "abs(true_shower_pdg[0]) ==11 && abs(true_shower_parent_pdg[0])==13";
 		std::vector<std::string> recomc_cuts = {
-			"true_shower_origin[0]==1 && true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] !=111 && is_delta_rad ==1 ",
+			"true_shower_origin[0]==1 && true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] !=111 && "+ signal_definition,
 			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc==0",
 			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc==1",
 			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] != 111 && is_delta_rad!=1 && true_shower_origin[0]==1",
@@ -411,14 +426,19 @@ int main (int argc, char *argv[]){
 
 
 		TFile *fsig = new TFile(("significance_"+run_tag+".root").c_str(),"recreate");
-		//std::vector<double> ans = scan_significance(fsig, {signal_cosmics} , {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info);
-		std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
+		std::vector<double> ans = scan_significance(fsig, {signal_cosmics} , {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info);
+		//std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
 		std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
 		fsig->Close();
 
 
 	}else if(mode_option == "stack"){
+		
+		if (access("stack",F_OK) == -1){
+	    	    mkdir("stack",0777);//Create a folder for pdf.
+	    	}
+
 		bdt_stack obs(run_tag+"_stack");
 		obs.addToStack(signal_cosmics);
 		obs.addToStack(bnb_cosmics);
@@ -429,8 +449,8 @@ int main (int argc, char *argv[]){
 		int ip=0;
 		for(auto &v:vars){
 			ip++;
-			obs.plotStacks(ftest,  vars.at(1) ,fcoscut,fbnbcut);
-			if(number==1) return 0;
+			obs.plotStacks(ftest, v ,fcoscut,fbnbcut);//vars.at(n)
+			if(number==1) return 0;// -n 1; means pick the first variable.
 		}
 
 		obs.plotBDTStacks(ftest, bnb_bdt_info, fcoscut, fbnbcut);
@@ -499,6 +519,14 @@ int main (int argc, char *argv[]){
 
 		std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
 
+	    	if (access("var",F_OK) == -1){
+	    	    mkdir("var",0777);//Create a folder for pdf.
+	    	}
+	    	else{
+	    	    std::cout<<"vars has been executed; the results locate in the folder: var/"<<std::endl;
+	    	    return 0;
+	    	}
+
 		if(run_cosmic){
 			for(auto &v:vars){
 
@@ -545,7 +573,7 @@ int main (int argc, char *argv[]){
 					l->SetFillStyle(0);
 					l->SetNColumns(2);
 
-					l->AddEntry(sig,"NC #Delta #gamma Signal","lf");	
+					l->AddEntry(sig,"CC #nu_e Intrinsic Signal","lf");	
 					l->AddEntry(bkg,"Intime Cosmic Background","lf");	
 					l->Draw();
 
@@ -611,7 +639,7 @@ int main (int argc, char *argv[]){
 					l->SetFillStyle(0);
 					l->SetNColumns(2);
 
-					l->AddEntry(sig,"NC #Delta #gamma Signal","lf");	
+					l->AddEntry(sig,"NC #nu_e Instrinsic Signal","lf");	
 					l->AddEntry(bkg,"BNB Backgrounds","lf");	
 					l->Draw();
 
@@ -683,7 +711,7 @@ int main (int argc, char *argv[]){
 			std::cout<<"Stage Vertex\t\t"<<nv<<"\t\t"<<nv/start*100<<std::endl;
 			std::cout<<"Stage Topo\t\t"<<ns<<"\t\t"<<ns/start*100<<"\t\t"<<100<<std::endl;
 
-			if(eff_files.at(i)->tag=="NCDeltaRadCosmics"){
+			if(eff_files.at(i)->tag=="IntrinsicNueCosmics"){
 				eff_sig.push_back(nevents/start*100);
 				eff_sig.push_back(ns/start*100);
 			}
@@ -706,14 +734,14 @@ int main (int argc, char *argv[]){
 				double np = eff_files.at(i)->GetEntries(thiscut.c_str())*pot_scale;
 				std::cout<<" + "<<eff_files.at(i)->flow.vec_pre_cuts.at(m)<<"\t||\t"<<np<<"\t("<<np/ns*100<<")\%"<<std::endl;
 
-				if(eff_files.at(i)->tag=="NCDeltaRadCosmics"){
+				if(eff_files.at(i)->tag=="IntrinsicNueCosmics"){
 					eff_sig.push_back(np/start*100);
 				}
 				effs.back().push_back(np);
 
 			}
 
-			if(eff_files.at(i)->tag=="NCDeltaRadCosmics"){
+			if(eff_files.at(i)->tag=="IntrinsicNueCosmics"){
 				eff_sig.push_back(  eff_files.at(i)->GetEntries(eff_files.at(i)->getStageCuts(2,fcoscut,fbnbcut).c_str())*pot_scale/start*100);
 				eff_sig.push_back(  eff_files.at(i)->GetEntries(eff_files.at(i)->getStageCuts(3,fcoscut,fbnbcut).c_str())*pot_scale/start*100);
 			}
@@ -877,7 +905,7 @@ int main (int argc, char *argv[]){
 		obs->addToStack(intime);
 		obs->addToStack(data5e19);
 
-		std::vector<std::string> hnam = {"nu_uBooNE_singlephoton_signal","nu_uBooNE_singlephoton_bkg","nu_uBooNE_singlephoton_intime","nu_uBooNE_singlephoton_data"};
+		std::vector<std::string> hnam = {"nu_uBooNE_singleelectron_signal","nu_uBooNE_singleelectron_bkg","nu_uBooNE_singleelectron_intime","nu_uBooNE_singleelectron_data"};
 		//std::vector<std::string> hnam = {"nu_uBooNE_singlephoton_signal","nu_uBooNE_singlephoton_bkg","nu_uBooNE_singlephoton_intime"};
 		obs->makeSBNspec("test", vars.at(1), fcoscut, fbnbcut,hnam );
 
@@ -886,18 +914,18 @@ int main (int argc, char *argv[]){
 
 
 
-	}else if( mode_option =="test"){
+	}else if( mode_option =="test"){//adjust the name and values of true signal events.
 
 
 
 		std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
-		std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
+		std::vector<std::string> recomc_names = {"CC #nu_e Intrinsic", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
 
 
 		std::string  nue = "abs(true_shower_pdg[0]) ==11 && abs(nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)";
 		std::string  michel = "abs(true_shower_pdg[0]) ==11 && abs(true_shower_parent_pdg[0])==13";
 		std::vector<std::string> recomc_cuts = {
-			"true_shower_origin[0]==1 && true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] !=111 && is_delta_rad ==1 ",
+			"true_shower_origin[0]==1 && true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] !=111 && "+ signal_definition,
 			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc==0",
 			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc==1",
 			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] != 111 && is_delta_rad!=1 && true_shower_origin[0]==1",
