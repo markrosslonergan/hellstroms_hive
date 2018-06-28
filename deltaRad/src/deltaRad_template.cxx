@@ -142,6 +142,7 @@ int main (int argc, char *argv[]){
 
 
 	//Set up some info about the BDTs to pass along; bdt_info is the type of variable. This stores information of the bdt: name, location, ariables... 
+
 	bdt_info bnb_bdt_info("bnb_"+run_tag, "BNB focused BDT","(56,0.37,0.565)");
 	bdt_info cosmic_bdt_info("cosmic_"+run_tag, "Cosmic focused BDT","(56,0.3,0.65)");
 

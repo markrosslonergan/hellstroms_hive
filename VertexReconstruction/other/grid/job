@@ -2,16 +2,17 @@
 
 
 if [ $# -ne 1 ]; then
-    echo "One arguument required:"
-    echo "*submit"
-    echo "*check"
-    echo "*clean"
+    echo "One arguuments required:"
+    echo "->{submit, check, clean}"
     exit 1
 fi
 
 
-VIN=/pnfs/uboone/resilient/users/rmurrell/vertex_quality_input
-OUTPUT=/pnfs/uboone/scratch/users/rmurrell/vertex_quality_output
+USER=rmurrell
+
+
+VIN=/pnfs/uboone/resilient/users/$USER/vertex_quality_input
+OUTPUT=/pnfs/uboone/scratch/users/$USER/vertex_quality_output
 jobnumber=`ls $VIN/permutations/permutations* | wc -l`
 makeupdir=$VIN/makeup 
 
@@ -88,8 +89,8 @@ elif [ "$1" == "makeup" ]; then
 
 elif [ "$1" == "clean" ]; then
 
-    echo rm -rf /pnfs/uboone/scratch/users/rmurrell/vertex_quality_output/
-    rm -rf /pnfs/uboone/scratch/users/rmurrell/vertex_quality_output/*
+    echo rm -rf /pnfs/uboone/scratch/users/$USER/vertex_quality_output/
+    rm -rf /pnfs/uboone/scratch/users/$USER/vertex_quality_output/*
 
 else
  

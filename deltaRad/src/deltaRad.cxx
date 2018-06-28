@@ -192,13 +192,13 @@ int main (int argc, char *argv[]){
 	
 	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 	std::string signal_definition = "is_delta_rad == 1";
-	std::string background_definition = "is_delta_rad == 0";
+	std::string background_definition = "!(" +signal_definition+ ")";
 //	std::string background_definition = "is_delta_rad == 0 && ccnc== 0 &&abs(true_shower_pdg[0]) ==11 && abs(nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)";
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
 	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1";
-
 	std::string true_bkg    = "true_shower_origin[0]==1";
+
 	if(istrack == "track"){
 		true_signal = true_signal+ "&& track_matched_to_ncdeltarad_proton[0]==1";
 		true_bkg = true_bkg +"&& true_track_origin[0]==1";
@@ -236,7 +236,8 @@ int main (int argc, char *argv[]){
 	//Data files
 	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_mcc8.9_fresh_v3.0.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
 	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_mcc8.9_fresh_v2.0.root",	"BNBext",	"E1p","",  kBlack, data_flow);
-	
+
+	//bdt_file *intrinsic = new bdt_file(dir,"vertexed_intrinsicnue_mcc8.9_fresh_v1.0.root","IntrinsicNue","hist","",kYellow,	signal_pure_flow);
 
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
@@ -1036,8 +1037,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 		//std::vector<bdt_file*> bdt_filesB = {bnb_pure,signal_pure};
 		//std::vector<bdt_file*> bdt_filesB = {intime, data5e19, bnbext};
-		std::vector<bdt_file*> bdt_filesB = {signal_pure};
-		//std::vector<bdt_file*> bdt_filesB = {bnbext};
+		std::vector<bdt_file*> bdt_filesB = {bnbext};
 
 		//bdt_precalc pre1(bdt_filesB.at(number));
 		//pre1.genTrackInfo();
