@@ -43,11 +43,11 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	
 
 	//for nice plots make the 50, 25 is quicker tho
-	int nsteps_cosmic = 15;//50
+	int nsteps_cosmic = 10;//50
 	double cut_min_cosmic = 999;
 	double cut_max_cosmic = -999;
 
-	int nsteps_bnb = 15;//50
+	int nsteps_bnb = 5;//50
 	double cut_min_bnb = 999;//0.52;
 	double cut_max_bnb = -999;
 
@@ -63,19 +63,19 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 		if( tmax_bnb >= cut_max_bnb) cut_max_bnb=tmax_bnb;
 
 	}
-	cut_min_cosmic = cut_max_cosmic*0.8;
-	cut_min_bnb = cut_max_bnb*0.8;
+	//cut_min_cosmic = cut_max_cosmic*0.8;
+	//cut_min_bnb = cut_max_bnb*0.8;
 
-	cut_max_cosmic =cut_max_cosmic*0.98;
-	cut_max_bnb =cut_max_bnb*0.98;
+	//cut_max_cosmic =cut_max_cosmic*1.0;
+	//cut_max_bnb =cut_max_bnb*1.0;
 
 	//Zoomed in notrack
-	cut_min_cosmic = 0.535; cut_max_cosmic = 0.56;
-	cut_min_bnb = 0.52; cut_max_bnb = 0.54;
+	cut_min_cosmic = 0.532; cut_max_cosmic = 0.543;
+	cut_min_bnb = 0.498; cut_max_bnb = 0.501;
 
 	//Zoomed in track
-	cut_min_cosmic = 0.54; cut_max_cosmic = 0.58;
-	cut_min_bnb = 0.515; cut_max_bnb = 0.53;
+//	cut_min_cosmic = 0.54; cut_max_cosmic = 0.58;
+//	cut_min_bnb = 0.515; cut_max_bnb = 0.53;
 
 
 	std::cout<<"BNB sig scan from: "<<cut_min_bnb<<" to "<<cut_max_bnb<<std::endl;

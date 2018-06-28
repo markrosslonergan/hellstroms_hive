@@ -13,7 +13,7 @@ int addPreFriends(bdt_file* filein,std::string which){
 		if(does_local_exist){
 			filein->addFriend( which+"_info"  , filename);
 		}else{
-			filein->addFriend( which+"_info"  , filein->dir+"/friends/"+filename);
+			filein->addFriend( which+"_info"  , filein->dir+"friends/"+filename);
 		}
 
 
