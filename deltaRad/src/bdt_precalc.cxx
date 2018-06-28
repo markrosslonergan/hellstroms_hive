@@ -18,6 +18,8 @@ int bdt_precalc::gen(std::string which ){
 
 }
 
+
+
 int bdt_precalc::genTrackInfo(){
 
 	//Some constants, not chosen for any huge reason

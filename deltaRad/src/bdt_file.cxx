@@ -375,6 +375,59 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 	return ans;
 }
 
+int bdt_file::writeStageFriendTree(std::string nam, double bdtvar1, double bdtvar2){
+
+	TFile *f = new TFile((this->tag+"_"+nam).c_str(), "recreate");
+	f->cd();
+	TTree * stage_tree = new TTree("stage_cuts","stage_cuts");
+	std::vector<int> passed(4,0);
+	double weight =0;	
+
+	TBranch *b_s0 = stage_tree->Branch("passed_topological_selection",&passed.at(0));
+	TBranch *b_s1 = stage_tree->Branch("passed_precuts",&passed.at(1));
+	TBranch *b_s2 = stage_tree->Branch("passed_cosmic_bdt_cut",&passed.at(2));
+	TBranch *b_s3 = stage_tree->Branch("passed_bnb_bdt_cut",&passed.at(3));
+	
+	TBranch *b_w = stage_tree->Branch("weight",&weight);
+
+	std::vector<TTreeFormula*> tf_vec;
+
+	TTreeFormula* tf_weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
+
+	for(int i=0; i < 4; i++){
+		tf_vec.push_back( new TTreeFormula(("tf_"+std::to_string(i)).c_str(), this->getStageCuts(i, bdtvar1,bdtvar2).c_str(), tvertex));
+	}
+
+	for(int k=0; k<tvertex->GetEntries(); k++){
+		tvertex->GetEntry(k);
+		if(k%10000 ==0 ){ std::cout<<"On event "<<k<<std::endl;}
+
+		double bnbc = tf_weight->EvalInstance();
+		double pot_scale = this->scale_data;
+		weight = bnbc*pot_scale;
+
+
+		for(int i=0; i < 4; i++){
+			if(tf_vec.at(i)->EvalInstance()){
+				passed.at(i) = 1;
+			}else{
+				passed.at(i) = 0;
+			}
+
+		}
+
+
+		stage_tree->Fill();
+
+	}
+
+	f->cd();
+	stage_tree->Write();
+	f->Close();
+
+return 0;
+}
+
 
 TText * drawPrelim(double x, double y,  std::string ins){
 		TText *tres = new TText(x, y, ins.c_str());

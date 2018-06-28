@@ -143,6 +143,7 @@ struct bdt_file{
 
 		std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
 	
+		int writeStageFriendTree(std::string nam,double,double);
 		int addPlotName(std::string plotin);
 };
 
