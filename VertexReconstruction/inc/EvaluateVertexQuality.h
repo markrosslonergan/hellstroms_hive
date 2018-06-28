@@ -124,7 +124,8 @@ class EvaluateVertexQuality {
 		std::string const & binning,
 		std::string const & weight,
 		std::string const & best_permutation,
-		std::string const & title = "") const;
+		std::string const & title = "",
+		std::string const & xtitle = "") const;
   void PlotParameters(std::vector<std::vector<double> > const & permutation_v,
 		      std::vector<std::vector<std::vector<double> > > const & drawn_values,
 		      std::vector<std::vector<std::pair<double, int>>> const & results,

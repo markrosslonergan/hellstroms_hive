@@ -38,10 +38,10 @@ int main (int argc, char *argv[]){
 	// Just some simple argument things
 	//===========================================================================================
 
-	std::string dir2 = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
-	//std::string dir = "/uboone/data/users/markross/vertexed_v2";//"/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v2/";
+	//std::string dir2 = "/uboone/app/users/markrl/single_photon/hellstroms_hive/hellstroms_hive/";
+	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v2/";
 	//std::string dir2 = "/home/mark/work/uBooNE/photon/tmva/";
-	std::string dir = "/home/mark/work/uBooNE/photon/tmva/samples/fresh_NCDR_bf_v2";
+	//std::string dir = "/home/mark/work/uBooNE/photon/tmva/samples/fresh_NCDR_bf_v2";
 
 	std::string mode_option = "fake"; 
 	std::string xml = "default.xml";
@@ -192,13 +192,13 @@ int main (int argc, char *argv[]){
 	
 	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 	std::string signal_definition = "is_delta_rad == 1";
-	std::string background_definition = "is_delta_rad == 0";
+	std::string background_definition = "!(" +signal_definition+ ")";
 //	std::string background_definition = "is_delta_rad == 0 && ccnc== 0 &&abs(true_shower_pdg[0]) ==11 && abs(nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)";
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
 	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1";
-
 	std::string true_bkg    = "true_shower_origin[0]==1";
+
 	if(istrack == "track"){
 		true_signal = true_signal+ "&& track_matched_to_ncdeltarad_proton[0]==1";
 		true_bkg = true_bkg +"&& true_track_origin[0]==1";
@@ -226,9 +226,9 @@ int main (int argc, char *argv[]){
 	bdt_flow bkg_flow(base_cuts,background_definition, vec_precuts,postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow bkg_pure_flow(base_cuts,background_definition+"&&"+ true_bkg ,vec_precuts,postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow data_flow(base_cuts,"1",	vec_precuts, postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
-
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v3.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
+	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltarad_mcc8.9_fresh_v1.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
+	//bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v3.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v3.0.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
@@ -236,6 +236,9 @@ int main (int argc, char *argv[]){
 	//Data files
 	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_mcc8.9_fresh_v3.0.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
 	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_mcc8.9_fresh_v2.0.root",	"BNBext",	"E1p","",  kBlack, data_flow);
+
+	//bdt_file *intrinsic = new bdt_file(dir,"vertexed_intrinsicnue_mcc8.9_fresh_v1.0.root","IntrinsicNue","hist","",kYellow,	signal_pure_flow);
+
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
 	std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext};
@@ -521,7 +524,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 	}	
 	else if(mode_option == "recomc"){
 
-		//std::vector<int> recomc_cols = {kRed-7, kRed+1, kYellow-7, kOrange-3, kBlue+3, kBlue,  kGreen+1, kBlue-7, kMagenta, kCyan, kOrange};
+		/*
 		std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
 		std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "#pi^{0} #rightarrow #gamma, Outside", "#pi^{0} #rightarrow #gamma, Low E_{#gamma} ","#pi^{0} #rightarrow #gamma, Other","Non #pi^{0} #gamma","BNB electron","BNB other","Cosmic"};
 		std::vector<std::string> recomc_cuts = {
@@ -535,12 +538,31 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 			"true_shower_origin[0] ==2"
 		};
 
+		*/
+		std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
+		std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
+
+
+		std::string  nue = "abs(true_shower_pdg[0]) ==11 && abs(nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)";
+		std::string  michel = "abs(true_shower_pdg[0]) ==11 && abs(true_shower_parent_pdg[0])==13";
+		std::vector<std::string> recomc_cuts = {
+			"true_shower_origin[0]==1 && true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] !=111 && is_delta_rad ==1 ",
+			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc==0",
+			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc==1",
+			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] != 111 && is_delta_rad!=1 && true_shower_origin[0]==1",
+			"true_shower_origin[0] ==1 && "+ nue,
+			"true_shower_origin[0] ==1 && "+ michel,
+			"true_shower_origin[0]==1 && true_shower_pdg[0]!=22 &&  (( abs(true_shower_pdg[0])!=11)  ||( abs(true_shower_pdg[0])==11 && !(abs(nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)) &&!(abs(true_shower_parent_pdg[0])==13)    ))     ",
+			"true_shower_origin[0] ==2 && abs(true_shower_parent_pdg[0])==13",
+			"true_shower_origin[0] ==2 && abs(true_shower_parent_pdg[0])!=13"
+		};
+
+
+
 		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols,istrack);
 
 
-
-
-		if(number==1){
+		if(true){
 			test.is_log = true;
 			if(run_cosmic){
 				test.plot_recomc(ftest, signal_cosmics, signal_cosmics->getBDTVariable(cosmic_bdt_info) , fcoscut,fbnbcut);
@@ -553,7 +575,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 			test.is_log = false;
 		}
-		if(number==0){
+		if(!response_only){
 			int h=0;
 			for(auto &v:vars){
 				test.setRebin(true);
@@ -1017,8 +1039,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 		//std::vector<bdt_file*> bdt_filesB = {bnb_pure,signal_pure};
 		//std::vector<bdt_file*> bdt_filesB = {intime, data5e19, bnbext};
-		std::vector<bdt_file*> bdt_filesB = {signal_pure, bnb_pure, intime, data5e19, bnbext};
-		//std::vector<bdt_file*> bdt_filesB = {bnbext};
+		std::vector<bdt_file*> bdt_filesB = {bnbext};
 
 		//bdt_precalc pre1(bdt_filesB.at(number));
 		//pre1.genTrackInfo();
@@ -1026,11 +1047,11 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 		//pre1.genBNBcorrectionInfo();
 		//pre1.genPi0Info();
 
-		for(auto &f: bdt_files){
+		for(auto &f: bdt_filesB){
 			bdt_precalc pre(f);
-			pre.genBNBcorrectionInfo();
+			//pre.genBNBcorrectionInfo();
 			//pre.genTrackInfo();
-			//pre.genPi0Info();
+			pre.genPi0Info();
 		}
 	}
 	else if(mode_option == "sbnfit"){
@@ -1046,7 +1067,6 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 		std::vector<std::string> hnam = {"nu_uBooNE_singlephoton_signal","nu_uBooNE_singlephoton_bkg","nu_uBooNE_singlephoton_intime","nu_uBooNE_singlephoton_data"};
 		//std::vector<std::string> hnam = {"nu_uBooNE_singlephoton_signal","nu_uBooNE_singlephoton_bkg","nu_uBooNE_singlephoton_intime"};
 		obs->makeSBNspec("test", vars.at(1), fcoscut, fbnbcut,hnam );
-
 
 
 

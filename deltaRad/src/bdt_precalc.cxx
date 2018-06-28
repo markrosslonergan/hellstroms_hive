@@ -6,7 +6,17 @@ double bragg_fnc(double *x, double *par) {
 
 
 int addPreFriends(bdt_file* filein,std::string which){
-	filein->addFriend( which+"_info"  , filein->tag+"_friends.root");
+		std::string filename = filein->tag+"_friends.root";
+
+		std::ifstream ifile(filename.c_str());
+		bool does_local_exist = (bool)ifile;
+		if(does_local_exist){
+			filein->addFriend( which+"_info"  , filename);
+		}else{
+			filein->addFriend( which+"_info"  , filein->dir+"/friends/"+filename);
+		}
+
+
 	return 0;
 }
 

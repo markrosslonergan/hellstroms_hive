@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 /******** Our includes *****/
 
 #include  "bdt_file.h"
