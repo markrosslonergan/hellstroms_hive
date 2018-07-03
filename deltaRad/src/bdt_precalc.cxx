@@ -7,6 +7,7 @@ double bragg_fnc(double *x, double *par) {
 
 int addPreFriends(bdt_file* filein,std::string which){
 	filein->addFriend( which+"_info"  , filein->tag+"_friends.root");
+    std::cout << "Added " << which+"_info" << " from " << filein->tag+"_friends.root" << std::endl;
 	return 0;
 }
 
@@ -193,6 +194,9 @@ int bdt_precalc::genTrackInfo(){
 					dra++;
 
 					c->SaveAs(("truncpics/muon_"+std::to_string(dra)+".png").c_str(),"png");
+                    delete gb;
+                    delete ga;
+                    delete c;
 
 
 				}
@@ -241,6 +245,9 @@ int bdt_precalc::genTrackInfo(){
 
 						exit(EXIT_FAILURE);
 					}
+
+                    delete bragg;
+                    delete pts;
 
 				}else{
 					v_track_good_calo.push_back(0);
@@ -351,6 +358,9 @@ int bdt_precalc::genTrackInfo(){
 	ga->SetLineColor(kRed-7);
 
 	c->Write();
+    delete gb;
+    delete ga;
+    delete c;
 
 
 	return 0;
@@ -359,77 +369,118 @@ int bdt_precalc::genTrackInfo(){
 // Function to calculate the pi0 -> 2gamma decay angle, relative to boost vector
 int bdt_precalc::genPi0BoostAngle() {
     TTree *friend_tree = new TTree("pi0_info", "pi0_info");
-    int most_energetic_shower_index;
-    int second_most_energetic_shower_index;
-    double px, py, pz, px1, py1, pz1, px2, py2, pz2, E1, E2, E_pi;
-    double reco_shower_helper_energy[2] ={0};
-    double reco_shower_dirx[2] = {0};
-    double reco_shower_diry[2] = {0};
-    double reco_shower_dirz[2] = {0};
+    Int_t most_energetic_shower_index = 0;
+    Int_t second_most_energetic_shower_index = 0;
+    Int_t ccnc = 0, reco_asso_showers = 0, reco_asso_tracks = 0;
+    Double_t reco_shower_helper_energy[20] = {0.};
+    Double_t reco_shower_dirx[20] = {0.};
+    Double_t reco_shower_diry[20] = {0.};
+    Double_t reco_shower_dirz[20] = {0.};
+    Double_t gamma_decay_angle = 0.;
+    Double_t gamma_opening_angle_lab = 0.;
+    Double_t gamma_z_angle = 0.;
+    //double gamma_opening_angle_cm = 0.;
+    TBranch *breco_shower_energy = 0;
+    TBranch *breco_shower_dirx = 0;
+    TBranch *breco_shower_diry = 0;
+    TBranch *breco_shower_dirz = 0;
 
     // Get necessary info from BDT files
     file->tvertex->SetBranchAddress("most_energetic_shower_index", &most_energetic_shower_index);
     file->tvertex->SetBranchAddress("second_most_energetic_shower_index", &second_most_energetic_shower_index);
-    file->tvertex->SetBranchAddress("reco_shower_helper_energy", &reco_shower_helper_energy);
-    file->tvertex->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx);
-    file->tvertex->SetBranchAddress("reco_shower_diry", &reco_shower_diry);
-    file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz);
-
-    TLorentzVector p_pi;
-    TVector3 preBoost;
-    double gamma_decay_angle = 0.;
+    file->tvertex->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
+    file->tvertex->SetBranchAddress("reco_shower_helper_energy", &reco_shower_helper_energy, &breco_shower_energy);
+    file->tvertex->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx, &breco_shower_dirx);
+    file->tvertex->SetBranchAddress("reco_shower_diry", &reco_shower_diry, &breco_shower_diry);
+    file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz, &breco_shower_dirz);
 
     // Friend tree branch
     TBranch *b_gamma_decay_angle = friend_tree->Branch("reco_gamma_decay_angle", &gamma_decay_angle);
+    TBranch *b_gamma_opening_angle_lab = friend_tree->Branch("gamma_opening_angle_lab", &gamma_opening_angle_lab);
+    TBranch *b_gamma_z_angle = friend_tree->Branch("gamma_z_angle", &gamma_z_angle);
+    //TBranch *b_gamma_opening_angle_cm = friend_tree->Branch("gamma_opening_angle_cm", &gamma_opening_angle_cm);
 
-    std::ofstream myfile;
-    myfile.open("output_pi0Boost.txt");
+    //std::ofstream myfile;
+    //myfile.open("output_pi0Boost.txt");
 	int NN = file->tvertex->GetEntries();
 	for(int i=0; i< file->tvertex->GetEntries(); i++) {
 		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
 		file->tvertex->GetEntry(i);
+        gamma_decay_angle = -999.;
+        // Check for signal
+        bool hasTwoShowers = (reco_asso_showers == 2);
+        bool goodIndex1 = (most_energetic_shower_index >= 0 && most_energetic_shower_index < 3);
+        bool goodIndex2 = (second_most_energetic_shower_index >= 0 && second_most_energetic_shower_index < 3);
+        if (hasTwoShowers && goodIndex1 && goodIndex2) { 
+            double px = 0., py = 0., pz = 0.; 
+            double px1 = 0., py1 = 0., pz1 = 0.; 
+            double px2 = 0., py2 = 0., pz2 = 0.;
+            double E1 = 0., E2 = 0., E_pi = 0.;
+            E1 = reco_shower_helper_energy[most_energetic_shower_index]; 
+            E2 = reco_shower_helper_energy[second_most_energetic_shower_index]; 
+            E_pi = E1 + E2; 
 
-        E1 = reco_shower_helper_energy[most_energetic_shower_index]; 
-        E2 = reco_shower_helper_energy[second_most_energetic_shower_index]; 
-        E_pi = E1 + E2; 
-        myfile << "E1 = " << E1 << std::endl;
-        myfile << "E2 = " << E2 << std::endl;
-        px1 = E1*reco_shower_dirx[most_energetic_shower_index]; 
-        py1 = E1*reco_shower_diry[most_energetic_shower_index];
-        pz1 = E1*reco_shower_dirz[most_energetic_shower_index];
-        px2 = E2*reco_shower_dirx[second_most_energetic_shower_index]; 
-        py2 = E2*reco_shower_diry[second_most_energetic_shower_index];
-        pz2 = E2*reco_shower_dirz[second_most_energetic_shower_index];
-         
-        px = px1 + px2;
-        py = py1 + py2;
-        pz = pz1 + pz2;
-        E_pi = E1 + E2;        
-        p_pi.SetPxPyPzE(px, py, pz, E_pi);
-        myfile << "Pion, pre-boost:" << std::endl;
-        myfile << "\t (" << p_pi.Px() << ", " 
-                         << p_pi.Py() << ", " 
-                         << p_pi.Pz() << ", " 
-                         << p_pi.E()  << ")" << std::endl;
+            px1 = E1*reco_shower_dirx[most_energetic_shower_index]; 
+            py1 = E1*reco_shower_diry[most_energetic_shower_index];
+            pz1 = E1*reco_shower_dirz[most_energetic_shower_index];
+            px2 = E2*reco_shower_dirx[second_most_energetic_shower_index]; 
+            py2 = E2*reco_shower_diry[second_most_energetic_shower_index];
+            pz2 = E2*reco_shower_dirz[second_most_energetic_shower_index]; 
+            TLorentzVector gamma1(px1, py1, pz1, E1);
+            TLorentzVector gamma2(px2, py2, pz2, E2);
+            gamma_opening_angle_lab = cos(gamma1.Angle(gamma2.Vect()));
 
-        TVector3 boostVec = p_pi.BoostVector(); 
-        myfile << "BoostVec:" << std::endl;
-        myfile << "\t (" << boostVec.X() << ", " 
-                         << boostVec.Y() << ", " 
-                         << boostVec.Z() << ")" << std::endl;
-                         
-        p_pi.Boost(-boostVec);
-        myfile << "Pion, post-boost:" << std::endl;
-        myfile << "\t (" << p_pi.Px() << ", " 
-                         << p_pi.Py() << ", " 
-                         << p_pi.Pz() << ", " 
-                         << p_pi.E()  << ")" << std::endl;
-        gamma_decay_angle = cos(p_pi.Angle(boostVec));
+            TLorentzVector p_pi = gamma1 + gamma2;
+            TVector3 preBoost(p_pi.X(), p_pi.Y(), p_pi.Z());
+            
+            Int_t forwardIndex = 0;
 
-        myfile << "decay angle = " << gamma_decay_angle << std::endl;
-        myfile << "-----------------------------------------------------------" << std::endl;
+            TVector3 boostVec = p_pi.BoostVector(); 
+            p_pi.Boost(-boostVec);
+            gamma1.Boost(-boostVec);
+            gamma2.Boost(-boostVec);
+            
+            if (gamma1.Z() > 0 && gamma2.Z() > 0) {
+                //myfile << "Both showers forward" << std::endl;
+                continue;
+            }
+            else if (gamma1.Z() < 0 && gamma2.Z() < 0) {
+                //myfile << "Both showers backward" << std::endl;
+                continue;
+            }
+            else if (gamma1.Z() > 0 && gamma2.Z() < 0) {
+                forwardIndex = most_energetic_shower_index;
+            }
+            else if (gamma1.Z() < 0 && gamma2.Z() > 0) {
+                forwardIndex = second_most_energetic_shower_index;
+            }
+            else {
+                //myfile << "Uhhhh???" << std::endl;
+                continue;
+            }
+            
+            TVector3 forwardShowerDir(reco_shower_dirx[forwardIndex],
+                                      reco_shower_diry[forwardIndex],
+                                      reco_shower_dirz[forwardIndex]);
+            TVector3 zUnit(0., 0., 1.);
+            gamma_decay_angle = cos(boostVec.Angle(forwardShowerDir));
+            //gamma_decay_angle = cos(p_pi.Angle(forwardShowerDir));
+            gamma_z_angle = cos(zUnit.Angle(boostVec));
+            //gamma_opening_angle_cm = cos(gamma1.Angle(gamma2.Vect()));
+
+            //myfile << "Decay angle = " << gamma_decay_angle << std::endl;
+            //myfile << "Opening angle, lab = " << gamma_opening_angle_lab << std::endl;
+            //myfile << "Opening angle, cm = " << gamma_opening_angle_cm << std::endl;
+            //myfile << "-----------------------------------------------------------" << std::endl;
+        }
         
 		friend_tree->Fill();
+        
+        std::fill_n(reco_shower_dirx, 20, 0);
+        std::fill_n(reco_shower_diry, 20, 0);
+        std::fill_n(reco_shower_dirz, 20, 0);
+        std::fill_n(reco_shower_helper_energy, 20, 0);
+        
 	}
 
 	friend_file_out->cd();

@@ -36,7 +36,7 @@ int main (int argc, char *argv[]){
 	//===========================================================================================
 	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
 
-	std::string mode_option = "train"; 
+	std::string mode_option = "precalc"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
 
@@ -207,11 +207,10 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[most_energetic_shower_index],reco_shower_dirx[most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 1 |Cosine Phi|", true,"d"));
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirz[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Theta|", true,"d"));
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirx[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Phi|", true,"d"));
-    vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma Angle (CM Frame)", true, "d"));
     
 	if(istrack=="track"){ 
+        vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma Angle (CM Frame)", true, "d"));
 		vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
-
 		vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(52,0,12)","Mean Track dE/dx", true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(52,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(52,0,24)","Track PIDA",true,"d"));
@@ -753,13 +752,13 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
     */
     else if(mode_option == "precalc"){
 
-			std::vector<bdt_file*> precalc_files = {signal_pure};
+			std::vector<bdt_file*> precalc_files = {bnb_pure};
 			for(auto &f: precalc_files){
 				bdt_precalc pre(f);
                 // Only uncomment one calcluation at a time, otherwise memory leaks!
 				//pre.genBNBcorrectionInfo();
-			    //pre.genTrackInfo();
-			    pre.genPi0BoostAngle();
+			    pre.genTrackInfo();
+			    //pre.genPi0BoostAngle();
 			}
 		}
 		  
