@@ -387,7 +387,6 @@ int main (int argc, char *argv[]){
 			bnb_response.plot_bdt_response(ftest);
 		}
 	}	
-	else if(mode_option == "recomc"){
 	else if(mode_option == "recomc"){//Labels backgrounds, adjust the name and values of true signal events.
 
 		std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};

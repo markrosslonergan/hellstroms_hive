@@ -23,6 +23,7 @@ for opt in "${OPTION[@]}"; do
 	mkdir $opt
     fi
     for track in "${TRACK[@]}"; do
+	echo "RUNNING: $opt, $track"
 	log=$PWD/run_hh_log/log_${opt}_${track}.txt
 	echo $EXEC --dir $DIR --option "$opt" --track "$track" --xml $XML > $log
 	echo >> $log
