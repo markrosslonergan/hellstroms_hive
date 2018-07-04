@@ -6,11 +6,12 @@ USER=rmurrell
 APP=/uboone/app/users/$USER
 DATA=/uboone/data/users/$USER
 
-EXEC=$APP/hellstroms_hive/deltaRad/build/src/deltaRad
+REPO=$APP/hellstroms_hive
+EXEC=$REPO/deltaRad/build/src/deltaRad
 DIR=$DATA/hellstroms_hive_files
 declare -a OPTION=("response" "recomc" "sig" "stack" "datamc" "vars" "eff" "effdata")
 declare -a TRACK=("track" "notrack")
-XML=$RM/hellstroms_hive/deltaRad/xml/default.xml
+XML=$REPO/deltaRad/xml/default.xml
 
 LOGDIR=$PWD/run_hh_log
 if [ ! -d "$LOGDIR" ]; then
