@@ -270,6 +270,8 @@ int main (int argc, char *argv[]){
 			addPreFriends(f,"track");
 			addPreFriends(f,"pi0");
 			addPreFriends(f,"bnbcorrection");
+			//addPreFriends(f,"pi0boost");
+
 			f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 		}
 	}
@@ -1024,6 +1026,10 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 	}else if( mode_option =="test"){
 
+		signal_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
+
+
+		return 0;
 
 
 		std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
