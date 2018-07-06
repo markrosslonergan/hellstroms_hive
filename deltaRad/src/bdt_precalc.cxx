@@ -374,6 +374,124 @@ int bdt_precalc::genTrackInfo(){
 }
 
 
+int bdt_precalc::genShowerInfo(){
+
+
+	TTree * friend_tree = new TTree("shower_info","shower_info");
+
+	//Some branches for some basic info
+	//	double asso_r
+	int reco_asso_tracks = 0;
+	int reco_asso_showers = 0;
+	
+	double reco_shower_dedx_plane1[100];
+	double reco_shower_dedx_plane2[100];
+	double reco_shower_dedx_plane0[100];
+
+	double reco_shower_dedxnew_plane1[100];
+	double reco_shower_dedxnew_plane2[100];
+	double reco_shower_dedxnew_plane0[100];
+
+	double  reco_shower_dirx[100];
+	double  reco_shower_diry[100];
+	double  reco_shower_dirz[100];
+
+	TBranch *bvec =0;
+
+	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
+	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
+	file->tvertex->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
+
+	file->tvertex->SetBranchAddress("reco_shower_dirx", reco_shower_dirx);
+	file->tvertex->SetBranchAddress("reco_shower_diry", reco_shower_diry);
+	file->tvertex->SetBranchAddress("reco_shower_dirz", reco_shower_dirz);
+
+	file->tvertex->SetBranchAddress("reco_shower_dedx_plane1", reco_shower_dedx_plane1);
+	file->tvertex->SetBranchAddress("reco_shower_dedx_plane2", reco_shower_dedx_plane2);
+	file->tvertex->SetBranchAddress("reco_shower_dedx_plane0", reco_shower_dedx_plane0);
+
+	file->tvertex->SetBranchAddress("reco_shower_dedxnew_plane1", reco_shower_dedxnew_plane1);
+	file->tvertex->SetBranchAddress("reco_shower_dedxnew_plane0", reco_shower_dedxnew_plane0);
+	file->tvertex->SetBranchAddress("reco_shower_dedxnew_plane2", reco_shower_dedxnew_plane2);
+
+	// New branches for FRIEND TREEEE 
+	std::vector<double> vec_amal_dEdx;
+
+	TBranch *b_amal_dEdx = friend_tree->Branch("amalgamated_shower_dEdx",&vec_amal_dEdx);
+
+	TH2D* h2 = new TH2D("h2","h2",50,0,6,50,0,90);
+	TH2D * h1 = new TH2D("h1","h1",50,0,6,50,-180,180);
+	TH2D * h0 = new TH2D("h0","h0",50,0,6,50,-180,180);
+
+	TH2D* hnew2 = new TH2D("hnew2","hnew2",50,0,6,50,0,90);
+	TH2D * hnew1 = new TH2D("hnew1","hnew1",50,0,6,50,-180,180);
+	TH2D * hnew0 = new TH2D("hnew0","hnew0",50,0,6,50,-180,180);
+
+
+	vec_amal_dEdx.clear();
+	int NN = file->tvertex->GetEntries();
+	for(int i=0; i< NN; i++){
+		file->tvertex->GetEntry(i);
+		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
+
+		for(int s=0; s< reco_asso_showers; s++){		
+			double dedx = -999;
+			double shower_theta = atan2(reco_shower_diry[s],reco_shower_dirz[s])*180.0/3.14159;
+			//First lets check the collection plane:
+			//is it with 30 degrees of wire?
+			
+			double mina2 = std::min( fabs(shower_theta-90), fabs(shower_theta+90));
+			double mina0 = std::min( fabs(shower_theta-30), fabs(shower_theta+150));
+			double mina1 =std::min( fabs(shower_theta-150), fabs(shower_theta+30));
+
+
+			if( mina2 > 35){
+				dedx = reco_shower_dedxnew_plane2[s];
+			//Next check 
+			}else{
+
+				if( mina1 > mina2){ // use plane1, or V plane
+					dedx =  reco_shower_dedxnew_plane1[s];
+				}else {//use plane0 or U plane
+					dedx = reco_shower_dedxnew_plane0[s];
+				}
+			}
+
+			h0->Fill(reco_shower_dedx_plane0[s], mina0);
+			h1->Fill(reco_shower_dedx_plane1[s], mina1);
+			h2->Fill(reco_shower_dedx_plane2[s], mina2);
+	
+			hnew0->Fill(reco_shower_dedxnew_plane0[s], mina0);
+			hnew1->Fill(reco_shower_dedxnew_plane1[s], mina1);
+			hnew2->Fill(reco_shower_dedxnew_plane2[s], mina2);
+								
+			vec_amal_dEdx.push_back(dedx);
+		}
+		friend_tree->Fill();
+
+		vec_amal_dEdx.clear();
+	}
+
+
+	friend_file_out->cd();
+	friend_tree->Write();
+
+	TFile *ftest = new TFile("shower.root","recreate");
+	ftest->cd();
+	h2->Write();
+	h0->Write();
+	h1->Write();
+
+	hnew2->Write();
+	hnew0->Write();
+	hnew1->Write();
+
+	ftest->Close();
+
+	return 0;
+}
+
+
 
 int bdt_precalc::genPi0Info(){
 
@@ -492,6 +610,17 @@ int bdt_precalc::genPi0Info(){
 				reco_showers_within_30 ++;
 			}	
 		}
+
+
+		//Loop over all tracks and showers that are NOT associated with this particular vertex. 
+		//For each track and shower use its projection forward and backward to see if its "close" 
+		//Use a 15cm intersection or something like that
+
+		
+
+
+
+
 
 
 		friend_tree->Fill();

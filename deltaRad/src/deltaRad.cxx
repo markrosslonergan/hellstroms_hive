@@ -20,6 +20,7 @@
 #include "bdt_file.h"
 #include "bdt_datamc.h"
 #include "bdt_var.h"
+#include "bdt_varplot.h"
 #include "bdt_precalc.h"
 #include "bdt_info.h"
 #include "bdt_train.h"
@@ -227,8 +228,8 @@ int main (int argc, char *argv[]){
 	bdt_flow bkg_pure_flow(base_cuts,background_definition+"&&"+ true_bkg ,vec_precuts,postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow data_flow(base_cuts,"1",	vec_precuts, postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltarad_mcc8.9_fresh_v1.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
-	//bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v3.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
+	//bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltarad_mcc8.9_fresh_v1.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
+	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v3.0.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltaradcosmics_mcc8.9_fresh_v3.0.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_mcc8.9_fresh_v3.0.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
@@ -325,6 +326,14 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("pi0_info.num_reco_showers_within_10cm_vertex","(10,0,10)","Num Showers within 10cm",false,"i"));
 
 	if(istrack=="track"){
+	
+		//Proton Straightness
+		//Ratio of Track energy via length to track energy via Calometery
+		vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_dirx[0])+ reco_shower_helper_energy[0]*reco_shower_dirx[0]","(52,-1.5,2)","Reconstructed Delta Momentum X [GeV]",true,"d"));
+		vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_diry[0])+ reco_shower_helper_energy[0]*reco_shower_diry[0]","(52,-1.5,2)","Reconstructed Delta Momentum Y [GeV]",true,"d"));
+		vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_dirz[0])+ reco_shower_helper_energy[0]*reco_shower_dirz[0]","(52,-1.5,2)","Reconstructed Delta Momentum Z [GeV]",true,"d"));
+		
+		vars.push_back(bdt_variable( "sqrt( pow("+reco_track_energy +"*(reco_track_dirx[0])+ reco_shower_helper_energy[0]*reco_shower_dirx[0],2)+ pow("+reco_track_energy +"*(reco_track_diry[0])+ reco_shower_helper_energy[0]*reco_shower_diry[0],2))","(52,0,2)","Reconstucted Delta Transverse Momentum [GeV]",true,"d"));
 
 		vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
 
@@ -680,72 +689,14 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 		std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
 
 		if(run_cosmic){
+
 			for(auto &v:vars){
-
-				for(int j=0; j<2;j++){	
-
-					std::string cut_signal = signal_pure->getStageCuts(j,fcoscut,fbnbcut); 
-					std::string cut_intime = intime->getStageCuts(j,fcoscut,fbnbcut); 
-
-
-					TH1* sig = signal_pure->getTH1(v,cut_signal.c_str(),v.safe_name+"_sig_cosmo_var" ,1.0);
-					TH1* bkg = intime->getTH1(v,cut_intime.c_str(),v.safe_name+"_bkg_cosmo_var" ,1.0);
-
-					sig->Scale(1.0/sig->Integral());			
-					bkg->Scale(1.0/bkg->Integral());			
-					sig->SetLineColor(kRed-7);
-					bkg->SetLineColor(kGreen-3);
-					sig->SetLineWidth(2);
-					bkg->SetLineWidth(2);
-				TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_cosmo").c_str(), ("cvar_"+v.name+"_cosmo").c_str(),1200,1200);
-				c_var->cd();
-
-
-					sig->SetFillColor(kRed-7);
-					bkg->SetFillColor(kGreen-3);
-					sig->SetFillStyle(3445);
-					bkg->SetFillStyle(3454);
-
-					if(j!=1){
-						sig->SetTitle(title.at(j).c_str());
-					}else{
-						sig->SetTitle(" ");
-					}
-					
-					c_var->cd();			
-
-					sig->Draw("hist");
-					bkg->Draw("hist same");
-					//sig->GetXaxis()->SetTitle(v.unit.c_str());
-					sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
-					sig->GetYaxis()->SetTitleOffset(1.5);
-
-					TLegend *l = new TLegend(0.11,0.75,0.89,0.89);
-					l->SetLineColor(kWhite);
-					l->SetFillStyle(0);
-					l->SetNColumns(2);
-
-					l->AddEntry(sig,"NC #Delta #gamma Signal","lf");	
-					l->AddEntry(bkg,"Intime Cosmic Background","lf");	
-					l->Draw();
-
-					TText *pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulation Preliminary");
-					pre->Draw();
-
-					TLatex latex;
-					latex.SetTextSize(0.06);
-					latex.SetTextAlign(13);  //align at top
-					latex.SetNDC();
-					latex.DrawLatex(.7,.71, bnb_bdt_info.topo_name.c_str());
-
-
-					double max_height = std::max( sig->GetMaximum(), bkg->GetMaximum());
-					sig->SetMaximum(max_height*1.3);
-
-
-				c_var->Print(("var/"+istrack+"_cosmic_"+v.safe_unit+"_stage_"+std::to_string(j)+".pdf").c_str(),"pdf");
-				}
-				if(number==1) return 0;
+				plot_bdt_variable(signal_pure, intime, vars.at(0), cosmic_bdt_info);
+				plot_bdt_variable(signal_pure, intime, vars.at(19), cosmic_bdt_info);
+				plot_bdt_variable(signal_pure, intime, vars.at(18), cosmic_bdt_info);
+				plot_bdt_variable(signal_pure, intime, vars.at(17), cosmic_bdt_info);
+				plot_bdt_variable(signal_pure, intime, vars.at(16), cosmic_bdt_info);
+				return 0;
 			}
 
 		}
@@ -832,8 +783,8 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 		std::vector<double> eff_sig;
 
-		std::vector<bdt_file*> eff_files = {signal_pure, bnb_cosmics, bnbext};
-		//std::vector<bdt_file*> eff_files = {signal_cosmics, bnb_cosmics, bnbext};
+		//std::vector<bdt_file*> eff_files = {signal_pure, bnb_cosmics, bnbext};
+		std::vector<bdt_file*> eff_files = {signal_cosmics, bnb_cosmics, bnbext};
 		std::vector<std::vector<double>> effs;
 		std::vector<std::vector<double>> pres;
 
@@ -1037,7 +988,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 		//std::vector<bdt_file*> bdt_filesB = {bnb_pure,signal_pure};
 		//std::vector<bdt_file*> bdt_filesB = {intime, data5e19, bnbext};
-		std::vector<bdt_file*> bdt_filesB = {bnbext};
+		std::vector<bdt_file*> bdt_filesB = {signal_pure};
 
 		//bdt_precalc pre1(bdt_filesB.at(number));
 		//pre1.genTrackInfo();
@@ -1049,7 +1000,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 			bdt_precalc pre(f);
 			//pre.genBNBcorrectionInfo();
 			//pre.genTrackInfo();
-			pre.genPi0Info();
+			pre.genShowerInfo();
 		}
 	}
 	else if(mode_option == "sbnfit"){

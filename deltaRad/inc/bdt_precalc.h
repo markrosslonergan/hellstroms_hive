@@ -22,6 +22,8 @@
 #include "TPad.h"
 #include "TH1.h"
 #include "TH1D.h"
+#include "TH2.h"
+#include "TH2D.h"
 #include "TLegend.h"
 #include "THStack.h"
 #include "TGraph.h"
@@ -47,6 +49,7 @@ class bdt_precalc{
 int gen(std::string which );
 int genTrackInfo();
 int genNewTrackInfo();
+int genShowerInfo();
 int genPi0Info();
 int genBNBcorrectionInfo();
 

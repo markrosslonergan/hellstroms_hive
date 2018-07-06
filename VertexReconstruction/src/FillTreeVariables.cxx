@@ -123,6 +123,10 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("all_reco_tracks_dist_from_vertex", &all_reco_tracks_dist_from_vertex);
   fvertex_tree->Branch("all_reco_showers_dist_from_vertex", &all_reco_showers_dist_from_vertex);
 
+  fvertex_tree->Branch("all_reco_tracks_bp_dist_from_vertex", &all_reco_tracks_bp_dist_from_vertex);
+  fvertex_tree->Branch("all_reco_showers_bp_dist_from_vertex", &all_reco_showers_bp_dist_from_vertex);
+
+
   fvertex_tree->Branch("closest_asso_shower_dist_to_flashzcenter", &closest_asso_shower_dist_to_flashzcenter, "closest_asso_shower_dist_to_flashzcenter/D");
 
   fvertex_tree->Branch("most_energetic_shower_index", &most_energetic_shower_index);
@@ -627,6 +631,10 @@ void FillTreeVariables::ResetVertex() {
   reco_track_calo_dEdx.clear();
   reco_track_calo_dEdxnew.clear();
   reco_track_calo_resrange.clear();
+
+  all_reco_showers_bp_dist_from_vertex.clear();
+  all_reco_tracks_bp_dist_from_vertex.clear();
+
 
   all_reco_showers_dist_from_vertex.clear();
   all_reco_tracks_dist_from_vertex.clear();
@@ -1197,19 +1205,49 @@ void FillTreeVariables::FindAllObjectsNearby(DetectorObjects const & detos, Part
 
  for(size_t const i : detos.GetTrackIndices()) {
 
+      bool is_associated = false;	
+     for(size_t const n : pa.GetObjectIndices()){
+		if (n == i) is_associated = true;
+      }
+      if(!is_associated){	
+
 	geoalgo::Trajectory const & traj = detos.GetTrack(i).ftrajectory;
         double const dist_to_reco_vertex = std::min( traj.front().Dist(reco_vertex), traj.back().Dist(reco_vertex));
 	all_reco_tracks_dist_from_vertex.push_back(dist_to_reco_vertex);
+
+	geoalgo::Line_t const trk_infinite_line(traj.front(), traj.back());
+	
+	double bpdist = falgo.SqDist(trk_infinite_line, reco_vertex);
+	
+	all_reco_tracks_bp_dist_from_vertex.push_back(bpdist);
+	}
  }
  
  for(size_t const i : detos.GetShowerIndices()){
 
-      geoalgo::Cone_t const & shower_cone = detos.GetShower(i).fcone;
-      geoalgo::Point_t const & shower_start = shower_cone.Start();
-	
-      double const dist_to_reco_vertex = shower_start.Dist(reco_vertex);
-      all_reco_showers_dist_from_vertex.push_back(dist_to_reco_vertex);
+      bool is_associated = false;	
+      for(size_t const n : pa.GetObjectIndices()){
+		if (n == i) is_associated = true;
+      }
+      if( !is_associated){	
+    	  geoalgo::Cone_t const & shower_cone = detos.GetShower(i).fcone;
+    	  geoalgo::Point_t const & shower_start = shower_cone.Start();
+          geoalgo::Point_t const & shower_dir = shower_cone.Dir();
+	  geoalgo::Point_t const & shower_end = shower_start + (shower_dir * shower_cone.Length());
+
+
+     	  double const dist_to_reco_vertex = shower_start.Dist(reco_vertex);
+    	  all_reco_showers_dist_from_vertex.push_back(dist_to_reco_vertex);
+
+	  geoalgo::Line_t const shr_infinite_line(shower_start, shower_end);
+
+	  double bpdist = falgo.SqDist(shr_infinite_line, reco_vertex);
+
+	  all_reco_showers_bp_dist_from_vertex.push_back(bpdist);
+      }
    }
+
+
 }
 
 
