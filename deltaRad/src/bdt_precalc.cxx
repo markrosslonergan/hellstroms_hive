@@ -400,13 +400,16 @@ int bdt_precalc::genPi0BoostAngle() {
     TBranch *b_gamma_z_angle = friend_tree->Branch("gamma_z_angle", &gamma_z_angle);
     //TBranch *b_gamma_opening_angle_cm = friend_tree->Branch("gamma_opening_angle_cm", &gamma_opening_angle_cm);
 
-    //std::ofstream myfile;
-    //myfile.open("output_pi0Boost.txt");
+    std::ofstream myfile;
+    myfile.open("output_pi0Boost.txt");
 	int NN = file->tvertex->GetEntries();
 	for(int i=0; i< file->tvertex->GetEntries(); i++) {
 		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
 		file->tvertex->GetEntry(i);
         gamma_decay_angle = -999.;
+        gamma_opening_angle_lab = -999;
+        //gamma_opening_angle_cm = -999;
+        gamma_z_angle = -999;
         // Check for signal
         bool hasTwoShowers = (reco_asso_showers == 2);
         bool goodIndex1 = (most_energetic_shower_index >= 0 && most_energetic_shower_index < 3);
@@ -426,52 +429,78 @@ int bdt_precalc::genPi0BoostAngle() {
             px2 = E2*reco_shower_dirx[second_most_energetic_shower_index]; 
             py2 = E2*reco_shower_diry[second_most_energetic_shower_index];
             pz2 = E2*reco_shower_dirz[second_most_energetic_shower_index]; 
+
             TLorentzVector gamma1(px1, py1, pz1, E1);
             TLorentzVector gamma2(px2, py2, pz2, E2);
-            gamma_opening_angle_lab = cos(gamma1.Angle(gamma2.Vect()));
+            gamma_opening_angle_lab = cos(gamma1.Vect().Angle(gamma2.Vect()));
+            myfile << "gamma1 coordinates, pre-boost:\n" << "\t(" << gamma1.X() 
+                                              << ", "  << gamma1.Y()
+                                              << ", "  << gamma1.Z()
+                                              << ")" << std::endl;
+
+            myfile << "gamma2 coordinates, pre-boost:\n" << "\t(" << gamma2.X() 
+                                              << ", "  << gamma2.Y()
+                                              << ", "  << gamma2.Z()
+                                              << ")" << std::endl;
 
             TLorentzVector p_pi = gamma1 + gamma2;
             TVector3 preBoost(p_pi.X(), p_pi.Y(), p_pi.Z());
             
-            Int_t forwardIndex = 0;
-
             TVector3 boostVec = p_pi.BoostVector(); 
+            myfile << "Boost vector:\n"  << "\t(" << boostVec.X() 
+                                         << ", "  << boostVec.Y()
+                                         << ", "  << boostVec.Z()
+                                         << ")"   << std::endl;
             p_pi.Boost(-boostVec);
             gamma1.Boost(-boostVec);
             gamma2.Boost(-boostVec);
             
+            myfile << "gamma1 coordinates, post-boost:\n" << "\t(" << gamma1.X() 
+                                              << ", " << gamma1.Y()
+                                              << ", " << gamma1.Z()
+                                              << ")"  << std::endl;
+
+            myfile << "gamma2 coordinates, post-boost:\n" << "\t(" << gamma2.X() 
+                                              << ", " << gamma2.Y()
+                                              << ", " << gamma2.Z()
+                                              << ")"  << std::endl;
+            TVector3 forwardShower;
+            // Define new coordinates with 
             if (gamma1.Z() > 0 && gamma2.Z() > 0) {
-                //myfile << "Both showers forward" << std::endl;
+                myfile << "Both showers forward" << std::endl;
                 continue;
             }
             else if (gamma1.Z() < 0 && gamma2.Z() < 0) {
-                //myfile << "Both showers backward" << std::endl;
+                myfile << "Both showers backward" << std::endl;
                 continue;
             }
-            else if (gamma1.Z() > 0 && gamma2.Z() < 0) {
-                forwardIndex = most_energetic_shower_index;
+            else if (gamma1.Z() > 0 && gamma2.Z() < 0 ) {
+                myfile << "Shower 1 forward" << std::endl;
+                forwardShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
             }
-            else if (gamma1.Z() < 0 && gamma2.Z() > 0) {
-                forwardIndex = second_most_energetic_shower_index;
+            else if (gamma1.Z() < 0 && gamma2.Z() > 0 ) {
+                myfile << "Shower 2 forward" << std::endl;
+                forwardShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
             }
             else {
-                //myfile << "Uhhhh???" << std::endl;
+                myfile << "Uhhhh???" << std::endl;
                 continue;
             }
             
-            TVector3 forwardShowerDir(reco_shower_dirx[forwardIndex],
-                                      reco_shower_diry[forwardIndex],
-                                      reco_shower_dirz[forwardIndex]);
+            myfile << "Forward shower:\n" << "\t(" << forwardShower.X() 
+                                          << ", "  << forwardShower.Y()
+                                          << ", "  << forwardShower.Z()
+                                          << ")"   << std::endl;
+
+            gamma_decay_angle = cos(boostVec.Angle(forwardShower));
             TVector3 zUnit(0., 0., 1.);
-            gamma_decay_angle = cos(boostVec.Angle(forwardShowerDir));
-            //gamma_decay_angle = cos(p_pi.Angle(forwardShowerDir));
-            gamma_z_angle = cos(zUnit.Angle(boostVec));
-            //gamma_opening_angle_cm = cos(gamma1.Angle(gamma2.Vect()));
+            gamma_z_angle = cos(zUnit.Angle(forwardShower));
+            //gamma_opening_angle_cm = cos(gamma1.Vect().Angle(gamma2.Vect()));
 
             //myfile << "Decay angle = " << gamma_decay_angle << std::endl;
             //myfile << "Opening angle, lab = " << gamma_opening_angle_lab << std::endl;
             //myfile << "Opening angle, cm = " << gamma_opening_angle_cm << std::endl;
-            //myfile << "-----------------------------------------------------------" << std::endl;
+            myfile << "-----------------------------------------------------------" << std::endl;
         }
         
 		friend_tree->Fill();

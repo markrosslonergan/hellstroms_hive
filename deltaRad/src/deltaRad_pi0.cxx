@@ -36,7 +36,7 @@ int main (int argc, char *argv[]){
 	//===========================================================================================
 	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
 
-	std::string mode_option = "precalc"; 
+	std::string mode_option = "train"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
 
@@ -752,13 +752,13 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
     */
     else if(mode_option == "precalc"){
 
-			std::vector<bdt_file*> precalc_files = {bnb_pure};
+			std::vector<bdt_file*> precalc_files = {signal_pure};
 			for(auto &f: precalc_files){
 				bdt_precalc pre(f);
                 // Only uncomment one calcluation at a time, otherwise memory leaks!
 				//pre.genBNBcorrectionInfo();
-			    pre.genTrackInfo();
-			    //pre.genPi0BoostAngle();
+			    //pre.genTrackInfo();
+			    pre.genPi0BoostAngle();
 			}
 		}
 		  
