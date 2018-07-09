@@ -376,10 +376,15 @@ int bdt_precalc::genPi0BoostAngle() {
     Double_t reco_shower_dirx[20] = {0.};
     Double_t reco_shower_diry[20] = {0.};
     Double_t reco_shower_dirz[20] = {0.};
-    Double_t gamma_decay_angle = 0.;
     Double_t gamma_opening_angle_lab = 0.;
-    Double_t gamma_z_angle = 0.;
-    //double gamma_opening_angle_cm = 0.;
+    Double_t gamma_decay_angle_forward = 0.;
+    Double_t gamma_decay_angle_backward = 0.;
+    Double_t gamma_z_angle_forward = 0.;
+    Double_t gamma_z_angle_backward = 0.;
+    Double_t gamma_decay_angle_same = 0;
+    Double_t gamma_decay_angle_opp = 0;
+    //Double_t gamma_opening_angle_cm = 0.;
+
     TBranch *breco_shower_energy = 0;
     TBranch *breco_shower_dirx = 0;
     TBranch *breco_shower_diry = 0;
@@ -395,9 +400,13 @@ int bdt_precalc::genPi0BoostAngle() {
     file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz, &breco_shower_dirz);
 
     // Friend tree branch
-    TBranch *b_gamma_decay_angle = friend_tree->Branch("reco_gamma_decay_angle", &gamma_decay_angle);
     TBranch *b_gamma_opening_angle_lab = friend_tree->Branch("gamma_opening_angle_lab", &gamma_opening_angle_lab);
-    TBranch *b_gamma_z_angle = friend_tree->Branch("gamma_z_angle", &gamma_z_angle);
+    TBranch *b_gamma_decay_angle_forward = friend_tree->Branch("reco_gamma_decay_angle_forward", &gamma_decay_angle_forward);
+    TBranch *b_gamma_decay_angle_backward = friend_tree->Branch("reco_gamma_decay_angle_backward", &gamma_decay_angle_backward);
+    TBranch *b_gamma_decay_angle_same = friend_tree->Branch("gamma_decay_angle_same", &gamma_decay_angle_same);
+    TBranch *b_gamma_decay_angle_opp = friend_tree->Branch("gamma_decay_angle_opp", &gamma_decay_angle_opp);
+    TBranch *b_gamma_z_angle_forward = friend_tree->Branch("gamma_z_angle_forward", &gamma_z_angle_forward);
+    TBranch *b_gamma_z_angle_backward = friend_tree->Branch("gamma_z_angle_backward", &gamma_z_angle_backward);
     //TBranch *b_gamma_opening_angle_cm = friend_tree->Branch("gamma_opening_angle_cm", &gamma_opening_angle_cm);
 
     std::ofstream myfile;
@@ -406,10 +415,12 @@ int bdt_precalc::genPi0BoostAngle() {
 	for(int i=0; i< file->tvertex->GetEntries(); i++) {
 		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
 		file->tvertex->GetEntry(i);
-        gamma_decay_angle = -999.;
+        gamma_decay_angle_forward = -999.;
+        gamma_decay_angle_backward = -999.;
         gamma_opening_angle_lab = -999;
         //gamma_opening_angle_cm = -999;
-        gamma_z_angle = -999;
+        gamma_z_angle_forward = -999;
+        gamma_z_angle_backward = -999;
         // Check for signal
         bool hasTwoShowers = (reco_asso_showers == 2);
         bool goodIndex1 = (most_energetic_shower_index >= 0 && most_energetic_shower_index < 3);
@@ -465,6 +476,9 @@ int bdt_precalc::genPi0BoostAngle() {
                                               << ", " << gamma2.Z()
                                               << ")"  << std::endl;
             TVector3 forwardShower;
+            TVector3 backwardShower;
+            TVector3 pi0SameDirShower;
+            TVector3 pi0OppDirShower;
             // Define new coordinates with 
             if (gamma1.Z() > 0 && gamma2.Z() > 0) {
                 myfile << "Both showers forward" << std::endl;
@@ -477,27 +491,51 @@ int bdt_precalc::genPi0BoostAngle() {
             else if (gamma1.Z() > 0 && gamma2.Z() < 0 ) {
                 myfile << "Shower 1 forward" << std::endl;
                 forwardShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
+                backwardShower.SetXYZ(gamma2.X(), gamma2.Y(), gamma2.Z());
             }
             else if (gamma1.Z() < 0 && gamma2.Z() > 0 ) {
                 myfile << "Shower 2 forward" << std::endl;
-                forwardShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
+                forwardShower.SetXYZ(gamma2.X(), gamma2.Y(), gamma2.Z());
+                backwardShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
             }
             else {
                 myfile << "Uhhhh???" << std::endl;
                 continue;
+            }
+            if ((gamma1.Z() > 0) == (boostVec.Z() > 0)) {
+                myfile << "Shower 1 in same direction as pi0" << std::endl;
+                pi0SameDirShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
+                pi0OppDirShower.SetXYZ(gamma2.X(), gamma2.Y(), gamma2.Z());
+            }
+            else if ((gamma2.Z() > 0) == (boostVec.Z() > 0)) {
+                myfile << "Shower 2 in same direction as pi0" << std::endl;
+                pi0SameDirShower.SetXYZ(gamma2.X(), gamma2.Y(), gamma2.Z());
+                pi0OppDirShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
+            }
+            else {
+                myfile << "Neither shower in same direction???" << std::endl;
             }
             
             myfile << "Forward shower:\n" << "\t(" << forwardShower.X() 
                                           << ", "  << forwardShower.Y()
                                           << ", "  << forwardShower.Z()
                                           << ")"   << std::endl;
+            myfile << "Backward shower:\n" << "\t("<< backwardShower.X() 
+                                          << ", "  << backwardShower.Y()
+                                          << ", "  << backwardShower.Z()
+                                          << ")"   << std::endl;
 
-            gamma_decay_angle = cos(boostVec.Angle(forwardShower));
+            gamma_decay_angle_forward = cos(boostVec.Angle(forwardShower));
+            gamma_decay_angle_backward = cos(boostVec.Angle(backwardShower));
+            gamma_decay_angle_same = cos(boostVec.Angle(pi0SameDirShower));
+            gamma_decay_angle_opp = cos(boostVec.Angle(pi0OppDirShower));
             TVector3 zUnit(0., 0., 1.);
-            gamma_z_angle = cos(zUnit.Angle(forwardShower));
+            gamma_z_angle_forward = cos(zUnit.Angle(forwardShower));
+            gamma_z_angle_backward = cos(zUnit.Angle(backwardShower));
+            
             //gamma_opening_angle_cm = cos(gamma1.Vect().Angle(gamma2.Vect()));
 
-            //myfile << "Decay angle = " << gamma_decay_angle << std::endl;
+            //myfile << "Decay angle = " << gamma_decay_angle_forward << std::endl;
             //myfile << "Opening angle, lab = " << gamma_opening_angle_lab << std::endl;
             //myfile << "Opening angle, cm = " << gamma_opening_angle_cm << std::endl;
             myfile << "-----------------------------------------------------------" << std::endl;
