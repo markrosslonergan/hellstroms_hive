@@ -20,7 +20,7 @@ int plot_bdt_variable(bdt_file * signal_pure, bdt_file * background_pure, bdt_va
 		bkg->SetLineColor(kGreen-3);
 		sig->SetLineWidth(2);
 		bkg->SetLineWidth(2);
-		TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_cosmo").c_str(), ("cvar_"+v.name+"_cosmo").c_str(),1200,1200);
+		TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_"+input_bdt_info.identifier).c_str(), ("cvar_"+v.name+"_"+input_bdt_info.identifier).c_str(),1200,1200);
 		c_var->cd();
 
 
@@ -67,6 +67,10 @@ int plot_bdt_variable(bdt_file * signal_pure, bdt_file * background_pure, bdt_va
 
 
 		c_var->Print(("var/"+input_bdt_info.identifier+"_"+v.safe_unit+"_stage_"+std::to_string(j)+".pdf").c_str(),"pdf");
+		
+		delete sig;
+		delete bkg;
+		delete c_var;
 	}
 
 

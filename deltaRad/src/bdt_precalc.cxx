@@ -16,15 +16,12 @@ int addPreFriends(bdt_file* filein,std::string which){
 			filein->addFriend( which+"_info"  , filein->dir+"friends/"+filename);
 		}
 
-
 	return 0;
 }
 
 
 
 int bdt_precalc::gen(std::string which ){
-
-
 
 }
 
@@ -261,6 +258,9 @@ int bdt_precalc::genTrackInfo(){
 						exit(EXIT_FAILURE);
 					}
 
+					delete bragg;
+					delete pts;
+
 				}else{
 					v_track_good_calo.push_back(0);
 				}
@@ -372,6 +372,9 @@ int bdt_precalc::genTrackInfo(){
 	c->Write();
 
 
+	delete gb;
+	delete ga;
+        delete c;
 	return 0;
 }
 
@@ -508,14 +511,24 @@ int bdt_precalc::genPi0Info(){
 	//std::vector<double> longest_asso_track_displacement = 0;	
 	std::vector<double> *vall_reco_tracks= 0;
 	std::vector<double> *vall_reco_showers= 0;
+	std::vector<double> *vall_bp_reco_tracks= 0;
+	std::vector<double> *vall_bp_reco_showers= 0;
+
 
 	TBranch *ballt = 0;
 	TBranch *balls = 0;
+
+	TBranch *ballbpt = 0;
+	TBranch *ballbps = 0;
 
 	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
 	file->tvertex->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
 	file->tvertex->SetBranchAddress("all_reco_tracks_dist_from_vertex",&vall_reco_tracks,&ballt);
 	file->tvertex->SetBranchAddress("all_reco_showers_dist_from_vertex",&vall_reco_showers,&balls);
+
+	file->tvertex->SetBranchAddress("all_reco_tracks_bp_dist_from_vertex",&vall_bp_reco_tracks,&ballbpt);
+	file->tvertex->SetBranchAddress("all_reco_showers_bp_dist_from_vertex",&vall_bp_reco_showers,&ballbps);
+
 	file->tvertex->SetBranchAddress("pi0_class_number",&pi0_class_number);
 	// New branches for FRIEND TREEEE 
 
@@ -523,6 +536,15 @@ int bdt_precalc::genPi0Info(){
 	double v_pi0_class_number=0;
 	std::vector<int> vec_reco_showers_within;
 	std::vector<int> vec_reco_tracks_within;
+
+	int reco_showers_bp_within_10 = 0;
+	int reco_showers_bp_within_20 = 0;
+	int reco_showers_bp_within_30 = 0;
+
+	int reco_tracks_bp_within_10 = 0;
+	int reco_tracks_bp_within_20 = 0;
+	int reco_tracks_bp_within_30 = 0;
+
 
 	int reco_showers_within_10 = 0;
 	int reco_showers_within_20 = 0;
@@ -542,6 +564,15 @@ int bdt_precalc::genPi0Info(){
 	TBranch *b_reco_tracks_within_20 = friend_tree->Branch("num_reco_tracks_within_20cm_vertex",&reco_tracks_within_20);
 	TBranch *b_reco_tracks_within_30 = friend_tree->Branch("num_reco_tracks_within_30cm_vertex",&reco_tracks_within_30);
 
+	TBranch *b_reco_showers_bp_within_10 = friend_tree->Branch("num_reco_showers_bp_within_10cm_vertex",&reco_showers_bp_within_10);
+	TBranch *b_reco_showers_bp_within_20 = friend_tree->Branch("num_reco_showers_bp_within_20cm_vertex",&reco_showers_bp_within_20);
+	TBranch *b_reco_showers_bp_within_30 = friend_tree->Branch("num_reco_showers_bp_within_30cm_vertex",&reco_showers_bp_within_30);
+	TBranch *b_reco_tracks_bp_within_10 = friend_tree->Branch("num_reco_tracks_bp_within_10cm_vertex",&reco_tracks_bp_within_10);
+	TBranch *b_reco_tracks_bp_within_20 = friend_tree->Branch("num_reco_tracks_bp_within_20cm_vertex",&reco_tracks_bp_within_20);
+	TBranch *b_reco_tracks_bp_within_30 = friend_tree->Branch("num_reco_tracks_bp_within_30cm_vertex",&reco_tracks_bp_within_30);
+
+
+
 	TBranch *b_pi0_class_number = friend_tree->Branch("pi0_class_number",&v_pi0_class_number);
 
 	int NN = file->tvertex->GetEntries();
@@ -555,6 +586,16 @@ int bdt_precalc::genPi0Info(){
 		reco_tracks_within_10 = 0;
 		reco_tracks_within_20 = 0;
 		reco_tracks_within_30 = 0;
+
+
+		reco_showers_bp_within_10 = 0;
+		reco_showers_bp_within_20 = 0;
+		reco_showers_bp_within_30 = 0;
+
+		reco_tracks_bp_within_10 = 0;
+		reco_tracks_bp_within_20 = 0;
+		reco_tracks_bp_within_30 = 0;
+
 
 		file->tvertex->GetEntry(i);
 		v_pi0_class_number = pi0_class_number;
@@ -584,9 +625,21 @@ int bdt_precalc::genPi0Info(){
 		}
 
 
+		for(int j=0; j< vall_bp_reco_tracks->size(); j++){
+
+			if(vall_bp_reco_tracks->at(j) < 10){
+				reco_tracks_bp_within_10 ++;
+				reco_tracks_bp_within_20 ++;
+				reco_tracks_bp_within_30 ++;
+			}else if(vall_bp_reco_tracks->at(j) < 20){
+				reco_tracks_bp_within_20 ++;
+				reco_tracks_bp_within_30 ++;
+			}else if(vall_bp_reco_tracks->at(j) < 30){
+				reco_tracks_bp_within_30 ++;
+			}	
+		}
 
 		for(int j=0; j< vall_reco_tracks->size(); j++){
-
 
 			if(vall_reco_tracks->at(j) < 10){
 				reco_tracks_within_10 ++;
@@ -600,6 +653,22 @@ int bdt_precalc::genPi0Info(){
 			}	
 		}
 
+
+
+		for(int j=0; j< vall_bp_reco_showers->size(); j++){
+			if(vall_bp_reco_showers->at(j) < 10){
+				reco_showers_bp_within_10 ++;
+				reco_showers_bp_within_20 ++;
+				reco_showers_bp_within_30 ++;
+			}else if(vall_bp_reco_showers->at(j) < 20){
+				reco_showers_bp_within_20 ++;
+				reco_showers_bp_within_30 ++;
+			}else if(vall_bp_reco_showers->at(j) < 30){
+				reco_showers_bp_within_30 ++;
+			}	
+		}
+
+
 		for(int j=0; j< vall_reco_showers->size(); j++){
 			if(vall_reco_showers->at(j) < 10){
 				reco_showers_within_10 ++;
@@ -612,16 +681,6 @@ int bdt_precalc::genPi0Info(){
 				reco_showers_within_30 ++;
 			}	
 		}
-
-
-		//Loop over all tracks and showers that are NOT associated with this particular vertex. 
-		//For each track and shower use its projection forward and backward to see if its "close" 
-		//Use a 15cm intersection or something like that
-
-		
-
-
-
 
 
 

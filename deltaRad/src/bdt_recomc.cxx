@@ -373,6 +373,24 @@ std::cout<<"5"<<std::endl;
 		c_reco_truth->Write();
 		c_reco_truth->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth.pdf").c_str(),"pdf");
 
+
+
+	for(auto * t : reco_mc_vec_sel) delete t;
+	for(auto * t : reco_mc_vec_pre) delete t;
+	for(auto * t : reco_mc_vec_bdt1) delete t;
+	for(auto * t : reco_mc_vec_bdt2) delete t;
+
+	delete reco_mc_all_sel;
+	delete reco_mc_all_pre;
+	delete reco_mc_all_bdt1;
+	delete reco_mc_all_bdt2;
+
+	delete s_reco_truth_sel;
+	delete s_reco_truth_pre;
+	delete s_reco_truth_bdt1;
+	delete s_reco_truth_bdt2;
+
+
 	return 0;
 }
 

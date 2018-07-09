@@ -411,6 +411,11 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+".pdf").c_str(),"pdf");
 		//cobs->SaveAs(("stack/"+var.name+".png").c_str(),"png");
 
+
+		delete cobs;
+		delete s0; delete s1; delete s2; delete s3;		 
+		delete t0; delete t1; delete t2; delete t3;	
+
 	return 0;
 }
 

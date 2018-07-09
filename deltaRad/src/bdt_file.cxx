@@ -14,6 +14,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 	plot_name = tag;
 
+	rangen = new TRandom3();
 
 	scale_data =1.0;
 	std::cout<<"Loading : "<<name<<std::endl;
@@ -151,10 +152,8 @@ double bdt_file::GetEntries(){
 }
 
 double bdt_file::GetEntries(std::string cuts){
-	TRandom3 *rangen = new TRandom3();
 	std::string namr = std::to_string(rangen->Uniform(10000));
 
-	//TCanvas *ctmp = new TCanvas();
 	this->tvertex->Draw(("reco_asso_showers>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
 	TH1* th1 = (TH1*)gDirectory->Get(namr.c_str()) ;
 	double ans = th1->GetSumOfWeights();

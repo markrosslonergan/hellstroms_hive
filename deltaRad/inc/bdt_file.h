@@ -33,6 +33,7 @@
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
 #include "TText.h"
+#include "TRandom3.h"
 
 template <typename T>
 std::string to_string_prec(const T a_value, const int n = 6)
@@ -74,6 +75,8 @@ struct bdt_file{
 		
 		std::string weight_branch;
 
+
+		TRandom3* rangen;
 		std::string topo_name;
 
 		//This is slightly deprecisated

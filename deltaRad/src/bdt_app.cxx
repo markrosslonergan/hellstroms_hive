@@ -3,19 +3,12 @@
 
 bdt_app_tree_struct::bdt_app_tree_struct(std::string const & tree_name, bool const extra) {
 	tree = new TTree(tree_name.c_str(), "");
-	if(extra) {
-	//	tree->Branch("is_delta_rad", &is_delta_rad, "is_delta_rad/I");
-	//	tree->Branch("true_nu_vtx_fid_contained", &true_nu_vtx_fid_contained, "true_nu_vtx_fid_contained/I");
-	//	tree->Branch("reco_asso_tracks", &reco_asso_tracks, "reco_asso_tracks/I");
-	}
 	tree->Branch("mva", &mva, "mva/D");
-	//tree->Branch("summed_associated_reco_shower_energy", &summed_associated_reco_shower_energy, "summed_associated_reco_shower_energy/D");
 }
 
 bdt_app_tree_struct::~bdt_app_tree_struct() {
 	delete tree;
 }
-
 
 
 void bdt_app_update_formula(std::vector<TTreeFormula*> & tfv, std::vector<float *> & rvv) {
@@ -26,6 +19,7 @@ void bdt_app_update_formula(std::vector<TTreeFormula*> & tfv, std::vector<float 
 }
 
 void bdt_app_update(void_vec const & tvv, std::vector<float *> & rvv) {
+	//OBSOLETE not called anymore
 
 	for(size_t i = 0; i < tvv.size(); ++i) {
 		if(tvv.get_type(i) == typeid(int).name()) {
@@ -38,6 +32,7 @@ void bdt_app_update(void_vec const & tvv, std::vector<float *> & rvv) {
 }
 
 void bdt_topological_update(std::vector<double*> *topv){
+	//OBSOLETE not called anymore
 
 
 }
@@ -87,13 +82,11 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
         std::cout << "Beginning loop for " << identifier << std::endl;
         std::cout << "############################################" << std::endl;
         for(int i = 0; i < N; ++i) {
-            if(i%50000==0){std::cout<<i<<"/"<<N<<std::endl;}
             tree->GetEntry(i);
-            //bdt_app_update(tree_var_v, reader_var_v);
             ts.mva = -999;
-            if(i%25000==0){
-                std::cout<<i<<"/"<<N<<std::endl;
-            }
+            if(i%25000==0){           std::cout<<i<<"/"<<N<<std::endl;          }
+
+
             if(tf_topological->EvalInstance()) {
                 bdt_app_update_formula(tree_formulas_v, reader_var_v);
             
@@ -106,21 +99,14 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
         }
 		ts.tree->Write();
     }
-        /*
-		for(int i = 0; i < tree->GetEntries(); ++i) {
-			tree->GetEntry(i);
-			bdt_app_update_formula(tree_var_v, reader_var_v);
-			ts.mva = -999;
-			if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(method.str.c_str());
-			ts.tree->Fill();
+      
 
-		}
-        */
-	
+	delete reader;
+	delete tf_topological;
+	delete tf_definition;
+	for(float * f : reader_var_v) delete f;
+	for(auto * t : tree_formulas_v) delete t;
 
-	//delete reader;
-	//delete tf;
-	//for(float * f : reader_var_v) delete f;
 
 }
 
