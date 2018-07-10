@@ -182,7 +182,7 @@ int main (int argc, char *argv[]){
     std::string p_pi_z = E1+"*reco_shower_dirz[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirz[second_most_energetic_shower_index]";
     std::vector<bdt_variable> vars;
 
-    vars.push_back(bdt_variable("sqrt("+p_pi_x+"*"+p_pi_x+"+"+p_pi_y+"*"+p_pi_y+"+"+p_pi_z+"*"+p_pi_z+")", "(100, 100, 1500)", "Reconstructed Pion Momentum[MeV]", true, "d"));
+    vars.push_back(bdt_variable("sqrt("+E1+"*"+E1+" + "+E2+"*"+E2+" + 2*"+E1+"*"+E2+"*"+angle_shower1_shower2+")", "(100, 100, 1500)", "Reconstructed Pion Momentum[MeV]", true, "d"));
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[most_energetic_shower_index]","(48,0,15)", "Shower 1 dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[second_most_energetic_shower_index]","(48,0,15)", "Shower 2 dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Summed Shower Energy [GeV]", false,"d"));

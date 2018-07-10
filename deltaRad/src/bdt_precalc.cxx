@@ -369,13 +369,14 @@ int bdt_precalc::genTrackInfo(){
 // Function to calculate the pi0 -> 2gamma decay angle, relative to boost vector
 int bdt_precalc::genPi0BoostAngle() {
     TTree *friend_tree = new TTree("pi0_info", "pi0_info");
+    std::size_t const N = 20;
     Int_t most_energetic_shower_index = 0;
     Int_t second_most_energetic_shower_index = 0;
     Int_t ccnc = 0, reco_asso_showers = 0, reco_asso_tracks = 0;
-    Double_t reco_shower_helper_energy[20] = {0.};
-    Double_t reco_shower_dirx[20] = {0.};
-    Double_t reco_shower_diry[20] = {0.};
-    Double_t reco_shower_dirz[20] = {0.};
+    Double_t reco_shower_helper_energy[N] = {0.};
+    Double_t reco_shower_dirx[N] = {0.};
+    Double_t reco_shower_diry[N] = {0.};
+    Double_t reco_shower_dirz[N] = {0.};
     Double_t gamma_opening_angle_lab = 0.;
     Double_t gamma_decay_angle_forward = 0.;
     Double_t gamma_decay_angle_backward = 0.;
@@ -443,7 +444,7 @@ int bdt_precalc::genPi0BoostAngle() {
 
             TLorentzVector gamma1(px1, py1, pz1, E1);
             TLorentzVector gamma2(px2, py2, pz2, E2);
-            gamma_opening_angle_lab = cos(gamma1.Vect().Angle(gamma2.Vect()));
+            gamma_opening_angle_lab = gamma1.Vect().Angle(gamma2.Vect());
             myfile << "gamma1 coordinates, pre-boost:\n" << "\t(" << gamma1.X() 
                                               << ", "  << gamma1.Y()
                                               << ", "  << gamma1.Z()
@@ -525,13 +526,23 @@ int bdt_precalc::genPi0BoostAngle() {
                                           << ", "  << backwardShower.Z()
                                           << ")"   << std::endl;
 
+            TVector3 zUnit(0., 0., 1.);
+            
             gamma_decay_angle_forward = cos(boostVec.Angle(forwardShower));
             gamma_decay_angle_backward = cos(boostVec.Angle(backwardShower));
             gamma_decay_angle_same = cos(boostVec.Angle(pi0SameDirShower));
             gamma_decay_angle_opp = cos(boostVec.Angle(pi0OppDirShower));
-            TVector3 zUnit(0., 0., 1.);
             gamma_z_angle_forward = cos(zUnit.Angle(forwardShower));
             gamma_z_angle_backward = cos(zUnit.Angle(backwardShower));
+
+            /*
+            gamma_decay_angle_forward = boostVec.Angle(forwardShower);
+            gamma_decay_angle_backward = boostVec.Angle(backwardShower);
+            gamma_decay_angle_same = boostVec.Angle(pi0SameDirShower);
+            gamma_decay_angle_opp = boostVec.Angle(pi0OppDirShower);
+            gamma_z_angle_forward = zUnit.Angle(forwardShower);
+            gamma_z_angle_backward = zUnit.Angle(backwardShower);
+            */
             
             //gamma_opening_angle_cm = cos(gamma1.Vect().Angle(gamma2.Vect()));
 
@@ -543,10 +554,10 @@ int bdt_precalc::genPi0BoostAngle() {
         
 		friend_tree->Fill();
         
-        std::fill_n(reco_shower_dirx, 20, 0);
-        std::fill_n(reco_shower_diry, 20, 0);
-        std::fill_n(reco_shower_dirz, 20, 0);
-        std::fill_n(reco_shower_helper_energy, 20, 0);
+        std::fill_n(reco_shower_helper_energy, N, 0);
+        std::fill_n(reco_shower_dirx, N, 0);
+        std::fill_n(reco_shower_diry, N, 0);
+        std::fill_n(reco_shower_dirz, N, 0);
         
 	}
 
