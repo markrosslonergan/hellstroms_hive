@@ -86,6 +86,9 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
             ts.mva = -999;
             if(i%25000==0){           std::cout<<i<<"/"<<N<<std::endl;          }
 
+             tf_topological->GetNdata();
+             tf_definition->GetNdata();
+
 
             if(tf_topological->EvalInstance()) {
                 bdt_app_update_formula(tree_formulas_v, reader_var_v);

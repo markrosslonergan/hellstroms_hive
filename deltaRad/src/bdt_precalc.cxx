@@ -6,15 +6,15 @@ double bragg_fnc(double *x, double *par) {
 
 
 int addPreFriends(bdt_file* filein,std::string which){
-		std::string filename = filein->tag+"_friends.root";
+	std::string filename = filein->tag+"_friends.root";
 
-		std::ifstream ifile(filename.c_str());
-		bool does_local_exist = (bool)ifile;
-		if(does_local_exist){
-			filein->addFriend( which+"_info"  , filename);
-		}else{
-			filein->addFriend( which+"_info"  , filein->dir+"friends/"+filename);
-		}
+	std::ifstream ifile(filename.c_str());
+	bool does_local_exist = (bool)ifile;
+	if(does_local_exist){
+		filein->addFriend( which+"_info"  , filename);
+	}else{
+		filein->addFriend( which+"_info"  , filein->dir+"friends/"+filename);
+	}
 
 	return 0;
 }
@@ -28,16 +28,26 @@ int bdt_precalc::gen(std::string which ){
 
 
 int bdt_precalc::genTrackInfo(){
+	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
 
+
+	file->tvertex->ResetBranchAddresses();
 	//Some constants, not chosen for any huge reason
 	double max_realistic_dEdx = 25;
 	double min_realistic_hits = 5;
 	double min_dEdx = 0.01;
-
-
+	
+	friend_file_out->cd();
 	TTree * friend_tree = new TTree("track_info","track_info");
 
-	//Some branches for some basic info
+
+	TFile *fileconv = new TFile("../../bnbcorrection/proton_conversion.root", "read");
+	TGraph * gconv = (TGraph*)fileconv->Get("Graph");
+	
+	friend_file_out->cd();
+
+
+		//Some branches for some basic info
 	//	double asso_r
 	int reco_asso_tracks = 0;
 	int reco_asso_showers = 0;
@@ -45,7 +55,7 @@ int bdt_precalc::genTrackInfo(){
 	//Branches for the dEdx calo only!
 	std::vector<std::vector<double>> *vtrk_dEdx = 0;
 	std::vector<std::vector<double>> *vtrk_resrange = 0;
-	std::vector<double>* true_track_pdg=0;
+	//std::vector<double>* true_track_pdg=0;
 
 	TBranch *bdEdx = 0;
 	TBranch *bresrange = 0;
@@ -55,8 +65,18 @@ int bdt_precalc::genTrackInfo(){
 	file->tvertex->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
 	file->tvertex->SetBranchAddress("reco_track_calo_dEdx",&vtrk_dEdx,&bdEdx);
 	file->tvertex->SetBranchAddress("reco_track_calo_resrange",&vtrk_resrange,&bresrange);
-	file->tvertex->SetBranchAddress("true_track_pdg",&true_track_pdg,&btrackpdg);
+	//file->tvertex->SetBranchAddress("true_track_pdg",&true_track_pdg,&btrackpdg);
 
+	double reco_track_startx[100], reco_track_starty[100], reco_track_startz[100];
+	double reco_track_endx[100], reco_track_endy[100], reco_track_endz[100];
+	file->tvertex->SetBranchAddress("reco_track_startx", &reco_track_startx);
+	file->tvertex->SetBranchAddress("reco_track_starty", &reco_track_starty);
+	file->tvertex->SetBranchAddress("reco_track_startz", &reco_track_startz);
+	file->tvertex->SetBranchAddress("reco_track_endx", &reco_track_endx);
+	file->tvertex->SetBranchAddress("reco_track_endy", &reco_track_endy);
+	file->tvertex->SetBranchAddress("reco_track_endz", &reco_track_endz);
+
+	
 	// New branches for FRIEND TREEEE 
 	double v_bragg_parA=0;
 	double v_bragg_parD=0;
@@ -71,6 +91,7 @@ int bdt_precalc::genTrackInfo(){
 	std::vector<double> v_track_braggA;
 	std::vector<double> v_track_good_calo;
 	std::vector<double> v_track_kinetic;
+	std::vector<double> v_track_kinetic_from_length;
 
 	TBranch *b_num_tracks = friend_tree->Branch("reco_asso_tracks",&v_reco_asso_tracks);
 
@@ -83,10 +104,11 @@ int bdt_precalc::genTrackInfo(){
 	TBranch *b_kinetic = friend_tree->Branch("reco_track_kinetic",&v_track_kinetic);
 	TBranch *b_good_calo = friend_tree->Branch("reco_track_good_calo",&v_track_good_calo);
 
+	TBranch *b_kinetic_from_length = friend_tree->Branch("reco_track_kinetic_from_length",&v_track_kinetic_from_length);
 
 
 	//Truncated Mean Testing
-	TFile* ftest = new TFile("test_trunc.root","recreate");
+	//TFile* ftest = new TFile("test_trunc.root","recreate");
 	bool done = false;
 	std::vector<double> bx;
 	std::vector<double> by;
@@ -126,6 +148,14 @@ int bdt_precalc::genTrackInfo(){
 				std::vector<float> end_resrange;
 
 
+				//Calculate the Total Kinetic Energy from length, assuming proton.
+				double reco_track_length = sqrt(pow(reco_track_startx[s]-reco_track_endx[s], 2) + pow(reco_track_starty[s]-reco_track_endy[s], 2) + pow(reco_track_startz[s]-reco_track_endz[s], 2));
+				v_track_kinetic_from_length.push_back( (gconv->Eval(reco_track_length))/1000.0);
+
+			
+		
+
+
 
 				TruncMean tm;
 				std::vector<double> trunc_dEdx;
@@ -134,18 +164,18 @@ int bdt_precalc::genTrackInfo(){
 
 				//Hard kill any silly dEdx, Dropping first and last point
 				if(vtrk_resrange->at(s).size()>1){
-				for(int k=1; k < vtrk_resrange->at(s).size()-1; k++){
+					for(int k=1; k < vtrk_resrange->at(s).size()-1; k++){
 
-					bool is_sensible =vtrk_dEdx->at(s).at(k) < max_realistic_dEdx; 
-					bool is_nan =vtrk_dEdx->at(s).at(k) != vtrk_dEdx->at(s).at(k); 
-					bool is_inf = std::isinf(vtrk_dEdx->at(s).at(k));
-					bool is_nonzero = vtrk_dEdx->at(s).at(k) > min_dEdx;
+						bool is_sensible =vtrk_dEdx->at(s).at(k) < max_realistic_dEdx; 
+						bool is_nan =vtrk_dEdx->at(s).at(k) != vtrk_dEdx->at(s).at(k); 
+						bool is_inf = std::isinf(vtrk_dEdx->at(s).at(k));
+						bool is_nonzero = vtrk_dEdx->at(s).at(k) > min_dEdx;
 
-					if(is_sensible && !is_nan && !is_inf && is_nonzero){
-						c_resrange.push_back(vtrk_resrange->at(s).at(k));
-						c_dEdx.push_back(vtrk_dEdx->at(s).at(k));
+						if(is_sensible && !is_nan && !is_inf && is_nonzero){
+							c_resrange.push_back(vtrk_resrange->at(s).at(k));
+							c_dEdx.push_back(vtrk_dEdx->at(s).at(k));
+						}
 					}
-				}
 				}
 				//If we dont have enough hits, move to next track and tag this track as "BAD"
 				if(c_dEdx.size() < min_realistic_hits ){
@@ -178,6 +208,8 @@ int bdt_precalc::genTrackInfo(){
 
 				tm.CalcTruncMeanProfile(c_resrange,c_dEdx, trunc_dEdx);			
 
+
+				/*
 				if(false && trunc_dEdx.size()> 150 && trunc_dEdx.back() >  trunc_dEdx.front() && true_track_pdg->at(s) == 13 && dra < 100){
 					bx = c_resrange;
 					by = c_dEdx;
@@ -212,6 +244,7 @@ int bdt_precalc::genTrackInfo(){
 
 
 				}
+				*/
 
 				//Check to make sure the vectors are filled in the right order. (Just for bragg variable!)
 				std::vector<double> brag_c_resrange = c_resrange;	
@@ -252,17 +285,19 @@ int bdt_precalc::genTrackInfo(){
 						std::cout<<c_resrange.size()<<" "<<trunc_dEdx.size()<<std::endl;
 						for(int m=0;m<c_resrange.size(); m++){
 
-						std::cout<<c_resrange.at(m)<<" "<<trunc_dEdx.at(m)<<std::endl;
+							std::cout<<c_resrange.at(m)<<" "<<trunc_dEdx.at(m)<<std::endl;
 						}		
+						std::cout<<"ERROR: Usually breaks here but for now set as bad_calo: "<<fit_bragg->Status()<<" "<<std::endl;
 
-						exit(EXIT_FAILURE);
+						//exit(EXIT_FAILURE);
+						v_track_good_calo.back() = 0;
 					}
 
 					delete bragg;
 					delete pts;
 
 				}else{
-					v_track_good_calo.push_back(0);
+					v_track_good_calo.back() = 0;
 				}
 
 				double pida_sum=0;
@@ -345,6 +380,7 @@ int bdt_precalc::genTrackInfo(){
 		friend_tree->Fill();
 		v_track_range.clear();
 		v_track_kinetic.clear();
+		v_track_kinetic_from_length.clear();
 		v_track_PIDA.clear();
 		v_track_braggA.clear();
 		v_start_mean_dEdx.clear();	
@@ -355,10 +391,10 @@ int bdt_precalc::genTrackInfo(){
 	}
 	friend_file_out->cd();
 	friend_tree->Write();
-
-
+	
+	friend_file_out->Close();
 	//Some Truncated Mean Testing
-	ftest->cd();
+/*	ftest->cd();
 	TGraph * gb = new TGraph(bx.size(),&bx[0], &by[0]);
 	TGraph * ga = new TGraph(bx.size(),&bx[0], &ay[0]);
 	TCanvas *c = new TCanvas();
@@ -374,21 +410,25 @@ int bdt_precalc::genTrackInfo(){
 
 	delete gb;
 	delete ga;
-        delete c;
+	delete c;
+*/
 	return 0;
 }
 
 
 int bdt_precalc::genShowerInfo(){
-
-
+	std::cout<<"Starting Shower Info"<<std::endl;
+	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
 	TTree * friend_tree = new TTree("shower_info","shower_info");
+
+
+	file->tvertex->ResetBranchAddresses();
 
 	//Some branches for some basic info
 	//	double asso_r
 	int reco_asso_tracks = 0;
 	int reco_asso_showers = 0;
-	
+
 	double reco_shower_dedx_plane1[100];
 	double reco_shower_dedx_plane2[100];
 	double reco_shower_dedx_plane0[100];
@@ -397,11 +437,9 @@ int bdt_precalc::genShowerInfo(){
 	double reco_shower_dedxnew_plane2[100];
 	double reco_shower_dedxnew_plane0[100];
 
-	double  reco_shower_dirx[100];
-	double  reco_shower_diry[100];
-	double  reco_shower_dirz[100];
-
-	TBranch *bvec =0;
+	double reco_shower_dirx[100];
+	double reco_shower_diry[100];
+	double reco_shower_dirz[100];
 
 	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
 	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
@@ -444,33 +482,52 @@ int bdt_precalc::genShowerInfo(){
 			double shower_theta = atan2(reco_shower_diry[s],reco_shower_dirz[s])*180.0/3.14159;
 			//First lets check the collection plane:
 			//is it with 30 degrees of wire?
-			
+
 			double mina2 = std::min( fabs(shower_theta-90), fabs(shower_theta+90));
 			double mina0 = std::min( fabs(shower_theta-30), fabs(shower_theta+150));
 			double mina1 =std::min( fabs(shower_theta-150), fabs(shower_theta+30));
 
 
-			if( mina2 > 35){
+			if( mina2 > 35 && ( reco_shower_dedxnew_plane2[s] > 0 || reco_shower_dedx_plane2[s]>0) ){
 				dedx = reco_shower_dedxnew_plane2[s];
-			//Next check 
+				if(dedx < 0) dedx = reco_shower_dedx_plane2[s];
+				
 			}else{
 
-				if( mina1 > mina2){ // use plane1, or V plane
+				if( mina1 > mina2 && ( reco_shower_dedxnew_plane1[s] > 0 || reco_shower_dedx_plane1[s] > 0) ){ // use plane1, or V plane
 					dedx =  reco_shower_dedxnew_plane1[s];
+	
+					if(dedx < 0) dedx = reco_shower_dedx_plane1[s];
+
+
+
 				}else {//use plane0 or U plane
 					dedx = reco_shower_dedxnew_plane0[s];
+
+					if(dedx < 0) dedx = reco_shower_dedx_plane0[s];
+
+
+
+
 				}
+			}
+
+			if(dedx < 0){
+				dedx = std::max(std::max( reco_shower_dedxnew_plane2[s], reco_shower_dedx_plane2[s]), std::max(std::max(reco_shower_dedxnew_plane1[s], reco_shower_dedx_plane1[s]), std::max(reco_shower_dedxnew_plane0[s], reco_shower_dedx_plane0[s]) ) );
+
 			}
 
 			h0->Fill(reco_shower_dedx_plane0[s], mina0);
 			h1->Fill(reco_shower_dedx_plane1[s], mina1);
 			h2->Fill(reco_shower_dedx_plane2[s], mina2);
-	
+
 			hnew0->Fill(reco_shower_dedxnew_plane0[s], mina0);
 			hnew1->Fill(reco_shower_dedxnew_plane1[s], mina1);
 			hnew2->Fill(reco_shower_dedxnew_plane2[s], mina2);
-								
+
 			vec_amal_dEdx.push_back(dedx);
+			if(dedx < 0) std::cout<<dedx<<" "<<reco_shower_dedx_plane0[s]<<" "<<reco_shower_dedx_plane1[s]<<" "<<reco_shower_dedx_plane2[s]<<std::endl;
+
 		}
 		friend_tree->Fill();
 
@@ -493,15 +550,20 @@ int bdt_precalc::genShowerInfo(){
 
 	ftest->Close();
 
+	friend_file_out->Close();
 	return 0;
 }
 
 
 
 int bdt_precalc::genPi0Info(){
+	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
 
-
+	file->tvertex->ResetBranchAddresses();
+        friend_file_out->cd();
 	TTree * friend_tree = new TTree("pi0_info","pi0_info");
+
+	std::cout<<"bdt_precalc: genPi0Info"<<std::endl;
 
 	//Some branches for some basic info
 	//	double asso_r
@@ -578,7 +640,7 @@ int bdt_precalc::genPi0Info(){
 	int NN = file->tvertex->GetEntries();
 	for(int i=0; i< file->tvertex->GetEntries(); i++){
 
-		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
+		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<" piClassInfo "<<std::endl;
 		reco_showers_within_10 = 0;
 		reco_showers_within_20 = 0;
 		reco_showers_within_30 = 0;
@@ -682,8 +744,6 @@ int bdt_precalc::genPi0Info(){
 			}	
 		}
 
-
-
 		friend_tree->Fill();
 
 		vec_reco_showers_within.clear();
@@ -694,25 +754,20 @@ int bdt_precalc::genPi0Info(){
 	friend_tree->Write();
 
 
+	std::cout<<"Done with Pi0ClassInfo"<<std::endl;
+	friend_file_out->Close();
 	return 0;
 }
 
 
 
 int bdt_precalc::genBNBcorrectionInfo(){
+	std::cout<<"bdt_precalc:: Starting BNBcorrectionInfo()"<<std::endl;
+	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
 
-	TTree * friend_tree = new TTree("bnbcorrection_info","bnbcorrection_info");
-	int nu_pdg = 0;
-	double true_nu_E = 0;
-	file->tvertex->SetBranchAddress("nu_pdg", &nu_pdg);
-	file->tvertex->SetBranchAddress("true_nu_E", &true_nu_E);
-	// New branches for FRIEND TREEEE 
-	double weight=0;
-	TBranch *b_weight = friend_tree->Branch("weight",&weight);
+	file->tvertex->ResetBranchAddresses();
 
-	TFile *f_bnbcorr = new TFile("bnbcorr.root","recreate");
-
-
+	//first Load up all the flux files
 	TFile *f_old = new TFile("../../bnbcorrection/bnb_oldflux_volAVTPC.root","read");
 	TH1F* h_mu_nue_old = (TH1F*)f_old->Get("h_mu_nue");
 	TH1F* h_mu_nuebar_old = (TH1F*)f_old->Get("h_mu_nuebar");
@@ -753,8 +808,6 @@ int bdt_precalc::genBNBcorrectionInfo(){
 	h_numubar_old->Add(h_pi_numubar_old);
 	h_numubar_old->Add(h_k0_numubar_old);
 	h_numubar_old->Add(h_k_numubar_old);
-
-
 
 
 	TFile *f_new = new TFile("../../bnbcorrection/bnb_newflux_volAVTPC.root","read");
@@ -814,9 +867,25 @@ int bdt_precalc::genBNBcorrectionInfo(){
 
 
 
+
+	file->f->cd();
+	int nu_pdg = 0;
+	double true_nu_E = 0;
+	std::cout<<"1"<<std::endl;
+	file->tvertex->SetBranchAddress("nu_pdg", &nu_pdg);
+	std::cout<<"2"<<std::endl;
+	file->tvertex->SetBranchAddress("true_nu_E", &true_nu_E);
 	
+	// New branches for FRIEND TREEEE 
+	std::cout<<"Set up new bnbcorrection_info TTree"<<std::endl;
+	friend_file_out->cd();
+	TTree * friend_tree = new TTree("bnbcorrection_info","bnbcorrection_info");
 
 
+	double weight=0;
+	TBranch *b_weight = friend_tree->Branch("weight",&weight);
+
+	
 
 	int NN = file->tvertex->GetEntries();
 	for(int i=0; i< NN; i++){
@@ -855,14 +924,21 @@ int bdt_precalc::genBNBcorrectionInfo(){
 
 
 
+/*	TFile *f_bnbcorr = new TFile("bnbcorr.root","recreate");
 	f_bnbcorr->cd();
 	h_nue_ratio->Write();
 	h_nuebar_ratio->Write();
 	h_numu_ratio->Write();
 	h_numubar_ratio->Write();
 	f_bnbcorr->Close();
+*/
 
-
+	//delete friend_tree;
+	friend_file_out->Close();
+	std::cout<<"Closed file"<<std::endl;
+//	delete friend_tree;
+//	delete friend_file_out;
+	std::cout<<"Done with bnbcorrection_info"<<std::endl;
 	return 0;
 }
 

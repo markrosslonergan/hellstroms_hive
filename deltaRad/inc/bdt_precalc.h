@@ -38,13 +38,15 @@ int addPreFriends(bdt_file* filein,std::string which);
 class bdt_precalc{
 	public:
 	bdt_file* file;
-	TFile *friend_file_out;
+	//TFile *friend_file_out;
+	std::string friend_file_out_name;
 	//pass in a bdt_file and it calculates stuff and add's it as friends!
 		bdt_precalc(bdt_file* in) : file(in) {
-		friend_file_out = new TFile((file->tag+"_friends.root").c_str(),"update");	
+		friend_file_out_name =file->tag+"_friends.root";
+		
 		};
 		//This will actually
-		~bdt_precalc(){ friend_file_out->Close();}
+		~bdt_precalc(){ ;}//friend_file_out->Close();}
 
 int gen(std::string which );
 int genTrackInfo();
