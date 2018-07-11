@@ -120,11 +120,14 @@ int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variabl
 	
 	TFile * app_ofile = TFile::Open((identifier+"_app"+".root").c_str(), "update");
 	for(size_t i = 0; i < files.size(); ++i) {
+		files.at(i)->tvertex->ResetBranchAddresses();
+
 		std::cout<<"On file: "<<files.at(i)->tag<<std::endl;
 		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
 		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
 	}
 	app_ofile->Close();
+	
 	delete app_ofile;
 
 

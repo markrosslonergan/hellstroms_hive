@@ -47,7 +47,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	double cut_min_cosmic = 999;
 	double cut_max_cosmic = -999;
 
-	int nsteps_bnb = 5;//50
+	int nsteps_bnb = 10;//50
 	double cut_min_bnb = 999;//0.52;
 	double cut_max_bnb = -999;
 
@@ -70,8 +70,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	//cut_max_bnb =cut_max_bnb*1.0;
 
 	//Zoomed in notrack
-	cut_min_cosmic = 0.532; cut_max_cosmic = 0.543;
-	cut_min_bnb = 0.498; cut_max_bnb = 0.501;
+//	cut_min_cosmic = 0.532; cut_max_cosmic = 0.543;
+//	cut_min_bnb = 0.498; cut_max_bnb = 0.501;
 
 	//Zoomed in track
 //	cut_min_cosmic = 0.54; cut_max_cosmic = 0.58;

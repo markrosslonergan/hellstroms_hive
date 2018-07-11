@@ -42,7 +42,6 @@ int main (int argc, char *argv[]){
 	std::string mode_option = "fake"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
-	TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
 
 	bool run_cosmic = true;
 	bool run_bnb = true;
@@ -265,7 +264,7 @@ int main (int argc, char *argv[]){
 			addPreFriends(f,"shower");
 			//addPreFriends(f,"pi0boost");
 			
-			f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
+			if(mode_option != "app" && mode_option != "train") f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 		}
 	}
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -289,16 +288,15 @@ int main (int argc, char *argv[]){
 	std::vector<bdt_variable> vars;
 
 	std::string proton_mass = "0.938272";
-	std::string reco_shower_momentum = "reco_shower_helper_energy[0]"; 
-	std::string reco_track_energy = "reco_track_energy_new_legacy[0]+"+proton_mass;
+	std::string reco_shower_momentum = "(-0.017962 + 1.3719*reco_shower_helper_energy[0])"; 
+	std::string reco_track_energy = "track_info.reco_track_kinetic_from_length[0]+"+proton_mass;
 	std::string reco_track_momentum  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"-"+proton_mass +"*"+proton_mass+")";
-	std::string invariant_mass = proton_mass+"*"+proton_mass+"+2.0*("+reco_track_energy+"*reco_shower_helper_energy[0]-"+reco_track_momentum+"*"+reco_shower_momentum+"*"+angle_track_shower+")";
+	std::string invariant_mass = proton_mass+"*"+proton_mass+"+2.0*("+reco_track_energy+"*"+reco_shower_momentum+"-"+reco_track_momentum+"*"+reco_shower_momentum+"*"+angle_track_shower+")";
 
 
-
-	vars.push_back(bdt_variable("shower_info.amalgamated_shower_dedx","(52,0,7)", "Amalgamated Shower dE/dx [MeV/cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_helper_energy[0]","(52,0,0.6)","Reconstructed Shower Energy [GeV]", false,"d"));
-	vars.push_back(bdt_variable("-0.017962 + 1.3719*reco_shower_helper_energy[0]","(52,0,0.6)","Reconstructed Shower Energy (Corrected) [GeV]", false,"d"));
+	vars.push_back(bdt_variable("shower_info.amalgamated_shower_dEdx[0]","(52,0,7)", "Amalgamated Shower dE/dx [MeV/cm]",false,"d"));
+//	vars.push_back(bdt_variable("reco_shower_helper_energy[0]","(52,0,0.6)","Reconstructed Shower Energy [GeV]", false,"d"));
+	vars.push_back(bdt_variable(reco_shower_momentum,"(52,0,0.6)","Reconstructed Shower Energy (Corrected) [GeV]", false,"d"));
 	vars.push_back(bdt_variable("reco_shower_length[0]","(52,0,100)","Shower Length [cm]",false,"d"));
 
 	vars.push_back(bdt_variable("reco_shower_opening_angle[0]","(52,0,0.8)","Shower Opening Angle",false,"d"));
@@ -310,11 +308,10 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("reco_nuverty","(52,-110,+110)","Reconstructed Vertex Y pos [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_nuvertz","(52,0,1050)","Reconstructed Vertex Z pos [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0],reco_shower_dirz[0]))","(52,-1,1)","Reconstructed Shower - Cosine Theta", true,"d"));
-	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0], reco_shower_dirx[0]))","(52,-1,1)","Reconstructed Shower - Cosine Phi", true,"d"));
-	vars.push_back(bdt_variable("atan2(reco_shower_diry[0],reco_shower_dirz[0])","(52,-180,180)","Reconstructed Shower - Theta", true,"d"));
-	vars.push_back(bdt_variable("atan2(reco_shower_diry[0], reco_shower_dirx[0])","(52,-180,180)","Reconstructed Shower - Phi", true,"d"));
-
+//	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0],reco_shower_dirz[0]))","(52,-1,1)","Reconstructed Shower - Cosine Theta", true,"d"));
+//	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[0], reco_shower_dirx[0]))","(52,-1,1)","Reconstructed Shower - Cosine Phi", true,"d"));
+	vars.push_back(bdt_variable("atan2(reco_shower_diry[0],reco_shower_dirz[0])","(52,-3.14159, 3.14159)","Reconstructed Shower - Theta", true,"d"));
+	vars.push_back(bdt_variable("atan2(reco_shower_diry[0], reco_shower_dirx[0])","(52,-3.14159,-3.14159)","Reconstructed Shower - Phi", true,"d"));
 
 	vars.push_back(bdt_variable("reco_shower_endx[0]","(52,0,250)"," Reconstructed Shower End X pos [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_endy[0]","(52,-110,+110)","Reconstructed Shower End Y pos [cm]",false,"d"));
@@ -324,6 +321,52 @@ int main (int argc, char *argv[]){
 	//vars.push_back(bdt_variable("reco_shower_helpernew_energy[0]","(52,0,0.4)","Reconstructed Shower Energy (NEW) [GeV]", false,"d"));
 	//vars.push_back(bdt_variable("reco_shower_dedxnew_plane2[0]","(52,0,6)", "Shower dE/dx Collection Plane (NEW) [MeV/cm]",false,"d"));
 
+	if(istrack=="track"){
+
+		//Proton Straightness (not currently feasible)
+		//Ratio of Track energy via length to track energy via Calometery
+		vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_dirx[0])+ "+reco_shower_momentum+"*reco_shower_dirx[0]","(52,-1.5,2)","Reconstructed Delta Momentum X [GeV]",true,"d"));
+		vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_diry[0])+ "+reco_shower_momentum+"*reco_shower_diry[0]","(52,-1.5,2)","Reconstructed Delta Momentum Y [GeV]",true,"d"));
+		vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_dirz[0])+ "+reco_shower_momentum+"*reco_shower_dirz[0]","(52,-1.5,2)","Reconstructed Delta Momentum Z [GeV]",true,"d"));
+
+		vars.push_back(bdt_variable( "sqrt( pow("+reco_track_energy +"*(reco_track_dirx[0])+ "+reco_shower_momentum+"*reco_shower_dirx[0],2)+ pow("+reco_track_energy +"*(reco_track_diry[0])+"+reco_shower_momentum +"*reco_shower_diry[0],2))","(52,0,2)","Reconstucted Delta Transverse (YX) Momentum [GeV]",true,"d"));
+
+		vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
+
+		vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(52,0,12)","Mean Track dE/dx [MeV/cm]", true,"d"));
+		//vars.push_back(bdt_variable("track_info.reco_track_end_mean_dEdx[0]", "(52,0,12)","Mean End Track dE/dx", true,"d"));
+		//vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]", "(52,0,12)","Mean Start Track dE/dx", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(52,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(52,0,24)","Track PIDA",true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(52,0,25)","Track Bragg A",true,"d"));
+
+		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(52,0,30)","Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
+
+		vars.push_back(bdt_variable(invariant_mass,"(52,1,2.5)","Invariant Mass",true,"d"));
+	
+		vars.push_back(bdt_variable("(atan2(reco_track_diry[0],reco_track_dirz[0]))","(52,-3.14159,3.14159)","Reconstructed Track -  Theta", true,"d"));
+		vars.push_back(bdt_variable("(atan2(reco_track_diry[0],reco_track_dirx[0]))","(52,-3.14159,3.14159)","Reconstructed Track -  Phi", true,"d"));
+
+	//	vars.push_back(bdt_variable("cos(atan2(reco_track_diry[0],reco_track_dirz[0]))","(52,-1,1)","Reconstructed Track - Cosine Theta", true,"d"));
+	//	vars.push_back(bdt_variable("cos(atan2(reco_track_diry[0],reco_track_dirx[0]))","(52,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));
+
+		vars.push_back(bdt_variable(angle_track_shower,	"(52,-1,1)","Cosine Track-Shower Angle ",true,"d"));
+
+		vars.push_back(bdt_variable("reco_track_endx[0]","(52,0,250)"," Reconstructed Track End X pos [cm]",false,"d"));
+		vars.push_back(bdt_variable("reco_track_endy[0]","(52,-110,+110)","Reconstructed Track End Y pos [cm]",false,"d"));
+		vars.push_back(bdt_variable("reco_track_endz[0]","(52,0,1050)","Reconstructed Track End Z pos [cm]",false,"d"));
+
+		//NEW variables for tracks
+		vars.push_back(bdt_variable("reco_track_energy_new_legacy[0]", "(52,0,1)","Track Energy (Best Plane)",true, "d"));
+		vars.push_back(bdt_variable("track_info.reco_track_kinetic[0]","(52,0,1)","Reconstructed Track Kinetic Energy (Calo) [cm]", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_kinetic_from_length[0]","(52,0,1)","Reconstructed Track Kinetic Energy (Length) [cm]", true,"d"));
+		vars.push_back(bdt_variable("track_info.reco_track_kinetic_from_length[0]/track_info.reco_track_kinetic[0]","(52,0,5)","Ratio of Reco Track Kinetic (Length/Calo)", true,"d"));
+
+
+	}
+
+	if(mode_option != "train" && mode_option != "app"){
+		//We don't want to train using these variables, but we would like to plot them just to see how things are
 
 	vars.push_back(bdt_variable("pi0_info.num_reco_showers_within_10cm_vertex","(10,0,10)","Num Showers within 10cm",false,"i"));
 	vars.push_back(bdt_variable("pi0_info.num_reco_showers_within_20cm_vertex","(10,0,10)","Num Showers within 20cm",false,"i"));
@@ -344,48 +387,6 @@ int main (int argc, char *argv[]){
 
 
 
-	if(istrack=="track"){
-
-		//Proton Straightness (not currently feasible)
-		//Ratio of Track energy via length to track energy via Calometery
-		vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_dirx[0])+ reco_shower_helper_energy[0]*reco_shower_dirx[0]","(52,-1.5,2)","Reconstructed Delta Momentum X [GeV]",true,"d"));
-		vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_diry[0])+ reco_shower_helper_energy[0]*reco_shower_diry[0]","(52,-1.5,2)","Reconstructed Delta Momentum Y [GeV]",true,"d"));
-		vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_dirz[0])+ reco_shower_helper_energy[0]*reco_shower_dirz[0]","(52,-1.5,2)","Reconstructed Delta Momentum Z [GeV]",true,"d"));
-
-		vars.push_back(bdt_variable( "sqrt( pow("+reco_track_energy +"*(reco_track_dirx[0])+ reco_shower_helper_energy[0]*reco_shower_dirx[0],2)+ pow("+reco_track_energy +"*(reco_track_diry[0])+ reco_shower_helper_energy[0]*reco_shower_diry[0],2))","(52,0,2)","Reconstucted Delta Transverse Momentum [GeV]",true,"d"));
-
-		vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
-
-		vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(52,0,12)","Mean Track dE/dx [MeV/cm]", true,"d"));
-		//vars.push_back(bdt_variable("track_info.reco_track_end_mean_dEdx[0]", "(52,0,12)","Mean End Track dE/dx", true,"d"));
-		//vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]", "(52,0,12)","Mean Start Track dE/dx", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(52,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(52,0,24)","Track PIDA",true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(52,0,25)","Track Bragg A",true,"d"));
-
-		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(52,0,30)","Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
-
-		vars.push_back(bdt_variable(invariant_mass,"(52,1,2.5)","Invariant Mass",true,"d"));	
-
-		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[0],reco_track_dirz[0]))","(52,-1,1)","Reconstructed Track - Cosine Theta", true,"d"));
-		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[0],reco_track_dirx[0]))","(52,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));
-
-		vars.push_back(bdt_variable(angle_track_shower,	"(52,-1,1)","Cosine Track-Shower Angle ",true,"d"));
-
-		vars.push_back(bdt_variable("reco_track_endx[0]","(52,0,250)"," Reconstructed Track End X pos [cm]",false,"d"));
-		vars.push_back(bdt_variable("reco_track_endy[0]","(52,-110,+110)","Reconstructed Track End Y pos [cm]",false,"d"));
-		vars.push_back(bdt_variable("reco_track_endz[0]","(52,0,1050)","Reconstructed Track End Z pos [cm]",false,"d"));
-
-		//NEW variables for tracks
-		vars.push_back(bdt_variable("reco_track_energy_new_legacy[0]", "(52,0,1)","Track Energy (Best Plane)",true, "d"));
-		vars.push_back(bdt_variable("track_info.reco_track_kinetic[0]","(52,0,1)","Reconstructed Track Kinetic Energy (Calo) [cm]", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_kinetic_from_length[0]","(52,0,1)","Reconstructed Track Kinetic Energy (Length) [cm]", true,"d"));
-
-
-	}
-
-	if(mode_option != "train" && mode_option != "app"){
-		//We don't want to train using these variables, but we would like to plot them just to see how things are
 
 		if(false && mode_option != "train"){
 			//We don't want to train using these variables, but we would like to plot them just to see how things are
@@ -535,6 +536,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 	}
 	else if(mode_option == "response"){
 
+		TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
 		//Ok print out Cosmic BDT
 		if(run_cosmic){
 			bdt_response cosmic_response(cosmic_bdt_info, signal_pure, intime);
@@ -567,6 +569,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 		bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,istrack);
 
+		TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
 		if(!response_only){
 			int h=0;
 
@@ -619,6 +622,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 		bnbext->fillstyle = 3333;
 		histogram_stack.addToStack(bnbext);
 
+		TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
 		int ip=0;
 
 		if(number == -1){
@@ -637,6 +641,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 	}else if(mode_option == "datamc"){
 
+		TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
 		//Obsolete
 		/*bdt_stack *obs = new bdt_stack(istrack+"_olddatamc");
 		  obs->plot_pot =4.801e19;
@@ -992,6 +997,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols,istrack);
 
 
+		TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
 		test.plot_recomc(ftest, bnb_cosmics, vars.at(1) , fcoscut,fbnbcut);
 
 		return 0;	
@@ -1061,7 +1067,6 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 		std::cout << "WARNING: " << mode_option << " is an invalid option\n";
 	}
 
-	ftest->Close();
 
 	return 0;
 
