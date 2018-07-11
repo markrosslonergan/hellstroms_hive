@@ -35,6 +35,8 @@
 #include "TText.h"
 #include "TRandom3.h"
 
+#include "TEntryList.h"
+
 template <typename T>
 std::string to_string_prec(const T a_value, const int n = 6)
 {
@@ -108,11 +110,31 @@ struct bdt_file{
 
 		TFile *f;
 		TTree *tvertex;
+
 		//copy tvertex into topovertex, but with topological cut.
 		TTree *topovertex;
 
 		TTree *tevent;
 		TTree *tpot;
+
+		std::string topological_list_name;
+		TEntryList * topological_list;
+		std::string precut_list_name;
+		TEntryList * precut_list;
+		std::string cosmicbdt_list_name;
+		TEntryList * cosmicbdt_list;
+		std::string bnbbdt_list_name;
+		TEntryList * bnbbdt_list;
+
+
+		int setStageEntryList(int j);
+		int calcPrecutEntryList();
+		int calcTopologicalEntryList();
+		int calcCosmicBDTEntryList(double,double);
+		int calcBNBBDTEntryList(double,double);
+
+
+
 
 		double scale_data;
 

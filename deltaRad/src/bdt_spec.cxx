@@ -73,8 +73,8 @@ int bdt_stack::makeSBNspec(std::string tagin, bdt_variable var, double c1, doubl
 TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 
 	int stack_rebin = 1;
-	if(level ==2) stack_rebin=2;
-	if(level ==3) stack_rebin=4;
+//	if(level ==2) stack_rebin=2;
+//	if(level ==3) stack_rebin=4;
 
 
 	TH1* summed = (TH1*)stack.at(0)->getTH1(var, stack.at(0)->getStageCuts(level,cut1, cut2), "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
@@ -127,6 +127,8 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 	std::vector<double> integral_sorter;
 
 	for(int t=0; t<stack.size(); t++){
+		std::cout<<"Stack "<<stack.at(t)->tag<<" level "<<t<<std::endl;
+
 		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin);
 		hist->SetTitle((this->name+"_"+var.name).c_str());
 		hist->SetLineColor(kBlack);

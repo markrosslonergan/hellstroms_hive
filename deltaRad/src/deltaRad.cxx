@@ -232,6 +232,8 @@ int main (int argc, char *argv[]){
 	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_fresh_v4.root",	"BNBext",	"E1p","",  kBlack, data_flow);
 
 
+	bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
+
 	//For conviencance fill a vector with pointers to all the files to loop over.
 	std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext};
 
@@ -265,10 +267,16 @@ int main (int argc, char *argv[]){
 			//addPreFriends(f,"pi0boost");
 			
 			if(mode_option != "app" && mode_option != "train") f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
+			
+			std::cout<<"Filling PrecutEntryList on File "<<f->tag<<std::endl;
+			f->calcPrecutEntryList();
+
 		}
 	}
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+
+
 
 
 	//Adding plot names
@@ -491,21 +499,25 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 	double fcoscut;
 	double fbnbcut;
 	if(istrack == "track"){
-		fcoscut = 0.564;
-		fbnbcut = 0.521; 
-
-		//ccut: 0.546841 bcut: 0.518333  #signal: 14.5568 #bkg: 85.138 ||  bnb: 82.0697 cos: 3.06832 || 1.57763 cosmic lin scan
-		fbnbcut = 0.518333;
-		fcoscut = 0.546841;
+//0.554 bcut: 0.534
+		fcoscut = 0.554;
+		fbnbcut = 0.534;
 
 	}else if(istrack == "notrack"){
-		fcoscut = 0.540882;
-		fbnbcut = 0.527059;
-
-		//	fcoscut = 0.551176;
-		//	fbnbcut = 0.538824;
+		fcoscut = 0.556667;
+		fbnbcut = 0.536667;
+		//Best Fit Significance: 0.556667 0.536667 0.924408
 
 	}
+
+	if(mode_option != "precalc" && mode_option != "train" && mode_option != "app" && mode_option != "sig"){
+		for(auto &f: bdt_files){
+			std::cout<<"Filling BDTList on File "<<f->tag<<std::endl;
+			f->calcCosmicBDTEntryList(fcoscut, fbnbcut);
+			f->calcBNBBDTEntryList(fcoscut, fbnbcut);
+		}
+	}
+
 
 
 
@@ -605,8 +617,8 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 
 		TFile *fsig = new TFile(("significance_"+istrack+".root").c_str(),"recreate");
-		//std::vector<double> ans = scan_significance(fsig, {signal_cosmics} , {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info);
-		std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
+		std::vector<double> ans = scan_significance(fsig, {signal_cosmics} , {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info);
+		//std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
 		std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
 		fsig->Close();
@@ -631,6 +643,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 				histogram_stack.plotStacks(ftest,  v ,fcoscut,fbnbcut);
 			}
 		}else{
+			std::cout<<"Starting to make a stack of : "<<vars.at(number).name<<std::endl;
 			histogram_stack.plotStacks(ftest,  vars.at(number) ,fcoscut,fbnbcut);
 			return 0;
 		}
@@ -696,9 +709,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 			if(number != -1){
 				plot_bdt_variable(signal_pure, intime, vars.at(number), cosmic_bdt_info);
 			}else{
-				for(auto &v:vars){
-					plot_bdt_variable(signal_pure, intime, v, cosmic_bdt_info);
-				}
+				plot_bdt_variables(signal_pure, intime, vars, cosmic_bdt_info);
 			}
 
 		}
@@ -708,9 +719,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 			if(number != -1){
 				plot_bdt_variable(signal_pure, bnb_pure, vars.at(number), bnb_bdt_info);
 			}else{
-				for(auto &v:vars){
-					plot_bdt_variable(signal_pure, bnb_pure, v, bnb_bdt_info);
-				}
+				plot_bdt_variables(signal_pure, bnb_pure, vars, bnb_bdt_info);
 			}
 
 		}
@@ -938,12 +947,12 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 		std::vector<bdt_file*> bdt_filesA = {bnb_pure};
 		std::vector<bdt_file*> bdt_filesB = {data5e19, bnbext};
-		std::vector<bdt_file*> bdt_filesC = {intime};
+		std::vector<bdt_file*> bdt_filesC = {lee};
 
-		for(auto &f: bdt_filesB){
+		for(auto &f: bdt_filesC){
 			bdt_precalc pre(f);
 		
-		//if(number==1)	pre.genBNBcorrectionInfo();
+		if(number==1)	pre.genBNBcorrectionInfo();
 		if(number==1)	pre.genPi0Info();
 		if(number==1)	pre.genShowerInfo();
 		if(number==1)	pre.genTrackInfo();
