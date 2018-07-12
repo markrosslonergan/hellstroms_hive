@@ -369,7 +369,7 @@ int bdt_precalc::genTrackInfo(){
 // Function to calculate the pi0 -> 2gamma decay angle, relative to boost vector
 int bdt_precalc::genPi0BoostAngle() {
     TTree *friend_tree = new TTree("pi0_info", "pi0_info");
-    std::size_t const N = 20;
+    std::size_t const N = 30;
     Int_t most_energetic_shower_index = 0;
     Int_t second_most_energetic_shower_index = 0;
     Int_t ccnc = 0, reco_asso_showers = 0, reco_asso_tracks = 0;
@@ -410,8 +410,8 @@ int bdt_precalc::genPi0BoostAngle() {
     TBranch *b_gamma_z_angle_backward = friend_tree->Branch("gamma_z_angle_backward", &gamma_z_angle_backward);
     //TBranch *b_gamma_opening_angle_cm = friend_tree->Branch("gamma_opening_angle_cm", &gamma_opening_angle_cm);
 
-    std::ofstream myfile;
-    myfile.open("output_pi0Boost.txt");
+    //std::ofstream myfile;
+    //myfile.open("output_pi0Boost.txt");
 	int NN = file->tvertex->GetEntries();
 	for(int i=0; i< file->tvertex->GetEntries(); i++) {
 		if (i%10000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
@@ -420,6 +420,8 @@ int bdt_precalc::genPi0BoostAngle() {
         gamma_decay_angle_backward = -999.;
         gamma_opening_angle_lab = -999;
         //gamma_opening_angle_cm = -999;
+        gamma_decay_angle_same = -999;
+        gamma_decay_angle_opp = -999;
         gamma_z_angle_forward = -999;
         gamma_z_angle_backward = -999;
         // Check for signal
@@ -445,6 +447,7 @@ int bdt_precalc::genPi0BoostAngle() {
             TLorentzVector gamma1(px1, py1, pz1, E1);
             TLorentzVector gamma2(px2, py2, pz2, E2);
             gamma_opening_angle_lab = gamma1.Vect().Angle(gamma2.Vect());
+            /*
             myfile << "gamma1 coordinates, pre-boost:\n" << "\t(" << gamma1.X() 
                                               << ", "  << gamma1.Y()
                                               << ", "  << gamma1.Z()
@@ -454,19 +457,22 @@ int bdt_precalc::genPi0BoostAngle() {
                                               << ", "  << gamma2.Y()
                                               << ", "  << gamma2.Z()
                                               << ")" << std::endl;
-
+            */
             TLorentzVector p_pi = gamma1 + gamma2;
             TVector3 preBoost(p_pi.X(), p_pi.Y(), p_pi.Z());
             
             TVector3 boostVec = p_pi.BoostVector(); 
+            /*
             myfile << "Boost vector:\n"  << "\t(" << boostVec.X() 
                                          << ", "  << boostVec.Y()
                                          << ", "  << boostVec.Z()
                                          << ")"   << std::endl;
+            */
             p_pi.Boost(-boostVec);
             gamma1.Boost(-boostVec);
             gamma2.Boost(-boostVec);
             
+            /*
             myfile << "gamma1 coordinates, post-boost:\n" << "\t(" << gamma1.X() 
                                               << ", " << gamma1.Y()
                                               << ", " << gamma1.Z()
@@ -476,47 +482,50 @@ int bdt_precalc::genPi0BoostAngle() {
                                               << ", " << gamma2.Y()
                                               << ", " << gamma2.Z()
                                               << ")"  << std::endl;
+            */
             TVector3 forwardShower;
             TVector3 backwardShower;
             TVector3 pi0SameDirShower;
             TVector3 pi0OppDirShower;
             // Define new coordinates with 
             if (gamma1.Z() > 0 && gamma2.Z() > 0) {
-                myfile << "Both showers forward" << std::endl;
+                //myfile << "Both showers forward" << std::endl;
                 continue;
             }
             else if (gamma1.Z() < 0 && gamma2.Z() < 0) {
-                myfile << "Both showers backward" << std::endl;
+                //myfile << "Both showers backward" << std::endl;
                 continue;
             }
             else if (gamma1.Z() > 0 && gamma2.Z() < 0 ) {
-                myfile << "Shower 1 forward" << std::endl;
+                //myfile << "Shower 1 forward" << std::endl;
                 forwardShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
                 backwardShower.SetXYZ(gamma2.X(), gamma2.Y(), gamma2.Z());
             }
             else if (gamma1.Z() < 0 && gamma2.Z() > 0 ) {
-                myfile << "Shower 2 forward" << std::endl;
+                //myfile << "Shower 2 forward" << std::endl;
                 forwardShower.SetXYZ(gamma2.X(), gamma2.Y(), gamma2.Z());
                 backwardShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
             }
             else {
-                myfile << "Uhhhh???" << std::endl;
+                //myfile << "Uhhhh???" << std::endl;
                 continue;
             }
             if ((gamma1.Z() > 0) == (boostVec.Z() > 0)) {
-                myfile << "Shower 1 in same direction as pi0" << std::endl;
+                //myfile << "Shower 1 in same direction as pi0" << std::endl;
                 pi0SameDirShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
                 pi0OppDirShower.SetXYZ(gamma2.X(), gamma2.Y(), gamma2.Z());
             }
             else if ((gamma2.Z() > 0) == (boostVec.Z() > 0)) {
-                myfile << "Shower 2 in same direction as pi0" << std::endl;
+                //myfile << "Shower 2 in same direction as pi0" << std::endl;
                 pi0SameDirShower.SetXYZ(gamma2.X(), gamma2.Y(), gamma2.Z());
                 pi0OppDirShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
             }
             else {
-                myfile << "Neither shower in same direction???" << std::endl;
+                //myfile << "Neither shower in same direction???" << std::endl;
+                continue;
             }
             
+            /*
             myfile << "Forward shower:\n" << "\t(" << forwardShower.X() 
                                           << ", "  << forwardShower.Y()
                                           << ", "  << forwardShower.Z()
@@ -526,6 +535,7 @@ int bdt_precalc::genPi0BoostAngle() {
                                           << ", "  << backwardShower.Z()
                                           << ")"   << std::endl;
 
+            */
             TVector3 zUnit(0., 0., 1.);
             
             gamma_decay_angle_forward = cos(boostVec.Angle(forwardShower));
@@ -549,7 +559,7 @@ int bdt_precalc::genPi0BoostAngle() {
             //myfile << "Decay angle = " << gamma_decay_angle_forward << std::endl;
             //myfile << "Opening angle, lab = " << gamma_opening_angle_lab << std::endl;
             //myfile << "Opening angle, cm = " << gamma_opening_angle_cm << std::endl;
-            myfile << "-----------------------------------------------------------" << std::endl;
+            //myfile << "-----------------------------------------------------------" << std::endl;
         }
         
 		friend_tree->Fill();

@@ -18,7 +18,7 @@ THStack* bdt_stack::getBDTStack(bdt_info whichbdt, int level, double cut1, doubl
 		hist->SetFillStyle(stack.at(t)->fillstyle);
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Verticies");
+		hist->GetYaxis()->SetTitle("Vertices");
 
 		stacked->Add(hist);
 	}
@@ -46,7 +46,7 @@ TH1* bdt_stack::getBDTSum(bdt_info whichbdt, int level, double cut1, double cut2
 		summed->SetLineWidth(1);
 
 		summed->GetXaxis()->SetTitle(var.unit.c_str());
-		summed->GetYaxis()->SetTitle("Verticies");
+		summed->GetYaxis()->SetTitle("Vertices");
 
 
 
@@ -87,7 +87,7 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 		summed->SetLineWidth(1);
 
 		summed->GetXaxis()->SetTitle(var.unit.c_str());
-		summed->GetYaxis()->SetTitle("Verticies");
+		summed->GetYaxis()->SetTitle("Vertices");
 
 
 
@@ -131,7 +131,7 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 		hist->Scale();		
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Verticies");
+		hist->GetYaxis()->SetTitle("Vertices");
 		
 		
 		to_sort.push_back(hist);
@@ -197,7 +197,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		s1->Draw("hist");
 		s1->SetTitle("Pre-Selection");
 		s1->GetXaxis()->SetTitle(var.unit.c_str());
-		s1->GetYaxis()->SetTitle("Verticies");
+		s1->GetYaxis()->SetTitle("Vertices");
 		s1->GetYaxis()->SetTitleOffset(1.5);
 		s1->SetMaximum(s1->GetMaximum()*1.3);
 		TLegend *l1 = new TLegend(0.11,0.72,0.89,0.89);
@@ -223,7 +223,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		s2->Draw("hist");
 		s2->SetTitle("Post Cosmic BDT cut");
 		s2->GetXaxis()->SetTitle(var.unit.c_str());
-		s2->GetYaxis()->SetTitle("Verticies");
+		s2->GetYaxis()->SetTitle("Vertices");
 		s2->GetYaxis()->SetTitleOffset(1.5);
 		s2->SetMaximum(s2->GetMaximum()*1.3);
 		TLegend *l2 = new TLegend(0.11,0.72,0.89,0.89);
@@ -248,7 +248,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		s3->Draw("hist");
 		s3->SetTitle("Post BNB BDT cut");
 		s3->GetXaxis()->SetTitle(var.unit.c_str());
-		s3->GetYaxis()->SetTitle("Verticies");
+		s3->GetYaxis()->SetTitle("Vertices");
 		s3->GetYaxis()->SetTitleOffset(1.5);
 		s3->SetMaximum(s3->GetMaximum()*1.3);
 		TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);
@@ -300,9 +300,9 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		TPad*p0 = (TPad*)cobs->cd(1);
 		p0->SetLogy();
 		s0->Draw("hist");
-		s0->SetTitle("All Verticies");
+		s0->SetTitle("All Vertices");
 		s0->GetXaxis()->SetTitle(var.unit.c_str());
-		s0->GetYaxis()->SetTitle("Verticies");
+		s0->GetYaxis()->SetTitle("Vertices");
 		s0->GetYaxis()->SetTitleOffset(1.5);
 		s0->SetMaximum(s0->GetMaximum()*10);
 		TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
@@ -327,7 +327,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		s1->Draw("hist");
 		s1->SetTitle("Pre-Selection");
 		s1->GetXaxis()->SetTitle(var.unit.c_str());
-		s1->GetYaxis()->SetTitle("Verticies");
+		s1->GetYaxis()->SetTitle("Vertices");
 		s1->GetYaxis()->SetTitleOffset(1.5);
 		s1->SetMaximum(s1->GetMaximum()*50);
 		s1->SetMinimum(1);
@@ -355,7 +355,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		s2->Draw("hist");
 		s2->SetTitle("Post Cosmic BDT cut");
 		s2->GetXaxis()->SetTitle(var.unit.c_str());
-		s2->GetYaxis()->SetTitle("Verticies");
+		s2->GetYaxis()->SetTitle("Vertices");
 		s2->GetYaxis()->SetTitleOffset(1.5);
 		s2->SetMaximum(s2->GetMaximum()*10);
 		TLegend *l2 = new TLegend(0.11,0.72,0.89,0.89);
@@ -384,7 +384,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		s3->Draw("hist");
 		s3->SetTitle("Post BNB BDT cut");
 		s3->GetXaxis()->SetTitle(var.unit.c_str());
-		s3->GetYaxis()->SetTitle("Verticies");
+		s3->GetYaxis()->SetTitle("Vertices");
 		s3->GetYaxis()->SetTitleOffset(1.5);
 		s3->SetMaximum(s3->GetMaximum()*10);
 		TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);

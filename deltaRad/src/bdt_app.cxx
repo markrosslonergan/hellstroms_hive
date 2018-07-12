@@ -140,14 +140,14 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
             	bdt_app_update_formula(tree_formulas_v, reader_var_v);
             
                 if(tf_definition->EvalInstance()) {
-		//std::cout<<"Pass Defin"<<std::endl;
+		            //std::cout<<"Pass Defin"<<std::endl;
                     ts.mva = reader->EvaluateMVA(method.str.c_str());
                     passed++;
                 }
             }
             ts.tree->Fill();
         }
-	ts.tree->Write();
+	    ts.tree->Write();
         std::cout << "Number of events passed: " << passed << std::endl;
     }
         /*

@@ -36,7 +36,7 @@ int main (int argc, char *argv[]){
 	//===========================================================================================
 	std::string dir = "/home/amogan/singlePhotonCode/hellstroms_hive/";
 
-	std::string mode_option = "train"; 
+	std::string mode_option = "precalc"; 
 	std::string xml = "default.xml";
 	std::string istrack ="track";
 
@@ -183,7 +183,7 @@ int main (int argc, char *argv[]){
     std::string p_pi = "sqrt("+E1+"*"+E1+" + "+E2+"*"+E2+" + 2*"+E1+"*"+E2+"*"+angle_shower1_shower2+")";
     std::vector<bdt_variable> vars;
 
-    vars.push_back(bdt_variable(p_pi, "(100, 100, 1500)", "Reconstructed Pion Momentum[MeV]", true, "d"));
+    vars.push_back(bdt_variable(p_pi, "(100, 0., 1.5)", "Reconstructed Pion Momentum[GeV]", false, "d"));
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[most_energetic_shower_index]","(48,0,15)", "Shower 1 dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_dedx_plane2[second_most_energetic_shower_index]","(48,0,15)", "Shower 2 dE/dx Collection Plane [MeV/cm]",false,"d"));
 	vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Summed Shower Energy [GeV]", false,"d"));
@@ -210,10 +210,10 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirx[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Phi|", true,"d"));
     
 	if(istrack=="track"){ 
-        vars.push_back(bdt_variable("pi0_info.gamma_decay_angle_forward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma Angle (CM Frame)", true, "d"));
-        vars.push_back(bdt_variable("pi0_info.gamma_decay_angle_backward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma Angle (CM Frame)", true, "d"));
-        vars.push_back(bdt_variable("pi0_info.gamma_z_angle_forward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma Angle (CM Frame)", true, "d"));
-        vars.push_back(bdt_variable("pi0_info.gamma_z_angle_backward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma Angle (CM Frame)", true, "d"));
+        vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle_forward", "(50, -1, 1)", "Reconstructed Cosine Pi Boost Angle Forward (Lab Frame)", true, "d"));
+        vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle_backward", "(50, -1, 1)", "Reconstructed Cosine Pi Boost Angle Backward Angle (Lab Frame)", true, "d"));
+        vars.push_back(bdt_variable("pi0_info.gamma_z_angle_forward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma_f Angle (CM Frame)", true, "d"));
+        //vars.push_back(bdt_variable("pi0_info.gamma_z_angle_backward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma_b Angle (CM Frame)", true, "d"));
 		vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(52,0,12)","Mean Track dE/dx", true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(52,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
@@ -309,7 +309,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 	else if(mode_option == "recomc"){
 
 	    // First off, what MC catagories do you want to stack?
-    	std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0}","NC BNB Background", "CC BNB Background", "NC #Delta Radiative", "Two Cosmic Showers", "One Cosmic Shower"};
+    	std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0}","NC BNB Background", "CC BNB Background", "NC #Delta Radiative", "Two Cosmic Showers", "One Cosmic Shower", "Other"};
 	    // How are they defined, cutwise?
         // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
         std::string signal = "ccnc == 1 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1";
@@ -326,7 +326,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
         // Other. For now, just case where one shower is cosmic, but not both
         std::string bkg6 = "(true_shower_origin[0]==2 || true_shower_origin[1]==2) && !(true_shower_origin[0]==2 && true_shower_origin[1]==2)";
         // Other; defined as "!" versions of above
-        std::string other = "!("+signal+"&&"+bkg1+"&&"+bkg2+"&&"+bkg3+"&&"+bkg4+"&&"+bkg5+"&&"+bkg6+")";
+        std::string other = "!("+signal+"||"+bkg1+"||"+bkg2+"||"+bkg3+"||"+bkg4+"||"+bkg5+"||"+bkg6+")";
 	    std::vector<std::string> recomc_cuts = {signal, bkg1,bkg2, bkg3, bkg4, bkg5, bkg6, other};
 
     
@@ -445,7 +445,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			if(true){
 				for(auto &v:vars){
 					TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_cosmo").c_str(), ("cvar_"+v.name+"_cosmo").c_str(),2200,1200);
-					c_var->Divide(2,1);
+					c_var->Divide(2,2);
 					c_var->cd();
 
 					for(int j=0; j<4;j++){	
@@ -500,7 +500,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 			if(true){
 				for(auto &v:vars){
 					TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_bnb").c_str(), ("cvar_"+v.name+"_bnb").c_str(),2200,1200);
-					c_var->Divide(2,1);
+					c_var->Divide(2,2);
 					c_var->cd();
 
 					for(int j=0; j<4;j++){	
@@ -531,7 +531,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 						sig->SetMaximum(sig->GetMaximum()*1.25);
 						bkg->Draw("hist same");
 						//sig->GetXaxis()->SetTitle(v.unit.c_str());
-						sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
+						sig->GetYaxis()->SetTitle("Vertices [Area Normalized]");
 						sig->GetYaxis()->SetTitleOffset(1.5);
 
 						TLegend *l = new TLegend(0.11,0.75,0.89,0.89);
@@ -756,7 +756,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
     */
     else if(mode_option == "precalc"){
 
-			std::vector<bdt_file*> precalc_files = {signal_pure};
+			std::vector<bdt_file*> precalc_files = {data5e19};
 			for(auto &f: precalc_files){
 				bdt_precalc pre(f);
                 // Only uncomment one calcluation at a time, otherwise memory leaks!
