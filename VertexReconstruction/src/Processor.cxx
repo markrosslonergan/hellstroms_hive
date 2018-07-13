@@ -69,6 +69,11 @@ void Processor::Run(int const entry) {
 
   else {
 
+    if(entry >= fstorage.fnumber_of_events) {
+      std::cout << "ERROR: requested entry larger than total number of events\n";
+      exit(1);
+    }
+
     RunEvent(entry);
 
   }
