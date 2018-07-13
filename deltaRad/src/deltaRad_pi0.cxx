@@ -107,7 +107,7 @@ int main (int argc, char *argv[]){
 	}else if(istrack == "notrack"){
 		//new_precuts = "reco_nu_vtx_dist_to_closest_tpc_wall > 10 && totalpe_ibg_sum > 50";
 		new_precuts = "1";
-		num_track_cut = "==0";
+		num_track_cut = "== 0";
 	}
 
 	//Set up 2 bdt_info structs for passing information on what BDT we are running. 
@@ -190,7 +190,7 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("reco_shower_length[most_energetic_shower_index]","(25,0,125)","Most Energetic Shower Length [cm]",false,"d"));
 	vars.push_back(bdt_variable("reco_shower_length[second_most_energetic_shower_index]","(25,0,125)","Least Energetic Shower Length [cm]",false,"d"));
     vars.push_back(bdt_variable(angle_shower1_shower2,"(50, -1, 1)", "Lab Opening Angle", false, "d"));
-    vars.push_back(bdt_variable(invMass,"(50, 0.03, 0.5)", "Two-shower Invariant Mass [GeV]", false, "d"));
+    vars.push_back(bdt_variable(invMass,"(50, 0.0, 0.5)", "Two-shower Invariant Mass [GeV]", false, "d"));
     vars.push_back(bdt_variable("reco_shower_helper_energy[most_energetic_shower_index]", "(50, 0, 1)", "Most Energetic Shower Energy", false, "d"));
     vars.push_back(bdt_variable("reco_shower_helper_energy[second_most_energetic_shower_index]", "(50, 0, 1)", "Second Most Energetic Shower Energy", false, "d"));
 
@@ -210,9 +210,10 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirx[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Phi|", true,"d"));
     
 	if(istrack=="track"){ 
-        vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle_forward", "(50, -1, 1)", "Reconstructed Cosine Pi Boost Angle Forward (Lab Frame)", true, "d"));
-        vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle_backward", "(50, -1, 1)", "Reconstructed Cosine Pi Boost Angle Backward Angle (Lab Frame)", true, "d"));
+        vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle_forward", "(50, -1, 1)", "Reconstructed Cosine Pi Boost Angle Forward (CM Frame)", true, "d"));
+        //vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle_backward", "(50, -1, 1)", "Reconstructed Cosine Pi Boost Angle Backward Angle (CM Frame)", true, "d"));
         vars.push_back(bdt_variable("pi0_info.gamma_z_angle_forward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma_f Angle (CM Frame)", true, "d"));
+        vars.push_back(bdt_variable("pi0_info.z_gamma_least_angle", "(25, 0, 1)", "Reconstructed #gamma #theta_{z} (CM Frame)", true, "d"));
         //vars.push_back(bdt_variable("pi0_info.gamma_z_angle_backward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma_b Angle (CM Frame)", true, "d"));
 		vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(52,0,12)","Mean Track dE/dx", true,"d"));
@@ -270,7 +271,6 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 
 	if(mode_option == "train") {
 		std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
-		//bdt_train(cosmic_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
 		bdt_train(cosmic_bdt_info, signal_pure, intime, vars, TMVAmethods);
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
 		bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
@@ -756,7 +756,9 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
     */
     else if(mode_option == "precalc"){
 
-			std::vector<bdt_file*> precalc_files = {data5e19};
+			//std::vector<bdt_file*> precalc_files = {signal_pure}; 
+			std::vector<bdt_file*> precalc_files = {signal_pure, signal_cosmics, bnb_pure, 
+                                                    bnb_cosmics, intime, bnbext, data5e19};
 			for(auto &f: precalc_files){
 				bdt_precalc pre(f);
                 // Only uncomment one calcluation at a time, otherwise memory leaks!

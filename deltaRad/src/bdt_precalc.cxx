@@ -382,8 +382,10 @@ int bdt_precalc::genPi0BoostAngle() {
     Double_t gamma_decay_angle_backward = 0.;
     Double_t gamma_z_angle_forward = 0.;
     Double_t gamma_z_angle_backward = 0.;
-    Double_t gamma_decay_angle_same = 0;
-    Double_t gamma_decay_angle_opp = 0;
+    Double_t gamma_decay_angle_same = 0.;
+    Double_t gamma_decay_angle_opp = 0.;
+    Double_t gamma_pi_least_angle = 0.;
+    Double_t z_gamma_least_angle = 0.;
     //Double_t gamma_opening_angle_cm = 0.;
 
     TBranch *breco_shower_energy = 0;
@@ -408,6 +410,8 @@ int bdt_precalc::genPi0BoostAngle() {
     TBranch *b_gamma_decay_angle_opp = friend_tree->Branch("gamma_decay_angle_opp", &gamma_decay_angle_opp);
     TBranch *b_gamma_z_angle_forward = friend_tree->Branch("gamma_z_angle_forward", &gamma_z_angle_forward);
     TBranch *b_gamma_z_angle_backward = friend_tree->Branch("gamma_z_angle_backward", &gamma_z_angle_backward);
+    TBranch *b_gamma_pi_least_angle = friend_tree->Branch("gamma_pi_least_angle", &gamma_pi_least_angle);
+    TBranch *b_z_gamma_least_angle = friend_tree->Branch("z_gamma_least_angle", &z_gamma_least_angle);
     //TBranch *b_gamma_opening_angle_cm = friend_tree->Branch("gamma_opening_angle_cm", &gamma_opening_angle_cm);
 
     //std::ofstream myfile;
@@ -424,6 +428,8 @@ int bdt_precalc::genPi0BoostAngle() {
         gamma_decay_angle_opp = -999;
         gamma_z_angle_forward = -999;
         gamma_z_angle_backward = -999;
+        gamma_pi_least_angle = -999;
+        z_gamma_least_angle = -999;
         // Check for signal
         bool hasTwoShowers = (reco_asso_showers == 2);
         bool goodIndex1 = (most_energetic_shower_index >= 0 && most_energetic_shower_index < 3);
@@ -537,6 +543,20 @@ int bdt_precalc::genPi0BoostAngle() {
 
             */
             TVector3 zUnit(0., 0., 1.);
+            if (zUnit.Angle(forwardShower) <= zUnit.Angle(backwardShower)) {
+                z_gamma_least_angle = cos(zUnit.Angle(forwardShower));
+            }
+            else if (zUnit.Angle(forwardShower) > zUnit.Angle(backwardShower)) {
+                z_gamma_least_angle = cos(zUnit.Angle(backwardShower));
+            }
+            else z_gamma_least_angle = -999;
+
+            if (boostVec.Angle(forwardShower) <= boostVec.Angle(backwardShower)) {
+                gamma_pi_least_angle = gamma_decay_angle_forward;
+            }
+            else {
+                gamma_pi_least_angle = gamma_decay_angle_backward;
+            }
             
             gamma_decay_angle_forward = cos(boostVec.Angle(forwardShower));
             gamma_decay_angle_backward = cos(boostVec.Angle(backwardShower));
