@@ -184,13 +184,13 @@ void PandoraAnalyzer::FillShowerTree() {
 }
 
 
-void PandoraAnalyzer::Run() {
+bool PandoraAnalyzer::Run() {
 
   FillVertexTree();
   FillTrackTree();
   FillShowerTree();
 
-  exit(0);
+  return true;
 
 }
 

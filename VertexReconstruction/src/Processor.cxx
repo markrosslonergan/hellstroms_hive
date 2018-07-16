@@ -13,7 +13,6 @@ Processor::Processor(char const * pot_name,
 	   files),
   fofile(nullptr){}
 
-
 Processor::~Processor() {
 
   for(Analyzer * analyzer : fanalyzers) delete analyzer;
@@ -37,12 +36,28 @@ void Processor::SetOutputFileName(char const * name) {
 }
 
 
+void Processor::SetOutputFilterFileName(char const * name) {
+
+  fstorage.SetOutputFilterFileName(name);
+
+}
+
+
 void Processor::RunEvent(int const entry) {
 
   fstorage.GetEvent(entry);
   
+  bool pass = true;
+
   for(Analyzer * analyzer : fanalyzers) { 
-    analyzer->Run();
+    if(!analyzer->Run()) {
+      pass = false;
+      break;
+    }
+  }
+
+  if(pass && fstorage.fevent_tree) {
+    fstorage.fevent_tree->Fill();
   }
 
 }
@@ -51,6 +66,7 @@ void Processor::RunEvent(int const entry) {
 void Processor::Run(int const entry) {
 
   if(fofile) fofile->cd();
+
   for(Analyzer * analyzer : fanalyzers) { 
     analyzer->SetOutputFile(fofile);
     analyzer->Initialize();
@@ -81,5 +97,7 @@ void Processor::Run(int const entry) {
   for(Analyzer * analyzer : fanalyzers) { 
     analyzer->Finalize();
   }  
+
+  if(fstorage.fevent_tree) fstorage.fevent_tree->Write();
 
 }

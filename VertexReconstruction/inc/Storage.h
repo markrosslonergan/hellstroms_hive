@@ -7,11 +7,15 @@
 #include <iostream>
 #include <unordered_map>
 
+//#include "Processor.h"
+
 #include "TFile.h"
 #include "TChain.h"
 
 
 struct Storage {
+
+  friend class Processor;
 
   Storage(char const * pot_name,
 	  char const * meta_name,
@@ -19,6 +23,8 @@ struct Storage {
 	  std::vector<char const *> const & files = std::vector<char const *>());
 
   ~Storage();
+
+  void SetOutputFilterFileName(char const * name);
 
 private:
 
@@ -41,6 +47,9 @@ private:
   TChain * fpot_chain;
   TChain * fmeta_chain;
   TChain * fevent_chain;
+
+  TFile * fofile_filter;
+  TTree * fevent_tree;
 
   std::unordered_map<std::string, std::pair<int, int>> fopflash_producer_map;
   std::unordered_map<std::string, std::pair<int, int>> fhit_producer_map;

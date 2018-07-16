@@ -15,9 +15,9 @@ class Analyzer {
   void SetStorage(Storage const & storage);
   void SetOutputFile(TFile * file);
 
-  virtual void Initialize(){};
-  virtual void Run(){};
-  virtual void Finalize(){};
+  virtual void Initialize(){}
+  virtual bool Run(){return true;}
+  virtual void Finalize(){}
 
  protected:
 

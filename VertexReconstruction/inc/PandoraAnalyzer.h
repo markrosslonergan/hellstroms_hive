@@ -22,7 +22,7 @@ class PandoraAnalyzer : public Analyzer {
   PandoraAnalyzer();
 
   void Initialize(){};
-  void Run();
+  bool Run();
   void Finalize();
 
  private:

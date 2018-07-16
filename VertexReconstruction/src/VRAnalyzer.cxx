@@ -455,7 +455,7 @@ void VRAnalyzer::VerticesPerEvent(ParticleAssociations const & pas) {
 }
 
 
-void VRAnalyzer::Run() {
+bool VRAnalyzer::Run() {
 
   //Runs the vertex builder
   VertexBuilder vb;
@@ -502,6 +502,8 @@ void VRAnalyzer::Run() {
   if(fvertices_per_event_tree) {
     VerticesPerEvent(pas);
   }
+
+  return true;
 
 }
 

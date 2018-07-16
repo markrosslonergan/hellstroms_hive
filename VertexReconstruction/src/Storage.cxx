@@ -9,7 +9,9 @@ Storage::Storage(char const * pot_name,
 		 std::vector<char const *> const & files) :
   fpot_chain(nullptr),
   fmeta_chain(nullptr),
-  fevent_chain(nullptr) {
+  fevent_chain(nullptr),
+  fofile_filter(nullptr),
+  fevent_tree(nullptr) {
 
   if(files.empty()) {
     std::cout << "Empty file list given to Storage\n";
@@ -48,9 +50,27 @@ Storage::Storage(char const * pot_name,
 
 Storage::~Storage() {
 
+  if(fofile_filter) fofile_filter->Close();
   if(fpot_chain) delete fpot_chain;
   delete fmeta_chain;
   delete fevent_chain;
+
+}
+
+
+void Storage::SetOutputFilterFileName(char const * name) {
+
+  fofile_filter = TFile::Open(name, "recreate");
+
+  TTree * pot_tree = fpot_chain->CloneTree();
+  pot_tree->Write();
+  delete pot_tree;
+
+  TTree * meta_tree = fmeta_chain->CloneTree();
+  meta_tree->Write();
+  delete meta_tree;
+
+  fevent_tree = fevent_chain->CloneTree(0);
 
 }
 
