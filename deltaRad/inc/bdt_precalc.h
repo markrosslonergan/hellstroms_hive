@@ -50,6 +50,7 @@ int genNewTrackInfo();
 int genPi0Info();
 int genBNBcorrectionInfo();
 int genPi0BoostAngle();
+int genPi0Bkg();
 
 
 

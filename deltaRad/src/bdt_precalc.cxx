@@ -542,6 +542,8 @@ int bdt_precalc::genPi0BoostAngle() {
                                           << ")"   << std::endl;
 
             */
+            
+            // See which shower is closest to z unit vector
             TVector3 zUnit(0., 0., 1.);
             if (zUnit.Angle(forwardShower) <= zUnit.Angle(backwardShower)) {
                 z_gamma_least_angle = cos(zUnit.Angle(forwardShower));
@@ -549,15 +551,15 @@ int bdt_precalc::genPi0BoostAngle() {
             else if (zUnit.Angle(forwardShower) > zUnit.Angle(backwardShower)) {
                 z_gamma_least_angle = cos(zUnit.Angle(backwardShower));
             }
-            else z_gamma_least_angle = -999;
 
+            // See which shower is closest to pion boost vector
             if (boostVec.Angle(forwardShower) <= boostVec.Angle(backwardShower)) {
-                gamma_pi_least_angle = gamma_decay_angle_forward;
+                gamma_pi_least_angle = cos(boostVec.Angle(forwardShower));
+            } 
+            else if (boostVec.Angle(forwardShower) > boostVec.Angle(backwardShower)) {
+                gamma_pi_least_angle = cos(boostVec.Angle(backwardShower));
             }
-            else {
-                gamma_pi_least_angle = gamma_decay_angle_backward;
-            }
-            
+
             gamma_decay_angle_forward = cos(boostVec.Angle(forwardShower));
             gamma_decay_angle_backward = cos(boostVec.Angle(backwardShower));
             gamma_decay_angle_same = cos(boostVec.Angle(pi0SameDirShower));
@@ -892,6 +894,17 @@ int bdt_precalc::genBNBcorrectionInfo(){
 	return 0;
 }
 
+// Take events tagged as "NCpi0" from the single-shower case,
+// and see which ones pass two-shower selection
+int bdt_precalc::genPi0Bkg() {
+    TFile *f = new TFile("marks_file", "READ");
+    TTree *friend_tree = new TTree("ncDeltaRadBkg_info", "ncDeltaRadBkg_info");
+    bool passes_two_shower = 1;
+    //file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz, &breco_shower_dirz);
+
+    TBranch *b_pass = friend_tree->Branch("passes_two_shower", &passes_two_shower);
 
 
 
+    return 0;
+}

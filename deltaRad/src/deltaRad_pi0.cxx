@@ -160,6 +160,7 @@ int main (int argc, char *argv[]){
 			addPreFriends(f,"track");
 			addPreFriends(f,"pi0");
 			addPreFriends(f,"bnbcorrection");
+			//addPreFriends(f,"ncDeltaRadBkg");
 			f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 		}
 	}
@@ -210,10 +211,11 @@ int main (int argc, char *argv[]){
 	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirx[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Phi|", true,"d"));
     
 	if(istrack=="track"){ 
-        vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle_forward", "(50, -1, 1)", "Reconstructed Cosine Pi Boost Angle Forward (CM Frame)", true, "d"));
+        vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle_forward", "(50, -1, 1)", "Reconstructed Cosine #theta_{#pi #gamma} (CM Frame)", true, "d"));
         //vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle_backward", "(50, -1, 1)", "Reconstructed Cosine Pi Boost Angle Backward Angle (CM Frame)", true, "d"));
-        vars.push_back(bdt_variable("pi0_info.gamma_z_angle_forward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma_f Angle (CM Frame)", true, "d"));
+        //vars.push_back(bdt_variable("pi0_info.gamma_z_angle_forward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma_f Angle (CM Frame)", true, "d"));
         vars.push_back(bdt_variable("pi0_info.z_gamma_least_angle", "(25, 0, 1)", "Reconstructed #gamma #theta_{z} (CM Frame)", true, "d"));
+        vars.push_back(bdt_variable("gamma_pi_least_angle", "(25, 0, 1)", "Reconstructed Smallest #theta_{#pi #gamma} (CM Frame)", true, "d"));
         //vars.push_back(bdt_variable("pi0_info.gamma_z_angle_backward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma_b Angle (CM Frame)", true, "d"));
 		vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(52,0,12)","Mean Track dE/dx", true,"d"));
@@ -316,9 +318,9 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
         // CC pi0 background
         std::string bkg1 = "ccnc == 0 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1"; 
         // Other NC BNB events where either (a) one of the showers isn't photon-induced, or (b) one doesn't come from pi0
-        std::string bkg2 = "(true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && ccnc == 1 && true_shower_origin[0]==1 && true_shower_origin[1]==1";
+        std::string bkg2 = "ccnc == 1 && (true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && true_shower_origin[0]==1 && true_shower_origin[1]==1";
         // Same as previous, but for CC events
-        std::string bkg3 = "(true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && ccnc == 0 && true_shower_origin[0]==1 && true_shower_origin[1]==1";
+        std::string bkg3 = "ccnc == 1 && (true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && true_shower_origin[0]==1 && true_shower_origin[1]==1";
         // Delta radiative is now considered a (very small) background
         std::string bkg4 = "reco_asso_showers==1 && true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] != 111 && is_delta_rad == 1 && true_shower_origin==1";
         // Cosmics
