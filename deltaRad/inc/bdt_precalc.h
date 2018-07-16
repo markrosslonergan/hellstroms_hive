@@ -60,5 +60,11 @@ int genBNBcorrectionInfo();
 
 };
 
+//line between X1 and X2, point X0
+double dist_line_point( std::vector<double>X1, std::vector<double> X2, std::vector<double> X0);
+double cos_angle_3pts(std::vector<double> last, std::vector<double> next, std::vector<double> mid);
+
+
+
 
 #endif

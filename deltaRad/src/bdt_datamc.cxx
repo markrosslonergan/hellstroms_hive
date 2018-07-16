@@ -17,7 +17,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 	//TCanvas *cobs = new TCanvas("","",1800,1600);
 	//cobs->Divide(2,2,0.0025,0.0000001);
 
-	double plot_pot=4.801e19;
+	double plot_pot=4.393e19;//4.801e19;
 
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;

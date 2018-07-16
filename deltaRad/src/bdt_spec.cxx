@@ -73,13 +73,14 @@ int bdt_stack::makeSBNspec(std::string tagin, bdt_variable var, double c1, doubl
 TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 
 	int stack_rebin = 1;
-//	if(level ==2) stack_rebin=2;
-//	if(level ==3) stack_rebin=4;
+	if(level ==2) stack_rebin=2;
+	if(level ==3) stack_rebin=4;
 
 
 	TH1* summed = (TH1*)stack.at(0)->getTH1(var, stack.at(0)->getStageCuts(level,cut1, cut2), "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
 
 	std::cout<<"Summed: "<<summed->GetSumOfWeights()<<std::endl;
+
 	for(int t=1; t<stack.size(); t++){
 		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "summed_"+std::to_string(t)+"_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, stack_rebin);
 		summed->Add(hist);
@@ -171,17 +172,24 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		double plot_pot=6.6e20;
 
 		ftest->cd();
+		std::cout<<"bdt_stack::plotStacks || Starting to get Stacks"<<std::endl;	
 		THStack* s0 = this->getStack(var,0,-9,-9);
 		THStack* s1 = this->getStack(var,1,-9,-9);
 		THStack* s2 = this->getStack(var,2,c1,-9);
 		THStack* s3 = this->getStack(var,3,c1, c2);
+		std::cout<<"bdt_stack::plotStacks || Gotten all Stacks"<<std::endl;	
+		std::cout<<"bdt_stack::plotStacks || Starting to get Sums"<<std::endl;	
 
 		TH1* t0 = this->getSum(var,0,-9,-9);
 		TH1* t1 = this->getSum(var,1,-9,-9);
 		TH1* t2 = this->getSum(var,2,c1,-9);
 		TH1* t3 = this->getSum(var,3,c1, c2);
-		
+		std::cout<<"bdt_stack::plotStacks || Gotten all Sums"<<std::endl;	
+
+	
+		std::cout<<t0<<std::endl;
 		t0->SetMarkerSize(0);
+		std::cout<<"bdt_stack::plotStacks || TEST"<<std::endl;	
 		t1->SetMarkerSize(0);
 		t2->SetMarkerSize(0);
 		t3->SetMarkerSize(0);

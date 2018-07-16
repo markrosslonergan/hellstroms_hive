@@ -55,17 +55,30 @@ int bdt_precalc::genTrackInfo(){
 	//Branches for the dEdx calo only!
 	std::vector<std::vector<double>> *vtrk_dEdx = 0;
 	std::vector<std::vector<double>> *vtrk_resrange = 0;
+	
+	std::vector<std::vector<double>> *vtrk_X = 0;
+	std::vector<std::vector<double>> *vtrk_Y = 0;
+	std::vector<std::vector<double>> *vtrk_Z = 0;
 	//std::vector<double>* true_track_pdg=0;
 
 	TBranch *bdEdx = 0;
 	TBranch *bresrange = 0;
 	TBranch *btrackpdg = 0;
 
+	TBranch *bX =0;
+	TBranch *bY =0;
+	TBranch *bZ =0;
+
 	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
 	file->tvertex->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
 	file->tvertex->SetBranchAddress("reco_track_calo_dEdx",&vtrk_dEdx,&bdEdx);
 	file->tvertex->SetBranchAddress("reco_track_calo_resrange",&vtrk_resrange,&bresrange);
 	//file->tvertex->SetBranchAddress("true_track_pdg",&true_track_pdg,&btrackpdg);
+
+	file->tvertex->SetBranchAddress("reco_track_X",&vtrk_X,&bX);
+	file->tvertex->SetBranchAddress("reco_track_Y",&vtrk_Y,&bY);
+	file->tvertex->SetBranchAddress("reco_track_Z",&vtrk_Z,&bZ);
+	
 
 	double reco_track_startx[100], reco_track_starty[100], reco_track_startz[100];
 	double reco_track_endx[100], reco_track_endy[100], reco_track_endz[100];
@@ -82,6 +95,8 @@ int bdt_precalc::genTrackInfo(){
 	double v_bragg_parD=0;
 	int v_reco_asso_tracks = 0;
 
+	std::vector<double> v_straightness_chi2;	
+	std::vector<double> v_straightness_sumangle;	
 
 	std::vector<double> v_mean_dEdx;	
 	std::vector<double> v_start_mean_dEdx;	
@@ -94,6 +109,10 @@ int bdt_precalc::genTrackInfo(){
 	std::vector<double> v_track_kinetic_from_length;
 
 	TBranch *b_num_tracks = friend_tree->Branch("reco_asso_tracks",&v_reco_asso_tracks);
+
+
+	TBranch *b_straightness_chi2 = friend_tree->Branch("reco_track_sum_angles",&v_straightness_chi2);
+	TBranch *b_straightness_sumangle = friend_tree->Branch("reco_track_straightline_chi2",&v_straightness_sumangle);
 
 	TBranch *b_mean_dEdx = friend_tree->Branch("reco_track_mean_dEdx",&v_mean_dEdx);
 	TBranch *b_start_mean_dEdx = friend_tree->Branch("reco_track_end_mean_dEdx",&v_end_mean_dEdx);
@@ -134,6 +153,50 @@ int bdt_precalc::genTrackInfo(){
 			for(int s=0; s<reco_asso_tracks; s++){
 
 				if (i%2000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<vtrk_dEdx->at(s).size()<<" "<<vtrk_resrange->at(s).size()<<" "<<reco_asso_tracks<<" "<<reco_asso_showers<<std::endl;
+				//First off lets calculate straightness..etc..
+				//
+					
+				std::vector<double> startpt = {vtrk_X->at(s).front(), vtrk_Y->at(s).front(), vtrk_Z->at(s).front()};
+				std::vector<double> endpt = {vtrk_X->at(s).back(), vtrk_Y->at(s).back(), vtrk_Z->at(s).back()};
+
+				double line_chi2=0;
+				double sum_angle=0;				
+
+				if(vtrk_X->at(s).size() != vtrk_Y->at(s).size() && vtrk_X->at(s).size() != vtrk_Z->at(s).size()){
+				std::cout<<"ERROR: Track X,Y,Z points of different length X: "<<vtrk_X->at(s).size()<<" Y: "<<vtrk_Y->at(s).size()<<" Z: "<<vtrk_Z->at(s).size()<<std::endl;
+				exit(EXIT_FAILURE);
+				}
+
+				for(int j=0; j< vtrk_X->at(s).size(); j++){
+					
+
+					std::vector<double> pt = {vtrk_X->at(s).at(j), vtrk_Y->at(s).at(j),vtrk_Z->at(s).at(j)};
+					double dist = dist_line_point(startpt, endpt, pt);
+
+					line_chi2+= dist*dist;
+
+					if(j==0  || j >= vtrk_X->at(s).size()-2){
+						continue;
+					}else{
+						std::vector<double> last_pt = {vtrk_X->at(s).at(j-1), vtrk_Y->at(s).at(j-1),vtrk_Z->at(s).at(j-1)};
+						std::vector<double> next_pt = {vtrk_X->at(s).at(j+1), vtrk_Y->at(s).at(j+1),vtrk_Z->at(s).at(j+1)};
+				
+						double costh = cos_angle_3pts(last_pt, pt, next_pt);
+							
+						sum_angle += fabs(180.0-fabs(acos(costh)*180.0/3.14159) );
+
+
+					}
+
+
+				}
+
+				v_straightness_chi2.push_back(line_chi2);
+				v_straightness_sumangle.push_back(sum_angle);
+
+
+
+				//And now some calorimetry things!
 
 				double sum_dEdx =0;
 				double sum_dEdx_start = 0;
@@ -386,6 +449,8 @@ int bdt_precalc::genTrackInfo(){
 		v_start_mean_dEdx.clear();	
 		v_end_mean_dEdx.clear();	
 		v_mean_dEdx.clear();	
+		v_straightness_sumangle.clear();	
+		v_straightness_chi2.clear();	
 		v_track_good_calo.clear();
 
 	}
@@ -940,6 +1005,53 @@ int bdt_precalc::genBNBcorrectionInfo(){
 //	delete friend_file_out;
 	std::cout<<"Done with bnbcorrection_info"<<std::endl;
 	return 0;
+}
+
+
+
+//line between X1 and X2, point X0
+double dist_line_point( std::vector<double>X1, std::vector<double> X2, std::vector<double> X0){
+	double x1 =X1.at(0);
+	double y1 =X1.at(1);
+	double z1 =X1.at(2);
+
+	double x2 =X2.at(0);
+	double y2 =X2.at(1);
+	double z2 =X2.at(2);
+
+	double x0 =X0.at(0);
+	double y0 =X0.at(1);
+	double z0 =X0.at(2);
+
+	double x10 = x1-x0;
+	double y10 = y1-y0;
+	double z10 = z1-z0;
+	
+	double x21 = x2-x1;
+	double y21 = y2-y1;
+	double z21 = z2-z1;
+	
+	double t = -(x10*x21+y10*y21+z10*z21)/fabs(x21*x21+y21*y21+z21*z21 );
+
+	double d2 = pow(x1-x0,2)+pow(y1-y0,2)+pow(z1-z0,2)+2*t*((x2-x1)*(x1-x0)+(y2-y1)*(y1-y0)+(z2-z1)*(z1-z0))+t*t*( pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2));
+
+
+	return sqrt(d2);
+
+}
+
+double cos_angle_3pts(std::vector<double> last, std::vector<double> next, std::vector<double> mid){
+	double lx = mid.at(0)-last.at(0);		
+	double ly = mid.at(1)-last.at(1);		
+	double lz = mid.at(2)-last.at(2);		
+	
+	double nx = mid.at(0)-next.at(0);		
+	double ny = mid.at(1)-next.at(1);		
+	double nz = mid.at(2)-next.at(2);		
+
+	double cos = (lx*nx+ly*ny+lz*nz)/(sqrt(lx*lx+ly*ly+lz*lz)*sqrt(nx*nx+ny*ny+nz*nz));
+
+	return cos;
 }
 
 

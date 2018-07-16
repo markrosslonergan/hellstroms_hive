@@ -98,7 +98,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 	if(tag == "Data5e19"){
 		leg = "lp";
-		pot = 4.801e19;// tor860_wcut
+		pot = 4.393e19;// tor860_wcut
 		weight_branch = "1";
 
 		std::cout<<"--> value: "<<pot<<std::endl;
@@ -124,11 +124,11 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		double sca = 1.23;//from 1.23
 		//https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
 
-		double ext=47953078.0; //External spills in each sample (EXT)
-		double spill_on=10702983.0;//This number in data zarko  (E1DCNT_wcut)
+		double ext=33752562+40051674;//47953078.0; //External spills in each sample (EXT)
+		double spill_on=10312906;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
 
 
-		double datanorm =4.801e19;// rot860_wcut run-subrunlist;
+		double datanorm =4.393e19;// rot860_wcut run-subrunlist;
 
 		double mod = spill_on/ext;
 
@@ -141,10 +141,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	}
 
 	std::cout<<"---> VERTEXCOUNT: "<<tag<<" "<<tvertex->GetEntries()*5e19/pot<<std::endl;
-
-	std::cout<<"Filling Topological EventLists"<<std::endl;
-
-	this->calcTopologicalEntryList();
 
 
 	std::cout<<"Done!"<<std::endl;
@@ -166,7 +162,6 @@ int bdt_file::calcPrecutEntryList(){
 	bool does_local_exist = (bool)ifile;
 	if(does_local_exist){
 
-
 		std::cout<<"Entry List File already exists for "<<this->tag<<std::endl;
 		TFile* fpre = new TFile(filename.c_str(),"update");	
 		if(fpre->GetListOfKeys()->Contains(precut_list_name.c_str()) ){
@@ -177,8 +172,10 @@ int bdt_file::calcPrecutEntryList(){
 		} else{
 
 			std::cout<<"Precut Entry List does not exists for "<<this->tag<<" creating it."<<std::endl;
+			f->cd();
 
 			this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
+			
 			precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
 
 		}
@@ -234,7 +231,6 @@ int bdt_file::calcCosmicBDTEntryList(double c1, double c2){
 
 
 int bdt_file::calcBNBBDTEntryList(double c1, double c2){
-
 	//first check if a file exists with a bnbbdt entry list in it!
 
 	std::string filename = this->tag+"_entrylists.root";
@@ -270,6 +266,53 @@ int bdt_file::calcBNBBDTEntryList(double c1, double c2){
 	return 0;
 
 }
+
+
+int bdt_file::calcBaseEntryList(){
+
+	//first check if a file exists with a topological entry list in it!
+
+
+	std::string filename = this->tag+"_entrylists.root";
+	topological_list_name = "topological_list_"+this->tag;
+	precut_list_name = "precut_list_"+this->tag;
+
+	std::ifstream ifile(filename.c_str());
+	bool does_local_exist = (bool)ifile;
+	if(does_local_exist){
+
+		std::cout<<"Entry List file already exists for "<<this->tag<<std::endl;
+		TFile* fpre = new TFile(filename.c_str(),"read");	
+		topological_list = (TEntryList*)fpre->Get(topological_list_name.c_str());
+		precut_list = (TEntryList*)fpre->Get(precut_list_name.c_str());
+
+	}else{
+		//create it
+
+		std::cout<<"Entry List file does not exists for "<<this->tag<<" creating it."<<std::endl;
+
+		this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0, -9,-9).c_str() , "entrylist");
+		topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
+
+
+		this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
+		precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
+
+
+
+		TFile* fpre = new TFile(filename.c_str(),"recreate");	
+		fpre->cd();
+		topological_list->Write();
+		precut_list->Write();
+		fpre->Close();
+		f->cd();
+
+	}
+
+	return 0;
+
+}
+
 
 
 int bdt_file::calcTopologicalEntryList(){
@@ -386,9 +429,9 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 	th1->SetStats(0);
 	th1->GetXaxis()->SetTitle(var.unit.c_str());
 	th1->GetYaxis()->SetTitle("Verticies");
-	//th1->SetDirectory(0);	
+	th1->SetDirectory(0);	
 
-	delete ctmp;
+	//delete ctmp;
 	return th1;
 }
 

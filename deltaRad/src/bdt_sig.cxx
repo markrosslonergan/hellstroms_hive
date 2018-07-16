@@ -43,15 +43,15 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	
 
 	//for nice plots make the 50, 25 is quicker tho
-	int nsteps_cosmic = 15;//50
+	int nsteps_cosmic = 14;//50
 	double cut_min_cosmic = 999;
 	double cut_max_cosmic = -999;
 
-	int nsteps_bnb = 15;//50
+	int nsteps_bnb = 14;//50
 	double cut_min_bnb = 999;//0.52;
 	double cut_max_bnb = -999;
 	
-
+	std::cout<<"Setting stage entry lists"<<std::endl;
 	for(size_t i = 0; i < sig_files.size(); ++i) {
 		sig_files.at(i)->setStageEntryList(1);
 	}
@@ -63,25 +63,56 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	//	double tmin_cos = sig_files.at(i)->tvertex->GetMinimum( (sig_files.at(i)->getBDTVariable(cosmic_focused_bdt).name + ">0").c_str()    );
 		double tmax_cos = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(cosmic_focused_bdt).name.c_str()    );
 		double tmax_bnb = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bnb_focused_bdt).name.c_str()    );
-
+	
+		std::cout<<"MaxCos: "<<tmax_cos<<" MaxBnb: "<<tmax_bnb<<std::endl;
 		//if( tmin_cos <= cut_min_cosmic) cut_min_cosmic=tmin_cos;
 		if( tmax_cos >= cut_max_cosmic) cut_max_cosmic=tmax_cos;
 		if( tmax_bnb >= cut_max_bnb) cut_max_bnb=tmax_bnb;
 
 	}
-	cut_min_cosmic = cut_max_cosmic*0.8;
+	cut_min_cosmic = cut_max_cosmic*0.6;
 	cut_min_bnb = cut_max_bnb*0.8;
 
 	cut_max_cosmic =cut_max_cosmic*1.0;
 	cut_max_bnb =cut_max_bnb*1.0;
 
 	//Zoomed in notrack
-	cut_min_cosmic = 0.545; cut_max_cosmic = 0.58;
-	cut_min_bnb = 0.525; cut_max_bnb = 0.55;
+//	cut_min_cosmic = 0.545; cut_max_cosmic = 0.58;
+//	cut_min_bnb = 0.525; cut_max_bnb = 0.55;
 
 	//Zoomed in track
-	cut_min_cosmic = 0.55; cut_max_cosmic = 0.61;
-	cut_min_bnb = 0.53; cut_max_bnb = 0.55;
+//	cut_min_cosmic = 0.54; cut_max_cosmic = 0.58;
+//	cut_min_bnb = 0.51; cut_max_bnb = 0.53;
+
+
+
+	//Create 2 tempoary TEntryLists  at minimum
+	std::vector<TEntryList*> sig_min_lists;
+	std::vector<TEntryList*> bkg_min_lists;
+
+
+	std::cout<<"Setting Min entry lists"<<std::endl;
+	for(size_t i = 0; i < sig_files.size(); ++i) {
+	
+
+		std::string min_list_name  = "micam"+std::to_string(i);
+		sig_files.at(i)->tvertex->Draw((">>"+min_list_name).c_str(), sig_files.at(i)->getStageCuts(3, cut_min_cosmic,cut_min_bnb).c_str() , "entrylist");
+		sig_min_lists.push_back(  (TEntryList*)gDirectory->Get(min_list_name.c_str()) );
+		sig_files.at(i)->tvertex->SetEntryList(sig_min_lists.back());
+
+
+	}
+	for(size_t i = 0; i < bkg_files.size(); ++i) {
+
+		std::string min_list_name  = "mibam"+std::to_string(i);
+		bkg_files.at(i)->tvertex->Draw((">>"+min_list_name).c_str(), bkg_files.at(i)->getStageCuts(3, cut_min_cosmic,cut_min_bnb).c_str() , "entrylist");
+		bkg_min_lists.push_back(  (TEntryList*)gDirectory->Get(min_list_name.c_str()) );
+		bkg_files.at(i)->tvertex->SetEntryList(bkg_min_lists.back());
+
+
+	}	
+
+
 
 
 	std::cout<<"BNB sig scan from: "<<cut_min_bnb<<" to "<<cut_max_bnb<<std::endl;

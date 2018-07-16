@@ -134,6 +134,9 @@ struct bdt_file{
 		int calcBNBBDTEntryList(double,double);
 
 
+		int calcBaseEntryList();
+
+
 
 
 		double scale_data;

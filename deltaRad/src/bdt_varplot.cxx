@@ -50,6 +50,7 @@ int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::
 			c_var->cd();			
 
 			sig->Draw("hist");
+		sig->SetMinimum(0);
 			bkg->Draw("hist same");
 			//sig->GetXaxis()->SetTitle(v.unit.c_str());
 			sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
@@ -99,10 +100,16 @@ int plot_bdt_variable(bdt_file * signal_pure, bdt_file * background_pure, bdt_va
 
 	std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
 
+	std::cout<<"Starting to plot "<<v.name<<std::endl;
 	for(int j=0; j<2;j++){	
-
+		
+		std::cout<<"On Stage "<<j<<std::endl;
 		signal_pure->setStageEntryList(j);
 		background_pure->setStageEntryList(j);
+
+		
+		std::cout<<"Set Stage Entries Done "<<j<<std::endl;
+		
 
 		//std::string cut_signal = signal_pure->getStageCuts(j,-9,-9); 
 		//std::string cut_background_pure = background_pure->getStageCuts(j,-9,-9); 
@@ -112,6 +119,9 @@ int plot_bdt_variable(bdt_file * signal_pure, bdt_file * background_pure, bdt_va
 
 		TH1* sig = signal_pure->getTH1(v,"1",v.safe_name+"_sig_var" ,1.0);
 		TH1* bkg = background_pure->getTH1(v,"1",v.safe_name+"_bkg_var" ,1.0);
+	
+		std::cout<<"Gotten all TH1's"<<j<<std::endl;
+		
 
 
 		sig->Scale(1.0/sig->Integral());			
@@ -138,6 +148,7 @@ int plot_bdt_variable(bdt_file * signal_pure, bdt_file * background_pure, bdt_va
 		c_var->cd();			
 
 		sig->Draw("hist");
+		sig->SetMinimum(0);
 		bkg->Draw("hist same");
 		//sig->GetXaxis()->SetTitle(v.unit.c_str());
 		sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");

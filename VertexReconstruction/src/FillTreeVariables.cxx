@@ -116,6 +116,10 @@ void FillTreeVariables::SetupTreeBranches() {
   fvertex_tree->Branch("reco_track_calo_dEdx", &reco_track_calo_dEdx);
   fvertex_tree->Branch("reco_track_calo_dEdxnew", &reco_track_calo_dEdxnew);
   fvertex_tree->Branch("reco_track_calo_resrange", &reco_track_calo_resrange);
+  
+  fvertex_tree->Branch("reco_track_X", &reco_track_X);
+  fvertex_tree->Branch("reco_track_Y", &reco_track_Y);
+  fvertex_tree->Branch("reco_track_Z", &reco_track_Z);
 
   fvertex_tree->Branch("reco_track_energy_new", &reco_track_energy_new);
   fvertex_tree->Branch("reco_track_energy_from_dEdx", &reco_track_energy_from_dEdx);
@@ -125,7 +129,6 @@ void FillTreeVariables::SetupTreeBranches() {
 
   fvertex_tree->Branch("all_reco_tracks_bp_dist_from_vertex", &all_reco_tracks_bp_dist_from_vertex);
   fvertex_tree->Branch("all_reco_showers_bp_dist_from_vertex", &all_reco_showers_bp_dist_from_vertex);
-
 
   fvertex_tree->Branch("closest_asso_shower_dist_to_flashzcenter", &closest_asso_shower_dist_to_flashzcenter, "closest_asso_shower_dist_to_flashzcenter/D");
 
@@ -631,6 +634,10 @@ void FillTreeVariables::ResetVertex() {
   reco_track_calo_dEdx.clear();
   reco_track_calo_dEdxnew.clear();
   reco_track_calo_resrange.clear();
+  
+ reco_track_X.clear();
+  reco_track_Y.clear();
+  reco_track_Z.clear();
 
   all_reco_showers_bp_dist_from_vertex.clear();
   all_reco_tracks_bp_dist_from_vertex.clear();
@@ -1340,6 +1347,11 @@ void FillTreeVariables::FindRecoObjectVariables(DetectorObjects const & detos,
       reco_track_calo_dEdx.push_back(fstorage->freco_track_EnergyHelper_dedx->at(original_index));
       reco_track_calo_dEdxnew.push_back(fstorage->freco_track_EnergyHelperNew_dedx->at(original_index));
       reco_track_calo_resrange.push_back(fstorage->freco_track_EnergyHelper_resrange->at(original_index));
+
+      reco_track_X.push_back(fstorage->freco_track_X->at(original_index));
+      reco_track_Y.push_back(fstorage->freco_track_Y->at(original_index));
+      reco_track_Z.push_back(fstorage->freco_track_Z->at(original_index));
+
 
       if(fmc && frmcm_bool) FillTrackTruth(original_index);
 
