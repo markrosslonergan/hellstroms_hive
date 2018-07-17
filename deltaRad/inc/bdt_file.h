@@ -128,13 +128,14 @@ struct bdt_file{
 
 
 		int setStageEntryList(int j);
+		int setStageEntryList(int j, double, double);
 		int calcPrecutEntryList();
 		int calcTopologicalEntryList();
 		int calcCosmicBDTEntryList(double,double);
 		int calcBNBBDTEntryList(double,double);
 
 
-		int calcBaseEntryList();
+		int calcBaseEntryList(bdt_info);
 
 
 
@@ -143,6 +144,7 @@ struct bdt_file{
 
 		bdt_flow flow;
 		bdt_variable getBDTVariable(bdt_info info);
+		bdt_variable getBDTVariable(bdt_info info, std::string bin);
 		//legacy code, and damned lazy too
 		//bdt_variable getBDTVariable(std::string cut);
 
@@ -159,6 +161,7 @@ struct bdt_file{
 
 		double GetEntries(std::string cuts);
 		double GetEntries();
+		TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
 

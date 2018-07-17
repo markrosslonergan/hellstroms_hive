@@ -8,7 +8,23 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c2){
 	is_bdt_variable = true;
-	bdt_variable dvar = data_file->getBDTVariable(whichbdt);
+	
+	double tmin =9999;
+	double tmax = -9999;
+	for(auto &f: mc_stack->stack){
+		std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
+
+		TH1 * tmp = f->getTH1((f->tag +"_"+whichbdt.identifier+ ".mva") ,(f->tag +"_"+whichbdt.identifier+ ".mva > 0")  , "tmpBDtstack_"+data_file->tag+"_"+whichbdt.name,1,0);
+	
+
+	 	tmax = std::max( tmax, f->tvertex->GetMaximum( (f->tag +"_"+whichbdt.identifier+ ".mva").c_str()   ));
+	 	if(f->tag!="NCDeltaRadCosmics") tmin = std::min( tmin, tmp->GetBinCenter(tmp->FindFirstBinAbove(0.05)));
+		std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
+		delete tmp;
+	}
+	std::string  binning = "(46,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
+
+	bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
 	return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
 }
 
@@ -44,15 +60,15 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 
 	if(is_bdt_variable){
-		s0 = mc_stack->getBDTStack(whichbdt,0,-9,-9);
-		s1 = mc_stack->getBDTStack(whichbdt,1,-9,-9);
-		s2 = mc_stack->getBDTStack(whichbdt,2,c1,-9);
-		s3 = mc_stack->getBDTStack(whichbdt,3,c1, c2);
+		s0 = mc_stack->getBDTStack(whichbdt,var.binning,0,-9,-9);
+		s1 = mc_stack->getBDTStack(whichbdt,var.binning,1,-9,-9);
+		s2 = mc_stack->getBDTStack(whichbdt,var.binning,2,c1,-9);
+		s3 = mc_stack->getBDTStack(whichbdt,var.binning,3,c1, c2);
 
-		sh0 = mc_stack->getBDTSum(whichbdt,0,-9,-9);
-		sh1 = mc_stack->getBDTSum(whichbdt,1,-9,-9);
-		sh2 = mc_stack->getBDTSum(whichbdt,2,c1,-9);
-		sh3 = mc_stack->getBDTSum(whichbdt,3,c1, c2);
+		sh0 = mc_stack->getBDTSum(whichbdt,var.binning,0,-9,-9);
+		sh1 = mc_stack->getBDTSum(whichbdt,var.binning,1,-9,-9);
+		sh2 = mc_stack->getBDTSum(whichbdt,var.binning,2,c1,-9);
+		sh3 = mc_stack->getBDTSum(whichbdt,var.binning,3,c1, c2);
 
 
 	}else{

@@ -193,89 +193,35 @@ int bdt_file::calcPrecutEntryList(){
 
 int bdt_file::calcCosmicBDTEntryList(double c1, double c2){
 
-	//first check if a file exists with a cosmicbdt entry list in it!
-
-	std::string filename = this->tag+"_entrylists.root";
 	cosmicbdt_list_name = "cosmicbdt_list_"+this->tag;
 
-	std::ifstream ifile(filename.c_str());
-	bool does_local_exist = (bool)ifile;
-	if(does_local_exist){
-
-
-		std::cout<<"Entry List File already exists for "<<this->tag<<std::endl;
-		TFile* fpre = new TFile(filename.c_str(),"update");	
-		if(fpre->GetListOfKeys()->Contains(cosmicbdt_list_name.c_str()) ){
-
-			std::cout<<"And it contains a list. loading."<<std::endl;
-
-			cosmicbdt_list = (TEntryList*)fpre->Get(cosmicbdt_list_name.c_str());
-		} else{
-
-			std::cout<<"CosmicBDT Entry List does not exists for "<<this->tag<<" creating it."<<std::endl;
-
-			this->tvertex->Draw((">>"+cosmicbdt_list_name).c_str(), this->getStageCuts(2,c1,-9).c_str() , "entrylist");
-			cosmicbdt_list = (TEntryList*)gDirectory->Get(cosmicbdt_list_name.c_str());
-
-		}
-
-		fpre->cd();
-		cosmicbdt_list->Write();
-		fpre->Close();
-		f->cd();
-
-	}
+	this->tvertex->Draw((">>"+cosmicbdt_list_name).c_str(), this->getStageCuts(2,c1,-9).c_str() , "entrylist");
+	cosmicbdt_list = (TEntryList*)gDirectory->Get(cosmicbdt_list_name.c_str());
 	return 0;
 
 }
 
 
 int bdt_file::calcBNBBDTEntryList(double c1, double c2){
-	//first check if a file exists with a bnbbdt entry list in it!
-
-	std::string filename = this->tag+"_entrylists.root";
 	bnbbdt_list_name = "bnbbdt_list_"+this->tag;
 
-	std::ifstream ifile(filename.c_str());
-	bool does_local_exist = (bool)ifile;
-	if(does_local_exist){
+	this->tvertex->Draw((">>"+bnbbdt_list_name).c_str(), this->getStageCuts(3,c1,c2).c_str() , "entrylist");
+	bnbbdt_list = (TEntryList*)gDirectory->Get(bnbbdt_list_name.c_str());
 
-
-		std::cout<<"Entry List File already exists for "<<this->tag<<std::endl;
-		TFile* fpre = new TFile(filename.c_str(),"update");	
-		if(fpre->GetListOfKeys()->Contains(bnbbdt_list_name.c_str()) ){
-
-			std::cout<<"And it contains a list. loading."<<std::endl;
-
-			bnbbdt_list = (TEntryList*)fpre->Get(bnbbdt_list_name.c_str());
-		} else{
-
-			std::cout<<"BNBBDT Entry List does not exists for "<<this->tag<<" creating it."<<std::endl;
-
-			this->tvertex->Draw((">>"+bnbbdt_list_name).c_str(), this->getStageCuts(2,c1,c2).c_str() , "entrylist");
-			bnbbdt_list = (TEntryList*)gDirectory->Get(bnbbdt_list_name.c_str());
-
-		}
-
-		fpre->cd();
-		bnbbdt_list->Write();
-		fpre->Close();
-		f->cd();
-
-	}
 	return 0;
 
 }
 
 
-int bdt_file::calcBaseEntryList(){
+int bdt_file::calcBaseEntryList(bdt_info in_info){
 
 	//first check if a file exists with a topological entry list in it!
 
 
+
 	std::string filename = this->tag+"_entrylists.root";
-	topological_list_name = "topological_list_"+this->tag;
-	precut_list_name = "precut_list_"+this->tag;
+	topological_list_name = "topological_list_"+in_info.topo_name+"_"+this->tag;
+	precut_list_name = "precut_list_"+in_info.topo_name+"_"+this->tag;
 
 	std::ifstream ifile(filename.c_str());
 	bool does_local_exist = (bool)ifile;
@@ -412,6 +358,32 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 	return getTH1(var, cuts,nam,plot_POT,1);
 
 }
+
+TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin){
+
+	//std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
+	TCanvas *ctmp = new TCanvas();
+	this->tvertex->Draw((invar+">>"+nam).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+	//std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
+	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
+	//th1->Sumw2();
+
+	th1->Scale(this->scale_data*plot_POT/this->pot);
+	//std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
+	if(rebin>1) th1->Rebin(rebin);
+	th1->SetLineColor(col);
+	th1->SetLineWidth(1);
+	th1->SetStats(0);
+	th1->GetXaxis()->SetTitle("Unit");
+	th1->GetYaxis()->SetTitle("Verticies");
+	th1->SetDirectory(0);	
+
+	//delete ctmp;
+	return th1;
+}
+
+
+
 TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin){
 
 	//std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
@@ -507,7 +479,10 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 
 bdt_variable bdt_file::getBDTVariable(bdt_info info){
 	return bdt_variable(this->tag +"_"+info.identifier+ ".mva", info.binning, info.name+" Response" ,false,"d");
+}
 
+bdt_variable bdt_file::getBDTVariable(bdt_info info, std::string binning){
+	return bdt_variable(this->tag +"_"+info.identifier+ ".mva", binning, info.name+" Response" ,false,"d");
 }
 
 
@@ -548,10 +523,19 @@ int bdt_file::setStageEntryList(int j){
 
 	if(j==0){
 		this->tvertex->SetEntryList(topological_list);
-	}
-	if(j==1){
+	}else if(j==1){
 		this->tvertex->SetEntryList(precut_list);
+	}else if (j==2){
+		this->tvertex->SetEntryList(cosmicbdt_list);
+	}else if (j==3){
+		this->tvertex->SetEntryList(bnbbdt_list);
+	}else if(j>3){
+		std::cout<<"bdt_file::setStageEntryList. Only up to level 3 allowed with Entry Lists"<<std::endl;
+		exit(EXIT_FAILURE);
+
 	}
+
+
 	return 0;
 }
 
