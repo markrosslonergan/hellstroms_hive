@@ -289,10 +289,6 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 
 
 int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
-	double plot_pot=6.6e20;
-
-
-
 
 	ftest->cd();
 
