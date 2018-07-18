@@ -11,7 +11,10 @@ Processor::Processor(char const * pot_name,
 	   "FillLightEvent/meta_tree",
 	   "FillLightEvent/event_tree",
 	   files),
-  fofile(nullptr){}
+  fofile(nullptr),
+  ffilter_dir(nullptr),
+  fevent_tree(nullptr),
+  fworkdir(nullptr){}
 
 Processor::~Processor() {
 
@@ -39,6 +42,8 @@ void Processor::SetOutputFileName(char const * name) {
 void Processor::SetOutputFilterFileName(char const * name) {
 
   fstorage.SetOutputFilterFileName(name);
+  ffilter_dir = fstorage.ffilter_dir;
+  fevent_tree = fstorage.fevent_tree;
 
 }
 
@@ -50,14 +55,16 @@ void Processor::RunEvent(int const entry) {
   bool pass = true;
 
   for(Analyzer * analyzer : fanalyzers) { 
-    if(!analyzer->Run()) {
+    if(!analyzer->Run() && ffilter_dir) {
       pass = false;
       break;
     }
   }
 
-  if(pass && fstorage.fevent_tree) {
-    fstorage.fevent_tree->Fill();
+  if(pass && ffilter_dir) {
+    ffilter_dir->cd();
+    fevent_tree->Fill();
+    fworkdir->cd();
   }
 
 }
@@ -66,6 +73,7 @@ void Processor::RunEvent(int const entry) {
 void Processor::Run(int const entry) {
 
   if(fofile) fofile->cd();
+  fworkdir = gDirectory;
 
   for(Analyzer * analyzer : fanalyzers) { 
     analyzer->SetOutputFile(fofile);
@@ -98,6 +106,6 @@ void Processor::Run(int const entry) {
     analyzer->Finalize();
   }  
 
-  if(fstorage.fevent_tree) fstorage.Write();
+  if(ffilter_dir) fstorage.Write();
 
 }

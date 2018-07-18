@@ -11,6 +11,7 @@ Storage::Storage(char const * pot_name,
   fmeta_chain(nullptr),
   fevent_chain(nullptr),
   fofile_filter(nullptr),
+  ffilter_dir(nullptr),
   fevent_tree(nullptr) {
 
   if(files.empty()) {
@@ -135,11 +136,17 @@ void Storage::CloneChain(TChain * chain, int const entries) {
 
 void Storage::SetOutputFilterFileName(char const * name) {
 
+  TDirectory * start_dir = gDirectory;
+
   fofile_filter = TFile::Open(name, "recreate");
 
   if(fpot_chain) CloneChain(fpot_chain);
   CloneChain(fmeta_chain);
+  MDCD(GetTDirName(fevent_chain->GetName()).c_str());
+  ffilter_dir = gDirectory;
   fevent_tree = fevent_chain->CloneTree(0);
+  
+  start_dir->cd();
 
 }
 
@@ -1101,7 +1108,7 @@ std::pair<int, int> const & Storage::GetShowerIndices(std::string const & produc
 void Storage::Write() {
 
   TDirectory * start_dir = gDirectory;
-  MDCD(GetTDirName(fevent_chain->GetName()).c_str());
+  ffilter_dir->cd();
   fevent_tree->Write();
   start_dir->cd();
 

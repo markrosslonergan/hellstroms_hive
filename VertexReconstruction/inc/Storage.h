@@ -53,6 +53,7 @@ private:
   TChain * fevent_chain;
 
   TFile * fofile_filter;
+  TDirectory * ffilter_dir;
   TTree * fevent_tree;
 
   std::unordered_map<std::string, std::pair<int, int>> fopflash_producer_map;

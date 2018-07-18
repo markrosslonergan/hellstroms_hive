@@ -31,8 +31,11 @@ class Processor {
   Storage fstorage;
   std::vector<Analyzer *> fanalyzers;
   TFile * fofile;
+  TFile * fofile_filter;
+  TDirectory * ffilter_dir;
+  TTree * fevent_tree;  
+  TDirectory * fworkdir;
   
-
 };
 
 
