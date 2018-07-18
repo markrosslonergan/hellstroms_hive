@@ -22,7 +22,6 @@ Storage::Storage(char const * pot_name,
 		meta_name,
 		event_name,
 		files.front())) {
-    std::cout << "ERROR: first input file missing required event or meta data, exiting\n";
     exit(1);
   }
   
@@ -58,23 +57,6 @@ Storage::~Storage() {
 }
 
 
-void Storage::SetOutputFilterFileName(char const * name) {
-
-  fofile_filter = TFile::Open(name, "recreate");
-
-  TTree * pot_tree = fpot_chain->CloneTree();
-  pot_tree->Write();
-  delete pot_tree;
-
-  TTree * meta_tree = fmeta_chain->CloneTree();
-  meta_tree->Write();
-  delete meta_tree;
-
-  fevent_tree = fevent_chain->CloneTree(0);
-
-}
-
-
 bool Storage::CheckFile(char const * pot_name,
 			char const * meta_name,
 			char const * event_name,
@@ -102,15 +84,62 @@ bool Storage::CheckFile(char const * pot_name,
   if(meta_tree) { 
     fmeta_chain = new TChain(meta_name);
   }
-  else result = false;
+  else {
+    result = false;
+    std::cout << "ERROR: first input file has no meta_tree named " << meta_name << "\n";
+  }
   if(event_tree) {
     fevent_chain = new TChain(event_name);
   }
-  else result = false;
+  else {
+    result = false;
+    std::cout << "ERROR: first input file has no event_tree named " << event_name << "\n";
+  }
 
   file->Close();
 
   return result;
+
+}
+
+
+std::string Storage::GetTDirName(char const * oname) {
+
+  std::string const str(oname);
+  size_t const pos = str.rfind("/");
+  if(pos == std::string::npos) return {};
+  else return str.substr(0, pos);
+
+}
+
+
+void Storage::MDCD(char const * dir_name) {
+
+  if(!gDirectory->FindKey(dir_name)) gDirectory->mkdir(dir_name);
+  gDirectory->cd(dir_name);
+
+}
+
+
+void Storage::CloneChain(TChain * chain, int const entries) {
+  
+  TDirectory * start_dir = gDirectory;
+  MDCD(GetTDirName(chain->GetName()).c_str());
+  TTree * tree = chain->CloneTree(entries);
+  tree->Write();
+  delete tree;
+  start_dir->cd();
+
+} 
+
+
+void Storage::SetOutputFilterFileName(char const * name) {
+
+  fofile_filter = TFile::Open(name, "recreate");
+
+  if(fpot_chain) CloneChain(fpot_chain);
+  CloneChain(fmeta_chain);
+  fevent_tree = fevent_chain->CloneTree(0);
 
 }
 
@@ -1065,5 +1094,15 @@ std::pair<int, int> const & Storage::GetTrackIndices(std::string const & produce
 std::pair<int, int> const & Storage::GetShowerIndices(std::string const & producer) const {
 
   return GetIndices(producer, fshower_producer_map);
+
+}
+
+
+void Storage::Write() {
+
+  TDirectory * start_dir = gDirectory;
+  MDCD(GetTDirName(fevent_chain->GetName()).c_str());
+  fevent_tree->Write();
+  start_dir->cd();
 
 }

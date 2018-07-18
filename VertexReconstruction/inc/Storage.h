@@ -44,6 +44,10 @@ private:
   std::pair<int, int> const & GetIndices(std::string const & producer,
 					 std::unordered_map<std::string, std::pair<int, int>> const & producer_map) const;
 
+  std::string GetTDirName(char const * oname);
+  void MDCD(char const * dir_name);
+  void CloneChain(TChain * chain, int const entries = -1);
+
   TChain * fpot_chain;
   TChain * fmeta_chain;
   TChain * fevent_chain;
@@ -63,6 +67,7 @@ public:
   std::pair<int, int> const & GetHitIndices(std::string const & producer) const;
   std::pair<int, int> const & GetTrackIndices(std::string const & producer) const;
   std::pair<int, int> const & GetShowerIndices(std::string const & producer) const;
+  void Write();
 
   //pot_chain
   int fnumber_of_events;

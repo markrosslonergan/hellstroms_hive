@@ -11,14 +11,15 @@ Pi0Filter::Pi0Filter() {
 
 bool Pi0Filter::Run() {
 
+  std::vector<int> const & reco_shower_largest_mc_type = *fstorage->freco_shower_largest_mc_type;
+  if(reco_shower_largest_mc_type.empty()) return false;
+  std::vector<int> const & reco_shower_largest_mc_index = *fstorage->freco_shower_largest_mc_index;
+  auto & shower_indices = fstorage->GetShowerIndices("pandoraNu");
+
   std::vector<int> const & ccnc = *fstorage->fccnc;
   std::vector<double> const & true_nuvertx = *fstorage->ftrue_nuvertx;
   std::vector<double> const & true_nuverty = *fstorage->ftrue_nuverty;
   std::vector<double> const & true_nuvertz = *fstorage->ftrue_nuvertz;
-
-  std::vector<int> const & reco_shower_largest_mc_type = *fstorage->freco_shower_largest_mc_type;
-  std::vector<int> const & reco_shower_largest_mc_index = *fstorage->freco_shower_largest_mc_index;
-  auto & shower_indices = fstorage->GetShowerIndices("pandoraNu");
 
   std::vector<int> const & mcshower_Origin = *fstorage->fmcshower_Origin;
   std::vector<int> const & mcshower_PdgCode = *fstorage->fmcshower_PdgCode;
@@ -33,6 +34,7 @@ bool Pi0Filter::Run() {
     if(ccnc.at(i) != 1) continue;
     nc_tru_nuvtx.push_back({true_nuvertx.at(i), true_nuverty.at(i), true_nuvertz.at(i)});
   }
+  if(nc_tru_nuvtx.empty()) return false;
 
   int counter = 0;
 
@@ -41,8 +43,7 @@ bool Pi0Filter::Run() {
     size_t const mcs = reco_shower_largest_mc_index.at(s);
     if(mcshower_Origin.at(mcs) != 1 || mcshower_PdgCode.at(mcs) != 22 || mcshower_MotherPdgCode.at(mcs) != 111) continue;
     for(auto const & nuvtx : nc_tru_nuvtx) {
-      if(nuvtx.Dist({mcshower_Start_X.at(mcs), mcshower_Start_Y.at(mcs), mcshower_Start_Z.at(mcs)}) < 1e-4)
-	++counter;
+      if(nuvtx.Dist({mcshower_Start_X.at(mcs), mcshower_Start_Y.at(mcs), mcshower_Start_Z.at(mcs)}) < 1e-4) ++counter;
     } 
   }
 

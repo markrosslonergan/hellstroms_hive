@@ -98,6 +98,6 @@ void Processor::Run(int const entry) {
     analyzer->Finalize();
   }  
 
-  if(fstorage.fevent_tree) fstorage.fevent_tree->Write();
+  if(fstorage.fevent_tree) fstorage.Write();
 
 }
