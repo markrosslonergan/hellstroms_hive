@@ -31,3 +31,6 @@ target_link_libraries (RunMCTruth VertexReconstructionlib ${ROOT_LIBRARIES})
 
 add_executable (RunPi0Filter RunPi0Filter.cxx VVDict.cxx)
 target_link_libraries (RunPi0Filter VertexReconstructionlib ${ROOT_LIBRARIES})
+
+add_executable (RunMerge RunMerge.cxx VVDict.cxx)
+target_link_libraries (RunMerge VertexReconstructionlib ${ROOT_LIBRARIES})
