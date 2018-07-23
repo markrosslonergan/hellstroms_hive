@@ -257,7 +257,7 @@ int bdt_precalc::genTrackInfo(){
 				for(int j=0; j< brag_trunc_dEdx.size(); j++){
 					//		if(brag_c_resrange.at(j) ==0) brag_c_resrange.at(j)=0.001;
 				}
-				while( brag_c_resrange.back()==0){
+				while(!brag_c_resrange.empty() && brag_c_resrange.back()==0){
 					brag_c_resrange.pop_back();
 					brag_trunc_dEdx.pop_back();
 
