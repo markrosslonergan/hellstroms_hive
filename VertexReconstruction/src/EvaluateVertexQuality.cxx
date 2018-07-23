@@ -18,10 +18,12 @@ EvaluateVertexQuality::PlotHelper::PlotHelper(std::string const & imetric_to_stu
 					      std::vector<std::string> const & imetrics_to_draw,
 					      std::vector<std::string> const & iparameters_to_draw,
 					      std::vector<std::string> const & iperformance_quantities,
-					      std::string const & iname) :
+					      std::string const & iname,
+					      std::string const & ititle) :
   metric_to_study(imetric_to_study, SIZE_MAX),
   method(imethod),
-  name(iname) {
+  name(iname),
+  title(ititle) {
     
   for(std::string const & str : imetrics_to_draw) metrics_to_draw.emplace(str, SIZE_MAX);
   for(std::string const & str : iparameters_to_draw) parameters_to_draw.emplace(str, SIZE_MAX);
@@ -303,9 +305,10 @@ void EvaluateVertexQuality::AddToDraw(std::string const & metric_to_study,
 				      std::vector<std::string> const & metrics_to_draw,
 				      std::vector<std::string> const & parameters_to_draw,
 				      std::vector<std::string> const & performance_quantities,
-				      std::string const & name) {
+				      std::string const & name,
+				      std::string const & title) {
   
-  fplot_helper_v.push_back({metric_to_study, method, metrics_to_draw, parameters_to_draw, performance_quantities, name});
+  fplot_helper_v.push_back({metric_to_study, method, metrics_to_draw, parameters_to_draw, performance_quantities, name, title});
 
 }
 
@@ -765,8 +768,9 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
       //std::string const title = "BNB Maximized";
       //std::string const title = "NC #Delta Radiative Maximized";
       //std::string const title = "BNB Events";
-      std::string const title = "NC #Delta Radiative Events";
-     
+      //std::string const title = "NC #Delta Radiative Events";
+      std::string const & title = ph.title;    
+
       std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).at(pq.second).second);
       /*
       DrawHist(ph, "dist_0track_" + method, pq.first, "dist", "(100, 0, 100)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance [cm]");
