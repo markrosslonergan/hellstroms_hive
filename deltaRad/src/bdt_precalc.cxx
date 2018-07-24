@@ -29,7 +29,7 @@ int bdt_precalc::gen(std::string which ){
 
 int bdt_precalc::genTrackInfo(){
 	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
-
+	std::cout<<"bdt_precalc::genTrackInfo() || Starting. "<<std::endl;
 
 	file->tvertex->ResetBranchAddresses();
 	//Some constants, not chosen for any huge reason
@@ -482,7 +482,7 @@ int bdt_precalc::genTrackInfo(){
 
 
 int bdt_precalc::genShowerInfo(){
-	std::cout<<"Starting Shower Info"<<std::endl;
+	std::cout<<"bdt_precalc::genShowerInfo() || Starting. "<<std::endl;
 	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
 	TTree * friend_tree = new TTree("shower_info","shower_info");
 
@@ -622,6 +622,7 @@ int bdt_precalc::genShowerInfo(){
 
 
 int bdt_precalc::genPi0Info(){
+	std::cout<<"bdt_precalc::genPi0Info() || Starting. "<<std::endl;
 	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
 
 	file->tvertex->ResetBranchAddresses();

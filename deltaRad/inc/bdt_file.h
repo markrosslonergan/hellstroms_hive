@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <set>
 #include <numeric>
 #include <iostream>
 #include <algorithm>
@@ -106,6 +107,7 @@ struct bdt_file{
 		int rebin;	
 
         int numberofevents;
+        int numberofevents_raw;
 		double pot;
 
 		TFile *f;

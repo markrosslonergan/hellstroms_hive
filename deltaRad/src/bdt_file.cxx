@@ -20,11 +20,11 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	std::cout<<"Loading : "<<name<<std::endl;
 	f = new TFile((dir+"/"+name).c_str(), "read");	
 
-
 	if(!f->IsOpen() || !f){
 		std::cout<<"ERROR: didnt open file right: "<<dir<<"/"<<name<<std::endl;
 		exit(EXIT_FAILURE);
 	}
+	std::cout<<"bdt_file::bdt_file || "<<name<<" Opened correctly by root."<<std::endl;
 
 	std::string tnam_event = root_dir+"event_tree";
 	std::string tnam = root_dir+"vertex_tree";
@@ -81,7 +81,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
 
 			weight_branch = "bnbcorrection_info.weight";
-
+			numberofevents_raw = numberofevents;
 		}
 	}
 
@@ -89,9 +89,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 
 	if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure"){
+		double volCryo = 199668.427885;
 		double volTPC = 101510.0;
 		double  volTPCActive=  86698.6;
-		numberofevents = numberofevents*volTPCActive/volTPC;
+		
+		//numberofevents = numberofevents*volTPCActive/volTPC;	
+		numberofevents = numberofevents*volTPCActive/volCryo;
+
+
+		tvertex->ResetBranchAddresses();
 	}
 
 
@@ -420,10 +426,8 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 
 	std::cout<<"getRecoMCTH1 || size of names: "<<recomc_names.size()<<" "<<recomc_cuts.size()<<" "<<recomc_cols.size()<<std::endl;
 
-
 	std::vector<TH1*> to_sort;
 	std::vector<double> integral_sorter;
-
 
 	for(int i=0; i< recomc_cuts.size(); i++){
 		std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
