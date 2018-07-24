@@ -36,12 +36,14 @@
 int addPreFriends(bdt_file* filein,std::string which);
 
 class bdt_precalc{
+  std::string const bnbcorrection_dir;
 	public:
 	bdt_file* file;
 	//TFile *friend_file_out;
 	std::string friend_file_out_name;
 	//pass in a bdt_file and it calculates stuff and add's it as friends!
-		bdt_precalc(bdt_file* in) : file(in) {
+ bdt_precalc(bdt_file* in, std::string const & dir = "../..") : file(in),
+	  bnbcorrection_dir(dir) {
 		friend_file_out_name =file->tag+"_friends.root";
 		
 		};

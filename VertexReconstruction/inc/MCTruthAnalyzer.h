@@ -23,7 +23,7 @@ class MCTruthAnalyzer : public Analyzer {
   MCTruthAnalyzer();
 
   void Initialize(){};
-  void Run();
+  bool Run();
   void Finalize();
 
  private:

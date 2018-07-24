@@ -41,7 +41,7 @@ int bdt_precalc::genTrackInfo(){
 	TTree * friend_tree = new TTree("track_info","track_info");
 
 
-	TFile *fileconv = new TFile("../../bnbcorrection/proton_conversion.root", "read");
+	TFile *fileconv = new TFile((bnbcorrection_dir+"/bnbcorrection/proton_conversion.root").c_str(), "read");
 	TGraph * gconv = (TGraph*)fileconv->Get("Graph");
 	
 	friend_file_out->cd();
@@ -320,7 +320,7 @@ int bdt_precalc::genTrackInfo(){
 				for(int j=0; j< brag_trunc_dEdx.size(); j++){
 					//		if(brag_c_resrange.at(j) ==0) brag_c_resrange.at(j)=0.001;
 				}
-				while( brag_c_resrange.back()==0){
+				while(!brag_c_resrange.empty() && brag_c_resrange.back()==0){
 					brag_c_resrange.pop_back();
 					brag_trunc_dEdx.pop_back();
 
@@ -834,7 +834,7 @@ int bdt_precalc::genBNBcorrectionInfo(){
 	file->tvertex->ResetBranchAddresses();
 
 	//first Load up all the flux files
-	TFile *f_old = new TFile("../../bnbcorrection/bnb_oldflux_volAVTPC.root","read");
+	TFile *f_old = new TFile((bnbcorrection_dir+"/bnbcorrection/bnb_oldflux_volAVTPC.root").c_str(),"read");
 	TH1F* h_mu_nue_old = (TH1F*)f_old->Get("h_mu_nue");
 	TH1F* h_mu_nuebar_old = (TH1F*)f_old->Get("h_mu_nuebar");
 	TH1F* h_mu_numu_old = (TH1F*)f_old->Get("h_mu_numu");
@@ -876,7 +876,7 @@ int bdt_precalc::genBNBcorrectionInfo(){
 	h_numubar_old->Add(h_k_numubar_old);
 
 
-	TFile *f_new = new TFile("../../bnbcorrection/bnb_newflux_volAVTPC.root","read");
+	TFile *f_new = new TFile((bnbcorrection_dir+"/bnbcorrection/bnb_newflux_volAVTPC.root").c_str(),"read");
 	TH1F* h_mu_nue_new = (TH1F*)f_new->Get("h_mu_nue");
 	TH1F* h_mu_nuebar_new = (TH1F*)f_new->Get("h_mu_nuebar");
 	TH1F* h_mu_numu_new = (TH1F*)f_new->Get("h_mu_numu");

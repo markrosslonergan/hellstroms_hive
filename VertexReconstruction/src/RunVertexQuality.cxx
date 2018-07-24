@@ -104,6 +104,7 @@ int main(int const argc, char const * argv[]) {
 
     Permutations permutations;
     std::vector<std::vector<double>> const & permutation_v = permutations.ReadFile(argv[1]);
+    //std::vector<std::vector<double>> const & permutation_v = {{1,1,1,1,1}};
     if(permutation_v.front().size() != 5) {
       std::cout << "ERROR: requires exactly 5 parameters per permutation\n";
       return 1;

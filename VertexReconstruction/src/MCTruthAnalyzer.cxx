@@ -11,7 +11,7 @@ MCTruthAnalyzer::MCTruthAnalyzer() :
 }
 
 
-void MCTruthAnalyzer::Run() {
+bool MCTruthAnalyzer::Run() {
 
   for(size_t i = 0; i < fstorage->fgenie_particle_PdgCode->size(); ++i) {
     std::unordered_map<int, std::pair<int, std::vector<int> > > particle_map;
@@ -69,6 +69,8 @@ void MCTruthAnalyzer::Run() {
       
   }
   */
+
+  return true;
 
 }
 
