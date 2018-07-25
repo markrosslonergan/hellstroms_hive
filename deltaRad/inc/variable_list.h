@@ -26,7 +26,8 @@ std::vector<bdt_variable>  all_vars;
 std::vector<bdt_variable>  pi0_vars;
 std::vector<std::string> all_precuts;
 std::string analysis_tag;
-variable_list(std_string analysis_tag_in);
+
+variable_list(std::string analysis_tag_in);
 
 };
 
