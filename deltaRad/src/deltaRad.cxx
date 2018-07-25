@@ -43,9 +43,9 @@ int main (int argc, char *argv[]){
 
 	std::string mode_option = "fake"; 
 	std::string xml = "default.xml";
-	std::string istrack ="track";
+	std::string analysis_tag ="ncdelta1g1p";
 
-	bool trkonly=false;
+
 	bool run_cosmic = true;
 	bool run_bnb = true;
 	int number = -1;
@@ -57,7 +57,7 @@ int main (int argc, char *argv[]){
 		{"dir", 		required_argument, 	0, 'd'},
 		{"option",		required_argument,	0, 'o'},
 		{"xml"	,		required_argument,	0, 'x'},
-		{"track",		required_argument,	0, 't'},
+		{"tag",			required_argument,	0, 't'},
 		{"help",		required_argument,	0, 'h'},
 		{"number",		required_argument,	0, 'n'},
 		{"cosmic",		no_argument,		0, 'c'},
@@ -98,7 +98,7 @@ int main (int argc, char *argv[]){
 				dir = optarg;
 				break;
 			case 't':
-				istrack = optarg;
+				analysis_tag = optarg;
 				break;
 			case '?':
 			case 'h':
@@ -118,14 +118,11 @@ int main (int argc, char *argv[]){
 				std::cout<<"\t-c\t--cosmic\t\t Run only cosmic training/app"<<std::endl;
 				std::cout<<"\t-b\t--bnb\t\t Run only BNB training/app"<<std::endl;
 				std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
-				std::cout<<"\t-t\t--track\t\tQuickly run between track and notrack"<<std::endl;
+				std::cout<<"\t-t\t--tag\t\tAnalysis tag used to keep all things clean!"<<std::endl;
 				std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
 				return 0;
 		}
 	}
-
-
-	if(istrack == "track") trkonly = true;
 
 	//===========================================================================================
 	//===========================================================================================
@@ -139,7 +136,7 @@ int main (int argc, char *argv[]){
 
 
 	//Load up variables and precut object ! ATTN: Found in variable_list.cxx in parent src/ folder
-	variable_list var_list(trkonly);
+	variable_list var_list(analysis_tag);
 
 	//Get all the variables you want to use	
 	std::vector<bdt_variable> vars = var_list.all_vars;
@@ -153,17 +150,15 @@ int main (int argc, char *argv[]){
 
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+istrack, "BNB focused BDT","(45,0.3,0.6)");
-	bdt_info cosmic_bdt_info("cosmic_"+istrack, "Cosmic focused BDT","(45,0.2,0.75)");
-
-
+	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(45,0.3,0.6)");
+	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(45,0.2,0.75)");
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
 	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1";
 	std::string true_bkg    = "true_shower_origin[0]==1";
 	std::string num_track_cut ;
 
-		if(istrack == "track"){
+	if(analysis_tag == "ncdelta1g1p"){
 			true_signal = true_signal+ "&& track_matched_to_ncdeltarad_proton[0]==1";
 			true_bkg = true_bkg +"&& true_track_origin[0]==1";
 			num_track_cut =  "==1";
@@ -244,7 +239,6 @@ int main (int argc, char *argv[]){
 			if(mode_option != "train" && mode_option != "app"){
 				f->calcBaseEntryList(cosmic_bdt_info);
 			}
-
 		}
 	}
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -269,14 +263,14 @@ int main (int argc, char *argv[]){
 	//MELD: Best Fit Significance: 0.591875 0.5325 1.74915
 	double fcoscut;
 	double fbnbcut;
-	if(istrack == "track"){
+	if(analysis_tag == "ncdelta1g1p"){
 		fcoscut = 0.591875;
 		fbnbcut = 0.5325;
 
 		//Reduced
 		//fcoscut =0.475;
 
-	}else if(istrack == "notrack"){
+	}else if(analysis_tag == "ncdelta1g0p"){
 		fcoscut = 0.5525;
 		fbnbcut = 0.533625;
 		//	Best Fit Significance: 0.5525 0.533625 1.1
@@ -307,7 +301,7 @@ int main (int argc, char *argv[]){
 	}
 	else if(mode_option == "response"){
 
-		TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
+		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 		//Ok print out Cosmic BDT
 		if(run_cosmic){
 			bdt_response cosmic_response(cosmic_bdt_info, signal_pure, intime);
@@ -338,9 +332,9 @@ int main (int argc, char *argv[]){
 			"true_shower_origin[0] ==2 && abs(true_shower_parent_pdg[0])!=13"
 		};
 
-		bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,istrack);
+		bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
-		TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
+		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 		if(!response_only){
 			int h=0;
 
@@ -372,7 +366,7 @@ int main (int argc, char *argv[]){
 	else if(mode_option == "sig"){
 
 
-		TFile *fsig = new TFile(("significance_"+istrack+".root").c_str(),"recreate");
+		TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
 		std::vector<double> ans = scan_significance(fsig, {signal_cosmics} , {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info);
 		//std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
@@ -381,7 +375,7 @@ int main (int argc, char *argv[]){
 
 
 	}else if(mode_option == "stack"){
-		bdt_stack histogram_stack(istrack+"_stack");
+		bdt_stack histogram_stack(analysis_tag+"_stack");
 		histogram_stack.addToStack(signal_cosmics);
 		histogram_stack.addToStack(bnb_cosmics);
 
@@ -390,7 +384,7 @@ int main (int argc, char *argv[]){
 		bnbext->fillstyle = 3333;
 		histogram_stack.addToStack(bnbext);
 
-		TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
+		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 		int ip=0;
 
 
@@ -415,19 +409,19 @@ int main (int argc, char *argv[]){
 
 	}else if(mode_option == "datamc"){
 
-		TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
+		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 		//Obsolete
-		/*bdt_stack *obs = new bdt_stack(istrack+"_olddatamc");
+		/*bdt_stack *obs = new bdt_stack(analysis_tag+"_olddatamc");
 		  obs->plot_pot =4.801e19;
 		  obs->addToStack(signal_cosmics);
 		  obs->addToStack(bnb_cosmics);
 		  obs->addToStack(intime);*/
 
-		bdt_stack *cosmic_stack = new bdt_stack(istrack+"_extintime");
+		bdt_stack *cosmic_stack = new bdt_stack(analysis_tag+"_extintime");
 		cosmic_stack->plot_pot = 4.393e19;
 		cosmic_stack->addToStack(intime);
 
-		bdt_stack *histogram_stack = new bdt_stack(istrack+"_datamc");
+		bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
 		histogram_stack->plot_pot = 4.393e19;
 		histogram_stack->addToStack(signal_cosmics);
 		histogram_stack->addToStack(bnb_cosmics);
@@ -440,17 +434,17 @@ int main (int argc, char *argv[]){
 
 		if(!response_only){
 			if(number != -1){
-				bdt_datamc datamc(data5e19, histogram_stack, istrack+"_datamc");	
+				bdt_datamc datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
 				std::vector<bdt_variable> tmp_var = {vars.at(number)};
 				datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
 			}else{
 
-				bdt_datamc real_datamc(data5e19, histogram_stack, istrack+"_datamc");	
+				bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
 				real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 			}
 		}else{
-			//bdt_datamc cosmic_datamc(bnbext, cosmic_stack, istrack+"_extintime");	
-			bdt_datamc real_datamc(data5e19, histogram_stack, istrack+"_datamc");	
+			//bdt_datamc cosmic_datamc(bnbext, cosmic_stack, analysis_tag+"_extintime");	
+			bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
 
 			if(run_cosmic) real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
 			if(run_bnb) real_datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
@@ -519,7 +513,7 @@ int main (int argc, char *argv[]){
 		std::cout<<"###############################Efficiency###############################"<<std::endl;
 
 
-		TFile * feff = new TFile(("Eff_"+istrack+".root").c_str(),"recreate");
+		TFile * feff = new TFile(("Eff_"+analysis_tag+".root").c_str(),"recreate");
 		TCanvas *ceff = new TCanvas();		
 		ceff->cd();
 
@@ -549,8 +543,8 @@ int main (int argc, char *argv[]){
 			double nevents = eff_files.at(i)->numberofevents*pot_scale;	
 
 			if(eff_files.at(i)->tag == "NCDeltaRadCosmics"){
-				if(istrack == "track") nevents = 76.6162;
-				if(istrack == "notrack") nevents = 81.7591;
+				if(analysis_tag == "ncdelta1g1p") nevents = 76.6162;
+				if(analysis_tag == "ncdelta1g0p") nevents = 81.7591;
 			}
 
 
@@ -623,7 +617,7 @@ int main (int argc, char *argv[]){
 		std::vector<std::string> sname;
 
 
-		if(istrack == "notrack"){
+		if(analysis_tag == "ncdeltarad1g0p"){
 			sname = {"Generated","Vertexed","Topological","Total PE $>20$","Fiducial cut","Reco $E_{\\gamma}$ $> 30$MeV"};
 		}else{
 			sname = {"Generated","Vertexed","Topological","Total PE $>20$","Fiducial cut","Track $< 100$cm","Reco $E_{\\gamma}$ $> 30$MeV","Shower gap $> 1$cm","Good calo cut","Flipped track cut","Back-to-back cut"};
@@ -734,17 +728,17 @@ int main (int argc, char *argv[]){
 	} else if(mode_option == "precalc"){
 		std::cout<<"mode: precalc: Begininning precalculation"<<std::endl;
 
-		if(number =-1)number =0;
+		if(number == -1) number =0;
 		std::vector<bdt_file*> bdt_filesA = {bdt_files.at(number)};
 		std::vector<bdt_file*> bdt_filesB = {data5e19, bnbext};
 		std::vector<bdt_file*> bdt_filesC = {ncpi0};
 
-		for(auto &f: bdt_filesC){
+		for(auto &f: bdt_filesA){
 			std::cout<<"On file: "<<f->tag<<std::endl;
 			bdt_precalc pre(f);
 
-			pre.genBNBcorrectionInfo();
-			pre.genPi0Info();
+		//	pre.genBNBcorrectionInfo();
+		//	pre.genPi0Info();
 			pre.genTrackInfo();
 			pre.genShowerInfo();
 
@@ -753,7 +747,7 @@ int main (int argc, char *argv[]){
 	}
 	else if(mode_option == "sbnfit"){
 
-		bdt_stack *obs = new bdt_stack(istrack+"_datamc");
+		bdt_stack *obs = new bdt_stack(analysis_tag+"_datamc");
 		obs->plot_pot =  6.6e20;
 		//obs->plot_pot =  4.801e19;
 		obs->addToStack(signal_cosmics);
@@ -869,10 +863,10 @@ int main (int argc, char *argv[]){
 
 		bdt_variable true_en("delta_photon_energy","(52,0,1.2)","True Shower Energy [GeV]",false,"d");
 		std::string ct;
-		if(istrack=="track") ct = (trk+"&&"+en_cut_trk+"&&"+fid_cut);
-		if(istrack=="notrack") ct = (notrk+"&&"+en_cut_notrk+"&&"+fid_cut);
+		if(analysis_tag=="ncdeltarad1g1p") ct = (trk+"&&"+en_cut_trk+"&&"+fid_cut);
+		if(analysis_tag=="ncdeltarad1g0p") ct = (notrk+"&&"+en_cut_notrk+"&&"+fid_cut);
 
-		TH1* pre = (TH1*)signal_cosmics->getTH1(true_en,ct , "pre_"+istrack+signal_cosmics->tag, 6.6e20, 2);
+		TH1* pre = (TH1*)signal_cosmics->getTH1(true_en,ct , "pre_"+analysis_tag+signal_cosmics->tag, 6.6e20, 2);
 		std::cout<<pre->GetSumOfWeights()<<std::endl;
 		std::cout<<"Before: "<<pre->GetSumOfWeights()<<std::endl;
 
@@ -880,11 +874,11 @@ int main (int argc, char *argv[]){
 		signal_cosmics->calcBNBBDTEntryList(fcoscut, fbnbcut);
 		signal_cosmics->tvertex->SetEntryList(0);
 		signal_cosmics->setStageEntryList(3);
-		TH1* post = (TH1*)signal_cosmics->getTH1(true_en, "1", "post_"+istrack+signal_cosmics->tag, 6.6e20, 2);
+		TH1* post = (TH1*)signal_cosmics->getTH1(true_en, "1", "post_"+analysis_tag+signal_cosmics->tag, 6.6e20, 2);
 
 		std::cout<<"Post: "<<post->GetSumOfWeights()<<std::endl;
 
-		TH1* ratio = (TH1*)post->Clone(("ratio_"+istrack).c_str());
+		TH1* ratio = (TH1*)post->Clone(("ratio_"+analysis_tag).c_str());
 		ratio->Divide(pre);
 
 		for(int i=1; i<= ratio->GetNbinsX(); i++){
@@ -921,9 +915,9 @@ int main (int argc, char *argv[]){
 			"true_shower_origin[0] ==2 && abs(true_shower_parent_pdg[0])!=13"
 		};
 
-		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols,istrack);
+		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
-		TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
+		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 		test.plot_recomc(ftest, bnb_cosmics, vars.at(1) , fcoscut,fbnbcut);
 
 		return 0;	

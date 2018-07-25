@@ -77,6 +77,17 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1,
 			std::cout<<"Stage: "<<s<<" Verticies: "<<stage_entries<<" Efficiency: "<<stage_entries/true_denominator<<std::endl;
 		}
 
+		std::cout<<"==================== Precuts - Individual  ==================="<<std::endl;
+			file->setStageEntryList(0);
+
+			for(int m=0; m< file->flow.vec_pre_cuts.size(); m++){
+				std::string tmpcut = file->flow.vec_pre_cuts.at(m);
+				double np = file->GetEntries(tmpcut.c_str())*MOD;
+				std::cout<<" + "<<file->flow.vec_pre_cuts.at(m)<<"\t||\t"<<np<<"\t("<<np/nverticies*100<<")\%"<<std::endl;
+			}
+
+
+
 
 		std::cout<<"==================== Precuts - One by One  ==================="<<std::endl;
 			file->setStageEntryList(0);

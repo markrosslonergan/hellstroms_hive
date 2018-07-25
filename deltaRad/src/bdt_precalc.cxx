@@ -28,7 +28,7 @@ int bdt_precalc::gen(std::string which ){
 
 
 int bdt_precalc::genTrackInfo(){
-	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
+	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"recreate");
 	std::cout<<"bdt_precalc::genTrackInfo() || Starting. "<<std::endl;
 
 	file->tvertex->ResetBranchAddresses();
@@ -36,18 +36,18 @@ int bdt_precalc::genTrackInfo(){
 	double max_realistic_dEdx = 25;
 	double min_realistic_hits = 5;
 	double min_dEdx = 0.01;
-	
+
 	friend_file_out->cd();
 	TTree * friend_tree = new TTree("track_info","track_info");
 
 
 	TFile *fileconv = new TFile((bnbcorrection_dir+"/bnbcorrection/proton_conversion.root").c_str(), "read");
 	TGraph * gconv = (TGraph*)fileconv->Get("Graph");
-	
+
 	friend_file_out->cd();
 
 
-		//Some branches for some basic info
+	//Some branches for some basic info
 	//	double asso_r
 	int reco_asso_tracks = 0;
 	int reco_asso_showers = 0;
@@ -55,7 +55,7 @@ int bdt_precalc::genTrackInfo(){
 	//Branches for the dEdx calo only!
 	std::vector<std::vector<double>> *vtrk_dEdx = 0;
 	std::vector<std::vector<double>> *vtrk_resrange = 0;
-	
+
 	std::vector<std::vector<double>> *vtrk_X = 0;
 	std::vector<std::vector<double>> *vtrk_Y = 0;
 	std::vector<std::vector<double>> *vtrk_Z = 0;
@@ -78,7 +78,7 @@ int bdt_precalc::genTrackInfo(){
 	file->tvertex->SetBranchAddress("reco_track_X",&vtrk_X,&bX);
 	file->tvertex->SetBranchAddress("reco_track_Y",&vtrk_Y,&bY);
 	file->tvertex->SetBranchAddress("reco_track_Z",&vtrk_Z,&bZ);
-	
+
 
 	double reco_track_startx[100], reco_track_starty[100], reco_track_startz[100];
 	double reco_track_endx[100], reco_track_endy[100], reco_track_endz[100];
@@ -89,13 +89,17 @@ int bdt_precalc::genTrackInfo(){
 	file->tvertex->SetBranchAddress("reco_track_endy", &reco_track_endy);
 	file->tvertex->SetBranchAddress("reco_track_endz", &reco_track_endz);
 
-	
+
 	// New branches for FRIEND TREEEE 
 	double v_bragg_parA=0;
 	double v_bragg_parD=0;
 	int v_reco_asso_tracks = 0;
 
+	std::vector<double> v_principal_0;	
+	std::vector<double> v_principal_1;	
+	std::vector<double> v_principal_2;	
 	std::vector<double> v_straightness_chi2;	
+	std::vector<double> v_num_spacepoints;	
 	std::vector<double> v_straightness_sumangle;	
 
 	std::vector<double> v_mean_dEdx;	
@@ -111,8 +115,12 @@ int bdt_precalc::genTrackInfo(){
 	TBranch *b_num_tracks = friend_tree->Branch("reco_asso_tracks",&v_reco_asso_tracks);
 
 
-	TBranch *b_straightness_chi2 = friend_tree->Branch("reco_track_sum_angles",&v_straightness_chi2);
-	TBranch *b_straightness_sumangle = friend_tree->Branch("reco_track_straightline_chi2",&v_straightness_sumangle);
+	TBranch *b_num_spacepoints = friend_tree->Branch("reco_track_num_spacepoints",&v_num_spacepoints);
+	TBranch *b_straightness_chi2 = friend_tree->Branch("reco_track_straightness_chi2",&v_straightness_chi2);
+	TBranch *b_principal_0 = friend_tree->Branch("reco_track_principal_0",&v_principal_0);
+	TBranch *b_principal_1 = friend_tree->Branch("reco_track_principal_1",&v_principal_1);
+	TBranch *b_principal_2 = friend_tree->Branch("reco_track_principal_2",&v_principal_2);
+	TBranch *b_straightness_sumangle = friend_tree->Branch("reco_track_sum_angles",&v_straightness_sumangle);
 
 	TBranch *b_mean_dEdx = friend_tree->Branch("reco_track_mean_dEdx",&v_mean_dEdx);
 	TBranch *b_start_mean_dEdx = friend_tree->Branch("reco_track_end_mean_dEdx",&v_end_mean_dEdx);
@@ -155,7 +163,7 @@ int bdt_precalc::genTrackInfo(){
 				if (i%2000==0)std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<vtrk_dEdx->at(s).size()<<" "<<vtrk_resrange->at(s).size()<<" "<<reco_asso_tracks<<" "<<reco_asso_showers<<std::endl;
 				//First off lets calculate straightness..etc..
 				//
-					
+
 				std::vector<double> startpt = {vtrk_X->at(s).front(), vtrk_Y->at(s).front(), vtrk_Z->at(s).front()};
 				std::vector<double> endpt = {vtrk_X->at(s).back(), vtrk_Y->at(s).back(), vtrk_Z->at(s).back()};
 
@@ -163,12 +171,45 @@ int bdt_precalc::genTrackInfo(){
 				double sum_angle=0;				
 
 				if(vtrk_X->at(s).size() != vtrk_Y->at(s).size() && vtrk_X->at(s).size() != vtrk_Z->at(s).size()){
-				std::cout<<"ERROR: Track X,Y,Z points of different length X: "<<vtrk_X->at(s).size()<<" Y: "<<vtrk_Y->at(s).size()<<" Z: "<<vtrk_Z->at(s).size()<<std::endl;
-				exit(EXIT_FAILURE);
+					std::cout<<"ERROR: Track X,Y,Z points of different length X: "<<vtrk_X->at(s).size()<<" Y: "<<vtrk_Y->at(s).size()<<" Z: "<<vtrk_Z->at(s).size()<<std::endl;
+					exit(EXIT_FAILURE);
 				}
 
+				/*TGraph2D * space_pts_3d = new TGraph2D(vtrk_X->at(s).size(), &vtrk_X->at(s).at(0), &vtrk_Y->at(s).at(0), &vtrk_Z->at(s).at(0));
+
+				  ROOT::Fit::Fitter fitter;
+				  SumDistance2 sdist(space_pts_3d);
+				  ROOT::Math::Functor fcn(sdist,4);
+				  double pStart[4] = {0.1,0.1,0.1,0.1};
+				  fitter.SetFCN(fcn,pStart);
+				  bool ok = fitter.FitFCN();
+				  double fitans = -999;
+				  if(ok){
+				  const ROOT::Fit::FitResult & result = fitter.Result();
+				  fitans = result.MinFcnValue();
+				  }
+				  delete space_pts_3d;
+				  */
+
+
+				TPrincipal* principal = new TPrincipal(3,"ND");
+
+				for(int x = 0; x< vtrk_X->at(s).size(); x++){
+					std::vector<double> tmp = {vtrk_X->at(s).at(x), vtrk_Y->at(s).at(x),vtrk_Z->at(s).at(x)};
+					principal->AddRow(&tmp[0]);
+				}
+				principal->MakePrincipals();
+				//principal->Print();
+				
+				TVectorD * eigen = (TVectorD*)principal->GetEigenValues();
+				std::vector<double> veigen = {(*eigen)(0),(*eigen)(1),(* eigen)(2)};		
+
+				//delete principal;
+				//delete eigen;
+
+
 				for(int j=0; j< vtrk_X->at(s).size(); j++){
-					
+
 
 					std::vector<double> pt = {vtrk_X->at(s).at(j), vtrk_Y->at(s).at(j),vtrk_Z->at(s).at(j)};
 					double dist = dist_line_point(startpt, endpt, pt);
@@ -180,9 +221,9 @@ int bdt_precalc::genTrackInfo(){
 					}else{
 						std::vector<double> last_pt = {vtrk_X->at(s).at(j-1), vtrk_Y->at(s).at(j-1),vtrk_Z->at(s).at(j-1)};
 						std::vector<double> next_pt = {vtrk_X->at(s).at(j+1), vtrk_Y->at(s).at(j+1),vtrk_Z->at(s).at(j+1)};
-				
+
 						double costh = cos_angle_3pts(last_pt, pt, next_pt);
-							
+
 						sum_angle += fabs(180.0-fabs(acos(costh)*180.0/3.14159) );
 
 
@@ -191,9 +232,13 @@ int bdt_precalc::genTrackInfo(){
 
 				}
 
+				v_num_spacepoints.push_back(vtrk_X->at(s).size());
 				v_straightness_chi2.push_back(line_chi2);
+				v_principal_0.push_back(veigen.at(0));
+				v_principal_1.push_back(veigen.at(1));
+				v_principal_2.push_back(veigen.at(2));
 				v_straightness_sumangle.push_back(sum_angle);
-
+				//				std::cout<<line_chi2<<" "<<fitans<<" "<<sum_angle<<" "<<v_num_spacepoints.back()<<std::endl;
 
 
 				//And now some calorimetry things!
@@ -215,8 +260,8 @@ int bdt_precalc::genTrackInfo(){
 				double reco_track_length = sqrt(pow(reco_track_startx[s]-reco_track_endx[s], 2) + pow(reco_track_starty[s]-reco_track_endy[s], 2) + pow(reco_track_startz[s]-reco_track_endz[s], 2));
 				v_track_kinetic_from_length.push_back( (gconv->Eval(reco_track_length))/1000.0);
 
-			
-		
+
+
 
 
 
@@ -273,37 +318,37 @@ int bdt_precalc::genTrackInfo(){
 
 
 				/*
-				if(false && trunc_dEdx.size()> 150 && trunc_dEdx.back() >  trunc_dEdx.front() && true_track_pdg->at(s) == 13 && dra < 100){
-					bx = c_resrange;
-					by = c_dEdx;
-					ay = trunc_dEdx;
-					std::vector<double> ax = bx;
-					ay.erase(ay.begin());
-					ax.erase(ax.begin());
+				   if(false && trunc_dEdx.size()> 150 && trunc_dEdx.back() >  trunc_dEdx.front() && true_track_pdg->at(s) == 13 && dra < 100){
+				   bx = c_resrange;
+				   by = c_dEdx;
+				   ay = trunc_dEdx;
+				   std::vector<double> ax = bx;
+				   ay.erase(ay.begin());
+				   ax.erase(ax.begin());
 
 
-					done = true;
-					std::cout<<"Got Done! "<<dra<<std::endl;
-					//Some Truncated Mean Testing
+				   done = true;
+				   std::cout<<"Got Done! "<<dra<<std::endl;
+				//Some Truncated Mean Testing
 
-					TGraph * gb = new TGraph(bx.size(),&bx[0], &by[0]);
-					TGraph * ga = new TGraph(ax.size(),&ax[0], &ay[0]);
-					TCanvas *c = new TCanvas();
-					gb->Draw("ap");
-					gb->SetMarkerStyle(20);
-					gb->SetMarkerSize(1.5);
+				TGraph * gb = new TGraph(bx.size(),&bx[0], &by[0]);
+				TGraph * ga = new TGraph(ax.size(),&ax[0], &ay[0]);
+				TCanvas *c = new TCanvas();
+				gb->Draw("ap");
+				gb->SetMarkerStyle(20);
+				gb->SetMarkerSize(1.5);
 
 
-					ga->Draw("l");
-					ga->SetLineWidth(2);
-					ga->SetLineColor(kRed-7);
+				ga->Draw("l");
+				ga->SetLineWidth(2);
+				ga->SetLineColor(kRed-7);
 
-					gb->GetXaxis()->SetTitle("Residual Range [cm]");
-					gb->GetYaxis()->SetTitle("dE/dx [MeV/cm]");
+				gb->GetXaxis()->SetTitle("Residual Range [cm]");
+				gb->GetYaxis()->SetTitle("dE/dx [MeV/cm]");
 
-					dra++;
+				dra++;
 
-					c->SaveAs(("truncpics/muon_"+std::to_string(dra)+".png").c_str(),"png");
+				c->SaveAs(("truncpics/muon_"+std::to_string(dra)+".png").c_str(),"png");
 
 
 				}
@@ -449,34 +494,38 @@ int bdt_precalc::genTrackInfo(){
 		v_start_mean_dEdx.clear();	
 		v_end_mean_dEdx.clear();	
 		v_mean_dEdx.clear();	
+		v_num_spacepoints.clear();	
 		v_straightness_sumangle.clear();	
 		v_straightness_chi2.clear();	
+		v_principal_1.clear();	
+		v_principal_0.clear();	
+		v_principal_2.clear();	
 		v_track_good_calo.clear();
 
 	}
 	friend_file_out->cd();
 	friend_tree->Write();
-	
+
 	friend_file_out->Close();
 	//Some Truncated Mean Testing
-/*	ftest->cd();
-	TGraph * gb = new TGraph(bx.size(),&bx[0], &by[0]);
-	TGraph * ga = new TGraph(bx.size(),&bx[0], &ay[0]);
-	TCanvas *c = new TCanvas();
-	gb->Draw("ap");
-	gb->SetMarkerStyle(20);
-	gb->SetMarkerSize(2);
+	/*	ftest->cd();
+		TGraph * gb = new TGraph(bx.size(),&bx[0], &by[0]);
+		TGraph * ga = new TGraph(bx.size(),&bx[0], &ay[0]);
+		TCanvas *c = new TCanvas();
+		gb->Draw("ap");
+		gb->SetMarkerStyle(20);
+		gb->SetMarkerSize(2);
 
-	ga->Draw("l");
-	ga->SetLineColor(kRed-7);
+		ga->Draw("l");
+		ga->SetLineColor(kRed-7);
 
-	c->Write();
+		c->Write();
 
 
-	delete gb;
-	delete ga;
-	delete c;
-*/
+		delete gb;
+		delete ga;
+		delete c;
+		*/
 	return 0;
 }
 
@@ -556,12 +605,12 @@ int bdt_precalc::genShowerInfo(){
 			if( mina2 > 35 && ( reco_shower_dedxnew_plane2[s] > 0 || reco_shower_dedx_plane2[s]>0) ){
 				dedx = reco_shower_dedxnew_plane2[s];
 				if(dedx < 0) dedx = reco_shower_dedx_plane2[s];
-				
+
 			}else{
 
 				if( mina1 > mina2 && ( reco_shower_dedxnew_plane1[s] > 0 || reco_shower_dedx_plane1[s] > 0) ){ // use plane1, or V plane
 					dedx =  reco_shower_dedxnew_plane1[s];
-	
+
 					if(dedx < 0) dedx = reco_shower_dedx_plane1[s];
 
 
@@ -626,7 +675,7 @@ int bdt_precalc::genPi0Info(){
 	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
 
 	file->tvertex->ResetBranchAddresses();
-        friend_file_out->cd();
+	friend_file_out->cd();
 	TTree * friend_tree = new TTree("pi0_info","pi0_info");
 
 	std::cout<<"bdt_precalc: genPi0Info"<<std::endl;
@@ -941,7 +990,7 @@ int bdt_precalc::genBNBcorrectionInfo(){
 	file->tvertex->SetBranchAddress("nu_pdg", &nu_pdg);
 	std::cout<<"2"<<std::endl;
 	file->tvertex->SetBranchAddress("true_nu_E", &true_nu_E);
-	
+
 	// New branches for FRIEND TREEEE 
 	std::cout<<"Set up new bnbcorrection_info TTree"<<std::endl;
 	friend_file_out->cd();
@@ -951,7 +1000,7 @@ int bdt_precalc::genBNBcorrectionInfo(){
 	double weight=0;
 	TBranch *b_weight = friend_tree->Branch("weight",&weight);
 
-	
+
 
 	int NN = file->tvertex->GetEntries();
 	for(int i=0; i< NN; i++){
@@ -990,20 +1039,20 @@ int bdt_precalc::genBNBcorrectionInfo(){
 
 
 
-/*	TFile *f_bnbcorr = new TFile("bnbcorr.root","recreate");
-	f_bnbcorr->cd();
-	h_nue_ratio->Write();
-	h_nuebar_ratio->Write();
-	h_numu_ratio->Write();
-	h_numubar_ratio->Write();
-	f_bnbcorr->Close();
-*/
+	/*	TFile *f_bnbcorr = new TFile("bnbcorr.root","recreate");
+		f_bnbcorr->cd();
+		h_nue_ratio->Write();
+		h_nuebar_ratio->Write();
+		h_numu_ratio->Write();
+		h_numubar_ratio->Write();
+		f_bnbcorr->Close();
+		*/
 
 	//delete friend_tree;
 	friend_file_out->Close();
 	std::cout<<"Closed file"<<std::endl;
-//	delete friend_tree;
-//	delete friend_file_out;
+	//	delete friend_tree;
+	//	delete friend_file_out;
 	std::cout<<"Done with bnbcorrection_info"<<std::endl;
 	return 0;
 }
@@ -1027,11 +1076,11 @@ double dist_line_point( std::vector<double>X1, std::vector<double> X2, std::vect
 	double x10 = x1-x0;
 	double y10 = y1-y0;
 	double z10 = z1-z0;
-	
+
 	double x21 = x2-x1;
 	double y21 = y2-y1;
 	double z21 = z2-z1;
-	
+
 	double t = -(x10*x21+y10*y21+z10*z21)/fabs(x21*x21+y21*y21+z21*z21 );
 
 	double d2 = pow(x1-x0,2)+pow(y1-y0,2)+pow(z1-z0,2)+2*t*((x2-x1)*(x1-x0)+(y2-y1)*(y1-y0)+(z2-z1)*(z1-z0))+t*t*( pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2));
@@ -1045,7 +1094,7 @@ double cos_angle_3pts(std::vector<double> last, std::vector<double> next, std::v
 	double lx = mid.at(0)-last.at(0);		
 	double ly = mid.at(1)-last.at(1);		
 	double lz = mid.at(2)-last.at(2);		
-	
+
 	double nx = mid.at(0)-next.at(0);		
 	double ny = mid.at(1)-next.at(1);		
 	double nz = mid.at(2)-next.at(2);		
