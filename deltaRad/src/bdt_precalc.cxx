@@ -28,7 +28,7 @@ int bdt_precalc::gen(std::string which ){
 
 
 int bdt_precalc::genTrackInfo(){
-	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"recreate");
+	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
 	std::cout<<"bdt_precalc::genTrackInfo() || Starting. "<<std::endl;
 
 	file->tvertex->ResetBranchAddresses();
@@ -201,10 +201,10 @@ int bdt_precalc::genTrackInfo(){
 				principal->MakePrincipals();
 				//principal->Print();
 				
-				TVectorD * eigen = (TVectorD*)principal->GetEigenValues();
+				TVectorD * eigen = (TVectorD*) principal->GetEigenValues();
 				std::vector<double> veigen = {(*eigen)(0),(*eigen)(1),(* eigen)(2)};		
 
-				//delete principal;
+				delete principal;
 				//delete eigen;
 
 
@@ -470,7 +470,8 @@ int bdt_precalc::genTrackInfo(){
 				v_mean_dEdx.push_back(sum_dEdx/(double)c_resrange.size());
 				v_start_mean_dEdx.push_back(sum_dEdx_start/num_start);
 				v_end_mean_dEdx.push_back(sum_dEdx_end/num_end);
-
+			
+			
 			}
 
 		}
@@ -506,7 +507,7 @@ int bdt_precalc::genTrackInfo(){
 	friend_file_out->cd();
 	friend_tree->Write();
 
-	friend_file_out->Close();
+	delete friend_file_out;
 	//Some Truncated Mean Testing
 	/*	ftest->cd();
 		TGraph * gb = new TGraph(bx.size(),&bx[0], &by[0]);
@@ -664,7 +665,7 @@ int bdt_precalc::genShowerInfo(){
 
 	ftest->Close();
 
-	friend_file_out->Close();
+	delete friend_file_out;
 	return 0;
 }
 
@@ -870,7 +871,7 @@ int bdt_precalc::genPi0Info(){
 
 
 	std::cout<<"Done with Pi0ClassInfo"<<std::endl;
-	friend_file_out->Close();
+	delete friend_file_out;
 	return 0;
 }
 
@@ -1049,7 +1050,7 @@ int bdt_precalc::genBNBcorrectionInfo(){
 		*/
 
 	//delete friend_tree;
-	friend_file_out->Close();
+	delete friend_file_out;
 	std::cout<<"Closed file"<<std::endl;
 	//	delete friend_tree;
 	//	delete friend_file_out;

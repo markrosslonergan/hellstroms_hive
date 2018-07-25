@@ -738,10 +738,9 @@ int main (int argc, char *argv[]){
 		for(auto &f: bdt_filesA){
 			std::cout<<"On file: "<<f->tag<<std::endl;
 			bdt_precalc pre(f);
-
+			pre.genTrackInfo();
 			pre.genBNBcorrectionInfo();
 			pre.genPi0Info();
-			pre.genTrackInfo();
 			pre.genShowerInfo();
 
 		}
