@@ -728,17 +728,19 @@ int main (int argc, char *argv[]){
 	} else if(mode_option == "precalc"){
 		std::cout<<"mode: precalc: Begininning precalculation"<<std::endl;
 
-		if(number == -1) number =0;
-		std::vector<bdt_file*> bdt_filesA = {bdt_files.at(number)};
-		std::vector<bdt_file*> bdt_filesB = {data5e19, bnbext};
-		std::vector<bdt_file*> bdt_filesC = {ncpi0};
+		std::vector<bdt_file*> bdt_filesA;
+		if(number == -1){
+			 bdt_filesA = bdt_files;
+		}else{
+			 bdt_filesA = {bdt_files.at(number)};
+		}
 
 		for(auto &f: bdt_filesA){
 			std::cout<<"On file: "<<f->tag<<std::endl;
 			bdt_precalc pre(f);
 
-		//	pre.genBNBcorrectionInfo();
-		//	pre.genPi0Info();
+			pre.genBNBcorrectionInfo();
+			pre.genPi0Info();
 			pre.genTrackInfo();
 			pre.genShowerInfo();
 

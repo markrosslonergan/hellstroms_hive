@@ -11,7 +11,6 @@ int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::
 
 	for(int j=0; j<2;j++){	
 
-
 		signal_pure->setStageEntryList(j);
 		background_pure->setStageEntryList(j);
 
@@ -61,11 +60,9 @@ int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::
 			l->SetFillStyle(0);
 			l->SetNColumns(2);
 
-			std::string bkg_legend_name = "Intime Cosmic Background";
-			if(background_pure->tag == "BNBPure") bkg_legend_name = "BNB Backgrounds";
 
-			l->AddEntry(sig,"NC #Delta #gamma Signal","lf");	
-			l->AddEntry(bkg, bkg_legend_name.c_str(),"lf");	
+			l->AddEntry(sig, signal_pure->plot_name.c_str(),"lf");	
+			l->AddEntry(bkg, background_pure->plot_name.c_str(),"lf");	
 			l->Draw();
 
 			TText *pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulation Preliminary");
