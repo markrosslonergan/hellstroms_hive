@@ -160,7 +160,6 @@ int main (int argc, char *argv[]){
 			addPreFriends(f,"track");
 			addPreFriends(f,"pi0");
 			addPreFriends(f,"bnbcorrection");
-			//addPreFriends(f,"ncDeltaRadBkg");
 			f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 		}
 	}
@@ -181,53 +180,56 @@ int main (int argc, char *argv[]){
     std::string p_pi_x = E1+"*reco_shower_dirx[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirx[second_most_energetic_shower_index]";
     std::string p_pi_y = E1+"*reco_shower_diry[most_energetic_shower_index]"+"+"+E2+"*reco_shower_diry[second_most_energetic_shower_index]";
     std::string p_pi_z = E1+"*reco_shower_dirz[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirz[second_most_energetic_shower_index]";
-    std::string p_pi = "sqrt("+E1+"*"+E1+" + "+E2+"*"+E2+" + 2*"+E1+"*"+E2+"*"+angle_shower1_shower2+")";
+    std::string p_pi_argo = "sqrt("+E1+"*"+E1+" + "+E2+"*"+E2+" + 2*"+E1+"*"+E2+"*"+angle_shower1_shower2+")";
+    std::string p_pi_comp = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
+    std::string p_pi_trans = "sqrt("+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
     std::vector<bdt_variable> vars;
 
-    vars.push_back(bdt_variable(p_pi, "(100, 0., 1.5)", "Reconstructed Pion Momentum[GeV]", false, "d"));
-	vars.push_back(bdt_variable("reco_shower_dedx_plane2[most_energetic_shower_index]","(48,0,15)", "Shower 1 dE/dx Collection Plane [MeV/cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_dedx_plane2[second_most_energetic_shower_index]","(48,0,15)", "Shower 2 dE/dx Collection Plane [MeV/cm]",false,"d"));
-	vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Summed Shower Energy [GeV]", false,"d"));
-	vars.push_back(bdt_variable("reco_shower_length[most_energetic_shower_index]","(25,0,125)","Most Energetic Shower Length [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_length[second_most_energetic_shower_index]","(25,0,125)","Least Energetic Shower Length [cm]",false,"d"));
-    vars.push_back(bdt_variable(angle_shower1_shower2,"(50, -1, 1)", "Lab Opening Angle", false, "d"));
     vars.push_back(bdt_variable(invMass,"(50, 0.0, 0.5)", "Two-shower Invariant Mass [GeV]", false, "d"));
-    vars.push_back(bdt_variable("reco_shower_helper_energy[most_energetic_shower_index]", "(50, 0, 1)", "Most Energetic Shower Energy", false, "d"));
-    vars.push_back(bdt_variable("reco_shower_helper_energy[second_most_energetic_shower_index]", "(50, 0, 1)", "Second Most Energetic Shower Energy", false, "d"));
+    //vars.push_back(bdt_variable(p_pi_x, "(100, 0., 1.5)", "Reco. Pion Momentum (x) [GeV]", false, "d"));
+    //vars.push_back(bdt_variable(p_pi_y, "(100, 0., 1.5)", "Reco. Pion Momentum (y) [GeV]", false, "d"));
+    //vars.push_back(bdt_variable(p_pi_z, "(100, 0., 1.5)", "Reco. Pion Momentum (z) [GeV]", false, "d"));
+    //vars.push_back(bdt_variable(p_pi_argo, "(100, 0., 1.5)", "Reco. Pion Momentum, ArgoNeut Method [GeV]", false, "d"));
+    vars.push_back(bdt_variable(p_pi_comp, "(100, 0., 1.5)", "Reco. Pion Momentum [GeV]", false, "d"));
+    vars.push_back(bdt_variable(p_pi_trans, "(100, 0., 1.5)", "Reco. Transverse (yz) Pion Momentum [GeV]", false, "d"));
+	vars.push_back(bdt_variable("reco_shower_dedx_plane2[most_energetic_shower_index]","(48,0,15)", "Leading Shower dE/dx (Collection Plane) [MeV/cm]",false,"d"));
+	vars.push_back(bdt_variable("reco_shower_dedx_plane2[second_most_energetic_shower_index]","(48,0,15)", "Subleading Shower dE/dx (Collection Plane) [MeV/cm]",false,"d"));
+	vars.push_back(bdt_variable("summed_associated_helper_shower_energy","(25,0,0.5)","Summed Shower Energy [GeV]", false,"d"));
+	//vars.push_back(bdt_variable("reco_shower_length[most_energetic_shower_index]","(25,0,125)","Leading Shower Length [cm]",false,"d"));
+	//vars.push_back(bdt_variable("reco_shower_length[second_most_energetic_shower_index]","(25,0,125)","Subleading Shower Length [cm]",false,"d"));
+    vars.push_back(bdt_variable(angle_shower1_shower2,"(50, -1, 1)", "Pion Opening Angle (Lab)", false, "d"));
+    vars.push_back(bdt_variable("reco_shower_helper_energy[most_energetic_shower_index]", "(50, 0, 1)", "Leading Shower Energy", false, "d"));
+    vars.push_back(bdt_variable("reco_shower_helper_energy[second_most_energetic_shower_index]", "(50, 0, 1)", "Subleading Shower Energy", false, "d"));
 
 	vars.push_back(bdt_variable("totalpe_ibg_sum","(25,0,2000)","Total in Beam-Gate PE",false,"d"));
-	vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from Shower to Flashcenter [cm]",false,"d"));
+	//vars.push_back(bdt_variable("closest_asso_shower_dist_to_flashzcenter","(25,0,1000)","Distance from Shower to Flashcenter [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(25,0,125)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[most_energetic_shower_index]","(25,0,1000)","Back Projected Distance from Shower 1 to TPC wall [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[second_most_energetic_shower_index]","(25,0,1000)","Back Projected Distance from Shower 2 to TPC wall [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_nuvertx","(25,0,300)"," Reconstructed Vertex x-location [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_nuverty","(25,-300,+300)","Reconstructed Vertex y-location [cm]",false,"d"));
-	vars.push_back(bdt_variable("reco_nuvertz","(25,0,1000)","Reconstructed Vertex z-location [cm]",false,"d"));
+	//vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(25,0,125)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));
+	//vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[most_energetic_shower_index]","(25,0,1000)","Back Projected Distance from Leading Shower to TPC wall [cm]",false,"d"));
+	//vars.push_back(bdt_variable("reco_shower_bp_dist_to_tpc[second_most_energetic_shower_index]","(25,0,1000)","Back Projected Distance from Subleading Shower to TPC wall [cm]",false,"d"));
+	//vars.push_back(bdt_variable("reco_nuvertx","(25,0,300)"," Reconstructed Vertex x-location [cm]",false,"d"));
+	//vars.push_back(bdt_variable("reco_nuverty","(25,-300,+300)","Reconstructed Vertex y-location [cm]",false,"d"));
+	//vars.push_back(bdt_variable("reco_nuvertz","(25,0,1000)","Reconstructed Vertex z-location [cm]",false,"d"));
 
-	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[most_energetic_shower_index],reco_shower_dirz[most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 1 |Cosine Theta|", true,"d"));
-	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[most_energetic_shower_index],reco_shower_dirx[most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 1 |Cosine Phi|", true,"d"));
-	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirz[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Theta|", true,"d"));
-	vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirx[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Shower 2 |Cosine Phi|", true,"d"));
+	//vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[most_energetic_shower_index],reco_shower_dirz[most_energetic_shower_index]))","(50,-1,1)","Reconstructed Leading Shower |Cosine Theta|", true,"d"));
+	//vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[most_energetic_shower_index],reco_shower_dirx[most_energetic_shower_index]))","(50,-1,1)","Reconstructed Leading Shower |Cosine Phi|", true,"d"));
+	//vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirz[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Subleading Shower |Cosine Theta|", true,"d"));
+	//vars.push_back(bdt_variable("cos(atan2(reco_shower_diry[second_most_energetic_shower_index],reco_shower_dirx[second_most_energetic_shower_index]))","(50,-1,1)","Reconstructed Subleading Shower |Cosine Phi|", true,"d"));
     
 	if(istrack=="track"){ 
-        vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle_forward", "(50, -1, 1)", "Reconstructed Cosine #theta_{#pi #gamma} (CM Frame)", true, "d"));
-        //vars.push_back(bdt_variable("pi0_info.reco_gamma_decay_angle_backward", "(50, -1, 1)", "Reconstructed Cosine Pi Boost Angle Backward Angle (CM Frame)", true, "d"));
-        //vars.push_back(bdt_variable("pi0_info.gamma_z_angle_forward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma_f Angle (CM Frame)", true, "d"));
-        vars.push_back(bdt_variable("pi0_info.z_gamma_least_angle", "(25, 0, 1)", "Reconstructed #gamma #theta_{z} (CM Frame)", true, "d"));
-        vars.push_back(bdt_variable("gamma_pi_least_angle", "(25, 0, 1)", "Reconstructed Smallest #theta_{#pi #gamma} (CM Frame)", true, "d"));
-        //vars.push_back(bdt_variable("pi0_info.gamma_z_angle_backward", "(50, -1, 1)", "Reconstructed Cosine #pi-#gamma_b Angle (CM Frame)", true, "d"));
+        vars.push_back(bdt_variable("pi0_info.gamma_z_least_angle", "(25, -0.1, 1.7)", "Reconstructed Smallest #gamma #theta_{z} (CM Frame)", true, "d"));
+        vars.push_back(bdt_variable("pi0_info.gamma_pi_least_angle", "(25, -0.1, 1.7)", "Reconstructed Smallest #gamma #theta_{#pi} (CM Frame)", true, "d"));
 		vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(52,0,12)","Mean Track dE/dx", true,"d"));
-		vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(52,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
+		//vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(52,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(52,0,24)","Track PIDA",true,"d"));
 		vars.push_back(bdt_variable("track_info.reco_track_braggA[0]","(52,0,25)","Track Bragg A",true,"d"));
-		vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(50,0,20)","Closest Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
-		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[longest_asso_track_index],reco_track_dirz[longest_asso_track_index]))","(50,-1.0, 1.0)","Reconstructed Track Cosine Theta", true,"d"));
-		vars.push_back(bdt_variable("cos(atan2(reco_track_diry[longest_asso_track_index],reco_track_dirx[longest_asso_track_index]))","(50,-1.0, 1.0)","Reconstructed Track Cosine Phi", true,"d"));
+		//vars.push_back(bdt_variable("shortest_asso_shower_to_vert_dist","(50,0,20)","Closest Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
+		//vars.push_back(bdt_variable("cos(atan2(reco_track_diry[longest_asso_track_index],reco_track_dirz[longest_asso_track_index]))","(50,-1.0, 1.0)","Reconstructed Track Cosine Theta", true,"d"));
+		//vars.push_back(bdt_variable("cos(atan2(reco_track_diry[longest_asso_track_index],reco_track_dirx[longest_asso_track_index]))","(50,-1.0, 1.0)","Reconstructed Track Cosine Phi", true,"d"));
  
-		vars.push_back(bdt_variable(angle_track_shower1,	"(50,-1,1)","|Cosine Track-Shower Angle (Most Energetic)| ",true,"d"));
-		vars.push_back(bdt_variable(angle_track_shower2,	"(50,-1,1)","|Cosine Track-Shower Angle (Second Most Energetic)| ",true,"d"));
+		//vars.push_back(bdt_variable(angle_track_shower1,	"(50,-1,1)","|Cosine Track-Shower Angle (Leading Shower)| ",true,"d"));
+		//vars.push_back(bdt_variable(angle_track_shower2,	"(50,-1,1)","|Cosine Track-Shower Angle (Subleading Shower)| ",true,"d"));
 	}
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -320,15 +322,17 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
         // Other NC BNB events where either (a) one of the showers isn't photon-induced, or (b) one doesn't come from pi0
         std::string bkg2 = "ccnc == 1 && (true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && true_shower_origin[0]==1 && true_shower_origin[1]==1";
         // Same as previous, but for CC events
-        std::string bkg3 = "ccnc == 1 && (true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && true_shower_origin[0]==1 && true_shower_origin[1]==1";
+        std::string bkg3 = "ccnc == 0 && (true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && true_shower_origin[0]==1 && true_shower_origin[1]==1";
         // Delta radiative is now considered a (very small) background
         std::string bkg4 = "reco_asso_showers==1 && true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] != 111 && is_delta_rad == 1 && true_shower_origin==1";
         // Cosmics
         std::string bkg5 = "true_shower_origin[0]==2 && true_shower_origin[1]==2";
-        // Other. For now, just case where one shower is cosmic, but not both
+        // One shower is cosmic, but not both
         std::string bkg6 = "(true_shower_origin[0]==2 || true_shower_origin[1]==2) && !(true_shower_origin[0]==2 && true_shower_origin[1]==2)";
         // Other; defined as "!" versions of above
-        std::string other = "!("+signal+"||"+bkg1+"||"+bkg2+"||"+bkg3+"||"+bkg4+"||"+bkg5+"||"+bkg6+")";
+        //std::string other = "!("+signal+"||"+bkg1+"||"+bkg2+"||"+bkg3+"||"+bkg4+"||"+bkg5+"||"+bkg6+")";
+        std::string other = "!("+signal+") && !("+bkg1+") && !("+bkg2+") && !("+bkg3+") && !("+bkg4+") && !("+bkg5+") && !("+bkg6+")";
+
 	    std::vector<std::string> recomc_cuts = {signal, bkg1,bkg2, bkg3, bkg4, bkg5, bkg6, other};
 
     
@@ -349,7 +353,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
             test.plot_recomc(ftest, signal_cosmics, v, fcoscut, fbnbcut);
             test.plot_recomc(ftest, bnb_cosmics, v, fcoscut, fbnbcut);
             h++;
-            if (h > 1) break;  
+            //if (h > 1) break;  
 		}	
     }  
 
@@ -383,6 +387,7 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
 		obs.addToStack(intime);
 
 		for(auto &v:vars){
+            //auto &v = vars.at(4); 
             std::cout << "In obs.plotStacks loop" << std::endl;
 			obs.plotStacks(ftest, v, fcoscut, fbnbcut);
 		}
@@ -407,30 +412,30 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
         //obs2->plot_pot = 5e19;
         //obs2->addToStack(intime);
 
-        bdt_stack *obs3 = new bdt_stack(istrack+"_overlaymc");
-        obs3->plot_pot = 5e19;
-        obs3->addToStack(bnbext);
+        //bdt_stack *obs3 = new bdt_stack(istrack+"_overlaymc");
+        //obs3->plot_pot = 5e19;
+        //obs3->addToStack(bnbext);
 
 
         int ip=0;
-        //for(auto &v:vars){
-        //for(auto &v = vars.at(2); v < 100; v++ ) {
+        for(auto &v:vars){
+        //auto &v = vars.at(0);
             //break;
             ip++;
             bdt_datamc tdatamc(data5e19, obs);
             //bdt_datamc tdatamc2(bnbext, obs2);
-            bdt_datamc tdatamc3(data5e19, obs3);
-            //tdatamc.plotStacks(ftest,  v,fcoscut,fbnbcut);
-            tdatamc.plotStacks(ftest,  vars.at(6),fcoscut,fbnbcut);
+            //bdt_datamc tdatamc3(data5e19, obs3);
+            tdatamc.plotStacks(ftest,  v,fcoscut,fbnbcut);
+            //tdatamc.plotStacks(ftest,  vars.at(6),fcoscut,fbnbcut);
             //tdatamc2.plotStacks(ftest,  v,fcoscut,fbnbcut);
             //tdatamc3.plotStacks(ftest,  v,fcoscut,fbnbcut);
             //return 0;
 
-        //}
+        }
 
         bdt_datamc datamc(data5e19, obs);
         //bdt_datamc datamc2(bnbext, obs2);
-        bdt_datamc datamc3(data5e19, obs3);
+        //bdt_datamc datamc3(data5e19, obs3);
 
         datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
         datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
@@ -758,9 +763,8 @@ Combined: 1.31445 with sig 38.9899 879.865 s/sqrtb 1.31445
     */
     else if(mode_option == "precalc"){
 
-			//std::vector<bdt_file*> precalc_files = {signal_pure}; 
-			std::vector<bdt_file*> precalc_files = {signal_pure, signal_cosmics, bnb_pure, 
-                                                    bnb_cosmics, intime, bnbext, data5e19};
+			std::vector<bdt_file*> precalc_files = {signal_pure};
+			//std::vector<bdt_file*> precalc_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, intime, bnbext, data5e19};
 			for(auto &f: precalc_files){
 				bdt_precalc pre(f);
                 // Only uncomment one calcluation at a time, otherwise memory leaks!

@@ -39,7 +39,7 @@ class bdt_precalc{
 	TFile *friend_file_out;
 	// Pass in a bdt_file and it calculates stuff and adds it as friends!
 		bdt_precalc(bdt_file* in) : file(in) {
-		friend_file_out = new TFile((file->tag+"_friends.root").c_str(),"update");	
+		friend_file_out = new TFile((file->tag+"_friends_test.root").c_str(),"update");	
 		};
 		//This will actually
 		~bdt_precalc(){ friend_file_out->Close();}

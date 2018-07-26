@@ -2,9 +2,9 @@
 
 int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	std::cout << "Plotting stack" << std::endl;
-	TCanvas *cobs = new TCanvas("","",900,800);
-	//TCanvas *cobs = new TCanvas("","",1800,1600);
-	//cobs->Divide(2,2,0.0025,0.0000001);
+	//TCanvas *cobs = new TCanvas("","",900,800);
+	TCanvas *cobs = new TCanvas("","",1800,1600);
+	cobs->Divide(2,2,0.0025,0.0000001);
 
 	double plot_pot=4.801e19;
 
@@ -55,8 +55,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
     //int k = 0;
         std::cout << k << std::endl;
         //std::string stageNum = std::to_string(k);
-		//cobs->cd(k+1);
-		cobs->cd();
+		cobs->cd(k+1);
+		//cobs->cd();
 		TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 		pad0top->SetBottomMargin(0); // Upper and lower plot are joined
 		pad0top->Draw();             // Draw the upper pad: pad2top
@@ -95,7 +95,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 			l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
 
-		//data_th1s.at(k)->Rebin(data_rebin);
+		data_th1s.at(k)->Rebin(data_rebin);
 		data_th1s.at(k)->SetMarkerStyle(20);
 		data_th1s.at(k)->SetLineColor(kBlack);
 		data_th1s.at(k)->Draw("same E1");
@@ -112,8 +112,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		l0->SetFillStyle(0);
 		l0->SetTextSize(0.03);
 
-		//cobs->cd(k+1);	
-		cobs->cd();
+		cobs->cd(k+1);	
+		//cobs->cd();
 		TPad *pad0bot = new TPad(("padbot_"+stage_name.at(k)).c_str(),("padbot_"+stage_name.at(k)).c_str(), 0, 0.05, 1, 0.35);
 		pad0bot->SetTopMargin(0);
 		pad0bot->SetBottomMargin(0.351);
@@ -165,9 +165,9 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
         cobs->Write();
         //cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
-        cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
+        //cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
         // To avoid renaming everything in the technote
-        if (k ==1 )
+        if (k ==3 )
 	        cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_name+".pdf").c_str(),"pdf"); 
     }
 
@@ -220,8 +220,8 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		std::cout << "Got data" << std::endl;
 
 
-		//cobs->cd(k+1);
-		cobs->cd();
+		cobs->cd(k+1);
+		//cobs->cd();
 		TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 		pad0top->SetLogy();
 		pad0top->SetBottomMargin(0); // Upper and lower plot are joined
@@ -267,8 +267,8 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		l0->SetFillStyle(0);
 		l0->SetTextSize(0.03);
 
-		//cobs->cd(k+1);	
-		cobs->cd();
+		cobs->cd(k+1);	
+		//cobs->cd();
 		TPad *pad0bot = new TPad(("padbot_"+stage_name.at(k)).c_str(),("padbot_"+stage_name.at(k)).c_str(), 0, 0.05, 1, 0.35);
 		pad0bot->SetTopMargin(0);
 		pad0bot->SetBottomMargin(0.351);

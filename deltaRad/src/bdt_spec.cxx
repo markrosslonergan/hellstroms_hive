@@ -100,6 +100,7 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
 	int stack_rebin = 1;
+    std::cout << "GETTING STACK" << std::endl;
 	//if(level ==2) stack_rebin=2;
 	//if(level ==3) stack_rebin=4;
 
@@ -120,7 +121,10 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 	std::vector<double> integral_sorter;
 
 	for(int t=0; t<stack.size(); t++){
+        std::cout << "IN GET STACK LOOP" << std::endl;
+        std::cout << "t value: " << t << std::endl;
 		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin);
+        std::cout << "DEFINED HIST" << std::endl;
 		hist->SetTitle((this->name+"_"+var.name).c_str());
 		hist->SetLineColor(kBlack);
 		hist->SetStats(0);
@@ -151,7 +155,7 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 		//legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
 	}
 
-
+    std::cout << "RETURNING STACK" << std::endl;
 	return stacked;	
 		
 }
@@ -161,11 +165,17 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		cobs->Divide(2,2,0.0025,0.0000001);
 		double plot_pot=6.6e20;
 
+        std::cout << "GOT POT" << std::endl;
 		ftest->cd();
+        std::cout << "CD'ED SUCCESSFULLY" << std::endl;
 		THStack* s0 = this->getStack(var,0,-9,-9);
+        std::cout << "GOT FIRST STACK " << std::endl;
 		THStack* s1 = this->getStack(var,1,-9,-9);
+        std::cout << "GOT SECOND STACK " << std::endl;
 		THStack* s2 = this->getStack(var,2,c1,-9);
+        std::cout << "GOT THIRD STACK" << std::endl;
 		THStack* s3 = this->getStack(var,3,c1, c2);
+        std::cout << "GOT LAST STACK" << std::endl;
 
 		std::cout<<"1"<<std::endl;
 
