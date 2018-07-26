@@ -4,12 +4,12 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 	//*******************************************************************************//
 	//*******************************************************************************//
-	//****************   Single Photon ||   ncdelta1g1p  and ncdelta 1g0p ***********//
+	//****************   Single Photon ||   track  and ncdelta 1g0p ***********//
 	//*******************************************************************************//
 	//*******************************************************************************//
 
 
-	if(analysis_tag == "ncdelta1g1p" || analysis_tag == "ncdelta1g0p"){
+	if(analysis_tag == "track" || analysis_tag == "notrack"){
 
 
 
@@ -65,11 +65,11 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 
 		//************************************************* Track + Shower Only Variables **********************************************//
-		if(analysis_tag == "ncdelta1g1p"){
-			all_vars.push_back(bdt_variable( "-log((track_info.reco_track_principal_2[0]+track_info.reco_track_principal_1[0])/track_info.reco_track_principal_0[0])","(48,0,30)","Track PCA straightness","true","d"));//15
+		if(analysis_tag == "track"){
+			//all_vars.push_back(bdt_variable( "-log((track_info.reco_track_principal_2[0]+track_info.reco_track_principal_1[0])/track_info.reco_track_principal_0[0])","(48,0,30)","Track PCA straightness","true","d"));//15
 			all_vars.push_back(bdt_variable( "fabs(atan2(reco_track_diry[0],reco_track_dirz[0]))/3.14159","(48,0,1.0)","Reconstucted Track Angle Beamy-ness [rad]","true","d")); //15
 			all_vars.push_back(bdt_variable( "min(fabs(atan2(reco_track_diry[0],reco_track_dirx[0])+3.14159/2.0),fabs(atan2(reco_track_diry[0],reco_track_dirx[0])-3.14159/2.0))/3.14159","(48,0,0.5)","Reconstucted Track Angle Cosmicy-ness [rad]","true","d")); //16
-			//all_vars.push_back(bdt_variable("log(track_info.reco_track_straightline_chi2[0])","(48,6,16)"," Track Line chi^2",true,"d") );//17
+			all_vars.push_back(bdt_variable("log(track_info.reco_track_straightline_chi2[0])","(48,6,16)"," Track Line chi^2",true,"d") );//17
 			all_vars.push_back(bdt_variable("log(track_info.reco_track_sum_angles[0])","(48,-30,20)"," Track Sum of all Angles",true,"d") );//18
 
 			all_vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_dirx[0])+ "+reco_shower_momentum+"*reco_shower_dirx[0]","(48,-2,2)","Reconstructed Delta Momentum X [GeV]",true,"d"));//19
@@ -99,7 +99,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		all_precuts.push_back(fiducial_cut);
 		all_precuts.push_back(min_shower_energy_cut);
 
-		if(analysis_tag == "ncdelta1g1p"){
+		if(analysis_tag == "track"){
 			all_precuts.push_back(track_length_cut);
 			all_precuts.push_back(min_conversion_cut);
 			all_precuts.push_back(good_calo_cut);
