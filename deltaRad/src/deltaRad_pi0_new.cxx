@@ -43,7 +43,7 @@ int main (int argc, char *argv[]){
 
 	std::string mode_option = "fake"; 
 	std::string xml = "default.xml";
-	std::string analysis_tag ="track";
+	std::string analysis_tag ="ncpi0_2g1p";
 
 
 	bool run_cosmic = true;
@@ -155,8 +155,8 @@ int main (int argc, char *argv[]){
 	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(45,0.2,0.75)");
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1";
-	std::string true_bkg    = "true_shower_origin[0]==1";
+    std::string signal_definition = "ccnc==1 && true_shower_parent_pdg[0]==111 && true_shower_parent_pdg[1]==111 && true_shower_origin[0]==1 && true_shower_origin[1]==1 ";
+	std::string true_bkg    = "!(" + signal_definition + ")";
 	std::string num_track_cut ;
 
 	if(analysis_tag == "track"){
@@ -166,11 +166,20 @@ int main (int argc, char *argv[]){
 
 				bnb_bdt_info.setTopoName("1#gamma1p");
 			cosmic_bdt_info.setTopoName("1#gamma1p");
-		}else{
+		}else if (analysis_tag == "notrack" {
 			num_track_cut = "==0";
 			bnb_bdt_info.setTopoName("1#gamma0p");
 			cosmic_bdt_info.setTopoName("1#gamma0p");
 		}
+        else if (analysis_tag == "ncpi0_2g1p") {
+			num_track_cut =  "==1";
+	    	bnb_bdt_info.setTopoName("2#gamma1p");
+			cosmic_bdt_info.setTopoName("2#gamma1p");
+        }
+        else {
+            std::cout << "Invalid analysis tag" << std::endl;
+            return 1;
+        }       
 
 	if(mode_option == "vars" || mode_option == "train") vec_precuts.erase(vec_precuts.begin());
 
@@ -233,6 +242,7 @@ int main (int argc, char *argv[]){
 		for(auto &f: bdt_files){
 			addPreFriends(f,"track");
 			addPreFriends(f,"pi0");
+			addPreFriends(f,"pi0Boost");
 			if(f->tag != "Data5e19" && f->tag != "BNBext") addPreFriends(f,"bnbcorrection");
 			addPreFriends(f,"shower");
 
