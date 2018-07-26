@@ -53,7 +53,7 @@ class bdt_precalc{
 	//pass in a bdt_file and it calculates stuff and add's it as friends!
 	bdt_precalc(bdt_file* in, std::string const & dir = "../..") : file(in),
 		bnbcorrection_dir(dir) {
-			friend_file_out_name =file->tag+"_friends.root";
+			friend_file_out_name =file->tag+"_friends_test.root";
 		};
 	//This will actually
 	~bdt_precalc(){ ;}

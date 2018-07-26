@@ -660,9 +660,9 @@ int bdt_precalc::genPi0BoostAngle() {
             TVector3 planeVec = forwardShower;
             planeVec.RotateY(TMath::Pi()/2);
 
+            TVector3 normal = gamma1.Vect().Cross(planeVec);
 
-            TVector3 normal = gamma1.Vect().Cross(gamma2.Vect());
-
+            // Find boosted angle relative to z-axis, for reference
             TVector3 zUnit(0., 0., 1.);
 
             // See which orientation of normal vector is closer to z-unit
@@ -682,14 +682,10 @@ int bdt_precalc::genPi0BoostAngle() {
 
             // See which shower is closer to z-unit and take the angle
             if (zUnit.Angle(forwardShower) <= zUnit.Angle(backwardShower)) {
-                projectionZ = forwardShower;
-                projectionZ.SetY(0);
-                gamma_z_least_angle = zUnit.Angle(projectionZ);
+                gamma_z_least_angle = projectionZ.Angle(forwardShower);
             } 
             else if (zUnit.Angle(forwardShower) > zUnit.Angle(backwardShower)) {
-                projectionZ = backwardShower;
-                projectionZ.SetY(0);
-                gamma_z_least_angle = zUnit.Angle(projectionZ);
+                gamma_z_least_angle = projectionZ.Angle(backwardShower);
             }
 
             // Repeat the above for the pion boost vector

@@ -48,7 +48,7 @@ int main (int argc, char *argv[]){
 
 	bool run_cosmic = true;
 	bool run_bnb = true;
-	int number = -1;
+	int number = 0;
 	bool response_only = false;
 
 	//All of this is just to load in command-line arguments, its not that important
@@ -155,23 +155,23 @@ int main (int argc, char *argv[]){
 	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(45,0.2,0.75)");
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-    std::string signal_definition = "ccnc==1 && true_shower_parent_pdg[0]==111 && true_shower_parent_pdg[1]==111 && true_shower_origin[0]==1 && true_shower_origin[1]==1 ";
-	std::string true_bkg    = "!(" + signal_definition + ")";
-	std::string num_track_cut ;
+    // Not needed for NCpi0(?) but kept in so code doesn't break
+    std::string true_signal = "ccnc==1 && true_shower_parent_pdg[0]==111 && true_shower_parent_pdg[1]==111 && true_shower_origin[0]==1 && true_shower_origin[1]==1 ";
+    std::string true_bkg    = "true_shower_origin[0]==1";
+    std::string num_track_cut ;
 
 	if(analysis_tag == "track"){
 			true_signal = true_signal+ "&& track_matched_to_ncdeltarad_proton[0]==1";
 			true_bkg = true_bkg +"&& true_track_origin[0]==1";
 			num_track_cut =  "==1";
 
-				bnb_bdt_info.setTopoName("1#gamma1p");
+			bnb_bdt_info.setTopoName("1#gamma1p");
 			cosmic_bdt_info.setTopoName("1#gamma1p");
 		}else if (analysis_tag == "notrack" {
 			num_track_cut = "==0";
 			bnb_bdt_info.setTopoName("1#gamma0p");
 			cosmic_bdt_info.setTopoName("1#gamma0p");
-		}
-        else if (analysis_tag == "ncpi0_2g1p") {
+		}else if (analysis_tag == "ncpi0_2g1p") {
 			num_track_cut =  "==1";
 	    	bnb_bdt_info.setTopoName("2#gamma1p");
 			cosmic_bdt_info.setTopoName("2#gamma1p");
@@ -179,12 +179,12 @@ int main (int argc, char *argv[]){
         else {
             std::cout << "Invalid analysis tag" << std::endl;
             return 1;
-        }       
+    }       
 
 	if(mode_option == "vars" || mode_option == "train") vec_precuts.erase(vec_precuts.begin());
 
-	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
-	std::string signal_definition = "is_delta_rad == 1";
+	std::string base_cuts = "reco_asso_showers == 2 && reco_asso_tracks "+num_track_cut;
+    std::string signal_definition = "ccnc==1 && true_shower_parent_pdg[0]==111 && true_shower_parent_pdg[1]==111";
 	std::string background_definition = "!(" +signal_definition+ ")";
 
 
@@ -199,8 +199,8 @@ int main (int argc, char *argv[]){
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_fresh_v4.1.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltaradcosmics_fresh_v4.1.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
+	bdt_file *signal_pure = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
 	bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
@@ -210,14 +210,14 @@ int main (int argc, char *argv[]){
 
 	bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
 	bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
-	bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
+	bdt_file *delta_rad    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_fresh_v4.1.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
 	std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext};
 
-	//The LEE signal is bigger than the SM signal by this factor
-	signal_pure->scale_data = 3.1;
-	signal_cosmics->scale_data = 3.1;
+	//The LEE signal is bigger than the SM signal by this factor (don't need this for NCpi0)
+	//signal_pure->scale_data = 3.1;
+	//signal_cosmics->scale_data = 3.1;
 
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -259,8 +259,8 @@ int main (int argc, char *argv[]){
 
 
 	//Adding plot names
-	signal_pure->addPlotName("NC Delta Radiative");
-	signal_cosmics->addPlotName("LEE NC #Delta Rad w/ Corsika");
+	signal_pure->addPlotName("NC #pi^{0}");
+	signal_cosmics->addPlotName("NC #pi^{0} w/ Corsika");
 	bnb_pure->addPlotName("BNB Backgrounds");
 	bnb_cosmics->addPlotName("BNB w/ Corsika");
 	intime->addPlotName("Intime Corsika cosmics");
@@ -276,7 +276,7 @@ int main (int argc, char *argv[]){
 	//MELD: Best Fit Significance: 0.591875 0.5325 1.74915
 	double fcoscut;
 	double fbnbcut;
-	if(analysis_tag == "track"){
+	if(analysis_tag == "track" || analysis_tag == "ncpi0_2g1p"){
 		fcoscut = 0.591875;
 		fbnbcut = 0.5325;
 
@@ -327,23 +327,33 @@ int main (int argc, char *argv[]){
 		}
 	}	
 	else if(mode_option == "recomc"){
+        std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
+        // Could maybe use these at some point
+        //std::string  nue = "abs(true_shower_pdg[0]) ==11 && abs(nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)";
+        //std::string  michel = "abs(true_shower_pdg[0]) ==11 && abs(true_shower_parent_pdg[0])==13";
 
-		std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
-		std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
-
-		std::string  nue = "abs(true_shower_pdg[0]) ==11 && abs(nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)";
-		std::string  michel = "abs(true_shower_pdg[0]) ==11 && abs(true_shower_parent_pdg[0])==13";
-		std::vector<std::string> recomc_cuts = {
-			"true_shower_origin[0]==1 && true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] !=111 && is_delta_rad ==1 ",
-			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc==0",
-			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc==1",
-			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] != 111 && is_delta_rad!=1 && true_shower_origin[0]==1",
-			"true_shower_origin[0] ==1 && "+ nue,
-			"true_shower_origin[0] ==1 && "+ michel,
-			"true_shower_origin[0]==1 && true_shower_pdg[0]!=22 &&  (( abs(true_shower_pdg[0])!=11)  ||( abs(true_shower_pdg[0])==11 && !(abs(nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)) &&!(abs(true_shower_parent_pdg[0])==13)    ))     ",
-			"true_shower_origin[0] ==2 && abs(true_shower_parent_pdg[0])==13",
-			"true_shower_origin[0] ==2 && abs(true_shower_parent_pdg[0])!=13"
-		};
+        // First off, what MC catagories do you want to stack?
+        std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0}","NC BNB Background", "CC BNB Background", "NC #Delta Radiative", "Two Cosmic Showers", "One Cosmic Shower", "Other"};
+        // How are they defined, cutwise?
+        // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
+        std::string signal = "ccnc == 1 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1";
+        // CC pi0 background
+        std::string bkg1 = "ccnc == 0 && true_shower_pdg[0] == 22 && true_shower_pdg[1] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && true_shower_origin[1]==1"; 
+        // Other NC BNB events where either (a) one of the showers isn't photon-induced, or (b) one doesn't come from pi0
+        std::string bkg2 = "ccnc == 1 && (true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && true_shower_origin[0]==1 && true_shower_origin[1]==1";
+        // Same as previous, but for CC events
+        std::string bkg3 = "ccnc == 0 && (true_shower_pdg[0] != 22 || true_shower_pdg[1] != 22 || true_shower_parent_pdg[0] != 111 || true_shower_parent_pdg[1] != 111) && true_shower_origin[0]==1 && true_shower_origin[1]==1";
+        // Delta radiative is now considered a (very small) background
+        std::string bkg4 = "reco_asso_showers==1 && true_shower_pdg[most_energetic_shower_index] == 22 && true_shower_parent_pdg[most_energetic_shower_index] != 111 && is_delta_rad == 1 && true_shower_origin==1";
+        // Cosmics
+        std::string bkg5 = "true_shower_origin[0]==2 && true_shower_origin[1]==2";
+        // One shower is cosmic, but not both
+        std::string bkg6 = "(true_shower_origin[0]==2 || true_shower_origin[1]==2) && !(true_shower_origin[0]==2 && true_shower_origin[1]==2)";
+        // Other; defined as "!" versions of above
+        //std::string other = "!("+signal+"||"+bkg1+"||"+bkg2+"||"+bkg3+"||"+bkg4+"||"+bkg5+"||"+bkg6+")";
+        std::string other = "!("+signal+") && !("+bkg1+") && !("+bkg2+") && !("+bkg3+") && !("+bkg4+") && !("+bkg5+") && !("+bkg6+")";
+       
+        std::vector<std::string> recomc_cuts = {signal, bkg1,bkg2, bkg3, bkg4, bkg5, bkg6, other}; 
 
 		bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
