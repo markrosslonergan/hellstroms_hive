@@ -4,35 +4,42 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	dir(indir),
 	name(inname),
 	tag(intag),
-	root_dir(inrootdir),
 	plot_ops(inops),
+	root_dir(inrootdir),
 	col(incol),
+	flow(inflow),
 	is_data("false"),
-	is_mc("true"),
-	flow(inflow)
+	is_mc("true")
 {
 
 	plot_name = tag;
 
+	rangen = new TRandom3();
 
 	scale_data =1.0;
 	std::cout<<"Loading : "<<name<<std::endl;
 	f = new TFile((dir+"/"+name).c_str(), "read");	
 
-
 	if(!f->IsOpen() || !f){
 		std::cout<<"ERROR: didnt open file right: "<<dir<<"/"<<name<<std::endl;
 		exit(EXIT_FAILURE);
 	}
+	std::cout<<"bdt_file::bdt_file || "<<name<<" Opened correctly by root."<<std::endl;
 
 	std::string tnam_event = root_dir+"event_tree";
 	std::string tnam = root_dir+"vertex_tree";
 	std::string tnam_pot = root_dir+"pot_tree";
 
+	weight_branch = "1";
+	fillstyle = 1001;
+
 	std::cout<<"Getting vertex tree"<<std::endl;
 	tvertex = (TTree*)f->Get(tnam.c_str());
+
 	//tevent = (TTree*)f->Get(tnam_event.c_str());
-	std::cout<<"Got vertex tree"<<std::endl;
+	std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
+	//topovertex = (TTree*)tvertex->CopyTree(flow.topological_cuts.c_str());
+	//std::cout<<"Copied to topological tree: "<<topovertex->GetEntries()<<std::endl;
 
 	double potbranch = 0;
 	int  numbranch = 0;
@@ -43,15 +50,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			//Found in 
 			double intime_modifier = 10.279;
 
-			double N_gen_bnb = 2153450.0;
-			double N_gen_cos = 991885.0;
-			double frac_job_worked = 5.0/9.0;
+			//Guarrenteed for fresh_mcc8.9
+			double N_gen_bnb = 2146800.0;
+			double N_gen_cos = 991914.0;
 
-			double pot_bnb_cosmic = 2.172e+21;
+			double pot_bnb_cosmic = 2.16562e+21;
 			double pot_plot = 6.6e20;
 
 			pot = pot_plot; 
-			this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos*frac_job_worked)*pot_plot/pot_bnb_cosmic;
+			this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos)*pot_plot/pot_bnb_cosmic;
 			std::cout<<"--> value: "<<pot<<" with scale factor: "<<scale_data<<std::endl;
 		}else{
 			leg = "l";
@@ -71,47 +78,76 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			numberofevents = tmpnum;
 			pot=tmppot;
 			std::cout<<"--> POT is MC: ";
-			std::cout<<"--> value: "<<pot<<std::endl;
+			std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+
+			weight_branch = "bnbcorrection_info.weight";
+			numberofevents_raw = numberofevents;
 		}
 	}
+
+
+
+
+	if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure"){
+		double volCryo = 199668.427885;
+		double volTPC = 101510.0;
+		double  volTPCActive=  86698.6;
+		
+		//numberofevents = numberofevents*volTPCActive/volTPC;	
+		numberofevents = numberofevents*volTPCActive/volCryo;
+
+
+		tvertex->ResetBranchAddresses();
+	}
+
+
+
 	if(tag == "Data5e19"){
 		leg = "lp";
-		double Nworked = 190991;
-		double Nsamweb = 191131;
+		pot = 4.393e19;// tor860_wcut
+		weight_branch = "1";
 
-		std::cout<<"--> POT is data: From Zarkos tool..";
-		pot = 4.879e+19*Nworked/Nsamweb; //7131/13671;// 376954.0/382718.0;//7131/13671;
 		std::cout<<"--> value: "<<pot<<std::endl;
 	}
 	if(tag == "BNBext"){
+		std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
+		tpot = (TTree*)f->Get(tnam_pot.c_str());
+		tpot->SetBranchAddress("number_of_events", &numbranch);
+		tpot->SetBranchAddress("pot",&potbranch);
+
+		std::cout<<"Set the POT branch"<<std::endl;
+		int tmpnum = 0;
+		double tmppot=0;
+		for(int i=0; i<tpot->GetEntries(); i++){
+			tpot->GetEntry(i);
+			tmpnum += (double)numbranch;
+		}
+		numberofevents = tmpnum;
+		std::cout<<"BNBEXT number of events: "<<numberofevents<<std::endl;
+
+
 		leg = "lp";
 		double sca = 1.23;//from 1.23
 		//https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
 
-		double exta=38713062.0;
-		double extb=581923.0;
-
-		double spill=10893847.0; 
-
-		double Nworked = 852486.0;
-		double Nsamweb = 463273 + 521026;
+		double ext=33752562+40051674;//47953078.0; //External spills in each sample (EXT)
+		double spill_on=10312906;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
 
 
-		//data
-		double NworkedD = 190991.0;
-		double NsamwebD = 191131.0;
-		double datanorm = 4.879e+19*NworkedD/NsamwebD; //7131/13671;// 376954.0/382718.0;//7131/13671;
+		double datanorm =4.393e19;// rot860_wcut run-subrunlist;
 
-		double mod = 5.0/9.0*spill/(exta);//spill/(exta+extb);
+		double mod = spill_on/ext;
 
 
 		std::cout<<"--> POT is data: From Zarkos tool..";
-		pot =datanorm/mod*Nworked/Nsamweb; //7131/13671;// 376954.0/382718.0;//7131/13671;
+		pot =datanorm/mod;
 		std::cout<<"--> value: "<<pot<<std::endl;
 
+		weight_branch = "1";
 	}
 
 	std::cout<<"---> VERTEXCOUNT: "<<tag<<" "<<tvertex->GetEntries()*5e19/pot<<std::endl;
+
 
 	std::cout<<"Done!"<<std::endl;
 
@@ -120,13 +156,181 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 };
 
+
+int bdt_file::calcPrecutEntryList(){
+
+	//first check if a file exists with a precut entry list in it!
+
+	std::string filename = this->tag+"_entrylists.root";
+	precut_list_name = "precut_list_"+this->tag;
+
+	std::ifstream ifile(filename.c_str());
+	bool does_local_exist = (bool)ifile;
+	if(does_local_exist){
+
+		std::cout<<"Entry List File already exists for "<<this->tag<<std::endl;
+		TFile* fpre = new TFile(filename.c_str(),"update");	
+		if(fpre->GetListOfKeys()->Contains(precut_list_name.c_str()) ){
+
+			std::cout<<"And it contains a list. loading."<<std::endl;
+
+			precut_list = (TEntryList*)fpre->Get(precut_list_name.c_str());
+		} else{
+
+			std::cout<<"Precut Entry List does not exists for "<<this->tag<<" creating it."<<std::endl;
+			f->cd();
+
+			this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
+			
+			precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
+
+		}
+
+		fpre->cd();
+		precut_list->Write();
+		fpre->Close();
+		f->cd();
+
+	}
+	return 0;
+
+}
+
+
+int bdt_file::calcCosmicBDTEntryList(double c1, double c2){
+
+	cosmicbdt_list_name = "cosmicbdt_list_"+this->tag;
+
+	this->tvertex->Draw((">>"+cosmicbdt_list_name).c_str(), this->getStageCuts(2,c1,-9).c_str() , "entrylist");
+	cosmicbdt_list = (TEntryList*)gDirectory->Get(cosmicbdt_list_name.c_str());
+	return 0;
+
+}
+
+
+int bdt_file::calcBNBBDTEntryList(double c1, double c2){
+	bnbbdt_list_name = "bnbbdt_list_"+this->tag;
+
+	this->tvertex->Draw((">>"+bnbbdt_list_name).c_str(), this->getStageCuts(3,c1,c2).c_str() , "entrylist");
+	bnbbdt_list = (TEntryList*)gDirectory->Get(bnbbdt_list_name.c_str());
+
+	return 0;
+
+}
+
+
+int bdt_file::calcBaseEntryList(std::string analysis_tag){
+
+	//first check if a file exists with a topological entry list in it!
+
+
+	std::string filename = this->tag+"_entrylists.root";
+	topological_list_name = "topological_list_"+analysis_tag+"_"+this->tag;
+	precut_list_name = "precut_list_"+analysis_tag+"_"+this->tag;
+
+	std::ifstream ifile(filename.c_str());
+	bool does_local_exist = (bool)ifile;
+	if(does_local_exist){
+
+		std::cout<<"Entry List file already exists for "<<this->tag<<std::endl;
+		TFile* fpre = new TFile(filename.c_str(),"read");	
+		topological_list = (TEntryList*)fpre->Get(topological_list_name.c_str());
+		precut_list = (TEntryList*)fpre->Get(precut_list_name.c_str());
+
+	}else{
+		//create it
+
+		std::cout<<"Entry List file does not exists for "<<this->tag<<" creating it."<<std::endl;
+
+		this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0, -9,-9).c_str() , "entrylist");
+		topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
+
+
+		this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
+		precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
+
+
+
+		TFile* fpre = new TFile(filename.c_str(),"update");	
+		fpre->cd();
+		topological_list->Write();
+		precut_list->Write();
+		fpre->Close();
+		f->cd();
+
+	}
+
+	return 0;
+
+}
+
+
+
+int bdt_file::calcTopologicalEntryList(){
+
+	//first check if a file exists with a topological entry list in it!
+
+
+
+	std::string filename = this->tag+"_entrylists.root";
+	topological_list_name = "topological_list_"+this->tag;
+
+	std::ifstream ifile(filename.c_str());
+	bool does_local_exist = (bool)ifile;
+	if(does_local_exist){
+
+		std::cout<<"Topological Entry List already exists for "<<this->tag<<std::endl;
+		TFile* fpre = new TFile(filename.c_str(),"read");	
+		topological_list = (TEntryList*)fpre->Get(topological_list_name.c_str());
+
+
+	}else{
+		//create it
+
+		std::cout<<"Topological Entry List does not exists for "<<this->tag<<" creating it."<<std::endl;
+
+		this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0, -9,-9).c_str() , "entrylist");
+		topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
+
+
+		TFile* fpre = new TFile(filename.c_str(),"recreate");	
+		fpre->cd();
+		topological_list->Write();
+		fpre->Close();
+		f->cd();
+
+	}
+
+	return 0;
+
+}
+
+
+
+
+
+
+
 int bdt_file::addPlotName(std::string plotin){
 	plot_name = plotin;
 	return 0;
 }
 
+double bdt_file::GetEntries(){
+	return this->GetEntries("1");
+}
 
+double bdt_file::GetEntries(std::string cuts){
+	std::string namr = std::to_string(rangen->Uniform(10000));
 
+	this->tvertex->Draw(("reco_asso_showers>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+	TH1* th1 = (TH1*)gDirectory->Get(namr.c_str()) ;
+	double ans = th1->GetSumOfWeights();
+	delete th1;
+
+	return ans;
+
+}
 
 int bdt_file::scale(double scalein){
 	scale_data = scalein;
@@ -139,7 +343,7 @@ int bdt_file::setPOT(double inpot){
 TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
 
 	TCanvas *ctmp = new TCanvas();
-	this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
+	this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
 	std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
 	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
@@ -159,17 +363,43 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 	return getTH1(var, cuts,nam,plot_POT,1);
 
 }
+
+TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin){
+
+	//std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
+	TCanvas *ctmp = new TCanvas();
+	this->tvertex->Draw((invar+">>"+nam).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+	//std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
+	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
+	//th1->Sumw2();
+
+	th1->Scale(this->scale_data*plot_POT/this->pot);
+	//std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
+	if(rebin>1) th1->Rebin(rebin);
+	th1->SetLineColor(col);
+	th1->SetLineWidth(1);
+	th1->SetStats(0);
+	th1->GetXaxis()->SetTitle("Unit");
+	th1->GetYaxis()->SetTitle("Verticies");
+	th1->SetDirectory(0);	
+
+	//delete ctmp;
+	return th1;
+}
+
+
+
 TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin){
 
-	std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
+	//std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 	TCanvas *ctmp = new TCanvas();
-	this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() ,cuts.c_str(),"goff");
-	std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
-
-
+	this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+	//std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
+	//th1->Sumw2();
+
 	th1->Scale(this->scale_data*plot_POT/this->pot);
-	//	std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
+	//std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
 	if(rebin>1) th1->Rebin(rebin);
 	th1->SetLineColor(col);
 	th1->SetLineWidth(1);
@@ -178,6 +408,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 	th1->GetYaxis()->SetTitle("Verticies");
 	th1->SetDirectory(0);	
 
+	//delete ctmp;
 	return th1;
 }
 
@@ -185,7 +416,6 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
 	return getRecoMCTH1(var, cuts, nam, plot_POT,1);
 }
-
 
 std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin){
 	std::vector<TH1*> ans_th1s;
@@ -195,32 +425,46 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 
 	std::cout<<"getRecoMCTH1 || size of names: "<<recomc_names.size()<<" "<<recomc_cuts.size()<<" "<<recomc_cols.size()<<std::endl;
 
+	std::vector<TH1*> to_sort;
+	std::vector<double> integral_sorter;
+
 	for(int i=0; i< recomc_cuts.size(); i++){
 		std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
 		TCanvas *ctmp = new TCanvas();
-		this->tvertex->Draw((var.name+">>"+nam+"_"+recomc_names.at(i)+ var.binning).c_str() , (cuts+"&&"+recomc_cuts.at(i)).c_str(),"goff");
+		this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
+		std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
+		//gDirectory->ls();
 
-		TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+recomc_names.at(i)).c_str()) ;
+		TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+std::to_string(i)).c_str()) ;
 		th1->Scale(this->scale_data*plot_POT/this->pot);
-		if(rebin >1 )th1->Rebin(rebin);
+		if(rebin > 1 ) th1->Rebin(rebin);
 		th1->SetFillColor(recomc_cols.at(i));
 		th1->SetLineColor(kBlack);
 		th1->SetLineWidth(1);
 		th1->SetStats(0);
 		th1->GetXaxis()->SetTitle(var.unit.c_str());
 		th1->GetYaxis()->SetTitle("Verticies");
-		ans_th1s.push_back(th1);
 
 		other_cuts = other_cuts+ " && " +"!("+recomc_cuts.at(i)+")";	
 
+		to_sort.push_back(th1);
+		integral_sorter.push_back(th1->GetSumOfWeights());
+
 	}
+
+	ans_th1s = to_sort;
+	//for (int i: sort_indexes(integral_sorter)) {
+	//ans_th1s.push_back( to_sort.at(i));	
+	//legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
+	//}
+
 
 	//Should fix this soon
 	//recomc_cuts.push_back(other_cuts +"&& shower_true_origin != -1");
 	//recomc_names.push_back(other);
 
 	TCanvas *ctmp = new TCanvas();
-	this->tvertex->Draw((var.name+">>"+nam+"_"+other+ var.binning).c_str() , other_cuts.c_str(),"goff");
+	this->tvertex->Draw((var.name+">>"+nam+"_"+other+ var.binning).c_str() , ("("+other_cuts+")*"+this->weight_branch).c_str(),"goff");
 
 
 	TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+other).c_str()) ;
@@ -237,7 +481,11 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 }
 
 bdt_variable bdt_file::getBDTVariable(bdt_info info){
-	return bdt_variable(this->tag +"_"+info.identifier+ ".mva", info.binning, info.name+" Response" ,false);
+	return bdt_variable(this->tag +"_"+info.identifier+ ".mva", info.binning, info.name+" Response" ,false,"d");
+}
+
+bdt_variable bdt_file::getBDTVariable(bdt_info info, std::string binning){
+	return bdt_variable(this->tag +"_"+info.identifier+ ".mva", binning, info.name+" Response" ,false,"d");
 }
 
 
@@ -252,7 +500,8 @@ bdt_file::~bdt_file(){
 int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_file){
 	friend_files.push_back(in_friend_file);
 	friend_names.push_back(in_friend_tree_nam);
-	
+
+	std::cout<<"Now adding TreeFriend: "<<in_friend_tree_nam<<" from file: "<<in_friend_file<<std::endl;
 	tvertex->AddFriend(friend_names.back().c_str(), friend_files.back().c_str());
 
 
@@ -260,16 +509,36 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
 }
 
 int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods){
+	topo_name = bnb_bdt_info.topo_name; 
+	for(auto &method: TMVAmethods){
 
-		for(auto &method: TMVAmethods){
-			
-				std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
-				this->addFriend(this->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_app"+".root");
+		std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+		this->addFriend(this->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_app"+".root");
 
-				std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
-				this->addFriend(this->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
-		}
-	
+		std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+		this->addFriend(this->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_app"+".root");
+	}
+
+	return 0;
+}
+
+int bdt_file::setStageEntryList(int j){
+
+	if(j==0){
+		this->tvertex->SetEntryList(topological_list);
+	}else if(j==1){
+		this->tvertex->SetEntryList(precut_list);
+	}else if (j==2){
+		this->tvertex->SetEntryList(cosmicbdt_list);
+	}else if (j==3){
+		this->tvertex->SetEntryList(bnbbdt_list);
+	}else if(j>3){
+		std::cout<<"bdt_file::setStageEntryList. Only up to level 3 allowed with Entry Lists"<<std::endl;
+		exit(EXIT_FAILURE);
+
+	}
+
+
 	return 0;
 }
 
@@ -320,5 +589,90 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 	return ans;
 }
 
+int bdt_file::writeStageFriendTree(std::string nam, double bdtvar1, double bdtvar2){
+
+	TFile *f = new TFile((this->tag+"_"+nam).c_str(), "recreate");
+	f->cd();
+	TTree * stage_tree = new TTree("stage_cuts","stage_cuts");
+	std::vector<int> passed(4,0);
+	double weight =0;	
+
+	TBranch *b_s0 = stage_tree->Branch("passed_topological_selection",&passed.at(0));
+	TBranch *b_s1 = stage_tree->Branch("passed_precuts",&passed.at(1));
+	TBranch *b_s2 = stage_tree->Branch("passed_cosmic_bdt_cut",&passed.at(2));
+	TBranch *b_s3 = stage_tree->Branch("passed_bnb_bdt_cut",&passed.at(3));
+
+	TBranch *b_w = stage_tree->Branch("weight",&weight);
+
+	std::vector<TTreeFormula*> tf_vec;
+
+	TTreeFormula* tf_weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
+
+	for(int i=0; i < 4; i++){
+		tf_vec.push_back( new TTreeFormula(("tf_"+std::to_string(i)).c_str(), this->getStageCuts(i, bdtvar1,bdtvar2).c_str(), tvertex));
+	}
+
+	for(int k=0; k<tvertex->GetEntries(); k++){
+		tvertex->GetEntry(k);
+		if(k%10000 ==0 ){ std::cout<<"On event "<<k<<std::endl;}
+
+		double bnbc = tf_weight->EvalInstance();
+		double pot_scale = this->scale_data;
+		weight = bnbc*pot_scale;
 
 
+		for(int i=0; i < 4; i++){
+			if(tf_vec.at(i)->EvalInstance()){
+				passed.at(i) = 1;
+			}else{
+				passed.at(i) = 0;
+			}
+
+		}
+
+
+		stage_tree->Fill();
+
+	}
+
+	f->cd();
+	stage_tree->Write();
+	f->Close();
+
+	return 0;
+}
+
+
+TText * drawPrelim(double x, double y,  std::string ins){
+	TText *tres = new TText(x, y, ins.c_str());
+	tres->SetTextColor(kBlack);
+	tres->SetNDC();
+	return tres;
+}
+
+
+
+TText * drawPrelim(double x, double y, double s, std::string ins){
+	TText *tres = new TText(x, y, ins.c_str());
+	tres->SetTextColor(kBlack);
+	tres->SetTextSize(s);
+	tres->SetNDC();
+	return tres;
+}
+
+
+
+TText * drawPrelim(double x, double y, double s){
+	TText *tres = new TText(x, y,"MicroBooNE Preliminary");
+	tres->SetTextColor(kBlack);
+	tres->SetTextSize(s);
+	tres->SetNDC();
+	return tres;
+}
+
+TText * drawPrelim(double x, double y){
+	TText *tres = new TText(x, y,"MicroBooNE Preliminary");
+	tres->SetTextColor(kBlack);//t90->SetTextSize(0.12);
+	tres->SetNDC();
+	return tres;
+}

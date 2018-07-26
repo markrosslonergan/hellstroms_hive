@@ -18,10 +18,12 @@ EvaluateVertexQuality::PlotHelper::PlotHelper(std::string const & imetric_to_stu
 					      std::vector<std::string> const & imetrics_to_draw,
 					      std::vector<std::string> const & iparameters_to_draw,
 					      std::vector<std::string> const & iperformance_quantities,
-					      std::string const & iname) :
+					      std::string const & iname,
+					      std::string const & ititle) :
   metric_to_study(imetric_to_study, SIZE_MAX),
   method(imethod),
-  name(iname) {
+  name(iname),
+  title(ititle) {
     
   for(std::string const & str : imetrics_to_draw) metrics_to_draw.emplace(str, SIZE_MAX);
   for(std::string const & str : iparameters_to_draw) parameters_to_draw.emplace(str, SIZE_MAX);
@@ -78,11 +80,19 @@ EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
   fmethod_map = {{"max", "Maximized"},
 		 {"min", "Minimized"}};
 
+  /*
   fxtitle_map = {{"start_prox", "start_prox"},
 		 {"shower_prox", "Maximum Shower Impact Parameter [cm]"},
 		 {"max_bp_dist", "Maximum Shower Backwards Projection Distance [cm]"},
 		 {"cpoa_vert_prox", "cpoa_vert_prox"},
 		 {"cpoa_trackend_prox", "cpoa_trackend_prox"}};
+  */
+
+  fxtitle_map = {{"start_prox", "t_{max} [cm]"},
+		 {"shower_prox", "s_{max} [cm]"},
+		 {"max_bp_dist", "bp_{max} [cm]"},
+		 {"cpoa_vert_prox", "a_{max} [cm]"},
+		 {"cpoa_trackend_prox", "t_{vert} [cm]"}};
 
   fytitle_map = {{"mean", "Mean"},
 		 {"ratio_eq_1", "Ratio of Good Vertices"}};
@@ -93,10 +103,15 @@ EvaluateVertexQuality::EvaluateVertexQuality(char const * vq_name,
 			  {"cleanliness", {"Cleanliness", kBlue, 8}}, 
 			  {"shower_cleanliness", {"Shower Cleanliness", kBlue, 23}}, 
 			  {"track_cleanliness", {"Track Cleanliness", kBlue, 33}}, 
-			  {"combined", {"Combined", kMagenta, 8}},
-			  {"shower_combined", {"Shower Combined", kMagenta, 23}},
-			  {"track_combined", {"Track Combined", kMagenta, 33}},
-			  {"dist", {"Reco - True Distance [cm]", kBlack, 8}}};
+			  /*
+			  {"combined", {"Combined", kBlack, 8}},
+			  {"shower_combined", {"Shower Combined", kBlack, 23}},
+			  {"track_combined", {"Track Combined", kBlack, 33}},
+			  */
+			  {"combined", {"cpq", kBlack, 8}},
+			  {"shower_combined", {"Shower cpq", kBlack, 23}},
+			  {"track_combined", {"Track cpq", kBlack, 33}},
+			  {"dist", {"Reco - True Distance [cm]", kMagenta, 8}}};
 
 }
 
@@ -290,9 +305,10 @@ void EvaluateVertexQuality::AddToDraw(std::string const & metric_to_study,
 				      std::vector<std::string> const & metrics_to_draw,
 				      std::vector<std::string> const & parameters_to_draw,
 				      std::vector<std::string> const & performance_quantities,
-				      std::string const & name) {
+				      std::string const & name,
+				      std::string const & title) {
   
-  fplot_helper_v.push_back({metric_to_study, method, metrics_to_draw, parameters_to_draw, performance_quantities, name});
+  fplot_helper_v.push_back({metric_to_study, method, metrics_to_draw, parameters_to_draw, performance_quantities, name, title});
 
 }
 
@@ -599,7 +615,7 @@ TH1 * EvaluateVertexQuality::DrawHist(TTree * tree,
 				      std::string const & title,
 				      std::string const & xtitle,
 				      std::string const & ytitle) const {
-  
+
   tree->Draw((draw+">>"+name+binning).c_str(), weight.c_str(), opt.c_str());
 
   TH1 * h = (TH1*)gDirectory->Get(name.c_str());
@@ -607,10 +623,10 @@ TH1 * EvaluateVertexQuality::DrawHist(TTree * tree,
   h->SetTitle(title.c_str());
   h->GetXaxis()->SetTitle(xtitle.c_str());
   h->GetXaxis()->CenterTitle();
+  h->GetXaxis()->SetTitleOffset(1.3);
   h->GetYaxis()->SetTitle(ytitle.c_str());
   h->GetYaxis()->CenterTitle(); 
-
-  h->Scale(1./h->GetEntries());
+  h->GetYaxis()->SetTitleOffset(1.3);
 
   h->SetLineWidth(3);
   
@@ -620,27 +636,32 @@ TH1 * EvaluateVertexQuality::DrawHist(TTree * tree,
 
 
 void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
-				     std::string const & method,
+				     std::string const & name,
 				     std::string const & pq,
 				     std::string const & draw,
 				     std::string const & binning,
 				     std::string const & weight,
-				     std::string const & best_permutation) const {
+				     std::string const & best_permutation,
+				     std::string const & title,
+				     std::string const & xtitle) const {
 
-  TCanvas * canvas = new TCanvas(("dist_" + method + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_" + pq).c_str());
-  std::string const title = GetTitle(ph, method);
+  TCanvas * canvas = new TCanvas((name + "_" + fdraw_vec.at(ph.metric_to_study.second).at(3) + "_" + pq).c_str());
+  //std::string const title = GetTitle(ph, method);
   std::string weight_modified = fdraw_vec.at(ph.metric_to_study.second).at(2);
-  if(weight != "") weight_modified + " && " + weight;
+  if(weight != "") weight_modified += " && " + weight;
 
   TH1 * h = DrawHist(fvq_chain,
 		     "h",
 		     draw,
 		     binning,
 		     weight_modified + " && " + best_permutation,
-		     "hist",
+		     "",
 		     title,
-		     "True - Reco Vertex Distance [cm]",
-		     "Number of Vertices");
+		     xtitle,
+		     "Area Normalized");
+
+  h->Scale(1./h->Integral(0, h->GetNbinsX()+1));
+  double ymax = h->GetBinContent(h->GetMaximumBin());
 
   TH1 * hp = nullptr;
   TLegend * legend = nullptr;
@@ -652,26 +673,72 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 		  draw,
 		  binning,
 		  weight_modified,
-		  "histsame",
+		  "",
 		  title,
 		  "True - Reco Vertex Distance [cm]",
-		  "Number of Vertices");
-    
+		  "Area Normalized");
+
+    hp->Scale(1./hp->Integral(0, hp->GetNbinsX()+1));    
     hp->SetLineColor(kRed);
     hp->SetLineStyle(2);
 
+    TH1 * hm = DrawHist(fvq_chain, "hm", draw, "(100, -1100, 1100)", weight_modified + " && " + best_permutation);
+    //TH1 * hm = DrawHist(fvq_chain, "hm", draw, "(5, 0, 5)", weight_modified + " && " + best_permutation);
+    //double const vbval = hm->Integral(0, hm->GetNbinsX()) / hm->GetEntries();
+    TH1 * hpm = DrawHist(fpandora_tree, "hpm", draw, "(100, -1100, 1100)", weight_modified);
+    //TH1 * hpm = DrawHist(fpandora_tree, "hpm", draw, "(5, 0, 5)", weight_modified);
+    //double const pval = hpm->Integral(0, hpm->GetNbinsX()) / hpm->GetEntries();
+    
     legend = new TLegend(0.6, 0.9, 0.9, 0.6);
-    legend->AddEntry(h, "Vertex Builder");
-    legend->AddEntry(hp, "Pandora");
+    legend->SetHeader("Mean [cm]", "c");
+    //dynamic_cast<TLegendEntry*>(legend->GetListOfPrimitives()->First())->SetTextAlign(-22);
+    std::stringstream stream, streamerr;
+    stream << std::setprecision(2) << hm->GetMean();
+    //streamerr << std::setprecision(2) << hm->GetRMS() / sqrt(hm->GetEntries());
+    legend->AddEntry(h, ("VertexBuilder: " + stream.str()).c_str());
+    stream.clear(); stream.str(""); streamerr.clear(); streamerr.str("");
+    stream << std::setprecision(2) << hpm->GetMean();
+    //streamerr << std::setprecision(2) << hpm->GetRMS() / sqrt(hpm->GetEntries());
+    legend->AddEntry(hp, ("Pandora: " + stream.str()).c_str());
+
+    delete hm;
+    delete hpm;
+
+    if(hp->GetBinContent(hp->GetMaximumBin()) > ymax) ymax = hp->GetBinContent(hp->GetMaximumBin());
 
   }
 
+  h->GetYaxis()->SetRangeUser(0, 1.1*ymax);
+
+  TPaveText * text = new TPaveText(0.6, 0.6, 0.9, 0.3, "blNDC");
+  text->AddText("MicroBooNE Simulation Preliminary");
+  text->SetFillStyle(0);
+  //text->SetLineColor(0);
+  text->SetTextColor(kRed);
+  text->SetBorderSize(0);
+
+  /*
+  TPaveText * text2 = new TPaveText(0.6, 0.4, 0.8, 0.3, "blNDC");
+  text2->AddText("Simulation");
+  text2->SetFillStyle(0);
+  text2->SetLineColor(0);
+  text2->SetBorderSize(1);
+  */
+
+  h->Draw("hist");
+  if(hp) hp->Draw("histsame");
   if(legend) legend->Draw();
+  text->Draw();
+  //text2->Draw();
+  
   canvas->Write();
   delete canvas;
   delete h;
   if(hp) delete hp;
-  
+  if(legend) delete legend;
+  delete text;
+  //delete text2;
+
 }
 
 
@@ -698,8 +765,24 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 
     for(auto const & pq : performance_quantities) {
 
+      //std::string const title = "BNB Maximized";
+      //std::string const title = "NC #Delta Radiative Maximized";
+      //std::string const title = "BNB Events";
+      //std::string const title = "NC #Delta Radiative Events";
+      std::string const & title = ph.title;    
+
       std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).at(pq.second).second);
-      DrawHist(ph, method, pq.first, "dist", "(20, 0, 300)", "reco_shower_total + reco_track_total > 1", fvq.GetPermString(best_permutation));
+      /*
+      DrawHist(ph, "dist_0track_" + method, pq.first, "dist", "(100, 0, 100)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance [cm]");
+      DrawHist(ph, "distx_0track_" + method, pq.first, "distx", "(200, -100, 100)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance (X-axis) [cm]");
+      DrawHist(ph, "disty_0track_" + method, pq.first, "disty", "(200, -100, 100)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance (Y-axis) [cm]");
+      DrawHist(ph, "distz_0track_" + method, pq.first, "distz", "(200, -200, 200)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance (Z-axis) [cm]");
+      */
+
+      DrawHist(ph, "dist_1track_" + method, pq.first, "dist", "(100, 0, 100)", "reco_track_total == 1", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance [cm]");
+      DrawHist(ph, "distx_1track_" + method, pq.first, "distx", "(200, -50, 50)", "reco_track_total == 1", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance (X-axis) [cm]");
+      DrawHist(ph, "disty_1track_" + method, pq.first, "disty", "(200, -50, 50)", "reco_track_total == 1", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance (Y-axis) [cm]");
+      DrawHist(ph, "distz_1track_" + method, pq.first, "distz", "(200, -50, 50)", "reco_track_total == 1", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance (Z-axis) [cm]");
       
       for(auto const & ptd : parameters_to_draw) {
  
@@ -715,7 +798,7 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 	double ymin = DBL_MAX;
 	double ymax = 0;
 	
-	TLegend * legend = new TLegend(0.6, 0.9, 0.9, 0.6);
+	TLegend * legend = new TLegend(0.6, 0.9, 0.9, 0.7);
 	std::vector<TGraph *> line_handler;
 
 	for(auto const & mtd : metrics_to_draw) {
@@ -725,7 +808,8 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 	  if(!first_graph) {
 
 	    graph->Draw("ap");
-
+	    graph->SetTitle(title.c_str());
+	    
 	    std::string const & performance_quantity = fvq.GetPerformanceQuantities().at(pq.second);
 	    auto const ytm_it = fytitle_map.find(performance_quantity);
 	    if(ytm_it == fytitle_map.end()) {
@@ -735,6 +819,7 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 	    else {
 	      graph->GetYaxis()->SetTitle(ytm_it->second.c_str());
 	    }
+
 	    graph->GetYaxis()->CenterTitle();
 
 	    first_graph = graph;
@@ -778,7 +863,8 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 
 	if(first_graph) {
 	  
-	  first_graph->GetYaxis()->SetRangeUser(ymin*0.9, ymax*1.1);
+	  //first_graph->GetYaxis()->SetRangeUser(ymin*0.9, ymax*1.1);
+	  first_graph->GetYaxis()->SetRangeUser(ymin*0.9, 1.1);
 	  legend->Draw();
 	  canvas->Write();
 	  for(TGraph * line : line_handler) delete line;

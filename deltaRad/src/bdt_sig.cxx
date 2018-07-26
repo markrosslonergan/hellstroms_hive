@@ -43,34 +43,77 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	
 
 	//for nice plots make the 50, 25 is quicker tho
-	int nsteps_cosmic = 15;//50
+	int nsteps_cosmic = 14;//50
 	double cut_min_cosmic = 999;
 	double cut_max_cosmic = -999;
 
-	int nsteps_bnb = 15;//50
+	int nsteps_bnb = 14;//50
 	double cut_min_bnb = 999;//0.52;
 	double cut_max_bnb = -999;
-
-
+	
+	std::cout<<"Setting stage entry lists"<<std::endl;
+	for(size_t i = 0; i < sig_files.size(); ++i) {
+		sig_files.at(i)->setStageEntryList(1);
+	}
+	for(size_t i = 0; i < bkg_files.size(); ++i) {
+		bkg_files.at(i)->setStageEntryList(1);
+	}
 
 	for(size_t i = 0; i < sig_files.size(); ++i) {
 	//	double tmin_cos = sig_files.at(i)->tvertex->GetMinimum( (sig_files.at(i)->getBDTVariable(cosmic_focused_bdt).name + ">0").c_str()    );
 		double tmax_cos = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(cosmic_focused_bdt).name.c_str()    );
 		double tmax_bnb = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bnb_focused_bdt).name.c_str()    );
-
+	
+		std::cout<<sig_files.at(i)->getBDTVariable(cosmic_focused_bdt).name<<" MaxCos: "<<tmax_cos<<" MaxBnb: "<<tmax_bnb<<std::endl;
 		//if( tmin_cos <= cut_min_cosmic) cut_min_cosmic=tmin_cos;
 		if( tmax_cos >= cut_max_cosmic) cut_max_cosmic=tmax_cos;
 		if( tmax_bnb >= cut_max_bnb) cut_max_bnb=tmax_bnb;
 
 	}
-	cut_min_cosmic = cut_max_cosmic*0.8;
+	cut_min_cosmic = cut_max_cosmic*0.6;
 	cut_min_bnb = cut_max_bnb*0.8;
 
-	cut_max_cosmic =cut_max_cosmic*1.02;
-	cut_max_bnb =cut_max_bnb*1.02;
+	cut_max_cosmic =cut_max_cosmic*1.0;
+	cut_max_bnb =cut_max_bnb*1.0;
 
-	//cut_min_cosmic = 0.57; cut_max_cosmic = 0.62;
-	//cut_min_bnb = 0.52; cut_max_bnb = 0.56;
+	//Zoomed in notrack
+//	cut_min_cosmic = 0.54; cut_max_cosmic = 0.58;
+//	cut_min_bnb = 0.51; cut_max_bnb = 0.552;
+
+	//Best Fit Significance: 0.601552 0.533678 1.63658
+	//Zoomed in track
+	cut_min_cosmic = 0.55; cut_max_cosmic = 0.61;
+	cut_min_bnb = 0.525; cut_max_bnb = 0.545;
+
+
+
+	//Create 2 tempoary TEntryLists  at minimum
+	std::vector<TEntryList*> sig_min_lists;
+	std::vector<TEntryList*> bkg_min_lists;
+
+
+	std::cout<<"Setting Min entry lists"<<std::endl;
+	for(size_t i = 0; i < sig_files.size(); ++i) {
+	
+
+		std::string min_list_name  = "micam"+std::to_string(i);
+		sig_files.at(i)->tvertex->Draw((">>"+min_list_name).c_str(), sig_files.at(i)->getStageCuts(3, cut_min_cosmic,cut_min_bnb).c_str() , "entrylist");
+		sig_min_lists.push_back(  (TEntryList*)gDirectory->Get(min_list_name.c_str()) );
+		sig_files.at(i)->tvertex->SetEntryList(sig_min_lists.back());
+
+
+	}
+	for(size_t i = 0; i < bkg_files.size(); ++i) {
+
+		std::string min_list_name  = "mibam"+std::to_string(i);
+		bkg_files.at(i)->tvertex->Draw((">>"+min_list_name).c_str(), bkg_files.at(i)->getStageCuts(3, cut_min_cosmic,cut_min_bnb).c_str() , "entrylist");
+		bkg_min_lists.push_back(  (TEntryList*)gDirectory->Get(min_list_name.c_str()) );
+		bkg_files.at(i)->tvertex->SetEntryList(bkg_min_lists.back());
+
+
+	}	
+
+
 
 
 	std::cout<<"BNB sig scan from: "<<cut_min_bnb<<" to "<<cut_max_bnb<<std::endl;
@@ -98,7 +141,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 				double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
 			
 				std::string bnbcut = sig_files.at(i)->getStageCuts(3,d,d2); 
-				signal += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
+				signal += sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
 
 			}
 
@@ -107,7 +150,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 		
 	
 				std::string bnbcut = bkg_files.at(i)->getStageCuts(3,d,d2); 
-				bkg.push_back(	bkg_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale);			
+				bkg.push_back(	bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
 
 				background += bkg.back();
 			}
@@ -164,6 +207,80 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	h2_sig_cut->Write();
 	c_sig_cuts->Write();
 
+	return std::vector<double>{best_mva_cut, best_mva_cut2, best_significance};
+
+}
+
+
+
+std::vector<double> lin_scan(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, double c1, double c2){
+	std::cout<<"Starting to Scan Significance"<<std::endl;
+	double best_significance = 0;
+	double best_mva_cut = DBL_MAX;
+	double best_mva_cut2 = DBL_MAX;
+
+	double plot_pot = 6.6e20;
+	
+
+	std::vector<double> vec_sig;//some vectors to store TGraph info;
+	std::vector<double> vec_cut;	
+
+
+	double d1 = c1;
+	double d2 = c2; 
+
+
+	for(int i=0; i< 100; i++){
+
+			d1 = d1*1.0001;
+			//d1 = d1*0.99999;
+
+			double signal = 0;
+			double background = 0;
+			std::vector<double> bkg;	
+
+			for(size_t i = 0; i < sig_files.size(); ++i) {
+				double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
+			
+				std::string bnbcut = sig_files.at(i)->getStageCuts(3,d1,d2); 
+				signal += sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
+
+			}
+
+			for(size_t i = 0; i < bkg_files.size(); ++i) {
+				double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
+		
+	
+				std::string bnbcut = bkg_files.at(i)->getStageCuts(3,d1,d2); 
+				bkg.push_back(	bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
+
+				background += bkg.back();
+			}
+			double significance =0;
+			if(signal==0){
+				 significance =0;
+			}else if(background !=0){
+				significance = signal/sqrt(background);
+			}else{
+				std::cout<<"method_best_significane_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<<d1<<", cut2: "<<d2<<std::endl;
+				break;
+			}
+
+
+			if(significance > best_significance) {
+				best_significance = significance;
+				best_mva_cut = d1;
+				best_mva_cut2 = d2;
+			}
+
+
+			std::cout<<"ccut: "<<d1<<" bcut: "<<d2<<" "<<" #signal: "<<signal<<" #bkg: "<<background<<" || "<<" bnb: "<<bkg.at(0)<<" cos: "<<bkg.at(1)<<" || "<<significance<<std::endl;
+			vec_sig.push_back(significance);
+			vec_cut.push_back(d1);
+			vec_cut.push_back(d2);
+		}
+
+		
 	return std::vector<double>{best_mva_cut, best_mva_cut2, best_significance};
 
 }

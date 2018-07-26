@@ -14,7 +14,15 @@ VRAnalyzer::VRAnalyzer(std::string const & name, VertexQuality * vq) :
   frun_pandora(false),
   fget_pot(false),
   frun_fill_tree_variables(false),
-  fvq(vq) {}
+  fvq(vq),
+  fvertices_per_event_tree(nullptr) {}
+
+
+VRAnalyzer::~VRAnalyzer() {
+
+  if(fvertices_per_event_tree) delete fvertices_per_event_tree;
+  
+}
 
 
 void VRAnalyzer::SetVerbose(bool const verbose) {
@@ -71,6 +79,22 @@ void VRAnalyzer::GetPOT(bool const get_pot) {
 void VRAnalyzer::RunFillTreeVariables(bool const run_fill_tree_variables) {
 
   frun_fill_tree_variables = run_fill_tree_variables;
+
+}
+
+
+void VRAnalyzer::RunVerticesPerEvent() {
+
+  if(fvertices_per_event_tree) {
+    std::cout << "vertices_per_event_tree already exists\n";
+    return;
+  }
+
+  fvertices_per_event_tree = new TTree("vertices_per_event", "");
+  fvertices_per_event_tree->Branch("run_number", &frun_number, "run_number/I");
+  fvertices_per_event_tree->Branch("subrun_number", &fsubrun_number, "subrun_number/I");
+  fvertices_per_event_tree->Branch("event_number", &fevent_number, "event_number/I");
+  fvertices_per_event_tree->Branch("vertex_number", &fvertex_number, "vertex_number/I");
 
 }
 
@@ -420,7 +444,18 @@ void VRAnalyzer::FillWPandora(ParticleAssociations & pas) {
 }
 
 
-void VRAnalyzer::Run() {
+void VRAnalyzer::VerticesPerEvent(ParticleAssociations const & pas) {
+
+  frun_number = fstorage->frun_number;
+  fsubrun_number = fstorage->fsubrun_number;
+  fevent_number = fstorage->fevent_number;
+  fvertex_number = pas.GetSelectedAssociations().size();
+  fvertices_per_event_tree->Fill();
+
+}
+
+
+bool VRAnalyzer::Run() {
 
   //Runs the vertex builder
   VertexBuilder vb;
@@ -464,6 +499,12 @@ void VRAnalyzer::Run() {
     fftv.Fill(pas);
   }    
 
+  if(fvertices_per_event_tree) {
+    VerticesPerEvent(pas);
+  }
+
+  return true;
+
 }
 
 
@@ -472,6 +513,7 @@ void VRAnalyzer::Finalize() {
   if(fofile) {
 
     if(frun_fill_tree_variables) fftv.Write();
+    if(fvertices_per_event_tree) fvertices_per_event_tree->Write();
 
   }
 

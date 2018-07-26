@@ -7,7 +7,7 @@
 
 <channel name="singlephoton" use="1" numbins="4">
 	<bins 
-		edges="0.0 0.15 0.30 0.45 0.60" 
+		edges="0 1 2 3 4" 
 		/>
 	<subchannel name="signal" use="1" osc="0"/>
 	<subchannel name="bkg" use="1" osc="0"/>

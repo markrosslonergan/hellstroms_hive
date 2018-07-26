@@ -17,6 +17,7 @@ class VRAnalyzer : public Analyzer {
  public:
 
   VRAnalyzer(std::string const & name = "vrana", VertexQuality * vq = nullptr);
+  ~VRAnalyzer();
 
   void SetVerbose(bool const verbose = true);
   void SetProducers(std::string const & track_producer,
@@ -33,9 +34,10 @@ class VRAnalyzer : public Analyzer {
 
   void GetPOT(bool const get_pot = true);
   void RunFillTreeVariables(bool const run_fill_tree_variables = true);
+  void RunVerticesPerEvent();
 
   void Initialize();
-  void Run();
+  bool Run();
   void Finalize();
 
  private:
@@ -62,6 +64,7 @@ class VRAnalyzer : public Analyzer {
 		       std::string indent = "");
   void FillWPandora(ParticleAssociations & pas);
   void FillPOTTree();
+  void VerticesPerEvent(ParticleAssociations const & pas);
 
   std::string fname;
 
@@ -85,8 +88,13 @@ class VRAnalyzer : public Analyzer {
   bool frun_fill_tree_variables;
 
   VertexQuality * fvq;
-
   FillTreeVariables fftv;
+
+  TTree * fvertices_per_event_tree;
+  int frun_number;
+  int fsubrun_number;
+  int fevent_number;
+  int fvertex_number;
 
 };
 

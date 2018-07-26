@@ -7,11 +7,15 @@
 #include <iostream>
 #include <unordered_map>
 
+//#include "Processor.h"
+
 #include "TFile.h"
 #include "TChain.h"
 
 
 struct Storage {
+
+  friend class Processor;
 
   Storage(char const * pot_name,
 	  char const * meta_name,
@@ -20,12 +24,14 @@ struct Storage {
 
   ~Storage();
 
+  void SetOutputFilterFileName(char const * name);
+
 private:
 
   bool CheckFile(char const * pot_name,
 		 char const * meta_name,
 		 char const * event_name,
-		 char const * const file) const;
+		 char const * const file);
   void Initialize();
   void SetupChains();
   void ProcessPotChain();
@@ -38,9 +44,17 @@ private:
   std::pair<int, int> const & GetIndices(std::string const & producer,
 					 std::unordered_map<std::string, std::pair<int, int>> const & producer_map) const;
 
+  std::string GetTDirName(char const * oname);
+  void MDCD(char const * dir_name);
+  void CloneChain(TChain * chain, int const entries = -1);
+
   TChain * fpot_chain;
   TChain * fmeta_chain;
   TChain * fevent_chain;
+
+  TFile * fofile_filter;
+  TDirectory * ffilter_dir;
+  TTree * fevent_tree;
 
   std::unordered_map<std::string, std::pair<int, int>> fopflash_producer_map;
   std::unordered_map<std::string, std::pair<int, int>> fhit_producer_map;
@@ -54,6 +68,7 @@ public:
   std::pair<int, int> const & GetHitIndices(std::string const & producer) const;
   std::pair<int, int> const & GetTrackIndices(std::string const & producer) const;
   std::pair<int, int> const & GetShowerIndices(std::string const & producer) const;
+  void Write();
 
   //pot_chain
   int fnumber_of_events;
@@ -182,6 +197,10 @@ public:
   std::vector<std::vector<double>> * freco_track_EnergyHelper_resrange;
   std::vector<std::vector<double>> * freco_track_EnergyHelper_dedx;
   std::vector<double> * freco_track_EnergyHelper_energy;
+  std::vector<double> * freco_track_EnergyHelperNew_energy_legacy;
+  std::vector<std::vector<double>> * freco_track_EnergyHelperNew_energy;
+  std::vector<std::vector<double>> * freco_track_EnergyHelperNew_energy_from_dedx;
+  std::vector<std::vector<double>> * freco_track_EnergyHelperNew_dedx;
   //Reco - MC matching
   std::vector<int> * freco_track_largest_mc_type;
   std::vector<int> * freco_track_largest_mc_index;
@@ -220,6 +239,9 @@ public:
   std::vector<double> * freco_shower_EnergyHelper_energy_legacy;
   std::vector<std::vector<double>> * freco_shower_EnergyHelper_energy;
   std::vector<std::vector<double>> * freco_shower_EnergyHelper_dedx;
+  std::vector<double> * freco_shower_EnergyHelperNew_energy_legacy;
+  std::vector<std::vector<double>> * freco_shower_EnergyHelperNew_energy;
+  std::vector<std::vector<double>> * freco_shower_EnergyHelperNew_dedx;
   //Reco - MC matching
   std::vector<int> * freco_shower_largest_mc_type;
   std::vector<int> * freco_shower_largest_mc_index;

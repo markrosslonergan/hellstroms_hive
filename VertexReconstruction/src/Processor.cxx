@@ -11,8 +11,10 @@ Processor::Processor(char const * pot_name,
 	   "FillLightEvent/meta_tree",
 	   "FillLightEvent/event_tree",
 	   files),
-  fofile(nullptr){}
-
+  fofile(nullptr),
+  ffilter_dir(nullptr),
+  fevent_tree(nullptr),
+  fworkdir(nullptr){}
 
 Processor::~Processor() {
 
@@ -37,12 +39,32 @@ void Processor::SetOutputFileName(char const * name) {
 }
 
 
+void Processor::SetOutputFilterFileName(char const * name) {
+
+  fstorage.SetOutputFilterFileName(name);
+  ffilter_dir = fstorage.ffilter_dir;
+  fevent_tree = fstorage.fevent_tree;
+
+}
+
+
 void Processor::RunEvent(int const entry) {
 
   fstorage.GetEvent(entry);
   
+  bool pass = true;
+
   for(Analyzer * analyzer : fanalyzers) { 
-    analyzer->Run();
+    if(!analyzer->Run() && ffilter_dir) {
+      pass = false;
+      break;
+    }
+  }
+
+  if(pass && ffilter_dir) {
+    ffilter_dir->cd();
+    fevent_tree->Fill();
+    fworkdir->cd();
   }
 
 }
@@ -51,6 +73,8 @@ void Processor::RunEvent(int const entry) {
 void Processor::Run(int const entry) {
 
   if(fofile) fofile->cd();
+  fworkdir = gDirectory;
+
   for(Analyzer * analyzer : fanalyzers) { 
     analyzer->SetOutputFile(fofile);
     analyzer->Initialize();
@@ -69,6 +93,11 @@ void Processor::Run(int const entry) {
 
   else {
 
+    if(entry >= fstorage.fnumber_of_events) {
+      std::cout << "ERROR: requested entry larger than total number of events\n";
+      exit(1);
+    }
+
     RunEvent(entry);
 
   }
@@ -76,5 +105,7 @@ void Processor::Run(int const entry) {
   for(Analyzer * analyzer : fanalyzers) { 
     analyzer->Finalize();
   }  
+
+  if(ffilter_dir) fstorage.Write();
 
 }

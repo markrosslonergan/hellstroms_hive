@@ -103,6 +103,9 @@ class FillTreeVariables {
   int total_exiting_particles;
   std::vector<int> exiting_particle_vector;
 
+  int  pi0_class_number;
+
+
   int is_single_photon;
   int is_delta_rad;
   int delta_true_pdg;
@@ -162,16 +165,40 @@ class FillTreeVariables {
   std::vector<double> reco_track_phi;
   std::vector<double> reco_track_theta;
   */
+  std::vector<std::vector<double>> reco_track_calo_dEdxnew;
   std::vector<std::vector<double>> reco_track_calo_dEdx;
   std::vector<std::vector<double>> reco_track_calo_resrange;
   
+  std::vector<std::vector<double>> reco_track_X;
+  std::vector<std::vector<double>> reco_track_Y;
+  std::vector<std::vector<double>> reco_track_Z;
+  
+  std::vector<std::vector<double>> reco_track_energy_new;
+  std::vector<std::vector<double>> reco_track_energy_from_dEdx;
+   
+  std::vector<double> all_reco_tracks_bp_dist_from_vertex;
+  std::vector<double> all_reco_showers_bp_dist_from_vertex;
+
+
   std::vector<double> all_reco_tracks_dist_from_vertex;
   std::vector<double> all_reco_showers_dist_from_vertex;
 
   double reco_track_length[100];
+  double reco_track_energy[100];
+  double reco_track_energy_new_legacy[100];
+  int reco_track_is_flipped[100];
+  double reco_track_startx[100];
+  double reco_track_starty[100];
+  double reco_track_startz[100];
+  double reco_track_endx[100];
+  double reco_track_endy[100];
+  double reco_track_endz[100];
   double reco_track_dirx[100];
   double reco_track_diry[100];
   double reco_track_dirz[100];
+  double reco_track_vertdirx[100];
+  double reco_track_vertdiry[100];
+  double reco_track_vertdirz[100];
   double reco_track_thetayx[100];
   double reco_track_thetaxz[100];
   double reco_track_thetayz[100];
@@ -227,6 +254,9 @@ class FillTreeVariables {
   double reco_shower_startx[100];
   double reco_shower_starty[100];
   double reco_shower_startz[100];
+  double reco_shower_endx[100];
+  double reco_shower_endy[100];
+  double reco_shower_endz[100];
   double reco_shower_dist[100];
   double reco_shower_distx[100];
   double reco_shower_disty[100];
@@ -242,10 +272,14 @@ class FillTreeVariables {
   double reco_shower_diry[100];
   double reco_shower_dirz[100];
   double reco_shower_helper_energy[100];
+  double reco_shower_helpernew_energy[100];
   double reco_shower_bp_dist_to_tpc[100];
   double reco_shower_dedx_plane0[100];
   double reco_shower_dedx_plane1[100];
   double reco_shower_dedx_plane2[100];
+  double reco_shower_dedxnew_plane0[100];
+  double reco_shower_dedxnew_plane1[100];
+  double reco_shower_dedxnew_plane2[100];
   double reco_shower_dist_to_closest_flashzcenter[100];
 
   std::vector<double> true_shower_matching_ratio;

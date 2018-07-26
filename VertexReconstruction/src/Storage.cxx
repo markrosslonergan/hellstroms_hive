@@ -6,22 +6,30 @@
 Storage::Storage(char const * pot_name,
 		 char const * meta_name,
 		 char const * event_name,
-		 std::vector<char const *> const & files) {
+		 std::vector<char const *> const & files) :
+  fpot_chain(nullptr),
+  fmeta_chain(nullptr),
+  fevent_chain(nullptr),
+  fofile_filter(nullptr),
+  ffilter_dir(nullptr),
+  fevent_tree(nullptr) {
 
   if(files.empty()) {
     std::cout << "Empty file list given to Storage\n";
     exit(1);
   }
 
+  if(!CheckFile(pot_name,
+		meta_name,
+		event_name,
+		files.front())) {
+    exit(1);
+  }
+  
   Initialize();
 
-  fpot_chain = new TChain(pot_name);
-  fmeta_chain = new TChain(meta_name);
-  fevent_chain = new TChain(event_name);
-
   for(char const * file : files) {
-    //if(!CheckFile(pot_name, meta_name, event_name, file)) continue;
-    fpot_chain->Add(file);
+    if(fpot_chain) fpot_chain->Add(file);
     fmeta_chain->Add(file);
     fevent_chain->Add(file);
   }
@@ -42,7 +50,8 @@ Storage::Storage(char const * pot_name,
 
 Storage::~Storage() {
 
-  delete fpot_chain;
+  if(fofile_filter) fofile_filter->Close();
+  if(fpot_chain) delete fpot_chain;
   delete fmeta_chain;
   delete fevent_chain;
 
@@ -52,7 +61,7 @@ Storage::~Storage() {
 bool Storage::CheckFile(char const * pot_name,
 			char const * meta_name,
 			char const * event_name,
-			char const * const file_name) const {
+			char const * const file_name) {
 
   TFile * file = TFile::Open(file_name);
 
@@ -67,22 +76,77 @@ bool Storage::CheckFile(char const * pot_name,
 
   bool result = true;
 
-  if(!pot_tree) {
-    std::cout << "Could not find: " << pot_name << " in " << file_name << "\n";
-    result = false;
+  if(pot_tree) {
+    fpot_chain = new TChain(pot_name);
   }
-  if(!meta_tree) { 
-    std::cout << "Could not find: " << meta_name << " in " << file_name << "\n";
-    result = false;
+  else {
+    std::cout << "WARNING: first input file has not pot tree named " << pot_name << ", pot information will not be loaded\n";
   }
-  if(!event_tree) {
-    std::cout << "Could not find: " << event_name << " in " << file_name << "\n";
+  if(meta_tree) { 
+    fmeta_chain = new TChain(meta_name);
+  }
+  else {
     result = false;
+    std::cout << "ERROR: first input file has no meta_tree named " << meta_name << "\n";
+  }
+  if(event_tree) {
+    fevent_chain = new TChain(event_name);
+  }
+  else {
+    result = false;
+    std::cout << "ERROR: first input file has no event_tree named " << event_name << "\n";
   }
 
   file->Close();
 
   return result;
+
+}
+
+
+std::string Storage::GetTDirName(char const * oname) {
+
+  std::string const str(oname);
+  size_t const pos = str.rfind("/");
+  if(pos == std::string::npos) return {};
+  else return str.substr(0, pos);
+
+}
+
+
+void Storage::MDCD(char const * dir_name) {
+
+  if(!gDirectory->FindKey(dir_name)) gDirectory->mkdir(dir_name);
+  gDirectory->cd(dir_name);
+
+}
+
+
+void Storage::CloneChain(TChain * chain, int const entries) {
+  
+  TDirectory * start_dir = gDirectory;
+  MDCD(GetTDirName(chain->GetName()).c_str());
+  TTree * tree = chain->CloneTree(entries);
+  tree->Write();
+  delete tree;
+  start_dir->cd();
+
+} 
+
+
+void Storage::SetOutputFilterFileName(char const * name) {
+
+  TDirectory * start_dir = gDirectory;
+
+  fofile_filter = TFile::Open(name, "recreate");
+
+  if(fpot_chain) CloneChain(fpot_chain);
+  CloneChain(fmeta_chain);
+  MDCD(GetTDirName(fevent_chain->GetName()).c_str());
+  ffilter_dir = gDirectory;
+  fevent_tree = fevent_chain->CloneTree(0);
+  
+  start_dir->cd();
 
 }
 
@@ -200,6 +264,10 @@ void Storage::Initialize() {
   freco_track_EnergyHelper_resrange = nullptr;
   freco_track_EnergyHelper_dedx = nullptr;
   freco_track_EnergyHelper_energy = nullptr;
+  freco_track_EnergyHelperNew_energy_legacy = nullptr;
+  freco_track_EnergyHelperNew_energy = nullptr;
+  freco_track_EnergyHelperNew_energy_from_dedx = nullptr;
+  freco_track_EnergyHelperNew_dedx = nullptr;
   //Reco - MC matching
   freco_track_largest_mc_type = nullptr;
   freco_track_largest_mc_index = nullptr;
@@ -238,6 +306,9 @@ void Storage::Initialize() {
   freco_shower_EnergyHelper_energy_legacy = nullptr;
   freco_shower_EnergyHelper_energy = nullptr;
   freco_shower_EnergyHelper_dedx = nullptr;
+  freco_shower_EnergyHelperNew_energy_legacy = nullptr;
+  freco_shower_EnergyHelperNew_energy = nullptr;
+  freco_shower_EnergyHelperNew_dedx = nullptr;
   //Reco - MC matching
   freco_shower_largest_mc_type = nullptr;
   freco_shower_largest_mc_index = nullptr;
@@ -397,15 +468,16 @@ void Storage::Initialize() {
 
 void Storage::SetupChains() {
 
-  ProcessPotChain();
   ProcessMetaChain();
   ProcessEventChain();
+  if(fpot_chain) ProcessPotChain();
 
 }
 
 
 void Storage::ProcessPotChain() {
 
+  int total_number_of_events = 0;
   int number_of_events;
   double pot;
 
@@ -414,9 +486,11 @@ void Storage::ProcessPotChain() {
 
   for(int i = 0; i < fpot_chain->GetEntries(); ++i) {
     fpot_chain->GetEntry(i);
-    fnumber_of_events += number_of_events;
+    total_number_of_events += number_of_events;
     fpot += pot;
   }
+
+  if(total_number_of_events != fnumber_of_events) std::cout << "WARNING: number of events in POT tree: " << total_number_of_events << " != number of events in event tree: " << fnumber_of_events << ", don't trust POT: " << fpot << "\n";
 
 }
 
@@ -455,10 +529,7 @@ void Storage::ProcessMetaChain() {
 
 void Storage::ProcessEventChain() {
 
-  //if(fnumber_of_events ==0){
-//	fnumber_of_events = fevent_chain->GetEntries();
-  // }
- 
+  fnumber_of_events = fevent_chain->GetEntries();
 
   fevent_chain->SetBranchAddress("opflash_producer_indices", &fopflash_producer_indices);
   fevent_chain->SetBranchAddress("hit_producer_indices", &fhit_producer_indices);
@@ -570,15 +641,20 @@ void Storage::ProcessEventChain() {
   fevent_chain->SetBranchAddress("reco_track_EnergyHelper_resrange", &freco_track_EnergyHelper_resrange);
   fevent_chain->SetBranchAddress("reco_track_EnergyHelper_dedx", &freco_track_EnergyHelper_dedx);
   fevent_chain->SetBranchAddress("reco_track_EnergyHelper_energy", &freco_track_EnergyHelper_energy);
+  fevent_chain->SetBranchAddress("reco_track_EnergyHelperNew_energy_legacy", &freco_track_EnergyHelperNew_energy_legacy);
+  fevent_chain->SetBranchAddress("reco_track_EnergyHelperNew_energy", &freco_track_EnergyHelperNew_energy);
+  fevent_chain->SetBranchAddress("reco_track_EnergyHelperNew_energy_from_dedx", &freco_track_EnergyHelperNew_energy_from_dedx);
+  fevent_chain->SetBranchAddress("reco_track_EnergyHelperNew_dedx", &freco_track_EnergyHelperNew_dedx);
+
   if(fmc && frmcm_bool) {
     fevent_chain->SetBranchAddress("reco_track_largest_mc_type", &freco_track_largest_mc_type);
     fevent_chain->SetBranchAddress("reco_track_largest_mc_index", &freco_track_largest_mc_index);
     fevent_chain->SetBranchAddress("reco_track_largest_ratio", &freco_track_largest_ratio);
-    if(fheavy) {
+    //if(fheavy) {
       fevent_chain->SetBranchAddress("reco_track_mc_type", &freco_track_mc_type);
       fevent_chain->SetBranchAddress("reco_track_mc_index", &freco_track_mc_index);
       fevent_chain->SetBranchAddress("reco_track_charge_contribution", &freco_track_charge_contribution);
-    }
+      //}
     fevent_chain->SetBranchAddress("reco_track_charge_total", &freco_track_charge_total);
   }
 
@@ -616,15 +692,18 @@ void Storage::ProcessEventChain() {
   fevent_chain->SetBranchAddress("reco_shower_EnergyHelper_energy_legacy", &freco_shower_EnergyHelper_energy_legacy);
   fevent_chain->SetBranchAddress("reco_shower_EnergyHelper_energy", &freco_shower_EnergyHelper_energy);
   fevent_chain->SetBranchAddress("reco_shower_EnergyHelper_dedx", &freco_shower_EnergyHelper_dedx);
+  fevent_chain->SetBranchAddress("reco_shower_EnergyHelperNew_energy_legacy", &freco_shower_EnergyHelperNew_energy_legacy);
+  fevent_chain->SetBranchAddress("reco_shower_EnergyHelperNew_energy", &freco_shower_EnergyHelperNew_energy);
+  fevent_chain->SetBranchAddress("reco_shower_EnergyHelperNew_dedx", &freco_shower_EnergyHelperNew_dedx);
   if(fmc && frmcm_bool) { 
     fevent_chain->SetBranchAddress("reco_shower_largest_mc_type", &freco_shower_largest_mc_type);
     fevent_chain->SetBranchAddress("reco_shower_largest_mc_index", &freco_shower_largest_mc_index);
     fevent_chain->SetBranchAddress("reco_shower_largest_ratio", &freco_shower_largest_ratio);
-    if(fheavy) {
+    //if(fheavy) {
       fevent_chain->SetBranchAddress("reco_shower_mc_type", &freco_shower_mc_type);
       fevent_chain->SetBranchAddress("reco_shower_mc_index", &freco_shower_mc_index);
       fevent_chain->SetBranchAddress("reco_shower_charge_contribution", &freco_shower_charge_contribution);
-    }
+      //}
     fevent_chain->SetBranchAddress("reco_shower_charge_total", &freco_shower_charge_total);
   }
 
@@ -1022,5 +1101,15 @@ std::pair<int, int> const & Storage::GetTrackIndices(std::string const & produce
 std::pair<int, int> const & Storage::GetShowerIndices(std::string const & producer) const {
 
   return GetIndices(producer, fshower_producer_map);
+
+}
+
+
+void Storage::Write() {
+
+  TDirectory * start_dir = gDirectory;
+  ffilter_dir->cd();
+  fevent_tree->Write();
+  start_dir->cd();
 
 }

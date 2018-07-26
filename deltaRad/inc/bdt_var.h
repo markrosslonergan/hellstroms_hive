@@ -36,8 +36,8 @@ struct bdt_variable{
 		bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack, std::string intype) : 
 			name(inname), 
 			binning(inbin),
-			is_track(intrack),
 			unit(inunit),
+			is_track(intrack),
 			type(intype)
 		{
 			safe_name = name;
@@ -51,7 +51,8 @@ struct bdt_variable{
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '-'), safe_name.end());
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '*'), safe_name.end());
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '.'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '|'), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ' '), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ','), safe_name.end());
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '|'), safe_name.end());
 	
            	safe_unit = unit;
