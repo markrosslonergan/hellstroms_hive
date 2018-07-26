@@ -167,9 +167,11 @@ int main (int argc, char *argv[]){
 			cosmic_bdt_info.setTopoName("1#gamma1p");
 		}else{
 			num_track_cut = "==0";
-				bnb_bdt_info.setTopoName("1#gamma0p");
+			bnb_bdt_info.setTopoName("1#gamma0p");
 			cosmic_bdt_info.setTopoName("1#gamma0p");
 		}
+
+	if(mode_option == "vars" || mode_option == "train") vec_precuts.erase(vec_precuts.begin());
 
 	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 	std::string signal_definition = "is_delta_rad == 1";
@@ -237,7 +239,7 @@ int main (int argc, char *argv[]){
 
 			std::cout<<"Filling Base EntryLists on File  "<<f->tag<<std::endl;
 			if(mode_option != "train" && mode_option != "app"){
-				f->calcBaseEntryList(cosmic_bdt_info);
+				f->calcBaseEntryList(analysis_tag);
 			}
 		}
 	}
