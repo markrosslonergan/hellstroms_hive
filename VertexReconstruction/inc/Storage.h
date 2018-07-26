@@ -7,11 +7,15 @@
 #include <iostream>
 #include <unordered_map>
 
+//#include "Processor.h"
+
 #include "TFile.h"
 #include "TChain.h"
 
 
 struct Storage {
+
+  friend class Processor;
 
   Storage(char const * pot_name,
 	  char const * meta_name,
@@ -19,6 +23,8 @@ struct Storage {
 	  std::vector<char const *> const & files = std::vector<char const *>());
 
   ~Storage();
+
+  void SetOutputFilterFileName(char const * name);
 
 private:
 
@@ -38,9 +44,17 @@ private:
   std::pair<int, int> const & GetIndices(std::string const & producer,
 					 std::unordered_map<std::string, std::pair<int, int>> const & producer_map) const;
 
+  std::string GetTDirName(char const * oname);
+  void MDCD(char const * dir_name);
+  void CloneChain(TChain * chain, int const entries = -1);
+
   TChain * fpot_chain;
   TChain * fmeta_chain;
   TChain * fevent_chain;
+
+  TFile * fofile_filter;
+  TDirectory * ffilter_dir;
+  TTree * fevent_tree;
 
   std::unordered_map<std::string, std::pair<int, int>> fopflash_producer_map;
   std::unordered_map<std::string, std::pair<int, int>> fhit_producer_map;
@@ -54,6 +68,7 @@ public:
   std::pair<int, int> const & GetHitIndices(std::string const & producer) const;
   std::pair<int, int> const & GetTrackIndices(std::string const & producer) const;
   std::pair<int, int> const & GetShowerIndices(std::string const & producer) const;
+  void Write();
 
   //pot_chain
   int fnumber_of_events;

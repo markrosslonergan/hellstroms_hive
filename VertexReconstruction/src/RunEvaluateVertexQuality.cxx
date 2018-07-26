@@ -70,6 +70,7 @@ int main(int const argc, char const * argv[]) {
 		performance_quantity,
 		"total");
 
+  /*
   evq.AddToDraw({"combined"},
 		method,
 		{"track_completeness", "track_cleanliness", "track_combined"},
@@ -83,6 +84,7 @@ int main(int const argc, char const * argv[]) {
 		parameters,
 		performance_quantity,
 		"shower");
+  */
 
   /*  
   std::string const weight = "tpc_volume_contained == 1 && is_nc_delta_rad == 1 && nc_delta_rad_split_shower == 1";
@@ -98,9 +100,9 @@ int main(int const argc, char const * argv[]) {
 	"shower_cleanliness", "", "Shower Cleanliness"});
   */
 
-  //evq.Run({4, 40, 40, 12, 12});
-  evq.Run({4, 30, 100, 25, 5});
-  //evq.Run();
+  //evq.Run({4, 40, 40, 12, 12}); //Max BNB params
+  //evq.Run({4, 30, 100, 25, 5}); //Max Delta params
+  evq.Run();
    
   std::cout << "Wall time: " << difftime(time(0), start) << "\n";  
 

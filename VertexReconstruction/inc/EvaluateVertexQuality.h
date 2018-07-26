@@ -6,6 +6,8 @@
 
 #include <vector>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 #include "TChain.h"
 #include "TFile.h"
@@ -15,6 +17,9 @@
 #include "TLegend.h"
 #include "TMath.h"
 #include "TLine.h"
+#include "TTreeFormula.h"
+#include "TPaveText.h"
+#include "TLegendEntry.h"
 
 #include "VertexQuality.h"
 
@@ -42,7 +47,8 @@ class EvaluateVertexQuality {
 	       std::vector<std::string> const & imetrics_to_draw,
 	       std::vector<std::string> const & iparameters_to_draw,
 	       std::vector<std::string> const & iperformance_quantities,
-	       std::string const & iname = "");
+	       std::string const & iname = "",
+	       std::string const & ititle = "");
     ~PlotHelper();
 
     void Print();
@@ -53,6 +59,7 @@ class EvaluateVertexQuality {
     std::map<std::string, size_t> parameters_to_draw;
     std::map<std::string, size_t> performance_quantities;
     std::string name;
+    std::string title;
 
     std::vector<TGraph *> graph_v;
 
@@ -72,7 +79,8 @@ class EvaluateVertexQuality {
 		 std::vector<std::string> const & metrics_to_draw,
 		 std::vector<std::string> const & parameters_to_draw,
 		 std::vector<std::string> const & performance_quantities,
-		 std::string const & name = "");
+		 std::string const & name = "",
+		 std::string const & title = "");
   void AddPerformanceMetric(std::vector<std::string> const & params);
   void Run(std::vector<double> const & input_permutation = {});
 
@@ -106,9 +114,9 @@ class EvaluateVertexQuality {
   TH1 * DrawHist(TTree * tree,
 		 std::string const & name,
 		 std::string const & draw,
-		 std::string const & binning,
-		 std::string const & weight,
-		 std::string const & opt,
+		 std::string const & binning = "",
+		 std::string const & weight = "",
+		 std::string const & opt = "",
 		 std::string const & title = "",
 		 std::string const & xtitle = "",
 		 std::string const & ytitle = "") const;
@@ -119,7 +127,8 @@ class EvaluateVertexQuality {
 		std::string const & binning,
 		std::string const & weight,
 		std::string const & best_permutation,
-		std::string const & title = "") const;
+		std::string const & title = "",
+		std::string const & xtitle = "") const;
   void PlotParameters(std::vector<std::vector<double> > const & permutation_v,
 		      std::vector<std::vector<std::vector<double> > > const & drawn_values,
 		      std::vector<std::vector<std::pair<double, int>>> const & results,

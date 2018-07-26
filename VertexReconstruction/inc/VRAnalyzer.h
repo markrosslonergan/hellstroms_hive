@@ -37,7 +37,7 @@ class VRAnalyzer : public Analyzer {
   void RunVerticesPerEvent();
 
   void Initialize();
-  void Run();
+  bool Run();
   void Finalize();
 
  private:

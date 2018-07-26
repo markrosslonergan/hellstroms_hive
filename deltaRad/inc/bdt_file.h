@@ -3,9 +3,11 @@
 
 #include <vector>
 #include <string>
+#include <set>
 #include <numeric>
 #include <iostream>
 #include <algorithm>
+#include <numeric>
 /******** Our includes *****/
 
 #include  "bdt_file.h"
@@ -23,6 +25,7 @@
 #include "TH1.h"
 #include "TH1D.h"
 #include "TLegend.h"
+#include "TLatex.h"
 #include "THStack.h"
 #include "TGraph.h"
 #include "TLine.h"
@@ -30,6 +33,10 @@
 #include "TMVA/DataLoader.h"
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
+#include "TText.h"
+#include "TRandom3.h"
+
+#include "TEntryList.h"
 
 template <typename T>
 std::string to_string_prec(const T a_value, const int n = 6)
@@ -54,6 +61,11 @@ std::vector<size_t> sort_indexes(const std::vector<T> &v) {
   return idx;
 }
 
+TText * drawPrelim(double x, double y);
+TText * drawPrelim(double x, double y,double s);
+TText * drawPrelim(double x, double y,double s, std::string in);
+TText * drawPrelim(double x, double y, std::string in);
+
 
 struct bdt_file{
 	public:
@@ -65,6 +77,10 @@ struct bdt_file{
 		std::string root_dir;
 		
 		std::string weight_branch;
+
+
+		TRandom3* rangen;
+		std::string topo_name;
 
 		//This is slightly deprecisated
 		std::string friend_tree_file;
@@ -91,20 +107,46 @@ struct bdt_file{
 		int rebin;	
 
         int numberofevents;
+        int numberofevents_raw;
 		double pot;
 
 		TFile *f;
 		TTree *tvertex;
+
 		//copy tvertex into topovertex, but with topological cut.
 		TTree *topovertex;
 
 		TTree *tevent;
 		TTree *tpot;
 
+		std::string topological_list_name;
+		TEntryList * topological_list;
+		std::string precut_list_name;
+		TEntryList * precut_list;
+		std::string cosmicbdt_list_name;
+		TEntryList * cosmicbdt_list;
+		std::string bnbbdt_list_name;
+		TEntryList * bnbbdt_list;
+
+
+		int setStageEntryList(int j);
+		int setStageEntryList(int j, double, double);
+		int calcPrecutEntryList();
+		int calcTopologicalEntryList();
+		int calcCosmicBDTEntryList(double,double);
+		int calcBNBBDTEntryList(double,double);
+
+
+		int calcBaseEntryList(std::string);
+
+
+
+
 		double scale_data;
 
 		bdt_flow flow;
 		bdt_variable getBDTVariable(bdt_info info);
+		bdt_variable getBDTVariable(bdt_info info, std::string bin);
 		//legacy code, and damned lazy too
 		//bdt_variable getBDTVariable(std::string cut);
 
@@ -121,6 +163,7 @@ struct bdt_file{
 
 		double GetEntries(std::string cuts);
 		double GetEntries();
+		TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
 
@@ -135,6 +178,7 @@ struct bdt_file{
 
 		std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
 	
+		int writeStageFriendTree(std::string nam,double,double);
 		int addPlotName(std::string plotin);
 };
 

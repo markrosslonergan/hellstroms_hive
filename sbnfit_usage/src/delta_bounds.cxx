@@ -42,6 +42,15 @@
 
 using namespace sbn;
 
+TText * drawPrelim(double x, double y, double s, std::string ins){
+		TText *tres = new TText(x, y, ins.c_str());
+		tres->SetTextColor(kBlack);
+		tres->SetTextSize(s);
+		tres->SetNDC();
+		return tres;
+}
+
+
 
 /*************************************************************
  *************************************************************
@@ -136,23 +145,17 @@ int main(int argc, char* argv[])
 	//SBNspec delta_spec("../../delta_BDT_onebin", xml);
 
 
-	SBNspec delta_spec("../../delta_BDT_1track", xml);
-	SBNspec delta_spec2("../../delta_BDT_0track", xml);
+	SBNspec delta_spec("../../delta_BDT_dual", xml);
 
 	delta_spec.calcFullVector();
-	delta_spec.Scale("signal",POTscale/3.1);
+	delta_spec.Scale("tracksig",POTscale/3.1);
+	delta_spec.Scale("notracksig",POTscale/3.1);
 	delta_spec.calcFullVector();
-
-	delta_spec2.calcFullVector();
-	delta_spec2.Scale("signal",POTscale/3.1);
-	delta_spec2.calcFullVector();
-
-	delta_spec.Add(&delta_spec2);
-	delta_spec.writeOut("check.root");
 
 	SBNspec bkg_spec = delta_spec;
 	bkg_spec.calcFullVector();
-	bkg_spec.Scale("signal",0.0);
+	bkg_spec.Scale("tracksig",0.0);
+	bkg_spec.Scale("notracksig",0.0);
 	bkg_spec.calcFullVector();
 
 
@@ -171,24 +174,26 @@ int main(int argc, char* argv[])
 	}
 	
 
-	int numMC = 60000;
+	int numMC = 100000;
 
 	TRandom3 * rangen= new TRandom3(0);
 
 
 	bool printed = false;
 
-	double modmax=15;
+	double modmax=9;
 	if(pot==19){
 		modmax=62;
 	}
 
 
 
-	for (double true_mod = 0.0; true_mod< modmax; true_mod+=0.50){
+	for (double true_mod = 0.0; true_mod< modmax; true_mod+=0.15){
 
 		SBNspec sig_spec = delta_spec;	
-		sig_spec.Scale("signal", true_mod); // this is now the "prediction" 
+		sig_spec.Scale("tracksig", true_mod); // this is now the "prediction" 
+		sig_spec.Scale("notracksig", true_mod); // this is now the "prediction" 
+
 
 		double stot = sig_spec.getTotalEvents();
 		double btot = bkg_spec.getTotalEvents();
@@ -318,7 +323,7 @@ int main(int argc, char* argv[])
 	l95->Draw();
 
 	v_g_CLs.front()->GetXaxis()->SetRangeUser(1,modmax-1);
-	v_g_CLs.front()->GetXaxis()->SetTitle("#sigma_{1 #gamma} enhancement");
+	v_g_CLs.front()->GetXaxis()->SetTitle("#sigma_{(#Delta #rightarrow N #gamma)} [units of SM #sigma]");
 	v_g_CLs.front()->GetYaxis()->SetTitle("CLs");
 	c0->Update();
 	p->RedrawAxis();
@@ -331,6 +336,21 @@ int main(int argc, char* argv[])
 	l2->AddEntry(v_g_CLs.at(2), "Median Experiment", "l");
 	l2->AddEntry(v_g_CLs.at(1), "68\% Experiments", "f");
 	l2->Draw();
+
+	TText *tpot = new TText(2.6, 0.008,"6.6e20 POT"); 
+	tpot->SetTextColor(kBlack);
+	tpot->Draw();
+	
+
+		
+		TText *tsel = drawPrelim(0.11,0.91,0.035,"MicroBooNE Preliminary");
+		tsel->Draw();
+
+		TText *titsel = drawPrelim(0.75, 0.91, 0.035, "Stat Only");
+		titsel->SetTextAlign(30);
+		titsel->SetTextColor(kRed);
+		titsel->Draw();
+	
 
 
 	c0->Write();

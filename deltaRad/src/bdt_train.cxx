@@ -20,6 +20,10 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	dataloader->AddBackgroundTree(background_file->tvertex);
 	int background_entries = background_file->tvertex->GetEntries(back_tcut);
 
+
+	dataloader->SetSignalWeightExpression(signal_file->weight_branch.c_str());
+	dataloader->SetBackgroundWeightExpression(background_file->weight_branch.c_str());
+
 	for(bdt_variable &var: variables) dataloader->AddVariable(var.name.c_str());
 
 
@@ -32,8 +36,8 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
 
 	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
-			//"nTrain_Signal="+std::to_string(signal_entries-10000)+":nTrain_Background="+std::to_string(background_entries-2000)+":SplitMode=Random:NormMode=NumEvents:!V");
-			"SplitMode=Random:NormMode=NumEvents:!V");
+			"nTrain_Signal="+std::to_string(floor(signal_entries*0.5))+":nTrain_Background="+std::to_string(floor(background_entries*0.5))+":SplitMode=Random:NormMode=NumEvents:!V");
+			//"SplitMode=Random:NormMode=NumEvents:!V");
 
     //factory.PrepareTrainingAndTestTree(ROOT.TCut(),"NormMode=EqualNumEvents:SplitMode=Block:nTrain_Signal=%s:nTest_Signal=%s:nTrain_Background=%s:nTest_Background=%s"%(nTrain_Signal,nTest_Signal,nTrain_Background,nTest_Background))
 

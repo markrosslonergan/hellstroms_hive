@@ -169,9 +169,17 @@ class FillTreeVariables {
   std::vector<std::vector<double>> reco_track_calo_dEdx;
   std::vector<std::vector<double>> reco_track_calo_resrange;
   
+  std::vector<std::vector<double>> reco_track_X;
+  std::vector<std::vector<double>> reco_track_Y;
+  std::vector<std::vector<double>> reco_track_Z;
+  
   std::vector<std::vector<double>> reco_track_energy_new;
   std::vector<std::vector<double>> reco_track_energy_from_dEdx;
-  
+   
+  std::vector<double> all_reco_tracks_bp_dist_from_vertex;
+  std::vector<double> all_reco_showers_bp_dist_from_vertex;
+
+
   std::vector<double> all_reco_tracks_dist_from_vertex;
   std::vector<double> all_reco_showers_dist_from_vertex;
 

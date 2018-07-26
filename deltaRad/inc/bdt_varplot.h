@@ -1,14 +1,19 @@
-#ifndef BDT_SIG_H
-#define BDT_SIG_H
+#ifndef BDT_VARPLOT_H
+#define BDT_VARPLOT_H
 
 #include <vector>
 #include <string>
+#include <numeric>
 #include <iostream>
+#include <algorithm>
+#include <numeric>
 /******** Our includes *****/
 
 #include  "bdt_file.h"
 #include  "bdt_var.h"
 #include  "bdt_info.h"
+#include  "bdt_flow.h"
+#include  "method_struct.h"
 
 /******** Root includes *****/
 
@@ -17,9 +22,9 @@
 #include "TCanvas.h"
 #include "TPad.h"
 #include "TH1.h"
-#include "TH2.h"
 #include "TH1D.h"
 #include "TLegend.h"
+#include "TLatex.h"
 #include "THStack.h"
 #include "TGraph.h"
 #include "TLine.h"
@@ -27,13 +32,11 @@
 #include "TMVA/DataLoader.h"
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
+#include "TText.h"
+
+int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::vector<bdt_variable> vars, bdt_info input_bdt_info);
 
 
-
-std::vector<double> lin_scan(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, double c1, double c2);
-std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_cut, bdt_info bnb_cut);
-
-
-
+int plot_bdt_variable(bdt_file * signal_pure, bdt_file * background_pure, bdt_variable v, bdt_info input_bdt_info);
 
 #endif
