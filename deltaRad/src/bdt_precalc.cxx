@@ -546,8 +546,10 @@ int bdt_precalc::genTrackInfo(){
 // relative to boost vector. Apparently Matt asked to CCpi0 groups for
 // this, so obviously we have to do it
 int bdt_precalc::genPi0BoostAngle() {
+	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
     // Initialization; set up necessary variables to read from vertexed samples
-    TTree *friend_tree = new TTree("pi0_info", "pi0_info");
+    file->tvertex->ResetBranchAddresses();
+    TTree *friend_tree = new TTree("pi0Boost_info", "pi0Boost_info");
     std::size_t const N = 30;
     // Note: if N is too small ( < 20 or so), code breaks due to "stack smashing"
     int most_energetic_shower_index = 0;
@@ -1242,17 +1244,6 @@ int bdt_precalc::genBNBcorrectionInfo(){
 	return 0;
 }
 
-// Take events tagged as "NCpi0" from the single-shower case,
-// and see which ones pass two-shower selection
-int bdt_precalc::genPi0Bkg() {
-    TFile *f = new TFile("marks_file", "READ");
-    TTree *friend_tree = new TTree("ncDeltaRadBkg_info", "ncDeltaRadBkg_info");
-    bool passes_two_shower = 1;
-    //file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz, &breco_shower_dirz);
-
-    TBranch *b_pass = friend_tree->Branch("passes_two_shower", &passes_two_shower);
-
-
 //line between X1 and X2, point X0
 double dist_line_point( std::vector<double>X1, std::vector<double> X2, std::vector<double> X0){
 	double x1 =X1.at(0);
@@ -1299,7 +1290,3 @@ double cos_angle_3pts(std::vector<double> last, std::vector<double> next, std::v
 }
 
 
-
-
-    return 0;
-}

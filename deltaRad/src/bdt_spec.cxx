@@ -288,23 +288,8 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 
 }
 
-		ftest->cd();
-		THStack* s0 = this->getStack(var,0,-9,-9);
-		THStack* s1 = this->getStack(var,1,-9,-9);
-		THStack* s2 = this->getStack(var,2,c1,-9);
-		THStack* s3 = this->getStack(var,3,c1, c2);
-
 int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
 
-    cobs->cd(1);
-    s0->Draw("hist");
-    s0->SetTitle("All Vertices");
-    s0->GetXaxis()->SetTitle(var.unit.c_str());
-    s0->GetYaxis()->SetTitle("Vertices");
-    s0->GetYaxis()->SetTitleOffset(1.5);
-    s0->SetMaximum(s0->GetMaximum()*1.3);
-    TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
-    std::vector<TH1F*> v0s;		
 	ftest->cd();
 
 	std::vector<std::string> stage_names = {"All Vertices","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
@@ -650,8 +635,6 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 
 	std::cout<<"5"<<std::endl;
->>>>>>> master
-
 
 	cobs->Write();
 	cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+".pdf").c_str(),"pdf");

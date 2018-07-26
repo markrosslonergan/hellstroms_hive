@@ -32,9 +32,7 @@
 #include "TMVA/DataLoader.h"
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
-<<<<<<< HEAD
 #include "TLorentzVector.h"
-=======
 #include "TGraph2D.h"
 #include <Math/Functor.h>
 #include <TPolyLine3D.h>
@@ -43,7 +41,6 @@
 #include <TVectorD.h>
 #include <TPrincipal.h>
 
->>>>>>> master
 
 int addPreFriends(bdt_file* filein,std::string which);
 
@@ -51,40 +48,24 @@ class bdt_precalc{
 	std::string const bnbcorrection_dir;
 	public:
 	bdt_file* file;
-<<<<<<< HEAD
-	TFile *friend_file_out;
-	// Pass in a bdt_file and it calculates stuff and adds it as friends!
-		bdt_precalc(bdt_file* in) : file(in) {
-		friend_file_out = new TFile((file->tag+"_friends_test.root").c_str(),"update");	
-=======
 	//TFile *friend_file_out;
 	std::string friend_file_out_name;
 	//pass in a bdt_file and it calculates stuff and add's it as friends!
 	bdt_precalc(bdt_file* in, std::string const & dir = "../..") : file(in),
 		bnbcorrection_dir(dir) {
 			friend_file_out_name =file->tag+"_friends.root";
-
->>>>>>> master
 		};
 	//This will actually
 	~bdt_precalc(){ ;}
 
-<<<<<<< HEAD
+int genPi0Bkg();
 int gen(std::string which );
 int genTrackInfo();
 int genNewTrackInfo();
+int genShowerInfo();
 int genPi0Info();
 int genBNBcorrectionInfo();
 int genPi0BoostAngle();
-int genPi0Bkg();
-=======
-	int gen(std::string which );
-	int genTrackInfo();
-	int genNewTrackInfo();
-	int genShowerInfo();
-	int genPi0Info();
-	int genBNBcorrectionInfo();
->>>>>>> master
 
 
 
