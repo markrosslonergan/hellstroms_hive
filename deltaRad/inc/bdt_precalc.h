@@ -51,10 +51,10 @@ class bdt_precalc{
 	//TFile *friend_file_out;
 	std::string friend_file_out_name;
 	//pass in a bdt_file and it calculates stuff and add's it as friends!
-	bdt_precalc(bdt_file* in, std::string const & dir = "../..") : file(in),
+	bdt_precalc(bdt_file* in, std::string const & dir = "../../") : file(in),
 		bnbcorrection_dir(dir) {
-			friend_file_out_name =file->tag+"_friends_test.root";
-		};
+		friend_file_out_name =file->tag+"_friends.root";
+    };
 	//This will actually
 	~bdt_precalc(){ ;}
 
@@ -66,11 +66,7 @@ int genShowerInfo();
 int genPi0Info();
 int genBNBcorrectionInfo();
 int genPi0BoostAngle();
-
-
-
-
-	};
+};
 
 //line between X1 and X2, point X0
 double dist_line_point( std::vector<double>X1, std::vector<double> X2, std::vector<double> X0);
