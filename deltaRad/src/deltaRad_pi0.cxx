@@ -277,7 +277,7 @@ int main (int argc, char *argv[]){
 	//MELD: Best Fit Significance: 0.591875 0.5325 1.74915
 	double fcoscut;
 	double fbnbcut;
-	if(analysis_tag == "track" || analysis_tag == "ncpi0_2g1p"){
+	if(analysis_tag == "track"){
 		fcoscut = 0.591875;
 		fbnbcut = 0.5325;
 
@@ -289,7 +289,10 @@ int main (int argc, char *argv[]){
 		fbnbcut = 0.533625;
 		//	Best Fit Significance: 0.5525 0.533625 1.1
 
-	}
+	}else if (analysis_tag == "ncpi0_2g1p") {
+        fcoscut = 0.591875;
+        fbnbcut = 0.5325;
+    }
 
 	//===========================================================================================
 	//===========================================================================================

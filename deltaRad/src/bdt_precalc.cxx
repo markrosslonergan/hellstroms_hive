@@ -9,13 +9,10 @@ int addPreFriends(bdt_file* filein,std::string which){
 	std::string filename = filein->tag+"_friends.root";
 
 	std::ifstream ifile(filename.c_str());
-    std::cout << "Searching for file " << filename.c_str() << std::endl;
 	bool does_local_exist = (bool)ifile;
 	if(does_local_exist){
-        std::cout << "Exists locally" << std::endl;
 		filein->addFriend( which+"_info"  , filename);
 	}else{
-        std::cout << "Does not exist locally" << std::endl;
 		filein->addFriend( which+"_info"  , filein->dir+"friends/"+filename);
 	}
 

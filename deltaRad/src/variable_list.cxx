@@ -161,8 +161,8 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		all_vars.push_back(bdt_variable("totalpe_ibg_sum","(48,0,5000)","Total in Beam-Gate PE",false,"d"));  //1
         all_vars.push_back(bdt_variable("reco_shower_dedx_plane2[most_energetic_shower_index]","(48,0,15)", "Leading Shower dE/dx (Collection Plane) [MeV/cm]",false,"d"));
         all_vars.push_back(bdt_variable("reco_shower_dedx_plane2[second_most_energetic_shower_index]","(48,0,15)", "Subleading Shower dE/dx (Collection Plane) [MeV/cm]",false,"d"));
-		all_vars.push_back(bdt_variable("reco_shower_length[0]","(48,0,100)","Leading Shower Length [cm]",false,"d"));//4
-		all_vars.push_back(bdt_variable("reco_shower_length[1]","(48,0,100)","Subleading Shower Length [cm]",false,"d"));//4
+		all_vars.push_back(bdt_variable("reco_shower_length[most_energetic_shower_index]","(48,0,100)","Leading Shower Length [cm]",false,"d"));//4
+		all_vars.push_back(bdt_variable("reco_shower_length[second_most_energetic_shower_index]","(48,0,100)","Subleading Shower Length [cm]",false,"d"));//4
 
 		all_vars.push_back(bdt_variable(angle_shower1_shower2,"(48,0,0.8)","Shower Opening Angle (Lab)",false,"d"));//5
 		all_vars.push_back(bdt_variable("reco_shower_dist_to_closest_flashzcenter[0]","(48,0,520)","Distance from Leading Shower to Flashcenter [cm]",false,"d"));//6
@@ -190,7 +190,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         all_vars.push_back(bdt_variable( "fabs(atan2(reco_track_diry[0],reco_track_dirz[0]))/3.14159","(48,0,1.0)","Reconstucted Track Angle Beamy-ness [rad]","true","d")); //15
         all_vars.push_back(bdt_variable( "min(fabs(atan2(reco_track_diry[0],reco_track_dirx[0])+3.14159/2.0),fabs(atan2(reco_track_diry[0],reco_track_dirx[0])-3.14159/2.0))/3.14159","(48,0,0.5)","Reconstucted Track Angle Cosmicy-ness [rad]","true","d")); //16
         //all_vars.push_back(bdt_variable("log(track_info.reco_track_straightline_chi2[0])","(48,6,16)"," Track Line chi^2",true,"d") );//17
-        //all_vars.push_back(bdt_variable("log(track_info.reco_track_sum_angles[0])","(48,-30,20)"," Track Sum of all Angles",true,"d") );//18
+        all_vars.push_back(bdt_variable("log(track_info.reco_track_sum_angles[0])","(48,-30,20)"," Track Sum of all Angles",true,"d") );//18
 
         all_vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(48,0,12)","Mean Track dE/dx [MeV/cm]", true,"d"));//23
         all_vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(48,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));//24
