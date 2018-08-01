@@ -7,7 +7,7 @@
 
 int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::vector<bdt_variable> vars, bdt_info input_bdt_info){
 
-	std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
+	std::vector<std::string> title = {"All Vertices","Pre-Selection Cuts"};
 
 	for(int j=0; j<2;j++){	
 
@@ -52,7 +52,7 @@ int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::
 		sig->SetMinimum(0);
 			bkg->Draw("hist same");
 			//sig->GetXaxis()->SetTitle(v.unit.c_str());
-			sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
+			sig->GetYaxis()->SetTitle("Vertices [Area Normalized]");
 			sig->GetYaxis()->SetTitleOffset(1.5);
 
 			TLegend *l = new TLegend(0.11,0.75,0.89,0.89);

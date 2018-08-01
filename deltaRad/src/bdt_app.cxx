@@ -45,6 +45,8 @@ void bdt_topological_update(std::vector<double*> *topv){
 int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::string otree_name, std::vector<bdt_variable> vars, std::vector<method_struct> const & methods) {
 
 	TMVA::Reader * reader = new TMVA::Reader("!Color:!Silent");
+    Int_t second_most_energetic_shower_index;
+    reader->AddSpectator("second_most_energetic_shower_index", &second_most_energetic_shower_index);
 
 	void_vec tree_var_v;
 	std::vector<float *> reader_var_v;
@@ -160,7 +162,8 @@ int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variabl
 
 	std::string identifier = info.identifier;
 	
-	TFile * app_ofile = TFile::Open((identifier+"_app"+".root").c_str(), "update");
+	//TFile * app_ofile = TFile::Open((identifier+"_app"+".root").c_str(), "update");
+	TFile * app_ofile = TFile::Open((identifier+"_app"+".root").c_str(), "recreate");
 	for(size_t i = 0; i < files.size(); ++i) {
 		files.at(i)->tvertex->ResetBranchAddresses();
 

@@ -44,6 +44,10 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		bdt_variable bdtvar = file->getBDTVariable(info);
 		std::string saf = file->tag+"_"+bdtvar.safe_name+"_"+bdt_type;
 		std::cout<<"saf: "<<saf<<std::endl;
+        std::cout << "tag = " << file->tag << std::endl;
+        std::cout << "safe name = " << bdtvar.safe_name << std::endl;
+        std::cout << "bdt type = " << bdt_type << std::endl;
+        std::cout << "binning = " << bdtvar.binning << std::endl;
 		fout->cd();
 		std::cout<<"About to get TH1"<<std::endl;
 

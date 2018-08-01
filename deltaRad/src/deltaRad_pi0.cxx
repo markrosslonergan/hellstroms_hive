@@ -479,7 +479,7 @@ int main (int argc, char *argv[]){
 
 	}else if(mode_option == "vars"){
 
-		std::vector<std::string> title = {"All vertices","Pre-Selection Cuts"};
+		std::vector<std::string> title = {"All Vertices","Pre-Selection Cuts"};
 
 		if(run_cosmic){
 

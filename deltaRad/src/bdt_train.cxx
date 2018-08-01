@@ -28,7 +28,7 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 
 
 	//dataloader->AddSpectator("most_energetic_shower_index");
-	//dataloader->AddSpectator("second_most_energetic_shower_index");
+	dataloader->AddSpectator("second_most_energetic_shower_index");
 	//dataloader->AddSpectator("true_shower_parent_pdg[most_energetic_shower_index]");
 	//dataloader->AddSpectator("true_shower_parent_pdg[second_most_energetic_shower_index]");
 

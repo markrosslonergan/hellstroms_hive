@@ -100,6 +100,10 @@ class FillTreeVariables {
   int exiting_piplus_number;
   int exiting_piminus_number;
   int exiting_pi0_number;
+  // Added for pi0 two-shower branch
+  std::vector<double> exiting_pi0_px;
+  std::vector<double> exiting_pi0_py;
+  std::vector<double> exiting_pi0_pz;
   int total_exiting_particles;
   std::vector<int> exiting_particle_vector;
 
