@@ -245,6 +245,7 @@ int main (int argc, char *argv[]){
 			addPreFriends(f,"pi0");
 			addPreFriends(f,"pi0Boost");
 			addPreFriends(f,"shower");
+            addPreFriends(f, "stage_cuts");
 			if(f->tag != "Data5e19" && f->tag != "BNBext") addPreFriends(f,"bnbcorrection");
 
 			if(mode_option != "app" && mode_option != "train") f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);

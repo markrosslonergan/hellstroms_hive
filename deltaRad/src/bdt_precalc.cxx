@@ -10,6 +10,10 @@ int addPreFriends(bdt_file* filein,std::string which){
 
 	std::ifstream ifile(filename.c_str());
 	bool does_local_exist = (bool)ifile;
+    if (which == "stage_cuts") {
+        filein->addFriend(which, filename);
+        return 0;
+    }
 	if(does_local_exist){
 		filein->addFriend( which+"_info"  , filename);
 	}else{
