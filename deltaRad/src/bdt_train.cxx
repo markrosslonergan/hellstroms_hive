@@ -27,10 +27,10 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	for(bdt_variable &var: variables) dataloader->AddVariable(var.name.c_str());
 
 
-	//dataloader->AddSpectator("most_energetic_shower_index");
+	dataloader->AddSpectator("most_energetic_shower_index");
 	dataloader->AddSpectator("second_most_energetic_shower_index");
-	//dataloader->AddSpectator("true_shower_parent_pdg[most_energetic_shower_index]");
-	//dataloader->AddSpectator("true_shower_parent_pdg[second_most_energetic_shower_index]");
+	dataloader->AddSpectator("true_shower_parent_pdg[most_energetic_shower_index]");
+	dataloader->AddSpectator("true_shower_parent_pdg[second_most_energetic_shower_index]");
 
 
 	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;

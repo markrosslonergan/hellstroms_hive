@@ -10,10 +10,10 @@ int addPreFriends(bdt_file* filein,std::string which){
 
 	std::ifstream ifile(filename.c_str());
 	bool does_local_exist = (bool)ifile;
-    if (which == "stage_cuts") {
-        filein->addFriend(which, filename);
-        return 0;
-    }
+    //if (which == "stage_cuts") {
+    //    filein->addFriend(which, filename);
+    //    return 0;
+    //}
 	if(does_local_exist){
 		filein->addFriend( which+"_info"  , filename);
 	}else{
@@ -563,9 +563,9 @@ int bdt_precalc::genPi0BoostAngle() {
     double reco_shower_dirx[N] = {0.};
     double reco_shower_diry[N] = {0.};
     double reco_shower_dirz[N] = {0.};
-    double gamma_opening_angle_lab = -999.;
-    double gamma_pi_least_angle = -999.;
-    double gamma_z_least_angle = -999.;
+    double gamma_opening_angle_lab;
+    double gamma_pi_least_angle;
+    double gamma_z_least_angle;
 
     TBranch *breco_shower_energy = 0;
     TBranch *breco_shower_dirx = 0;
@@ -712,6 +712,12 @@ int bdt_precalc::genPi0BoostAngle() {
                 gamma_pi_least_angle = projectionPi.Angle(backwardShower); 
             }     
         }        
+        if (gamma_pi_least_angle < 0 || gamma_pi_least_angle > 3) {
+            std::cout << "Bad pi value" << std::endl;
+        }
+        if (gamma_z_least_angle < 0 || gamma_z_least_angle > 3) {
+            std::cout << "Bad z value" << std::endl;
+        }
 		friend_tree->Fill();
         
         // Empty arrays to avoid memory leaks; may not be necessary anymore
