@@ -660,6 +660,8 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 		     xtitle,
 		     "Area Normalized");
 
+  std::cout << weight_modified + " && " + best_permutation << "\n" << h->GetEntries() << "\n";
+
   h->Scale(1./h->Integral(0, h->GetNbinsX()+1));
   double ymax = h->GetBinContent(h->GetMaximumBin());
 
@@ -742,6 +744,29 @@ void EvaluateVertexQuality::DrawHist(PlotHelper const & ph,
 }
 
 
+TGraph * EvaluateVertexQuality::DrawGraphFromTree(TTree * tree,
+						  std::string const & draw,
+						  std::string const & weight) {
+
+  int const n = tree->Draw(draw.c_str(), weight.c_str());
+  return new TGraph(n, tree->GetV1(), tree->GetV2());  
+
+}
+
+
+void EvaluateVertexQuality::DrawGraphFromTreeSupimp(TTree * tree,
+						    std::string const & draw1,
+						    std::string const & draw2,
+						    std::string const & weight) {
+
+  TGraph * graph1 = DrawGraphFromTree(tree, draw1, weight);
+  TGraph * graph2 = DrawGraphFromTree(tree, draw2, weight);
+  
+  
+  
+}
+
+
 void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > const & permutation_v,
 					   std::vector<std::vector<std::vector<double> > > const & drawn_values,
 					   std::vector<std::vector<std::pair<double, int> > > const & results,
@@ -772,18 +797,21 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
       std::string const & title = ph.title;    
 
       std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).at(pq.second).second);
-      /*
-      DrawHist(ph, "dist_0track_" + method, pq.first, "dist", "(100, 0, 100)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance [cm]");
-      DrawHist(ph, "distx_0track_" + method, pq.first, "distx", "(200, -100, 100)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance (X-axis) [cm]");
-      DrawHist(ph, "disty_0track_" + method, pq.first, "disty", "(200, -100, 100)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance (Y-axis) [cm]");
-      DrawHist(ph, "distz_0track_" + method, pq.first, "distz", "(200, -200, 200)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks", "True - Reco Vertex Distance (Z-axis) [cm]");
-      */
 
-      DrawHist(ph, "dist_1track_" + method, pq.first, "dist", "(100, 0, 100)", "reco_track_total == 1", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance [cm]");
-      DrawHist(ph, "distx_1track_" + method, pq.first, "distx", "(200, -50, 50)", "reco_track_total == 1", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance (X-axis) [cm]");
-      DrawHist(ph, "disty_1track_" + method, pq.first, "disty", "(200, -50, 50)", "reco_track_total == 1", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance (Y-axis) [cm]");
-      DrawHist(ph, "distz_1track_" + method, pq.first, "distz", "(200, -50, 50)", "reco_track_total == 1", fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance (Z-axis) [cm]");
-      
+      //std::string const cut = "reco_track_total == 1 && tpc_volume_contained == 1 && true_associated_shower == 1";
+      std::string const cut = "reco_track_total == 1";
+      DrawHist(ph, "dist_1track_" + method, pq.first, "dist", "(100, 0, 100)", cut, fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance [cm]");
+      DrawHist(ph, "distx_1track_" + method, pq.first, "distx", "(200, -50, 50)", cut, fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance (X-axis) [cm]");
+      DrawHist(ph, "disty_1track_" + method, pq.first, "disty", "(200, -50, 50)", cut, fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance (Y-axis) [cm]");
+      DrawHist(ph, "distz_1track_" + method, pq.first, "distz", "(200, -50, 50)", cut, fvq.GetPermString(best_permutation), title + " > 0 Associated Tracks", "True - Reco Vertex Distance (Z-axis) [cm]");
+  
+      /*
+      DrawGraphFromTreeSupimp(fvq_chain,
+			      "",
+			      "",
+			      "reco_track_total == 1 && tpc_volume_contained == 1 && true_associated_shower == 1");
+      */    
+
       for(auto const & ptd : parameters_to_draw) {
  
 	int const parameter_index = ptd.second;
@@ -930,6 +958,6 @@ void EvaluateVertexQuality::Run(std::vector<double> const & input_permutation) {
 
   CheckPlotHelperV();
   PlotParameters(fpermutation_v, drawn_values, max_results, "max");
-  PlotParameters(fpermutation_v, drawn_values, min_results, "min");
+  //PlotParameters(fpermutation_v, drawn_values, min_results, "min");
 
 }
