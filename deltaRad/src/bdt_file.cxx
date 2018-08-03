@@ -219,15 +219,14 @@ int bdt_file::calcBNBBDTEntryList(double c1, double c2){
 }
 
 
-int bdt_file::calcBaseEntryList(bdt_info in_info){
+int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
 	//first check if a file exists with a topological entry list in it!
 
 
-
 	std::string filename = this->tag+"_entrylists.root";
-	topological_list_name = "topological_list_"+in_info.topo_name+"_"+this->tag;
-	precut_list_name = "precut_list_"+in_info.topo_name+"_"+this->tag;
+	topological_list_name = "topological_list_"+analysis_tag+"_"+this->tag;
+	precut_list_name = "precut_list_"+analysis_tag+"_"+this->tag;
 
 	std::ifstream ifile(filename.c_str());
 	bool does_local_exist = (bool)ifile;
@@ -252,7 +251,7 @@ int bdt_file::calcBaseEntryList(bdt_info in_info){
 
 
 
-		TFile* fpre = new TFile(filename.c_str(),"recreate");	
+		TFile* fpre = new TFile(filename.c_str(),"update");	
 		fpre->cd();
 		topological_list->Write();
 		precut_list->Write();

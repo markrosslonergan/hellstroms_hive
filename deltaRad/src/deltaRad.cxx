@@ -43,7 +43,7 @@ int main (int argc, char *argv[]){
 
 	std::string mode_option = "fake"; 
 	std::string xml = "default.xml";
-	std::string analysis_tag ="ncdelta1g1p";
+	std::string analysis_tag ="track";
 
 
 	bool run_cosmic = true;
@@ -131,6 +131,7 @@ int main (int argc, char *argv[]){
 	//===========================================================================================
 
 	//Most TMVA arguments are loaded in here via XML
+	std::cout<<"Getting xml variables"<<std::endl;
 	MVALoader xml_methods(xml);
 	std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); 
 
@@ -158,7 +159,7 @@ int main (int argc, char *argv[]){
 	std::string true_bkg    = "true_shower_origin[0]==1";
 	std::string num_track_cut ;
 
-	if(analysis_tag == "ncdelta1g1p"){
+	if(analysis_tag == "track"){
 			true_signal = true_signal+ "&& track_matched_to_ncdeltarad_proton[0]==1";
 			true_bkg = true_bkg +"&& true_track_origin[0]==1";
 			num_track_cut =  "==1";
@@ -167,9 +168,11 @@ int main (int argc, char *argv[]){
 			cosmic_bdt_info.setTopoName("1#gamma1p");
 		}else{
 			num_track_cut = "==0";
-				bnb_bdt_info.setTopoName("1#gamma0p");
+			bnb_bdt_info.setTopoName("1#gamma0p");
 			cosmic_bdt_info.setTopoName("1#gamma0p");
 		}
+
+	if(mode_option == "vars" || mode_option == "train") vec_precuts.erase(vec_precuts.begin());
 
 	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 	std::string signal_definition = "is_delta_rad == 1";
@@ -237,7 +240,7 @@ int main (int argc, char *argv[]){
 
 			std::cout<<"Filling Base EntryLists on File  "<<f->tag<<std::endl;
 			if(mode_option != "train" && mode_option != "app"){
-				f->calcBaseEntryList(cosmic_bdt_info);
+				f->calcBaseEntryList(analysis_tag);
 			}
 		}
 	}
@@ -263,14 +266,14 @@ int main (int argc, char *argv[]){
 	//MELD: Best Fit Significance: 0.591875 0.5325 1.74915
 	double fcoscut;
 	double fbnbcut;
-	if(analysis_tag == "ncdelta1g1p"){
+	if(analysis_tag == "track"){
 		fcoscut = 0.591875;
 		fbnbcut = 0.5325;
 
 		//Reduced
 		//fcoscut =0.475;
 
-	}else if(analysis_tag == "ncdelta1g0p"){
+	}else if(analysis_tag == "notrack"){
 		fcoscut = 0.5525;
 		fbnbcut = 0.533625;
 		//	Best Fit Significance: 0.5525 0.533625 1.1
@@ -543,8 +546,8 @@ int main (int argc, char *argv[]){
 			double nevents = eff_files.at(i)->numberofevents*pot_scale;	
 
 			if(eff_files.at(i)->tag == "NCDeltaRadCosmics"){
-				if(analysis_tag == "ncdelta1g1p") nevents = 76.6162;
-				if(analysis_tag == "ncdelta1g0p") nevents = 81.7591;
+				if(analysis_tag == "track") nevents = 76.6162;
+				if(analysis_tag == "notrack") nevents = 81.7591;
 			}
 
 
@@ -738,10 +741,9 @@ int main (int argc, char *argv[]){
 		for(auto &f: bdt_filesA){
 			std::cout<<"On file: "<<f->tag<<std::endl;
 			bdt_precalc pre(f);
-
+			pre.genTrackInfo();
 			pre.genBNBcorrectionInfo();
 			pre.genPi0Info();
-			pre.genTrackInfo();
 			pre.genShowerInfo();
 
 		}

@@ -137,7 +137,7 @@ struct bdt_file{
 		int calcBNBBDTEntryList(double,double);
 
 
-		int calcBaseEntryList(bdt_info);
+		int calcBaseEntryList(std::string);
 
 
 
