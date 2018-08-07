@@ -625,13 +625,17 @@ int bdt_precalc::genPi0BoostAngle() {
 
             // Opening angle, because why not
             gamma_opening_angle_lab = gamma1.Vect().Angle(gamma2.Vect());
-            
+
             // Boost
             TVector3 boostVec = p_pi.BoostVector(); 
             p_pi.Boost(-boostVec);
             gamma1.Boost(-boostVec);
             gamma2.Boost(-boostVec);
-            
+
+            myfile << "boostVec: (" << boostVec.X() << ", "
+                                    << boostVec.Y() << ", " 
+                                    << boostVec.Z() << ")" << std::endl;
+ 
             // Define forward and backward shower for easy orientation later
             TVector3 forwardShower;
             TVector3 backwardShower;
@@ -656,68 +660,60 @@ int bdt_precalc::genPi0BoostAngle() {
                 continue;
             }
 
-            // Define a vector normal to the two-photon plane, used for projections
-            // into two-photon plane
+            myfile << "forwardShower: (" << forwardShower.X() << ", "
+                                         << forwardShower.Y() << ", " 
+                                         << forwardShower.Z() << ")" << std::endl;
+            myfile << "backwardShower: (" << backwardShower.X() << ", "
+                                          << backwardShower.Y() << ", " 
+                                          << backwardShower.Z() << ")" << std::endl;
+            // Define unit vector normal to xz-plane, with y-component
+            // the same sign as the forward shower; this is done for 
+            // projecting stuff later
 
-            // First, define a vector in the same plane as the forward shower
-            // that isn't back-to-back. Otherwise, plane definition is ambiguous
-            TVector3 planeVec = forwardShower;
-            planeVec.RotateY(TMath::Pi()/2);
+            TVector3 normal(0., 1., 0.);
+            //if (boostVec.Y() >=0) normalSetXYZ(0, 1., 0.);
+            //else normalSetXYZ(0, -1., 0.);
 
-            TVector3 normal = gamma1.Vect().Cross(planeVec);
+            // Project boost vector and showers into xz-plane
+            TVector3 projectionBoostVec = boostVec - boostVec.Dot(normal)/normal.Mag2() * normal;
+            TVector3 projectionForwardShower = forwardShower - forwardShower.Dot(normal)/normal.Mag2() * normal;
+            TVector3 projectionBackwardShower = backwardShower - backwardShower.Dot(normal)/normal.Mag2() * normal;
+            myfile << "projectionBoostVec: (" << projectionBoostVec.X() << ", "
+                                              << projectionBoostVec.Y() << ", " 
+                                              << projectionBoostVec.Z() << ")" << std::endl;
 
-            // Find boosted angle relative to z-axis, for reference
+            myfile << "projectionForwardShower: (" << projectionForwardShower.X() << ", "
+                                                   << projectionForwardShower.Y() << ", " 
+                                                   << projectionForwardShower.Z() << ")" << std::endl;
+
+            myfile << "projectionBackwardShower: (" << projectionBackwardShower.X() << ", "
+                                                    << projectionBackwardShower.Y() << ", " 
+                                                    << projectionBackwardShower.Z() << ")" << std::endl;
+            // z-unit vector, for reference
             TVector3 zUnit(0., 0., 1.);
 
-            // See which orientation of normal vector is closer to z-unit
-            if (normal.Angle(zUnit) > 1.571) {
+            // For reference, take angle between forward shower and z-unit 
+            gamma_z_least_angle = zUnit.Angle(projectionForwardShower);
+            myfile << "gamma_z_least_angle = " << gamma_z_least_angle << std::endl;
+
+            // See which shower is closer to pion boost vector and take the angle (in xz-plane)
+            if (projectionBoostVec.Angle(projectionForwardShower) <= projectionBoostVec.Angle(projectionBackwardShower)) {
+                gamma_pi_least_angle = projectionBoostVec.Angle(projectionForwardShower);
+            } 
+            else if (projectionBoostVec.Angle(projectionForwardShower) > projectionBoostVec.Angle(projectionBackwardShower)) {
+                gamma_pi_least_angle = projectionBoostVec.Angle(projectionBackwardShower);
+            } 
+            myfile << "gamma_pi_least_angle = " << gamma_pi_least_angle << std::endl;
+            myfile << "----------------------------------------------------------------" << std::endl;
+
+            // Repeat the above for the pion boost vector 
+            /*if (normal.Angle(boostVec) > 1.571) {
                 normal.SetX(-normal.X());
                 normal.SetY(-normal.Y());
                 normal.SetZ(-normal.Z());
-            }
+            }*/
 
-            myfile << "Normal components wrt zUnit: (" << normal.X() << ", "
-                                                       << normal.Y() << ", "
-                                                       << normal.Z() << ")"
-                                                       << std::endl;
-
-            // Projection into two-shower plane, where angle should be isotropic
-            TVector3 projectionZ = zUnit - zUnit.Dot(normal)/normal.Mag2() * normal;
-
-            // See which shower is closer to z-unit and take the angle
-            if (zUnit.Angle(forwardShower) <= zUnit.Angle(backwardShower)) {
-                gamma_z_least_angle = projectionZ.Angle(forwardShower);
-            } 
-            else if (zUnit.Angle(forwardShower) > zUnit.Angle(backwardShower)) {
-                gamma_z_least_angle = projectionZ.Angle(backwardShower);
-            }
-
-            // Repeat the above for the pion boost vector
-            if (normal.Angle(boostVec) > 1.571) {
-                normal.SetX(-normal.X());
-                normal.SetY(-normal.Y());
-                normal.SetZ(-normal.Z());
-            }
-
-            myfile << "Normal components wrt boostVec: (" << normal.X() << ", "
-                                                       << normal.Y() << ", "
-                                                       << normal.Z() << ")"
-                                                       << std::endl;
-
-            TVector3 projectionPi = boostVec - boostVec.Dot(normal)/normal.Mag2() * normal;
-            if (projectionPi.Angle(forwardShower) <= projectionPi.Angle(backwardShower)) {
-                gamma_pi_least_angle = projectionPi.Angle(forwardShower); 
-            } 
-            else if (projectionPi.Angle(forwardShower) > projectionPi.Angle(backwardShower)) {
-                gamma_pi_least_angle = projectionPi.Angle(backwardShower); 
-            }     
         }        
-        if (gamma_pi_least_angle < 0 || gamma_pi_least_angle > 3) {
-            std::cout << "Bad pi value" << std::endl;
-        }
-        if (gamma_z_least_angle < 0 || gamma_z_least_angle > 3) {
-            std::cout << "Bad z value" << std::endl;
-        }
 		friend_tree->Fill();
         
         // Empty arrays to avoid memory leaks; may not be necessary anymore
@@ -1295,5 +1291,4 @@ double cos_angle_3pts(std::vector<double> last, std::vector<double> next, std::v
 
 	return cos;
 }
-
 

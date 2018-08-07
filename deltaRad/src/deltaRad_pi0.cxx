@@ -46,7 +46,7 @@ int main (int argc, char *argv[]){
 	std::string xml = "default.xml";
 	std::string analysis_tag ="ncpi0_2g1p";
 
-	bool run_cosmic = true;
+	bool run_cosmic = false;
 	bool run_bnb = true;
 	int number = -1;
 	bool response_only = false;
@@ -196,7 +196,7 @@ int main (int argc, char *argv[]){
 	bdt_flow signal_flow(base_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow cosmic_flow(base_cuts,		"1", 					vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow bkg_pure_flow(base_cuts,	background_definition+"&&"+ true_bkg ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow bkg_pure_flow(base_cuts,background_definition+"&&"+ true_bkg, vec_precuts, postcuts, cosmic_bdt_info, bnb_bdt_info);
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :

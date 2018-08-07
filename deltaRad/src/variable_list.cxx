@@ -143,6 +143,8 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         std::string p_pi_comp = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
         std::string p_pi_trans = "sqrt("+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 
+        std::string cm_angle = "abs("+E1+" - "+E2+")/("+p_pi_comp+")";
+
         //********************************Pre-selection cuts*************************************************//
 		std::string new_precuts;
 
@@ -158,6 +160,9 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 		//************************************************* Shower-only Variables **********************************************//
 
+        //all_vars.push_back(bdt_variable(p_pi_comp, "(25, 0, 2)", "Reconstructed #pi^{0} Momentum", false, "d"));
+        //all_vars.push_back(bdt_variable(cm_angle, "(25, 0, 2)", "Reconstructed #gamma-#pi Angle (CM)", false, "d"));
+        //all_vars.push_back(bdt_variable(invMass, "(25, 0, 2)", "Reconstructed Diphoton Mass", false, "d"));
 		all_vars.push_back(bdt_variable("totalpe_ibg_sum","(48,0,5000)","Total in Beam-Gate PE",false,"d"));  //1
         all_vars.push_back(bdt_variable("reco_shower_dedx_plane2[most_energetic_shower_index]","(48,0,15)", "Leading Shower dE/dx (Collection Plane) [MeV/cm]",false,"d")); //2
         all_vars.push_back(bdt_variable("reco_shower_dedx_plane2[second_most_energetic_shower_index]","(48,0,15)", "Subleading Shower dE/dx (Collection Plane) [MeV/cm]",false,"d")); //3
@@ -207,8 +212,8 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         all_vars.push_back(bdt_variable("track_info.reco_track_kinetic[0]","(48,0,1)","Reconstructed Track Kinetic Energy (Calo) [cm]", true,"d"));//36
         all_vars.push_back(bdt_variable("track_info.reco_track_kinetic_from_length[0]","(48,0,1)","Reconstructed Track Kinetic Energy (Length) [cm]", true,"d"));//37
         all_vars.push_back(bdt_variable("track_info.reco_track_kinetic_from_length[0]/track_info.reco_track_kinetic[0]","(48,0,5)","Ratio of Reco Track Kinetic (Length/Calo)", true,"d"));//38
-        all_vars.push_back(bdt_variable("pi0Boost_info.gamma_pi_least_angle","(25, -0.1, 1.6)","Smallest #gamma #pi Angle (CM Frame)", true,"d"));//39
-        all_vars.push_back(bdt_variable("pi0Boost_info.gamma_z_least_angle","(25, -0.1, 1.6)","Smallest #gamma z Angle (CM Frame)", true,"d"));//40
+        //all_vars.push_back(bdt_variable("pi0Boost_info.gamma_pi_least_angle","(25, -0.1, 1.6)","Smallest #gamma #pi Angle (CM Frame)", true,"d"));//39
+        //all_vars.push_back(bdt_variable("pi0Boost_info.gamma_z_least_angle","(25, -0.1, 1.6)","Smallest #gamma z Angle (CM Frame)", true,"d"));//40
 
 		all_precuts.push_back(pe_cut);
 		all_precuts.push_back(fiducial_cut);
