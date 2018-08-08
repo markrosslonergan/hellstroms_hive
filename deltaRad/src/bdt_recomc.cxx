@@ -13,7 +13,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 	double plot_pot = 6.6e20;
 
-	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
+	std::vector<std::string> stage_names = {"All Vertices","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 
 	//REWRITE THIS USING file->getStageCuts
 	file->recomc_cols = recomc_cols;
@@ -71,7 +71,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			std::cout<<"Drawn."<<std::endl;
 
 			s_reco_truth->GetXaxis()->SetTitle(var.unit.c_str());
-			s_reco_truth->GetYaxis()->SetTitle("Verticies");
+			s_reco_truth->GetYaxis()->SetTitle("Vertices");
 			s_reco_truth->GetYaxis()->SetTitleOffset(1.5);
 
 			TLatex latexsel;
@@ -105,10 +105,23 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 
 			for(auto * t : vec_reco_mc) delete t;
-			delete all_reco_mc;
-			delete s_reco_truth;
-			delete c;
-			delete pad; delete padl;
+            if (all_reco_mc) {
+                std::cout << "Deleting all all_reco_mc" << std::endl;
+			    delete all_reco_mc;
+            }
+            if (s_reco_truth) {
+                std::cout << "Deleting all s_reco_truth" << std::endl;
+			    delete s_reco_truth;
+            }
+            if (c) {
+                std::cout << "Deleting c" << std::endl;
+			    delete c;
+            }
+            if (pad && padl) {
+                std::cout << "Deleting pads" << std::endl;
+			    delete pad; delete padl;
+            }
+            std::cout << "Loop finished, stuff deleted" << std::endl;
 
 
 		}
@@ -152,7 +165,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	file->recomc_names = recomc_names;
 
 
-	//-------------- All Verticies -------------
+	//-------------- All Vertices -------------
 	std::string selection = file->getStageCuts(0, -9, -9);
 
 	reco_mc_vec_sel = file->getRecoMCTH1(var, selection, "sel_"+file->tag+"_"+var.safe_name, plot_pot);
@@ -236,7 +249,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	TCanvas *c_reco_truth = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag).c_str(), ("recomc_truth_"+var.name+"_"+file->tag).c_str(),2000,1600);
 	c_reco_truth->Divide(2,2);
 
-	//******************* All Verticies	*************************
+	//******************* All Vertices	*************************
 	c_reco_truth->cd(1);
 
 	TPad *padsel = new TPad("padsel", "padsel", 0, 0, 0.7, 1.0);
@@ -246,7 +259,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	padsel->cd();               // padsel becomes the current pad
 
 
-	THStack * s_reco_truth_sel = new THStack("All Verticies",("All Verticies Total:"+to_string_prec(N_selection,1)).c_str());		
+	THStack * s_reco_truth_sel = new THStack("All Vertices",("All Vertices Total:"+to_string_prec(N_selection,1)).c_str());		
 	TLegend * l_reco_truth_sel = new TLegend(0.11,0.11,0.89,0.89);
 
 
@@ -270,7 +283,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 	std::cout<<"1"<<std::endl;
 	s_reco_truth_sel->GetXaxis()->SetTitle(var.unit.c_str());
-	s_reco_truth_sel->GetYaxis()->SetTitle("Verticies");
+	s_reco_truth_sel->GetYaxis()->SetTitle("Vertices");
 	s_reco_truth_sel->GetYaxis()->SetTitleOffset(1.5);
 
 	TLatex latexsel;
@@ -327,7 +340,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	s_reco_truth_pre->Draw("hist");
 	reco_mc_all_pre->Draw("E2 same");
 	s_reco_truth_pre->GetXaxis()->SetTitle(var.unit.c_str());
-	s_reco_truth_pre->GetYaxis()->SetTitle("Verticies");
+	s_reco_truth_pre->GetYaxis()->SetTitle("Vertices");
 	s_reco_truth_pre->GetYaxis()->SetTitleOffset(1.5);
 
 	TLatex latexpre;
@@ -387,7 +400,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	reco_mc_all_bdt1->Draw("E2 same");
 
 	s_reco_truth_bdt1->GetXaxis()->SetTitle(var.unit.c_str());
-	s_reco_truth_bdt1->GetYaxis()->SetTitle("Verticies");
+	s_reco_truth_bdt1->GetYaxis()->SetTitle("Vertices");
 	s_reco_truth_bdt1->GetYaxis()->SetTitleOffset(1.5);
 
 	TLatex latexbdt1;
@@ -450,7 +463,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	reco_mc_all_bdt2->Draw("E2 same");
 
 	s_reco_truth_bdt2->GetXaxis()->SetTitle(var.unit.c_str());
-	s_reco_truth_bdt2->GetYaxis()->SetTitle("Verticies");
+	s_reco_truth_bdt2->GetYaxis()->SetTitle("Vertices");
 	s_reco_truth_bdt2->GetYaxis()->SetTitleOffset(1.5);
 
 	TLatex latexbdt2;

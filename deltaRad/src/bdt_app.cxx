@@ -46,7 +46,7 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 
 	TMVA::Reader * reader = new TMVA::Reader("!Color:!Silent");
     Int_t second_most_energetic_shower_index;
-    reader->AddSpectator("second_most_energetic_shower_index", &second_most_energetic_shower_index);
+    //reader->AddSpectator("second_most_energetic_shower_index", &second_most_energetic_shower_index);
 
 	void_vec tree_var_v;
 	std::vector<float *> reader_var_v;

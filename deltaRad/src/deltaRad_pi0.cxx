@@ -46,7 +46,7 @@ int main (int argc, char *argv[]){
 	std::string xml = "default.xml";
 	std::string analysis_tag ="ncpi0_2g1p";
 
-	bool run_cosmic = false;
+	bool run_cosmic = true;
 	bool run_bnb = true;
 	int number = -1;
 	bool response_only = false;
@@ -279,8 +279,8 @@ int main (int argc, char *argv[]){
 	double fcoscut;
 	double fbnbcut;
 	if(analysis_tag == "track"){
-		fcoscut = 0.591875;
-		fbnbcut = 0.5325;
+		fcoscut = 0.5908;
+		fbnbcut = 0.5438;
 
 		//Reduced
 		//fcoscut =0.475;
@@ -358,9 +358,9 @@ int main (int argc, char *argv[]){
         //std::string other = "!("+signal+"||"+bkg1+"||"+bkg2+"||"+bkg3+"||"+bkg4+"||"+bkg5+"||"+bkg6+")";
         std::string other = "!("+signal+") && !("+bkg1+") && !("+bkg2+") && !("+bkg3+") && !("+bkg4+") && !("+bkg5+") && !("+bkg6+")";
        
-        std::vector<std::string> recomc_cuts = {signal, bkg1,bkg2, bkg3, bkg4, bkg5, bkg6, other}; 
+        std::vector<std::string> recomc_cuts = {signal, bkg1, bkg2, bkg3, bkg4, bkg5, bkg6, other}; 
 
-		bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
+		bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols, analysis_tag);
 
 		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 		if(!response_only){
@@ -372,7 +372,7 @@ int main (int argc, char *argv[]){
 				return 0;
 
 			}else{
-					recomc.plot_recomc(ftest, bnb_cosmics, vars, fcoscut, fbnbcut);
+				recomc.plot_recomc(ftest, bnb_cosmics, vars, fcoscut, fbnbcut);
 			}	
 		}
 
@@ -390,8 +390,7 @@ int main (int argc, char *argv[]){
 			recomc.is_log = false;
 		}
 
-	}
-	else if(mode_option == "sig"){
+	} else if(mode_option == "sig"){
 
 
 		TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
