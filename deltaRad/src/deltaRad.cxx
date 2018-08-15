@@ -50,7 +50,7 @@ int main (int argc, char *argv[]){
 
 	bool run_cosmic = true;
 	bool run_bnb = true;
-	int number = 0;
+	int number = 2;
 	bool response_only = false;
 
 	//All of this is just to load in command-line arguments, its not that important
@@ -214,7 +214,7 @@ int main (int argc, char *argv[]){
 		new_precuts = "totalpe_ibg_sum > 20 &&" +new_precuts;
 	}
 
-
+	
 
 
 	//***************************************************************************************************/
@@ -398,9 +398,13 @@ int main (int argc, char *argv[]){
 
 	}	
 
-		
+	/*
  	std::vector<bdt_variable> public_vars = {vars.at(0), vars.at(1), vars.at(6)};
 	if(istrack=="track") public_vars.push_back(vars.at(17));
+	*/
+
+	std::vector<bdt_variable> public_vars;
+	if(istrack=="track") public_vars.push_back(vars.at(20));
 
 	//This batch appears to be nan or inf a lot
 	//vars.push_back(bdt_variable("most_energetic_shower_reco_thetaxz","(25,-1.7,1.7)","Shower Angle xy [rad]",false));
@@ -556,8 +560,8 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 			for(auto &v:vars){
 				test.setRebin(true);
 				if(v.name == "pi0_info.num_reco_showers_within_10cm_vertex") test.setRebin(false);
-			//	test.plot_recomc(ftest, signal_cosmics, v, fcoscut, fbnbcut);
-				test.plot_recomc(ftest, bnb_cosmics, vars.at(1), fcoscut, fbnbcut);
+				test.plot_recomc(ftest, signal_cosmics, v, fcoscut, fbnbcut);
+				//	test.plot_recomc(ftest, bnb_cosmics, vars.at(1), fcoscut, fbnbcut);
 				if(v.name == "pi0_info.num_reco_showers_within_10cm_vertex") test.setRebin(true);
 				h++;
 				return 0;
@@ -1075,8 +1079,8 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 		bdt_recomc test(recomc_names, recomc_cuts, recomc_cols,istrack);
 
-
-		test.plot_recomc(ftest, bnb_cosmics, vars.at(1) , fcoscut,fbnbcut);
+		test.plot_recomc(ftest, signal_cosmics, vars.at(1), fcoscut, fbnbcut);
+		//test.plot_recomc(ftest, bnb_cosmics, vars.at(1) , fcoscut,fbnbcut);
 
 		return 0;	
 		bnb_cosmics->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist:BNBCosmics_bnb_track.mva", bnb_cosmics->getStageCuts(3,fcoscut,fbnbcut).c_str()  );
