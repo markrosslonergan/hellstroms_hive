@@ -30,7 +30,29 @@ class MCTruthAnalyzer : public Analyzer {
   
   TTree * ftree;
 
-  int fpi0_statuscode;
+  int delta_pdg;
+  int proton_pdg;
+  int photon_pdg;
+
+  std::vector<int> exiting_particles;
+  int number_of_exiting_particles;
+
+  double mp;
+  double Ep;
+  double Pp;
+  double Eg;
+  
+  double Pxp;
+  double Pyp;
+  double Pzp;
+  
+  double Pxg;
+  double Pyg;
+  double Pzg;
+  
+  double costerm;
+
+  double inv_delta_mass;
      
 };
 

@@ -6,69 +6,77 @@
 MCTruthAnalyzer::MCTruthAnalyzer() :
   ftree(new TTree("MCTruthAnalyzer_tree", "")) {
 
+  ftree->Branch("delta_pdg", &delta_pdg, "delta_pdg/I");
+  ftree->Branch("proton_pdg", &proton_pdg, "proton_pdg/I");
+  ftree->Branch("photon_pdg", &photon_pdg, "photon_pdg/I");
+
+  ftree->Branch("exiting_particles", &exiting_particles);
+  ftree->Branch("number_of_exiting_particles", &number_of_exiting_particles, "number_of_exiting_particles/I");
+
+  ftree->Branch("mp", &mp, "mp/D");
+  ftree->Branch("Ep", &Ep, "Ep/D");
+  ftree->Branch("Pp", &Pp, "Pp/D");
+  ftree->Branch("Eg", &Eg, "Eg/D");
   
+  ftree->Branch("Pxp", &Pxp, "Pxp/D");
+  ftree->Branch("Pyp", &Pyp, "Pyp/D");
+  ftree->Branch("Pzp", &Pzp, "Pzp/D");
+  
+  ftree->Branch("Pxg", &Pxg, "Pxg/D");
+  ftree->Branch("Pyg", &Pyg, "Pyg/D");
+  ftree->Branch("Pzg", &Pzg, "Pzg/D");
+  
+  ftree->Branch("costerm", &costerm, "costerm/D");
+
+  ftree->Branch("inv_delta_mass", &inv_delta_mass, "inv_delta_mass/D");
   
 }
 
 
 bool MCTruthAnalyzer::Run() {
 
-  for(size_t i = 0; i < fstorage->fgenie_particle_PdgCode->size(); ++i) {
-    std::unordered_map<int, std::pair<int, std::vector<int> > > particle_map;
-    std::vector<int> const & genie_particle_TrackId = fstorage->fgenie_particle_TrackId->at(i);
-    std::vector<int> const & genie_particle_PdgCode = fstorage->fgenie_particle_PdgCode->at(i);
-    std::vector<int> const & genie_particle_StatusCode = fstorage->fgenie_particle_StatusCode->at(i);
-    std::vector<int> const & genie_particle_Mother = fstorage->fgenie_particle_Mother->at(i);
-    std::vector<double> const & genie_particle_X = fstorage->fgenie_particle_X->at(i);
-    std::vector<double> const & genie_particle_Y = fstorage->fgenie_particle_Y->at(i);
-    std::vector<double> const & genie_particle_Z = fstorage->fgenie_particle_Z->at(i);
-    bool print = false;
-    for(size_t j = 0; j < genie_particle_PdgCode.size(); ++j) {
-      if(genie_particle_PdgCode.at(j) == 111) {
-	particle_map[genie_particle_TrackId.at(j)] = std::make_pair(j, std::vector<int>());
-      }
-    }
-    for(size_t j = 0; j < genie_particle_PdgCode.size(); ++j) {
-      auto const pm_it = particle_map.find(genie_particle_Mother.at(j));
-      if(pm_it == particle_map.end()) continue;
-      if(genie_particle_PdgCode.at(j) == 22) {
-	std::cout << "Photon child of pi0 in genie, event: " << fstorage->fevent_number << "\n";
-	exit(1);
-      }
-    }
+  int const delta_mct_index = fstorage->fdelta_mct_index;
+  if(delta_mct_index == -1) return false;
+  int const delta_index = fstorage->fdelta_index->at(delta_mct_index);
+
+  int const photon_index = fstorage->fdelta_photon_index->at(delta_mct_index);
+  int const proton_index = fstorage->fdelta_proton_index->at(delta_mct_index);
+  if(proton_index == -1) return false;
+
+  delta_pdg = fstorage->fgenie_particle_PdgCode->at(delta_mct_index).at(delta_index);
+  proton_pdg = fstorage->fgenie_particle_PdgCode->at(delta_mct_index).at(proton_index);
+  photon_pdg = fstorage->fgenie_particle_PdgCode->at(delta_mct_index).at(photon_index);
+
+  std::vector<int> const & pdg_codes = fstorage->fgenie_particle_PdgCode->at(delta_mct_index);
+  std::vector<int> const & status_codes = fstorage->fgenie_particle_StatusCode->at(delta_mct_index);
+  number_of_exiting_particles = 0;
+  for(size_t i = 0; i < status_codes.size(); ++i) {
+    if(status_codes.at(i) != 1) continue;
+    exiting_particles.push_back(pdg_codes.at(i));
+    ++number_of_exiting_particles;
   }
+  
+  mp = 0.9382720813;
+  Ep = fstorage->fgenie_particle_E->at(delta_mct_index).at(proton_index);
+  Eg = fstorage->fgenie_particle_E->at(delta_mct_index).at(photon_index);
+  
+  Pxp = fstorage->fgenie_particle_Px->at(delta_mct_index).at(proton_index);
+  Pyp = fstorage->fgenie_particle_Py->at(delta_mct_index).at(proton_index);
+  Pzp = fstorage->fgenie_particle_Pz->at(delta_mct_index).at(proton_index);
 
-  /*
-  std::vector<int> const & mcparticle_TrackId = *fstorage->fmcparticle_TrackId;
-  std::vector<int> const & mcparticle_StatusCode = *fstorage->fmcparticle_StatusCode;
-  std::vector<int> const & mcparticle_PdgCode = *fstorage->fmcparticle_PdgCode;
-  std::vector<int> const & mcparticle_Mother = *fstorage->fmcparticle_Mother;
+  Pp = sqrt(Pxp*Pxp + Pyp*Pyp + Pzp*Pzp);
+  
+  Pxg = fstorage->fgenie_particle_Px->at(delta_mct_index).at(photon_index);
+  Pyg = fstorage->fgenie_particle_Py->at(delta_mct_index).at(photon_index);
+  Pzg = fstorage->fgenie_particle_Pz->at(delta_mct_index).at(photon_index);
+  
+  costerm = Pxp*Pxg + Pyp*Pyg + Pzp*Pzg;
 
-  std::unordered_map<int, std::pair<int, std::vector<int> > > particle_map;
-    
-  for(int i = 0; i < mcparticle_TrackId.size(); ++i) {
-    if(mcparticle_PdgCode.at(i) == 111) particle_map[mcparticle_TrackId.at(i)] = std::make_pair(i, std::vector<int>());
-  }
+  inv_delta_mass = mp*mp + 2*(Ep*Eg-costerm);
 
-  for(int i = 0; i < mcparticle_TrackId.size(); ++i) {
+  ftree->Fill();
 
-    auto const pm_it = particle_map.find(mcparticle_Mother.at(i));
-    if(pm_it == particle_map.end()) continue;
-
-    pm_it->second.second.push_back(i);
-      
-  }  
-
-  for(auto & p : particle_map) {
-    
-    int photon_counter = 0;
-    
-    for(int const i : p.second.second) {
-      
-    }
-      
-  }
-  */
+  exiting_particles.clear();
 
   return true;
 

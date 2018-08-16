@@ -26,8 +26,8 @@ target_link_libraries (GetPermutationFiles ${ROOT_LIBRARIES})
 add_executable (RunEvaluateVertexQuality RunEvaluateVertexQuality.cxx EvaluateVertexQuality.cxx VVDict.cxx)
 target_link_libraries (RunEvaluateVertexQuality VertexReconstructionlib ${ROOT_LIBRARIES})
 
-add_executable (RunMCTruth RunMCTruth.cxx VVDict.cxx)
-target_link_libraries (RunMCTruth VertexReconstructionlib ${ROOT_LIBRARIES})
+add_executable (RunInvDeltaMass RunInvDeltaMass.cxx VVDict.cxx)
+target_link_libraries (RunInvDeltaMass VertexReconstructionlib ${ROOT_LIBRARIES})
 
 add_executable (RunPi0Filter RunPi0Filter.cxx VVDict.cxx)
 target_link_libraries (RunPi0Filter VertexReconstructionlib ${ROOT_LIBRARIES})

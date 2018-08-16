@@ -22,7 +22,7 @@ int main(int const argc, char const * argv[]) {
 		      "FillLightEvent/meta_tree",
 		      "FillLightEvent/event_tree",
 		      {argv + 1, argv + argc});
-  processor.SetOutputFileName("RunMCTruth.root");
+  processor.SetOutputFileName("RunInvDeltaMass.root");
 
   MCTruthAnalyzer * MCTAna = new MCTruthAnalyzer;
 
