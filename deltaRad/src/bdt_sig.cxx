@@ -154,6 +154,9 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 				background += bkg.back();
 			}
+
+
+
 			double significance =0;
 			if(signal==0){
 				 significance =0;

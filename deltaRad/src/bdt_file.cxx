@@ -223,7 +223,6 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
 	//first check if a file exists with a topological entry list in it!
 
-
 	std::string filename = this->tag+"_entrylists.root";
 	topological_list_name = "topological_list_"+analysis_tag+"_"+this->tag;
 	precut_list_name = "precut_list_"+analysis_tag+"_"+this->tag;
@@ -385,6 +384,28 @@ TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, doub
 
 	//delete ctmp;
 	return th1;
+}
+
+TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std::string nam, double plot_POT){
+
+	//std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
+	TCanvas *ctmp = new TCanvas();
+	this->tvertex->Draw((varx.name+":"+vary.name+">>"+nam+"(16,0.0,0.8,16,0.0,0.8)").c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+	//std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
+	TH2* th2 = (TH2*)gDirectory->Get(nam.c_str()) ;
+	//th1->Sumw2();
+
+	th2->Scale(this->scale_data*plot_POT/this->pot);
+	//std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th2->GetSumOfWeights()<<std::endl;
+	//th2->SetLineColor(col);
+	//th2->SetLineWidth(1);
+	th2->SetStats(0);
+	th2->GetXaxis()->SetTitle(varx.unit.c_str());
+	th2->GetYaxis()->SetTitle(vary.unit.c_str());
+	th2->SetDirectory(0);	
+
+	//delete ctmp;
+	return th2;
 }
 
 

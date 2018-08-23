@@ -31,6 +31,12 @@ void VRAnalyzer::SetVerbose(bool const verbose) {
 
 }
 
+void VRAnalyzer::SetFlashTimings(double flash_start, double flash_end){
+	fflash_start = flash_start;
+	fflash_end = flash_end;
+}
+
+
 
 void VRAnalyzer::SetProducers(std::string const & track_producer,
 			      std::string const & shower_producer,
@@ -130,6 +136,7 @@ void VRAnalyzer::Initialize() {
 
   if(frun_fill_tree_variables) {
     fftv.SetVerbose(fverbose);
+    fftv.SetFlashTimings(fflash_start, fflash_end);
     fftv.SetProducers(fstorage,
 		      ftrack_producer,
 		      fshower_producer,

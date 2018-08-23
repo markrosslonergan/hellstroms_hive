@@ -28,6 +28,7 @@
 #include "TMVA/DataLoader.h"
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
+#include "TStyle.h"
 
 
 class bdt_efficiency{
@@ -39,6 +40,7 @@ class bdt_efficiency{
 		std::vector<double> verticies;
 
 		bdt_efficiency(bdt_file*, std::string denomin,double,double);
+		bdt_efficiency(bdt_file*, std::string denomin,double,double,bool);
 
 };
 

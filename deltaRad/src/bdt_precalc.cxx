@@ -715,6 +715,7 @@ int bdt_precalc::genPi0Info(){
 	std::vector<int> vec_reco_showers_within;
 	std::vector<int> vec_reco_tracks_within;
 
+
 	int reco_showers_bp_within_10 = 0;
 	int reco_showers_bp_within_20 = 0;
 	int reco_showers_bp_within_30 = 0;
@@ -723,6 +724,8 @@ int bdt_precalc::genPi0Info(){
 	int reco_tracks_bp_within_20 = 0;
 	int reco_tracks_bp_within_30 = 0;
 
+	int collated_showers = 0;
+	int collated_tracks = 0;
 
 	int reco_showers_within_10 = 0;
 	int reco_showers_within_20 = 0;
@@ -748,7 +751,10 @@ int bdt_precalc::genPi0Info(){
 	TBranch *b_reco_tracks_bp_within_10 = friend_tree->Branch("num_reco_tracks_bp_within_10cm_vertex",&reco_tracks_bp_within_10);
 	TBranch *b_reco_tracks_bp_within_20 = friend_tree->Branch("num_reco_tracks_bp_within_20cm_vertex",&reco_tracks_bp_within_20);
 	TBranch *b_reco_tracks_bp_within_30 = friend_tree->Branch("num_reco_tracks_bp_within_30cm_vertex",&reco_tracks_bp_within_30);
+	
 
+	TBranch *b_reco_collatedt = friend_tree->Branch("num_other_asso_tracks",&collated_tracks);
+	TBranch *b_reco_collateds = friend_tree->Branch("num_other_asso_showers",&collated_showers);
 
 
 	TBranch *b_pi0_class_number = friend_tree->Branch("pi0_class_number",&v_pi0_class_number);
@@ -765,6 +771,8 @@ int bdt_precalc::genPi0Info(){
 		reco_tracks_within_20 = 0;
 		reco_tracks_within_30 = 0;
 
+		collated_showers = 0;
+		collated_tracks = 0;
 
 		reco_showers_bp_within_10 = 0;
 		reco_showers_bp_within_20 = 0;
@@ -790,6 +798,8 @@ int bdt_precalc::genPi0Info(){
 
 				if(vall_reco_tracks->at(j)<c){
 					vec_reco_tracks_within.back()++;
+
+					
 				}
 			}
 
@@ -803,17 +813,25 @@ int bdt_precalc::genPi0Info(){
 		}
 
 
-		for(int j=0; j< vall_bp_reco_tracks->size(); j++){
+		if(vall_bp_reco_tracks->size() != vall_reco_tracks->size()){
+			std::cout<<"Error in track: "<<vall_bp_reco_tracks->size()<<" != "<<vall_reco_tracks->size()<<std::endl;
+		}	
 
-			if(vall_bp_reco_tracks->at(j) < 10){
-				reco_tracks_bp_within_10 ++;
-				reco_tracks_bp_within_20 ++;
-				reco_tracks_bp_within_30 ++;
-			}else if(vall_bp_reco_tracks->at(j) < 20){
-				reco_tracks_bp_within_20 ++;
-				reco_tracks_bp_within_30 ++;
-			}else if(vall_bp_reco_tracks->at(j) < 30){
-				reco_tracks_bp_within_30 ++;
+		if(vall_bp_reco_showers->size() != vall_reco_showers->size()){
+			std::cout<<"Error in shower: "<<vall_bp_reco_showers->size()<<" != "<<vall_reco_showers->size()<<std::endl;
+		}	
+
+		for(int j=0; j< vall_bp_reco_showers->size(); j++){
+
+			if(vall_bp_reco_showers->at(j) < 10){
+				reco_showers_bp_within_10 ++;
+				reco_showers_bp_within_20 ++;
+				reco_showers_bp_within_30 ++;
+			}else if(vall_bp_reco_showers->at(j) < 20){
+				reco_showers_bp_within_20 ++;
+				reco_showers_bp_within_30 ++;
+			}else if(vall_bp_reco_showers->at(j) < 30){
+				reco_showers_bp_within_30 ++;
 			}	
 		}
 
@@ -838,25 +856,39 @@ int bdt_precalc::genPi0Info(){
 				reco_showers_bp_within_10 ++;
 				reco_showers_bp_within_20 ++;
 				reco_showers_bp_within_30 ++;
+
+
+				if(vall_reco_showers->at(j) < 30){
+					collated_showers++;
+				}
+
 			}else if(vall_bp_reco_showers->at(j) < 20){
 				reco_showers_bp_within_20 ++;
 				reco_showers_bp_within_30 ++;
 			}else if(vall_bp_reco_showers->at(j) < 30){
 				reco_showers_bp_within_30 ++;
+
+
 			}	
 		}
 
 
-		for(int j=0; j< vall_reco_showers->size(); j++){
-			if(vall_reco_showers->at(j) < 10){
-				reco_showers_within_10 ++;
-				reco_showers_within_20 ++;
-				reco_showers_within_30 ++;
-			}else if(vall_reco_showers->at(j) < 20){
-				reco_showers_within_20 ++;
-				reco_showers_within_30 ++;
-			}else if(vall_reco_showers->at(j) < 30){
-				reco_showers_within_30 ++;
+		for(int j=0; j< vall_reco_tracks->size(); j++){
+			if(vall_reco_tracks->at(j) < 10){
+				reco_tracks_within_10 ++;
+				reco_tracks_within_20 ++;
+				reco_tracks_within_30 ++;
+
+				if(vall_reco_tracks->at(j) < 30){
+					collated_tracks++;
+				}
+
+
+			}else if(vall_reco_tracks->at(j) < 20){
+				reco_tracks_within_20 ++;
+				reco_tracks_within_30 ++;
+			}else if(vall_reco_tracks->at(j) < 30){
+				reco_tracks_within_30 ++;
 			}	
 		}
 
