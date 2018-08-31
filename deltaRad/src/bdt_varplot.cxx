@@ -40,7 +40,8 @@ int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::
 			sig->SetFillStyle(3445);
 			bkg->SetFillStyle(3454);
 
-			if(j!=1){
+            // Note: was "j!=1" before, not sure why
+			if(j!=2){
 				sig->SetTitle(title.at(j).c_str());
 			}else{
 				sig->SetTitle(" ");
@@ -65,7 +66,8 @@ int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::
 			l->AddEntry(bkg, background_pure->plot_name.c_str(),"lf");	
 			l->Draw();
 
-			TText *pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulation Preliminary");
+			//TText *pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulation Preliminary");
+			TText *pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulation");
 			pre->Draw();
 
 			TLatex latex;
@@ -79,7 +81,8 @@ int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::
 			sig->SetMaximum(max_height*1.3);
 
 
-			c_var->Print(("var/"+input_bdt_info.identifier+"_"+v.safe_unit+"_stage_"+std::to_string(j)+".pdf").c_str(),"pdf");
+			//c_var->Print(("var/"+input_bdt_info.identifier+"_"+v.safe_unit+"_stage_"+std::to_string(j)+".pdf").c_str(),"pdf");
+			c_var->Print(("var/"+input_bdt_info.identifier+"_"+v.safe_unit+"_stage_"+std::to_string(j)+".png").c_str(),"png");
 
 
 			

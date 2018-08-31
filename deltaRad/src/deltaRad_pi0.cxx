@@ -291,8 +291,8 @@ int main (int argc, char *argv[]){
 		//	Best Fit Significance: 0.5525 0.533625 1.1
 
 	}else if (analysis_tag == "ncpi0_2g1p") {
-        fcoscut = 0.591875;
-        fbnbcut = 0.5325;
+        fcoscut = 0.6004;
+        fbnbcut = 0.5446;
     }
 
 	//===========================================================================================
@@ -506,7 +506,11 @@ int main (int argc, char *argv[]){
 
 
 
-	} else if(mode_option == "eff"){
+	} else if (mode_option == "test") { 
+		signal_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
+		//bnb_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
+    }
+    else if(mode_option == "eff"){
 
 		std::string ZMIN = "0.0"; std::string ZMAX = "1036.8";
 		std::string XMIN = "0.0"; std::string XMAX = "256.35";

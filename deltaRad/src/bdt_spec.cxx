@@ -309,7 +309,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 
 		//And all variables in the vector var
 		for(auto &var: vars){
-			std::cout<<"Starting on variable "<<var.name<<std::endl;
+			std::cout<<"Starting on variable " << var.name<<std::endl;
 			TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1800,1600);
 			//cobs->Divide(2,2,0.0025,0.0000001);
 
@@ -372,10 +372,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			delete stk;
 			delete tsum;
 			delete l3;
-
-
-
-		}
+        }
 	}
 
 

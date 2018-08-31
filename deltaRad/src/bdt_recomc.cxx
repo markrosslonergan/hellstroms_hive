@@ -105,22 +105,11 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 
 			for(auto * t : vec_reco_mc) delete t;
-            if (all_reco_mc) {
-                std::cout << "Deleting all all_reco_mc" << std::endl;
-			    delete all_reco_mc;
-            }
-            if (s_reco_truth) {
-                std::cout << "Deleting all s_reco_truth" << std::endl;
-			    delete s_reco_truth;
-            }
-            if (c) {
-                std::cout << "Deleting c" << std::endl;
-			    delete c;
-            }
-            if (pad && padl) {
-                std::cout << "Deleting pads" << std::endl;
-			    delete pad; delete padl;
-            }
+            delete all_reco_mc;
+            delete s_reco_truth;
+            delete c;
+            //delete padl;
+            //delete pad;
             std::cout << "Loop finished, stuff deleted" << std::endl;
 
 
@@ -465,6 +454,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	s_reco_truth_bdt2->GetXaxis()->SetTitle(var.unit.c_str());
 	s_reco_truth_bdt2->GetYaxis()->SetTitle("Vertices");
 	s_reco_truth_bdt2->GetYaxis()->SetTitleOffset(1.5);
+	s_reco_truth_bdt2->GetYaxis()->SetNoExponent(1);
 
 	TLatex latexbdt2;
 	latexbdt2.SetTextSize(0.05);

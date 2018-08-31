@@ -33,7 +33,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
-
+    
 	double plot_pot=4.393e19;//4.801e19;
 
 	double title_size_ratio=0.1;
@@ -48,9 +48,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 	ftest->cd();
 
-	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
+	std::vector<std::string> stage_names = {"All Vertices","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 	//Loop over all stages
-	for(int s = 1; s< 4; s++){
+	for(int s = 0; s< 4; s++){
 		std::cout<<"On stage: "<<s<<std::endl;
 		//First set the files at this stage
 		for(auto &f: mc_stack->stack){
@@ -101,7 +101,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			int data_rebin = 1;
 			if(s==0 || s == 1){
 				rmin=0.6; rmax = 1.399;
-			}else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=4;};
+			//}else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=4;};
+			}else if(s==2){ data_rebin = 1;}else if(s==3){data_rebin=1;};
 
 
 			double max_modifier = 1.4;
@@ -119,7 +120,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			stk->Draw("hist");
 			stk->SetTitle(stage_names.at(s).c_str());
 			stk->GetXaxis()->SetTitle(var.unit.c_str());
-			stk->GetYaxis()->SetTitle("Verticies");
+			stk->GetYaxis()->SetTitle("Vertices");
 			stk->GetYaxis()->SetTitleOffset(1.5);
 			stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
 			stk->SetMinimum(min_val);
@@ -152,22 +153,23 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			l0->SetLineWidth(0);
 			l0->SetLineColor(0);
 			l0->SetFillStyle(0);
-			l0->SetTextSize(0.03);
+			l0->SetTextSize(0.04);
 
 			TLatex latex;
-			latex.SetTextSize(0.06);
+			latex.SetTextSize(0.05);
 			latex.SetTextAlign(13);  //align at top
 			latex.SetNDC();
 			latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
 			TLatex pottex;
-			pottex.SetTextSize(0.06);
+			pottex.SetTextSize(0.05);
 			pottex.SetTextAlign(13);  //align at top
 			pottex.SetNDC();
 			std::string pot_draw = to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
 			pottex.DrawLatex(.7,.65, pot_draw.c_str());
 
-			TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary");
+			//TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary");
+			TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
 			pre->Draw();
 
 			//cobs->cd(k+1);	
@@ -236,13 +238,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			t->Draw("same");
 
 			//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
-			//var_precut.front()->GetYaxis()->SetTitle("Verticies");
+			//var_precut.front()->GetYaxis()->SetTitle("Vertices");
 
 
 
 			std::cout<<"Writing pdf."<<std::endl;
 			cobs->Write();
-			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+			//cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 
 
@@ -346,8 +349,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 	std::vector<TH1*> vec_th1s = {sh0,sh1,sh2,sh3};	
 	std::vector<std::string> data_cuts = {dat_cut_0, dat_cut_1, dat_cut_2, dat_cut_3};
 	std::vector<TH1*> data_th1s = {d0,d1,d2,d3};
-	//std::vector<std::string> stage_name = {"All Verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT Cut"};
-	std::vector<std::string> stage_name = {"All Verticies","","Cosmic BDT Cut","BNB BDT Cut"};
+	//std::vector<std::string> stage_name = {"All Vertices","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT Cut"};
+	std::vector<std::string> stage_name = {"All Vertices","","Cosmic BDT Cut","BNB BDT Cut"};
 
 
 	for(int k = 1; k<4; k++){
@@ -383,7 +386,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 		vec_stacks.at(k)->Draw("hist");
 		vec_stacks.at(k)->SetTitle(stage_name.at(k).c_str());
 		vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
-		vec_stacks.at(k)->GetYaxis()->SetTitle("Verticies");
+		vec_stacks.at(k)->GetYaxis()->SetTitle("Vertices");
 		vec_stacks.at(k)->GetYaxis()->SetTitleOffset(1.5);
 		vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum())*max_modifier);
 		vec_stacks.at(k)->SetMinimum(min_val);
@@ -418,22 +421,23 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 		l0->SetLineWidth(0);
 		l0->SetLineColor(0);
 		l0->SetFillStyle(0);
-		l0->SetTextSize(0.03);
+		l0->SetTextSize(0.04);
 
 		TLatex latex;
-		latex.SetTextSize(0.06);
+		latex.SetTextSize(0.05);
 		latex.SetTextAlign(13);  //align at top
 		latex.SetNDC();
 		latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
 		TLatex pottex;
-		pottex.SetTextSize(0.06);
+		pottex.SetTextSize(0.05);
 		pottex.SetTextAlign(13);  //align at top
 		pottex.SetNDC();
 		std::string pot_draw = to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
 		pottex.DrawLatex(.7,.65, pot_draw.c_str());
 
-		TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary");
+		//TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary");
+		TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
 		pre->Draw();
 
 		//cobs->cd(k+1);	
@@ -499,7 +503,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 		t->Draw("same");
 
 		//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
-		//var_precut.front()->GetYaxis()->SetTitle("Verticies");
+		//var_precut.front()->GetYaxis()->SetTitle("Vertices");
 
 
 

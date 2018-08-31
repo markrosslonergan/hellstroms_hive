@@ -29,6 +29,7 @@ int bdt_response::plot_bdt_response(TFile *fout){
 	leg->SetLineColor(kWhite);
 	leg->SetLineWidth(0);
 	leg->SetNColumns(2);
+    leg->SetTextSize(0.045);
 
 	std::vector<bdt_file*> files= {bdt_sig, bdt_bkg};
 

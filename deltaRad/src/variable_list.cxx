@@ -137,13 +137,12 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         std::string invMass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+angle_shower1_shower2+"))";
 
         // Pion momentum components
-        std::string p_pi_x = E1+"*reco_shower_dirx[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirx[second_most_energetic_shower_index]";
-        std::string p_pi_y = E1+"*reco_shower_diry[most_energetic_shower_index]"+"+"+E2+"*reco_shower_diry[second_most_energetic_shower_index]";
-        std::string p_pi_z = E1+"*reco_shower_dirz[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirz[second_most_energetic_shower_index]";
-        std::string p_pi_comp = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
-        std::string p_pi_trans = "sqrt("+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
+        std::string p_pi_x = "("+E1+"*reco_shower_dirx[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirx[second_most_energetic_shower_index])";
+        std::string p_pi_y = "("+E1+"*reco_shower_diry[most_energetic_shower_index]"+"+"+E2+"*reco_shower_diry[second_most_energetic_shower_index])";
+        std::string p_pi_z = "("+E1+"*reco_shower_dirz[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirz[second_most_energetic_shower_index])";
+        std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 
-        std::string cm_angle = "("+E1+" - "+E2+")/("+p_pi_comp+")";
+        std::string cm_angle = "abs("+E1+" - "+E2+")/("+p_pi+")";
 
         //********************************Pre-selection cuts*************************************************//
 		std::string new_precuts;
@@ -160,9 +159,14 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 		//************************************************* Shower-only Variables **********************************************//
 
-        //all_vars.push_back(bdt_variable(p_pi_comp, "(50, 0, 1.5)", "Reconstructed #pi^{0} Momentum", false, "d"));
-        //all_vars.push_back(bdt_variable(cm_angle, "(25, 0, 1.6)", "Reconstructed #gamma-#pi Angle (CM)", false, "d"));
-        all_vars.push_back(bdt_variable(invMass, "(50, 0, 1)", "Reconstructed Diphoton Mass", false, "d"));
+        //all_vars.push_back(bdt_variable(p_pi, "(50, 0, 1.5)", "Reconstructed #pi^{0} Momentum", false, "d"));
+        //all_vars.push_back(bdt_variable(p_pi_x, "(50, 0, 1.5)", "Reconstructed #pi^{0} x-Momentum", false, "d"));
+        //all_vars.push_back(bdt_variable(p_pi_y, "(50, 0, 1.5)", "Reconstructed #pi^{0} y-Momentum", false, "d"));
+        //all_vars.push_back(bdt_variable(p_pi_z, "(50, 0, 1.5)", "Reconstructed #pi^{0} z-Momentum", false, "d"));
+        //all_vars.push_back(bdt_variable(cm_angle, "(25, 0, 1.6)", "Reconstructed #gamma-#pi Angle (CM) [Radians]", false, "d"));
+        all_vars.push_back(bdt_variable(E1, "(50, 0, 1.5)", "Leading Shower Energy [GeV]", false, "d"));
+        all_vars.push_back(bdt_variable(E2, "(50, 0, 1.5)", "Subleading Shower Energy [GeV]", false, "d"));
+        all_vars.push_back(bdt_variable(E1+"+"+E2, "(50, 0, 1.5)", "Summed Shower Energy [GeV]", false, "d"));
 		all_vars.push_back(bdt_variable("totalpe_ibg_sum","(48,0,5000)","Total in Beam-Gate PE",false,"d"));  //1
         all_vars.push_back(bdt_variable("reco_shower_dedx_plane2[most_energetic_shower_index]","(48,0,15)", "Leading Shower dE/dx (Collection Plane) [MeV/cm]",false,"d")); //2
         all_vars.push_back(bdt_variable("reco_shower_dedx_plane2[second_most_energetic_shower_index]","(48,0,15)", "Subleading Shower dE/dx (Collection Plane) [MeV/cm]",false,"d")); //3
@@ -212,6 +216,11 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         all_vars.push_back(bdt_variable("track_info.reco_track_kinetic[0]","(48,0,1)","Reconstructed Track Kinetic Energy (Calo) [cm]", true,"d"));//36
         all_vars.push_back(bdt_variable("track_info.reco_track_kinetic_from_length[0]","(48,0,1)","Reconstructed Track Kinetic Energy (Length) [cm]", true,"d"));//37
         all_vars.push_back(bdt_variable("track_info.reco_track_kinetic_from_length[0]/track_info.reco_track_kinetic[0]","(48,0,5)","Ratio of Reco Track Kinetic (Length/Calo)", true,"d"));//38
+        all_vars.push_back(bdt_variable(p_pi, "(50, 0, 1.5)", "Reconstructed #pi^{0} Momentum", true, "d"));
+        //all_vars.push_back(bdt_variable(invMass, "(50, 0, 1)", "Reconstructed Diphoton Mass", true, "d"));
+        all_vars.push_back(bdt_variable(p_pi_x, "(50, 0, 1.5)", "Reconstructed #pi^{0} x-Momentum", true, "d"));
+        //all_vars.push_back(bdt_variable(p_pi_y, "(50, 0, 1.5)", "Reconstructed #pi^{0} y-Momentum", true, "d"));
+        //all_vars.push_back(bdt_variable(p_pi_z, "(50, 0, 1.5)", "Reconstructed #pi^{0} z-Momentum", true, "d"));
         //all_vars.push_back(bdt_variable("pi0Boost_info.gamma_pi_least_angle","(25, -0.1, 1.6)","Smallest #gamma #pi Angle (CM Frame)", true,"d"));//39
         //all_vars.push_back(bdt_variable("pi0Boost_info.gamma_z_least_angle","(25, -0.1, 1.6)","Smallest #gamma z Angle (CM Frame)", true,"d"));//40
 
@@ -223,7 +232,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         all_precuts.push_back(min_conversion_cut);
         all_precuts.push_back(good_calo_cut);
         all_precuts.push_back(track_direction_cut);
-        all_precuts.push_back(dead_wire_track);
+        //all_precuts.push_back(dead_wire_track);
 
 
 	}else if( analysis_tag == "YOURTAGHERE"){
