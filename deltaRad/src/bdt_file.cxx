@@ -608,6 +608,7 @@ int bdt_file::writeStageFriendTree(std::string nam, double bdtvar1, double bdtva
 	std::vector<TTreeFormula*> tf_vec;
 
 	TTreeFormula* tf_weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
+    tf_weight->GetNdata();
 
 	for(int i=0; i < 4; i++){
 		tf_vec.push_back( new TTreeFormula(("tf_"+std::to_string(i)).c_str(), this->getStageCuts(i, bdtvar1,bdtvar2).c_str(), tvertex));
@@ -623,6 +624,7 @@ int bdt_file::writeStageFriendTree(std::string nam, double bdtvar1, double bdtva
 
 
 		for(int i=0; i < 4; i++){
+            tf_vec.at(i)->GetNdata();
 			if(tf_vec.at(i)->EvalInstance()){
 				passed.at(i) = 1;
 			}else{
