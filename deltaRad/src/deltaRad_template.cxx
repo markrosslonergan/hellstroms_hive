@@ -151,7 +151,7 @@ int main (int argc, char *argv[]){
 	
 
 	//Right now, for this example, we have 1 shower 1 track only
-	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks == 1"; //1 shower and track in each vertex.
+	std::string base_cuts = "(reco_asso_showers == 1 && reco_asso_tracks == 1)"; //1 shower and track in each vertex.
 	std::string signal_definition = "((nu_pdg == 12 && lep_pdg == 11)||(nu_pdg == -12 && lep_pdg == -11))";//it means it select nu_e&e- event or anti-nu_e&e+ event.
 	std::string background_definition = "abs(nu_pdg) != 12";//events that contains no nu_e or anti-nu_e
 

@@ -83,6 +83,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			weight_branch = "bnbcorrection_info.weight";
 			numberofevents_raw = numberofevents;
 		}
+
+		if(tag=="LEEunfolded" || tag =="LEEunfoldedCosmics") weight_branch = "(bnbcorrection_info.weight)*(lee_unfolding_tree.signal_weight)";
+
 	}
 
 
