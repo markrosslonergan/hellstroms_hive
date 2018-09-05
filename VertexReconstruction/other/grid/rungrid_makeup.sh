@@ -12,7 +12,7 @@ echo "PROCESS " ${PROCESS} >> $log
 echo >> $log
 
 
-USER=rmurrell
+USER=amogan
 
 
 RES=/pnfs/uboone/resilient/users/$USER
@@ -22,7 +22,7 @@ VOUT=vertex_quality_output
 
 
 EXEC=RunVertexQuality
-INPUT_FILE=le_nc_delta_rad_cosmic_200.root
+INPUT_FILE=ncpi0_light_event_file.root
 
 
 echo setup uboonecode v06_26_01_10 -q e10:prof >>$log

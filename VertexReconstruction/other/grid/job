@@ -8,7 +8,7 @@ if [ $# -ne 1 ]; then
 fi
 
 
-USER=rmurrell
+USER=amogan
 
 
 VIN=/pnfs/uboone/resilient/users/$USER/vertex_quality_input

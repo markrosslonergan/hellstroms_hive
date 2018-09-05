@@ -12,7 +12,7 @@ echo "PROCESS " ${PROCESS} >> $log
 echo >> $log
 
 
-USER=rmurrell
+USER=amogan
 
 
 RES=/pnfs/uboone/resilient/users/$USER
@@ -25,13 +25,17 @@ VVDICT=libVVDict_rdict.pcm
 INPUT_PERM_FILE=permutations_$PROCESS.root
 #INPUT_FILE=le_bnb_cosmic_200.root
 #INPUT_FILE=le_nc_delta_rad_cosmic_200.root
-INPUT_FILE=le_nc_delta_rad_cosmic_1.root
+INPUT_FILE=RunMerge2.root
 #INPUT_PERM_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/$USER/vertex_quality_input/permutations/$PERM_FILE
 #INPUT_FILE=root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/uboone/resilient/users/$USER/vertex_quality_input/light_event_files/$FILE
 
 
-echo setup uboonecode v06_26_01_10 -q e10:prof >>$log
-setup uboonecode v06_26_01_10 -q e10:prof >> $log 2>&1
+echo setup uboonecode v06_26_01_13 -q e10:prof >> $log
+setup uboonecode v06_26_01_13 -q e10:prof >> $log 2>&1
+echo setup gcc v6_4_0 >> $log
+setup gcc v6_4_0 >> $log 2>&1
+echo setup root v6_12_04e -q e15:prof >> $log
+setup root v6_12_04e -q e15:prof >> $log 2>&1
 echo >> $log
 
 
