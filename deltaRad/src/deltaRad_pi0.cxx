@@ -39,6 +39,8 @@ int main (int argc, char *argv[]){
 
 	//This is a standardized location on /pnfs/ that everyone can use. 
 	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v3/";
+    std::string mydir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples";
+	std::string datadir = "/uboone/data/users/amogan/single_photon";
     //std::string frienddir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v3/friends/";
 
 
@@ -200,10 +202,14 @@ int main (int argc, char *argv[]){
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Pure","hist","",kRed-7, signal_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
+	//bdt_file *signal_pure = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Pure","hist","",kRed-7, signal_flow);
+	//bdt_file *signal_cosmics = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
+	bdt_file *signal_pure = new bdt_file(mydir,"vertexed_ncpi0_PiMom_v4.1.root","NCpi0Pure","hist","",kRed-7, signal_flow);
+	bdt_file *signal_cosmics = new bdt_file(mydir,"vertexed_ncpi0_PiMom_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
+	//bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
+	//bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
+	bdt_file *bnb_pure    = new bdt_file(mydir, "vertexed_BNBCosmics_PiMom_v4.1.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(mydir, "vertexed_BNBCosmics_PiMom_v4.1.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
 	bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//Data files
 	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_fresh_v4.1.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
@@ -291,8 +297,8 @@ int main (int argc, char *argv[]){
 		//	Best Fit Significance: 0.5525 0.533625 1.1
 
 	}else if (analysis_tag == "ncpi0_2g1p") {
-        fcoscut = 0.6004;
-        fbnbcut = 0.5446;
+        fcoscut = 0.5884;
+        fbnbcut = 0.543;
     }
 
 	//===========================================================================================
@@ -769,11 +775,11 @@ int main (int argc, char *argv[]){
 		for(auto &f: bdt_filesA){
 			std::cout<<"On file: "<<f->tag<<std::endl;
 			bdt_precalc pre(f);
-			//pre.genTrackInfo();
-			//pre.genBNBcorrectionInfo();
-			//pre.genPi0Info();
-			//pre.genShowerInfo();
-            pre.genPi0BoostAngle();
+			pre.genTrackInfo();
+			pre.genBNBcorrectionInfo();
+			pre.genPi0Info();
+			pre.genShowerInfo();
+            //pre.genPi0BoostAngle();
 
 		}
 		return 0;

@@ -289,8 +289,10 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 }
 
 int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
+    std::cout << "In function" << std::endl;
 
 	ftest->cd();
+    std::cout << "In file directory" << std::endl;
 
 	std::vector<std::string> stage_names = {"All Vertices","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 	//Loop over all stages
