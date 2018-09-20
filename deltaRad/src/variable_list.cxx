@@ -176,7 +176,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         all_vars.push_back(bdt_variable(invMass, "(50, 0, 1)", "Reconstructed Diphoton Mass", true, "d"));
         all_vars.push_back(bdt_variable(p_pi, "(50, 0, 1.5)", "Reconstructed #pi^{0} Momentum", true, "d"));
         //all_vars.push_back(bdt_variable(p_pi_z, "(50, 0, 1.5)", "Reconstructed #pi^{0} z-Momentum", true, "d"));
-        all_vars.push_back(bdt_variable(cm_angle, "(25, -1., 1.)", "Reconstructed #gamma-#pi Angle (CM) [Radians]", false, "d"));
+        all_vars.push_back(bdt_variable(cm_angle, "(24, -1, 1)", "Reconstructed #gamma-#pi Angle (CM) [Radians]", false, "d"));
 		all_vars.push_back(bdt_variable("reco_shower_dist_to_closest_flashzcenter[0]","(48,0,520)","Distance from Leading Shower to Flashcenter [cm]",false,"d"));//6
 
 		all_vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(48,0,120)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));//7

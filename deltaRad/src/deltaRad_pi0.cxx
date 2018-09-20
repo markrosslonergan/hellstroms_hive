@@ -204,10 +204,10 @@ int main (int argc, char *argv[]){
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
 	//bdt_file *signal_pure = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Pure","hist","",kRed-7, signal_flow);
 	//bdt_file *signal_cosmics = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
-	bdt_file *signal_pure = new bdt_file(mydir,"vertexed_ncpi0_PiMom_v4.1.root","NCpi0Pure","hist","",kRed-7, signal_flow);
-	bdt_file *signal_cosmics = new bdt_file(mydir,"vertexed_ncpi0_PiMom_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
 	//bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
 	//bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
+	bdt_file *signal_pure = new bdt_file(mydir,"vertexed_ncpi0_PiMom_v4.1.root","NCpi0Pure","hist","",kRed-7, signal_flow);
+	bdt_file *signal_cosmics = new bdt_file(mydir,"vertexed_ncpi0_PiMom_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(mydir, "vertexed_BNBCosmics_PiMom_v4.1.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(mydir, "vertexed_BNBCosmics_PiMom_v4.1.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
 	bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
@@ -512,7 +512,7 @@ int main (int argc, char *argv[]){
 
 
 
-	} else if (mode_option == "test") { 
+	} else if (mode_option == "makeFriend") { 
 		signal_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
 		//bnb_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
     }
