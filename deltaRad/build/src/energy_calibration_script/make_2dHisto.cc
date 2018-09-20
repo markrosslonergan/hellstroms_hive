@@ -1,15 +1,14 @@
 #include "energy_cal.h"
 using std::cout;
 using std::endl;
-double leadingCorr(double);
-double subleadingCorr(double);
+//double leadingCorr(double);
+//double subleadingCorr(double);
 
 void make_2dHisto() {
     /////////////////////////////////////////////////////////
     ////////////// INITIALIZATION /////////////////////
     ////////////////////////////////////////////////////////
     
-    // Some convenient strings
     //TString dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v3/";
     TString dir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/";
     // Get signal file and TTree
@@ -54,12 +53,17 @@ void make_2dHisto() {
     int count = 0;
     Int_t leadingIndex = 0; // Leading shower index may be 0 or 1
     // Signal loop
-    for (int i = 0; i < t->GetEntries(); i++) {
+    //for (int i = 0; i < t->GetEntries(); i++) {
+    for (int i = 0; i < 10; i++) {
+        cout << "Getting entry" << endl;
+        cout << "True energy: " << true_shower_energy->at(0) << endl;
         t->GetEntry(i);
+        cout << "Got entry" << endl;
         if (passed_bnb_bdt_cut != 1) continue; 
         count++;
 
         // Figure out whether leading shower index is 0 or 1; fill accordingly
+        /*
         leadingIndex = (most_energetic_shower_index > second_most_energetic_shower_index);
         Double_t corr1, corr2;
         if (leadingIndex == 0) {
@@ -90,16 +94,11 @@ void make_2dHisto() {
             h_cal2_corr->Fill(true_shower_energy->at(0),
                              corr2, weight);
         }
-        /*
-        for (int j = 0; j < 2; j++){
-            h_cal3->Fill(true_shower_energy->at(j), 
-                     reco_shower_helper_energy[j], 
-                     weight);        
-        }
         */
     }
     cout << "Total passed: " << count << endl;
     
+    /*
     TCanvas *c1 = new TCanvas("c1", "c1", 1000, 700);
     c1->cd();
     gStyle->SetOptStat(0);
@@ -167,8 +166,9 @@ void make_2dHisto() {
 
     c4->SaveAs("plot_energy_cal_subleading_corr.png", "PNG");
 
-    fout->Write();
-    fout->Close();
+    */
+    //fout->Write();
+    //fout->Close();
 }
 
 int main() {
@@ -178,6 +178,7 @@ int main() {
 
 // Energy correction functions
 // Parameters extracted from fit performed in energy_cal.cc
+/*
 double leadingCorr(double energy) {
     double corr = 1.24476*energy + 0.015528;
     return corr;
@@ -188,4 +189,4 @@ double subleadingCorr(double energy) {
     return corr;
 }
 
-
+*/

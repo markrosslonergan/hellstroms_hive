@@ -513,8 +513,8 @@ int main (int argc, char *argv[]){
 
 
 	} else if (mode_option == "makeFriend") { 
-		signal_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
-		//bnb_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
+		//signal_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
+		bnb_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
     }
     else if(mode_option == "eff"){
 

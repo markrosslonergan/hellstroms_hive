@@ -28,6 +28,7 @@ void draw_1DHistos() {
         // Uncorrected histos for leading photon
         c_lead->cd(i+1);
         TString histoName = Form("h%i_leading", i+1);
+        TString subhistoName = Form("h%i_subleading", i+1);
         TH1D *h = (TH1D*)fin->Get(histoName);
         h->SetMarkerColor(kAzure+2);
         h->SetLineColor(kAzure+2);
@@ -51,8 +52,22 @@ void draw_1DHistos() {
         a->SetTitleOffset(1.1);
         a->SetTitle("Reco. Leading Photon Energy [MeV]");
         h->Draw();
+        if (i < subleadingBins.size() ) {
+            c_sub->cd(i+1);
+            TH1D *h2 = (TH1D*)fin->Get(subhistoName);
+            h2->SetMarkerColor(kAzure+2);
+            h2->SetLineColor(kAzure+2);
+            TAxis *b = h2->GetXaxis();
+            Int_t numdiv2 = subleadingBins.at(i).second - subleadingBins.at(i).first;
+            b->SetNdivisions(numdiv2);
+            b->SetTitleOffset(1.1);
+            b->SetTitle("Reco. Subleading Photon Energy [MeV]");
+            b->SetRangeUser(0, 0.3);
+            h2->Draw();
+        }
     }
     c_lead->SaveAs("projections_leading.png", "PNG");
+    c_sub->SaveAs("projections_subleading.png", "PNG");
 }
 
 int main() {
