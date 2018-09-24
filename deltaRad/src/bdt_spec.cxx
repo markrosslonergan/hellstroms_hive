@@ -507,13 +507,13 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	latexpre.SetTextSize(0.05);
 	latexpre.SetTextAlign(13);  //align at top
 	latexpre.SetNDC();
-	latexpre.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexpre.DrawLatex(.66,.70,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenpre;
 	pottenpre.SetTextSize(0.05);
 	pottenpre.SetTextAlign(13);  //align at top
 	pottenpre.SetNDC();
 	std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenpre.DrawLatex(.66,.75, pot_draw_pre.c_str());
+	pottenpre.DrawLatex(.66,.65, pot_draw_pre.c_str());
 
 
 
@@ -545,12 +545,18 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	for(auto &f: this->stack){
 
 		double Nevents = f->GetEntries( f->getStageCuts(2,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+		
+		if(!f->recorded){
+		    f->numberofevents_ref = Nevents;
+		    }
+		double efficiency = Nevents/f->numberofevents_ref;
+
 		cobs->cd(3);
 		auto h1 = new TH1F(("tmp3"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 		h1->SetFillColor(f->col);
 		h1->SetLineColor(kBlack);
 		h1->SetFillStyle(f->fillstyle);
-		l2->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+		l2->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+" ("+to_string_prec(efficiency,2)+"%)}").c_str(),"f");
 	}
 	l2->Draw();
 	l2->SetLineColor(kWhite);

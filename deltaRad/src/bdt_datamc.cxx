@@ -30,6 +30,8 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
+	//NEED TO FIGURE OUT WHAT DOES THIS DO
+	//std::cout<<"THIS SHOULD NOT APPEAR HERE!CHECK CHECK"<<std::endl;
 
 	double plot_pot=4.393e19;//4.801e19;
 
@@ -63,9 +65,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 		if(s==3) data_file->calcBNBBDTEntryList(c1, c2);
 
 		data_file->setStageEntryList(s);
-
-
-
 
 		if(true && s == 3){
 			data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist");

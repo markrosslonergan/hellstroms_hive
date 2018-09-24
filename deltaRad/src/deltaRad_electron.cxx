@@ -188,7 +188,7 @@ int main (int argc, char *argv[]){
     if(mode_option == "vars" || mode_option == "var" || mode_option == "train") vec_precuts.erase(vec_precuts.begin());
 
     std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
-    std::string signal_definition = "1";   //(((nu_pdg == 12 && lep_pdg == 11)||(nu_pdg == -12 &&    lep_pdg == -11))&&true_shower_pdg == 11)";
+    std::string signal_definition = "(((nu_pdg == 12 && lep_pdg == 11)||(nu_pdg == -12 && lep_pdg == -11))&&true_shower_pdg == 11&&abs(true_nuvertz-true_track_startz[0])+abs(true_nuverty-true_track_starty[0])+abs(true_nuvertx-true_track_startx[0])< 1)&&abs(true_shower_parent_pdg[0])!=13";
     std::string background_definition = "(nu_pdg != 12 && nu_pdg != -12)";
     
 
@@ -349,11 +349,12 @@ int main (int argc, char *argv[]){
 	}
 
 	std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
-	std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
+	//std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
+	std::vector<std::string> recomc_names = {"track_pdg>11", "track_pdg<11", "shower_pdg>11","shower_pdg<11","single_photon or delta_rad","NC events","track parent_pdg>12","track_parent_pdg<12", "all_pass"};
 
 	std::string  nue = "abs(true_shower_pdg[0]) ==11 && abs(nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)";
 	std::string  michel = "abs(true_shower_pdg[0]) ==11 && abs(true_shower_parent_pdg[0])==13";
-	std::vector<std::string> recomc_cuts = {
+/*	std::vector<std::string> recomc_cuts = {
 	    "true_shower_origin[0]==1 && true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] !=111 && is_delta_rad ==1 ",
 	    "true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc==0",
 	    "true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc==1",
@@ -364,6 +365,18 @@ int main (int argc, char *argv[]){
 	    "true_shower_origin[0] ==2 && abs(true_shower_parent_pdg[0])==13",
 	    "true_shower_origin[0] ==2 && abs(true_shower_parent_pdg[0])!=13"
 	};
+*/
+	std::vector<std::string> recomc_cuts = {
+	    "abs(true_track_pdg[0])> 11",
+	    "abs(true_track_pdg[0])< 11",
+	    "abs(true_shower_pdg[0])> 11",
+	    "abs(true_shower_pdg[0])< 11",
+	    "is_single_photon||is_delta_rad",
+	    "ccnc==1",
+	    "abs(true_track_parent_pdg[0])>12",
+	    "abs(true_track_parent_pdg[0])<12",
+	    "1",
+	    };
 
 	bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 

@@ -108,6 +108,10 @@ struct bdt_file{
 
         int numberofevents;
         int numberofevents_raw;
+
+	bool recorded = false; //after record the referenced number of events, this becomes true.
+	int numberofevents_ref;//in stack plot, refer to this events # to calculate efficiency
+
 		double pot;
 
 		TFile *f;
