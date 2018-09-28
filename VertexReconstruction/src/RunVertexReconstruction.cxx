@@ -72,7 +72,6 @@ int main(int const argc, char * argv[]) {
 	}
 
 
- 
   //Bit of code to extract the jobsub id's from the path and append to the output filename
   std::vector<char const*>  files_input = {&input_file[0]}; 
 

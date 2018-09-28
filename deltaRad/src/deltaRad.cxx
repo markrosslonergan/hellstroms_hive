@@ -32,7 +32,7 @@
 #include "bdt_boxcut.h"
 #include "bdt_spec.h"
 #include "bdt_eff.h"
-
+#include "bdt_test.h"
 
 
 int main (int argc, char *argv[]){
@@ -206,11 +206,14 @@ int main (int argc, char *argv[]){
 	//bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
 
 
+	bdt_file * bnb_withpi0 = new bdt_file(dir,"vertexed_bnbcosmics_fresh_pi0mom_v4.2.root", "BNBCosmicsPi0","hist","",kBlue-4,bkg_flow);
+
 	bdt_file *bnb_overlay = new bdt_file(dir,"vertexed_bnboverlay_fresh_v4.1.root","BNBoverlay","hist","",kBlue-6, bkg_flow);
 	bdt_file *dirt = new bdt_file(dir,"vertexed_dirt_fresh_v4.1.root","Dirt","hist","",kOrange-6, data_flow);
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
-	std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, bnb_overlay, dirt};
+	std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, bnb_overlay, dirt,bnb_withpi0};
+	//std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, bnb_overlay, dirt};
 
 	//The LEE signal is bigger than the SM signal by this factor
 	signal_pure->scale_data = 3.1;
@@ -300,8 +303,6 @@ int main (int argc, char *argv[]){
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
 		if(run_bnb) bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
 		return 0;
-
-
 
 	}else if(mode_option == "app"){
 
@@ -778,8 +779,15 @@ int main (int argc, char *argv[]){
 
 	}else if( mode_option =="test"){
 
-		signal_cosmics->writeStageFriendTree("stage_friend2.root", fcoscut, fbnbcut);
-		bnb_cosmics->writeStageFriendTree("stage_friend2.root", fcoscut, fbnbcut);
+
+        //bdt_test mytest(bnb_cosmics, vars, "test");
+        //mytest.RunTests();
+
+
+
+		//bnb_withpi0->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
+	//	signal_cosmics->writeStageFriendTree("stage_friend2.root", fcoscut, fbnbcut);
+		bnb_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
 		return 0;
 
 		double true_nuvertx = 0;
