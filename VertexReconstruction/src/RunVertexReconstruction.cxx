@@ -20,6 +20,7 @@ int main(int const argc, char * argv[]) {
 	{
 		{"flash", 		required_argument, 	0, 'f'},
 		{"input", 		required_argument, 	0, 'i'},
+		{"output", 		required_argument, 	0, 'o'},
 		{0,			no_argument, 		0,  0}
 	};
 
@@ -27,13 +28,17 @@ int main(int const argc, char * argv[]) {
 	double flash_start = 3.2;
 	double flash_end = 4.8;
 	std::string input_file;
+    std::string output_dir = "./";
 	int iarg = 0; opterr=1; int index;
 	while(iarg != -1)
 	{
-		iarg = getopt_long(argc,argv, "f:?:i:", longopts, &index);
+		iarg = getopt_long(argc,argv, "o:f:?:i:", longopts, &index);
 
 		switch(iarg)
 		{
+            case 'o':
+                  output_dir = optarg;
+                   break;
 			case 'f':
 				which_flash = optarg;
 				if(which_flash == "MC"){
@@ -60,6 +65,7 @@ int main(int const argc, char * argv[]) {
 			case 'h':
 				std::cout<<"Allowed arguments:"<<std::endl;
 				std::cout<<"\t-i\t--input\t\tInput File"<<std::endl;
+				std::cout<<"\t-i\t--output\t\tOutput Directory"<<std::endl;
 				std::cout<<"\t-f\t--flash\t\tWhat flash timings"<<std::endl;
 				std::cout<<"\t\t\t\t Options are:"<<std::endl;
 				std::cout<<"\t\t\t\t MC: 3.10 ->  4.90"<<std::endl;
@@ -87,7 +93,7 @@ int main(int const argc, char * argv[]) {
     	first_file.erase(0, pos + delimiter.length());
   }
 
-  std::string output_name  = "RunVertexReconstruction_"+timestamp+"_"+broken_down_first_file.at(broken_down_first_file.size()-2)+"_"+broken_down_first_file.back()+".root";
+  std::string output_name  = output_dir+"RunVertexReconstruction_"+timestamp+"_"+broken_down_first_file.at(broken_down_first_file.size()-2)+"_"+broken_down_first_file.back()+".root";
 
   std::cout<<"Starting Vertexing on file : "<<input_file<<std::endl;
   std::cout<<"Output Filename : "<<output_name<<std::endl;

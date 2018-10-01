@@ -785,8 +785,8 @@ int main (int argc, char *argv[]){
 
 
 
-		//bnb_withpi0->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
-	//	signal_cosmics->writeStageFriendTree("stage_friend2.root", fcoscut, fbnbcut);
+		bnb_withpi0->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
+	    //signal_cosmics->writeStageFriendTree("stage_friend2.root", fcoscut, fbnbcut);
 		bnb_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
 		return 0;
 
