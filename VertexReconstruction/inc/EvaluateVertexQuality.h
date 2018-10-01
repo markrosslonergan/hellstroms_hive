@@ -129,6 +129,13 @@ class EvaluateVertexQuality {
 		std::string const & best_permutation,
 		std::string const & title = "",
 		std::string const & xtitle = "") const;
+  TGraph * DrawGraphFromTree(TTree * tree,
+			     std::string const & draw,
+			     std::string const & weight);
+  void DrawGraphFromTreeSupimp(TTree * tree, 
+			       std::string const & draw1,
+			       std::string const & draw2,
+			       std::string const & weight);
   void PlotParameters(std::vector<std::vector<double> > const & permutation_v,
 		      std::vector<std::vector<std::vector<double> > > const & drawn_values,
 		      std::vector<std::vector<std::pair<double, int>>> const & results,

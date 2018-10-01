@@ -143,6 +143,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 			d0->Draw("same E1");
 
+			std::cout<<"KSTEST: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
+
+
 			stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
 
 			double NdatEvents = data_file->GetEntries()*(plot_pot/data_file->pot )*data_file->scale_data;
@@ -338,12 +341,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 	std::cout<<"Gotten all data hists."<<std::endl;
 
-	if(false){
-		data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist",dat_cut_3.c_str());
-		return 0;
-	}
-
-
+	//if(false){
 
 	std::vector<THStack*> vec_stacks = {s0,s1,s2,s3};	
 	std::vector<TH1*> vec_th1s = {sh0,sh1,sh2,sh3};	
@@ -369,7 +367,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 		double rmax = 2.99;
 		int data_rebin = 1;
 		if(k==0 || k == 1){
-			rmin=0.6; rmax = 1.399;
+			rmin=0.0; rmax = 1.999;
 
 		}else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=4;};
 

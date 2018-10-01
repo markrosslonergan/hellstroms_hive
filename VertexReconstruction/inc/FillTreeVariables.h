@@ -20,6 +20,7 @@ class FillTreeVariables {
   ~FillTreeVariables();
 
   void SetVerbose(bool const verbose = true) {fverbose = verbose;}
+  void SetFlashTimings(double, double);
   void SetProducers(Storage const * storage,
                     std::string const & track_producer,
                     std::string const & shower_producer,
@@ -67,6 +68,10 @@ class FillTreeVariables {
   std::string fshower_producer;
   std::string fhit_producer;
   std::string fopflash_producer;
+
+  double fflash_start;
+  double fflash_end;
+
 
   geoalgo::AABox ftpc_volume;
   double foffset;

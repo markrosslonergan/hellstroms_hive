@@ -8,12 +8,21 @@ FillTreeVariables::FillTreeVariables() :
   frmcm_bool(false),
   fwire_plane(2),
   fverbose(false),
-  fvertex_tree(nullptr) {}
+  fvertex_tree(nullptr),
+  fflash_start(3.2),
+  fflash_end(4.8)
+ {}
 
 
 FillTreeVariables::~FillTreeVariables() {
 
   delete fvertex_tree;
+
+}
+
+void FillTreeVariables::SetFlashTimings(double flash_start, double flash_end){
+	fflash_start = flash_start;
+	fflash_end = flash_end;
 
 }
 
@@ -1162,7 +1171,7 @@ double FillTreeVariables::ShowerZDistToClosestFlash(int const shower_index) {
     double const time = opf_time.at(i);
     double const zcenter = opf_zcenter.at(i);
     if(fverbose) std::cout << "\topf time: " << time << " (opf.Time() > 3.2 && opf.Time() < 4.8)\n";
-    if(!(time > 3.2 && time < 4.8)) continue;
+    if(!(time > fflash_start && time < fflash_end)) continue;
     if(fverbose) std::cout << "\tWithin time range\n";
     ++opf_ibg_counter;
     if(fverbose) std::cout << "\tShower index: " << shower_index << " zmin: " << zmin << " zmax: " << zmax << "\n";
@@ -1550,10 +1559,10 @@ void FillTreeVariables::Fill(ParticleAssociations const & pas) {
     double const totalpe = opf_totalpe.at(i);
     double const time = opf_time.at(i);
     totalpe_sum += totalpe;
-    if(time > 3.2 && time < 4.8) {
+    if(time > fflash_start && time < fflash_end) {
       totalpe_ibg_sum += totalpe;
     }
-    else if(time < 3.2) {
+    else if(time < fflash_start){
       totalpe_bbg_sum += totalpe;
     }
   }

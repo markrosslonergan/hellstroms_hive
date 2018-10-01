@@ -36,10 +36,16 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			all_reco_mc->SetFillColor(kGray+3);
 			all_reco_mc->SetLineWidth(1);
 
+			int nrebin = 1;
+			if(s==2) nrebin=2;
+			if(s==3) nrebin=4;
+
+			all_reco_mc->Rebin(nrebin);	
+
 
 			fout->cd();
 
-			TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(), ("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),1600,1600);
+			TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(), ("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),1600,1350);
 			c->cd();
 
 
@@ -56,7 +62,11 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 			int iv=0;
 			for(auto &v: vec_reco_mc){
+				v->Rebin(nrebin);
 				std::cout<<"on hist #: "<<iv<<". Add to stack."<<std::endl;
+
+				if(iv==2) v->SetFillStyle(3344);
+
 				s_reco_truth->Add(v);
 				double n = v->Integral();
 				std::cout<<" and calc percentage."<<std::endl; 
@@ -103,7 +113,6 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 			c->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
-
 			for(auto * t : vec_reco_mc) delete t;
             delete all_reco_mc;
             delete s_reco_truth;
@@ -115,7 +124,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 		}
 	}
-
+    return 0;
 }
 
 

@@ -20,6 +20,7 @@ class VRAnalyzer : public Analyzer {
   ~VRAnalyzer();
 
   void SetVerbose(bool const verbose = true);
+  void SetFlashTimings(double, double);
   void SetProducers(std::string const & track_producer,
 		    std::string const & shower_producer,
 		    std::string const & hit_producer,
@@ -76,6 +77,9 @@ class VRAnalyzer : public Analyzer {
   std::string fshower_producer;
   std::string fhit_producer;
   std::string fopflash_producer;
+
+  double fflash_start;
+  double fflash_end;
 
   double fstart_prox;
   double fshower_prox;

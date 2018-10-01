@@ -45,6 +45,9 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 		//************************************************* Shower Only Variables **********************************************//
 
+
+
+
 		all_vars.push_back(bdt_variable("totalpe_ibg_sum","(48,0,5000)","Total in Beam-Gate PE",false,"d"));  //1
 		all_vars.push_back(bdt_variable("shower_info.amalgamated_shower_dEdx[0]","(48,0,6.5)", "Amalgamated Shower dE/dx [MeV/cm]",false,"d")); //2
 		all_vars.push_back(bdt_variable(reco_shower_momentum,"(48,0,0.8)","Reconstructed Shower Energy (Corrected) [GeV]", false,"d"));  //3
@@ -97,6 +100,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		};
 
 		all_precuts.push_back(pe_cut);
+		all_precuts.push_back("passed_swtrigger==1");
 		all_precuts.push_back(fiducial_cut);
 		all_precuts.push_back(min_shower_energy_cut);
 

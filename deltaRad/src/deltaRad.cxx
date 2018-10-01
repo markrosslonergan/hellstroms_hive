@@ -32,7 +32,7 @@
 #include "bdt_boxcut.h"
 #include "bdt_spec.h"
 #include "bdt_eff.h"
-
+#include "bdt_test.h"
 
 
 int main (int argc, char *argv[]){
@@ -151,8 +151,8 @@ int main (int argc, char *argv[]){
 
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(45,0.3,0.6)");
-	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(45,0.2,0.75)");
+	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(80,0.3,0.6)");
+	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.2,0.75)");
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
 	std::string true_signal = "shower_matched_to_ncdeltarad_photon[0]==1";
@@ -171,8 +171,10 @@ int main (int argc, char *argv[]){
 			bnb_bdt_info.setTopoName("1#gamma0p");
 			cosmic_bdt_info.setTopoName("1#gamma0p");
 		}
-
-	if(mode_option == "vars" || mode_option == "train") vec_precuts.erase(vec_precuts.begin());
+	if(mode_option == "response" || mode_option == "vars" || mode_option == "train"){
+		 vec_precuts.erase(vec_precuts.begin());
+		 vec_precuts.erase(vec_precuts.begin());
+	}
 
 	std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 	std::string signal_definition = "is_delta_rad == 1";
@@ -199,12 +201,19 @@ int main (int argc, char *argv[]){
 	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_fresh_v4.1.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
 	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_fresh_v4.1.root",	"BNBext",	"E1p","",  kBlack, data_flow);
 
-	bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
-	bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
-	bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
+	//bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
+	//bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
+	//bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
+
+
+	bdt_file * bnb_withpi0 = new bdt_file(dir,"vertexed_bnbcosmics_fresh_pi0mom_v4.2.root", "BNBCosmicsPi0","hist","",kBlue-4,bkg_flow);
+
+	bdt_file *bnb_overlay = new bdt_file(dir,"vertexed_bnboverlay_fresh_v4.1.root","BNBoverlay","hist","",kBlue-6, bkg_flow);
+	bdt_file *dirt = new bdt_file(dir,"vertexed_dirt_fresh_v4.1.root","Dirt","hist","",kOrange-6, data_flow);
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
-	std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext};
+	std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, bnb_overlay, dirt,bnb_withpi0};
+	//std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, bnb_overlay, dirt};
 
 	//The LEE signal is bigger than the SM signal by this factor
 	signal_pure->scale_data = 3.1;
@@ -217,7 +226,9 @@ int main (int argc, char *argv[]){
 		std::cout<<"Loading "<<f->tag<<"\t with "<<f->tvertex->GetEntries()<<"\t verticies. (unweighted)"<<std::endl;
 		std::cout<<"POT of file loaded is: "<<f->pot<<"\t\t "<<std::endl;
 		std::cout<<"Scale factor is then: "<<f->scale_data<<std::endl;
-	}
+	}	
+
+
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
@@ -292,8 +303,6 @@ int main (int argc, char *argv[]){
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
 		if(run_bnb) bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
 		return 0;
-
-
 
 	}else if(mode_option == "app"){
 
@@ -381,16 +390,16 @@ int main (int argc, char *argv[]){
 		bdt_stack histogram_stack(analysis_tag+"_stack");
 		histogram_stack.addToStack(signal_cosmics);
 		histogram_stack.addToStack(bnb_cosmics);
+		//histogram_stack.addToStack(bnb_overlay);
 
 		//Add bnbext but change the color and style first
 		bnbext->col = intime->col;	
 		bnbext->fillstyle = 3333;
 		histogram_stack.addToStack(bnbext);
+		//histogram_stack.addToStack(dirt);
 
 		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 		int ip=0;
-
-
 
 
 		if(!response_only){
@@ -431,6 +440,7 @@ int main (int argc, char *argv[]){
 		bnbext->col = intime->col;	
 		bnbext->fillstyle = 3333;
 		histogram_stack->addToStack(bnbext);
+//		histogram_stack->addToStack(dirt);
 
 		int ip=0;
 
@@ -446,11 +456,11 @@ int main (int argc, char *argv[]){
 				real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 			}
 		}else{
-			//bdt_datamc cosmic_datamc(bnbext, cosmic_stack, analysis_tag+"_extintime");	
+			bdt_datamc cosmic_datamc(bnbext, cosmic_stack, analysis_tag+"_extintime");	
 			bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
 
-			if(run_cosmic) real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-			if(run_bnb) real_datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+			if(run_bnb) real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+			if(run_cosmic) real_datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 		}
 
 	}else if(mode_option == "vars"){
@@ -502,8 +512,9 @@ int main (int argc, char *argv[]){
 
 		std::string denom  = en_cut_trk + "&&"+ fid_cut + "&& "+ trk;
 
-
-		bdt_efficiency(signal_cosmics, denom, fcoscut,fbnbcut);
+		if(number < 0) number =0;
+		if(number == 2) denom = "1";
+		bdt_efficiency(bdt_files.at(number), denom, fcoscut,fbnbcut,true);
 
 
 		//everything below here is older
@@ -768,9 +779,16 @@ int main (int argc, char *argv[]){
 
 	}else if( mode_option =="test"){
 
-		//signal_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
-		//bnb_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
 
+        //bdt_test mytest(bnb_cosmics, vars, "test");
+        //mytest.RunTests();
+
+
+
+		bnb_withpi0->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
+	    //signal_cosmics->writeStageFriendTree("stage_friend2.root", fcoscut, fbnbcut);
+		bnb_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
+		return 0;
 
 		double true_nuvertx = 0;
 		double true_nuverty = 0;
