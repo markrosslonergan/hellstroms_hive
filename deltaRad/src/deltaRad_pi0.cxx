@@ -297,8 +297,8 @@ int main (int argc, char *argv[]){
 		//	Best Fit Significance: 0.5525 0.533625 1.1
 
 	}else if (analysis_tag == "ncpi0_2g1p") {
-        fcoscut = 0.5884;
-        fbnbcut = 0.543;
+        fcoscut = 0.6076;
+        fbnbcut = 0.5422;
     }
 
 	//===========================================================================================

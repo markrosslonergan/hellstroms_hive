@@ -9,10 +9,10 @@ LIBS=$(shell root-config --libs)
 LD=g++
 
 # Something Gianluca recommended
-DEBUGFLAGS= -O0 -ggdb -D _DEBUG
+DEBUGFLAGS=-O0 -ggdb -D _DEBUG
 
 # Make it easier to add targets...see below
-TARGETNAMES=energy_cal make_2dHisto draw_1DHistos
+TARGETNAMES=energy_cal prepare_histos draw_1DHistos langausFit
 
 # If using class objects, modify and uncomment the following line
 # Assuming .h and .cxx are called histogram_functions

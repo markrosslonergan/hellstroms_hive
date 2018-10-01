@@ -60,23 +60,23 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		all_vars.push_back(bdt_variable("reco_shower_endy[0]","(48,-110,+110)","Reconstructed Shower End Y pos [cm]",false,"d"));//11
 		all_vars.push_back(bdt_variable("reco_shower_endz[0]","(48,0,1050)","Reconstructed Shower End Z pos [cm]",false,"d"));//12
 
-		all_vars.push_back(bdt_variable( "fabs(atan2(reco_shower_diry[0],reco_shower_dirz[0]))/3.14159","(48,0,1.0)","Reconstucted Shower Angle Beamy-ness [rad]","false","d")); //13
-		all_vars.push_back(bdt_variable( "min(fabs(atan2(reco_shower_diry[0],reco_shower_dirx[0])+3.14159/2.0),fabs(atan2(reco_shower_diry[0],reco_shower_dirx[0])-3.14159/2.0))/3.14159","(48,0,0.5)","Reconstucted Shower Angle Cosmicy-ness [rad]","false","d")); //14
+		all_vars.push_back(bdt_variable( "fabs(atan2(reco_shower_diry[0],reco_shower_dirz[0]))/3.14159","(48,0,1.0)","Reconstructed Shower Angle Beamy-ness [rad]","false","d")); //13
+		all_vars.push_back(bdt_variable( "min(fabs(atan2(reco_shower_diry[0],reco_shower_dirx[0])+3.14159/2.0),fabs(atan2(reco_shower_diry[0],reco_shower_dirx[0])-3.14159/2.0))/3.14159","(48,0,0.5)","Reconstructed Shower Angle Cosmicy-ness [rad]","false","d")); //14
 
 
 
 		//************************************************* Track + Shower Only Variables **********************************************//
 		if(analysis_tag == "track"){
 			//all_vars.push_back(bdt_variable( "-log((track_info.reco_track_principal_2[0]+track_info.reco_track_principal_1[0])/track_info.reco_track_principal_0[0])","(48,0,30)","Track PCA straightness","true","d"));//15
-			all_vars.push_back(bdt_variable( "fabs(atan2(reco_track_diry[0],reco_track_dirz[0]))/3.14159","(48,0,1.0)","Reconstucted Track Angle Beamy-ness [rad]","true","d")); //15
-			all_vars.push_back(bdt_variable( "min(fabs(atan2(reco_track_diry[0],reco_track_dirx[0])+3.14159/2.0),fabs(atan2(reco_track_diry[0],reco_track_dirx[0])-3.14159/2.0))/3.14159","(48,0,0.5)","Reconstucted Track Angle Cosmicy-ness [rad]","true","d")); //16
+			all_vars.push_back(bdt_variable( "fabs(atan2(reco_track_diry[0],reco_track_dirz[0]))/3.14159","(48,0,1.0)","Reconstructed Track Angle Beamy-ness [rad]","true","d")); //15
+			all_vars.push_back(bdt_variable( "min(fabs(atan2(reco_track_diry[0],reco_track_dirx[0])+3.14159/2.0),fabs(atan2(reco_track_diry[0],reco_track_dirx[0])-3.14159/2.0))/3.14159","(48,0,0.5)","Reconstructed Track Angle Cosmicy-ness [rad]","true","d")); //16
 			all_vars.push_back(bdt_variable("log(track_info.reco_track_straightline_chi2[0])","(48,6,16)"," Track Line chi^2",true,"d") );//17
 			all_vars.push_back(bdt_variable("log(track_info.reco_track_sum_angles[0])","(48,-30,20)"," Track Sum of all Angles",true,"d") );//18
 
 			all_vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_dirx[0])+ "+reco_shower_momentum+"*reco_shower_dirx[0]","(48,-2,2)","Reconstructed Delta Momentum X [GeV]",true,"d"));//19
 			all_vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_diry[0])+ "+reco_shower_momentum+"*reco_shower_diry[0]","(48,-2,2)","Reconstructed Delta Momentum Y [GeV]",true,"d"));//20
 			all_vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_dirz[0])+ "+reco_shower_momentum+"*reco_shower_dirz[0]","(48,-1.5,2)","Reconstructed Delta Momentum Z [GeV]",true,"d"));//21
-			all_vars.push_back(bdt_variable( "sqrt( pow("+reco_track_energy +"*(reco_track_dirx[0])+ "+reco_shower_momentum+"*reco_shower_dirx[0],2)+ pow("+reco_track_energy +"*(reco_track_diry[0])+"+reco_shower_momentum +"*reco_shower_diry[0],2))","(48,0,2)","Reconstucted Delta Transverse (YX) Momentum [GeV]",true,"d"));//22
+			all_vars.push_back(bdt_variable( "sqrt( pow("+reco_track_energy +"*(reco_track_dirx[0])+ "+reco_shower_momentum+"*reco_shower_dirx[0],2)+ pow("+reco_track_energy +"*(reco_track_diry[0])+"+reco_shower_momentum +"*reco_shower_diry[0],2))","(48,0,2)","Reconstructed Delta Transverse (YX) Momentum [GeV]",true,"d"));//22
 			all_vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]", "(48,0,12)","Mean Track dE/dx [MeV/cm]", true,"d"));//23
 			all_vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]", "(48,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));//24
 			all_vars.push_back(bdt_variable("track_info.reco_track_PIDA[0]","(48,0,24)","Track PIDA",true,"d"));//25
@@ -134,7 +134,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         std::string E2 = "reco_shower_helper_energy[second_most_energetic_shower_index]"; 
 
         // Invariant mass for two massless particles (photons)
-        std::string invMass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+angle_shower1_shower2+"))";
+        std::string invMass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-("+angle_shower1_shower2+")))";
 
         // Pion momentum components
         //std::string p_pi_x = "("+E1+"*reco_shower_dirx[most_energetic_shower_index]"+"+"+E2+"*reco_shower_dirx[second_most_energetic_shower_index])";
@@ -145,8 +145,9 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         std::string p_pi_z = "(reco_shower_helper_energy[0]*reco_shower_dirz[0] + reco_shower_helper_energy[1]*reco_shower_dirz[1])";
         std::string p_pi_trans = "sqrt("+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
         std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
+		//std::string reco_shower_momentum = "(-0.017962 + 1.3719*reco_shower_helper_energy[0])"; 
 
-        std::string cm_angle = "abs(reco_shower_helper_energy[0] - reco_shower_helper_energy[1])/("+p_pi+")";
+        std::string cm_angle = "(abs(reco_shower_helper_energy[0] - reco_shower_helper_energy[1])/("+p_pi+"))";
 
         //********************************Pre-selection cuts*************************************************//
 		std::string new_precuts;
@@ -175,8 +176,10 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         all_vars.push_back(bdt_variable(E1+"+"+E2, "(50, 0, 1.5)", "Summed Shower Energy [GeV]", false, "d"));
         all_vars.push_back(bdt_variable(invMass, "(50, 0, 1)", "Reconstructed Diphoton Mass", true, "d"));
         all_vars.push_back(bdt_variable(p_pi, "(50, 0, 1.5)", "Reconstructed #pi^{0} Momentum", true, "d"));
-        //all_vars.push_back(bdt_variable(p_pi_z, "(50, 0, 1.5)", "Reconstructed #pi^{0} z-Momentum", true, "d"));
-        all_vars.push_back(bdt_variable(cm_angle, "(24, -1, 1)", "Reconstructed #gamma-#pi Angle (CM) [Radians]", false, "d"));
+        //all_vars.push_back(bdt_variable(p_pi_x, "(50, 0, 1.5)", "Reconstructed #pi^{0} x-Momentum", true, "d"));
+        //all_vars.push_back(bdt_variable(p_pi_y, "(50, 0, 1.5)", "Reconstructed #pi^{0} y-Momentum", true, "d"));
+        all_vars.push_back(bdt_variable(p_pi_z, "(50, 0, 1.5)", "Reconstructed #pi^{0} z-Momentum", true, "d"));
+        all_vars.push_back(bdt_variable(cm_angle, "(25, 0, 1)", "Reconstructed Cosine #gamma-#pi Angle (CM) [Radians]", false, "d"));
 		all_vars.push_back(bdt_variable("reco_shower_dist_to_closest_flashzcenter[0]","(48,0,520)","Distance from Leading Shower to Flashcenter [cm]",false,"d"));//6
 
 		all_vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(48,0,120)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));//7
@@ -193,14 +196,14 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		all_vars.push_back(bdt_variable("reco_shower_endy[second_most_energetic_shower_index]","(48,-110,+110)","Reconstructed Subleading Shower End Y pos [cm]",false,"d"));//16
 		all_vars.push_back(bdt_variable("reco_shower_endz[second_most_energetic_shower_index]","(48,0,1050)","Reconstructed Subleading Shower End Z pos [cm]",false,"d"));//17
 
-		//all_vars.push_back(bdt_variable( "fabs(atan2(reco_shower_diry[0],reco_shower_dirz[0]))/3.14159","(48,0,1.0)","Reconstucted Leading Shower Angle Beamy-ness [rad]","false","d")); //18
-		//all_vars.push_back(bdt_variable( "min(fabs(atan2(reco_shower_diry[0],reco_shower_dirx[0])+3.14159/2.0),fabs(atan2(reco_shower_diry[0],reco_shower_dirx[0])-3.14159/2.0))/3.14159","(48,0,0.5)","Reconstucted Leading Shower Angle Cosmicy-ness [rad]","false","d")); //19
+		//all_vars.push_back(bdt_variable( "fabs(atan2(reco_shower_diry[0],reco_shower_dirz[0]))/3.14159","(48,0,1.0)","Reconstructed Leading Shower Angle Beamy-ness [rad]","false","d")); //18
+		//all_vars.push_back(bdt_variable( "min(fabs(atan2(reco_shower_diry[0],reco_shower_dirx[0])+3.14159/2.0),fabs(atan2(reco_shower_diry[0],reco_shower_dirx[0])-3.14159/2.0))/3.14159","(48,0,0.5)","Reconstructed Leading Shower Angle Cosmicy-ness [rad]","false","d")); //19
 
 
 
 		//************************************************* Track + Shower Only Variables **********************************************//
-        all_vars.push_back(bdt_variable( "fabs(atan2(reco_track_diry[0],reco_track_dirz[0]))/3.14159","(48,0,1.0)","Reconstucted Track Angle Beamy-ness [rad]","true","d")); //20
-        all_vars.push_back(bdt_variable( "min(fabs(atan2(reco_track_diry[0],reco_track_dirx[0])+3.14159/2.0),fabs(atan2(reco_track_diry[0],reco_track_dirx[0])-3.14159/2.0))/3.14159","(48,0,0.5)","Reconstucted Track Angle Cosmicy-ness [rad]","true","d")); //21
+        //all_vars.push_back(bdt_variable( "fabs(atan2(reco_track_diry[0],reco_track_dirz[0]))/3.14159","(48,0,1.0)","Reconstructed Track Angle Beamy-ness [rad]","true","d")); //20
+        //all_vars.push_back(bdt_variable( "min(fabs(atan2(reco_track_diry[0],reco_track_dirx[0])+3.14159/2.0),fabs(atan2(reco_track_diry[0],reco_track_dirx[0])-3.14159/2.0))/3.14159","(48,0,0.5)","Reconstructed Track Angle Cosmicy-ness [rad]","true","d")); //21
         //all_vars.push_back(bdt_variable("log(track_info.reco_track_straightline_chi2[0])","(48,6,16)"," Track Line chi^2",true,"d") );//22
         //all_vars.push_back(bdt_variable("log(track_info.reco_track_sum_angles[0])","(48,-30,20)"," Track Sum of all Angles",true,"d") );//23
 
@@ -219,11 +222,6 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         all_vars.push_back(bdt_variable("track_info.reco_track_kinetic[0]","(48,0,1)","Reconstructed Track Kinetic Energy (Calo) [cm]", true,"d"));//36
         all_vars.push_back(bdt_variable("track_info.reco_track_kinetic_from_length[0]","(48,0,1)","Reconstructed Track Kinetic Energy (Length) [cm]", true,"d"));//37
         all_vars.push_back(bdt_variable("track_info.reco_track_kinetic_from_length[0]/track_info.reco_track_kinetic[0]","(48,0,5)","Ratio of Reco Track Kinetic (Length/Calo)", true,"d"));//38
-        //all_vars.push_back(bdt_variable(p_pi_x, "(50, 0, 1.5)", "Reconstructed #pi^{0} x-Momentum", true, "d"));
-        //all_vars.push_back(bdt_variable(p_pi_y, "(50, 0, 1.5)", "Reconstructed #pi^{0} y-Momentum", true, "d"));
-        //all_vars.push_back(bdt_variable(p_pi_z, "(50, 0, 1.5)", "Reconstructed #pi^{0} z-Momentum", true, "d"));
-        //all_vars.push_back(bdt_variable("pi0Boost_info.gamma_pi_least_angle","(25, -0.1, 1.6)","Smallest #gamma #pi Angle (CM Frame)", true,"d"));//39
-        //all_vars.push_back(bdt_variable("pi0Boost_info.gamma_z_least_angle","(25, -0.1, 1.6)","Smallest #gamma z Angle (CM Frame)", true,"d"));//40
 
 		all_precuts.push_back(pe_cut);
 		all_precuts.push_back(fiducial_cut);

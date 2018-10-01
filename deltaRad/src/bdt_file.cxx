@@ -596,7 +596,7 @@ int bdt_file::writeStageFriendTree(std::string nam, double bdtvar1, double bdtva
 	f->cd();
 	TTree * stage_tree = new TTree("stage_cuts","stage_cuts");
 	std::vector<int> passed(4,0);
-	double weight =0;	
+	double weight = 0;	
 
 	TBranch *b_s0 = stage_tree->Branch("passed_topological_selection",&passed.at(0));
 	TBranch *b_s1 = stage_tree->Branch("passed_precuts",&passed.at(1));

@@ -13,6 +13,9 @@ void doCalibration() {
     TH2D *h_cal2 = (TH2D*)fin->Get("h_cal2");
     TH2D *h_cal_corr = (TH2D*)fin->Get("h_cal_corr");
     TH2D *h_cal2_corr = (TH2D*)fin->Get("h_cal2_corr");
+    TH2D *h_cal3 = (TH2D*)fin->Get("h_cal3");
+    TH1D *h_invar = (TH1D*)fin->Get("h_invar");
+    TH1D *h_invar_corr = (TH1D*)fin->Get("h_invar_corr");
 
     // Get binning for projections, i.e., "slices" of 2D histos; can change
     // this in the header file
@@ -23,17 +26,19 @@ void doCalibration() {
     std::vector<TH1D*> h_cal_projections_corr(leadingBins.size() );
     std::vector<TH1D*> h_cal2_projections(subleadingBins.size() );
     std::vector<TH1D*> h_cal2_projections_corr(subleadingBins.size() );
+    std::vector<TH1D*> h_cal3_projections(leadingBins.size() );
     // Prepare arrays for x- and y-values, for graphing
     double xvals[leadingBins.size()], yvals[leadingBins.size()];
     double xvals2[subleadingBins.size()], yvals2[subleadingBins.size()];
     double xvals_corr[leadingBins.size()], yvals_corr[leadingBins.size()];
     double xvals2_corr[subleadingBins.size()], yvals2_corr[subleadingBins.size()];
+    double xvals3[leadingBins.size()], yvals3[leadingBins.size()];
     // x-errors are just one-half slice width; should be the same for 
     // uncorrected and corrected histograms
     double xerrs[leadingBins.size()], xerrs2[subleadingBins.size()];
     double yerrs[leadingBins.size()], yerrs2[subleadingBins.size()];
     double yerrs_corr[leadingBins.size()], yerrs2_corr[subleadingBins.size()];
-    // For now, just fill y-vals with some small, nonzero value; may change later
+    // For now, just fill y-vals with some small, nonzero value; will change later
     std::fill_n(yerrs, leadingBins.size(), 1e-7); 
     std::fill_n(yerrs_corr, leadingBins.size(), 1e-7); 
     std::fill_n(yerrs2, subleadingBins.size(), 1e-7); 
@@ -41,6 +46,7 @@ void doCalibration() {
 
     // Loop over bin ranges, get projections, fill x- and y-vals/errs accordingly
     for(int i = 0; i < leadingBins.size(); i++) {
+        // Projections for leading photon
         TString projName = Form("h%i_leading", i+1);
         TString projName_corr = Form("h%i_leading_corr", i+1);
         h_cal_projections.at(i) = (TH1D*)h_cal->ProjectionY(projName, 
@@ -62,6 +68,7 @@ void doCalibration() {
         yvals[i] = h_cal_projections.at(i)->GetXaxis()->GetBinCenter(maxBin);
         yvals_corr[i] = h_cal_projections_corr.at(i)->GetXaxis()->GetBinCenter(maxBin_corr);
 
+
         // Same as above, but for subleading photon
         if (i < subleadingBins.size() ) {
             TString projName2 = Form("h%i_subleading", i+1);
@@ -82,6 +89,21 @@ void doCalibration() {
             yvals2_corr[i] = h_cal2_projections_corr.at(i)->GetXaxis()->GetBinCenter(maxBin2_corr);
 
         }
+
+        // Same as above, for both photons
+        TString projName3 = Form("h%i_both", i+1);
+        h_cal3_projections.at(i) = (TH1D*)h_cal3->ProjectionY(projName3,
+                                                  leadingBins.at(i).first,
+                                                  leadingBins.at(i).second );
+
+        int maxBin3 = h_cal3_projections.at(i)->GetMaximumBin();
+        //int maxBin_corr = h_cal_projections_corr.at(i)->GetMaximumBin();
+        xvals3[i] = (leadingBins.at(i).first + (leadingBins.at(i).second - leadingBins.at(i).first)/2.)*binToMev;
+        //xvals_corr[i] = (leadingBins.at(i).first + (leadingBins.at(i).second - leadingBins.at(i).first)/2.)*binToMev;
+        //xerrs3[i] = (leadingBins.at(i).second - leadingBins.at(i).first)/2.*binToMev;
+        yvals3[i] = h_cal3_projections.at(i)->GetXaxis()->GetBinCenter(maxBin);
+        //yvals_corr[i] = h_cal_projections_corr.at(i)->GetXaxis()->GetBinCenter(maxBin_corr);
+
     }
      
     /////////////////////////////////////////////////////////
@@ -100,7 +122,7 @@ void doCalibration() {
     h_cal->Draw("colz");
 
     // y = x line, for comparison
-    TF1 *f1 = new TF1("f", "x", 0, 0.5);
+    TF1 *f1 = new TF1("f1", "x", 0, 0.5);
     f1->SetLineColor(kBlack);
     f1->Draw("same");
 
@@ -202,6 +224,39 @@ void doCalibration() {
     f1->Draw("same");
 
     c4->SaveAs("plot_finalCal_subleading_corr.png", "PNG");
+
+    // Couldn't get invariant mass histos to write properly. So, here's
+    // the explicit command which works for some reason
+    h_invar->Write();
+    h_invar_corr->Write();
+
+    TCanvas *c5 = new TCanvas("c5", "c5", 1000, 700);
+    c5->cd();
+    gStyle->SetOptStat(0);
+
+    // Drawing options
+    // Set minimum < 0 so that 0 bins aren't white (which looks bad)
+    h_cal3->SetMinimum(-1e-7);
+    h_cal3->GetXaxis()->SetTitle("True Energy [GeV]");
+    h_cal3->GetYaxis()->SetTitle("Reconstructed Energy [GeV]");
+    h_cal3->SetTitle("Both Photons");
+    h_cal3->Draw("colz");
+
+    f1->Draw("same");
+
+    // Fit line
+    TF1 *fit3 = new TF1("fit3", "pol1", 0.05, h_cal3->GetNbinsX() );
+    fit->SetLineColor(kPink+9);
+
+    TGraphErrors *g3 = new TGraphErrors(leadingBins.size(), xvals3, yvals3, xerrs, yerrs);
+    g3->SetMarkerStyle(23);
+    g3->SetMarkerSize(1.5);
+    g3->SetLineColor(kPink+9);
+    g3->SetMarkerColor(kPink+9);
+    g3->Fit("fit3", "R");
+    g3->Draw("ep same");
+
+    c5->SaveAs("plot_finalCal_both.png", "PNG");
 
     fout->Write();
     fout->Close();
