@@ -21,6 +21,7 @@ int main(int const argc, char * argv[]) {
 		{"flash", 		required_argument, 	0, 'f'},
 		{"input", 		required_argument, 	0, 'i'},
 		{"output", 		required_argument, 	0, 'o'},
+		{"help", 		no_argument, 	0, 'h'},
 		{0,			no_argument, 		0,  0}
 	};
 
@@ -32,7 +33,7 @@ int main(int const argc, char * argv[]) {
 	int iarg = 0; opterr=1; int index;
 	while(iarg != -1)
 	{
-		iarg = getopt_long(argc,argv, "o:f:?:i:", longopts, &index);
+		iarg = getopt_long(argc,argv, "o:f:?:i:h", longopts, &index);
 
 		switch(iarg)
 		{
@@ -65,10 +66,10 @@ int main(int const argc, char * argv[]) {
 			case 'h':
 				std::cout<<"Allowed arguments:"<<std::endl;
 				std::cout<<"\t-i\t--input\t\tInput File"<<std::endl;
-				std::cout<<"\t-i\t--output\t\tOutput Directory"<<std::endl;
+				std::cout<<"\t-o\t--output\t\tOutput Directory"<<std::endl;
 				std::cout<<"\t-f\t--flash\t\tWhat flash timings"<<std::endl;
 				std::cout<<"\t\t\t\t Options are:"<<std::endl;
-				std::cout<<"\t\t\t\t MC: 3.10 ->  4.90"<<std::endl;
+				std::cout<<"\t\t\t\t MC: 3.10 ->  4.90 [Default]"<<std::endl;
 				std::cout<<"\t\t\t\t Data: 3.20 -> 5.00"<<std::endl;
 				std::cout<<"\t\t\t\t BNBext:3.60 -> 5.40 "<<std::endl;
 				std::cout<<"\t\t\t\t Overlay: 3.50 ->5.30 "<<std::endl;
