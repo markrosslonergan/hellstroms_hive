@@ -168,7 +168,7 @@ int main (int argc, char *argv[]){
     bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(45,0,1)");
 
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-    std::string true_signal = "true_shower_origin[0]==1";
+    std::string true_signal = "((true_shower_origin[0]==1&&abs(true_nuvertz-true_track_startz[0])+abs(true_nuverty-true_track_starty[0])+abs(true_nuvertx-true_track_startx[0])< 1)&&sqrt(pow(reco_shower_startx[0]-reco_track_startx[0],2)+pow(reco_shower_starty[0]-reco_track_starty[0],2)+pow(reco_shower_startz[0]-reco_track_startz[0],2))<2)";
     std::string true_bkg    = true_signal;
     std::string num_track_cut ;
 
@@ -188,7 +188,7 @@ int main (int argc, char *argv[]){
     if(mode_option == "vars" || mode_option == "var" || mode_option == "train") vec_precuts.erase(vec_precuts.begin());
 
     std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
-    std::string signal_definition = "(((nu_pdg == 12 && lep_pdg == 11)||(nu_pdg == -12 && lep_pdg == -11))&&true_shower_pdg == 11&&abs(true_nuvertz-true_track_startz[0])+abs(true_nuverty-true_track_starty[0])+abs(true_nuvertx-true_track_startx[0])< 1)&&abs(true_shower_parent_pdg[0])!=13";
+    std::string signal_definition = "(((nu_pdg == 12 && lep_pdg == 11)||(nu_pdg == -12 && lep_pdg == -11))&&true_shower_pdg == 11&&abs(true_shower_parent_pdg[0])!=13)";
     std::string background_definition = "(nu_pdg != 12 && nu_pdg != -12)";
     
 
@@ -197,10 +197,10 @@ int main (int argc, char *argv[]){
     //***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
     //***************************************************************************************************/
     bdt_flow signal_pure_flow(base_cuts, 	signal_definition +"&&"+ true_signal, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-    bdt_flow signal_flow(base_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow signal_flow(base_cuts,		signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow cosmic_flow(base_cuts,		"1", 					vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-    bdt_flow bkg_pure_flow(base_cuts,	background_definition+"&&"+ true_bkg ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow bkg_pure_flow(base_cuts,		background_definition+"&&"+ true_bkg ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
     bdt_flow intrinsic_flow = cosmic_flow;
  
@@ -213,12 +213,12 @@ int main (int argc, char *argv[]){
    // bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltaradcosmics_fresh_v4.1.root", "LEENue", "hist","",  kCyan-3, signal_flow);
     bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
     bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
-    bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
+    bdt_file *intime =	    new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
     //Data files
     bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_fresh_v4.1.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
-    bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_fresh_v4.1.root",	"BNBext",	"E1p","",  kBlack, data_flow);
+    bdt_file *bnbext	=   new bdt_file(dir, "vertexed_bnbext_fresh_v4.1.root",	"BNBext",	"E1p","",  kBlack, data_flow);
 
-    bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, intrinsic_flow);
+    bdt_file *intrinsics =  new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, intrinsic_flow);
     
     //bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
     //bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
@@ -345,13 +345,11 @@ int main (int argc, char *argv[]){
 	}
 	else{
 	    std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-	    sleep(2);
+//	    sleep(2);
 	}
 
 	std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
 	//std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
-	std::vector<std::string> recomc_names = {"track_pdg>11", "track_pdg<11", "shower_pdg>11","shower_pdg<11","single_photon or delta_rad","NC events","track parent_pdg>12","track_parent_pdg<12", "all_pass"};
-
 	std::string  nue = "abs(true_shower_pdg[0]) ==11 && abs(nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)";
 	std::string  michel = "abs(true_shower_pdg[0]) ==11 && abs(true_shower_parent_pdg[0])==13";
 /*	std::vector<std::string> recomc_cuts = {
@@ -366,18 +364,63 @@ int main (int argc, char *argv[]){
 	    "true_shower_origin[0] ==2 && abs(true_shower_parent_pdg[0])!=13"
 	};
 */
-	std::vector<std::string> recomc_cuts = {
-	    "abs(true_track_pdg[0])> 11",
-	    "abs(true_track_pdg[0])< 11",
-	    "abs(true_shower_pdg[0])> 11",
-	    "abs(true_shower_pdg[0])< 11",
-	    "is_single_photon||is_delta_rad",
-	    "ccnc==1",
-	    "abs(true_track_parent_pdg[0])>12",
-	    "abs(true_track_parent_pdg[0])<12",
-	    "1",
-	    };
+    
+    std::vector<std::string> recomc_names = {
+	    "1p0e",
+	    "np0e",
+	    "1muon",
+	    //"CC #pi^{0} #rightarrow #gamma (cosmic)",
+	    "Track (parent): #pi^{+}", 
+	    "Shower: #mu^{-} ", 
+	    "Shower: proton",
+	    "Shower: #gamma",
+	    "Shower (parent): #mu^{-}",
+	    "Shower (p): CC #pi^{0}",
+	    "Shower (p): proton",
+	    // "NC events", 
+	};
 
+	std::vector<std::string> recomc_cuts = {
+	    "exiting_proton_number==1 && exiting_electron_number==0",
+	    "exiting_proton_number>1 && exiting_electron_number==0",
+	    "exiting_muon_number>0",
+	    //"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==2 &&ccnc==0",
+	    "true_track_parent_pdg[0]==2212",
+	    "true_shower_pdg[0]== 2212",
+	    "true_shower_pdg[0]== 22",
+	    "true_shower_parent_pdg[0]==13",
+	    "true_shower_parent_pdg[0]==111&&ccnc==0",//sth>2200
+	    "true_shower_parent_pdg[0]==2212",
+	    // "ccnc==1",
+	};
+
+/*
+	std::vector<std::string> recomc_names = {
+	    "Track: proton", 
+	    "Track (parent): proton",
+	    "Track (parent): #pi^{+}", 
+	    "Shower: #mu^{-} ", 
+	    "Shower: proton",
+	    "Shower: #gamma",
+	    "Shower (parent): #mu^{-}",
+	    "Shower (par.): CC #pi^{0}",
+	    "Shower (par.): proton",
+	    // "NC events", 
+	};
+
+	std::vector<std::string> recomc_cuts = {
+	    "true_track_pdg[0]== 2212",
+	    "true_track_parent_pdg[0]==2212",
+	    "true_track_parent_pdg[0]==211",
+	    "true_shower_pdg[0]== 13 ",
+	    "true_shower_pdg[0]== 2212",
+	    "true_shower_pdg[0]== 22",
+	    "true_shower_parent_pdg[0]==13",
+	    "true_shower_parent_pdg[0]==111&&ccnc==0",//sth>2200
+	    "true_shower_parent_pdg[0]==2212",
+	    // "ccnc==1",
+	};
+*/
 	bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
 	TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");

@@ -99,10 +99,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			double rmin = 0;
 			double rmax = 2.99;
 			int data_rebin = 1;
-			if(s==0 || s == 1){
+		/*	if(s==0 || s == 1){
 				rmin=0.6; rmax = 1.399;
 			}else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=4;};
-
+		*/
 
 			double max_modifier = 1.4;
 			double min_val = 0.01;

@@ -176,8 +176,6 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 
 */
 
-
-
 	std::vector<TH1*> to_sort;
 	std::vector<double> integral_sorter;
 
@@ -328,6 +326,20 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);
 			tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);tsum->Draw("hist same");
 			for(auto &f: this->stack){
+			    double Nevents = f->GetEntries()*(plot_pot/f->pot )*f->scale_data;
+				if(s==0){
+				    f->numberofevents_ref = Nevents;
+				    std::cout<<"MIAO"<<std::endl;
+				}
+				double efficiency = Nevents/f->numberofevents_ref*100;
+
+				cobs->cd(s);
+				auto h1 = new TH1F(("tmp_"+std::to_string(s)+"_"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
+				h1->SetFillStyle(f->fillstyle);
+				h1->SetFillColor(f->col);
+				h1->SetLineColor(kBlack);
+				l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+" ("+to_string_prec(efficiency,2)+"%)}").c_str(),"f");
+/*
 				double Nevents = f->GetEntries()*(plot_pot/f->pot )*f->scale_data;
 
 				cobs->cd(s);
@@ -336,7 +348,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 				h1->SetFillColor(f->col);
 				h1->SetLineColor(kBlack);
 				l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
-			}
+*/			}
 			l3->Draw();
 			l3->SetLineColor(kWhite);
 			l3->SetLineWidth(0);
@@ -348,13 +360,13 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			latexbdt2.SetTextSize(0.05);
 			latexbdt2.SetTextAlign(13);  //align at top
 			latexbdt2.SetNDC();
-			latexbdt2.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+			latexbdt2.DrawLatex(.66,.70,this->stack.at(0)->topo_name.c_str());
 			TLatex pottenbdt2;
 			pottenbdt2.SetTextSize(0.05);
 			pottenbdt2.SetTextAlign(13);  //align at top
 			pottenbdt2.SetNDC();
 			std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-			pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
+			pottenbdt2.DrawLatex(.66,.65, pot_draw_bdt2.c_str());
 
 			TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation Preliminary");
 			tbdt2->Draw();
@@ -372,13 +384,8 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			delete tsum;
 			delete l3;
 
-
-
 		}
 	}
-
-
-
 	return 0;
 }
 
@@ -387,7 +394,10 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 
 
 
+
 int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
+/*	std::cout<<"THIS LINE SHOULD NOT BE HERE, CHECKEHCK!!!!!"<<std::endl;
+
 	TCanvas *cobs = new TCanvas("","",1800,1600);
 	cobs->Divide(2,2,0.0025,0.0000001);
 	double plot_pot=6.6e20;
@@ -415,11 +425,11 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	t2->SetMarkerSize(0);
 	t3->SetMarkerSize(0);
 
-	/*		t0->SetLineWidth(1);
-			t1->SetLineWidth(0.075);
-			t2->SetLineWidth(0.05);
-			t3->SetLineWidth(0.025);
-			*/	
+	//		t0->SetLineWidth(1);
+	//		t1->SetLineWidth(0.075);
+	//		t2->SetLineWidth(0.05);
+	//		t3->SetLineWidth(0.025);
+	//			
 
 	std::cout<<"1"<<std::endl;
 
@@ -471,8 +481,6 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	titsel->Draw();
 
 
-
-
 	std::cout<<"2"<<std::endl;
 	cobs->cd(2);
 	s1->Draw("hist");
@@ -515,18 +523,12 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenpre.DrawLatex(.66,.65, pot_draw_pre.c_str());
 
-
-
-
 	TText *tpre = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation Preliminary");
 	tpre->Draw();
 
 	TText *titpre = drawPrelim(0.89, 0.91, 0.035, "Pre-Selection Cuts");
 	titpre->SetTextAlign(30);
 	titpre->Draw();
-
-
-
 
 
 	std::cout<<"3"<<std::endl;
@@ -654,6 +656,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	delete t0; delete t1; delete t2; delete t3;	
 
 	return 0;
+*/
 }
 
 
@@ -868,4 +871,5 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	cobs->SaveAs(("stack/"+this->name+ "_response_"+var.safe_unit+".pdf").c_str(),"pdf");
 
 	return 0;
+	
 }
