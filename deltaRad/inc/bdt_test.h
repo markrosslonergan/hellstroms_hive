@@ -39,6 +39,10 @@ class bdt_test{
 
 		bdt_test(bdt_file* filein, std::vector<bdt_variable> varin, std::string tagin) : file(filein), vars(varin), tag(tagin) {};
 	
+        
+    int    CompareVars(std::vector<bdt_file*> files);
+
+
 		int RunTests();
 };
 

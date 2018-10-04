@@ -1,5 +1,45 @@
 #include "bdt_test.h"
 
+
+int bdt_test::CompareVars(std::vector<bdt_file*> comp_files){
+
+
+        file->setStageEntryList(1);
+        for(int i=0; i< comp_files.size(); i++){
+            comp_files[i]->setStageEntryList(1);
+        }
+
+
+        for( auto &v : vars){
+            std::cout<<"On variable "<<v.unit<<std::endl;
+
+            TCanvas *c = new TCanvas((v.safe_unit+file->tag).c_str(),(v.safe_unit+file->tag).c_str(),1200,1200);
+            TPad*p =(TPad*)c->cd();
+            p->SetLogy();
+              
+            TH1* tmp = (TH1*)file->getTH1(v, "1",  (file->tag+"_"+v.safe_unit), 6.6e20);
+            c->cd();
+            tmp->SetLineStyle(1);
+            tmp->DrawCopy("hist");
+
+            for(int i=0; i<comp_files.size(); i++){
+                TH1* tmp2 = (TH1*)comp_files[i]->getTH1(v, "1",  (comp_files[i]->tag+"_"+v.safe_unit), 6.6e20);
+                c->cd();
+                tmp2->SetLineStyle(2);
+                tmp2->DrawCopy("hist same");
+            }
+            
+            c->SaveAs(("test_compare_"+v.safe_name+".pdf").c_str(),"pdf");
+        }
+
+
+
+
+    return 0;
+
+}
+
+
 int bdt_test::RunTests(){
 
     TTreeFormula * tf_topological = new TTreeFormula("tf_top", file->flow.topological_cuts.c_str(),file->tvertex);

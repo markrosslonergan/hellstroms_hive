@@ -206,7 +206,7 @@ int main (int argc, char *argv[]){
 	//bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
 
 
-	bdt_file * bnb_withpi0 = new bdt_file(dir,"vertexed_bnbcosmics_fresh_pi0mom_v4.2.root", "BNBCosmicsPi0","hist","",kBlue-4,bkg_flow);
+	bdt_file * bnb_withpi0 = new bdt_file(dir,"vertexed_bnbcosmics_fresh_pi0mom_v4.2.root", "BNBCosmicsPi0","hist","",kRed-4,bkg_flow);
 
 	bdt_file *bnb_overlay = new bdt_file(dir,"vertexed_bnboverlay_fresh_v4.1.root","BNBoverlay","hist","",kBlue-6, bkg_flow);
 	bdt_file *dirt = new bdt_file(dir,"vertexed_dirt_fresh_v4.1.root","Dirt","hist","",kOrange-6, data_flow);
@@ -305,10 +305,16 @@ int main (int argc, char *argv[]){
 		return 0;
 
 	}else if(mode_option == "app"){
-
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
-		if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
-		if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
+        
+			if(number != -1){
+	    		if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
+	        	if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
+			}else{
+                if(run_cosmic) bdt_app(cosmic_bdt_info, {bdt_files[number]}, vars, TMVAmethods);
+	        	if(run_bnb)    bdt_app(bnb_bdt_info, {bdt_files[number]}, vars, TMVAmethods);
+			}
+
 		return 0;
 	}
 	else if(mode_option == "response"){
@@ -780,10 +786,11 @@ int main (int argc, char *argv[]){
 	}else if( mode_option =="test"){
 
 
-        //bdt_test mytest(bnb_cosmics, vars, "test");
-        //mytest.RunTests();
+        bdt_test mytest(bnb_cosmics, vars, "test");
+        mytest.CompareVars({bnb_withpi0});
+        //mytest.RunTests()
 
-
+        return 0;
 
 		bnb_withpi0->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
 	    //signal_cosmics->writeStageFriendTree("stage_friend2.root", fcoscut, fbnbcut);

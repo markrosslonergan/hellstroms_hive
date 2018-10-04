@@ -29,9 +29,14 @@ include(${ROOT_USE_FILE})
 message(STATUS "OUTPUT of CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 
+
+
 include_directories("${PROJECT_BINARY_DIR}")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/GeoAlgo/)
+
+
+add_subdirectory(libio)
 
 add_subdirectory(src)
 add_subdirectory(GeoAlgo)
