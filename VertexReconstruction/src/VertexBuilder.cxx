@@ -14,7 +14,7 @@ VertexBuilder::VertexBuilder() :
   fcpoa_trackend_prox(-1),
   fdetos(nullptr),
   fshower_score(false),
-  fverbose(false) {}
+  fverbose(true) {}
 
 
 bool VertexBuilder::CheckSetVariables() {
@@ -86,14 +86,13 @@ void VertexBuilder::AssociateTracks(ParticleAssociations & pas) {
     std::cout << "Track pn size: " << pn.size() << "\n";
 
     if(pn.size()) {
-
       size_t last_id = pn.end()->first;
       for(auto p : pn) {
 	if(last_id != p.first) {
 	  std::cout << std::endl << p.first << " "
 		    << *p.second;
 	}
-	else std::cout << " " << *p.second;
+	else std::cout <<std::endl<<" " << *p.second;
 	std::cout << fdetos->GetTrack(p.first).ftrajectory.Length();
 	last_id = p.first;
       }
@@ -914,6 +913,7 @@ void VertexBuilder::AddLoneShowers(ParticleAssociations & pas) {
 
 
 void VertexBuilder::Run(ParticleAssociations & pas) {
+  std::cout<<" VertexBuilder::Run() || Beginning!"<<std::endl;
 
   if(!CheckSetVariables()) return;
 

@@ -84,7 +84,7 @@ void Processor::Run(int const entry) {
   
     for(int i = 0; i < fstorage.fnumber_of_events; ++i) {
 
-      if(i % 100 == 0) std::cout << "Entry: " << i << "\n";      
+      if(i % 1 == 0) std::cout << "Entry: " << i << "\n";      
       RunEvent(i);
       
     }
