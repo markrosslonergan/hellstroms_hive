@@ -37,23 +37,18 @@
 // Define bin ranges for projection histograms
 // Each bin is 10 MeV, so the energy range will be bin_num/10
 // Ex: To project between 100 and 150 MeV, use (10, 15) as bin numbers
-std::vector<std::pair<int,int> > leadingProjBins() {
+std::vector<std::pair<int,int> > projBins() {
     std::vector<std::pair<int,int> > ranges;
-    ranges.push_back(std::make_pair(5 , 10) );
-    ranges.push_back(std::make_pair(10, 15) );
-    ranges.push_back(std::make_pair(15, 20) );
-    ranges.push_back(std::make_pair(20, 25) );
-    ranges.push_back(std::make_pair(25, 30) );
-    ranges.push_back(std::make_pair(30, 40) );
+    //ranges.push_back(std::make_pair(3, 5) );
+    ranges.push_back(std::make_pair(3, 4) );
+    ranges.push_back(std::make_pair(5, 6) );
+    ranges.push_back(std::make_pair(7, 9) );
+    ranges.push_back(std::make_pair(10, 14) );
+    ranges.push_back(std::make_pair(15, 19) );
+    ranges.push_back(std::make_pair(20, 24) );
+    ranges.push_back(std::make_pair(25, 29) );
+    ranges.push_back(std::make_pair(30, 39) );
     ranges.push_back(std::make_pair(40, 50) );
     return ranges;
 }
 
-std::vector<std::pair<int,int> > subleadingProjBins() {
-    std::vector<std::pair<int,int> > subranges;
-    subranges.push_back(std::make_pair(3 , 6) );
-    subranges.push_back(std::make_pair(6, 9) );
-    subranges.push_back(std::make_pair(9, 12) );
-    subranges.push_back(std::make_pair(12, 15) );
-    return subranges;
-}

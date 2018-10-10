@@ -151,7 +151,8 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 		//std::string reco_shower_momentum = "(-0.017962 + 1.3719*reco_shower_helper_energy[0])"; 
 
-        std::string cm_angle = "(abs(reco_shower_helper_energy[0] - reco_shower_helper_energy[1])/("+p_pi+"))";
+        std::string cm_angle = "(fabs(reco_shower_helper_energy[0] - reco_shower_helper_energy[1])/("+p_pi+"))";
+        std::string asymm = "(fabs(reco_shower_helper_energy[0] - reco_shower_helper_energy[1])/(reco_shower_helper_energy[0] + reco_shower_helper_energy[1]))";
 
         //********************************Pre-selection cuts*************************************************//
 		std::string new_precuts;
@@ -184,6 +185,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         //all_vars.push_back(bdt_variable(p_pi_y, "(50, 0, 1.5)", "Reconstructed #pi^{0} y-Momentum", true, "d"));
         all_vars.push_back(bdt_variable(p_pi_z, "(50, 0, 1.5)", "Reconstructed #pi^{0} z-Momentum", true, "d"));
         all_vars.push_back(bdt_variable(cm_angle, "(25, 0, 1)", "Reconstructed Cosine #gamma-#pi Angle (CM) [Radians]", false, "d"));
+        all_vars.push_back(bdt_variable(asymm, "(25, 0, 1)", "Reconstructed Shower Energy Asymmetry", true, "d"));
 		all_vars.push_back(bdt_variable("reco_shower_dist_to_closest_flashzcenter[0]","(48,0,520)","Distance from Leading Shower to Flashcenter [cm]",false,"d"));//6
 
 		all_vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(48,0,120)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));//7

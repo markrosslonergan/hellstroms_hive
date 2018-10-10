@@ -210,7 +210,7 @@ int main (int argc, char *argv[]){
 	bdt_file *signal_cosmics = new bdt_file(mydir,"vertexed_ncpi0_PiMom_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(mydir, "vertexed_BNBCosmics_PiMom_v4.1.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(mydir, "vertexed_BNBCosmics_PiMom_v4.1.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
-	bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
+	bdt_file *intime = new bdt_file(mydir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//Data files
 	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_fresh_v4.1.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
 	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_fresh_v4.1.root",	"BNBext",	"E1p","",  kBlack, data_flow);
@@ -249,7 +249,7 @@ int main (int argc, char *argv[]){
 		for(auto &f: bdt_files){
 			addPreFriends(f,"track");
 			addPreFriends(f,"pi0");
-			addPreFriends(f,"pi0Boost");
+			//addPreFriends(f,"pi0Boost");
 			addPreFriends(f,"shower");
             addPreFriends(f, "stage_cuts");
 			if(f->tag != "Data5e19" && f->tag != "BNBext") addPreFriends(f,"bnbcorrection");

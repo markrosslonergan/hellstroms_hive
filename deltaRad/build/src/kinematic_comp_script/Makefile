@@ -12,7 +12,7 @@ LD=g++
 DEBUGFLAGS= -O0 -ggdb -D _DEBUG
 
 # Make it easier to add targets...see below
-TARGETNAMES=kinematic_comp draw_histos
+TARGETNAMES=kinematic_comp draw_histos workaround
 
 # If using class objects, modify and uncomment the following line
 # Assuming .h and .cxx are called histogram_functions

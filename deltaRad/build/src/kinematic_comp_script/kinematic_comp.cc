@@ -18,71 +18,54 @@ void kinematic_comp() {
     TFile *fbkg = new TFile(sampledir+"vertexed_BNBCosmics_PiMom_v4.1.root", "READ");
     TTree *tbkg = (TTree*)fbkg->Get("vertex_tree");
     // Friend tree to get Mark's selection
-    TFile *fcut_deltarad = new TFile("../BNBCosmicsPi0_stage_friend.root", "READ");
-    TTree *tcut_deltarad = (TTree*)fcut_deltarad->Get("stage_cuts");
+    TFile *fcut_deltarad = new TFile("quick_stage.root", "READ");
+    TTree *tcut_deltarad = (TTree*)fcut_deltarad->Get("quick_stage");
     tbkg->AddFriend(tcut_deltarad);
 
     // Declare variables from trees. "sig" denotes my NC pi0 signal file,
     // "bkg" denotes Mark's NC pi0-tagged backgrounds
     // Large number here (25) to avoid "stack smashing"
     //std::size_t const N = 100;
-    int passed_topological_selection_bkg, passed_precuts_bkg, passed_cosmic_bdt_cut_bkg, passed_bnb_bdt_cut_bkg;
+    //int passed_topological_selection_bkg, passed_precuts_bkg, passed_cosmic_bdt_cut_bkg, passed_bnb_bdt_cut_bkg;
     int passed_topological_selection_sig, passed_precuts_sig, passed_cosmic_bdt_cut_sig, passed_bnb_bdt_cut_sig;
     int exiting_pi0_number;
-    double weight_bkg, weight_sig;
-    //double reco_shower_helper_energy_bkg[N] = {0.};
-    //double reco_shower_dedx_plane0_bkg[N] = {0.};
-    //double reco_shower_length_bkg[N] = {0.};
+    int is_delta_rad;
+    int quick_pass;
+    double weight_bkg = 1, weight_sig;
     //double exiting_pi0_px_bkg[N] = {0.};
     //double exiting_pi0_py_bkg[N] = {0.};
     //double exiting_pi0_pz_bkg[N] = {0.};
     std::vector<double> *exiting_pi0_px_bkg = 0;
     std::vector<double> *exiting_pi0_py_bkg = 0;
     std::vector<double> *exiting_pi0_pz_bkg = 0;
-    //exiting_pi0_px_bkg->reserve(N) = 0;
-    //exiting_pi0_py_bkg->reserve(N) = 0;
-    //exiting_pi0_pz_bkg->reserve(N) = 0;
     //double reco_shower_helper_energy_sig[N] = {0.} = 0;
     //double reco_shower_dedx_plane0_sig[N] = {0.} = 0;
     //double reco_shower_length_sig[N] = {0.} = 0;
     std::vector<double> *exiting_pi0_px_sig = 0;
     std::vector<double> *exiting_pi0_py_sig = 0;
     std::vector<double> *exiting_pi0_pz_sig = 0;
-    //exiting_pi0_px_sig->reserve(N);
-    //exiting_pi0_py_sig->reserve(N);
-    //exiting_pi0_pz_sig->reserve(N);
     //double exiting_pi0_px_sig[N] = {0.};
     //double exiting_pi0_py_sig[N] = {0.};
     //double exiting_pi0_pz_sig[N] = {0.};
 
     // Set branches to be used
     // Signal and background files use the same variable names, so be careful!
-    //TBranch *breco_shower_energy_bkg = 0;
-    //TBranch *breco_shower_dedx_plane0_bkg = 0;
-    //TBranch *breco_shower_length_bkg = 0;
     TBranch *bexiting_pi0_px_bkg;
     TBranch *bexiting_pi0_py_bkg;
     TBranch *bexiting_pi0_pz_bkg;
-    //TBranch *breco_shower_energy_sig = 0;
-    //TBranch *breco_shower_dedx_plane0_sig = 0;
-    //TBranch *breco_shower_length_sig = 0;
     TBranch *bexiting_pi0_px_sig;
     TBranch *bexiting_pi0_py_sig;
     TBranch *bexiting_pi0_pz_sig;
 
     tbkg->SetBranchAddress("exiting_pi0_number", &exiting_pi0_number);
-    //tbkg->SetBranchAddress("reco_shower_dedx_plane0", &reco_shower_dedx_plane0_bkg, &breco_shower_dedx_plane0_bkg);
-    //tbkg->SetBranchAddress("reco_shower_helper_energy", &reco_shower_helper_energy_bkg, &breco_shower_energy_bkg);
-    //tbkg->SetBranchAddress("reco_shower_length", &reco_shower_length_bkg, &breco_shower_length_bkg);
     tbkg->SetBranchAddress("exiting_pi0_px", &exiting_pi0_px_bkg, &bexiting_pi0_px_bkg);
     tbkg->SetBranchAddress("exiting_pi0_py", &exiting_pi0_py_bkg, &bexiting_pi0_py_bkg);
     tbkg->SetBranchAddress("exiting_pi0_pz", &exiting_pi0_pz_bkg, &bexiting_pi0_pz_bkg);
-    tcut_deltarad->SetBranchAddress("passed_bnb_bdt_cut", &passed_bnb_bdt_cut_bkg);
-    tcut_deltarad->SetBranchAddress("weight", &weight_bkg);
+    tbkg->SetBranchAddress("is_delta_rad", &is_delta_rad);
+    //tcut_deltarad->SetBranchAddress("passed_bnb_bdt_cut", &passed_bnb_bdt_cut_bkg);
+    tcut_deltarad->SetBranchAddress("quick_pass", &quick_pass);
+    //tcut_deltarad->SetBranchAddress("weight", &weight_bkg);
 
-    //tsig->SetBranchAddress("reco_shower_dedx_plane0", &reco_shower_dedx_plane0_sig, &breco_shower_dedx_plane0_sig);
-    //tsig->SetBranchAddress("reco_shower_helper_energy", &reco_shower_helper_energy_sig, &breco_shower_energy_sig);
-    //tsig->SetBranchAddress("reco_shower_length", &reco_shower_length_sig, &breco_shower_length_sig);
     tsig->SetBranchAddress("exiting_pi0_px", &exiting_pi0_px_sig, &bexiting_pi0_px_sig);
     tsig->SetBranchAddress("exiting_pi0_py", &exiting_pi0_py_sig, &bexiting_pi0_py_sig);
     tsig->SetBranchAddress("exiting_pi0_pz", &exiting_pi0_pz_sig, &bexiting_pi0_pz_sig);
@@ -99,14 +82,20 @@ void kinematic_comp() {
     TH1D *h_exiting_pi0_py_sig = new TH1D("h_exiting_pi0_py_sig", "h_exiting_pi0_py_sig", 50, 0, 1.5); 
     TH1D *h_exiting_pi0_pz_sig = new TH1D("h_exiting_pi0_pz_sig", "h_exiting_pi0_pz_sig", 50, 0, 1.5); 
     TH1D *h_exiting_pi0_ptot_sig = new TH1D("h_exiting_pi0_ptot_sig", "h_exiting_pi0_ptot_sig", 50, 0, 1.5); 
-    TH2D *h_PvsPZ_sig = new TH2D("h_PvsPZ_sig", "h_PvsPZ_sig", 50, 0, 1.5, 50, 0, 1.5);
-    TH2D *h_PvsPZ_bkg = new TH2D("h_PvsPZ_bkg", "h_PvsPZ_bkg", 50, 0, 1.5, 50, 0, 1.5);
+    TH2D *h_PvsPZ_sig = new TH2D("h_PvsPZ_sig", "h_PvsPZ_sig", 50, 0, 1., 50, 0, 1.);
+    TH2D *h_PvsPZ_bkg = new TH2D("h_PvsPZ_bkg", "h_PvsPZ_bkg", 50, 0, 1., 50, 0, 1.);
+    TH2D *h_PvsPX_sig = new TH2D("h_PvsPX_sig", "h_PvsPX_sig", 50, 0, 1., 50, 0, 1.);
+    TH2D *h_PvsPX_bkg = new TH2D("h_PvsPX_bkg", "h_PvsPX_bkg", 50, 0, 1., 50, 0, 1.);
+    TH2D *h_PvsPY_sig = new TH2D("h_PvsPY_sig", "h_PvsPY_sig", 50, 0, 1., 50, 0, 1.);
+    TH2D *h_PvsPY_bkg = new TH2D("h_PvsPY_bkg", "h_PvsPY_bkg", 50, 0, 1., 50, 0, 1.);
 
     int passed_sig = 0;
     int passed_bkg = 0;
     int passed_deltaRad = 0;
-    int passed_pi0_cut = 0;
+    int passed_bkg_pi0_cut = 0;
+    int passed_isDelta = 0;
     int passed_ncpi0 = 0;
+    int passed_bkg_notDeltaRad = 0;
     double ptot = 0;
     // Signal loop
     for (int i = 0; i < tsig->GetEntries(); i++) {
@@ -120,6 +109,8 @@ void kinematic_comp() {
                      exiting_pi0_pz_sig->at(0)*exiting_pi0_pz_sig->at(0)
                );
         h_PvsPZ_sig->Fill(ptot, exiting_pi0_pz_sig->at(0), weight_sig);
+        h_PvsPX_sig->Fill(ptot, exiting_pi0_px_sig->at(0), weight_sig);
+        h_PvsPY_sig->Fill(ptot, exiting_pi0_py_sig->at(0), weight_sig);
 
         h_exiting_pi0_px_sig->Fill(exiting_pi0_px_sig->at(0), weight_sig);
         h_exiting_pi0_py_sig->Fill(exiting_pi0_py_sig->at(0), weight_sig);
@@ -133,26 +124,41 @@ void kinematic_comp() {
     // and (c) isn't a true delta rad. Should get Mark's NC pi0 backgrounds
     for (int j = 0; j < tbkg->GetEntries(); j++) {
         tbkg->GetEntry(j);
-        if (passed_bnb_bdt_cut_bkg != 1) continue;
+        if (quick_pass != 1) continue;
         passed_deltaRad++;
 
-        if (exiting_pi0_number != 1) continue;
-        passed_pi0_cut++;
+        if (exiting_pi0_number < 1) continue;
+        passed_bkg_pi0_cut++;
+
+        if (is_delta_rad == 1) continue;
+        passed_isDelta++;
 
         ptot = sqrt( exiting_pi0_px_bkg->at(0)*exiting_pi0_px_bkg->at(0) +
                      exiting_pi0_py_bkg->at(0)*exiting_pi0_py_bkg->at(0) +
                      exiting_pi0_pz_bkg->at(0)*exiting_pi0_pz_bkg->at(0)
                );
         h_PvsPZ_bkg->Fill(ptot, exiting_pi0_pz_bkg->at(0), weight_bkg);
+        h_PvsPX_bkg->Fill(ptot, exiting_pi0_px_bkg->at(0), weight_bkg);
+        h_PvsPY_bkg->Fill(ptot, exiting_pi0_py_bkg->at(0), weight_bkg);
 
         h_exiting_pi0_px_bkg->Fill(exiting_pi0_px_bkg->at(0), weight_bkg);
         h_exiting_pi0_py_bkg->Fill(exiting_pi0_py_bkg->at(0), weight_bkg);
         h_exiting_pi0_pz_bkg->Fill(exiting_pi0_pz_bkg->at(0), weight_bkg);
         h_exiting_pi0_ptot_bkg->Fill(ptot, weight_bkg);
+
+        /*
+        h_PvsPZ_bkg->Fill(ptot, exiting_pi0_pz_bkg->at(0), weight_bkg);
+
+        h_exiting_pi0_px_bkg->Fill(exiting_pi0_px_bkg->at(0), weight_bkg);
+        h_exiting_pi0_py_bkg->Fill(exiting_pi0_py_bkg->at(0), weight_bkg);
+        h_exiting_pi0_pz_bkg->Fill(exiting_pi0_pz_bkg->at(0), weight_bkg);
+        h_exiting_pi0_ptot_bkg->Fill(ptot, weight_bkg);
+        */
  
     }
     cout << "Passes Mark's selection: " << passed_deltaRad << endl;
-    cout << "After pi0==1 cut: " << passed_pi0_cut << endl;
+    cout << "After pi0==1 cut: " << passed_bkg_pi0_cut << endl;
+    cout << "After !is_delta_rad cut: " << passed_isDelta << endl;
     cout << "----------------------" << endl;
     cout << "Passes my selection: " << passed_ncpi0 << endl;
 
