@@ -66,7 +66,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 		data_file->setStageEntryList(s);
 
-		if(true && s == 3){
+		if(true && s == 3){//print out event numbers that psss BDT
 			data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist");
 		}
 
@@ -89,10 +89,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 			cobs->cd();
+			//pad0top is the plot on the upper part of the canvas, while pad0bot is the bottom part.
 			TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
 
 			if(is_bdt_variable) pad0top->SetLogy();
-			pad0top->SetBottomMargin(0); // Upper and lower plot are joined
+			pad0top->SetBottomMargin(0.012); // Upper and lower plot are joined
 			pad0top->Draw();             // Draw the upper pad: pad2top
 			pad0top->cd();               // pad2top becomes the current pad
 
@@ -103,7 +104,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 				rmin=0.6; rmax = 1.399;
 			}else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=4;};
 		*/
-
 			double max_modifier = 1.4;
 			double min_val = 0.01;
 			if(is_bdt_variable) {
@@ -115,15 +115,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			d0->SetMarkerStyle(20);
 			d0->SetLineColor(kBlack);
 
-
-
 			stk->SetMaximum(tsum->GetMaximum()*1.4);
 			stk->SetMinimum(0.0001);
 			stk->Draw("hist");
 			stk->SetTitle(stage_names.at(s).c_str());
 			stk->GetXaxis()->SetTitle(var.unit.c_str());
 			stk->GetYaxis()->SetTitle("Verticies");
-			stk->GetYaxis()->SetTitleOffset(1.5);
+			stk->GetYaxis()->SetTitleOffset(1);//set the position of the title, shift left respected to y-axis with a positve value
 			stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
 			stk->SetMinimum(min_val);
 			tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
@@ -176,13 +174,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			//cobs->cd(k+1);	
 			cobs->cd();
 			TPad *pad0bot = new TPad(("padbot_"+stage_names.at(s)).c_str(),("padbot_"+stage_names.at(s)).c_str(), 0, 0.05, 1, 0.35);
-			pad0bot->SetTopMargin(0);
+			pad0bot->SetTopMargin(0);//some distance away from the plot on the upper cavans.
 			pad0bot->SetBottomMargin(0.351);
 			pad0bot->SetGridx(); // vertical grid
 			pad0bot->Draw();
 			pad0bot->cd();       // pad0bot becomes the current pad
-
-
 
 
 			//tsum->Rebin(data_rebin);
@@ -229,7 +225,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			ratpre->SetTitle("");
 
 
-
 			std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2) ;
 			TText *t = new TText(0.11,0.41,mean.c_str());
 			t->SetNDC();
@@ -247,18 +242,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			cobs->Write();
 			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
-
-
-
-			delete cobs;
+		/*	delete cobs;
 			delete stk;
 			delete tsum;
 			delete d0;
 			delete ratunit;
 			delete ratpre;
 			delete rat_denom;			
-
-
+*/
 		}
 	}
 
@@ -273,6 +264,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt){
+/*
 
 	//TCanvas *cobs = new TCanvas("","",1800,1600);
 	//cobs->Divide(2,2,0.0025,0.0000001);
@@ -533,5 +525,6 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 
 	return 0;
+*/
 }
 

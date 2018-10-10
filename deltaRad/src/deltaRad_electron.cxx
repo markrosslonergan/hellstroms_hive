@@ -266,13 +266,13 @@ int main (int argc, char *argv[]){
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
 
-    //Adding plot names
+    //Adding plot names, these apply to every plot.
     signal_pure->addPlotName("LEE #nu_{e}");
     signal_cosmics->addPlotName("LEE #nu_{e} w/ Corsika");
     bnb_pure->addPlotName("BNB Backgrounds");
     bnb_cosmics->addPlotName("BNB w/ Corsika");
     intime->addPlotName("Intime Corsika cosmics");
-    data5e19->addPlotName("4.8e19 POT Data");
+    data5e19->addPlotName("4.4e19 POT Data");
     bnbext->addPlotName("External BNB Data");
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -781,14 +781,6 @@ int main (int argc, char *argv[]){
 
 	std::cout<<"\\end{tabular}"<<std::endl;
 	std::cout<<"\\end{table}"<<std::endl;
-
-
-
-
-
-
-
-
 
 
 	//END********************************************

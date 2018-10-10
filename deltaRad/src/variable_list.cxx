@@ -217,7 +217,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 	if(analysis_tag == "electron1cosmic" ||analysis_tag == "electron1" || analysis_tag == "electron0cosmic"){//Cosmic variables
 
-	    all_vars.push_back(bdt_variable("3/3*(abs(reco_shower_diry+reco_track_diry))","(52,0,2)","Total Momentum (Track and Shower, Normalized) Aligned to y-direction", false, "d"));
+	    all_vars.push_back(bdt_variable("3/3*(abs(reco_shower_diry[0]+reco_track_diry[0]))","(52,0,2)","Total Momentum (Track and Shower, Normalized) Aligned to y-direction", false, "d"));
 
 	    all_vars.push_back(bdt_variable("4/4*("+ min_disx + ")","(52,-100,50)", "Distance of a Track Ahead of a Shower (x-direction)[cm]",true,"d"));
 
@@ -249,7 +249,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 	std::string E_range = "reco_shower_helpernew_energy[0]+reco_track_energy_new_legacy[0]+0.000511+0.9382723-(0.93957-0.04)";//0.004? not sure.
 	//muon killer N/A
-	all_vars.push_back(bdt_variable(QEE_p +"-"+ E_range, "(100,-2,2)", "QE_{#nu}^{QE}[p]-E^{range}", true, "d"));
+//	all_vars.push_back(bdt_variable(QEE_p +"-"+ E_range, "(100,-2,2)", "QE_{#nu}^{QE}[p]-E^{range}", true, "d"));
 	all_vars.push_back(bdt_variable(QEE_e +"-"+ E_range, "(100,-2,2)", "QE_{#nu}^{QE}[e]-E^{range}", true, "d"));
 	
 //----------------------------------------------------------->>Momentum<<-------------------------------------------------------------
@@ -277,7 +277,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
     	all_vars.push_back(bdt_variable("11/11*abs(track_info.reco_track_mean_dEdx[0]/reco_track_dirz[0]-reco_shower_dedxnew_plane2[0]/reco_shower_dirz[0])",
 	    "(52,0,10)", "Diff. of dE/dx on Track and Shower in Col. Plane (Directrion Corrected)[MeV/cm]",false,"d"));
 
-    	all_vars.push_back(bdt_variable("12/12*track_info.reco_track_mean_dEdx[0]/reco_track_dirz[0]","(52,0,10)", "dE/dx of Track in Collection Plane (Direction Corrected) [MeV/cm]",false,"d"));
+//    	all_vars.push_back(bdt_variable("12/12*track_info.reco_track_mean_dEdx[0]/reco_track_dirz[0]","(52,0,10)", "dE/dx of Track in Collection Plane (Direction Corrected) [MeV/cm]",false,"d"));
 	    
 //----------------------------------------------------------->>Length<<-------------------------------------------------------------
 	all_vars.push_back(bdt_variable("13/13*max(reco_track_displacement[0],reco_shower_length[0])","(52,0,350)","Maximum Displacement of Track or Shower [cm]", true,"d"));//note: muon is to be killed by evaluating the distance btw shower and track
