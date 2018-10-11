@@ -345,7 +345,7 @@ int main (int argc, char *argv[]){
 	}
 	else{
 	    std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-//	    sleep(2);
+	    sleep(2);
 	}
 
 	std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
