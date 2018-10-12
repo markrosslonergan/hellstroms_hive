@@ -222,6 +222,9 @@ void FillTreeVariables::SetupTreeBranches() {
     fvertex_tree->Branch("exiting_piplus_number", &exiting_piplus_number, "exiting_piplus_number/I");
     fvertex_tree->Branch("exiting_piminus_number", &exiting_piminus_number, "exiting_piminus_number/I");
     fvertex_tree->Branch("exiting_pi0_number", &exiting_pi0_number, "exiting_pi0_number/I");
+    fvertex_tree->Branch("exiting_pi0_px", &exiting_pi0_px);
+    fvertex_tree->Branch("exiting_pi0_py", &exiting_pi0_py);
+    fvertex_tree->Branch("exiting_pi0_pz", &exiting_pi0_pz);
     fvertex_tree->Branch("total_exiting_particles", &total_exiting_particles, "total_exiting_particles/I"); 
     fvertex_tree->Branch("exiting_particle_vector", &exiting_particle_vector);
 
@@ -484,6 +487,9 @@ void FillTreeVariables::ResetEvent() {
   exiting_piplus_number = 0;
   exiting_piminus_number = 0;
   exiting_pi0_number = 0;
+  exiting_pi0_px.clear();
+  exiting_pi0_py.clear();
+  exiting_pi0_pz.clear();
   total_exiting_particles = 0;
   exiting_particle_vector.clear();
 
@@ -695,6 +701,11 @@ void FillTreeVariables::ResetVertex() {
 
   most_energetic_shower_index = -1;
   second_most_energetic_shower_index = -1;
+
+  //exiting_pi0_px.clear();
+  //exiting_pi0_py.clear();
+  //exiting_pi0_pz.clear();
+
   /*
   reco_shower_startx.clear();
   reco_shower_starty.clear();
@@ -816,10 +827,20 @@ void FillTreeVariables::FillTruth(size_t const mct_index) {
     case -211:
       ++exiting_piminus_number;
       break;
-    case 111:
-      ++exiting_pi0_number;
-	//index ifstorage->fgenie_particle_PdgCode->at(delta_mct_index).at(delta_index); is a pi0
+    case 111: { 
+      ++exiting_pi0_number; 
+      
+      double this_pi0_px = fstorage->fgenie_particle_Px->at(mct_index).at(i);
+      double this_pi0_py = fstorage->fgenie_particle_Py->at(mct_index).at(i);
+      double this_pi0_pz = fstorage->fgenie_particle_Pz->at(mct_index).at(i);
+      
+      exiting_pi0_px.push_back(this_pi0_px);
+      exiting_pi0_py.push_back(this_pi0_py);
+      exiting_pi0_pz.push_back(this_pi0_pz);
+
       break;
+      }
+    
     }
     ++total_exiting_particles;
   }
