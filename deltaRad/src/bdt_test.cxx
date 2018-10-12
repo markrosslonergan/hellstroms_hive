@@ -60,12 +60,9 @@ int bdt_test::RunTests(){
           //  std::cout<<"bdt_test::RunTests()\t||\t Starting on file: "<<file->tag<<" with variable: "<<v.name<<std::endl;
 
 
-
             tf_topological->GetNdata();
             tf_definition->GetNdata();
             tf_v->GetNdata();
-
-
 
 
                 double ans = tf_v->EvalInstance();

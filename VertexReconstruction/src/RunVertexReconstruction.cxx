@@ -109,15 +109,25 @@ int main(int const argc, char * argv[]) {
 
   //VR
   VRAnalyzer * vrana = new VRAnalyzer("varana");
-  vrana->SetVerbose(true);
+  vrana->SetVerbose(false);
   vrana->SetVBVariables(4, 30, 100, 25, 5);
   //vrana->SetVBVariables(4, 20, 50, 13, 10);
-  vrana->SetProducers("pandora",
-		      "pandora",
+ /* vrana->SetProducers("pandoraTrack",
+		      "pandoraShower",
 		      "pandoraCosmicHitRemoval",
 		      "simpleFlashBeam",
 		      //"swtrigger");
 		      "daq");
+  */            
+  vrana->SetProducers(
+              "pandoraNu",
+		      "pandoraNu",
+		      "pandoraCosmicHitRemoval",
+		      "simpleFlashBeam",
+		      //"swtrigger");
+		      "daq");
+
+
   vrana->SetFlashTimings(flash_start, flash_end);
 
   //vrana->RunPandora();

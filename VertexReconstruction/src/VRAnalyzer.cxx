@@ -156,6 +156,7 @@ void VRAnalyzer::AddTracks(DetectorObjects & detos,
   std::vector<std::vector<double>> const & reco_track_X = *fstorage->freco_track_X;
   std::vector<std::vector<double>> const & reco_track_Y = *fstorage->freco_track_Y;
   std::vector<std::vector<double>> const & reco_track_Z = *fstorage->freco_track_Z;
+std::cout<<"Adding a total of "<<reco_track_Z.size()<<" Track."<<std::endl;
 
   auto & track_indices = fstorage->GetTrackIndices(producer);
 
@@ -189,6 +190,8 @@ void VRAnalyzer::AddShowers(DetectorObjects & detos,
   std::vector<double> const & reco_shower_ShowerStart_Y = *fstorage->freco_shower_ShowerStart_Y;
   std::vector<double> const & reco_shower_ShowerStart_Z = *fstorage->freco_shower_ShowerStart_Z;
   std::vector<double> const & reco_shower_Length = *fstorage->freco_shower_Length;
+
+ std::cout<<"Adding a total of "<<reco_shower_Length.size()<<" Showers."<<std::endl;
 
   auto & shower_indices = fstorage->GetShowerIndices(producer);
   
@@ -502,8 +505,8 @@ bool VRAnalyzer::Run() {
   }
 
   //Testing tuhis bit
-  AddTracks(pas.GetDetectorObjects(), "pandoraCosmic");
-  AddShowers(pas.GetDetectorObjects(), "pandoraCosmic");
+//  AddTracks(pas.GetDetectorObjects(), "pandoraCosmic");
+//  AddShowers(pas.GetDetectorObjects(), "pandoraCosmic");
 
   if(frun_fill_tree_variables){
     fftv.Fill(pas);

@@ -304,8 +304,8 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
 			f->setStageEntryList(s);
 
-
-			if(s==3 && true && f->tag == "BNBCosmics") f->tvertex->Scan("run_number:subrun_number:event_number:reco_nuvertx:reco_nuverty:reco_nuvertz:reco_track_vertdirx[0]:reco_track_vertdiry[0]:reco_track_vertdirz[0]:reco_shower_startx[0]:reco_shower_starty[0]:reco_shower_startz[0]:reco_shower_dirx[0]:reco_shower_diry[0]:reco_shower_dirz[0]");
+            //Also usable on BNBCosmics
+			if(s==3 && true && f->tag == "NCDeltaRadCosmics") f->tvertex->Scan("run_number:subrun_number:event_number:reco_nuvertx:reco_nuverty:reco_nuvertz:reco_track_vertdirx[0]:reco_track_vertdiry[0]:reco_track_vertdirz[0]:reco_shower_startx[0]:reco_shower_starty[0]:reco_shower_startz[0]:reco_shower_dirx[0]:reco_shower_diry[0]:reco_shower_dirz[0]");
 		}	
 		std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 

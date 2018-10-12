@@ -14,7 +14,7 @@ VertexBuilder::VertexBuilder() :
   fcpoa_trackend_prox(-1),
   fdetos(nullptr),
   fshower_score(false),
-  fverbose(true) {}
+  fverbose(false) {}
 
 
 bool VertexBuilder::CheckSetVariables() {
@@ -76,24 +76,30 @@ void VertexBuilder::AssociateTracks(ParticleAssociations & pas) {
   for(size_t const i : fdetos->GetTrackIndices()) {
 
     Track const & t = fdetos->GetTrack(i);
+    if(fverbose){
+        std::cout<<"Init Track Pts: "<<i<<" t.fid "<<t.fid<<" front() "<<t.ftrajectory.front()<<" back() "<<t.ftrajectory.back()[0]<<std::endl;
+    }
+   // if(t.ftrajectory.back()[0]!=-999){
     pn.emplace(t.fid, &t.ftrajectory.front());
     pn.emplace(t.fid, &t.ftrajectory.back());
-
-  }
+    //}
+      }
 
   if(fverbose) {
 
     std::cout << "Track pn size: " << pn.size() << "\n";
 
     if(pn.size()) {
+
+      int k=0;
       size_t last_id = pn.end()->first;
       for(auto p : pn) {
-	if(last_id != p.first) {
-	  std::cout << std::endl << p.first << " "
-		    << *p.second;
-	}
-	else std::cout <<std::endl<<" " << *p.second;
-	std::cout << fdetos->GetTrack(p.first).ftrajectory.Length();
+	//if we are not on the last id. 
+    //if(last_id != p.first) {
+	  std::cout <<"On number "<<k<<" p.first: "<< p.first <<" *p.second: " << *p.second<<" Length of Track: "<<fdetos->GetTrack(p.first).ftrajectory.Length()<<std::endl;
+	//}
+    k++;
+	//else std::cout <<" *p.second: " << *p.second<<std::endl;
 	last_id = p.first;
       }
 
@@ -344,6 +350,7 @@ void VertexBuilder::AssociateShowers(ParticleAssociations & pas) {
 
   for(size_t const i : fdetos->GetShowerIndices()) { 
     shower_map.emplace(i, &pas.GetDetectorObjects().GetShower(i));
+    if(fverbose)std::cout<<i<<" Length "<<pas.GetDetectorObjects().GetShower(i).fcone.Length()<<" Radius "<<pas.GetDetectorObjects().GetShower(i).fcone.Radius()<<" Angle: "<<pas.GetDetectorObjects().GetShower(i).fcone.Angle()<<" start_X: "<<pas.GetDetectorObjects().GetShower(i).fcone.Start()[0]<<" "<<pas.GetDetectorObjects().GetShower(i).fcone.Start()[1]<<" "<<pas.GetDetectorObjects().GetShower(i).fcone.Start()[2]<<std::endl;
   }
 
   std::vector<ParticleAssociation> const & associations = pas.GetAssociations();
