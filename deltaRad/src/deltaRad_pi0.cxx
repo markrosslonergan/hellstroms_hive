@@ -297,8 +297,8 @@ int main (int argc, char *argv[]){
 		//	Best Fit Significance: 0.5525 0.533625 1.1
 
 	}else if (analysis_tag == "ncpi0_2g1p") {
-        fcoscut = 0.6076;
-        fbnbcut = 0.5422;
+        fcoscut = 0.5944;
+        fbnbcut = 0.5446;
     }
 
 	//===========================================================================================
@@ -467,12 +467,14 @@ int main (int argc, char *argv[]){
 
 		if(!response_only){
 			if(number != -1){
-				bdt_datamc datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
+				bdt_datamc datamc(data5e19, histogram_stack, analysis_tag+"_datamc");
+                datamc.mc_stack->do_rebin=false;
 				std::vector<bdt_variable> tmp_var = {vars.at(number)};
 				datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
 			}else{
 
 				bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
+                real_datamc.mc_stack->do_rebin=false;
 				real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 			}
 		}else{

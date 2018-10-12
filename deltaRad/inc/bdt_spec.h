@@ -35,9 +35,10 @@ class bdt_stack{
 		std::string name;
 		double plot_pot;
 		std::vector<bdt_file*> stack;
-
+        bool do_rebin;
 		bdt_stack(std::string in) : name(in){
 			plot_pot=6.6e20;
+            do_rebin=true;
 		}
 
 		int addToStack(bdt_file* in){

@@ -144,6 +144,22 @@ void phaseSpaceOverlay() {
     legPY->Draw("same");
 
     c_PvsPY->SaveAs("plot_PvsPY.png", "PNG");
+
+    TCanvas *c_PvsOpang = new TCanvas("c_PvsOpang", "c_PvsOpang", 1100, 800);
+    TH2D *h_PvsOpang_sig = (TH2D*)fin->Get("h_PvsOpang_sig");
+    h_PvsOpang_sig->SetTitle("");
+    h_PvsOpang_sig->SetLineColor(kRed+1);
+    //h_PvsOpang_sig->SetMarkerColor(kRed+1);
+    //h_PvsOpang_sig->SetFillColor(kRed+1);
+    h_PvsOpang_sig->SetMarkerStyle(7);
+    h_PvsOpang_sig->SetMarkerSize(1.5);
+    h_PvsOpang_sig->GetXaxis()->SetTitle("Opening Angle [Degrees]");
+    h_PvsOpang_sig->GetXaxis()->SetTitleSize(0.05);
+    h_PvsOpang_sig->GetYaxis()->SetTitle("Pion Momentum [GeV]");
+    h_PvsOpang_sig->GetYaxis()->SetTitleSize(0.05);
+    h_PvsOpang_sig->Draw();
+
+    c_PvsOpang->SaveAs("plot_PvsOpang.png", "PNG");
 }
 
 int main() {

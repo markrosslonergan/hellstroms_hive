@@ -5,6 +5,7 @@ using std::endl;
 std::pair<double,double> getFitRange(TH1D*);
 
 void langausFit() {
+
     TFile *fin = new TFile("output_energy_calibration.root", "READ");
     if (!fin) {
         cout << "Bad input file" << endl;
@@ -14,24 +15,22 @@ void langausFit() {
     TF1 *langaus = new TF1("langaus", landauGaussian, 0, 0.5, 4);
     langaus->SetParNames("Landau width","Peak value","Normalization","Gaussian width");
 
-    TCanvas *c = new TCanvas("c", "c", 1900, 1000);
-    c->Divide(4,2);
+    TCanvas *c_lead = new TCanvas("c_lead", "c_lead", 1900, 1000);
+    c_lead->Divide(4,2);
     gStyle->SetOptStat(0);
     gStyle->SetOptFit(1);
-    gStyle->SetTextSize(2.);
     gROOT->ForceStyle();
-
     TString histName;
     std::pair<double,double> fitRange;
-    std::vector< std::pair<int,int> > bins = projBins();
+    std::vector< std::pair<int,int> > leadingBins = leadingProjBins();
     TFile *fout = new TFile("output_langaus_fits.root", "RECREATE");
-    std::vector<double> peakVals(bins.size() );
+    std::vector<double> peakVals(7);
     std::ofstream of;
     of.open("peakvals.dat");
 
-    for (int i = 0; i < bins.size(); i++) {
-        c->cd(i+1);
-        histName = Form("h%i", i+1);
+    for (int i = 0; i < leadingBins.size(); i++) {
+        c_lead->cd(i+1);
+        histName = Form("h%i_leading", i+1);
         TH1D *h = (TH1D*)fin->Get(histName);
         if (!h) {
             cout << "Bad histogram" << endl;
@@ -69,7 +68,7 @@ void langausFit() {
         of << peakVals.at(i) << endl;
 
     }
-    c->SaveAs("langausfits.png", "png");
+    c_lead->SaveAs("langausfits.png", "png");
 }
 
 int main() {

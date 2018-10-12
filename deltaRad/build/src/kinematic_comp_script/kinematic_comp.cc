@@ -25,7 +25,7 @@ void kinematic_comp() {
     // Declare variables from trees. "sig" denotes my NC pi0 signal file,
     // "bkg" denotes Mark's NC pi0-tagged backgrounds
     // Large number here (25) to avoid "stack smashing"
-    //std::size_t const N = 100;
+    std::size_t const N = 20;
     //int passed_topological_selection_bkg, passed_precuts_bkg, passed_cosmic_bdt_cut_bkg, passed_bnb_bdt_cut_bkg;
     int passed_topological_selection_sig, passed_precuts_sig, passed_cosmic_bdt_cut_sig, passed_bnb_bdt_cut_sig;
     int exiting_pi0_number;
@@ -35,15 +35,24 @@ void kinematic_comp() {
     //double exiting_pi0_px_bkg[N] = {0.};
     //double exiting_pi0_py_bkg[N] = {0.};
     //double exiting_pi0_pz_bkg[N] = {0.};
-    std::vector<double> *exiting_pi0_px_bkg = 0;
-    std::vector<double> *exiting_pi0_py_bkg = 0;
-    std::vector<double> *exiting_pi0_pz_bkg = 0;
-    //double reco_shower_helper_energy_sig[N] = {0.} = 0;
-    //double reco_shower_dedx_plane0_sig[N] = {0.} = 0;
-    //double reco_shower_length_sig[N] = {0.} = 0;
     std::vector<double> *exiting_pi0_px_sig = 0;
     std::vector<double> *exiting_pi0_py_sig = 0;
     std::vector<double> *exiting_pi0_pz_sig = 0;
+
+    std::vector<double> *exiting_pi0_px_bkg = 0;
+    std::vector<double> *exiting_pi0_py_bkg = 0;
+    std::vector<double> *exiting_pi0_pz_bkg = 0;
+
+    double reco_shower_dirx_sig[N] = {0.};
+    double reco_shower_diry_sig[N] = {0.};
+    double reco_shower_dirz_sig[N] = {0.};
+    double reco_shower_helper_energy_sig[N] = {0.};
+
+    double reco_shower_dirx_bkg[N] = {0.};
+    double reco_shower_diry_bkg[N] = {0.};
+    double reco_shower_dirz_bkg[N] = {0.};
+    //double reco_shower_dedx_plane0_sig[N] = {0.} = 0;
+    //double reco_shower_length_sig[N] = {0.} = 0;
     //double exiting_pi0_px_sig[N] = {0.};
     //double exiting_pi0_py_sig[N] = {0.};
     //double exiting_pi0_pz_sig[N] = {0.};
@@ -56,11 +65,21 @@ void kinematic_comp() {
     TBranch *bexiting_pi0_px_sig;
     TBranch *bexiting_pi0_py_sig;
     TBranch *bexiting_pi0_pz_sig;
+    TBranch *breco_shower_dirx_sig = 0;
+    TBranch *breco_shower_diry_sig = 0;
+    TBranch *breco_shower_dirz_sig = 0;
+    TBranch *breco_shower_dirx_bkg = 0;
+    TBranch *breco_shower_diry_bkg = 0;
+    TBranch *breco_shower_dirz_bkg = 0;
+    TBranch *breco_shower_helper_energy_sig = 0;
 
     tbkg->SetBranchAddress("exiting_pi0_number", &exiting_pi0_number);
     tbkg->SetBranchAddress("exiting_pi0_px", &exiting_pi0_px_bkg, &bexiting_pi0_px_bkg);
     tbkg->SetBranchAddress("exiting_pi0_py", &exiting_pi0_py_bkg, &bexiting_pi0_py_bkg);
     tbkg->SetBranchAddress("exiting_pi0_pz", &exiting_pi0_pz_bkg, &bexiting_pi0_pz_bkg);
+    tbkg->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx_bkg, &breco_shower_dirx_bkg);
+    tbkg->SetBranchAddress("reco_shower_diry", &reco_shower_diry_bkg, &breco_shower_diry_bkg);
+    tbkg->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz_bkg, &breco_shower_dirz_bkg);
     tbkg->SetBranchAddress("is_delta_rad", &is_delta_rad);
     //tcut_deltarad->SetBranchAddress("passed_bnb_bdt_cut", &passed_bnb_bdt_cut_bkg);
     tcut_deltarad->SetBranchAddress("quick_pass", &quick_pass);
@@ -69,6 +88,10 @@ void kinematic_comp() {
     tsig->SetBranchAddress("exiting_pi0_px", &exiting_pi0_px_sig, &bexiting_pi0_px_sig);
     tsig->SetBranchAddress("exiting_pi0_py", &exiting_pi0_py_sig, &bexiting_pi0_py_sig);
     tsig->SetBranchAddress("exiting_pi0_pz", &exiting_pi0_pz_sig, &bexiting_pi0_pz_sig);
+    tsig->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx_sig, &breco_shower_dirx_sig);
+    tsig->SetBranchAddress("reco_shower_diry", &reco_shower_diry_sig, &breco_shower_diry_sig);
+    tsig->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz_sig, &breco_shower_dirz_sig);
+    tsig->SetBranchAddress("reco_shower_helper_energy", &reco_shower_helper_energy_sig, &breco_shower_helper_energy_sig);
     tcut_ncpi0->SetBranchAddress("passed_bnb_bdt_cut", &passed_bnb_bdt_cut_sig);
     tcut_ncpi0->SetBranchAddress("weight", &weight_sig);
 
@@ -88,6 +111,7 @@ void kinematic_comp() {
     TH2D *h_PvsPX_bkg = new TH2D("h_PvsPX_bkg", "h_PvsPX_bkg", 50, 0, 1., 50, 0, 1.);
     TH2D *h_PvsPY_sig = new TH2D("h_PvsPY_sig", "h_PvsPY_sig", 50, 0, 1., 50, 0, 1.);
     TH2D *h_PvsPY_bkg = new TH2D("h_PvsPY_bkg", "h_PvsPY_bkg", 50, 0, 1., 50, 0, 1.);
+    TH2D *h_PvsOpang_sig = new TH2D("h_PvsOpang_sig", "h_PvsOpang_sig", 36, 0, 180, 50, 0, 1.);
 
     int passed_sig = 0;
     int passed_bkg = 0;
@@ -97,6 +121,8 @@ void kinematic_comp() {
     int passed_ncpi0 = 0;
     int passed_bkg_notDeltaRad = 0;
     double ptot = 0;
+    double ptot_reco = 0;
+    double opAng = 0;
     // Signal loop
     for (int i = 0; i < tsig->GetEntries(); i++) {
         // Fill signal histos
@@ -108,9 +134,21 @@ void kinematic_comp() {
                      exiting_pi0_py_sig->at(0)*exiting_pi0_py_sig->at(0) +
                      exiting_pi0_pz_sig->at(0)*exiting_pi0_pz_sig->at(0)
                );
+        ptot_reco = sqrt( reco_shower_helper_energy_sig[0]*reco_shower_dirx_sig[0]+
+                          reco_shower_helper_energy_sig[1]*reco_shower_dirx_sig[1]+ 
+                          reco_shower_helper_energy_sig[0]*reco_shower_diry_sig[0]+
+                          reco_shower_helper_energy_sig[1]*reco_shower_diry_sig[1]+ 
+                          reco_shower_helper_energy_sig[0]*reco_shower_dirz_sig[0]+ 
+                          reco_shower_helper_energy_sig[1]*reco_shower_dirz_sig[1]
+                    ); 
+        opAng = 57.2958*TMath::ACos(reco_shower_dirx_sig[0]*reco_shower_dirx_sig[1]+
+                                    reco_shower_diry_sig[0]*reco_shower_diry_sig[1]+
+                                    reco_shower_dirz_sig[0]*reco_shower_dirz_sig[1]);
+
         h_PvsPZ_sig->Fill(ptot, exiting_pi0_pz_sig->at(0), weight_sig);
         h_PvsPX_sig->Fill(ptot, exiting_pi0_px_sig->at(0), weight_sig);
         h_PvsPY_sig->Fill(ptot, exiting_pi0_py_sig->at(0), weight_sig);
+        h_PvsOpang_sig->Fill(opAng, ptot_reco, weight_bkg);
 
         h_exiting_pi0_px_sig->Fill(exiting_pi0_px_sig->at(0), weight_sig);
         h_exiting_pi0_py_sig->Fill(exiting_pi0_py_sig->at(0), weight_sig);
@@ -137,6 +175,7 @@ void kinematic_comp() {
                      exiting_pi0_py_bkg->at(0)*exiting_pi0_py_bkg->at(0) +
                      exiting_pi0_pz_bkg->at(0)*exiting_pi0_pz_bkg->at(0)
                );
+
         h_PvsPZ_bkg->Fill(ptot, exiting_pi0_pz_bkg->at(0), weight_bkg);
         h_PvsPX_bkg->Fill(ptot, exiting_pi0_px_bkg->at(0), weight_bkg);
         h_PvsPY_bkg->Fill(ptot, exiting_pi0_py_bkg->at(0), weight_bkg);
