@@ -45,12 +45,12 @@ int main (int argc, char *argv[]){
 
     std::string mode_option = "fake"; 
     std::string xml = "default.xml";
-    std::string analysis_tag ="electron1";// 1e1p event
+    std::string analysis_tag ="electron1";//for 1e1p event
 
 
     bool run_cosmic = true;
     bool run_bnb = true;
-    int number = -1;
+    int  number = -1;//change it via argument -n <number> to indicate which variable to use
     bool response_only = false;
 
     //All of this is just to load in command-line arguments, its not that important
@@ -146,33 +146,27 @@ int main (int argc, char *argv[]){
     }
     else if(!run_cosmic){//do bnb
 	temp_tag = analysis_tag + "bnb";
-    }
-    //do everything
-    
+    } //do everything for both run_bnb and cosmic_bnb to be true.
 
     variable_list var_list(temp_tag);
-
-    //Get all the variables you want to use	
-    std::vector<bdt_variable> vars = var_list.all_vars;
-
-    //This is a vector each containing a precut, they are all added together to make the whole "precut"
-    std::vector<std::string> vec_precuts = var_list.all_precuts;
-
-    //We dont currently use postcuts
-    std::string postcuts = "1";
-
+    std::vector<bdt_variable> vars = var_list.all_vars; //Get all the variables you want to use	
+    std::vector<std::string> vec_precuts = var_list.all_precuts; //This is a vector each containing a precut, they are all added together to make the whole "precut"
+    std::string postcuts = "1";//We dont currently use postcuts
 
     //We have 2 BDT's one for cosmics and one for BNB related backgrounds only
     //Set up some info about the BDTs to pass along
     bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(45,0,1)");
     bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(45,0,1)");
 
+
+    /***************************** DEFINITION *****************************/
+
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
     std::string true_signal = "((true_shower_origin[0]==1&&abs(true_nuvertz-true_track_startz[0])+abs(true_nuverty-true_track_starty[0])+abs(true_nuvertx-true_track_startx[0])< 1)&&sqrt(pow(reco_shower_startx[0]-reco_track_startx[0],2)+pow(reco_shower_starty[0]-reco_track_starty[0],2)+pow(reco_shower_startz[0]-reco_track_startz[0],2))<2)";
-    std::string true_bkg    = true_signal;
+    std::string true_bkg    = "(true_shower_origin[0]==1)";//origin ==1 for BNB, porigin == 2 for cosmic; This is for selecting true BNB background.
     std::string num_track_cut ;
 
-    if(analysis_tag == "electron1"){
+    if(analysis_tag == "electron1"){//this tag helps identify variables to use.
 	true_signal = true_signal+ "&& true_track_origin[0]==1";
 	true_bkg = true_signal;
 	num_track_cut =  "== 1";
@@ -194,38 +188,39 @@ int main (int argc, char *argv[]){
 
 
     //***************************************************************************************************/
-    //***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
+    //********** The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  **********/
     //***************************************************************************************************/
-    bdt_flow signal_pure_flow(base_cuts, 	signal_definition +"&&"+ true_signal, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-    bdt_flow signal_flow(base_cuts,		signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-    bdt_flow cosmic_flow(base_cuts,		"1", 					vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-    bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-    bdt_flow bkg_pure_flow(base_cuts,		background_definition+"&&"+ true_bkg ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-    bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
-    bdt_flow intrinsic_flow = cosmic_flow;
- 
-    // BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-    // file names to be adjusted
-    bdt_file *signal_pure    = new bdt_file(dir, "vertexed_nueintrinsic_fresh_v4.1.root",	"LEEunfolded",	   "hist","",  kCyan-3, signal_pure_flow);
-    bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_nueintrinsic_fresh_v4.1.root", "LEEunfoldedCosmics", "hist","",  kCyan-3, signal_flow);
-    
-   // bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_fresh_v4.1.root",	"LEENue",	   "hist","",  kCyan-3, signal_pure_flow);
-   // bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltaradcosmics_fresh_v4.1.root", "LEENue", "hist","",  kCyan-3, signal_flow);
-    bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
-    bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
-    bdt_file *intime =	    new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
-    //Data files
-    bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_fresh_v4.1.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
-    bdt_file *bnbext	=   new bdt_file(dir, "vertexed_bnbext_fresh_v4.1.root",	"BNBext",	"E1p","",  kBlack, data_flow);
+    //pure_flow are also well-constructed vertices.
+    bdt_flow signal_pure_flow(base_cuts	, signal_definition +"&&"+ true_signal	, vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
+    bdt_flow signal_flow(base_cuts	, signal_definition			, vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
 
-    bdt_file *intrinsics =  new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, intrinsic_flow);
+    bdt_flow cosmic_flow(base_cuts	, "1"					, vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
+    //bkg_pure are true BNB background.
+    bdt_flow bkg_flow(base_cuts		, background_definition			, vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
+    bdt_flow bkg_pure_flow(base_cuts	, background_definition+"&&"+ true_bkg	, vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
+
+    bdt_flow data_flow(base_cuts	, "1"					, vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
+
+    bdt_flow intrinsic_flow = cosmic_flow;//introduce intrinsicNue as BNB background. 
+ 
+    /* Arguments: 
+     * bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
+     * This means: bdt_file (directory, file name, tag to passed along, what plots , color, how to use it)
+     */
+    bdt_file *signal_pure   = new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "LEEunfolded",  "hist","",  kCyan-3, signal_pure_flow);
+    bdt_file *signal_cosmics= new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "LEEunfoldedCosmics", "hist","",  kCyan-3, signal_flow);
     
-    //bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
-    //bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
-    //
+    bdt_file *bnb_pure	    = new bdt_file( dir, "vertexed_bnbcosmics_fresh_v4.1.root"	, "BNBPure",  "hist","",  kBlue-4, bkg_pure_flow);
+    bdt_file *bnb_cosmics   = new bdt_file( dir, "vertexed_bnbcosmics_fresh_v4.1.root"	, "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
+    bdt_file *intime	    = new bdt_file( dir, "vertexed_intime_fresh_v4.1.root"	, "IntimeCosmics","hist","", kGreen-3, cosmic_flow);
+    bdt_file *data5e19	    = new bdt_file( dir, "vertexed_data5e19_fresh_v4.1.root"	, "Data5e19",   "E1p","",  kBlack, data_flow);//Data files
+    bdt_file *bnbext	    = new bdt_file( dir, "vertexed_bnbext_fresh_v4.1.root"	, "BNBext",	"E1p","",  kBlack, data_flow);
+    bdt_file *intrinsics    = new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "NueIntrinsicCosmics","hist","",kRed-7, intrinsic_flow);
+    
     //For conviencance fill a vector with pointers to all the files to loop over.
     std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, intrinsics};
 
+    //***************************************************************************************************/
     //The LEE signal is bigger than the SM signal by this factor
 
 
