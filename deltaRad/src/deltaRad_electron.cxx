@@ -207,15 +207,17 @@ int main (int argc, char *argv[]){
      * bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
      * This means: bdt_file (directory, file name, tag to passed along, what plots , color, how to use it)
      */
-    bdt_file *signal_pure   = new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "LEEunfolded",  "hist","",  kCyan-3, signal_pure_flow);
-    bdt_file *signal_cosmics= new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "LEEunfoldedCosmics", "hist","",  kCyan-3, signal_flow);
-    
-    bdt_file *bnb_pure	    = new bdt_file( dir, "vertexed_bnbcosmics_fresh_v4.1.root"	, "BNBPure",  "hist","",  kBlue-4, bkg_pure_flow);
-    bdt_file *bnb_cosmics   = new bdt_file( dir, "vertexed_bnbcosmics_fresh_v4.1.root"	, "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
-    bdt_file *intime	    = new bdt_file( dir, "vertexed_intime_fresh_v4.1.root"	, "IntimeCosmics","hist","", kGreen-3, cosmic_flow);
-    bdt_file *data5e19	    = new bdt_file( dir, "vertexed_data5e19_fresh_v4.1.root"	, "Data5e19",   "E1p","",  kBlack, data_flow);//Data files
-    bdt_file *bnbext	    = new bdt_file( dir, "vertexed_bnbext_fresh_v4.1.root"	, "BNBext",	"E1p","",  kBlack, data_flow);
-    bdt_file *intrinsics    = new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "NueIntrinsicCosmics","hist","",kRed-7, intrinsic_flow);
+    bdt_file *signal_pure   = new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "LEEunfolded"		, "hist","", kCyan-3 , signal_pure_flow	);
+    bdt_file *signal_cosmics= new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "LEEunfoldedCosmics"	, "hist","", kCyan-3 , signal_flow	);
+    bdt_file *bnb_pure	    = new bdt_file( dir, "vertexed_bnbcosmics_fresh_v4.1.root"	, "BNBPure"		, "hist","", kBlue-4 , bkg_pure_flow	);
+    bdt_file *bnb_cosmics   = new bdt_file( dir, "vertexed_bnbcosmics_fresh_v4.1.root"	, "BNBCosmics"		, "hist","", kBlue-4 , bkg_flow		);
+    //Corsika
+    bdt_file *intime	    = new bdt_file( dir, "vertexed_intime_fresh_v4.1.root"	, "IntimeCosmics"	, "hist","", kGreen-3, cosmic_flow	);
+    //two data files
+    bdt_file *data5e19	    = new bdt_file( dir, "vertexed_data5e19_fresh_v4.1.root"	, "Data5e19"		, "E1p"	,"", kBlack  , data_flow	);
+    bdt_file *bnbext	    = new bdt_file( dir, "vertexed_bnbext_fresh_v4.1.root"	, "BNBext"		, "E1p"	,"", kBlack  , data_flow	);
+
+    bdt_file *intrinsics    = new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "NueIntrinsicCosmics"	, "hist","", kRed-7  , intrinsic_flow	);
     
     //For conviencance fill a vector with pointers to all the files to loop over.
     std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, intrinsics};
@@ -720,7 +722,7 @@ int main (int argc, char *argv[]){
 	    }
 
 	    std::cout<<std::endl;
-
+	    //I change this
 	    //break;
 	}
 
