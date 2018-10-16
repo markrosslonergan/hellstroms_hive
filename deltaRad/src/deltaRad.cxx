@@ -38,7 +38,9 @@
 int main (int argc, char *argv[]){
 
 	//This is a standardized location on /pnfs/ that everyone can use. 
-	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v3/";
+	//std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v3/";
+	std::string dir = "/pnfs/uboone/persistent/users/ksutton/single_photon_vertexed_101518/";
+
 
 
 	std::string mode_option = "fake"; 
@@ -192,32 +194,35 @@ int main (int argc, char *argv[]){
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_fresh_v4.1.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltaradcosmics_fresh_v4.1.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
-	bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
+	bdt_file *signal_pure    = new bdt_file(dir, "ncdeltarad_corsika_overlays_train.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir, "ncdeltarad_corsika_overlays_test.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir, "bnb_data_overlay_vertex_train.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_data_overlay_vertex_test.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
+	//bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
+
 	//Data files
-	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_fresh_v4.1.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
-	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_fresh_v4.1.root",	"BNBext",	"E1p","",  kBlack, data_flow);
+	bdt_file *data5e19    = new bdt_file(dir, "data5e19_vertex.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
+	bdt_file *bnbext_cosmics    = new bdt_file(dir, "bnbext_vertex_test.root",	"BNBextCosmics",	"E1p","",  kBlack, data_flow);
+	bdt_file *bnbext_pure    = new bdt_file(dir, "bnbext_vertex_train.root",	"BNBext",	"E1p","",  kBlack, data_flow);
 
 	//bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
 	//bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
 	//bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
 
 
-	bdt_file * bnb_withpi0 = new bdt_file(dir,"vertexed_bnbcosmics_fresh_pi0mom_v4.2.root", "BNBCosmicsPi0","hist","",kRed-4,bkg_flow);
+	//bdt_file * bnb_withpi0 = new bdt_file(dir,"vertexed_bnbcosmics_fresh_pi0mom_v4.2.root", "BNBCosmicsPi0","hist","",kRed-4,bkg_flow);
 
-	bdt_file *bnb_overlay = new bdt_file(dir,"vertexed_bnboverlay_fresh_v4.1.root","BNBoverlay","hist","",kBlue-6, bkg_flow);
-	bdt_file *dirt = new bdt_file(dir,"vertexed_dirt_fresh_v4.1.root","Dirt","hist","",kOrange-6, data_flow);
+	//bdt_file *bnb_overlay = new bdt_file(dir,"vertexed_bnboverlay_fresh_v4.1.root","BNBoverlay","hist","",kBlue-6, bkg_flow);
+	bdt_file *dirt = new bdt_file(dir,"dirt_vertex.root","Dirt","hist","",kOrange-6, data_flow);
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
-	std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, bnb_overlay, dirt,bnb_withpi0};
+	std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, data5e19, bnbext_cosmics, bnbext_pure, dirt};
+	//std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, bnb_overlay, dirt,bnb_withpi0};
 	//std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, bnb_overlay, dirt};
 
 	//The LEE signal is bigger than the SM signal by this factor
-	signal_pure->scale_data = 3.1;
-	signal_cosmics->scale_data = 3.1;
+	signal_pure->scale_data = 3.0;
+	signal_cosmics->scale_data = 3.0;
 
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -264,7 +269,7 @@ int main (int argc, char *argv[]){
 	signal_cosmics->addPlotName("LEE NC #Delta Rad w/ Corsika");
 	bnb_pure->addPlotName("BNB Backgrounds");
 	bnb_cosmics->addPlotName("BNB w/ Corsika");
-	intime->addPlotName("Intime Corsika cosmics");
+//	intime->addPlotName("Intime Corsika cosmics");
 	data5e19->addPlotName("4.8e19 POT Data");
 	bnbext->addPlotName("External BNB Data");
 
@@ -299,7 +304,7 @@ int main (int argc, char *argv[]){
 
 	if(mode_option == "train") {
 		std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
-		if(run_cosmic) bdt_train(cosmic_bdt_info, signal_pure, intime, vars, TMVAmethods);
+		if(run_cosmic) bdt_train(cosmic_bdt_info, signal_pure,bnbext_pure , vars, TMVAmethods);
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
 		if(run_bnb) bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
 		return 0;
@@ -322,7 +327,7 @@ int main (int argc, char *argv[]){
 		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 		//Ok print out Cosmic BDT
 		if(run_cosmic){
-			bdt_response cosmic_response(cosmic_bdt_info, signal_pure, intime);
+			bdt_response cosmic_response(cosmic_bdt_info, signal_pure, bnbext_pure);
 			cosmic_response.plot_bdt_response(ftest);
 		}
 
@@ -399,7 +404,7 @@ int main (int argc, char *argv[]){
 		//histogram_stack.addToStack(bnb_overlay);
 
 		//Add bnbext but change the color and style first
-		bnbext->col = intime->col;	
+	//	bnbext->col = intime->col;	
 		bnbext->fillstyle = 3333;
 		histogram_stack.addToStack(bnbext);
 		//histogram_stack.addToStack(dirt);
@@ -435,15 +440,11 @@ int main (int argc, char *argv[]){
 		  obs->addToStack(bnb_cosmics);
 		  obs->addToStack(intime);*/
 
-		bdt_stack *cosmic_stack = new bdt_stack(analysis_tag+"_extintime");
-		cosmic_stack->plot_pot = 4.393e19;
-		cosmic_stack->addToStack(intime);
-
 		bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
 		histogram_stack->plot_pot = 4.393e19;
 		histogram_stack->addToStack(signal_cosmics);
 		histogram_stack->addToStack(bnb_cosmics);
-		bnbext->col = intime->col;	
+		//bnbext->col = intime->col;	
 		bnbext->fillstyle = 3333;
 		histogram_stack->addToStack(bnbext);
 //		histogram_stack->addToStack(dirt);
@@ -462,7 +463,6 @@ int main (int argc, char *argv[]){
 				real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 			}
 		}else{
-			bdt_datamc cosmic_datamc(bnbext, cosmic_stack, analysis_tag+"_extintime");	
 			bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
 
 			if(run_bnb) real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
@@ -476,11 +476,11 @@ int main (int argc, char *argv[]){
 		if(run_cosmic){
 
 			if(number != -1){
-				plot_bdt_variable(signal_pure, intime, vars.at(number), cosmic_bdt_info);
+				plot_bdt_variable(signal_pure, bnbext_pure, vars.at(number), cosmic_bdt_info);
 				//bdt_variable true_en("delta_photon_energy","(52,0,1.2)","True Shower Energy [GeV]",false,"d");
 				//plot_bdt_variable(signal_pure, intime, true_en, cosmic_bdt_info);
 			}else{
-				plot_bdt_variables(signal_pure, intime, vars, cosmic_bdt_info);
+				plot_bdt_variables(signal_pure, bnbext_pure, vars, cosmic_bdt_info);
 			}
 
 		}
@@ -773,7 +773,7 @@ int main (int argc, char *argv[]){
 		//obs->plot_pot =  4.801e19;
 		obs->addToStack(signal_cosmics);
 		obs->addToStack(bnb_cosmics);
-		obs->addToStack(intime);
+		//obs->addToStack(intime);
 		obs->addToStack(data5e19);
 
 		std::vector<std::string> hnam = {"nu_uBooNE_singlephoton_signal","nu_uBooNE_singlephoton_bkg","nu_uBooNE_singlephoton_intime","nu_uBooNE_singlephoton_data"};
@@ -962,3 +962,4 @@ int main (int argc, char *argv[]){
 	return 0;
 
 }
+
