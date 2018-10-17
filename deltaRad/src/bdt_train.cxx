@@ -11,6 +11,8 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, b
 				"V:!Silent:Color:DrawProgressBar:AnalysisType=Classification");
 	TMVA::DataLoader * dataloader = new TMVA::DataLoader(("BDTxmls_"+name).c_str());
 
+	for(bdt_variable &var: variables) dataloader->AddVariable(var.name.c_str());
+
 	int bdt_precut_stage = 1;
 	TCut sig_tcut =  TCut(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 	TCut back_tcut = TCut(background_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
@@ -20,35 +22,29 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, b
 
     int background_entries = background_file->tvertex->GetEntries(back_tcut);
     int background_test_entries = background_test->tvertex->GetEntries(back_tcut);
- 
-	std::string splotopts = "nTest_Signals="+std::to_string(signal_test_entries)+":nTest_Backgrounds="+std::to_string(background_test_entries)+":nTrain_Signals="+std::to_string(signal_entries)+":nTrain_Backgrounds="+std::to_string(background_entries)+":SplitMode=Random:NormMode=NumEvents:V";
-	const TString s = splotopts;
-   
-    dataloader->AddDataSet(splotopts);
-	dataloader->AddTree(signal_file->tvertex,"Signals",1.0,sig_tcut,TMVA::Types::ETreeType::kTraining);
-	dataloader->AddTree(signal_test->tvertex,"Signals",1.0, sig_tcut,TMVA::Types::ETreeType::kTesting);
-	dataloader->SetWeightExpression(signal_file->weight_branch.c_str(),"Signals");
-//	dataloader->SetWeightExpression(signal_file->weight_branch.c_str(),"SignalTest");
-
-	dataloader->AddTree(background_file->tvertex,"Backgrounds",((double)signal_entries)/((double)background_entries), back_tcut,TMVA::Types::ETreeType::kTraining);
-	dataloader->AddTree(background_file->tvertex,"Backgrounds",((double)signal_entries)/((double)background_entries), back_tcut,TMVA::Types::ETreeType::kTesting);
-	dataloader->SetWeightExpression(background_file->weight_branch.c_str(),"Backgrounds");
-//	dataloader->SetWeightExpression(background_test->weight_branch.c_str(),"BackgroundTest");
-
-	for(bdt_variable &var: variables) dataloader->AddVariable(var.name.c_str());
-
-    TCut t_true = "1";
-
-	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
+    
+    std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
 	std::cout<<"signal_test-_ntries: "<<signal_test_entries<<" background_test_entries: "<<background_test_entries<<std::endl;
 	std::cout<<"SIGNAL CUTS : "<<sig_tcut<<std::endl;
 	std::cout<<"BKG CUTS : "<<back_tcut<<std::endl;
-    
-    //"SplitMode=Random:NormMode=NumEvents:!V");
+ 
+
+	std::string splotopts = "nTrain_Signal="+std::to_string(signal_entries-10)+":nTrain_Background="+std::to_string(background_entries-10)+"NormMode=EqualNumEvents:V";
+	//std::string splotopts = "nTest_Signal="+std::to_string(signal_test_entries)+":nTest_Background="+std::to_string(background_test_entries)+":nTrain_Signal="+std::to_string(signal_entries)+":nTrain_Background="+std::to_string(background_entries)+":SplitMode=Random:NormMode=NumEvents:V";
+	const TString s = splotopts;
+	
+
+    dataloader->AddTree(signal_file->tvertex,"Signal",1.0,sig_tcut,TMVA::Types::ETreeType::kTraining);
+	dataloader->AddTree(signal_test->tvertex,"Signal",1.0, sig_tcut,TMVA::Types::ETreeType::kTesting);
+	dataloader->SetWeightExpression(signal_file->weight_branch.c_str(),"Signal");
+
+	dataloader->AddTree(background_file->tvertex,"Background",1.0, back_tcut,TMVA::Types::ETreeType::kTraining);
+	dataloader->AddTree(background_file->tvertex,"Background",1.0, back_tcut,TMVA::Types::ETreeType::kTesting);
+	dataloader->SetWeightExpression(background_file->weight_branch.c_str(),"Background");
 
 
-    //factory.PrepareTrainingAndTestTree(ROOT.TCut(),"NormMode=EqualNumEvents:SplitMode=Block:nTrain_Signal=%s:nTest_Signal=%s:nTrain_Background=%s:nTest_Background=%s"%(nTrain_Signal,nTest_Signal,nTrain_Background,nTest_Background))
-
+   // dataloader->PrepareTrainingAndTestTree("1","1", splotopts); 
+   
 
 	for(method_struct const & method : methods) factory->BookMethod(dataloader, method.type, method.str, method.option);
 
