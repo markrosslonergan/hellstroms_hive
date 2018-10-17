@@ -119,11 +119,15 @@ int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variabl
 	std::string identifier = info.identifier;
 	
 	for(size_t i = 0; i < files.size(); ++i) {
-	    TFile * app_ofile = TFile::Open((identifier+"_"+files[i]->tag+"_app"+".root").c_str(), "update");
-		files.at(i)->tvertex->ResetBranchAddresses();
+		std::cout<<"On file: "<<files.at(i)->tag<<" "<<i<<std::endl;
+        std::cout<<"Opening an appripiate file for saving: "<<(identifier+"_"+files[i]->tag+"_app"+".root").c_str()<<std::endl;
+        TFile * app_ofile = TFile::Open((identifier+"_"+files[i]->tag+"_app"+".root").c_str(), "recreate");
+        
+        std::cout<<"Resetting Branch Addresses!"<<std::endl;
+        files.at(i)->tvertex->ResetBranchAddresses();
 
-		std::cout<<"On file: "<<files.at(i)->tag<<std::endl;
 		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
+        std::cout<<"BDT response will be saved in ttree: "<<bdt_response_friend_tree_name<<std::endl;
 		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
     
         app_ofile->Close();

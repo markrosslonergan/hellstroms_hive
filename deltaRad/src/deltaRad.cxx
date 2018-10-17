@@ -313,8 +313,8 @@ int main (int argc, char *argv[]){
 
 	}else if(mode_option == "app"){
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
-        
-			if(number != -1){
+            std::cout<<"Beginining App stage"<<std::endl;        
+			if(number == -1){
 	    		if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
 	        	if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
 			}else{
