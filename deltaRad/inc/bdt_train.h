@@ -12,6 +12,7 @@
 #include "TMVA/Types.h"
 #include "TMVA/DataLoader.h"
 #include "TMVA/Reader.h"
+#include "TMVA/Factory.h"
 
 #include "method_struct.h"
 #include "bdt_file.h"

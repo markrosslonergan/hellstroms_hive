@@ -17,33 +17,44 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, b
 	TCut sig_tcut =  TCut(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 	TCut back_tcut = TCut(background_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 
-	int signal_entries = signal_file->tvertex->GetEntries(sig_tcut);
-	int signal_test_entries = signal_test->tvertex->GetEntries(sig_tcut);
+	int signal_entries = signal_file->tvertex->GetEntries(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
+	int signal_test_entries = signal_test->tvertex->GetEntries(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 
-    int background_entries = background_file->tvertex->GetEntries(back_tcut);
-    int background_test_entries = background_test->tvertex->GetEntries(back_tcut);
+    int background_entries = background_file->tvertex->GetEntries(background_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
+    int background_test_entries = background_test->tvertex->GetEntries(background_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
     
     std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
 	std::cout<<"signal_test-_ntries: "<<signal_test_entries<<" background_test_entries: "<<background_test_entries<<std::endl;
 	std::cout<<"SIGNAL CUTS : "<<sig_tcut<<std::endl;
 	std::cout<<"BKG CUTS : "<<back_tcut<<std::endl;
- 
 
-	std::string splotopts = "nTrain_Signal="+std::to_string(signal_entries-10)+":nTrain_Background="+std::to_string(background_entries-10)+"NormMode=EqualNumEvents:V";
-	//std::string splotopts = "nTest_Signal="+std::to_string(signal_test_entries)+":nTest_Background="+std::to_string(background_test_entries)+":nTrain_Signal="+std::to_string(signal_entries)+":nTrain_Background="+std::to_string(background_entries)+":SplitMode=Random:NormMode=NumEvents:V";
+	//std::string splotopts = "nTrain_Signal=0:nTrain_Background=0:NormMode=EqualNumEvents:V:VerboseLevel=Debug:SplitMode=Block";
+	std::string splotopts = "nTrain_Signal="+std::to_string(signal_entries-1)+":nTrain_Background="+std::to_string(background_entries-1)+":SplitMode=Random:NormMode=NumEvents:V";
 	const TString s = splotopts;
-	
-    dataloader->AddTree(signal_file->tvertex,"Signal",1.0, sig_tcut,TMVA::Types::kTraining);
-	dataloader->AddTree(signal_test->tvertex,"Signal",1.0, sig_tcut,TMVA::Types::kTesting);
-	dataloader->SetWeightExpression(signal_file->weight_branch.c_str(),"Signal");
 
-	dataloader->AddTree(background_file->tvertex,"Background",1.0, back_tcut,TMVA::Types::kTraining);
-	dataloader->AddTree(background_test->tvertex,"Background",1.0, back_tcut,TMVA::Types::kTesting);
-	dataloader->SetWeightExpression(background_file->weight_branch.c_str(),"Background");
+    dataloader->AddSignalTree(signal_file->tvertex);
+	dataloader->SetWeightExpression(signal_file->weight_branch.c_str());
+//	dataloader->SetWeightExpression(signal_file->weight_branch.c_str(),"Signals");
+//  dataloader->AddTree(signal_file->tvertex,"Signals",1.0, sig_tcut,TMVA::Types::kTraining);
 
-   // dataloader->PrepareTrainingAndTestTree("1","1", splotopts); 
+	dataloader->AddBackgroundTree(background_file->tvertex);
+	dataloader->SetWeightExpression(background_file->weight_branch.c_str());
+	//dataloader->SetWeightExpression(background_file->weight_branch.c_str(),"Backgrounds");
+//	dataloader->AddTree(background_file->tvertex,"Backgrounds",1.0, back_tcut,TMVA::Types::kTraining);
 
-	for(method_struct const & method : methods) factory->BookMethod(dataloader, method.type, method.str, method.option);
+
+//	dataloader->AddTree(signal_test->tvertex,"Signal",1.0, sig_tcut,TMVA::Types::kTesting);
+//	dataloader->AddTree(background_test->tvertex,"Background",1.0, back_tcut,TMVA::Types::kTesting);
+    
+    
+   // dataloader->AddCut(back_tcut,"Background");
+   // dataloader->SetCut(back_tcut,"Background");
+   // dataloader->AddCut(sig_tcut,"Signal");
+    dataloader->PrepareTrainingAndTestTree(sig_tcut,back_tcut, splotopts); 
+
+
+    for(method_struct const & method : methods) factory->BookMethod(dataloader, method.type, method.str, method.option);
+
 
 	factory->TrainAllMethods();
 	factory->TestAllMethods();
