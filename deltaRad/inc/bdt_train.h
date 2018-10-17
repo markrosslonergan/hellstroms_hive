@@ -20,6 +20,7 @@
 
 
 
+int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, bdt_file *signal_test, bdt_file *background_test, std::vector<bdt_variable> variables, std::vector<method_struct> & methods);
 int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, std::vector<bdt_variable> variables, std::vector<method_struct> & methods);
 
 

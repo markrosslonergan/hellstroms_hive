@@ -182,7 +182,6 @@ int main (int argc, char *argv[]){
 	std::string signal_definition = "is_delta_rad == 1";
 	std::string background_definition = "!(" +signal_definition+ ")";
 
-
 	//***************************************************************************************************/
 	//***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
 	//***************************************************************************************************/
@@ -196,22 +195,22 @@ int main (int argc, char *argv[]){
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
 	bdt_file *signal_pure    = new bdt_file(dir, "ncdeltarad_corsikaoverlays_vertex_train.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir, "ncdeltarad_corsikaoverlays_vertex_test.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir, "bnb_data_overlay_vertex_train.root", "BNBPure",	  "hist","",   kGreen-3, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_data_overlay_vertex_test.root", "BNBCosmics", "hist","",   kGreen-3, bkg_flow);
+	
+    bdt_file *bnb_pure    = new bdt_file(dir, "bnb_data_overlay_vertex_train.root", "BNBPure",	  "hist","",   kBlue-6, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_data_overlay_vertex_test.root", "BNBCosmics", "hist","",   kBlue - 6, bkg_flow);
 	//bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 
 	//Data files
 	bdt_file *data5e19    = new bdt_file(dir, "data5e19_vertex.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
-	bdt_file *bnbext_cosmics    = new bdt_file(dir, "bnbext_vertex_test.root",	"BNBextCosmics",	"E1p","",  kBlack, data_flow);
-	bdt_file *bnbext_pure    = new bdt_file(dir, "bnbext_vertex_train.root",	"BNBext",	"E1p","",  kBlack, data_flow);
+
+	bdt_file *bnbext_cosmics    = new bdt_file(dir, "bnbext_vertex_test.root",	"BNBextCosmics",	"E1p","",  kGreen-3, data_flow);
+	bdt_file *bnbext_pure    = new bdt_file(dir, "bnbext_vertex_train.root",	"BNBext",	"E1p","",  kGreen-3, data_flow);
 
 	//bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
 	//bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
 	//bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
 
-
 	//bdt_file * bnb_withpi0 = new bdt_file(dir,"vertexed_bnbcosmics_fresh_pi0mom_v4.2.root", "BNBCosmicsPi0","hist","",kRed-4,bkg_flow);
-
 	//bdt_file *bnb_overlay = new bdt_file(dir,"vertexed_bnboverlay_fresh_v4.1.root","BNBoverlay","hist","",kBlue-6, bkg_flow);
 	bdt_file *dirt = new bdt_file(dir,"dirt_vertex.root","Dirt","hist","",kOrange-6, data_flow);
 
@@ -304,9 +303,9 @@ int main (int argc, char *argv[]){
 
 	if(mode_option == "train") {
 		std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
-		if(run_cosmic) bdt_train(cosmic_bdt_info, signal_pure,bnbext_pure , vars, TMVAmethods);
+		if(run_cosmic) bdt_train(cosmic_bdt_info, signal_pure,   bnbext_pure, signal_cosmics, bnbext_cosmics,     vars, TMVAmethods);
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
-		if(run_bnb) bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
+		if(run_bnb)    bdt_train(bnb_bdt_info,    signal_pure,   bnb_pure,        vars, TMVAmethods);
 		return 0;
 
 	}else if(mode_option == "app"){
