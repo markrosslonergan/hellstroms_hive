@@ -194,8 +194,8 @@ int main (int argc, char *argv[]){
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure    = new bdt_file(dir, "ncdeltarad_corsika_overlays_train.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir, "ncdeltarad_corsika_overlays_test.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
+	bdt_file *signal_pure    = new bdt_file(dir, "ncdeltarad_corsikaoverlays_vertex_train.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir, "ncdeltarad_corsikaoverlays_vertex_test.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(dir, "bnb_data_overlay_vertex_train.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_data_overlay_vertex_test.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
 	//bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
@@ -271,7 +271,7 @@ int main (int argc, char *argv[]){
 	bnb_cosmics->addPlotName("BNB w/ Corsika");
 //	intime->addPlotName("Intime Corsika cosmics");
 	data5e19->addPlotName("4.8e19 POT Data");
-	bnbext->addPlotName("External BNB Data");
+	bnbext_cosmics->addPlotName("External BNB Data");
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -390,8 +390,7 @@ int main (int argc, char *argv[]){
 
 
 		TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-		std::vector<double> ans = scan_significance(fsig, {signal_cosmics} , {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info);
-		//std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
+		std::vector<double> ans = scan_significance(fsig, {signal_cosmics} , {bnb_cosmics, bnbext_cosmics}, cosmic_bdt_info, bnb_bdt_info);
 
 		std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
 		fsig->Close();
@@ -405,8 +404,8 @@ int main (int argc, char *argv[]){
 
 		//Add bnbext but change the color and style first
 	//	bnbext->col = intime->col;	
-		bnbext->fillstyle = 3333;
-		histogram_stack.addToStack(bnbext);
+		bnbext_cosmics->fillstyle = 3333;
+		histogram_stack.addToStack(bnbext_cosmics);
 		//histogram_stack.addToStack(dirt);
 
 		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
@@ -445,8 +444,8 @@ int main (int argc, char *argv[]){
 		histogram_stack->addToStack(signal_cosmics);
 		histogram_stack->addToStack(bnb_cosmics);
 		//bnbext->col = intime->col;	
-		bnbext->fillstyle = 3333;
-		histogram_stack->addToStack(bnbext);
+		bnbext_cosmics->fillstyle = 3333;
+		histogram_stack->addToStack(bnbext_cosmics);
 //		histogram_stack->addToStack(dirt);
 
 		int ip=0;
@@ -540,7 +539,7 @@ int main (int argc, char *argv[]){
 		std::vector<double> eff_sig;
 
 		//std::vector<bdt_file*> eff_files = {signal_pure, bnb_cosmics, bnbext};
-		std::vector<bdt_file*> eff_files = {signal_cosmics, bnb_cosmics, bnbext};
+		std::vector<bdt_file*> eff_files = {signal_cosmics, bnb_cosmics, bnbext_cosmics};
 		std::vector<std::vector<double>> effs;
 		std::vector<std::vector<double>> pres;
 
@@ -709,7 +708,7 @@ int main (int argc, char *argv[]){
 
 	}
 	else if(mode_option == "effdata"){
-		std::vector<bdt_file*> data_files = {data5e19, bnbext};
+		std::vector<bdt_file*> data_files = {data5e19, bnbext_pure};
 
 		std::cout<<"Starting efficiency study: coscut @ "<<fcoscut<<" bnbcut@: "<<fbnbcut<<std::endl;
 
@@ -787,12 +786,12 @@ int main (int argc, char *argv[]){
 
 
         bdt_test mytest(bnb_cosmics, vars, "test");
-        mytest.CompareVars({bnb_withpi0});
+       // mytest.CompareVars({bnb_withpi0});
         //mytest.RunTests()
 
         return 0;
 
-		bnb_withpi0->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
+		//bnb_withpi0->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
 	    //signal_cosmics->writeStageFriendTree("stage_friend2.root", fcoscut, fbnbcut);
 		bnb_cosmics->writeStageFriendTree("stage_friend.root", fcoscut, fbnbcut);
 		return 0;
@@ -962,4 +961,5 @@ int main (int argc, char *argv[]){
 	return 0;
 
 }
+
 
