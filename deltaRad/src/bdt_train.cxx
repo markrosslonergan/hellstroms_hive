@@ -33,18 +33,15 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, b
 	//std::string splotopts = "nTest_Signal="+std::to_string(signal_test_entries)+":nTest_Background="+std::to_string(background_test_entries)+":nTrain_Signal="+std::to_string(signal_entries)+":nTrain_Background="+std::to_string(background_entries)+":SplitMode=Random:NormMode=NumEvents:V";
 	const TString s = splotopts;
 	
-
-    dataloader->AddTree(signal_file->tvertex,"Signal",1.0,sig_tcut,TMVA::Types::ETreeType::kTraining);
-	dataloader->AddTree(signal_test->tvertex,"Signal",1.0, sig_tcut,TMVA::Types::ETreeType::kTesting);
+    dataloader->AddTree(signal_file->tvertex,"Signal",1.0, sig_tcut,TMVA::Types::kTraining);
+	dataloader->AddTree(signal_test->tvertex,"Signal",1.0, sig_tcut,TMVA::Types::kTesting);
 	dataloader->SetWeightExpression(signal_file->weight_branch.c_str(),"Signal");
 
-	dataloader->AddTree(background_file->tvertex,"Background",1.0, back_tcut,TMVA::Types::ETreeType::kTraining);
-	dataloader->AddTree(background_file->tvertex,"Background",1.0, back_tcut,TMVA::Types::ETreeType::kTesting);
+	dataloader->AddTree(background_file->tvertex,"Background",1.0, back_tcut,TMVA::Types::kTraining);
+	dataloader->AddTree(background_test->tvertex,"Background",1.0, back_tcut,TMVA::Types::kTesting);
 	dataloader->SetWeightExpression(background_file->weight_branch.c_str(),"Background");
 
-
    // dataloader->PrepareTrainingAndTestTree("1","1", splotopts); 
-   
 
 	for(method_struct const & method : methods) factory->BookMethod(dataloader, method.type, method.str, method.option);
 
