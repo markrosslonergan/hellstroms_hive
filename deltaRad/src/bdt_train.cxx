@@ -7,7 +7,8 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 
 
 	TMVA::Factory * factory = new TMVA::Factory(name.c_str(), outfile,
-				"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
+			//	"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
+				"!V:!Silent:Color:DrawProgressBar:AnalysisType=Classification");
 	TMVA::DataLoader * dataloader = new TMVA::DataLoader(("BDTxmls_"+name).c_str());
 
 	int bdt_precut_stage = 1;
@@ -28,8 +29,16 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 
 	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
 
-	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
-			"nTrain_Signal="+std::to_string(floor(signal_entries*0.65))+":nTrain_Background="+std::to_string(floor(background_entries*0.65))+":SplitMode=Random:NormMode=NumEvents:!V");
+	std::cout<<"SIGNAL CUTS : "<<sig_tcut<<std::endl;
+	std::cout<<"BKG CUTS : "<<back_tcut<<std::endl;
+
+	std::string splotopts = "nTrain_Signal="+std::to_string(floor(signal_entries))+":nTrain_Background="+std::to_string(floor(background_entries))+":SplitMode=Random:NormMode=NumEvents:!V";
+	const TString s = splotopts;
+
+	
+ 
+        dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut, "V:NormMode=NumEvents:SplitMode=Random:nTrain_Signal=10000:nTest_Signal=10:nTrain_Background=10000:nTest_Background=10");
+		
 			//"SplitMode=Random:NormMode=NumEvents:!V");
 
     //factory.PrepareTrainingAndTestTree(ROOT.TCut(),"NormMode=EqualNumEvents:SplitMode=Block:nTrain_Signal=%s:nTest_Signal=%s:nTrain_Background=%s:nTest_Background=%s"%(nTrain_Signal,nTest_Signal,nTrain_Background,nTest_Background))

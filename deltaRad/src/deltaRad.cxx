@@ -191,13 +191,13 @@ int main (int argc, char *argv[]){
 	bdt_flow cosmic_flow(base_cuts,		"1", 					vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow bkg_pure_flow(base_cuts,	background_definition+"&&"+ true_bkg ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
+	bdt_flow data_flow(base_cuts,		"reco_asso_showers==1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
 	bdt_file *signal_pure    = new bdt_file(dir, "ncdeltarad_corsikaoverlays_vertex_train.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir, "ncdeltarad_corsikaoverlays_vertex_test.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir, "bnb_data_overlay_vertex_train.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_data_overlay_vertex_test.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir, "bnb_data_overlay_vertex_train.root", "BNBPure",	  "hist","",   kGreen-3, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_data_overlay_vertex_test.root", "BNBCosmics", "hist","",   kGreen-3, bkg_flow);
 	//bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 
 	//Data files
