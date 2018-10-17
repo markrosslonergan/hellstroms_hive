@@ -305,7 +305,7 @@ int main (int argc, char *argv[]){
 		std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
 		if(run_cosmic) bdt_train(cosmic_bdt_info, signal_pure,   bnbext_pure, signal_cosmics, bnbext_cosmics,     vars, TMVAmethods);
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
-		if(run_bnb)    bdt_train(bnb_bdt_info,    signal_pure,   bnb_pure,        vars, TMVAmethods);
+		if(run_bnb)    bdt_train(bnb_bdt_info,    signal_pure,   bnb_pure, signal_cosmics, bnb_cosmics,       vars, TMVAmethods);
 		return 0;
 
 	}else if(mode_option == "app"){
