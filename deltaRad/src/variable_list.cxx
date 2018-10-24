@@ -133,15 +133,15 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		std::string proton_mass = "0.938272";
 		std::string reco_track_energy = "(track_info.reco_track_kinetic_from_length[0]+"+proton_mass + ")";
 		std::string reco_track_momentum  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"-"+proton_mass +"*"+proton_mass+")";
-        std::string angle_shower1_shower2 ="(reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz[0]*reco_shower_dirz[1])";
+        //std::string angle_shower1_shower2 ="(reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz[0]*reco_shower_dirz[1])";
         //std::string angle_shower1_shower2 ="acos(reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz[0]*reco_shower_dirz[1])*57.2958";
-        std::string E1 = "(reco_shower_helper_energy[most_energetic_shower_index])"; 
-        std::string E2 = "(reco_shower_helper_energy[second_most_energetic_shower_index])"; 
+        //std::string E1 = "(reco_shower_helper_energy[most_energetic_shower_index])"; 
+        //std::string E2 = "(reco_shower_helper_energy[second_most_energetic_shower_index])"; 
         //std::string E1 = "(0.015228 + 1.24476*reco_shower_helper_energy[most_energetic_shower_index])"; 
         //std::string E2 = "(0.02409 + 1.18413*reco_shower_helper_energy[second_most_energetic_shower_index])"; 
 
         // Invariant mass for two massless particles (photons)
-        std::string invMass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-("+angle_shower1_shower2+")))";
+        //std::string invMass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-("+angle_shower1_shower2+")))";
 
         // Pion momentum components
         std::string p_pi_x = "(reco_shower_helper_energy[0]*reco_shower_dirx[0] + reco_shower_helper_energy[1]*reco_shower_dirx[1])";
@@ -150,10 +150,10 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         //std::string p_pi_x = "("+E1+"*reco_shower_dirx[most_energetic_shower_index] + "+E2+"*reco_shower_dirx[second_most_energetic_shower_index])";
         //std::string p_pi_y = "("+E1+"*reco_shower_diry[most_energetic_shower_index] + "+E2+"*reco_shower_diry[second_most_energetic_shower_index])";
         //std::string p_pi_z = "("+E1+"*reco_shower_dirz[most_energetic_shower_index] + "+E2+"*reco_shower_dirz[second_most_energetic_shower_index])";
-        std::string p_pi_trans = "sqrt("+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
-        std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
+        //std::string p_pi_trans = "sqrt("+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
+        //std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 
-        std::string cm_angle = "(fabs("+E1+" - "+E2+")/("+p_pi+"))";
+        //std::string cm_angle = "(fabs("+E1+" - "+E2+")/("+p_pi+"))";
         //std::string cm_angle = "(fabs(reco_shower_helper_energy[0]- reco_shower_helper_energy[1])/("+p_pi+"))";
         //std::string cm_angle = "(fabs(reco_shower_helper_energy[most_energetic_shower_index]- reco_shower_helper_energy[second_most_energetic_shower_index])/("+p_pi+"))";
 
@@ -178,16 +178,16 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		all_vars.push_back(bdt_variable("reco_shower_length[most_energetic_shower_index]","(48,0,100)","Leading Shower Length [cm]",false,"d"));//4
 		all_vars.push_back(bdt_variable("reco_shower_length[second_most_energetic_shower_index]","(48,0,100)","Subleading Shower Length [cm]",false,"d"));//5
 
-		all_vars.push_back(bdt_variable(angle_shower1_shower2,"(50, 0, 1)","Reco. Shower Opening Angle (Degrees)",false,"d"));//5
-        all_vars.push_back(bdt_variable(E1, "(50, 0, 1)", "Leading Shower Energy [GeV]", false, "d"));
-        all_vars.push_back(bdt_variable(E2, "(25, 0, 0.5)", "Subleading Shower Energy [GeV]", false, "d"));
-        all_vars.push_back(bdt_variable(E1+"+"+E2, "(50, 0, 1.5)", "Summed Shower Energy [GeV]", false, "d"));
-        all_vars.push_back(bdt_variable(invMass, "(50, 0, 0.5)", "Reconstructed Diphoton Mass", true, "d"));
-        all_vars.push_back(bdt_variable(p_pi, "(50, 0, 1.5)", "Reconstructed #pi^{0} Momentum", true, "d"));
+		all_vars.push_back(bdt_variable("pi0_info.opening_angle","(50, 0, 1)","Reco. Shower Opening Angle (Degrees)",false,"d"));//5
+        all_vars.push_back(bdt_variable("pi0_info.leading_shower_energy", "(50, 0, 1)", "Leading Shower Energy [GeV]", false, "d"));
+        //all_vars.push_back(bdt_variable("pi0_info.subleading_shower_energy", "(25, 0, 0.5)", "Subleading Shower Energy [GeV]", false, "d"));
+        all_vars.push_back(bdt_variable("pi0_info.leading_shower_energy+pi0_info.subleading_shower_energy", "(50, 0, 1.5)", "Summed Shower Energy [GeV]", false, "d"));
+        all_vars.push_back(bdt_variable("pi0_info.pi0_invariant_mass", "(50, 0, 0.5)", "Reconstructed Diphoton Mass", true, "d"));
+        all_vars.push_back(bdt_variable("pi0_info.reco_pi0_momentum", "(50, 0, 1.5)", "Reconstructed #pi^{0} Momentum", true, "d"));
         //all_vars.push_back(bdt_variable(p_pi_x, "(50, 0, 1.5)", "Reconstructed #pi^{0} x-Momentum", true, "d"));
-        //all_vars.push_back(bdt_variable(p_pi_y, "(50, 0, 1.5)", "Reconstructed #pi^{0} y-Momentum", true, "d"));
+        all_vars.push_back(bdt_variable(p_pi_y, "(50, 0, 1.5)", "Reconstructed #pi^{0} y-Momentum", true, "d"));
         all_vars.push_back(bdt_variable(p_pi_z, "(50, 0, 1.5)", "Reconstructed #pi^{0} z-Momentum", true, "d"));
-        all_vars.push_back(bdt_variable(cm_angle, "(25, 0, 1)", "Reconstructed cos(#theta_{CM})", false, "d"));
+        all_vars.push_back(bdt_variable("pi0_info.cm_decay_angle", "(25, 0, 1)", "Reconstructed cos(#theta_{CM})", false, "d"));
 		all_vars.push_back(bdt_variable("reco_shower_dist_to_closest_flashzcenter[0]","(48,0,520)","Distance from Leading Shower to Flashcenter [cm]",false,"d"));//6
 
 		all_vars.push_back(bdt_variable("reco_nu_vtx_dist_to_closest_tpc_wall","(48,0,120)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));//7

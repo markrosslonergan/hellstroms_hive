@@ -297,8 +297,9 @@ int main (int argc, char *argv[]){
 		//	Best Fit Significance: 0.5525 0.533625 1.1
 
 	}else if (analysis_tag == "ncpi0_2g1p") {
-        fcoscut = 0.5944;
-        fbnbcut = 0.5446;
+        fcoscut = 0.5644;
+        fbnbcut = 0.5434;
+
     }
 
 	//===========================================================================================
@@ -777,10 +778,10 @@ int main (int argc, char *argv[]){
 		for(auto &f: bdt_filesA){
 			std::cout<<"On file: "<<f->tag<<std::endl;
 			bdt_precalc pre(f);
-			pre.genTrackInfo();
-			pre.genBNBcorrectionInfo();
+			//pre.genTrackInfo();
+			//pre.genBNBcorrectionInfo();
 			pre.genPi0Info();
-			pre.genShowerInfo();
+			//pre.genShowerInfo();
             //pre.genPi0BoostAngle();
 
 		}

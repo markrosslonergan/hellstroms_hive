@@ -541,6 +541,8 @@ int bdt_precalc::genTrackInfo(){
 // Function to calculate the pi0 -> 2gamma decay angle in CM frame,
 // relative to boost vector. Apparently Matt asked to CCpi0 groups for
 // this, so obviously we have to do it
+// NO LONGER NECESSARY, JUST KEEPING FOR FUTURE REFERENCE
+/*
 int bdt_precalc::genPi0BoostAngle() {
 	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
     // Initialization; set up necessary variables to read from vertexed samples
@@ -699,11 +701,11 @@ int bdt_precalc::genPi0BoostAngle() {
             myfile << "----------------------------------------------------------------" << std::endl;
 
             // Repeat the above for the pion boost vector 
-            /*if (normal.Angle(boostVec) > 1.571) {
+            if (normal.Angle(boostVec) > 1.571) {
                 normal.SetX(-normal.X());
                 normal.SetY(-normal.Y());
                 normal.SetZ(-normal.Z());
-            }*/
+            }
 
         }        
 		friend_tree->Fill();
@@ -720,6 +722,8 @@ int bdt_precalc::genPi0BoostAngle() {
     friend_file_out->Close();
     return 0;
 }
+*/
+
 int bdt_precalc::genShowerInfo(){
 	std::cout<<"bdt_precalc::genShowerInfo() || Starting. "<<std::endl;
 	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
@@ -872,11 +876,24 @@ int bdt_precalc::genPi0Info(){
 	int reco_asso_tracks = 0;
 	int reco_asso_showers = 0;
 	int pi0_class_number = 0;
+    int most_energetic_shower_index = 0;
+    int second_most_energetic_shower_index = 0;
+    int ccnc = 0;
+    std::size_t const N = 30; // Large number to avoid "stack smashing"
 	//std::vector<double> longest_asso_track_displacement = 0;	
 	std::vector<double> *vall_reco_tracks= 0;
 	std::vector<double> *vall_reco_showers= 0;
 	std::vector<double> *vall_bp_reco_tracks= 0;
 	std::vector<double> *vall_bp_reco_showers= 0;
+    double reco_shower_helper_energy[N] = {0.};
+    double reco_shower_dirx[N] = {0.};
+    double reco_shower_diry[N] = {0.};
+    double reco_shower_dirz[N] = {0.};
+    double leading_shower_energy, subleading_shower_energy;
+    double cm_decay_angle;
+    double reco_pi0_momentum;
+    double opening_angle;
+    double pi0_invariant_mass;
 
 	TBranch *ballt = 0;
 	TBranch *balls = 0;
@@ -885,23 +902,36 @@ int bdt_precalc::genPi0Info(){
 	TBranch *ballbpt = 0;
 	TBranch *ballbps = 0;
 
+    // For energy can momentum calculations
+    TBranch *breco_shower_energy = 0;
+    TBranch *breco_shower_dirx = 0;
+    TBranch *breco_shower_diry = 0;
+    TBranch *breco_shower_dirz = 0;
+
+    // Get necessary variables from TTree
 	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
 	file->tvertex->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
 	file->tvertex->SetBranchAddress("all_reco_tracks_dist_from_vertex",&vall_reco_tracks,&ballt);
 	file->tvertex->SetBranchAddress("all_reco_showers_dist_from_vertex",&vall_reco_showers,&balls);
-    //file->tvertex->SetBranchAddress("all_gamma_decay_angles", &vall_gamma_decays);
-
 	file->tvertex->SetBranchAddress("all_reco_tracks_bp_dist_from_vertex",&vall_bp_reco_tracks,&ballbpt);
 	file->tvertex->SetBranchAddress("all_reco_showers_bp_dist_from_vertex",&vall_bp_reco_showers,&ballbps);
-
 	file->tvertex->SetBranchAddress("pi0_class_number",&pi0_class_number);
+
+    file->tvertex->SetBranchAddress("most_energetic_shower_index", &most_energetic_shower_index);
+    file->tvertex->SetBranchAddress("second_most_energetic_shower_index", &second_most_energetic_shower_index);
+    file->tvertex->SetBranchAddress("ccnc", &ccnc);
+    file->tvertex->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
+	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
+    file->tvertex->SetBranchAddress("reco_shower_helper_energy", &reco_shower_helper_energy, &breco_shower_energy);
+    file->tvertex->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx, &breco_shower_dirx);
+    file->tvertex->SetBranchAddress("reco_shower_diry", &reco_shower_diry, &breco_shower_diry);
+    file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz, &breco_shower_dirz);
 
 	// New branches for FRIEND TREE 
 	double v_pi0_class_number=0;
 	std::vector<int> vec_reco_showers_within;
 	std::vector<int> vec_reco_tracks_within;
     std::vector<double> vec_gamma_decay_angles;
-
 
 	int reco_showers_bp_within_10 = 0;
 	int reco_showers_bp_within_20 = 0;
@@ -943,6 +973,18 @@ int bdt_precalc::genPi0Info(){
 
 	TBranch *b_pi0_class_number = friend_tree->Branch("pi0_class_number",&v_pi0_class_number);
 
+    TBranch *b_leading_shower_energy = friend_tree->Branch("leading_shower_energy", &leading_shower_energy);
+    TBranch *b_subleading_shower_energy = friend_tree->Branch("subleading_shower_energy", &subleading_shower_energy);
+    TBranch *b_reco_pi0_momentum = friend_tree->Branch("reco_pi0_momentum", &reco_pi0_momentum);
+    TBranch *b_opening_angle = friend_tree->Branch("opening_angle", &opening_angle);
+    TBranch *b_pi0_invariant_mass = friend_tree->Branch("pi0_invariant_mass", &pi0_invariant_mass);
+    TBranch *b_cm_decay_angle = friend_tree->Branch("cm_decay_angle", &cm_decay_angle);
+
+    std::ofstream outfile;
+    outfile.open("pi0_info_output.txt");
+    //outfile << "E1 \t\t E2 \t pi0Mom \t CMAngle \t invMass" << std::endl;
+    outfile << "px1 \t\t py1 \t\t pz1 \t\t px2 \t\t py2 \t\t pz2 \t\t piMom" << std::endl;
+    outfile << "-------------------------------------------------------------------" << std::endl;
 	int NN = file->tvertex->GetEntries();
 	for(int i=0; i< file->tvertex->GetEntries(); i++){
 
@@ -966,6 +1008,12 @@ int bdt_precalc::genPi0Info(){
 		reco_tracks_bp_within_20 = 0;
 		reco_tracks_bp_within_30 = 0;
 
+        leading_shower_energy = -999;
+        subleading_shower_energy = -999;
+        reco_pi0_momentum = -999;
+        opening_angle = -999;
+        pi0_invariant_mass = -999;
+        cm_decay_angle = -999;
 
 		file->tvertex->GetEntry(i);
 		v_pi0_class_number = pi0_class_number;
@@ -1072,6 +1120,47 @@ int bdt_precalc::genPi0Info(){
 				reco_tracks_within_30 ++;
 			}	
 		}
+
+        // Add two-shower info: corrected shower energies, cm decay angle, and
+        // reconstructed momentum
+        if (reco_asso_showers==2) {
+            // Set up kinematic variables
+            double px = 0., py = 0., pz = 0.; 
+            double px1 = 0., py1 = 0., pz1 = 0.; 
+            double px2 = 0., py2 = 0., pz2 = 0.;
+            double E1 = 0., E2 = 0., E_pi = 0.;
+            leading_shower_energy = 1.24476*reco_shower_helper_energy[most_energetic_shower_index] + 0.015228;
+            subleading_shower_energy = 1.18413*reco_shower_helper_energy[second_most_energetic_shower_index] + 0.02409;
+
+            // Pion momentum components
+            px1 = leading_shower_energy*reco_shower_dirx[most_energetic_shower_index]; 
+            py1 = leading_shower_energy*reco_shower_diry[most_energetic_shower_index];
+            pz1 = leading_shower_energy*reco_shower_dirz[most_energetic_shower_index];
+            px2 = subleading_shower_energy*reco_shower_dirx[second_most_energetic_shower_index]; 
+            py2 = subleading_shower_energy*reco_shower_diry[second_most_energetic_shower_index];
+            pz2 = subleading_shower_energy*reco_shower_dirz[second_most_energetic_shower_index]; 
+            px = px1 + px2;
+            py = py1 + py2;
+            pz = pz1 + pz2;
+
+            reco_pi0_momentum = sqrt(px*px + py*py + pz*pz);
+
+            cm_decay_angle = (leading_shower_energy - subleading_shower_energy)/reco_pi0_momentum;
+            
+            opening_angle = reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1];
+
+            pi0_invariant_mass = sqrt(2.0*leading_shower_energy*subleading_shower_energy*(1-opening_angle));
+
+            outfile << px1 << "\t" << py1 << "\t" << pz1 << "\t" << px2 << "\t" << py2 << "\t" << pz2 << "\t" << reco_pi0_momentum << std::endl; 
+            /*
+            outfile << leading_shower_energy << "\t";
+            outfile << subleading_shower_energy << "\t";
+            outfile << reco_pi0_momentum << "\t";
+            outfile << cm_decay_angle << "\t" << std::endl;
+            outfile << pi0_invariant_mass << "\t";
+            */
+
+        }
 
 		friend_tree->Fill();
 
