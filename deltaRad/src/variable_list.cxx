@@ -180,11 +180,11 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 		all_vars.push_back(bdt_variable("pi0_info.opening_angle","(50, 0, 1)","Reco. Shower Opening Angle (Degrees)",false,"d"));//5
         all_vars.push_back(bdt_variable("pi0_info.leading_shower_energy", "(50, 0, 1)", "Leading Shower Energy [GeV]", false, "d"));
-        //all_vars.push_back(bdt_variable("pi0_info.subleading_shower_energy", "(25, 0, 0.5)", "Subleading Shower Energy [GeV]", false, "d"));
+        all_vars.push_back(bdt_variable("pi0_info.subleading_shower_energy", "(25, 0, 0.5)", "Subleading Shower Energy [GeV]", false, "d"));
         all_vars.push_back(bdt_variable("pi0_info.leading_shower_energy+pi0_info.subleading_shower_energy", "(50, 0, 1.5)", "Summed Shower Energy [GeV]", false, "d"));
         all_vars.push_back(bdt_variable("pi0_info.pi0_invariant_mass", "(50, 0, 0.5)", "Reconstructed Diphoton Mass", true, "d"));
         all_vars.push_back(bdt_variable("pi0_info.reco_pi0_momentum", "(50, 0, 1.5)", "Reconstructed #pi^{0} Momentum", true, "d"));
-        //all_vars.push_back(bdt_variable(p_pi_x, "(50, 0, 1.5)", "Reconstructed #pi^{0} x-Momentum", true, "d"));
+        all_vars.push_back(bdt_variable(p_pi_x, "(50, 0, 1.5)", "Reconstructed #pi^{0} x-Momentum", true, "d"));
         all_vars.push_back(bdt_variable(p_pi_y, "(50, 0, 1.5)", "Reconstructed #pi^{0} y-Momentum", true, "d"));
         all_vars.push_back(bdt_variable(p_pi_z, "(50, 0, 1.5)", "Reconstructed #pi^{0} z-Momentum", true, "d"));
         all_vars.push_back(bdt_variable("pi0_info.cm_decay_angle", "(25, 0, 1)", "Reconstructed cos(#theta_{CM})", false, "d"));
