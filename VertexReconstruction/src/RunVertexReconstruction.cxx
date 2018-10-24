@@ -120,8 +120,8 @@ int main(int const argc, char * argv[]) {
 		      "daq");
   */            
   vrana->SetProducers(
-              "pandoraNu",
-		      "pandoraNu",
+              "pandora",
+		      "pandora",
 		      "pandoraCosmicHitRemoval",
 		      "simpleFlashBeam",
 		      //"swtrigger");
@@ -129,15 +129,19 @@ int main(int const argc, char * argv[]) {
 
 
   vrana->SetFlashTimings(flash_start, flash_end);
-
+  std::cout<<"set flash timing"<<std::endl;
   //vrana->RunPandora();
   vrana->GetPOT();
+  std::cout<<"got POT"<<std::endl;
   vrana->RunFillTreeVariables();
+  std::cout<<"ran fill tree variables"<<std::endl;
   //vrana->RunVerticesPerEvent();
   
 
   processor.AddAnalyzer(vrana);
+  std::cout<<"added analyzer"<<std::endl;
   processor.SetOutputFileName(output_name.c_str());
+  std::cout<<"output names is "<<output_name.c_str()<<std::endl;
   processor.Run();
 
   std::cout << "Wall time: " << difftime(time(0), start) << "\n";
