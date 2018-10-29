@@ -67,9 +67,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 		data_file->setStageEntryList(s);
 
+        std::string E1 = "(0.015228 + 1.24476*reco_shower_helper_energy[most_energetic_shower_index])"; 
+                std::string E2 = "(0.02409 + 1.18413*reco_shower_helper_energy[second_most_energetic_shower_index])"; 
+        TString angle_shower1_shower2 =Form("(reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz    [0]*reco_shower_dirz[1])");
+        TString invMass = Form("sqrt(2.0*"+E1+"*"+E2+"*(1.0-("+angle_shower1_shower2+")))");
 
 		if(true && s == 3){
-			data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist");
+			data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_helper_energy[0]:reco_shower_helper_energy[1]:reco_track_displacement[0]:track_info.reco_track_PIDA[0]:"+angle_shower1_shower2+":"+invMass);
 		}
 
 

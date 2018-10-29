@@ -46,7 +46,7 @@ int main (int argc, char *argv[]){
 
 	std::string mode_option = "fake"; 
 	std::string xml = "default.xml";
-	std::string analysis_tag ="ncpi0_2g1p";
+	std::string analysis_tag ="2g1p";
 
 	bool run_cosmic = true;
 	bool run_bnb = true;
@@ -64,7 +64,7 @@ int main (int argc, char *argv[]){
 		{"number",		required_argument,	0, 'n'},
 		{"cosmic",		no_argument,		0, 'c'},
 		{"bnb",			no_argument,		0, 'b'},
-		{0,			no_argument, 		0,  0},
+		{0,			    no_argument, 		0,  0},
 	};
 
 	int iarg = 0; opterr=1; int index;
@@ -155,7 +155,7 @@ int main (int argc, char *argv[]){
 
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(45,0.3,0.6)");
+	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(45,0.3,0.65)");
 	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(45,0.2,0.75)");
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
@@ -175,10 +175,14 @@ int main (int argc, char *argv[]){
 			num_track_cut = "==0";
 			bnb_bdt_info.setTopoName("1#gamma0p");
 			cosmic_bdt_info.setTopoName("1#gamma0p");
-		}else if (analysis_tag == "ncpi0_2g1p") {
+		}else if (analysis_tag == "2g1p") {
 			num_track_cut =  "==1";
 	    	bnb_bdt_info.setTopoName("2#gamma1p");
 			cosmic_bdt_info.setTopoName("2#gamma1p");
+        }else if (analysis_tag == "2g0p") {
+			num_track_cut =  "==0";
+	    	bnb_bdt_info.setTopoName("2#gamma0p");
+			cosmic_bdt_info.setTopoName("2#gamma0p");
         }else {
             std::cout << "Invalid analysis tag" << std::endl;
             return 1;
@@ -194,12 +198,12 @@ int main (int argc, char *argv[]){
 	//***************************************************************************************************/
 	//***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
 	//***************************************************************************************************/
-	bdt_flow signal_pure_flow(base_cuts, 	signal_definition +"&&"+ true_signal, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow signal_flow(base_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow cosmic_flow(base_cuts,		"1", 					vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow bkg_pure_flow(base_cuts,background_definition+"&&"+ true_bkg, vec_precuts, postcuts, cosmic_bdt_info, bnb_bdt_info);
-	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
+	bdt_flow signal_pure_flow(base_cuts, signal_definition +"&&"+ true_signal, vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow signal_flow(     base_cuts, signal_definition, 		           vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow cosmic_flow(     base_cuts, "1", 					               vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow bkg_flow(        base_cuts, background_definition,                vec_precuts, postcuts, cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow bkg_pure_flow(   base_cuts, background_definition+"&&"+ true_bkg, vec_precuts, postcuts, cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow data_flow(       base_cuts, "1",					               vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
 	//bdt_file *signal_pure = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Pure","hist","",kRed-7, signal_flow);
@@ -296,11 +300,14 @@ int main (int argc, char *argv[]){
 		fbnbcut = 0.533625;
 		//	Best Fit Significance: 0.5525 0.533625 1.1
 
-	}else if (analysis_tag == "ncpi0_2g1p") {
-        fcoscut = 0.5644;
-        fbnbcut = 0.5434;
-
+	}else if (analysis_tag == "2g1p") {
+        fcoscut = 0.54; // Apparently doesn't matter anymore???
+        fbnbcut = 0.5416;
+    }else if (analysis_tag == "2g0p") {
+        fcoscut = 0.54; // Apparently doesn't matter anymore???
+        fbnbcut = 0.5416;
     }
+
 
 	//===========================================================================================
 	//===========================================================================================
