@@ -567,7 +567,7 @@ int bdt_file::setStageEntryList(int j){
 
 std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 
-	bool verbose = false;
+	bool verbose = true;
 
 	std::string ans;
 	switch(stage) {

@@ -161,7 +161,7 @@ int main (int argc, char *argv[]){
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
     std::string true_signal = "ccnc==1 && true_shower_parent_pdg[0]==111 && true_shower_parent_pdg[1]==111 && true_shower_origin[0]==1 && true_shower_origin[1]==1 ";
     // Might need to change this next line???
-    std::string true_bkg    = "true_shower_origin[0]==2";
+    std::string true_bkg = "true_shower_origin[0]==2";
     std::string num_track_cut ;
 
 	if(analysis_tag == "track"){
@@ -188,7 +188,8 @@ int main (int argc, char *argv[]){
             return 1;
         }       
 
-	if(mode_option == "vars" || mode_option == "train") vec_precuts.erase(vec_precuts.begin());
+	if(mode_option == "vars" || mode_option == "train" || mode_option == "response") 
+        vec_precuts.erase(vec_precuts.begin());
 
 	std::string base_cuts = "reco_asso_showers == 2 && reco_asso_tracks "+num_track_cut;
     std::string signal_definition = "ccnc==1 && true_shower_parent_pdg[0]==111 && true_shower_parent_pdg[1]==111";

@@ -237,14 +237,17 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         }
 
 		all_precuts.push_back(pe_cut);
+		//all_precuts.push_back("passed_swtrigger==1");
 		all_precuts.push_back(fiducial_cut);
 		all_precuts.push_back(min_shower_energy_cut);
-        all_precuts.push_back(track_length_cut);
-        all_precuts.push_back(min_conversion_cut);
-        all_precuts.push_back(good_calo_cut);
-        all_precuts.push_back(track_direction_cut);
-        all_precuts.push_back(dead_wire_track);
 
+		if(analysis_tag == "2g1p"){
+			all_precuts.push_back(track_length_cut);
+			all_precuts.push_back(min_conversion_cut);
+			all_precuts.push_back(good_calo_cut);
+			all_precuts.push_back(track_direction_cut);
+			all_precuts.push_back(dead_wire_track);
+		}
 
 	}else if( analysis_tag == "YOURTAGHERE"){
 

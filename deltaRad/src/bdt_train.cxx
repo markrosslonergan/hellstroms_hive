@@ -27,17 +27,10 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 
 	for(bdt_variable &var: variables) dataloader->AddVariable(var.name.c_str());
 
-
-	//dataloader->AddSpectator("most_energetic_shower_index");
-	//dataloader->AddSpectator("second_most_energetic_shower_index");
-	//dataloader->AddSpectator("true_shower_parent_pdg[most_energetic_shower_index]");
-	//dataloader->AddSpectator("true_shower_parent_pdg[second_most_energetic_shower_index]");
-
-
 	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
 
 	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
-			"nTrain_Signal="+std::to_string(floor(signal_entries))+":nTrain_Background="+std::to_string(floor(background_entries))+":SplitMode=Random:NormMode=NumEvents:!V");
+			"nTrain_Signal="+std::to_string(floor(signal_entries*0.5))+":nTrain_Background="+std::to_string(floor(background_entries*0.5))+":SplitMode=Random:NormMode=NumEvents:!V");
 			//"SplitMode=Random:NormMode=NumEvents:!V");
 
     //factory.PrepareTrainingAndTestTree(ROOT.TCut(),"NormMode=EqualNumEvents:SplitMode=Block:nTrain_Signal=%s:nTest_Signal=%s:nTrain_Background=%s:nTest_Background=%s"%(nTrain_Signal,nTest_Signal,nTrain_Background,nTest_Background))
