@@ -162,13 +162,14 @@ int main (int argc, char *argv[]){
     /***************************** DEFINITION *****************************/
 
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-    std::string true_signal = "((true_shower_origin[0]==1&&abs(true_nuvertz-true_track_startz[0])+abs(true_nuverty-true_track_starty[0])+abs(true_nuvertx-true_track_startx[0])< 1)&&sqrt(pow(reco_shower_startx[0]-reco_track_startx[0],2)+pow(reco_shower_starty[0]-reco_track_starty[0],2)+pow(reco_shower_startz[0]-reco_track_startz[0],2))<2)";
-    std::string true_bkg    = "(true_shower_origin[0]==1)";//origin ==1 for BNB, porigin == 2 for cosmic; This is for selecting true BNB background.
+    std::string true_signal = "ccnc==0 && true_track_pdg[0]==2212 &&abs(true_shower_pdg[0])==11&&true_shower_origin[0]==1";
+    //This is for selecting true BNB background.
+    std::string true_bkg    = "true_shower_origin[0]==1";//origin ==1 for BNB, origin == 2 for cosmic; 
     std::string num_track_cut ;
 
     if(analysis_tag == "electron1"){//this tag helps identify variables to use.
 	true_signal = true_signal+ "&& true_track_origin[0]==1";
-	true_bkg = true_signal;
+	true_bkg = true_bkg+ "&& true_track_origin[0]==1";//true BNB bkg
 	num_track_cut =  "== 1";
 
 	bnb_bdt_info.setTopoName("1e1p");
@@ -182,8 +183,8 @@ int main (int argc, char *argv[]){
     if(mode_option == "vars" || mode_option == "var" || mode_option == "train") vec_precuts.erase(vec_precuts.begin());
 
     std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
-    std::string signal_definition = "(((nu_pdg == 12 && lep_pdg == 11)||(nu_pdg == -12 && lep_pdg == -11))&&true_shower_pdg == 11&&abs(true_shower_parent_pdg[0])!=13)";
-    std::string background_definition = "(nu_pdg != 12 && nu_pdg != -12)";
+    std::string signal_definition = "abs(nu_pdg) == 12 && exiting_electron_number==1 && exiting_proton_number==1";//abs(nu_pdg)=12 are all satisfied in signal sample.
+    std::string background_definition = "!("+signal_definition+")";
     
 
 
@@ -207,14 +208,14 @@ int main (int argc, char *argv[]){
      * bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
      * This means: bdt_file (directory, file name, tag to passed along, what plots , color, how to use it)
      */
-    bdt_file *signal_pure   = new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "LEEunfolded"		, "hist","", kCyan-3 , signal_pure_flow	);
+    bdt_file *signal_pure   = new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "LEEunfolded"		, "hist","", kCyan-3 , signal_pure_flow	);//unfolded means reweighted
     bdt_file *signal_cosmics= new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "LEEunfoldedCosmics"	, "hist","", kCyan-3 , signal_flow	);
     bdt_file *bnb_pure	    = new bdt_file( dir, "vertexed_bnbcosmics_fresh_v4.1.root"	, "BNBPure"		, "hist","", kBlue-4 , bkg_pure_flow	);
     bdt_file *bnb_cosmics   = new bdt_file( dir, "vertexed_bnbcosmics_fresh_v4.1.root"	, "BNBCosmics"		, "hist","", kBlue-4 , bkg_flow		);
     //Corsika
     bdt_file *intime	    = new bdt_file( dir, "vertexed_intime_fresh_v4.1.root"	, "IntimeCosmics"	, "hist","", kGreen-3, cosmic_flow	);
     //two data files
-    bdt_file *data5e19	    = new bdt_file( dir, "vertexed_data5e19_fresh_v4.1.root"	, "Data5e19"		, "E1p"	,"", kBlack  , data_flow	);
+    bdt_file *data5e19	    = new bdt_file( dir, "vertexed_data5e19_fresh_v4.1.root"	, "Data5e19"		, "E1p"	,"", kBlack  , data_flow	);//actually it is 4e19
     bdt_file *bnbext	    = new bdt_file( dir, "vertexed_bnbext_fresh_v4.1.root"	, "BNBext"		, "E1p"	,"", kBlack  , data_flow	);
 
     bdt_file *intrinsics    = new bdt_file( dir, "vertexed_nueintrinsic_fresh_v4.1.root", "NueIntrinsicCosmics"	, "hist","", kRed-7  , intrinsic_flow	);

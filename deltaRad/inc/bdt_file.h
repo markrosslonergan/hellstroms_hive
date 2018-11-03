@@ -23,6 +23,7 @@
 #include "TCanvas.h"
 #include "TPad.h"
 #include "TH1.h"
+#include "TH2.h"
 #include "TH1D.h"
 #include "TLegend.h"
 #include "TLatex.h"
@@ -169,6 +170,9 @@ struct bdt_file{
 		TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
+
+		TH2* getTH2(bdt_variable varx, bdt_variable vary, std::string cuts, std::string nam, double plot_POT);
+
 
 		std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
 		std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);

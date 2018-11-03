@@ -3,19 +3,12 @@
 
 bdt_app_tree_struct::bdt_app_tree_struct(std::string const & tree_name, bool const extra) {
 	tree = new TTree(tree_name.c_str(), "");
-	if(extra) {
-	//	tree->Branch("is_delta_rad", &is_delta_rad, "is_delta_rad/I");
-	//	tree->Branch("true_nu_vtx_fid_contained", &true_nu_vtx_fid_contained, "true_nu_vtx_fid_contained/I");
-	//	tree->Branch("reco_asso_tracks", &reco_asso_tracks, "reco_asso_tracks/I");
-	}
 	tree->Branch("mva", &mva, "mva/D");
-	//tree->Branch("summed_associated_reco_shower_energy", &summed_associated_reco_shower_energy, "summed_associated_reco_shower_energy/D");
 }
 
 bdt_app_tree_struct::~bdt_app_tree_struct() {
 	delete tree;
 }
-
 
 
 void bdt_app_update_formula(std::vector<TTreeFormula*> & tfv, std::vector<float *> & rvv) {
@@ -26,6 +19,7 @@ void bdt_app_update_formula(std::vector<TTreeFormula*> & tfv, std::vector<float 
 }
 
 void bdt_app_update(void_vec const & tvv, std::vector<float *> & rvv) {
+	//OBSOLETE not called anymore
 
 	for(size_t i = 0; i < tvv.size(); ++i) {
 		if(tvv.get_type(i) == typeid(int).name()) {
@@ -38,6 +32,7 @@ void bdt_app_update(void_vec const & tvv, std::vector<float *> & rvv) {
 }
 
 void bdt_topological_update(std::vector<double*> *topv){
+	//OBSOLETE not called anymore
 
 
 }
@@ -85,18 +80,20 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 	
         int N = tree->GetEntries();
         std::cout << "Beginning loop for " << identifier << std::endl;
-        
-	for(int i = 0; i < N; ++i) {//i ranges from 0 to N-1 in this case.
-
-	    if( i%(N/100) == 0){
-	    std::cout.precision(3);
-	    std::cout<<"\r"<< 100*i/N+1 <<"\% of "<< N <<" entries complete.";//+1 is for the display 100%
-	    std::cout.flush();
-	    }
-
+        std::cout << "############################################" << std::endl;
+        for(int i = 0; i < N; ++i) {
             tree->GetEntry(i);
-            //bdt_app_update(tree_var_v, reader_var_v);
             ts.mva = -999;
+	     
+	    if( i%(N/100) == 0){
+	    	    std::cout.precision(3);
+	    	    std::cout<<"\r"<< 100*i/N+1 <<"\% of "<< N <<" entries complete.";//+1 is for the display 100%
+	    	    std::cout.flush();
+	    	    }
+
+             tf_topological->GetNdata();
+             tf_definition->GetNdata();
+
 
             if(tf_topological->EvalInstance()) {
                 bdt_app_update_formula(tree_formulas_v, reader_var_v);
@@ -107,26 +104,17 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
                 }
             }
             ts.tree->Fill();
-	}
-		std::cout<<std::endl;//a new line
+        }
 		ts.tree->Write();
-        std::cout << "####################################################Finish!"<< std::endl;
     }
-        /*
-		for(int i = 0; i < tree->GetEntries(); ++i) {
-			tree->GetEntry(i);
-			bdt_app_update_formula(tree_var_v, reader_var_v);
-			ts.mva = -999;
-			if(tf->EvalInstance()) ts.mva = reader->EvaluateMVA(method.str.c_str());
-			ts.tree->Fill();
+      
 
-		}
-        */
-	
+	delete reader;
+	delete tf_topological;
+	delete tf_definition;
+	for(float * f : reader_var_v) delete f;
+	for(auto * t : tree_formulas_v) delete t;
 
-	//delete reader;
-	//delete tf;
-	//for(float * f : reader_var_v) delete f;
 
 }
 
@@ -135,14 +123,20 @@ int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variabl
 
 	std::string identifier = info.identifier;
 	
-	TFile * app_ofile = TFile::Open((identifier+"_app"+".root").c_str(), "update");
 	for(size_t i = 0; i < files.size(); ++i) {
+	    TFile * app_ofile = TFile::Open((identifier+"_"+files[i]->tag+"_app"+".root").c_str(), "update");
+		files.at(i)->tvertex->ResetBranchAddresses();
+
 		std::cout<<"On file: "<<files.at(i)->tag<<std::endl;
 		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
 		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
+    
+        app_ofile->Close();
+	    delete app_ofile;
+
 	}
-	app_ofile->Close();
-	delete app_ofile;
+
+
 
 	return 0;
 }
