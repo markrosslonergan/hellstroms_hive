@@ -40,11 +40,11 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	
 
 	//for nice plots make the 50, 25 is quicker tho
-	int nsteps_cosmic = 50;//14
+	int nsteps_cosmic = 10;//14
 	double cut_min_cosmic = 999;
 	double cut_max_cosmic = -999;
 
-	int nsteps_bnb = 50;//14
+	int nsteps_bnb = 10;//14
 	double cut_min_bnb = 999;//0.52;
 	double cut_max_bnb = -999;
 	
@@ -74,8 +74,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	cut_max_bnb =cut_max_bnb*1.0;
 
 	//Zoomed in notrack
-//	cut_min_cosmic = 0.54; cut_max_cosmic = 0.58;
-//	cut_min_bnb = 0.51; cut_max_bnb = 0.552;
+	cut_min_cosmic = 0.2; cut_max_cosmic = 0.7;
+    cut_min_bnb = 0.2; cut_max_bnb = 0.7;
 
 	//Best Fit Significance: 0.601552 0.533678 1.63658
 	//Zoomed in track
@@ -128,6 +128,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
     double total_sig = 0.;
     for(size_t i = 0; i < sig_files.size(); ++i) {
         double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
+        std::cout << "POT scale: " << pot_scale << std::endl;
   
         std::string bnbcut = sig_files.at(i)->getStageCuts(1,-9,-9); 
         total_sig += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
