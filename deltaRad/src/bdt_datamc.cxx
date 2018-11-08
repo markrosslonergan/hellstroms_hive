@@ -264,7 +264,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt){
-/*
 
 	//TCanvas *cobs = new TCanvas("","",1800,1600);
 	//cobs->Divide(2,2,0.0025,0.0000001);
@@ -525,6 +524,5 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 
 	return 0;
-*/
 }
 

@@ -162,7 +162,9 @@ int main (int argc, char *argv[]){
     /***************************** DEFINITION *****************************/
 
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-    std::string true_signal = "ccnc==0 && true_track_pdg[0]==2212 &&abs(true_shower_pdg[0])==11&&true_shower_origin[0]==1";
+    std::string true_signal = "ccnc==0 && true_track_pdg[0]==2212 &&abs(true_shower_pdg[0])==11&&true_shower_origin[0]==1&&(abs(true_nuvertz-true_track_startz[0])+abs(true_nuverty-true_track_starty[0])+abs(true_nuvertx-true_track_startx[0])<1)";
+    //The last constraint is applied in the LEEd/
+
     //This is for selecting true BNB background.
     std::string true_bkg    = "true_shower_origin[0]==1";//origin ==1 for BNB, origin == 2 for cosmic; 
     std::string num_track_cut ;
@@ -184,7 +186,7 @@ int main (int argc, char *argv[]){
 
     std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
     std::string signal_definition = "abs(nu_pdg) == 12 && exiting_electron_number==1 && exiting_proton_number==1";//abs(nu_pdg)=12 are all satisfied in signal sample.
-    std::string background_definition = "!("+signal_definition+")";
+    std::string background_definition = "(abs(nu_pdg)!=12)";
     
 
 
