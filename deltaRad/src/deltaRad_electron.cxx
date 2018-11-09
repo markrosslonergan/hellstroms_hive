@@ -306,8 +306,6 @@ int main (int argc, char *argv[]){
 	if(run_bnb) bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
 	return 0;
 
-
-
     }else if(mode_option == "app"){
 
 	//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
