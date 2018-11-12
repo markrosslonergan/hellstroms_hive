@@ -43,7 +43,7 @@ int bdt_precalc::genTrackInfo(){
 	TTree * friend_tree = new TTree("track_info","track_info");
 
 
-	TFile *fileconv = new TFile((bnbcorrection_dir+"/bnbcorrection/proton_conversion.root").c_str(), "read");
+	TFile *fileconv = new TFile((bnbcorrection_dir+"bnbcorrection/proton_conversion.root").c_str(), "read");
 	TGraph * gconv = (TGraph*)fileconv->Get("Graph");
 
 	friend_file_out->cd();

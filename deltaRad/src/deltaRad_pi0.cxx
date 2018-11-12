@@ -305,8 +305,8 @@ int main (int argc, char *argv[]){
         fcoscut = 0.54; // Apparently doesn't matter anymore???
         fbnbcut = 0.5416;
     }else if (analysis_tag == "2g0p") {
-        fcoscut = 0.54; // Apparently doesn't matter anymore???
-        fbnbcut = 0.5416;
+        fcoscut = 0.536553; 
+        fbnbcut = 0.5246;
     }
 
 
@@ -787,8 +787,8 @@ int main (int argc, char *argv[]){
 			std::cout<<"On file: "<<f->tag<<std::endl;
 			bdt_precalc pre(f);
 			//pre.genTrackInfo();
-			//pre.genBNBcorrectionInfo();
-			pre.genPi0Info();
+			pre.genBNBcorrectionInfo();
+			//pre.genPi0Info();
 			//pre.genShowerInfo();
             //pre.genPi0BoostAngle();
 
