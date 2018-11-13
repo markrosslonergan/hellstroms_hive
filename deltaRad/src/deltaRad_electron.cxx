@@ -186,6 +186,8 @@ int main (int argc, char *argv[]){
 
     std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
     std::string signal_definition = "abs(nu_pdg) == 12 && exiting_electron_number==1 && exiting_proton_number==1";//abs(nu_pdg)=12 are all satisfied in signal sample.
+    //also include anti-electron.:q
+    //
     std::string background_definition = "(abs(nu_pdg)!=12)";
     
 
