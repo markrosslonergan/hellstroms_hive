@@ -170,13 +170,14 @@ int main (int argc, char *argv[]){
     std::string num_track_cut ;
 
     if(analysis_tag == "electron1"){//this tag helps identify variables to use.
-	true_signal = true_signal+ "&& true_track_origin[0]==1";
+	true_signal = true_signal+ "&& true_track_origin[0]==1&& exiting_proton_number==1";
 	true_bkg = true_bkg+ "&& true_track_origin[0]==1";//true BNB bkg
 	num_track_cut =  "== 1";
 
 	bnb_bdt_info.setTopoName("1e1p");
 	cosmic_bdt_info.setTopoName("1e1p");
     }else{//the following is to be modified later.
+
 	num_track_cut = "== 0";
 	bnb_bdt_info.setTopoName("1e0p");
 	cosmic_bdt_info.setTopoName("1e0p");
@@ -185,10 +186,9 @@ int main (int argc, char *argv[]){
     if(mode_option == "vars" || mode_option == "var" || mode_option == "train") vec_precuts.erase(vec_precuts.begin());
 
     std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
-    std::string signal_definition = "abs(nu_pdg) == 12 && exiting_electron_number==1 && exiting_proton_number==1";//abs(nu_pdg)=12 are all satisfied in signal sample.
-    //also include anti-electron.:q
-    //
-    std::string background_definition = "(abs(nu_pdg)!=12)";
+    std::string signal_definition = "abs(nu_pdg) == 12 && (exiting_electron_number==1||exiting_antielectron_number==1)&&exiting_piplus_number==0&&exiting_piminus_number==0&&exiting_pi0_number==0&&true_shower_energy[0]>0.02&&true_track_energy[0]>0.04";//abs(nu_pdg)=12 are all satisfied in signal sample.
+    //expected 28.9 nue or 24.8 LEEnue  in 1e20 POT at E<0.7GeV  
+    std::string background_definition = "!("+signal_definition+")";
     
 
 
