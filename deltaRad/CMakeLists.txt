@@ -37,4 +37,6 @@ add_subdirectory(src)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/xml/default.xml DESTINATION ./src/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/xml/default_bnb.xml DESTINATION ./src/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/other/run.sh DESTINATION ./src/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/deltaRad_electron.cxx DESTINATION ./)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/variable_list.cxx DESTINATION ./)
 
