@@ -284,7 +284,7 @@ int main (int argc, char *argv[]){
     double fcoscut, fbnbcut;
 
     if (access("sig.txt",F_OK) == -1){//no file
-	std::cout<<"Error: No sig.txt is found in directory. Proceed without BDT cuts."<<std::endl;
+	std::cout<<"Warning: No sig.txt is found in the current directory. Proceed without BDT cuts."<<std::endl;
     }
     else{
 	std::cout<<"Read off significance from sig.txt for coscut & bnbcut."<<std::endl;
@@ -597,7 +597,6 @@ int main (int argc, char *argv[]){
 
 //----------------------------------------------------------------------
     } else if(mode_option == "eff"){
-	/*
 	std::string ZMIN = "0.0"; std::string ZMAX = "1036.8";
 	std::string XMIN = "0.0"; std::string XMAX = "256.35";
 	std::string YMIN = "-116.5"; std::string YMAX = "116.5";
@@ -620,7 +619,6 @@ int main (int argc, char *argv[]){
 	bdt_efficiency(signal_cosmics, denom, fcoscut,fbnbcut);
 
 	return 0;
-	*/
 
 	//everything below here is older
 	double plot_pot = 6.6e20;
@@ -732,7 +730,10 @@ int main (int argc, char *argv[]){
 
 	//pe_cut, fiducial_cut, track_length_cut, min_energy_cut, min_conversion_cut, good_calo_cut, track_direction_cut, back_to_back_cut
 	std::vector<std::string> sname;
-
+	
+	if(analysis_tag == "electron1"){
+	    sname = {"Generated","Vertexed","Topological","Total PE $>20$","Fiducial cut","Good Calo Cut", "Show angle <0.04"};
+	}
 
 	if(analysis_tag == "ncdeltarad1g0p"){
 	    sname = {"Generated","Vertexed","Topological","Total PE $>20$","Fiducial cut","Reco $E_{\\gamma}$ $> 30$MeV"};

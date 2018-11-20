@@ -324,7 +324,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1,
 
 	feff->Close();
 
-	return;
+	//return;
 
 
 
