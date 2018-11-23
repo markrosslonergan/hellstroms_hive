@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <mva type="BDT" use="yes">
 	<method type = "BDT" use = "yes">
-		<param>  NTrees=8500 	</param>				
+		<param>  NTrees=4500 	</param>				
 		<param>  MinNodeSize=2.5% </param>				
 		<param>  BoostType=RealAdaBoost</param>
 		<param>  AdaBoostBeta=0.75 	</param>				

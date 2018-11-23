@@ -204,10 +204,11 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 	if(analysis_tag == "electron1bnb" || analysis_tag == "electron1" || analysis_tag == "electron0bnb"){//BNB variables
 
-	    all_vars.push_back(bdt_variable("1/1*("+ min_disz + ")","(30,-40,20)", "Distance of a Track Ahead of a Shower (z-direction)[cm]",true,"d"));
+	   // all_vars.push_back(bdt_variable("1/1*("+ min_disz + ")","(30,-40,20)", "A Track Ahead of a Shower (z-direction)[cm]",true,"d"));
 	    
-	    //The denomenator might be zero, but solve this problem later.
-	    all_vars.push_back(bdt_variable("2/2*reco_shower_dedxnew_plane2[0]/reco_shower_dirz[0]", "(20,0,10)", "Shower dE/dx [MeV/cm]",false,"d"));
+	    //in MCC8, dedxnew_plane2[0] has most null values.
+	    //all_vars.push_back(bdt_variable("2/2*reco_shower_dedxnew_plane2[0]/reco_shower_dirz[0]", "(20,0,10)", "Shower dE/dx [MeV/cm]",false,"d"));
+	    all_vars.push_back(bdt_variable("shower_info.amalgamated_shower_dEdx[0]","(48,0,6.5)", "Amalgamated Shower dE/dx [MeV/cm]",false,"d")); //2
 	}
 
 
@@ -216,12 +217,12 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 	if(analysis_tag == "electron1cosmic" ||analysis_tag == "electron1" || analysis_tag == "electron0cosmic"){//Cosmic variables
 
-	    all_vars.push_back(bdt_variable("3/3*(abs(reco_shower_diry[0]+reco_track_diry[0]))","(32,0,2)","Total Momentum Aligned to y-direction", false, "d"));
+	    all_vars.push_back(bdt_variable("3/3*(abs(reco_shower_diry[0]+reco_track_diry[0]))","(32,0,2)","Total Momentum Aligned to the y-direction", false, "d"));
 
-	    all_vars.push_back(bdt_variable("4/4*("+ min_disx + ")","(30,-40,20)", "Distance of a Track Ahead of a Shower (x-direction)[cm]",true,"d"));
+	   // all_vars.push_back(bdt_variable("4/4*("+ min_disx + ")","(30,-40,20)", "A Track Ahead of a Shower (x-direction)[cm]",true,"d"));
 
 	    all_vars.push_back(bdt_variable("5/5*(sqrt(1-reco_track_dirz[0]*reco_track_dirz[0])*"+track_mom+"+sqrt(1-reco_shower_dirz[0]*reco_shower_dirz[0])*"+shower_mom+")",
-				"(40,0,1.5)","Total Momtum Perpendicular to z-direction", false, "d"));
+				"(40,0,1.5)","Total Momentum Perpendicular to the z-direction", false, "d"));
 	}
 
 
@@ -230,7 +231,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 //	all_vars.push_back(bdt_variable("3/3*reco_shower_helper_energy[0]","(52,0,0.5)","Reconstructed Shower Energy [GeV]", false,"d"));
 //	all_vars.push_back(bdt_variable("4/4*reco_track_energy_new_legacy[0]", "(52,0,1)","Track Energy (Best Plane)",true, "d"));
 	
-	all_vars.push_back(bdt_variable("6/6*reco_shower_helpernew_energy[0]+reco_track_energy_new_legacy[0]","(40,0,1)","Nue Energy [GeV]", false,"d"));
+	all_vars.push_back(bdt_variable("6/6*reco_shower_helpernew_energy[0]+reco_track_energy_new_legacy[0]","(40,0,1)","Nue Reconstructed Energy [GeV]", false,"d"));
 
 	/* Particle Mass [GeV]
 	 *  n	    0.93957
@@ -273,13 +274,13 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 //	all_vars.push_back(bdt_variable("14/14*abs(abs(atan2(reco_track_dirx[0],reco_track_dirz[0]))-1.5708)","(52,0,1.58)","Reconstructed Track - |alpha_{xz} - pi/2|", true,"d"));
 	
 //----------------------------------------------------------->>Stopping Power<<-------------------------------------------------------------
-    	all_vars.push_back(bdt_variable("11/11*abs(track_info.reco_track_mean_dEdx[0]-reco_shower_dedxnew_plane2[0]/reco_shower_dirz[0])",
-	    "(30,0,10)", "Diff. of dE/dx on Track and Shower in Col. Plane (Directrion Corrected)[MeV/cm]",false,"d"));
+    	all_vars.push_back(bdt_variable("11/11*abs(track_info.reco_track_mean_dEdx[0]-shower_info.amalgamated_shower_dEdx[0])",
+	    "(30,0,10)", "Difference of dE/dx btw a Track and a Shower [MeV/cm]",false,"d"));
 
 //    	all_vars.push_back(bdt_variable("12/12*track_info.reco_track_mean_dEdx[0]/reco_track_dirz[0]","(52,0,10)", "dE/dx of Track in Collection Plane (Direction Corrected) [MeV/cm]",false,"d"));
 	    
 //----------------------------------------------------------->>Length<<-------------------------------------------------------------
-	all_vars.push_back(bdt_variable("12/12*max(reco_track_displacement[0],reco_shower_length[0])","(30,0,150)","Maximum Track or Shower Length [cm]", true,"d"));//note: muon is to be killed by evaluating the distance btw shower and track
+	all_vars.push_back(bdt_variable("12/12*abs(max(reco_track_displacement[0],reco_shower_length[0])-50)","(30,0,150)","|Maximum Length of a Track or a Shower-50| [cm]", true,"d"));//note: muon is to be killed by evaluating the distance btw shower and track
 //	all_vars.push_back(bdt_variable("12/12*reco_track_displacement[0]","(30,0,150)","Track Length [cm]", true,"d"));//note: muon is to be killed by evaluating the distance btw shower and track
 //	all_vars.push_back(bdt_variable("13/13*reco_shower_length[0]","(30,0,150)","Shower Length [cm]", true,"d"));//note: muon is to be killed by evaluating the distance btw shower and track
 
@@ -287,8 +288,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 //	all_vars.push_back(bdt_variable("3/3*("+ min_disy + ")","(52,-100,50)", "Distance of a Track Ahead of a Shower (y-direction)[cm]",true,"d"));
 
-	all_vars.push_back(bdt_variable("14/14*min("+ min_disz + ", min("+ min_disy +"," + min_disx + "))","(50,-100,5)",
-		"Distance of a Track Ahead of a Shower (all-direction)[cm]",true,"d"));
+	all_vars.push_back(bdt_variable("14/14*min("+ min_disz + ", min("+ min_disy +"," + min_disx + "))","(50,-100,5)", "A Track Ahead of a Shower (all-direction)[cm]",true,"d"));
 
 
 //----------------------------------------------------------->>Others<<-------------------------------------------------------------
@@ -300,21 +300,21 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 //	all_vars.push_back(bdt_variable("25/25*pi0_info.num_reco_showers_within_10cm_vertex","(10,0,10)","Num Showers within 10cm",false,"i"));
 
 	all_vars.push_back(bdt_variable("15/15*shortest_asso_shower_to_vert_dist","(52,0,20)","Photon Conversion Length from Reconstructed Vertex [cm]" ,false,"d"));
-	all_vars.push_back(bdt_variable("16/16*abs("+angle_track_shower+"-0.5)","(40,0,1.5)","|Cosine Track-Shower Angle-0.5|",true,"d"));//for back-to-back cut
+	all_vars.push_back(bdt_variable("16/16*abs("+angle_track_shower+")","(15,0,1)","|Cosine Track-Shower Angle|",true,"d"));//for back-to-back cut
 
 	all_vars.push_back(bdt_variable("17/17*reco_shower_dist_to_closest_flashzcenter[0]","(40,0,200)","Distance from Shower to Flashcenter [cm]",false,"d"));
 //----------------------------------------------------------->>Others (Track)<<-----------------------------------------------------
 	//muon killer
-	all_vars.push_back(bdt_variable("18/18*abs(track_info.reco_track_PIDA[0]-9)","(52,0,14)","|Track PIDA - 9|",true,"d"));
+	all_vars.push_back(bdt_variable("18/18*abs(track_info.reco_track_PIDA[0]-9)","(40,0,14)","|Track PIDA - 9|",true,"d"));
 
 //	all_vars.push_back(bdt_variable("track_info.reco_track_mean_dEdx[0]","(0,2)", "Track Mean dEdx",true,"d"));
 //	all_vars.push_back(bdt_variable("track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0]","(0,5)", "Track direction",true,"d"));
 //	std::string track_direction_cut = "track_info.reco_track_start_mean_dEdx[0]/track_info.reco_track_end_mean_dEdx[0] >= 0.9";
 //
 //----------------------------------------------------------->>Others (Shower)<<-----------------------------------------------------
-	all_vars.push_back(bdt_variable("19/19*(reco_shower_length[0]*tan(reco_shower_opening_angle[0]/2))","(30,0,10)","Half Base Length of a Shower [cm]", false, "d"));
-//	all_vars.push_back(bdt_variable("30/30*(reco_shower_length[0]*reco_shower_length[0]*tan(reco_shower_opening_angle[0]/2))","(52,0,200)","Thickness of Shower [#{cm^2}]", false, "d"));
 	all_vars.push_back(bdt_variable("20/20*reco_shower_opening_angle[0]","(20,0,0.8)","Shower Opening Angle [rad]",false,"d"));
+	all_vars.push_back(bdt_variable("19/19*2*(reco_shower_length[0]*tan(reco_shower_opening_angle[0]/2))","(30,0,20)","Base Length of a Shower [cm]", false, "d"));
+//	all_vars.push_back(bdt_variable("30/30*(reco_shower_length[0]*reco_shower_length[0]*tan(reco_shower_opening_angle[0]/2))","(52,0,200)","Thickness of Shower [#{cm^2}]", false, "d"));
 //	all_vars.push_back(bdt_variable("21/21*reco_nu_vtx_dist_to_closest_tpc_wall","(52,0,120)","Reconstructed Vertex to TPC Wall Distance [cm]",false,"d"));
 	
 //	all_vars.push_back(bdt_variable("34/34*reco_shower_length[0]*pow(tan(reco_shower_opening_angle[0]/2),2)/reco_shower_helper_energy[0]","(52,0,20)","Area of Shower Length over shower energy [#{cm^2/GeV}]", false, "d"));
