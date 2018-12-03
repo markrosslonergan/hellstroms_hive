@@ -22,20 +22,14 @@ void MCTruthAnalyzer::Run() {
     std::vector<double> const & genie_particle_X = fstorage->fgenie_particle_X->at(i);
     std::vector<double> const & genie_particle_Y = fstorage->fgenie_particle_Y->at(i);
     std::vector<double> const & genie_particle_Z = fstorage->fgenie_particle_Z->at(i);
-    bool print = false;
+    std::vector<double> const & genie_particle_E = fstorage->fgenie_particle_E->at(i);
+
     for(size_t j = 0; j < genie_particle_PdgCode.size(); ++j) {
-      if(genie_particle_PdgCode.at(j) == 111) {
-	particle_map[genie_particle_TrackId.at(j)] = std::make_pair(j, std::vector<int>());
-      }
+      std::cout << genie_particle_TrackId[j] << ' ' << genie_particle_PdgCode[j] << ' ' << genie_particle_StatusCode[j] << ' ' 
+		<< genie_particle_E[j] << '\n';
     }
-    for(size_t j = 0; j < genie_particle_PdgCode.size(); ++j) {
-      auto const pm_it = particle_map.find(genie_particle_Mother.at(j));
-      if(pm_it == particle_map.end()) continue;
-      if(genie_particle_PdgCode.at(j) == 22) {
-	std::cout << "Photon child of pi0 in genie, event: " << fstorage->fevent_number << "\n";
-	exit(1);
-      }
-    }
+    std::cout << '\n';
+
   }
 
   /*

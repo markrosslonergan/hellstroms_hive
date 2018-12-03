@@ -718,8 +718,8 @@ void EvaluateVertexQuality::PlotParameters(std::vector<std::vector<double> > con
 
     for(auto const & pq : performance_quantities) {
 
-      std::string const title = "BNB Maximized";
-      //std::string const title = "NC #Delta Radiative Maximized";
+      //std::string const title = "BNB Maximized";
+      std::string const title = "NC #Delta Radiative Maximized";
 
       std::vector<double> const & best_permutation = permutation_v.at(results.at(ph_index).at(pq.second).second);
       DrawHist(ph, "0track_" + method, pq.first, "dist", "(40, 0, 10)", "reco_track_total == 0", fvq.GetPermString(best_permutation), title + " 0 Associated Tracks");

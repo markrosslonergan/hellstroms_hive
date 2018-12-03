@@ -26,7 +26,7 @@ int main(int const argc, char const * argv[]) {
   std::vector<std::string> const method = {"max"};
   std::vector<std::string> const metrics_to_draw = {"track_cleanliness", "track_completeness", "shower_completeness", "shower_cleanliness"};
   //std::vector<std::string> const metrics_to_draw = {"completeness", "cleanliness", "combined"};
-  std::vector<std::string> const parameters = {"shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"};
+  std::vector<std::string> const parameters = {"start_prox", "shower_prox", "max_bp_dist", "cpoa_vert_prox", "cpoa_trackend_prox"};
   //std::vector<std::string> const parameters = {"shower_prox"};
   //std::vector<std::string> const performance_quantity = {"mean", "ratio_eq_1"};
   std::vector<std::string> const performance_quantity = {"ratio_eq_1"};
@@ -98,9 +98,9 @@ int main(int const argc, char const * argv[]) {
 	"shower_cleanliness", "", "Shower Cleanliness"});
   */
 
-  //evq.Run({4, 40, 40, 12, 12});
-  evq.Run({4, 30, 100, 25, 5});
-  //evq.Run();
+  //evq.Run({4, 40, 40, 12, 12}); //Run over specific permutation
+  //evq.Run({4, 30, 100, 25, 5});
+  evq.Run(); //Run over all permutations and find best one
    
   std::cout << "Wall time: " << difftime(time(0), start) << "\n";  
 

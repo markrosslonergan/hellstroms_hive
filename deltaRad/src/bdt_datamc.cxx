@@ -105,7 +105,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 	std::vector<std::string> stage_name = {"All Verticies","","Cosmic BDT Cut","BNB BDT Cut"};
 
 
-	for(int k = 1; k<4; k++){
+	for(int k = 1; k<2; k++){
 		TCanvas *cobs = new TCanvas("","",900,800);
 		//	cobs->cd(k+1);
 		cobs->cd();
@@ -189,7 +189,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 		pottex.DrawLatex(.7,.65, pot_draw.c_str());
 
-		TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary");
+		TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation Preliminary");
 		pre->Draw();
 
 		//cobs->cd(k+1);	
@@ -248,9 +248,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 		ratpre->SetTitle("");
 
 
-
-		std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2) ;
-		TText *t = new TText(0.11,0.41,mean.c_str());
+		std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+" #pm "+to_string_prec(NdatEvents/NeventsStack*sqrt(1./NdatEvents+1./NeventsStack), 2);
+		TLatex *t = new TLatex(0.11,0.41,mean.c_str());
 		t->SetNDC();
 		t->SetTextColor(kRed-7);
 		//t->SetTextFont(43);
