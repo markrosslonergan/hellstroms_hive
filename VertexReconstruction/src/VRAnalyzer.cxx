@@ -492,8 +492,8 @@ void VRAnalyzer::Run() {
   }
 
   //Testing tuhis bit
-  AddTracks(pas.GetDetectorObjects(), "pandoraCosmic");
-  AddShowers(pas.GetDetectorObjects(), "pandoraCosmic");
+  //AddTracks(pas.GetDetectorObjects(), "pandoraCosmic");
+  //AddShowers(pas.GetDetectorObjects(), "pandoraCosmic");
 
   if(frun_fill_tree_variables){
     fftv.Fill(pas);

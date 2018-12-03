@@ -18,7 +18,7 @@ class VertexQuality {
 
  public:
 
-  VertexQuality(std::string const & name = "VertexQuality");
+  VertexQuality(std::string const & name = "VertexQuality", bool const track_only = false);
   ~VertexQuality();
 
   void FillEventTree(bool const fill_event_tree = true);
@@ -35,8 +35,7 @@ class VertexQuality {
 
   void SetStorage(Storage const * storage);
   void RunShowerMatch();
-  void Run(ParticleAssociations const & pas,
-	   bool const track_only = false);
+  void Run(ParticleAssociations const & pas);
   std::vector<double> DrawHist(TTree * tree,
 			       std::string const & draw,
 			       std::string const & binning,
@@ -64,8 +63,7 @@ class VertexQuality {
   
  private:
 
-  void RunShowerMatch(ParticleAssociations const & pas,
-		      bool const track_only);
+  void RunShowerMatch(ParticleAssociations const & pas);
   void SetupVertexQualityTree(TTree * const tree);
   void GetTrueObjects(size_t const mct_index,
 		      std::vector<size_t> & mctrack_v,
@@ -85,7 +83,9 @@ class VertexQuality {
 		std::vector<size_t> const & track_v,
 		std::vector<size_t> const & shower_v);
   TTree * SetupEvalTree(std::vector<std::vector<std::vector<double>>> & drawn_values);
-  std::string fname;
+
+  std::string const fname;
+  bool const ftrack_only;
   std::string ftrack_producer;
   std::string fshower_producer;
   std::vector<std::vector<std::string>> fdraw_vec;

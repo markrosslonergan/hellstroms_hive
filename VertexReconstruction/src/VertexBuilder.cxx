@@ -921,19 +921,20 @@ void VertexBuilder::Run(ParticleAssociations & pas) {
 
   if(fverbose) std::cout << "Associate tracks\n";
   AssociateTracks(pas);
-  if(fverbose) std::cout << "Associate showers\n";
-  AssociateShowers(pas);
+  //if(fverbose) std::cout << "Associate showers\n";
+  //AssociateShowers(pas);
 
   if(fverbose) std::cout << "Add lone tracks\n";
   AddLoneTracks(pas);
-  if(fverbose) std::cout << "Add lone showers\n";
-  AddLoneShowers(pas);
+  //if(fverbose) std::cout << "Add lone showers\n";
+  //AddLoneShowers(pas);
   //if(fverbose) std::cout << "Get shower associations\n";
   pas.GetAllAssociations();
-
+  
   pas.NodeCheck();
 
 }
 
 
 #endif
+
