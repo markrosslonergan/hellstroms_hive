@@ -3,8 +3,9 @@
 #include "VertexQuality.h"
 
 
-VertexQuality::VertexQuality(std::string const & name) :
+VertexQuality::VertexQuality(std::string const & name, bool const track_only) :
   fname(name),
+  ftrack_only(track_only),
   fvertex_tree(nullptr),
   frun_shower_match(false),
   fevent_tree(nullptr) {
@@ -330,7 +331,7 @@ void VertexQuality::FillTree(TTree * tree,
                              std::vector<size_t> const & shower_v) {
 
   ResetVertex();
-
+  
   if(pa_index == SIZE_MAX) {
     tree->Fill();
     return;
@@ -427,8 +428,7 @@ void VertexQuality::FillTree(TTree * tree,
 }
 
 
-void VertexQuality::RunShowerMatch(ParticleAssociations const & pas,
-				   bool const track_only) {
+void VertexQuality::RunShowerMatch(ParticleAssociations const & pas) {
 
   ResetEvent();
 
@@ -479,16 +479,22 @@ void VertexQuality::RunShowerMatch(ParticleAssociations const & pas,
     std::vector<ParticleAssociation> const & pa_v = pas.GetAssociations();
     for(size_t const i : pas.GetSelectedAssociations()) {
       ParticleAssociation const & pa = pa_v.at(i);
+      bool bnb_track = false;
       bool bnb_shower = false;
       fis_nc_delta_rad = 0;
       for(size_t const n : pa.GetObjectIndices()) {
-	if(detos.GetRecoType(n) != detos.fshower_reco_type) continue;
+	if((ftrack_only && detos.GetRecoType(n) != detos.ftrack_reco_type) || (!ftrack_only && detos.GetRecoType(n) != detos.fshower_reco_type)) continue;
 	size_t const original_index = detos.GetDetectorObject(n).foriginal_index;
-	if(fis_nc_delta_rad == 0 && std::find(delta_shower_indices.begin(), delta_shower_indices.end(), original_index) != delta_shower_indices.end()) fis_nc_delta_rad = 1;
-	if(!bnb_shower && std::find(shower_v.begin(), shower_v.end(), original_index) != shower_v.end()) bnb_shower = true;
+	if(ftrack_only) {
+	  if(!bnb_track && std::find(track_v.begin(), track_v.end(), original_index) != track_v.end()) bnb_track = true;
+	}
+	else {
+	  if(fis_nc_delta_rad == 0 && std::find(delta_shower_indices.begin(), delta_shower_indices.end(), original_index) != delta_shower_indices.end()) fis_nc_delta_rad = 1;
+	  if(!bnb_shower && std::find(shower_v.begin(), shower_v.end(), original_index) != shower_v.end()) bnb_shower = true;
+	}
       }
-      if(!bnb_shower) {
-	if(fis_nc_delta_rad) std::cout << "WARNING: not BNB shower tagged as NC Delta rad, entry: " << fstorage->fcurrent_entry << " event number: " << fstorage->fevent_number << "\n";
+      if((!ftrack_only && !bnb_shower) || (ftrack_only && !bnb_track)) {
+	//if(fis_nc_delta_rad) std::cout << "WARNING: not BNB shower tagged as NC Delta rad, entry: " << fstorage->fcurrent_entry << " event number: " << fstorage->fevent_number << "\n";
 	continue;
       }
       FillTree(fvertex_tree, pas, i, true_nu_vtx, track_v, shower_v);
@@ -504,11 +510,11 @@ void VertexQuality::RunShowerMatch(ParticleAssociations const & pas,
 
 
 
-void VertexQuality::Run(ParticleAssociations const & pas,
-			bool const track_only) {
+void VertexQuality::Run(ParticleAssociations const & pas) {
 
-  if(frun_shower_match) RunShowerMatch(pas, track_only);
-
+  if(frun_shower_match) RunShowerMatch(pas);
+  else std::cout << "ERROR: run shower match not set for VertexQuality\n";
+  
 }
 
 
@@ -541,12 +547,12 @@ std::vector<double> VertexQuality::DrawHist(TTree * tree,
 					    std::string const & weight) const {
   
   std::vector<double> results;
-
+  
   TCanvas * canvas = new TCanvas("temp");
   tree->Draw((draw + ">>h" + binning).c_str(), weight.c_str());
   TH1 * h = (TH1*)gDirectory->Get("h");
-
-  if(h->GetEntries() == 0){
+  
+  if(!h || h->GetEntries() == 0){
     results.push_back(-DBL_MAX);
     results.push_back(-DBL_MAX);
   }

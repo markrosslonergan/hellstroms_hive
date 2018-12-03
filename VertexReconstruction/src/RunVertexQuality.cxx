@@ -32,7 +32,7 @@ int main(int const argc, char const * argv[]) {
   std::string const track_producer = "pandoraNu";
   std::string const shower_producer = "pandoraNu";
 
-  VertexQuality vq;
+  VertexQuality vq("VertexQuality", true);
   //vq.FillEventTree();
   vq.RunShowerMatch();
   vq.SetProducers(track_producer, shower_producer);
@@ -51,7 +51,8 @@ int main(int const argc, char const * argv[]) {
 	"track_combined", 
 	"", 
 	"Track Combined"});
-  
+
+  /*
   vq.AddPerformanceMetric({"correct_shower_total / true_shower_total", ratio_binning, weight + " && true_shower_total > 0",
 	"shower_completeness", "", "Shower Completeness"});
   vq.AddPerformanceMetric({"correct_shower_total / reco_shower_total", ratio_binning, weight + " && reco_shower_total > 0",
@@ -84,6 +85,7 @@ int main(int const argc, char const * argv[]) {
   
   vq.AddPerformanceMetric({"dist", "", weight,
 	"dist", "", "Distance"});  
+  */
 
   if(pandora) {
 
