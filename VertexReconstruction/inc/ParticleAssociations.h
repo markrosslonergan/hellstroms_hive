@@ -137,7 +137,8 @@ public:
   void NodeCheck();
 
   void GetShowerAssociations();
-
+  void GetAllAssociations();
+  
   std::vector<size_t> & GetSelectedAssociations() {return fselected_associations;}
   std::vector<size_t> const & GetSelectedAssociations() const {return fselected_associations;}
 

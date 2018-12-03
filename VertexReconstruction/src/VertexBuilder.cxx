@@ -928,8 +928,8 @@ void VertexBuilder::Run(ParticleAssociations & pas) {
   AddLoneTracks(pas);
   if(fverbose) std::cout << "Add lone showers\n";
   AddLoneShowers(pas);
-  if(fverbose) std::cout << "Get shower associations\n";
-  pas.GetShowerAssociations();
+  //if(fverbose) std::cout << "Get shower associations\n";
+  pas.GetAllAssociations();
 
   pas.NodeCheck();
 

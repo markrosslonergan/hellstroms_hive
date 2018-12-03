@@ -355,6 +355,28 @@ void ParticleAssociations::GetShowerAssociations() {
 }
 
 
+void ParticleAssociations::GetAllAssociations() {
+
+  std::multimap<double, size_t> pa_map;
+  for(size_t i = 0; i < fassociations.size(); ++i) {
+    if(fverbose) std::cout << "\tAssociation: " << i << "\n";
+    ParticleAssociation const & pa = fassociations.at(i);
+    pa_map.emplace(pa.GetRecoVertex().at(2), i);
+  }
+  
+  for(std::pair<double, size_t> const & p : pa_map) {
+    if(fverbose) std::cout << "\tAssociation: " << p.second << " " << "z-position: " << p.first << "\n";
+    if(Ignore(p.second)) continue;
+    IgnoreAssociationsConnectedTo(p.second);
+    fselected_associations.push_back(p.second);
+  }
+
+  if(fverbose) std::cout << "ClearIgnored\n";
+
+  ClearIgnored();
+
+}
+
 /*
 void ParticleAssociations::DeleteAssociation(size_t const s) {
   
