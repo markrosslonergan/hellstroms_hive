@@ -345,7 +345,7 @@ int main (int argc, char *argv[]){
 	}
 	else{
 	    std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-	    sleep(2);
+//CHECK	    sleep(2);
 	}
 
 	std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
@@ -616,9 +616,9 @@ int main (int argc, char *argv[]){
 	std::string denom  = en_cut_trk + "&&"+ fid_cut + "&& "+ trk;
 
 
-	bdt_efficiency(signal_cosmics, denom, fcoscut,fbnbcut);
+	bdt_efficiency(signal_cosmics, denom, fcoscut,fbnbcut, true);
 
-	return 0;
+	//return 0;
 
 	//everything below here is older
 	double plot_pot = 6.6e20;
@@ -639,6 +639,7 @@ int main (int argc, char *argv[]){
 	std::vector<std::vector<double>> effs;
 	std::vector<std::vector<double>> pres;
 
+	//std::vector<bdt_file*> eff_files = {signal_pure, bnb_cosmics, bnbext};
 	for(int i=0; i< eff_files.size(); i++){
 	    std::vector<double> tmp;
 	    effs.push_back(tmp);
@@ -730,7 +731,9 @@ int main (int argc, char *argv[]){
 
 	//pe_cut, fiducial_cut, track_length_cut, min_energy_cut, min_conversion_cut, good_calo_cut, track_direction_cut, back_to_back_cut
 	std::vector<std::string> sname;
-	
+
+	std::cout<<"CHECK734"<<std::endl;
+
 	if(analysis_tag == "electron1"){
 	    sname = {"Generated","Vertexed","Topological","Total PE $>20$","Fiducial cut","Good Calo Cut", "Show angle <0.04"};
 	}

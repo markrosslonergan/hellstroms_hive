@@ -1,6 +1,6 @@
 #include "bdt_eff.h"
 
-
+/*
 bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1, double c2) : file(filein), denominator(denomin){
 
 
@@ -103,9 +103,10 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1,
 
 
 }
+*/
 
 
-
+//THIS IS WITH A BOOL.
 bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1, double c2,bool in) : file(filein), denominator(denomin){
 
 
@@ -349,10 +350,6 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1,
 		double np = file->GetEntries(thiscut.c_str())*MOD;
 		std::cout<<" + "<<file->flow.vec_pre_cuts.at(m)<<"\t||\t"<<np<<"\t("<<np/nverticies*100<<")\%"<<std::endl;
 	}
-
-
-
-
 }
 
 

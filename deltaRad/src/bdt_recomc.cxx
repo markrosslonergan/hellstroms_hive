@@ -56,6 +56,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 
 			int iv=0;
+			
 			for(auto &v: vec_reco_mc){
 				std::cout<<"on hist #: "<<iv<<". Add to stack."<<std::endl;
 				s_reco_truth->Add(v);
@@ -67,10 +68,11 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 				iv++;
 			}	
 
+			std::cout<<"CHECK 70"<<std::endl;
 			s_reco_truth->Draw("hist");
 			all_reco_mc->Draw("E2 same");
 			std::cout<<"Drawn."<<std::endl;
-
+		    	
 			s_reco_truth->GetXaxis()->SetTitle(var.unit.c_str());
 			s_reco_truth->GetYaxis()->SetTitle("Verticies");
 			s_reco_truth->GetYaxis()->SetTitleOffset(1.5);
@@ -91,6 +93,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			tsel->Draw();
 
 
+			std::cout<<"CHECK 96"<<std::endl;
 			c->cd();          // Go back to the main canvas before defining pad2
 			TPad *padl = new TPad("padl", "padl", 0.7, 0, 1, 1);
 			padl->SetBottomMargin(0.2);
@@ -108,7 +111,6 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			for(auto * t : vec_reco_mc) delete t;
 			delete all_reco_mc;
 			delete s_reco_truth;
-			delete c;
 			delete pad; delete padl;
 
 
@@ -118,7 +120,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 }
 
 
-
+//THIS one is not being called, everything below are obsolete.
 
 int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
 

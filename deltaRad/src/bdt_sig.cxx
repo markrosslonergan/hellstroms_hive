@@ -245,7 +245,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	//initialize cuts with no data ( distingushed from cuts with 0 background).
 	for(int i = 1 ; i <= nsteps_cosmic ; i++ ){
 	    for(int j = 1 ; j <= nsteps_bnb ; j++ ){
-		h2_sig_cut->SetBinContent( i , j , -5 );
+		h2_sig_cut->SetBinContent( i , j , 0 );
 		//std::cout<<"add "<<i<<" and "<<j<<std::endl;
 	    }
 	}
@@ -384,7 +384,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	c_sig_cuts->Write();
 
 	//return std::vector<double>{best_mva_cut, best_mva_cut2, best_significance};
-	std::cout<<"Clarification: unexplored area is assigned significance -5."<<std::endl;
+	std::cout<<"Clarification: unexplored area is assigned significance 0."<<std::endl;
 	return std::vector<double>{*best_cut, *best_cut2, *best_sig};
     }
 }
