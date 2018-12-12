@@ -50,7 +50,7 @@ int main (int argc, char *argv[]){
 
   bool run_cosmic = true;
   bool run_bnb = false;
-  int number = 2;
+  int number = 1;
   bool response_only = false;
 
   //All of this is just to load in command-line arguments, its not that important

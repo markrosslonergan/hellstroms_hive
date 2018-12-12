@@ -16,3 +16,6 @@ target_link_libraries (deltaRad_pi0 tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
 
 add_executable (deltaRad_binning deltaRad_binning.cxx)
 target_link_libraries (deltaRad_binning tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
+
+add_executable (deltaRad_modified deltaRad_modified.cxx)
+target_link_libraries (deltaRad_modified tinyxmllib deltaRadlib ${ROOT_LIBRARIES})

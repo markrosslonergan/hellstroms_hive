@@ -867,10 +867,10 @@ void EvaluateVertexQuality::Run(std::vector<double> const & input_permutation) {
 
   if(fpandora_tree) GetPandoraMetrics();
 
-  fvq.Print(fpermutation_v, fdraw_vec, drawn_values, max_results, min_results);
+  //fvq.Print(fpermutation_v, fdraw_vec, drawn_values, max_results, min_results);
 
   CheckPlotHelperV();
   PlotParameters(fpermutation_v, drawn_values, max_results, "max");
-  PlotParameters(fpermutation_v, drawn_values, min_results, "min");
+  //PlotParameters(fpermutation_v, drawn_values, min_results, "min");
 
 }
