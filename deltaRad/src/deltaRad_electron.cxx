@@ -162,7 +162,7 @@ int main (int argc, char *argv[]){
     /***************************** DEFINITION *****************************/
 
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-    std::string true_signal = "ccnc==0 && true_track_pdg[0]==2212 &&abs(true_shower_pdg[0])==11&&true_shower_origin[0]==1&&(abs(true_nuvertz-true_track_startz[0])+abs(true_nuverty-true_track_starty[0])+abs(true_nuvertx-true_track_startx[0])<1)";
+    std::string true_signal = "true_track_pdg[0]==2212 &&abs(true_shower_pdg[0])==11&&true_shower_origin[0]==1&&(abs(true_nuvertz-true_track_startz[0])+abs(true_nuverty-true_track_starty[0])+abs(true_nuvertx-true_track_startx[0])<1)";
     //The last constraint is applied in the LEEd/
 
     //This is for selecting true BNB background.
@@ -345,7 +345,7 @@ int main (int argc, char *argv[]){
 	}
 	else{
 	    std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-//CHECK	    sleep(2);
+	    sleep(2);
 	}
 
 	std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
@@ -366,31 +366,31 @@ int main (int argc, char *argv[]){
 */
     
     std::vector<std::string> recomc_names = {
-	    "1p0e",
-	    "np0e",
+	    "No e+(e-)",
 	    "1muon",
 	    //"CC #pi^{0} #rightarrow #gamma (cosmic)",
 	    "Track (parent): #pi^{+}", 
 	    "Shower: #mu^{-} ", 
 	    "Shower: proton",
-	    "Shower: #gamma",
-	    "Shower (parent): #mu^{-}",
 	    "Shower (p): CC #pi^{0}",
 	    "Shower (p): proton",
+	    "all",
+	    "all"
 	    // "NC events", 
 	};
 
 	std::vector<std::string> recomc_cuts = {
-	    "exiting_proton_number==1 && exiting_electron_number==0",
-	    "exiting_proton_number>1 && exiting_electron_number==0",
+//0	    "exiting_proton_number==1 && exiting_electron_number==0",
+	    "(exiting_electron_number==0||exiting_antielectron_number==0)",
+	    "exiting_proton_number>0",
 	    "exiting_muon_number>0",
 	    //"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==2 &&ccnc==0",
 	    "true_track_parent_pdg[0]==2212",
 	    "true_shower_pdg[0]== 2212",
 	    "true_shower_pdg[0]== 22",
-	    "true_shower_parent_pdg[0]==13",
 	    "true_shower_parent_pdg[0]==111&&ccnc==0",//sth>2200
 	    "true_shower_parent_pdg[0]==2212",
+	    "1"
 	    // "ccnc==1",
 	};
 
@@ -600,27 +600,37 @@ int main (int argc, char *argv[]){
 	std::string ZMIN = "0.0"; std::string ZMAX = "1036.8";
 	std::string XMIN = "0.0"; std::string XMAX = "256.35";
 	std::string YMIN = "-116.5"; std::string YMAX = "116.5";
-	std::string pmass = "0.938272";
-
-
-
-	std::string en_cut_trk = "delta_photon_energy > 0.02 && delta_proton_energy-"+pmass+" > 0.04";
-	std::string en_cut_notrk = "delta_photon_energy > 0.02";
+//	std::string pmass = "0.938272";
+//
+//	std::string en_cut_trk = "delta_photon_energy > 0.02 && delta_proton_energy-"+pmass+" > 0.04";
+//	std::string en_cut_notrk = "delta_photon_energy > 0.02";
 	std::string fid_cut = "(true_nuvertx >"+XMIN+"+10 && true_nuvertx < "+XMAX+"-10 && true_nuverty >"+ YMIN+"+20 && true_nuverty <"+ YMAX+"-20 && true_nuvertz >"+ ZMIN +" +10 && true_nuvertz < "+ZMAX+"-10)";
 
-	std::string is_delta_rad = "1";
-	std::string notrk = "exiting_photon_number==1 && exiting_proton_number==0 &&"+is_delta_rad;
-	std::string trk = "exiting_photon_number==1 && exiting_proton_number==1 &&"+is_delta_rad;
+	std::string reco_fid_cut = "(reco_nuvertx >"+XMIN+"+10 && reco_nuvertx < "+XMAX+"-10 && reco_nuverty >"+ YMIN+"+20 && reco_nuverty <"+ YMAX+"-20 && reco_nuvertz >"+ ZMIN +" +10 && reco_nuvertz < "+ZMAX+"-10)";
+//
+//	std::string is_delta_rad = "1";
+//	std::string notrk = "exiting_photon_number==1 && exiting_proton_number==0 &&"+is_delta_rad;
+//	std::string trk = "exiting_photon_number==1 && exiting_proton_number==1 &&"+is_delta_rad;
 
-
-	std::string denom  = en_cut_trk + "&&"+ fid_cut + "&& "+ trk;
+	
+//	std::string denom  = en_cut_trk + "&&"+ fid_cut + "&& "+ trk;
+	std::string denom  = fid_cut;
 
 
 	bdt_efficiency(signal_cosmics, denom, fcoscut,fbnbcut, true);
+	bdt_efficiency(bnb_cosmics, denom, fcoscut,fbnbcut, true);
+	bdt_efficiency(bnbext, reco_fid_cut, fcoscut,fbnbcut, true);
 
-	//return 0;
+	return 0;
 
-	//everything below here is older
+
+
+
+
+
+
+
+	//everything below here is older and not used.
 	double plot_pot = 6.6e20;
 	std::cout<<"Starting efficiency study: coscut @ "<<fcoscut<<" bnbcut@: "<<fbnbcut<<std::endl;
 
@@ -639,7 +649,6 @@ int main (int argc, char *argv[]){
 	std::vector<std::vector<double>> effs;
 	std::vector<std::vector<double>> pres;
 
-	//std::vector<bdt_file*> eff_files = {signal_pure, bnb_cosmics, bnbext};
 	for(int i=0; i< eff_files.size(); i++){
 	    std::vector<double> tmp;
 	    effs.push_back(tmp);
@@ -724,7 +733,7 @@ int main (int argc, char *argv[]){
 	    }
 
 	    std::cout<<std::endl;
-	    //I change this
+	    
 	    //break;
 	}
 
@@ -732,17 +741,14 @@ int main (int argc, char *argv[]){
 	//pe_cut, fiducial_cut, track_length_cut, min_energy_cut, min_conversion_cut, good_calo_cut, track_direction_cut, back_to_back_cut
 	std::vector<std::string> sname;
 
-	std::cout<<"CHECK734"<<std::endl;
-
 	if(analysis_tag == "electron1"){
-	    sname = {"Generated","Vertexed","Topological","Total PE $>20$","Fiducial cut","Good Calo Cut", "Show angle <0.04"};
+	    sname = {"Generated","Vertexed","Topological","Total PE $>20$","Fiducial cut","Good Calo Cut", "Show angle $<0.04$"};
 	}
 
 	if(analysis_tag == "ncdeltarad1g0p"){
 	    sname = {"Generated","Vertexed","Topological","Total PE $>20$","Fiducial cut","Reco $E_{\\gamma}$ $> 30$MeV"};
-	}else{
-	    sname = {"Generated","Vertexed","Topological","Total PE $>20$","Fiducial cut","Track $< 100$cm","Reco $E_{\\gamma}$ $> 30$MeV","Shower gap $> 1$cm","Good calo cut","Flipped track cut","Back-to-back cut"};
 	}
+
 	//	for(int i=0; i< pres.back().size(); i++){
 	//		sname.push_back( std::to_string(i));
 	//	}

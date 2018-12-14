@@ -87,8 +87,8 @@ TH1* bdt_stack::getEntrySum(bdt_variable var){
 
 TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
 	int stack_rebin = 1;
-//	if(level ==2) stack_rebin=2;
-//	if(level ==3) stack_rebin=2;
+	if(level ==2) stack_rebin= 2;
+	if(level ==3) stack_rebin= 2;
 
 
 	TH1* summed = (TH1*)stack.at(0)->getTH1(var, "1", "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
@@ -160,8 +160,8 @@ THStack* bdt_stack::getEntryStack(bdt_variable var){
 THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
 	int stack_rebin = 1;
-//	if(level ==2) stack_rebin=2;
-//	if(level ==3) stack_rebin=2;
+	if(level ==2) stack_rebin=2;
+	if(level ==3) stack_rebin=2;
 
 	/*
 
@@ -225,8 +225,8 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
 	int stack_rebin = 1;
-//	if(level ==2) stack_rebin=2;
-//	if(level ==3) stack_rebin=2;
+	if(level ==2) stack_rebin=2;
+	if(level ==3) stack_rebin=2;
 
 	/*
 
@@ -329,7 +329,6 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			    double Nevents = f->GetEntries()*(plot_pot/f->pot )*f->scale_data;
 				if(s==0){
 				    f->numberofevents_ref = Nevents;
-				    std::cout<<"MIAO"<<std::endl;
 				}
 				double efficiency = Nevents/f->numberofevents_ref*100;
 
@@ -338,7 +337,10 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 				h1->SetFillStyle(f->fillstyle);
 				h1->SetFillColor(f->col);
 				h1->SetLineColor(kBlack);
+
 				l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+" ("+to_string_prec(efficiency,2)+"%)}").c_str(),"f");
+//				l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+
 /*
 				double Nevents = f->GetEntries()*(plot_pot/f->pot )*f->scale_data;
 

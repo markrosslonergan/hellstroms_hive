@@ -30,7 +30,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 		for(auto &var: vars){
 			std::vector<TH1*> vec_reco_mc = file->getRecoMCTH1(var,"1","stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name,plot_pot);
 			TH1* all_reco_mc = (TH1*)file->getTH1(var , "1" ,"comb_stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name, plot_pot);
-			int Num = all_reco_mc->GetSumOfWeights();				
+			int Num = all_reco_mc->GetSumOfWeights();//CHECK THIS IS 0
 
 			all_reco_mc->SetLineColor(kBlack);
 			all_reco_mc->SetFillStyle(3002);
@@ -68,7 +68,6 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 				iv++;
 			}	
 
-			std::cout<<"CHECK 70"<<std::endl;
 			s_reco_truth->Draw("hist");
 			all_reco_mc->Draw("E2 same");
 			std::cout<<"Drawn."<<std::endl;
@@ -93,7 +92,6 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			tsel->Draw();
 
 
-			std::cout<<"CHECK 96"<<std::endl;
 			c->cd();          // Go back to the main canvas before defining pad2
 			TPad *padl = new TPad("padl", "padl", 0.7, 0, 1, 1);
 			padl->SetBottomMargin(0.2);

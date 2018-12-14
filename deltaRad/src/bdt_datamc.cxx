@@ -26,14 +26,15 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
 	bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
 	return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
+	//this calls the plotStacks function below below
 }
 
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
-	//NEED TO FIGURE OUT WHAT DOES THIS DO
-	//std::cout<<"THIS SHOULD NOT APPEAR HERE!CHECK CHECK"<<std::endl;
+	//stack does not come here.
 
 	double plot_pot=4.393e19;//4.801e19;
+
 
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
@@ -104,6 +105,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 				rmin=0.6; rmax = 1.399;
 			}else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=4;};
 		*/
+
 			double max_modifier = 1.4;
 			double min_val = 0.01;
 			if(is_bdt_variable) {

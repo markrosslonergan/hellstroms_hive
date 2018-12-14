@@ -49,7 +49,6 @@ class bdt_recomc{
 //			bdt_type = cut.identifier;
 //		
 //		}
-		bdt_recomc(){};
 		bdt_recomc(std::vector<std::string> namein, std::vector<std::string> cutsin, std::vector<int> incols, std::string tagin) : recomc_cuts(cutsin), recomc_names(namein), recomc_cols(incols) , tag(tagin){ do_rebin = true; is_log = false;};
 
 		//New improved
