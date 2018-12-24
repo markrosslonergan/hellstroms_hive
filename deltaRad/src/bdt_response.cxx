@@ -202,7 +202,7 @@ pad0bot->SetGridx(); // vertical grid
 	g_sig_eff->Draw("al");
 	g_sig_eff->SetTitle("");
 	g_sig_eff->GetXaxis()->SetTitle("BDT Response");
-	g_sig_eff->SetMaximum(1.0);
+	g_sig_eff->SetMaximum(0.99);
 	g_sig_eff->SetMinimum(0.0001);
 	g_bkg_eff->Draw("l");
 	//leff->Draw();

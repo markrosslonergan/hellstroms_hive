@@ -50,7 +50,7 @@ int main (int argc, char *argv[]){
 
   bool run_cosmic = true;
   bool run_bnb = false;
-  int number = 1;
+  int number = 2;
   bool response_only = false;
 
   //All of this is just to load in command-line arguments, its not that important
@@ -470,6 +470,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
   }else if(istrack == "notrack"){
     fcoscut = 0.540882;
+    //fcoscut = 0.5;
     fbnbcut = 0.527059;
 
     //	fcoscut = 0.551176;

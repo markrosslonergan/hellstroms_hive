@@ -120,6 +120,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 		double rmin = 0;
 		double rmax = 2.99;
 		int data_rebin = 1;
+
 		if(k==0 || k == 1){
 			rmin=0.6; rmax = 1.399;
 
@@ -148,17 +149,22 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 		TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
 		l0->SetNColumns(2);
 		double NeventsStack = 0;
-
+		double stackerr = 0;
+		
 		for(auto &f: mc_stack->stack){
-			double Nevents = f->GetEntries( f->getStageCuts(k,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+		        double const Nevents_unscaled = f->GetEntries( f->getStageCuts(k,c1,c2).c_str());
+			double const scaling = (plot_pot/f->pot )*f->scale_data;
+			double const Nevents = Nevents_unscaled*scaling;
 			NeventsStack+=Nevents;
+			stackerr += scaling*scaling*Nevents_unscaled;
 			auto h1 = new TH1F(("tmp"+stage_name.at(k)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
 			h1->SetFillColor(f->col);
 			h1->SetFillStyle(f->fillstyle);
 			h1->SetLineColor(kBlack);
 			l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 		}
-
+		stackerr = sqrt(stackerr);
+		
 		data_th1s.at(k)->Rebin(data_rebin);
 		data_th1s.at(k)->SetMarkerStyle(20);
 		data_th1s.at(k)->SetLineColor(kBlack);
@@ -166,7 +172,9 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 		vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum()*max_modifier));
 
-		double NdatEvents = data_file->GetEntries(data_cuts.at(k).c_str())*(plot_pot/data_file->pot )*data_file->scale_data;
+		double const NdatEvents_unscaled = data_file->GetEntries(data_cuts.at(k).c_str());
+		double const NdatEvents_scaling = (plot_pot/data_file->pot )*data_file->scale_data;
+		double const NdatEvents = NdatEvents_unscaled*NdatEvents_scaling;
 
 		l0->AddEntry(data_th1s.at(k),("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
 
@@ -247,8 +255,10 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 		ratpre->SetLineColor(kBlack);
 		ratpre->SetTitle("");
 
-
-		std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+" #pm "+to_string_prec(NdatEvents/NeventsStack*sqrt(1./NdatEvents+1./NeventsStack), 2);
+ 		double const dataerr = sqrt(NdatEvents_unscaled) * NdatEvents_scaling;
+		std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)
+		  +" #pm "+to_string_prec(NdatEvents/NeventsStack*sqrt((dataerr*dataerr)/(NdatEvents*NdatEvents)+(stackerr*stackerr)/(NeventsStack*NeventsStack)), 2);
+			
 		TLatex *t = new TLatex(0.11,0.41,mean.c_str());
 		t->SetNDC();
 		t->SetTextColor(kRed-7);

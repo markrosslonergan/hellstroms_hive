@@ -125,7 +125,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 		c_reco_truth->cd(1);
 
    		TPad *padsel = new TPad("padsel", "padsel", 0, 0, 0.7, 1.0);
-   		if(is_log) padsel->SetLogy();
+		padsel->SetLogy();
+  		if(is_log) padsel->SetLogy();
 		padsel->SetRightMargin(0); // Upper and lower plot are joined
    		padsel->Draw();             // Draw the upper pad: padsel
   		padsel->cd();               // padsel becomes the current pad

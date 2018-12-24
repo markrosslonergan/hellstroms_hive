@@ -49,9 +49,9 @@ int main (int argc, char *argv[]){
   TFile * ftest = new TFile(("test+"+istrack+".root").c_str(),"recreate");
 
   bool run_cosmic = true;
-  bool run_bnb = false;
-  int number = 1; //0==?, 1==intime vs bnbext, 2==datamc
-  bool response_only = true;
+  bool run_bnb = true;
+  int number = 2; //0==?, 1==intime vs bnbext, 2==datamc
+  bool response_only = false;
 
   //All of this is just to load in command-line arguments, its not that important
   const struct option longopts[] = 
@@ -320,6 +320,8 @@ int main (int argc, char *argv[]){
 
   vars.push_back(bdt_variable("pi0_info.num_reco_showers_within_10cm_vertex","(10,0,10)","Num Showers within 10cm",false,"i"));
 
+  std::vector<bdt_variable> vars_shower{vars};
+  
   if(istrack=="track"){
 
     vars.push_back(bdt_variable("reco_track_displacement[0]","(52,0,150)","Reconstructed Track Displacement [cm]", true,"d"));
@@ -538,9 +540,6 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
     bdt_recomc test(recomc_names, recomc_cuts, recomc_cols,istrack);
 
-
-
-
     if(number==1){
       test.is_log = true;
       if(run_cosmic){
@@ -624,10 +623,10 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
 	
     if(!response_only){
-      //for(auto & v : {vars.at(1)}) {
-      //for(auto & v : {vars.at(10), vars.at(11), vars.at(23), vars.at(24)}) {
+      //for(auto &v:vars_shower){
       //for(auto &v:public_vars){
-      for(auto &v:vars){
+      for(auto & v : {vars.at(1)}) {
+	//for(auto &v:vars){
 	ip++;
 	if(number==0){
 	  bdt_datamc datamc(data5e19, obs, istrack);	
@@ -666,6 +665,7 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
     std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
 
     if(run_cosmic){
+      //for(auto &v:vars_shower){
       for(auto &v:vars){
 
 	for(int j=0; j<2;j++){	
@@ -1083,8 +1083,8 @@ Combined: 1.71757 with sig 24.4592 202.794 s/sqrtb 1.71757
 
     bdt_recomc test(recomc_names, recomc_cuts, recomc_cols,istrack);
 
-    test.plot_recomc(ftest, signal_cosmics, vars.at(1), fcoscut, fbnbcut);
-    //test.plot_recomc(ftest, bnb_cosmics, vars.at(1) , fcoscut,fbnbcut);
+    //test.plot_recomc(ftest, signal_cosmics, vars.at(1), fcoscut, fbnbcut);
+    test.plot_recomc(ftest, bnb_cosmics, vars.at(1) , fcoscut,fbnbcut);
 
     return 0;	
     bnb_cosmics->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist:BNBCosmics_bnb_track.mva", bnb_cosmics->getStageCuts(3,fcoscut,fbnbcut).c_str()  );
