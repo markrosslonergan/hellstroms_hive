@@ -117,12 +117,17 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variable> vars, std::vector<method_struct> & method){
 
 	std::string identifier = info.identifier;
+    std::cout<<"Beginning bdt application stage for "<<identifier<<std::endl;
 	
-	for(size_t i = 0; i < files.size(); ++i) {
-	    TFile * app_ofile = TFile::Open((identifier+"_"+files[i]->tag+"_app"+".root").c_str(), "update");
+	for(size_t i = 0; i < files.size(); i++) {
+		std::cout<<"On file: "<<i<<"/"<<files.size()<<" :  "<<files[i]->tag<<std::endl;
+
+        TFile * app_ofile = TFile::Open((identifier+"_"+files[i]->tag+"_app"+".root").c_str(), "update");
+
+
+		std::cout<<"Resetting the branch addresses"<<std::endl;
 		files.at(i)->tvertex->ResetBranchAddresses();
 
-		std::cout<<"On file: "<<files.at(i)->tag<<std::endl;
 		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
 		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
     

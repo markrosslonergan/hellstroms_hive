@@ -38,7 +38,7 @@
 int main (int argc, char *argv[]){
 
 	//This is a standardized location on /pnfs/ that everyone can use. 
-	std::string dir = "/home/mark/work/uBooNE/photon/mcc9_mega_retreat/hellstroms_hive/deltaRad/build/src/";
+	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v2/";
 
 
 	std::string mode_option = "fake"; 
@@ -192,14 +192,14 @@ int main (int argc, char *argv[]){
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure    = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v1.1_slimmed.root",	"NCDeltaRad",	   "hist","singlephoton/",  kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v1.1_slimmed.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir, "bnb_overlay_mcc9_v1.2_slimmed.root", "BNBPure",	  "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_mcc9_v1.2_slimmed.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+	bdt_file *signal_pure    = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v2.0.merged.root",	"NCDeltaRad",	   "hist","singlephoton/",  kRed-7, signal_pure_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v2.0.merged.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir, "bnb_overlay_mcc9_v2.0.merged.root", "BNBPure",	  "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_mcc9_v2.0.merged.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
 	//bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//Data files
 	//bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_fresh_v4.1.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
-	bdt_file *bnbext    = new bdt_file(dir, "bnbext_mcc9_v1.2_slim.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
+	bdt_file *bnbext    = new bdt_file(dir, "bnbext_mcc9_v2.0.merged.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 	//bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
 	//bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
@@ -241,7 +241,8 @@ int main (int argc, char *argv[]){
 			if(mode_option != "app" && mode_option != "train" && mode_option !="vars") f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 
 			std::cout<<"Filling Base EntryLists on File  "<<f->tag<<std::endl;
-			if(mode_option != "train" && mode_option != "app"){
+			//if(mode_option != "train" && mode_option != "app"){
+			if(mode_option != "train"){
 				f->calcBaseEntryList(analysis_tag);
 			}
 		}
@@ -290,15 +291,15 @@ int main (int argc, char *argv[]){
 
 	if(mode_option == "train") {
 		std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
-//		if(run_cosmic) bdt_train(cosmic_bdt_info, signal_pure, intime, vars, TMVAmethods);
+		if(run_cosmic) bdt_train(cosmic_bdt_info, signal_pure, bnbext, vars, TMVAmethods);
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
 		if(run_bnb) bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
 		return 0;
 
 	}else if(mode_option == "app"){
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
-        
-			if(number != -1){
+
+			if(number == -1){
 	    		if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
 	        	if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
 			}else{
