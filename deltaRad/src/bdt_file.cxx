@@ -65,7 +65,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
 			tpot = (TTree*)f->Get(tnam_pot.c_str());
 			tpot->SetBranchAddress("number_of_events", &numbranch);
-			tpot->SetBranchAddress("pot",&potbranch);
+			tpot->SetBranchAddress("POT",&potbranch);
 
 			std::cout<<"Set the POT branch"<<std::endl;
 			int tmpnum = 0;
@@ -80,7 +80,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			std::cout<<"--> POT is MC: ";
 			std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
 
-			weight_branch = "bnbcorrection_info.weight";
+			weight_branch = "1";
 			numberofevents_raw = numberofevents;
 		}
 	}
@@ -113,7 +113,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
 		tpot = (TTree*)f->Get(tnam_pot.c_str());
 		tpot->SetBranchAddress("number_of_events", &numbranch);
-		tpot->SetBranchAddress("pot",&potbranch);
+		tpot->SetBranchAddress("POT",&potbranch);
 
 		std::cout<<"Set the POT branch"<<std::endl;
 		int tmpnum = 0;
