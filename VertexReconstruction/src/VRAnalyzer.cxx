@@ -478,8 +478,8 @@ bool VRAnalyzer::Run() {
   ParticleAssociations pas;
   if(frun_pandora) {
     std::cout<<" VRAnalyzer::Run() || Running in Pandora Vertex Only Mode"<<std::endl;
-    AddTracks(pas.GetDetectorObjects(), "pandoraNu", true);
-    AddShowers(pas.GetDetectorObjects(), "pandoraNu", true);
+    AddTracks(pas.GetDetectorObjects(), "pandora", true);
+    AddShowers(pas.GetDetectorObjects(), "pandora", true);
     FillWPandora(pas);
   } 
   else {

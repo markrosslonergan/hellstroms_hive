@@ -51,6 +51,7 @@ void FillTreeVariables::SetProducers(Storage const * storage,
 
   fmc = fstorage->fmc;
   frmcm_bool = fstorage->frmcm_bool;
+
   ftrack_producer = track_producer;
   fshower_producer = shower_producer;
   fhit_producer = hit_producer;

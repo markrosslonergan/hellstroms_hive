@@ -130,6 +130,7 @@ int main(int const argc, char * argv[]) {
 
   vrana->SetFlashTimings(flash_start, flash_end);
   std::cout<<"set flash timing"<<std::endl;
+  //LOOK 
   //vrana->RunPandora();
   vrana->GetPOT();
   std::cout<<"got POT"<<std::endl;

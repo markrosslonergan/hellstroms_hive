@@ -113,8 +113,6 @@ int bdt_precalc::genTrackInfo(){
 	std::vector<double> v_track_kinetic_from_length;
 
 	TBranch *b_num_tracks = friend_tree->Branch("reco_asso_tracks",&v_reco_asso_tracks);
-
-
 	TBranch *b_num_spacepoints = friend_tree->Branch("reco_track_num_spacepoints",&v_num_spacepoints);
 	TBranch *b_straightness_chi2 = friend_tree->Branch("reco_track_straightness_chi2",&v_straightness_chi2);
 	TBranch *b_principal_0 = friend_tree->Branch("reco_track_principal_0",&v_principal_0);
