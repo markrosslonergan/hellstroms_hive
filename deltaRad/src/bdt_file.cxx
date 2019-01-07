@@ -544,6 +544,9 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 		case 3: {
 				bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
 				bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
+				
+				//This gives a problem when applying two cuts bdtvar1 and bdtvar2 
+				//gives no events, then this will leads to Num=0 (in bdt_recomv.cxx).
 				ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2);
 				if(verbose)std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
 				if(verbose)std::cout << "Stage 3 var name: " << stage3var.name << std::endl;

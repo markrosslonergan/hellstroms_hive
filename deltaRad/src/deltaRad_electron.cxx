@@ -186,6 +186,7 @@ int main (int argc, char *argv[]){
     if(mode_option == "vars" || mode_option == "var" || mode_option == "train") vec_precuts.erase(vec_precuts.begin());
 
     std::string base_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
+    //ADD interaction_type==1001 for CCQE
     std::string signal_definition = "abs(nu_pdg) == 12 && (exiting_electron_number==1||exiting_antielectron_number==1)&&exiting_piplus_number==0&&exiting_piminus_number==0&&exiting_pi0_number==0&&true_shower_energy[0]>0.02&&true_track_energy[0]>0.04";//abs(nu_pdg)=12 are all satisfied in signal sample.
     //expected 28.9 nue or 24.8 LEEnue  in 1e20 POT at E<0.7GeV  
     std::string background_definition = "!("+signal_definition+")";
@@ -345,11 +346,40 @@ int main (int argc, char *argv[]){
 	}
 	else{
 	    std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-	    sleep(2);
+//CHECK	    sleep(2);
 	}
 
+
+	if(false){//This section is used to search evetns that pass through BDTs
+	    for(auto &f: bdt_files){
+		std::cout<<"\nLooking for events that pass cosmiccut in "<< f->tag << std::endl;
+		std::string cosmiccut = f->getStageCuts(2, fcoscut, -9);
+		if(f->tag.compare(0,10,"BNBCosmics",0,10) == 0 ||
+		f->tag.compare(0,13,"IntimeCosmics",0,13) == 0){ 
+//		    f->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_helper_energy[0]:reco_track_displacement[0]", cosmiccut.c_str());
+		    f->tvertex->Scan("run_number:interaction_type:nu_pdg:lep_pdg:exiting_proton_number:exiting_electron_number:exiting_muon_number:exiting_piplus_number:exiting_pi0_number", cosmiccut.c_str());
+
+		}else{
+		    std::cout<<"Skip this file."<< std::endl;
+		}
+	    }
+	    for(auto &f: bdt_files){
+		std::cout<<"\nLooking for events that pass bnbcut in "<< f->tag << std::endl;
+		std::string bnbcut = f->getStageCuts(3, fcoscut, fbnbcut);
+		if(f->tag.compare(0,10,"BNBCosmics",0,10) == 0 ||
+		f->tag.compare(0,13,"IntimeCosmics",0,13) == 0){ 
+//		    f->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_helper_energy[0]:reco_track_displacement[0]",bnbcut.c_str());
+		    f->tvertex->Scan("run_number:subrun_number:event_number:nu_pdg:lep_pdg:exiting_electron_number:exiting_muon_number:exiting_piplus_number:exiting_pi0_number", bnbcut.c_str());
+		}else{
+		    std::cout<<"Skip this file."<< std::endl;
+		}
+	    }
+	    return 0;
+	}
+
+
 	std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
-	//std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
+//	std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
 	std::string  nue = "abs(true_shower_pdg[0]) ==11 && abs(nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)";
 	std::string  michel = "abs(true_shower_pdg[0]) ==11 && abs(true_shower_parent_pdg[0])==13";
 /*	std::vector<std::string> recomc_cuts = {
@@ -364,63 +394,33 @@ int main (int argc, char *argv[]){
 	    "true_shower_origin[0] ==2 && abs(true_shower_parent_pdg[0])!=13"
 	};
 */
-    
-    std::vector<std::string> recomc_names = {
-	    "No e+(e-)",
-	    "1muon",
-	    //"CC #pi^{0} #rightarrow #gamma (cosmic)",
-	    "Track (parent): #pi^{+}", 
-	    "Shower: #mu^{-} ", 
-	    "Shower: proton",
-	    "Shower (p): CC #pi^{0}",
-	    "Shower (p): proton",
-	    "all",
-	    "all"
-	    // "NC events", 
-	};
 
-	std::vector<std::string> recomc_cuts = {
-//0	    "exiting_proton_number==1 && exiting_electron_number==0",
-	    "(exiting_electron_number==0||exiting_antielectron_number==0)",
-	    "exiting_proton_number>0",
-	    "exiting_muon_number>0",
-	    //"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==2 &&ccnc==0",
-	    "true_track_parent_pdg[0]==2212",
-	    "true_shower_pdg[0]== 2212",
-	    "true_shower_pdg[0]== 22",
-	    "true_shower_parent_pdg[0]==111&&ccnc==0",//sth>2200
-	    "true_shower_parent_pdg[0]==2212",
-	    "1"
-	    // "ccnc==1",
-	};
-
-/*
 	std::vector<std::string> recomc_names = {
-	    "Track: proton", 
-	    "Track (parent): proton",
-	    "Track (parent): #pi^{+}", 
-	    "Shower: #mu^{-} ", 
-	    "Shower: proton",
-	    "Shower: #gamma",
-	    "Shower (parent): #mu^{-}",
-	    "Shower (par.): CC #pi^{0}",
-	    "Shower (par.): proton",
-	    // "NC events", 
+	    "#nu_{#mu} CC QE",
+	    "#nu_{#mu} CC Res. #pi^{+}",
+	    "#nu_{#mu} NC Res. #pi^{0}",
+	    "#nu_{e}   CC Coh. #pi^{+}",//Coherent
+	    "#nu_{#mu} CC Coh. #pi^{+}",
+	    "#nu_{#mu} NC Coh. #pi^{0}",
+	    "#nu_{#mu} CC/NC DIS",
+	    "Proton Shower:0eNp",//event type:1092
+	   // "BNB Other",
+	    "Other",
 	};
 
-	std::vector<std::string> recomc_cuts = {
-	    "true_track_pdg[0]== 2212",
-	    "true_track_parent_pdg[0]==2212",
-	    "true_track_parent_pdg[0]==211",
-	    "true_shower_pdg[0]== 13 ",
-	    "true_shower_pdg[0]== 2212",
-	    "true_shower_pdg[0]== 22",
-	    "true_shower_parent_pdg[0]==13",
-	    "true_shower_parent_pdg[0]==111&&ccnc==0",//sth>2200
-	    "true_shower_parent_pdg[0]==2212",
-	    // "ccnc==1",
+	std::vector<std::string> recomc_cuts = {//Look at number of hardrons && leptons only.
+	    "interaction_type==1001 && nu_pdg==14 && ccnc==0",//ccnc==0 means charge current
+	    "interaction_type==1002 && nu_pdg==14 && ccnc==0",
+	    "interaction_type==1002 && nu_pdg==14 && ccnc==1",
+	    "interaction_type==1004 && nu_pdg==12 && ccnc==0",
+	    "interaction_type==1004 && nu_pdg==14 && ccnc==0",
+	    "interaction_type==1004 && nu_pdg==14 && ccnc==1",
+	    "interaction_type==1003 && nu_pdg==14",
+	    "true_shower_pdg[0]==2212&&exiting_proton_number>1&&exiting_electron_number==0",
+	   // "true_shower_origin[0]==1&&(interaction_type>1004||interaction_type<1001)",
+	    "(interaction_type>1004||interaction_type<1001)",
 	};
-*/
+
 	bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
 	TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
@@ -811,7 +811,7 @@ int main (int argc, char *argv[]){
 
 
     }
-    else if(mode_option == "effdata"){
+/*    else if(mode_option == "effdata"){
 	std::vector<bdt_file*> data_files = {data5e19, bnbext};
 
 	std::cout<<"Starting efficiency study: coscut @ "<<fcoscut<<" bnbcut@: "<<fbnbcut<<std::endl;
@@ -1055,5 +1055,5 @@ int main (int argc, char *argv[]){
 
 
     return 0;
-
+*/
 }

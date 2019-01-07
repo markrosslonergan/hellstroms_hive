@@ -65,7 +65,7 @@ now=$(date +"%T")
 echo "Current time : $now"
 echo "-------------------------------------------------------------------------------------------" >> ./record.txt 2>&1
 echo "Now runs -o recomc :" >> ./record.txt 2>&1
-./deltaRad_electron -o recomc >> ./record.txt 2>&1
+./deltaRad_electron -o recomc -n 2>> ./record.txt 2>&1
 echo "Finish!!!!!!!!!!!" >> ./record.txt 2>&1
 now=$(date +"%T")
 echo "Current time : $now"

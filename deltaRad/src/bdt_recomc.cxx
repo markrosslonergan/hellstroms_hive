@@ -21,26 +21,35 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 	file->recomc_cuts = recomc_cuts;
 	file->recomc_names = recomc_names;
 
-	for(int s = 3;s<4; s++){ //Loop over all stages
+	for(int s = 0;s<4; s++){ //Loop over all stages
+
 		std::cout<<"Calculating any necessary EntryLists for "<<file->tag<<" On stage "<<s<<"."<<std::endl;
 		if(s==2) file->calcCosmicBDTEntryList(cut_cosmic_val, cut_bnb_val);
 		if(s==3) file->calcBNBBDTEntryList(cut_cosmic_val, cut_bnb_val);
+
 		file->setStageEntryList(s);
 
 		for(auto &var: vars){
 			std::vector<TH1*> vec_reco_mc = file->getRecoMCTH1(var,"1","stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name,plot_pot);
 			TH1* all_reco_mc = (TH1*)file->getTH1(var , "1" ,"comb_stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name, plot_pot);
-			int Num = all_reco_mc->GetSumOfWeights();//CHECK THIS IS 0
+			int Num = all_reco_mc->GetSumOfWeights();//CHECK, if Num goes 0 (this comes from s3, so s3 is problematic), then .. 
+
 
 			all_reco_mc->SetLineColor(kBlack);
 			all_reco_mc->SetFillStyle(3002);
 			all_reco_mc->SetFillColor(kGray+3);
 			all_reco_mc->SetLineWidth(1);
 
+			int nrebin = 1;
+			if(s==2) nrebin=2;
+			if(s==3) nrebin=4;
+
+			all_reco_mc->Rebin(nrebin);	
+
 
 			fout->cd();
 
-			TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(), ("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),1600,1600);
+			TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(), ("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),1600,1350);
 			c->cd();
 
 
@@ -56,22 +65,27 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 
 			int iv=0;
-			
 			for(auto &v: vec_reco_mc){
+				v->Rebin(nrebin);
 				std::cout<<"on hist #: "<<iv<<". Add to stack."<<std::endl;
+
+				if(iv==2) v->SetFillStyle(3344);
+
 				s_reco_truth->Add(v);
 				double n = v->Integral();
 				std::cout<<" and calc percentage."<<std::endl; 
 				double per = n/Num*100.0;
 				std::cout<<"and add legend"<<std::endl;
+
 				l_reco_truth->AddEntry(v,("#splitline{"+ recomc_names.at(iv)+"}{#bf{"+to_string_prec(n,2)+"}     ("+to_string_prec(per,1)+"%)}"  ).c_str(),"f");
+
 				iv++;
 			}	
 
 			s_reco_truth->Draw("hist");
 			all_reco_mc->Draw("E2 same");
 			std::cout<<"Drawn."<<std::endl;
-		    	
+
 			s_reco_truth->GetXaxis()->SetTitle(var.unit.c_str());
 			s_reco_truth->GetYaxis()->SetTitle("Verticies");
 			s_reco_truth->GetYaxis()->SetTitleOffset(1.5);
@@ -105,12 +119,13 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 			c->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
-
+			/*
 			for(auto * t : vec_reco_mc) delete t;
 			delete all_reco_mc;
 			delete s_reco_truth;
+			delete c;
 			delete pad; delete padl;
-
+			*/
 
 		}
 	}
@@ -118,10 +133,10 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 }
 
 
-//THIS one is not being called, everything below are obsolete.
+
 
 int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
-
+/*
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
 	double title_offset_ratioY = 0.3 ;
@@ -217,30 +232,30 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 
 
-
-	if(false){
-		//file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]",bnbcut.c_str());
+//CHECK: turn the following lines to true  
+	if(true){
+		file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]",bnbcut.c_str());
 		double all = file->GetEntries(precut);
 		double red = file->GetEntries(precut+"&& true_track_pdg==2212"); 
 		std::cout<<"BNBCOSMICS FINAL: "<<all<<" "<<red<<" "<<red/all*100<<std::endl;
 		std::cout<<"BNBCOSMICS FINAL: "<<all<<" "<<red<<" "<<red/all*100<<std::endl;
 		return 0;
 	}
-
+*/
 
 
 	/**********************************************************************
 	 *			Reco-Truth Matching section
 	 *
 	 **********************************************************************/
-
+/*
 	fout->cd();
 
 	TCanvas *c_reco_truth = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag).c_str(), ("recomc_truth_"+var.name+"_"+file->tag).c_str(),2000,1600);
 	c_reco_truth->Divide(2,2);
-
+*/
 	//******************* All Verticies	*************************
-	c_reco_truth->cd(1);
+/*	c_reco_truth->cd(1);
 
 	TPad *padsel = new TPad("padsel", "padsel", 0, 0, 0.7, 1.0);
 	if(is_log) padsel->SetLogy();
@@ -510,6 +525,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 
 	return 0;
+*/
 }
 
 
