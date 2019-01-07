@@ -38,9 +38,8 @@
 int main (int argc, char *argv[]){
 
 	//This is a standardized location on /pnfs/ that everyone can use. 
-	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v3/";
-
-
+    std::string dir = "/uboone/data/users/markross/single_photon/vertex_mcc9/";
+    std::string dir_old = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v3/";
 	std::string mode_option = "fake"; 
 	std::string xml = "default.xml";
 	std::string analysis_tag ="track";
@@ -192,33 +191,43 @@ int main (int argc, char *argv[]){
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltaradcosmics_fresh_v4.1.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltaradcosmics_fresh_v4.1.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
-	bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
+	bdt_file *signal_pure    = new bdt_file(dir_old, "vertexed_ncdeltaradcosmics_fresh_v4.1.root",	"NCDeltaRad",	   "hist","",  kRed-7, signal_pure_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir_old, "vertexed_ncdeltaradcosmics_fresh_v4.1.root", "NCDeltaRadCosmics", "hist","",  kRed-7, signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir_old, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBPure",	  "hist","",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir_old, "vertexed_bnbcosmics_fresh_v4.1.root", "BNBCosmics", "hist","",  kBlue-4, bkg_flow);
+	bdt_file *intime = new bdt_file(dir_old, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//Data files
-	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_fresh_v4.1.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
-	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_fresh_v4.1.root",	"BNBext",	"E1p","",  kBlack, data_flow);
+	bdt_file *data5e19    = new bdt_file(dir_old, "vertexed_data5e19_fresh_v4.1.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
+	bdt_file *bnbext    = new bdt_file(dir_old, "vertexed_bnbext_fresh_v4.1.root",	"BNBext",	"E1p","",  kBlack, data_flow);
 
-	//bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
-	//bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
-	//bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
+	//bdt_file *lee = new bdt_file(dir_old,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
+	//bdt_file *intrinsics = new bdt_file(dir_old,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
+	//bdt_file *ncpi0 = new bdt_file(dir_old,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
 
 
-	bdt_file * bnb_withpi0 = new bdt_file(dir,"vertexed_bnbcosmics_fresh_pi0mom_v4.2.root", "BNBCosmicsPi0","hist","",kRed-4,bkg_flow);
+	bdt_file * bnb_withpi0 = new bdt_file(dir_old,"vertexed_bnbcosmics_fresh_pi0mom_v4.2.root", "BNBCosmicsPi0","hist","",kRed-4,bkg_flow);
+	bdt_file *bnb_overlay = new bdt_file(dir_old,"vertexed_bnboverlay_fresh_v4.1.root","BNBoverlay","hist","",kBlue-6, bkg_flow);
+	bdt_file *dirt = new bdt_file(dir_old,"vertexed_dirt_fresh_v4.1.root","Dirt","hist","",kOrange-6, data_flow);
 
-	bdt_file *bnb_overlay = new bdt_file(dir,"vertexed_bnboverlay_fresh_v4.1.root","BNBoverlay","hist","",kBlue-6, bkg_flow);
-	bdt_file *dirt = new bdt_file(dir,"vertexed_dirt_fresh_v4.1.root","Dirt","hist","",kOrange-6, data_flow);
+
+    bdt_file *mcc9_bnbext_t0 = new bdt_file(dir,"vertexed.bnbext_tag0_mcc9_v1.root","BNBextTag0","hist","",kGreen-3,data_flow);
+    bdt_file *mcc9_bnbext_t1 = new bdt_file(dir,"vertexed.bnbext_tag1_mcc9_v1.root","BNBextTag1","hist","",kGreen-3,data_flow);
+
+    bdt_file *mcc9_bnbmc_t0 = new bdt_file(dir,"vertexed.bnbmc_tag0_mcc9_v1.root","BNBmcTag0","hist","",kBlue-4,data_flow);
+    bdt_file *mcc9_bnbmc_t2 = new bdt_file(dir,"vertexed.bnbmc_tag2_mcc9_v1.root","BNBmcTag2","hist","",kRed-7,data_flow);
+
+    bdt_file *mcc9_data_t0 = new bdt_file(dir,"vertexed.data5e19_tag0_mcc9_v1.root","Data5e19Tag0","E1p","",kBlack,data_flow);
+    bdt_file *mcc9_data_t1 = new bdt_file(dir,"vertexed.data5e19_tag1_mcc9_v1.root","Data5e19Tag1","E1p","",kBlack,data_flow);
+
+    mcc9_bnbext_t0->fillstyle = 3333;
+    mcc9_bnbext_t1->fillstyle = 3333;
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
-	std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, bnb_overlay, dirt,bnb_withpi0};
-	//std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, bnb_overlay, dirt};
+	std::vector<bdt_file*> bdt_files = {mcc9_bnbext_t1, mcc9_bnbext_t0,  mcc9_data_t1, mcc9_data_t0, mcc9_bnbmc_t0, mcc9_bnbmc_t2};
 
 	//The LEE signal is bigger than the SM signal by this factor
 	signal_pure->scale_data = 3.1;
 	signal_cosmics->scale_data = 3.1;
-
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -247,7 +256,7 @@ int main (int argc, char *argv[]){
 			if(f->tag != "Data5e19" && f->tag != "BNBext") addPreFriends(f,"bnbcorrection");
 			addPreFriends(f,"shower");
 
-			if(mode_option != "app" && mode_option != "train") f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
+	//		if(mode_option != "app" && mode_option != "train") f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 
 			std::cout<<"Filling Base EntryLists on File  "<<f->tag<<std::endl;
 			if(mode_option != "train" && mode_option != "app"){
@@ -257,6 +266,17 @@ int main (int argc, char *argv[]){
 	}
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+
+	mcc9_data_t0->addPlotName("Data5e19 [Tag0]");
+	mcc9_data_t1->addPlotName("Data5e19 [Tag1]");
+
+	mcc9_bnbext_t0->addPlotName("BNBext [Tag0]");
+	mcc9_bnbext_t1->addPlotName("BNBext [Tag1]");
+
+    
+	mcc9_bnbmc_t2->addPlotName("BNB MC + Corsika [Tag 2]");
+	mcc9_bnbmc_t0->addPlotName("BNB MC + Corsika [Tag 0]");
+
 
 
 	//Adding plot names
@@ -428,45 +448,42 @@ int main (int argc, char *argv[]){
 	}else if(mode_option == "datamc"){
 
 		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-		//Obsolete
-		/*bdt_stack *obs = new bdt_stack(analysis_tag+"_olddatamc");
-		  obs->plot_pot =4.801e19;
-		  obs->addToStack(signal_cosmics);
-		  obs->addToStack(bnb_cosmics);
-		  obs->addToStack(intime);*/
 
-		bdt_stack *cosmic_stack = new bdt_stack(analysis_tag+"_extintime");
-		cosmic_stack->plot_pot = 4.393e19;
-		cosmic_stack->addToStack(intime);
+		bdt_stack *histogram_stack_t0 = new bdt_stack(analysis_tag+"_Tag0");
+		histogram_stack_t0->plot_pot = 4.393e19;
+		histogram_stack_t0->addToStack(mcc9_bnbmc_t0);
+		histogram_stack_t0->addToStack(mcc9_bnbext_t0);
 
-		bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
-		histogram_stack->plot_pot = 4.393e19;
-		histogram_stack->addToStack(signal_cosmics);
-		histogram_stack->addToStack(bnb_cosmics);
-		bnbext->col = intime->col;	
-		bnbext->fillstyle = 3333;
-		histogram_stack->addToStack(bnbext);
-//		histogram_stack->addToStack(dirt);
+        bdt_stack *histogram_stack_t2 = new bdt_stack(analysis_tag+"_Tag2");
+		histogram_stack_t2->plot_pot = 4.393e19;		
+        histogram_stack_t2->addToStack(mcc9_bnbmc_t2);
+		histogram_stack_t2->addToStack(mcc9_bnbext_t1);
+
 
 		int ip=0;
 
-
 		if(!response_only){
 			if(number != -1){
-				bdt_datamc datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
-				std::vector<bdt_variable> tmp_var = {vars.at(number)};
-				datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
-			}else{
+				bdt_datamc datamc_t0(mcc9_data_t0, histogram_stack_t0, analysis_tag+"_Tag0");	
+				bdt_datamc datamc_t2(mcc9_data_t1, histogram_stack_t2, analysis_tag+"_Tag2");	
 
-				bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
-				real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+                std::vector<bdt_variable> tmp_var = {vars.at(number)};
+				datamc_t0.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
+				datamc_t2.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
+
+
+			}else{
+            	bdt_datamc datamc_t0(mcc9_data_t0, histogram_stack_t0, analysis_tag+"_Tag0");	
+				bdt_datamc datamc_t2(mcc9_data_t1, histogram_stack_t2, analysis_tag+"_Tag2");	
+				
+                datamc_t0.plotStacks(ftest, vars,fcoscut,fbnbcut);
+                datamc_t2.plotStacks(ftest, vars,fcoscut,fbnbcut);
 			}
 		}else{
-			bdt_datamc cosmic_datamc(bnbext, cosmic_stack, analysis_tag+"_extintime");	
-			bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
-
-			if(run_bnb) real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-			if(run_cosmic) real_datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+//			bdt_datamc cosmic_datamc(bnbext, cosmic_stack, analysis_tag+"_extintime");	
+//			bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
+//			if(run_bnb) real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+//			if(run_cosmic) real_datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 		}
 
 	}else if(mode_option == "vars"){

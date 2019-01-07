@@ -76,8 +76,8 @@ int bdt_stack::makeSBNspec(std::string tagin, bdt_variable var, double c1, doubl
 		f->cd();	
 		hist->Write();
 	}	
-
-	return 0;
+	
+    return 0;
 }
 
 TH1* bdt_stack::getEntrySum(bdt_variable var){
@@ -181,10 +181,19 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 	std::vector<TH1*> to_sort;
 	std::vector<double> integral_sorter;
 
+    double norm = 0;
+	for(int t=0; t<stack.size(); t++){
+        TH1* hist = (TH1*)stack.at(t)->getTH1(var, "1", "streack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin);
+        norm += hist->Integral();
+
+    }
+
 	for(int t=0; t<stack.size(); t++){
 		std::cout<<"Stack "<<stack.at(t)->tag<<" level "<<t<<std::endl;
 
 		TH1* hist = (TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin);
+        std::cout<<"NORM: "<<norm/hist->Integral()<<" "<<hist->Integral()/norm<<std::endl;
+        hist->Scale(1/norm);
 		hist->SetTitle((this->name+"_"+var.name).c_str());
 		hist->SetLineColor(kBlack);
 		hist->SetStats(0);

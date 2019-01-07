@@ -80,11 +80,10 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			std::cout<<"--> POT is MC: ";
 			std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
 
-			weight_branch = "bnbcorrection_info.weight";
+			weight_branch = "1";//"bnbcorrection_info.weight";
 			numberofevents_raw = numberofevents;
 		}
 	}
-
 
 
 
@@ -95,7 +94,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		
 		//numberofevents = numberofevents*volTPCActive/volTPC;	
 		numberofevents = numberofevents*volTPCActive/volCryo;
-
 
 		tvertex->ResetBranchAddresses();
 	}
@@ -146,7 +144,10 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		weight_branch = "1";
 	}
 
-	std::cout<<"---> VERTEXCOUNT: "<<tag<<" "<<tvertex->GetEntries()*5e19/pot<<std::endl;
+
+			pot = 1.0; 
+			this->scale_data = 1.0;//ntime_modifier*N_gen_bnb/(N_gen_cos)*pot_plot/pot_bnb_cosmic;
+            numberofevents = 1.0;
 
 
 	std::cout<<"Done!"<<std::endl;
