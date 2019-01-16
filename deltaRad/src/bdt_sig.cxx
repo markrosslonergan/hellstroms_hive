@@ -43,11 +43,11 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	
 
 	//for nice plots make the 50, 25 is quicker tho
-	int nsteps_cosmic = 14;//50
+	int nsteps_cosmic = 20;//50
 	double cut_min_cosmic = 999;
 	double cut_max_cosmic = -999;
 
-	int nsteps_bnb = 14;//50
+	int nsteps_bnb = 20;//50
 	double cut_min_bnb = 999;//0.52;
 	double cut_max_bnb = -999;
 	
@@ -82,8 +82,11 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 	//Best Fit Significance: 0.601552 0.533678 1.63658
 	//Zoomed in track
-	cut_min_cosmic = 0.55; cut_max_cosmic = 0.61;
-	cut_min_bnb = 0.525; cut_max_bnb = 0.545;
+//	cut_min_cosmic = 0.55; cut_max_cosmic = 0.61;
+//	cut_min_bnb = 0.525; cut_max_bnb = 0.545;
+	cut_min_cosmic = 0.607-0.05; cut_max_cosmic = 0.607+0.05;
+	cut_min_bnb = 0.565025-0.05; cut_max_bnb = 0.565025+0.05;
+
 
 
 

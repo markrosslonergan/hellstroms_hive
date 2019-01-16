@@ -88,7 +88,7 @@ TH1* bdt_stack::getEntrySum(bdt_variable var){
 TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
 	int stack_rebin = 1;
 	if(level ==2) stack_rebin=2;
-	if(level ==3) stack_rebin=4;
+	if(level ==3) stack_rebin=2;
 
 
 	TH1* summed = (TH1*)stack.at(0)->getTH1(var, "1", "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
@@ -124,7 +124,7 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 
 	int stack_rebin = 1;
 	if(level ==2) stack_rebin=2;
-	if(level ==3) stack_rebin=4;
+	if(level ==3) stack_rebin=2;
 
 
 	TH1* summed = (TH1*)stack.at(0)->getTH1(var, stack.at(0)->getStageCuts(level,cut1, cut2), "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
@@ -161,7 +161,7 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
 	int stack_rebin = 1;
 	if(level ==2) stack_rebin=2;
-	if(level ==3) stack_rebin=4;
+	if(level ==3) stack_rebin=2;
 
 	/*
 
@@ -228,7 +228,7 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
 	int stack_rebin = 1;
 	if(level ==2) stack_rebin=2;
-	if(level ==3) stack_rebin=4;
+	if(level ==3) stack_rebin=2;
 
 	/*
 
@@ -305,7 +305,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			f->setStageEntryList(s);
 
             //Also usable on BNBCosmics
-			if(s==3 && true && f->tag == "NCDeltaRadCosmics") f->tvertex->Scan("run_number:subrun_number:event_number:reco_nuvertx:reco_nuverty:reco_nuvertz:reco_track_vertdirx[0]:reco_track_vertdiry[0]:reco_track_vertdirz[0]:reco_shower_startx[0]:reco_shower_starty[0]:reco_shower_startz[0]:reco_shower_dirx[0]:reco_shower_diry[0]:reco_shower_dirz[0]");
+			if(s==3 && false && f->tag == "NCDeltaRadCosmics") f->tvertex->Scan("run_number:subrun_number:event_number:reco_nuvertx:reco_nuverty:reco_nuvertz:reco_track_vertdirx[0]:reco_track_vertdiry[0]:reco_track_vertdirz[0]:reco_shower_startx[0]:reco_shower_starty[0]:reco_shower_startz[0]:reco_shower_dirx[0]:reco_shower_diry[0]:reco_shower_dirz[0]");
 		}	
 		std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 

@@ -85,17 +85,29 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		}
 	}
 
+    if(tag == "BNBPure" || tag == "BNBCosmics"){
+    //MCC9 pot issues
+    //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
+        pot = 2.16562e21*(double)numberofevents/2154500.0;
+        std::cout<<"REAL MCC9: --> POT is MC: ";
+		std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+    }
 
 
-
-	if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure"){
+	if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure" || tag == "NCDeltaRad"){
 		double volCryo = 199668.427885;
 		double volTPC = 101510.0;
-		double  volTPCActive=  86698.6;
+		double volTPCActive=  86698.6;
 		
 		//numberofevents = numberofevents*volTPCActive/volTPC;	
-		numberofevents = numberofevents*volTPCActive/volCryo;
+		numberofevents = numberofevents;//*volTPCActive/volCryo;
 
+        //in MCC9 POT is broken so lets fudge it here: OLD mcc8 1.64282e+24 NumEvents: 350189
+        //pot = 1.64282e24*((double)numberofevents/350189.0);
+        pot = 1.64282e24*(39954.0/350189.0);
+
+        std::cout<<"REAL MCC9: --> POT is MC: ";
+		std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
 
 		tvertex->ResetBranchAddresses();
 	}
@@ -104,9 +116,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 	if(tag == "Data5e19"){
 		leg = "lp";
-		pot = 4.393e19;// tor860_wcut
+		pot = 4.898e19; //old mcc84.393e19;// tor860_wcut
 		weight_branch = "1";
-
+        //so MCC9, we have 197772 events in file and 197833 evnts in samweb (lets ignore that) so 
 		std::cout<<"--> value: "<<pot<<std::endl;
 	}
 	if(tag == "BNBext"){
@@ -129,17 +141,34 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		leg = "lp";
 		double sca = 1.23;//from 1.23
 		//https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
+        
+        //MCC9: 
+        //Data samweb is 197833 events. defname: data_bnb_run1_unblind_mcc9.0_nov_reco_2d_reco2_slim
+        //tor860_wcut: 4.898e+19,  E1DCNT_wcut: 11595542.0
+        //
+        //bnbext samweb is  200433 events, defname: data_extbnb_run1_dev_mcc9.0_nov_reco_2d_reco2_slim
+        //EXT spills: 15435961.0
 
-		double ext=33752562+40051674;//47953078.0; //External spills in each sample (EXT)
-		double spill_on=10312906;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
 
+        //so that is
+        double ext=15435961.0;//47953078.0; //External spills in each sample (EXT)
+		double spill_on=11595542.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
+		double datanorm =4.898e19;// tor860_wcut run-subrunlist;
 
-		double datanorm =4.393e19;// rot860_wcut run-subrunlist;
+        double Noff_full = 200433.0; //this is full samweb events
+        double Noff_have = numberofevents;
 
-		double mod = spill_on/ext;
+        //This is old MCC8 one
+		//double ext=33752562+40051674;//47953078.0; //External spills in each sample (EXT)
+		//double spill_on=10312906;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
+		//double datanorm =4.393e19;// tor860_wcut run-subrunlist;
+
+        
+		double mod = spill_on/ext*(Noff_full/Noff_have);
 
 
 		std::cout<<"--> POT is data: From Zarkos tool..";
+        //going to scale by how many events I actually have in MCC9
 		pot =datanorm/mod;
 		std::cout<<"--> value: "<<pot<<std::endl;
 

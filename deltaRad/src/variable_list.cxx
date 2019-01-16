@@ -13,6 +13,8 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 
 
+		//std::string fiducial_vertex_truth = "mctruth_nu_vertex_x > 10 && mctruth_nu_vertex_x < 246 && mctruth_nu_vertex_y > -107 && mctruth_nu_vertex_y < 107 && mctruth_nu_vertex_z > 10 && mctruth_nu_vertex_z < 1026 ";
+        //
 		std::string angle_track_shower ="(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])";
 		std::string fiducial_vertex = "reco_vertex_x > 10 && reco_vertex_x < 246 && reco_vertex_y > -107 && reco_vertex_y < 107 && reco_vertex_z > 10 && reco_vertex_z < 1026 ";
 		std::string fiducial_shower_end = "reco_shower_endx > 5 && reco_shower_endx < 245 && reco_shower_endy > -105 && reco_shower_endy < 95 && reco_shower_endz > 10 && reco_shower_endz < 1026 ";
@@ -26,6 +28,8 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		std::string invariant_mass = "("+proton_mass+"*"+proton_mass+"+2.0*("+reco_track_energy+"*"+reco_shower_momentum+"-"+reco_track_momentum+"*"+reco_shower_momentum+"*"+angle_track_shower+"))";
 
 		std::string delta_transverse_momentum = "sqrt( pow("+reco_track_energy +"*(reco_track_dirx[0])+ "+reco_shower_momentum+"*reco_shower_dirx[0],2)+ pow("+reco_track_energy +"*(reco_track_diry[0])+"+reco_shower_momentum +"*reco_shower_diry[0],2))";
+        
+
 
 		std::string new_precuts;
 
@@ -35,16 +39,15 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		std::string min_conversion_cut = "reco_shower_conversion_distance[0] > 0";
 		std::string back_to_back_cut = "("+angle_track_shower+" > -1 &&"  + angle_track_shower + "< 1)";
 		std::string pe_cut = "reco_flash_total_pe_in_beamgate[0] > 20";
+        std::string shower_dedx_cut = "reco_shower_dEdx_plane2_nhits[0]>1";
 
 
 		//************************************************* Shower Only Variables **********************************************//
 
-
-
 		//all_vars.push_back(bdt_variable("sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))","(48,0,100)"," Reco-True Vetrex Dist [cm]",false,"d"));  //1
 
 		all_vars.push_back(bdt_variable("reco_flash_total_pe_in_beamgate[0]","(48,0,5000)","Total in Beam-Gate PE",false,"d"));  //1
-		//all_vars.push_back(bdt_variable("reco_shower_dEdx_plane2_median[0]","(48,0,6.5)", "Median Shower dE/dx plane 2 [MeV/cm]",false,"d")); //2
+		all_vars.push_back(bdt_variable("reco_shower_dEdx_plane2_median[0]","(48,0,6.5)", "Median Shower dE/dx plane 2 [MeV/cm]",false,"d")); //2
 		all_vars.push_back(bdt_variable("reco_shower_energy[0]/1000.0","(48,0,0.8)","Reconstructed Shower Energy (Corrected) [GeV]", false,"d"));  //3
 		all_vars.push_back(bdt_variable("reco_shower_length[0]","(48,0,100)","Shower Length [cm]",false,"d"));//4
 
@@ -89,6 +92,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         all_precuts.push_back(min_shower_energy_cut);
 		all_precuts.push_back(pe_cut);
 		all_precuts.push_back(fiducial_cut);
+        all_precuts.push_back(shower_dedx_cut);
 
 		if(analysis_tag == "track"){
 			all_precuts.push_back(track_length_cut);

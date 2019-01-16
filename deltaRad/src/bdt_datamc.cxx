@@ -31,7 +31,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
 
-	double plot_pot=4.393e19;//4.801e19;
+	double plot_pot=4.898e19;//4.393e19;//4.801e19;
 
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
@@ -102,7 +102,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			int data_rebin = 1;
 			if(s==0 || s == 1){
 				rmin=0; rmax = 1.99;
-			}else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=4;};
+			}else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
 
 			double max_modifier = 1.4;
@@ -281,7 +281,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 	//TCanvas *cobs = new TCanvas("","",1800,1600);
 	//cobs->Divide(2,2,0.0025,0.0000001);
 
-	double plot_pot=4.393e19;//4.801e19;
+	double plot_pot=4.898e19;// 4.393e19;//;//4.801e19;
 
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
@@ -352,7 +352,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 	std::cout<<"Gotten all data hists."<<std::endl;
 
 
-	if(true){
+	if(false){
 		data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist",dat_cut_3.c_str());
 		return 0;
 	}
@@ -385,7 +385,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 		if(k==0 || k == 1){
 			rmin=0.0; rmax = 1.999;
 
-		}else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=4;};
+		}else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
 
 
 		double max_modifier = 1.4;

@@ -177,8 +177,8 @@ int main (int argc, char *argv[]){
 	}
 
 	std::string base_cuts = "reco_vertex_size==1 && reco_asso_showers==1 && reco_asso_tracks "+num_track_cut;
-	std::string signal_definition = "1";
-	std::string background_definition = "1";
+	std::string signal_definition = "mctruth_is_delta_radiative==1";
+	std::string background_definition = "mctruth_is_delta_radiative!=1";
 
 
 	//***************************************************************************************************/
@@ -198,7 +198,7 @@ int main (int argc, char *argv[]){
 	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_mcc9_v2.0.merged.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
 	//bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//Data files
-	//bdt_file *data5e19    = new bdt_file(dir, "vertexed_data5e19_fresh_v4.1.root",	"Data5e19",	   "E1p","",  kBlack, data_flow);
+	bdt_file *data5e19    = new bdt_file(dir, "data_mcc9_v2.0.merged.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
 	bdt_file *bnbext    = new bdt_file(dir, "bnbext_mcc9_v2.0.merged.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 	//bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
@@ -207,12 +207,12 @@ int main (int argc, char *argv[]){
 
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
-	std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics,signal_pure,bnb_pure,bnbext};
+	std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics,signal_pure,bnb_pure,bnbext,data5e19};
 	//std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, bnb_overlay, dirt};
 
 	//The LEE signal is bigger than the SM signal by this factor
-	signal_pure->scale_data = 3.1;
-	signal_cosmics->scale_data = 3.1;
+	signal_pure->scale_data = 3.0;
+	signal_cosmics->scale_data = 3.0;
 
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -267,17 +267,19 @@ int main (int argc, char *argv[]){
 
 
 	//MELD: Best Fit Significance: 0.591875 0.5325 1.74915
+    //MCC9: Best Fit Significance: 0.597 0.555025 2.18283
+    //
 	double fcoscut;
 	double fbnbcut;
 	if(analysis_tag == "track"){
-		fcoscut = 0.591875;
-		fbnbcut = 0.5325;
+		fcoscut = 0.597;
+		fbnbcut = 0.555025;
 
 		//Reduced
 		//fcoscut =0.475;
 
 	}else if(analysis_tag == "notrack"){
-		fcoscut = 0.5525;
+		fcoscut = 0.55;
 		fbnbcut = 0.533625;
 		//	Best Fit Significance: 0.5525 0.533625 1.1
 
@@ -310,11 +312,11 @@ int main (int argc, char *argv[]){
 		return 0;
 	}
 	else if(mode_option == "response"){
-    /*
+    
 		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 		//Ok print out Cosmic BDT
 		if(run_cosmic){
-			bdt_response cosmic_response(cosmic_bdt_info, signal_pure, intime);
+			bdt_response cosmic_response(cosmic_bdt_info, signal_pure, bnbext);
 			cosmic_response.plot_bdt_response(ftest);
 		}
 
@@ -322,7 +324,7 @@ int main (int argc, char *argv[]){
 			bdt_response bnb_response(bnb_bdt_info, signal_pure, bnb_pure);
 			bnb_response.plot_bdt_response(ftest);
 		}
-	*/
+	
         }	
 	else if(mode_option == "recomc"){
 
@@ -334,7 +336,7 @@ int main (int argc, char *argv[]){
 		std::vector<std::string> recomc_cuts = {
 			"true_shower_origin[0]==1 && true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] !=111 && is_delta_rad ==1 ",
 			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc==0",
-			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] == 111 && true_shower_origin[0]==1 && ccnc==1",
+			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[1] == 111 && true_shower_origin[0]==1 && ccnc==1",
 			"true_shower_pdg[0] == 22 && true_shower_parent_pdg[0] != 111 && is_delta_rad!=1 && true_shower_origin[0]==1",
 			"true_shower_origin[0] ==1 && "+ nue,
 			"true_shower_origin[0] ==1 && "+ michel,
@@ -376,7 +378,7 @@ int main (int argc, char *argv[]){
 	}
 	else if(mode_option == "sig"){
 
-        /*
+        
 		TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
 		std::vector<double> ans = scan_significance(fsig, {signal_cosmics} , {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info);
 		//std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
@@ -384,15 +386,13 @@ int main (int argc, char *argv[]){
 		std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
 		fsig->Close();
 
-
+    
 	}else if(mode_option == "stack"){
 		bdt_stack histogram_stack(analysis_tag+"_stack");
 		histogram_stack.addToStack(signal_cosmics);
 		histogram_stack.addToStack(bnb_cosmics);
-		//histogram_stack.addToStack(bnb_overlay);
 
 		//Add bnbext but change the color and style first
-		bnbext->col = intime->col;	
 		bnbext->fillstyle = 3333;
 		histogram_stack.addToStack(bnbext);
 		//histogram_stack.addToStack(dirt);
@@ -416,28 +416,22 @@ int main (int argc, char *argv[]){
 			return 0;
 		}
 
-*/
+
 
 	}else if(mode_option == "datamc"){
-/*
+
 		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 		//Obsolete
 
-		bdt_stack *cosmic_stack = new bdt_stack(analysis_tag+"_extintime");
-		cosmic_stack->plot_pot = 4.393e19;
-		cosmic_stack->addToStack(intime);
-
 		bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
-		histogram_stack->plot_pot = 4.393e19;
+		histogram_stack->plot_pot = 4.898e19;
 		histogram_stack->addToStack(signal_cosmics);
 		histogram_stack->addToStack(bnb_cosmics);
-		bnbext->col = intime->col;	
 		bnbext->fillstyle = 3333;
 		histogram_stack->addToStack(bnbext);
 //		histogram_stack->addToStack(dirt);
 
 		int ip=0;
-
 
 		if(!response_only){
 			if(number != -1){
@@ -450,13 +444,12 @@ int main (int argc, char *argv[]){
 				real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 			}
 		}else{
-			bdt_datamc cosmic_datamc(bnbext, cosmic_stack, analysis_tag+"_extintime");	
 			bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
 
 			if(run_bnb) real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
 			if(run_cosmic) real_datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 		}
-*/
+
 	}else if(mode_option == "vars"){
         std::cout<<"Starting vars"<<std::endl;
 		std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
