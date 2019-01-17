@@ -538,192 +538,6 @@ int bdt_precalc::genTrackInfo(){
 	return 0;
 }
 
-// Function to calculate the pi0 -> 2gamma decay angle in CM frame,
-// relative to boost vector. Apparently Matt asked to CCpi0 groups for
-// this, so obviously we have to do it
-// NO LONGER NECESSARY, JUST KEEPING FOR FUTURE REFERENCE
-/*
-int bdt_precalc::genPi0BoostAngle() {
-	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
-    // Initialization; set up necessary variables to read from vertexed samples
-    file->tvertex->ResetBranchAddresses();
-    TTree *friend_tree = new TTree("pi0Boost_info", "pi0Boost_info");
-    std::size_t const N = 30;
-    // Note: if N is too small ( < 20 or so), code breaks due to "stack smashing"
-    int most_energetic_shower_index = 0;
-    int second_most_energetic_shower_index = 0;
-    int ccnc = 0, reco_asso_showers = 0, reco_asso_tracks = 0;
-    double reco_shower_helper_energy[N] = {0.};
-    double reco_shower_dirx[N] = {0.};
-    double reco_shower_diry[N] = {0.};
-    double reco_shower_dirz[N] = {0.};
-    double gamma_opening_angle_lab;
-    double gamma_pi_least_angle;
-    double gamma_z_least_angle;
-
-    TBranch *breco_shower_energy = 0;
-    TBranch *breco_shower_dirx = 0;
-    TBranch *breco_shower_diry = 0;
-    TBranch *breco_shower_dirz = 0;
-
-    // Get necessary info from BDT files
-    file->tvertex->SetBranchAddress("most_energetic_shower_index", &most_energetic_shower_index);
-    file->tvertex->SetBranchAddress("second_most_energetic_shower_index", &second_most_energetic_shower_index);
-    file->tvertex->SetBranchAddress("ccnc", &ccnc);
-    file->tvertex->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
-	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
-    file->tvertex->SetBranchAddress("reco_shower_helper_energy", &reco_shower_helper_energy, &breco_shower_energy);
-    file->tvertex->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx, &breco_shower_dirx);
-    file->tvertex->SetBranchAddress("reco_shower_diry", &reco_shower_diry, &breco_shower_diry);
-    file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz, &breco_shower_dirz);
-
-    // Friend tree branch
-    TBranch *b_gamma_opening_angle_lab = friend_tree->Branch("gamma_opening_angle_lab", &gamma_opening_angle_lab);
-    TBranch *b_gamma_pi_least_angle = friend_tree->Branch("gamma_pi_least_angle", &gamma_pi_least_angle);
-    TBranch *b_gamma_z_least_angle = friend_tree->Branch("gamma_z_least_angle", &gamma_z_least_angle);
-
-	int NN = file->tvertex->GetEntries();
-    std::ofstream myfile;
-    myfile.open("outputBoost.txt");
-	for(int i=0; i< file->tvertex->GetEntries(); i++) {
-        gamma_opening_angle_lab = -999.;
-        gamma_pi_least_angle = -999.;
-        gamma_z_least_angle = -999.;
-		if (i%10000==0) std::cout<<i<<"/"<<NN<<" "<<file->tag<<" "<<std::endl;
-		file->tvertex->GetEntry(i);
-
-        // Check for signal candidates
-        if (reco_asso_showers==2) {
-            // Set up kinematic variables
-            double px = 0., py = 0., pz = 0.; 
-            double px1 = 0., py1 = 0., pz1 = 0.; 
-            double px2 = 0., py2 = 0., pz2 = 0.;
-            double E1 = 0., E2 = 0., E_pi = 0.;
-            E1 = reco_shower_helper_energy[most_energetic_shower_index]; 
-            E2 = reco_shower_helper_energy[second_most_energetic_shower_index]; 
-            E_pi = E1 + E2; 
-
-            // Pion momentum components
-            px1 = E1*reco_shower_dirx[most_energetic_shower_index]; 
-            py1 = E1*reco_shower_diry[most_energetic_shower_index];
-            pz1 = E1*reco_shower_dirz[most_energetic_shower_index];
-            px2 = E2*reco_shower_dirx[second_most_energetic_shower_index]; 
-            py2 = E2*reco_shower_diry[second_most_energetic_shower_index];
-            pz2 = E2*reco_shower_dirz[second_most_energetic_shower_index]; 
-
-            // Four vectors for photons and pre-boost pion
-            TLorentzVector gamma1(px1, py1, pz1, E1);
-            TLorentzVector gamma2(px2, py2, pz2, E2);
-            TLorentzVector p_pi = gamma1 + gamma2;
-            TVector3 preBoost(p_pi.X(), p_pi.Y(), p_pi.Z());
-
-            // Opening angle, because why not
-            gamma_opening_angle_lab = gamma1.Vect().Angle(gamma2.Vect());
-
-            // Boost
-            TVector3 boostVec = p_pi.BoostVector(); 
-            p_pi.Boost(-boostVec);
-            gamma1.Boost(-boostVec);
-            gamma2.Boost(-boostVec);
-
-            myfile << "boostVec: (" << boostVec.X() << ", "
-                                    << boostVec.Y() << ", " 
-                                    << boostVec.Z() << ")" << std::endl;
- 
-            // Define forward and backward shower for easy orientation later
-            TVector3 forwardShower;
-            TVector3 backwardShower;
-
-            // Make sure boosted shower directions make sense; should be back-to-back
-            if (gamma1.Z() > 0 && gamma2.Z() > 0) {
-                continue;
-            }
-            else if (gamma1.Z() < 0 && gamma2.Z() < 0) {
-                continue;
-            }
-            else if (gamma1.Z() > 0 && gamma2.Z() < 0 ) {
-                forwardShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
-                backwardShower.SetXYZ(gamma2.X(), gamma2.Y(), gamma2.Z());
-            }
-            else if (gamma1.Z() < 0 && gamma2.Z() > 0 ) {
-                forwardShower.SetXYZ(gamma2.X(), gamma2.Y(), gamma2.Z());
-                backwardShower.SetXYZ(gamma1.X(), gamma1.Y(), gamma1.Z());
-            }
-            // Not sure what else could happen, but just in case
-            else {
-                continue;
-            }
-
-            myfile << "forwardShower: (" << forwardShower.X() << ", "
-                                         << forwardShower.Y() << ", " 
-                                         << forwardShower.Z() << ")" << std::endl;
-            myfile << "backwardShower: (" << backwardShower.X() << ", "
-                                          << backwardShower.Y() << ", " 
-                                          << backwardShower.Z() << ")" << std::endl;
-            // Define unit vector normal to xz-plane, with y-component
-            // the same sign as the forward shower; this is done for 
-            // projecting stuff later
-
-            TVector3 normal(0., 1., 0.);
-            //if (boostVec.Y() >=0) normalSetXYZ(0, 1., 0.);
-            //else normalSetXYZ(0, -1., 0.);
-
-            // Project boost vector and showers into xz-plane
-            TVector3 projectionBoostVec = boostVec - boostVec.Dot(normal)/normal.Mag2() * normal;
-            TVector3 projectionForwardShower = forwardShower - forwardShower.Dot(normal)/normal.Mag2() * normal;
-            TVector3 projectionBackwardShower = backwardShower - backwardShower.Dot(normal)/normal.Mag2() * normal;
-            myfile << "projectionBoostVec: (" << projectionBoostVec.X() << ", "
-                                              << projectionBoostVec.Y() << ", " 
-                                              << projectionBoostVec.Z() << ")" << std::endl;
-
-            myfile << "projectionForwardShower: (" << projectionForwardShower.X() << ", "
-                                                   << projectionForwardShower.Y() << ", " 
-                                                   << projectionForwardShower.Z() << ")" << std::endl;
-
-            myfile << "projectionBackwardShower: (" << projectionBackwardShower.X() << ", "
-                                                    << projectionBackwardShower.Y() << ", " 
-                                                    << projectionBackwardShower.Z() << ")" << std::endl;
-            // z-unit vector, for reference
-            TVector3 zUnit(0., 0., 1.);
-
-            // For reference, take angle between forward shower and z-unit 
-            gamma_z_least_angle = zUnit.Angle(projectionForwardShower);
-            myfile << "gamma_z_least_angle = " << gamma_z_least_angle << std::endl;
-
-            // See which shower is closer to pion boost vector and take the angle (in xz-plane)
-            if (projectionBoostVec.Angle(projectionForwardShower) <= projectionBoostVec.Angle(projectionBackwardShower)) {
-                gamma_pi_least_angle = projectionBoostVec.Angle(projectionForwardShower);
-            } 
-            else if (projectionBoostVec.Angle(projectionForwardShower) > projectionBoostVec.Angle(projectionBackwardShower)) {
-                gamma_pi_least_angle = projectionBoostVec.Angle(projectionBackwardShower);
-            } 
-            myfile << "gamma_pi_least_angle = " << gamma_pi_least_angle << std::endl;
-            myfile << "----------------------------------------------------------------" << std::endl;
-
-            // Repeat the above for the pion boost vector 
-            if (normal.Angle(boostVec) > 1.571) {
-                normal.SetX(-normal.X());
-                normal.SetY(-normal.Y());
-                normal.SetZ(-normal.Z());
-            }
-
-        }        
-		friend_tree->Fill();
-        
-        // Empty arrays to avoid memory leaks; may not be necessary anymore
-        std::fill_n(reco_shower_helper_energy, N, 0);
-        std::fill_n(reco_shower_dirx, N, 0);
-        std::fill_n(reco_shower_diry, N, 0);
-        std::fill_n(reco_shower_dirz, N, 0);
-        
-	}
-	friend_file_out->cd();
-	friend_tree->Write();
-    friend_file_out->Close();
-    return 0;
-}
-*/
-
 int bdt_precalc::genShowerInfo(){
 	std::cout<<"bdt_precalc::genShowerInfo() || Starting. "<<std::endl;
 	TFile *friend_file_out = new TFile(friend_file_out_name.c_str(),"update");
@@ -736,6 +550,10 @@ int bdt_precalc::genShowerInfo(){
 	//	double asso_r
 	int reco_asso_tracks = 0;
 	int reco_asso_showers = 0;
+    int most_energetic_shower_index = 0;
+    int second_most_energetic_shower_index = 0;
+    double leading_bp_dist = 0;
+    double subleading_bp_dist = 0;
 
 	double reco_shower_dedx_plane1[100];
 	double reco_shower_dedx_plane2[100];
@@ -745,13 +563,31 @@ int bdt_precalc::genShowerInfo(){
 	double reco_shower_dedxnew_plane2[100];
 	double reco_shower_dedxnew_plane0[100];
 
+    double reco_nuvertx;
+    double reco_nuverty;
+    double reco_nuvertz;
+
+	double reco_shower_startx[100];
+	double reco_shower_starty[100];
+	double reco_shower_startz[100];
+    
 	double reco_shower_dirx[100];
 	double reco_shower_diry[100];
 	double reco_shower_dirz[100];
 
 	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
-	file->tvertex->SetBranchAddress("reco_asso_tracks", &reco_asso_tracks);
 	file->tvertex->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
+
+    file->tvertex->SetBranchAddress("most_energetic_shower_index", &most_energetic_shower_index);
+    file->tvertex->SetBranchAddress("second_most_energetic_shower_index", &second_most_energetic_shower_index);
+
+	file->tvertex->SetBranchAddress("reco_nuvertx", &reco_nuvertx);
+	file->tvertex->SetBranchAddress("reco_nuverty", &reco_nuverty);
+	file->tvertex->SetBranchAddress("reco_nuvertz", &reco_nuvertz);
+
+	file->tvertex->SetBranchAddress("reco_shower_startx", reco_shower_startx);
+	file->tvertex->SetBranchAddress("reco_shower_starty", reco_shower_starty);
+	file->tvertex->SetBranchAddress("reco_shower_startz", reco_shower_startz);
 
 	file->tvertex->SetBranchAddress("reco_shower_dirx", reco_shower_dirx);
 	file->tvertex->SetBranchAddress("reco_shower_diry", reco_shower_diry);
@@ -769,6 +605,11 @@ int bdt_precalc::genShowerInfo(){
 	std::vector<double> vec_amal_dEdx;
 
 	TBranch *b_amal_dEdx = friend_tree->Branch("amalgamated_shower_dEdx",&vec_amal_dEdx);
+	TBranch *b_leading_bp_dist = friend_tree->Branch("leading_shower_bp_dist_to_vtx",&leading_bp_dist);
+	TBranch *b_subleading_bp_dist = friend_tree->Branch("subleading_shower_bp_dist_to_vtx",&subleading_bp_dist);
+
+    //TH1D *h_lead_bp = new TH1D("h_lead_bp", "h_lead_bp", 20, 0, 200);
+    //TH1D *h_sublead_bp = new TH1D("h_sublead_bp", "h_sublead_bp", 20, 0, 200);
 
 	TH2D* h2 = new TH2D("h2","h2",50,0,6,50,0,90);
 	TH2D * h1 = new TH2D("h1","h1",50,0,6,50,-180,180);
@@ -832,6 +673,21 @@ int bdt_precalc::genShowerInfo(){
 
 			vec_amal_dEdx.push_back(dedx);
 			if(dedx < 0) std::cout<<dedx<<" "<<reco_shower_dedx_plane0[s]<<" "<<reco_shower_dedx_plane1[s]<<" "<<reco_shower_dedx_plane2[s]<<std::endl;
+
+            // Calculate back-projected distances to vertex
+            double sx1 = reco_shower_startx[most_energetic_shower_index];
+            double sy1 = reco_shower_starty[most_energetic_shower_index];
+            double sz1 = reco_shower_startz[most_energetic_shower_index];
+            double sx2 = reco_shower_startx[second_most_energetic_shower_index];
+            double sy2 = reco_shower_starty[second_most_energetic_shower_index];
+            double sz2 = reco_shower_startz[second_most_energetic_shower_index];
+
+            double vx = reco_nuvertx;
+            double vy = reco_nuverty;
+            double vz = reco_nuvertz;
+
+            leading_bp_dist = sqrt((sx1-vx)*(sx1-vx) + (sy1-vy)*(sy1-vy) + (sz1-vz)*(sz1-vz) );
+            subleading_bp_dist = sqrt((sx2-vx)*(sx2-vx) + (sy2-vy)*(sy2-vy) + (sz2-vz)*(sz2-vz) );
 
 		}
 		friend_tree->Fill();

@@ -164,6 +164,8 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		std::string pe_cut = "totalpe_ibg_sum > 20";
 		std::string flash_proximity_cut = "reco_shower_dist_to_closest_flashzcenter[0] < 80";
 		std::string dead_wire_track = "((reco_track_endz < 685 || reco_track_endz > 715) && shower_info.amalgamated_shower_dEdx[0] < 6.5 )";
+        std::string leading_bp_dist_cut = "shower_info.leading_shower_bp_dist_to_vtx < 80";
+        std::string subleading_bp_dist_cut = "shower_info.subleading_shower_bp_dist_to_vtx < 80";
 
 
 		//************************************************* Shower-only Variables **********************************************//
