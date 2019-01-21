@@ -33,7 +33,7 @@
 #include "bdt_spec.h"
 #include "bdt_eff.h"
 #include "bdt_test.h"
-
+#include "bdt_vertex_eff.h"
 
 int main (int argc, char *argv[]){
 
@@ -151,7 +151,7 @@ int main (int argc, char *argv[]){
 
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(80,0.3,0.6)");
+	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(80,0.37,0.63)");
 	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.2,0.75)");
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
@@ -192,8 +192,8 @@ int main (int argc, char *argv[]){
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure    = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v2.0.merged.root",	"NCDeltaRad",	   "hist","singlephoton/",  kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v2.0.merged.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
+	bdt_file *signal_pure    = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v3.1.merged.root",	"NCDeltaRad",	   "hist","singlephoton/",  kRed-7, signal_pure_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v3.1.merged.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
 	bdt_file *bnb_pure    = new bdt_file(dir, "bnb_overlay_mcc9_v2.0.merged.root", "BNBPure",	  "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_mcc9_v2.0.merged.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
 	//bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
@@ -242,7 +242,7 @@ int main (int argc, char *argv[]){
 
 			std::cout<<"Filling Base EntryLists on File  "<<f->tag<<std::endl;
 			//if(mode_option != "train" && mode_option != "app"){
-			if(mode_option != "train"){
+			if(mode_option != "train" && mode_option != "eff"){
 				f->calcBaseEntryList(analysis_tag);
 			}
 		}
@@ -253,12 +253,11 @@ int main (int argc, char *argv[]){
 
 	//Adding plot names
 	signal_pure->addPlotName("NC Delta Radiative");
-	signal_cosmics->addPlotName("LEE NC #Delta Rad w/ Corsika");
+	signal_cosmics->addPlotName("LEE NC #Delta Rad w/ Overlay");
 	bnb_pure->addPlotName("BNB Backgrounds");
-	bnb_cosmics->addPlotName("BNB w/ Corsika");
-//	intime->addPlotName("Intime Corsika cosmics");
-//	data5e19->addPlotName("4.8e19 POT Data");
-//	bnbext->addPlotName("External BNB Data");
+	bnb_cosmics->addPlotName("BNB w/ Overlay");
+    data5e19->addPlotName("4.8e19 POT Data");
+	bnbext->addPlotName("External BNB Data");
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -276,7 +275,7 @@ int main (int argc, char *argv[]){
 		fbnbcut = 0.555025;
 
 		//Reduced
-		//fcoscut =0.475;
+		fcoscut =0.5;
 
 	}else if(analysis_tag == "notrack"){
 		fcoscut = 0.55;
@@ -480,7 +479,26 @@ int main (int argc, char *argv[]){
 
 
 	} else if(mode_option == "eff"){
-/*
+
+
+       bdt_variable true_photon("mctruth_delta_photon_energy","(20,0,1.0)","True Photon Energy [MeV]",false,"d");
+        //bdt_variable true_photon("mctruth_delta_proton_energy-0.98","(20,0,1.0)","True Proton Kinetic Energy [MeV]",false,"d");
+        
+        //std::string denom = "mctruth_is_delta_radiative && mctruth_delta_radiative_1g1p_or_1g1n==1";
+        std::string denom = "mctruth_is_delta_radiative && mctruth_delta_radiative_1g1p_or_1g1n==0";
+        //std::vector<std::string> vec_eff = {"reco_asso_showers==1","reco_asso_tracks==1","sim_shower_matched==1 && sim_track_matched==1"};
+        //std::vector<std::string> vec_eff = {"reco_asso_tracks==1", "reco_asso_showers==1", "sim_shower_matched==1 && sim_track_matched==1"};
+        std::vector<std::string> vec_eff = { "reco_asso_showers==1","reco_asso_tracks==0", "sim_shower_matched==1"};
+
+            
+        
+        
+        bdt_vertex_eff myeff(signal_cosmics,true_photon, denom,vec_eff); 
+        myeff.plotEfficiencies("test.pdf"); 
+        
+        
+        
+        /*
 		std::string ZMIN = "0.0"; std::string ZMAX = "1036.8";
 		std::string XMIN = "0.0"; std::string XMAX = "256.35";
 		std::string YMIN = "-116.5"; std::string YMAX = "116.5";
