@@ -129,6 +129,9 @@ struct bdt_file{
 		std::string bnbbdt_list_name;
 		TEntryList * bnbbdt_list;
 
+        //a function that splits a BDT file based on string and !string
+        int splitBDTfile(std::string split_string,std::string trueTAG, bdt_file* truesplit, std::string falseTAG, bdt_file *falsesplit);
+
 
 		int setStageEntryList(int j);
 		int setStageEntryList(int j, double, double);

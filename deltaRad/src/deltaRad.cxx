@@ -194,8 +194,8 @@ int main (int argc, char *argv[]){
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
 	bdt_file *signal_pure    = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v3.1.merged.root",	"NCDeltaRad",	   "hist","singlephoton/",  kRed-7, signal_pure_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v3.1.merged.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir, "bnb_overlay_mcc9_v2.0.merged.root", "BNBPure",	  "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_mcc9_v2.0.merged.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir, "bnb_overlay_mcc9_v2.0.merged.root", "BNBPure",	  "hist","singlephoton/",  kBlue-4, bkg_pure_flow);     
+    bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_mcc9_v2.0.merged.root", "BNBCosmics", "hist","singlephoton/",  kBlue-7, bkg_flow);
 	//bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//Data files
 	bdt_file *data5e19    = new bdt_file(dir, "data_mcc9_v2.0.merged.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
@@ -205,10 +205,14 @@ int main (int argc, char *argv[]){
 	//bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
 	//bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
 
+    bdt_file * bnb_cosmics_good;
+    bdt_file * bnb_cosmics_overlay;
+    bnb_cosmics->splitBDTfile("(sim_shower_matched[0] ==1&& sim_track_matched[0]==1)","BNBCosmicsGood",bnb_cosmics_good,"BNBCosmicsOverlay",bnb_cosmics_overlay);
+
+
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
-	std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics,signal_pure,bnb_pure,bnbext,data5e19};
-	//std::vector<bdt_file*> bdt_files = {signal_cosmics, signal_pure, bnb_pure, bnb_cosmics, intime, data5e19, bnbext, bnb_overlay, dirt};
+	std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics,signal_pure,bnb_pure,bnbext,data5e19,bnb_cosmics_overlay,bnb_cosmics_good};
 
 	//The LEE signal is bigger than the SM signal by this factor
 	signal_pure->scale_data = 3.0;
@@ -258,6 +262,9 @@ int main (int argc, char *argv[]){
 	bnb_cosmics->addPlotName("BNB w/ Overlay");
     data5e19->addPlotName("4.8e19 POT Data");
 	bnbext->addPlotName("External BNB Data");
+
+	bnb_cosmics_good->addPlotName("BNB");
+	bnb_cosmics_overlay->addPlotName("BNB w/ Overlay Contamination");
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -389,7 +396,9 @@ int main (int argc, char *argv[]){
 	}else if(mode_option == "stack"){
 		bdt_stack histogram_stack(analysis_tag+"_stack");
 		histogram_stack.addToStack(signal_cosmics);
-		histogram_stack.addToStack(bnb_cosmics);
+		//histogram_stack.addToStack(bnb_cosmics);
+		histogram_stack.addToStack(bnb_cosmics_overlay);
+		histogram_stack.addToStack(bnb_cosmics_good);
 
 		//Add bnbext but change the color and style first
 		bnbext->fillstyle = 3333;
