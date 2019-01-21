@@ -85,7 +85,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		}
 	}
 
-    if(tag == "BNBPure" || tag == "BNBCosmics"){
+    if(tag == "BNBPure" || tag == "BNBCosmics" || tag == "BNBCosmicsOverlay" || tag == "BNBCosmicsGood"){
     //MCC9 pot issues
     //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
         pot = 2.16562e21*(double)numberofevents/2154500.0;
@@ -639,6 +639,23 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 	return ans;
 }
 
+int bdt_file::splitBDTfile(std::string split_string,std::string trueTAG, bdt_file* truesplit, std::string falseTAG, bdt_file *falsesplit){
+    
+    
+    bdt_flow true_flow = this->flow;
+    true_flow.definition_cuts = true_flow.definition_cuts + "&& (" +split_string+")"; 
+    true_flow.base_cuts = true_flow.topological_cuts+ true_flow.definition_cuts;
+
+    bdt_flow false_flow = this->flow;
+    false_flow.definition_cuts = false_flow.definition_cuts + "&& !(" +split_string+")";  //notice the !
+    false_flow.base_cuts = false_flow.topological_cuts+ false_flow.definition_cuts;
+
+    truesplit = new bdt_file(this->dir, this->name,	trueTAG,	this->plot_ops, this->root_dir,  this->col, true_flow);
+    falsesplit = new bdt_file(this->dir, this->name,	falseTAG,	this->plot_ops, this->root_dir,  this->col, false_flow);
+
+
+    return 0;
+}
 int bdt_file::writeStageFriendTree(std::string nam, double bdtvar1, double bdtvar2){
 
 	TFile *f = new TFile((this->tag+"_"+nam).c_str(), "recreate");
