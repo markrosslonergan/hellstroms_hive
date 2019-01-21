@@ -153,7 +153,7 @@ int main (int argc, char *argv[]){
 	//Set up some info about the BDTs to pass along
 
 	//bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(25,0.1,0.8)");
-	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(80,0.37,0.63)");
+	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(40,0.33,0.63)");
 	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.2,0.75)");
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
@@ -196,14 +196,14 @@ int main (int argc, char *argv[]){
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure    = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v3.1.merged.root",	"NCDeltaRad",	   "hist","singlephoton/",  kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v3.1.merged.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir, "bnb_overlay_mcc9_v2.0.merged.root", "BNBPure",	  "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_mcc9_v2.0.merged.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltarad_overlay_mcc9_v4.1.root",	"NCDeltaRad",	   "hist","singlephoton/",  kRed-7, signal_pure_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltarad_overlay_mcc9_v4.1.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnb_overlay_v4_mcc9_v4.1.root", "BNBPure",	  "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnb_overlay_v4_mcc9_v4.1.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
 	//bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//Data files
-	bdt_file *data5e19    = new bdt_file(dir, "data_mcc9_v2.0.merged.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
-	bdt_file *bnbext    = new bdt_file(dir, "bnbext_mcc9_v2.0.merged.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
+	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data_mcc9_v4.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbest_mcc9_v4.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 	//bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
 	//bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
@@ -279,8 +279,8 @@ int main (int argc, char *argv[]){
 	double fcoscut;
 	double fbnbcut;
 	if(analysis_tag == "track"){
-		fcoscut = 0.597;
-		fbnbcut = 0.555025;
+		fcoscut = 0.564431;
+		fbnbcut = 0.574628;
 
 		//Reduced
 		fcoscut =0.5;
