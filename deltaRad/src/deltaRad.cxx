@@ -151,17 +151,19 @@ int main (int argc, char *argv[]){
 
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(80,0.3,0.6)");
+	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(25,0.1,0.8)");
 	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.2,0.75)");
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-	std::string true_signal = "sim_shower_matched[0]==1 && sim_track_matched[0]==1 && mctruth_is_delta_radiative==1";
-	std::string true_bkg = "sim_shower_matched[0]==1 && sim_track_matched[0]==1";
+	//std::string true_signal = "sim_shower_matched[0]==1 && sim_track_matched[0]==1 && mctruth_is_delta_radiative==1";
+	std::string true_signal = "sim_shower_matched[0]==1 && mctruth_is_delta_radiative==1";
+	//std::string true_bkg = "sim_shower_matched[0]==1 && sim_track_matched[0]==1";
+	std::string true_bkg = "sim_shower_matched[0]==1";
 	std::string num_track_cut ;
 
 	if(analysis_tag == "track"){
-			true_signal = true_signal+ "&& 1";
-			true_bkg = true_bkg +"&& 1";
+			true_signal = true_signal+ "&& 1" + " && sim_track_matched[0]==1" ;
+			true_bkg = true_bkg +"&& 1" + " && sim_track_matched[0]==1";
 			num_track_cut =  "==1";
 
     		bnb_bdt_info.setTopoName("1#gamma1p");
@@ -253,9 +255,9 @@ int main (int argc, char *argv[]){
 
 	//Adding plot names
 	signal_pure->addPlotName("NC Delta Radiative");
-	signal_cosmics->addPlotName("LEE NC #Delta Rad w/ Corsika");
+	signal_cosmics->addPlotName("LEE NC #Delta Rad w/ Overlays");
 	bnb_pure->addPlotName("BNB Backgrounds");
-	bnb_cosmics->addPlotName("BNB w/ Corsika");
+	bnb_cosmics->addPlotName("BNB w/ Overlays");
 //	intime->addPlotName("Intime Corsika cosmics");
 //	data5e19->addPlotName("4.8e19 POT Data");
 //	bnbext->addPlotName("External BNB Data");
@@ -279,8 +281,8 @@ int main (int argc, char *argv[]){
 		//fcoscut =0.475;
 
 	}else if(analysis_tag == "notrack"){
-		fcoscut = 0.55;
-		fbnbcut = 0.533625;
+		fcoscut = 0.54;//0.587101;
+		fbnbcut =  0.618163;
 		//	Best Fit Significance: 0.5525 0.533625 1.1
 
 	}
