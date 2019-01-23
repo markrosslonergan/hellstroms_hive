@@ -153,8 +153,8 @@ int main (int argc, char *argv[]){
 	//Set up some info about the BDTs to pass along
 
 	//bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(25,0.1,0.8)");
-	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(40,0.33,0.63)");
-	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.2,0.75)");
+	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(60,0.2,0.7");
+	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.1,0.8)");
 
 	//Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
 	//std::string true_signal = "sim_shower_matched[0]==1 && sim_track_matched[0]==1 && mctruth_is_delta_radiative==1";
@@ -199,26 +199,29 @@ int main (int argc, char *argv[]){
 
 	bdt_file *signal_pure    = new bdt_file(dir, "vertexed_ncdeltarad_overlay_mcc9_v4.1.root",	"NCDeltaRad",	   "hist","singlephoton/",  kRed-7, signal_pure_flow);
 	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_ncdeltarad_overlay_mcc9_v4.1.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
-	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnb_overlay_v4_mcc9_v4.1.root", "BNBPure",	  "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnb_overlay_v4_mcc9_v4.1.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+	bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnb_overlay_combined_v3v4_mcc9_v4.1.root", "BNBPure",	  "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnb_overlay_combined_v3v4_mcc9_v4.1.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
     
     //bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//Data files
 	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data_mcc9_v4.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
-	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbest_mcc9_v4.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
+	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_mcc9_v4.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 	//bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
 	//bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
 	//bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
 
-    bdt_file * bnb_cosmics_good;
-    bdt_file * bnb_cosmics_overlay;
-    bnb_cosmics->splitBDTfile("(sim_shower_matched[0] ==1&& sim_track_matched[0]==1)","BNBCosmicsGood",bnb_cosmics_good,"BNBCosmicsOverlay",bnb_cosmics_overlay);
+
+    //bdt_file * bnb_cosmics_good;
+    //bdt_file * bnb_cosmics_overlay;
+   // bnb_cosmics->splitBDTfile("(sim_shower_matched[0] ==1&& sim_track_matched[0]==1)","BNBCosmicsGood",bnb_cosmics_good,"BNBCosmicsOverlay",bnb_cosmics_overlay);
 
 
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
-	std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics,signal_pure,bnb_pure,bnbext,data5e19,bnb_cosmics_overlay,bnb_cosmics_good};
+	//std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics,signal_pure,bnb_pure,bnbext,data5e19,bnb_cosmics_overlay,bnb_cosmics_good};
+	std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics,signal_pure,bnb_pure,bnbext,data5e19,bnb_cosmics};
+
 
 	//The LEE signal is bigger than the SM signal by this factor
 	signal_pure->scale_data = 3.0;
@@ -273,8 +276,8 @@ int main (int argc, char *argv[]){
     data5e19->addPlotName("4.8e19 POT Data");
 	bnbext->addPlotName("External BNB Data");
 
-	bnb_cosmics_good->addPlotName("BNB");
-	bnb_cosmics_overlay->addPlotName("BNB w/ Overlay Contamination");
+   // bnb_cosmics_good->addPlotName("BNB");
+//	bnb_cosmics_overlay->addPlotName("BNB w/ Overlay Contamination");
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -288,15 +291,15 @@ int main (int argc, char *argv[]){
 	double fcoscut;
 	double fbnbcut;
 	if(analysis_tag == "track"){
-		fcoscut = 0.564431;
-		fbnbcut = 0.574628;
+		fcoscut =  0.612701;
+		fbnbcut = 0.570259;
 
 		//Reduced
-		fcoscut =0.5;
+		//fcoscut =0.5;
 
 	}else if(analysis_tag == "notrack"){
-		fcoscut = 0.54;//0.587101;
-		fbnbcut =  0.618163;
+		fcoscut = 0.566749; //0.612701;//0.587101;
+		fbnbcut =  0.570259;
 		//	Best Fit Significance: 0.5525 0.533625 1.1
 
 	}
@@ -406,9 +409,9 @@ int main (int argc, char *argv[]){
 	}else if(mode_option == "stack"){
 		bdt_stack histogram_stack(analysis_tag+"_stack");
 		histogram_stack.addToStack(signal_cosmics);
-		//histogram_stack.addToStack(bnb_cosmics);
-		histogram_stack.addToStack(bnb_cosmics_overlay);
-		histogram_stack.addToStack(bnb_cosmics_good);
+		histogram_stack.addToStack(bnb_cosmics);
+		//histogram_stack.addToStack(bnb_cosmics_overlay);
+		//histogram_stack.addToStack(bnb_cosmics_good);
 
 		//Add bnbext but change the color and style first
 		bnbext->fillstyle = 3333;
