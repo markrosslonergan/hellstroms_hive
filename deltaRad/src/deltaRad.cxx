@@ -79,7 +79,6 @@ int main (int argc, char *argv[]){
 				number = strtof(optarg,NULL);
 				run_bnb = false;
 				break;
-                break
 			case 'c':
 				run_cosmic = true;
 				run_bnb = false;
