@@ -744,7 +744,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		h1->SetFillColor(f->col);
 		h1->SetLineColor(kBlack);
         h1->SetFillStyle(f->fillstyle);
-		double Nevents = f->GetEntries( f->getStageCuts(1,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+    	double Nevents = f->GetEntries( f->getStageCuts(1,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 		l1->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 	}
 	l1->Draw();
@@ -788,11 +788,8 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 
 		auto h1 = new TH1F(("tmp3"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 		h1->SetFillColor(f->col);
-		h1->SetLineColor(kBlack);
+    	h1->SetLineColor(kBlack);
     	h1->SetFillStyle(f->fillstyle);
-
-
-
 
 		double Nevents = f->GetEntries( f->getStageCuts(2,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 		l2->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
@@ -838,9 +835,9 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		auto h1 = new TH1F(("tmp4"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 		h1->SetFillColor(f->col);
 		h1->SetLineColor(kBlack);
-	h1->SetFillStyle(f->fillstyle);
+        h1->SetFillStyle(f->fillstyle);
 
-		double Nevents = f->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+    	double Nevents = f->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 		l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 	}
 	l3->Draw();
