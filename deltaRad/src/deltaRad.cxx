@@ -79,7 +79,7 @@ int main (int argc, char *argv[]){
 				number = strtof(optarg,NULL);
 				run_bnb = false;
 				break;
-
+                break
 			case 'c':
 				run_cosmic = true;
 				run_bnb = false;
@@ -457,6 +457,33 @@ int main (int argc, char *argv[]){
 			if(run_bnb) real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
 			if(run_cosmic) real_datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 		}
+
+    }else if(mode_option == "gif"){
+
+
+		TFile * ftest2 = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+		//Obsolete
+
+		bdt_stack *histogram_stack_gif = new bdt_stack(analysis_tag+"_datamc");
+		histogram_stack_gif->plot_pot = 4.898e19;
+		histogram_stack_gif->addToStack(signal_cosmics);
+		histogram_stack_gif->addToStack(bnb_cosmics);
+		bnbext->fillstyle = 3333;
+		histogram_stack_gif->addToStack(bnbext);
+
+        double cmin = 0.3;
+        double cmax = 0.7;
+
+			if(number != -1){
+				bdt_datamc datamc_gif(data5e19, histogram_stack_gif, analysis_tag+"_datamc_gif");	
+				std::vector<bdt_variable> tmp_var_gif = {vars.at(number)};
+                for(double c = cmin; c<cmax; c+=0.05){
+    				datamc_gif.plotStacks(ftest2,  tmp_var_gif ,fcoscut,-9.0);
+                }
+			}else{
+                std::cout<<"Need to give a number with this! can't do all at once!"<<std::endl;
+			}
+		
 
 	}else if(mode_option == "vars"){
         std::cout<<"Starting vars"<<std::endl;
