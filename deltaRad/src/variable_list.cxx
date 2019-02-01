@@ -55,8 +55,10 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		all_vars.push_back(bdt_variable("reco_shower_flash_shortest_distz[0]","(48,0,520)","Distance from Shower to Flashcenter [cm]",false,"d"));//6
 
 		all_vars.push_back(bdt_variable("cos(reco_shower_theta_yz[0])","(48,-1,1)","Reconstructed Shower - Cosine Theta", false,"d"));//8
-		all_vars.push_back(bdt_variable("cos(reco_shower_phi_yx[0])","(48,-1,1)","Reconstructed Shower - Cosine Phi", false,"d"));//9
-		all_vars.push_back(bdt_variable("reco_shower_startx[0]","(48,0,250)"," Reconstructed Shower start X pos [cm]",false,"d"));//10
+		//all_vars.push_back(bdt_variable("cos(reco_shower_phi_yx[0])","(48,-1,1)","Reconstructed Shower - Cosine Phi", false,"d"));//9
+	    all_vars.push_back(bdt_variable("reco_shower_phi_yx[0]","(48,-3.14,3.14)","Reconstructed Shower - Phi", false,"d"));//
+	    
+        all_vars.push_back(bdt_variable("reco_shower_startx[0]","(48,0,250)"," Reconstructed Shower start X pos [cm]",false,"d"));//10
 		all_vars.push_back(bdt_variable("reco_shower_starty[0]","(48,-110,+110)","Reconstructed Shower start Y pos [cm]",false,"d"));//11
 		all_vars.push_back(bdt_variable("reco_shower_startz[0]","(48,0,1050)","Reconstructed Shower start Z pos [cm]",false,"d"));//12
         all_vars.push_back(bdt_variable("log10(reco_shower_conversion_distance[0])","(48,-2,4)","Log Reconstructed Shower conversion distance","false","d"));
@@ -81,7 +83,8 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 			all_vars.push_back(bdt_variable("reco_track_trunc_PIDA[0]","(48,0,24)","Track PIDA",true,"d"));//25
 			all_vars.push_back(bdt_variable(invariant_mass,"(48,1,2.5)","Invariant Mass",true,"d"));//28
 			all_vars.push_back(bdt_variable("cos(reco_track_theta_yz[0])","(48,-1,1)","Reconstructed Track - Cosine Theta", true,"d"));//29
-			all_vars.push_back(bdt_variable("cos(reco_track_phi_yx[0])","(48,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));//30
+			//all_vars.push_back(bdt_variable("cos(reco_track_phi_yx[0])","(48,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));//30
+			all_vars.push_back(bdt_variable("reco_track_phi_yx[0]","(48,-3.14,3.14)","Reconstructed Track  Phi", true,"d"));//30
 			all_vars.push_back(bdt_variable(angle_track_shower,	"(48,-1,1)","Cosine Track-Shower Angle ",true,"d"));//31
 			all_vars.push_back(bdt_variable("reco_track_endx[0]","(48,0,250)"," Reconstructed Track End X pos [cm]",true,"d"));//32
 			all_vars.push_back(bdt_variable("reco_track_endy[0]","(48,-110,+110)","Reconstructed Track End Y pos [cm]",true,"d"));//33
