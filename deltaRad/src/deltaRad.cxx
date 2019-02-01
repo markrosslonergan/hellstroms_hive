@@ -169,11 +169,18 @@ int main (int argc, char *argv[]){
 
     		bnb_bdt_info.setTopoName("1#gamma1p");
 			cosmic_bdt_info.setTopoName("1#gamma1p");
-		}else{
+		}else if (analysis_tag == "notrack") {
 			num_track_cut = "==0";
 			bnb_bdt_info.setTopoName("1#gamma0p");
 			cosmic_bdt_info.setTopoName("1#gamma0p");
-		}
+		}else if(analysis_tag == "1g2p"){
+            num_track_cut = "==2";
+			bnb_bdt_info.setTopoName("1#gamma2p");
+			cosmic_bdt_info.setTopoName("1#gamma2p");
+        	true_signal = true_signal+ "&& 1" + " && sim_track_matched[0]==1 && sim_track_matched[1]==1" ;
+			true_bkg = true_bkg +"&& 1" + " && sim_track_matched[0]==1 && sim_track_matched[1]==1";
+			
+        }
 	if(mode_option == "response" || mode_option == "vars" || mode_option == "train"){
 	//	 vec_precuts.erase(vec_precuts.begin());
 //		 vec_precuts.erase(vec_precuts.begin());
@@ -289,9 +296,11 @@ int main (int argc, char *argv[]){
     //
 	double fcoscut;
 	double fbnbcut;
+    //0.615753 but: 0.589863
+    //ccut: 0.651672 bcut: 0.598801  #signal: 12.518 #bkg: 68.8004 ||  bnb: 68.8004 cos: 0 || 1.50918
 	if(analysis_tag == "track"){
-		fcoscut =  0.612701;
-		fbnbcut = 0.570259;
+		fcoscut =  0.651672;
+		fbnbcut = 0.598801;
 
 		//Reduced
 		//fcoscut =0.5;
@@ -483,14 +492,14 @@ int main (int argc, char *argv[]){
 		bnbext->fillstyle = 3333;
 		histogram_stack_gif->addToStack(bnbext);
 
-        double cmin = 0.3;
-        double cmax = 0.7;
+        double cmin = 0.2;
+        double cmax = 0.75;
 
 			if(number != -1){
-				bdt_datamc datamc_gif(data5e19, histogram_stack_gif, analysis_tag+"_datamc_gif");	
 				std::vector<bdt_variable> tmp_var_gif = {vars.at(number)};
-                for(double c = cmin; c<cmax; c+=0.05){
-    				datamc_gif.plotStacks(ftest2,  tmp_var_gif ,fcoscut,-9.0);
+                for(double c = cmin; c<cmax; c+=0.002){
+				    bdt_datamc datamc_gif(data5e19, histogram_stack_gif, analysis_tag+"_datamc"+std::to_string(c)+"_gif");	
+    				datamc_gif.plotStacks(ftest2,  tmp_var_gif ,c, -9.0);
                 }
 			}else{
                 std::cout<<"Need to give a number with this! can't do all at once!"<<std::endl;
@@ -528,17 +537,23 @@ int main (int argc, char *argv[]){
 
 	} else if(mode_option == "eff"){
 
+        std::string fiducial_vertex = "reco_vertex_x > 10 && reco_vertex_x < 246 && reco_vertex_y > -107 && reco_vertex_y < 107 && reco_vertex_z > 10 && reco_vertex_z < 1026 ";
 
-       bdt_variable true_photon("mctruth_delta_photon_energy","(20,0,1.0)","True Photon Energy [MeV]",false,"d");
+        bdt_variable true_photon("mctruth_delta_photon_energy","(20,0,1.0)","True Photon Energy [MeV]",false,"d");
         //bdt_variable true_photon("mctruth_delta_proton_energy-0.98","(20,0,1.0)","True Proton Kinetic Energy [MeV]",false,"d");
         
-        //std::string denom = "mctruth_is_delta_radiative && mctruth_delta_radiative_1g1p_or_1g1n==1";
-        std::string denom = "mctruth_is_delta_radiative && mctruth_delta_radiative_1g1p_or_1g1n==0";
-        //std::vector<std::string> vec_eff = {"reco_asso_showers==1","reco_asso_tracks==1","sim_shower_matched==1 && sim_track_matched==1"};
-        //std::vector<std::string> vec_eff = {"reco_asso_tracks==1", "reco_asso_showers==1", "sim_shower_matched==1 && sim_track_matched==1"};
-        std::vector<std::string> vec_eff = { "reco_asso_showers==1","reco_asso_tracks==0", "sim_shower_matched==1"};
+        //std::string denom = "mctruth_is_delta_radiative && mctruth_delta_radiative_1g1p_or_1g1n==1 && mctruth_delta_proton_energy -0.98 > 0.04 && mctruth_delta_photon_energy >0.02 &&" +fiducial_vertex;
+        std::string denom = "mctruth_is_delta_radiative && mctruth_delta_radiative_1g1p_or_1g1n==0 && mctruth_delta_photon_energy >0.02 &&" +fiducial_vertex;
+        //
+        
+        std::string cc1 = signal_cosmics->getStageCuts(1, -9,-9);
+        std::string cc2 = signal_cosmics->getStageCuts(2, fcoscut,-9);
+        std::string cc3 = signal_cosmics->getStageCuts(3, fcoscut, fbnbcut);
+	
 
-            
+        //std::vector<std::string> vec_eff = {"reco_asso_tracks==1 && sim_track_matched[0]==1","reco_asso_showers==1 && sim_shower_matched[0]==1",cc1,cc2,cc3};
+//        std::vector<std::string> vec_eff = { "reco_asso_showers==1 && sim_shower_matched[0] ==1","reco_asso_tracks==1 && sim_track_matched[0]==1"};
+        std::vector<std::string> vec_eff = { "reco_asso_showers==1 && sim_shower_matched[0] ==1","reco_asso_tracks==0"};
         
         
         bdt_vertex_eff myeff(signal_cosmics,true_photon, denom,vec_eff); 

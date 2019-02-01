@@ -27,7 +27,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
 	return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
 }
-
+ 
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
 
@@ -47,7 +47,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 	//Loop over all stages
-	for(int s = 1; s< 4; s++){
+	for(int s = 2; s< 3; s++){
 		std::cout<<"On stage: "<<s<<std::endl;
 		//First set the files at this stage
 		for(auto &f: mc_stack->stack){
@@ -83,7 +83,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 			THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
 			TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
-			TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+data_file->tag+"_"+var.safe_name, plot_pot);
+			TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(c1)+"_"+std::to_string(c2)+data_file->tag+"_"+var.safe_name, plot_pot);
 
 			tsum->SetMarkerSize(0);
 			d0->SetMarkerSize(2);
@@ -137,7 +137,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			for(auto &f: mc_stack->stack){
 				double Nevents = f->GetEntries()*(plot_pot/f->pot )*f->scale_data;
 				NeventsStack+=Nevents;
-				auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
+				auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag+"_"+std::to_string(c1)+"_"+std::to_string(c2)).c_str(), ("tmp"+stage_names.at(s)+var.safe_name+f->tag +"_"+std::to_string(c1)+"_"+std::to_string(c2)).c_str(),200,-10,10);
 				h1->SetFillColor(f->col);
 				h1->SetFillStyle(f->fillstyle);
 				h1->SetLineColor(kBlack);
@@ -250,6 +250,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			std::cout<<"Writing pdf."<<std::endl;
 			cobs->Write();
 			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 
 

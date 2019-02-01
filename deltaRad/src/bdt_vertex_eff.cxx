@@ -43,7 +43,7 @@ int bdt_vertex_eff::plotEfficiencies(std::string outputname){
         }
 
         l->AddEntry(stage_hists.back(), std::to_string(i).c_str(),"l");
-    
+        std::cout<<"EFFICIENCY: "<<n_stage_hist/n_denom*100.0<<std::endl; 
     }
 
     cverteff->cd();

@@ -9,7 +9,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 	//*******************************************************************************//
 
 
-	if(analysis_tag == "track" || analysis_tag == "notrack"){
+	if(analysis_tag == "track" || analysis_tag == "notrack" || analysis_tag == "1g2p"){
 
 
 
@@ -30,9 +30,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		std::string delta_transverse_momentum = "sqrt( pow("+reco_track_energy +"*(reco_track_dirx[0])+ "+reco_shower_momentum+"*reco_shower_dirx[0],2)+ pow("+reco_track_energy +"*(reco_track_diry[0])+"+reco_shower_momentum +"*reco_shower_diry[0],2))";
         
 
-
 		std::string new_precuts;
-
 		std::string good_calo_cut = "reco_track_good_calo[0] > 0";
 		std::string track_length_cut = "reco_track_displacement[0]<250";
 		std::string min_shower_energy_cut = "reco_shower_energy[0]>0.00 ";
@@ -91,7 +89,12 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 			all_vars.push_back(bdt_variable("reco_track_startz[0]","(48,0,1050)","Reconstructed Track Start Z pos [cm]",true,"d"));//34
 			all_vars.push_back(bdt_variable("reco_track_spacepoint_principal0[0]","(48,0,1)","Recontstructed Track Spacepoint Principal0",true,"d"));//34
 
-		};
+		}else if(analysis_tag == "1g2p"){
+
+            all_vars.push_back(bdt_variable("reco_track_proton_kinetic_energy[reco_track_ordered_energy_index[0]]","(48,0,2)","Reconstructed Track Kinetic Energy 1st [GeV]","true","d"));
+            all_vars.push_back(bdt_variable("reco_track_proton_kinetic_energy[reco_track_ordered_energy_index[1]]","(48,0,2)","Reconstructed Track Kinetic Energy 2nd [GeV]","true","d"));
+
+        }
 		
         all_precuts.push_back(min_shower_energy_cut);
 		all_precuts.push_back(pe_cut);
@@ -103,7 +106,9 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 			all_precuts.push_back(min_conversion_cut);
 			all_precuts.push_back(good_calo_cut);
 			all_precuts.push_back(back_to_back_cut);
-		}
+		}else if(analysis_tag=="1g2p"){
+			all_precuts.push_back("reco_track_good_calo[0] > 0 && reco_track_good_calo[1]>0");
+        }
 		//*******************************************************************************//
 		//*******************************************************************************//
 		//****************   YOURE TAGE HERE				      ***********//

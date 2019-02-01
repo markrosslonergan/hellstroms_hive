@@ -228,7 +228,7 @@ int bdt_file::calcPrecutEntryList(){
 
 int bdt_file::calcCosmicBDTEntryList(double c1, double c2){
 
-	cosmicbdt_list_name = "cosmicbdt_list_"+this->tag;
+	cosmicbdt_list_name = "cosmicbdt_list_"+std::to_string(c1)+"_" +this->tag;
 
 	this->tvertex->Draw((">>"+cosmicbdt_list_name).c_str(), this->getStageCuts(2,c1,-9).c_str() , "entrylist");
 	cosmicbdt_list = (TEntryList*)gDirectory->Get(cosmicbdt_list_name.c_str());
@@ -238,7 +238,7 @@ int bdt_file::calcCosmicBDTEntryList(double c1, double c2){
 
 
 int bdt_file::calcBNBBDTEntryList(double c1, double c2){
-	bnbbdt_list_name = "bnbbdt_list_"+this->tag;
+	bnbbdt_list_name = "bnbbdt_list_"+std::to_string(c1)+"_"+std::to_string(c2)+"_" +this->tag;
 
 	this->tvertex->Draw((">>"+bnbbdt_list_name).c_str(), this->getStageCuts(3,c1,c2).c_str() , "entrylist");
 	bnbbdt_list = (TEntryList*)gDirectory->Get(bnbbdt_list_name.c_str());
@@ -252,7 +252,7 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
 	//first check if a file exists with a topological entry list in it!
 
-	std::string filename = this->tag+"_entrylists.root";
+	std::string filename = this->tag+"_"+analysis_tag+"_entrylists.root";
 	topological_list_name = "topological_list_"+analysis_tag+"_"+this->tag;
 	precut_list_name = "precut_list_"+analysis_tag+"_"+this->tag;
 
