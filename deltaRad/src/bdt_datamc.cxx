@@ -247,9 +247,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 
-			std::cout<<"Writing pdf."<<std::endl;
+			std::cout<<"Writing png."<<std::endl;
 			cobs->Write();
-			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 
 
@@ -524,12 +524,12 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 
 
-		std::cout<<"Writing pdf."<<std::endl;
+		std::cout<<"Writing png."<<std::endl;
 		cobs->Write();
 		if(is_bdt_variable){
-			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
+			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+"_stage_"+std::to_string(k)+".png").c_str(),"png");
 		}else{
-			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
+			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(k)+".png").c_str(),"png");
 		}
 
 		if(is_bdt_variable) return 0;

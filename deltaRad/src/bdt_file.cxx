@@ -85,12 +85,12 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		}
 	}
 
-    if(tag == "BNBPure" || tag == "BNBCosmics"){
-    //MCC9 pot issues
-    //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
-        pot = 2.16562e21*(double)numberofevents/2154500.0;
-        std::cout<<"REAL MCC9: --> POT is MC: ";
-		std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+    if(tag == "BNBPure" || tag == "BNBCosmics" || tag == "NCPi0" && tag=="NCPi0Cosmics"){
+      //MCC9 pot issues
+      //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
+      pot = 2.16562e21*(double)numberofevents/2154500.0;
+      std::cout<<"REAL MCC9: --> POT is MC: ";
+		  std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
     }
 
 
@@ -270,12 +270,17 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
 		std::cout<<"Entry List file does not exists for "<<this->tag<<" creating it."<<std::endl;
 
+    std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
 		this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0, -9,-9).c_str() , "entrylist");
+    std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
 		topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
+    std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
 
 
 		this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
+    std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
 		precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
+    std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
 
 
 
