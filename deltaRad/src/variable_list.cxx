@@ -146,7 +146,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		std::string min_shower_energy_cut = "reco_shower_energy[0]>0.0 ";
 		std::string min_conversion_cut = "reco_shower_conversion_distance[0] > 0 && reco_shower_conversion_distance[1]>0";
 		std::string back_to_back_cut = "1";//("+angle_track_shower+" > -1 &&"  + angle_track_shower + "< 1)";
-		std::string pe_cut = "reco_flash_total_pe_in_beamgate[0]>20";
+		std::string pe_cut = "reco_flash_total_pe_in_beamgate[0] > 20";
     std::string shower_dedx_cut = "reco_shower_dEdx_plane2_nhits[0]>1 && reco_shower_dEdx_plane2_nhits[1]>1";
 
 
@@ -155,8 +155,8 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		//all_vars.push_back(bdt_variable("sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))","(48,0,100)"," Reco-True Vetrex Dist [cm]",false,"d"));  //1
 
     all_vars.push_back(bdt_variable(p_pi_x+"/1000", "(50, 0, 0.5)", "Reco. #pi^{0} x-Momentum [GeV]", false, "d"));
-    all_vars.push_back(bdt_variable(p_pi_y+"/1000", "(50, 0, 0.5)", "Reco. #pi^{0} y-Momentum [GeV]", false, "d"));
-    all_vars.push_back(bdt_variable(p_pi_z+"/1000", "(50, 0, 0.5)", "Reco. #pi^{0} z-Momentum [GeV]", false, "d"));
+    //all_vars.push_back(bdt_variable(p_pi_y+"/1000", "(50, 0, 0.5)", "Reco. #pi^{0} y-Momentum [GeV]", false, "d"));
+    //all_vars.push_back(bdt_variable(p_pi_z+"/1000", "(50, 0, 0.5)", "Reco. #pi^{0} z-Momentum [GeV]", false, "d"));
     all_vars.push_back(bdt_variable(invariant_mass, "(50, 0, 0.5)", "Reco. #pi^{0} Invariant Mass [GeV]", false, "d"));
     all_vars.push_back(bdt_variable(cm_angle, "(25, 0, 1.0)", "Reco. cos(#theta_{CM}) ", false, "d"));
 
@@ -174,14 +174,14 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		all_vars.push_back(bdt_variable("reco_shower_flash_shortest_distz["+shower_index1+"]","(48,0,520)","Distance from Leading Shower to Flashcenter [cm]",false,"d"));//6
 		all_vars.push_back(bdt_variable("reco_shower_flash_shortest_distz["+shower_index2+"]","(48,0,520)","Distance from Subleading Shower to Flashcenter [cm]",false,"d"));//6
 
-		all_vars.push_back(bdt_variable("cos(reco_shower_theta_yz["+shower_index1+"])","(48,-1,1)","Reco. Leading Shower - Cosine Theta", false,"d"));//8
-		all_vars.push_back(bdt_variable("cos(reco_shower_theta_yz["+shower_index2+"])","(48,-1,1)","Reco. Subleading Shower - Cosine Theta", false,"d"));//8
+		//all_vars.push_back(bdt_variable("cos(reco_shower_theta_yz["+shower_index1+"])","(48,-1,1)","Reco. Leading Shower - Cosine Theta", false,"d"));//8
+		//all_vars.push_back(bdt_variable("cos(reco_shower_theta_yz["+shower_index2+"])","(48,-1,1)","Reco. Subleading Shower - Cosine Theta", false,"d"));//8
 		all_vars.push_back(bdt_variable("cos(reco_shower_phi_yx["+shower_index1+"])","(48,-1,1)","Reco. Leading Shower - Cosine Phi", false,"d"));//9
 		all_vars.push_back(bdt_variable("cos(reco_shower_phi_yx["+shower_index2+"])","(48,-1,1)","Reco. Subleading Shower - Cosine Phi", false,"d"));//9
-		all_vars.push_back(bdt_variable("reco_shower_startx["+shower_index1+"]","(48,0,250)"," Reco. Leading Shower start X pos [cm]",false,"d"));//10
-		all_vars.push_back(bdt_variable("reco_shower_startx["+shower_index2+"]","(48,0,250)"," Reco. Subleading Shower start X pos [cm]",false,"d"));//10
-		all_vars.push_back(bdt_variable("reco_shower_starty["+shower_index1+"]","(48,0,120)"," Reco. Leading Shower start Y pos [cm]",false,"d"));//10
-		all_vars.push_back(bdt_variable("reco_shower_starty["+shower_index2+"]","(48,0,120)"," Reco. Subleading Shower start Y pos [cm]",false,"d"));//10
+		//all_vars.push_back(bdt_variable("reco_shower_startx["+shower_index1+"]","(48,0,250)"," Reco. Leading Shower start X pos [cm]",false,"d"));//10
+		//all_vars.push_back(bdt_variable("reco_shower_startx["+shower_index2+"]","(48,0,250)"," Reco. Subleading Shower start X pos [cm]",false,"d"));//10
+		//all_vars.push_back(bdt_variable("reco_shower_starty["+shower_index1+"]","(48,0,120)"," Reco. Leading Shower start Y pos [cm]",false,"d"));//10
+		//all_vars.push_back(bdt_variable("reco_shower_starty["+shower_index2+"]","(48,0,120)"," Reco. Subleading Shower start Y pos [cm]",false,"d"));//10
 		all_vars.push_back(bdt_variable("reco_shower_startz["+shower_index1+"]","(50,0,1050)"," Reco. Leading Shower start Z pos [cm]",false,"d"));//10
 		all_vars.push_back(bdt_variable("reco_shower_startz["+shower_index2+"]","(50,0,1050)"," Reco. Subleading Shower start Z pos [cm]",false,"d"));//10
     all_vars.push_back(bdt_variable("log10(reco_shower_conversion_distance["+shower_index1+"])","(48,-2,4)","Log Reco. Leading Shower conversion distance","false","d"));
@@ -205,13 +205,13 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
       all_vars.push_back(bdt_variable("reco_track_proton_kinetic_energy[0]","(48,0,2)","Reconstructed Track Kinetic Energy [GeV]","true","d"));
 			all_vars.push_back(bdt_variable("reco_track_mean_trunc_dEdx[0]", "(48,0,12)","Mean Track dE/dx [MeV/cm]", true,"d"));//23
 			all_vars.push_back(bdt_variable("reco_track_mean_trunc_dEdx_start_half[0]/reco_track_mean_trunc_dEdx_end_half[0]", "(48,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));//24
-			all_vars.push_back(bdt_variable("reco_track_trunc_PIDA[0]","(48,0,24)","Track PIDA",true,"d"));//25
+			//all_vars.push_back(bdt_variable("reco_track_trunc_PIDA[0]","(48,0,24)","Track PIDA",true,"d"));//25
 			all_vars.push_back(bdt_variable("cos(reco_track_theta_yz[0])","(48,-1,1)","Reconstructed Track - Cosine Theta", true,"d"));//29
-			all_vars.push_back(bdt_variable("cos(reco_track_phi_yx[0])","(48,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));//30
+			//all_vars.push_back(bdt_variable("cos(reco_track_phi_yx[0])","(48,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));//30
 			all_vars.push_back(bdt_variable(angle_track_shower,	"(48,-1,1)","Cosine Track-Shower Angle ",true,"d"));//31
 			all_vars.push_back(bdt_variable("reco_track_endx[0]","(48,0,250)"," Reconstructed Track End X pos [cm]",true,"d"));//32
 			all_vars.push_back(bdt_variable("reco_track_endy[0]","(48,-110,+110)","Reconstructed Track End Y pos [cm]",true,"d"));//33
-			all_vars.push_back(bdt_variable("reco_track_endz[0]","(48,0,1050)","Reconstructed Track End Z pos [cm]",true,"d"));//34
+			//all_vars.push_back(bdt_variable("reco_track_endz[0]","(48,0,1050)","Reconstructed Track End Z pos [cm]",true,"d"));//34
 
 			all_precuts.push_back(track_length_cut);
 			all_precuts.push_back(min_conversion_cut);
@@ -219,10 +219,10 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 			all_precuts.push_back(back_to_back_cut);
 		};
 		
-    //all_precuts.push_back(min_shower_energy_cut); 
+    all_precuts.push_back(min_shower_energy_cut); 
 		//all_precuts.push_back(pe_cut); 
-		//all_precuts.push_back(fiducial_cut);
-    //all_precuts.push_back(shower_dedx_cut);
+		all_precuts.push_back(fiducial_cut);
+    all_precuts.push_back(shower_dedx_cut);
 
 
 	}

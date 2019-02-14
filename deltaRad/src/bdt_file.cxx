@@ -64,13 +64,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			leg = "l";
 			std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
 			tpot = (TTree*)f->Get(tnam_pot.c_str());
+      std::cout << "tpot name: " << tnam_pot.c_str() << std::endl;
 			tpot->SetBranchAddress("number_of_events", &numbranch);
 			tpot->SetBranchAddress("POT",&potbranch);
 
 			std::cout<<"Set the POT branch"<<std::endl;
 			int tmpnum = 0;
 			double tmppot=0;
-			for(int i=0; i<tpot->GetEntries(); i++){
+      std::cout << "tpot entries: " << tpot->GetEntries() << std::endl;
+			for(int i=0; i<tpot->GetEntries(); i++) {
 				tpot->GetEntry(i);
 				tmpnum += (double)numbranch;
 				tmppot += potbranch;
@@ -85,7 +87,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		}
 	}
 
-    if(tag == "BNBPure" || tag == "BNBCosmics" || tag == "NCPi0" && tag=="NCPi0Cosmics"){
+    if(tag == "BNBPure" || tag == "BNBCosmics" || tag == "NCPi0" || tag=="NCPi0Cosmics"){
       //MCC9 pot issues
       //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
       pot = 2.16562e21*(double)numberofevents/2154500.0;
