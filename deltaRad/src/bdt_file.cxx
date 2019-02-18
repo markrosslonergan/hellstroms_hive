@@ -317,7 +317,7 @@ TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, 
 
 
 TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
-	return getTH1(var, cuts,nam,plot_POT,1);
+	return getTH1(var, cuts, nam, plot_POT, 1);//rebin==1
 }
 
 TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin){
@@ -325,6 +325,7 @@ TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, doub
 	//std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 	TCanvas *ctmp = new TCanvas();
 	this->tvertex->Draw((invar+">>"+nam).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+
 	//std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
 	//th1->Sumw2();

@@ -357,7 +357,7 @@ int main (int argc, char *argv[]){
 		if(f->tag.compare(0,10,"BNBCosmics",0,10) == 0 ||
 		f->tag.compare(0,13,"IntimeCosmics",0,13) == 0){ 
 //		    f->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_helper_energy[0]:reco_track_displacement[0]", cosmiccut.c_str());
-		    f->tvertex->Scan("run_number:interaction_type:nu_pdg:lep_pdg:exiting_proton_number:exiting_electron_number:exiting_muon_number:exiting_piplus_number:exiting_pi0_number", cosmiccut.c_str());
+		    f->tvertex->Scan("run_number:subrun_number:event_number:interaction_type:nu_pdg:lep_pdg:exiting_proton_number:exiting_electron_number:exiting_muon_number:exiting_piplus_number:exiting_pi0_number", cosmiccut.c_str());
 
 		}else{
 		    std::cout<<"Skip this file."<< std::endl;
@@ -369,7 +369,7 @@ int main (int argc, char *argv[]){
 		if(f->tag.compare(0,10,"BNBCosmics",0,10) == 0 ||
 		f->tag.compare(0,13,"IntimeCosmics",0,13) == 0){ 
 //		    f->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_helper_energy[0]:reco_track_displacement[0]",bnbcut.c_str());
-		    f->tvertex->Scan("run_number:subrun_number:event_number:nu_pdg:lep_pdg:exiting_electron_number:exiting_muon_number:exiting_piplus_number:exiting_pi0_number", bnbcut.c_str());
+		    f->tvertex->Scan("run_number:subrun_number:event_number:nu_pdg:interaction_type:lep_pdg:exiting_electron_number:exiting_muon_number:exiting_piplus_number:exiting_pi0_number", bnbcut.c_str());
 		}else{
 		    std::cout<<"Skip this file."<< std::endl;
 		}
@@ -394,31 +394,43 @@ int main (int argc, char *argv[]){
 	    "true_shower_origin[0] ==2 && abs(true_shower_parent_pdg[0])!=13"
 	};
 */
-
+/*Reference of interaction type:
+ * 1000: CC Nuance Offset
+ * 1001: CC CCQE
+ * 1002: NC NCQE 
+ * 1003: CC ResCCNuProtonPiPlus 
+ * 1004: CC ResCCNuNeutronPi0 
+ * 1005: CC ResCCNuNeutronPiPlus 
+ * 1006: NC ResNCNuProtonPi0
+ * 1008: NC ResNuNeutronPi0 
+ * 1009: NC ResNCNuNeutronPiMinus 
+ * 1091: CC CCDIS 
+ * 1092: NC NCDIS
+ */
+    
 	std::vector<std::string> recomc_names = {
 	    "#nu_{#mu} CC QE",
+	    "#nu_{#mu} NC QE",
 	    "#nu_{#mu} CC Res. #pi^{+}",
+	    "#nu_{#mu} CC Res. #pi^{0}",
+	    "#nu_{#mu} NC Res. #pi^{-}",
 	    "#nu_{#mu} NC Res. #pi^{0}",
-	    "#nu_{e}   CC Coh. #pi^{+}",//Coherent
-	    "#nu_{#mu} CC Coh. #pi^{+}",
-	    "#nu_{#mu} NC Coh. #pi^{0}",
-	    "#nu_{#mu} CC/NC DIS",
-	    "Proton Shower:0eNp",//event type:1092
-	   // "BNB Other",
+	    "#nu_{#mu} CC DIS",
+	    "#nu_{#mu} NC DIS",
+	    // "BNB Other",
 	    "Other",
 	};
 
 	std::vector<std::string> recomc_cuts = {//Look at number of hardrons && leptons only.
 	    "interaction_type==1001 && nu_pdg==14 && ccnc==0",//ccnc==0 means charge current
-	    "interaction_type==1002 && nu_pdg==14 && ccnc==0",
-	    "interaction_type==1002 && nu_pdg==14 && ccnc==1",
-	    "interaction_type==1004 && nu_pdg==12 && ccnc==0",
-	    "interaction_type==1004 && nu_pdg==14 && ccnc==0",
-	    "interaction_type==1004 && nu_pdg==14 && ccnc==1",
-	    "interaction_type==1003 && nu_pdg==14",
-	    "true_shower_pdg[0]==2212&&exiting_proton_number>1&&exiting_electron_number==0",
-	   // "true_shower_origin[0]==1&&(interaction_type>1004||interaction_type<1001)",
-	    "(interaction_type>1004||interaction_type<1001)",
+	    "interaction_type==1002 && nu_pdg==14 && ccnc==1",//
+	    "(interaction_type==1003 || interaction_type==1005) && nu_pdg==14 && ccnc==0",
+	    "interaction_type==1004 && nu_pdg==14 && ccnc==0",//
+	    "interaction_type==1009 && nu_pdg==14 && ccnc==1",
+	    "(interaction_type==1006 || interaction_type==1008) && nu_pdg==14 && ccnc==1",
+	    "interaction_type==1091 && nu_pdg==14 && ccnc==0",
+	    "interaction_type==1092 && nu_pdg==14 && ccnc==1",
+	    "(interaction_type<1001||interaction_type==1007||interaction_type>1009||interaction_type<1091||interaction_type>1092)&&nu_pdg!=14",
 	};
 
 	bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);

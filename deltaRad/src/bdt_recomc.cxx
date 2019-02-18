@@ -32,7 +32,9 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 		for(auto &var: vars){
 			std::vector<TH1*> vec_reco_mc = file->getRecoMCTH1(var,"1","stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name,plot_pot);
 			TH1* all_reco_mc = (TH1*)file->getTH1(var , "1" ,"comb_stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name, plot_pot);
-			int Num = all_reco_mc->GetSumOfWeights();//CHECK, if Num goes 0 (this comes from s3, so s3 is problematic), then .. 
+			double Num = all_reco_mc->GetSumOfWeights();//CHECK, if Num goes 0 (this comes from s3, so s3 is problematic), then .. 
+//			std::cout<<"CHECK "<<Num<<std::endl;
+//			if(Num==0) return 0;
 
 
 			all_reco_mc->SetLineColor(kBlack);
@@ -135,7 +137,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 
 
-int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
+//int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
 /*
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
@@ -526,7 +528,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 	return 0;
 */
-}
+//}
 
 
 
