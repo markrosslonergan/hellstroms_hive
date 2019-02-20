@@ -84,6 +84,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			numberofevents_raw = numberofevents;
 		}
 	}
+    
+    if( tag == "LEEunfolded" || tag == "LEEunfoldedCosmics"){
+	//CHECK, for now
+	//--> POT is MC: --> value: 05.72623e+22 NumEvents: 592200
+        pot = 5.72623e22*(double)numberofevents/592200.0;
+        std::cout<<"REAL MCC9: --> POT is MC: ";
+		std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+    }
+
 
     if(tag == "BNBPure" || tag == "BNBCosmics" || tag == "BNBCosmicsOverlay" || tag == "BNBCosmicsGood"){
     //MCC9 pot issues
