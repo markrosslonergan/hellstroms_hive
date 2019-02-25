@@ -7,7 +7,8 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 
 
 	TMVA::Factory * factory = new TMVA::Factory(name.c_str(), outfile,
-				"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
+				//"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
+				"!V:!Silent:Color:DrawProgressBar:AnalysisType=Classification");
 	TMVA::DataLoader * dataloader = new TMVA::DataLoader(("BDTxmls_"+name).c_str());
 
 	int bdt_precut_stage = 1;
