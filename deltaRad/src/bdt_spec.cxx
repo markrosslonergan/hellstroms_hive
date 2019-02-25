@@ -692,6 +692,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s0->GetYaxis()->SetTitle("Verticies");
 	s0->GetYaxis()->SetTitleOffset(1.5);
 	s0->SetMaximum(s0->GetMaximum()*10);
+    s0->SetMinimum(0.05);
 	TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
 
 	t0->DrawCopy("Same E2"); t0->SetFillStyle(0);t0->Draw("hist same");
@@ -701,7 +702,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		h1->SetFillColor(f->col);
 		h1->SetFillStyle(f->fillstyle);
 		h1->SetLineColor(kBlack);
-		l0->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+		l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 
 	}
 	l0->Draw();
@@ -735,16 +736,16 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s1->GetYaxis()->SetTitle("Verticies");
 	s1->GetYaxis()->SetTitleOffset(1.5);
 	s1->SetMaximum(s1->GetMaximum()*50);
-	s1->SetMinimum(1);
+	s1->SetMinimum(0.05);
 	t1->DrawCopy("Same E2"); t1->SetFillStyle(0);t1->Draw("hist same");
 	TLegend *l1 = new TLegend(0.11,0.72,0.89,0.89);
 	for(auto &f: this->stack){
 		auto h1 = new TH1F(("tmp2"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 		h1->SetFillColor(f->col);
 		h1->SetLineColor(kBlack);
-
-		double Nevents = f->GetEntries( f->getStageCuts(1,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
-		l1->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+        h1->SetFillStyle(f->fillstyle);
+    	double Nevents = f->GetEntries( f->getStageCuts(1,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+		l1->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 	}
 	l1->Draw();
 	l1->SetLineColor(kWhite);
@@ -780,17 +781,18 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s2->GetYaxis()->SetTitle("Verticies");
 	s2->GetYaxis()->SetTitleOffset(1.5);
 	s2->SetMaximum(s2->GetMaximum()*10);
+	s2->SetMinimum(0.05);
 	TLegend *l2 = new TLegend(0.11,0.72,0.89,0.89);
 	t2->DrawCopy("Same E2"); t2->SetFillStyle(0);t2->Draw("hist same");
 	for(auto &f: this->stack){
 
 		auto h1 = new TH1F(("tmp3"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 		h1->SetFillColor(f->col);
-		h1->SetLineColor(kBlack);
-
+    	h1->SetLineColor(kBlack);
+    	h1->SetFillStyle(f->fillstyle);
 
 		double Nevents = f->GetEntries( f->getStageCuts(2,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
-		l2->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+		l2->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 	}
 	l2->Draw();
 	l2->SetLineColor(kWhite);
@@ -826,15 +828,17 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s3->GetYaxis()->SetTitle("Verticies");
 	s3->GetYaxis()->SetTitleOffset(1.5);
 	s3->SetMaximum(s3->GetMaximum()*10);
+	s3->SetMinimum(0.05);
 	TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);
 	t3->DrawCopy("Same E2"); t3->SetFillStyle(0);t3->Draw("hist same");
 	for(auto &f: this->stack){
 		auto h1 = new TH1F(("tmp4"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 		h1->SetFillColor(f->col);
 		h1->SetLineColor(kBlack);
+        h1->SetFillStyle(f->fillstyle);
 
-		double Nevents = f->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
-		l3->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+    	double Nevents = f->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+		l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 	}
 	l3->Draw();
 	l3->SetLineColor(kWhite);
