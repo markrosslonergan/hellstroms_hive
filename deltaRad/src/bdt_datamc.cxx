@@ -47,7 +47,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 	//Loop over all stages
-	for(int s = 2; s< 3; s++){
+	for(int s = 1; s< 4; s++){
 		std::cout<<"On stage: "<<s<<std::endl;
 		//First set the files at this stage
 		for(auto &f: mc_stack->stack){
@@ -67,7 +67,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 
-		if(false && s == 3){
+		if(true && s == 3){
 			data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist");
 		}
 

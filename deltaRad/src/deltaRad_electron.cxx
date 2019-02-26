@@ -32,9 +32,10 @@
 #include "bdt_boxcut.h"
 #include "bdt_spec.h"
 #include "bdt_eff.h"
+#include "bdt_vertex_eff.h"
 #include <sys/stat.h>
 
-using namespace std;//CHECK IF THIS HELPS
+using namespace std;
 
 int main (int argc, char *argv[]){
 
@@ -272,7 +273,7 @@ int main (int argc, char *argv[]){
 
 	    if(mode_option != "app" && mode_option != "train" && mode_option !="vars") f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 
-//CHECK	    if(f->tag == "LEEunfolded" || f->tag == "LEEunfoldedCosmics") f->tvertex->AddFriend("lee_unfolding_tree","/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_v3/friends/Unfolded_LEE_scaled_NueIntrinsicCosmics.root");
+	    if(f->tag == "LEEunfolded" || f->tag == "LEEunfoldedCosmics") f->tvertex->AddFriend("lee_unfolding_tree","/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v2/vertexed_nueintrinsics_lee_signal_weights.root");
 
 
 	    std::cout<<"Filling Base EntryLists on File  "<<f->tag<<std::endl;
@@ -286,12 +287,13 @@ int main (int argc, char *argv[]){
 
 
     //Adding plot names, these apply to every plot.
-    signal_pure->addPlotName("LEE #nu_{e}");
-    signal_cosmics->addPlotName("LEE #nu_{e} w/ Corsika");
+    signal_pure->addPlotName( "LEE #nu_{e}");
+    signal_cosmics->addPlotName("LEE #nu_{e} w/ Cosmic");
     bnb_pure->addPlotName("BNB Backgrounds");
-    bnb_cosmics->addPlotName("BNB w/ Corsika");
-    data5e19->addPlotName("4.4e19 POT Data");
+    bnb_cosmics->addPlotName("BNB w/ Cosmic");
+    data5e19->addPlotName("4.9e19 POT Data");
     bnbext->addPlotName("External BNB Data");
+    intrinsics->addPlotName("Intrinsic #nu_{e} w/ Cosmic");
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -429,15 +431,15 @@ int main (int argc, char *argv[]){
 	};
 
 	std::vector<std::string> recomc_cuts = {//Look at number of hardrons && leptons only.
-	    "interaction_type==1001 && nu_pdg==14 && mctruth_cc_or_nc==0",
-	    "interaction_type==1002 && nu_pdg==14 && mctruth_cc_or_nc==1",
-	    "(interaction_type==1003 || interaction_type==1005) && nu_pdg==14 && mctruth_cc_or_nc==0",
-	    "interaction_type==1004 && nu_pdg==14 && mctruth_cc_or_nc==0",
-	    "interaction_type==1009 && nu_pdg==14 && mctruth_cc_or_nc==1",
-	    "(interaction_type==1006 || interaction_type==1008) && nu_pdg==14 && mctruth_cc_or_nc==1",
-	    "interaction_type==1091 && nu_pdg==14 && mctruth_cc_or_nc==0",
-	    "interaction_type==1092 && nu_pdg==14 && mctruth_cc_or_nc==1",
-	    "(interaction_type<1001||interaction_type==1007||interaction_type>1009||interaction_type<1091||interaction_type>1092)&&nu_pdg!=14",
+	    "mctruth_interaction_type==1001 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0",
+	    "mctruth_interaction_type==1002 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1",
+	    "(mctruth_interaction_type==1003 || mctruth_interaction_type==1005) && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0",
+	    "mctruth_interaction_type==1004 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0",
+	    "mctruth_interaction_type==1009 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1",
+	    "(mctruth_interaction_type==1006 || mctruth_interaction_type==1008) && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1",
+	    "mctruth_interaction_type==1091 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0",
+	    "mctruth_interaction_type==1092 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1",
+	    "(mctruth_interaction_type<1001||mctruth_interaction_type==1007||mctruth_interaction_type>1009||mctruth_interaction_type<1091||mctruth_interaction_type>1092)&&mctruth_nu_pdg!=14",
 	};
 
 	bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
@@ -636,32 +638,29 @@ int main (int argc, char *argv[]){
 //----------------------------------------------------------------------
 //CHECK
     } else if(mode_option == "eff"){
-	std::string ZMIN = "0.0"; std::string ZMAX = "1036.8";
-	std::string XMIN = "0.0"; std::string XMAX = "256.35";
-	std::string YMIN = "-116.5"; std::string YMAX = "116.5";
-//	std::string pmass = "0.938272";
-//
-//	std::string en_cut_trk = "delta_photon_energy > 0.02 && delta_proton_energy-"+pmass+" > 0.04";
-//	std::string en_cut_notrk = "delta_photon_energy > 0.02";
-	std::string fid_cut = "(true_nuvertx >"+XMIN+"+10 && true_nuvertx < "+XMAX+"-10 && true_nuverty >"+ YMIN+"+20 && true_nuverty <"+ YMAX+"-20 && true_nuvertz >"+ ZMIN +" +10 && true_nuvertz < "+ZMAX+"-10)";
 
-	std::string reco_fid_cut = "(reco_nuvertx >"+XMIN+"+10 && reco_nuvertx < "+XMAX+"-10 && reco_nuverty >"+ YMIN+"+20 && reco_nuverty <"+ YMAX+"-20 && reco_nuvertz >"+ ZMIN +" +10 && reco_nuvertz < "+ZMAX+"-10)";
-//
-//	std::string is_delta_rad = "1";
-//	std::string notrk = "exiting_photon_number==1 && exiting_proton_number==0 &&"+is_delta_rad;
-//	std::string trk = "exiting_photon_number==1 && exiting_proton_number==1 &&"+is_delta_rad;
+        std::string fiducial_vertex = "reco_vertex_x > 10 && reco_vertex_x < 246 && reco_vertex_y > -107 && reco_vertex_y < 107 && reco_vertex_z > 10 && reco_vertex_z < 1026 ";
 
-	
+
+        bdt_variable true_nue("mctruth_lepton_E","(20,0,1.0)","True Electron Energy [MeV]",false,"d");
+
+
+        std::string cc1 = signal_cosmics->getStageCuts(1, -9,-9);
+        std::string cc2 = signal_cosmics->getStageCuts(2, fcoscut,-9);
+        std::string cc3 = signal_cosmics->getStageCuts(3, fcoscut, fbnbcut);
+
+	std::string denom  = "abs(mctruth_nu_pdg)==12&&mctruth_lepton_E>0.02&&" +fiducial_vertex;
+
+	std::vector<std::string> vec_eff = { "reco_asso_showers==1 && sim_shower_matched[0] ==1","reco_asso_tracks==0"};
+        
+        
+        bdt_vertex_eff myeff(signal_cosmics,true_nue, denom, vec_eff); 
+        myeff.plotEfficiencies("test.pdf"); 
+ 
 //	std::string denom  = en_cut_trk + "&&"+ fid_cut + "&& "+ trk;
-	std::string denom  = fid_cut;
 
-
-	bdt_efficiency(signal_cosmics, denom, fcoscut,fbnbcut, true);
-	bdt_efficiency(bnb_cosmics, denom, fcoscut,fbnbcut, true);
-	bdt_efficiency(bnbext, reco_fid_cut, fcoscut,fbnbcut, true);
 
 	return 0;
-
 /*
 
 	//everything below here is older and not used.

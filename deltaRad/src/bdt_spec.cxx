@@ -333,12 +333,18 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			for(auto &f: this->stack){
 				double Nevents = f->GetEntries()*(plot_pot/f->pot )*f->scale_data;
 
+				if(s==0){
+				    f->numberofevents_ref = Nevents;
+				}
+				double efficiency = Nevents/f->numberofevents_ref*100;
+
 				cobs->cd(s);
 				auto h1 = new TH1F(("tmp_"+std::to_string(s)+"_"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 				h1->SetFillStyle(f->fillstyle);
 				h1->SetFillColor(f->col);
 				h1->SetLineColor(kBlack);
-				l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+				l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+" ("+to_string_prec(efficiency,2)+"%)}").c_str(),"f");
+//				l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 			}
 			l3->Draw();
 			l3->SetLineColor(kWhite);
@@ -351,13 +357,13 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			latexbdt2.SetTextSize(0.05);
 			latexbdt2.SetTextAlign(13);  //align at top
 			latexbdt2.SetNDC();
-			latexbdt2.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+			latexbdt2.DrawLatex(.66,.70,this->stack.at(0)->topo_name.c_str());//ADjust the position of the label "1e1p"
 			TLatex pottenbdt2;
 			pottenbdt2.SetTextSize(0.05);
 			pottenbdt2.SetTextAlign(13);  //align at top
 			pottenbdt2.SetNDC();
 			std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-			pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
+			pottenbdt2.DrawLatex(.66,.65, pot_draw_bdt2.c_str());//Adjust position of the label "*e20 POT"
 
 			TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation Preliminary");
 			tbdt2->Draw();
@@ -375,12 +381,8 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			delete tsum;
 			delete l3;
 
-
-
 		}
 	}
-
-
 
 	return 0;
 }

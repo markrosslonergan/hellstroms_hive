@@ -1,5 +1,5 @@
 #include "bdt_recomc.h"
-
+using namespace std;
 
 int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variable> vars, double cut_cosmic_val, double cut_bnb_val){
 
@@ -22,15 +22,20 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 	file->recomc_names = recomc_names;
 
 	for(int s = 0;s<4; s++){ //Loop over all stages
+
 		std::cout<<"Calculating any necessary EntryLists for "<<file->tag<<" On stage "<<s<<"."<<std::endl;
 		if(s==2) file->calcCosmicBDTEntryList(cut_cosmic_val, cut_bnb_val);
 		if(s==3) file->calcBNBBDTEntryList(cut_cosmic_val, cut_bnb_val);
+
 		file->setStageEntryList(s);
 
 		for(auto &var: vars){
 			std::vector<TH1*> vec_reco_mc = file->getRecoMCTH1(var,"1","stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name,plot_pot);
 			TH1* all_reco_mc = (TH1*)file->getTH1(var , "1" ,"comb_stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name, plot_pot);
-			int Num = all_reco_mc->GetSumOfWeights();				
+			double Num = all_reco_mc->GetSumOfWeights();//CHECK, if Num goes 0 (this comes from s3, so s3 is problematic), then .. 
+			std::cout<<"CHECK "<<Num<<std::endl;
+//			if(Num==0) return 0;
+
 
 			all_reco_mc->SetLineColor(kBlack);
 			all_reco_mc->SetFillStyle(3002);
@@ -72,8 +77,11 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 				double n = v->Integral();
 				std::cout<<" and calc percentage."<<std::endl; 
 				double per = n/Num*100.0;
+
 				std::cout<<"and add legend"<<std::endl;
+
 				l_reco_truth->AddEntry(v,("#splitline{"+ recomc_names.at(iv)+"}{#bf{"+to_string_prec(n,2)+"}     ("+to_string_prec(per,1)+"%)}"  ).c_str(),"f");
+
 				iv++;
 			}	
 
@@ -130,8 +138,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 
 
-int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
-
+//int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
+/*
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
 	double title_offset_ratioY = 0.3 ;
@@ -227,30 +235,30 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 
 
-
-	if(false){
-		//file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]",bnbcut.c_str());
+//CHECK: turn the following lines to true  
+	if(true){
+		file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]",bnbcut.c_str());
 		double all = file->GetEntries(precut);
 		double red = file->GetEntries(precut+"&& true_track_pdg==2212"); 
 		std::cout<<"BNBCOSMICS FINAL: "<<all<<" "<<red<<" "<<red/all*100<<std::endl;
 		std::cout<<"BNBCOSMICS FINAL: "<<all<<" "<<red<<" "<<red/all*100<<std::endl;
 		return 0;
 	}
-
+*/
 
 
 	/**********************************************************************
 	 *			Reco-Truth Matching section
 	 *
 	 **********************************************************************/
-
+/*
 	fout->cd();
 
 	TCanvas *c_reco_truth = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag).c_str(), ("recomc_truth_"+var.name+"_"+file->tag).c_str(),2000,1600);
 	c_reco_truth->Divide(2,2);
-
+*/
 	//******************* All Verticies	*************************
-	c_reco_truth->cd(1);
+/*	c_reco_truth->cd(1);
 
 	TPad *padsel = new TPad("padsel", "padsel", 0, 0, 0.7, 1.0);
 	if(is_log) padsel->SetLogy();
@@ -520,7 +528,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 
 	return 0;
-}
+*/
+//}
 
 
 

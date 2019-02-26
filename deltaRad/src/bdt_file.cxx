@@ -85,7 +85,10 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		}
 	}
     
-    if( tag == "LEEunfolded" || tag == "LEEunfoldedCosmics"){
+	if(tag=="LEEunfolded" || tag =="LEEunfoldedCosmics"){//tage for re-weighted intrinsicnue sample
+	    weight_branch = "(lee_signal_weights.lee_weights)";
+	}
+    if( tag == "LEEunfolded" || tag == "LEEunfoldedCosmics" || tag == "NueIntrinsicCosmics" ){
 	//CHECK, for now
 	//--> POT is MC: --> value: 05.72623e+22 NumEvents: 592200
         pot = 5.72623e22*(double)numberofevents/592200.0;

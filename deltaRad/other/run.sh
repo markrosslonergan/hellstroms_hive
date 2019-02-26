@@ -11,21 +11,24 @@ now=$(date +"%T")
 echo "Current time : $now"
 echo "-------------------------------------------------------------------------------------------" >> ./record.txt 2>&1
 echo "Now runs app -var:" | tee -a ./record.txt 
-./deltaRad_toying -o var >> ./record.txt 2>&1
+./deltaRad_electron -o var #>> ./record.txt 2>&1
 
 echo "Finish!!!!!!!!!!!" >> ./record.txt 2>&1
 now=$(date +"%T")
 echo "Current time : $now"
 echo "-------------------------------------------------------------------------------------------" >> ./record.txt 2>&1
 echo "Now runs app --bnb:" | tee -a ./record.txt 
-./deltaRad_electron -o app --bnb >> ./record.txt 2>&1
+./deltaRad_electron -o app --bnb > /dev/null #>> ./record.txt 2>&1
 
 echo "Finish!!!!!!!!!!!" >> ./record.txt 2>&1
 now=$(date +"%T")
 echo "Current time : $now"
 echo "-------------------------------------------------------------------------------------------" >> ./record.txt 2>&1
 echo "Now runs app --cosmic:"| tee -a ./record.txt 
-./deltaRad_electron -o app --cosmic >> ./record.txt 2>&1
+./deltaRad_electron -o app --cosmic > /dev/null # >> ./record.txt 2>&1
+
+echo "Now runs app:" | tee -a ./record.txt 
+./deltaRad_electron -o app >> ./record.txt 2>&1
 
 echo "Finish!!!!!!!!!!!" >> ./record.txt 2>&1
 now=$(date +"%T")
@@ -44,20 +47,20 @@ echo "Current time : $now"
 
 echo "-------------------------------------------------------------------------------------------" >> ./record.txt 2>&1
 echo "Now runs -o stack :" | tee -a ./record.txt 
-./deltaRad_electron -o stack >> ./record.txt 2>&1
+./deltaRad_electron -o stack -n '2'>> ./record.txt 2>&1
 
 echo "Finish!!!!!!!!!" >> ./record.txt 2>&1
 now=$(date +"%T")
 echo "Current time : $now"
 echo "-------------------------------------------------------------------------------------------" >> ./record.txt 2>&1
-echo "Now runs -o datamc --number 2 :" >> ./record.txt 2>&1
-./deltaRad_electron -o datamc >> ./record.txt 2>&1
+echo "Now runs -o datamc --number :" >> ./record.txt 2>&1
+./deltaRad_electron -o datamc -n '2' >> ./record.txt 2>&1
 
 echo "Finish!!!!!!!!!!!" >> ./record.txt 2>&1
 now=$(date +"%T")
 echo "Current time : $now"
 echo "-------------------------------------------------------------------------------------------" >> ./record.txt 2>&1
-echo "Now runs -r -o response :" >> ./record.txt 2>&1
+echo "Now runs -o response :" >> ./record.txt 2>&1
 ./deltaRad_electron -o response >> ./record.txt 2>&1
 
 echo "Finish!!!!!!!!!!!" >> ./record.txt 2>&1

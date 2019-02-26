@@ -188,7 +188,6 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 	//== 1e0p
 	if( analysis_tag.compare(8,1,"electron0",8,1)==0 ){
-	    all_precuts.push_back(track_length_cut);
 
 	}
 
@@ -197,6 +196,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 	if( analysis_tag.compare(8,1,"electron1",8,1)==0 ){
 	    //1.precuts
 
+	    all_precuts.push_back(track_length_cut);
 	    all_precuts.push_back(good_calo_cut);//track with sufficient hits.
 
 	    //2.bnb cuts: N/A
@@ -209,7 +209,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 			    "(40,0,1.5)","Total Momentum Perpendicular to the z-direction [GeV]", false, "d"));
 	    }
 	    //4.general cuts
-	    all_vars.push_back(bdt_variable("4/4*reco_shower_energy[0]/1000.0","(48,0,0.8)","Reconstructed Shower Energy [GeV]", false,"d"));  //3
+	    all_vars.push_back(bdt_variable("4/4*reco_shower_energy[0]/1000.0","(48,0,2)","Reconstructed Shower Energy [GeV]", false,"d"));  //3
 	    all_vars.push_back(bdt_variable("5/5*reco_track_proton_kinetic_energy[0]","(48,0,2)","Reconstructed Track Kinetic Energy [GeV]","true","d"));
 
 	    all_vars.push_back(bdt_variable("6/6*reco_shower_energy[0]/1000.0+reco_track_proton_kinetic_energy[0]","(48,0,2)","Reconstructed Nue Energy [GeV]","true","d"));

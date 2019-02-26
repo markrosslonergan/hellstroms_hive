@@ -107,8 +107,9 @@ struct bdt_file{
 
 		int rebin;	
 
-        int numberofevents;
-        int numberofevents_raw;
+		int numberofevents;
+		int numberofevents_raw;
+		double numberofevents_ref;//in stack plot, refer to this events # to calculate efficiency
 		double pot;
 
 		TFile *f;
