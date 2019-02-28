@@ -215,8 +215,8 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 			all_vars.push_back(bdt_variable("reco_track_mean_trunc_dEdx[0]", "(48,0,12)","Mean Track dE/dx [MeV/cm]", true,"d"));//23
 			all_vars.push_back(bdt_variable("reco_track_mean_trunc_dEdx_start_half[0]/reco_track_mean_trunc_dEdx_end_half[0]", "(48,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));//24
 			//all_vars.push_back(bdt_variable("reco_track_trunc_PIDA[0]","(24,0,24)","Track PIDA",true,"d"));//25
-			all_vars.push_back(bdt_variable("reco_track_theta_yz[0]","(24,-1,1)","Reconstructed Track Theta", true,"d"));//29
-			all_vars.push_back(bdt_variable("reco_track_phi_yx[0]","(24,-1,1)","Reconstructed Track Phi", true,"d"));//30
+			all_vars.push_back(bdt_variable("cos(reco_track_theta_yz[0])","(24,-1,1)","Reconstructed Track #cos(#theta)", true,"d"));//29
+			all_vars.push_back(bdt_variable("cos(reco_track_phi_yx[0])","(24,-1,1)","Reconstructed #cos(#phi)", true,"d"));//30
 			//all_vars.push_back(bdt_variable(angle_track_shower,	"(24,-1,1)","Cosine Track-Shower Angle ",true,"d"));//31
 			//all_vars.push_back(bdt_variable("reco_track_endx[0]","(24,0,250)"," Reconstructed Track End X pos [cm]",true,"d"));//32
 			//all_vars.push_back(bdt_variable("reco_track_endy[0]","(24,-110,+110)","Reconstructed Track End Y pos [cm]",true,"d"));//33

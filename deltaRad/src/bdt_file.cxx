@@ -528,6 +528,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	//recomc_cuts.push_back(other_cuts +"&& shower_true_origin != -1");
 	//recomc_names.push_back(other);
 
+  /*
 	TCanvas *ctmp = new TCanvas();
 	this->tvertex->Draw((var.name+">>"+nam+"_"+other+ var.binning).c_str() , ("("+other_cuts+")*"+this->weight_branch).c_str(),"goff");
 
@@ -541,6 +542,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	th1->GetXaxis()->SetTitle(var.unit.c_str());
 	th1->GetYaxis()->SetTitle("Verticies");
 	//ans_th1s.push_back(th1);
+  */
 
 	return ans_th1s;	
 }

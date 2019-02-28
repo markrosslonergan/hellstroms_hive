@@ -338,29 +338,32 @@ int main (int argc, char *argv[]){
         }	
 	else if(mode_option == "recomc"){
 
-		std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
+		std::vector<int> recomc_cols = {kBlue-3, kRed+1, kAzure+2, kAzure+6, kYellow-7, kGreen+1, kGray};
 
-    std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "BNB CC #pi^{0}","NC BNB Background", "CC BNB Background", "NC #Delta Radiative", "Two Cosmic Showers", "One Cosmic Shower", "Other"};
+    std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "NC BNB Background", "BNB CC #pi^{0}", "CC BNB Background", "Two Cosmic Showers", "Other"};
     // How are they defined, cutwise?
     // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
-    std::string signal = "mctruth_cc_or_nc == 1 && sim_shower_pdg[0] == 22 && sim_shower_pdg[1] == 22 && sim_shower_parent_pdg[0] == 111 && sim_shower_parent_pdg[1] == 111 && sim_shower_origin[0]==1 && sim_shower_origin[1]==1";
-    // CC pi0 background
-    std::string bkg1 = "mctruth_cc_or_nc == 0 && sim_shower_pdg[0] == 22 && sim_shower_pdg[1] == 22 && sim_shower_parent_pdg[0] == 111 && sim_shower_parent_pdg[1] == 111 && sim_shower_origin[0]==1 && sim_shower_origin[1]==1"; 
+    //std::string signal = "mctruth_cc_or_nc == 1 && sim_shower_pdg[0] == 22 && sim_shower_pdg[1] == 22 && sim_shower_parent_pdg[0] == 111 && sim_shower_parent_pdg[1] == 111 && sim_shower_origin[0]==1 && sim_shower_origin[1]==1";
+    //std::string signal = "mctruth_cc_or_nc==1 && sim_track_matched[0]==1 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111";
+    std::string signal = "mctruth_cc_or_nc==1 && sim_track_matched[0]==1 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111";
     // Other NC BNB events where either (a) one of the showers isn't photon-induced, or (b) one doesn't come from pi0
-    std::string bkg2 = "mctruth_cc_or_nc == 1 && (sim_shower_pdg[0] != 22 || sim_shower_pdg[1] != 22 || sim_shower_parent_pdg[0] != 111 || sim_shower_parent_pdg[1] != 111) && sim_shower_origin[0]==1 && sim_shower_origin[1]==1";
-    // Same as previous, but for CC events
-    std::string bkg3 = "mctruth_cc_or_nc == 0 && (sim_shower_pdg[0] != 22 || sim_shower_pdg[1] != 22 || sim_shower_parent_pdg[0] != 111 || sim_shower_parent_pdg[1] != 111) && sim_shower_origin[0]==1 && sim_shower_origin[1]==1";
+    std::string bkg1 = "mctruth_cc_or_nc == 1 && (sim_shower_pdg[0] != 22 || sim_shower_pdg[1] != 22 || sim_shower_parent_pdg[0] != 111 || sim_shower_parent_pdg[1] != 111) && !("+signal+")";
+    // CC pi0 background
+    std::string bkg2 = "mctruth_cc_or_nc == 0 && sim_shower_pdg[0] == 22 && sim_shower_pdg[1] == 22 && sim_shower_parent_pdg[0] == 111 && sim_shower_parent_pdg[1] == 111 && !("+bkg1+")"; 
+    // CC other
+    std::string bkg3 = "mctruth_cc_or_nc == 0 && (sim_shower_pdg[0] != 22 || sim_shower_pdg[1] != 22 || sim_shower_parent_pdg[0] != 111 || sim_shower_parent_pdg[1] != 111) && !("+bkg2+")";
     // Delta radiative is now considered a (very small) background
-    std::string bkg4 = "reco_asso_showers==1 && sim_shower_pdg["+shower_index1+"] == 22 && sim_shower_parent_pdg["+shower_index1+"] != 111 && mctruth_is_delta_radiative == 1 && sim_shower_origin==1";
-    // Cosmics
-    std::string bkg5 = "sim_shower_origin[0]==2 && sim_shower_origin[1]==2";
-    // One shower is cosmic, but not both
-    std::string bkg6 = "(sim_shower_origin[0]==2 || sim_shower_origin[1]==2) && !(sim_shower_origin[0]==2 && sim_shower_origin[1]==2)";
+    //std::string bkg4 = "sim_shower_pdg["+shower_index1+"] == 22 && sim_shower_parent_pdg["+shower_index1+"] != 111 && mctruth_is_delta_radiative == 1";
+    // Cosmics (both?)
+    std::string bkg5 = "sim_shower_matched[0]==0 && sim_shower_matched[1]==0 && !("+bkg3+")";
+    // One shower is cosmic, but not both. Should be accounted for in previous
+    //std::string bkg6 = "(sim_shower_origin[0]==2 || sim_shower_origin[1]==2) && !(sim_shower_origin[0]==2 && sim_shower_origin[1]==2)";
     // Other; defined as "!" versions of above
-    //std::string other = "!("+signal+"||"+bkg1+"||"+bkg2+"||"+bkg3+"||"+bkg4+"||"+bkg5+"||"+bkg6+")";
-    std::string other = "!("+signal+") && !("+bkg1+") && !("+bkg2+") && !("+bkg3+") && !("+bkg4+") && !("+bkg5+") && !("+bkg6+")";
+    std::string other = "!("+signal+"||"+bkg1+"||"+bkg2+"||"+bkg3+"||"+bkg5+")";
+    // "Other" is now taken care of elsewhere, I think???
+    //std::string other = "!("+bkg5+")";
    
-    std::vector<std::string> recomc_cuts = {signal, bkg1, bkg2, bkg3, bkg4, bkg5, bkg6, other}; 
+    std::vector<std::string> recomc_cuts = {signal, bkg1, bkg2, bkg3, bkg5, other}; 
 
 		bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 

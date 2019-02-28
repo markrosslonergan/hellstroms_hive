@@ -39,7 +39,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 			int nrebin = 1;
 			if(s==2) nrebin=2;
-			if(s==3) nrebin=4;
+			if(s==3) nrebin=2;
 
 			all_reco_mc->Rebin(nrebin);	
 
@@ -66,7 +66,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 				v->Rebin(nrebin);
 				std::cout<<"on hist #: "<<iv<<". Add to stack."<<std::endl;
 
-				if(iv==2) v->SetFillStyle(3344);
+				//if(iv==2) v->SetFillStyle(3344);
 
 				s_reco_truth->Add(v);
 				double n = v->Integral();
