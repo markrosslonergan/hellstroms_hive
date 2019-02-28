@@ -27,11 +27,11 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
 	return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
 }
- 
+
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
-
-	double plot_pot=4.898e19;//4.393e19;//4.801e19;
+// NEW ONE
+	double plot_pot=4.393e19;//4.801e19;
 
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
@@ -47,7 +47,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 	//Loop over all stages
-	for(int s = 0; s< 4; s++){
+	for(int s = 1; s< 4; s++){
 		std::cout<<"On stage: "<<s<<std::endl;
 		//First set the files at this stage
 		for(auto &f: mc_stack->stack){
@@ -77,13 +77,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 		//And all variables in the vector var
 		for(auto &var: vars){
 			std::cout<<"Starting on variable "<<var.name<<std::endl;
-			TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1800,1600); 
+			TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1800,1600);
 			//cobs->Divide(2,2,0.0025,0.0000001);
 			cobs->cd();
 
 			THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
 			TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
-			TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(c1)+"_"+std::to_string(c2)+data_file->tag+"_"+var.safe_name, plot_pot);
+			TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+data_file->tag+"_"+var.safe_name, plot_pot);
 
 			tsum->SetMarkerSize(0);
 			d0->SetMarkerSize(2);
@@ -137,7 +137,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			for(auto &f: mc_stack->stack){
 				double Nevents = f->GetEntries()*(plot_pot/f->pot )*f->scale_data;
 				NeventsStack+=Nevents;
-				auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag+"_"+std::to_string(c1)+"_"+std::to_string(c2)).c_str(), ("tmp"+stage_names.at(s)+var.safe_name+f->tag +"_"+std::to_string(c1)+"_"+std::to_string(c2)).c_str(),200,-10,10);
+				auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
 				h1->SetFillColor(f->col);
 				h1->SetFillStyle(f->fillstyle);
 				h1->SetLineColor(kBlack);
@@ -159,7 +159,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			l0->SetLineWidth(0);
 			l0->SetLineColor(0);
 			l0->SetFillStyle(0);
-			l0->SetTextSize(0.03);
+			l0->SetTextSize(0.04);
 
 			TLatex latex;
 			latex.SetTextSize(0.06);
@@ -189,7 +189,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 
-			tsum->Rebin(data_rebin);
+			//tsum->Rebin(data_rebin);
 			TH1* rat_denom = (TH1*)tsum->Clone(("ratio_denom_"+stage_names.at(s)).c_str());
 			for(int i=0; i<rat_denom->GetNbinsX(); i++){
 				rat_denom->SetBinError(i,0.0);
@@ -247,8 +247,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 
-			std::cout<<"Writing png."<<std::endl;
+			std::cout<<"Writing pdf."<<std::endl;
 			cobs->Write();
+			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 
@@ -281,7 +282,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 	//TCanvas *cobs = new TCanvas("","",1800,1600);
 	//cobs->Divide(2,2,0.0025,0.0000001);
 
-	double plot_pot=4.898e19;// 4.393e19;//;//4.801e19;
+	double plot_pot=4.393e19;//4.801e19;
 
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
@@ -352,7 +353,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 	std::cout<<"Gotten all data hists."<<std::endl;
 
 
-	if(false){
+	if(true){
 		data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist",dat_cut_3.c_str());
 		return 0;
 	}
@@ -436,7 +437,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 		l0->SetLineWidth(0);
 		l0->SetLineColor(0);
 		l0->SetFillStyle(0);
-		l0->SetTextSize(0.03);
+		l0->SetTextSize(0.04);
 
 		TLatex latex;
 		latex.SetTextSize(0.06);
@@ -524,12 +525,12 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 
 
-		std::cout<<"Writing png."<<std::endl;
+		std::cout<<"Writing pdf."<<std::endl;
 		cobs->Write();
 		if(is_bdt_variable){
-			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+"_stage_"+std::to_string(k)+".png").c_str(),"png");
+			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_BDTVAR_"+whichbdt.identifier+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
 		}else{
-			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(k)+".png").c_str(),"png");
+			cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
 		}
 
 		if(is_bdt_variable) return 0;
