@@ -47,7 +47,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 	//Loop over all stages
-	for(int s = 2; s< 3; s++){
+	for(int s = 0; s< 4; s++){
 		std::cout<<"On stage: "<<s<<std::endl;
 		//First set the files at this stage
 		for(auto &f: mc_stack->stack){
@@ -77,7 +77,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 		//And all variables in the vector var
 		for(auto &var: vars){
 			std::cout<<"Starting on variable "<<var.name<<std::endl;
-			TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1800,1600);
+			TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1800,1600); 
 			//cobs->Divide(2,2,0.0025,0.0000001);
 			cobs->cd();
 
@@ -189,7 +189,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 
-			//tsum->Rebin(data_rebin);
+			tsum->Rebin(data_rebin);
 			TH1* rat_denom = (TH1*)tsum->Clone(("ratio_denom_"+stage_names.at(s)).c_str());
 			for(int i=0; i<rat_denom->GetNbinsX(); i++){
 				rat_denom->SetBinError(i,0.0);

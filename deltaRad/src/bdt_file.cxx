@@ -87,7 +87,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		}
 	}
 
-    if(tag == "BNBPure" || tag == "BNBCosmics" || tag == "NCPi0" || tag=="NCPi0Cosmics"){
+    if(tag == "BNBPure" || tag == "BNBCosmics"){
       //MCC9 pot issues
       //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
       pot = 2.16562e21*(double)numberofevents/2154500.0;
@@ -95,6 +95,14 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		  std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
     }
 
+    if(tag == "NCPi0" || tag=="NCPi0Cosmics"){
+      //MCC9 pot issues
+      //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
+      double nc_fraction = 0.040967;
+      pot = 2.16562e21*(double)numberofevents/2154500.0/nc_fraction;
+      std::cout<<"REAL MCC9: --> POT is MC: ";
+		  std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+    }
 
 	if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure" || tag == "NCDeltaRad"){
 		double volCryo = 199668.427885;

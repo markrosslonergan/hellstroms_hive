@@ -38,13 +38,14 @@
 int main (int argc, char *argv[]){
 
 	//This is a standardized location on /pnfs/ that everyone can use. 
-	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v2";
+	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5";
+	std::string olddir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v2";
   std::string mydir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples";
   std::string datadir = "/uboone/data/users/amogan/v08_00_00_01/singlePhoton/samples";
 
 
 	std::string mode_option = "fake"; 
-	std::string xml = "default.xml";
+	std::string xml = "trimmed.xml";
 	std::string analysis_tag ="2g1p";
 
 
@@ -164,8 +165,8 @@ int main (int argc, char *argv[]){
   //std::string true_signal;
   //std::string true_bkg;
 	std::string num_track_cut;
-  std::string true_signal = "sim_shower_matched[0]==1 && sim_shower_matched[1]==1 && sim_track_matched[0]==1 && mctruth_num_exiting_pi0>0";
-	std:: string true_bkg = "sim_shower_matched[0]==1 && sim_shower_matched[1]==1 && sim_track_matched[0]==1 && mctruth_num_exiting_pi0==0";
+  std::string true_signal = "sim_shower_overlay_fraction[0]<0.1 && sim_shower_overlay_fraction[1]<0.1 && sim_track_matched[0]==1 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111";
+	std:: string true_bkg = "sim_shower_matched[0]==1 && sim_shower_matched[1]==1 && sim_track_matched[0]==1 && ( mctruth_cc_or_nc==0 || mctruth_num_exiting_pi0==0 )";
   if (analysis_tag == "2g1p") {
     true_signal = true_signal+ "&& 1";
     true_bkg = true_bkg +"&& 1";
@@ -194,7 +195,8 @@ int main (int argc, char *argv[]){
 	}
 
 	std::string base_cuts = "reco_vertex_size==1 && reco_asso_showers==2 && reco_asso_tracks "+num_track_cut;
-	std::string signal_definition = "mctruth_num_exiting_pi0>0";
+	//std::string signal_definition = "mctruth_num_exiting_pi0>0";
+	std::string signal_definition = "1";
 	std::string background_definition = "(mctruth_num_exiting_pi0==0 || mctruth_cc_or_nc==0)";
 
 
@@ -209,14 +211,14 @@ int main (int argc, char *argv[]){
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure = new bdt_file(dir, "vertexed_bnb_overlay_combined_v3v4_mcc9_v4.1.root",	"NCPi0", "hist","singlephoton/",  kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(dir, "vertexed_bnb_overlay_combined_v3v4_mcc9_v4.1.root", "NCPi0Cosmics", "hist","singlephoton/",  kRed-7, signal_flow);
-	bdt_file *bnb_pure = new bdt_file(dir, "vertexed_bnb_overlay_combined_v3v4_mcc9_v4.1.root", "BNBPure",	  "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnb_overlay_combined_v3v4_mcc9_v4.1.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+	bdt_file *signal_pure = new bdt_file(mydir, "ncpi0_35k_homebrew.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_pure_flow);
+	bdt_file *signal_cosmics = new bdt_file(mydir, "ncpi0_35k_homebrew.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
+	bdt_file *bnb_pure = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root ", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
 
 	//Data files
-	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data_mcc9_v4.0_AGAIN.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
-	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_mcc9_v4.0_again.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
+	bdt_file *data5e19 = new bdt_file(olddir, "vertexed_data_mcc9_v4.0_AGAIN.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
+	bdt_file *bnbext = new bdt_file(dir, "bnbext_mcc9_v5.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
 	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, data5e19, bnbext};
@@ -282,10 +284,8 @@ int main (int argc, char *argv[]){
 	double fcoscut;
 	double fbnbcut;
 	if(analysis_tag == "2g1p"){
-		fcoscut = 0.671036;
-		fbnbcut = 0.544251;
-		//Reduced
-		//fcoscut =0.475;
+		fcoscut = 0.592;
+		fbnbcut = 0.45375;
 
 	}else if(analysis_tag == "2g0p"){
 		fcoscut = 0.2;
