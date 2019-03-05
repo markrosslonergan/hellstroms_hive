@@ -44,7 +44,10 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
 int main (int argc, char *argv[]){
 
 	//This is a standardized location on /pnfs/ that everyone can use. 
-	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
+	//std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
+	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v6/";
+	std::string olddir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
+	std::string mydir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/";
 
 
 	std::string mode_option = "fake"; 
@@ -161,10 +164,10 @@ int main (int argc, char *argv[]){
 	bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
-	bdt_file *signal_cosmics = new bdt_file(dir, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
-	bdt_file *data5e19    = new bdt_file(dir, "data_mcc9_v5.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
-	bdt_file *bnbext    = new bdt_file(dir, "bnbext_mcc9_v5.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
+	bdt_file *signal_cosmics = new bdt_file(olddir, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_run1_v6.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+	bdt_file *data5e19    = new bdt_file(mydir, "vertexed_data5e19_v6.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+	bdt_file *bnbext    = new bdt_file(olddir, "bnbext_mcc9_v5.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 	std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics, bnbext, data5e19};
 
@@ -211,23 +214,16 @@ int main (int argc, char *argv[]){
 	//===========================================================================================
 	//===========================================================================================
 
-	if(mode_option == "valid"){
+  if(mode_option == "valid"){
 
-		std::string angle_track_shower ="(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])";
-		std::string fiducial_vertex = "reco_vertex_x > 10 && reco_vertex_x < 246 && reco_vertex_y > -107 && reco_vertex_y < 107 && reco_vertex_z > 10 && reco_vertex_z < 1026 ";
-		std::string fiducial_shower_end = "reco_shower_endx > 5 && reco_shower_endx < 245 && reco_shower_endy > -105 && reco_shower_endy < 95 && reco_shower_endz > 10 && reco_shower_endz < 1026 ";
-		std::string fiducial_track_end = "reco_track_endx > 5 && reco_track_endx < 245 && reco_track_endy > -95 && reco_track_endy < 95 && reco_track_endz > 10 && reco_track_endz < 1026 ";
-		std::string fiducial_cut = fiducial_vertex;//"&&"+fiducial_shower_end;
-
+    // Strings to calculate variables
     std::string shower_index1 = "(reco_shower_ordered_energy_index[0])";
     std::string shower_index2 = "(reco_shower_ordered_energy_index[1])";
 
 		std::string proton_mass = "0.938272";
-		std::string reco_shower_momentum = "(reco_shower_energy[0]*0.001)"; 
-		std::string reco_track_energy = "(reco_track_proton_kinetic_energy[0]+"+proton_mass + ")";
-		std::string reco_track_momentum  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"-"+proton_mass +"*"+proton_mass+")";
     std::string E1 = "reco_shower_energy["+shower_index1+"]";
     std::string E2 = "reco_shower_energy["+shower_index2+"]";
+    std::string Eratio = "("+E1+"/"+E2+")";
     std::string two_shower_opening_angle = "(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])";
 		std::string invariant_mass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+two_shower_opening_angle+"))/1000";
 
@@ -237,17 +233,23 @@ int main (int argc, char *argv[]){
     std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 
     std::string cm_angle = "(fabs("+E1+" - "+E2+")/("+p_pi+"))";
-    std::string s_reco_vertex_res ="(sqrt(pow(reco_vertex_x - mctruth_nu_vertex_x,2)-pow(reco_vertex_y - mctruth_nu_vertex_y,2)-pow(reco_vertex_z - mctruth_nu_vertex_z,2)))";
-    bdt_variable v_reco_vertex_res (s_reco_vertex_res,"(54,0,100)","Vertex Resolutione cm", false,"d");
-    validateOverlay({v_reco_vertex_res},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 && reco_asso_tracks>0", "vertex_res",true);
+    
+    // Signal definition and cuts for MC plots
+    std::string true_signal = "sim_shower_overlay_fraction[0]<0.1 && sim_shower_overlay_fraction[1]<0.1 && sim_track_matched[0]==1 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111";
+    std::string mycuts = "reco_asso_showers==2 && reco_asso_track==1 && sim_shower_is_true_shower && "+E2+">0.01";
 
+    // Do the stuff, make the plots
+    bdt_variable invmass(invariant_mass,"(12, 0, 0.5)","#pi^{0} Invariant Mass [GeV]","false","d");
+    validateOverlay({invmass},{bnb_cosmics}, {mycuts}, data5e19,"reco_asso_showers==2 && reco_asso_tracks==1", "pi0_invmass");
 
-    bdt_variable v_reco_vertex_y("reco_vertex_y","(54,-125,125)","Vertex y [cm]","false","d");
-    validateOverlay({v_reco_vertex_y},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 && reco_asso_tracks>0", "reco_vertex_y");
+    bdt_variable centerOfMass_angle(cm_angle,"(12, 0, 1.0)","#theta^{CM}_{#gamma #gamma}","false","d");
+    validateOverlay({centerOfMass_angle},{bnb_cosmics}, {mycuts}, data5e19,"reco_asso_showers==2 && reco_asso_tracks==1", "cmangle");
 
-    std::string s_reco_conv_dist = "log10(sqrt(pow(reco_shower_startx - reco_vertex_x,2)-pow(reco_shower_starty - reco_vertex_y,2)-pow(reco_shower_startz - reco_vertex_z,2)))";
-    bdt_variable v_reco_conv_dist(s_reco_conv_dist,"(54,-3,4)","Conv Dist Log10[cm]","false","d");
-    validateOverlay({v_reco_conv_dist},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 && reco_asso_tracks>0", "conv_length");
+    bdt_variable pion_momentum(p_pi, "(12, 0, 0.5)", "Reco. #pi^{0} Momentum [GeV]", "false", "d");
+    validateOverlay({pion_momentum},{bnb_cosmics}, {mycuts}, data5e19,"reco_asso_showers==2 && reco_asso_tracks==1", "pimom");
+
+    bdt_variable energy_ratio(Eratio, "(12, 0, 0.5)", "Ratio of Shower Energies [GeV]", "false", "d");
+    validateOverlay({energy_ratio},{bnb_cosmics}, {mycuts}, data5e19,"reco_asso_showers==2 && reco_asso_tracks==1", "e_ratio");
 
 
 
@@ -356,6 +358,7 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
          maxval  = std::max(maxval, ts1->GetMaximum());
          ts1->Draw("hist");
          ts1->SetMaximum(maxval*1.3);
+         ts1->GetXaxis()->SetTitle(vars[i].unit.c_str() );
      }
 
         c->cd();

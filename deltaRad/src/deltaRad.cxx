@@ -450,11 +450,7 @@ int main (int argc, char *argv[]){
 
 		int ip=0;
 
-<<<<<<< HEAD
-
-=======
         std::vector<bool> subv = {false,false,true};
->>>>>>> 2ae313e0e6bd99df11e053e55fb1b82e776f41c0
 		if(!response_only){
 			if(number != -1){
 				bdt_datamc datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
