@@ -450,15 +450,22 @@ int main (int argc, char *argv[]){
 
 		int ip=0;
 
+<<<<<<< HEAD
 
+=======
+        std::vector<bool> subv = {false,false,true};
+>>>>>>> 2ae313e0e6bd99df11e053e55fb1b82e776f41c0
 		if(!response_only){
 			if(number != -1){
 				bdt_datamc datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
+            
+                datamc.setSubtractionVector(subv);
 				std::vector<bdt_variable> tmp_var = {vars.at(number)};
 				datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
 			}else{
 
 				bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
+                real_datamc.setSubtractionVector(subv);
 				real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 			}
 		}else{
