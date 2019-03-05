@@ -136,6 +136,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 			for(auto &f: mc_stack->stack){
 				double Nevents = f->GetEntries()*(plot_pot/f->pot )*f->scale_data;
+        std::cout << "Looping on file " << f->name << std::endl;
+        std::cout << "Entries: " << f->GetEntries() << std::endl;
+        std::cout << "POT scaling: " << plot_pot/f->pot << std::endl;
+        std::cout << "Nevents then is = " << Nevents << std::endl;
 				NeventsStack+=Nevents;
 				auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
 				h1->SetFillColor(f->col);
@@ -143,6 +147,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 				h1->SetLineColor(kBlack);
 				l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 			}
+      std::cout << "Total events instack: " << NeventsStack << std::endl;
 
 			d0->Draw("same E1");
 
@@ -151,7 +156,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 			stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
 
+      std::cout << "data entries: " << data_file->GetEntries() << std::endl;
+      std::cout << "Data pot: " << data_file->pot << std::endl;
 			double NdatEvents = data_file->GetEntries()*(plot_pot/data_file->pot )*data_file->scale_data;
+      std::cout << "NdatEvents is then " << NdatEvents << std::endl;
+      std::cout << "And ratio is " << NdatEvents/NeventsStack << std::endl;
 
 			l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
 
@@ -353,7 +362,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 	std::cout<<"Gotten all data hists."<<std::endl;
 
 
-	if(true){
+	if(false){
 		data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist",dat_cut_3.c_str());
 		return 0;
 	}

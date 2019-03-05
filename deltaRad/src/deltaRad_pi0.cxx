@@ -217,7 +217,7 @@ int main (int argc, char *argv[]){
 	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root ", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
 
 	//Data files
-	bdt_file *data5e19 = new bdt_file(olddir, "vertexed_data_mcc9_v4.0_AGAIN.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
+	bdt_file *data5e19 = new bdt_file(dir, "data_mcc9_v5.0.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
 	bdt_file *bnbext = new bdt_file(dir, "bnbext_mcc9_v5.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
@@ -284,8 +284,8 @@ int main (int argc, char *argv[]){
 	double fcoscut;
 	double fbnbcut;
 	if(analysis_tag == "2g1p"){
-		fcoscut = 0.592;
-		fbnbcut = 0.45375;
+		fcoscut = 0.5925;
+		fbnbcut = 0.44975;
 
 	}else if(analysis_tag == "2g0p"){
 		fcoscut = 0.2;
