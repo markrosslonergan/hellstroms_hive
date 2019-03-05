@@ -124,11 +124,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			pad0top->cd();               // pad2top becomes the current pad
 
         
-            double rmin = 0.5;
-	       	double rmax = 1.699;
+      //      double rmin = 0.5;
+	    //   	double rmax = 1.699;
 	    //	double rmin = 0;
 		//	double rmax = 2.99;
-			int data_rebin = 1;
+		//	int data_rebin = 1;
 			if(s==0 || s == 1){
 				rmin=0; rmax = 1.99;
 			}else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};

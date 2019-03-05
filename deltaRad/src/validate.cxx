@@ -218,7 +218,7 @@ int main (int argc, char *argv[]){
 
 
      std::string s_reco_vertex_res ="(sqrt(pow(reco_vertex_x - mctruth_nu_vertex_x,2)-pow(reco_vertex_y - mctruth_nu_vertex_y,2)-pow(reco_vertex_z - mctruth_nu_vertex_z,2)))";
-     bdt_variable v_reco_vertex_res (s_reco_vertex_res,"(54,0,100)","Vertex Resolutione cm", false,"d");
+     bdt_variable v_reco_vertex_res (s_reco_vertex_res,"(54,0,100)","Vertex Resolution cm", false,"d");
      validateOverlay({v_reco_vertex_res},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 && reco_asso_tracks>0", "vertex_res",true);
 
 
@@ -228,6 +228,10 @@ int main (int argc, char *argv[]){
      std::string s_reco_conv_dist = "log10(sqrt(pow(reco_shower_startx - reco_vertex_x,2)-pow(reco_shower_starty - reco_vertex_y,2)-pow(reco_shower_startz - reco_vertex_z,2)))";
      bdt_variable v_reco_conv_dist(s_reco_conv_dist,"(54,-3,4)","Conv Dist Log10[cm]","false","d");
      validateOverlay({v_reco_conv_dist},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 && reco_asso_tracks>0", "conv_length");
+
+     std::string s_reco_shower_dedx_plane2 ="reco_shower_dEdx_plane2_median[0]";
+     bdt_variable v_reco_shower_dedx_plane2 (s_reco_shower_dedx_plane2,"(48,0,6.5)", "Median Shower dE/dx plane 2 [MeV/cm]",false,"d");
+     validateOverlay({v_reco_shower_dedx_plane2 },{bnb_cosmics}, {"reco_asso_showers>0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 ", "shower_dedx_plane2",true);
 
 
 
