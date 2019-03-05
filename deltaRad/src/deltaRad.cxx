@@ -299,15 +299,14 @@ int main (int argc, char *argv[]){
     //0.615753 but: 0.589863
     //ccut: 0.651672 bcut: 0.598801  #signal: 12.518 #bkg: 68.8004 ||  bnb: 68.8004 cos: 0 || 1.50918
 	if(analysis_tag == "track"){
-		fcoscut =  0.6;
-		fbnbcut = 0.5;
-
+		fcoscut =   0.45;
+        fbnbcut = 0.54;
         //Reduced
 		//fcoscut =0.5;
 
 	}else if(analysis_tag == "notrack"){
-		fcoscut = 0.566749; //0.612701;//0.587101;
-		fbnbcut =  0.570259;
+		fcoscut = 0.5; //0.612701;//0.587101;
+		fbnbcut =  0.569627;
 		//	Best Fit Significance: 0.5525 0.533625 1.1
 
 	}

@@ -47,7 +47,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 	//Loop over all stages
-	for(int s = 2; s< 3; s++){
+	for(int s = 1; s< 4; s++){
 		std::cout<<"On stage: "<<s<<std::endl;
 		//First set the files at this stage
 		for(auto &f: mc_stack->stack){
@@ -96,9 +96,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			pad0top->SetBottomMargin(0); // Upper and lower plot are joined
 			pad0top->Draw();             // Draw the upper pad: pad2top
 			pad0top->cd();               // pad2top becomes the current pad
-
-			double rmin = 0;
-			double rmax = 2.99;
+        
+            double rmin = 0.5;
+	       	double rmax = 1.699;
+	    //	double rmin = 0;
+		//	double rmax = 2.99;
 			int data_rebin = 1;
 			if(s==0 || s == 1){
 				rmin=0; rmax = 1.99;
@@ -144,7 +146,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 				l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 			}
 
-			d0->Draw("same E1");
+//			d0->Draw("same E1");
 
 			std::cout<<"KSTEST: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
 
@@ -153,9 +155,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 			double NdatEvents = data_file->GetEntries()*(plot_pot/data_file->pot )*data_file->scale_data;
 
+            d0->Scale(NeventsStack/NdatEvents);
+            d0->Draw("same E1");
+
+
 			l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
 
-			l0->Draw();
+ 
+
+            l0->Draw();
 			l0->SetLineWidth(0);
 			l0->SetLineColor(0);
 			l0->SetFillStyle(0);
@@ -234,7 +242,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 
-			std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2) ;
+			//std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2) ;
+			std::string mean = "Ratio: Normalized" ;
 			TText *t = new TText(0.11,0.41,mean.c_str());
 			t->SetNDC();
 			t->SetTextColor(kRed-7);
@@ -380,9 +389,11 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 		pad0top->Draw();             // Draw the upper pad: pad2top
 		pad0top->cd();               // pad2top becomes the current pad
 
-		double rmin = 0;
-		double rmax = 2.99;
-		int data_rebin = 1;
+		//double rmin = 0;
+		//double rmax = 2.99;
+		double rmin = 0.5;
+		double rmax = 1.699;
+	    int data_rebin = 1;
 		if(k==0 || k == 1){
 			rmin=0.0; rmax = 1.999;
 
