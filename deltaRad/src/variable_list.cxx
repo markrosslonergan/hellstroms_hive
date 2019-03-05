@@ -185,7 +185,6 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 	
 	//-------------------- End of Shared Variables for all electron analysis ----------------
 
-
 	//== 1e0p
 	if( analysis_tag.compare(8,1,"electron0",8,1)==0 ){
 

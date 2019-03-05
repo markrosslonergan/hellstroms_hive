@@ -47,7 +47,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 	//Loop over all stages
-	for(int s = 1; s< 4; s++){
+	for(int s = 0; s< 4; s++){
 		std::cout<<"On stage: "<<s<<std::endl;
 		//First set the files at this stage
 		for(auto &f: mc_stack->stack){
@@ -65,13 +65,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 		data_file->setStageEntryList(s);
 
 
-
-
 		if(true && s == 3){
 			data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist");
 		}
-
-
 
 
 		//And all variables in the vector var
@@ -81,21 +77,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			//cobs->Divide(2,2,0.0025,0.0000001);
 			cobs->cd();
 
+            if(do_subtraction){
+                std::cout<<"Setting do Subtraction inside bdt_stack "<<std::endl;
+                mc_stack->setSubtractionVector(subtraction_vec);
+            }
+
 			THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
 			TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
 			TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(c1)+"_"+std::to_string(c2)+data_file->tag+"_"+var.safe_name, plot_pot);
-
-			tsum->SetMarkerSize(0);
-			d0->SetMarkerSize(2);
-
-
-			cobs->cd();
-			TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
-
-			if(is_bdt_variable) pad0top->SetLogy();
-			pad0top->SetBottomMargin(0); // Upper and lower plot are joined
-			pad0top->Draw();             // Draw the upper pad: pad2top
-			pad0top->cd();               // pad2top becomes the current pad
+                std::cout<<"1 "<<std::endl;
 
 			double rmin = 0;
 			double rmax = 2.99;
@@ -105,6 +95,33 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			}else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
 
+                tsum->Rebin(data_rebin);
+			d0->Rebin(data_rebin);
+
+            if(do_subtraction){
+                std::cout<<"Actually doing the subtracting"<<std::endl;
+                for(int i=0; i< subtraction_vec.size();i++)
+                    if(subtraction_vec[i]){
+                        std::cout<<"Subtracting: "<<i<<std::endl;
+                        mc_stack->vec_hists[i]->Rebin(data_rebin);
+                        d0->Add((mc_stack->vec_hists[i]),-1.0);
+                        tsum->Add((mc_stack->vec_hists[i]),-1.0);
+                    }
+            }
+
+
+                std::cout<<"2 "<<std::endl;
+			tsum->SetMarkerSize(0);
+			d0->SetMarkerSize(2);
+
+			cobs->cd();
+			TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
+
+			if(is_bdt_variable) pad0top->SetLogy();
+			pad0top->SetBottomMargin(0); // Upper and lower plot are joined
+			pad0top->Draw();             // Draw the upper pad: pad2top
+			pad0top->cd();               // pad2top becomes the current pad
+
 			double max_modifier = 1.4;
 			double min_val = 0.01;
 			if(is_bdt_variable) {
@@ -112,7 +129,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 				min_val = 0.1;
 			}
 
-			d0->Rebin(data_rebin);
 			d0->SetMarkerStyle(20);
 			d0->SetLineColor(kBlack);
 
@@ -134,14 +150,21 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			l0->SetNColumns(2);
 			double NeventsStack = 0;
 
+            int n=0;
 			for(auto &f: mc_stack->stack){
+
 				double Nevents = f->GetEntries()*(plot_pot/f->pot )*f->scale_data;
 				NeventsStack+=Nevents;
 				auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag+"_"+std::to_string(c1)+"_"+std::to_string(c2)).c_str(), ("tmp"+stage_names.at(s)+var.safe_name+f->tag +"_"+std::to_string(c1)+"_"+std::to_string(c2)).c_str(),200,-10,10);
 				h1->SetFillColor(f->col);
 				h1->SetFillStyle(f->fillstyle);
 				h1->SetLineColor(kBlack);
-				l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+                std::string string_events = to_string_prec(Nevents,2);
+                if(do_subtraction){
+                    if(subtraction_vec[n]) string_events+=" Subtracted";
+                }
+				l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
+                n++;
 			}
 
 			d0->Draw("same E1");

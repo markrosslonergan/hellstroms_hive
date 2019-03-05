@@ -40,7 +40,7 @@ using namespace std;
 int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
-    std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v2";
+    std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5";
 
 
     std::string mode_option = "fake"; 
@@ -273,7 +273,7 @@ int main (int argc, char *argv[]){
 
 	    if(mode_option != "app" && mode_option != "train" && mode_option !="vars") f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 
-	    if(f->tag == "LEEunfolded" || f->tag == "LEEunfoldedCosmics") f->tvertex->AddFriend("lee_unfolding_tree","/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v2/vertexed_nueintrinsics_lee_signal_weights.root");
+	    if(f->tag == "LEEunfolded" || f->tag == "LEEunfoldedCosmics") f->tvertex->AddFriend("lee_signal_weights","/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v2/vertexed_nueintrinsics_lee_signal_weights.root");
 
 
 	    std::cout<<"Filling Base EntryLists on File  "<<f->tag<<std::endl;

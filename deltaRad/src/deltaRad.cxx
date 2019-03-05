@@ -210,8 +210,8 @@ int main (int argc, char *argv[]){
     
     //bdt_file *intime = new bdt_file(dir, "vertexed_intime_fresh_v4.1.root" ,"IntimeCosmics","hist","", kGreen-3, cosmic_flow);
 	//Data files
-	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data_mcc9_v4.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
-	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_mcc9_v4.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
+	bdt_file *data5e19    = new bdt_file(dir, "vertexed_data_mcc9_v4.0_AGAIN.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+	bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_mcc9_v4.0_again.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 	//bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
 	//bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
@@ -462,14 +462,18 @@ int main (int argc, char *argv[]){
 
 		int ip=0;
 
+        std::vector<bool> subv = {false,false,true};
 		if(!response_only){
 			if(number != -1){
 				bdt_datamc datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
+            
+                datamc.setSubtractionVector(subv);
 				std::vector<bdt_variable> tmp_var = {vars.at(number)};
 				datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
 			}else{
 
 				bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
+                real_datamc.setSubtractionVector(subv);
 				real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 			}
 		}else{

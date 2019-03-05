@@ -34,7 +34,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tinyxml/)
 add_subdirectory(tinyxml)
 add_subdirectory(src)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/xml/default.xml DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/build/src/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/xml/default.xml DESTINATION ./src/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/xml/default_bnb.xml DESTINATION ./src/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/other/run.sh DESTINATION ./src/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/deltaRad_electron.cxx DESTINATION ./)
