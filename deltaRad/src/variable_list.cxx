@@ -41,7 +41,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 
 		//************************************************* Shower Only Variables **********************************************//
-
+        //
 		//all_vars.push_back(bdt_variable("sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))","(48,0,100)"," Reco-True Vetrex Dist [cm]",false,"d"));  //1
 
 		all_vars.push_back(bdt_variable("reco_flash_total_pe_in_beamgate[0]","(48,0,5000)","Total in Beam-Gate PE",false,"d"));  //1
@@ -66,15 +66,15 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
       
         all_vars.push_back(bdt_variable("log10(reco_shower_conversion_distance[0])","(48,-2,4)","Log Reconstructed Shower conversion distance","false","d"));
       //  all_vars.push_back(bdt_variable("reco_shower_delaunay_area_plane2[0]","(48,0,200e3)","Reconstructed Shower delaunay area plane 2","false","d"));
-        
-       // all_vars.push_back(bdt_variable("reco_shower_start_to_nearest_dead_wire_plane0[0]","(48,0,250)"," Reconstructed Shower dead wire dist plane 0 pos [cm]",false,"d"));//10
-		//all_vars.push_back(bdt_variable("reco_shower_start_to_nearest_dead_wire_plane1[0]","(48,-110,+110)","Reconstructed Shower dead wire dist plane 1 pos [cm]",false,"d"));//11
-		//all_vars.push_back(bdt_variable("reco_shower_start_to_nearest_dead_wire_plane2[0]","(48,0,1050)","Reconstructed Shower dead wire dist plane 2 pos [cm]",false,"d"));//12
+       
+       // all_vars.push_back(bdt_variable("reco_shower_start_to_nearest_dead_wire_plane0[0]","(24,0,250)"," Reconstructed Shower dead wire dist plane 0 pos [cm]",false,"d"));//10
+		//all_vars.push_back(bdt_variable("reco_shower_start_to_nearest_dead_wire_plane1[0]","(24,-110,+110)","Reconstructed Shower dead wire dist plane 1 pos [cm]",false,"d"));//11
+		//all_vars.push_back(bdt_variable("reco_shower_start_to_nearest_dead_wire_plane2[0]","(24,0,1050)","Reconstructed Shower dead wire dist plane 2 pos [cm]",false,"d"));//12
 
 
 		//************************************************* Track + Shower Only Variables **********************************************//
 		if(analysis_tag == "track"){
-			//all_vars.push_back(bdt_variable( "-log((track_info.reco_track_principal_2[0]+track_info.reco_track_principal_1[0])/track_info.reco_track_principal_0[0])","(48,0,30)","Track PCA straightness","true","d"));//15
+		//all_vars.push_back(bdt_variable( "-log((track_info.reco_track_principal_2[0]+track_info.reco_track_principal_1[0])/track_info.reco_track_principal_0[0])","(48,0,30)","Track PCA straightness","true","d"));//15
 
             all_vars.push_back(bdt_variable("reco_track_proton_kinetic_energy[0]","(48,0,2)","Reconstructed Track Kinetic Energy [GeV]","true","d"));
 			all_vars.push_back(bdt_variable( reco_track_energy +"*(reco_track_dirx[0])+ "+reco_shower_momentum+"*reco_shower_dirx[0]","(48,-2,2)","Reconstructed Delta Momentum X [GeV]",true,"d"));//19
@@ -96,11 +96,10 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 			all_vars.push_back(bdt_variable("reco_track_starty[0]","(48,-110,+110)","Reconstructed Track Start Y pos [cm]",true,"d"));//33
 			all_vars.push_back(bdt_variable("reco_track_startz[0]","(48,0,1050)","Reconstructed Track Start Z pos [cm]",true,"d"));//34
 			all_vars.push_back(bdt_variable("reco_track_spacepoint_principal0[0]","(48,0,1)","Recontstructed Track Spacepoint Principal0",true,"d"));//34
-
 		}else if(analysis_tag == "1g2p"){
 
-            all_vars.push_back(bdt_variable("reco_track_proton_kinetic_energy[reco_track_ordered_energy_index[0]]","(48,0,2)","Reconstructed Track Kinetic Energy 1st [GeV]","true","d"));
-            all_vars.push_back(bdt_variable("reco_track_proton_kinetic_energy[reco_track_ordered_energy_index[1]]","(48,0,2)","Reconstructed Track Kinetic Energy 2nd [GeV]","true","d"));
+            all_vars.push_back(bdt_variable("reco_track_proton_kinetic_energy[reco_track_ordered_energy_index[0]]","(24,0,2)","Reconstructed Track Kinetic Energy 1st [GeV]","true","d"));
+            all_vars.push_back(bdt_variable("reco_track_proton_kinetic_energy[reco_track_ordered_energy_index[1]]","(24,0,2)","Reconstructed Track Kinetic Energy 2nd [GeV]","true","d"));
 
         }
 		

@@ -448,7 +448,12 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 	TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
 	//th1->Sumw2();
 
-	th1->Scale(this->scale_data*plot_POT/this->pot);
+    if(plot_POT==0){
+
+	    th1->Scale(1.0/th1->Integral());
+    }else{
+	    th1->Scale(this->scale_data*plot_POT/this->pot);
+    }
 	//std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
 	if(rebin>1) th1->Rebin(rebin);
 	th1->SetLineColor(col);
