@@ -36,7 +36,8 @@
 #include "bdt_vertex_eff.h"
 
 
-int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string pdfname);
+int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname);
+int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname, bool islog);
 
 
 
@@ -218,18 +219,20 @@ int main (int argc, char *argv[]){
 
      std::string s_reco_vertex_res ="(sqrt(pow(reco_vertex_x - mctruth_nu_vertex_x,2)-pow(reco_vertex_y - mctruth_nu_vertex_y,2)-pow(reco_vertex_z - mctruth_nu_vertex_z,2)))";
      bdt_variable v_reco_vertex_res (s_reco_vertex_res,"(54,0,100)","Vertex Resolutione cm", false,"d");
+     validateOverlay({v_reco_vertex_res},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 && reco_asso_tracks>0", "vertex_res",true);
 
 
+     bdt_variable v_reco_vertex_y("reco_vertex_y","(54,-125,125)","Vertex y [cm]","false","d");
+     validateOverlay({v_reco_vertex_y},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 && reco_asso_tracks>0", "reco_vertex_y");
 
-
-
-     validateOverlay({v_reco_vertex_res},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, datai5e19, "test");
-
+     std::string s_reco_conv_dist = "log10(sqrt(pow(reco_shower_startx - reco_vertex_x,2)-pow(reco_shower_starty - reco_vertex_y,2)-pow(reco_shower_startz - reco_vertex_z,2)))";
+     bdt_variable v_reco_conv_dist(s_reco_conv_dist,"(54,-3,4)","Conv Dist Log10[cm]","false","d");
+     validateOverlay({v_reco_conv_dist},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 && reco_asso_tracks>0", "conv_length");
 
 
 
      //Plot 1: ===========================================================================================
-
+    /*
      TCanvas *c0 = new TCanvas(); 
      c0->cd();
 
@@ -292,23 +295,31 @@ int main (int argc, char *argv[]){
 
      c->SaveAs("hope.pdf","pdf");
 
-
+    */
 
     }
 	return 0;
 
 }
 
-int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file * data, std::string pdfname){
+int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file * data, std::string datacut, std::string pdfname){
+    validateOverlay(vars, files, cuts, data,datacut,pdfname,false);
+    return 0;
+}
+
+int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file * data, std::string datacut, std::string pdfname, bool islog){
 
      TCanvas *c = new TCanvas();
      c->cd();
-     c->SetLogy();
+     if(islog) c->SetLogy();
+
+     double maxval = -9999;
+
      for(int i=0; i<files.size();i++){
 
          c->cd(); 
-         TH1* th1_overlay =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& sim_shower_overlay_fraction > 0.15" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
-         TH1* th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&&   sim_shower_overlay_fraction < 0.15" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
+         TH1* th1_overlay =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& sim_shower_overlay_fraction > 0.2" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
+         TH1* th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&&   sim_shower_overlay_fraction < 0.2" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
          THStack * ts1 = new THStack();
 
          th1_overlay->SetFillColor(files[i]->col);
@@ -322,14 +333,18 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
          ts1->Add(th1_overlay);
          ts1->Add(th1_mcish);
          c->cd();
-        
+         maxval  = std::max(maxval, ts1->GetMaximum());
          ts1->Draw("hist");
+         ts1->SetMaximum(maxval*1.3);
      }
 
         c->cd();
-        TH1* h_data =  (TH1*) data->getTH1(vars[0], cuts[0] , "data_truth_overlay", 0, 1);
+        TH1* h_data =  (TH1*) data->getTH1(vars[0], datacut , "data_truth_overlay", 0, 1);
         c->cd();
+        h_data->SetLineColor(kBlack);
         h_data->Draw("E1 same");
+    
+
 
 
         c->cd();
