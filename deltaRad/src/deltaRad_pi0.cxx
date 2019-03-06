@@ -144,6 +144,8 @@ int main (int argc, char *argv[]){
 
 	//Get all the variables you want to use	
 	std::vector<bdt_variable> vars = var_list.all_vars;
+	std::vector<bdt_variable> training_vars = var_list.train_vars;
+	std::vector<bdt_variable> plotting_vars = var_list.plot_vars;
 
 	//This is a vector each containing a precut, they are all added together to make the whole "precut"
 	std::vector<std::string> vec_precuts = var_list.all_precuts;
@@ -214,7 +216,7 @@ int main (int argc, char *argv[]){
 	bdt_file *signal_pure = new bdt_file(mydir, "ncpi0_35k_homebrew.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_pure_flow);
 	bdt_file *signal_cosmics = new bdt_file(mydir, "ncpi0_35k_homebrew.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
 	bdt_file *bnb_pure = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root ", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root ", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
 
 	//Data files
 	bdt_file *data5e19 = new bdt_file(dir, "data_mcc9_v5.0.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
@@ -222,10 +224,6 @@ int main (int argc, char *argv[]){
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
 	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, data5e19, bnbext};
-
-	//bdt_file *lee = new bdt_file(dir,"vertexed_elikeleecosmics_fresh_v4.root","LEEsignal","hist","",kRed-7, signal_flow);
-	//bdt_file *intrinsics = new bdt_file(dir,"vertexed_nueintrinsic_fresh_v4.1.root","NueIntrinsicCosmics","hist","",kRed-7, signal_flow);
-	//bdt_file *ncpi0 = new bdt_file(dir,"vertexed_ncpi0cosmics_fltr_fresh_v4.1.root","NCpi0Cosmics","hist","",kRed-7, signal_flow);
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -303,20 +301,20 @@ int main (int argc, char *argv[]){
 	if(mode_option == "train") {
 
 		std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
-		if(run_cosmic) bdt_train(cosmic_bdt_info, signal_pure, bnbext, vars, TMVAmethods);
+		if(run_cosmic) bdt_train(cosmic_bdt_info, signal_pure, bnbext, training_vars, plotting_vars, TMVAmethods);
 		std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
-		if(run_bnb) bdt_train(bnb_bdt_info, signal_pure, bnb_pure, vars, TMVAmethods);
+		if(run_bnb) bdt_train(bnb_bdt_info, signal_pure, bnb_pure, training_vars, plotting_vars, TMVAmethods);
 		return 0;
 
 	}else if(mode_option == "app"){
 		//Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
 
 			if(number == -1){
-	    		if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
-	        	if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
+	    		if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, training_vars, plotting_vars, TMVAmethods);
+	        if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, training_vars, plotting_vars, TMVAmethods);
 			}else{
-                if(run_cosmic) bdt_app(cosmic_bdt_info, {bdt_files[number]}, vars, TMVAmethods);
-	        	if(run_bnb)    bdt_app(bnb_bdt_info, {bdt_files[number]}, vars, TMVAmethods);
+          if(run_cosmic) bdt_app(cosmic_bdt_info, {bdt_files[number]}, training_vars, plotting_vars, TMVAmethods);
+	        if(run_bnb)    bdt_app(bnb_bdt_info, {bdt_files[number]}, training_vars, plotting_vars, TMVAmethods);
 			}
 
 		return 0;

@@ -77,15 +77,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			//cobs->Divide(2,2,0.0025,0.0000001);
 			cobs->cd();
 
-            if(do_subtraction){
-                std::cout<<"Setting do Subtraction inside bdt_stack "<<std::endl;
-                mc_stack->setSubtractionVector(subtraction_vec);
-            }
+      if(do_subtraction){
+          std::cout<<"Setting do Subtraction inside bdt_stack "<<std::endl;
+          mc_stack->setSubtractionVector(subtraction_vec);
+      }
 
 			THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
 			TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
 			TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(c1)+"_"+std::to_string(c2)+data_file->tag+"_"+var.safe_name, plot_pot);
-                std::cout<<"1 "<<std::endl;
+      std::cout<<"1 "<<std::endl;
 
 			double rmin = 0;
 			double rmax = 2.99;
@@ -95,7 +95,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			}else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
 
-      tsum->Rebin(data_rebin);
+      //tsum->Rebin(data_rebin);
 			d0->Rebin(data_rebin);
 
       if(do_subtraction){
@@ -122,7 +122,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			pad0top->Draw();             // Draw the upper pad: pad2top
 			pad0top->cd();               // pad2top becomes the current pad
 
-			double max_modifier = 1.4;
+			double max_modifier = 1.7;
 			double min_val = 0.01;
 			if(is_bdt_variable) {
 				max_modifier = 10.0;
@@ -221,7 +221,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 
-			//tsum->Rebin(data_rebin);
+			tsum->Rebin(data_rebin);
 			TH1* rat_denom = (TH1*)tsum->Clone(("ratio_denom_"+stage_names.at(s)).c_str());
 			for(int i=0; i<rat_denom->GetNbinsX(); i++){
 				rat_denom->SetBinError(i,0.0);
@@ -266,6 +266,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 
+      /*
 			std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2) ;
 			TText *t = new TText(0.11,0.41,mean.c_str());
 			t->SetNDC();
@@ -273,6 +274,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			//t->SetTextFont(43);
 			t->SetTextSize(0.12);
 			t->Draw("same");
+      */
 
 			//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 			//var_precut.front()->GetYaxis()->SetTitle("Verticies");
