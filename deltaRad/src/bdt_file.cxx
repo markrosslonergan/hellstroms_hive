@@ -98,7 +98,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     if(tag == "NCPi0" || tag=="NCPi0Cosmics"){
       //MCC9 pot issues
       //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
-      double nc_fraction = 0.040967;
+      // nc_fraction calculated by opening bnb_nu_overlay_combined_whatever and
+      // diving the number of NC events with > 0 exiting pi0s by the total no. entries
+      double nc_fraction = 0.061877;
       pot = 2.16562e21*(double)numberofevents/2154500.0/nc_fraction;
       std::cout<<"REAL MCC9: --> POT is MC: ";
 		  std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;

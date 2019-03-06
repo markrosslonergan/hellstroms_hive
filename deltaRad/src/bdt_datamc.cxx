@@ -221,7 +221,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 
-			tsum->Rebin(data_rebin);
+			//tsum->Rebin(data_rebin);
 			TH1* rat_denom = (TH1*)tsum->Clone(("ratio_denom_"+stage_names.at(s)).c_str());
 			for(int i=0; i<rat_denom->GetNbinsX(); i++){
 				rat_denom->SetBinError(i,0.0);
@@ -266,7 +266,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 
-      /*
 			std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2) ;
 			TText *t = new TText(0.11,0.41,mean.c_str());
 			t->SetNDC();
@@ -274,7 +273,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			//t->SetTextFont(43);
 			t->SetTextSize(0.12);
 			t->Draw("same");
-      */
 
 			//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 			//var_precut.front()->GetYaxis()->SetTitle("Verticies");
@@ -300,8 +298,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 		}
 	}
-
-
 
 	return 0;
 }

@@ -176,17 +176,17 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
     train_vars.push_back(bdt_variable("log10(reco_shower_conversion_distance["+shower_index2+"])","(24,-2,4)","Log Reco. Subleading Shower conversion distance","false","d"));
 		plot_vars.push_back(bdt_variable("sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))","(48,0,100)"," Reco-True Vetrex Dist [cm]",false,"d"));  //1
 
-    plot_vars.push_back(bdt_variable(p_pi_x+"/1000", "(25, 0, 0.5)", "Reco. #pi^{0} x-Momentum [GeV]", false, "d"));
-    plot_vars.push_back(bdt_variable(p_pi_y+"/1000", "(25, 0, 0.5)", "Reco. #pi^{0} y-Momentum [GeV]", false, "d"));
-    plot_vars.push_back(bdt_variable(p_pi_z+"/1000", "(25, 0, 0.5)", "Reco. #pi^{0} z-Momentum [GeV]", false, "d"));
-    plot_vars.push_back(bdt_variable(invariant_mass, "(25, 0, 0.5)", "Reco. #pi^{0} Invariant Mass (uncalibrated) [GeV]", false, "d"));
-    plot_vars.push_back(bdt_variable(cm_angle, "(25, 0, 1.0)", "Reco. cos(#theta_{CM}) ", false, "d"));
+    plot_vars.push_back(bdt_variable(p_pi_x+"/1000", "(24, 0, 0.5)", "Reco. #pi^{0} x-Momentum [GeV]", false, "d"));
+    plot_vars.push_back(bdt_variable(p_pi_y+"/1000", "(24, 0, 0.5)", "Reco. #pi^{0} y-Momentum [GeV]", false, "d"));
+    plot_vars.push_back(bdt_variable(p_pi_z+"/1000", "(24, 0, 0.5)", "Reco. #pi^{0} z-Momentum [GeV]", false, "d"));
+    plot_vars.push_back(bdt_variable(invariant_mass, "(24, 0, 0.5)", "Reco. #pi^{0} Invariant Mass (uncalibrated) [GeV]", false, "d"));
+    plot_vars.push_back(bdt_variable(cm_angle, "(24, 0, 1.0)", "Reco. cos(#theta_{CM}) ", false, "d"));
 
 		plot_vars.push_back(bdt_variable("reco_shower_length["+shower_index1+"]","(24,0,100)","Leading Shower Length [cm]",false,"d"));//4
 		plot_vars.push_back(bdt_variable("reco_shower_length["+shower_index2+"]","(24,0,100)","Subleading Shower Length [cm]",false,"d"));//4
 
-		plot_vars.push_back(bdt_variable("reco_shower_opening_angle["+shower_index1+"]","(25,0,0.8)","Leading Shower Opening Angle",false,"d"));//5
-		plot_vars.push_back(bdt_variable("reco_shower_opening_angle["+shower_index2+"]","(25,0,0.8)","Subleading Shower Opening Angle",false,"d"));//5
+		plot_vars.push_back(bdt_variable("reco_shower_opening_angle["+shower_index1+"]","(24,0,0.8)","Leading Shower Opening Angle",false,"d"));//5
+		plot_vars.push_back(bdt_variable("reco_shower_opening_angle["+shower_index2+"]","(24,0,0.8)","Subleading Shower Opening Angle",false,"d"));//5
 		plot_vars.push_back(bdt_variable("reco_shower_flash_shortest_distz["+shower_index2+"]","(24,0,520)","Distance from Subleading Shower to Flashcenter [cm]",false,"d"));//6
 
 		plot_vars.push_back(bdt_variable("reco_shower_theta_yz["+shower_index2+"]","(24,-1,1)","Reco. Subleading Shower #theta", false,"d"));//8
@@ -195,8 +195,8 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		plot_vars.push_back(bdt_variable("reco_shower_startx["+shower_index2+"]","(24,0,250)"," Reco. Subleading Shower start X pos [cm]",false,"d"));//10
 		plot_vars.push_back(bdt_variable("reco_shower_starty["+shower_index1+"]","(24,0,120)"," Reco. Leading Shower start Y pos [cm]",false,"d"));//10
 		plot_vars.push_back(bdt_variable("reco_shower_starty["+shower_index2+"]","(24,0,120)"," Reco. Subleading Shower start Y pos [cm]",false,"d"));//10
-		plot_vars.push_back(bdt_variable("reco_shower_startz["+shower_index1+"]","(25,0,1050)"," Reco. Leading Shower start Z pos [cm]",false,"d"));//10
-		plot_vars.push_back(bdt_variable("reco_shower_startz["+shower_index2+"]","(25,0,1050)"," Reco. Subleading Shower start Z pos [cm]",false,"d"));//10
+		plot_vars.push_back(bdt_variable("reco_shower_startz["+shower_index1+"]","(24,0,1050)"," Reco. Leading Shower start Z pos [cm]",false,"d"));//10
+		plot_vars.push_back(bdt_variable("reco_shower_startz["+shower_index2+"]","(24,0,1050)"," Reco. Subleading Shower start Z pos [cm]",false,"d"));//10
     plot_vars.push_back(bdt_variable("reco_shower_delaunay_area_plane2["+shower_index1+"]","(48,0,200e3)","Reconstructed Shower delaunay area plane 2","false","d"));
   
     //remove dead wire stuff from training for now.
