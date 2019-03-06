@@ -38,6 +38,7 @@
 
 int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname);
 int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname, bool islog);
+int validateOverlay2(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string pdfname);
 
 
 
@@ -165,11 +166,15 @@ int main (int argc, char *argv[]){
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	bdt_file *signal_cosmics = new bdt_file(olddir, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_run1_v6.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
-	bdt_file *data5e19    = new bdt_file(mydir, "vertexed_data5e19_v6.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+	bdt_file *bnb_cosmics = new bdt_file(olddir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+	bdt_file *bnb_cosmics_v6 = new bdt_file(dir, "bnb_overlay_run1_v6.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+	bdt_file *data5e19  = new bdt_file(olddir, "data_mcc9_v5.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+	bdt_file *data5e19_v6    = new bdt_file(mydir, "vertexed_data5e19_v6.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
 	bdt_file *bnbext    = new bdt_file(olddir, "bnbext_mcc9_v5.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
-	std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics, bnbext, data5e19};
+  TFile *fin_data_v6 = new TFile("/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/vertexed_data5e19_v6.root", "READ");
+	//std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics, bnbext, data5e19};
+	std::vector<bdt_file*> bdt_files = {bnb_cosmics, bnb_cosmics_v6, data5e19, data5e19_v6};
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -202,7 +207,9 @@ int main (int argc, char *argv[]){
 	//Adding plot names
 	signal_cosmics->addPlotName("LEE NC #Delta Rad w/ Overlay");
 	bnb_cosmics->addPlotName("BNB w/ Overlay");
-    data5e19->addPlotName("4.8e19 POT Data");
+	bnb_cosmics_v6->addPlotName("BNB w/ Overlay");
+  data5e19->addPlotName("4.8e19 POT Data");
+  data5e19_v6->addPlotName("4.8e19 POT Data");
 	bnbext->addPlotName("External BNB Data");
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -223,7 +230,7 @@ int main (int argc, char *argv[]){
 		std::string proton_mass = "0.938272";
     std::string E1 = "reco_shower_energy["+shower_index1+"]";
     std::string E2 = "reco_shower_energy["+shower_index2+"]";
-    std::string Eratio = "("+E1+"/"+E2+")";
+    std::string Eratio = "("+E1+")/("+E2+")";
     std::string two_shower_opening_angle = "(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])";
 		std::string invariant_mass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+two_shower_opening_angle+"))/1000";
 
@@ -236,21 +243,35 @@ int main (int argc, char *argv[]){
     
     // Signal definition and cuts for MC plots
     std::string true_signal = "sim_shower_overlay_fraction[0]<0.1 && sim_shower_overlay_fraction[1]<0.1 && sim_track_matched[0]==1 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111";
-    std::string mycuts = "reco_asso_showers==2 && reco_asso_track==1 && sim_shower_is_true_shower && "+E2+">0.01";
+    std::string my_mcCuts = "reco_asso_showers==2 &&"+E2+">0.1";
+    //std::string my_mcCuts = "reco_asso_showers==2 && reco_asso_tracks==1 && sim_shower_is_true_shower && "+E2+">0.1";
+    std::string my_dataCuts = "reco_asso_showers==2 && reco_asso_tracks==1 && "+E2+">0.1";
+    //std::string my_dataCuts = "reco_asso_showers==2 && reco_asso_tracks==1 && sim_shower_is_true_shower && "+E2+">0.1";
 
     // Do the stuff, make the plots
+    /*
     bdt_variable invmass(invariant_mass,"(12, 0, 0.5)","#pi^{0} Invariant Mass [GeV]","false","d");
-    validateOverlay({invmass},{bnb_cosmics}, {mycuts}, data5e19,"reco_asso_showers==2 && reco_asso_tracks==1", "pi0_invmass");
+    validateOverlay({invmass},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "pi0_invmass_v5");
+    validateOverlay({invmass},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "pi0_invmass_v6");
 
     bdt_variable centerOfMass_angle(cm_angle,"(12, 0, 1.0)","#theta^{CM}_{#gamma #gamma}","false","d");
-    validateOverlay({centerOfMass_angle},{bnb_cosmics}, {mycuts}, data5e19,"reco_asso_showers==2 && reco_asso_tracks==1", "cmangle");
+    validateOverlay({centerOfMass_angle},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "cmangle_v5");
+    validateOverlay({centerOfMass_angle},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "cmangle_v6");
 
     bdt_variable pion_momentum(p_pi, "(12, 0, 0.5)", "Reco. #pi^{0} Momentum [GeV]", "false", "d");
-    validateOverlay({pion_momentum},{bnb_cosmics}, {mycuts}, data5e19,"reco_asso_showers==2 && reco_asso_tracks==1", "pimom");
+    validateOverlay({pion_momentum},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "pimom_v5");
+    validateOverlay({pion_momentum},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "pimom_v6");
 
-    bdt_variable energy_ratio(Eratio, "(12, 0, 0.5)", "Ratio of Shower Energies [GeV]", "false", "d");
-    validateOverlay({energy_ratio},{bnb_cosmics}, {mycuts}, data5e19,"reco_asso_showers==2 && reco_asso_tracks==1", "e_ratio");
+    bdt_variable energy_ratio(Eratio, "(10, 1, 10)", "Ratio of Shower Energies [GeV]", "false", "d");
+    validateOverlay({energy_ratio},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "e_ratio_v5");
+    validateOverlay({energy_ratio},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "e_ratio_v6");
+    */
 
+    // Plot stuff with increasing no. showers cuts
+    bdt_variable overlay_fraction("sim_shower_overlay_fraction", "(50, 0, 1)", "Shower Overlay Fraction", "false", "d");
+    std::vector<std::string> showerCuts = {"reco_asso_showers>0", "reco_asso_showers==1", "reco_asso_showers==2", "reco_asso_showers==3"};
+    validateOverlay2({overlay_fraction}, {bnb_cosmics}, showerCuts, "overlay_frac_v5");
+    validateOverlay2({overlay_fraction}, {bnb_cosmics_v6}, showerCuts, "overlay_frac_v6");
 
 
      //Plot 1: ===========================================================================================
@@ -341,13 +362,21 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
 
          c->cd(); 
          TH1* th1_overlay =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& sim_shower_overlay_fraction > 0.2" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
-         TH1* th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&&   sim_shower_overlay_fraction < 0.2" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
+         TH1* th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& sim_shower_overlay_fraction < 0.2" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
          THStack * ts1 = new THStack();
 
          th1_overlay->SetFillColor(files[i]->col);
          th1_overlay->SetFillStyle(3244);
          th1_mcish->SetFillColor(files[i]->col);
          
+         if (th1_mcish->Integral() == 0. || th1_overlay->Integral() == 0) {
+           std::cout << "MC hist integral in " << vars[i].unit.c_str() << " is 0!" << std::endl;
+           return 1;
+         }
+         if (th1_overlay->Integral() == 0.) {
+           std::cout << "Overlay hist integral in " << vars[i].unit.c_str() << " is 0!" << std::endl;
+           return 1;
+         }
          double norm = th1_overlay->Integral()+ th1_mcish->Integral();
          th1_overlay->Scale(1.0/norm);
          th1_mcish->Scale(1.0/norm);
@@ -365,6 +394,7 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
         TH1* h_data =  (TH1*) data->getTH1(vars[0], datacut , "data_truth_overlay", 0, 1);
         c->cd();
         h_data->SetLineColor(kBlack);
+        h_data->SetMarkerStyle(8);
         h_data->Draw("E1 same");
     
 
@@ -376,6 +406,67 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
         return 0;
 
 }
+
+
+// Written by Andrew because editing other things is too much work
+int validateOverlay2(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string pdfname){
+
+    TCanvas *c = new TCanvas();
+    c->cd();
+    c->SetLogy();
+
+    TH1 *th1 =  (TH1*) files[0]->getTH1(vars[0], cuts[0], "photon_overlay_frac_"+std::to_string(0), 0, 1);
+    c->cd();
+    //th1->SetFillColor(kAzure+2);
+    th1->SetLineColor(kAzure+2);
+    c->cd();
+    th1->GetXaxis()->SetTitle("Shower Overlay Fraction");
+    c->cd();
+    th1->Draw("hist");
+    c->cd();
+
+    c->cd();
+    TH1 *th2 =  (TH1*) files[0]->getTH1(vars[0], cuts[1], "photon_overlay_frac_"+std::to_string(1), 0, 1);
+    //th2->SetFillColor(kGreen+2);
+    th2->SetLineColor(kGreen+2);
+    c->cd();
+    th2->Draw("hist same");
+    c->cd();
+
+    c->cd();
+    TH1 *th3 =  (TH1*) files[0]->getTH1(vars[0], cuts[2], "photon_overlay_frac_"+std::to_string(2), 0, 1);
+    //th3->SetFillColor(kViolet+5);
+    th3->SetLineColor(kViolet+5);
+    c->cd();
+    th3->Draw("hist same");
+    c->cd();
+
+    c->cd();
+    TH1 *th4 =  (TH1*) files[0]->getTH1(vars[0], cuts[3], "photon_overlay_frac_"+std::to_string(3), 0, 1);
+    //th4->SetFillColor(kRed+1);
+    th4->SetLineColor(kRed+1);
+    c->cd();
+    th4->Draw("hist same");
+    c->cd();
+  
+    TLegend *leg = new TLegend(0.15, 0.7, 0.45, 0.9);
+    leg->AddEntry(th1, "All");
+    leg->AddEntry(th2, "1 Shower");
+    leg->AddEntry(th3, "2 Showers");
+    leg->AddEntry(th4, "3 Showers");
+    leg->Draw("same");
+
+
+    c->SaveAs((pdfname+".png").c_str(),"png");    
+
+
+
+    return 0;
+
+}
+
+
+
 
 
 
