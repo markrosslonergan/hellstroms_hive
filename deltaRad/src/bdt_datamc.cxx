@@ -29,6 +29,36 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 }
 
 
+int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, double c1, double c2){
+ 
+		data_file->tvertex->ResetBranchAddresses();
+
+        if(stage==2) data_file->calcCosmicBDTEntryList(c1, c2);
+		if(stage==3) data_file->calcBNBBDTEntryList(c1, c2);
+        data_file->setStageEntryList(stage);
+
+        int n_run_number = 0;
+        int n_subrun_number = 0;
+        int n_event_number = 0;
+
+        data_file->tvertex->SetBranchAddress("run_number", &n_run_number);
+        data_file->tvertex->SetBranchAddress("subrun_number", &n_subrun_number);
+        data_file->tvertex->SetBranchAddress("event_number", &n_event_number);
+
+        std::cout<<"Starting printPassingDataEvents() "<<std::endl;
+        for(int i=0;i < data_file->tvertex->GetEntries(); i++ ){
+            data_file->tvertex->GetEntry(i);
+            std::cout<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<std::endl;
+        }
+        std::cout<<"End printPassingDataEvents() "<<std::endl;
+
+		data_file->tvertex->ResetBranchAddresses();
+
+    return 0;
+}
+
+
+
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
 // NEW ONE
 	double plot_pot=4.393e19;//4.801e19;
@@ -131,8 +161,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 			d0->SetMarkerStyle(20);
 			d0->SetLineColor(kBlack);
-
-
 
 			stk->SetMaximum(tsum->GetMaximum()*1.4);
 			stk->SetMinimum(0.0001);

@@ -458,6 +458,7 @@ int main (int argc, char *argv[]){
 				bdt_datamc datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
 				std::vector<bdt_variable> tmp_var = {vars.at(number)};
 				datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
+        datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
 			}else{
 
 				bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
