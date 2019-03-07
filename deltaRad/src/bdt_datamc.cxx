@@ -233,7 +233,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			pre->Draw();
       TText *spec;
       if (isSpectator) {
-        TText *spec = drawPrelim(0.82, 0.52, "Spectator Variable");
+        TText *spec = drawPrelim(0.67, 0.92, "Spectator Variable");
         spec->Draw("same");
       }
 
