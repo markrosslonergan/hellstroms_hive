@@ -39,9 +39,10 @@ class bdt_datamc{
 		bdt_stack *mc_stack;
 		std::string tag;
 
+    bool isSpectator = false;
 		bool is_bdt_variable;
-        bool do_subtraction; 
-        std::vector<bool> subtraction_vec;
+    bool do_subtraction; 
+    std::vector<bool> subtraction_vec;
 
 		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;};
 		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;};
@@ -58,6 +59,8 @@ class bdt_datamc{
 		int plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt);
 		int plotStacks(TFile*f, bdt_variable var,double,double);
 		int plotBDTStacks(TFile*f, bdt_info,double,double);
+
+    int SetSpectator();
 
 
 };

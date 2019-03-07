@@ -147,7 +147,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
     std::string p_pi_z = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirz["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirz["+shower_index2+"])";
     std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 
-    std::string cm_angle = "(fabs("+E1+" - "+E2+")/("+p_pi+"))";
+    std::string cm_angle = "(("+E1+" - "+E2+")/("+p_pi+"))";
 
 
 		std::string new_precuts;
@@ -180,7 +180,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
     plot_vars.push_back(bdt_variable(p_pi_y+"/1000", "(24, 0, 0.5)", "Reco. #pi^{0} y-Momentum [GeV]", false, "d"));
     plot_vars.push_back(bdt_variable(p_pi_z+"/1000", "(24, 0, 0.5)", "Reco. #pi^{0} z-Momentum [GeV]", false, "d"));
     plot_vars.push_back(bdt_variable(invariant_mass, "(24, 0, 0.5)", "Reco. #pi^{0} Invariant Mass (uncalibrated) [GeV]", false, "d"));
-    plot_vars.push_back(bdt_variable(cm_angle, "(24, 0, 1.0)", "Reco. cos(#theta_{CM}) ", false, "d"));
+    plot_vars.push_back(bdt_variable(cm_angle, "(24, -1.0, 1.0)", "Reco. cos(#theta_{CM}) ", false, "d"));
 
 		plot_vars.push_back(bdt_variable("reco_shower_length["+shower_index1+"]","(24,0,100)","Leading Shower Length [cm]",false,"d"));//4
 		plot_vars.push_back(bdt_variable("reco_shower_length["+shower_index2+"]","(24,0,100)","Subleading Shower Length [cm]",false,"d"));//4

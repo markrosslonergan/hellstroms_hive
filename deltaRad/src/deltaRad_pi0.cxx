@@ -461,7 +461,9 @@ int main (int argc, char *argv[]){
 			}else{
 
 				bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
-				real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+				real_datamc.plotStacks(ftest, training_vars,fcoscut,fbnbcut);
+        real_datamc.SetSpectator();
+				real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
 			}
 		}else{
 			bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
