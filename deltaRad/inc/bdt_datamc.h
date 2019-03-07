@@ -59,6 +59,8 @@ class bdt_datamc{
 		int plotStacks(TFile*f, bdt_variable var,double,double);
 		int plotBDTStacks(TFile*f, bdt_info,double,double);
 
+        int printPassingDataEvents(std::string outfilename, int stage, double c1, double c2);
+ 
 
 };
 

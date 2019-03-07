@@ -27,7 +27,36 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 	bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
 	return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
 }
+
+
+int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, double c1, double c2){
  
+		data_file->tvertex->ResetBranchAddresses();
+
+        if(stage==2) data_file->calcCosmicBDTEntryList(c1, c2);
+		if(stage==3) data_file->calcBNBBDTEntryList(c1, c2);
+        data_file->setStageEntryList(stage);
+
+        int n_run_number = 0;
+        int n_subrun_number = 0;
+        int n_event_number = 0;
+
+        data_file->tvertex->SetBranchAddress("run_number", &n_run_number);
+        data_file->tvertex->SetBranchAddress("subrun_number", &n_subrun_number);
+        data_file->tvertex->SetBranchAddress("event_number", &n_event_number);
+
+        std::cout<<"Starting printPassingDataEvents() "<<std::endl;
+        for(int i=0;i < data_file->tvertex->GetEntries(); i++ ){
+            data_file->tvertex->GetEntry(i);
+            std::cout<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<std::endl;
+        }
+        std::cout<<"End printPassingDataEvents() "<<std::endl;
+
+		data_file->tvertex->ResetBranchAddresses();
+
+    return 0;
+}
+
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
 
@@ -82,10 +111,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 mc_stack->setSubtractionVector(subtraction_vec);
             }
 
-			THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
-			TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
-			TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(c1)+"_"+std::to_string(c2)+data_file->tag+"_"+var.safe_name, plot_pot);
-                std::cout<<"1 "<<std::endl;
+			THStack *stk  = (THStack*)mc_stack->getEntryStack(var,s);
+			TH1     *tsum = (TH1*)mc_stack->getEntrySum(var,s);
+			TH1     *d0   = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(c1)+"_"+std::to_string(c2)+data_file->tag+"_"+var.safe_name, plot_pot);
+        
+            std::cout<<"1 "<<std::endl;
 
 			double rmin = 0;
 			double rmax = 2.99;
@@ -95,7 +125,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			}else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
 
-                tsum->Rebin(data_rebin);
 			d0->Rebin(data_rebin);
 
             if(do_subtraction){
@@ -110,7 +139,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             }
 
 
-                std::cout<<"2 "<<std::endl;
+            std::cout<<"2 "<<std::endl;
 			tsum->SetMarkerSize(0);
 			d0->SetMarkerSize(2);
 
@@ -131,8 +160,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 			d0->SetMarkerStyle(20);
 			d0->SetLineColor(kBlack);
-
-
 
 			stk->SetMaximum(tsum->GetMaximum()*1.4);
 			stk->SetMinimum(0.0001);
@@ -182,7 +209,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			l0->SetLineWidth(0);
 			l0->SetLineColor(0);
 			l0->SetFillStyle(0);
-			l0->SetTextSize(0.03);
+            l0->SetTextSize(0.03);
 
 			TLatex latex;
 			latex.SetTextSize(0.06);
