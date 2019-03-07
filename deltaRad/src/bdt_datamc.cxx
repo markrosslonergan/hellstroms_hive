@@ -226,10 +226,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			pottex.DrawLatex(.7,.65, pot_draw.c_str());
 
 			TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary");
-      if (isSpectator) {
-        TText *spec = drawPrelim(0.12, 0.72, "Spectator Variable");
-      }
 			pre->Draw();
+      TText *spec;
+      if (isSpectator) {
+        TText *spec = drawPrelim(0.82, 0.62, "Spectator Variable");
+        spec->Draw("same");
+      }
 
 			//cobs->cd(k+1);	
 			cobs->cd();
