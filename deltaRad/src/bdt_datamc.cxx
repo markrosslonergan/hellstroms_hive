@@ -44,10 +44,13 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
         data_file->tvertex->SetBranchAddress("run_number", &n_run_number);
         data_file->tvertex->SetBranchAddress("subrun_number", &n_subrun_number);
         data_file->tvertex->SetBranchAddress("event_number", &n_event_number);
+       
 
         std::cout<<"Starting printPassingDataEvents() "<<std::endl;
-        for(int i=0;i < data_file->tvertex->GetEntries(); i++ ){
-            data_file->tvertex->GetEntry(i);
+        for(int i=0;i < data_file->bnbbdt_list->GetN(); i++ ){
+            size_t en = data_file->bnbbdt_list->Next();
+            data_file->tvertex->GetEntry(en);
+
             std::cout<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<std::endl;
         }
         std::cout<<"End printPassingDataEvents() "<<std::endl;
