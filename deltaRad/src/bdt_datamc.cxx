@@ -47,11 +47,12 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
        
 
         std::cout<<"Starting printPassingDataEvents() "<<std::endl;
+        size_t en = data_file->bnbbdt_list->GetEntry(0);
         for(int i=0;i < data_file->bnbbdt_list->GetN(); i++ ){
-            size_t en = data_file->bnbbdt_list->Next();
+                    
             data_file->tvertex->GetEntry(en);
-
             std::cout<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<std::endl;
+            en = data_file->bnbbdt_list->Next();
         }
         std::cout<<"End printPassingDataEvents() "<<std::endl;
 
