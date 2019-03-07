@@ -31,11 +31,15 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
 int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, double c1, double c2){
  
-		data_file->tvertex->ResetBranchAddresses();
+		data_file->calcCosmicBDTEntryList(c1, c2);
+		data_file->calcBNBBDTEntryList(c1, c2);
+        data_file->setStageEntryList(3);
 
-        if(stage==2) data_file->calcCosmicBDTEntryList(c1, c2);
-		if(stage==3) data_file->calcBNBBDTEntryList(c1, c2);
-        data_file->setStageEntryList(stage);
+        std::string fake = "fake_bnbbdt_list_"+std::to_string(c1)+"_"+std::to_string(c2)+"_" +data_file->tag;
+
+    	data_file->tvertex->Draw((">>"+fake).c_str(), data_file->getStageCuts(3,c1,c2).c_str() , "entrylist");
+	    TEntryList * fake_list = (TEntryList*)gDirectory->Get(fake.c_str());
+
 
         int n_run_number = 0;
         int n_subrun_number = 0;
@@ -44,19 +48,16 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
         data_file->tvertex->SetBranchAddress("run_number", &n_run_number);
         data_file->tvertex->SetBranchAddress("subrun_number", &n_subrun_number);
         data_file->tvertex->SetBranchAddress("event_number", &n_event_number);
-       
 
         std::cout<<"Starting printPassingDataEvents() "<<std::endl;
-        size_t en = data_file->bnbbdt_list->GetEntry(0);
-        for(int i=0;i < data_file->bnbbdt_list->GetN(); i++ ){
-                    
-            data_file->tvertex->GetEntry(en);
-            std::cout<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<std::endl;
-            en = data_file->bnbbdt_list->Next();
+        
+        for(int i=0;i < fake_list->GetN(); i++ ){
+            
+            data_file->tvertex->GetEntry( fake_list->GetEntry(i));
+            std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<std::endl;
         }
         std::cout<<"End printPassingDataEvents() "<<std::endl;
-
-		data_file->tvertex->ResetBranchAddresses();
+        
 
     return 0;
 }
@@ -98,11 +99,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 		data_file->setStageEntryList(s);
 
-
 		if(false && s == 3){
 			data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist");
 		}
-
 
 		//And all variables in the vector var
 		for(auto &var: vars){
