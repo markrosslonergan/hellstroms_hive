@@ -68,7 +68,7 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
 // NEW ONE
-	double plot_pot=4.393e19;//4.801e19;
+	double plot_pot=4.893e19;//4.801e19;
 
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;

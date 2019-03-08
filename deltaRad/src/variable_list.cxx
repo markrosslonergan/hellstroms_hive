@@ -139,7 +139,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		std::string reco_track_momentum  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"-"+proton_mass +"*"+proton_mass+")";
     std::string E1 = "reco_shower_energy["+shower_index1+"]";
     std::string E2 = "reco_shower_energy["+shower_index2+"]";
-    std::string two_shower_opening_angle = "(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])";
+    std::string two_shower_opening_angle = "(acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1]))";
 		std::string invariant_mass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+two_shower_opening_angle+"))/1000";
 
     std::string p_pi_x = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirx["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirx["+shower_index2+"])";
@@ -170,12 +170,12 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		plot_vars.push_back(bdt_variable("reco_shower_dEdx_plane2_median["+shower_index2+"]","(24,0,6.5)", "Median Subleading Shower dE/dx plane 2 [MeV/cm]",false,"d")); //2
 		train_vars.push_back(bdt_variable("reco_shower_energy["+shower_index1+"]/1000.0","(24,0,0.5)","Reco. Leading Shower Energy (Uncalibrated) [GeV]", false,"d"));  //3
 		train_vars.push_back(bdt_variable("reco_shower_energy["+shower_index2+"]/1000.0","(24,0,0.5)","Reco. Subleading Shower Energy (Corrected) [GeV]", false,"d"));  //3
-		train_vars.push_back(bdt_variable(two_shower_opening_angle,"(24,-1.0,1.0)","Two-Shower Opening Angle",false,"d"));//5
+		train_vars.push_back(bdt_variable(two_shower_opening_angle,"(24,-3.15,3.15)","Two-Shower Opening Angle",false,"d"));//5
 		train_vars.push_back(bdt_variable("reco_shower_flash_shortest_distz["+shower_index1+"]","(24,0,520)","Distance from Leading Shower to Flashcenter [cm]",false,"d"));//6
 		train_vars.push_back(bdt_variable("reco_shower_theta_yz["+shower_index1+"]","(24,-1,1)","Reco. Leading Shower Theta", false,"d"));//8
 		train_vars.push_back(bdt_variable("reco_shower_phi_yx["+shower_index1+"]","(24,-1,1)","Reco. Leading Shower Phi", false,"d"));//9
-    train_vars.push_back(bdt_variable("reco_shower_conversion_distance["+shower_index1+"]","(24,1,100)","Log Reco. Leading Shower conversion distance","false","d"));
-    train_vars.push_back(bdt_variable("reco_shower_conversion_distance["+shower_index2+"]","(24,0,100)","Log Reco. Subleading Shower conversion distance","false","d"));
+    train_vars.push_back(bdt_variable("reco_shower_conversion_distance["+shower_index1+"]","(24,1,100)","Reco. Leading Shower conversion distance","false","d"));
+    train_vars.push_back(bdt_variable("reco_shower_conversion_distance["+shower_index2+"]","(24,0,100)","Reco. Subleading Shower conversion distance","false","d"));
 		plot_vars.push_back(bdt_variable("sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))","(48,0,100)"," Reco-True Vetrex Dist [cm]",false,"d"));  //1
 
     plot_vars.push_back(bdt_variable(p_pi_x+"/1000", "(24, 0, 0.5)", "Reco. #pi^{0} x-Momentum [GeV]", false, "d"));

@@ -510,7 +510,8 @@ int main (int argc, char *argv[]){
 
         std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+20 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
     
-        std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_num_exiting_pi0 == 2", fid_cut, "mctruth_delta_proton_energy > "+pmass+"+0.04"}; 
+        std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_num_exiting_pi0 == 2", fid_cut}; 
+        //std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_num_exiting_pi0 == 2", fid_cut, "mctruth_delta_proton_energy > "+pmass+"+0.04"}; 
         std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==2","reco_asso_tracks==1"};
 
      	bdt_efficiency(signal_cosmics, v_denom, v_topo, vec_precuts,fcoscut, fbnbcut,13.2e20);
