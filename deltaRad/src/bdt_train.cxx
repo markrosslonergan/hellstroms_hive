@@ -85,7 +85,7 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	dataloader->SetSignalWeightExpression(signal_file->weight_branch.c_str());
 	dataloader->SetBackgroundWeightExpression(background_file->weight_branch.c_str());
 
-  for (bdt_variable &var: plot_variables) dataloader->AddSpectator(var.name.c_str() );
+  //for (bdt_variable &var: plot_variables) dataloader->AddSpectator(var.name.c_str() );
 
 	for(bdt_variable &var: train_variables) dataloader->AddVariable(var.name.c_str());
 

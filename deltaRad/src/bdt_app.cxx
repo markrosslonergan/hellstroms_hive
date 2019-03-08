@@ -174,11 +174,13 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 		reader->AddVariable(p.name.c_str(), reader_var_v.back());
 	}
 
+  /*
   for (bdt_variable &k: plot_vars) {
     tree_formulas_v.push_back(new TTreeFormula(k.safe_name.c_str(), k.name.c_str() ,tree));
 		reader_var_v.push_back(new float(-1));
     reader->AddSpectator(k.name.c_str(), reader_var_v.back() );
   }
+  */
 
 
 	//TTreeFormula * tf = new TTreeFormula("tf", cut.c_str(), tree);

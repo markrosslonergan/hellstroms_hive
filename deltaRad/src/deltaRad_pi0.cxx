@@ -156,21 +156,21 @@ int main (int argc, char *argv[]){
 
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(40,0.3,0.7)");
-	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(40,0.2,0.8)");
+	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(30,0.3,0.7)");
+	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(30,0.2,0.8)");
 
   // Handy strings for shower indices
   std::string shower_index1 = "reco_shower_ordered_energy_index[0]";
   std::string shower_index2 = "reco_shower_ordered_energy_index[1]";
 
 	//Train on "good" signals, defined as ones matched to the NCpi0 and have little "clutter" around.	
-  //std::string true_signal;
+  //std::string signal_training_definition;
   //std::string true_bkg;
 	std::string num_track_cut;
-  std::string true_signal = "sim_shower_overlay_fraction[0]<0.1 && sim_shower_overlay_fraction[1]<0.1 && sim_track_matched[0]==1 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111";
+  std::string signal_training_definition = "sim_shower_overlay_fraction[0]<0.2 && sim_shower_overlay_fraction[1]<0.2 && sim_track_matched[0]==1 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111";
 	std:: string true_bkg = "sim_shower_matched[0]==1 && sim_shower_matched[1]==1 && sim_track_matched[0]==1 && ( mctruth_cc_or_nc==0 || mctruth_num_exiting_pi0==0 )";
   if (analysis_tag == "2g1p") {
-    true_signal = true_signal+ "&& 1";
+    signal_training_definition = signal_training_definition+ "&& 1";
     true_bkg = true_bkg +"&& 1";
     num_track_cut =  "==1";
 
@@ -179,7 +179,7 @@ int main (int argc, char *argv[]){
   }
   /*
   else if (analysis_tag == "2g0p") {
-	  true_signal = "sim_shower_matched[0]==1 && sim_shower_matched[1]==1 && sim_track_matched[0]==0 && mctruth_num_exiting_pi0>0";
+	  signal_training_definition = "sim_shower_matched[0]==1 && sim_shower_matched[1]==1 && sim_track_matched[0]==0 && mctruth_num_exiting_pi0>0";
 	  true_bkg = "sim_shower_matched[0]==1 && sim_shower_matched[1]==1 && sim_track_matched[0]==0 && mctruth_num_exiting_pi0==0";
     bnb_bdt_info.setTopoName("2#gamma0p");
     cosmic_bdt_info.setTopoName("2#gamma0p");
@@ -205,7 +205,7 @@ int main (int argc, char *argv[]){
 	//***************************************************************************************************/
 	//***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
 	//***************************************************************************************************/
-	bdt_flow signal_pure_flow(base_cuts, 	signal_definition +"&&"+ true_signal, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow signal_pure_flow(base_cuts, 	signal_definition +"&&"+ signal_training_definition, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow signal_flow(base_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow cosmic_flow(base_cuts,		"1", 					vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
@@ -282,9 +282,8 @@ int main (int argc, char *argv[]){
 	double fcoscut;
 	double fbnbcut;
 	if(analysis_tag == "2g1p"){
-		fcoscut = 0.568;
-		fbnbcut = 0.4425;
-
+		fcoscut = 0.586775;
+		fbnbcut = 0.39921;
 	}else if(analysis_tag == "2g0p"){
 		fcoscut = 0.2;
 		fbnbcut = 0.2;

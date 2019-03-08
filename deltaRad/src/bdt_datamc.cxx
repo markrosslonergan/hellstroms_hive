@@ -22,7 +22,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 		std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
 		delete tmp;
 	}
-	std::string  binning = "(46,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
+	std::string  binning = "(30,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
 
 	bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
 	return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
@@ -293,6 +293,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 
+      /*
 			std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2) ;
 			TText *t = new TText(0.11,0.41,mean.c_str());
 			t->SetNDC();
@@ -300,6 +301,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			//t->SetTextFont(43);
 			t->SetTextSize(0.12);
 			t->Draw("same");
+      */
 
 			//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 			//var_precut.front()->GetYaxis()->SetTitle("Verticies");
@@ -339,7 +341,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 	//TCanvas *cobs = new TCanvas("","",1800,1600);
 	//cobs->Divide(2,2,0.0025,0.0000001);
 
-	double plot_pot=4.393e19;//4.801e19;
+	double plot_pot=4.893e19;//4.801e19;
 
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
@@ -569,6 +571,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 
 
+    /*
 		std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2) ;
 		TText *t = new TText(0.11,0.41,mean.c_str());
 		t->SetNDC();
@@ -576,6 +579,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 		//t->SetTextFont(43);
 		t->SetTextSize(0.12);
 		t->Draw("same");
+    */
 
 		//var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
 		//var_precut.front()->GetYaxis()->SetTitle("Verticies");

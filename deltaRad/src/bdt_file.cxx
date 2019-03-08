@@ -55,7 +55,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			double N_gen_cos = 991914.0;
 
 			double pot_bnb_cosmic = 2.16562e+21;
-			double pot_plot = 6.6e20;
+			double pot_plot = 13.2e20;
 
 			pot = pot_plot; 
 			this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos)*pot_plot/pot_bnb_cosmic;
