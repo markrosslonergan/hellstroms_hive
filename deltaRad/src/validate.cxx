@@ -39,7 +39,7 @@
 int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname);
 int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname, bool islog);
 int validateOverlay2(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string pdfname);
-
+int makeIncrementPlots (bdt_variable v_reco_shower_dedx_plane2, bdt_variable v_reco_shower_dedx_plane1,  bdt_variable v_reco_shower_dedx_plane0,std::string s_reco_shower_angle_wire_plane2, std::string s_reco_shower_angle_wire_plane1,std::string s_reco_shower_angle_wire_plane0, bdt_file* bnb_cosmics, bdt_file* data5e19);
 
 
 int main (int argc, char *argv[]){
@@ -290,11 +290,11 @@ int main (int argc, char *argv[]){
             std::string s_reco_shower_dedx_plane0 ="reco_shower_dEdx_plane0_median[0]";
             bdt_variable v_reco_shower_dedx_plane0 (s_reco_shower_dedx_plane0,"(48,0,6.5)", "Median Shower dE/dx plane 0 [MeV/cm]",false,"d");
 
-            double n_increments = 10;
-            double angle_increment = 3.14/(2*n_increments);
-            double angle_min = 0;
-            double angle_max = angle_min + angle_increment;
-
+            /* double n_increments = 10;
+               double angle_increment = 3.14/(2*n_increments);
+               double angle_min = 0;
+               double angle_max = angle_min + angle_increment;
+               */
             std::string proton_mass = "0.938272";
             std::string E1 = "reco_shower_energy["+shower_index1+"]";
             std::string E2 = "reco_shower_energy["+shower_index2+"]";
@@ -402,41 +402,12 @@ int main (int argc, char *argv[]){
 
 
 
-            std::string s_angle_min = std::to_string(angle_min);
-            std::string s_angle_max= std::to_string(angle_max);
-
-
-            for (int i = 1; i <= n_increments; i++){
-
-                std::string data_conditions_plane2 = "reco_asso_showers>0 &&"  + s_reco_shower_angle_wire_plane2+ " > " +s_angle_min + "     && " + s_reco_shower_angle_wire_plane2 + " <= " + s_angle_max;
-                std::string mc_conditions_plane2 = data_conditions_plane2 + "&& sim_shower_is_true_shower" ;
-
-
-                std::string data_conditions_plane1 = "reco_asso_showers>0 &&"  + s_reco_shower_angle_wire_plane1+ " > " +s_angle_min + "     && " + s_reco_shower_angle_wire_plane1 + " <= " + s_angle_max;
-                std::string mc_conditions_plane1 = data_conditions_plane1 + "&& sim_shower_is_true_shower" ;
-
-                std::string data_conditions_plane0 = "reco_asso_showers>0 &&"  + s_reco_shower_angle_wire_plane0+ " > " +s_angle_min + "     && " + s_reco_shower_angle_wire_plane0 + " <= " + s_angle_max;
-
-                std::string mc_conditions_plane0 = data_conditions_plane0 + "&& sim_shower_is_true_shower" ;
-
-                validateOverlay({v_reco_shower_dedx_plane2 },{bnb_cosmics}, {mc_conditions_plane2}, data5e19,{data_conditions_plane2}, "shower_dedx_plane2_angle_" + s_angle_min + "_" + s_angle_max ,false);
-                validateOverlay({v_reco_shower_dedx_plane1 },{bnb_cosmics}, {mc_conditions_plane1}, data5e19,{data_conditions_plane1}, "shower_dedx_plane1_angle_" + s_angle_min + "_" + s_angle_max ,false);
-                validateOverlay({v_reco_shower_dedx_plane0 },{bnb_cosmics}, {mc_conditions_plane0}, data5e19,{data_conditions_plane0}, "shower_dedx_plane0_angle_" + s_angle_min + "_" + s_angle_max ,false);
-
-
-
-                angle_min = angle_max;
-                angle_max = angle_min+angle_increment;
-                s_angle_min =  std::to_string(angle_min);
-                s_angle_max= std::to_string(angle_max);
-
-            } 
-
-
             //bdt_variable v_reco_shower_dedx_plane2 (s_reco_shower_dedx_plane2,"(48,0,6.5)", "Median Shower dE/dx plane 2 [MeV/cm]",false,"d");
             validateOverlay({v_reco_shower_dedx_plane2 },{bnb_cosmics}, {"reco_asso_showers>0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0  ", "shower_dedx_plane2",false);
             validateOverlay({v_reco_shower_dedx_plane1 },{bnb_cosmics}, {"reco_asso_showers>0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0  ", "shower_dedx_plane1", false);
             validateOverlay({v_reco_shower_dedx_plane0 },{bnb_cosmics}, {"reco_asso_showers>0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0  ", "shower_dedx_plane0",false);
+
+            makeIncrementPlots ( v_reco_shower_dedx_plane2, v_reco_shower_dedx_plane1, v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane2, s_reco_shower_angle_wire_plane1, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19);
 
 
             //Plot 1: ===========================================================================================
@@ -632,6 +603,51 @@ int main (int argc, char *argv[]){
 
         return 0;
 
+    }
+
+    int makeIncrementPlots (bdt_variable v_reco_shower_dedx_plane2, bdt_variable v_reco_shower_dedx_plane1,  bdt_variable v_reco_shower_dedx_plane0,std::string s_reco_shower_angle_wire_plane2, std::string s_reco_shower_angle_wire_plane1,std::string s_reco_shower_angle_wire_plane0, bdt_file* bnb_cosmics, bdt_file* data5e19){
+
+        double n_increments = 10;
+        double angle_increment = 3.14/(2*n_increments);
+        double angle_min = 0;
+        double angle_max = angle_min + angle_increment;
+
+
+        std::string s_angle_min = std::to_string(angle_min);
+        std::string s_angle_max= std::to_string(angle_max);
+
+
+        for (int i = 1; i <= n_increments; i++){
+
+            std::string data_conditions_plane2 = "reco_asso_showers>0 &&"  + s_reco_shower_angle_wire_plane2+ " > " +s_angle_min + "     && " + s_reco_shower_angle_wire_plane2 + " <= " + s_angle_max;
+            std::string mc_conditions_plane2 = data_conditions_plane2 + "&& sim_shower_is_true_shower" ;
+
+
+            std::string data_conditions_plane1 = "reco_asso_showers>0 &&"  + s_reco_shower_angle_wire_plane1+ " > " +s_angle_min + "     && " + s_reco_shower_angle_wire_plane1 + " <= " + s_angle_max;
+            std::string mc_conditions_plane1 = data_conditions_plane1 + "&& sim_shower_is_true_shower" ;
+
+            std::string data_conditions_plane0 = "reco_asso_showers>0 &&"  + s_reco_shower_angle_wire_plane0+ " > " +s_angle_min + "     && " + s_reco_shower_angle_wire_plane0 + " <= " + s_angle_max;
+
+            std::string mc_conditions_plane0 = data_conditions_plane0 + "&& sim_shower_is_true_shower" ;
+
+            validateOverlay({v_reco_shower_dedx_plane2 },{bnb_cosmics}, {mc_conditions_plane2}, data5e19,{data_conditions_plane2}, "shower_dedx_plane2_angle_" + s_angle_min + "_" + s_angle_max ,false);
+            validateOverlay({v_reco_shower_dedx_plane1 },{bnb_cosmics}, {mc_conditions_plane1}, data5e19,{data_conditions_plane1}, "shower_dedx_plane1_angle_" + s_angle_min + "_" + s_angle_max ,false);
+            validateOverlay({v_reco_shower_dedx_plane0 },{bnb_cosmics}, {mc_conditions_plane0}, data5e19,{data_conditions_plane0}, "shower_dedx_plane0_angle_" + s_angle_min + "_" + s_angle_max ,false);
+
+
+
+            angle_min = angle_max;
+            angle_max = angle_min+angle_increment;
+            s_angle_min =  std::to_string(angle_min);
+            s_angle_max= std::to_string(angle_max);
+
+        } 
+
+
+
+
+
+        return 0;
     }
 
 
