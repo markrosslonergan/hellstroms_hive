@@ -39,8 +39,7 @@
 int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname);
 int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname, bool islog);
 int validateOverlay2(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string pdfname);
-int makeIncrementPlots (bdt_variable v_reco_shower_dedx_plane2, bdt_variable v_reco_shower_dedx_plane1,  bdt_variable v_reco_shower_dedx_plane0,std::string s_reco_shower_angle_wire_plane2, std::string s_reco_shower_angle_wire_plane1,std::string s_reco_shower_angle_wire_plane0, bdt_file* bnb_cosmics, bdt_file* data5e19);
-
+int makeIncrementPlots(std::string name, bdt_variable variable, std::string cut_variable, bdt_file* bnb_cosmics, bdt_file* data5e19, int n_increments, double cut_val_max, double cut_val_min, std::string base_data_conditions, std::string base_mc_conditions);
 
 int main (int argc, char *argv[]){
 
@@ -407,7 +406,14 @@ int main (int argc, char *argv[]){
             validateOverlay({v_reco_shower_dedx_plane1 },{bnb_cosmics}, {"reco_asso_showers>0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0  ", "shower_dedx_plane1", false);
             validateOverlay({v_reco_shower_dedx_plane0 },{bnb_cosmics}, {"reco_asso_showers>0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0  ", "shower_dedx_plane0",false);
 
-            makeIncrementPlots ( v_reco_shower_dedx_plane2, v_reco_shower_dedx_plane1, v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane2, s_reco_shower_angle_wire_plane1, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19);
+            std::string data_conditions_shower = "reco_asso_showers>0";
+            std::string mc_conditions_shower = data_conditions_shower + "&& sim_shower_is_true_shower" ;
+
+            makeIncrementPlots ("median_shower_dedx_plane2",  v_reco_shower_dedx_plane2, s_reco_shower_angle_wire_plane2, bnb_cosmics, data5e19, 10, M_PI, 0., data_conditions_shower, mc_conditions_shower);
+            makeIncrementPlots ("median_shower_dedx_plane1",  v_reco_shower_dedx_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19,  10, M_PI, 0.,  data_conditions_shower, mc_conditions_shower);
+            makeIncrementPlots ("median_shower_dedx_plane0",  v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19,  10, M_PI, 0.,  data_conditions_shower, mc_conditions_shower);
+
+
 
 
             //Plot 1: ===========================================================================================
@@ -555,6 +561,8 @@ int main (int argc, char *argv[]){
         c->cd();
         c->SetLogy();
 
+
+
         TH1 *th1 =  (TH1*) files[0]->getTH1(vars[0], cuts[0], "photon_overlay_frac_"+std::to_string(0), 0, 1);
         c->cd();
         //th1->SetFillColor(kAzure+2);
@@ -569,6 +577,10 @@ int main (int argc, char *argv[]){
         TH1 *th2 =  (TH1*) files[0]->getTH1(vars[0], cuts[1], "photon_overlay_frac_"+std::to_string(1), 0, 1);
         //th2->SetFillColor(kGreen+2);
         th2->SetLineColor(kGreen+2);
+
+
+
+
         c->cd();
         th2->Draw("hist same");
         c->cd();
@@ -605,47 +617,32 @@ int main (int argc, char *argv[]){
 
     }
 
-    int makeIncrementPlots (bdt_variable v_reco_shower_dedx_plane2, bdt_variable v_reco_shower_dedx_plane1,  bdt_variable v_reco_shower_dedx_plane0,std::string s_reco_shower_angle_wire_plane2, std::string s_reco_shower_angle_wire_plane1,std::string s_reco_shower_angle_wire_plane0, bdt_file* bnb_cosmics, bdt_file* data5e19){
+    int makeIncrementPlots (std::string name, bdt_variable variable, std::string cut_variable, bdt_file* bnb_cosmics, bdt_file* data5e19, int n_increments, double cut_val_max, double cut_val_min,std::string base_data_conditions, std::string base_mc_conditions ){
 
-        double n_increments = 10;
-        double angle_increment = 3.14/(2*n_increments);
-        double angle_min = 0;
-        double angle_max = angle_min + angle_increment;
+        double increment = (cut_val_max - cut_val_min)/(2*n_increments);
+        double min = cut_val_min;
+        double max = cut_val_min + increment;
 
 
-        std::string s_angle_min = std::to_string(angle_min);
-        std::string s_angle_max= std::to_string(angle_max);
+        std::string s_min = std::to_string(min);
+        std::string s_max= std::to_string(max);
 
 
         for (int i = 1; i <= n_increments; i++){
 
-            std::string data_conditions_plane2 = "reco_asso_showers>0 &&"  + s_reco_shower_angle_wire_plane2+ " > " +s_angle_min + "     && " + s_reco_shower_angle_wire_plane2 + " <= " + s_angle_max;
-            std::string mc_conditions_plane2 = data_conditions_plane2 + "&& sim_shower_is_true_shower" ;
+            std::string cuts = cut_variable+ " > " +s_min + "     && " + cut_variable  + " <= " + s_max;
+            std::string data_conditions = base_data_conditions + "&& " + cuts;
+            std::string mc_conditions= base_mc_conditions + "&&" + cuts ;
 
 
-            std::string data_conditions_plane1 = "reco_asso_showers>0 &&"  + s_reco_shower_angle_wire_plane1+ " > " +s_angle_min + "     && " + s_reco_shower_angle_wire_plane1 + " <= " + s_angle_max;
-            std::string mc_conditions_plane1 = data_conditions_plane1 + "&& sim_shower_is_true_shower" ;
+           validateOverlay({variable },{bnb_cosmics}, {mc_conditions}, data5e19,{data_conditions}, name + "_" + s_min + "_" + s_max ,false);
 
-            std::string data_conditions_plane0 = "reco_asso_showers>0 &&"  + s_reco_shower_angle_wire_plane0+ " > " +s_angle_min + "     && " + s_reco_shower_angle_wire_plane0 + " <= " + s_angle_max;
-
-            std::string mc_conditions_plane0 = data_conditions_plane0 + "&& sim_shower_is_true_shower" ;
-
-            validateOverlay({v_reco_shower_dedx_plane2 },{bnb_cosmics}, {mc_conditions_plane2}, data5e19,{data_conditions_plane2}, "shower_dedx_plane2_angle_" + s_angle_min + "_" + s_angle_max ,false);
-            validateOverlay({v_reco_shower_dedx_plane1 },{bnb_cosmics}, {mc_conditions_plane1}, data5e19,{data_conditions_plane1}, "shower_dedx_plane1_angle_" + s_angle_min + "_" + s_angle_max ,false);
-            validateOverlay({v_reco_shower_dedx_plane0 },{bnb_cosmics}, {mc_conditions_plane0}, data5e19,{data_conditions_plane0}, "shower_dedx_plane0_angle_" + s_angle_min + "_" + s_angle_max ,false);
-
-
-
-            angle_min = angle_max;
-            angle_max = angle_min+angle_increment;
-            s_angle_min =  std::to_string(angle_min);
-            s_angle_max= std::to_string(angle_max);
+            min = max;
+            max = min+increment;
+            s_min =  std::to_string(min);
+            s_max= std::to_string(max);
 
         } 
-
-
-
-
 
         return 0;
     }
