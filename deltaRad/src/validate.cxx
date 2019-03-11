@@ -47,6 +47,7 @@ int main (int argc, char *argv[]){
 	//This is a standardized location on /pnfs/ that everyone can use. 
 	//std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
 	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v6/";
+	std::string newdir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/";
 	std::string olddir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
 	std::string mydir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/";
 
@@ -168,14 +169,14 @@ int main (int argc, char *argv[]){
 
 	bdt_file *signal_cosmics = new bdt_file(olddir, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
 	bdt_file *bnb_cosmics = new bdt_file(olddir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
-	bdt_file *bnb_cosmics_v6 = new bdt_file(dir, "bnb_overlay_run1_v6.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+	bdt_file *bnb_cosmics_v7 = new bdt_file(newdir, "vertexed_mcc9_v7", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
 	bdt_file *data5e19  = new bdt_file(olddir, "data_mcc9_v5.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
 	bdt_file *data5e19_v6    = new bdt_file(mydir, "vertexed_data5e19_v6.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
 	bdt_file *bnbext    = new bdt_file(olddir, "bnbext_mcc9_v5.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
   TFile *fin_data_v6 = new TFile("/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/vertexed_data5e19_v6.root", "READ");
 	//std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics, bnbext, data5e19};
-	std::vector<bdt_file*> bdt_files = {bnb_cosmics, bnb_cosmics_v6, data5e19, data5e19_v6};
+	std::vector<bdt_file*> bdt_files = {bnb_cosmics, bnb_cosmics_v7, data5e19, data5e19_v6};
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -208,7 +209,7 @@ int main (int argc, char *argv[]){
 	//Adding plot names
 //	signal_cosmics->addPlotName("LEE NC #Delta Rad w/ Overlay");
 	bnb_cosmics->addPlotName("BNB w/ Overlay");
-	bnb_cosmics_v6->addPlotName("BNB w/ Overlay");
+	bnb_cosmics_v7->addPlotName("BNB w/ Overlay");
   data5e19->addPlotName("4.8e19 POT Data");
   data5e19_v6->addPlotName("4.8e19 POT Data");
 	bnbext->addPlotName("External BNB Data");
@@ -272,23 +273,21 @@ int main (int argc, char *argv[]){
     //std::string my_dataCuts = "reco_asso_showers==2 && reco_asso_tracks==1 && sim_shower_is_true_shower && "+E2+">0.1";
 
     // Do the stuff, make the plots
-    /*
     bdt_variable invmass(invariant_mass,"(12, 0, 0.5)","#pi^{0} Invariant Mass [GeV]","false","d");
     validateOverlay({invmass},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "pi0_invmass_v5");
-    validateOverlay({invmass},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "pi0_invmass_v6");
+    validateOverlay({invmass},{bnb_cosmics_v7}, {my_mcCuts}, data5e19_v6, my_dataCuts, "pi0_invmass_v6");
 
     bdt_variable centerOfMass_angle(cm_angle,"(12, 0, 1.0)","#theta^{CM}_{#gamma #gamma}","false","d");
     validateOverlay({centerOfMass_angle},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "cmangle_v5");
-    validateOverlay({centerOfMass_angle},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "cmangle_v6");
+    validateOverlay({centerOfMass_angle},{bnb_cosmics_v7}, {my_mcCuts}, data5e19_v6, my_dataCuts, "cmangle_v6");
 
     bdt_variable pion_momentum(p_pi, "(12, 0, 0.5)", "Reco. #pi^{0} Momentum [GeV]", "false", "d");
     validateOverlay({pion_momentum},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "pimom_v5");
-    validateOverlay({pion_momentum},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "pimom_v6");
+    validateOverlay({pion_momentum},{bnb_cosmics_v7}, {my_mcCuts}, data5e19_v6, my_dataCuts, "pimom_v6");
 
     bdt_variable energy_ratio(Eratio, "(10, 1, 10)", "Ratio of Shower Energies [GeV]", "false", "d");
     validateOverlay({energy_ratio},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "e_ratio_v5");
-    validateOverlay({energy_ratio},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "e_ratio_v6");
-    */
+    validateOverlay({energy_ratio},{bnb_cosmics_v7}, {my_mcCuts}, data5e19_v6, my_dataCuts, "e_ratio_v6");
      std::string s_reco_vertex_res ="(sqrt(pow(reco_vertex_x - mctruth_nu_vertex_x,2)-pow(reco_vertex_y - mctruth_nu_vertex_y,2)-pow(reco_vertex_z - mctruth_nu_vertex_z,2)))";
      bdt_variable v_reco_vertex_res (s_reco_vertex_res,"(54,0,100)","Vertex Resolutione cm", false,"d");
     
@@ -328,7 +327,7 @@ int main (int argc, char *argv[]){
     bdt_variable overlay_fraction("sim_shower_overlay_fraction", "(50, 0, 1)", "Shower Overlay Fraction", "false", "d");
     std::vector<std::string> showerCuts = {"reco_asso_showers>0", "reco_asso_showers==1", "reco_asso_showers==2", "reco_asso_showers==3"};
     validateOverlay2({overlay_fraction}, {bnb_cosmics}, showerCuts, "overlay_frac_v5");
-    validateOverlay2({overlay_fraction}, {bnb_cosmics_v6}, showerCuts, "overlay_frac_v6");
+    validateOverlay2({overlay_fraction}, {bnb_cosmics_v7}, showerCuts, "overlay_frac_v7");
 
 
      //Plot 1: ===========================================================================================

@@ -165,27 +165,25 @@ int main (int argc, char *argv[]){
 
 	//Train on "good" signals, defined as ones matched to the NCpi0 and have little "clutter" around.	
   //std::string signal_training_definition;
-  //std::string true_bkg;
+  //std::string bnb_bkg_training_def;
 	std::string num_track_cut;
-  std::string signal_training_definition = "sim_shower_overlay_fraction[0]<0.2 && sim_shower_overlay_fraction[1]<0.2 && sim_track_matched[0]==1 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111";
-	std:: string true_bkg = "sim_shower_matched[0]==1 && sim_shower_matched[1]==1 && sim_track_matched[0]==1 && ( mctruth_cc_or_nc==0 || mctruth_num_exiting_pi0==0 )";
+  std::string signal_training_definition = "sim_shower_overlay_fraction[0]<0.2 && sim_shower_overlay_fraction[1]<0.2 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111";
+	std::string bnb_bkg_training_def = "( mctruth_cc_or_nc==0 || mctruth_num_exiting_pi0==0 )";
   if (analysis_tag == "2g1p") {
-    signal_training_definition = signal_training_definition+ "&& 1";
-    true_bkg = true_bkg +"&& 1";
+    signal_training_definition = signal_training_definition+ "&& sim_track_matched[0]==1";
+    bnb_bkg_training_def = bnb_bkg_training_def +"&& 1";
     num_track_cut =  "==1";
 
     bnb_bdt_info.setTopoName("2#gamma1p");
     cosmic_bdt_info.setTopoName("2#gamma1p");
   }
-  /*
   else if (analysis_tag == "2g0p") {
-	  signal_training_definition = "sim_shower_matched[0]==1 && sim_shower_matched[1]==1 && sim_track_matched[0]==0 && mctruth_num_exiting_pi0>0";
-	  true_bkg = "sim_shower_matched[0]==1 && sim_shower_matched[1]==1 && sim_track_matched[0]==0 && mctruth_num_exiting_pi0==0";
+	  //signal_training_definition = "sim_shower_matched[0]==1 && sim_shower_matched[1]==1 && sim_track_matched[0]==0 && mctruth_num_exiting_pi0>0";
+	  //bnb_bkg_training_def = "sim_shower_matched[0]==1 && sim_shower_matched[1]==1 && sim_track_matched[0]==0 && mctruth_num_exiting_pi0==0";
     bnb_bdt_info.setTopoName("2#gamma0p");
     cosmic_bdt_info.setTopoName("2#gamma0p");
     num_track_cut = "==0";
   }
-  */
   else  {
     std::cout << "Invalid analysis tag" << std::endl;
     return 1;
@@ -209,14 +207,19 @@ int main (int argc, char *argv[]){
 	bdt_flow signal_flow(base_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow cosmic_flow(base_cuts,		"1", 					vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow bkg_pure_flow(base_cuts,	background_definition+"&&"+ true_bkg ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow bkg_pure_flow(base_cuts,	background_definition+"&&"+ bnb_bkg_training_def ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	bdt_file *signal_pure = new bdt_file(mydir, "ncpi0_35k_homebrew.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(mydir, "ncpi0_35k_homebrew.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
-	bdt_file *bnb_pure = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root ", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
+	//bdt_file *signal_pure = new bdt_file(mydir, "ncpi0_35k_homebrew.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_pure_flow);
+	//bdt_file *signal_cosmics = new bdt_file(mydir, "ncpi0_35k_homebrew.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
+  std::string markdir = "/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/Mar2019/";
+	bdt_file *signal_pure = new bdt_file(markdir, "ncpi0_homebrewoverlay_mcc9_v7.0.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_pure_flow);
+	bdt_file *signal_cosmics = new bdt_file(markdir, "ncpi0_homebrewoverlay_mcc9_v7.0.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
+	//bdt_file *bnb_pure = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
+	//bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root ", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
+	bdt_file *bnb_pure = new bdt_file(dir, "vertexed_mcc9_v7", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_mcc9_v7", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
 
 	//Data files
 	bdt_file *data5e19 = new bdt_file(dir, "data_mcc9_v5.0.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
@@ -282,8 +285,10 @@ int main (int argc, char *argv[]){
 	double fcoscut;
 	double fbnbcut;
 	if(analysis_tag == "2g1p"){
-		fcoscut = 0.586775;
-		fbnbcut = 0.39921;
+		//fcoscut = 0.586775;
+		//fbnbcut = 0.39921;
+		fcoscut = 0.562;
+		fbnbcut = 0.417;
 	}else if(analysis_tag == "2g0p"){
 		fcoscut = 0.2;
 		fbnbcut = 0.2;
@@ -508,9 +513,9 @@ int main (int argc, char *argv[]){
 		std::string YMIN = "-116.5"; std::string YMAX = "116.5";
 		std::string pmass = "0.938272";
 
-        std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+20 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
+        std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-10 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
     
-        std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_num_exiting_pi0 == 2", fid_cut}; 
+        std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_num_exiting_pi0 == 1", "mctruth_pi0_leading_photon_energy > 0.02", "mctruth_pi0_subleading_photon_energy > 0.02", fid_cut}; 
         //std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_num_exiting_pi0 == 2", fid_cut, "mctruth_delta_proton_energy > "+pmass+"+0.04"}; 
         std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==2","reco_asso_tracks==1"};
 
