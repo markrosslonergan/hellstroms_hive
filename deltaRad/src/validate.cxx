@@ -409,9 +409,13 @@ int main (int argc, char *argv[]){
             std::string data_conditions_shower = "reco_asso_showers>0";
             std::string mc_conditions_shower = data_conditions_shower + "&& sim_shower_is_true_shower" ;
 
-            makeIncrementPlots ("median_shower_dedx_plane2",  v_reco_shower_dedx_plane2, s_reco_shower_angle_wire_plane2, bnb_cosmics, data5e19, 10, M_PI, 0., data_conditions_shower, mc_conditions_shower);
-            makeIncrementPlots ("median_shower_dedx_plane1",  v_reco_shower_dedx_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19,  10, M_PI, 0.,  data_conditions_shower, mc_conditions_shower);
-            makeIncrementPlots ("median_shower_dedx_plane0",  v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19,  10, M_PI, 0.,  data_conditions_shower, mc_conditions_shower);
+            makeIncrementPlots ("median_shower_dedx_plane2",  v_reco_shower_dedx_plane2, s_reco_shower_angle_wire_plane2, bnb_cosmics, data5e19, 10, M_PI/2, 0., data_conditions_shower, mc_conditions_shower);
+            makeIncrementPlots ("median_shower_dedx_plane1",  v_reco_shower_dedx_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19,  10, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
+            makeIncrementPlots ("median_shower_dedx_plane0",  v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19,  10, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
+
+
+            std::string s_reco_shower_energy = "reco_shower_energy[0]/1000.0";
+            makeIncrementPlots ("median_shower_dedx_plane2_wrt_shower_energy",  v_reco_shower_dedx_plane2, s_reco_shower_energy, bnb_cosmics, data5e19, 10, 1., 0., data_conditions_shower, mc_conditions_shower);
 
 
 
@@ -619,7 +623,9 @@ int main (int argc, char *argv[]){
 
     int makeIncrementPlots (std::string name, bdt_variable variable, std::string cut_variable, bdt_file* bnb_cosmics, bdt_file* data5e19, int n_increments, double cut_val_max, double cut_val_min,std::string base_data_conditions, std::string base_mc_conditions ){
 
-        double increment = (cut_val_max - cut_val_min)/(2*n_increments);
+        
+
+        double increment = (cut_val_max - cut_val_min)/(n_increments);
         double min = cut_val_min;
         double max = cut_val_min + increment;
 
@@ -635,7 +641,7 @@ int main (int argc, char *argv[]){
             std::string mc_conditions= base_mc_conditions + "&&" + cuts ;
 
 
-           validateOverlay({variable },{bnb_cosmics}, {mc_conditions}, data5e19,{data_conditions}, name + "_" + s_min + "_" + s_max ,false);
+           validateOverlay({variable },{bnb_cosmics}, {mc_conditions}, data5e19,{data_conditions}, name + "_" + std::to_string(i) ,false);
 
             min = max;
             max = min+increment;
