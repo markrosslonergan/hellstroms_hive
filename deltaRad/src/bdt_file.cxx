@@ -95,7 +95,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		  std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
     }
 
-    if(tag == "NCPi0" || tag=="NCPi0Cosmics"){
+    if(tag == "NCPi0" || tag=="NCPi0Cosmics" || "NCPi0FailedCosmics"){
       //MCC9 pot issues
       //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
       // nc_fraction calculated by opening bnb_nu_overlay_combined_whatever and
@@ -163,11 +163,26 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 
         //so that is
+        // v5 values 
         double ext=15435961.0;//47953078.0; //External spills in each sample (EXT)
-		double spill_on=11595542.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
-		double datanorm =4.898e19;// tor860_wcut run-subrunlist;
+		    double spill_on=11595542.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
+		    double datanorm =4.898e19;// tor860_wcut run-subrunlist;
+
+        // March 11th mini-retreat BNBext sample
+        //    EXT         Gate2        E1DCNT        tor860        tor875       E1DCNT_wcut    tor860_wcut   tor875_wcut
+        //    15095058.0  21882986.0   21893697.0    9.096e+19     9.084e+19    17720712.0     7.978e+19     7.967e+19
+
+        // March 11th data v7 values
+        //    EXT         Gate2        E1DCNT        tor860        tor875      E1DCNT_wcut   tor860_wcut   tor875_wcut
+        //    5850781.0   11499004.0   11503891.0    4.912e+19     4.906e+19   10953185.0    4.911e+19     4.905e+19
+        /*
+        double ext=15095058.0;//47953078.0; //External spills in each sample (EXT)
+		    double spill_on=10953185.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
+		    double datanorm =4.911e19;// tor860_wcut run-subrunlist;
+        */
 
         double Noff_full = 200433.0; //this is full samweb events
+        //double Noff_full = 195809.0;
         double Noff_have = numberofevents;
 
         //This is old MCC8 one

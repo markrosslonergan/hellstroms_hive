@@ -154,6 +154,15 @@ int main (int argc, char *argv[]){
 	//We dont currently use postcuts
 	std::string postcuts = "1";
 
+  // Signal definitions
+  std::string ZMIN = "0.0"; std::string ZMAX = "1036.8";
+  std::string XMIN = "0.0"; std::string XMAX = "256.35";
+  std::string YMIN = "-116.5"; std::string YMAX = "116.5";
+  std::string pmass = "0.938272";
+
+  std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-10 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
+
+  std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_pi0_subleading_photon>0.02 && mctruth_delta_proton_energy>0.04"+pmass+")";
 
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	//Set up some info about the BDTs to pass along
@@ -197,37 +206,45 @@ int main (int argc, char *argv[]){
 
 	std::string base_cuts = "reco_vertex_size==1 && reco_asso_showers==2 && reco_asso_tracks "+num_track_cut;
 	//std::string signal_definition = "mctruth_num_exiting_pi0>0";
-	std::string signal_definition = "1";
 	std::string background_definition = "(mctruth_num_exiting_pi0==0 || mctruth_cc_or_nc==0)";
 
 
 	//***************************************************************************************************/
 	//***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
 	//***************************************************************************************************/
-	bdt_flow signal_pure_flow(base_cuts, 	signal_definition +"&&"+ signal_training_definition, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow signal_training_flow(base_cuts, 	signal_definition +"&&"+ signal_training_definition, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow signal_flow(base_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow signal_failed_flow(base_cuts, 	"!("+signal_definition+")" , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow cosmic_flow(base_cuts,		"1", 					vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow bkg_pure_flow(base_cuts,	background_definition+"&&"+ bnb_bkg_training_def ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 	// BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-	//bdt_file *signal_pure = new bdt_file(mydir, "ncpi0_35k_homebrew.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_pure_flow);
+	//bdt_file *signal_pure = new bdt_file(mydir, "ncpi0_35k_homebrew.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_training_flow);
 	//bdt_file *signal_cosmics = new bdt_file(mydir, "ncpi0_35k_homebrew.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
   std::string markdir = "/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/Mar2019/";
-	bdt_file *signal_pure = new bdt_file(newdir, "ncpi0_homebrewoverlay_mcc9_v7.0.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_pure_flow);
+	bdt_file *signal_pure = new bdt_file(dir, "ncpi0_overlay_mcc9_35khomebrew_v5.0.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_training_flow);
+	bdt_file *signal_cosmics = new bdt_file(dir, "ncpi0_overlay_mcc9_35khomebrew_v5.0.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
+	bdt_file *signal_failed_cosmics = new bdt_file(dir, "ncpi0_overlay_mcc9_35khomebrew_v5.0.root", "NCPi0FailedCosmics", "hist","singlephoton/", kRed-7, signal_failed_flow);
+	bdt_file *bnb_pure = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root ", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
+	//Data files
+	bdt_file *data5e19 = new bdt_file(dir, "data_mcc9_v5.0.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
+	bdt_file *bnbext = new bdt_file(dir, "bnbext_mcc9_v5.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
+  /*
+	bdt_file *signal_pure = new bdt_file(newdir, "ncpi0_homebrewoverlay_mcc9_v7.0.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_training_flow);
 	bdt_file *signal_cosmics = new bdt_file(newdir, "ncpi0_homebrewoverlay_mcc9_v7.0.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
-	//bdt_file *bnb_pure = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
-	//bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root ", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
 	bdt_file *bnb_pure = new bdt_file(newdir, "bnb_overlay_run1_v7.0.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(newdir, "bnb_overlay_run1_v7.0.root", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
 
 	//Data files
-	bdt_file *data5e19 = new bdt_file(dir, "data_mcc9_v5.0.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
-	bdt_file *bnbext = new bdt_file(dir, "bnbext_mcc9_v5.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
+	bdt_file *data5e19 = new bdt_file(mydir, "vertexed_data5e19_v6.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
+	bdt_file *bnbext = new bdt_file(newdir, "bnbext_run1_v7.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
+  */
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
-	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, data5e19, bnbext};
+	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, signal_failed_cosmics, bnb_pure, bnb_cosmics, data5e19, bnbext};
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -269,6 +286,7 @@ int main (int argc, char *argv[]){
 	//Adding plot names
 	signal_pure->addPlotName("NC Pi0");
 	signal_cosmics->addPlotName("NC Pi0 w/ Overlays");
+	signal_failed_cosmics->addPlotName("Failed NC Pi0 w/ Overlays");
 	bnb_pure->addPlotName("BNB Backgrounds");
 	bnb_cosmics->addPlotName("BNB w/ Overlays");
 	data5e19->addPlotName("4.8e19 POT Data");
@@ -415,6 +433,8 @@ int main (int argc, char *argv[]){
 	}else if(mode_option == "stack"){
 		bdt_stack histogram_stack(analysis_tag+"_stack");
 		histogram_stack.addToStack(signal_cosmics);
+		signal_failed_cosmics->fillstyle = 3333;
+		histogram_stack.addToStack(signal_failed_cosmics);
 		histogram_stack.addToStack(bnb_cosmics);
 
 		//Add bnbext but change the color and style first
@@ -451,6 +471,8 @@ int main (int argc, char *argv[]){
 		bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
 		histogram_stack->plot_pot = 4.898e19;
 		histogram_stack->addToStack(signal_cosmics);
+		signal_failed_cosmics->fillstyle = 3333;
+		histogram_stack.addToStack(signal_failed_cosmics);
 		histogram_stack->addToStack(bnb_cosmics);
 		bnbext->fillstyle = 3333;
 		histogram_stack->addToStack(bnbext);
@@ -509,13 +531,6 @@ int main (int argc, char *argv[]){
 
 	} else if(mode_option == "eff"){
 
-    	std::string ZMIN = "0.0"; std::string ZMAX = "1036.8";
-		std::string XMIN = "0.0"; std::string XMAX = "256.35";
-		std::string YMIN = "-116.5"; std::string YMAX = "116.5";
-		std::string pmass = "0.938272";
-
-        std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-10 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
-    
         std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_num_exiting_pi0 == 1", "mctruth_pi0_leading_photon_energy > 0.02", "mctruth_pi0_subleading_photon_energy > 0.02", fid_cut}; 
         //std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_num_exiting_pi0 == 2", fid_cut, "mctruth_delta_proton_energy > "+pmass+"+0.04"}; 
         std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==2","reco_asso_tracks==1"};
