@@ -169,16 +169,15 @@ int main (int argc, char *argv[]){
     /***************************** DEFINITION *****************************/
 
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-    std::string true_signal = "sim_shower_matched[0]==1";
-    //The last constraint is applied in the LEEd/
+    std::string true_signal = "abs(mctruth_nu_pdg)==12&&mctruth_interaction_type==1001&&sim_shower_matched[0]==1&& sim_shower_overlay_fraction[0]<0.2&&mctruth_lepton_E[0]>0.02 && mctruth_exiting_proton_energy[0]>0.04&&(reco_shower_energy[0]/1000<(mctruth_lepton_E[0]*0.8+0.2))&&(reco_shower_energy[0]/1000>(mctruth_lepton_E[0]*0.55-0.05))";
 
     //This is for selecting true BNB background.
-    std::string true_bkg    = true_signal;
+    std::string true_bkg    = "sim_shower_matched[0]==1&&sim_shower_overlay_fraction[0]<0.2";
     std::string num_track_cut ;
 
     if(analysis_tag == "electron1"){//1e1p
 	true_signal = true_signal+ "&& sim_track_matched[0]==1"; 
-	true_bkg = true_signal;//true BNB bkg
+	true_bkg = true_bkg+"&& sim_track_matched[0]==1";//true BNB bkg
 	num_track_cut =  "== 1";
 
 	bnb_bdt_info.setTopoName("1e1p");
@@ -196,22 +195,22 @@ int main (int argc, char *argv[]){
     }
 
 
+    std::string base_cuts = "reco_vertex_size==1 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 //    if(mode_option == "vars" || mode_option == "var" || mode_option == "train") vec_precuts.erase(vec_precuts.begin());
 
-    std::string base_cuts = "reco_vertex_size==1 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
-    //ADD interaction_type==1001 for CCQE
-    std::string signal_definition = "abs(mctruth_nu_pdg)==12 && mctruth_interaction_type==1001";// && sim_shower_energy[0]>0.02 && sim_track_energy[0]>0.04";
-//    std::string signal_definition = "abs(nu_pdg) == 12 && (exiting_electron_number==1||exiting_antielectron_number==1)&&exiting_piplus_number==0&&exiting_piminus_number==0&&exiting_pi0_number==0&&true_shower_energy[0]>0.02&&true_track_energy[0]>0.04";//abs(nu_pdg)=12 are all satisfied in signal sample.
+    std::string signal_definition = "(mctruth_nu_pdg==12&&mctruth_num_exiting_protons == 1&& ((mctruth_num_exiting_pi0+mctruth_num_exiting_pipm) ==0))";
     //expected 28.9 nue or 24.8 LEEnue  in 1e20 POT at E<0.7GeV  
-    std::string background_definition = "!("+signal_definition+")";
-    
+
+    std::string background_definition = "(abs(mctruth_nu_pdg)!=12||mctruth_cc_or_nc==1)";
+    //non-CCQE nue events and CC but not CCQEnue events not going into signal or backgroun
 
 
     //***************************************************************************************************/
     //********** The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  **********/
     //***************************************************************************************************/
     //pure_flow are also well-constructed vertices.
-    bdt_flow signal_pure_flow(base_cuts	, signal_definition +"&&"+ true_signal	, vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
+    bdt_flow signal_pure_flow(base_cuts	, "("+true_signal+")"	, vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
+//    bdt_flow signal_pure_flow(base_cuts	, signal_definition +"&&"+true_signal	, vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
     bdt_flow signal_flow(base_cuts	, signal_definition			, vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
 
     bdt_flow cosmic_flow(base_cuts	, "1"					, vec_precuts,	postcuts, cosmic_bdt_info, bnb_bdt_info);
@@ -227,19 +226,21 @@ int main (int argc, char *argv[]){
      * bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
      * This means: bdt_file (directory, file name, tag to passed along, what plots , color, how to use it)
      */
-//    bdt_file *signal_pure   = new bdt_file( dir, "vertexed_ncdeltarad_overlay_mcc9_v4.2.root", "LEEunfolded"		, "hist","singlephoton/", kCyan-3 , signal_pure_flow	);//unfolded means reweighted
-//    bdt_file *signal_cosmics= new bdt_file( dir, "vertexed_ncdeltarad_overlay_mcc9_v4.2.root", "LEEunfoldedCosmics"	, "hist","singlephoton/", kCyan-3 , signal_flow	);
-    bdt_file *signal_pure   = new bdt_file( dir, "vertexed_nueintrinsic_overlay_mcc9_v4.2.root", "LEEunfolded"		, "hist","singlephoton/", kCyan-3 , signal_pure_flow	);//unfolded means reweighted
-    bdt_file *signal_cosmics= new bdt_file( dir, "vertexed_nueintrinsic_overlay_mcc9_v4.2.root", "LEEunfoldedCosmics"	, "hist","singlephoton/", kCyan-3 , signal_flow	);
+    //In the intrinsicNue sample:
+    //mctruth_nu_vertex_x \in [-1.78,257.99]
+    //mctruth_nu_vertex_y \in [-115.45,117.41]
+    //mctruth_nu_vertex_x \in [0.13,1036.54]
+    bdt_file *signal_pure   = new bdt_file( dir, "nueintrinsic_overlay_mcc9_v5.0.root", "LEEunfolded"		, "hist","singlephoton/", kCyan-3 , signal_pure_flow	);//unfolded means reweighted
+    bdt_file *signal_cosmics= new bdt_file( dir, "nueintrinsic_overlay_mcc9_v5.0.root", "LEEunfoldedCosmics"	, "hist","singlephoton/", kCyan-3 , signal_flow	);
 
-    bdt_file *bnb_pure    = new bdt_file(dir, "vertexed_bnb_overlay_combined_v3v4_mcc9_v4.1.root", "BNBPure",	  "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
-    bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_bnb_overlay_combined_v3v4_mcc9_v4.1.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *bnb_pure    = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBPure",	  "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
+    bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
     
     //two data files
-    bdt_file *data5e19    = new bdt_file(dir, "vertexed_data_mcc9_v4.0_AGAIN.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *bnbext    = new bdt_file(dir, "vertexed_bnbext_mcc9_v4.0_again.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
+    bdt_file *data5e19    = new bdt_file(dir, "data_mcc9_v5.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *bnbext    = new bdt_file(dir, "bnbext_mcc9_v5.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
-    bdt_file *intrinsics    = new bdt_file( dir, "vertexed_nueintrinsic_overlay_mcc9_v4.2.root", "NueIntrinsicCosmics"	, "hist","singlephoton/", kRed-7  , intrinsic_flow	);
+    bdt_file *intrinsics    = new bdt_file( dir, "nueintrinsic_overlay_mcc9_v5.0.root", "NueIntrinsicCosmics"	, "hist","singlephoton/", kRed-7  , intrinsic_flow	);
     
     //For conviencance fill a vector with pointers to all the files to loop over.
     std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics, signal_pure, bnb_pure, bnbext,data5e19, bnb_cosmics, intrinsics};
@@ -273,7 +274,7 @@ int main (int argc, char *argv[]){
 
 	    if(mode_option != "app" && mode_option != "train" && mode_option !="vars") f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 
-	    if(f->tag == "LEEunfolded" || f->tag == "LEEunfoldedCosmics") f->tvertex->AddFriend("lee_signal_weights","/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v2/vertexed_nueintrinsics_lee_signal_weights.root");
+	    if(f->tag == "LEEunfolded" || f->tag == "LEEunfoldedCosmics") f->tvertex->AddFriend("lee_signal_weights","/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/lee_weights_for_nueintrinsic_overlay_mcc9_v5.0.root");
 
 
 	    std::cout<<"Filling Base EntryLists on File  "<<f->tag<<std::endl;
@@ -337,7 +338,6 @@ int main (int argc, char *argv[]){
 	    if(run_cosmic) bdt_app(cosmic_bdt_info, {bdt_files[number]}, vars, TMVAmethods);
 	    if(run_bnb)    bdt_app(bnb_bdt_info, {bdt_files[number]}, vars, TMVAmethods);
 	}
-
 	return 0;
     }
     else if(mode_option == "response"){
@@ -554,16 +554,21 @@ int main (int argc, char *argv[]){
 	histogram_stack->addToStack(bnbext);
 
 	int ip=0;
-
-
+	
+	std::vector<bool> subv = {false,false,true};
 	if(!response_only){
 	    if(number != -1){
 		bdt_datamc datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
+		
+		datamc.setSubtractionVector(subv);
+
 		std::vector<bdt_variable> tmp_var = {vars.at(number)};
 		datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
 	    }else{
 
 		bdt_datamc real_datamc(data5e19, histogram_stack, analysis_tag+"_datamc");	
+		real_datamc.setSubtractionVector(subv);
+
 		real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 	    }
 	}else{
