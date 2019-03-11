@@ -39,6 +39,7 @@ int main (int argc, char *argv[]){
 
 	//This is a standardized location on /pnfs/ that everyone can use. 
 	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5";
+	std::string newdir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v7";
 	std::string olddir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v2";
   std::string mydir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples";
   std::string datadir = "/uboone/data/users/amogan/v08_00_00_01/singlePhoton/samples";
@@ -214,12 +215,12 @@ int main (int argc, char *argv[]){
 	//bdt_file *signal_pure = new bdt_file(mydir, "ncpi0_35k_homebrew.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_pure_flow);
 	//bdt_file *signal_cosmics = new bdt_file(mydir, "ncpi0_35k_homebrew.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
   std::string markdir = "/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/Mar2019/";
-	bdt_file *signal_pure = new bdt_file(markdir, "ncpi0_homebrewoverlay_mcc9_v7.0.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_pure_flow);
-	bdt_file *signal_cosmics = new bdt_file(markdir, "ncpi0_homebrewoverlay_mcc9_v7.0.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
+	bdt_file *signal_pure = new bdt_file(newdir, "ncpi0_homebrewoverlay_mcc9_v7.0.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_pure_flow);
+	bdt_file *signal_cosmics = new bdt_file(newdir, "ncpi0_homebrewoverlay_mcc9_v7.0.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
 	//bdt_file *bnb_pure = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
 	//bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root ", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
-	bdt_file *bnb_pure = new bdt_file(dir, "vertexed_mcc9_v7", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dir, "vertexed_mcc9_v7", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
+	bdt_file *bnb_pure = new bdt_file(newdir, "bnb_overlay_run1_v7.0.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(newdir, "bnb_overlay_run1_v7.0.root", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
 
 	//Data files
 	bdt_file *data5e19 = new bdt_file(dir, "data_mcc9_v5.0.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
