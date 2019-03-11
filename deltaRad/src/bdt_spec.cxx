@@ -317,7 +317,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			f->setStageEntryList(s);
 
             //Also usable on BNBCosmics
-			if(s==3 && false && f->tag == "NCDeltaRadCosmics") f->tvertex->Scan("run_number:subrun_number:event_number:reco_nuvertx:reco_nuverty:reco_nuvertz:reco_track_vertdirx[0]:reco_track_vertdiry[0]:reco_track_vertdirz[0]:reco_shower_startx[0]:reco_shower_starty[0]:reco_shower_startz[0]:reco_shower_dirx[0]:reco_shower_diry[0]:reco_shower_dirz[0]");
+			if(s==3 && false && f->tag == "NCPi0Cosmics") f->tvertex->Scan("run_number:subrun_number:event_number:reco_nuvertx:reco_nuverty:reco_nuvertz:reco_track_vertdirx[0]:reco_track_vertdiry[0]:reco_track_vertdirz[0]:reco_shower_startx[0]:reco_shower_starty[0]:reco_shower_startz[0]:reco_shower_dirx[0]:reco_shower_diry[0]:reco_shower_dirz[0]");
 		}	
 		std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 
@@ -380,7 +380,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			titbdt2->Draw();
 
 			//cobs->Write();
-			cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+			cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 			delete cobs;
 			delete stk;
@@ -654,7 +654,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 
 	cobs->Write();
-	cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+".pdf").c_str(),"pdf");
+	cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+".png").c_str(),"png");
 	//cobs->SaveAs(("stack/"+var.name+".png").c_str(),"png");
 
 
@@ -878,7 +878,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 
 
 	cobs->Write();
-	cobs->SaveAs(("stack/"+this->name+ "_response_"+var.safe_unit+".pdf").c_str(),"pdf");
+	cobs->SaveAs(("stack/"+this->name+ "_response_"+var.safe_unit+".png").c_str(),"png");
 
 	return 0;
 }

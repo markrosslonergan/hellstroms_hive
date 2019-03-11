@@ -43,11 +43,11 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	
 
 	//for nice plots make the 50, 25 is quicker tho
-	int nsteps_cosmic = 30;//50
+	int nsteps_cosmic = 40;//50
 	double cut_min_cosmic = 999;
 	double cut_max_cosmic = -999;
 
-	int nsteps_bnb = 30;//50
+	int nsteps_bnb = 40;//50
 	double cut_min_bnb = 999;//0.52;
 	double cut_max_bnb = -999;
 	
@@ -70,11 +70,13 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 		if( tmax_bnb >= cut_max_bnb) cut_max_bnb=tmax_bnb;
 
 	}
-	cut_min_cosmic = cut_max_cosmic*0.8;
-	cut_min_bnb = cut_max_bnb*0.8;
+  // Normally *0.7 or *0.8
+	cut_min_cosmic = cut_max_cosmic*0.7;
+	cut_min_bnb = cut_max_bnb*0.6;
 
-	cut_max_cosmic =cut_max_cosmic*1.0;
-	cut_max_bnb =cut_max_bnb*1.0;
+  // These are normally *1.0
+	cut_max_cosmic =cut_max_cosmic*0.9;
+	cut_max_bnb =cut_max_bnb*0.8; 
 
 	//Zoomed in notrack
 //	cut_min_cosmic = 0.54; cut_max_cosmic = 0.58;
@@ -82,10 +84,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 	//Best Fit Significance: 0.601552 0.533678 1.63658
 	//Zoomed in track
-//	cut_min_cosmic = 0.55; cut_max_cosmic = 0.61;
-//	cut_min_bnb = 0.525; cut_max_bnb = 0.545;
-	//cut_min_cosmic = 0.607-0.05; cut_max_cosmic = 0.607+0.05;
-	//cut_min_bnb = 0.565025-0.05; cut_max_bnb = 0.565025+0.05;
+	cut_min_cosmic = 0.57; cut_max_cosmic = 0.62;
+	cut_min_bnb = 0.42; cut_max_bnb = 0.49;
 
 
 
@@ -129,6 +129,16 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	TH2D * h2_sig_cut = new TH2D( "significance_2D",  "significance_2D",nsteps_cosmic, cut_min_cosmic, cut_max_cosmic, nsteps_bnb, cut_min_bnb, cut_max_bnb);
 	std::vector<double> vec_sig;//some vectors to store TGraph info;
 	std::vector<double> vec_cut;	
+  
+  // Calculate total signal for efficiency 
+  double total_sig = 0.;
+  for(size_t i = 0; i < sig_files.size(); ++i) {
+      double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
+      std::cout << "POT scale: " << pot_scale << std::endl;
+
+      std::string bnbcut = sig_files.at(i)->getStageCuts(1,-9,-9); 
+      total_sig += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
+  }
 
 	for(int di=1; di<=nsteps_cosmic; di++) {
 		double d  = (double)(di-1.0)*step_cosmic + cut_min_cosmic; ;	
@@ -164,7 +174,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 			if(signal==0){
 				 significance =0;
 			}else if(background !=0){
-				significance = signal/sqrt(background);
+        significance = signal/(signal+background)*signal/total_sig*100;
+				//significance = signal/sqrt(background);
 			}else{
 				std::cout<<"method_best_significane_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<<d<<", cut2: "<<d2<<std::endl;
 				break;

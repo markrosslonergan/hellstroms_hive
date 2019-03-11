@@ -64,13 +64,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 			leg = "l";
 			std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
 			tpot = (TTree*)f->Get(tnam_pot.c_str());
+      std::cout << "tpot name: " << tnam_pot.c_str() << std::endl;
 			tpot->SetBranchAddress("number_of_events", &numbranch);
 			tpot->SetBranchAddress("POT",&potbranch);
 
 			std::cout<<"Set the POT branch"<<std::endl;
 			int tmpnum = 0;
 			double tmppot=0;
-			for(int i=0; i<tpot->GetEntries(); i++){
+      std::cout << "tpot entries: " << tpot->GetEntries() << std::endl;
+			for(int i=0; i<tpot->GetEntries(); i++) {
 				tpot->GetEntry(i);
 				tmpnum += (double)numbranch;
 				tmppot += potbranch;
@@ -85,14 +87,24 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		}
 	}
 
-    if(tag == "BNBPure" || tag == "BNBCosmics" || tag == "BNBCosmicsOverlay" || tag == "BNBCosmicsGood"){
-    //MCC9 pot issues
-    //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
-        pot = 2.16562e21*(double)numberofevents/2154500.0;
-        std::cout<<"REAL MCC9: --> POT is MC: ";
-		std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+    if(tag == "BNBPure" || tag == "BNBCosmics"){
+      //MCC9 pot issues
+      //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
+      pot = 2.16562e21*(double)numberofevents/2154500.0;
+      std::cout<<"REAL MCC9: --> POT is MC: ";
+		  std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
     }
 
+    if(tag == "NCPi0" || tag=="NCPi0Cosmics"){
+      //MCC9 pot issues
+      //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
+      // nc_fraction calculated by opening bnb_nu_overlay_combined_whatever and
+      // diving the number of NC events with > 0 exiting pi0s by the total no. entries
+      double nc_fraction = 0.061877;
+      pot = 2.16562e21*(double)numberofevents/2154500.0/nc_fraction;
+      std::cout<<"REAL MCC9: --> POT is MC: ";
+		  std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+    }
 
 	if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure" || tag == "NCDeltaRad"){
 		double volCryo = 199668.427885;
@@ -270,12 +282,17 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
 		std::cout<<"Entry List file does not exists for "<<this->tag<<" creating it."<<std::endl;
 
+    std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
 		this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0, -9,-9).c_str() , "entrylist");
+    std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
 		topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
+    std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
 
 
 		this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
+    std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
 		precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
+    std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
 
 
 
@@ -518,6 +535,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	//recomc_cuts.push_back(other_cuts +"&& shower_true_origin != -1");
 	//recomc_names.push_back(other);
 
+  /*
 	TCanvas *ctmp = new TCanvas();
 	this->tvertex->Draw((var.name+">>"+nam+"_"+other+ var.binning).c_str() , ("("+other_cuts+")*"+this->weight_branch).c_str(),"goff");
 
@@ -531,6 +549,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 	th1->GetXaxis()->SetTitle(var.unit.c_str());
 	th1->GetYaxis()->SetTitle("Verticies");
 	//ans_th1s.push_back(th1);
+  */
 
 	return ans_th1s;	
 }

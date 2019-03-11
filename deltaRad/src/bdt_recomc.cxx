@@ -39,7 +39,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 			int nrebin = 1;
 			if(s==2) nrebin=2;
-			if(s==3) nrebin=4;
+			if(s==3) nrebin=2;
 
 			all_reco_mc->Rebin(nrebin);	
 
@@ -66,7 +66,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 				v->Rebin(nrebin);
 				std::cout<<"on hist #: "<<iv<<". Add to stack."<<std::endl;
 
-				if(iv==2) v->SetFillStyle(3344);
+				//if(iv==2) v->SetFillStyle(3344);
 
 				s_reco_truth->Add(v);
 				double n = v->Integral();
@@ -112,7 +112,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			l_reco_truth->SetLineWidth(0);
 
 
-			c->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+			c->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 			/*
 			for(auto * t : vec_reco_mc) delete t;
@@ -499,7 +499,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 
 	c_reco_truth->Write();
-	c_reco_truth->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth.pdf").c_str(),"pdf");
+	c_reco_truth->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth.png").c_str(),"png");
 
 
 

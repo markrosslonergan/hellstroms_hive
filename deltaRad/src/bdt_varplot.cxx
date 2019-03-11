@@ -11,12 +11,12 @@ int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::
 
 	for(int j=0; j<2;j++){	
 
-        std::cout<<"on stage : "<<j<<std::endl;
-        std::cout<<" Setting sig stage entry lists."<<std::endl;
+    std::cout<<"on stage : "<<j<<std::endl;
+    std::cout<<" Setting sig stage entry lists."<<std::endl;
 		signal_pure->setStageEntryList(j);
-        std::cout<<" Setting back stage entry lists."<<std::endl;
+    std::cout<<" Setting back stage entry lists."<<std::endl;
 		background_pure->setStageEntryList(j);
-        std::cout<<" Set stage entry lists."<<std::endl;
+    std::cout<<" Set stage entry lists."<<std::endl;
 
 		for(auto &v: vars){
 
@@ -25,15 +25,15 @@ int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::
 
 			//		TH1* sig = signal_pure->getTH1(v,cut_signal.c_str(),v.safe_name+"_sig_var" ,1.0);
 			//		TH1* bkg = background_pure->getTH1(v,cut_background_pure.c_str(),v.safe_name+"_bkg_var" ,1.0);
-        	TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_"+input_bdt_info.identifier).c_str(), ("cvar_"+v.name+"_"+input_bdt_info.identifier).c_str(),1200,1200);
+      TCanvas *c_var = new TCanvas(("cvar_"+v.name+"_"+input_bdt_info.identifier).c_str(), ("cvar_"+v.name+"_"+input_bdt_info.identifier).c_str(),1200,1200);
 			c_var->cd();
 
-            std::cout<<"On variable: "<<v.name<<std::endl;
+      std::cout<<"On variable: "<<v.name<<std::endl;
 
 			TH1* sig = signal_pure->getTH1(v,"1",v.safe_name+"_sig_var" ,1.0);
 			TH1* bkg = background_pure->getTH1(v,"1",v.safe_name+"_bkg_var" ,1.0);
 
-            std::cout<<"INtegrals: "<<sig->Integral()<<" "<<bkg->Integral()<<std::endl;
+      std::cout<<"Integrals: "<<sig->Integral()<<" "<<bkg->Integral()<<std::endl;
 			sig->Scale(1.0/sig->Integral());			
 			bkg->Scale(1.0/bkg->Integral());			
 			sig->SetLineColor(signal_pure->col);
@@ -41,7 +41,6 @@ int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::
 			sig->SetLineWidth(2);
 			bkg->SetLineWidth(2);
 			c_var->cd();
-
 
 			sig->SetFillColor(signal_pure->col);
 			bkg->SetFillColor(background_pure->col);
