@@ -37,496 +37,576 @@
 
 
 int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname);
-int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname, bool islog);
+int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname,bool islog);
+int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::vector<bdt_file*> datas, std::string datacut, std::string pdfname, bool islog, bool cutall);
 int validateOverlay2(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string pdfname);
 
 
 
 int main (int argc, char *argv[]){
 
-	//This is a standardized location on /pnfs/ that everyone can use. 
-	//std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
-	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v6/";
-	std::string olddir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
-	std::string mydir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/";
+    //This is a standardized location on /pnfs/ that everyone can use. 
+    //std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
+    std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v7/";
+    std::string olddir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
+    std::string olddir6 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v6/";
+    std::string mydir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/";
 
-	std::string dir5 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
+    std::string dir5 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
 
-	std::string mode_option = "fake"; 
-	std::string xml = "default.xml";
-	std::string analysis_tag ="track";
-
-
-	bool run_cosmic = true;
-	bool run_bnb = true;
-	int number = -1;
-	bool response_only = false;
-
-	//All of this is just to load in command-line arguments, its not that important
-	const struct option longopts[] = 
-	{
-		{"dir", 		required_argument, 	0, 'd'},
-		{"option",		required_argument,	0, 'o'},
-		{"xml"	,		required_argument,	0, 'x'},
-		{"tag",			required_argument,	0, 't'},
-		{"help",		required_argument,	0, 'h'},
-		{"number",		required_argument,	0, 'n'},
-		{"cosmic",		no_argument,		0, 'c'},
-		{"bnb",			no_argument,		0, 'b'},
-		{0,			no_argument, 		0,  0},
-	};
-
-	int iarg = 0; opterr=1; int index;
-	while(iarg != -1)
-	{
-		iarg = getopt_long(argc,argv, "cbx:o:d:t:n:rh?", longopts, &index);
-
-		switch(iarg)
-		{
-			case 'r':
-				response_only = true;;
-				break;
-			case 'n':
-				number = strtof(optarg,NULL);
-				run_bnb = false;
-				break;
-			case 'c':
-				run_cosmic = true;
-				run_bnb = false;
-				break;
-			case 'b':
-				run_bnb = true;
-				run_cosmic = false;	
-				break;
-			case 'x':
-				xml = optarg;
-				break;
-			case 'o':
-				mode_option = optarg;
-				break;
-			case 'd':
-				dir = optarg;
-				break;
-			case 't':
-				analysis_tag = optarg;
-				break;
-			case '?':
-			case 'h':
-				std::cout<<"Allowed arguments:"<<std::endl;
-				std::cout<<"\t-d\t--dir\t\tDirectory for file inputs"<<std::endl;
-				std::cout<<"\t-x\t--xml\t\tInput .xml file for configuring what MVA/BDT & param"<<std::endl;
-				std::cout<<"\t-o\t--option\t\tOptional mode to run, train, app..etc.."<<std::endl;
-				std::cout<<"\t\t\t\t Options are:"<<std::endl;
-				std::cout<<"\t\t\t\t train:"<<std::endl;
-				std::cout<<"\t\t\t\t app:"<<std::endl;
-				std::cout<<"\t\t\t\t response:"<<std::endl;
-				std::cout<<"\t\t\t\t sig:"<<std::endl;
-				std::cout<<"\t\t\t\t stack:"<<std::endl;
-				std::cout<<"\t\t\t\t recomc:"<<std::endl;
-				std::cout<<"\t\t\t\t datamc:"<<std::endl;
-				std::cout<<"\t\t\t\t eff:"<<std::endl;
-				std::cout<<"\t-c\t--cosmic\t\t Run only cosmic training/app"<<std::endl;
-				std::cout<<"\t-b\t--bnb\t\t Run only BNB training/app"<<std::endl;
-				std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
-				std::cout<<"\t-t\t--tag\t\tAnalysis tag used to keep all things clean!"<<std::endl;
-				std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
-				return 0;
-		}
-	}
-
-	//===========================================================================================
-	//===========================================================================================
-	//			Begininning of main program here!
-	//===========================================================================================
-	//===========================================================================================
-
-	//Most TMVA arguments are loaded in here via XML
-	std::cout<<"Getting xml variables"<<std::endl;
-	MVALoader xml_methods(xml);
-	std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); 
+    std::string mode_option = "fake"; 
+    std::string xml = "default.xml";
+    std::string analysis_tag ="track";
 
 
+    bool run_cosmic = true;
+    bool run_bnb = true;
+    int number = -1;
+    bool response_only = false;
 
-	//We dont currently use postcuts
-	std::string postcuts = "1";
-	
-	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(60,0.2,0.7");
-	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.1,0.8)");
+    //All of this is just to load in command-line arguments, its not that important
+    const struct option longopts[] = 
+    {
+        {"dir", 		required_argument, 	0, 'd'},
+        {"option",		required_argument,	0, 'o'},
+        {"xml"	,		required_argument,	0, 'x'},
+        {"tag",			required_argument,	0, 't'},
+        {"help",		required_argument,	0, 'h'},
+        {"number",		required_argument,	0, 'n'},
+        {"cosmic",		no_argument,		0, 'c'},
+        {"bnb",			no_argument,		0, 'b'},
+        {0,			no_argument, 		0,  0},
+    };
 
-	std::string base_cuts = "reco_vertex_size==1 && reco_asso_showers > 0";
-	std::string signal_definition = "1";
-	std::string background_definition = "1";
+    int iarg = 0; opterr=1; int index;
+    while(iarg != -1)
+    {
+        iarg = getopt_long(argc,argv, "cbx:o:d:t:n:rh?", longopts, &index);
+
+        switch(iarg)
+        {
+            case 'r':
+                response_only = true;;
+                break;
+            case 'n':
+                number = strtof(optarg,NULL);
+                run_bnb = false;
+                break;
+            case 'c':
+                run_cosmic = true;
+                run_bnb = false;
+                break;
+            case 'b':
+                run_bnb = true;
+                run_cosmic = false;	
+                break;
+            case 'x':
+                xml = optarg;
+                break;
+            case 'o':
+                mode_option = optarg;
+                break;
+            case 'd':
+                dir = optarg;
+                break;
+            case 't':
+                analysis_tag = optarg;
+                break;
+            case '?':
+            case 'h':
+                std::cout<<"Allowed arguments:"<<std::endl;
+                std::cout<<"\t-d\t--dir\t\tDirectory for file inputs"<<std::endl;
+                std::cout<<"\t-x\t--xml\t\tInput .xml file for configuring what MVA/BDT & param"<<std::endl;
+                std::cout<<"\t-o\t--option\t\tOptional mode to run, train, app..etc.."<<std::endl;
+                std::cout<<"\t\t\t\t Options are:"<<std::endl;
+                std::cout<<"\t\t\t\t train:"<<std::endl;
+                std::cout<<"\t\t\t\t app:"<<std::endl;
+                std::cout<<"\t\t\t\t response:"<<std::endl;
+                std::cout<<"\t\t\t\t sig:"<<std::endl;
+                std::cout<<"\t\t\t\t stack:"<<std::endl;
+                std::cout<<"\t\t\t\t recomc:"<<std::endl;
+                std::cout<<"\t\t\t\t datamc:"<<std::endl;
+                std::cout<<"\t\t\t\t eff:"<<std::endl;
+                std::cout<<"\t-c\t--cosmic\t\t Run only cosmic training/app"<<std::endl;
+                std::cout<<"\t-b\t--bnb\t\t Run only BNB training/app"<<std::endl;
+                std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
+                std::cout<<"\t-t\t--tag\t\tAnalysis tag used to keep all things clean!"<<std::endl;
+                std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
+                return 0;
+        }
+    }
+
+    //===========================================================================================
+    //===========================================================================================
+    //			Begininning of main program here!
+    //===========================================================================================
+    //===========================================================================================
+
+    //Most TMVA arguments are loaded in here via XML
+    std::cout<<"Getting xml variables"<<std::endl;
+    MVALoader xml_methods(xml);
+    std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); 
+
+
+
+    //We dont currently use postcuts
+    std::string postcuts = "1";
+
+    bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(60,0.2,0.7");
+    bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.1,0.8)");
+
+    std::string base_cuts = "reco_vertex_size==1 && reco_asso_showers > 0";
+    std::string signal_definition = "1";
+    std::string background_definition = "1";
 
     std::vector<std::string> vec_precuts = {"1"};
 
-	//***************************************************************************************************/
-	//***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
-	//***************************************************************************************************/
-	bdt_flow signal_flow(base_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
+    //***************************************************************************************************/
+    //***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
+    //***************************************************************************************************/
+    bdt_flow signal_flow(base_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
-	bdt_file *signal_cosmics = new bdt_file(olddir, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
-	bdt_file *bnb_cosmics = new bdt_file(olddir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
-	bdt_file *bnb_cosmics_v6 = new bdt_file(dir, "bnb_overlay_run1_v6.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
-	bdt_file *data5e19  = new bdt_file(olddir, "data_mcc9_v5.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
-	bdt_file *data5e19_v6    = new bdt_file(mydir, "vertexed_data5e19_v6.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
-	bdt_file *bnbext    = new bdt_file(olddir, "bnbext_mcc9_v5.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
+    bdt_file *signal_cosmics = new bdt_file(olddir, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *bnb_cosmics = new bdt_file(olddir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *bnb_cosmics_v7 = new bdt_file(dir, "bnb_overlay_combined_v7.1.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *data5e19  = new bdt_file(olddir, "data_mcc9_v5.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+//    bdt_file *data5e19_v6    = new bdt_file(olddir6, "vertexed_data5e19_v6.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+   bdt_file *data5e19_v6    = new bdt_file(dir, "data5e19_v7.1.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *bnbext    = new bdt_file(dir, "bnbext_run1_v7.1.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
 
-  TFile *fin_data_v6 = new TFile("/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/vertexed_data5e19_v6.root", "READ");
-	//std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics, bnbext, data5e19};
-	std::vector<bdt_file*> bdt_files = {bnb_cosmics, bnb_cosmics_v6, data5e19, data5e19_v6};
+    TFile *fin_data_v6 = new TFile("/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/vertexed_data5e19_v6.root", "READ");
+    //std::vector<bdt_file*> bdt_files = {signal_cosmics, bnb_cosmics, bnbext, data5e19};
+    std::vector<bdt_file*> bdt_files = {bnb_cosmics, bnb_cosmics_v7, data5e19, data5e19_v6,bnbext};
 
-	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-	for(auto &f: bdt_files){
-		std::cout<<"Loading "<<f->tag<<"\t with "<<f->tvertex->GetEntries()<<"\t verticies. (unweighted)"<<std::endl;
-		std::cout<<"POT of file loaded is: "<<f->pot<<"\t\t "<<std::endl;
-		std::cout<<"Scale factor is then: "<<f->scale_data<<std::endl;
-	}	
+    std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+    std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+    for(auto &f: bdt_files){
+        std::cout<<"Loading "<<f->tag<<"\t with "<<f->tvertex->GetEntries()<<"\t verticies. (unweighted)"<<std::endl;
+        std::cout<<"POT of file loaded is: "<<f->pot<<"\t\t "<<std::endl;
+        std::cout<<"Scale factor is then: "<<f->scale_data<<std::endl;
+    }	
 
-	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+    std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+    std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-	if(mode_option != "precalc" ){
-	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-	std::cout<<" Going to add any precomputed tree friends, or any trained BDT responses   "<<std::endl;
-	std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
-	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-		for(auto &f: bdt_files){
+    if(mode_option != "precalc" ){
+        std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+        std::cout<<" Going to add any precomputed tree friends, or any trained BDT responses   "<<std::endl;
+        std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
+        std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+        for(auto &f: bdt_files){
 
-			std::cout<<"Filling Base EntryLists on File  "<<f->tag<<std::endl;
-			//if(mode_option != "train" && mode_option != "app"){
-			if(mode_option != "train" && mode_option != "eff"){
-				f->calcBaseEntryList(analysis_tag);
-			}
-		}
-	}
-	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+            std::cout<<"Filling Base EntryLists on File  "<<f->tag<<std::endl;
+            //if(mode_option != "train" && mode_option != "app"){
+            if(mode_option != "train" && mode_option != "eff"){
+                f->calcBaseEntryList(analysis_tag);
+            }
+        }
+        }
+        std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+        std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-	//Adding plot names
-//	signal_cosmics->addPlotName("LEE NC #Delta Rad w/ Overlay");
-	bnb_cosmics->addPlotName("BNB w/ Overlay");
-	bnb_cosmics_v6->addPlotName("BNB w/ Overlay");
-  data5e19->addPlotName("4.8e19 POT Data");
-  data5e19_v6->addPlotName("4.8e19 POT Data");
-	bnbext->addPlotName("External BNB Data");
+        //Adding plot names
+        //	signal_cosmics->addPlotName("LEE NC #Delta Rad w/ Overlay");
+        bnb_cosmics->addPlotName("BNB w/ Overlay");
+        bnb_cosmics_v7->addPlotName("BNB w/ Overlay");
+        data5e19->addPlotName("4.8e19 POT Data");
+        data5e19_v6->addPlotName("4.8e19 POT Data");
+        bnbext->addPlotName("External BNB Data");
 
-	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+        std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+        std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-	//===========================================================================================
-	//===========================================================================================
-	//		Main flow of the program , using OPTIONS
-	//===========================================================================================
-	//===========================================================================================
+        //===========================================================================================
+        //===========================================================================================
+        //		Main flow of the program , using OPTIONS
+        //===========================================================================================
+        //===========================================================================================
 
-  if(mode_option == "valid"){
+        if(mode_option == "valid"){
 
-    // Strings to calculate variables
-    std::string shower_index1 = "(reco_shower_ordered_energy_index[0])";
-    std::string shower_index2 = "(reco_shower_ordered_energy_index[1])";
+            // Strings to calculate variables
+            std::string shower_index1 = "(reco_shower_ordered_energy_index[0])";
+            std::string shower_index2 = "(reco_shower_ordered_energy_index[1])";
 
-		std::string proton_mass = "0.938272";
-    std::string E1 = "reco_shower_energy["+shower_index1+"]";
-    std::string E2 = "reco_shower_energy["+shower_index2+"]";
-    std::string Eratio = "("+E1+")/("+E2+")";
-    std::string two_shower_opening_angle = "(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])";
-		std::string invariant_mass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+two_shower_opening_angle+"))/1000";
+            std::string proton_mass = "0.938272";
+            std::string E1 = "reco_shower_energy["+shower_index1+"]";
+            std::string E2 = "reco_shower_energy["+shower_index2+"]";
+            std::string Eratio = "("+E1+")/("+E2+")";
+            std::string two_shower_opening_angle = "(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])";
+            std::string invariant_mass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+two_shower_opening_angle+"))/1000";
 
-    std::string p_pi_x = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirx["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirx["+shower_index2+"])";
-    std::string p_pi_y = "(reco_shower_energy["+shower_index1+"]*reco_shower_diry["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_diry["+shower_index2+"])";
-    std::string p_pi_z = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirz["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirz["+shower_index2+"])";
-    std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
+            std::string p_pi_x = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirx["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirx["+shower_index2+"])";
+            std::string p_pi_y = "(reco_shower_energy["+shower_index1+"]*reco_shower_diry["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_diry["+shower_index2+"])";
+            std::string p_pi_z = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirz["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirz["+shower_index2+"])";
+            std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 
-     bdt_variable v_showerMult("reco_asso_showers","(5,0,5)","Number of reconstructed showers associated","false","d");
-     validateOverlay({v_showerMult},{bnb_cosmics}, {"reco_vertex_size>=0"}, data5e19, "reco_vertex_size>=0", "shower_multiplicity",true);
+            bdt_variable v_showerMult("reco_asso_showers","(5,0,5)","Number of reconstructed showers associated","false","d");
+            validateOverlay({v_showerMult},{bnb_cosmics_v7}, {"reco_vertex_size>0"}, {data5e19_v6,bnbext}, "reco_vertex_size>0", "shower_multiplicity",true,false);
 
-     bdt_variable v_trackMult("reco_asso_tracks","(5,0,5)","Number of reconstructed tracks associated","false","d");
-     validateOverlay({v_trackMult},{bnb_cosmics}, {"reco_vertex_size>=0"}, data5e19, "reco_vertex_size>=0", "track_multiplicity",true);
+            bdt_variable v_trackMult("reco_asso_tracks","(5,0,5)","Number of reconstructed tracks associated","false","d");
+            validateOverlay({v_trackMult},{bnb_cosmics_v7}, {"reco_vertex_size>=0"}, {data5e19_v6,bnbext}, "reco_vertex_size>=0", "track_multiplicity",true,false);
 
-     bdt_variable v_vertexMult("reco_vertex_size","(5,0,5)","Number of reconstructed vertexs associated","false","d");
-     validateOverlay({v_vertexMult},{bnb_cosmics}, {"1"}, data5e19, "1", "vertex_multiplicity",true);
+            bdt_variable v_vertexMult("reco_vertex_size","(5,0,5)","Number of Pandora Neutrino-Slices in event","false","d");
+            validateOverlay({v_vertexMult},{bnb_cosmics_v7}, {"1"}, {data5e19_v6,bnbext}, "1", "vertex_multiplicity",false,false);
 
-     bdt_variable v_overlayfrac("sim_shower_overlay_fraction","(100,0,1)","Shower hit overlay fraction","false","d");
-     validateOverlay({v_overlayfrac},{bnb_cosmics}, {"1"}, data5e19, "1", "shower_overlay_frac",true);
+            bdt_variable v_overlayfrac("sim_shower_overlay_fraction","(100,0,1)","Shower hit overlay fraction","false","d");
+            validateOverlay({v_overlayfrac},{bnb_cosmics_v7}, {"1"}, {data5e19_v6,bnbext}, "1", "shower_overlay_frac",true,true);
 
-     bdt_variable v_overlayfrac2("reco_shower_startx","(100,0,270)","Shower Start X [cm]","false","d");
-     validateOverlay({v_overlayfrac2},{bnb_cosmics}, {"reco_asso_showers>0"}, data5e19, "reco_asso_showers>0", "shower_start_x",false);
+            bdt_variable v_overlayfrac2("reco_shower_startx","(50,0,270)","Shower Start X [cm]","false","d");
+            validateOverlay({v_overlayfrac2},{bnb_cosmics_v7}, {"reco_asso_showers>0"}, {data5e19_v6,bnbext}, "reco_asso_showers>0", "shower_start_x",false,true);
 
-     bdt_variable v_overlayfrac3("reco_shower_starty","(100,-125,125)","Shower Start Y [cm]","false","d");
-     validateOverlay({v_overlayfrac3},{bnb_cosmics}, {"reco_asso_showers>0"}, data5e19, "reco_asso_showers>0", "shower_start_y",false);
+            bdt_variable v_overlayfrac3("reco_shower_starty","(50,-125,125)","Shower Start Y [cm]","false","d");
+            validateOverlay({v_overlayfrac3},{bnb_cosmics_v7}, {"reco_asso_showers>0"}, {data5e19_v6,bnbext}, "reco_asso_showers>0", "shower_start_y",false,true);
 
-     bdt_variable v_trk_length("reco_track_displacement","(100,0,300)","Track Length Y [cm]","false","d");
-     validateOverlay({v_trk_length},{bnb_cosmics}, {"reco_asso_tracks>0"}, data5e19, "reco_asso_tracks>0", "shower_track_length",false);
+            bdt_variable v_overlayfrac4("reco_shower_startz","(50,-125,125)","Shower Start Z [cm]","false","d");
+            validateOverlay({v_overlayfrac4},{bnb_cosmics_v7}, {"reco_asso_showers>0"}, {data5e19_v6,bnbext}, "reco_asso_showers>0", "shower_start_z",false,true);
+            
+            bdt_variable v_snumhits0("reco_shower_num_hits_plane0","(50,0,200)","Num Hits in Shower Plane 0","false","d");
+            validateOverlay({v_snumhits0},{bnb_cosmics_v7}, {"reco_asso_showers>0"}, {data5e19_v6,bnbext}, "reco_asso_showers>0", "shower_hits0",false,true);
+ 
+            bdt_variable v_snumhits1("reco_shower_num_hits_plane1","(50,0,200)","Num Hits in Shower Plane 1","false","d");
+            validateOverlay({v_snumhits1},{bnb_cosmics_v7}, {"reco_asso_showers>0"}, {data5e19_v6,bnbext}, "reco_asso_showers>0", "shower_hits1",false,true);
+
+            bdt_variable v_snumhits2("reco_shower_num_hits_plane2","(50,0,200)","Num Hits in Shower Plane 2","false","d");
+            validateOverlay({v_snumhits2},{bnb_cosmics_v7}, {"reco_asso_showers>0"}, {data5e19_v6,bnbext}, "reco_asso_showers>0", "shower_hits2",false,true);
+
+            bdt_variable v_sopen("reco_shower_opening_angle","(50,0,1)","Opening angle of shower (pandora)","false","d");
+            validateOverlay({v_sopen},{bnb_cosmics_v7}, {"reco_asso_showers>0"}, {data5e19_v6,bnbext}, "reco_asso_showers>0", "shower_openingnangle",false,true);
+
+            bdt_variable v_slength("reco_shower_length","(50,0,100)","Shower Length","false","d");
+            validateOverlay({v_slength},{bnb_cosmics_v7}, {"reco_asso_showers>0"}, {data5e19_v6,bnbext}, "reco_asso_showers>0", "shower_length",false,true);
 
 
-    std::string cm_angle = "(fabs("+E1+" - "+E2+")/("+p_pi+"))";
+            bdt_variable v_trk_length("reco_track_displacement","(40,0,300)","Track Length [cm]","false","d");
+            validateOverlay({v_trk_length},{bnb_cosmics_v7}, {"reco_asso_tracks>0"}, {data5e19_v6,bnbext}, "reco_asso_tracks>0", "track_length",false,true);
+
+            bdt_variable v_tgoodcalo("reco_track_good_calo","(40,0,100)","Track Good Calo Hits","false","d");
+            validateOverlay({v_tgoodcalo},{bnb_cosmics_v7}, {"reco_asso_tracks>0"}, {data5e19_v6,bnbext}, "reco_asso_tracks>0", "track_goodcalo",true,true);
+
+            bdt_variable v_tstop("reco_track_mean_dEdx_start_half/reco_track_mean_dEdx_end_half","(40,0,3)","Ratio of end/start track mean dEdx","false","d");
+            validateOverlay({v_tstop},{bnb_cosmics_v7}, {"reco_asso_tracks>0"}, {data5e19_v6,bnbext}, "reco_asso_tracks>0", "track_stopping",false,true);
+
     
-    // Signal definition and cuts for MC plots
-    std::string true_signal = "sim_shower_overlay_fraction[0]<0.1 && sim_shower_overlay_fraction[1]<0.1 && sim_track_matched[0]==1 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111";
-    std::string my_mcCuts = "reco_asso_showers==2 &&"+E2+">0.1";
-    //std::string my_mcCuts = "reco_asso_showers==2 && reco_asso_tracks==1 && sim_shower_is_true_shower && "+E2+">0.1";
-    std::string my_dataCuts = "reco_asso_showers==2 && reco_asso_tracks==1 && "+E2+">0.1";
-    //std::string my_dataCuts = "reco_asso_showers==2 && reco_asso_tracks==1 && sim_shower_is_true_shower && "+E2+">0.1";
+            bdt_variable v_tdedx("reco_track_mean_dEdx","(40,0,10)","Mean Track dEdx","false","d");
+            validateOverlay({v_tdedx},{bnb_cosmics_v7}, {"reco_asso_tracks>0"}, {data5e19_v6,bnbext}, "reco_asso_tracks>0", "track_dedx",false,true);
+ 
+            bdt_variable v_tdedxtrun("reco_track_mean_trunc_dEdx","(40,0,10)","Mean Track trunc_dEdx","false","d");
+            validateOverlay({v_tdedxtrun},{bnb_cosmics_v7}, {"reco_track_good_calo > 0 && reco_asso_tracks>0"}, {data5e19_v6,bnbext}, "reco_track_good_calo && reco_asso_tracks>0", "track_trun_dedx",false,true);
 
-    // Do the stuff, make the plots
-    /*
-    bdt_variable invmass(invariant_mass,"(12, 0, 0.5)","#pi^{0} Invariant Mass [GeV]","false","d");
-    validateOverlay({invmass},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "pi0_invmass_v5");
-    validateOverlay({invmass},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "pi0_invmass_v6");
+          bdt_variable v_tstop_trunc("reco_track_mean_trunc_dEdx_start_half/reco_track_mean_trunc_dEdx_end_half","(40,0,3)","Ratio of end/start track mean dEdx","false","d");
+            validateOverlay({v_tstop_trunc},{bnb_cosmics_v7}, {"reco_track_good_calo> 0 && reco_asso_tracks>0"}, {data5e19_v6,bnbext}, "reco_track_good_calo>0  && reco_asso_tracks>0", "track_trunc_stopping",false,true);
 
-    bdt_variable centerOfMass_angle(cm_angle,"(12, 0, 1.0)","#theta^{CM}_{#gamma #gamma}","false","d");
-    validateOverlay({centerOfMass_angle},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "cmangle_v5");
-    validateOverlay({centerOfMass_angle},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "cmangle_v6");
-
-    bdt_variable pion_momentum(p_pi, "(12, 0, 0.5)", "Reco. #pi^{0} Momentum [GeV]", "false", "d");
-    validateOverlay({pion_momentum},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "pimom_v5");
-    validateOverlay({pion_momentum},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "pimom_v6");
-
-    bdt_variable energy_ratio(Eratio, "(10, 1, 10)", "Ratio of Shower Energies [GeV]", "false", "d");
-    validateOverlay({energy_ratio},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "e_ratio_v5");
-    validateOverlay({energy_ratio},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "e_ratio_v6");
-    */
-     std::string s_reco_vertex_res ="(sqrt(pow(reco_vertex_x - mctruth_nu_vertex_x,2)-pow(reco_vertex_y - mctruth_nu_vertex_y,2)-pow(reco_vertex_z - mctruth_nu_vertex_z,2)))";
-     bdt_variable v_reco_vertex_res (s_reco_vertex_res,"(54,0,100)","Vertex Resolutione cm", false,"d");
-    
-     //validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname, bool islog);
-
-     validateOverlay({v_reco_vertex_res},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 && reco_asso_tracks>0", "vertex_res",true);
+          bdt_variable v_tstop_trunc2("max( reco_track_mean_trunc_dEdx_end_half/reco_track_mean_trunc_dEdx_start_half,  reco_track_mean_trunc_dEdx_start_half/reco_track_mean_trunc_dEdx_end_half)","(40,0,3)","Ratio of end/start track mean dEdx","false","d");
+            validateOverlay({v_tstop_trunc2},{bnb_cosmics_v7}, {"reco_track_good_calo> 0 && reco_asso_tracks>0"}, {data5e19_v6,bnbext}, "reco_track_good_calo>0  && reco_asso_tracks>0", "track_MAX_trunc_stopping",false,true);
 
 
-     bdt_variable v_reco_vertex_y("reco_vertex_y","(54,-125,125)","Vertex y [cm]","false","d");
+            std::string cm_angle = "(fabs("+E1+" - "+E2+")/("+p_pi+"))";
 
-     validateOverlay({v_reco_vertex_y},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 && reco_asso_tracks>0", "reco_vertex_y");
+            // Signal definition and cuts for MC plots
+            std::string true_signal = "sim_shower_overlay_fraction[0]<0.1 && sim_shower_overlay_fraction[1]<0.1 && sim_track_matched[0]==1 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111";
+            std::string my_mcCuts = "reco_asso_showers==2 &&"+E2+">0.1";
+            //std::string my_mcCuts = "reco_asso_showers==2 && reco_asso_tracks==1 && sim_shower_is_true_shower && "+E2+">0.1";
+            std::string my_dataCuts = "reco_asso_showers==2 && reco_asso_tracks==1 && "+E2+">0.1";
+            //std::string my_dataCuts = "reco_asso_showers==2 && reco_asso_tracks==1 && sim_shower_is_true_shower && "+E2+">0.1";
+
+            // Do the stuff, make the plots
+            /*
+               bdt_variable invmass(invariant_mass,"(12, 0, 0.5)","#pi^{0} Invariant Mass [GeV]","false","d");
+               validateOverlay({invmass},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "pi0_invmass_v5");
+               validateOverlay({invmass},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "pi0_invmass_v6");
+
+               bdt_variable centerOfMass_angle(cm_angle,"(12, 0, 1.0)","#theta^{CM}_{#gamma #gamma}","false","d");
+               validateOverlay({centerOfMass_angle},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "cmangle_v5");
+               validateOverlay({centerOfMass_angle},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "cmangle_v6");
+
+               bdt_variable pion_momentum(p_pi, "(12, 0, 0.5)", "Reco. #pi^{0} Momentum [GeV]", "false", "d");
+               validateOverlay({pion_momentum},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "pimom_v5");
+               validateOverlay({pion_momentum},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "pimom_v6");
+
+               bdt_variable energy_ratio(Eratio, "(10, 1, 10)", "Ratio of Shower Energies [GeV]", "false", "d");
+               validateOverlay({energy_ratio},{bnb_cosmics}, {my_mcCuts}, data5e19, my_dataCuts, "e_ratio_v5");
+               validateOverlay({energy_ratio},{bnb_cosmics_v6}, {my_mcCuts}, data5e19_v6, my_dataCuts, "e_ratio_v6");
+               */
+            std::string s_reco_vertex_res ="(sqrt(pow(reco_vertex_x - mctruth_nu_vertex_x,2)-pow(reco_vertex_y - mctruth_nu_vertex_y,2)-pow(reco_vertex_z - mctruth_nu_vertex_z,2)))";
+            bdt_variable v_reco_vertex_res (s_reco_vertex_res,"(54,0,100)","Vertex Resolutione cm", false,"d");
+
+            //validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file* data, std::string datacut, std::string pdfname, bool islog);
+
+            validateOverlay({v_reco_vertex_res},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 && reco_asso_tracks>0", "vertex_res",true);
+
+
+            bdt_variable v_reco_vertex_y("reco_vertex_y","(54,-125,125)","Vertex y [cm]","false","d");
+
+            validateOverlay({v_reco_vertex_y},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0 && reco_asso_tracks>0", "reco_vertex_y");
 
 
 
-     std::string s_reco_conv_dist = "sqrt(pow(reco_shower_startx - reco_vertex_x,2)-pow(reco_shower_starty - reco_vertex_y,2)-pow(reco_shower_startz - reco_vertex_z,2))";
-     bdt_variable v_reco_conv_dist(s_reco_conv_dist,"(54,0,100)","Conv Dist [cm]","false","d");
-     
-     validateOverlay({v_reco_conv_dist},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "conv_length_all",true);
-     validateOverlay({v_reco_conv_dist},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_pdg==22"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "conv_length_photon",true);
-     validateOverlay({v_reco_conv_dist},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && abs(sim_shower_pdg)==11"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "conv_length_electron",true);
-     validateOverlay({v_reco_conv_dist},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && abs(sim_shower_pdg)==11 && abs(sim_shower_parent_pdg) == 13"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "conv_length_electron_parent_muon",true);
+            std::string s_reco_conv_dist = "sqrt(pow(reco_shower_startx - reco_vertex_x,2)-pow(reco_shower_starty - reco_vertex_y,2)-pow(reco_shower_startz - reco_vertex_z,2))";
+            bdt_variable v_reco_conv_dist(s_reco_conv_dist,"(54,0,100)","Conv Dist [cm]","false","d");
+
+            validateOverlay({v_reco_conv_dist},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, {data5e19,bnbext}, "reco_asso_showers>0 && reco_asso_tracks>0", "conv_length_all",true,true);
+            validateOverlay({v_reco_conv_dist},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_pdg==22"}, {data5e19,bnbext}, "reco_asso_showers>0 && reco_asso_tracks>0", "conv_length_photon",true,true);
+            validateOverlay({v_reco_conv_dist},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && abs(sim_shower_pdg)==11"}, {data5e19,bnbext}, "reco_asso_showers>0 && reco_asso_tracks>0", "conv_length_electron",true,true);
+            validateOverlay({v_reco_conv_dist},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && abs(sim_shower_pdg)==11 && abs(sim_shower_parent_pdg) == 13"}, {data5e19,bnbext}, "reco_asso_showers>0 && reco_asso_tracks>0", "conv_length_electron_parent_muon",true,true);
 
 
-     bdt_variable v_reco_shower_theta("reco_shower_theta_yz","(30,-3.2,3.2)","Reco Shower Theta yz [Rad]","false","d");
-     bdt_variable v_reco_shower_phi("reco_shower_phi_yx","(30,-3.2,3.2)","Reco Shower Phi yx [Rad]","false","d");
-     
-     validateOverlay({v_reco_shower_theta},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_theta_all",false);
-     validateOverlay({v_reco_shower_theta},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_pdg==22"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_theta_photon",false);
-     validateOverlay({v_reco_shower_theta},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && abs(sim_shower_pdg)==11"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_theta_electron",false);
-
-     validateOverlay({v_reco_shower_phi},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_phi_all",false);
-     validateOverlay({v_reco_shower_phi},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_pdg==22"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_phi_photon",false);
-     validateOverlay({v_reco_shower_phi},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && abs(sim_shower_pdg)==11"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_phi_electron",false);
 
 
-    // Plot stuff with increasing no. showers cuts
-    bdt_variable overlay_fraction("sim_shower_overlay_fraction", "(50, 0, 1)", "Shower Overlay Fraction", "false", "d");
-    std::vector<std::string> showerCuts = {"reco_asso_showers>0", "reco_asso_showers==1", "reco_asso_showers==2", "reco_asso_showers==3"};
-    validateOverlay2({overlay_fraction}, {bnb_cosmics}, showerCuts, "overlay_frac_v5");
-    validateOverlay2({overlay_fraction}, {bnb_cosmics_v6}, showerCuts, "overlay_frac_v6");
+            bdt_variable v_reco_shower_theta("reco_shower_theta_yz","(30,-3.2,3.2)","Reco Shower Theta yz [Rad]","false","d");
+            bdt_variable v_reco_shower_phi("reco_shower_phi_yx","(30,-3.2,3.2)","Reco Shower Phi yx [Rad]","false","d");
 
 
-     //Plot 1: ===========================================================================================
-    /*
-     TCanvas *c0 = new TCanvas(); 
-     c0->cd();
+            validateOverlay({v_reco_shower_theta},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_theta_all",false);
+            validateOverlay({v_reco_shower_theta},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_pdg==22"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_theta_photon",false);
+            validateOverlay({v_reco_shower_theta},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && abs(sim_shower_pdg)==11"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_theta_electron",false);
 
-     TH1* h_reco_vertex_res_photon =  (TH1*) bnb_cosmics->getTH1(v_reco_vertex_res,   "reco_asso_showers > 0 && reco_asso_tracks > 0 && sim_shower_is_true_shower && sim_shower_matched && sim_shower_pdg == 22", "photon_truth", 0, 1);
-     TH1* h_reco_vertex_res_photon_notrack =  (TH1*) bnb_cosmics->getTH1(v_reco_vertex_res,   "reco_asso_showers > 0 && reco_asso_tracks == 0 && sim_shower_is_true_shower && sim_shower_matched && sim_shower_pdg == 22", "photon_truth_notrack", 0, 1);
-     c0->cd();
-     TH1* h_reco_vertex_res_electron =  (TH1*) bnb_cosmics->getTH1(v_reco_vertex_res, "reco_asso_showers > 0 && reco_asso_tracks > 0 && sim_shower_is_true_shower && sim_shower_matched && abs(sim_shower_pdg) == 11", "electron_truth", 0, 1);
-     TH1* h_reco_vertex_res_electron_notrack =  (TH1*) bnb_cosmics->getTH1(v_reco_vertex_res, "reco_asso_showers > 0 && reco_asso_tracks == 0 && sim_shower_is_true_shower && sim_shower_matched && abs(sim_shower_pdg) == 11 ", "electron_truth_notrack", 0, 1);
 
-     c0->cd();
-     c0->SetLogy();
+            validateOverlay({v_reco_shower_phi},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_phi_all",false);
+            validateOverlay({v_reco_shower_phi},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_pdg==22"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_phi_photon",false);
+            validateOverlay({v_reco_shower_phi},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && abs(sim_shower_pdg)==11"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_phi_electron",false);
 
-     h_reco_vertex_res_photon->SetLineColor(kRed);
-     h_reco_vertex_res_photon_notrack->SetLineColor(kRed);
-     h_reco_vertex_res_photon_notrack->SetLineStyle(9);
 
-     h_reco_vertex_res_electron->SetLineColor(kBlue);
-     h_reco_vertex_res_electron_notrack->SetLineColor(kBlue);
-     h_reco_vertex_res_electron_notrack->SetLineStyle(9);
+            // Plot stuff with increasing no. showers cuts
+            bdt_variable overlay_fraction("sim_shower_overlay_fraction", "(50, 0, 1)", "Shower Overlay Fraction", "false", "d");
+            std::vector<std::string> showerCuts = {"reco_asso_showers>0", "reco_asso_showers==1", "reco_asso_showers==2", "reco_asso_showers==3"};
+            validateOverlay2({overlay_fraction}, {bnb_cosmics}, showerCuts, "overlay_frac_v5");
+            validateOverlay2({overlay_fraction}, {bnb_cosmics_v7}, showerCuts, "overlay_frac_v6");
 
-     h_reco_vertex_res_photon->Draw("hist");
-     h_reco_vertex_res_photon_notrack->Draw("hist same");
-     h_reco_vertex_res_electron->Draw("hist same");
-     h_reco_vertex_res_electron_notrack->Draw("hist same");
 
-     h_reco_vertex_res_electron->SetMaximum(std::max(h_reco_vertex_res_photon->GetMaximum(),h_reco_vertex_res_electron->GetMaximum())*1.3);
+            //Plot 1: ===========================================================================================
+            /*
+               TCanvas *c0 = new TCanvas(); 
+               c0->cd();
 
-     c0->SaveAs("hope_conv.pdf","pdf");
-    
-  
+               TH1* h_reco_vertex_res_photon =  (TH1*) bnb_cosmics->getTH1(v_reco_vertex_res,   "reco_asso_showers > 0 && reco_asso_tracks > 0 && sim_shower_is_true_shower && sim_shower_matched && sim_shower_pdg == 22", "photon_truth", 0, 1);
+               TH1* h_reco_vertex_res_photon_notrack =  (TH1*) bnb_cosmics->getTH1(v_reco_vertex_res,   "reco_asso_showers > 0 && reco_asso_tracks == 0 && sim_shower_is_true_shower && sim_shower_matched && sim_shower_pdg == 22", "photon_truth_notrack", 0, 1);
+               c0->cd();
+               TH1* h_reco_vertex_res_electron =  (TH1*) bnb_cosmics->getTH1(v_reco_vertex_res, "reco_asso_showers > 0 && reco_asso_tracks > 0 && sim_shower_is_true_shower && sim_shower_matched && abs(sim_shower_pdg) == 11", "electron_truth", 0, 1);
+               TH1* h_reco_vertex_res_electron_notrack =  (TH1*) bnb_cosmics->getTH1(v_reco_vertex_res, "reco_asso_showers > 0 && reco_asso_tracks == 0 && sim_shower_is_true_shower && sim_shower_matched && abs(sim_shower_pdg) == 11 ", "electron_truth_notrack", 0, 1);
 
-	//Plot 1: ===========================================================================================
-   
-     std::string s_reco_conv_dist ="log10(sqrt(pow(reco_shower_startx - reco_vertex_x,2)-pow(reco_shower_starty - reco_vertex_y,2)-pow(reco_shower_startz - reco_vertex_z,2)))";
-     std::string s_true_conv_dist = "log10(sqrt(pow(sim_shower_start_x - mctruth_nu_vertex_x,2)-pow(sim_shower_start_y - mctruth_nu_vertex_y,2)-pow(sim_shower_start_z - mctruth_nu_vertex_z,2)))";
+               c0->cd();
+               c0->SetLogy();
 
-     bdt_variable v_reco_conv_dist (s_reco_conv_dist,"(54,-2,4)","Reconstructed Conversion Distance Log[cm]", false,"d");
-     bdt_variable v_true_conv_dist (s_true_conv_dist,"(54,-2,4)","True Conversion Distance Log[cm]", false,"d");
+               h_reco_vertex_res_photon->SetLineColor(kRed);
+               h_reco_vertex_res_photon_notrack->SetLineColor(kRed);
+               h_reco_vertex_res_photon_notrack->SetLineStyle(9);
 
-     TCanvas *c = new TCanvas(); 
-     c->cd();
+               h_reco_vertex_res_electron->SetLineColor(kBlue);
+               h_reco_vertex_res_electron_notrack->SetLineColor(kBlue);
+               h_reco_vertex_res_electron_notrack->SetLineStyle(9);
 
-     TH1* h_reco_conv_dist =  (TH1*) bnb_cosmics->getTH1(v_reco_conv_dist, "reco_asso_showers > 0 && reco_asso_tracks > 0 && sim_shower_is_true_shower && sim_shower_matched ", "photon_truth", 0, 1);
-     c->cd();
-     TH1* h_true_conv_dist =  (TH1*) bnb_cosmics->getTH1(v_true_conv_dist, "reco_asso_showers > 0 && reco_asso_tracks > 0 && sim_shower_is_true_shower && sim_shower_matched", "true_truth", 0, 1);
-     //TH1* h_true_conv_dist =  (TH1*) bnb_cosmics->getTH1(v_true_conv_dist, "reco_asso_showers > 0 && reco_asso_tracks > 0 ", "ee_truth", 0, 1);
-     c->cd();
-     TH1* h_data_conv_dist =  (TH1*) data5e19->getTH1(v_reco_conv_dist, "reco_asso_showers > 0 && reco_asso_tracks > 0 ", "data", 0, 1);
-     c->cd();
+               h_reco_vertex_res_photon->Draw("hist");
+               h_reco_vertex_res_photon_notrack->Draw("hist same");
+               h_reco_vertex_res_electron->Draw("hist same");
+               h_reco_vertex_res_electron_notrack->Draw("hist same");
 
-     h_reco_conv_dist->SetLineColor(kRed);
-     h_true_conv_dist->SetLineColor(kBlue);
-     h_data_conv_dist->SetLineColor(kBlack);
+               h_reco_vertex_res_electron->SetMaximum(std::max(h_reco_vertex_res_photon->GetMaximum(),h_reco_vertex_res_electron->GetMaximum())*1.3);
 
-     h_reco_conv_dist->Draw("hist");
-     h_true_conv_dist->Draw("hist same");
-     h_data_conv_dist->Draw("E1 same");
+               c0->SaveAs("hope_conv.pdf","pdf");
 
-     h_reco_conv_dist->SetMaximum(std::max(h_true_conv_dist->GetMaximum(),h_reco_conv_dist->GetMaximum())*1.3);
 
-     c->SaveAs("hope.pdf","pdf");
 
-    */
+            //Plot 1: ===========================================================================================
+
+            std::string s_reco_conv_dist ="log10(sqrt(pow(reco_shower_startx - reco_vertex_x,2)-pow(reco_shower_starty - reco_vertex_y,2)-pow(reco_shower_startz - reco_vertex_z,2)))";
+            std::string s_true_conv_dist = "log10(sqrt(pow(sim_shower_start_x - mctruth_nu_vertex_x,2)-pow(sim_shower_start_y - mctruth_nu_vertex_y,2)-pow(sim_shower_start_z - mctruth_nu_vertex_z,2)))";
+
+            bdt_variable v_reco_conv_dist (s_reco_conv_dist,"(54,-2,4)","Reconstructed Conversion Distance Log[cm]", false,"d");
+            bdt_variable v_true_conv_dist (s_true_conv_dist,"(54,-2,4)","True Conversion Distance Log[cm]", false,"d");
+
+            TCanvas *c = new TCanvas(); 
+            c->cd();
+
+            TH1* h_reco_conv_dist =  (TH1*) bnb_cosmics->getTH1(v_reco_conv_dist, "reco_asso_showers > 0 && reco_asso_tracks > 0 && sim_shower_is_true_shower && sim_shower_matched ", "photon_truth", 0, 1);
+            c->cd();
+            TH1* h_true_conv_dist =  (TH1*) bnb_cosmics->getTH1(v_true_conv_dist, "reco_asso_showers > 0 && reco_asso_tracks > 0 && sim_shower_is_true_shower && sim_shower_matched", "true_truth", 0, 1);
+            //TH1* h_true_conv_dist =  (TH1*) bnb_cosmics->getTH1(v_true_conv_dist, "reco_asso_showers > 0 && reco_asso_tracks > 0 ", "ee_truth", 0, 1);
+            c->cd();
+            TH1* h_data_conv_dist =  (TH1*) data5e19->getTH1(v_reco_conv_dist, "reco_asso_showers > 0 && reco_asso_tracks > 0 ", "data", 0, 1);
+            c->cd();
+
+            h_reco_conv_dist->SetLineColor(kRed);
+            h_true_conv_dist->SetLineColor(kBlue);
+            h_data_conv_dist->SetLineColor(kBlack);
+
+            h_reco_conv_dist->Draw("hist");
+            h_true_conv_dist->Draw("hist same");
+            h_data_conv_dist->Draw("E1 same");
+
+            h_reco_conv_dist->SetMaximum(std::max(h_true_conv_dist->GetMaximum(),h_reco_conv_dist->GetMaximum())*1.3);
+
+            c->SaveAs("hope.pdf","pdf");
+
+*/
+
+        }
+        return 0;
 
     }
-	return 0;
 
-}
+    int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file * data, std::string datacut, std::string pdfname){
+        std::vector<bdt_file *> tmp = {data};
+        validateOverlay(vars, files, cuts, tmp,datacut,pdfname,false,true);
+        return 0;
+    }
 
-int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file * data, std::string datacut, std::string pdfname){
-    validateOverlay(vars, files, cuts, data,datacut,pdfname,false);
-    return 0;
-}
-
-int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file * data, std::string datacut, std::string pdfname, bool islog){
-
-     TCanvas *c = new TCanvas();
-     c->cd();
-     if(islog) c->SetLogy();
-
-     double maxval = -9999;
- TLegend* leg=new TLegend(0.7,0.7,0.9,0.9);
-         
-     for(int i=0; i<files.size();i++){
-
-         c->cd(); 
-//       TH1* th1_overlay =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& 1" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
- //      TH1* th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& 0" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
-         TH1* th1_overlay =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& sim_shower_overlay_fraction > 0.2" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
-         TH1* th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& sim_shower_overlay_fraction < 0.2" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
-         THStack * ts1 = new THStack();
-
-         th1_overlay->SetFillColor(files[i]->col);
-         th1_overlay->SetFillStyle(3244);
-         th1_mcish->SetFillColor(files[i]->col);
-         
-         if (th1_mcish->Integral() == 0. || th1_overlay->Integral() == 0) {
-           std::cout << "MC hist integral in " << vars[i].unit.c_str() << " is 0!" << std::endl;
-           return 1;
-         }
-         if (th1_overlay->Integral() == 0.) {
-           std::cout << "Overlay hist integral in " << vars[i].unit.c_str() << " is 0!" << std::endl;
-           return 1;
-         }
-         double norm = th1_overlay->Integral()+ th1_mcish->Integral();
-         th1_overlay->Scale(1.0/norm);
-         th1_mcish->Scale(1.0/norm);
-
-         ts1->Add(th1_overlay);
-         ts1->Add(th1_mcish);
-         c->cd();
-         maxval  = std::max(maxval, ts1->GetMaximum());
-         ts1->Draw("hist");
-         ts1->SetMaximum(maxval*1.5);
-         ts1->GetXaxis()->SetTitle(vars[i].unit.c_str());
+    int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, bdt_file * data, std::string datacut, std::string pdfname,bool islog){
+        std::vector<bdt_file *> tmp = {data};
+        validateOverlay(vars, files, cuts, tmp,datacut,pdfname,islog,true);
+        return 0;
+    }
 
 
-         leg->AddEntry(th1_overlay,"BNB Overlay","f");
-     }
+    int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::vector<bdt_file *> datas, std::string datacut, std::string pdfname, bool islog, bool cutup){
 
+        TCanvas *c = new TCanvas();
         c->cd();
-        TH1* h_data =  (TH1*) data->getTH1(vars[0], datacut , "data_truth_overlay", 0, 1);
+        if(islog) c->SetLogy();
+
+        double maxval = -9999;
+        TLegend* leg=new TLegend(0.7,0.7,0.9,0.9);
+
+        for(int i=0; i<files.size();i++){
+
+            c->cd(); 
+            TH1* th1_overlay;
+            TH1* th1_mcish;
+
+            if(cutup){
+                //       TH1* th1_overlay =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& 1" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
+                //      TH1* th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& 0" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
+                th1_overlay =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& sim_shower_overlay_fraction > 0.2" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
+                th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& sim_shower_overlay_fraction < 0.2" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
+            }else{
+                th1_overlay =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& 1" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
+                th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& 0" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
+            }
+
+            THStack * ts1 = new THStack();
+
+            th1_overlay->SetFillColor(files[i]->col);
+            th1_overlay->SetFillStyle(3244);
+            th1_mcish->SetFillColor(files[i]->col);
+
+            if (th1_mcish->Integral() == 0. || th1_overlay->Integral() == 0) {
+                std::cout << "MC hist integral in " << vars[i].unit.c_str() << " is 0!" << std::endl;
+                //return 1;
+            }
+            if (th1_overlay->Integral() == 0.) {
+                std::cout << "Overlay hist integral in " << vars[i].unit.c_str() << " is 0!" << std::endl;
+                // return 1;
+            }
+            double norm = th1_overlay->Integral()+ th1_mcish->Integral();
+            th1_overlay->Scale(1.0/norm);
+            th1_mcish->Scale(1.0/norm);
+
+            ts1->Add(th1_overlay);
+            ts1->Add(th1_mcish);
+            c->cd();
+            maxval  = std::max(maxval, ts1->GetMaximum());
+            ts1->Draw("hist");
+            ts1->SetMaximum(maxval*1.5);
+            ts1->GetXaxis()->SetTitle(vars[i].unit.c_str());
+
+
+            leg->AddEntry(th1_overlay,"BNB w/ Overlay","f");
+        }
+
+        if(datas.size()==2){
+            c->cd();
+            TH1* h_bnbext =  (TH1*) datas[1]->getTH1(vars[0], datacut , "bnbext", 0, 1);
+            c->cd();
+            h_bnbext->SetLineColor(kRed);
+            h_bnbext->SetLineWidth(2);
+            h_bnbext->Draw("hist same");
+
+            leg->AddEntry(h_bnbext,"BNBext run1","lp");
+            leg->Draw("same");
+
+
+
+        }
+        c->cd();
+        TH1* h_data =  (TH1*) datas[0]->getTH1(vars[0], datacut , "data_truth_overlay", 0, 1);
         c->cd();
         h_data->SetLineColor(kBlack);
         h_data->SetMarkerStyle(20);
         h_data->Draw("E1 same");
-    
+
         leg->AddEntry(h_data,"Data5e19","lp");
         leg->Draw("same");
+
+
+
+
 
         c->cd();
         c->SaveAs((pdfname+".pdf").c_str(),"pdf");    
 
         return 0;
 
-}
+    }
 
 
-// Written by Andrew because editing other things is too much work
-int validateOverlay2(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string pdfname){
+    // Written by Andrew because editing other things is too much work
+    int validateOverlay2(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string pdfname){
 
-    TCanvas *c = new TCanvas();
-    c->cd();
-    c->SetLogy();
+        TCanvas *c = new TCanvas();
+        c->cd();
+        c->SetLogy();
 
-    TH1 *th1 =  (TH1*) files[0]->getTH1(vars[0], cuts[0], "photon_overlay_frac_"+std::to_string(0), 0, 1);
-    c->cd();
-    //th1->SetFillColor(kAzure+2);
-    th1->SetLineColor(kAzure+2);
-    c->cd();
-    th1->GetXaxis()->SetTitle("Shower Overlay Fraction");
-    c->cd();
-    th1->Draw("hist");
-    c->cd();
+        TH1 *th1 =  (TH1*) files[0]->getTH1(vars[0], cuts[0], "photon_overlay_frac_"+std::to_string(0), 0, 1);
+        c->cd();
+        //th1->SetFillColor(kAzure+2);
+        th1->SetLineColor(kAzure+2);
+        c->cd();
+        th1->GetXaxis()->SetTitle("Shower Overlay Fraction");
+        c->cd();
+        th1->Draw("hist");
+        c->cd();
 
-    c->cd();
-    TH1 *th2 =  (TH1*) files[0]->getTH1(vars[0], cuts[1], "photon_overlay_frac_"+std::to_string(1), 0, 1);
-    //th2->SetFillColor(kGreen+2);
-    th2->SetLineColor(kGreen+2);
-    c->cd();
-    th2->Draw("hist same");
-    c->cd();
+        c->cd();
+        TH1 *th2 =  (TH1*) files[0]->getTH1(vars[0], cuts[1], "photon_overlay_frac_"+std::to_string(1), 0, 1);
+        //th2->SetFillColor(kGreen+2);
+        th2->SetLineColor(kGreen+2);
+        c->cd();
+        th2->Draw("hist same");
+        c->cd();
 
-    c->cd();
-    TH1 *th3 =  (TH1*) files[0]->getTH1(vars[0], cuts[2], "photon_overlay_frac_"+std::to_string(2), 0, 1);
-    //th3->SetFillColor(kViolet+5);
-    th3->SetLineColor(kViolet+5);
-    c->cd();
-    th3->Draw("hist same");
-    c->cd();
+        c->cd();
+        TH1 *th3 =  (TH1*) files[0]->getTH1(vars[0], cuts[2], "photon_overlay_frac_"+std::to_string(2), 0, 1);
+        //th3->SetFillColor(kViolet+5);
+        th3->SetLineColor(kViolet+5);
+        c->cd();
+        th3->Draw("hist same");
+        c->cd();
 
-    c->cd();
-    TH1 *th4 =  (TH1*) files[0]->getTH1(vars[0], cuts[3], "photon_overlay_frac_"+std::to_string(3), 0, 1);
-    //th4->SetFillColor(kRed+1);
-    th4->SetLineColor(kRed+1);
-    c->cd();
-    th4->Draw("hist same");
-    c->cd();
-  
-    TLegend *leg = new TLegend(0.15, 0.7, 0.45, 0.9);
-    leg->AddEntry(th1, "All");
-    leg->AddEntry(th2, "1 Shower");
-    leg->AddEntry(th3, "2 Showers");
-    leg->AddEntry(th4, "3 Showers");
-    leg->Draw("same");
+        c->cd();
+        TH1 *th4 =  (TH1*) files[0]->getTH1(vars[0], cuts[3], "photon_overlay_frac_"+std::to_string(3), 0, 1);
+        //th4->SetFillColor(kRed+1);
+        th4->SetLineColor(kRed+1);
+        c->cd();
+        th4->Draw("hist same");
+        c->cd();
 
-
-    c->SaveAs((pdfname+".png").c_str(),"png");    
+        TLegend *leg = new TLegend(0.15, 0.7, 0.45, 0.9);
+        leg->AddEntry(th1, "All");
+        leg->AddEntry(th2, "1 Shower");
+        leg->AddEntry(th3, "2 Showers");
+        leg->AddEntry(th4, "3 Showers");
+        leg->Draw("same");
 
 
+        c->SaveAs((pdfname+".png").c_str(),"png");    
 
-    return 0;
 
-}
+
+        return 0;
+
+    }
 
 
 
