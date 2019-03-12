@@ -45,7 +45,7 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
 int validateOverlay2(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string pdfname);
 int makeIncrementPlots(std::string name, bdt_variable variable, std::string cut_variable, bdt_file* bnb_cosmics, bdt_file* data5e19, bdt_file* bnbext, int n_increments, double cut_val_max, double cut_val_min, std::string base_data_conditions, std::string base_mc_conditions);
 
-
+std::string getAnglewrtWire(int plane, std::string var_in_x, std::string var_in_y);
 
 int main (int argc, char *argv[]){
 
@@ -175,7 +175,7 @@ int main (int argc, char *argv[]){
     bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.1.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
     bdt_file *data5e19    = new bdt_file(dir, "data5e19_v7.1.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *bnbext    = new bdt_file(dir, "bnbext_run1_v7.1.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
-    
+
     //this is
     //  bdt_file *data5e19_v6    = new bdt_file(olddir6, "vertexed_data5e19_v6.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
 
@@ -214,7 +214,7 @@ int main (int argc, char *argv[]){
     bnb_cosmics->addPlotName("BNB w/ Overlay");
     data5e19->addPlotName("4.8e19 POT Data");
     bnbext->addPlotName("BNBext");
-    
+
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
@@ -227,9 +227,15 @@ int main (int argc, char *argv[]){
     if(mode_option == "valid"){
 
 
-        std::string s_reco_shower_angle_wire_plane2 = "abs((3.14/2) - acos(reco_shower_dirx[0]*0 + reco_shower_diry[0]*1.0))";
-        std::string s_reco_shower_angle_wire_plane1 = "abs((3.14/2) - acos(reco_shower_dirx[0]*(-0.5) + reco_shower_diry[0]*sqrt(3)/2))";
-        std::string s_reco_shower_angle_wire_plane0 = "abs((3.14/2) - acos(reco_shower_dirx[0]*0.5 + reco_shower_diry[0]*sqrt(3)/2))";
+        //        std::string s_reco_shower_angle_wire_plane2 = "abs((3.14/2) - acos(reco_shower_dirx[0]*0 + reco_shower_diry[0]*1.0))";
+        //        std::string s_reco_shower_angle_wire_plane1 = "abs((3.14/2) - acos(reco_shower_dirx[0]*(-0.5) + reco_shower_diry[0]*sqrt(3)/2))";
+        //        std::string s_reco_shower_angle_wire_plane0 = "abs((3.14/2) - acos(reco_shower_dirx[0]*0.5 + reco_shower_diry[0]*sqrt(3)/2))";
+
+        std::string s_reco_shower_angle_wire_plane2 = getAnglewrtWire(2,"reco_shower_dirx[0]", "reco_shower_diry[0]");
+        std::string s_reco_shower_angle_wire_plane1 = getAnglewrtWire(1,"reco_shower_dirx[0]", "reco_shower_diry[0]");
+        std::string s_reco_shower_angle_wire_plane0 = getAnglewrtWire(0,"reco_shower_dirx[0]", "reco_shower_diry[0]");
+
+
 
         bdt_variable v_reco_shower_angle_wire_plane2 (s_reco_shower_angle_wire_plane2,"(48,0,1.57)", "Angle Between Reco Shower and Wires Plane 2",false,"d");
         validateOverlay({v_reco_shower_angle_wire_plane2 },{bnb_cosmics}, {"reco_asso_showers>0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0  ", "shower_angle_wire_plane2",true);
@@ -354,11 +360,11 @@ int main (int argc, char *argv[]){
         makeIncrementPlots ("median_shower_dedx_plane1_wrt_angle",  v_reco_shower_dedx_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
         makeIncrementPlots ("median_shower_dedx_plane0_wrt_angle",  v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
 
-         std::string s_reco_shower_energy = "reco_shower_energy[0]/1000.0";
-         makeIncrementPlots ("median_shower_dedx_plane2_wrt_energy",  v_reco_shower_dedx_plane2, s_reco_shower_energy, bnb_cosmics, data5e19,bnbext,  5, 1., 0., data_conditions_shower, mc_conditions_shower); 
-         makeIncrementPlots ("median_shower_dedx_plane1_wrt_energy",  v_reco_shower_dedx_plane1, s_reco_shower_energy, bnb_cosmics, data5e19, bnbext, 5, 1., 0., data_conditions_shower, mc_conditions_shower); 
-         makeIncrementPlots ("median_shower_dedx_plane0_wrt_energy",  v_reco_shower_dedx_plane0, s_reco_shower_energy, bnb_cosmics, data5e19, bnbext, 5, 1., 0., data_conditions_shower, mc_conditions_shower); 
-        
+        std::string s_reco_shower_energy = "reco_shower_energy[0]/1000.0";
+        makeIncrementPlots ("median_shower_dedx_plane2_wrt_energy",  v_reco_shower_dedx_plane2, s_reco_shower_energy, bnb_cosmics, data5e19,bnbext,  5, 1., 0., data_conditions_shower, mc_conditions_shower); 
+        makeIncrementPlots ("median_shower_dedx_plane1_wrt_energy",  v_reco_shower_dedx_plane1, s_reco_shower_energy, bnb_cosmics, data5e19, bnbext, 5, 1., 0., data_conditions_shower, mc_conditions_shower); 
+        makeIncrementPlots ("median_shower_dedx_plane0_wrt_energy",  v_reco_shower_dedx_plane0, s_reco_shower_energy, bnb_cosmics, data5e19, bnbext, 5, 1., 0., data_conditions_shower, mc_conditions_shower); 
+
         // ------------------------------------- Conversion Distance Stuff -----------------------------//
 
 
@@ -403,7 +409,7 @@ int main (int argc, char *argv[]){
         // Plot stuff with increasing no. showers cuts
         bdt_variable overlay_fraction("sim_shower_overlay_fraction", "(50, 0, 1)", "Shower Overlay Fraction", "false", "d");
         std::vector<std::string> showerCuts = {"reco_asso_showers>0", "reco_asso_showers==1", "reco_asso_showers==2", "reco_asso_showers==3"};
-//        validateOverlay2({overlay_fraction}, {bnb_cosmics_v6}, showerCuts, "overlay_frac_v6");
+        //        validateOverlay2({overlay_fraction}, {bnb_cosmics_v6}, showerCuts, "overlay_frac_v6");
         validateOverlay2({overlay_fraction}, {bnb_cosmics}, showerCuts, "overlay_frac_v7");
 
         // Do the stuff, make the plots
@@ -621,7 +627,7 @@ int makeIncrementPlots (std::string name, bdt_variable variable, std::string cut
         std::string cuts = cut_variable+ " > " +s_min + "     && " + cut_variable  + " <= " + s_max;
         std::string data_conditions = base_data_conditions + "&& " + cuts;
         std::string mc_conditions= base_mc_conditions + "&&" + cuts ;
-    
+
         validateOverlay({variable },{bnb_cosmics}, {mc_conditions}, {data5e19,bnbext},{data_conditions}, name + "_" +letter+"_"+ std::to_string(i) ,false,true);
 
         letter++;
@@ -636,6 +642,22 @@ int makeIncrementPlots (std::string name, bdt_variable variable, std::string cut
 }
 
 
+std::string getAnglewrtWire(int plane, std::string var_in_x, std::string var_in_y){
+
+    std::string s_var;
+
+    if (plane == 2){
+        s_var = "abs((3.14/2) - acos(" + var_in_x + "*0 + " + var_in_y+ "*1.0))";
+    }
+    if (plane ==1 ){
+        s_var = "abs((3.14/2) - acos(" + var_in_x + "*(-0.5) + " + var_in_y+ "*(sqrt(3)/2)))";
+    }
+    if (plane == 0){
+        s_var = "abs((3.14/2) - acos(" + var_in_x + "*(0.5) + " + var_in_y+ "*(sqrt(3)/2)))";
+    } 
+
+    return s_var;
+}
 
 
 
