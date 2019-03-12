@@ -54,11 +54,13 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
 
         std::cout<<"Starting printPassingDataEvents() "<<std::endl;
         
+        /*
         for(int i=0;i < fake_list->GetN(); i++ ){
             data_file->tvertex->GetEntry( fake_list->GetEntry(i));
             std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<" "<<n_vertex_z<<std::endl;
         }
         std::cout<<"End printPassingDataEvents() "<<std::endl;
+        */
         
 
     return 0;

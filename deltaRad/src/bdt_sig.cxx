@@ -71,21 +71,21 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 	}
   // Normally *0.7 or *0.8
-	cut_min_cosmic = cut_max_cosmic*0.7;
-	cut_min_bnb = cut_max_bnb*0.6;
+	cut_min_cosmic = cut_max_cosmic*0.6;
+	cut_min_bnb = cut_max_bnb*0.7;
 
   // These are normally *1.0
-	cut_max_cosmic =cut_max_cosmic*0.9;
-	cut_max_bnb =cut_max_bnb*0.8; 
+	cut_max_cosmic =cut_max_cosmic*0.8;
+	cut_max_bnb =cut_max_bnb*0.9; 
 
 	//Zoomed in notrack
-//	cut_min_cosmic = 0.54; cut_max_cosmic = 0.58;
-//	cut_min_bnb = 0.51; cut_max_bnb = 0.552;
+	cut_min_cosmic = 0.568; cut_max_cosmic = 0.572;
+	cut_min_bnb = 0.47; cut_max_bnb = 0.5;
 
 	//Best Fit Significance: 0.601552 0.533678 1.63658
 	//Zoomed in track
-	cut_min_cosmic = 0.55; cut_max_cosmic = 0.57;
-	cut_min_bnb = 0.36; cut_max_bnb = 0.42;
+	//cut_min_cosmic = 0.55; cut_max_cosmic = 0.57;
+	//cut_min_bnb = 0.36; cut_max_bnb = 0.42;
 
 
 
@@ -177,7 +177,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
         significance = signal/(signal+background)*signal/total_sig*100;
 				//significance = signal/sqrt(background);
 			}else{
-				std::cout<<"method_best_significane_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<<d<<", cut2: "<<d2<<std::endl;
+				std::cout<<"method_best_significance_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<<d<<", cut2: "<<d2<<std::endl;
 				break;
 			}
 
