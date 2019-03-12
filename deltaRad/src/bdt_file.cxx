@@ -88,7 +88,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	}
 
     if(tag == "BNBPure" || tag == "BNBCosmics"){
-      std::cout << "IN BNB PORTION" << std::endl;
       //MCC9 pot issues
       //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
       pot = 2.16562e21*(double)numberofevents/2154500.0;
@@ -97,7 +96,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     }
 
     else if(tag == "NCPi0" || tag=="NCPi0Cosmics" || tag=="NCPi0NonSignalCosmics"){
-      std::cout << "IN NCPi0 PORTION" << std::endl;
       //MCC9 pot issues
       //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
       // nc_fraction calculated by opening bnb_nu_overlay_combined_whatever and
@@ -109,7 +107,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     }
 
 	  else if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure" || tag == "NCDeltaRad"){
-      std::cout << "IN NCDELTA PORTION" << std::endl;
       double volCryo = 199668.427885;
       double volTPC = 101510.0;
       double volTPCActive=  86698.6;
@@ -130,7 +127,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 
 	  else if(tag == "Data5e19"){
-      std::cout << "IN DATA5E19 PORTION" << std::endl;
       leg = "lp";
       pot = 4.898e19; //old mcc84.393e19;// tor860_wcut
       weight_branch = "1";
@@ -138,7 +134,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
       std::cout<<"--> value: "<<pot<<std::endl;
 	  }
 	  else if(tag == "BNBext"){
-      std::cout << "IN BNBEXT PORTION" << std::endl;
       std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
       tpot = (TTree*)f->Get(tnam_pot.c_str());
       tpot->SetBranchAddress("number_of_events", &numbranch);

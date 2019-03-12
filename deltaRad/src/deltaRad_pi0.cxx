@@ -162,12 +162,12 @@ int main (int argc, char *argv[]){
 
   //std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1)";
   std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_delta_proton_energy>0.04+"+pmass+")";
-  //std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_pi0_subleading_photon_energy>0.02 && mctruth_delta_proton_energy>0.04+"+pmass+")";
+  //std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_pi0_subleading_photon_energy > 0.02 && mctruth_delta_proton_energy>0.04+"+pmass+")";
 
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(30,0.25,1.0)");
-	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(30,0.2,0.8)");
+	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(30,0.2,0.65)");
+	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(30,0.15,0.8)");
 
   // Handy strings for shower indices
   std::string shower_index1 = "reco_shower_ordered_energy_index[0]";
@@ -212,8 +212,8 @@ int main (int argc, char *argv[]){
 	//***************************************************************************************************/
 	//***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
 	//***************************************************************************************************/
-	bdt_flow signal_training_flow(base_cuts, 	signal_definition +"&&"+ signal_training_definition, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow signal_flow(base_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow signal_training_flow(base_cuts, signal_definition +"&&"+ signal_training_definition, vec_precuts, postcuts, cosmic_bdt_info, bnb_bdt_info);
+	bdt_flow signal_flow(base_cuts, 	signal_definition ,vec_precuts,	postcuts,	cosmic_bdt_info, bnb_bdt_info);
 	bdt_flow nonsignal_flow(base_cuts, 	"!("+signal_definition+")" , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow cosmic_flow(base_cuts,		"1", 					vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
