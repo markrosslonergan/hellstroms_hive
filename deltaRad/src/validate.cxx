@@ -394,6 +394,16 @@ int main (int argc, char *argv[]){
 
         bdt_variable v_reco_shower_theta("reco_shower_theta_yz","(30,-3.2,3.2)","Reco Shower Theta yz [Rad]","false","d");
         bdt_variable v_reco_shower_phi("reco_shower_phi_yx","(30,-3.2,3.2)","Reco Shower Phi yx [Rad]","false","d");
+        bdt_variable v_reco_shower_num_hits_plane0("reco_shower_num_hits_plane0", "(50,0,1000)", "Reco Shower N Hits Plane 0", "false","i" ); 
+        bdt_variable v_reco_shower_num_hits_plane1("reco_shower_num_hits_plane1", "(50,0,1000)", "Reco Shower N Hits Plane 1", "false","i" ); 
+        bdt_variable v_reco_shower_num_hits_plane2("reco_shower_num_hits_plane2", "(50,0,1000)", "Reco Shower N Hits Plane 2", "false","i" ); 
+        
+
+
+        validateOverlay({v_reco_shower_num_hits_plane0},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_nhits_plane0",false);
+        validateOverlay({v_reco_shower_num_hits_plane1},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_nhits_plane1",false);
+        validateOverlay({v_reco_shower_num_hits_plane2},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_nhits_plane2",false);
+        
 
 
         validateOverlay({v_reco_shower_theta},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_theta_all",false);
@@ -444,7 +454,9 @@ int main (int argc, char *argv[]){
         makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane0",  v_tdedxtrun, s_reco_track_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
 
         makeIncrementPlots ("mean_trunc_track_dedx_wrt_proton_KE",  v_tdedxtrun,  s_reco_track_energy, bnb_cosmics, data5e19, bnbext, 10, 2., 0., data_track_conditions, mc_track_conditions);
- 
+
+
+
 
 
 
