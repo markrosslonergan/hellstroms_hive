@@ -172,12 +172,12 @@ int main (int argc, char *argv[]){
 
     bdt_file *signal_cosmics = new bdt_file(olddir5, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
 
-    bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.1.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.2.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
     bdt_file *data5e19    = new bdt_file(dir, "data5e19_v7.1.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *bnbext    = new bdt_file(dir, "bnbext_run1_v7.1.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
     
     //this is
-    //  bdt_file *data5e19_v6    = new bdt_file(olddir6, "vertexed_data5e19_v6.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+    //bdt_file *data5e19_v6    = new bdt_file(olddir6, "vertexed_data5e19_v6.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
 
     std::vector<bdt_file*> bdt_files = {bnb_cosmics, data5e19, bnbext};
 
@@ -272,10 +272,10 @@ int main (int argc, char *argv[]){
         std::string p_pi_z = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirz["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirz["+shower_index2+"])";
         std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 
-        bdt_variable v_showerMult("reco_asso_showers","(5,0,5)","Number of reconstructed showers associated","false","d");
+        bdt_variable v_showerMult("reco_asso_showers","(5,0,5)","Number of reconstructed showers in Neutrino Slice","false","d");
         validateOverlay({v_showerMult},{bnb_cosmics}, {"reco_vertex_size>0"}, {data5e19,bnbext}, "reco_vertex_size>0", "shower_multiplicity",true,false);
 
-        bdt_variable v_trackMult("reco_asso_tracks","(5,0,5)","Number of reconstructed tracks associated","false","d");
+        bdt_variable v_trackMult("reco_asso_tracks","(5,0,5)","Number of reconstructed tracks in Neutrino Slice","false","d");
         validateOverlay({v_trackMult},{bnb_cosmics}, {"reco_vertex_size>=0"}, {data5e19,bnbext}, "reco_vertex_size>=0", "track_multiplicity",true,false);
 
         bdt_variable v_vertexMult("reco_vertex_size","(5,0,5)","Number of Pandora Neutrino-Slices in event","false","d");
@@ -310,26 +310,26 @@ int main (int argc, char *argv[]){
 
 
         bdt_variable v_trk_length("reco_track_displacement","(40,0,300)","Track Length [cm]","false","d");
-        validateOverlay({v_trk_length},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_length",false,true);
+        validateOverlay({v_trk_length},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_length",false,false);
 
         bdt_variable v_tgoodcalo("reco_track_good_calo","(40,0,100)","Track Good Calo Hits","false","d");
-        validateOverlay({v_tgoodcalo},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_goodcalo",true,true);
+        validateOverlay({v_tgoodcalo},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_goodcalo",true,false);
 
         bdt_variable v_tstop("reco_track_mean_dEdx_start_half/reco_track_mean_dEdx_end_half","(40,0,3)","Ratio of end/start track mean dEdx","false","d");
-        validateOverlay({v_tstop},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_stopping",false,true);
+        validateOverlay({v_tstop},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_stopping",false,false);
 
 
         bdt_variable v_tdedx("reco_track_mean_dEdx","(40,0,10)","Mean Track dEdx","false","d");
-        validateOverlay({v_tdedx},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_dedx",false,true);
+        validateOverlay({v_tdedx},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_dedx",false,false);
 
         bdt_variable v_tdedxtrun("reco_track_mean_trunc_dEdx","(40,0,10)","Mean Track trunc_dEdx","false","d");
-        validateOverlay({v_tdedxtrun},{bnb_cosmics}, {"reco_track_good_calo > 0 && reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_track_good_calo && reco_asso_tracks>0", "track_trun_dedx",false,true);
+        validateOverlay({v_tdedxtrun},{bnb_cosmics}, {"reco_track_good_calo > 0 && reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_track_good_calo && reco_asso_tracks>0", "track_trun_dedx",false,false);
 
         bdt_variable v_tstop_trunc("reco_track_mean_trunc_dEdx_start_half/reco_track_mean_trunc_dEdx_end_half","(40,0,3)","Ratio of end/start track mean dEdx","false","d");
-        validateOverlay({v_tstop_trunc},{bnb_cosmics}, {"reco_track_good_calo> 0 && reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_track_good_calo>0  && reco_asso_tracks>0", "track_trunc_stopping",false,true);
+        validateOverlay({v_tstop_trunc},{bnb_cosmics}, {"reco_track_good_calo> 0 && reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_track_good_calo>0  && reco_asso_tracks>0", "track_trunc_stopping",false,false);
 
         bdt_variable v_tstop_trunc2("max( reco_track_mean_trunc_dEdx_end_half/reco_track_mean_trunc_dEdx_start_half,  reco_track_mean_trunc_dEdx_start_half/reco_track_mean_trunc_dEdx_end_half)","(40,0,3)","Ratio of end/start track mean dEdx","false","d");
-        validateOverlay({v_tstop_trunc2},{bnb_cosmics}, {"reco_track_good_calo> 0 && reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_track_good_calo>0  && reco_asso_tracks>0", "track_MAX_trunc_stopping",false,true);
+        validateOverlay({v_tstop_trunc2},{bnb_cosmics}, {"reco_track_good_calo> 0 && reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_track_good_calo>0  && reco_asso_tracks>0", "track_MAX_trunc_stopping",false,false);
 
 
         std::string cm_angle = "(fabs("+E1+" - "+E2+")/("+p_pi+"))";
@@ -467,6 +467,8 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
 
     double maxval = -9999;
     TLegend* leg=new TLegend(0.7,0.7,0.9,0.9);
+
+    if(islog) c->SetLogy();
 
     for(int i=0; i<files.size();i++){
 
