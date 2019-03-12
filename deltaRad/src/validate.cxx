@@ -443,7 +443,8 @@ int main (int argc, char *argv[]){
         makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane1",  v_tdedxtrun, s_reco_track_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
         makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane0",  v_tdedxtrun, s_reco_track_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
 
-
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_proton_KE",  v_tdedxtrun,  s_reco_track_energy, bnb_cosmics, data5e19, bnbext, 10, 2., 0., data_track_conditions, mc_track_conditions);
+ 
 
 
 
