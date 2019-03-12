@@ -455,10 +455,10 @@ int main (int argc, char *argv[]){
         bdt_variable v_reco_track_spacepointPCA0 ("reco_track_spacepoint_principal0","(48,0,1)","Reconstructed Track Spacepoint PCA0","true","d");
         validateOverlay( { v_reco_track_spacepointPCA0},{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_principal0",false, false);
 
-        bdt_variable v_reco_track_spacepointPCA1 ("reco_track_spacepoint_principal0","(48,0,1)","Reconstructed Track Spacepoint PCA1","true","d");
+        bdt_variable v_reco_track_spacepointPCA1 ("reco_track_spacepoint_principal1","(48,0,1)","Reconstructed Track Spacepoint PCA1","true","d");
         validateOverlay( { v_reco_track_spacepointPCA1},{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_principal1",false, false);
 
-        bdt_variable v_reco_track_spacepointPCA2 ("reco_track_spacepoint_principal0","(48,0,1)","Reconstructed Track Spacepoint PCA2","true","d");
+        bdt_variable v_reco_track_spacepointPCA2 ("reco_track_spacepoint_principal2","(48,0,1)","Reconstructed Track Spacepoint PCA2","true","d");
         validateOverlay( { v_reco_track_spacepointPCA2},{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_principal2",false, false);
 
 
