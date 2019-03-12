@@ -172,12 +172,12 @@ int main (int argc, char *argv[]){
 
     bdt_file *signal_cosmics = new bdt_file(olddir5, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
 
-    bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.1.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.2.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
     bdt_file *data5e19    = new bdt_file(dir, "data5e19_v7.1.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *bnbext    = new bdt_file(dir, "bnbext_run1_v7.1.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
 
     //this is
-    //  bdt_file *data5e19_v6    = new bdt_file(olddir6, "vertexed_data5e19_v6.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+    //bdt_file *data5e19_v6    = new bdt_file(olddir6, "vertexed_data5e19_v6.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
 
     std::vector<bdt_file*> bdt_files = {bnb_cosmics, data5e19, bnbext};
 
@@ -252,13 +252,13 @@ int main (int argc, char *argv[]){
         std::string shower_index2 = "(reco_shower_ordered_energy_index[1])";
 
         std::string s_reco_shower_dedx_plane2 ="reco_shower_dEdx_plane2_median[0]";
-        bdt_variable v_reco_shower_dedx_plane2 (s_reco_shower_dedx_plane2,"(48,0,6.5)", "Median Shower dE/dx plane 2 [MeV/cm]",false,"d");
+        bdt_variable v_reco_shower_dedx_plane2 (s_reco_shower_dedx_plane2,"(36,0,6.5)", "Median Shower dE/dx plane 2 [MeV/cm]",false,"d");
 
         std::string s_reco_shower_dedx_plane1 ="reco_shower_dEdx_plane1_median[0]";
-        bdt_variable v_reco_shower_dedx_plane1 (s_reco_shower_dedx_plane1,"(48,0,6.5)", "Median Shower dE/dx plane 1 [MeV/cm]",false,"d");
+        bdt_variable v_reco_shower_dedx_plane1 (s_reco_shower_dedx_plane1,"(36,0,6.5)", "Median Shower dE/dx plane 1 [MeV/cm]",false,"d");
 
         std::string s_reco_shower_dedx_plane0 ="reco_shower_dEdx_plane0_median[0]";
-        bdt_variable v_reco_shower_dedx_plane0 (s_reco_shower_dedx_plane0,"(48,0,6.5)", "Median Shower dE/dx plane 0 [MeV/cm]",false,"d");
+        bdt_variable v_reco_shower_dedx_plane0 (s_reco_shower_dedx_plane0,"(36,0,6.5)", "Median Shower dE/dx plane 0 [MeV/cm]",false,"d");
 
         /* double n_increments = 10;
            double angle_increment = 3.14/(2*n_increments);
@@ -278,10 +278,10 @@ int main (int argc, char *argv[]){
         std::string p_pi_z = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirz["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirz["+shower_index2+"])";
         std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 
-        bdt_variable v_showerMult("reco_asso_showers","(5,0,5)","Number of reconstructed showers associated","false","d");
+        bdt_variable v_showerMult("reco_asso_showers","(5,0,5)","Number of reconstructed showers in Neutrino Slice","false","d");
         validateOverlay({v_showerMult},{bnb_cosmics}, {"reco_vertex_size>0"}, {data5e19,bnbext}, "reco_vertex_size>0", "shower_multiplicity",true,false);
 
-        bdt_variable v_trackMult("reco_asso_tracks","(5,0,5)","Number of reconstructed tracks associated","false","d");
+        bdt_variable v_trackMult("reco_asso_tracks","(5,0,5)","Number of reconstructed tracks in Neutrino Slice","false","d");
         validateOverlay({v_trackMult},{bnb_cosmics}, {"reco_vertex_size>=0"}, {data5e19,bnbext}, "reco_vertex_size>=0", "track_multiplicity",true,false);
 
         bdt_variable v_vertexMult("reco_vertex_size","(5,0,5)","Number of Pandora Neutrino-Slices in event","false","d");
@@ -316,26 +316,26 @@ int main (int argc, char *argv[]){
 
 
         bdt_variable v_trk_length("reco_track_displacement","(40,0,300)","Track Length [cm]","false","d");
-        validateOverlay({v_trk_length},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_length",false,true);
+        validateOverlay({v_trk_length},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_length",false,false);
 
         bdt_variable v_tgoodcalo("reco_track_good_calo","(40,0,100)","Track Good Calo Hits","false","d");
-        validateOverlay({v_tgoodcalo},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_goodcalo",true,true);
+        validateOverlay({v_tgoodcalo},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_goodcalo",true,false);
 
         bdt_variable v_tstop("reco_track_mean_dEdx_start_half/reco_track_mean_dEdx_end_half","(40,0,3)","Ratio of end/start track mean dEdx","false","d");
-        validateOverlay({v_tstop},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_stopping",false,true);
+        validateOverlay({v_tstop},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_stopping",false,false);
 
 
         bdt_variable v_tdedx("reco_track_mean_dEdx","(40,0,10)","Mean Track dEdx","false","d");
-        validateOverlay({v_tdedx},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_dedx",false,true);
+        validateOverlay({v_tdedx},{bnb_cosmics}, {"reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_asso_tracks>0", "track_dedx",false,false);
 
         bdt_variable v_tdedxtrun("reco_track_mean_trunc_dEdx","(40,0,10)","Mean Track trunc_dEdx","false","d");
-        validateOverlay({v_tdedxtrun},{bnb_cosmics}, {"reco_track_good_calo > 0 && reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_track_good_calo && reco_asso_tracks>0", "track_trun_dedx",false,true);
+        validateOverlay({v_tdedxtrun},{bnb_cosmics}, {"reco_track_good_calo > 0 && reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_track_good_calo && reco_asso_tracks>0", "track_trun_dedx",false,false);
 
         bdt_variable v_tstop_trunc("reco_track_mean_trunc_dEdx_start_half/reco_track_mean_trunc_dEdx_end_half","(40,0,3)","Ratio of end/start track mean dEdx","false","d");
-        validateOverlay({v_tstop_trunc},{bnb_cosmics}, {"reco_track_good_calo> 0 && reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_track_good_calo>0  && reco_asso_tracks>0", "track_trunc_stopping",false,true);
+        validateOverlay({v_tstop_trunc},{bnb_cosmics}, {"reco_track_good_calo> 0 && reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_track_good_calo>0  && reco_asso_tracks>0", "track_trunc_stopping",false,false);
 
         bdt_variable v_tstop_trunc2("max( reco_track_mean_trunc_dEdx_end_half/reco_track_mean_trunc_dEdx_start_half,  reco_track_mean_trunc_dEdx_start_half/reco_track_mean_trunc_dEdx_end_half)","(40,0,3)","Ratio of end/start track mean dEdx","false","d");
-        validateOverlay({v_tstop_trunc2},{bnb_cosmics}, {"reco_track_good_calo> 0 && reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_track_good_calo>0  && reco_asso_tracks>0", "track_MAX_trunc_stopping",false,true);
+        validateOverlay({v_tstop_trunc2},{bnb_cosmics}, {"reco_track_good_calo> 0 && reco_asso_tracks>0"}, {data5e19,bnbext}, "reco_track_good_calo>0  && reco_asso_tracks>0", "track_MAX_trunc_stopping",false,false);
 
 
         std::string cm_angle = "(fabs("+E1+" - "+E2+")/("+p_pi+"))";
@@ -356,14 +356,14 @@ int main (int argc, char *argv[]){
         std::string data_conditions_shower = "reco_asso_showers>0";
         std::string mc_conditions_shower = data_conditions_shower + "&& sim_shower_is_true_shower" ;
 
-        makeIncrementPlots ("median_shower_dedx_plane2_wrt_angle",  v_reco_shower_dedx_plane2, s_reco_shower_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0., data_conditions_shower, mc_conditions_shower);
-        makeIncrementPlots ("median_shower_dedx_plane1_wrt_angle",  v_reco_shower_dedx_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
-        makeIncrementPlots ("median_shower_dedx_plane0_wrt_angle",  v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
+        makeIncrementPlots ("median_shower_dedx_plane2_wrt_angle",  v_reco_shower_dedx_plane2, s_reco_shower_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0., data_conditions_shower, mc_conditions_shower);
+        makeIncrementPlots ("median_shower_dedx_plane1_wrt_angle",  v_reco_shower_dedx_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
+        makeIncrementPlots ("median_shower_dedx_plane0_wrt_angle",  v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
 
-        std::string s_reco_shower_energy = "reco_shower_energy[0]/1000.0";
-        makeIncrementPlots ("median_shower_dedx_plane2_wrt_energy",  v_reco_shower_dedx_plane2, s_reco_shower_energy, bnb_cosmics, data5e19,bnbext,  5, 1., 0., data_conditions_shower, mc_conditions_shower); 
-        makeIncrementPlots ("median_shower_dedx_plane1_wrt_energy",  v_reco_shower_dedx_plane1, s_reco_shower_energy, bnb_cosmics, data5e19, bnbext, 5, 1., 0., data_conditions_shower, mc_conditions_shower); 
-        makeIncrementPlots ("median_shower_dedx_plane0_wrt_energy",  v_reco_shower_dedx_plane0, s_reco_shower_energy, bnb_cosmics, data5e19, bnbext, 5, 1., 0., data_conditions_shower, mc_conditions_shower); 
+        std::string s_reco_shower_energy = "reco_shower_energy[0]/900.0";
+        makeIncrementPlots ("median_shower_dedx_plane2_wrt_energy",  v_reco_shower_dedx_plane2, s_reco_shower_energy, bnb_cosmics, data5e19,bnbext,  4, 1., 0., data_conditions_shower, mc_conditions_shower); 
+        makeIncrementPlots ("median_shower_dedx_plane1_wrt_energy",  v_reco_shower_dedx_plane1, s_reco_shower_energy, bnb_cosmics, data5e19, bnbext, 4, 1., 0., data_conditions_shower, mc_conditions_shower); 
+        makeIncrementPlots ("median_shower_dedx_plane0_wrt_energy",  v_reco_shower_dedx_plane0, s_reco_shower_energy, bnb_cosmics, data5e19, bnbext, 4, 1., 0., data_conditions_shower, mc_conditions_shower); 
 
         // ------------------------------------- Conversion Distance Stuff -----------------------------//
 
@@ -512,6 +512,8 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
     double maxval = -9999;
     TLegend* leg=new TLegend(0.7,0.7,0.9,0.9);
 
+    if(islog) c->SetLogy();
+
     for(int i=0; i<files.size();i++){
 
         c->cd(which_c); 
@@ -553,7 +555,7 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
         ts1->Draw("hist");
         ts1->SetMaximum(maxval*1.5);
         ts1->GetXaxis()->SetTitle(vars[i].unit.c_str());
-
+        ts1->SetTitle(pdfname.c_str());
 
         leg->AddEntry(th1_overlay,"BNB w/ Overlay","f");
     }
@@ -657,13 +659,19 @@ int makeIncrementPlots (std::string name, bdt_variable variable, std::string cut
     std::string s_min = std::to_string(min);
     std::string s_max= std::to_string(max);
 
+
+    TCanvas *c = new TCanvas(("tmp_"+name).c_str(),"tmp",800*sqrt(n_increments),800*sqrt(n_increments));
+    c->Divide(sqrt(n_increments),sqrt(n_increments));
+    c->cd();
+
+
     for (int i = 1; i <= n_increments; i++){
 
         std::string cuts = cut_variable+ " > " +s_min + "     && " + cut_variable  + " <= " + s_max;
         std::string data_conditions = base_data_conditions + "&& " + cuts;
         std::string mc_conditions= base_mc_conditions + "&&" + cuts ;
 
-        validateOverlay({variable },{bnb_cosmics}, {mc_conditions}, {data5e19,bnbext},{data_conditions}, name + "_" +letter+"_"+ std::to_string(i) ,false,true);
+        validateOverlay({variable },{bnb_cosmics}, {mc_conditions}, {data5e19,bnbext},{data_conditions}, c, i, s_min+" -> "+s_max,false,true);
 
         letter++;
         min = max;
@@ -672,6 +680,10 @@ int makeIncrementPlots (std::string name, bdt_variable variable, std::string cut
         s_max= std::to_string(max);
 
     } 
+    
+    c->cd();
+    c->SaveAs((name+".pdf").c_str(),"pdf");
+
 
     return 0;
 }
