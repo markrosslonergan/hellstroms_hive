@@ -401,9 +401,9 @@ int main (int argc, char *argv[]){
         validateOverlay({v_reco_shower_theta},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && abs(sim_shower_pdg)==11"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_theta_electron",false);
 
 
-        validateOverlay({v_reco_shower_phi},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_phi_all",false);
-        validateOverlay({v_reco_shower_phi},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_pdg==22"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_phi_photon",false);
-        validateOverlay({v_reco_shower_phi},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && abs(sim_shower_pdg)==11"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_phi_electron",false);
+        validateOverlay({v_reco_shower_phi},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_phi_all",true);
+        validateOverlay({v_reco_shower_phi},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && sim_shower_pdg==22"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_phi_photon",true);
+        validateOverlay({v_reco_shower_phi},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0 && abs(sim_shower_pdg)==11"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_phi_electron",true);
 
 
         // Plot stuff with increasing no. showers cuts
@@ -411,6 +411,31 @@ int main (int argc, char *argv[]){
         std::vector<std::string> showerCuts = {"reco_asso_showers>0", "reco_asso_showers==1", "reco_asso_showers==2", "reco_asso_showers==3"};
         //        validateOverlay2({overlay_fraction}, {bnb_cosmics_v6}, showerCuts, "overlay_frac_v6");
         validateOverlay2({overlay_fraction}, {bnb_cosmics}, showerCuts, "overlay_frac_v7");
+
+
+
+        //-------------------------------------Now some track stuff --------------------------------------------//
+        
+        std::string s_reco_track_angle_wire_plane2 = getAnglewrtWire(2,"reco_track_dirx[0]", "reco_track_diry[0]");
+        std::string s_reco_track_angle_wire_plane1 = getAnglewrtWire(1,"reco_track_dirx[0]", "reco_track_diry[0]");
+        std::string s_reco_track_angle_wire_plane0 = getAnglewrtWire(0,"reco_track_dirx[0]", "reco_track_diry[0]");
+
+ //int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::vector<bdt_file*> datas, std::string datacut, std::string pdfname, bool islog, bool cutall);
+
+        std::string data_track_conditions = "reco_asso_tracks>0  ";
+        std::string mc_track_conditions = data_track_conditions ;
+
+         bdt_variable v_reco_track_angle_wire_plane2 (s_reco_track_angle_wire_plane2,"(48,0,1.57)", "Angle Between Reco Track and Wires Plane 2",false,"d");
+        validateOverlay({v_reco_track_angle_wire_plane2 },{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext},{data_track_conditions}, "track_angle_wire_plane2", false, false);
+
+        bdt_variable v_reco_track_angle_wire_plane1 (s_reco_track_angle_wire_plane1,"(48,0,1.57)", "Angle Between Reco Track and Wires Plane 1",false,"d");
+        validateOverlay({v_reco_track_angle_wire_plane1 },{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext},{data_track_conditions}, "track_angle_wire_plane1",false, false);
+
+        bdt_variable v_reco_track_angle_wire_plane0 (s_reco_track_angle_wire_plane0,"(48,0,1.57)", "Angle Between Reco Track and Wires Plane 0",false,"d");
+        validateOverlay({v_reco_track_angle_wire_plane0 },{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_angle_wire_plane0",false, false);
+
+
+
 
         // Do the stuff, make the plots
         /*
