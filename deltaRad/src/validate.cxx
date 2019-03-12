@@ -415,17 +415,17 @@ int main (int argc, char *argv[]){
 
 
         //-------------------------------------Now some track stuff --------------------------------------------//
-        
+
         std::string s_reco_track_angle_wire_plane2 = getAnglewrtWire(2,"reco_track_dirx[0]", "reco_track_diry[0]");
         std::string s_reco_track_angle_wire_plane1 = getAnglewrtWire(1,"reco_track_dirx[0]", "reco_track_diry[0]");
         std::string s_reco_track_angle_wire_plane0 = getAnglewrtWire(0,"reco_track_dirx[0]", "reco_track_diry[0]");
 
- //int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::vector<bdt_file*> datas, std::string datacut, std::string pdfname, bool islog, bool cutall);
+        //int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::vector<bdt_file*> datas, std::string datacut, std::string pdfname, bool islog, bool cutall);
 
-        std::string data_track_conditions = "reco_asso_tracks>0  ";
+        std::string data_track_conditions = "reco_asso_tracks>0 && reco_track_good_calo > 0  ";
         std::string mc_track_conditions = data_track_conditions ;
 
-         bdt_variable v_reco_track_angle_wire_plane2 (s_reco_track_angle_wire_plane2,"(48,0,1.57)", "Angle Between Reco Track and Wires Plane 2",false,"d");
+        bdt_variable v_reco_track_angle_wire_plane2 (s_reco_track_angle_wire_plane2,"(48,0,1.57)", "Angle Between Reco Track and Wires Plane 2",false,"d");
         validateOverlay({v_reco_track_angle_wire_plane2 },{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext},{data_track_conditions}, "track_angle_wire_plane2", false, false);
 
         bdt_variable v_reco_track_angle_wire_plane1 (s_reco_track_angle_wire_plane1,"(48,0,1.57)", "Angle Between Reco Track and Wires Plane 1",false,"d");
@@ -434,6 +434,12 @@ int main (int argc, char *argv[]){
         bdt_variable v_reco_track_angle_wire_plane0 (s_reco_track_angle_wire_plane0,"(48,0,1.57)", "Angle Between Reco Track and Wires Plane 0",false,"d");
         validateOverlay({v_reco_track_angle_wire_plane0 },{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_angle_wire_plane0",false, false);
 
+        
+         makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane2",  v_tdedxtrun, s_reco_track_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0., data_track_conditions, mc_track_conditions);
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane1",  v_tdedxtrun, s_reco_track_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane0",  v_tdedxtrun, s_reco_track_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
+
+     
 
 
 
