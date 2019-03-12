@@ -278,7 +278,7 @@ int main (int argc, char *argv[]){
         std::string p_pi_z = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirz["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirz["+shower_index2+"])";
         std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 
-        std::string testcut = "test_matched_hits > 50";
+        std::string testcut = "test_matched_hits > 40";
 
 
         bdt_variable v_matched("test_matched_hits","(100,0,50)","Number of hits that get matched to something MC","false","d");
@@ -303,7 +303,7 @@ int main (int argc, char *argv[]){
         bdt_variable v_overlayfrac3("reco_shower_starty","(50,-125,125)","Shower Start Y [cm]","false","d");
         validateOverlay({v_overlayfrac3},{bnb_cosmics}, {"reco_asso_showers>0"}, {data5e19,bnbext}, "reco_asso_showers>0", "shower_start_y",false,true);
 
-        bdt_variable v_overlayfrac4("reco_shower_startz","(50,-125,125)","Shower Start Z [cm]","false","d");
+        bdt_variable v_overlayfrac4("reco_shower_startz","(50,0,1050)","Shower Start Z [cm]","false","d");
         validateOverlay({v_overlayfrac4},{bnb_cosmics}, {"reco_asso_showers>0"}, {data5e19,bnbext}, "reco_asso_showers>0", "shower_start_z",false,true);
 
         bdt_variable v_snumhits0("reco_shower_num_hits_plane0","(50,0,200)","Num Hits in Shower Plane 0","false","d");
@@ -401,9 +401,9 @@ int main (int argc, char *argv[]){
 
         bdt_variable v_reco_shower_theta("reco_shower_theta_yz","(30,-3.2,3.2)","Reco Shower Theta yz [Rad]","false","d");
         bdt_variable v_reco_shower_phi("reco_shower_phi_yx","(30,-3.2,3.2)","Reco Shower Phi yx [Rad]","false","d");
-        bdt_variable v_reco_shower_num_hits_plane0("reco_shower_num_hits_plane0", "(50,0,1000)", "Reco Shower N Hits Plane 0", "false","i" ); 
-        bdt_variable v_reco_shower_num_hits_plane1("reco_shower_num_hits_plane1", "(50,0,1000)", "Reco Shower N Hits Plane 1", "false","i" ); 
-        bdt_variable v_reco_shower_num_hits_plane2("reco_shower_num_hits_plane2", "(50,0,1000)", "Reco Shower N Hits Plane 2", "false","i" ); 
+        bdt_variable v_reco_shower_num_hits_plane0("reco_shower_num_hits_plane0", "(50,0,400)", "Reco Shower N Hits Plane 0", "false","i" ); 
+        bdt_variable v_reco_shower_num_hits_plane1("reco_shower_num_hits_plane1", "(50,0,400)", "Reco Shower N Hits Plane 1", "false","i" ); 
+        bdt_variable v_reco_shower_num_hits_plane2("reco_shower_num_hits_plane2", "(50,0,400)", "Reco Shower N Hits Plane 2", "false","i" ); 
 
 
 
@@ -460,20 +460,20 @@ int main (int argc, char *argv[]){
         validateOverlay( { v_reco_track_energy},{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_proton_kinetic_energy",false, false);
 
         bdt_variable v_reco_track_spacepointPCA0 ("reco_track_spacepoint_principal0","(48,0,1)","Reconstructed Track Spacepoint PCA0","true","d");
-        validateOverlay( { v_reco_track_spacepointPCA0},{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_principal0",false, false);
+        validateOverlay( { v_reco_track_spacepointPCA0},{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_principal0",true, false);
 
         bdt_variable v_reco_track_spacepointPCA1 ("reco_track_spacepoint_principal1","(48,0,1)","Reconstructed Track Spacepoint PCA1","true","d");
-        validateOverlay( { v_reco_track_spacepointPCA1},{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_principal1",false, false);
+        validateOverlay( { v_reco_track_spacepointPCA1},{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_principal1",true, false);
 
-        bdt_variable v_reco_track_spacepointPCA2 ("reco_track_spacepoint_principal2","(48,0,1)","Reconstructed Track Spacepoint PCA2","true","d");
-        validateOverlay( { v_reco_track_spacepointPCA2},{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_principal2",false, false);
+//        bdt_variable v_reco_track_spacepointPCA2 ("reco_track_spacepoint_principal2","(48,0,1)","Reconstructed Track Spacepoint PCA2","true","d");
+  //      validateOverlay( { v_reco_track_spacepointPCA2},{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_principal2",false, false);
 
 
-        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane2",  v_tdedxtrun, s_reco_track_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0., data_track_conditions, mc_track_conditions);
-        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane1",  v_tdedxtrun, s_reco_track_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
-        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane0",  v_tdedxtrun, s_reco_track_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane2",  v_tdedxtrun, s_reco_track_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0., data_track_conditions, mc_track_conditions);
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane1",  v_tdedxtrun, s_reco_track_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane0",  v_tdedxtrun, s_reco_track_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
 
-        makeIncrementPlots ("mean_trunc_track_dedx_wrt_proton_KE",  v_tdedxtrun,  s_reco_track_energy, bnb_cosmics, data5e19, bnbext, 10, 2., 0., data_track_conditions, mc_track_conditions);
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_proton_KE",  v_tdedxtrun,  s_reco_track_energy, bnb_cosmics, data5e19, bnbext, 9, 2., 0., data_track_conditions, mc_track_conditions);
 
 
 
@@ -553,14 +553,17 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
         TH1* th1_overlay;
         TH1* th1_mcish;
 
+        std::string testcut = "test_matched_hits > 0";
+
+
         if(cutup){
             //       TH1* th1_overlay =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& 1" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
             //      TH1* th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& 0" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
-            th1_overlay =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& sim_shower_overlay_fraction > 0.2" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
-            th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& sim_shower_overlay_fraction < 0.2" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
+            th1_overlay =  (TH1*) files[i]->getTH1(vars[i], testcut+"&&"+cuts[i] +"&& sim_shower_overlay_fraction > 0.2" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
+            th1_mcish =  (TH1*) files[i]->getTH1(vars[i], testcut+"&&"+cuts[i] +"&& sim_shower_overlay_fraction < 0.2" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
         }else{
-            th1_overlay =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& 1" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
-            th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& 0" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
+            th1_overlay =  (TH1*) files[i]->getTH1(vars[i], testcut+"&&"+cuts[i] +"&& 1" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
+            th1_mcish =  (TH1*) files[i]->getTH1(vars[i], testcut+"&&"+cuts[i] +"&& 0" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
         }
 
         THStack * ts1 = new THStack();
