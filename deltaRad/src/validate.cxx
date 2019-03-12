@@ -434,12 +434,16 @@ int main (int argc, char *argv[]){
         bdt_variable v_reco_track_angle_wire_plane0 (s_reco_track_angle_wire_plane0,"(48,0,1.57)", "Angle Between Reco Track and Wires Plane 0",false,"d");
         validateOverlay({v_reco_track_angle_wire_plane0 },{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_angle_wire_plane0",false, false);
 
-        
-         makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane2",  v_tdedxtrun, s_reco_track_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0., data_track_conditions, mc_track_conditions);
+        std::string s_reco_track_energy = "(reco_track_proton_kinetic_energy[0]";
+        bdt_variable v_reco_track_energy (s_reco_track_energy,"(48,0,2)","Reconstructed Proton Track Kinetic Energy [GeV]","true","d");
+        validateOverlay( { v_reco_track_energy},{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_proton_kinetic_energy",false, false);
+
+
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane2",  v_tdedxtrun, s_reco_track_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0., data_track_conditions, mc_track_conditions);
         makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane1",  v_tdedxtrun, s_reco_track_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
         makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane0",  v_tdedxtrun, s_reco_track_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 10, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
 
-     
+
 
 
 
