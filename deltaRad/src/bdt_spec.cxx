@@ -306,7 +306,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 
 	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 	//Loop over all stages
-	for(int s = 0; s< 4; s++){
+	for(int s = 1; s< 4; s++){
 		std::cout<<"On stage: "<<s<<std::endl;
 		//First set the files at this stage
 		for(auto &f: this->stack){
@@ -360,12 +360,12 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			l3->SetNColumns(2);
 
 			TLatex latexbdt2;
-			latexbdt2.SetTextSize(0.05);
+			latexbdt2.SetTextSize(0.04);
 			latexbdt2.SetTextAlign(13);  //align at top
 			latexbdt2.SetNDC();
 			latexbdt2.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
 			TLatex pottenbdt2;
-			pottenbdt2.SetTextSize(0.05);
+			pottenbdt2.SetTextSize(0.04);
 			pottenbdt2.SetTextAlign(13);  //align at top
 			pottenbdt2.SetNDC();
 			std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";

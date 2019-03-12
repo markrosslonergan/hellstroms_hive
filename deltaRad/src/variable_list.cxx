@@ -232,8 +232,10 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
     all_precuts.push_back(min_shower_energy_cut); 
 		all_precuts.push_back(pe_cut); 
-		all_precuts.push_back(fiducial_cut);
     //all_precuts.push_back(shower_dedx_cut);
+
+    ////// NOTE: Fiducial cut now in deltaRad_pi0.cxx //////
+		//all_precuts.push_back(fiducial_cut);
 
     // Now put all variables into a single vector for non-training stages
     all_vars.reserve(train_vars.size() + plot_vars.size() );

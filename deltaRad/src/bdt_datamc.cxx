@@ -181,7 +181,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 			tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
 
 
-			TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
+			TLegend *l0 = new TLegend(0.11,0.62,0.89,0.89);
 			l0->SetNColumns(2);
 			double NeventsStack = 0;
 
@@ -472,7 +472,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 
 		TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
-		l0->SetNColumns(2);
+		l0->SetNColumns(3);
 		double NeventsStack = 0;
 
 		for(auto &f: mc_stack->stack){

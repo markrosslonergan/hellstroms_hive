@@ -160,12 +160,12 @@ int main (int argc, char *argv[]){
 
   std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-10 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
-  std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1)";
-  //std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_pi0_subleading_photon_energy>0.02 && mctruth_delta_proton_energy>0.04"+pmass+")";
+  //std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1)";
+  std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_pi0_subleading_photon_energy>0.02 && mctruth_delta_proton_energy>0.04+"+pmass+")";
 
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(30,0.2,0.8)");
+	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(30,0.28,0.92)");
 	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(30,0.2,0.8)");
 
   // Handy strings for shower indices
@@ -227,7 +227,7 @@ int main (int argc, char *argv[]){
 	//bdt_file *signal_cosmics = new bdt_file(dir, "ncpi0_overlay_mcc9_35khomebrew_v5.0.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
 	bdt_file *signal_pure = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.0.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_training_flow);
 	bdt_file *signal_cosmics = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.0.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
-	bdt_file *signal_failed_cosmics = new bdt_file(dir, "ncpi0_overlay_mcc9_35khomebrew_v5.0.root", "NCPi0FailedCosmics", "hist","singlephoton/", kRed-7, signal_failed_flow);
+	bdt_file *signal_failed_cosmics = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.0.root", "NCPi0FailedCosmics", "hist","singlephoton/", kRed-7, signal_failed_flow);
   /*
 	bdt_file *bnb_pure = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root ", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
@@ -235,11 +235,11 @@ int main (int argc, char *argv[]){
 	bdt_file *data5e19 = new bdt_file(dir, "data_mcc9_v5.0.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
 	bdt_file *bnbext = new bdt_file(dir, "bnbext_mcc9_v5.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
   */
-	bdt_file *bnb_pure = new bdt_file(dirv7, "bnb_overlay_run1_v7.1.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dirv7, "bnb_overlay_run1_v7.1.root", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
+	bdt_file *bnb_pure = new bdt_file(dirv7, "bnb_overlay_combined_v7.1.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dirv7, "bnb_overlay_combined_v7.1.root", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
 
 	//Data files
-	bdt_file *data5e19 = new bdt_file(mydir, "data5e19_v7.1.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
+	bdt_file *data5e19 = new bdt_file(dirv7, "data5e19_v7.1.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
 	bdt_file *bnbext = new bdt_file(dirv7, "bnbext_run1_v7.1.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
@@ -304,10 +304,15 @@ int main (int argc, char *argv[]){
 	double fcoscut;
 	double fbnbcut;
 	if(analysis_tag == "2g1p"){
-		//fcoscut = 0.586775;
-		//fbnbcut = 0.39921;
-		fcoscut = 0.562;
-		fbnbcut = 0.417;
+    // v5 values
+		//fcoscut = 0.562;
+		//fbnbcut = 0.417;
+    
+    // Mar 11th mini-retreat, cali values
+		//fcoscut = 0.547;
+		//fbnbcut = 0.3928;
+		fcoscut = 0.2;
+		fbnbcut = 0.2;
 	}else if(analysis_tag == "2g0p"){
 		fcoscut = 0.5698;
 		fbnbcut = 0.479;
