@@ -161,11 +161,12 @@ int main (int argc, char *argv[]){
   std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-10 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
   //std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1)";
-  std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_pi0_subleading_photon_energy>0.02 && mctruth_delta_proton_energy>0.04+"+pmass+")";
+  std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_delta_proton_energy>0.04+"+pmass+")";
+  //std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_pi0_subleading_photon_energy>0.02 && mctruth_delta_proton_energy>0.04+"+pmass+")";
 
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	//Set up some info about the BDTs to pass along
-	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(30,0.28,0.92)");
+	bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(30,0.25,1.0)");
 	bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(30,0.2,0.8)");
 
   // Handy strings for shower indices
@@ -179,8 +180,8 @@ int main (int argc, char *argv[]){
   std::string signal_training_definition = "sim_shower_overlay_fraction[0]<0.2 && sim_shower_overlay_fraction[1]<0.2 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111";
 	std::string bnb_bkg_training_def = "( mctruth_cc_or_nc==0 || mctruth_num_exiting_pi0==0 )";
   if (analysis_tag == "2g1p") {
-    signal_training_definition = signal_training_definition+ "&& sim_track_matched[0]==1";
-    bnb_bkg_training_def = bnb_bkg_training_def +"&& 1";
+    //signal_training_definition = signal_training_definition+ "&& sim_track_matched[0]==1";
+    //bnb_bkg_training_def = bnb_bkg_training_def +"&& 1";
     num_track_cut =  "==1";
 
     bnb_bdt_info.setTopoName("2#gamma1p");
@@ -213,7 +214,7 @@ int main (int argc, char *argv[]){
 	//***************************************************************************************************/
 	bdt_flow signal_training_flow(base_cuts, 	signal_definition +"&&"+ signal_training_definition, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow signal_flow(base_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow signal_failed_flow(base_cuts, 	"!("+signal_definition+")" , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow nonsignal_flow(base_cuts, 	"!("+signal_definition+")" , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow cosmic_flow(base_cuts,		"1", 					vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 	bdt_flow bkg_pure_flow(base_cuts,	background_definition+"&&"+ bnb_bkg_training_def ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
@@ -227,23 +228,23 @@ int main (int argc, char *argv[]){
 	//bdt_file *signal_cosmics = new bdt_file(dir, "ncpi0_overlay_mcc9_35khomebrew_v5.0.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
 	bdt_file *signal_pure = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.0.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_training_flow);
 	bdt_file *signal_cosmics = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.0.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
-	bdt_file *signal_failed_cosmics = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.0.root", "NCPi0FailedCosmics", "hist","singlephoton/", kRed-7, signal_failed_flow);
-  /*
+	bdt_file *nonsignal_cosmics = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.0.root", "NCPi0NonSignalCosmics", "hist","singlephoton/", kRed-7, nonsignal_flow);
 	bdt_file *bnb_pure = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root ", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
 	//Data files
 	bdt_file *data5e19 = new bdt_file(dir, "data_mcc9_v5.0.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
 	bdt_file *bnbext = new bdt_file(dir, "bnbext_mcc9_v5.0.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
-  */
-	bdt_file *bnb_pure = new bdt_file(dirv7, "bnb_overlay_combined_v7.1.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
-	bdt_file *bnb_cosmics = new bdt_file(dirv7, "bnb_overlay_combined_v7.1.root", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
+  /*
+	bdt_file *bnb_pure = new bdt_file(dirv7, "bnb_overlay_combined_v7.2.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
+	bdt_file *bnb_cosmics = new bdt_file(dirv7, "bnb_overlay_combined_v7.2.root", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
 
 	//Data files
 	bdt_file *data5e19 = new bdt_file(dirv7, "data5e19_v7.1.root", "Data5e19", "E1p","singlephoton/", kBlack, data_flow);
 	bdt_file *bnbext = new bdt_file(dirv7, "bnbext_run1_v7.1.root",	"BNBext",	"E1p","singlephoton/",  kGreen-3, data_flow);
+  */
 
 	//For conviencance fill a vector with pointers to all the files to loop over.
-	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, signal_failed_cosmics, bnb_pure, bnb_cosmics, data5e19, bnbext};
+	std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, nonsignal_cosmics, bnb_pure, bnb_cosmics, data5e19, bnbext};
 	//std::vector<bdt_file*> bdt_files = {signal_pure, signal_cosmics, bnb_pure, bnb_cosmics, data5e19, bnbext};
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -265,8 +266,6 @@ int main (int argc, char *argv[]){
 	std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-
-
 		for(auto &f: bdt_files){
 
 			if(mode_option != "app" && mode_option != "train" && mode_option !="vars") f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
@@ -282,11 +281,10 @@ int main (int argc, char *argv[]){
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-
 	//Adding plot names
 	signal_pure->addPlotName("NC Pi0");
 	signal_cosmics->addPlotName("NC Pi0 w/ Overlays");
-	signal_failed_cosmics->addPlotName("Failed NC Pi0 w/ Overlays");
+	nonsignal_cosmics->addPlotName("Non-Signal NC Pi0 w/ Overlays");
 	bnb_pure->addPlotName("BNB Backgrounds");
 	bnb_cosmics->addPlotName("BNB w/ Overlays");
 	data5e19->addPlotName("4.8e19 POT Data");
@@ -295,24 +293,16 @@ int main (int argc, char *argv[]){
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-
-
-
-	//MELD: Best Fit Significance: 0.591875 0.5325 1.74915
-    //MCC9: Best Fit Significance: 0.597 0.555025 2.18283
-    //
 	double fcoscut;
 	double fbnbcut;
 	if(analysis_tag == "2g1p"){
     // v5 values
-		//fcoscut = 0.562;
-		//fbnbcut = 0.417;
+		fcoscut = 0.6115;
+		fbnbcut = 0.2;
     
     // Mar 11th mini-retreat, cali values
-		//fcoscut = 0.547;
-		//fbnbcut = 0.3928;
-		fcoscut = 0.2;
-		fbnbcut = 0.2;
+		//fcoscut = 0.582;
+		//fbnbcut = 0.4475;
 	}else if(analysis_tag == "2g0p"){
 		fcoscut = 0.5698;
 		fbnbcut = 0.479;
@@ -438,8 +428,8 @@ int main (int argc, char *argv[]){
 	}else if(mode_option == "stack"){
 		bdt_stack histogram_stack(analysis_tag+"_stack");
 		histogram_stack.addToStack(signal_cosmics);
-		signal_failed_cosmics->fillstyle = 3333;
-		histogram_stack.addToStack(signal_failed_cosmics);
+		nonsignal_cosmics->fillstyle = 3333;
+		histogram_stack.addToStack(nonsignal_cosmics);
 		histogram_stack.addToStack(bnb_cosmics);
 
 		//Add bnbext but change the color and style first
@@ -476,8 +466,8 @@ int main (int argc, char *argv[]){
 		bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
 		histogram_stack->plot_pot = 4.898e19;
 		histogram_stack->addToStack(signal_cosmics);
-		signal_failed_cosmics->fillstyle = 3333;
-		histogram_stack->addToStack(signal_failed_cosmics);
+		nonsignal_cosmics->fillstyle = 3333;
+		histogram_stack->addToStack(nonsignal_cosmics);
 		histogram_stack->addToStack(bnb_cosmics);
 		bnbext->fillstyle = 3333;
 		histogram_stack->addToStack(bnbext);

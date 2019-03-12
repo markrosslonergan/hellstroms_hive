@@ -88,6 +88,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	}
 
     if(tag == "BNBPure" || tag == "BNBCosmics"){
+      std::cout << "IN BNB PORTION" << std::endl;
       //MCC9 pot issues
       //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
       pot = 2.16562e21*(double)numberofevents/2154500.0;
@@ -95,7 +96,8 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		  std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
     }
 
-    if(tag == "NCPi0" || tag=="NCPi0Cosmics" || "NCPi0FailedCosmics"){
+    else if(tag == "NCPi0" || tag=="NCPi0Cosmics" || tag=="NCPi0NonSignalCosmics"){
+      std::cout << "IN NCPi0 PORTION" << std::endl;
       //MCC9 pot issues
       //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
       // nc_fraction calculated by opening bnb_nu_overlay_combined_whatever and
@@ -106,10 +108,11 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 		  std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
     }
 
-	if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure" || tag == "NCDeltaRad"){
-		double volCryo = 199668.427885;
-		double volTPC = 101510.0;
-		double volTPCActive=  86698.6;
+	  else if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure" || tag == "NCDeltaRad"){
+      std::cout << "IN NCDELTA PORTION" << std::endl;
+      double volCryo = 199668.427885;
+      double volTPC = 101510.0;
+      double volTPCActive=  86698.6;
 		
 		//numberofevents = numberofevents*volTPCActive/volTPC;	
 		numberofevents = numberofevents;//*volTPCActive/volCryo;
@@ -126,81 +129,86 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
 
 
-	if(tag == "Data5e19"){
-		leg = "lp";
-		pot = 4.898e19; //old mcc84.393e19;// tor860_wcut
-		weight_branch = "1";
-        //so MCC9, we have 197772 events in file and 197833 evnts in samweb (lets ignore that) so 
-		std::cout<<"--> value: "<<pot<<std::endl;
-	}
-	if(tag == "BNBext"){
-		std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
-		tpot = (TTree*)f->Get(tnam_pot.c_str());
-		tpot->SetBranchAddress("number_of_events", &numbranch);
-		tpot->SetBranchAddress("POT",&potbranch);
+	  else if(tag == "Data5e19"){
+      std::cout << "IN DATA5E19 PORTION" << std::endl;
+      leg = "lp";
+      pot = 4.898e19; //old mcc84.393e19;// tor860_wcut
+      weight_branch = "1";
+          //so MCC9, we have 197772 events in file and 197833 evnts in samweb (lets ignore that) so 
+      std::cout<<"--> value: "<<pot<<std::endl;
+	  }
+	  else if(tag == "BNBext"){
+      std::cout << "IN BNBEXT PORTION" << std::endl;
+      std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
+      tpot = (TTree*)f->Get(tnam_pot.c_str());
+      tpot->SetBranchAddress("number_of_events", &numbranch);
+      tpot->SetBranchAddress("POT",&potbranch);
 
-		std::cout<<"Set the POT branch"<<std::endl;
-		int tmpnum = 0;
-		double tmppot=0;
-		for(int i=0; i<tpot->GetEntries(); i++){
-			tpot->GetEntry(i);
-			tmpnum += (double)numbranch;
-		}
-		numberofevents = tmpnum;
-		std::cout<<"BNBEXT number of events: "<<numberofevents<<std::endl;
+      std::cout<<"Set the POT branch"<<std::endl;
+      int tmpnum = 0;
+      double tmppot=0;
+      for(int i=0; i<tpot->GetEntries(); i++){
+        tpot->GetEntry(i);
+        tmpnum += (double)numbranch;
+      }
+      numberofevents = tmpnum;
+      std::cout<<"BNBEXT number of events: "<<numberofevents<<std::endl;
 
 
-		leg = "lp";
-		double sca = 1.23;//from 1.23
-		//https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
+      leg = "lp";
+      double sca = 1.23;//from 1.23
+      //https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
         
-        //MCC9: 
-        //Data samweb is 197833 events. defname: data_bnb_run1_unblind_mcc9.0_nov_reco_2d_reco2_slim
-        //tor860_wcut: 4.898e+19,  E1DCNT_wcut: 11595542.0
-        //
-        //bnbext samweb is  200433 events, defname: data_extbnb_run1_dev_mcc9.0_nov_reco_2d_reco2_slim
-        //EXT spills: 15435961.0
+      //MCC9: 
+      //Data samweb is 197833 events. defname: data_bnb_run1_unblind_mcc9.0_nov_reco_2d_reco2_slim
+      //tor860_wcut: 4.898e+19,  E1DCNT_wcut: 11595542.0
+      //
+      //bnbext samweb is  200433 events, defname: data_extbnb_run1_dev_mcc9.0_nov_reco_2d_reco2_slim
+      //EXT spills: 15435961.0
 
 
-        //so that is
-        // v5 values 
-        /*
-        double ext=15435961.0;//47953078.0; //External spills in each sample (EXT)
-		    double spill_on=11595542.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
-		    double datanorm =4.898e19;// tor860_wcut run-subrunlist;
-        */
+      //so that is
+      // v5 values 
+      double ext=15435961.0;//47953078.0; //External spills in each sample (EXT)
+      double spill_on=11595542.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
+      double datanorm =4.898e19;// tor860_wcut run-subrunlist;
 
-        // March 11th mini-retreat BNBext sample
-        //    EXT         Gate2        E1DCNT        tor860        tor875       E1DCNT_wcut    tor860_wcut   tor875_wcut
-        //    15095058.0  21882986.0   21893697.0    9.096e+19     9.084e+19    17720712.0     7.978e+19     7.967e+19
+      // March 11th mini-retreat BNBext sample
+      //    EXT         Gate2        E1DCNT        tor860        tor875       E1DCNT_wcut    tor860_wcut   tor875_wcut
+      //    15095058.0  21882986.0   21893697.0    9.096e+19     9.084e+19    17720712.0     7.978e+19     7.967e+19
 
-        // March 11th data v7 values
-        //    EXT         Gate2        E1DCNT        tor860        tor875      E1DCNT_wcut   tor860_wcut   tor875_wcut
-        //    5850781.0   11499004.0   11503891.0    4.912e+19     4.906e+19   10953185.0    4.911e+19     4.905e+19
-        double ext=15095058.0;//47953078.0; //External spills in each sample (EXT)
-		    double spill_on=10953185.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
-		    double datanorm =4.911e19;// tor860_wcut run-subrunlist;
+      // March 11th data v7 values
+      //    EXT         Gate2        E1DCNT        tor860        tor875      E1DCNT_wcut   tor860_wcut   tor875_wcut
+      //    5850781.0   11499004.0   11503891.0    4.912e+19     4.906e+19   10953185.0    4.911e+19     4.905e+19
+      /*
+      double ext=15095058.0;//47953078.0; //External spills in each sample (EXT)
+      double spill_on=10953185.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
+      double datanorm =4.911e19;// tor860_wcut run-subrunlist;
+      */
 
-        double Noff_full = 200433.0; //this is full samweb events
-        //double Noff_full = 195809.0;
-        double Noff_have = numberofevents;
+      double Noff_full = 200433.0; //this is full samweb events
+      //double Noff_full = 195809.0;
+      double Noff_have = numberofevents;
 
-        //This is old MCC8 one
-		//double ext=33752562+40051674;//47953078.0; //External spills in each sample (EXT)
-		//double spill_on=10312906;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
-		//double datanorm =4.393e19;// tor860_wcut run-subrunlist;
+      //This is old MCC8 one
+      //double ext=33752562+40051674;//47953078.0; //External spills in each sample (EXT)
+      //double spill_on=10312906;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
+      //double datanorm =4.393e19;// tor860_wcut run-subrunlist;
 
-        
-		double mod = spill_on/ext*(Noff_full/Noff_have);
+          
+      double mod = spill_on/ext*(Noff_full/Noff_have);
 
 
-		std::cout<<"--> POT is data: From Zarkos tool..";
-        //going to scale by how many events I actually have in MCC9
-		pot =datanorm/mod;
-		std::cout<<"--> value: "<<pot<<std::endl;
+      std::cout<<"--> POT is data: From Zarkos tool..";
+          //going to scale by how many events I actually have in MCC9
+      pot =datanorm/mod;
+      std::cout<<"--> value: "<<pot<<std::endl;
 
-		weight_branch = "1";
-	}
+      weight_branch = "1";
+	  }
+    else {
+      std::cout << "[BDT_FILE]: Invalid analysis tag " << std::endl;
+    }
 
 	std::cout<<"---> VERTEXCOUNT: "<<tag<<" "<<tvertex->GetEntries()*5e19/pot<<std::endl;
 
