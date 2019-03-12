@@ -172,7 +172,7 @@ int main (int argc, char *argv[]){
 
     bdt_file *signal_cosmics = new bdt_file(olddir5, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
 
-    bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.2.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.3.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
     bdt_file *data5e19    = new bdt_file(dir, "data5e19_v7.1.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *bnbext    = new bdt_file(dir, "bnbext_run1_v7.1.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
 
@@ -278,6 +278,13 @@ int main (int argc, char *argv[]){
         std::string p_pi_z = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirz["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirz["+shower_index2+"])";
         std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 
+        std::string testcut = "test_matched_hits > 50";
+
+
+        bdt_variable v_matched("test_matched_hits","(100,0,50)","Number of hits that get matched to something MC","false","d");
+        validateOverlay({v_matched},{bnb_cosmics}, {"1"}, {}, "0", "matched_hits",false,false);
+
+
         bdt_variable v_showerMult("reco_asso_showers","(5,0,5)","Number of reconstructed showers in Neutrino Slice","false","d");
         validateOverlay({v_showerMult},{bnb_cosmics}, {"reco_vertex_size>0"}, {data5e19,bnbext}, "reco_vertex_size>0", "shower_multiplicity",true,false);
 
@@ -285,7 +292,7 @@ int main (int argc, char *argv[]){
         validateOverlay({v_trackMult},{bnb_cosmics}, {"reco_vertex_size>=0"}, {data5e19,bnbext}, "reco_vertex_size>=0", "track_multiplicity",true,false);
 
         bdt_variable v_vertexMult("reco_vertex_size","(5,0,5)","Number of Pandora Neutrino-Slices in event","false","d");
-        validateOverlay({v_vertexMult},{bnb_cosmics}, {"1"}, {data5e19,bnbext}, "1", "vertex_multiplicity",false,false);
+        validateOverlay({v_vertexMult},{bnb_cosmics}, {testcut}, {data5e19,bnbext}, "1", "vertex_multiplicity",false,false);
 
         bdt_variable v_overlayfrac("sim_shower_overlay_fraction","(100,0,1)","Shower hit overlay fraction","false","d");
         validateOverlay({v_overlayfrac},{bnb_cosmics}, {"1"}, {data5e19,bnbext}, "1", "shower_overlay_frac",true,true);
@@ -566,10 +573,8 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
 
         leg->AddEntry(h_bnbext,"BNBext run1","lp");
         leg->Draw("same");
-
-
-
     }
+    if(datas.size()>0){
     c->cd(which_c);
     TH1* h_data =  (TH1*) datas[0]->getTH1(vars[0], datacut , "data_truth_overlay", 0, 1);
     c->cd(which_c);
@@ -579,6 +584,7 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
 
     leg->AddEntry(h_data,"Data5e19","lp");
     leg->Draw("same");
+    }
 
     return 0;
 
