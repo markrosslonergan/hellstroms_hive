@@ -404,6 +404,10 @@ int main (int argc, char *argv[]){
         validateOverlay({v_reco_shower_num_hits_plane1},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_nhits_plane1",false);
         validateOverlay({v_reco_shower_num_hits_plane2},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_nhits_plane2",false);
         
+        makeIncrementPlots ("shower_nhits_plane2_wrt_angle", v_reco_shower_num_hits_plane2, s_reco_shower_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0., data_conditions_shower, mc_conditions_shower);
+        makeIncrementPlots ("shower_nhits_plane1_wrt_angle",  v_reco_shower_num_hits_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
+        makeIncrementPlots ("shower_nhits_plane0_wrt_angle",  v_reco_shower_num_hits_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
+
 
 
         validateOverlay({v_reco_shower_theta},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_theta_all",false);
