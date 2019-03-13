@@ -140,15 +140,15 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
     std::string E1 = "reco_shower_energy["+shower_index1+"]";
     std::string E2 = "reco_shower_energy["+shower_index2+"]";
     std::string two_shower_opening_angle = "(acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1]))";
-		std::string invariant_mass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+two_shower_opening_angle+"))/1000";
+		std::string invariant_mass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-cos("+two_shower_opening_angle+")))/1000";
 
     std::string p_pi_x = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirx["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirx["+shower_index2+"])";
     std::string p_pi_y = "(reco_shower_energy["+shower_index1+"]*reco_shower_diry["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_diry["+shower_index2+"])";
     std::string p_pi_z = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirz["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirz["+shower_index2+"])";
     std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
+    std::string p_pi_trans = "sqrt("+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 
     std::string cm_angle = "(("+E1+" - "+E2+")/("+p_pi+"))";
-
 
 		std::string new_precuts;
 
@@ -169,11 +169,11 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		plot_vars.push_back(bdt_variable("reco_shower_dEdx_plane2_median["+shower_index1+"]","(24,0,6.5)", "Median Leading Shower dE/dx plane 2 [MeV/cm]",false,"d")); //2
 		plot_vars.push_back(bdt_variable("reco_shower_dEdx_plane2_median["+shower_index2+"]","(24,0,6.5)", "Median Subleading Shower dE/dx plane 2 [MeV/cm]",false,"d")); //2
 		train_vars.push_back(bdt_variable("reco_shower_energy["+shower_index1+"]/1000.0","(24,0,0.5)","Reco. Leading Shower Energy (Uncalibrated) [GeV]", false,"d"));  //3
-		train_vars.push_back(bdt_variable("reco_shower_energy["+shower_index2+"]/1000.0","(24,0,0.5)","Reco. Subleading Shower Energy (Corrected) [GeV]", false,"d"));  //3
-		train_vars.push_back(bdt_variable(two_shower_opening_angle,"(24,-3.15,3.15)","Two-Shower Opening Angle",false,"d"));//5
+		train_vars.push_back(bdt_variable("reco_shower_energy["+shower_index2+"]/1000.0","(24,0,0.5)","Reco. Subleading Shower Energy (Uncalibrated) [GeV]", false,"d"));  //3
+		train_vars.push_back(bdt_variable(two_shower_opening_angle,"(24,0.,3.15)","Two-Shower Opening Angle",false,"d"));//5
 		train_vars.push_back(bdt_variable("reco_shower_flash_shortest_distz["+shower_index1+"]","(24,0,520)","Distance from Leading Shower to Flashcenter [cm]",false,"d"));//6
 		train_vars.push_back(bdt_variable("reco_shower_theta_yz["+shower_index1+"]","(24,-1,1)","Reco. Leading Shower Theta", false,"d"));//8
-		train_vars.push_back(bdt_variable("reco_shower_phi_yx["+shower_index1+"]","(24,-1,1)","Reco. Leading Shower Phi", false,"d"));//9
+		plot_vars.push_back(bdt_variable("reco_shower_phi_yx["+shower_index1+"]","(24,-1,1)","Reco. Leading Shower Phi", false,"d"));//9
     train_vars.push_back(bdt_variable("reco_shower_conversion_distance["+shower_index1+"]","(24,1,100)","Reco. Leading Shower conversion distance","false","d"));
     train_vars.push_back(bdt_variable("reco_shower_conversion_distance["+shower_index2+"]","(24,0,100)","Reco. Subleading Shower conversion distance","false","d"));
 		plot_vars.push_back(bdt_variable("sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))","(48,0,100)"," Reco-True Vetrex Dist [cm]",false,"d"));  //1
@@ -181,6 +181,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
     plot_vars.push_back(bdt_variable(p_pi_x+"/1000", "(24, 0, 0.5)", "Reco. #pi^{0} x-Momentum [GeV]", false, "d"));
     plot_vars.push_back(bdt_variable(p_pi_y+"/1000", "(24, 0, 0.5)", "Reco. #pi^{0} y-Momentum [GeV]", false, "d"));
     plot_vars.push_back(bdt_variable(p_pi_z+"/1000", "(24, 0, 0.5)", "Reco. #pi^{0} z-Momentum [GeV]", false, "d"));
+    plot_vars.push_back(bdt_variable(p_pi_trans+"/1000", "(24, 0, 0.5)", "Reco. #pi^{0} Transverse Momentum [GeV]", false, "d"));
     plot_vars.push_back(bdt_variable(invariant_mass, "(24, 0, 0.5)", "Reco. #pi^{0} Invariant Mass (uncalibrated) [GeV]", false, "d"));
     plot_vars.push_back(bdt_variable(cm_angle, "(24, 0., 1.0)", "Reco. cos(#theta_{CM}) ", false, "d"));
 
@@ -213,11 +214,16 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		//************************************************* Track + Shower Only Variables **********************************************//
 		if(analysis_tag == "2g1p"){
 
-      train_vars.push_back(bdt_variable("reco_track_proton_kinetic_energy[0]","(24,0,2)","Reconstructed Track Kinetic Energy [GeV]","true","d"));
+      std::string ratio1 = "reco_track_mean_trunc_dEdx_start_half[0]/reco_track_mean_trunc_dEdx_end_half[0]";
+      std::string ratio2 = "reco_track_mean_trunc_dEdx_end_half[0]/reco_track_mean_trunc_dEdx_start_half[0]";
+      train_vars.push_back(bdt_variable("reco_track_proton_kinetic_energy[0]","(24,0,1.0)","Reconstructed Track Kinetic Energy [GeV]","true","d"));
 			plot_vars.push_back(bdt_variable("reco_track_mean_trunc_dEdx[0]", "(48,0,12)","Mean Track dE/dx [MeV/cm]", true,"d"));//23
 			train_vars.push_back(bdt_variable("reco_track_theta_yz[0]","(24,-3.15,3.15)","Reconstructed Track #theta", true,"d"));//29
-			train_vars.push_back(bdt_variable("reco_track_phi_yx[0]","(24,-3.15,3.15)","Reconstructed Track #Phi", true,"d"));//30
-			plot_vars.push_back(bdt_variable("reco_track_mean_trunc_dEdx_start_half[0]/reco_track_mean_trunc_dEdx_end_half[0]", "(48,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));//24
+			plot_vars.push_back(bdt_variable("reco_track_phi_yx[0]","(24,-3.15,3.15)","Reconstructed Track #Phi", true,"d"));//30
+			plot_vars.push_back(bdt_variable("reco_track_displacement","(48,0, 200)","Reconstructed Track Length", true,"d"));//30
+			plot_vars.push_back(bdt_variable(ratio1, "(48,0,3.5)","Ratio of Mean Start/End Track dE/dx", true,"d"));//24
+			plot_vars.push_back(bdt_variable(ratio2, "(48,0,3.5)","Ratio of Mean End/Start Track dE/dx", true,"d"));//24
+			plot_vars.push_back(bdt_variable("max("+ratio1+", "+ratio2+")", "(48,0,3.5)","Max Ratio of Mean Start/End Track dE/dx", true,"d"));//24
 			plot_vars.push_back(bdt_variable("reco_track_trunc_PIDA[0]","(24,0,24)","Track PIDA",true,"d"));//25
 			plot_vars.push_back(bdt_variable(angle_track_shower,	"(24,-1,1)","Cosine Track-Shower Angle ",true,"d"));//31
 			plot_vars.push_back(bdt_variable("reco_track_endx[0]","(24,0,250)"," Reconstructed Track End X pos [cm]",true,"d"));//32

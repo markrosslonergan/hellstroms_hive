@@ -160,9 +160,7 @@ int main (int argc, char *argv[]){
 
   std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-10 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
-  //std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1)";
-  std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_delta_proton_energy>0.04+"+pmass+")";
-  //std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_pi0_subleading_photon_energy > 0.02 && mctruth_delta_proton_energy>0.04+"+pmass+")";
+  std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_pi0_subleading_photon_energy > 0.02 && mctruth_delta_proton_energy>0.04+"+pmass+")";
 
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	//Set up some info about the BDTs to pass along
@@ -260,9 +258,14 @@ int main (int argc, char *argv[]){
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
 	if(mode_option != "precalc" ){
+    bnb_pure->addFriend("singlephoton/vertex_tree", "bnb_overlay_v5_friend.root");
+    bnb_cosmics->addFriend("singlephoton/vertex_tree", "bnb_overlay_v5_friend.root");
+    data5e19->addFriend("singlephoton/vertex_tree", "data_v5_friend.root");
+    bnbext->addFriend("singlephoton/vertex_tree", "bnbext_v5_friend.root");
+    
 
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-	std::cout<<" Going to add any precomputed tree friends, or any trained BDT responses   "<<std::endl;
+	std::cout<<" Going to add any precomputed tree friends, or any trained BDT responses  "<<std::endl;
 	std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
@@ -297,8 +300,8 @@ int main (int argc, char *argv[]){
 	double fbnbcut;
 	if(analysis_tag == "2g1p"){
     // v5 values
-		fcoscut = 0.6115;
-		fbnbcut = 0.2;
+		fcoscut = 0.59875;
+		fbnbcut = 0.4675;
     
     // Mar 11th mini-retreat, cali values
 		//fcoscut = 0.582;
