@@ -160,7 +160,7 @@ int main (int argc, char *argv[]){
 
   std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-10 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
-  std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_pi0_subleading_photon_energy > 0.02 && mctruth_delta_proton_energy>0.04+"+pmass+")";
+  std::string signal_definition = "(mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && mctruth_pi0_subleading_photon_energy > 0.02 && mctruth_leading_exiting_proton_energy>0.04+"+pmass+")";
 
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	//Set up some info about the BDTs to pass along
@@ -224,9 +224,9 @@ int main (int argc, char *argv[]){
   std::string markdir = "/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/Mar2019/";
 	//bdt_file *signal_pure = new bdt_file(dir, "ncpi0_overlay_mcc9_35khomebrew_v5.0.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_training_flow);
 	//bdt_file *signal_cosmics = new bdt_file(dir, "ncpi0_overlay_mcc9_35khomebrew_v5.0.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
-	bdt_file *signal_pure = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.0.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_training_flow);
-	bdt_file *signal_cosmics = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.0.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
-	bdt_file *nonsignal_cosmics = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.0.root", "NCPi0NonSignalCosmics", "hist","singlephoton/", kRed-7, nonsignal_flow);
+	bdt_file *signal_pure = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.44.root",	"NCPi0", "hist","singlephoton/", kRed-7, signal_training_flow);
+	bdt_file *signal_cosmics = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.44.root", "NCPi0Cosmics", "hist","singlephoton/", kRed-7, signal_flow);
+	bdt_file *nonsignal_cosmics = new bdt_file(dirv7, "ncpi0_homebrewoverlay_mcc9_v7.44.root", "NCPi0NonSignalCosmics", "hist","singlephoton/", kRed-7, nonsignal_flow);
 	bdt_file *bnb_pure = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root", "BNBPure", "hist","singlephoton/",  kBlue-4, bkg_pure_flow);
 	bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_mcc9_v5.0.root ", "BNBCosmics", "hist","singlephoton/", kBlue-4, bkg_flow);
 	//Data files

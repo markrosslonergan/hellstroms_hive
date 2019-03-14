@@ -230,6 +230,9 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 			plot_vars.push_back(bdt_variable("reco_track_endy[0]","(24,-110,+110)","Reconstructed Track End Y pos [cm]",true,"d"));//33
 			plot_vars.push_back(bdt_variable("reco_track_endz[0]","(24,0,1050)","Reconstructed Track End Z pos [cm]",true,"d"));//34
 
+      std::string kengVar = "abs(max(reco_track_mean_dEdx_start_half[0],reco_track_mean_dEdx_end_half[0])-reco_shower_dEdx_plane2_max[0])";
+      train_vars.push_back(bdt_variable(kengVar,"(12,0,12)","Keng's thing","false","d"));
+
 			all_precuts.push_back(track_length_cut);
 			all_precuts.push_back(min_conversion_cut);
 			//all_precuts.push_back(good_calo_cut);
@@ -241,7 +244,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
     //all_precuts.push_back(shower_dedx_cut);
 
     ////// NOTE: Fiducial cut now in deltaRad_pi0.cxx //////
-		//all_precuts.push_back(fiducial_cut);
+		all_precuts.push_back(fiducial_cut);
 
     // Now put all variables into a single vector for non-training stages
     all_vars.reserve(train_vars.size() + plot_vars.size() );
