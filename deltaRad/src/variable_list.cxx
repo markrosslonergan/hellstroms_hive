@@ -50,11 +50,11 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         train_vars.push_back(bdt_variable("reco_shower_dEdx_plane2_median[0]","(48,0,6.5)", "Median Shower dE/dx plane 2 [MeV/cm]",false,"d")); //2
         plot_vars.push_back(bdt_variable("reco_shower_dEdx_plane1_median[0]","(48,0,6.5)", "Median Shower dE/dx plane 1 [MeV/cm]",false,"d")); //2
         plot_vars.push_back(bdt_variable("reco_shower_dEdx_plane0_median[0]","(48,0,6.5)", "Median Shower dE/dx plane 0 [MeV/cm]",false,"d")); //2
-        
+
         plot_vars.push_back(bdt_variable("reco_shower_dQdx_plane2_median[0]","(48,0,6.5)", "Median Shower dQ/dx plane 2 [MeV/cm]",false,"d")); //2
         plot_vars.push_back(bdt_variable("reco_shower_dQdx_plane1_median[0]","(48,0,6.5)", "Median Shower dQ/dx plane 1 [MeV/cm]",false,"d")); //2
         plot_vars.push_back(bdt_variable("reco_shower_dQdx_plane0_median[0]","(48,0,6.5)", "Median Shower dQ/dx plane 0 [MeV/cm]",false,"d")); //2
-        
+
         train_vars.push_back(bdt_variable("reco_shower_energy[0]/1000.0","(48,0,0.8)","Reconstructed Shower Energy [GeV]", false,"d"));  //3
         plot_vars.push_back(bdt_variable("reco_shower_length[0]","(48,0,100)","Shower Length [cm]",false,"d"));//4
 
@@ -141,12 +141,6 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         all_vars.insert(all_vars.end(), train_vars.begin(), train_vars.end() );
         all_vars.insert(all_vars.end(), plot_vars.begin(), plot_vars.end() );
 
-
-        //*******************************************************************************//
-        //*******************************************************************************//
-        //****************   YOUR TAGE HERE				      ***********//
-        //*******************************************************************************//
-        //*******************************************************************************//
 
 
     }
