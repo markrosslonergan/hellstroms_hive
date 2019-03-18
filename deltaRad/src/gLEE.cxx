@@ -207,6 +207,14 @@ int main (int argc, char *argv[]){
     signal->scale_data = 3.1;
 
 
+    //int setAsOnBeamData(double in_tor860_wcut);
+    //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext);
+
+
+    OnBeamData->setAsOnBeamData(4.795e19);
+    OffBeamData->setAsOffBeamData(4.795e19,10708042.0,13027682.0);
+
+
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     for(auto &f: bdt_files){
