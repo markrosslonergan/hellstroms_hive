@@ -405,7 +405,6 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	TCanvas *cobs = new TCanvas("","",1800,1600);
 	cobs->Divide(2,2,0.0025,0.0000001);
-	double plot_pot=6.6e20;
 
 	ftest->cd();
 	std::cout<<"bdt_stack::plotStacks || Starting to get Stacks"<<std::endl;	
