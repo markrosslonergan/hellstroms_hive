@@ -300,8 +300,8 @@ int main (int argc, char *argv[]){
 	double fbnbcut;
 	if(analysis_tag == "2g1p"){
     // v5 values
-		fcoscut = 0.59875;
-		fbnbcut = 0.4675;
+		fcoscut = 0.556;
+		fbnbcut = 0.5076;
     
     // Mar 11th mini-retreat, cali values
 		//fcoscut = 0.582;
