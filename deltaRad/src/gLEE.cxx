@@ -140,8 +140,8 @@ int main (int argc, char *argv[]){
     bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.2,0.75)");
 
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-    std::string training_signal_cut = "shower_matched_to_ncdeltarad_photon[0]==1";
-    std::string training_bkg_cut    = "true_shower_origin[0]==1";
+    std::string training_signal_cut = "1";
+    std::string training_bkg_cut    = "1";
     std::string num_track_cut;
 
     if(analysis_tag == "track"){
@@ -156,19 +156,15 @@ int main (int argc, char *argv[]){
         bnb_bdt_info.setTopoName("1#gamma0p");
         cosmic_bdt_info.setTopoName("1#gamma0p");
     }
-    if(mode_option == "response" || mode_option == "vars" || mode_option == "train"){
-        vec_precuts.erase(vec_precuts.begin());
-        vec_precuts.erase(vec_precuts.begin());
-    }
+    	
+    std::string ZMIN = "0.0"; std::string ZMAX = "1036.8";
+	std::string XMIN = "0.0"; std::string XMAX = "256.35";
+	std::string YMIN = "-116.5"; std::string YMAX = "116.5";
+	std::string pmass = "0.938272";
 
-    	std::string ZMIN = "0.0"; std::string ZMAX = "1036.8";
-		std::string XMIN = "0.0"; std::string XMAX = "256.35";
-		std::string YMIN = "-116.5"; std::string YMAX = "116.5";
-		std::string pmass = "0.938272";
-
-        std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+20 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
+    std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+20 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
     
-    std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_delta_photon_energy>0.02", "mctruth_delta_proton_energy > "+pmass+"+0.04",fid_cut}; 
+    std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1", "mctruth_exiting_photon_from_delta_decay > 0.02", "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
     std::string signal_definition = v_denom[0];
 
     for(int i=1; i< v_denom.size();i++){
@@ -189,14 +185,14 @@ int main (int argc, char *argv[]){
     bdt_flow data_flow(topological_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
     // BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
-    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root",	"NCDeltaRadTrain",	   "hist","",  kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root", "NCDeltaRadOverlay", "hist","",  kRed-7, signal_flow);
-    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_collins_v9.1.root", "BNBTrain",	  "hist","",  kBlue-4, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_collins_v9.1.root", "BNBOverlays", "hist","",  kBlue-4, bkg_flow);
+    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_collins_v9.1.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_collins_v9.1.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
     
     //Data files
-    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.0.root",	"OnBeamData",	   "E1p","",  kBlack, data_flow);
-    bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v9.0.root",	"OffBeamData",	"E1p","",  kGreen-3, data_flow);
+    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.0.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v9.0.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
     //For conviencance fill a vector with pointers to all the files to loop over.
     std::vector<bdt_file*> bdt_files = {signal, training_signal, training_bnb, bnb, OnBeamData, OffBeamData};
@@ -462,16 +458,10 @@ int main (int argc, char *argv[]){
         }
 
 
-
-
     } else if(mode_option == "eff"){
-
         
         std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==1"};
-
      	bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut,13.2e20);
-
-
    
 
     }else {
