@@ -101,6 +101,7 @@ struct bdt_file{
 		int fillstyle;
 
 		bool is_data;
+        bool is_bnbext;
 		bool is_mc;
 
 		std::string leg;

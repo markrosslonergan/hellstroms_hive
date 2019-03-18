@@ -9,6 +9,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	col(incol),
 	flow(inflow),
 	is_data("false"),
+    is_bnbext("false"),
 	is_mc("true")
 {
 
@@ -45,6 +46,54 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	int  numbranch = 0;
 
 	if(is_mc){
+        //If its MC or Overlay, lets just grab the POT from the nice POT tree
+            leg = "l";
+			std::cout<<"bdt_file::bdt_file()\t||\tFile is either MC or OVERLAY for purposes of getting POT."<<std::endl;
+			std::cout<<"bdt_file::bdt_file()\t||\tGetting POT tree: "<<tnam_pot<<" "<<std::endl;
+			tpot = (TTree*)f->Get(tnam_pot.c_str());
+			tpot->SetBranchAddress("number_of_events", &numbranch);
+			tpot->SetBranchAddress("POT",&potbranch);
+			std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
+			int tmpnum = 0;
+			double tmppot=0;
+			std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
+			for(int i=0; i<tpot->GetEntries(); i++) {
+				tpot->GetEntry(i);
+				tmpnum += (double)numbranch;
+				tmppot += potbranch;
+			}
+			numberofevents = tmpnum;
+			pot=tmppot;
+			std::cout<<"bdt_file::bdt_file()\t||\t---> POT is MC/OVERLAY "<std::endl;
+			std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
+			std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
+			weight_branch = "1";
+			numberofevents_raw = numberofevents;
+
+    }else(is_data){
+        //
+        
+        leg = "lp";
+		pot = 4.898e19; //old mcc84.393e19;// tor860_wcut
+		weight_branch = "1";
+        //so MCC9, we have 197772 events in file and 197833 evnts in samweb (lets ignore that) so 
+		std::cout<<"--> value: "<<pot<<std::endl;
+
+
+
+
+
+
+    }else(is_bnbext){
+
+
+
+
+    }
+
+
+
+    //This is all old school mcc8 stuff for now.
 		if(tag == "IntimeCosmics"){
 			std::cout<<"Getting POT for CosmicIntime: "<<std::endl;
 			//Found in 
