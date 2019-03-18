@@ -144,7 +144,8 @@ struct bdt_file{
 
 		int calcBaseEntryList(std::string);
 
-
+        double data_tor860_wcut;
+        int setData_tor860_wcut(double in_data_tor860_wcut){ data_tor860_wcut = in_data_tor860_wcut; return 0;}
 
 
 		double scale_data;
