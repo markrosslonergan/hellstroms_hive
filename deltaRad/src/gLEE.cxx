@@ -126,6 +126,7 @@ int main (int argc, char *argv[]){
 
     //Get all the variables you want to use	
     std::vector<bdt_variable> vars = var_list.all_vars;
+    std::cout<<"Adding a total of "<<vars.size()<<" vars!"<<std::endl;
 
     //This is a vector each containing a precut, they are all added together to make the whole "precut"
     std::vector<std::string> vec_precuts = var_list.all_precuts;
@@ -133,20 +134,19 @@ int main (int argc, char *argv[]){
     //We dont currently use postcuts
     std::string postcuts = "1";
 
-
     //We have 2 BDT's one for cosmics and one for BNB related backgrounds only
     //Set up some info about the BDTs to pass along
     bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(80,0.3,0.6)");
     bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.2,0.75)");
 
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-    std::string training_signal_cut = "1";
-    std::string training_bkg_cut    = "1";
+    std::string training_signal_cut = "sim_shower_pdg[0]==22 && sim_shower_parent_pdg[0] ==-1 && sim_shower_overlay_fraction[0] < 0.5";
+    std::string training_bkg_cut    = "sim_shower_overlay_fraction[0]<0.5";
     std::string num_track_cut;
 
     if(analysis_tag == "track"){
-        training_signal_cut = training_signal_cut+ "&& track_matched_to_ncdeltarad_proton[0]==1";
-        training_bkg_cut = training_bkg_cut +"&& true_track_origin[0]==1";
+        training_signal_cut = training_signal_cut+ "&& sim_track_overlay_fraction[0]< 0.5";
+        training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<0.5";
         num_track_cut =  "==1";
 
         bnb_bdt_info.setTopoName("1#gamma1p");
@@ -156,15 +156,13 @@ int main (int argc, char *argv[]){
         bnb_bdt_info.setTopoName("1#gamma0p");
         cosmic_bdt_info.setTopoName("1#gamma0p");
     }
-    	
-    std::string ZMIN = "0.0"; std::string ZMAX = "1036.8";
-	std::string XMIN = "0.0"; std::string XMAX = "256.35";
-	std::string YMIN = "-116.5"; std::string YMAX = "116.5";
-	std::string pmass = "0.938272";
 
+    std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
+	std::string pmass = "0.938272";
     std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+20 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
     
-    std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1", "mctruth_exiting_photon_from_delta_decay > 0.02", "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
+    std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
+
     std::string signal_definition = v_denom[0];
 
     for(int i=1; i< v_denom.size();i++){
@@ -173,6 +171,8 @@ int main (int argc, char *argv[]){
 
     std::string background_definition = "!(" +signal_definition+ ")";
     std::string topological_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
+
+
 
     //***************************************************************************************************/
     //***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
@@ -198,8 +198,8 @@ int main (int argc, char *argv[]){
     std::vector<bdt_file*> bdt_files = {signal, training_signal, training_bnb, bnb, OnBeamData, OffBeamData};
 
     //The LEE signal is bigger than the SM signal by this factor
-    training_signal->scale_data = 3.1;
-    signal->scale_data = 3.1;
+    training_signal->scale_data = 3.0;
+    signal->scale_data = 3.0;
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
@@ -396,34 +396,31 @@ int main (int argc, char *argv[]){
 
 
     }else if(mode_option == "datamc"){
-
+        std::cout<<"Starting datamc"<<std::endl;
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
-        histogram_stack->plot_pot = 4.393e19;
+        histogram_stack->plot_pot = OnBeamData->pot;
         histogram_stack->addToStack(signal);
         histogram_stack->addToStack(bnb);
-       // OffBeamData->col = intime->col;	
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(OffBeamData);
-        //		histogram_stack->addToStack(dirt);
 
         int ip=0;
-
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
             if(number != -1){
                 bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
 
-                datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
+                //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
 
-                datamc.setSubtractionVector(subv);
+                //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
             }else{
 
                 bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
-                real_datamc.setSubtractionVector(subv);
+                //real_datamc.setSubtractionVector(subv);
                 real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
             }
         }else{
@@ -461,7 +458,8 @@ int main (int argc, char *argv[]){
     } else if(mode_option == "eff"){
         
         std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==1"};
-     	bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut,13.2e20);
+
+     	bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
    
 
     }else {

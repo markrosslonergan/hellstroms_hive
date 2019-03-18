@@ -15,8 +15,6 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 
 
-		//std::string fiducial_vertex_truth = "mctruth_nu_vertex_x > 10 && mctruth_nu_vertex_x < 246 && mctruth_nu_vertex_y > -107 && mctruth_nu_vertex_y < 107 && mctruth_nu_vertex_z > 10 && mctruth_nu_vertex_z < 1026 ";
-        //
 		std::string angle_track_shower ="(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])";
 		std::string fiducial_vertex = "reco_vertex_x > 10 && reco_vertex_x < 246 && reco_vertex_y > -107 && reco_vertex_y < 107 && reco_vertex_z > 10 && reco_vertex_z < 1026 ";
 		std::string fiducial_shower_end = "reco_shower_endx > 5 && reco_shower_endx < 245 && reco_shower_endy > -105 && reco_shower_endy < 95 && reco_shower_endz > 10 && reco_shower_endz < 1026 ";
@@ -33,7 +31,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         
 
 		std::string new_precuts;
-		std::string good_calo_cut = "reco_track_good_calo[0] > 0";
+		std::string good_calo_cut = "1";
 		std::string track_length_cut = "reco_track_displacement[0]<250";
 		std::string min_shower_energy_cut = "reco_shower_energy[0]>0.00 ";
 		std::string min_conversion_cut = "reco_shower_conversion_distance[0] > 0";
@@ -114,7 +112,6 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         }
 		
         all_precuts.push_back(min_shower_energy_cut);
-		all_precuts.push_back(pe_cut);
 		all_precuts.push_back(fiducial_cut);
         all_precuts.push_back(shower_dedx_cut);
 
