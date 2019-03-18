@@ -40,8 +40,8 @@ int main (int argc, char *argv[]){
 	//This is a standardized location on /pnfs/ that everyone can use. 
 	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5";
 	std::string olddir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v2";
-  std::string mydir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples";
-  std::string datadir = "/uboone/data/users/amogan/v08_00_00_01/singlePhoton/samples";
+    std::string mydir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples";
+    std::string datadir = "/uboone/data/users/amogan/v08_00_00_01/singlePhoton/samples";
 
 
 	std::string mode_option = "fake"; 
