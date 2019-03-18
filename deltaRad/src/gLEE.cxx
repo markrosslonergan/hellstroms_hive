@@ -170,7 +170,7 @@ int main (int argc, char *argv[]){
     }
 
     std::string background_definition = "1";
-    std::string topological_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
+    std::string topological_cuts = "reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 
 
 
@@ -187,6 +187,7 @@ int main (int argc, char *argv[]){
     // BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
     bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
     bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    
     bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_collins_v9.1.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
     bdt_file *bnb = new bdt_file(dir, "bnb_overlay_collins_v9.1.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
     
