@@ -330,8 +330,8 @@ int bdt_file::calcPOT(){
 
 //        double mod = spill_on/ext*(Noff_full/Noff_have);
 
-        double modifier = data_spills_E1DCNT_wcut/ext_spills_ext*(N_samweb_ext/(double)numberofevents);
 
+        double modifier = data_spills_E1DCNT_wcut/ext_spills_ext*(N_samweb_ext/numberofevents);
 
         std::cout<<"--> POT is data: From Zarkos tool..";
         //going to scale by how many events I actually have in MCC9
@@ -344,8 +344,6 @@ int bdt_file::calcPOT(){
 
         weight_branch = "1";
         numberofevents_raw = numberofevents;
-
-
 
     }
 
@@ -624,7 +622,6 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
     //th1->Sumw2();
 
     if(plot_POT==0){
-
         th1->Scale(1.0/th1->Integral());
     }else{
         th1->Scale(this->scale_data*plot_POT/this->pot);

@@ -51,7 +51,6 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
     data_file->tvertex->SetBranchAddress("event_number",  &n_event_number);
     data_file->tvertex->SetBranchAddress("reco_vertex_z", &n_vertex_z);
 
-
     std::cout<<"Starting printPassingDataEvents() "<<std::endl;
 
     for(int i=0;i < fake_list->GetN(); i++ ){
@@ -68,7 +67,7 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
     // NEW ONE
-    double plot_pot=4.393e19;//4.801e19;
+    double plot_pot=data_file->pot;
 
     double title_size_ratio=0.1;
     double label_size_ratio=0.1;
@@ -86,6 +85,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     //Loop over all stages
 
     for(int s = 1; s< 4; s++){
+    
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
         for(auto &f: mc_stack->stack){
@@ -95,6 +95,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
             f->setStageEntryList(s);
         }	
+    
+        
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 
         if(s==2) data_file->calcCosmicBDTEntryList(c1, c2);
@@ -102,15 +104,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
         data_file->setStageEntryList(s);
 
-        if(false && s == 3){
-            data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist");
-        }
-
         //And all variables in the vector var
         for(auto &var: vars){
             std::cout<<"Starting on variable "<<var.name<<std::endl;
             TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1800,1600);
-            //cobs->Divide(2,2,0.0025,0.0000001);
             cobs->cd();
 
             if(do_subtraction){
@@ -121,7 +118,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
             TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
             TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(c1)+"_"+std::to_string(c2)+data_file->tag+"_"+var.safe_name, plot_pot);
-            std::cout<<"1 "<<std::endl;
 
             double rmin = 0;
             double rmax = 2.99;
@@ -198,7 +194,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             int n=0;
             for(auto &f: mc_stack->stack){
 
-                double Nevents = f->GetEntries()*(plot_pot/f->pot )*f->scale_data;
+                double Nevents = f->GetEntries()*(plot_pot/f->pot)*f->scale_data;
                 NeventsStack+=Nevents;
                 auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
                 h1->SetFillColor(f->col);
@@ -360,7 +356,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
     //TCanvas *cobs = new TCanvas("","",1800,1600);
     //cobs->Divide(2,2,0.0025,0.0000001);
 
-    double plot_pot=4.393e19;//4.801e19;
+    double plot_pot=data_file->pot;
 
     double title_size_ratio=0.1;
     double label_size_ratio=0.1;
@@ -429,13 +425,6 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
     TH1 * d3 = data_file->getTH1(var, dat_cut_3, "d3_"+data_file->tag+"_"+var.safe_name, plot_pot);
 
     std::cout<<"Gotten all data hists."<<std::endl;
-
-
-    if(false){
-        data_file->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_dedx_plane2[0]:reco_shower_helper_energy[0]:reco_track_displacement[0]:shortest_asso_shower_to_vert_dist",dat_cut_3.c_str());
-        return 0;
-    }
-
 
 
     std::vector<THStack*> vec_stacks = {s0,s1,s2,s3};	

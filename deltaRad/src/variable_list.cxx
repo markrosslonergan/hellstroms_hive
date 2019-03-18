@@ -113,6 +113,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		
         all_precuts.push_back(min_shower_energy_cut);
 		all_precuts.push_back(fiducial_cut);
+        all_precuts.push_back(pe_cut);
         all_precuts.push_back(shower_dedx_cut);
 
 		if(analysis_tag == "track"){

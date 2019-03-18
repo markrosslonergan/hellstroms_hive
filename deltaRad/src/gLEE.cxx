@@ -169,7 +169,7 @@ int main (int argc, char *argv[]){
             signal_definition += "&&" + v_denom[i];
     }
 
-    std::string background_definition = "!(" +signal_definition+ ")";
+    std::string background_definition = "1";
     std::string topological_cuts = "reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 
 
