@@ -126,6 +126,13 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		}else if(analysis_tag=="1g2p"){
 			all_precuts.push_back("reco_track_good_calo[0] > 0 && reco_track_good_calo[1]>0");
         }
+
+         // Now put all variables into a single vector for non-training stages
+    all_vars.reserve(train_vars.size() + plot_vars.size() );
+    all_vars.insert(all_vars.end(), train_vars.begin(), train_vars.end() );
+    all_vars.insert(all_vars.end(), plot_vars.begin(), plot_vars.end() );
+
+
 		//*******************************************************************************//
 		//*******************************************************************************//
 		//****************   YOUR TAGE HERE				      ***********//
