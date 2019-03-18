@@ -211,7 +211,7 @@ int bdt_file::setAsOnBeamData(double in_tor860_wcut){
     return 0;
 }
 
-int bdt_file::setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext){
+int bdt_file::setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double in_N_samweb_ext){
     is_data = false;
     is_mc = false;
     is_bnbext = true;
@@ -219,6 +219,7 @@ int bdt_file::setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills
     data_tor860_wcut = in_data_tor860_wcut;
     data_spills_E1DCNT_wcut = in_data_spills_E1DCNT_wcut;
     ext_spills_ext = in_ext_spills_ext;
+    N_samweb_ext = in_N_samweb_ext;
 
     return 0;
 }
@@ -329,7 +330,8 @@ int bdt_file::calcPOT(){
 
 //        double mod = spill_on/ext*(Noff_full/Noff_have);
 
-        double modifier = data_spills_E1DCNT_wcut/ext_spills_ext;
+        double modifier = data_spills_E1DCNT_wcut/ext_spills_ext*(N_samweb_ext/(double)numberofevents);
+
 
         std::cout<<"--> POT is data: From Zarkos tool..";
         //going to scale by how many events I actually have in MCC9
