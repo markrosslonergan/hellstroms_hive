@@ -15,7 +15,6 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 
 
-<<<<<<< HEAD
 		std::string angle_track_shower ="(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])";
 		std::string fiducial_vertex = "reco_vertex_x > 10 && reco_vertex_x < 246 && reco_vertex_y > -107 && reco_vertex_y < 107 && reco_vertex_z > 10 && reco_vertex_z < 1026 ";
 		std::string fiducial_shower_end = "reco_shower_endx > 5 && reco_shower_endx < 245 && reco_shower_endy > -105 && reco_shower_endy < 95 && reco_shower_endz > 10 && reco_shower_endz < 1026 ";
@@ -38,32 +37,6 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 		std::string min_conversion_cut = "reco_shower_conversion_distance[0] > 0";
 		std::string back_to_back_cut = "("+angle_track_shower+" > -1 &&"  + angle_track_shower + "< 1)";
 		std::string pe_cut = "reco_flash_total_pe_in_beamgate[0] > 20";
-=======
-        //std::string fiducial_vertex_truth = "mctruth_nu_vertex_x > 10 && mctruth_nu_vertex_x < 246 && mctruth_nu_vertex_y > -107 && mctruth_nu_vertex_y < 107 && mctruth_nu_vertex_z > 10 && mctruth_nu_vertex_z < 1026 ";
-        //
-        std::string angle_track_shower ="(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])";
-        std::string fiducial_vertex = "reco_vertex_x > 10 && reco_vertex_x < 246 && reco_vertex_y > -107 && reco_vertex_y < 107 && reco_vertex_z > 10 && reco_vertex_z < 1026 ";
-        std::string fiducial_shower_end = "reco_shower_endx > 5 && reco_shower_endx < 245 && reco_shower_endy > -105 && reco_shower_endy < 95 && reco_shower_endz > 10 && reco_shower_endz < 1026 ";
-        std::string fiducial_track_end = "reco_track_endx > 5 && reco_track_endx < 245 && reco_track_endy > -95 && reco_track_endy < 95 && reco_track_endz > 10 && reco_track_endz < 1026 ";
-        std::string fiducial_cut = fiducial_vertex;//"&&"+fiducial_shower_end;
-
-        std::string proton_mass = "0.938272";
-        std::string reco_shower_momentum = "(reco_shower_energy[0]*0.001)"; 
-        std::string reco_track_energy = "(reco_track_proton_kinetic_energy[0]+"+proton_mass + ")";
-        std::string reco_track_momentum  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"-"+proton_mass +"*"+proton_mass+")";
-        std::string invariant_mass = "("+proton_mass+"*"+proton_mass+"+2.0*("+reco_track_energy+"*"+reco_shower_momentum+"-"+reco_track_momentum+"*"+reco_shower_momentum+"*"+angle_track_shower+"))";
-
-        std::string delta_transverse_momentum = "sqrt( pow("+reco_track_energy +"*(reco_track_dirx[0])+ "+reco_shower_momentum+"*reco_shower_dirx[0],2)+ pow("+reco_track_energy +"*(reco_track_diry[0])+"+reco_shower_momentum +"*reco_shower_diry[0],2))";
-
-
-        std::string new_precuts;
-        std::string good_calo_cut = "reco_track_good_calo[0] > 0";
-        std::string track_length_cut = "reco_track_displacement[0]<250";
-        std::string min_shower_energy_cut = "reco_shower_energy[0]>0.00 ";
-        std::string min_conversion_cut = "reco_shower_conversion_distance[0] > 0";
-        std::string back_to_back_cut = "("+angle_track_shower+" > -1 &&"  + angle_track_shower + "< 1)";
-        std::string pe_cut = "reco_flash_total_pe_in_beamgate[0] > 20";
->>>>>>> d7fec371044b6b0f5dae438c9a4bfb51eac10e6a
         std::string shower_dedx_cut = "reco_shower_dEdx_plane2_nhits[0]>1";
 
 
