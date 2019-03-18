@@ -297,7 +297,7 @@ int main (int argc, char *argv[]){
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
         //Ok print out Cosmic BDT
         if(run_cosmic){
-            bdt_response cosmic_response(cosmic_bdt_info, training_signal, intime);
+            bdt_response cosmic_response(cosmic_bdt_info, training_signal, OffBeamData);
             cosmic_response.plot_bdt_response(ftest);
         }
 
