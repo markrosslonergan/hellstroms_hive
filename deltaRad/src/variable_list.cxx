@@ -84,7 +84,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         //************************************************* Track + Shower Only Variables For 1g  **********************************************//
         if(analysis_tag == "track"){
             //all_vars.push_back(bdt_variable( "-log((track_info.reco_track_principal_2[0]+track_info.reco_track_principal_1[0])/track_info.reco_track_principal_0[0])","(48,0,30)","Track PCA straightness","true","d"));//15
-            train_vars.push_back(bdt_variable("reco_track_length[0]","(48,0,250)","Track Length [cm]",false,"d"));//4
+            train_vars.push_back(bdt_variable("reco_track_displacement[0]","(48,0,500)","Track Displacement [cm]",false,"d"));//4
 
 
             train_vars.push_back(bdt_variable("reco_track_proton_kinetic_energy[0]","(48,0,2)","Reconstructed Track Kinetic Energy [GeV]","true","d"));
@@ -99,7 +99,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
             plot_vars.push_back(bdt_variable("reco_track_mean_trunc_dEdx_plane0[0]", "(48,0,12)","Mean Track dE/dx Plane 0 [MeV/cm]", true,"d"));//23
             plot_vars.push_back(bdt_variable("reco_track_mean_trunc_dEdx_start_half_plane0[0]/reco_track_mean_trunc_dEdx_end_half_plane0[0]", "(48,0,3.5)","Ratio of Mean Start/End Track dE/dx Plane 0", true,"d"));//24
 
-            plot_vars.push_back(bdt_variable("reco_track_trunc_PIDA[0]","(48,0,24)","Track PIDA",true,"d"));//25
+            //plot_vars.push_back(bdt_variable("reco_track_trunc_PIDA[0]","(48,0,24)","Track PIDA",true,"d"));//25
             plot_vars.push_back(bdt_variable(invariant_mass,"(48,1,2.5)","Invariant Mass",true,"d"));//28
             plot_vars.push_back(bdt_variable("cos(reco_track_theta_yz[0])","(48,-1,1)","Reconstructed Track - Cosine Theta", true,"d"));//29
             plot_vars.push_back(bdt_variable("cos(reco_track_phi_yx[0])","(48,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));//30
