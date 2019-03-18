@@ -52,6 +52,7 @@ int main (int argc, char *argv[]){
     //This is a standardized location on /pnfs/ that everyone can use. 
     std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v7/";
     std::string dir8 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v8/";
+    std::string dir9 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
 
     std::string olddir5 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
     std::string olddir6 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v6/";
@@ -173,9 +174,15 @@ int main (int argc, char *argv[]){
 
     bdt_file *signal_cosmics = new bdt_file(olddir5, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
     //bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.3.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    bdt_file *bnb_cosmics = new bdt_file(dir8, "bnb_overlay_v8.42.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    bdt_file *data5e19    = new bdt_file(dir8, "data5e19_v8.3.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *bnb_cosmics = new bdt_file(dir9, "bnb_overlay_v9.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *data5e19    = new bdt_file(dir9, "data5e19_v9.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *bnbext    = new bdt_file(dir, "bnbext_run1_v7.1.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
+
+    std::vector<bdt_file *> files = {signal_cosmics, bnb_cosmics, data5e19, bnbext};
+
+    for(auto &f: files){
+            f->calcPOT();
+    }
 
     //this is
 //    bdt_file *bnb_cosmics = new bdt_file(olddir5, "bnb_overlay_combined_mcc9_v5.0.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);

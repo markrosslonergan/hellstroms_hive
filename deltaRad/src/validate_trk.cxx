@@ -55,6 +55,7 @@ int main (int argc, char *argv[]){
     //This is a standardized location on /pnfs/ that everyone can use. 
     std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v7/";
     std::string dir8 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v8/";
+    std::string dir9 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
 
     std::string olddir5 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
     std::string olddir6 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v6/";
@@ -175,14 +176,22 @@ int main (int argc, char *argv[]){
     bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
     bdt_file *bnb_cosmics_cali = new bdt_file(dir8, "bnb_overlay_v8.42.root", "BNBOverlay_cali", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    bdt_file *bnb_cosmics_caliSCE = new bdt_file(dir8, "bnb_overlay_v8.31.root", "BNBOverlay_caliSCE", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *bnb_cosmics_caliSCE = new bdt_file(dir9, "bnb_overlay_v9.0.root", "BNBOverlay_caliSCE", "hist","singlephoton/",  kBlue-4, bkg_flow);
     bdt_file *bnb_cosmics_calo = new bdt_file(dir8, "bnb_overlay_v8.299.root", "BNBOverlay_calo", "hist","singlephoton/",  kBlue-4, bkg_flow);
 
     bdt_file *data5e19_cali    = new bdt_file(dir8, "data5e19_v8.3.root",	"On-BeamData_cali",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *data5e19_caliSCE    = new bdt_file(dir8, "data5e19_v8.31.root",	"On-BeamData_caliSCE",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *data5e19_caliSCE    = new bdt_file(dir9, "data5e19_v9.0.root",	"On-BeamData_caliSCE",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *data5e19_calo    = new bdt_file(dir8, "data5e19_v8.299.root",	"On-BeamData_calo",	   "E1p","singlephoton/",  kBlack, data_flow);
 
     bdt_file *bnbext    = new bdt_file(dir, "bnbext_run1_v7.1.root",	"Off-BeamData",	"hist","singlephoton/",  kBlack, data_flow);
+
+    std::vector<bdt_file *> files = {bnb_cosmics_calo, bnb_cosmics_caliSCE, bnb_cosmics_calo, data5e19_cali, data5e19_caliSCE, data5e19_calo};
+
+    for(auto &f: files){
+            f->calcPOT();
+    }
+
+
 
     //===========================================================================================
     //===========================================================================================
@@ -222,7 +231,6 @@ int main (int argc, char *argv[]){
        compareQuick({v_dedx_trun_p2,v_dedx_trun_p2},{bnb_cosmics_cali, bnb_cosmics_cali},{"reco_asso_tracks>0 && sim_track_overlay_fraction>0.5","reco_asso_tracks>0&& sim_track_overlay_fraction<0.5"} ,"quickcheck_t2");
 
 
-       return 0;
        compareQuick({v_dedx_p0,v_dedx_p0,v_dedx_p2},{bnb_cosmics_cali, bnb_cosmics_caliSCE,bnb_cosmics_calo},{"reco_asso_tracks>0","reco_asso_tracks>0","reco_asso_tracks>0"} ,"compare_bnb_cosmics_dedx_p0");
 
        compareQuick({v_dedx_p1,v_dedx_p1,v_dedx_p1},{bnb_cosmics_cali, bnb_cosmics_caliSCE,bnb_cosmics_calo},{"reco_asso_tracks>0","reco_asso_tracks>0","reco_asso_tracks>0"} ,"compare_bnb_cosmics_dedx_p1");

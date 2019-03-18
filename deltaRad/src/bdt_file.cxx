@@ -44,69 +44,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
     //topovertex = (TTree*)tvertex->CopyTree(flow.topological_cuts.c_str());
     //std::cout<<"Copied to topological tree: "<<topovertex->GetEntries()<<std::endl;
-
-    double potbranch = 0;
-    int  numbranch = 0;
-
-    if(is_mc){
-        //If its MC or Overlay, lets just grab the POT from the nice POT tree
-        leg = "l";
-        std::cout<<"bdt_file::bdt_file()\t||\tFile is either MC or OVERLAY for purposes of getting POT."<<std::endl;
-        std::cout<<"bdt_file::bdt_file()\t||\tGetting POT tree: "<<tnam_pot<<" "<<std::endl;
-        tpot = (TTree*)f->Get(tnam_pot.c_str());
-        tpot->SetBranchAddress("number_of_events", &numbranch);
-        tpot->SetBranchAddress("POT",&potbranch);
-        std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
-        int tmpnum = 0;
-        double tmppot=0;
-        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
-        for(int i=0; i<tpot->GetEntries(); i++) {
-            tpot->GetEntry(i);
-            tmpnum += (double)numbranch;
-            tmppot += potbranch;
-        }
-        numberofevents = tmpnum;
-        pot=tmppot;
-        std::cout<<"bdt_file::bdt_file()\t||\t---> POT is MC/OVERLAY "<std::endl;
-        std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
-        std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
-        weight_branch = "1";
-        numberofevents_raw = numberofevents;
-
-    }else if(is_data){
-        //This is for Pure On beam Data. Taken as input by calling 
-
-        std::cout<<"bdt_file::bdt_file()\t||\tFile is ON-BEAM DATA for purposes of getting POT."<<std::endl;
-        tpot = (TTree*)f->Get(tnam_pot.c_str());
-        tpot->SetBranchAddress("number_of_events", &numbranch);
-        std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
-        int tmpnum = 0;
-        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
-        for(int i=0; i<tpot->GetEntries(); i++) {
-            tpot->GetEntry(i);
-            tmpnum += (double)numbranch;
-        }
-        numberofevents = tmpnum;
-        numberofevents_raw = numberofevents;
-
-        leg = "lp";
-        pot = data_tor860_cut; // tor860_wcut
-        weight_branch = "1";
-        std::cout<<"bdt_file::bdt_file()\t||\t---> POT is DATA. Setting from internal ZARKOS's tool numbers."<std::endl;
-        std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
-
-
-
-    }else if(is_bnbext){
-
-        std::cout<<"bdt_file::bdt_file()\t||\tFile is OFF-BEAM DATA for purposes of getting POT."<<std::endl;
-
-
-
-    }
-
-
-
+/*
     //This is all old school mcc8 stuff for now.
     if(tag == "IntimeCosmics"){
         std::cout<<"Getting POT for CosmicIntime: "<<std::endl;
@@ -250,15 +188,170 @@ if(tag == "BNBext"){
     weight_branch = "1";
 }
 
-std::cout<<"---> VERTEXCOUNT: "<<tag<<" "<<tvertex->GetEntries()*5e19/pot<<std::endl;
-
-
-std::cout<<"Done!"<<std::endl;
+*/
 
 
 
 
 };
+
+int bdt_file::setAsMC(){
+
+}
+
+int bdt_file::setAsOverlay(){
+}
+
+int bdt_file::setAsOnBeamData(double in_tor860_wcut){
+    is_data = true;
+    is_mc = false;
+    is_bnbext = false;
+
+    data_tor860_wcut = in_tor860_wcut;
+    return 0;
+}
+
+int bdt_file::setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext){
+    is_data = false;
+    is_mc = false;
+    is_bnbext = true;
+
+    data_tor860_wcut = in_data_tor860_wcut;
+    data_spills_E1DCNT_wcut = in_data_spills_E1DCNT_wcut;
+    ext_spills_ext = in_ext_spills_ext;
+
+    return 0;
+}
+
+
+
+int bdt_file::calcPOT(){
+
+    std::string tnam_event = root_dir+"event_tree";
+    std::string tnam = root_dir+"vertex_tree";
+    std::string tnam_pot = root_dir+"pot_tree";
+
+ 
+    double potbranch = 0;
+    int  numbranch = 0;
+
+
+    if(is_mc){
+        //If its MC or Overlay, lets just grab the POT from the nice POT tree
+        leg = "l";
+        std::cout<<"bdt_file::bdt_file()\t||\tFile is either MC or OVERLAY for purposes of getting POT."<<std::endl;
+        std::cout<<"bdt_file::bdt_file()\t||\tGetting POT tree: "<<tnam_pot<<" "<<std::endl;
+        tpot = (TTree*)f->Get(tnam_pot.c_str());
+        tpot->SetBranchAddress("number_of_events", &numbranch);
+        tpot->SetBranchAddress("POT",&potbranch);
+        std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
+        int tmpnum = 0;
+        double tmppot=0;
+        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
+        for(int i=0; i<tpot->GetEntries(); i++) {
+            tpot->GetEntry(i);
+            tmpnum += (double)numbranch;
+            tmppot += potbranch;
+        }
+        numberofevents = tmpnum;
+        pot=tmppot;
+        std::cout<<"bdt_file::bdt_file()\t||\t---> POT is MC/OVERLAY "<<std::endl;
+        std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
+        std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
+        weight_branch = "1";
+        numberofevents_raw = numberofevents;
+
+    }else if(is_data){
+        //This is for Pure On beam Data. Taken as input by calling 
+
+        std::cout<<"bdt_file::bdt_file()\t||\tFile is ON-BEAM DATA for purposes of getting POT."<<std::endl;
+        tpot = (TTree*)f->Get(tnam_pot.c_str());
+        tpot->SetBranchAddress("number_of_events", &numbranch);
+        std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
+        int tmpnum = 0;
+        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
+        for(int i=0; i<tpot->GetEntries(); i++) {
+            tpot->GetEntry(i);
+            tmpnum += (double)numbranch;
+        }
+        numberofevents = tmpnum;
+        numberofevents_raw = numberofevents;
+
+        leg = "lp";
+        pot = this->data_tor860_wcut; // tor860_wcut
+        weight_branch = "1";
+        std::cout<<"bdt_file::bdt_file()\t||\t---> POT is DATA. Setting from internal ZARKOS's tool numbers."<<std::endl;
+        std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
+
+
+
+    }else if(is_bnbext){
+
+        std::cout<<"bdt_file::bdt_file()\t||\tFile is OFF-BEAM (BNBEXT) DATA for purposes of getting POT."<<std::endl;
+        tpot = (TTree*)f->Get(tnam_pot.c_str());
+        int numbranch =0;
+        tpot->SetBranchAddress("number_of_events", &numbranch);
+        std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
+        int tmpnum = 0;
+        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
+        for(int i=0; i<tpot->GetEntries(); i++) {
+            tpot->GetEntry(i);
+            tmpnum += (double)numbranch;
+        }
+        numberofevents = tmpnum;
+        numberofevents_raw = numberofevents;
+
+
+
+        leg = "lp";
+        //https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
+
+        //MCC9:  HERE FOR EXAMPLE PURPOSE ONLY
+        //Data samweb is 197833 events. defname: data_bnb_run1_unblind_mcc9.0_nov_reco_2d_reco2_slim
+        //tor860_wcut: 4.898e+19,  E1DCNT_wcut: 11595542.0
+        //
+        //bnbext samweb is  200433 events, defname: data_extbnb_run1_dev_mcc9.0_nov_reco_2d_reco2_slim
+        //EXT spills: 15435961.0
+
+
+        //so that is
+     //   double ext=15435961.0;//47953078.0; //External spills in each sample (EXT)
+      //  double spill_on = data_tor860_wcut;   //11595542.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
+      //  double datanorm =4.898e19;// tor860_wcut run-subrunlist;
+
+        double Noff_full = 200433.0; //this is full samweb events
+        double Noff_have = numberofevents;
+
+        //This is old MCC8 one
+        //double ext=33752562+40051674;//47953078.0; //External spills in each sample (EXT)
+        //double spill_on=10312906;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
+        //double datanorm =4.393e19;// tor860_wcut run-subrunlist;
+
+//        double mod = spill_on/ext*(Noff_full/Noff_have);
+
+        double modifier = data_spills_E1DCNT_wcut/ext_spills_ext;
+
+        std::cout<<"--> POT is data: From Zarkos tool..";
+        //going to scale by how many events I actually have in MCC9
+        pot =this->data_tor860_wcut/modifier;
+        std::cout<<"--> value: "<<pot<<std::endl;
+
+        std::cout<<"bdt_file::bdt_file()\t||\t---> POT is OFF BEAM DATA "<<std::endl;
+        std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
+        std::cout<<"--> scaled to 5e19 number of Entries: "<<numberofevents/pot*5e19<<std::endl;
+
+        weight_branch = "1";
+        numberofevents_raw = numberofevents;
+
+
+
+    }
+
+
+
+    return 0;
+}
+
 
 
 int bdt_file::calcPrecutEntryList(){

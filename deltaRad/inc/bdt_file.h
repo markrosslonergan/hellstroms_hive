@@ -145,7 +145,16 @@ struct bdt_file{
 		int calcBaseEntryList(std::string);
 
         double data_tor860_wcut;
-        int setData_tor860_wcut(double in_data_tor860_wcut){ data_tor860_wcut = in_data_tor860_wcut; return 0;}
+        double data_spills_E1DCNT_wcut;
+        double ext_spills_ext;
+
+        int setAsMC();
+        int setAsOverlay();
+        int setAsOnBeamData(double in_tor860_wcut);
+        int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext);
+
+        int calcPOT();
+
 
 
 		double scale_data;
