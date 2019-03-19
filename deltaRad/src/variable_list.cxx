@@ -50,9 +50,9 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         plot_vars.push_back(bdt_variable("reco_shower_dEdx_plane1_median[0]","(48,0,6.5)", "Median Shower dE/dx plane 1 [MeV/cm]",false,"d")); //2
         plot_vars.push_back(bdt_variable("reco_shower_dEdx_plane0_median[0]","(48,0,6.5)", "Median Shower dE/dx plane 0 [MeV/cm]",false,"d")); //2
 
-        plot_vars.push_back(bdt_variable("reco_shower_dQdx_plane2_median[0]","(48,0,750000)", "Median Shower dQ/dx plane 2 [MeV/cm]",false,"d")); //2
-        plot_vars.push_back(bdt_variable("reco_shower_dQdx_plane1_median[0]","(48,0,750000)", "Median Shower dQ/dx plane 1 [MeV/cm]",false,"d")); //2
-        plot_vars.push_back(bdt_variable("reco_shower_dQdx_plane0_median[0]","(48,0,750000)", "Median Shower dQ/dx plane 0 [MeV/cm]",false,"d")); //2
+        plot_vars.push_back(bdt_variable("reco_shower_dQdx_plane2_median[0]","(48,0,400000)", "Median Shower dQ/dx plane 2 ",false,"d")); //2
+        plot_vars.push_back(bdt_variable("reco_shower_dQdx_plane1_median[0]","(48,0,400000)", "Median Shower dQ/dx plane 1 ",false,"d")); //2
+        plot_vars.push_back(bdt_variable("reco_shower_dQdx_plane0_median[0]","(48,0,400000)", "Median Shower dQ/dx plane 0 ",false,"d")); //2
 
         train_vars.push_back(bdt_variable("reco_shower_energy[0]/1000.0","(48,0,0.8)","Reconstructed Shower Energy [GeV]", false,"d"));  //3
         plot_vars.push_back(bdt_variable("reco_shower_length[0]","(48,0,100)","Shower Length [cm]",false,"d"));//4
@@ -74,8 +74,9 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         plot_vars.push_back(bdt_variable("reco_vertex_z[0]","(48,0,1050)","Reconstructed Vertex Z pos [cm]",false,"d"));//12
 
         //train_vars.push_back(bdt_variable("log10(reco_shower_conversion_distance[0])","(48,-2,4)","Log Reconstructed Shower conversion distance","false","d"));
-        train_vars.push_back(bdt_variable("reco_shower_conversion_distance[0]","(48,0,1000)"," Reconstructed Shower conversion distance [cm]","false","d"));
-       //plot_vars.push_back(bdt_variable("reco_shower_delaunay_area_plane2[0]","(48,0,200e3)","Reconstructed Shower delaunay area plane 2","false","d"));
+        train_vars.push_back(bdt_variable("reco_shower_conversion_distance[0]","(48,0,500)"," Reconstructed Shower conversion distance [cm]","false","d"));
+        plot_vars.push_back(bdt_variable("reco_shower_conversion_distance[0]","(48,0,250)"," Reconstructed Shower conversion distance [cm]","false","d"));
+      //plot_vars.push_back(bdt_variable("reco_shower_delaunay_area_plane2[0]","(48,0,200e3)","Reconstructed Shower delaunay area plane 2","false","d"));
 
         plot_vars.push_back(bdt_variable("reco_shower_start_to_nearest_dead_wire_plane0[0]","(24,0,125)"," Reconstructed Shower dead wire dist plane 0 pos [cm]",false,"d"));//10
         plot_vars.push_back(bdt_variable("reco_shower_start_to_nearest_dead_wire_plane1[0]","(24,0,+110)","Reconstructed Shower dead wire dist plane 1 pos [cm]",false,"d"));//11
