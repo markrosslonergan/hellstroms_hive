@@ -209,6 +209,8 @@ int main (int argc, char *argv[]){
     training_signal->scale_data = 3.0;
     signal->scale_data = 3.0;
 
+    bnb->scale_data = 1.22;
+
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
     OnBeamData->setAsOnBeamData(4.795e19);
