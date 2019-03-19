@@ -126,6 +126,9 @@ int main (int argc, char *argv[]){
 
     //Get all the variables you want to use	
     std::vector<bdt_variable> vars = var_list.all_vars;
+    std::vector<bdt_variable> training_vars = var_list.train_vars;
+    std::vector<bdt_variable> plotting_vars = var_list.plot_vars;   
+
     std::cout<<"Adding a total of "<<vars.size()<<" vars!"<<std::endl;
 
     //This is a vector each containing a precut, they are all added together to make the whole "precut"
@@ -158,15 +161,15 @@ int main (int argc, char *argv[]){
     }
 
     std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
-	std::string pmass = "0.938272";
+    std::string pmass = "0.938272";
     std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+20 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
-    
+
     std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
 
     std::string signal_definition = v_denom[0];
 
     for(int i=1; i< v_denom.size();i++){
-            signal_definition += "&&" + v_denom[i];
+        signal_definition += "&&" + v_denom[i];
     }
 
     std::string background_definition = "1";
@@ -183,7 +186,7 @@ int main (int argc, char *argv[]){
     bdt_flow signal_flow(topological_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_flow(topological_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_training_flow(topological_cuts,	background_definition+"&&"+ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-    
+
     bdt_flow data_flow(topological_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
     // BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
@@ -194,7 +197,7 @@ int main (int argc, char *argv[]){
 
     bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_collins_v9.1.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
     bdt_file *bnb = new bdt_file(dir, "bnb_overlay_collins_v9.1.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    
+
     //Data files
     bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.0.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v9.0.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
@@ -277,20 +280,20 @@ int main (int argc, char *argv[]){
 
     if(mode_option == "train") {
         std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
-        if(run_cosmic) bdt_train(cosmic_bdt_info, training_signal, OffBeamData, vars, TMVAmethods);
+        if(run_cosmic) bdt_train(cosmic_bdt_info, training_signal, OffBeamData, training_vars, plotting_vars, TMVAmethods);
         std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
-        if(run_bnb) bdt_train(bnb_bdt_info, training_signal, training_bnb, vars, TMVAmethods);
+        if(run_bnb) bdt_train(bnb_bdt_info, training_signal, training_bnb, training_vars,  plotting_vars, TMVAmethods);
         return 0;
 
     }else if(mode_option == "app"){
         //Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
 
         if(number != -1){
-            if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, vars, TMVAmethods);
-            if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, vars, TMVAmethods);
+            if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, training_vars,  plotting_vars, TMVAmethods);
+            if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, training_vars,  plotting_vars, TMVAmethods);
         }else{
-            if(run_cosmic) bdt_app(cosmic_bdt_info, {bdt_files[number]}, vars, TMVAmethods);
-            if(run_bnb)    bdt_app(bnb_bdt_info, {bdt_files[number]}, vars, TMVAmethods);
+            if(run_cosmic) bdt_app(cosmic_bdt_info, {bdt_files[number]}, training_vars, plotting_vars, TMVAmethods);
+            if(run_bnb)    bdt_app(bnb_bdt_info, {bdt_files[number]}, training_vars, plotting_vars, TMVAmethods);
         }
 
         return 0;
@@ -430,7 +433,10 @@ int main (int argc, char *argv[]){
 
                 bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
                 //real_datamc.setSubtractionVector(subv);
-                real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+                // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+                real_datamc.plotStacks(ftest, training_vars,fcoscut,fbnbcut);
+                real_datamc.SetSpectator();
+                real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
         }else{
             bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
@@ -465,12 +471,12 @@ int main (int argc, char *argv[]){
 
 
     } else if(mode_option == "eff"){
-        
+
         std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==1"};
 
-     	bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
-     	//bdt_efficiency(bnb, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 5e19);
-   
+        bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
+        //bdt_efficiency(bnb, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 5e19);
+
 
     }else {
         std::cout << "WARNING: " << mode_option << " is an invalid option\n";
