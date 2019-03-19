@@ -36,6 +36,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     weight_branch = "1";
     fillstyle = 1001;
+    scale_data = 1.0;
 
     std::cout<<"Getting vertex tree"<<std::endl;
     tvertex = (TTree*)f->Get(tnam.c_str());
@@ -319,9 +320,6 @@ int bdt_file::calcPOT(){
      //   double ext=15435961.0;//47953078.0; //External spills in each sample (EXT)
       //  double spill_on = data_tor860_wcut;   //11595542.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
       //  double datanorm =4.898e19;// tor860_wcut run-subrunlist;
-
-        double Noff_full = 200433.0; //this is full samweb events
-        double Noff_have = numberofevents;
 
         //This is old MCC8 one
         //double ext=33752562+40051674;//47953078.0; //External spills in each sample (EXT)

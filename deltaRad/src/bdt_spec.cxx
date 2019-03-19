@@ -76,7 +76,6 @@ int bdt_stack::makeSBNspec(std::string tagin, bdt_variable var, double c1, doubl
 		f->cd();	
 		hist->Write();
 	}	
-
 	return 0;
 }
 

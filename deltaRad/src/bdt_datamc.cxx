@@ -68,6 +68,7 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
     // NEW ONE
     double plot_pot=data_file->pot;
+    std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
 
     double title_size_ratio=0.1;
     double label_size_ratio=0.1;
@@ -110,7 +111,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1800,1600);
             cobs->cd();
 
-            if(do_subtraction){
+            if(false&&do_subtraction){
                 std::cout<<"Setting do Subtraction inside bdt_stack "<<std::endl;
                 mc_stack->setSubtractionVector(subtraction_vec);
             }
@@ -130,7 +131,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             //tsum->Rebin(data_rebin);
             d0->Rebin(data_rebin);
 
-            if(do_subtraction){
+            if(false &&do_subtraction){
                 std::cout<<"Actually doing the subtracting"<<std::endl;
                 for(int i=0; i< subtraction_vec.size();i++)
                     if(subtraction_vec[i]){
@@ -187,7 +188,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
 
 
-            TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
+            TLegend *l0 = new TLegend(0.11,0.65,0.89,0.89);
             l0->SetNColumns(2);
             double NeventsStack = 0;
 
@@ -217,7 +218,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             double NdatEvents = data_file->GetEntries()*(plot_pot/data_file->pot )*data_file->scale_data;
 
-            d0->Scale(NeventsStack/NdatEvents);
+            //d0->Scale(NeventsStack/NdatEvents);
             d0->Draw("same E1");
 
 
@@ -309,8 +310,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
 
-            //std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2) ;
-            std::string mean = "Ratio: Normalized" ;
+            std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2) ;
+            //std::string mean = "Ratio: Normalized" ;
             TText *t = new TText(0.11,0.41,mean.c_str());
             t->SetNDC();
             t->SetTextColor(kRed-7);
