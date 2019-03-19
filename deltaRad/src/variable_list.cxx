@@ -15,28 +15,29 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 
 
-		std::string angle_track_shower ="(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])";
-		std::string fiducial_vertex = "reco_vertex_x > 10 && reco_vertex_x < 246 && reco_vertex_y > -107 && reco_vertex_y < 107 && reco_vertex_z > 10 && reco_vertex_z < 1026 ";
-		std::string fiducial_shower_end = "reco_shower_endx > 5 && reco_shower_endx < 245 && reco_shower_endy > -105 && reco_shower_endy < 95 && reco_shower_endz > 10 && reco_shower_endz < 1026 ";
-		std::string fiducial_track_end = "reco_track_endx > 5 && reco_track_endx < 245 && reco_track_endy > -95 && reco_track_endy < 95 && reco_track_endz > 10 && reco_track_endz < 1026 ";
-		std::string fiducial_cut = fiducial_vertex;//"&&"+fiducial_shower_end;
+        std::string angle_track_shower ="(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])";
+        std::string fiducial_vertex = "reco_vertex_x > 10 && reco_vertex_x < 246 && reco_vertex_y > -107 && reco_vertex_y < 107 && reco_vertex_z > 10 && reco_vertex_z < 1026 ";
+        std::string fiducial_shower_end = "reco_shower_endx > 5 && reco_shower_endx < 245 && reco_shower_endy > -105 && reco_shower_endy < 95 && reco_shower_endz > 10 && reco_shower_endz < 1026 ";
+        std::string fiducial_track_end = "reco_track_endx > 5 && reco_track_endx < 245 && reco_track_endy > -95 && reco_track_endy < 95 && reco_track_endz > 10 && reco_track_endz < 1026 ";
+        std::string fiducial_cut = fiducial_vertex;//"&&"+fiducial_shower_end;
 
-		std::string proton_mass = "0.938272";
-		std::string reco_shower_momentum = "(reco_shower_energy[0]*0.001)"; 
-		std::string reco_track_energy = "(reco_track_proton_kinetic_energy[0]+"+proton_mass + ")";
-		std::string reco_track_momentum  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"-"+proton_mass +"*"+proton_mass+")";
-		std::string invariant_mass = "("+proton_mass+"*"+proton_mass+"+2.0*("+reco_track_energy+"*"+reco_shower_momentum+"-"+reco_track_momentum+"*"+reco_shower_momentum+"*"+angle_track_shower+"))";
+        std::string proton_mass = "0.938272";
+        std::string reco_shower_momentum = "(reco_shower_energy[0]*0.001)"; 
+        std::string reco_track_energy = "(reco_track_proton_kinetic_energy[0]+"+proton_mass + ")";
+        std::string reco_track_momentum  = "sqrt("+reco_track_energy+"*"+reco_track_energy+"-"+proton_mass +"*"+proton_mass+")";
+        std::string invariant_mass = "("+proton_mass+"*"+proton_mass+"+2.0*("+reco_track_energy+"*"+reco_shower_momentum+"-"+reco_track_momentum+"*"+reco_shower_momentum+"*"+angle_track_shower+"))";
 
-		std::string delta_transverse_momentum = "sqrt( pow("+reco_track_energy +"*(reco_track_dirx[0])+ "+reco_shower_momentum+"*reco_shower_dirx[0],2)+ pow("+reco_track_energy +"*(reco_track_diry[0])+"+reco_shower_momentum +"*reco_shower_diry[0],2))";
-        
+        std::string delta_transverse_momentum = "sqrt( pow("+reco_track_energy +"*(reco_track_dirx[0])+ "+reco_shower_momentum+"*reco_shower_dirx[0],2)+ pow("+reco_track_energy +"*(reco_track_diry[0])+"+reco_shower_momentum +"*reco_shower_diry[0],2))";
 
-		std::string new_precuts;
-		std::string good_calo_cut = "1";
-		std::string track_length_cut = "reco_track_displacement[0]<250";
-		std::string min_shower_energy_cut = "reco_shower_energy[0]>0.00 ";
-		std::string min_conversion_cut = "reco_shower_conversion_distance[0] > 0";
-		std::string back_to_back_cut = "("+angle_track_shower+" > -1 &&"  + angle_track_shower + "< 1)";
-		std::string pe_cut = "reco_flash_total_pe_in_beamgate[0] > 20";
+
+        std::string new_precuts;
+        std::string good_calo_cut = "1";
+        //std::string good_calo_cut = "reco_track_good_calo_plane2[0] > 0";
+        std::string track_length_cut = "reco_track_displacement[0]<250";
+        std::string min_shower_energy_cut = "reco_shower_energy[0]>0.00 ";
+        std::string min_conversion_cut = "reco_shower_conversion_distance[0] > 0";
+        std::string back_to_back_cut = "("+angle_track_shower+" > -1 &&"  + angle_track_shower + "< 1)";
+        std::string pe_cut = "reco_flash_total_pe_in_beamgate[0] > 20";
         std::string shower_dedx_cut = "reco_shower_dEdx_plane2_nhits[0]>1";
 
 
@@ -48,11 +49,11 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         train_vars.push_back(bdt_variable("reco_shower_dEdx_plane2_median[0]","(48,0,6.5)", "Median Shower dE/dx plane 2 [MeV/cm]",false,"d")); //2
         plot_vars.push_back(bdt_variable("reco_shower_dEdx_plane1_median[0]","(48,0,6.5)", "Median Shower dE/dx plane 1 [MeV/cm]",false,"d")); //2
         plot_vars.push_back(bdt_variable("reco_shower_dEdx_plane0_median[0]","(48,0,6.5)", "Median Shower dE/dx plane 0 [MeV/cm]",false,"d")); //2
-        
+
         plot_vars.push_back(bdt_variable("reco_shower_dQdx_plane2_median[0]","(48,0,6.5)", "Median Shower dQ/dx plane 2 [MeV/cm]",false,"d")); //2
         plot_vars.push_back(bdt_variable("reco_shower_dQdx_plane1_median[0]","(48,0,6.5)", "Median Shower dQ/dx plane 1 [MeV/cm]",false,"d")); //2
         plot_vars.push_back(bdt_variable("reco_shower_dQdx_plane0_median[0]","(48,0,6.5)", "Median Shower dQ/dx plane 0 [MeV/cm]",false,"d")); //2
-        
+
         train_vars.push_back(bdt_variable("reco_shower_energy[0]/1000.0","(48,0,0.8)","Reconstructed Shower Energy [GeV]", false,"d"));  //3
         plot_vars.push_back(bdt_variable("reco_shower_length[0]","(48,0,100)","Shower Length [cm]",false,"d"));//4
 
@@ -83,7 +84,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         //************************************************* Track + Shower Only Variables For 1g  **********************************************//
         if(analysis_tag == "track"){
             //all_vars.push_back(bdt_variable( "-log((track_info.reco_track_principal_2[0]+track_info.reco_track_principal_1[0])/track_info.reco_track_principal_0[0])","(48,0,30)","Track PCA straightness","true","d"));//15
-            train_vars.push_back(bdt_variable("reco_track_length[0]","(48,0,250)","Track Length [cm]",false,"d"));//4
+            train_vars.push_back(bdt_variable("reco_track_displacement[0]","(48,0,500)","Track Displacement [cm]",false,"d"));//4
 
 
             train_vars.push_back(bdt_variable("reco_track_proton_kinetic_energy[0]","(48,0,2)","Reconstructed Track Kinetic Energy [GeV]","true","d"));
@@ -98,7 +99,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
             plot_vars.push_back(bdt_variable("reco_track_mean_trunc_dEdx_plane0[0]", "(48,0,12)","Mean Track dE/dx Plane 0 [MeV/cm]", true,"d"));//23
             plot_vars.push_back(bdt_variable("reco_track_mean_trunc_dEdx_start_half_plane0[0]/reco_track_mean_trunc_dEdx_end_half_plane0[0]", "(48,0,3.5)","Ratio of Mean Start/End Track dE/dx Plane 0", true,"d"));//24
 
-            plot_vars.push_back(bdt_variable("reco_track_trunc_PIDA[0]","(48,0,24)","Track PIDA",true,"d"));//25
+            //plot_vars.push_back(bdt_variable("reco_track_trunc_PIDA[0]","(48,0,24)","Track PIDA",true,"d"));//25
             plot_vars.push_back(bdt_variable(invariant_mass,"(48,1,2.5)","Invariant Mass",true,"d"));//28
             plot_vars.push_back(bdt_variable("cos(reco_track_theta_yz[0])","(48,-1,1)","Reconstructed Track - Cosine Theta", true,"d"));//29
             plot_vars.push_back(bdt_variable("cos(reco_track_phi_yx[0])","(48,-1,1)","Reconstructed Track - Cosine Phi", true,"d"));//30
@@ -127,7 +128,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
         if(analysis_tag == "track"){
             all_precuts.push_back(track_length_cut);
-            all_precuts.push_back(min_conversion_cut);
+           all_precuts.push_back(min_conversion_cut);
             all_precuts.push_back(good_calo_cut);
             all_precuts.push_back(back_to_back_cut);
         }else if(analysis_tag=="1g2p"){
@@ -139,12 +140,6 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
         all_vars.insert(all_vars.end(), train_vars.begin(), train_vars.end() );
         all_vars.insert(all_vars.end(), plot_vars.begin(), plot_vars.end() );
 
-
-        //*******************************************************************************//
-        //*******************************************************************************//
-        //****************   YOUR TAGE HERE				      ***********//
-        //*******************************************************************************//
-        //*******************************************************************************//
 
 
     }
