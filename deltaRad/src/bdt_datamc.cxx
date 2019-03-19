@@ -86,7 +86,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     //Loop over all stages
 
     for(int s = 1; s< 2; s++){
-    
+
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
         for(auto &f: mc_stack->stack){
@@ -96,8 +96,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
             f->setStageEntryList(s);
         }	
-    
-        
+
+
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 
         if(s==2) data_file->calcCosmicBDTEntryList(c1, c2);
@@ -245,14 +245,21 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             pottex.DrawLatex(.7,.65, pot_draw.c_str());
 
-            TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary");
-            pre->Draw();
-            TText *spec;
+            TText *pre; 
             if (isSpectator) {
-                TText *spec = drawPrelim(0.82, 0.52, "Spectator Variable");
-                spec->Draw("same");
-            }
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary - Spectator Variable");
+            }else {
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary - Training Variable");
 
+            }
+            pre->Draw();
+
+            /* TText *spec;
+               if (isSpectator) {
+               TText *spec = drawPrelim(0.82, 0.52, "Spectator Variable");
+               spec->Draw("same");
+               }
+               */
             //cobs->cd(k+1);	
             cobs->cd();
             TPad *pad0bot = new TPad(("padbot_"+stage_names.at(s)).c_str(),("padbot_"+stage_names.at(s)).c_str(), 0, 0.05, 1, 0.35);
