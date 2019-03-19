@@ -178,6 +178,8 @@ int main (int argc, char *argv[]){
     //***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
     //***************************************************************************************************/
     bdt_flow signal_training_flow(topological_cuts, 	signal_definition +"&&"+ training_signal_cut, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow signal_other_flow(topological_cuts, 	"!("+signal_definition +")", 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+
     bdt_flow signal_flow(topological_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_flow(topological_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_training_flow(topological_cuts,	background_definition+"&&"+ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
@@ -187,7 +189,9 @@ int main (int argc, char *argv[]){
     // BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
     bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
     bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    
+    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-7, signal_other_flow);
+    signal_other->fillstyle = 3333;
+
     bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_collins_v9.1.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
     bdt_file *bnb = new bdt_file(dir, "bnb_overlay_collins_v9.1.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
     
@@ -196,7 +200,7 @@ int main (int argc, char *argv[]){
     bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v9.0.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
     //For conviencance fill a vector with pointers to all the files to loop over.
-    std::vector<bdt_file*> bdt_files = {signal, training_signal, training_bnb, bnb, OnBeamData, OffBeamData};
+    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData};
 
     //The LEE signal is bigger than the SM signal by this factor
     training_signal->scale_data = 3.0;
@@ -244,6 +248,7 @@ int main (int argc, char *argv[]){
     //Adding plot names
     training_signal->addPlotName("NC Delta Radiative");
     signal->addPlotName("LEE NC #Delta Rad w/ Overlays");
+    signal_other->addPlotName("Other w/ Overlays");
     training_bnb->addPlotName("BNB Backgrounds");
     bnb->addPlotName("BNB w/Overlays");
     OnBeamData->addPlotName("On-Beam  Data");
@@ -367,6 +372,7 @@ int main (int argc, char *argv[]){
     }else if(mode_option == "stack"){
         bdt_stack histogram_stack(analysis_tag+"_stack");
         histogram_stack.addToStack(signal);
+        histogram_stack.addToStack(signal_other);
         histogram_stack.addToStack(bnb);
 
         //Add OffBeamData but change the color and style first
@@ -403,6 +409,7 @@ int main (int argc, char *argv[]){
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
         histogram_stack->plot_pot = OnBeamData->pot;
         histogram_stack->addToStack(signal);
+        histogram_stack->addToStack(signal_other);
         histogram_stack->addToStack(bnb);
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(OffBeamData);
@@ -461,6 +468,7 @@ int main (int argc, char *argv[]){
         std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==1"};
 
      	bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
+     	//bdt_efficiency(bnb, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 5e19);
    
 
     }else {
