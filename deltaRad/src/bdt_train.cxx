@@ -1,5 +1,13 @@
 #include "bdt_train.h"
 
+int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
+
+    std::vector<method_struct> methods = {info.TMVAmethod};
+    std::vector<bdt_variable> variables = info.train_vars;
+
+    return bdt_train(info, signal_file, background_file, variables, methods);
+}
+
 int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, std::vector<bdt_variable> variables, std::vector<method_struct> & methods){
 
 	std::string const name = info.identifier;
@@ -85,7 +93,7 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	dataloader->SetSignalWeightExpression(signal_file->weight_branch.c_str());
 	dataloader->SetBackgroundWeightExpression(background_file->weight_branch.c_str());
 
-  for (bdt_variable &var: plot_variables) dataloader->AddSpectator(var.name.c_str() );
+//  for (bdt_variable &var: plot_variables) dataloader->AddSpectator(var.name.c_str() );
 
 	for(bdt_variable &var: train_variables) dataloader->AddVariable(var.name.c_str());
 

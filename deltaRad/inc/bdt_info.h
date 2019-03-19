@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include "bdt_var.h"
+#include "method_struct.h"
 /******** Our includes *****/
 
 /******** Root includes *****/
@@ -25,6 +27,10 @@ struct bdt_info{
 
 	std::string signal_definition;
 	std::string background_definition;
+
+    method_struct TMVAmethod;
+    std::vector<bdt_variable> train_vars;
+    std::vector<bdt_variable> spec_vars;
 
 	std::string topo_name;
 	

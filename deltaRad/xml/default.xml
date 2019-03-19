@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<mva type="BDT" use="yes">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(50,0,1)">
 	<method type = "BDT" use = "yes">
 		<param>  NTrees=3500 	</param>				
 		<param>  MinNodeSize=2.5% </param>				
@@ -10,29 +10,25 @@
 		<param>  BaggedSampleFraction=0.5	</param>				
 		<param>  nCuts=-1	</param>				
 		<param>  MaxDepth=3 	</param>				
+    </method>
+    <var def = "reco_shower_dEdx_plane1_median[0]" binning = "(36,0,6.5)" unit = "Median Shower dE/dx plane 1 [MeV/cm]" type="d" spectator="false">
+    <var def = "reco_shower_energy[0]/1000.0" binning = "(36,0,1.0)" unit = "Reconstructed Shower Energy [GeV]" type="d" spectator="true">
+</mva>
 
-	</method>
-
-
-
-	<method type = "BDTG" use="no">
-		<param>  NTrees=2000 	</param>				
+<mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(50,0,1)">
+	<method type = "BDT" use = "yes">
+		<param>  NTrees=3500 	</param>				
 		<param>  MinNodeSize=2.5% </param>				
-		<param>  BoostType=Grad 	</param>				
-		<param>  Shrinkage=0.10 	</param>				
-		<param>  UseBaggedBoost</param>
-		<param>  BaggedSampleFraction=0.5 	</param>				
-		<param>  nCuts=20 	</param>				
+		<param>  BoostType=RealAdaBoost</param>
+		<param>  AdaBoostBeta=0.75 	</param>				
+		<param>  SeparationType=GiniIndex</param>				
+		<param>  UseBaggedBoost</param> 
+		<param>  BaggedSampleFraction=0.5	</param>				
+		<param>  nCuts=-1	</param>				
 		<param>  MaxDepth=3 	</param>				
-	</method>
-	
+    </method>
+    <var def = "reco_shower_dEdx_plane2_median[0]" binning = "(36,0,6.5)" unit = "Median Shower dE/dx plane 2 [MeV/cm]" type="d" spectator="true">
+    <var def = "reco_shower_length[0]" binning = "(36,0,100)" unit = "Reconstructed Shower Length [cm]" type="d" spectator="false">
 </mva>
 
-<mva type="Fisher" use="no">
-	<method type = "BoostedFisher" use = "yes">
-		<param> Boost_Num=20</param> 
-		<param> Boost_Transform=log</param>
-		<param> Boost_Type=AdaBoost</param>
-		<param> Boost_AdaBoostBeta=0.2</param>
-	</method>
-</mva>
+

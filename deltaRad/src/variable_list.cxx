@@ -11,7 +11,7 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
     //*******************************************************************************//
 
 
-    if(analysis_tag == "track" || analysis_tag == "notrack" || analysis_tag == "1g2p"){
+    if(analysis_tag == "track" || analysis_tag == "notrack" || analysis_tag == "1g2p" ){
 
 
 

@@ -29,9 +29,9 @@ int main (int argc, char *argv[]){
 
     std::string mode_option = "fake"; 
     std::string xml = "default.xml";
-    std::string topo_tag = "1g1p";
+    std::string topo_tag = "track";
     std::string bdt_tag = "cosmic";
-    std::string analysis_tag = topo_tag+"_"+bdt_tag;
+    std::string analysis_tag = topo_tag;
 
     bool run_cosmic = true;
     bool run_bnb = true;
@@ -45,7 +45,8 @@ int main (int argc, char *argv[]){
         {"option",		required_argument,	0, 'o'},
         {"xml"	,		required_argument,	0, 'x'},
         {"topo_tag",	required_argument,	0, 't'},
-        {"bdt_tag",		required_argument,	0, 'b'},
+        {"cosmic",		no_argument,	0, 'b'},
+        {"bnb",		    no_argument,	0, 'c'},
         {"help",		required_argument,	0, 'h'},
         {"number",		required_argument,	0, 'n'},
         {0,			no_argument, 		0,  0},
@@ -54,7 +55,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:t:b:n:rh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:t:bcn:rh?", longopts, &index);
 
         switch(iarg)
         {
@@ -63,10 +64,17 @@ int main (int argc, char *argv[]){
                 break;
             case 'n':
                 number = strtof(optarg,NULL);
-                run_bnb = false;
                 break;
             case 'x':
                 xml = optarg;
+                break;
+            case 'c':
+                run_cosmic = true;
+                run_bnb = false;
+                break;
+            case 'b':
+                run_cosmic = false;
+                run_bnb = true;
                 break;
             case 'o':
                 mode_option = optarg;
@@ -76,9 +84,6 @@ int main (int argc, char *argv[]){
                 break;
             case 't':
                 topo_tag = optarg;
-                break;
-            case 'b':
-                bdt_tag = optarg;
                 break;
             case '?':
             case 'h':
@@ -95,11 +100,10 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t\t\t\t recomc:"<<std::endl;
                 std::cout<<"\t\t\t\t datamc:"<<std::endl;
                 std::cout<<"\t\t\t\t eff:"<<std::endl;
-                //std::cout<<"\t-c\t--cosmic\t\t Run only cosmic training/app"<<std::endl;
-                //std::cout<<"\t-b\t--bnb\t\t Run only BNB training/app"<<std::endl;
+                std::cout<<"\t-c\t--cosmic\t\t Run only cosmic training/app"<<std::endl;
+                std::cout<<"\t-b\t--bnb\t\t Run only BNB training/app"<<std::endl;
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag used to keep all things clean!"<<std::endl;
-                std::cout<<"\t-b\t--bdt_tag\t\tBDT tag, i.e BNB or COSMIC.."<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
                 return 0;
         }
@@ -124,8 +128,6 @@ int main (int argc, char *argv[]){
     std::vector<bdt_variable> training_vars = var_list.train_vars;
     std::vector<bdt_variable> plotting_vars = var_list.plot_vars;   
 
-    std::cout<<"Adding a total of "<<vars.size()<<" vars!"<<std::endl;
-
     //This is a vector each containing a precut, they are all added together to make the whole "precut"
     std::vector<std::string> vec_precuts = var_list.all_precuts;
 
@@ -133,9 +135,20 @@ int main (int argc, char *argv[]){
     std::string postcuts = "1";
 
     //We have 2 BDT's one for cosmics and one for BNB related backgrounds only
-    //Set up some info about the BDTs to pass along
-    bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(80,0.3,0.6)");
-//    bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.2,0.75)");
+    bdt_info cosmic_bdt_info(   analysis_tag+TMVAmethods[0].bdt_tag,     TMVAmethods[0].bdt_name,  TMVAmethods[0].bdt_binning);
+    bdt_info bnb_bdt_info(      analysis_tag+TMVAmethods[1].bdt_tag,     TMVAmethods[1].bdt_name,  TMVAmethods[1].bdt_binning);
+
+    cosmic_bdt_info.TMVAmethod = TMVAmethods[0];
+    bnb_bdt_info.TMVAmethod = TMVAmethods[1];
+
+    cosmic_bdt_info.train_vars = TMVAmethods[0].bdt_train_vars; 
+    cosmic_bdt_info.spec_vars = TMVAmethods[0].bdt_spec_vars; 
+    
+    bnb_bdt_info.train_vars = TMVAmethods[1].bdt_train_vars; 
+    bnb_bdt_info.spec_vars = TMVAmethods[1].bdt_spec_vars; 
+    
+    std::cout<<"In  "<<cosmic_bdt_info.identifier<<" we have "<<cosmic_bdt_info.train_vars.size()<<" cosmic training variables and "<<cosmic_bdt_info.spec_vars.size()<<" spectators"<<std::endl;
+    std::cout<<"In  "<<bnb_bdt_info.identifier<<" we have "<<bnb_bdt_info.train_vars.size()<<" bnb training variables and "<<bnb_bdt_info.spec_vars.size()<<" spectators"<<std::endl;
 
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
     std::string training_signal_cut = "sim_shower_pdg[0]==22 && sim_shower_parent_pdg[0] ==-1 && sim_shower_overlay_fraction[0] < 0.5";
@@ -148,11 +161,9 @@ int main (int argc, char *argv[]){
         num_track_cut =  "==1";
 
         bnb_bdt_info.setTopoName("1#gamma1p");
-        cosmic_bdt_info.setTopoName("1#gamma1p");
     }else{
         num_track_cut = "==0";
         bnb_bdt_info.setTopoName("1#gamma0p");
-        cosmic_bdt_info.setTopoName("1#gamma0p");
     }
 
     std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
@@ -168,13 +179,12 @@ int main (int argc, char *argv[]){
     }
 
     std::string background_definition = "!mctruth_is_delta_radiative";
-    std::string topological_cuts = "reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
-
-
+    std::string topological_cuts = "(reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut+")";
 
     //***************************************************************************************************/
     //***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
     //***************************************************************************************************/
+    std::cout<<"Defining all out bdt_flows."<<std::endl;
     bdt_flow signal_training_flow(topological_cuts, 	signal_definition +"&&"+ training_signal_cut, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow signal_other_flow(topological_cuts, 	"!("+signal_definition +")", 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
@@ -182,9 +192,9 @@ int main (int argc, char *argv[]){
     bdt_flow bkg_flow(topological_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_training_flow(topological_cuts,	background_definition+"&&"+ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
-    bdt_flow data_flow(topological_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
+    bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
-    // BDt files , bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
+    std::cout<<"Defining all our bdt_files."<<std::endl;
     bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
     bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
     bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-7, signal_other_flow);
@@ -201,7 +211,7 @@ int main (int argc, char *argv[]){
     std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData};
 
     //The LEE signal is bigger than the SM signal by this factor
-    training_signal->scale_data = 3.0;
+    training_signal->scale_data = 3.0*1.22;
     signal->scale_data = 3.0*1.22;
 
     bnb->scale_data = 1.22;
@@ -277,22 +287,21 @@ int main (int argc, char *argv[]){
 
     if(mode_option == "train") {
         std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
-        if(run_cosmic) bdt_train(cosmic_bdt_info, training_signal, OffBeamData, training_vars, plotting_vars, TMVAmethods);
+        if(run_cosmic) bdt_train(cosmic_bdt_info, training_signal, OffBeamData);
         std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
-        if(run_bnb) bdt_train(bnb_bdt_info, training_signal, training_bnb, training_vars,  plotting_vars, TMVAmethods);
+        if(run_bnb) bdt_train(bnb_bdt_info, training_signal, training_bnb);
         return 0;
 
     }else if(mode_option == "app"){
         //Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
 
         if(number != -1){
-            if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, training_vars,  plotting_vars, TMVAmethods);
-            if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, training_vars,  plotting_vars, TMVAmethods);
+            if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, cosmic_bdt_info.train_vars,  plotting_vars, TMVAmethods);
+            if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, bnb_bdt_info.train_vars,  plotting_vars, TMVAmethods);
         }else{
-            if(run_cosmic) bdt_app(cosmic_bdt_info, {bdt_files[number]}, training_vars, plotting_vars, TMVAmethods);
-            if(run_bnb)    bdt_app(bnb_bdt_info, {bdt_files[number]}, training_vars, plotting_vars, TMVAmethods);
+            if(run_cosmic) bdt_app(cosmic_bdt_info, {bdt_files[number]}, cosmic_bdt_info.train_vars, plotting_vars, TMVAmethods);
+            if(run_bnb)    bdt_app(bnb_bdt_info, {bdt_files[number]}, bnb_bdt_info.train_vars, plotting_vars, TMVAmethods);
         }
-
         return 0;
     }
     else if(mode_option == "response"){
@@ -449,9 +458,9 @@ int main (int argc, char *argv[]){
         if(run_cosmic){
 
             if(number != -1){
-                plot_bdt_variable(training_signal, OffBeamData, vars.at(number), cosmic_bdt_info);
+                plot_bdt_variable(training_signal, OffBeamData, cosmic_bdt_info.train_vars.at(number), cosmic_bdt_info);
             }else{
-                plot_bdt_variables(training_signal, OffBeamData, vars, cosmic_bdt_info);
+                plot_bdt_variables(training_signal, OffBeamData, cosmic_bdt_info.train_vars, cosmic_bdt_info);
             }
 
         }
@@ -459,9 +468,9 @@ int main (int argc, char *argv[]){
 
 
             if(number != -1){
-                plot_bdt_variable(training_signal, training_bnb, vars.at(number), bnb_bdt_info);
+                plot_bdt_variable(training_signal, training_bnb, bnb_bdt_info.train_vars.at(number), bnb_bdt_info);
             }else{
-                plot_bdt_variables(training_signal, training_bnb, vars, bnb_bdt_info);
+                plot_bdt_variables(training_signal, training_bnb, bnb_bdt_info.train_vars, bnb_bdt_info);
             }
 
         }
