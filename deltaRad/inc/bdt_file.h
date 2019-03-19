@@ -153,10 +153,12 @@ struct bdt_file{
         int setAsOverlay();
         int setAsOnBeamData(double in_tor860_wcut);
         int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
+        int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext);
 
         int calcPOT();
 
 
+        int makeRunSubRunList();
 
 		double scale_data;
 
