@@ -29,8 +29,9 @@ int main (int argc, char *argv[]){
 
     std::string mode_option = "fake"; 
     std::string xml = "default.xml";
-    std::string analysis_tag ="track";
-
+    std::string topo_tag = "1g1p";
+    std::string bdt_tag = "cosmic";
+    std::string analysis_tag = topo_tag+"_"+bdt_tag;
 
     bool run_cosmic = true;
     bool run_bnb = true;
@@ -43,18 +44,17 @@ int main (int argc, char *argv[]){
         {"dir", 		required_argument, 	0, 'd'},
         {"option",		required_argument,	0, 'o'},
         {"xml"	,		required_argument,	0, 'x'},
-        {"tag",			required_argument,	0, 't'},
+        {"topo_tag",	required_argument,	0, 't'},
+        {"bdt_tag",		required_argument,	0, 'b'},
         {"help",		required_argument,	0, 'h'},
         {"number",		required_argument,	0, 'n'},
-        {"cosmic",		no_argument,		0, 'c'},
-        {"bnb",			no_argument,		0, 'b'},
         {0,			no_argument, 		0,  0},
     };
 
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "cbx:o:d:t:n:rh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:t:b:n:rh?", longopts, &index);
 
         switch(iarg)
         {
@@ -64,15 +64,6 @@ int main (int argc, char *argv[]){
             case 'n':
                 number = strtof(optarg,NULL);
                 run_bnb = false;
-                break;
-
-            case 'c':
-                run_cosmic = true;
-                run_bnb = false;
-                break;
-            case 'b':
-                run_bnb = true;
-                run_cosmic = false;	
                 break;
             case 'x':
                 xml = optarg;
@@ -84,7 +75,10 @@ int main (int argc, char *argv[]){
                 dir = optarg;
                 break;
             case 't':
-                analysis_tag = optarg;
+                topo_tag = optarg;
+                break;
+            case 'b':
+                bdt_tag = optarg;
                 break;
             case '?':
             case 'h':
@@ -101,10 +95,11 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t\t\t\t recomc:"<<std::endl;
                 std::cout<<"\t\t\t\t datamc:"<<std::endl;
                 std::cout<<"\t\t\t\t eff:"<<std::endl;
-                std::cout<<"\t-c\t--cosmic\t\t Run only cosmic training/app"<<std::endl;
-                std::cout<<"\t-b\t--bnb\t\t Run only BNB training/app"<<std::endl;
+                //std::cout<<"\t-c\t--cosmic\t\t Run only cosmic training/app"<<std::endl;
+                //std::cout<<"\t-b\t--bnb\t\t Run only BNB training/app"<<std::endl;
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
-                std::cout<<"\t-t\t--tag\t\tAnalysis tag used to keep all things clean!"<<std::endl;
+                std::cout<<"\t-t\t--topo_tag\t\tTopological Tag used to keep all things clean!"<<std::endl;
+                std::cout<<"\t-b\t--bdt_tag\t\tBDT tag, i.e BNB or COSMIC.."<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
                 return 0;
         }
@@ -140,7 +135,7 @@ int main (int argc, char *argv[]){
     //We have 2 BDT's one for cosmics and one for BNB related backgrounds only
     //Set up some info about the BDTs to pass along
     bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(80,0.3,0.6)");
-    bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.2,0.75)");
+//    bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.2,0.75)");
 
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
     std::string training_signal_cut = "sim_shower_pdg[0]==22 && sim_shower_parent_pdg[0] ==-1 && sim_shower_overlay_fraction[0] < 0.5";
@@ -172,7 +167,7 @@ int main (int argc, char *argv[]){
         signal_definition += "&&" + v_denom[i];
     }
 
-    std::string background_definition = "1";
+    std::string background_definition = "!mctruth_is_delta_radiative";
     std::string topological_cuts = "reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut;
 
 
@@ -207,7 +202,7 @@ int main (int argc, char *argv[]){
 
     //The LEE signal is bigger than the SM signal by this factor
     training_signal->scale_data = 3.0;
-    signal->scale_data = 3.0;
+    signal->scale_data = 3.0*1.22;
 
     bnb->scale_data = 1.22;
 

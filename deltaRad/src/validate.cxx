@@ -47,6 +47,9 @@ int makeIncrementPlots(std::string name, bdt_variable variable, std::string cut_
 
 std::string getAnglewrtWire(int plane, std::string var_in_x, std::string var_in_y);
 
+int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
+
+
 int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
@@ -174,11 +177,12 @@ int main (int argc, char *argv[]){
 
     bdt_file *signal_cosmics = new bdt_file(olddir5, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
     //bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.3.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    bdt_file *bnb_cosmics = new bdt_file(dir9, "bnb_overlay_v9.2.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *bnb_cosmics = new bdt_file(dir9, "bnb_overlay_v9.2.root", "BNBOverlay", "hist","singlephoton/",  kBlue-4, bkg_flow);
     bdt_file *data5e19    = new bdt_file(dir9, "data5e19_v9.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *bnbext    = new bdt_file(dir, "bnbext_run1_v7.1.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
+    bdt_file *bnbext    = new bdt_file(dir9, "bnbext_run1_v9.0.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
+    bdt_file *bnb_corsika    = new bdt_file(dir9, "bnb_corsika_v9.2.root",	"BNBCorsika",	"hist","singlephoton/",  kGreen-3, bkg_flow);
 
-    std::vector<bdt_file *> files = {signal_cosmics, bnb_cosmics, data5e19, bnbext};
+    std::vector<bdt_file *> files = {signal_cosmics, bnb_cosmics, data5e19, bnbext,bnb_corsika};
 
     for(auto &f: files){
             f->calcPOT();
@@ -252,7 +256,11 @@ int main (int argc, char *argv[]){
         std::string s_reco_shower_angle_wire_plane1 = getAnglewrtWire(1,"reco_shower_diry[0]", "reco_shower_dirz[0]");
         std::string s_reco_shower_angle_wire_plane0 = getAnglewrtWire(0,"reco_shower_diry[0]", "reco_shower_dirz[0]");
 
+        bdt_variable v_reco_vertex_z ("reco_vertex_z","(60,-100,1200)","Reco Vertex Z Position [cm]", false,"d");
 
+        compareQuick({v_reco_vertex_z,v_reco_vertex_z,v_reco_vertex_z,v_reco_vertex_z},{bnb_cosmics, bnb_corsika,bnbext,data5e19},{"reco_vertex_size ==1", "reco_vertex_size ==1", "reco_vertex_size ==1", "reco_vertex_size ==1"} ,"reco_vertex_z");
+
+    return 0; 
 
         bdt_variable v_reco_shower_angle_wire_plane2 (s_reco_shower_angle_wire_plane2,"(48,0,1.57)", "Angle Between Reco Shower and Wires Plane 2",false,"d");
         validateOverlay({v_reco_shower_angle_wire_plane2 },{bnb_cosmics}, {"reco_asso_showers>0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0  ", "shower_angle_wire_plane2",true);
@@ -317,7 +325,7 @@ int main (int argc, char *argv[]){
         validateOverlay({v_showertrackMult},{bnb_cosmics}, {"reco_vertex_size>0"}, {data5e19,bnbext}, "reco_vertex_size>0", "showertrack_multiplicity",true,false);
 
         bdt_variable v_vertexMult("reco_vertex_size","(5,0,5)","Number of Pandora Neutrino-Slices in event","false","d");
-        validateOverlay({v_vertexMult},{bnb_cosmics}, {testcut}, {data5e19,bnbext}, "1", "vertex_multiplicity",false,true);
+        validateOverlay({v_vertexMult},{bnb_cosmics}, {testcut}, {data5e19,bnbext,bnb_corsika}, "1", "vertex_multiplicity",false,false);
 
         bdt_variable v_overlayfrac("sim_shower_overlay_fraction","(100,0,1)","Shower hit overlay fraction","false","d");
         validateOverlay({v_overlayfrac},{bnb_cosmics}, {"1"}, {data5e19,bnbext}, "1", "shower_overlay_frac",true,false);
@@ -677,7 +685,7 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
         leg->AddEntry(th1_mcish,"BNB w/ Overlay: <50\% overlay","f");
     }
 
-    if(datas.size()==2){
+    if(datas.size()>1){
         c->cd(which_c);
         TH1* h_bnbext =  (TH1*) datas[1]->getTH1(vars[0], datacut , "bnbext", 0, 1);
         c->cd(which_c);
@@ -696,6 +704,17 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
     h_data->SetMarkerStyle(20);
     h_data->Draw("E1 same");
 
+    if(datas.size()==3){
+        c->cd(which_c);
+        TH1* h_bnbcorsika =  (TH1*) datas[2]->getTH1(vars[0], datacut , "bnbcorsika", 0, 1);
+        c->cd(which_c);
+        h_bnbcorsika->SetLineColor(kGreen-3);
+        h_bnbcorsika->SetLineWidth(2);
+        h_bnbcorsika->Draw("hist same");
+
+        leg->AddEntry(h_bnbcorsika,"BNB w/ Corsika","lp");
+        leg->Draw("same");
+    }
 
     leg->AddEntry(h_data,"Data5e19","lp");
     leg->Draw("same");
@@ -828,3 +847,44 @@ std::string getAnglewrtWire(int plane, std::string var_in_x, std::string var_in_
 
 
 
+int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name){
+
+    TCanvas *c = new TCanvas();
+    c->cd(); 
+
+
+
+    std::vector<int> cols = {kRed-7,  kBlue-7, kGreen+1 ,kBlack};
+    TLegend* leg=new TLegend(0.55,0.55,0.9,0.9);
+
+
+    std::string testcut = "1";
+    for(int i=0; i< files.size();i++){
+
+        c->cd();
+        TH1* th1 =  (TH1*) files[i]->getTH1(vars[i], testcut+"&&"+cuts[i], "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
+        c->cd();
+
+        th1->SetLineColor(cols[i]);
+        th1->SetLineWidth(2);
+
+        double norm = th1->Integral();
+        th1->Scale(1.0/norm);
+
+
+        th1->Draw("hist same");
+
+        th1->SetMaximum(th1->GetMaximum()*2.0);
+        th1->GetXaxis()->SetTitle(vars[i].unit.c_str());
+        th1->SetTitle(vars[i].unit.c_str());
+
+        leg->AddEntry(th1,files[i]->tag.c_str(),"l");
+
+
+    }
+
+    leg->Draw();
+    c->SaveAs((name+".pdf").c_str(),"pdf");
+
+    return 0;
+};
