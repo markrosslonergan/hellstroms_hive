@@ -212,6 +212,11 @@ int bdt_file::setAsOnBeamData(double in_tor860_wcut){
     return 0;
 }
 
+int bdt_file::setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext){
+    this->setAsOffBeamData(in_data_tor860_wcut, in_data_spills_E1DCNT_wcut, in_ext_spills_ext, -1);
+
+    return 0;
+}
 int bdt_file::setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double in_N_samweb_ext){
     is_data = false;
     is_mc = false;
@@ -328,6 +333,7 @@ int bdt_file::calcPOT(){
 
 //        double mod = spill_on/ext*(Noff_full/Noff_have);
 
+        if(N_samweb_ext ==-1) N_samweb_ext = numberofevents;
 
         double modifier = data_spills_E1DCNT_wcut/ext_spills_ext*(N_samweb_ext/numberofevents);
 
@@ -350,7 +356,28 @@ int bdt_file::calcPOT(){
     return 0;
 }
 
+int bdt_file::makeRunSubRunList(){
 
+    int n_run_number = 0;
+    int n_subrun_number = 0;
+    int n_event_number = 0;
+
+    this->tvertex->SetBranchAddress("run_number",    &n_run_number);
+    this->tvertex->SetBranchAddress("subrun_number", &n_subrun_number);
+    this->tvertex->SetBranchAddress("event_number",  &n_event_number);
+
+    std::cout<<"Starting makeRunSubRunList() "<<std::endl;
+
+    for(int i=0;i < this->tvertex->GetEntries(); i++ ){
+        this->tvertex->GetEntry(i);
+        std::cout<<n_run_number<<" "<<n_subrun_number<<std::endl;
+    }
+    std::cout<<"Ending makeRunSubRunList() "<<std::endl;
+
+    this->tvertex->ResetBranchAddresses();
+
+    return 0;
+}
 
 int bdt_file::calcPrecutEntryList(){
 
