@@ -174,7 +174,7 @@ int main (int argc, char *argv[]){
 
     bdt_file *signal_cosmics = new bdt_file(olddir5, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
     //bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.3.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    bdt_file *bnb_cosmics = new bdt_file(dir9, "bnb_overlay_v9.1.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *bnb_cosmics = new bdt_file(dir9, "bnb_overlay_v9.2.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
     bdt_file *data5e19    = new bdt_file(dir9, "data5e19_v9.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *bnbext    = new bdt_file(dir, "bnbext_run1_v7.1.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
 
@@ -317,7 +317,7 @@ int main (int argc, char *argv[]){
         validateOverlay({v_showertrackMult},{bnb_cosmics}, {"reco_vertex_size>0"}, {data5e19,bnbext}, "reco_vertex_size>0", "showertrack_multiplicity",true,false);
 
         bdt_variable v_vertexMult("reco_vertex_size","(5,0,5)","Number of Pandora Neutrino-Slices in event","false","d");
-        validateOverlay({v_vertexMult},{bnb_cosmics}, {testcut}, {data5e19}, "1", "vertex_multiplicity",false,false);
+        validateOverlay({v_vertexMult},{bnb_cosmics}, {testcut}, {data5e19,bnbext}, "1", "vertex_multiplicity",false,true);
 
         bdt_variable v_overlayfrac("sim_shower_overlay_fraction","(100,0,1)","Shower hit overlay fraction","false","d");
         validateOverlay({v_overlayfrac},{bnb_cosmics}, {"1"}, {data5e19,bnbext}, "1", "shower_overlay_frac",true,false);
