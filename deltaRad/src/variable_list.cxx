@@ -31,8 +31,8 @@ variable_list::variable_list(std::string analysis_tag_in): analysis_tag(analysis
 
 
         std::string new_precuts;
-        //std::string good_calo_cut = "1";
-        std::string good_calo_cut = "reco_track_good_calo_plane2[0] > 0";
+        std::string good_calo_cut = "1";
+        //std::string good_calo_cut = "reco_track_good_calo_plane2[0] > 0";
         std::string track_length_cut = "reco_track_displacement[0]<250";
         std::string min_shower_energy_cut = "reco_shower_energy[0]>0.00 ";
         std::string min_conversion_cut = "reco_shower_conversion_distance[0] > 0";
