@@ -190,9 +190,9 @@ int main (int argc, char *argv[]){
     bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
     std::cout<<"Defining all our bdt_files."<<std::endl;
-    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.3.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.3.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.3.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-7, signal_other_flow);
+    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.3.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.3.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.3.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-7, signal_other_flow);
     signal_other->fillstyle = 3333;
 
     bdt_file *dirt = new bdt_file(dir,"dirt_v9.3.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);

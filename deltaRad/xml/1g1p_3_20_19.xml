@@ -14,6 +14,7 @@
 <precut def = "reco_track_good_calo[0] > 0 " name = "Track Good Calo Cut" />
 <precut def = "reco_shower_conversion_distance[0] > 0" name = "Shower Conversion Dist Cut" />
 
+<!--Comsic BDT Training + Spectator Variables-->
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(50,0,1)">
     <method type = "COSMIC" use = "yes">
         <param>  NTrees=3500 	</param>				
@@ -26,15 +27,21 @@
         <param>  nCuts=-1	</param>				
         <param>  MaxDepth=3 	</param>				
     </method>
+    <!--Vertex Variables-->
+
+    <!-- Shower Calo Variables-->
     <var def = "reco_shower_dedx_plane1_median[0]" binning = "(36,0,6.5)" unit = "median shower de/dx plane 1 [mev/cm]" type="d" spectator="true"/>
     <var def = "reco_shower_dedx_plane0_median[0]" binning = "(36,0,6.5)" unit = "median shower de/dx plane 0 [mev/cm]" type="d" spectator="true"/>
     <var def = "reco_shower_dedx_plane2_median[0]" binning = "(36,0,6.5)" unit = "median shower de/dx plane 2 [mev/cm]" type="d" spectator="false"/>
-    <var def = "reco_shower_theta_yz[0]" binning = "(36,-3.14,3.14)" unit = "Reconstructed Shower Theta yz [rad]" type = "d" spectator="false"/>
-    <var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning ="(36,-1,1)" unit="Cosine Angle between photon and proton [rad]" type = "d" spectator = "false"/>
     <var def = "reco_shower_energy_max[0]/1000.0" binning = "(36,0,1.0)" unit = "Reconstructed Shower Energy [GeV]" type="d" spectator="false"/>
-    <var def = "" binning = "(36,0,1.0)" unit = "" type="d" spectator="false"/>
-</mva>
 
+    <!--Shower Geom Variables-->
+    <var def = "reco_shower_theta_yz[0]" binning = "(36,-3.14,3.14)" unit = "Reconstructed Shower Theta yz [rad]" type = "d" spectator="false"/>
+    
+    <!--Track Angle Variables-->
+    <var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning ="(36,-1,1)" unit="Cosine Angle between photon and proton [rad]" type = "d" spectator = "false"/>
+    
+    
 <mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(50,0,1)">
     <method type = "BNB" use = "yes">
         <param>  NTrees=3500 	</param>				
