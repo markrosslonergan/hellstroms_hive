@@ -299,15 +299,15 @@ int main (int argc, char *argv[]){
            */
 
         std::string proton_mass = "0.938272";
-        std::string E1 = "reco_shower_energy["+shower_index1+"]";
-        std::string E2 = "reco_shower_energy["+shower_index2+"]";
+        std::string E1 = "reco_shower_energy_max["+shower_index1+"]";
+        std::string E2 = "reco_shower_energy_max["+shower_index2+"]";
         std::string Eratio = "("+E1+")/("+E2+")";
         std::string two_shower_opening_angle = "(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])";
         std::string invariant_mass = "sqrt(2.0*"+E1+"*"+E2+"*(1.0-"+two_shower_opening_angle+"))/1000";
 
-        std::string p_pi_x = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirx["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirx["+shower_index2+"])";
-        std::string p_pi_y = "(reco_shower_energy["+shower_index1+"]*reco_shower_diry["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_diry["+shower_index2+"])";
-        std::string p_pi_z = "(reco_shower_energy["+shower_index1+"]*reco_shower_dirz["+shower_index1+"] + reco_shower_energy["+shower_index2+"]*reco_shower_dirz["+shower_index2+"])";
+        std::string p_pi_x = "(reco_shower_energy_max["+shower_index1+"]*reco_shower_dirx["+shower_index1+"] + reco_shower_energy_max["+shower_index2+"]*reco_shower_dirx["+shower_index2+"])";
+        std::string p_pi_y = "(reco_shower_energy_max["+shower_index1+"]*reco_shower_diry["+shower_index1+"] + reco_shower_energy_max["+shower_index2+"]*reco_shower_diry["+shower_index2+"])";
+        std::string p_pi_z = "(reco_shower_energy_max["+shower_index1+"]*reco_shower_dirz["+shower_index1+"] + reco_shower_energy_max["+shower_index2+"]*reco_shower_dirz["+shower_index2+"])";
         std::string p_pi = "sqrt("+p_pi_x+"*"+p_pi_x+" + "+p_pi_y+"*"+p_pi_y+" + "+p_pi_z+"*"+p_pi_z+")";
 
         //std::string testcut = "test_matched_hits > 40";
@@ -454,10 +454,10 @@ int main (int argc, char *argv[]){
         makeIncrementPlots ("median_shower_dedx_plane1_wrt_angle",  v_reco_shower_dedx_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
         makeIncrementPlots ("median_shower_dedx_plane0_wrt_angle",  v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
 
-        std::string s_reco_shower_energy = "reco_shower_energy[0]/1000.0";
-        makeIncrementPlots ("median_shower_dedx_plane2_wrt_energy",  v_reco_shower_dedx_plane2, s_reco_shower_energy, bnb_cosmics, data5e19,bnbext,  4, 400., 0., data_conditions_shower, mc_conditions_shower); 
-        makeIncrementPlots ("median_shower_dedx_plane1_wrt_energy",  v_reco_shower_dedx_plane1, s_reco_shower_energy, bnb_cosmics, data5e19, bnbext, 4, 400., 0., data_conditions_shower, mc_conditions_shower); 
-        makeIncrementPlots ("median_shower_dedx_plane0_wrt_energy",  v_reco_shower_dedx_plane0, s_reco_shower_energy, bnb_cosmics, data5e19, bnbext, 4, 400., 0., data_conditions_shower, mc_conditions_shower); 
+        std::string s_reco_shower_energy_max = "reco_shower_energy_max[0]/1000.0";
+        makeIncrementPlots ("median_shower_dedx_plane2_wrt_energy",  v_reco_shower_dedx_plane2, s_reco_shower_energy_max, bnb_cosmics, data5e19,bnbext,  4, 400., 0., data_conditions_shower, mc_conditions_shower); 
+        makeIncrementPlots ("median_shower_dedx_plane1_wrt_energy",  v_reco_shower_dedx_plane1, s_reco_shower_energy_max, bnb_cosmics, data5e19, bnbext, 4, 400., 0., data_conditions_shower, mc_conditions_shower); 
+        makeIncrementPlots ("median_shower_dedx_plane0_wrt_energy",  v_reco_shower_dedx_plane0, s_reco_shower_energy_max, bnb_cosmics, data5e19, bnbext, 4, 400., 0., data_conditions_shower, mc_conditions_shower); 
 
         // ------------------------------------- Conversion Distance Stuff -----------------------------//
 
