@@ -132,9 +132,14 @@ int main (int argc, char *argv[]){
     std::vector<bdt_variable> training_vars = var_list.train_vars;
     std::vector<bdt_variable> plotting_vars = var_list.plot_vars;   
 
-       //We have 2 BDT's one for cosmics and one for BNB related backgrounds only
+    //We have 2 BDT's one for cosmics and one for BNB related backgrounds only
     bdt_info cosmic_bdt_info(analysis_tag, TMVAmethods[0]);
     bdt_info bnb_bdt_info(analysis_tag, TMVAmethods[1]);
+
+    //Get all the variables you want to use	
+    vars = cosmic_bdt_info.train_vars;
+    training_vars = cosmic_bdt_info.train_vars;
+    plotting_vars = cosmic_bdt_info.spec_vars;
 
     std::cout<<"In  "<<cosmic_bdt_info.identifier<<" we have "<<cosmic_bdt_info.train_vars.size()<<" cosmic training variables and "<<cosmic_bdt_info.spec_vars.size()<<" spectators"<<std::endl;
     std::cout<<"In  "<<bnb_bdt_info.identifier<<" we have "<<bnb_bdt_info.train_vars.size()<<" bnb training variables and "<<bnb_bdt_info.spec_vars.size()<<" spectators"<<std::endl;
@@ -185,38 +190,41 @@ int main (int argc, char *argv[]){
     bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
     std::cout<<"Defining all our bdt_files."<<std::endl;
-    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-7, signal_other_flow);
+    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.3.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.3.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.3.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-7, signal_other_flow);
     signal_other->fillstyle = 3333;
 
-    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_collins_v9.1.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_collins_v9.1.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *dirt = new bdt_file(dir,"dirt_v9.3.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
+
+
+    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_v9.3.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_v9.3.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
 
     //Data files
-    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.0.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v9.0.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
+    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v9.3.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
     //For conviencance fill a vector with pointers to all the files to loop over.
-    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData};
+    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData,dirt};
 
     //The LEE signal is bigger than the SM signal by this factor
-    training_signal->scale_data = 3.0*1.22;
-    signal->scale_data = 3.0*1.22;
+    training_signal->scale_data = 3.0;
+    signal->scale_data = 3.0;
 
-    bnb->scale_data = 1.22;
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
     OnBeamData->setAsOnBeamData(4.795e19);
-    OffBeamData->setAsOffBeamData(4.795e19,10708042.0,10078674.0);//,176093.0);
+    OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
 
     //OffBeamData->makeRunSubRunList();
-
+    //return 0;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     for(auto &f: bdt_files){
-        std::cout<<"Loading "<<f->tag<<"\t with "<<f->tvertex->GetEntries()<<"\t verticies. (unweighted)"<<std::endl;
+        std::cout<<"On file "<<f->name<<std::endl;
+        std::cout<<"Loading "<<f->tag<<"\t with "<<f->tvertex->GetEntries()<<"\t entries.(unweighted)"<<std::endl;
         f->calcPOT();
         std::cout<<"Scale factor is then: "<<f->scale_data<<std::endl;
     }	
@@ -254,7 +262,7 @@ int main (int argc, char *argv[]){
     bnb->addPlotName("BNB w/Overlays");
     OnBeamData->addPlotName("On-Beam  Data");
     OffBeamData->addPlotName("Off-Beam Data");
-
+    dirt->addPlotName("Dirt");
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
@@ -414,6 +422,7 @@ int main (int argc, char *argv[]){
         histogram_stack->addToStack(bnb);
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(OffBeamData);
+        histogram_stack->addToStack(dirt);
 
         int ip=0;
         std::vector<bool> subv = {false,false,true};

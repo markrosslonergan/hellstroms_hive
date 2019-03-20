@@ -1,12 +1,12 @@
 <?xml version="1.0" ?>
 
+
+
+
 <precut def="reco_track_displacement[0]<500" name = "Track Length Cut" />
 <precut def="reco_shower_energy[0]>0.02" name = "Shower Energy Cut" />
 <precut def="reco_flash_total_pe_in_beamgate[0] > 20" name ="Optical Filter 20 PE"/>
 <precut def = "fabs(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) < 0.99" name = "Back to Back track shower cut"/>
-    
-   
-
 
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(50,0,1)">
 	<method type = "COSMIC" use = "yes">

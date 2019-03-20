@@ -177,7 +177,7 @@ int main (int argc, char *argv[]){
 
     bdt_file *signal_cosmics = new bdt_file(olddir5, "ncdeltarad_overlay_mcc9_v5.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
     //bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.3.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    bdt_file *bnb_cosmics = new bdt_file(dir9, "bnb_overlay_v9.2.root", "BNBOverlay", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *bnb_cosmics = new bdt_file(dir9, "bnb_overlay_v9.21.root", "BNBOverlay", "hist","singlephoton/",  kBlue-4, bkg_flow);
     bdt_file *data5e19    = new bdt_file(dir9, "data5e19_v9.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *bnbext    = new bdt_file(dir9, "bnbext_run1_v9.0.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
     bdt_file *bnb_corsika    = new bdt_file(dir9, "bnb_corsika_v9.2.root",	"BNBCorsika",	"hist","singlephoton/",  kGreen-3, bkg_flow);
@@ -260,7 +260,6 @@ int main (int argc, char *argv[]){
 
         compareQuick({v_reco_vertex_z,v_reco_vertex_z,v_reco_vertex_z,v_reco_vertex_z},{bnb_cosmics, bnb_corsika,bnbext,data5e19},{"reco_vertex_size ==1", "reco_vertex_size ==1", "reco_vertex_size ==1", "reco_vertex_size ==1"} ,"reco_vertex_z");
 
-    return 0; 
 
         bdt_variable v_reco_shower_angle_wire_plane2 (s_reco_shower_angle_wire_plane2,"(48,0,1.57)", "Angle Between Reco Shower and Wires Plane 2",false,"d");
         validateOverlay({v_reco_shower_angle_wire_plane2 },{bnb_cosmics}, {"reco_asso_showers>0 && sim_shower_is_true_shower"}, data5e19,"reco_asso_showers>0  ", "shower_angle_wire_plane2",true);
@@ -681,8 +680,9 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
         ts1->GetXaxis()->SetTitle(vars[i].unit.c_str());
         ts1->SetTitle(pdfname.c_str());
 
-        leg->AddEntry(th1_overlay,"BNB w/ Overlay: >50\% overlay","f");
-        leg->AddEntry(th1_mcish,"BNB w/ Overlay: <50\% overlay","f");
+          leg->AddEntry(th1_overlay,"BNB w/ Overlay","f");
+     //   leg->AddEntry(th1_overlay,"BNB w/ Overlay: >50\% overlay","f");
+       // leg->AddEntry(th1_mcish,"BNB w/ Overlay: <50\% overlay","f");
     }
 
     if(datas.size()>1){

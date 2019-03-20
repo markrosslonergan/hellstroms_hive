@@ -85,7 +85,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
     //Loop over all stages
 
-    for(int s = 1; s< 2; s++){
+    for(int s = 0; s< 2; s++){
 
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
@@ -232,18 +232,20 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             l0->SetFillStyle(0);
             l0->SetTextSize(0.04);
 
-            TLatex latex;
-            latex.SetTextSize(0.06);
-            latex.SetTextAlign(13);  //align at top
-            latex.SetNDC();
-            latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
+            //  TLatex latex;
+       // latex.SetTextSize(0.06);
+      //  latex.SetTextAlign(13);  //align at top
+      //  latex.SetNDC();
+      //  latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
             TLatex pottex;
             pottex.SetTextSize(0.06);
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
-            std::string pot_draw = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+            std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-            pottex.DrawLatex(.7,.65, pot_draw.c_str());
+           pottex.DrawLatex(.60,.64, pot_draw.c_str());
+
+
 
             TText *pre; 
             if (isSpectator) {
@@ -515,18 +517,18 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         l0->SetFillStyle(0);
         l0->SetTextSize(0.04);
 
-        TLatex latex;
-        latex.SetTextSize(0.06);
-        latex.SetTextAlign(13);  //align at top
-        latex.SetNDC();
-        latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
+      //  TLatex latex;
+       // latex.SetTextSize(0.06);
+      //  latex.SetTextAlign(13);  //align at top
+      //  latex.SetNDC();
+      //  latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
         TLatex pottex;
         pottex.SetTextSize(0.06);
         pottex.SetTextAlign(13);  //align at top
         pottex.SetNDC();
-        std::string pot_draw = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+        std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-        pottex.DrawLatex(.7,.65, pot_draw.c_str());
+        pottex.DrawLatex(.7,.64, pot_draw.c_str());
 
         TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary");
         pre->Draw();
