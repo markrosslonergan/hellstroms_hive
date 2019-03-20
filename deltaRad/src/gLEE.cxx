@@ -458,20 +458,26 @@ int main (int argc, char *argv[]){
         if(run_cosmic){
 
             if(number != -1){
-                plot_bdt_variable(training_signal, OffBeamData, cosmic_bdt_info.train_vars.at(number), cosmic_bdt_info);
+                //plot_bdt_variable(training_signal, OffBeamData, vars.at(number), cosmic_bdt_info);
+                plot_bdt_variable(training_signal, OffBeamData, training_vars.at(number), cosmic_bdt_info, false);
+                plot_bdt_variable(training_signal, OffBeamData, plotting_vars.at(number), cosmic_bdt_info, true);
             }else{
-                plot_bdt_variables(training_signal, OffBeamData, cosmic_bdt_info.train_vars, cosmic_bdt_info);
-            }
+                //plot_bdt_variables(training_signal, OffBeamData, vars, cosmic_bdt_info);
+               plot_bdt_variables(training_signal, OffBeamData, training_vars, cosmic_bdt_info, false);
+               plot_bdt_variables(training_signal, OffBeamData, plotting_vars, cosmic_bdt_info, true);
+          }
 
         }
         if(run_bnb){
 
 
             if(number != -1){
-                plot_bdt_variable(training_signal, training_bnb, bnb_bdt_info.train_vars.at(number), bnb_bdt_info);
-            }else{
-                plot_bdt_variables(training_signal, training_bnb, bnb_bdt_info.train_vars, bnb_bdt_info);
-            }
+                plot_bdt_variable(training_signal, training_bnb, training_vars.at(number), bnb_bdt_info, false);
+                plot_bdt_variable(training_signal, training_bnb, plotting_vars.at(number), bnb_bdt_info, true);
+         }else{
+                plot_bdt_variables(training_signal, training_bnb, training_vars, bnb_bdt_info, false);
+                plot_bdt_variables(training_signal, training_bnb, plotting_vars, bnb_bdt_info, true);
+    }
 
         }
 
