@@ -113,35 +113,6 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 
 }
 
-
-int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variable> vars, std::vector<method_struct> & method){
-
-	std::string identifier = info.identifier;
-    std::cout<<"Beginning bdt application stage for "<<identifier<<std::endl;
-	
-	for(size_t i = 0; i < files.size(); i++) {
-		std::cout<<"On file: "<<i<<"/"<<files.size()<<" :  "<<files[i]->tag<<std::endl;
-
-        TFile * app_ofile = TFile::Open((identifier+"_"+files[i]->tag+"_app"+".root").c_str(), "update");
-
-
-		std::cout<<"Resetting the branch addresses"<<std::endl;
-		files.at(i)->tvertex->ResetBranchAddresses();
-
-		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
-		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
-		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
-    
-    app_ofile->Close();
-	  delete app_ofile;
-
-	}
-
-
-
-	return 0;
-}
-
 // Separate training and plotting variables
 int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::string otree_name, std::vector<bdt_variable> train_vars, std::vector<bdt_variable> plot_vars, std::vector<method_struct> const & methods) {
 
@@ -224,6 +195,41 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 
 }
 
+int bdt_app(bdt_info ininfo, std::vector<bdt_file*> & infiles){
+    std::vector<method_struct> t_methods = {ininfo.TMVAmethod};
+        return bdt_app(ininfo, infiles, ininfo.train_vars, t_methods);
+}
+
+
+int bdt_app(bdt_info info, std::vector<bdt_file*> & files, std::vector<bdt_variable> vars, std::vector<method_struct> & method){
+
+	std::string identifier = info.identifier;
+    std::cout<<"Beginning bdt application stage for "<<identifier<<std::endl;
+	
+	for(size_t i = 0; i < files.size(); i++) {
+		std::cout<<"On file: "<<i<<"/"<<files.size()<<" :  "<<files.at(i)->tag<<std::endl;
+
+        TFile * app_ofile = TFile::Open((identifier+"_"+files[i]->tag+"_app"+".root").c_str(), "recreate");
+
+
+		std::cout<<"Resetting the branch addresses"<<std::endl;
+		files.at(i)->tvertex->ResetBranchAddresses();
+
+		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
+		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
+		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
+    
+    app_ofile->Close();
+	  delete app_ofile;
+
+	}
+
+
+
+	return 0;
+}
+
+
 
 int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variable> train_vars, std::vector<bdt_variable> plot_vars, std::vector<method_struct> & method){
 
@@ -231,9 +237,10 @@ int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variabl
     std::cout<<"Beginning bdt application stage for "<<identifier<<std::endl;
 	
 	for(size_t i = 0; i < files.size(); i++) {
-		std::cout<<"On file: "<<i<<"/"<<files.size()<<" :  "<<files[i]->tag<<std::endl;
+		
+        std::cout<<"On file: "<<i<<"/"<<files.size()<<" :  "<<files[i]->tag<<std::endl;
 
-        TFile * app_ofile = TFile::Open((identifier+"_"+files[i]->tag+"_app"+".root").c_str(), "update");
+        TFile * app_ofile = TFile::Open((identifier+"_"+files[i]->tag+"_app"+".root").c_str(), "recreate");
 
 
 		std::cout<<"Resetting the branch addresses"<<std::endl;

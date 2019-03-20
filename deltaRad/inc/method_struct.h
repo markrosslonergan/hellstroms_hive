@@ -18,6 +18,8 @@ struct method_struct {
     std::vector<bdt_variable> bdt_train_vars;
     std::vector<bdt_variable> bdt_spec_vars;
 
+    std::vector<std::string> precuts;
+
     method_struct(){
     }
 

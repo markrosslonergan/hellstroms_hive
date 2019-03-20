@@ -120,6 +120,10 @@ int main (int argc, char *argv[]){
     MVALoader xml_methods(xml);
     std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); 
 
+    //This is a vector each containing a precut, they are all added together to make the whole "precut"
+    std::vector<std::string> vec_precuts = TMVAmethods[0].precuts;
+
+
     //Load up variables and precut object ! ATTN: Found in variable_list.cxx in parent src/ folder
     variable_list var_list(analysis_tag);
 
@@ -128,25 +132,10 @@ int main (int argc, char *argv[]){
     std::vector<bdt_variable> training_vars = var_list.train_vars;
     std::vector<bdt_variable> plotting_vars = var_list.plot_vars;   
 
-    //This is a vector each containing a precut, they are all added together to make the whole "precut"
-    std::vector<std::string> vec_precuts = var_list.all_precuts;
+       //We have 2 BDT's one for cosmics and one for BNB related backgrounds only
+    bdt_info cosmic_bdt_info(analysis_tag, TMVAmethods[0]);
+    bdt_info bnb_bdt_info(analysis_tag, TMVAmethods[1]);
 
-    //We dont currently use postcuts
-    std::string postcuts = "1";
-
-    //We have 2 BDT's one for cosmics and one for BNB related backgrounds only
-    bdt_info cosmic_bdt_info(   analysis_tag+TMVAmethods[0].bdt_tag,     TMVAmethods[0].bdt_name,  TMVAmethods[0].bdt_binning);
-    bdt_info bnb_bdt_info(      analysis_tag+TMVAmethods[1].bdt_tag,     TMVAmethods[1].bdt_name,  TMVAmethods[1].bdt_binning);
-
-    cosmic_bdt_info.TMVAmethod = TMVAmethods[0];
-    bnb_bdt_info.TMVAmethod = TMVAmethods[1];
-
-    cosmic_bdt_info.train_vars = TMVAmethods[0].bdt_train_vars; 
-    cosmic_bdt_info.spec_vars = TMVAmethods[0].bdt_spec_vars; 
-    
-    bnb_bdt_info.train_vars = TMVAmethods[1].bdt_train_vars; 
-    bnb_bdt_info.spec_vars = TMVAmethods[1].bdt_spec_vars; 
-    
     std::cout<<"In  "<<cosmic_bdt_info.identifier<<" we have "<<cosmic_bdt_info.train_vars.size()<<" cosmic training variables and "<<cosmic_bdt_info.spec_vars.size()<<" spectators"<<std::endl;
     std::cout<<"In  "<<bnb_bdt_info.identifier<<" we have "<<bnb_bdt_info.train_vars.size()<<" bnb training variables and "<<bnb_bdt_info.spec_vars.size()<<" spectators"<<std::endl;
 
@@ -180,6 +169,7 @@ int main (int argc, char *argv[]){
 
     std::string background_definition = "!mctruth_is_delta_radiative";
     std::string topological_cuts = "(reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut+")";
+    std::string postcuts = "1";  //We dont currently use postcuts
 
     //***************************************************************************************************/
     //***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
@@ -295,12 +285,13 @@ int main (int argc, char *argv[]){
     }else if(mode_option == "app"){
         //Apply! This will update cosmic_bdt_info, signal file and bkg file. As in update them PROPERLY!	
 
-        if(number != -1){
-            if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files, cosmic_bdt_info.train_vars,  plotting_vars, TMVAmethods);
-            if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files, bnb_bdt_info.train_vars,  plotting_vars, TMVAmethods);
+        if(number == -1){
+            if(run_cosmic) bdt_app(cosmic_bdt_info, bdt_files);
+            if(run_bnb)    bdt_app(bnb_bdt_info, bdt_files);
         }else{
-            if(run_cosmic) bdt_app(cosmic_bdt_info, {bdt_files[number]}, cosmic_bdt_info.train_vars, plotting_vars, TMVAmethods);
-            if(run_bnb)    bdt_app(bnb_bdt_info, {bdt_files[number]}, bnb_bdt_info.train_vars, plotting_vars, TMVAmethods);
+            std::vector<bdt_file*> tmp_f =  {bdt_files[number]};
+            if(run_cosmic) bdt_app(cosmic_bdt_info,tmp_f);
+            if(run_bnb)    bdt_app(bnb_bdt_info, tmp_f);
         }
         return 0;
     }

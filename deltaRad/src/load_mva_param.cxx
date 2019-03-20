@@ -26,7 +26,25 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
 	TiXmlHandle hDoc(&doc);
 
+	TiXmlElement *pPreCut;
+	pPreCut = doc.FirstChildElement("precut");
 
+    std::vector<std::string> precuts;
+
+    std::cout<<"########################### Precuts ###########################"<<std::endl;
+	while(pPreCut )
+	{
+
+      std::string cut_def = pPreCut->Attribute("def");
+      std::string cut_name = pPreCut->Attribute("name");
+
+      std::cout<<"Loading Precut number "<<precuts.size()<<" "<<cut_name<<std::endl;
+      std::cout<<"--- Define: "<<cut_def<<std::endl;
+      precuts.push_back(cut_def);
+      pPreCut = pPreCut->NextSiblingElement("precut");
+
+    }
+    std::cout<<"################################################################"<<std::endl;
 	// we have Modes, Detectors, Channels, Covariance matricies, MC multisim data, oscillation pattern matching
 	TiXmlElement *pMVA; 
 
@@ -39,6 +57,8 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 	}
 
 	TMVA::Types  type_instance = TMVA::Types::Instance();
+
+
 
 	while(pMVA )
 	{
@@ -109,6 +129,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             temp_struct.bdt_binning = bdt_binning;
             temp_struct.bdt_train_vars = bdt_train_vars;
             temp_struct.bdt_spec_vars = bdt_spec_vars;
+            temp_struct.precuts = precuts;
 
 			vec_methods.push_back(temp_struct);		
 	
