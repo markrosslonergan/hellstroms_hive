@@ -1,8 +1,13 @@
 <?xml version="1.0" ?>
 
+<!DOCTYPE project [
+<!ENTITY proton_mass = "0.938272">
+]>
+
+<project>
 <!--General Precuts -->
     <precut def ="reco_flash_total_pe_in_beamgate[0] > 20" name ="Optical Filter 20 PE"/>
-    <precut def = "(reco_vertex_x > 10 &amp;&amp; reco_vertex_x < 246 &amp;&amp; reco_vertex_y > -107 &amp;&amp; reco_vertex_y < 107 &amp;&amp; reco_vertex_z > 10 &amp;&amp; reco_vert    ex_z < 1026) " name = "Fiducial Vertex Cut" />
+    <precut def = "(reco_vertex_x > 10 &amp;&amp; reco_vertex_x < 246 &amp;&amp; reco_vertex_y > -107 &amp;&amp; reco_vertex_y < 107 &amp;&amp; reco_vertex_z > 10 &amp;&amp; reco_vertex_z < 1026) " name = "Fiducial Vertex Cut" />
 
 <!--Shower Precuts -->
 <precut def = "reco_shower_energy_max[0]>0.0" name = "Shower Energy Cut" />
@@ -100,3 +105,5 @@
     <var def = "reco_shower_theta_yz[0]" binning = "(36,-3.14,3.14)" unit = "Reconstructed Shower Theta yz [rad]" type = "d" spectator = "false"/>
     <var def = "reco_shower_length[0]" binning = "(36,0,100)" unit = "Reconstructed Shower Length [cm]" type="d" spectator="false"/>
 </mva>
+</project>
+
