@@ -164,7 +164,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 rmin=0; rmax = 1.99;
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
-            double max_modifier = 1.4;
+            double max_modifier = 1.65;
 
             //     double max_modifier = 1.7;
             double min_val = 0.01;
@@ -176,13 +176,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             d0->SetMarkerStyle(20);
             d0->SetLineColor(kBlack);
 
-            stk->SetMaximum(tsum->GetMaximum()*1.4);
             stk->SetMinimum(0.0001);
             stk->Draw("hist");
             stk->SetTitle(stage_names.at(s).c_str());
             stk->GetXaxis()->SetTitle(var.unit.c_str());
             stk->GetYaxis()->SetTitle("Verticies");
-            stk->GetYaxis()->SetTitleOffset(1.5);
+            stk->GetYaxis()->SetTitleOffset(1.6);
             stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
             stk->SetMinimum(min_val);
             tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");

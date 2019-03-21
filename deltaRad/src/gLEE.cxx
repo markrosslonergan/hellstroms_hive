@@ -20,6 +20,9 @@
 #include "bdt_eff.h"
 #include "bdt_test.h"
 
+int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
+
+
 
 int main (int argc, char *argv[]){
 
@@ -145,8 +148,8 @@ int main (int argc, char *argv[]){
     std::cout<<"In  "<<bnb_bdt_info.identifier<<" we have "<<bnb_bdt_info.train_vars.size()<<" bnb training variables and "<<bnb_bdt_info.spec_vars.size()<<" spectators"<<std::endl;
 
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-    std::string training_signal_cut = "sim_shower_pdg[0]==22 && sim_shower_parent_pdg[0] ==-1 && sim_shower_overlay_fraction[0] < 0.5";
-    std::string training_bkg_cut    = "sim_shower_overlay_fraction[0]<0.5";
+    std::string training_signal_cut = "sim_shower_pdg[0]==22 && sim_shower_overlay_fraction[0] < 0.5";
+    std::string training_bkg_cut    = "sim_shower_overlay_fraction[0]<1.0";
     std::string num_track_cut;
 
     if(analysis_tag == "track"){
@@ -155,9 +158,11 @@ int main (int argc, char *argv[]){
         num_track_cut =  "==1";
 
         bnb_bdt_info.setTopoName("1#gamma1p");
+        cosmic_bdt_info.setTopoName("1#gamma1p");
     }else{
         num_track_cut = "==0";
         bnb_bdt_info.setTopoName("1#gamma0p");
+        cosmic_bdt_info.setTopoName("1#gamma0p");
     }
 
     std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
@@ -190,13 +195,12 @@ int main (int argc, char *argv[]){
     bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
     std::cout<<"Defining all our bdt_files."<<std::endl;
-    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.3.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.3.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.3.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-7, signal_other_flow);
-    signal_other->fillstyle = 3333;
+    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.31.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.31.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_collins_v9.31.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-7, signal_other_flow);
+    signal_other->fillstyle = 3390;
 
-    bdt_file *dirt = new bdt_file(dir,"dirt_v9.3.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
-
+    bdt_file *dirt = new bdt_file(dir,"dirt_v9.31.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
     bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_v9.3.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
     bdt_file *bnb = new bdt_file(dir, "bnb_overlay_v9.3.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
@@ -205,7 +209,17 @@ int main (int argc, char *argv[]){
     bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v9.3.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
+    
+    
+    
+ /*  bdt_file *bnb_cosmics_noabs = new bdt_file(dir, "bnb_overlay_NoAbsGain.root", "BNBOverlay_noabs", "hist","singlephoton/",  kBlue-4, data_flow);
+   bdt_file *bnb_cosmics_nom = new bdt_file(dir, "bnb_overlay_nominal2.root", "BNBOverlay_Nomonal", "hist","singlephoton/",  kBlue-4, data_flow);
+   bdt_file *bnb_cosmics_undo = new bdt_file(dir, "bnb_overlay_undo2.root", "BNBOverlay_undo", "hist","singlephoton/",  kBlue-4, data_flow);
+   bdt_file *bnb_cosmics_noyz = new bdt_file(dir, "bnb_overlay_NoYZ.root", "BNBOverlay_noyz", "hist","singlephoton/",  kBlue-4, data_flow);
+*/
+
     //For conviencance fill a vector with pointers to all the files to loop over.
+    //std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData,dirt, bnb_cosmics_noabs, bnb_cosmics_nom, bnb_cosmics_undo, bnb_cosmics_noyz};
     std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData,dirt};
 
     //The LEE signal is bigger than the SM signal by this factor
@@ -228,6 +242,22 @@ int main (int argc, char *argv[]){
         f->calcPOT();
         std::cout<<"Scale factor is then: "<<f->scale_data<<std::endl;
     }	
+
+
+    //===========================================================================================
+    //===========================================================================================
+    //		Main flow of the program , using OPTIONS
+    //===========================================================================================
+    //===========================================================================================
+
+    /*
+        std::cout<<"Hello"<<std::endl;
+        bdt_variable v_vertexMult("reco_vertex_size","(5,0,5)","Number of Pandora Neutrino-Slices in event","false","d");
+        compareQuick({v_vertexMult,v_vertexMult,v_vertexMult, v_vertexMult},{bnb_cosmics_nom, bnb_cosmics_undo,bnb_cosmics_noyz,bnb_cosmics_noabs},{"1","1","1","1"} ,"wescheck_0");
+        return 0;
+    */
+
+
 
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -419,12 +449,15 @@ int main (int argc, char *argv[]){
         histogram_stack->plot_pot = OnBeamData->pot;
         histogram_stack->addToStack(signal);
         histogram_stack->addToStack(signal_other);
+
+
         histogram_stack->addToStack(bnb);
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(OffBeamData);
-        histogram_stack->addToStack(dirt);
 
-        int ip=0;
+
+        histogram_stack->addToStack(dirt);
+                int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
             if(number != -1){
@@ -498,3 +531,46 @@ int main (int argc, char *argv[]){
     return 0;
 
 }
+
+
+int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name){
+
+    TCanvas *c = new TCanvas();
+    c->cd(); 
+
+
+
+    std::vector<int> cols = {kRed-7,  kBlue-7, kGreen+1 ,kGray};
+    TLegend* leg=new TLegend(0.55,0.55,0.9,0.9);
+
+
+    std::string testcut = "1";
+    for(int i=0; i< files.size();i++){
+
+        c->cd();
+        TH1* th1 =  (TH1*) files[i]->getTH1(vars[i], testcut+"&&"+cuts[i], "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
+        c->cd();
+
+        th1->SetLineColor(cols[i]);
+        th1->SetLineWidth(2);
+
+        double norm = th1->Integral();
+        th1->Scale(1.0/norm);
+
+
+        th1->Draw("hist same");
+
+        th1->SetMaximum(th1->GetMaximum()*1.5);
+        th1->GetXaxis()->SetTitle(vars[i].unit.c_str());
+        th1->SetTitle(vars[i].unit.c_str());
+
+        leg->AddEntry(th1,files[i]->tag.c_str(),"l");
+
+
+    }
+
+    leg->Draw();
+    c->SaveAs((name+".pdf").c_str(),"pdf");
+
+    return 0;
+};
