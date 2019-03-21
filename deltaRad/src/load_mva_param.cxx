@@ -80,26 +80,34 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
                 TiXmlElement *pVar = pMVA->FirstChildElement("var");
                 std::vector<bdt_variable> bdt_train_vars;
                 std::vector<bdt_variable> bdt_spec_vars;
+        while(pVar){
+            std::string var_def = pVar->Attribute("def");
+            std::string var_binning = pVar->Attribute("binning");
+            std::string var_unit = pVar->Attribute("unit");
+            std::string var_type = pVar->Attribute("type");
+            std::string var_spectator = pVar->Attribute("spectator");
+            const char* var_logplot = pVar->Attribute("logplot");
+            bool var_logplot_bool;
+            if (var_logplot ==NULL){
+                var_logplot_bool= false;
+            }else{
+                var_logplot_bool= true;
+            }
+            
+            bool is_spec = false;
+            if(var_spectator=="true") is_spec = true;
 
-                while(pVar){
-                    std::string var_def = pVar->Attribute("def");
-                    std::string var_binning = pVar->Attribute("binning");
-                    std::string var_unit = pVar->Attribute("unit");
-                    std::string var_type = pVar->Attribute("type");
-                    std::string var_spectator = pVar->Attribute("spectator");
-
-                    bool is_spec = false;
-                    if(var_spectator=="true") is_spec = true;
-
-                    if(is_spec) {
-                        bdt_spec_vars.push_back( bdt_variable(var_def,var_binning,var_unit,"false",var_type));            
-                        std::cout<<"Adding Train "<<var_def<<" with binning: "<<var_binning<<std::endl;
-                    }else{
-                        bdt_train_vars.push_back( bdt_variable(var_def,var_binning,var_unit,"false",var_type));            
-                        std::cout<<"Adding Spectator "<<var_def<<" with binning: "<<var_binning<<std::endl;
-                    }
-                    pVar = pVar->NextSiblingElement("var");
-                }
+                bdt_variable t(var_def,var_binning,var_unit,"false",var_type);
+                t.is_logplot = var_logplot_bool;
+            if(is_spec) {
+                bdt_spec_vars.push_back(t );            
+                std::cout<<"Adding Train "<<var_def<<" with binning: "<<var_binning<<std::endl;
+                        }else{
+                bdt_train_vars.push_back(t);            
+                std::cout<<"Adding Spectator "<<var_def<<" with binning: "<<var_binning<<std::endl;
+            }
+            pVar = pVar->NextSiblingElement("var");
+        }
 
 
                 TiXmlElement *pMethod = pMVA->FirstChildElement("method");

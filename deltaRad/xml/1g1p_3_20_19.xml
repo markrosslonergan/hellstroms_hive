@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+
+<!--General Precuts -->
+<precut def ="reco_flash_total_pe_in_beamgate[0] > 20" name ="Optical Filter 20 PE"/>
+<precut def = "reco_vertex_x > 10 && reco_vertex_x < 246 && reco_vertex_y > -107 && reco_vertex_y < 107 && reco_vertex_z > 10 && reco_vertex_z < 1026 " name = "Fiducial Vertex Cut" />
+
+<!--Shower Precuts -->
+<precut def = "reco_shower_energy_max[0]>0.0" name = "Shower Energy Cut" />
+<precut def = "reco_shower_dEdx_plane2_nhits[0]>1" name = "Shower dE/dx Plane Min Nhits"/>
+
+<!--Track Precuts -->
+<precut def = "reco_track_displacement[0]<500" name = "Track Length Cut" />
+<precut def = "fabs(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) < 0.99" name = "Back to Back track shower cut"/>
+<precut def = "reco_track_good_calo[0] > 0 " name = "Track Good Calo Cut" />
+<precut def = "reco_shower_conversion_distance[0] > 0" name = "Shower Conversion Dist Cut" />
+
+<!--Comsic BDT Training + Spectator Variables-->
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(50,0,1)">
+    <method type = "COSMIC" use = "yes">
+        <param>  NTrees=3500 	</param>				
+        <param>  MinNodeSize=2.5% </param>				
+        <param>  BoostType=RealAdaBoost</param>
+        <param>  AdaBoostBeta=0.75 	</param>				
+        <param>  SeparationType=GiniIndex</param>				
+        <param>  UseBaggedBoost</param> 
+        <param>  BaggedSampleFraction=0.5	</param>				
+        <param>  nCuts=-1	</param>				
+        <param>  MaxDepth=3 	</param>				
+    </method>
+    <!--Vertex Variables-->
+    <var def = "sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))" binning = "(36,0,100)" unit = "Reco-True Vertex Dist [cm]" type = "d" spectator = "true" />
+    <var def = "reco_shower_flash_shortest_distz[0]" binning = "(36,0,520)" unit = "Distance from Shower to Flashcenter [cm]" type = "d" spectator = "false" />
+
+    <!-- Shower Calo Variables-->
+    <var def = "reco_shower_dEdx_plane1_median[0]" binning = "(36,0,6.5)" unit = "median shower de/dx plane 1 [mev/cm]" type="d" spectator="true"/>
+    <var def = "reco_shower_dEdx_plane0_median[0]" binning = "(36,0,6.5)" unit = "median shower de/dx plane 0 [mev/cm]" type="d" spectator="true"/>
+    <var def = "reco_shower_dEdx_plane2_median[0]" binning = "(36,0,6.5)" unit = "median shower de/dx plane 2 [mev/cm]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_max[0]/1000.0" binning = "(36,0,1.0)" unit = "Reconstructed Shower Energy [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_dQdx_plane1_median[0]" binning = "(36,0,400000)" unit = "median shower dQ/dx plane 1" type="d" spectator="true"/>
+    <var def = "reco_shower_dQdx_plane0_median[0]" binning = "(36,0,400000)" unit = "median shower dQ/dx plane 0" type="d" spectator="true"/>
+    <var def = "reco_shower_dQdx_plane2_median[0]" binning = "(36,0,400000)" unit = "median shower dQ/dx plane 2" type="d" spectator="true"/>
+
+    <!--Shower Geom Variables-->
+    <var def = "reco_shower_theta_yz[0]" binning = "(36,-3.14,3.14)" unit = "Reconstructed Shower Theta yz [rad]" type = "d" spectator="false"/>
+    <var def = "reco_shower_length[0]" binning = "(36,0,100)" unit = "Shower Length [cm]" type = "d" spectator="true"/>
+    <var def = "reco_shower_opening_angle[0]" binning = "(36,0,0.8)" unit = "Shower Opening Angle" type = "d" spectator = "true" />
+
+    <!--Track Calo Variables-->
+    <!--Track Geom Variables-->
+    <var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning ="(36,-1,1)" unit="Cosine Angle between photon and proton [rad]" type = "d" spectator = "false"/>
+</mva>
+
+<mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(50,0,1)">
+    <method type = "BNB" use = "yes">
+        <param>  NTrees=3500 	</param>				
+        <param>  MinNodeSize=2.5% </param>				
+        <param>  BoostType=RealAdaBoost</param>
+        <param>  AdaBoostBeta=0.75 	</param>				
+        <param>  SeparationType=GiniIndex</param>				
+        <param>  UseBaggedBoost</param> 
+        <param>  BaggedSampleFraction=0.5	</param>				
+        <param>  nCuts=-1	</param>				
+        <param>  MaxDepth=3 	</param>				
+    </method>
+    <var def = "reco_shower_dEdx_plane2_median[0]" binning = "(36,0,6.5)" unit = "Median Shower dE/dx plane 2 [MeV/cm]" type="d" spectator="true"/>
+    <var def = "reco_shower_theta_yz[0]" binning = "(36,-3.14,3.14)" unit = "Reconstructed Shower Theta yz [rad]" type = "d" spectator = "false"/>
+    <var def = "reco_shower_length[0]" binning = "(36,0,100)" unit = "Reconstructed Shower Length [cm]" type="d" spectator="false"/>
+</mva>
+
+

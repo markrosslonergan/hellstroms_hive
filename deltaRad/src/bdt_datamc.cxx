@@ -166,6 +166,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             double max_modifier = 1.65;
 
+            
+            if(var.is_logplot == true){
+                pad0top->SetLogy();
+            }
             //     double max_modifier = 1.7;
             double min_val = 0.01;
             if(is_bdt_variable) {

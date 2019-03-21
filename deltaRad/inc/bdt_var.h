@@ -32,13 +32,15 @@ struct bdt_variable{
 		std::string safe_unit;
 		bool is_track;
 		std::string type;
+        bool is_logplot;
 
 		bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack, std::string intype) : 
 			name(inname), 
 			binning(inbin),
 			unit(inunit),
 			is_track(intrack),
-			type(intype)
+			type(intype),
+            is_logplot(false)
 		{
 			safe_name = name;
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '('), safe_name.end());
