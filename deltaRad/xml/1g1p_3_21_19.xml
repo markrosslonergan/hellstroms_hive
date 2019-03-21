@@ -53,19 +53,34 @@
     <var def = "reco_shower_phi_yx[0]" binning = "(36,-3.14,3.14)" unit = "Reconstructed Shower - Phi yx" type = "d" spectator = "true"/>
     <var def = "reco_shower_startx[0]" binning = "(36,0,250)" unit = " Reconstructed Shower start X pos [cm]" type = "d" spectator = "false"/>
     <var def = "reco_shower_starty[0]" binning = "(36,-110,+110)" unit = " Reconstructed Shower start Y pos [cm]" type = "d" spectator = "false"/>
-    <var def = "reco_shower_startx[0]" binning = "(36,0,1050)" unit = " Reconstructed Shower start Z pos [cm]" type = "d" spectator = "false"/>
+    <var def = "reco_shower_startz[0]" binning = "(36,0,1050)" unit = " Reconstructed Shower start Z pos [cm]" type = "d" spectator = "false"/>
     <var def = "reco_shower_start_to_nearest_dead_wire_plane0[0]" binning = "(24,0,125)" unit = " Reconstructed Shower dead wire dist plane 0 pos [cm]" type = "d" spectator = "false" />
     <var def = "reco_shower_start_to_nearest_dead_wire_plane1[0]" binning = "(24,0,110)" unit = " Reconstructed Shower dead wire dist plane 1 pos [cm]" type = "d" spectator = "false" />
     <var def = "reco_shower_start_to_nearest_dead_wire_plane2[0]" binning = "(24,0,200)" unit = " Reconstructed Shower dead wire dist plane 2 pos [cm]" type = "d" spectator = "false" />
 
     <!--Track Calo Variables-->
-    <!--Track Geom Variables-->
-    <var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning ="(36,-1,1)" unit="Cosine Angle between photon and proton [rad]" type = "d" spectator = "true"/>
-    <var def = "reco_track_displacement[0]" binning = "(36,0,500)" unit = "Track Displacement [cm]" type = "d" spectator = "true" />
     <var def = "reco_track_proton_kinetic_energy[0]" binning = "(36,0,1)" unit = "Reconstructed Track Kinetic Energy [GeV]" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dEdx_plane2[0]" binning =  "(36,0,12)" unit = "Truncated Mean Track dE/dx Plane 2 [MeV/cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dedx_plane1[0]" binning =  "(36,0,12)" unit = "truncated mean track de/dx plane 1 [mev/cm]" type = "d" spectator = "false"/>
     <var def = "reco_track_mean_trunc_dedx_plane0[0]" binning =  "(36,0,12)" unit = "truncated mean track de/dx plane 0 [mev/cm]" type = "d" spectator = "false"/>
+    <var def = "reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0]" binning = "(36,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 2" type = "d" spectator = "true"/>
+    <var def = "reco_track_mean_trunc_dEdx_start_half_plane1[0]/reco_track_mean_trunc_dEdx_end_half_plane1[0]" binning = "(36,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 1" type = "d" spectator = "false"/>
+    <var def = "reco_track_mean_trunc_dEdx_start_half_plane0[0]/reco_track_mean_trunc_dEdx_end_half_plane0[0]" binning = "(36,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 0" type = "d" spectator = "false"/>
+    
+    <!--Track Geom Variables-->
+    <var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning ="(36,-1,1)" unit="Cosine Angle between photon and proton [rad]" type = "d" spectator = "true"/>
+    <var def = "reco_track_displacement[0]" binning = "(36,0,500)" unit = "Track Displacement [cm]" type = "d" spectator = "true" />
+    <var def = "cos(reco_track_theta_yz[0])" binning = "(36,-1,1)" unit = "Reconstructed Track - Cosine Theta yz" type = "d" spectator = "false"/>
+    <var def = "cos(reco_track_phi_yx[0])" binning = "(36,-1,1)" unit = "Reconstructed Track - Cosine Phi yx" type = "d" spectator = "false"/>
+    <var def = "reco_track_phi_yx[0]" binning = "(36,-3.14,3.14)" unit = "Reconstructed Track Phi yx" type = "d" spectator = "true"/>
+    <var def = "reco_track_theta_yz[0]" binning = "(36,-3.14,3.14)" unit = "Reconstructed Track Theta yz" type = "d" spectator = "true"/>
+    <var def = "reco_track_startx[0]" binning = "(36,0,250)" unit = " Reconstructed Track start X pos [cm]" type = "d" spectator = "false"/>
+    <var def = "reco_track_starty[0]" binning = "(36,-110,+110)" unit = " Reconstructed Track start Y pos [cm]" type = "d" spectator = "false"/>
+    <var def = "reco_track_startz[0]" binning = "(36,0,1050)" unit = " Reconstructed Track start Z pos [cm]" type = "d" spectator = "false"/>
+    <var def = "reco_track_endx[0]" binning = "(36,0,250)" unit = " Reconstructed Track end X pos [cm]" type = "d" spectator = "false"/>
+    <var def = "reco_track_endy[0]" binning = "(36,-110,+110)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "false"/>
+    <var def = "reco_track_endz[0]" binning = "(36,0,1050)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "false"/>
+    <var def = "reco_track_spacepoint_principal0[0]" binning = "(36,0,1)" unit = "Recontstructed Track Spacepoint Principal0" type = "d" spectator = "false"/> 
 
 </mva>
 
