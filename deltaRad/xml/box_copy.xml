@@ -56,6 +56,8 @@
     <var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 1 [mev/cm]" type="d" spectator="false"/>
     <var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 0 [mev/cm]" type="d" spectator="false"/>
     <var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 2 [mev/cm]" type="d" spectator="true"/>
+    <var def = "reco_shower_dEdx_amalgamated[0]" binning = "(24,0,6.5)" unit = "median shower de/dx amalgamated [mev/cm]" type="d" spectator="true"/>
+
     <var def = "reco_shower_energy_max[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane0[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane1[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 1 [GeV]" type="d" spectator="true"/>
@@ -104,7 +106,7 @@
 
     <!--Track Geom Variables-->
     <var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning ="(24,-1,1)" unit="Cosine Angle between photon and proton [rad]" type = "d" spectator = "true"/>
-    <var def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning ="(24,-3.14,3.14)" unit="Angle between photon and proton [rad]" type = "d" spectator = "false"/>
+    <var def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning ="(24,0,3.14)" unit="Angle between photon and proton [rad]" type = "d" spectator = "false"/>
     <var def = "reco_track_displacement[0]" binning = "(24,0,500)" unit = "Track Displacement [cm]" type = "d" spectator = "true" />
     <var def = "cos(reco_track_theta_yz[0])" binning = "(24,-1,1)" unit = "Reconstructed Track - Cosine Theta yz" type = "d" spectator = "false"/>
     <var def = "cos(reco_track_phi_yx[0])" binning = "(24,-1,1)" unit = "Reconstructed Track - Cosine Phi yx" type = "d" spectator = "false"/>
@@ -157,6 +159,9 @@
     <var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 1 [mev/cm]" type="d" spectator="false"/>
     <var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 0 [mev/cm]" type="d" spectator="false"/>
     <var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 2 [mev/cm]" type="d" spectator="true"/>
+    <var def = "reco_shower_dEdx_amalgamated[0]" binning = "(24,0,6.5)" unit = "median shower de/dx amalgamated [mev/cm]" type="d" spectator="true"/>
+
+
     <var def = "reco_shower_energy_max[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane0[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane1[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 1 [GeV]" type="d" spectator="true"/>
@@ -205,7 +210,7 @@
 
     <!--Track Geom Variables-->
     <var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning ="(24,-1,1)" unit="Cosine Angle between photon and proton [rad]" type = "d" spectator = "true"/>
-    <var def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning ="(24,-3.14,3.14)" unit="Angle between photon and proton [rad]" type = "d" spectator = "false"/>
+    <var def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning ="(24,0,3.14)" unit="Angle between photon and proton [rad]" type = "d" spectator = "false"/>
     <var def = "reco_track_displacement[0]" binning = "(24,0,500)" unit = "Track Displacement [cm]" type = "d" spectator = "true" />
     <var def = "cos(reco_track_theta_yz[0])" binning = "(24,-1,1)" unit = "Reconstructed Track - Cosine Theta yz" type = "d" spectator = "false"/>
     <var def = "cos(reco_track_phi_yx[0])" binning = "(24,-1,1)" unit = "Reconstructed Track - Cosine Phi yx" type = "d" spectator = "false"/>
