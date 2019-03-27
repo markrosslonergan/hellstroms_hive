@@ -9,7 +9,7 @@
 <precut def = "(reco_shower_dEdx_plane2_nhits[0]>1 || reco_shower_dEdx_plane0_nhits[0]>1 || reco_shower_dEdx_plane1_nhits[0]>1)" name = "Shower dE/dx Plane Min Nhits"/>
 <precut def = "reco_track_displacement[0]<500" name = "Track Length Cut" />
 
-<!--
+
 <precut def = "reco_shower_energy_max[0]>0.125" name = "Shower Energy Cut 100 mev" />
 <precut def = " (reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) >-0.99  &amp;&amp; (reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) < 0.99" name = "Back to Back track shower cut"/>
 <precut def = "reco_track_good_calo_best_plane[0]!=-1 " name = "Track Good Calo Cut" />
@@ -19,9 +19,9 @@
 <precut def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0] < 0.9" name = "Reconstructed Delta Momentum Y [GeV]" />
 <precut def = "(cos(reco_track_theta_yz[0]) > 0.5)" name = "cos track"/> 
 <precut def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) > -0.8" name="Cosine Angle between photon and proton [rad]" />
-<precut def = "reco_track_endy[0] < 90" name = "track end"/>
+<precut def = "reco_track_endy[0] < 92" name = "track end"/>
 <precut def = "reco_track_proton_kinetic_energy[0] < 0.6" name = "protoon KE"/>
--->
+
 
 <!--Comsic BDT Training + Spectator Variables-->
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(50,0,1)">
@@ -47,6 +47,7 @@
     <var def = "reco_vertex_y[0]" binning = "(24,-120,+120)" unit = " Reconstructed vertex Y pos [cm]" type = "d" spectator = "false"/>
     <var def = "reco_vertex_z[0]" binning = "(24,-10,1060)" unit = " Reconstructed vertex Z pos [cm]" type = "d" spectator = "false"/>
     <var def = "reco_shower_conversion_distance[0]" binning = "(24,0,500)" unit = " Reconstructed Shower conversion distance [cm]" type = "d" spectator = "true"/>
+    <var def = "reco_shower_conversion_distance[0]" binning = "(24,0,500)" unit = " Reconstructed Shower conversion distance Log[cm]" type = "d" spectator = "true" logplot="true"/>
     <var def = "reco_vertex_to_nearest_dead_wire_plane0[0]" binning = "(24,0,125)" unit = " Reconstructed Vertex dead wire dist plane 0 pos [cm]" type = "d" spectator = "false" />
     <var def = "reco_vertex_to_nearest_dead_wire_plane1[0]" binning = "(24,0,110)" unit = " Reconstructed Vertex dead wire dist plane 1 pos [cm]" type = "d" spectator = "false" />
     <var def = "reco_vertex_to_nearest_dead_wire_plane2[0]" binning = "(24,0,200)" unit = " Reconstructed Vertex dead wire dist plane 2 pos [cm]" type = "d" spectator = "false" />
@@ -80,7 +81,8 @@
     <var def = "reco_shower_start_to_nearest_dead_wire_plane0[0]" binning = "(24,0,125)" unit = " Reconstructed Shower dead wire dist plane 0 pos [cm]" type = "d" spectator = "false" />
     <var def = "reco_shower_start_to_nearest_dead_wire_plane1[0]" binning = "(24,0,110)" unit = " Reconstructed Shower dead wire dist plane 1 pos [cm]" type = "d" spectator = "false" />
     <var def = "reco_shower_start_to_nearest_dead_wire_plane2[0]" binning = "(24,0,200)" unit = " Reconstructed Shower dead wire dist plane 2 pos [cm]" type = "d" spectator = "false" />
-    <var def =  "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Shower Associated Slice Neutrino Score" type = "d" spectator = "false" logplot = "true"/>
+    <var def =  "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Shower Associated Slice Neutrino Score Log" type = "d" spectator = "false" logplot = "true"/>
+    <var def =  "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Shower Associated Slice Neutrino Score" type = "d" spectator = "false" />
 
 
     <!--Track Calo Variables-->
@@ -100,7 +102,8 @@
     <var def = "reco_track_end_to_nearest_dead_wire_plane0[0]" binning = "(24,0,125)" unit = " Reconstructed Track End dead wire dist plane 0 pos [cm]" type = "d" spectator = "false" />
     <var def = "reco_track_end_to_nearest_dead_wire_plane1[0]" binning = "(24,0,110)" unit = " Reconstructed Track End dead wire dist plane 1 pos [cm]" type = "d" spectator = "false" />
     <var def = "reco_track_end_to_nearest_dead_wire_plane2[0]" binning = "(24,0,200)" unit = " Reconstructed Track End dead wire dist plane 2 pos [cm]" type = "d" spectator = "false" />
-    <var def =  "reco_track_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Track Associated Slice Neutrino Score" type = "d" spectator = "false" logplot = "true"/>
+    <var def =  "reco_track_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Track Associated Slice Neutrino Score LOG" type = "d" spectator = "false" logplot = "true"/>
+    <var def =  "reco_track_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Track Associated Slice Neutrino Score" type = "d" spectator = "false"/>
 
 
 
@@ -150,6 +153,7 @@
     <var def = "reco_vertex_y[0]" binning = "(24,-120,+120)" unit = " Reconstructed vertex Y pos [cm]" type = "d" spectator = "false"/>
     <var def = "reco_vertex_z[0]" binning = "(24,-10,1060)" unit = " Reconstructed vertex Z pos [cm]" type = "d" spectator = "false"/>
     <var def = "reco_shower_conversion_distance[0]" binning = "(24,0,500)" unit = " Reconstructed Shower conversion distance [cm]" type = "d" spectator = "true"/>
+    <var def = "reco_shower_conversion_distance[0]" binning = "(24,0,500)" unit = " Reconstructed Shower conversion distance log[cm]" type = "d" spectator = "true" logplot = "true"/>
     <var def = "reco_vertex_to_nearest_dead_wire_plane0[0]" binning = "(24,0,125)" unit = " Reconstructed Vertex dead wire dist plane 0 pos [cm]" type = "d" spectator = "false" />
     <var def = "reco_vertex_to_nearest_dead_wire_plane1[0]" binning = "(24,0,110)" unit = " Reconstructed Vertex dead wire dist plane 1 pos [cm]" type = "d" spectator = "false" />
     <var def = "reco_vertex_to_nearest_dead_wire_plane2[0]" binning = "(24,0,200)" unit = " Reconstructed Vertex dead wire dist plane 2 pos [cm]" type = "d" spectator = "false" />

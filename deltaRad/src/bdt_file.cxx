@@ -45,6 +45,14 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
     //topovertex = (TTree*)tvertex->CopyTree(flow.topological_cuts.c_str());
     //std::cout<<"Copied to topological tree: "<<topovertex->GetEntries()<<std::endl;
+    
+
+    std::cout<<"Getting eventweight tree"<<std::endl;
+    teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
+    std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
+
+
+
 /*
     //This is all old school mcc8 stuff for now.
     if(tag == "IntimeCosmics"){

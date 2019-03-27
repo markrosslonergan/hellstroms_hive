@@ -211,8 +211,6 @@ int main (int argc, char *argv[]){
 
         compareQuick({v_vertexMult,v_vertexMult,v_vertexMult, v_vertexMult},{bnb_cosmics_nom, bnb_cosmics_undo,bnb_cosmics_noyz,bnb_cosmics_noabs},{"1"} ,"wescheck_0");
         
-    return 0;
-
 
         std::string calcut = "1";
 

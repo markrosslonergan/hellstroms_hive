@@ -40,6 +40,7 @@ int main (int argc, char *argv[]){
     bool run_bnb = true;
     int number = -1;
     bool response_only = false;
+    int sbnfit_stage = 1;
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -50,6 +51,7 @@ int main (int argc, char *argv[]){
         {"topo_tag",	required_argument,	0, 't'},
         {"cosmic",		no_argument,	0, 'b'},
         {"bnb",		    no_argument,	0, 'c'},
+        {"sbnfit",		required_argument,	0, 's'},
         {"help",		required_argument,	0, 'h'},
         {"number",		required_argument,	0, 'n'},
         {0,			no_argument, 		0,  0},
@@ -58,7 +60,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:t:bcn:rh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:t:bcn:rh?", longopts, &index);
 
         switch(iarg)
         {
@@ -85,6 +87,10 @@ int main (int argc, char *argv[]){
             case 'd':
                 dir = optarg;
                 break;
+            case 's':
+                mode_option = "sbnfit";
+                sbnfit_stage = strtod(optarg,NULL);
+                break;
             case 't':
                 topo_tag = optarg;
                 break;
@@ -107,6 +113,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-b\t--bnb\t\t Run only BNB training/app"<<std::endl;
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag used to keep all things clean!"<<std::endl;
+                std::cout<<"\t-s\t--sbnfit\t\tProduce a sbnfit for file N at stage S"<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
                 return 0;
         }
@@ -203,8 +210,8 @@ int main (int argc, char *argv[]){
 
     bdt_file *dirt = new bdt_file(dir,"dirt_v9.31.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
-    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_v9.3.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_v9.3.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_v9.4.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_v9.4.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
 
     //Data files
     bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
@@ -440,6 +447,47 @@ int main (int argc, char *argv[]){
             return 0;
         }
 
+    }else if(mode_option == "sbnfit"){
+        if(number==-1) number ==0;
+
+        bdt_file * file = bdt_files.at(number);
+
+        //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
+        file->teventweight->AddFriend(file->tvertex);
+
+        std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(number)+"_"+file->tag+".root";
+        
+        std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
+        TFile* f_sbnfit = new TFile(output_file_name.c_str(),"recreate");
+        
+
+        std::cout<<"Creating directory structure"<<std::endl;
+        TDirectory *cdtof = f_sbnfit->mkdir("singlephoton");
+        cdtof->cd();    
+        
+        
+        std::string sbnfit_cuts = file->getStageCuts(sbnfit_stage,fcoscut,fbnbcut);
+        
+        std::cout<<"Copying vertex tree"<<std::endl;
+        TTree * t_sbnfit_tree = (TTree*)file->tvertex->CopyTree(sbnfit_cuts.c_str());
+        std::cout<<"Copying POT tree"<<std::endl;
+        TTree * t_sbnfit_pot_tree = (TTree*)file->tpot->CopyTree("1");
+        std::cout<<"Copying eventweight tree (via friends)"<<std::endl;
+        TTree * t_sbnfit_eventweight_tree = (TTree*)file->teventweight->CopyTree(sbnfit_cuts.c_str());
+
+
+        
+        std::cout<<"Writing to file"<<std::endl;
+        cdtof->cd();
+        t_sbnfit_tree->Write();
+        t_sbnfit_pot_tree->Write();
+        t_sbnfit_eventweight_tree->Write(); 
+
+        f_sbnfit->Close();
+        std::cout<<"Done!"<<std::endl;
+
+
+        return 0;
 
 
     }else if(mode_option == "datamc"){
