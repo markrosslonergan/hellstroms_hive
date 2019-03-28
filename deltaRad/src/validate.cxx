@@ -177,7 +177,7 @@ int main (int argc, char *argv[]){
 
     bdt_file *signal_cosmics = new bdt_file(dir9, "ncdeltarad_overlay_collins_v9.31.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
     //bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.3.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    bdt_file *bnb_cosmics = new bdt_file(dir9, "bnb_overlay_v9.4.root", "BNBOverlay", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *bnb_cosmics = new bdt_file(dir9, "bnb_overlay_v9.9901.root", "BNBOverlay", "hist","singlephoton/",  kBlue-4, bkg_flow);
     bdt_file *data5e19    = new bdt_file(dir9, "data5e19_v9.3.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *bnbext    = new bdt_file(dir9, "bnbext_run1_v9.3.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
     bdt_file *bnb_corsika    = new bdt_file(dir9, "bnb_corsika_v9.3.root",	"BNBCorsika",	"hist","singlephoton/",  kGreen-3, bkg_flow);
