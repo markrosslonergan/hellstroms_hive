@@ -209,7 +209,7 @@ int main (int argc, char *argv[]){
     signal_other->fillstyle = 3390;
 
 
-    bdt_file *dirt = new bdt_file(dir9,"dirt_v9.3.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
+    bdt_file *dirt = new bdt_file(dir,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
     bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_v10.0.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
     bdt_file *bnb = new bdt_file(dir, "bnb_overlay_v10.0.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
@@ -455,7 +455,7 @@ int main (int argc, char *argv[]){
         //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
         file->teventweight->AddFriend(file->tvertex);
 
-        std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(number)+"_"+file->tag+".root";
+        std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(sbnfit_stage)+"_"+file->tag+".root";
         
         std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
         TFile* f_sbnfit = new TFile(output_file_name.c_str(),"recreate");
