@@ -150,13 +150,13 @@ int main (int argc, char *argv[]){
     std::cout<<"In  "<<bnb_bdt_info.identifier<<" we have "<<bnb_bdt_info.train_vars.size()<<" bnb training variables and "<<bnb_bdt_info.spec_vars.size()<<" spectators"<<std::endl;
 
     //Train on "good" signals, defined as ones matched to the NC pi0 and have little "clutter" around.	
-    std::string training_signal_cut = "sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111 && sim_shower_overlay_fraction[0] < 0.5 && sim_shower_overlay_fraction[1]<0.5";
-    std::string training_bkg_cut = "sim_shower_overlay_fraction[0]<0.5";
+    std::string training_signal_cut = "sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111 && sim_shower_overlay_fraction[0] < 1. && sim_shower_overlay_fraction[1]<1.";
+    std::string training_bkg_cut = "sim_shower_overlay_fraction[0]<1. && sim_shower_overlay_fraction[1]<1. && !(sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111)";
     std::string num_track_cut;
 
     if(analysis_tag == "2g1p"){
-        training_signal_cut = training_signal_cut+ "&& sim_track_overlay_fraction[0]< 0.5";
-        training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<0.5";
+        training_signal_cut = training_signal_cut+ "&& sim_track_overlay_fraction[0]< 1.";
+        training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<1.";
         num_track_cut =  "==1";
 
         bnb_bdt_info.setTopoName("1#gamma1p");
@@ -222,7 +222,7 @@ int main (int argc, char *argv[]){
     bdt_file *dirt = new bdt_file(dirv10,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
     //For conviencance fill a vector with pointers to all the files to loop over.
-    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData,dirt};
+    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData, dirt};
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
@@ -281,8 +281,8 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "2g1p"){
-        fcoscut =   0.45;
-        fbnbcut = 0.54;
+        fcoscut =   0.643;
+        fbnbcut = 0.6323;
     }else if(analysis_tag == "2g0p"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;
@@ -387,7 +387,7 @@ int main (int argc, char *argv[]){
 
 
         TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-        std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info);
+        std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
         //std::vector<double> ans = lin_scan({signal}, {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
         std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
@@ -404,7 +404,7 @@ int main (int argc, char *argv[]){
         OffBeamData->col;	
         OffBeamData->fillstyle = 3333;
         histogram_stack.addToStack(OffBeamData);
-        //histogram_stack.addToStack(dirt);
+        histogram_stack.addToStack(dirt);
 
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
         int ip=0;

@@ -85,7 +85,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
     //Loop over all stages
 
-    for(int s = 0; s< 2; s++){
+    for(int s = 0; s< 4; s++){
 
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
@@ -447,7 +447,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
     std::vector<std::string> stage_name = {"All Verticies","","Cosmic BDT Cut","BNB BDT Cut"};
 
 
-    for(int k = 1; k<4; k++){
+    for(int k = 0; k<4; k++){
         TCanvas *cobs = new TCanvas("","",900,800);
         //	cobs->cd(k+1);
         cobs->cd();
