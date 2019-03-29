@@ -185,10 +185,16 @@ int main (int argc, char *argv[]){
 
     bdt_file *bnbext    = new bdt_file(dir, "bnbext_run1_v7.1.root",	"Off-BeamData",	"hist","singlephoton/",  kBlack, data_flow);
 
-    std::vector<bdt_file *> files = {bnb_cosmics_calo, bnb_cosmics_caliSCE, bnb_cosmics_calo, data5e19_cali, data5e19_caliSCE, data5e19_calo};
+//    verlay_NoAbsGain.root  bnb_overlay_NoYZ.root  bnb_overlay_nominal.root  bnb_overlay_undo.root
+   bdt_file *bnb_cosmics_noabs = new bdt_file(dir9, "bnb_overlay_NoAbsGain.root", "BNBOverlay_noabs", "hist","singlephoton/",  kBlue-4, bkg_flow);
+   bdt_file *bnb_cosmics_nom = new bdt_file(dir9, "bnb_overlay_nominal.root", "BNBOverlay_Nomonal", "hist","singlephoton/",  kBlue-4, bkg_flow);
+   bdt_file *bnb_cosmics_undo = new bdt_file(dir9, "bnb_overlay_undo.root", "BNBOverlay_undo", "hist","singlephoton/",  kBlue-4, bkg_flow);
+   bdt_file *bnb_cosmics_noyz = new bdt_file(dir9, "bnb_overlay_NoYZ.root", "BNBOverlay_noyz", "hist","singlephoton/",  kBlue-4, bkg_flow);
+
+    std::vector<bdt_file *> files = {bnb_cosmics_calo, bnb_cosmics_caliSCE, bnb_cosmics_calo, data5e19_cali, data5e19_caliSCE, data5e19_calo, bnb_cosmics_noabs, bnb_cosmics_nom, bnb_cosmics_undo, bnb_cosmics_noyz};
 
     for(auto &f: files){
-            f->calcPOT();
+//            f->calcPOT();
     }
 
 
@@ -201,7 +207,10 @@ int main (int argc, char *argv[]){
 
     if(mode_option == "valid"){
 
+        bdt_variable v_vertexMult("reco_vertex_size","(5,0,5)","Number of Pandora Neutrino-Slices in event","false","d");
 
+        compareQuick({v_vertexMult,v_vertexMult,v_vertexMult, v_vertexMult},{bnb_cosmics_nom, bnb_cosmics_undo,bnb_cosmics_noyz,bnb_cosmics_noabs},{"1"} ,"wescheck_0");
+        
 
         std::string calcut = "1";
 
