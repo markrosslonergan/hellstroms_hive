@@ -56,12 +56,12 @@
     <var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 1 [mev/cm]" type="d" spectator="false"/>
     <var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 0 [mev/cm]" type="d" spectator="false"/>
     <var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 2 [mev/cm]" type="d" spectator="true"/>
-    <var def = "reco_shower_dEdx_amalgamated[0]" binning = "(24,0,6.5)" unit = "median shower de/dx amalgamated [mev/cm]" type="d" spectator="true"/>
+    <var def = "reco_shower_dEdx_amalgamated[0]" binning = "(24,0,6.5)" unit = "median shower de/dx amalgamated [mev/cm]" type="d" spectator="false"/>
 
     <var def = "reco_shower_energy_max[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy [GeV]" type="d" spectator="true"/>
-    <var def = "reco_shower_energy_plane0[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
-    <var def = "reco_shower_energy_plane1[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 1 [GeV]" type="d" spectator="true"/>
-    <var def = "reco_shower_energy_plane2[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 2 [GeV]" type="d" spectator="true"/>
+    <var def = "reco_shower_energy_plane0[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 0 [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_plane1[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 1 [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_plane2[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 2 [GeV]" type="d" spectator="false"/>
     <var def = "reco_shower_dQdx_plane1_median[0]" binning = "(24,0,400000)" unit = "median shower dQ/dx plane 1" type="d" spectator="false"/>
     <var def = "reco_shower_dQdx_plane0_median[0]" binning = "(24,0,400000)" unit = "median shower dQ/dx plane 0" type="d" spectator="false"/>
     <var def = "reco_shower_dQdx_plane2_median[0]" binning = "(24,0,400000)" unit = "median shower dQ/dx plane 2" type="d" spectator="false"/>
