@@ -101,10 +101,10 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
                 t.is_logplot = var_logplot_bool;
             if(is_spec) {
                 bdt_spec_vars.push_back(t );            
-                std::cout<<"Adding Train "<<var_def<<" with binning: "<<var_binning<<std::endl;
+                std::cout<<"Adding Spectator Variable "<<var_def<<" with binning: "<<var_binning<<std::endl;
                         }else{
                 bdt_train_vars.push_back(t);            
-                std::cout<<"Adding Spectator "<<var_def<<" with binning: "<<var_binning<<std::endl;
+                std::cout<<"Adding Training Variable  "<<var_def<<" with binning: "<<var_binning<<std::endl;
             }
             pVar = pVar->NextSiblingElement("var");
         }
