@@ -41,6 +41,7 @@ int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
     std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
+    std::string dir10 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10/";
 
 
     std::string mode_option = "fake"; 
@@ -174,7 +175,8 @@ int main (int argc, char *argv[]){
     bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
     
-    bdt_file *bnb_cosmics_caliSCE = new bdt_file(dir, "bnb_overlay_v9.9901.root", "BNBOverlay_caliSCE", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *bnb_cosmics_caliSCE = new bdt_file(dir10, "bnb_overlay_v10.01.root", "BNBOverlay_caliSCE", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    //bdt_file *bnb_cosmics_caliSCE = new bdt_file(dir, "bnb_overlay_v9.9901.root", "BNBOverlay_caliSCE", "hist","singlephoton/",  kBlue-4, bkg_flow);
     bdt_file *data5e19_caliSCE    = new bdt_file(dir, "data5e19_v9.3.root",	"On-BeamData_caliSCE",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *bnbext_caliSCE    = new bdt_file(dir, "bnbext_run1_v9.3.root",	"Off-BeamData_caliSCE",	"hist","singlephoton/",  kRed, data_flow);
     bdt_file *bnb_corsika_caliSCE    = new bdt_file(dir, "bnb_corsika_v9.3.root",	"BNBCorsika_caliSCE",	"hist","singlephoton/",  kGreen-3, bkg_flow);

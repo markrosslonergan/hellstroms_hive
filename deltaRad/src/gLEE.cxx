@@ -149,6 +149,8 @@ int main (int argc, char *argv[]){
 
     //Get all the variables you want to use	
     vars = cosmic_bdt_info.train_vars;
+    vars.insert( vars.end(), cosmic_bdt_info.spec_vars.begin(), cosmic_bdt_info.spec_vars.end() );
+
     training_vars = cosmic_bdt_info.train_vars;
     plotting_vars = cosmic_bdt_info.spec_vars;
 
