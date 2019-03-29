@@ -379,7 +379,9 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			titbdt2->Draw();
 
 			//cobs->Write();
-			cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
+			//cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
+            cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),".pdf");
+
 
 			delete cobs;
 			delete stk;
@@ -652,7 +654,8 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 
 	cobs->Write();
-	cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+".png").c_str(),"png");
+	cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+".pdf").c_str(),"pdf");
+    //cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+".png").c_str(),"png");
 	//cobs->SaveAs(("stack/"+var.name+".png").c_str(),"png");
 
 

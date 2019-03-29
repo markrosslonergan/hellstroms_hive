@@ -311,8 +311,9 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "track"){
-        fcoscut =   0.658;
-        fbnbcut =  0.61;
+        //0.664 0.59375
+        fcoscut =  0.664;
+        fbnbcut =  0.59375;
     }else if(analysis_tag == "notrack"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;

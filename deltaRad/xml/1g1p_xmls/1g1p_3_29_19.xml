@@ -83,7 +83,7 @@
     <var def = "reco_shower_start_to_nearest_dead_wire_plane1[0]" binning = "(24,0,110)" unit = " Reconstructed Shower dead wire dist plane 1 pos [cm]" type = "d" spectator = "true" />
     <var def = "reco_shower_start_to_nearest_dead_wire_plane2[0]" binning = "(24,0,200)" unit = " Reconstructed Shower dead wire dist plane 2 pos [cm]" type = "d" spectator = "true" />
     <var def =  "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Shower Associated Slice Neutrino Score Log" type = "d" spectator = "true" logplot = "true"/>
-    <var def =  "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Shower Associated Slice Neutrino Score" type = "d" spectator = "false" />
+    <var def =  "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Shower Associated Slice Neutrino Score" type = "d" spectator = "true" />
 
 
     <!--Track Calo Variables-->
@@ -95,7 +95,7 @@
     <var def = "reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 2" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dEdx_start_half_plane1[0]/reco_track_mean_trunc_dEdx_end_half_plane1[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 1" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dEdx_start_half_plane0[0]/reco_track_mean_trunc_dEdx_end_half_plane0[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 0" type = "d" spectator = "true"/>
-    <var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d" spectator = "false"/>
+    <var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d" spectator = "true"/>
     <var def =  "reco_track_best_calo_plane[0]" binning = "(8, -1, 3)" unit = "Reconstructed Track Best Calo Plane" type = "i" spectator = "true"/>
     <var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(24, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" spectator = "true"/>
     <var def =  "reco_track_trunc_PIDA_plane0[0]" binning = "(24, 0, 60)" unit = "Reconstructed Track PIDA Plane 0" type = "d" spectator = "true"/>
@@ -123,7 +123,7 @@
     <var def = "reco_track_endy[0]" binning = "(24,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(24,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(24,0,1)" unit = "Recontstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
-    <var def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,1,2.5)" unit = "Invariant Mass of photon-proton pair" type  = "d" spectator = "false"/>
+    <var def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,1,2.5)" unit = "Invariant Mass of photon-proton pair" type  = "d" spectator = "true"/>
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" spectator = "true" /> 
@@ -189,7 +189,7 @@
     <var def = "reco_shower_start_to_nearest_dead_wire_plane1[0]" binning = "(24,0,110)" unit = " Reconstructed Shower dead wire dist plane 1 pos [cm]" type = "d" spectator = "true" />
     <var def = "reco_shower_start_to_nearest_dead_wire_plane2[0]" binning = "(24,0,200)" unit = " Reconstructed Shower dead wire dist plane 2 pos [cm]" type = "d" spectator = "true" />
     <var def =  "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Shower Associated Slice Neutrino Score Log" type = "d" spectator = "true" logplot = "true"/>
-    <var def =  "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Shower Associated Slice Neutrino Score" type = "d" spectator = "false" />
+    <var def =  "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Shower Associated Slice Neutrino Score" type = "d" spectator = "true" />
 
 
     <!--Track Calo Variables-->
@@ -201,7 +201,7 @@
     <var def = "reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 2" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dEdx_start_half_plane1[0]/reco_track_mean_trunc_dEdx_end_half_plane1[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 1" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dEdx_start_half_plane0[0]/reco_track_mean_trunc_dEdx_end_half_plane0[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 0" type = "d" spectator = "true"/>
-    <var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d" spectator = "false"/>
+    <var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d" spectator = "true"/>
     <var def =  "reco_track_best_calo_plane[0]" binning = "(8, -1, 3)" unit = "Reconstructed Track Best Calo Plane" type = "i" spectator = "true"/>
     <var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(24, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" spectator = "true"/>
     <var def =  "reco_track_trunc_PIDA_plane0[0]" binning = "(24, 0, 60)" unit = "Reconstructed Track PIDA Plane 0" type = "d" spectator = "true"/>
@@ -229,7 +229,7 @@
     <var def = "reco_track_endy[0]" binning = "(24,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(24,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(24,0,1)" unit = "Recontstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
-    <var def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,1,2.5)" unit = "Invariant Mass of photon-proton pair" type  = "d" spectator = "false"/>
+    <var def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,1,2.5)" unit = "Invariant Mass of photon-proton pair" type  = "d" spectator = "true/"/>
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" spectator = "true" /> 
