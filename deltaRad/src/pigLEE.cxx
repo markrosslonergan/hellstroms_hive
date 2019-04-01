@@ -25,6 +25,7 @@ int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
     std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
+    std::string mydir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/";
     std::string dirv10 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10/";
 
 
@@ -143,6 +144,7 @@ int main (int argc, char *argv[]){
 
     //Get all the variables you want to use	
     vars = cosmic_bdt_info.train_vars;
+
     training_vars = cosmic_bdt_info.train_vars;
     plotting_vars = cosmic_bdt_info.spec_vars;
 
@@ -208,13 +210,13 @@ int main (int argc, char *argv[]){
     ///////////////// SAMPLES /////////////////////////
     std::cout<<"Defining all our bdt_files."<<std::endl;
     // MC+Overlay files
-    bdt_file *training_signal=new bdt_file(dirv10,"ncpi0_overlay_collins_v10.0.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dirv10, "ncpi0_overlay_collins_v10.0.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dirv10,"ncpi0_overlay_collins_v10.0.root","NCPi0OverlayOther","hist","singlephoton/",kRed-7,signal_other_flow);
+    bdt_file *training_signal=new bdt_file(mydir,"ncpi0_overlay_v10.1.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(mydir, "ncpi0_overlay_v10.1.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(mydir,"ncpi0_overlay_v10.1.root","NCPi0OverlayOther","hist","singlephoton/",kRed-7,signal_other_flow);
     signal_other->fillstyle = 3333;
 
-    bdt_file *training_bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *training_bnb = new bdt_file(mydir, "bnb_overlay_v10.1.root", "BNBTrain", "hist","singlephoton/", kBlue-4, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(mydir, "bnb_overlay_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
 
     //Data files
     bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
@@ -281,8 +283,8 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "2g1p"){
-        fcoscut =   0.643;
-        fbnbcut = 0.6323;
+        fcoscut =   0.627225;
+        fbnbcut = 0.683;
     }else if(analysis_tag == "2g0p"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;

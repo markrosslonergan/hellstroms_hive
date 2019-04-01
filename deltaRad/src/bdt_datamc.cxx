@@ -448,6 +448,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 
     for(int k = 0; k<4; k++){
+      std::cout << "[PLOTBDTSTACKS:] On stage " << k << std::endl;
         TCanvas *cobs = new TCanvas("","",900,800);
         //	cobs->cd(k+1);
         cobs->cd();
@@ -614,7 +615,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
             cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
         }
 
-        if(is_bdt_variable) return 0;
+        //if(is_bdt_variable) return 0;
     }
 
 
