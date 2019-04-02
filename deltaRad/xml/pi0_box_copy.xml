@@ -30,7 +30,7 @@
 <!--Comsic BDT Training + Spectator Variables-->
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(50,0,1)">
     <method type = "COSMIC" use = "yes">
-        <param>  NTrees=50 	</param>				
+        <param>  NTrees=25 	</param>				
         <param>  MinNodeSize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
         <param>  AdaBoostBeta=0.75 	</param>				
@@ -38,7 +38,7 @@
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
         <param>  nCuts=-1	</param>				
-        <param>  MaxDepth=3 	</param>				
+        <param>  MaxDepth=4 	</param>				
     </method>
     <!--Vertex Variables-->
     <var def = "sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))" binning = "(20,0,100)" unit = "Reco-True Vertex Dist [cm]" type = "d" spectator = "true" />
@@ -125,9 +125,9 @@
     <var def =  "reco_shower_nuscore[(reco_shower_ordered_energy_index[1])]" binning = "(20, 0, 1)" unit = "Reco. Subleading Shower Associated Slice Neutrino Score" type = "d" spectator = "true" logplot = "true"/>
 
     <!-- Pi0 variables -->
-    <var def = "(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])]+reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])])/1000" binning = "(20, 0, 1)" unit = "Reco. #pi^{0} x-Momentum [GeV]" type = "d" spectator = "true" />
-    <var def = "(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])]+reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])/1000" binning = "(20, 0, 1)" unit = "Reco. #pi^{0} y-Momentum [GeV]" type = "d" spectator = "true" />
-    <var def = "(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])]+reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])/1000" binning = "(20, 0, 1)" unit = "Reco. #pi^{0} z-Momentum [GeV]" type = "d" spectator = "true" />
+    <var def = "(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])]+reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])])/1000" binning = "(20, -1, 1)" unit = "Reco. #pi^{0} x-Momentum [GeV]" type = "d" spectator = "true" />
+    <var def = "(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])]+reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])/1000" binning = "(20, -1, 1)" unit = "Reco. #pi^{0} y-Momentum [GeV]" type = "d" spectator = "true" />
+    <var def = "(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])]+reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])/1000" binning = "(20, -1, 1)" unit = "Reco. #pi^{0} z-Momentum [GeV]" type = "d" spectator = "true" />
 
     <!-- Transverse momentum -->
     <var def="sqrt((reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])]))/1000" binning = "(20, 0, 1)" unit = "Reco. #pi^{0} Transverse Momentum [GeV]" type = "d" spectator = "true" />
@@ -181,7 +181,7 @@
 <!--BNB BDT Training + Spectator Variables-->
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(50,0,1)">
     <method type = "BNB" use = "yes">
-        <param>  NTrees=50 	</param>				
+        <param>  NTrees=25 	</param>				
         <param>  MinNodeSize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
         <param>  AdaBoostBeta=0.75 	</param>				
@@ -189,7 +189,7 @@
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
         <param>  nCuts=-1	</param>				
-        <param>  MaxDepth=3 	</param>				
+        <param>  MaxDepth=4 	</param>				
     </method>
     <!--Vertex Variables-->
     <var def = "sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))" binning = "(20,0,100)" unit = "Reco-True Vertex Dist [cm]" type = "d" spectator = "true" />
@@ -277,9 +277,9 @@
     <var def =  "reco_shower_nuscore[(reco_shower_ordered_energy_index[1])]" binning = "(20, 0, 1)" unit = "Reco. Subleading Shower Associated Slice Neutrino Score" type = "d" spectator = "true" logplot = "true"/>
 
     <!-- Pi0 variables -->
-    <var def = "(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])]+reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])])/1000" binning = "(20, 0, 1)" unit = "Reco. #pi^{0} x-Momentum [GeV]" type = "d" spectator = "true" />
-    <var def = "(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])]+reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])/1000" binning = "(20, 0, 1)" unit = "Reco. #pi^{0} y-Momentum [GeV]" type = "d" spectator = "true" />
-    <var def = "(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])]+reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])/1000" binning = "(20, 0, 1)" unit = "Reco. #pi^{0} z-Momentum [GeV]" type = "d" spectator = "true" />
+    <var def = "(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])]+reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])])/1000" binning = "(20, -1, 1)" unit = "Reco. #pi^{0} x-Momentum [GeV]" type = "d" spectator = "true" />
+    <var def = "(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])]+reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])/1000" binning = "(20, -1, 1)" unit = "Reco. #pi^{0} y-Momentum [GeV]" type = "d" spectator = "true" />
+    <var def = "(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])]+reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])/1000" binning = "(20, -1, 1)" unit = "Reco. #pi^{0} z-Momentum [GeV]" type = "d" spectator = "true" />
 
     <!-- Transverse momentum -->
     <var def="sqrt((reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])]))/1000" binning = "(20, 0, 1)" unit = "Reco. #pi^{0} Transverse Momentum [GeV]" type = "d" spectator = "true" />

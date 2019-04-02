@@ -275,8 +275,8 @@ int main (int argc, char *argv[]){
 
     //Adding plot names
     training_signal->addPlotName("NC #pi^{0}");
-    signal->addPlotName("NC #pi^{0} w/ Overlays");
-    signal_other->addPlotName("Other w/ Overlays");
+    signal->addPlotName("Signal NC #pi^{0} w/ Overlays");
+    signal_other->addPlotName("Other NC #pi^{0} w/ Overlays");
     training_bnb->addPlotName("BNB Backgrounds");
     bnb->addPlotName("BNB w/Overlays");
     OnBeamData->addPlotName("On-Beam  Data");
@@ -289,8 +289,8 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "2g1p"){
-        fcoscut =   0.66942;
-        fbnbcut = 0.6181;
+        fcoscut =   0.727;
+        fbnbcut = 0.671;
     }else if(analysis_tag == "2g0p"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;
@@ -338,28 +338,27 @@ int main (int argc, char *argv[]){
     }	
     else if(mode_option == "recomc"){
 
-        std::vector<int> recomc_cols = {kRed+1, kAzure+2, kAzure+5, kGreen-2, kGreen-3, kGray+1};
+        std::vector<int> recomc_cols = {kBlue-3, kRed+1, kAzure+2, kAzure+5, kGreen-2, kGreen-3, kGray+1};
 
         std::vector<std::string>recomc_names = {"NC BNB Background", "NC #Delta Radiative", "BNB CC #pi^{0}", "CC BNB Background", "Two Cosmic Showers", "One Cosmic Shwoer", "Other"};
         // How are they defined, cutwise?
         // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
         std::string signal_string = "mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111 && sim_shower_overlay_fraction[0]<0.2 && sim_shower_overlay_fraction[1]<0.2 && sim_track_overlay_fraction[0]<0.2";
         // Other NC BNB events where either (a) one of the showers isn't photon-induced, or (b) one doesn't come from pi0
-        std::string bkg1 = "mctruth_cc_or_nc == 1 && mctruth_is_delta_radiative!=1 && sim_shower_overlay_fraction[0]<0.5 && sim_shower_overlay_fraction[1]<0.5 && sim_track_overlay_fraction[0]<0.5 && !(sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg==111 && sim_shower_parent_pdg[1]==111)";
+        std::string nc_bnb = "mctruth_cc_or_nc == 1 && mctruth_is_delta_radiative!=1 && sim_shower_overlay_fraction[0]<0.5 && sim_shower_overlay_fraction[1]<0.5 && sim_track_overlay_fraction[0]<0.5 && !(sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg==111 && sim_shower_parent_pdg[1]==111)";
         // NC delta radiative decay; very small subset of NC background
-        std::string bkg2 = "sim_shower_pdg["+shower_index1+"] == 22 && sim_shower_parent_pdg["+shower_index1+"] != 111 && sim_shower_overlay_fraction["+shower_index1+"]<0.5 && sim_shower_overlay_fraction["+shower_index2+"]>0.5 && mctruth_is_delta_radiative == 1";
+        std::string ncdelta = "sim_shower_pdg["+shower_index1+"] == 22 && sim_shower_parent_pdg["+shower_index1+"] != 111 && sim_shower_overlay_fraction["+shower_index1+"]<0.5 && sim_shower_overlay_fraction["+shower_index2+"]>0.5 && mctruth_is_delta_radiative == 1";
         // CC pi0 background
-        std::string bkg3 = "mctruth_cc_or_nc==0 && sim_shower_overlay_fraction[0]<0.2 && sim_shower_overlay_fraction[1]<0.2 && mctruth_num_exiting_pi0==1 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111 && sim_track_overlay_fraction[0]<0.2";
+        std::string cc_pi0 = "mctruth_cc_or_nc==0 && sim_shower_overlay_fraction[0]<0.2 && sim_shower_overlay_fraction[1]<0.2 && mctruth_num_exiting_pi0==1 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111 && sim_track_overlay_fraction[0]<0.2";
         // CC other
-        std::string bkg4 = "mctruth_cc_or_nc==0 && sim_shower_overlay_fraction[0]<0.2 && sim_shower_overlay_fraction[1]<0.2 && sim_track_overlay_fraction[0]<0.2 && (sim_shower_pdg[0] != 22 || sim_shower_pdg[1] != 22 || sim_shower_parent_pdg[0] != 111 || sim_shower_parent_pdg[1] != 111)";
+        std::string cc_bnb = "mctruth_cc_or_nc==0 && sim_shower_overlay_fraction[0]<0.2 && sim_shower_overlay_fraction[1]<0.2 && sim_track_overlay_fraction[0]<0.2 && (sim_shower_pdg[0] != 22 || sim_shower_pdg[1] != 22 || sim_shower_parent_pdg[0] != 111 || sim_shower_parent_pdg[1] != 111)";
         // Cosmics (both?)
-        std::string bkg5 = "sim_shower_overlay_fraction[0]>0.8 && sim_shower_overlay_fraction[1]>0.8";
-        std::string bkg6 = "(sim_shower_overlay_fraction[0]>0.8 || sim_shower_overlay_fraction[1]>0.8) && !(sim_shower_overlay_fraction[0]>0.8 && sim_shower_overlay_fraction[1]>0.8)";
+        std::string two_cosmic = "sim_shower_overlay_fraction[0]>0.8 && sim_shower_overlay_fraction[1]>0.8";
+        std::string one_cosmic = "(sim_shower_overlay_fraction[0]>0.8 || sim_shower_overlay_fraction[1]>0.8) && !(sim_shower_overlay_fraction[0]>0.8 && sim_shower_overlay_fraction[1]>0.8)";
         // Other; defined as "!" versions of above
-        //std::string other = "!("+signal_string+") && !("+bkg1+") && !("+bkg2+") && !("+bkg3+") && !("+bkg4+") && !("+bkg5+") && !("+bkg6+")";
-        std::string other = "!("+signal_string+") && !("+bkg1+") && !("+bkg2+") && !("+bkg3+") && !("+bkg4+") && !("+bkg5+") && !("+bkg6+")";
+        std::string other = "!("+signal_string+") && !("+nc_bnb+") && !("+ncdelta+") && !("+cc_pi0+") && !("+cc_bnb+") && !("+two_cosmic+") && !("+one_cosmic+")";
        
-        std::vector<std::string> recomc_cuts = {bkg1, bkg3, bkg4, bkg5, bkg6, other}; 
+        std::vector<std::string> recomc_cuts = {signal_string, nc_bnb, cc_pi0, cc_bnb, two_cosmic, one_cosmic, other}; 
 
         bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
