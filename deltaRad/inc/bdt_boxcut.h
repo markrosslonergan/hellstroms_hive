@@ -29,8 +29,6 @@
 #include "TFriendElement.h"
 
 
-
-
 class bdt_boxcut{
 	public:
 		std::string core_cuts;	
@@ -43,6 +41,7 @@ class bdt_boxcut{
 
 		int doCuts(TFile *ftest);
 
+        int setUpFolders();
 
 };
 

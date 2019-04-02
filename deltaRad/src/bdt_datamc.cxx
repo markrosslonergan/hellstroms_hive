@@ -164,7 +164,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 rmin=0; rmax = 1.99;
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
-            double max_modifier = 1.4;
+            double max_modifier = 1.65;
+
             
             if(var.is_logplot == true){
                 pad0top->SetLogy();
@@ -179,13 +180,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             d0->SetMarkerStyle(20);
             d0->SetLineColor(kBlack);
 
-            stk->SetMaximum(tsum->GetMaximum()*1.4);
             stk->SetMinimum(0.0001);
             stk->Draw("hist");
             stk->SetTitle(stage_names.at(s).c_str());
             stk->GetXaxis()->SetTitle(var.unit.c_str());
             stk->GetYaxis()->SetTitle("Verticies");
-            stk->GetYaxis()->SetTitleOffset(1.5);
+            stk->GetYaxis()->SetTitleOffset(1.6);
             stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
             stk->SetMinimum(min_val);
             tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
@@ -474,12 +474,12 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         double max_modifier = 1.4;
         double min_val = 0.01;
         if(is_bdt_variable) {
-            max_modifier = 10.0;
+            max_modifier = 30.0;
             min_val = 0.1;
         }
 
         vec_stacks.at(k)->SetMaximum(vec_th1s.at(k)->GetMaximum()*1.4);
-        vec_stacks.at(k)->SetMinimum(0.0001);
+        vec_stacks.at(k)->SetMinimum(0.00001);
         vec_stacks.at(k)->Draw("hist");
         vec_stacks.at(k)->SetTitle(stage_name.at(k).c_str());
         vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
@@ -490,7 +490,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         vec_th1s.at(k)->DrawCopy("Same E2"); vec_th1s.at(k)->SetFillStyle(0);//vec_th1s.at(k)->Draw("hist same");
 
 
-        TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
+        TLegend *l0 = new TLegend(0.11,0.66,0.89,0.89);
         l0->SetNColumns(2);
         double NeventsStack = 0;
 

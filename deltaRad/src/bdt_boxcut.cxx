@@ -55,6 +55,15 @@ int bdt_boxcut::doCuts(TFile *ftest){
 }
 
 
+int bdt_boxcut::setUpFolders(){
+
+
+
+
+
+    return 0;
+}
+
 
 	/*
 	}else if(mode_option == "boxcut"){
