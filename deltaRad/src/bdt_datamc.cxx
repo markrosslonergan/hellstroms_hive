@@ -164,7 +164,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 rmin=0; rmax = 1.99;
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
-            double max_modifier = 1.65;
+            //double max_modifier = 1.65;
+            double max_modifier = 2.0;
 
             
             if(var.is_logplot == true){

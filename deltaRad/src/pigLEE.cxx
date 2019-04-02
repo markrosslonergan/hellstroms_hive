@@ -39,6 +39,7 @@ int main (int argc, char *argv[]){
     bool run_bnb = true;
     int number = -1;
     bool response_only = false;
+    int sbnfit_stage = 1;
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -49,6 +50,7 @@ int main (int argc, char *argv[]){
         {"topo_tag",	required_argument,	0, 't'},
         {"cosmic",		no_argument,	0, 'c'},
         {"bnb",		    no_argument,	0, 'b'},
+        {"sbnfit",		required_argument,	0, 's'},
         {"help",		required_argument,	0, 'h'},
         {"number",		required_argument,	0, 'n'},
         {0,			no_argument, 		0,  0},
@@ -83,6 +85,10 @@ int main (int argc, char *argv[]){
                 break;
             case 'd':
                 dir = optarg;
+                break;
+            case 's':
+                mode_option = "sbnfit";
+                sbnfit_stage = strtod(optarg,NULL);
                 break;
             case 't':
                 topo_tag = optarg;
@@ -161,10 +167,10 @@ int main (int argc, char *argv[]){
         training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<1.";
         num_track_cut =  "==1";
 
-        bnb_bdt_info.setTopoName("1#gamma1p");
+        bnb_bdt_info.setTopoName("2#gamma1p");
     }else if (analysis_tag == "2g0p") {
         num_track_cut = "==0";
-        bnb_bdt_info.setTopoName("1#gamma0p");
+        bnb_bdt_info.setTopoName("2#gamma0p");
     }
     else {
       std::cout << "Invalid analysis tag" << std::endl;
@@ -210,13 +216,13 @@ int main (int argc, char *argv[]){
     ///////////////// SAMPLES /////////////////////////
     std::cout<<"Defining all our bdt_files."<<std::endl;
     // MC+Overlay files
-    bdt_file *training_signal=new bdt_file(mydir,"ncpi0_overlay_v10.1.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(mydir, "ncpi0_overlay_v10.1.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(mydir,"ncpi0_overlay_v10.1.root","NCPi0OverlayOther","hist","singlephoton/",kRed-7,signal_other_flow);
+    bdt_file *training_signal=new bdt_file(dirv10,"ncpi0_overlay_v10.1.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dirv10, "ncpi0_overlay_v10.1.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dirv10,"ncpi0_overlay_v10.1.root","NCPi0OverlayOther","hist","singlephoton/",kRed-7,signal_other_flow);
     signal_other->fillstyle = 3333;
 
-    bdt_file *training_bnb = new bdt_file(mydir, "bnb_overlay_v10.1.root", "BNBTrain", "hist","singlephoton/", kBlue-4, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(mydir, "bnb_overlay_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *training_bnb = new bdt_file(dirv10, "bnb_overlay_combined_v10.1.root", "BNBTrain", "hist","singlephoton/", kBlue-4, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dirv10, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
 
     //Data files
     bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
@@ -332,27 +338,28 @@ int main (int argc, char *argv[]){
     }	
     else if(mode_option == "recomc"){
 
-        std::vector<int> recomc_cols = {kBlue-3, kRed+1, kRed-4, kAzure+2, kAzure+5, kGreen+1, kGreen-2, kGray+1};
+        std::vector<int> recomc_cols = {kRed+1, kAzure+2, kAzure+5, kGreen-2, kGreen-3, kGray+1};
 
-        std::vector<std::string>recomc_names = {"BNB NC #pi^{0}", "NC BNB Background", "NC #Delta Radiative", "BNB CC #pi^{0}", "CC BNB Background", "Two Cosmic Showers", "One Cosmic Shower", "Other"};
+        std::vector<std::string>recomc_names = {"NC BNB Background", "NC #Delta Radiative", "BNB CC #pi^{0}", "CC BNB Background", "Two Cosmic Showers", "One Cosmic Shwoer", "Other"};
         // How are they defined, cutwise?
         // NC pi0 signal: two photon showers whose true parents are pi0's, all resulting from NC BNB interaction
-        std::string signal_string = "mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111 && sim_track_overlay_fraction[0]<0.5";
+        std::string signal_string = "mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111 && sim_shower_overlay_fraction[0]<0.2 && sim_shower_overlay_fraction[1]<0.2 && sim_track_overlay_fraction[0]<0.2";
         // Other NC BNB events where either (a) one of the showers isn't photon-induced, or (b) one doesn't come from pi0
         std::string bkg1 = "mctruth_cc_or_nc == 1 && mctruth_is_delta_radiative!=1 && sim_shower_overlay_fraction[0]<0.5 && sim_shower_overlay_fraction[1]<0.5 && sim_track_overlay_fraction[0]<0.5 && !(sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg==111 && sim_shower_parent_pdg[1]==111)";
         // NC delta radiative decay; very small subset of NC background
         std::string bkg2 = "sim_shower_pdg["+shower_index1+"] == 22 && sim_shower_parent_pdg["+shower_index1+"] != 111 && sim_shower_overlay_fraction["+shower_index1+"]<0.5 && sim_shower_overlay_fraction["+shower_index2+"]>0.5 && mctruth_is_delta_radiative == 1";
         // CC pi0 background
-        std::string bkg3 = "mctruth_cc_or_nc==0 && sim_shower_overlay_fraction[0]<0.5 && sim_shower_overlay_fraction[1]<0.5 && mctruth_num_exiting_pi0>0 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111 && sim_track_overlay_fraction[0]<0.5";
+        std::string bkg3 = "mctruth_cc_or_nc==0 && sim_shower_overlay_fraction[0]<0.2 && sim_shower_overlay_fraction[1]<0.2 && mctruth_num_exiting_pi0==1 && sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111 && sim_track_overlay_fraction[0]<0.2";
         // CC other
-        std::string bkg4 = "mctruth_cc_or_nc == 0 && sim_shower_overlay_fraction[0]<0.5 && sim_shower_overlay_fraction[1]<0.5 && sim_track_overlay_fraction < 0.5 && (sim_shower_pdg[0] != 22 || sim_shower_pdg[1] != 22 || sim_shower_parent_pdg[0] != 111 || sim_shower_parent_pdg[1] != 111)";
+        std::string bkg4 = "mctruth_cc_or_nc==0 && sim_shower_overlay_fraction[0]<0.2 && sim_shower_overlay_fraction[1]<0.2 && sim_track_overlay_fraction[0]<0.2 && (sim_shower_pdg[0] != 22 || sim_shower_pdg[1] != 22 || sim_shower_parent_pdg[0] != 111 || sim_shower_parent_pdg[1] != 111)";
         // Cosmics (both?)
-        std::string bkg5 = "sim_shower_overlay_fraction[0]>0.5 && sim_shower_overlay_fraction[1]>0.5";
-        std::string bkg6 = "(sim_shower_overlay_fraction[0]>0.5 || sim_shower_overlay_fraction[1]>0.5) && !(sim_shower_overlay_fraction[0]>0.5 && sim_shower_overlay_fraction[1]>0.5) && mctruth_is_delta_radiative!=1";
+        std::string bkg5 = "sim_shower_overlay_fraction[0]>0.8 && sim_shower_overlay_fraction[1]>0.8";
+        std::string bkg6 = "(sim_shower_overlay_fraction[0]>0.8 || sim_shower_overlay_fraction[1]>0.8) && !(sim_shower_overlay_fraction[0]>0.8 && sim_shower_overlay_fraction[1]>0.8)";
         // Other; defined as "!" versions of above
+        //std::string other = "!("+signal_string+") && !("+bkg1+") && !("+bkg2+") && !("+bkg3+") && !("+bkg4+") && !("+bkg5+") && !("+bkg6+")";
         std::string other = "!("+signal_string+") && !("+bkg1+") && !("+bkg2+") && !("+bkg3+") && !("+bkg4+") && !("+bkg5+") && !("+bkg6+")";
        
-        std::vector<std::string> recomc_cuts = {signal_string, bkg1, bkg2, bkg3, bkg4, bkg5, bkg6, other}; 
+        std::vector<std::string> recomc_cuts = {bkg1, bkg3, bkg4, bkg5, bkg6, other}; 
 
         bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
@@ -508,7 +515,49 @@ int main (int argc, char *argv[]){
         //bdt_efficiency(bnb, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 5e19);
 
 
-    }else {
+    }else if(mode_option == "sbnfit"){
+        if(number==-1) number ==0;
+
+        bdt_file * file = bdt_files.at(number);
+
+        //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
+        file->teventweight->AddFriend(file->tvertex);
+
+        std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(sbnfit_stage)+"_"+file->tag+".root";
+        
+        std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
+        TFile* f_sbnfit = new TFile(output_file_name.c_str(),"recreate");
+        
+
+        std::cout<<"Creating directory structure"<<std::endl;
+        TDirectory *cdtof = f_sbnfit->mkdir("singlephoton");
+        cdtof->cd();    
+        
+        
+        std::string sbnfit_cuts = file->getStageCuts(sbnfit_stage,fcoscut,fbnbcut);
+        
+        std::cout<<"Copying vertex tree"<<std::endl;
+        TTree * t_sbnfit_tree = (TTree*)file->tvertex->CopyTree(sbnfit_cuts.c_str());
+        std::cout<<"Copying POT tree"<<std::endl;
+        TTree * t_sbnfit_pot_tree = (TTree*)file->tpot->CopyTree("1");
+        std::cout<<"Copying eventweight tree (via friends)"<<std::endl;
+        TTree * t_sbnfit_eventweight_tree = (TTree*)file->teventweight->CopyTree(sbnfit_cuts.c_str());
+
+
+        
+        std::cout<<"Writing to file"<<std::endl;
+        cdtof->cd();
+        t_sbnfit_tree->Write();
+        t_sbnfit_pot_tree->Write();
+        t_sbnfit_eventweight_tree->Write(); 
+
+        f_sbnfit->Close();
+        std::cout<<"Done!"<<std::endl;
+
+
+        return 0;
+    }
+    else {
         std::cout << "WARNING: " << mode_option << " is an invalid option\n";
     }
 
