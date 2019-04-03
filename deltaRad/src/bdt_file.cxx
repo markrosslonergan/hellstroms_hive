@@ -1,8 +1,5 @@
 #include "bdt_file.h"
 
-
-
-
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
     dir(indir),
     name(inname),
@@ -21,7 +18,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     rangen = new TRandom3();
 
     scale_data =1.0;
-    std::cout<<"Loading : "<<name<<std::endl;
+    std::cout<<"\nLoading : "<<name<<std::endl;
     f = new TFile((dir+"/"+name).c_str(), "read");	
 
     if(!f->IsOpen() || !f){

@@ -1,15 +1,5 @@
 #! /bin/bash
 
-echo "Going to delete old files, if you dont stop."
-sleep(10)
-rm  *.root
-rm -r BDT*
-
-now=$(date +"%T")
-echo "Delete old root files and weight folders; Current time : $now"
-echo "-----Beee------! Start training!" > ./record.txt 2>&1
-./eLEE -x box_copy.xml -o train  >> ./record.txt 2>&1
-
 echo "Finish!!!!!!!!!!!" >> ./record.txt 2>&1
 now=$(date +"%T")
 echo "Current time : $now"
@@ -17,12 +7,6 @@ echo "--------------------------------------------------------------------------
 echo "Now runs app -var:" | tee -a ./record.txt 
 ./eLEE -x box_copy.xml -o var #>> ./record.txt 2>&1
 
-echo "Finish!!!!!!!!!!!" >> ./record.txt 2>&1
-now=$(date +"%T")
-echo "Current time : $now"
-echo "-------------------------------------------------------------------------------------------" >> ./record.txt 2>&1
-echo "Now runs app --bnb:" | tee -a ./record.txt 
-./eLEE -x box_copy.xml -o app > /dev/null #>> ./record.txt 2>&1
 
 echo "Finish!!!!!!!!!!!" >> ./record.txt 2>&1
 now=$(date +"%T")

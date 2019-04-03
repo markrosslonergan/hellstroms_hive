@@ -85,7 +85,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
     //Loop over all stages
 
-    for(int s = 0; s< 2; s++){
+    for(int s = 0; s< 4; s++){
 
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
@@ -191,7 +191,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
 
 
-            TLegend *l0 = new TLegend(0.11,0.65,0.89,0.90);
+            TLegend *l0 = new TLegend(0.11,0.55,0.89,0.95);
 			//TLegend(x,y,width,height)
             l0->SetNColumns(2);
             double NeventsStack = 0;

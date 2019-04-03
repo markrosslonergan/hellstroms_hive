@@ -1,4 +1,5 @@
 #include "bdt_spec.h"
+using namespace std;
 
 
 THStack* bdt_stack::getBDTStack(bdt_info whichbdt, std::string binning, int level, double cut1, double cut2){
@@ -373,8 +374,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation Preliminary");
 			tbdt2->Draw();
 
-
-			TText *titbdt2 = drawPrelim(0.89, 0.91, 0.035, stage_names.at(s).c_str());
+			TText *titbdt2 = drawPrelim(0.69, 0.91, 0.035, stage_names.at(s).c_str());
 			titbdt2->SetTextAlign(30);
 			titbdt2->Draw();
 
@@ -402,6 +402,8 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 
 
 int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
+	cout<<"COME AND VISIT 405 of bdt_spec.cxx\n\n\n\n"<<endl;
+	/*
 	TCanvas *cobs = new TCanvas("","",1800,1600);
 	cobs->Divide(2,2,0.0025,0.0000001);
 
@@ -428,11 +430,10 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	t2->SetMarkerSize(0);
 	t3->SetMarkerSize(0);
 
-	/*		t0->SetLineWidth(1);
-			t1->SetLineWidth(0.075);
-			t2->SetLineWidth(0.05);
-			t3->SetLineWidth(0.025);
-			*/	
+//			t0->SetLineWidth(1);
+//			t1->SetLineWidth(0.075);
+//			t2->SetLineWidth(0.05);
+//			t3->SetLineWidth(0.025);
 
 	std::cout<<"1"<<std::endl;
 
@@ -661,6 +662,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	delete t0; delete t1; delete t2; delete t3;	
 
 	return 0;
+*/
 }
 
 

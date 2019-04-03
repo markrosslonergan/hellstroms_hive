@@ -1,4 +1,5 @@
 #include "bdt_train.h"
+using namespace std;
 
 int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
 
@@ -34,7 +35,10 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 
 
 	dataloader->SetSignalWeightExpression(signal_file->weight_branch.c_str());
+	cout<<"CHECK WEIGHT BRANCH for signal: "<<signal_file->weight_branch<<endl;	
+
 	dataloader->SetBackgroundWeightExpression(background_file->weight_branch.c_str());
+	cout<<"CHECK WEIGHT BRANCH for background: "<<background_file->weight_branch<<endl;	
 
 	for(bdt_variable &var: variables) dataloader->AddVariable(var.name.c_str());
 
