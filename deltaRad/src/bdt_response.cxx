@@ -66,7 +66,7 @@ int bdt_response::plot_bdt_response(TFile *fout){
 		h_bdt.back()->Write();
 		std::cout<<h_bdt.back()->GetSumOfWeights()<<" "<<bdtvar.name<<std::endl;
 		h_bdt.back()->GetXaxis()->SetTitle(bdtvar.unit.c_str());
-		h_bdt.back()->GetYaxis()->SetTitle("Verticies [Unit Normalized]");
+		h_bdt.back()->GetYaxis()->SetTitle("Events [Unit Normalized]");
 		h_bdt.back()->GetYaxis()->SetTitleOffset(1.25);
 		h_bdt.back()->GetYaxis()->SetTitleSize(0.035);
 
@@ -216,7 +216,7 @@ pad0bot->SetGridx(); // vertical grid
 	latex.SetNDC();
 	latex.DrawLatex(.15,.433,bdt_sig->topo_name.c_str());
 
-	TText *pre = drawPrelim(0.13,0.86,0.1,"MicroBooNE Simulation Preliminary");
+	TText *pre = drawPrelim(0.13,0.86,0.1,"MicroBooNE Simulation In Progress");
 	pre->Draw();
 
 

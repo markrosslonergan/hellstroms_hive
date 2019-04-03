@@ -2,7 +2,7 @@
 
 int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::vector<bdt_variable> vars, bdt_info input_bdt_info, bool isSpectator){
 
-    std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
+    std::vector<std::string> title = {"Topological Selection","Pre-Selection Cuts"};
 
     for(int j=0; j<2;j++){	
 
@@ -54,7 +54,7 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
             sig->SetMinimum(0);
             bkg->Draw("hist same");
             //sig->GetXaxis()->SetTitle(v.unit.c_str());
-            sig->GetYaxis()->SetTitle("Verticies [Area Normalized]");
+            sig->GetYaxis()->SetTitle("Events [Area Normalized]");
             sig->GetYaxis()->SetTitleOffset(1.5);
 
             TLegend *l = new TLegend(0.11,0.75,0.89,0.89);
@@ -69,14 +69,14 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
 
             TText *pre;
             if (isSpectator) {
-                pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulaton Preliminary - Spectator Variable");
+                pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulaton In Progress - Spectator Variable");
             }else {
-                pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulaton Preliminary - Training Variable");
+                pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulaton In Progress - Training Variable");
 
             }
 
 
-            //TText *pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulation Preliminary");
+            //TText *pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulation In Progress");
             pre->Draw();
 
             TLatex latex;
