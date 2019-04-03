@@ -159,10 +159,10 @@ int main (int argc, char *argv[]){
         training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<1.";
         num_track_cut =  "==1";
 
-        bnb_bdt_info.setTopoName("1#gamma1p");
+        bnb_bdt_info.setTopoName("2#gamma1p");
     }else if (analysis_tag == "2g0p") {
         num_track_cut = "==0";
-        bnb_bdt_info.setTopoName("1#gamma0p");
+        bnb_bdt_info.setTopoName("2#gamma0p");
     }
     else {
       std::cout << "Invalid analysis tag" << std::endl;
@@ -281,8 +281,8 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "2g1p"){
-        fcoscut =   0.643;
-        fbnbcut = 0.6323;
+        fcoscut =   0.64284;
+        fbnbcut = 0.632225;
     }else if(analysis_tag == "2g0p"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;
@@ -469,7 +469,7 @@ int main (int argc, char *argv[]){
 
     }else if(mode_option == "vars"){
 
-        std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
+        std::vector<std::string> title = {"All Vertices","Pre-Selection Cuts"};
 
         if(run_cosmic){
 

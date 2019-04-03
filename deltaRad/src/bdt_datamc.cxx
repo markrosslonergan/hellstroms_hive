@@ -22,7 +22,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
         std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
         delete tmp;
     }
-    std::string  binning = "(46,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
+    std::string  binning = "(40,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
 
     bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
     return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
@@ -82,7 +82,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
     ftest->cd();
 
-    std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
+    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
     //Loop over all stages
 
     for(int s = 0; s< 4; s++){
@@ -164,7 +164,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 rmin=0; rmax = 1.99;
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
-            double max_modifier = 1.4;
+            double max_modifier = 1.9;
             
             if(var.is_logplot == true){
                 pad0top->SetLogy();
@@ -184,7 +184,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             stk->Draw("hist");
             stk->SetTitle(stage_names.at(s).c_str());
             stk->GetXaxis()->SetTitle(var.unit.c_str());
-            stk->GetYaxis()->SetTitle("Verticies");
+            stk->GetYaxis()->SetTitle("Events");
             stk->GetYaxis()->SetTitleOffset(1.5);
             stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
             stk->SetMinimum(min_val);
@@ -252,9 +252,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary - Spectator Variable");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In-Progress - Spectator Variable");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary - Training Variable");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In-Progress - Training Variable");
 
             }
             pre->Draw();
@@ -443,14 +443,14 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
     std::vector<TH1*> vec_th1s = {sh0,sh1,sh2,sh3};	
     std::vector<std::string> data_cuts = {dat_cut_0, dat_cut_1, dat_cut_2, dat_cut_3};
     std::vector<TH1*> data_th1s = {d0,d1,d2,d3};
-    //std::vector<std::string> stage_name = {"All Verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT Cut"};
-    std::vector<std::string> stage_name = {"All Verticies","","Cosmic BDT Cut","BNB BDT Cut"};
+    std::vector<std::string> stage_name = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT Cut"};
+    //std::vector<std::string> stage_name = {"Topological Selection","","Cosmic BDT Cut","BNB BDT Cut"};
 
 
     for(int k = 0; k<4; k++){
         TCanvas *cobs = new TCanvas("","",900,800);
-        //	cobs->cd(k+1);
-        cobs->cd();
+        cobs->cd(k+1);
+        //cobs->cd();
         TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 
 
@@ -470,7 +470,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         }else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
 
 
-        double max_modifier = 1.4;
+        double max_modifier = 1.9;
         double min_val = 0.01;
         if(is_bdt_variable) {
             max_modifier = 10.0;
@@ -482,7 +482,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         vec_stacks.at(k)->Draw("hist");
         vec_stacks.at(k)->SetTitle(stage_name.at(k).c_str());
         vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
-        vec_stacks.at(k)->GetYaxis()->SetTitle("Verticies");
+        vec_stacks.at(k)->GetYaxis()->SetTitle("Events");
         vec_stacks.at(k)->GetYaxis()->SetTitleOffset(1.5);
         vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum())*max_modifier);
         vec_stacks.at(k)->SetMinimum(min_val);
@@ -533,11 +533,11 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         pottex.DrawLatex(.7,.64, pot_draw.c_str());
 
-        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary");
+        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In-Progress");
         pre->Draw();
 
-        //cobs->cd(k+1);	
-        cobs->cd();
+        cobs->cd(k+1);	
+        //cobs->cd();
         TPad *pad0bot = new TPad(("padbot_"+stage_name.at(k)).c_str(),("padbot_"+stage_name.at(k)).c_str(), 0, 0.05, 1, 0.35);
         pad0bot->SetTopMargin(0);
         pad0bot->SetBottomMargin(0.351);
