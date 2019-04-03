@@ -194,7 +194,7 @@ int main (int argc, char *argv[]){
         signal_definition += "&&" + v_denom[i];
     }
 
-    std::string background_definition = "(abs(mctruth_nu_pdg)!=12";//||mctruth_cc_or_nc==1)";
+    std::string background_definition = "abs(mctruth_nu_pdg)!=12";//||mctruth_cc_or_nc==1";
 //    std::string intrinsic_background = "(abs(mctruth_nu_pdg)==12&&mctruth_cc_or_nc==0)";
     std::string topological_cuts = "(reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut+")";
     std::string postcuts = "1";  //We dont currently use postcuts
@@ -374,8 +374,15 @@ int main (int argc, char *argv[]){
     }
     else if(mode_option == "response"){
 
-        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-        //Ok print out Cosmic BDT
+	if (access("response",F_OK) == -1){
+	    mkdir("response",0777);//Create a folder for pdf.
+	}
+	else{
+	    std::cout<<"Overwrite response/ in 2 seconds, 1 seconds, ..."<<std::endl;
+	    sleep(2);
+	}
+	TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+	//Ok print out Cosmic BDT
         if(run_cosmic){
             bdt_response cosmic_response(cosmic_bdt_info, training_signal, OffBeamData);
             cosmic_response.plot_bdt_response(ftest);
@@ -543,6 +550,16 @@ int main (int argc, char *argv[]){
 
 
     }else if(mode_option == "datamc"){
+
+	if (access("datamc",F_OK) == -1){
+	    mkdir("datamc",0777);//Create a folder for pdf.
+	}
+	else{
+	    std::cout<<"Overwrite datamc/ in 2 seconds, 1 seconds, ..."<<std::endl;
+	    sleep(2);
+	}
+
+
         std::cout<<"Starting datamc"<<std::endl;
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 
@@ -584,38 +601,48 @@ int main (int argc, char *argv[]){
             if(run_cosmic) real_datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
         }
 
-    }else if(mode_option == "vars"){
-
-        std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
-
-        if(run_cosmic){
-
-            if(number != -1){
-                //plot_bdt_variable(training_signal, OffBeamData, vars.at(number), cosmic_bdt_info);
-                plot_bdt_variable(training_signal, OffBeamData, training_vars.at(number), cosmic_bdt_info, false);
-                plot_bdt_variable(training_signal, OffBeamData, plotting_vars.at(number), cosmic_bdt_info, true);
-            }else{
-                //plot_bdt_variables(training_signal, OffBeamData, vars, cosmic_bdt_info);
-               plot_bdt_variables(training_signal, OffBeamData, training_vars, cosmic_bdt_info, false);
-               plot_bdt_variables(training_signal, OffBeamData, plotting_vars, cosmic_bdt_info, true);
-          }
-
-        }
-        if(run_bnb){
+    }else if(mode_option == "vars"|| mode_option == "var"){
 
 
-            if(number != -1){
-                plot_bdt_variable(training_signal, training_bnb, training_vars.at(number), bnb_bdt_info, false);
-                plot_bdt_variable(training_signal, training_bnb, plotting_vars.at(number), bnb_bdt_info, true);
-         }else{
-                plot_bdt_variables(training_signal, training_bnb, training_vars, bnb_bdt_info, false);
-                plot_bdt_variables(training_signal, training_bnb, plotting_vars, bnb_bdt_info, true);
-    }
-
-        }
+	if (access("var",F_OK) == -1){
+	    mkdir("var",0777);//Create a folder for pdf.
+	}
+	else{
+	    std::cout<<"Overwrite var/ in 2 seconds, 1 seconds, ..."<<std::endl;
+	    sleep(2);
+	}
 
 
-    } else if(mode_option == "eff"){
+	std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};
+
+	if(run_cosmic){
+
+	    if(number != -1){
+		//plot_bdt_variable(training_signal, OffBeamData, vars.at(number), cosmic_bdt_info);
+		plot_bdt_variable(training_signal, OffBeamData, training_vars.at(number), cosmic_bdt_info, false);
+		plot_bdt_variable(training_signal, OffBeamData, plotting_vars.at(number), cosmic_bdt_info, true);
+	    }else{
+		//plot_bdt_variables(training_signal, OffBeamData, vars, cosmic_bdt_info);
+		plot_bdt_variables(training_signal, OffBeamData, training_vars, cosmic_bdt_info, false);
+		plot_bdt_variables(training_signal, OffBeamData, plotting_vars, cosmic_bdt_info, true);
+	    }
+
+	}
+	if(run_bnb){
+
+
+	    if(number != -1){
+		plot_bdt_variable(training_signal, training_bnb, training_vars.at(number), bnb_bdt_info, false);
+		plot_bdt_variable(training_signal, training_bnb, plotting_vars.at(number), bnb_bdt_info, true);
+	    }else{
+		plot_bdt_variables(training_signal, training_bnb, training_vars, bnb_bdt_info, false);
+		plot_bdt_variables(training_signal, training_bnb, plotting_vars, bnb_bdt_info, true);
+	    }
+
+	}
+
+
+    }else if(mode_option == "eff"){
 
         std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==1"};
 

@@ -191,7 +191,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
 
 
-            TLegend *l0 = new TLegend(0.11,0.60,0.89,0.89);
+            TLegend *l0 = new TLegend(0.11,0.65,0.89,0.90);
+			//TLegend(x,y,width,height)
             l0->SetNColumns(2);
             double NeventsStack = 0;
 
@@ -490,7 +491,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         vec_th1s.at(k)->DrawCopy("Same E2"); vec_th1s.at(k)->SetFillStyle(0);//vec_th1s.at(k)->Draw("hist same");
 
 
-        TLegend *l0 = new TLegend(0.11,0.66,0.89,0.89);
+        TLegend *l0 = new TLegend(0.11,0.65,0.89,0.89);
         l0->SetNColumns(2);
         double NeventsStack = 0;
 
@@ -519,20 +520,15 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         l0->SetLineWidth(0);
         l0->SetLineColor(0);
         l0->SetFillStyle(0);
-        l0->SetTextSize(0.04);
+        l0->SetTextSize(0.03);
 
-      //  TLatex latex;
-       // latex.SetTextSize(0.06);
-      //  latex.SetTextAlign(13);  //align at top
-      //  latex.SetNDC();
-      //  latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
         TLatex pottex;
         pottex.SetTextSize(0.06);
         pottex.SetTextAlign(13);  //align at top
         pottex.SetNDC();
         std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-        pottex.DrawLatex(.7,.64, pot_draw.c_str());
+        pottex.DrawLatex(.6,.64, pot_draw.c_str());//(x,y,..) position
 
         TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary");
         pre->Draw();

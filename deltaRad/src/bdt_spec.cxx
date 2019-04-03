@@ -362,13 +362,13 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			latexbdt2.SetTextSize(0.05);
 			latexbdt2.SetTextAlign(13);  //align at top
 			latexbdt2.SetNDC();
-			latexbdt2.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+			latexbdt2.DrawLatex(.66,.70,this->stack.at(0)->topo_name.c_str());
 			TLatex pottenbdt2;
 			pottenbdt2.SetTextSize(0.05);
 			pottenbdt2.SetTextAlign(13);  //align at top
 			pottenbdt2.SetNDC();
 			std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-			pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
+			pottenbdt2.DrawLatex(.66,.65, pot_draw_bdt2.c_str());
 
 			TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation Preliminary");
 			tbdt2->Draw();

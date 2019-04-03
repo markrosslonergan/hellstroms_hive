@@ -1,7 +1,10 @@
 #! /bin/bash
 
+rm  *.root
+rm -r BDT*
+
 now=$(date +"%T")
-echo "Current time : $now"
+echo "Delete old root files and weight folders; Current time : $now"
 echo "-----Beee------! Start training!" > ./record.txt 2>&1
 ./eLEE -x box_copy.xml -o train  >> ./record.txt 2>&1
 
