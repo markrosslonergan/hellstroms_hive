@@ -85,7 +85,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
     //Loop over all stages
 
-    for(int s = 1; s< 2; s++){
+    for(int s = 0; s< 2; s++){
 
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
@@ -164,7 +164,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 rmin=0; rmax = 1.99;
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
-            double max_modifier = 1.65;
+            double max_modifier = 1.7;
 
             
             if(var.is_logplot == true){
@@ -191,7 +191,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
 
 
-            TLegend *l0 = new TLegend(0.11,0.65,0.89,0.89);
+            TLegend *l0 = new TLegend(0.11,0.60,0.89,0.89);
             l0->SetNColumns(2);
             double NeventsStack = 0;
 
@@ -201,7 +201,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 double Nevents = f->GetEntries()*(plot_pot/f->pot)*f->scale_data;
                 NeventsStack+=Nevents;
                 auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
-                h1->SetFillColor(f->col);
+                std::cout<<"Adding legend for "<<f->tag<<" entries "<<Nevents<<std::endl;
+		h1->SetFillColor(f->col);
                 h1->SetFillStyle(f->fillstyle);
                 h1->SetLineColor(kBlack);
                 std::string string_events = to_string_prec(Nevents,2);
