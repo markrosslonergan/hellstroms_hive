@@ -35,7 +35,7 @@ int main (int argc, char *argv[]){
     std::string xml = "default.xml";
     std::string topo_tag = "track";
     std::string bdt_tag = "cosmic";
-    std::string analysis_tag = topo_tag;
+   // std::string analysis_tag = topo_tag;
 
     bool run_cosmic = true;
     bool run_bnb = true;
@@ -125,6 +125,9 @@ int main (int argc, char *argv[]){
     //			Begininning of main program here!
     //===========================================================================================
     //===========================================================================================
+    
+    std::string analysis_tag = topo_tag;
+
 
     //Most TMVA arguments are loaded in here via XML
     std::cout<<"Getting xml variables"<<std::endl;
@@ -137,6 +140,7 @@ int main (int argc, char *argv[]){
 
     //Load up variables and precut object ! ATTN: Found in variable_list.cxx in parent src/ folder
     variable_list var_list(analysis_tag);
+    std::cout<<"Working with analysis tag: "<<analysis_tag<<std::endl;
 
     //Get all the variables you want to use	
     std::vector<bdt_variable> vars = var_list.all_vars;
