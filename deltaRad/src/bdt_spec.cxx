@@ -673,7 +673,9 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c2){
 	TCanvas *cobs = new TCanvas("","",1800,1600);
 	cobs->Divide(2,2,0.0025,0.0000001);
-	double plot_pot=6.6e20;
+	//double plot_pot=6.6e20;
+    double plot_pot=13.2e20;
+
 
 	ftest->cd();
 	THStack* s0 = this->getBDTStack(whichbdt,0,-9,-9);

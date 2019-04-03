@@ -213,8 +213,8 @@ int main (int argc, char *argv[]){
 
     bdt_file *dirt = new bdt_file(dir,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
-    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_v10.01.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_v10.01.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
 
     //Data files
     bdt_file *OnBeamData    = new bdt_file(dir9, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
@@ -311,9 +311,9 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "track"){
-        //0.664 0.59375
-        fcoscut =  0.664;
-        fbnbcut =  0.59375;
+         //0.677 0.6125
+        fcoscut =  0.677;
+        fbnbcut =  0.60625;
     }else if(analysis_tag == "notrack"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;
@@ -600,7 +600,7 @@ int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, s
     for(int i=0; i< files.size();i++){
 
         c->cd();
-        TH1* th1 =  (TH1*) files[i]->getTH1(vars[i], testcut+"&&"+cuts[i], "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
+        TH1* th1 =  (TH1*) files[i]->getTH1(vars[i], testcut+"&&"+cuts[i], "photon_truth_overlay"+std::to_string(i), 13.2e20, 1);
         c->cd();
 
         th1->SetLineColor(cols[i]);

@@ -141,7 +141,9 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	double label_size_upper=0.05;
 	double title_offset_upper = 1.45;
 
-	double plot_pot = 6.6e20;
+//	double plot_pot = 6.6e20;
+	double plot_pot = 13.2e20;
+
 
 	//The reco MC vectors (one for each file) currently only bnbcosmic has truth sooo
 	std::vector<TH1*> reco_mc_vec_sel;
