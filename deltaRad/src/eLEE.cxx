@@ -190,7 +190,7 @@ int main (int argc, char *argv[]){
     std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
     std::vector<std::string> v_denom = {"abs(mctruth_nu_pdg)==12"," ((mctruth_num_exiting_pi0+mctruth_num_exiting_pipm) ==0)", 
-				"(mctruth_leading_exiting_proton_energy-0.93828)>0.04" ,"mctruth_lepton_E[0]>0.02" ,fid_cut}; 
+				"(mctruth_leading_exiting_proton_energy-0.93828)>0.04" ,"mctruth_lepton_E[0]>0.02" ,fid_cut,"mctruth_nu_E<0.8"}; 
 
     std::string signal_definition = v_denom[0];
 
@@ -268,8 +268,11 @@ int main (int argc, char *argv[]){
 
 
 	 if(f->tag.compare(0,11,"LEEunfolded",0,11)==0){
+	 
 	 cout<<"Add Branch as weight\n\n"<<endl;
-	 f->weight_branch = "(lee_signal_weights.lee_weights)";
+
+	 f->weight_branch ="(lee_signal_weights.lee_weights)";
+	 
 	 f->tvertex->AddFriend("lee_signal_weights",(dir+"lee_weights_friend_for_nueintrinsic_overlay_v10.0.root").c_str());
 	}
 
@@ -514,7 +517,7 @@ int main (int argc, char *argv[]){
     else if(mode_option == "sig"){
 
 	TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-	std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
+	std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
 	//std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
 	std::ofstream save_sig("sig.txt");

@@ -22,7 +22,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
         std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
         delete tmp;
     }
-    std::string  binning = "(46,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
+    std::string  binning = whichbdt.binning;//"(46,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
 
     bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
     return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
@@ -191,8 +191,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
 
 
-            TLegend *l0 = new TLegend(0.11,0.55,0.89,0.95);
-			//TLegend(x,y,width,height)
+            TLegend *l0 = new TLegend(0.11,0.56,0.89,0.89);//This is for normal data-mc
+			//TLegend(x,y,x2,y2), i.e. left bottom & right top 
             l0->SetNColumns(2);
             double NeventsStack = 0;
 
@@ -475,12 +475,12 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         double max_modifier = 1.4;
         double min_val = 0.01;
         if(is_bdt_variable) {
-            max_modifier = 30.0;
-            min_val = 0.1;
+            max_modifier = 50.0;
+            min_val = 0.01;
         }
 
         vec_stacks.at(k)->SetMaximum(vec_th1s.at(k)->GetMaximum()*1.4);
-        vec_stacks.at(k)->SetMinimum(0.00001);
+        vec_stacks.at(k)->SetMinimum(0.001);
         vec_stacks.at(k)->Draw("hist");
         vec_stacks.at(k)->SetTitle(stage_name.at(k).c_str());
         vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
@@ -491,7 +491,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         vec_th1s.at(k)->DrawCopy("Same E2"); vec_th1s.at(k)->SetFillStyle(0);//vec_th1s.at(k)->Draw("hist same");
 
 
-        TLegend *l0 = new TLegend(0.11,0.65,0.89,0.89);
+        TLegend *l0 = new TLegend(0.11,0.55,0.89,0.89);
         l0->SetNColumns(2);
         double NeventsStack = 0;
 

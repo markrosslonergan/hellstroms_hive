@@ -15,14 +15,14 @@ now=$(date +"%T")
 echo "Current time : $now"
 echo "-------------------------------------------------------------------------------------------" >> ./record.txt 2>&1
 echo "Now runs app -var:" | tee -a ./record.txt 
-./eLEE -x box_copy.xml -o var #>> ./record.txt 2>&1
+./eLEE -x box_copy.xml -o var >> ./record.txt 2>&1
 
 echo "Finish!!!!!!!!!!!" >> ./record.txt 2>&1
 now=$(date +"%T")
 echo "Current time : $now"
 echo "-------------------------------------------------------------------------------------------" >> ./record.txt 2>&1
 echo "Now runs app --bnb:" | tee -a ./record.txt 
-./eLEE -x box_copy.xml -o app > /dev/null #>> ./record.txt 2>&1
+./eLEE -x box_copy.xml -o app >> ./record.txt 2>&1
 
 echo "Finish!!!!!!!!!!!" >> ./record.txt 2>&1
 now=$(date +"%T")

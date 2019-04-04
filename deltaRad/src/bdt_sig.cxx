@@ -209,8 +209,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 *-------------------------------Set parameters below-----------------------------------------------
 *--------------------------------------------------------------------------------------------------
 */
-	cut_min_cosmic = cut_max_cosmic*0.75;
-	cut_min_bnb = cut_max_bnb*0.75;
+	cut_min_cosmic = cut_max_cosmic*0.65;
+	cut_min_bnb = cut_max_bnb*0.65;
 
 	//Zoomed in track
 	//cut_min_cosmic = 0.58; cut_max_cosmic = 0.61;
@@ -219,7 +219,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	//instead of steps, use resolution, i.e. the size of cuts step:
 	double resolution = 0.01;   //initial resolution; decreases it after finishing one 
 	double res_step = 0.5;	    //set of searches: resolution = resolution*resolution_step;
-	int zoom_times = 1;	    //set up the minimum resolution 
+	int zoom_times = 2;	    //set up the minimum resolution 
 
 	//the last set of searches has resolution:
 	double final_resolution = resolution * pow (res_step, zoom_times);
