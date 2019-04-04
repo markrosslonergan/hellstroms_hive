@@ -12,9 +12,9 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 	double label_size_upper=0.05;
 	double title_offset_upper = 1.45;
 
-	double plot_pot = 6.6e20;
+	double plot_pot = 13.2e20;
 
-	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
+	std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 
 	//REWRITE THIS USING file->getStageCuts
 	file->recomc_cols = recomc_cols;
@@ -82,7 +82,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			std::cout<<"Drawn."<<std::endl;
 
 			s_reco_truth->GetXaxis()->SetTitle(var.unit.c_str());
-			s_reco_truth->GetYaxis()->SetTitle("Verticies");
+			s_reco_truth->GetYaxis()->SetTitle("Events");
 			s_reco_truth->GetYaxis()->SetTitleOffset(1.5);
 
 			TLatex latexsel;
@@ -112,7 +112,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			l_reco_truth->SetLineWidth(0);
 
 
-			c->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth_stage_"+std::to_string(s)+".png").c_str(),"png");
+			c->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
 			/*
 			for(auto * t : vec_reco_mc) delete t;
@@ -499,7 +499,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 
 	c_reco_truth->Write();
-	c_reco_truth->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth.png").c_str(),"png");
+	c_reco_truth->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth.pdf").c_str(),"pdf");
 
 
 

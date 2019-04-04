@@ -22,7 +22,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
         std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
         delete tmp;
     }
-    std::string  binning = "(40,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
+    std::string  binning = "(30,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
 
     bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
     return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
@@ -85,7 +85,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
     //Loop over all stages
 
-    for(int s = 0; s< 4; s++){
+    for(int s = 1; s< 4; s++){
 
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
@@ -447,10 +447,10 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
     //std::vector<std::string> stage_name = {"Topological Selection","","Cosmic BDT Cut","BNB BDT Cut"};
 
 
-    for(int k = 0; k<4; k++){
+    for(int k = 1; k<4; k++){
         TCanvas *cobs = new TCanvas("","",900,800);
-        cobs->cd(k+1);
-        //cobs->cd();
+        //cobs->cd(k+1);
+        cobs->cd();
         TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 
 
@@ -470,7 +470,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         }else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
 
 
-        double max_modifier = 1.9;
+        double max_modifier = 1.7;
         double min_val = 0.01;
         if(is_bdt_variable) {
             max_modifier = 10.0;
@@ -489,7 +489,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         vec_th1s.at(k)->DrawCopy("Same E2"); vec_th1s.at(k)->SetFillStyle(0);//vec_th1s.at(k)->Draw("hist same");
 
 
-        TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
+        TLegend *l0 = new TLegend(0.11,0.62,0.89,0.89);
         l0->SetNColumns(2);
         double NeventsStack = 0;
 
@@ -531,13 +531,13 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         pottex.SetNDC();
         std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-        pottex.DrawLatex(.7,.64, pot_draw.c_str());
+        pottex.DrawLatex(.7,.96, pot_draw.c_str());
 
         TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In-Progress");
         pre->Draw();
 
-        cobs->cd(k+1);	
-        //cobs->cd();
+        //cobs->cd(k+1);	
+        cobs->cd();
         TPad *pad0bot = new TPad(("padbot_"+stage_name.at(k)).c_str(),("padbot_"+stage_name.at(k)).c_str(), 0, 0.05, 1, 0.35);
         pad0bot->SetTopMargin(0);
         pad0bot->SetBottomMargin(0.351);
