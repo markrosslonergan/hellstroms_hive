@@ -35,7 +35,7 @@ int main (int argc, char *argv[]){
     std::string xml = "default.xml";
     std::string topo_tag = "track";
     std::string bdt_tag = "cosmic";
-   // std::string analysis_tag = topo_tag;
+    // std::string analysis_tag = topo_tag;
 
     bool run_cosmic = true;
     bool run_bnb = true;
@@ -125,7 +125,7 @@ int main (int argc, char *argv[]){
     //			Begininning of main program here!
     //===========================================================================================
     //===========================================================================================
-    
+
     std::string analysis_tag = topo_tag;
 
 
@@ -183,7 +183,17 @@ int main (int argc, char *argv[]){
     std::string pmass = "0.938272";
     std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+20 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
-    std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
+    //    std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
+
+    std::vector<std::string> v_denom;
+    if(analysis_tag == "notrack"){
+        v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy < "+pmass+"+0.04",fid_cut}; 
+
+    } else{
+        v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
+
+    }
+
 
     std::string signal_definition = v_denom[0];
 
@@ -224,14 +234,14 @@ int main (int argc, char *argv[]){
     bdt_file *OnBeamData    = new bdt_file(dir9, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *OffBeamData    = new bdt_file(dir9, "bnbext_run1_v9.3.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
-    
-    
-    
- /*  bdt_file *bnb_cosmics_noabs = new bdt_file(dir, "bnb_overlay_NoAbsGain.root", "BNBOverlay_noabs", "hist","singlephoton/",  kBlue-4, data_flow);
-   bdt_file *bnb_cosmics_nom = new bdt_file(dir, "bnb_overlay_nominal2.root", "BNBOverlay_Nomonal", "hist","singlephoton/",  kBlue-4, data_flow);
-   bdt_file *bnb_cosmics_undo = new bdt_file(dir, "bnb_overlay_undo2.root", "BNBOverlay_undo", "hist","singlephoton/",  kBlue-4, data_flow);
-   bdt_file *bnb_cosmics_noyz = new bdt_file(dir, "bnb_overlay_NoYZ.root", "BNBOverlay_noyz", "hist","singlephoton/",  kBlue-4, data_flow);
-*/
+
+
+
+    /*  bdt_file *bnb_cosmics_noabs = new bdt_file(dir, "bnb_overlay_NoAbsGain.root", "BNBOverlay_noabs", "hist","singlephoton/",  kBlue-4, data_flow);
+        bdt_file *bnb_cosmics_nom = new bdt_file(dir, "bnb_overlay_nominal2.root", "BNBOverlay_Nomonal", "hist","singlephoton/",  kBlue-4, data_flow);
+        bdt_file *bnb_cosmics_undo = new bdt_file(dir, "bnb_overlay_undo2.root", "BNBOverlay_undo", "hist","singlephoton/",  kBlue-4, data_flow);
+        bdt_file *bnb_cosmics_noyz = new bdt_file(dir, "bnb_overlay_NoYZ.root", "BNBOverlay_noyz", "hist","singlephoton/",  kBlue-4, data_flow);
+        */
 
     //For conviencance fill a vector with pointers to all the files to loop over.
     //std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData,dirt, bnb_cosmics_noabs, bnb_cosmics_nom, bnb_cosmics_undo, bnb_cosmics_noyz};
@@ -266,11 +276,11 @@ int main (int argc, char *argv[]){
     //===========================================================================================
 
     /*
-        std::cout<<"Hello"<<std::endl;
-        bdt_variable v_vertexMult("reco_vertex_size","(5,0,5)","Number of Pandora Neutrino-Slices in event","false","d");
-        compareQuick({v_vertexMult,v_vertexMult,v_vertexMult, v_vertexMult},{bnb_cosmics_nom, bnb_cosmics_undo,bnb_cosmics_noyz,bnb_cosmics_noabs},{"1","1","1","1"} ,"wescheck_0");
-        return 0;
-    */
+       std::cout<<"Hello"<<std::endl;
+       bdt_variable v_vertexMult("reco_vertex_size","(5,0,5)","Number of Pandora Neutrino-Slices in event","false","d");
+       compareQuick({v_vertexMult,v_vertexMult,v_vertexMult, v_vertexMult},{bnb_cosmics_nom, bnb_cosmics_undo,bnb_cosmics_noyz,bnb_cosmics_noabs},{"1","1","1","1"} ,"wescheck_0");
+       return 0;
+       */
 
 
 
@@ -315,13 +325,14 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "track"){
-         //0.677 0.6125
+        //0.677 0.6125
         fcoscut =  0.677;
         fbnbcut =  0.60625;
     }else if(analysis_tag == "notrack"){
         //0.64 0.59875
-        fcoscut = 0.64; //0.612701;//0.587101;
-        fbnbcut = 0.595;
+        //0.673 0.5825
+        fcoscut = 0.73; //0.612701;//0.587101;
+        fbnbcut = 0.5825;
     }
 
     //===========================================================================================
@@ -366,25 +377,26 @@ int main (int argc, char *argv[]){
     }	
     else if(mode_option == "recomc"){
 
-       // std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kGreen+1 ,kGray};
-       std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
-        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
-     //std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","Cosmic Michel e^{#pm}", "Cosmic Other"};
+        // std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kGreen+1 ,kGray};
+        std::vector<int> recomc_cols = { kBlue+3};//, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
+        std::vector<std::string> recomc_names = { "CC #pi^{0} #rightarrow #gamma"};//, "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other","Cosmic Michel e^{#pm}", "Cosmic Other"};
+        //std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","Cosmic Michel e^{#pm}", "Cosmic Other"};
 
 
         std::string  nue = "abs(sim_shower_pdg[0]) ==11 && abs(mctruth_nu_pdg)==12 && abs(sim_shower_pdg) ==11"; // && (exiting_electron_number==1 || exiting_antielectron_number==1)";
         std::string  michel = "abs(sim_shower_pdg[0]) ==11 && abs(sim_shower_parent_pdg[0])==13";
         std::vector<std::string> recomc_cuts = {
-            "sim_shower_origin[0]==1 && sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] !=111 && mctruth_is_delta_radiative ==1 ",
-            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && sim_shower_origin[0]==1 && mctruth_cc_or_nc==0",
-            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && sim_shower_origin[0]==1 && mctruth_cc_or_nc==1",
+            //"sim_shower_origin[0]==1 && sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] !=111 && mctruth_is_delta_radiative ==1 ",
+            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && sim_shower_origin[0]==1 && mctruth_cc_or_nc==0"
+            /*"sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && sim_shower_origin[0]==1 && mctruth_cc_or_nc==1",
             "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative!=1 && sim_shower_origin[0]==1",
             "sim_shower_origin[0] ==1 && "+ nue,
             "sim_shower_origin[0] ==1 && "+ michel,
             //"sim_shower_origin[0]==1 && sim_shower_pdg[0]!=22 &&  (( abs(sim_shower_pdg[0])!=11)  ||( abs(sim_shower_pdg[0])==11 && !(abs(mctruth_nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)) &&!(abs(sim_shower_parent_pdg[0])==13)    ))     ",
-             "sim_shower_origin[0]==1 && sim_shower_pdg[0]!=22 &&  (( abs(sim_shower_pdg[0])!=11)  ||( abs(sim_shower_pdg[0])==11 && !(abs(mctruth_nu_pdg)==12) &&!(abs(sim_shower_parent_pdg[0])==13)    )     ",
-           "sim_shower_origin[0] ==2 && abs(sim_shower_parent_pdg[0])==13",
+            "sim_shower_origin[0]==1 && sim_shower_pdg[0]!=22 &&  (( abs(sim_shower_pdg[0])!=11)  ||( abs(sim_shower_pdg[0])==11 && !(abs(mctruth_nu_pdg)==12) &&!(abs(sim_shower_parent_pdg[0])==13)    )     ",
+            "sim_shower_origin[0] ==2 && abs(sim_shower_parent_pdg[0])==13",
             "sim_shower_origin[0] ==2 && abs(sim_shower_parent_pdg[0])!=13"
+      */
         };
 
         bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
@@ -468,18 +480,18 @@ int main (int argc, char *argv[]){
         file->teventweight->AddFriend(file->tvertex);
 
         std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(sbnfit_stage)+"_"+file->tag+".root";
-        
+
         std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
         TFile* f_sbnfit = new TFile(output_file_name.c_str(),"recreate");
-        
+
 
         std::cout<<"Creating directory structure"<<std::endl;
         TDirectory *cdtof = f_sbnfit->mkdir("singlephoton");
         cdtof->cd();    
-        
-        
+
+
         std::string sbnfit_cuts = file->getStageCuts(sbnfit_stage,fcoscut,fbnbcut);
-        
+
         std::cout<<"Copying vertex tree"<<std::endl;
         TTree * t_sbnfit_tree = (TTree*)file->tvertex->CopyTree(sbnfit_cuts.c_str());
         std::cout<<"Copying POT tree"<<std::endl;
@@ -488,7 +500,7 @@ int main (int argc, char *argv[]){
         TTree * t_sbnfit_eventweight_tree = (TTree*)file->teventweight->CopyTree(sbnfit_cuts.c_str());
 
 
-        
+
         std::cout<<"Writing to file"<<std::endl;
         cdtof->cd();
         t_sbnfit_tree->Write();
@@ -518,7 +530,7 @@ int main (int argc, char *argv[]){
 
 
         histogram_stack->addToStack(dirt);
-                int ip=0;
+        int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
             if(number != -1){
@@ -557,9 +569,9 @@ int main (int argc, char *argv[]){
                 plot_bdt_variable(training_signal, OffBeamData, plotting_vars.at(number), cosmic_bdt_info, true);
             }else{
                 //plot_bdt_variables(training_signal, OffBeamData, vars, cosmic_bdt_info);
-               plot_bdt_variables(training_signal, OffBeamData, training_vars, cosmic_bdt_info, false);
-               plot_bdt_variables(training_signal, OffBeamData, plotting_vars, cosmic_bdt_info, true);
-          }
+                plot_bdt_variables(training_signal, OffBeamData, training_vars, cosmic_bdt_info, false);
+                plot_bdt_variables(training_signal, OffBeamData, plotting_vars, cosmic_bdt_info, true);
+            }
 
         }
         if(run_bnb){
@@ -568,10 +580,10 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 plot_bdt_variable(training_signal, training_bnb, training_vars.at(number), bnb_bdt_info, false);
                 plot_bdt_variable(training_signal, training_bnb, plotting_vars.at(number), bnb_bdt_info, true);
-         }else{
+            }else{
                 plot_bdt_variables(training_signal, training_bnb, training_vars, bnb_bdt_info, false);
                 plot_bdt_variables(training_signal, training_bnb, plotting_vars, bnb_bdt_info, true);
-    }
+            }
 
         }
 
