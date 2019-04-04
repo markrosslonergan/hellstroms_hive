@@ -267,10 +267,10 @@ int main (int argc, char *argv[]){
 
     //Adding plot names
     training_signal->addPlotName("NC #pi^{0}");
-    signal->addPlotName("NC #pi^{0} w/ Overlays");
-    signal_other->addPlotName("Other w/ Overlays");
+    signal->addPlotName("Signal NC #pi^{0} w/ Overlays");
+    signal_other->addPlotName("Other NC #pi^{0} w/ Overlays");
     training_bnb->addPlotName("BNB Backgrounds");
-    bnb->addPlotName("BNB w/Overlays");
+    bnb->addPlotName("BNB Backgrounds");
     OnBeamData->addPlotName("On-Beam  Data");
     OffBeamData->addPlotName("Off-Beam Data");
     dirt->addPlotName("Dirt");
