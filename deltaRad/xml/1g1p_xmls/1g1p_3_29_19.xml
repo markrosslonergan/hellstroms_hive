@@ -48,7 +48,7 @@
     <var def = "reco_vertex_y[0]" binning = "(24,-120,+120)" unit = " Reconstructed vertex Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_vertex_z[0]" binning = "(24,-10,1060)" unit = " Reconstructed vertex Z pos [cm]" type = "d" spectator = "true"/>
     <!--<var def = "reco_shower_conversion_distance[0]" binning = "(24,0,500)" unit = " Reconstructed Shower conversion distance [cm]" type = "d" spectator = "false"/>-->
-    <var def = "reco_shower_conversion_distance[0]" binning = "(24,0,250)" unit = " Reconstructed Shower conversion distance Log[cm]" type = "d" spectator = "false"  logplot="true"/>
+    <var def = "reco_shower_conversion_distance[0]" binning = "(24,0,150)" unit = " Reconstructed Shower Conversion Distance [cm]" type = "d" spectator = "false"  logplot="true"/>
     <var def = "reco_vertex_to_nearest_dead_wire_plane0[0]" binning = "(24,0,125)" unit = " Reconstructed Vertex dead wire dist plane 0 pos [cm]" type = "d" spectator = "true" />
     <var def = "reco_vertex_to_nearest_dead_wire_plane1[0]" binning = "(24,0,110)" unit = " Reconstructed Vertex dead wire dist plane 1 pos [cm]" type = "d" spectator = "true" />
     <var def = "reco_vertex_to_nearest_dead_wire_plane2[0]" binning = "(24,0,200)" unit = " Reconstructed Vertex dead wire dist plane 2 pos [cm]" type = "d" spectator = "true" />
@@ -71,7 +71,7 @@
 
     <!--Shower Geom Variables-->
     <var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower Theta yz [rad]" type = "d" spectator="false"/>
-    <var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Shower Length [cm]" type = "d" spectator="false"/>
+    <var def = "reco_shower_length[0]" binning = "(24,0,150)" unit = "Shower Length [cm]" type = "d" spectator="false"/>
     <var def = "reco_shower_opening_angle[0]" binning = "(24,0,0.8)" unit = "Shower Opening Angle" type = "d" spectator = "true" />
     <var def = "cos(reco_shower_theta_yz[0])" binning = "(24,-1,1)" unit = "Reconstructed Shower - Cosine Theta yz" type = "d" spectator = "true"/>
     <var def = "cos(reco_shower_phi_yx[0])" binning = "(24,-1,1)" unit = "Reconstructed Shower - Cosine Phi yx" type = "d" spectator = "true"/>
@@ -123,7 +123,7 @@
     <var def = "reco_track_endy[0]" binning = "(24,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(24,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(24,0,1)" unit = "Recontstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
-    <var def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,1,2.5)" unit = "Invariant Mass of photon-proton pair" type  = "d" spectator = "true"/>
+    <var def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,1,2)" unit = "Invariant Mass of Photon-Proton Pair [GeV]" type  = "d" spectator = "true"/>
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" spectator = "true" /> 
@@ -157,7 +157,7 @@
     <var def = "reco_vertex_y[0]" binning = "(24,-120,+120)" unit = " Reconstructed vertex Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_vertex_z[0]" binning = "(24,-10,1060)" unit = " Reconstructed vertex Z pos [cm]" type = "d" spectator = "true"/>
     <!--<var def = "reco_shower_conversion_distance[0]" binning = "(24,0,500)" unit = " Reconstructed Shower conversion distance [cm]" type = "d" spectator = "false"/>-->
-    <var def = "reco_shower_conversion_distance[0]" binning = "(24,0,250)" unit = " Reconstructed Shower conversion distance Log[cm]" type = "d" spectator = "false"  logplot="true"/>
+    <var def = "reco_shower_conversion_distance[0]" binning = "(24,0,150)" unit = " Reconstructed Shower Conversion Distance [cm]" type = "d" spectator = "false"  logplot="true"/>
     <var def = "reco_vertex_to_nearest_dead_wire_plane0[0]" binning = "(24,0,125)" unit = " Reconstructed Vertex dead wire dist plane 0 pos [cm]" type = "d" spectator = "true" />
     <var def = "reco_vertex_to_nearest_dead_wire_plane1[0]" binning = "(24,0,110)" unit = " Reconstructed Vertex dead wire dist plane 1 pos [cm]" type = "d" spectator = "true" />
     <var def = "reco_vertex_to_nearest_dead_wire_plane2[0]" binning = "(24,0,200)" unit = " Reconstructed Vertex dead wire dist plane 2 pos [cm]" type = "d" spectator = "true" />
@@ -180,7 +180,7 @@
 
     <!--Shower Geom Variables-->
     <var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower Theta yz [rad]" type = "d" spectator="false"/>
-    <var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Shower Length [cm]" type = "d" spectator="false"/>
+    <var def = "reco_shower_length[0]" binning = "(24,0,150)" unit = "Shower Length [cm]" type = "d" spectator="false"/>
     <var def = "reco_shower_opening_angle[0]" binning = "(24,0,0.8)" unit = "Shower Opening Angle" type = "d" spectator = "true" />
     <var def = "cos(reco_shower_theta_yz[0])" binning = "(24,-1,1)" unit = "Reconstructed Shower - Cosine Theta yz" type = "d" spectator = "true"/>
     <var def = "cos(reco_shower_phi_yx[0])" binning = "(24,-1,1)" unit = "Reconstructed Shower - Cosine Phi yx" type = "d" spectator = "true"/>
@@ -232,7 +232,7 @@
     <var def = "reco_track_endy[0]" binning = "(24,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(24,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(24,0,1)" unit = "Recontstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
-    <var def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,1,2.5)" unit = "Invariant Mass of photon-proton pair" type  = "d" spectator = "true"/>
+    <var def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,1,2)" unit = "Invariant Mass of Photon-Proton Pair [GeV]" type  = "d" spectator = "true"/>
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" spectator = "true" /> 

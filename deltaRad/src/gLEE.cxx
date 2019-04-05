@@ -221,8 +221,8 @@ int main (int argc, char *argv[]){
     std::cout<<"Defining all our bdt_files."<<std::endl;
     bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
     bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-7, signal_other_flow);
-    signal_other->fillstyle = 3390;
+    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
+    //signal_other->fillstyle = 3390;
 
 
     bdt_file *dirt = new bdt_file(dir,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
@@ -245,7 +245,7 @@ int main (int argc, char *argv[]){
 
     //For conviencance fill a vector with pointers to all the files to loop over.
     //std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData,dirt, bnb_cosmics_noabs, bnb_cosmics_nom, bnb_cosmics_undo, bnb_cosmics_noyz};
-    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData,dirt};
+    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData,dirt, OffBeamData};
 
     //The LEE signal is bigger than the SM signal by this factor
     training_signal->scale_data = 3.0;
@@ -310,14 +310,14 @@ int main (int argc, char *argv[]){
 
 
     //Adding plot names
-    training_signal->addPlotName("NC Delta Radiative");
-    signal->addPlotName("LEE NC #Delta Rad w/ Overlays");
+    training_signal->addPlotName("NC #Delta Radiative");
+    signal->addPlotName("Signal NC #Delta Rad w/ Overlays");
     signal_other->addPlotName("Other NC #Delta Rad w/ Overlays");
     training_bnb->addPlotName("BNB Backgrounds");
     bnb->addPlotName("BNB w/Overlays");
     OnBeamData->addPlotName("On-Beam  Data");
     OffBeamData->addPlotName("Off-Beam Data");
-    dirt->addPlotName("Dirt");
+    dirt->addPlotName("Dirt w/ Overlays");
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 

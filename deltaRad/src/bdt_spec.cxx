@@ -19,7 +19,7 @@ THStack* bdt_stack::getBDTStack(bdt_info whichbdt, std::string binning, int leve
 		hist->SetFillStyle(stack.at(t)->fillstyle);
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Events [Area Normalized]");
+		hist->GetYaxis()->SetTitle("Events");
 
 		stacked->Add(hist);
 	}
@@ -53,7 +53,7 @@ TH1* bdt_stack::getBDTSum(bdt_info whichbdt, std::string binning, int level, dou
 	summed->SetFillColor(kGray+3);
 
 	summed->GetXaxis()->SetTitle(var.unit.c_str());
-	summed->GetYaxis()->SetTitle("Events [Area Normalized]");
+	summed->GetYaxis()->SetTitle("Events");
 
 
 
@@ -108,7 +108,7 @@ TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
 	summed->SetLineWidth(1);
 
 	summed->GetXaxis()->SetTitle(var.unit.c_str());
-	summed->GetYaxis()->SetTitle("Events [Area Normalized]");
+	summed->GetYaxis()->SetTitle("Events");
 
 
 
@@ -144,7 +144,7 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 	summed->SetLineWidth(1);
 
 	summed->GetXaxis()->SetTitle(var.unit.c_str());
-	summed->GetYaxis()->SetTitle("Events [Area Normalized]");
+	summed->GetYaxis()->SetTitle("Events");
 
 
 
@@ -194,7 +194,7 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 		hist->Scale();		
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Events [Area Normalized]");
+		hist->GetYaxis()->SetTitle("Events");
 
 
 		to_sort.push_back(hist);
@@ -265,7 +265,7 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 		hist->Scale();		
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Events [Area Normalized]");
+		hist->GetYaxis()->SetTitle("Events");
 
 
 		to_sort.push_back(hist);
@@ -336,7 +336,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			stk->Draw("hist");
 			stk->SetTitle("");
 			stk->GetXaxis()->SetTitle(var.unit.c_str());
-			stk->GetYaxis()->SetTitle("Events [Area Normalized]");
+			stk->GetYaxis()->SetTitle("Events");
 			stk->GetYaxis()->SetTitleOffset(1.5);
 			stk->SetMaximum(stk->GetMaximum()*1.35);
 			TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);
@@ -370,7 +370,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 			pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
 
-			TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation In Progress");
+			TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 			tbdt2->Draw();
 
 
@@ -442,7 +442,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s0->Draw("hist");
 	s0->SetTitle("");
 	s0->GetXaxis()->SetTitle(var.unit.c_str());
-	s0->GetYaxis()->SetTitle("Events [Area Normalized]");
+	s0->GetYaxis()->SetTitle("Events");
 	s0->GetYaxis()->SetTitleOffset(1.5);
 	s0->SetMaximum(s0->GetMaximum()*1.3);
 	TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
@@ -478,7 +478,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	pottensel.DrawLatex(.66,.75, pot_draw_sel.c_str());
 
 
-	TText *tsel = drawPrelim(0.16,0.91,0.035,"MicroBooNE Simulation In Progress");
+	TText *tsel = drawPrelim(0.16,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tsel->Draw();
 
 	TText *titsel = drawPrelim(0.89, 0.91, 0.035, "Topological Selection");
@@ -493,7 +493,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s1->Draw("hist");
 	s1->SetTitle("");
 	s1->GetXaxis()->SetTitle(var.unit.c_str());
-	s1->GetYaxis()->SetTitle("Events [Area Normalized]");
+	s1->GetYaxis()->SetTitle("Events");
 	s1->GetYaxis()->SetTitleOffset(1.5);
 	s1->SetMaximum(s1->GetMaximum()*1.3);
 	TLegend *l1 = new TLegend(0.11,0.72,0.89,0.89);
@@ -533,7 +533,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 
 
-	TText *tpre = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation In Progress");
+	TText *tpre = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tpre->Draw();
 
 	TText *titpre = drawPrelim(0.89, 0.91, 0.035, "Pre-Selection Cuts");
@@ -551,7 +551,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s2->Draw("hist");
 	s2->SetTitle("");
 	s2->GetXaxis()->SetTitle(var.unit.c_str());
-	s2->GetYaxis()->SetTitle("Events [Area Normalized]");
+	s2->GetYaxis()->SetTitle("Events");
 	s2->GetYaxis()->SetTitleOffset(1.5);
 	s2->SetMaximum(s2->GetMaximum()*1.3);
 	TLegend *l2 = new TLegend(0.11,0.72,0.89,0.89);
@@ -586,7 +586,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	pottenbdt1.DrawLatex(.66,.75, pot_draw_bdt1.c_str());
 
 
-	TText *tbdt1 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation In Progress");
+	TText *tbdt1 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tbdt1->Draw();
 
 	TText *titbdt1 = drawPrelim(0.89, 0.91, 0.035, "Cosmic BDT Cut");
@@ -603,7 +603,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s3->Draw("hist");
 	s3->SetTitle("");
 	s3->GetXaxis()->SetTitle(var.unit.c_str());
-	s3->GetYaxis()->SetTitle("Events [Area Normalized]");
+	s3->GetYaxis()->SetTitle("Events");
 	s3->GetYaxis()->SetTitleOffset(1.5);
 	s3->SetMaximum(s3->GetMaximum()*1.35);
 	TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);
@@ -637,7 +637,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
 
-	TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation In Progress");
+	TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tbdt2->Draw();
 
 
@@ -704,7 +704,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s0->Draw("hist");
 	s0->SetTitle("Topological Selection");
 	s0->GetXaxis()->SetTitle(var.unit.c_str());
-	s0->GetYaxis()->SetTitle("Events [Area Normalized]");
+	s0->GetYaxis()->SetTitle("Events");
 	s0->GetYaxis()->SetTitleOffset(1.5);
 	s0->SetMaximum(s0->GetMaximum()*10);
     s0->SetMinimum(0.05);
@@ -748,7 +748,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s1->Draw("hist");
 	s1->SetTitle("Pre-Selection Cuts");
 	s1->GetXaxis()->SetTitle(var.unit.c_str());
-	s1->GetYaxis()->SetTitle("Events [Area Normalized]");
+	s1->GetYaxis()->SetTitle("Events");
 	s1->GetYaxis()->SetTitleOffset(1.5);
 	s1->SetMaximum(s1->GetMaximum()*50);
 	s1->SetMinimum(0.05);
@@ -793,7 +793,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s2->Draw("hist");
 	s2->SetTitle("Cosmic BDT cut");
 	s2->GetXaxis()->SetTitle(var.unit.c_str());
-	s2->GetYaxis()->SetTitle("Events [Area Normalized]");
+	s2->GetYaxis()->SetTitle("Events");
 	s2->GetYaxis()->SetTitleOffset(1.5);
 	s2->SetMaximum(s2->GetMaximum()*10);
 	s2->SetMinimum(0.05);
@@ -840,7 +840,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s3->Draw("hist");
 	s3->SetTitle("BNB BDT cut");
 	s3->GetXaxis()->SetTitle(var.unit.c_str());
-	s3->GetYaxis()->SetTitle("Events [Area Normalized]");
+	s3->GetYaxis()->SetTitle("Events");
 	s3->GetYaxis()->SetTitleOffset(1.5);
 	s3->SetMaximum(s3->GetMaximum()*10);
 	s3->SetMinimum(0.05);

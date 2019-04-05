@@ -82,7 +82,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			std::cout<<"Drawn."<<std::endl;
 
 			s_reco_truth->GetXaxis()->SetTitle(var.unit.c_str());
-			s_reco_truth->GetYaxis()->SetTitle("Events [Area Normalized]");
+			s_reco_truth->GetYaxis()->SetTitle("Events");
 			s_reco_truth->GetYaxis()->SetTitleOffset(1.5);
 
 			TLatex latexsel;
@@ -97,7 +97,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			std::string pot_draw = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 			pottensel.DrawLatex(.7,.89, pot_draw.c_str());
 
-			TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation In Progress");
+			TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 			tsel->Draw();
 
 
@@ -285,7 +285,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 	std::cout<<"1"<<std::endl;
 	s_reco_truth_sel->GetXaxis()->SetTitle(var.unit.c_str());
-	s_reco_truth_sel->GetYaxis()->SetTitle("Events [Area Normalized]");
+	s_reco_truth_sel->GetYaxis()->SetTitle("Events");
 	s_reco_truth_sel->GetYaxis()->SetTitleOffset(1.5);
 
 	TLatex latexsel;
@@ -300,7 +300,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottensel.DrawLatex(.7,.89, pot_draw_sel.c_str());
 
-	TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation In Progress");
+	TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 	tsel->Draw();
 
 
@@ -342,7 +342,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	s_reco_truth_pre->Draw("hist");
 	reco_mc_all_pre->Draw("E2 same");
 	s_reco_truth_pre->GetXaxis()->SetTitle(var.unit.c_str());
-	s_reco_truth_pre->GetYaxis()->SetTitle("Events [Area Normalized]");
+	s_reco_truth_pre->GetYaxis()->SetTitle("Events");
 	s_reco_truth_pre->GetYaxis()->SetTitleOffset(1.5);
 
 	TLatex latexpre;
@@ -358,7 +358,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	pottenpre.DrawLatex(.7,.89, pot_draw_pre.c_str());
 
 
-	TText *tpre = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation In Progress");
+	TText *tpre = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 	tpre->Draw();
 
 
@@ -402,7 +402,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	reco_mc_all_bdt1->Draw("E2 same");
 
 	s_reco_truth_bdt1->GetXaxis()->SetTitle(var.unit.c_str());
-	s_reco_truth_bdt1->GetYaxis()->SetTitle("Events [Area Normalized]");
+	s_reco_truth_bdt1->GetYaxis()->SetTitle("Events");
 	s_reco_truth_bdt1->GetYaxis()->SetTitleOffset(1.5);
 
 	TLatex latexbdt1;
@@ -417,7 +417,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenbdt1.DrawLatex(.7,.89, pot_draw_bdt1.c_str());
 
-	TText *tbdt1 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation In Progress");
+	TText *tbdt1 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 	tbdt1->Draw();
 
 
@@ -465,7 +465,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	reco_mc_all_bdt2->Draw("E2 same");
 
 	s_reco_truth_bdt2->GetXaxis()->SetTitle(var.unit.c_str());
-	s_reco_truth_bdt2->GetYaxis()->SetTitle("Events [Area Normalized]");
+	s_reco_truth_bdt2->GetYaxis()->SetTitle("Events");
 	s_reco_truth_bdt2->GetYaxis()->SetTitleOffset(1.5);
 
 	TLatex latexbdt2;
@@ -480,7 +480,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenbdt2.DrawLatex(.7,.89, pot_draw_bdt2.c_str());
 
-	TText *tbdt2 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation In Progress");
+	TText *tbdt2 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 	tbdt2->Draw();
 
 
