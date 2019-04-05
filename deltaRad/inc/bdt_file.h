@@ -120,6 +120,7 @@ struct bdt_file{
 
 		TTree *tevent;
 		TTree *tpot;
+    TTree *teventweight;
 
 		std::string topological_list_name;
 		TEntryList * topological_list;

@@ -54,7 +54,7 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
             sig->SetMinimum(0);
             bkg->Draw("hist same");
             //sig->GetXaxis()->SetTitle(v.unit.c_str());
-            sig->GetYaxis()->SetTitle("Events - Area Normalized");
+            sig->GetYaxis()->SetTitle("Events [Area Normalized]");
             sig->GetYaxis()->SetTitleOffset(1.5);
 
             TLegend *l = new TLegend(0.11,0.75,0.89,0.89);

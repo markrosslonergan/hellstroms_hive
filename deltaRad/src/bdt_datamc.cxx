@@ -22,7 +22,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
         std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
         delete tmp;
     }
-    std::string  binning = "(30,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
+    std::string  binning = "(20,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
 
     bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
     return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
@@ -164,7 +164,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 rmin=0; rmax = 1.99;
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
-            double max_modifier = 2.0;
+            double max_modifier = 1.7;
             
             if(var.is_logplot == true){
                 pad0top->SetLogy();
@@ -328,7 +328,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
             t->SetTextSize(0.12);
-            t->Draw("same");
+            //t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
             //var_precut.front()->GetYaxis()->SetTitle("Verticies");
@@ -470,7 +470,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         }else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
 
 
-        double max_modifier = 1.7;
+        double max_modifier = 1.9;
         double min_val = 0.01;
         if(is_bdt_variable) {
             max_modifier = 10.0;
@@ -599,7 +599,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         t->SetTextColor(kRed-7);
         //t->SetTextFont(43);
         t->SetTextSize(0.12);
-        t->Draw("same");
+        //t->Draw("same");
 
         //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
         //var_precut.front()->GetYaxis()->SetTitle("Verticies");
