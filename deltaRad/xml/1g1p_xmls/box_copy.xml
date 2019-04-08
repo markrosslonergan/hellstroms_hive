@@ -55,7 +55,7 @@
 
 
     <!-- Shower Calo Variables-->
-    <var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 1 [mev/cm]" type="d" spectator="true"/>
+   <var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 1 [mev/cm]" type="d" spectator="true"/>
     <var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 0 [mev/cm]" type="d" spectator="true"/>
     <var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 2 [mev/cm]" type="d" spectator="false"/>
     <var def = "reco_shower_dEdx_amalgamated[0]" binning = "(24,0,6.5)" unit = "median shower de/dx amalgamated [mev/cm]" type="d" spectator="true"/>
@@ -67,7 +67,7 @@
     <var def = "reco_shower_dQdx_plane1_median[0]" binning = "(24,0,400000)" unit = "median shower dQ/dx plane 1" type="d" spectator="true"/>
     <var def = "reco_shower_dQdx_plane0_median[0]" binning = "(24,0,400000)" unit = "median shower dQ/dx plane 0" type="d" spectator="true"/>
     <var def = "reco_shower_dQdx_plane2_median[0]" binning = "(24,0,400000)" unit = "median shower dQ/dx plane 2" type="d" spectator="true"/>
-    <var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(24,0 ,2000 )" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" spectator = "false"/>
+   <var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(24,0 ,2000 )" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" spectator = "false"/>
 
     <!--Shower Geom Variables-->
     <var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower Theta yz [rad]" type = "d" spectator="false"/>
