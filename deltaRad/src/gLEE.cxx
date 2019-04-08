@@ -3,6 +3,8 @@
 
 #include <getopt.h>
 
+#include "TFriendElement.h"
+
 #include "variable_list.h"
 #include "bdt_file.h"
 #include "bdt_datamc.h"
@@ -477,6 +479,17 @@ int main (int argc, char *argv[]){
         std::cout<<"Copying eventweight tree (via friends)"<<std::endl;
         TTree * t_sbnfit_eventweight_tree = (TTree*)file->teventweight->CopyTree(sbnfit_cuts.c_str());
 
+
+        TFriendElement *fr0 = (TFriendElement*)t_sbnfit_eventweight_tree->GetListOfFriends()->FindObject((file->tag +"_"+cosmic_bdt_info.identifier).c_str());
+        TFriendElement *fr1 = (TFriendElement*)t_sbnfit_eventweight_tree->GetListOfFriends()->FindObject((file->tag +"_"+bnb_bdt_info.identifier).c_str());
+        t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(fr0);
+        t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(fr1);
+        
+
+        TFriendElement *fr2 = (TFriendElement*)t_sbnfit_tree->GetListOfFriends()->FindObject((file->tag +"_"+cosmic_bdt_info.identifier).c_str() );
+        TFriendElement *fr3 = (TFriendElement*)t_sbnfit_tree->GetListOfFriends()->FindObject((file->tag +"_"+bnb_bdt_info.identifier).c_str());
+        t_sbnfit_tree->GetListOfFriends()->Remove(fr2);
+        t_sbnfit_tree->GetListOfFriends()->Remove(fr3);
 
         
         std::cout<<"Writing to file"<<std::endl;
