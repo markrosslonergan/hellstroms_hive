@@ -379,31 +379,46 @@ int main (int argc, char *argv[]){
     }	
     else if(mode_option == "recomc"){
 
-        std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7,kOrange-3, kGreen+1 ,kGray};
-        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other",  "Overlay","Other"};
+        std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7,kOrange-3, kGreen+1 , kGray};
+//        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other Non #gamma",  "Overlay","Other"};
         //         std::vector<int> recomc_cols = { kYellow-7,kOrange-3, kGreen+1 ,kGray};
-        //      std::vector<std::string> recomc_names = {"BNB Michel e^{#pm}","BNB Other", "Cosmic Michel e^{#pm}", "Cosmic Other"};
+         std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}", "Other NC", "Other CC", "Cosmic (Overlay)"};
+       
+        std::string overlay = "sim_shower_overlay_fraction[0] >= 0.8";
+      
+        std::string ncdelta = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative ==1 && !("+overlay+")";
+        std::string ccpi0 = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==0 && !("+overlay+")";
+        std::string ncpi0 = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==1 && !("+overlay+")";
+        std::string othergamma =  "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative!=1 && !("+overlay+")";
+        std::string  nue = "abs(mctruth_lepton_pdg)==11 && abs(sim_shower_pdg[0]) ==11  && !("+overlay+")"; // && (exiting_electron_number==1 || exiting_antielectron_number==1)";
+        std::string  michel = "abs(sim_shower_pdg[0]) ==11 && abs(sim_shower_parent_pdg[0])==13 && !("+overlay+")";
+        //std::string bnbother =  "sim_shower_pdg[0]!=22 && !("+nue+") && !("+michel+")  && !("+overlay+")";
+       // std::string overlay = "sim_shower_overlay_fraction[0] == 1";
+        //std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel,bnbother};
+        std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel};
 
-        std::string  nue = "abs(mctruth_lepton_pdg)==11 && abs(sim_shower_pdg[0]) ==11"; // && (exiting_electron_number==1 || exiting_antielectron_number==1)";
-        std::string  michel = "abs(sim_shower_pdg[0]) ==11 && abs(sim_shower_parent_pdg[0])==13";
-        std::vector<std::string> recomc_cuts = {
-            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative ==1",
-            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==0", 
-            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==1",
-            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative!=1",
-            nue,
-            michel,
-            "sim_shower_pdg[0]!=22 &&  (( abs(sim_shower_pdg[0])!=11)  || (abs(sim_shower_pdg[0])==11 && !(abs(mctruth_nu_pdg)==12) &&!(abs(sim_shower_parent_pdg[0])==13))) ",
-            "sim_shower_overlay_fraction[0] == 1"
-        };
 
-        std::string other = "1";
+        std::string othercc = "!("+overlay+") && ! mctruth_cc_or_nc==0";
         for(auto s: recomc_cuts){
-            other += "&& !("+s+")";
+            othercc += "&& !("+s+")";
+        }
+        
+        std::string othernc = "!("+overlay+") && ! mctruth_cc_or_nc==1";
+        for(auto s: recomc_cuts){
+            othernc += "&& !("+s+")";
         }
 
-        recomc_cuts.push_back(other);
+       recomc_cuts.push_back(othernc);
+       recomc_cuts.push_back(othercc);
+       
+        std::string other = "!("+overlay+")";
+        for(auto s: recomc_cuts){
+            othernc += "&& !("+s+")";
+        }
 
+       // recomc_cuts.push_back(other);
+        recomc_cuts.push_back(overlay);
+      
 
         bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
