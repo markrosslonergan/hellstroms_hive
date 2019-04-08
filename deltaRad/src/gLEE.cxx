@@ -328,8 +328,8 @@ int main (int argc, char *argv[]){
     double fbnbcut;
     if(analysis_tag == "track"){
         //0.677 0.6125
-        fcoscut =  0.677;
-        fbnbcut =  0.60625;
+        fcoscut =  0.6;
+        fbnbcut =  0.55;
     }else if(analysis_tag == "notrack"){
         //0.64 0.59875
         //0.673 0.5825
@@ -380,27 +380,30 @@ int main (int argc, char *argv[]){
     else if(mode_option == "recomc"){
 
         std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7,kOrange-3, kGreen+1 ,kGray};
-        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other", "Cosmic Michel e^{#pm}", "Cosmic Other"};
+        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0} #rightarrow #gamma", "NC #pi^{0} #rightarrow #gamma","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other",  "Overlay","Other"};
         //         std::vector<int> recomc_cols = { kYellow-7,kOrange-3, kGreen+1 ,kGray};
         //      std::vector<std::string> recomc_names = {"BNB Michel e^{#pm}","BNB Other", "Cosmic Michel e^{#pm}", "Cosmic Other"};
 
-
-
-        std::string  nue = "abs(sim_shower_pdg[0]) ==11 && abs(mctruth_nu_pdg)==12 && abs(sim_shower_pdg) ==11"; // && (exiting_electron_number==1 || exiting_antielectron_number==1)";
+        std::string  nue = "abs(mctruth_lepton_pdg)==11 && abs(sim_shower_pdg[0]) ==11"; // && (exiting_electron_number==1 || exiting_antielectron_number==1)";
         std::string  michel = "abs(sim_shower_pdg[0]) ==11 && abs(sim_shower_parent_pdg[0])==13";
         std::vector<std::string> recomc_cuts = {
-            "sim_shower_origin[0]==1 && sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] !=111 && mctruth_is_delta_radiative ==1 ",
-            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && sim_shower_origin[0]==1 && mctruth_cc_or_nc==0", 
-            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && sim_shower_origin[0]==1 && mctruth_cc_or_nc==1",
-            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative!=1 && sim_shower_origin[0]==1",
-            "sim_shower_origin[0] ==1 && "+ nue,
-            "sim_shower_origin[0] ==1 && "+ michel,
-            //"sim_shower_origin[0]==1 && sim_shower_pdg[0]!=22 &&  (( abs(sim_shower_pdg[0])!=11)  ||( abs(sim_shower_pdg[0])==11 && !(abs(mctruth_nu_pdg)==12 && (exiting_electron_number==1 || exiting_antielectron_number==1)) &&!(abs(sim_shower_parent_pdg[0])==13)    ))     ",
-            "sim_shower_origin[0]==1 && sim_shower_pdg[0]!=22 &&  (( abs(sim_shower_pdg[0])!=11)  ||( abs(sim_shower_pdg[0])==11 && !(abs(mctruth_nu_pdg)==12) &&!(abs(sim_shower_parent_pdg[0])==13))) ",
-            "sim_shower_origin[0] ==2 && abs(sim_shower_parent_pdg[0])==13",
-            "sim_shower_origin[0] ==2 && abs(sim_shower_parent_pdg[0])!=13"
-
+            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative ==1",
+            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==0", 
+            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==1",
+            "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative!=1",
+            nue,
+            michel,
+            "sim_shower_pdg[0]!=22 &&  (( abs(sim_shower_pdg[0])!=11)  || (abs(sim_shower_pdg[0])==11 && !(abs(mctruth_nu_pdg)==12) &&!(abs(sim_shower_parent_pdg[0])==13))) ",
+            "sim_shower_overlay_fraction[0] == 1"
         };
+
+        std::string other = "1";
+        for(auto s: recomc_cuts){
+            other += "&& !("+s+")";
+        }
+
+        recomc_cuts.push_back(other);
+
 
         bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
