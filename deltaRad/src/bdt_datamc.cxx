@@ -298,7 +298,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             line->Draw("same");
             ratunit->SetLineColor(kBlack);
             ratunit->SetTitle("");
-            ratunit->GetYaxis()->SetTitle("Data/(MC+Cosmic)");
+            //ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
+            ratunit->GetYaxis()->SetTitle("Data/(MC+Off-Beam)");
             ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
             ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY);
             ratunit->SetMinimum(rmin);	
@@ -334,14 +335,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             //t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
-            //var_precut.front()->GetYaxis()->SetTitle("Verticies");
+            //var_precut.front()->GetYaxis()->SetTitle("Events");
 
 
 
             std::cout<<"Writing pdf."<<std::endl;
             cobs->Write();
             cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
-            cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
+            //cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 
 
@@ -577,7 +578,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         ratunit->SetLineColor(kBlack);
         ratunit->SetTitle("");
         //ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
-        ratunit->GetYaxis()->SetTitle("Data/(MC+Cosmic)");
+        ratunit->GetYaxis()->SetTitle("Data/(MC+Off-Beam)");
         ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
         ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY);
         ratunit->SetMinimum(rmin);	

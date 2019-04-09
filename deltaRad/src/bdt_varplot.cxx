@@ -76,7 +76,7 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
             }
 
 
-            //TText *pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulation Preliminary");
+            //TText *pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulation - In Progress");
             pre->Draw();
 
             TLatex latex;

@@ -370,7 +370,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 			pottenbdt2.DrawLatex(.48,.70, pot_draw_bdt2.c_str());
 
-			TText *tbdt2 = drawPrelim(0.10,0.91,0.035,"MicroBooNE Simulation - In Progress");
+			TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 			tbdt2->Draw();
 
 
@@ -654,8 +654,6 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 	cobs->Write();
 	cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+".pdf").c_str(),"pdf");
-	//cobs->SaveAs(("stack/"+var.name+".png").c_str(),"png");
-
 
 	delete cobs;
 	delete s0; delete s1; delete s2; delete s3;		 
