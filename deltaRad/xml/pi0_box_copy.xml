@@ -69,7 +69,7 @@
     <var def = "reco_shower_dEdx_amalgamated[(reco_shower_ordered_energy_index[0])]" binning = "(20,0,6.5)" unit = "Median Leading Shower dE/dx Amalgamated [MeV/cm]" type="d" spectator="true"/>
     <var def = "reco_shower_dEdx_amalgamated[(reco_shower_ordered_energy_index[1])]" binning = "(20,0,6.5)" unit = "Median Subleading Shower dE/dx Amalgamated [MeV/cm]" type="d" spectator="true"/>
 
-    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,0.6)" unit = "Reconstructed Shower Energy (Leading Photon) [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(10,0,0.6)" unit = "Reconstructed Shower Energy (Leading Photon) [GeV]" type="d" spectator="false"/>
     <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy [GeV]" type="d" spectator="false"/>
 
     <var def = "reco_shower_energy_plane0[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>

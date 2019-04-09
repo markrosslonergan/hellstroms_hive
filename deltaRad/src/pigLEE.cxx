@@ -220,8 +220,9 @@ int main (int argc, char *argv[]){
     bdt_file *signal_other = new bdt_file(dirv10,"ncpi0_overlay_collins_v10.0.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
     //signal_other->fillstyle = 3333;
 
-    bdt_file *training_bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *training_bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+    // Color was kBlue-4
 
     //Data files
     bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
@@ -274,12 +275,12 @@ int main (int argc, char *argv[]){
 
     //Adding plot names
     training_signal->addPlotName("NC #pi^{0}");
-    signal->addPlotName("Signal NC #pi^{0} w/ Overlays");
-    signal_other->addPlotName("Other NC #pi^{0} w/ Overlays");
+    signal->addPlotName("Signal NC #pi^{0}");
+    signal_other->addPlotName("Other NC #pi^{0}");
     training_bnb->addPlotName("BNB Backgrounds");
     bnb->addPlotName("BNB Backgrounds");
     OnBeamData->addPlotName("On-Beam  Data");
-    OffBeamData->addPlotName("Off-Beam Data");
+    OffBeamData->addPlotName("Cosmic Data");
     dirt->addPlotName("Dirt");
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;

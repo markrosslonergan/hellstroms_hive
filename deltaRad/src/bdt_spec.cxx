@@ -362,20 +362,20 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			latexbdt2.SetTextSize(0.05);
 			latexbdt2.SetTextAlign(13);  //align at top
 			latexbdt2.SetNDC();
-			latexbdt2.DrawLatex(.55,.75,this->stack.at(0)->topo_name.c_str());
+			latexbdt2.DrawLatex(.48,.75,this->stack.at(0)->topo_name.c_str());
 			TLatex pottenbdt2;
 			pottenbdt2.SetTextSize(0.05);
 			pottenbdt2.SetTextAlign(13);  //align at top
 			pottenbdt2.SetNDC();
 			std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-			pottenbdt2.DrawLatex(.55,.70, pot_draw_bdt2.c_str());
+			pottenbdt2.DrawLatex(.48,.70, pot_draw_bdt2.c_str());
 
-			TText *tbdt2 = drawPrelim(0.10,0.91,0.035,"MicroBooNE Simulation In-Progress");
+			TText *tbdt2 = drawPrelim(0.10,0.91,0.035,"MicroBooNE Simulation - In Progress");
 			tbdt2->Draw();
 
 
 			//TText *titbdt2 = drawPrelim(0.91, 0.91, 0.035, stage_names.at(s).c_str());
-			TText *titbdt2 = drawPrelim(0.55, 0.6, 0.035, stage_names.at(s).c_str());
+			TText *titbdt2 = drawPrelim(0.48, 0.6, 0.05, stage_names.at(s).c_str());
 			titbdt2->SetTextAlign(10);
 			titbdt2->Draw();
 
@@ -477,7 +477,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	pottensel.DrawLatex(.62,.70, pot_draw_sel.c_str());
 
 
-	TText *tsel = drawPrelim(0.16,0.91,0.035,"MicroBooNE Simulation In-Progress");
+	TText *tsel = drawPrelim(0.16,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tsel->Draw();
 
 	TText *titsel = drawPrelim(0.89, 0.91, 0.035, "Topological Selection");
@@ -532,12 +532,12 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 
 
-	TText *tpre = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation In-Progress");
+	TText *tpre = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tpre->Draw();
 
-	TText *titpre = drawPrelim(0.89, 0.91, 0.035, "Pre-Selection Cuts");
-	titpre->SetTextAlign(30);
-	titpre->Draw();
+	//TText *titpre = drawPrelim(0.89, 0.91, 0.035, "Pre-Selection Cuts");
+	//titpre->SetTextAlign(30);
+	//titpre->Draw();
 
 
 
@@ -585,7 +585,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	pottenbdt1.DrawLatex(.62,.70, pot_draw_bdt1.c_str());
 
 
-	TText *tbdt1 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation In-Progress");
+	TText *tbdt1 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tbdt1->Draw();
 
 	TText *titbdt1 = drawPrelim(0.89, 0.91, 0.035, "Cosmic BDT Cut");
@@ -636,7 +636,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenbdt2.DrawLatex(.62,.70, pot_draw_bdt2.c_str());
 
-	TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation In-Progress");
+	TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tbdt2->Draw();
 
 

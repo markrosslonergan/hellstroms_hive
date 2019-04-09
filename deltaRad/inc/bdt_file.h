@@ -118,9 +118,10 @@ struct bdt_file{
 		//copy tvertex into topovertex, but with topological cut.
 		TTree *topovertex;
 
+
 		TTree *tevent;
 		TTree *tpot;
-    TTree *teventweight;
+		TTree *teventweight;
 
 		std::string topological_list_name;
 		TEntryList * topological_list;
