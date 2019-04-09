@@ -27,6 +27,10 @@ std::vector<bdt_variable>  pi0_vars;
 std::vector<std::string> all_precuts;
 std::string analysis_tag;
 
+// New additions for plotting/training separately
+std::vector<bdt_variable>  train_vars;
+std::vector<bdt_variable>  plot_vars;
+
 variable_list(std::string analysis_tag_in);
 
 };

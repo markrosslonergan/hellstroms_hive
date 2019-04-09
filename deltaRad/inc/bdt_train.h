@@ -20,7 +20,17 @@
 
 
 
+/*
 int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, std::vector<bdt_variable> variables, std::vector<method_struct> & methods);
+
+// If training and plotting variables are separate
+int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, std::vector<bdt_variable> train_variables, std::vector<bdt_variable> plot_variables, std::vector<method_struct> & methods);
+*/
+
+int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file);
+int bdt_train(bdt_info, bdt_file*, bdt_file*, std::vector<bdt_variable>, std::vector<method_struct> & );
+int bdt_train(bdt_info, bdt_file*, bdt_file*, std::vector<bdt_variable>, std::vector<bdt_variable>, std::vector<method_struct> & );
+
 
 
 

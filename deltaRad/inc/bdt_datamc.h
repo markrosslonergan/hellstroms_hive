@@ -39,18 +39,31 @@ class bdt_datamc{
 		bdt_stack *mc_stack;
 		std::string tag;
 
+    bool isSpectator = false;
 		bool is_bdt_variable;
+    bool do_subtraction; 
+    std::vector<bool> subtraction_vec;
 
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false;};
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false;};
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {};
+		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;};
+		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;};
+		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;};
 
-	
+
+        int setSubtractionVector(std::vector<bool> trac){
+            subtraction_vec = trac;
+            do_subtraction=true;
+            return 0;
+        }
+
 		int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
 		int plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt);
 		int plotStacks(TFile*f, bdt_variable var,double,double);
 		int plotBDTStacks(TFile*f, bdt_info,double,double);
 
+    int SetSpectator();
+
+    int printPassingDataEvents(std::string outfilename, int stage, double c1, double c2);
+ 
 
 };
 

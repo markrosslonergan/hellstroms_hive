@@ -19,7 +19,7 @@ THStack* bdt_stack::getBDTStack(bdt_info whichbdt, std::string binning, int leve
 		hist->SetFillStyle(stack.at(t)->fillstyle);
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Verticies");
+		hist->GetYaxis()->SetTitle("Events [POT Normalized]");
 
 		stacked->Add(hist);
 	}
@@ -53,7 +53,7 @@ TH1* bdt_stack::getBDTSum(bdt_info whichbdt, std::string binning, int level, dou
 	summed->SetFillColor(kGray+3);
 
 	summed->GetXaxis()->SetTitle(var.unit.c_str());
-	summed->GetYaxis()->SetTitle("Verticies");
+	summed->GetYaxis()->SetTitle("Events [POT Normalized]");
 
 
 
@@ -76,7 +76,6 @@ int bdt_stack::makeSBNspec(std::string tagin, bdt_variable var, double c1, doubl
 		f->cd();	
 		hist->Write();
 	}	
-
 	return 0;
 }
 
@@ -88,7 +87,7 @@ TH1* bdt_stack::getEntrySum(bdt_variable var){
 TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
 	int stack_rebin = 1;
 	if(level ==2) stack_rebin=2;
-	if(level ==3) stack_rebin=4;
+	if(level ==3) stack_rebin=2;
 
 
 	TH1* summed = (TH1*)stack.at(0)->getTH1(var, "1", "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
@@ -109,7 +108,7 @@ TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
 	summed->SetLineWidth(1);
 
 	summed->GetXaxis()->SetTitle(var.unit.c_str());
-	summed->GetYaxis()->SetTitle("Verticies");
+	summed->GetYaxis()->SetTitle("Events [POT Normalized]");
 
 
 
@@ -124,7 +123,7 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 
 	int stack_rebin = 1;
 	if(level ==2) stack_rebin=2;
-	if(level ==3) stack_rebin=4;
+	if(level ==3) stack_rebin=2;
 
 
 	TH1* summed = (TH1*)stack.at(0)->getTH1(var, stack.at(0)->getStageCuts(level,cut1, cut2), "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
@@ -145,7 +144,7 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 	summed->SetLineWidth(1);
 
 	summed->GetXaxis()->SetTitle(var.unit.c_str());
-	summed->GetYaxis()->SetTitle("Verticies");
+	summed->GetYaxis()->SetTitle("Events [POT Normalized]");
 
 
 
@@ -161,7 +160,7 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
 	int stack_rebin = 1;
 	if(level ==2) stack_rebin=2;
-	if(level ==3) stack_rebin=4;
+	if(level ==3) stack_rebin=2;
 
 	/*
 
@@ -176,15 +175,15 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 
 */
 
-
-
 	std::vector<TH1*> to_sort;
 	std::vector<double> integral_sorter;
+    vec_hists.clear();
 
 	for(int t=0; t<stack.size(); t++){
 		std::cout<<"Stack "<<stack.at(t)->tag<<" level "<<t<<std::endl;
 
-		TH1* hist = (TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin);
+        vec_hists.push_back((TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin));
+        TH1* hist = vec_hists.back();
 		hist->SetTitle((this->name+"_"+var.name).c_str());
 		hist->SetLineColor(kBlack);
 		hist->SetStats(0);
@@ -195,13 +194,19 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 		hist->Scale();		
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Verticies");
+		hist->GetYaxis()->SetTitle("Events [POT Normalized]");
 
 
 		to_sort.push_back(hist);
 		integral_sorter.push_back(hist->GetSumOfWeights());
-
-		stacked->Add(hist);
+        
+        if(do_subtraction){
+        if(!subtraction_vec[t]){
+		    stacked->Add(hist);
+        }
+        }else{
+		    stacked->Add(hist);
+        }
 
 		//std::cout<<"HAT: "<<level<<" "<<stack.at(t)->tag<<std::endl;
 		//for(int k=1; k< hist->GetNbinsX(); k++){
@@ -222,13 +227,12 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 }
 
 
-
 THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cut2){
 
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
 	int stack_rebin = 1;
 	if(level ==2) stack_rebin=2;
-	if(level ==3) stack_rebin=4;
+	if(level ==3) stack_rebin=2;
 
 	/*
 
@@ -243,15 +247,14 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 
 */
 
-
-
 	std::vector<TH1*> to_sort;
 	std::vector<double> integral_sorter;
-
+    vec_hists.clear();
 	for(int t=0; t<stack.size(); t++){
 		std::cout<<"Stack "<<stack.at(t)->tag<<" level "<<t<<std::endl;
 
-		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin);
+        vec_hists.push_back( (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin));
+		TH1* hist = vec_hists.back();
 		hist->SetTitle((this->name+"_"+var.name).c_str());
 		hist->SetLineColor(kBlack);
 		hist->SetStats(0);
@@ -262,13 +265,21 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 		hist->Scale();		
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Verticies");
+		hist->GetYaxis()->SetTitle("Events POT [Normalized]");
 
 
 		to_sort.push_back(hist);
 		integral_sorter.push_back(hist->GetSumOfWeights());
 
-		stacked->Add(hist);
+        if(do_subtraction){
+        if(!subtraction_vec[t]){
+		    stacked->Add(hist);
+        }
+        }else{
+            stacked->Add(hist);
+        }
+
+
 
 		//std::cout<<"HAT: "<<level<<" "<<stack.at(t)->tag<<std::endl;
 		//for(int k=1; k< hist->GetNbinsX(); k++){
@@ -276,7 +287,7 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 		//}
 
 	}
-
+    
 	for (int i: sort_indexes(integral_sorter)) {
 		//stacked->Add(to_sort.at(i));	
 		//legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
@@ -292,7 +303,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 
 	ftest->cd();
 
-	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
+	std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 	//Loop over all stages
 	for(int s = 0; s< 4; s++){
 		std::cout<<"On stage: "<<s<<std::endl;
@@ -305,7 +316,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			f->setStageEntryList(s);
 
             //Also usable on BNBCosmics
-			if(s==3 && true && f->tag == "NCDeltaRadCosmics") f->tvertex->Scan("run_number:subrun_number:event_number:reco_nuvertx:reco_nuverty:reco_nuvertz:reco_track_vertdirx[0]:reco_track_vertdiry[0]:reco_track_vertdirz[0]:reco_shower_startx[0]:reco_shower_starty[0]:reco_shower_startz[0]:reco_shower_dirx[0]:reco_shower_diry[0]:reco_shower_dirz[0]");
+			if(s==3 && false && f->tag == "NCPi0Cosmics") f->tvertex->Scan("run_number:subrun_number:event_number:reco_nuvertx:reco_nuverty:reco_nuvertz:reco_track_vertdirx[0]:reco_track_vertdiry[0]:reco_track_vertdirz[0]:reco_shower_startx[0]:reco_shower_starty[0]:reco_shower_startz[0]:reco_shower_dirx[0]:reco_shower_diry[0]:reco_shower_dirz[0]");
 		}	
 		std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 
@@ -325,7 +336,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			stk->Draw("hist");
 			stk->SetTitle("");
 			stk->GetXaxis()->SetTitle(var.unit.c_str());
-			stk->GetYaxis()->SetTitle("Verticies");
+			stk->GetYaxis()->SetTitle("Events [POT Normalized]");
 			stk->GetYaxis()->SetTitleOffset(1.5);
 			stk->SetMaximum(stk->GetMaximum()*1.35);
 			TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);
@@ -351,20 +362,21 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			latexbdt2.SetTextSize(0.05);
 			latexbdt2.SetTextAlign(13);  //align at top
 			latexbdt2.SetNDC();
-			latexbdt2.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+			latexbdt2.DrawLatex(.48,.75,this->stack.at(0)->topo_name.c_str());
 			TLatex pottenbdt2;
 			pottenbdt2.SetTextSize(0.05);
 			pottenbdt2.SetTextAlign(13);  //align at top
 			pottenbdt2.SetNDC();
 			std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-			pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
+			pottenbdt2.DrawLatex(.48,.70, pot_draw_bdt2.c_str());
 
-			TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation Preliminary");
+			TText *tbdt2 = drawPrelim(0.10,0.91,0.035,"MicroBooNE Simulation - In Progress");
 			tbdt2->Draw();
 
 
-			TText *titbdt2 = drawPrelim(0.89, 0.91, 0.035, stage_names.at(s).c_str());
-			titbdt2->SetTextAlign(30);
+			//TText *titbdt2 = drawPrelim(0.91, 0.91, 0.035, stage_names.at(s).c_str());
+			TText *titbdt2 = drawPrelim(0.48, 0.6, 0.05, stage_names.at(s).c_str());
+			titbdt2->SetTextAlign(10);
 			titbdt2->Draw();
 
 			//cobs->Write();
@@ -393,7 +405,6 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	TCanvas *cobs = new TCanvas("","",1800,1600);
 	cobs->Divide(2,2,0.0025,0.0000001);
-	double plot_pot=6.6e20;
 
 	ftest->cd();
 	std::cout<<"bdt_stack::plotStacks || Starting to get Stacks"<<std::endl;	
@@ -430,7 +441,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s0->Draw("hist");
 	s0->SetTitle("");
 	s0->GetXaxis()->SetTitle(var.unit.c_str());
-	s0->GetYaxis()->SetTitle("Verticies");
+	s0->GetYaxis()->SetTitle("Events [POT Normalized]");
 	s0->GetYaxis()->SetTitleOffset(1.5);
 	s0->SetMaximum(s0->GetMaximum()*1.3);
 	TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
@@ -457,19 +468,19 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	latexsel.SetTextSize(0.05);
 	latexsel.SetTextAlign(13);  //align at top
 	latexsel.SetNDC();
-	latexsel.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexsel.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottensel;
 	pottensel.SetTextSize(0.05);
 	pottensel.SetTextAlign(13);  //align at top
 	pottensel.SetNDC();
 	std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottensel.DrawLatex(.66,.75, pot_draw_sel.c_str());
+	pottensel.DrawLatex(.62,.70, pot_draw_sel.c_str());
 
 
-	TText *tsel = drawPrelim(0.16,0.91,0.035,"MicroBooNE Simulation Preliminary");
+	TText *tsel = drawPrelim(0.16,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tsel->Draw();
 
-	TText *titsel = drawPrelim(0.89, 0.91, 0.035, "All Vertices");
+	TText *titsel = drawPrelim(0.89, 0.91, 0.035, "Topological Selection");
 	titsel->SetTextAlign(30);
 	titsel->Draw();
 
@@ -481,7 +492,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s1->Draw("hist");
 	s1->SetTitle("");
 	s1->GetXaxis()->SetTitle(var.unit.c_str());
-	s1->GetYaxis()->SetTitle("Verticies");
+	s1->GetYaxis()->SetTitle("Events [POT Normalized]");
 	s1->GetYaxis()->SetTitleOffset(1.5);
 	s1->SetMaximum(s1->GetMaximum()*1.3);
 	TLegend *l1 = new TLegend(0.11,0.72,0.89,0.89);
@@ -510,23 +521,23 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	latexpre.SetTextSize(0.05);
 	latexpre.SetTextAlign(13);  //align at top
 	latexpre.SetNDC();
-	latexpre.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexpre.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenpre;
 	pottenpre.SetTextSize(0.05);
 	pottenpre.SetTextAlign(13);  //align at top
 	pottenpre.SetNDC();
 	std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenpre.DrawLatex(.66,.75, pot_draw_pre.c_str());
+	pottenpre.DrawLatex(.62,.70, pot_draw_pre.c_str());
 
 
 
 
-	TText *tpre = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation Preliminary");
+	TText *tpre = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tpre->Draw();
 
-	TText *titpre = drawPrelim(0.89, 0.91, 0.035, "Pre-Selection Cuts");
-	titpre->SetTextAlign(30);
-	titpre->Draw();
+	//TText *titpre = drawPrelim(0.89, 0.91, 0.035, "Pre-Selection Cuts");
+	//titpre->SetTextAlign(30);
+	//titpre->Draw();
 
 
 
@@ -539,7 +550,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s2->Draw("hist");
 	s2->SetTitle("");
 	s2->GetXaxis()->SetTitle(var.unit.c_str());
-	s2->GetYaxis()->SetTitle("Verticies");
+	s2->GetYaxis()->SetTitle("Events [POT Normalized]");
 	s2->GetYaxis()->SetTitleOffset(1.5);
 	s2->SetMaximum(s2->GetMaximum()*1.3);
 	TLegend *l2 = new TLegend(0.11,0.72,0.89,0.89);
@@ -565,16 +576,16 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	latexbdt1.SetTextSize(0.05);
 	latexbdt1.SetTextAlign(13);  //align at top
 	latexbdt1.SetNDC();
-	latexbdt1.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexbdt1.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenbdt1;
 	pottenbdt1.SetTextSize(0.05);
 	pottenbdt1.SetTextAlign(13);  //align at top
 	pottenbdt1.SetNDC();
 	std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenbdt1.DrawLatex(.66,.75, pot_draw_bdt1.c_str());
+	pottenbdt1.DrawLatex(.62,.70, pot_draw_bdt1.c_str());
 
 
-	TText *tbdt1 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation Preliminary");
+	TText *tbdt1 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tbdt1->Draw();
 
 	TText *titbdt1 = drawPrelim(0.89, 0.91, 0.035, "Cosmic BDT Cut");
@@ -591,7 +602,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s3->Draw("hist");
 	s3->SetTitle("");
 	s3->GetXaxis()->SetTitle(var.unit.c_str());
-	s3->GetYaxis()->SetTitle("Verticies");
+	s3->GetYaxis()->SetTitle("Events [POT Normalized]");
 	s3->GetYaxis()->SetTitleOffset(1.5);
 	s3->SetMaximum(s3->GetMaximum()*1.35);
 	TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);
@@ -617,15 +628,15 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	latexbdt2.SetTextSize(0.05);
 	latexbdt2.SetTextAlign(13);  //align at top
 	latexbdt2.SetNDC();
-	latexbdt2.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexbdt2.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenbdt2;
 	pottenbdt2.SetTextSize(0.05);
 	pottenbdt2.SetTextAlign(13);  //align at top
 	pottenbdt2.SetNDC();
 	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
+	pottenbdt2.DrawLatex(.62,.70, pot_draw_bdt2.c_str());
 
-	TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation Preliminary");
+	TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tbdt2->Draw();
 
 
@@ -660,7 +671,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c2){
 	TCanvas *cobs = new TCanvas("","",1800,1600);
 	cobs->Divide(2,2,0.0025,0.0000001);
-	double plot_pot=6.6e20;
+	double plot_pot=13.2e20;
 
 	ftest->cd();
 	THStack* s0 = this->getBDTStack(whichbdt,0,-9,-9);
@@ -687,11 +698,12 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	TPad*p0 = (TPad*)cobs->cd(1);
 	p0->SetLogy();
 	s0->Draw("hist");
-	s0->SetTitle("All Verticies");
+	s0->SetTitle("Topological Selection");
 	s0->GetXaxis()->SetTitle(var.unit.c_str());
-	s0->GetYaxis()->SetTitle("Verticies");
+	s0->GetYaxis()->SetTitle("Events [Normalized]");
 	s0->GetYaxis()->SetTitleOffset(1.5);
 	s0->SetMaximum(s0->GetMaximum()*10);
+    s0->SetMinimum(0.05);
 	TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
 
 	t0->DrawCopy("Same E2"); t0->SetFillStyle(0);t0->Draw("hist same");
@@ -701,7 +713,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 		h1->SetFillColor(f->col);
 		h1->SetFillStyle(f->fillstyle);
 		h1->SetLineColor(kBlack);
-		l0->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+		l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 
 	}
 	l0->Draw();
@@ -713,13 +725,13 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	latexsel.SetTextSize(0.05);
 	latexsel.SetTextAlign(13);  //align at top
 	latexsel.SetNDC();
-	latexsel.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexsel.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottensel;
 	pottensel.SetTextSize(0.05);
 	pottensel.SetTextAlign(13);  //align at top
 	pottensel.SetNDC();
 	std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottensel.DrawLatex(.66,.75, pot_draw_sel.c_str());
+	pottensel.DrawLatex(.62,.70, pot_draw_sel.c_str());
 
 
 
@@ -732,19 +744,19 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s1->Draw("hist");
 	s1->SetTitle("Pre-Selection Cuts");
 	s1->GetXaxis()->SetTitle(var.unit.c_str());
-	s1->GetYaxis()->SetTitle("Verticies");
+	s1->GetYaxis()->SetTitle("Events [Normalized]");
 	s1->GetYaxis()->SetTitleOffset(1.5);
 	s1->SetMaximum(s1->GetMaximum()*50);
-	s1->SetMinimum(1);
+	s1->SetMinimum(0.05);
 	t1->DrawCopy("Same E2"); t1->SetFillStyle(0);t1->Draw("hist same");
 	TLegend *l1 = new TLegend(0.11,0.72,0.89,0.89);
 	for(auto &f: this->stack){
 		auto h1 = new TH1F(("tmp2"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 		h1->SetFillColor(f->col);
 		h1->SetLineColor(kBlack);
-
-		double Nevents = f->GetEntries( f->getStageCuts(1,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
-		l1->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+        h1->SetFillStyle(f->fillstyle);
+    	double Nevents = f->GetEntries( f->getStageCuts(1,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+		l1->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 	}
 	l1->Draw();
 	l1->SetLineColor(kWhite);
@@ -757,13 +769,13 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	latexpre.SetTextSize(0.05);
 	latexpre.SetTextAlign(13);  //align at top
 	latexpre.SetNDC();
-	latexpre.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexpre.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenpre;
 	pottenpre.SetTextSize(0.05);
 	pottenpre.SetTextAlign(13);  //align at top
 	pottenpre.SetNDC();
 	std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenpre.DrawLatex(.66,.75, pot_draw_pre.c_str());
+	pottenpre.DrawLatex(.62,.70, pot_draw_pre.c_str());
 
 
 
@@ -777,20 +789,21 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s2->Draw("hist");
 	s2->SetTitle("Cosmic BDT cut");
 	s2->GetXaxis()->SetTitle(var.unit.c_str());
-	s2->GetYaxis()->SetTitle("Verticies");
+	s2->GetYaxis()->SetTitle("Events [Normalized]");
 	s2->GetYaxis()->SetTitleOffset(1.5);
 	s2->SetMaximum(s2->GetMaximum()*10);
+	s2->SetMinimum(0.05);
 	TLegend *l2 = new TLegend(0.11,0.72,0.89,0.89);
 	t2->DrawCopy("Same E2"); t2->SetFillStyle(0);t2->Draw("hist same");
 	for(auto &f: this->stack){
 
 		auto h1 = new TH1F(("tmp3"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 		h1->SetFillColor(f->col);
-		h1->SetLineColor(kBlack);
-
+    	h1->SetLineColor(kBlack);
+    	h1->SetFillStyle(f->fillstyle);
 
 		double Nevents = f->GetEntries( f->getStageCuts(2,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
-		l2->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+		l2->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 	}
 	l2->Draw();
 	l2->SetLineColor(kWhite);
@@ -801,13 +814,13 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	latexbdt1.SetTextSize(0.05);
 	latexbdt1.SetTextAlign(13);  //align at top
 	latexbdt1.SetNDC();
-	latexbdt1.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexbdt1.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenbdt1;
 	pottenbdt1.SetTextSize(0.05);
 	pottenbdt1.SetTextAlign(13);  //align at top
 	pottenbdt1.SetNDC();
 	std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenbdt1.DrawLatex(.66,.75, pot_draw_bdt1.c_str());
+	pottenbdt1.DrawLatex(.62,.70, pot_draw_bdt1.c_str());
 
 
 
@@ -823,18 +836,20 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s3->Draw("hist");
 	s3->SetTitle("BNB BDT cut");
 	s3->GetXaxis()->SetTitle(var.unit.c_str());
-	s3->GetYaxis()->SetTitle("Verticies");
+	s3->GetYaxis()->SetTitle("Events [POT Normalized]");
 	s3->GetYaxis()->SetTitleOffset(1.5);
 	s3->SetMaximum(s3->GetMaximum()*10);
+	s3->SetMinimum(0.05);
 	TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);
 	t3->DrawCopy("Same E2"); t3->SetFillStyle(0);t3->Draw("hist same");
 	for(auto &f: this->stack){
 		auto h1 = new TH1F(("tmp4"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 		h1->SetFillColor(f->col);
 		h1->SetLineColor(kBlack);
+        h1->SetFillStyle(f->fillstyle);
 
-		double Nevents = f->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
-		l3->AddEntry(h1,("#splitline{"+f->tag+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+    	double Nevents = f->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
+		l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
 	}
 	l3->Draw();
 	l3->SetLineColor(kWhite);
@@ -848,13 +863,13 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	latexbdt2.SetTextSize(0.05);
 	latexbdt2.SetTextAlign(13);  //align at top
 	latexbdt2.SetNDC();
-	latexbdt2.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexbdt2.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenbdt2;
 	pottenbdt2.SetTextSize(0.05);
 	pottenbdt2.SetTextAlign(13);  //align at top
 	pottenbdt2.SetNDC();
 	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
+	pottenbdt2.DrawLatex(.62,.70, pot_draw_bdt2.c_str());
 
 
 

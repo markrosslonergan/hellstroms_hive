@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include "bdt_var.h"
+#include "method_struct.h"
 /******** Our includes *****/
 
 /******** Root includes *****/
@@ -26,12 +28,24 @@ struct bdt_info{
 	std::string signal_definition;
 	std::string background_definition;
 
+    method_struct TMVAmethod;
+    std::vector<bdt_variable> train_vars;
+    std::vector<bdt_variable> spec_vars;
+
 	std::string topo_name;
 	
 	bdt_info(){identifier = "null"; name = "null"; binning = "null";};
-	bdt_info(std::string in_identifier, std::string in_name, std::string in_bin) : identifier(in_identifier), name(in_name), binning(in_bin), base_cuts("1"), pre_cuts("1"), mid_cuts("1"),post_cuts("1"), bdt_cosmic_cuts("1"), bdt_bnb_cuts("1"),signal_definition("1"),background_definition("1"){
-	topo_name = "N#gammaNp";	
+	
+    bdt_info(std::string in_identifier, std::string in_name, std::string in_bin) : identifier(in_identifier), name(in_name), binning(in_bin), base_cuts("1"), pre_cuts("1"), mid_cuts("1"),post_cuts("1"), bdt_cosmic_cuts("1"), bdt_bnb_cuts("1"),signal_definition("1"),background_definition("1"){
+	topo_name = "2#gamma1p";	
 	};
+
+
+    bdt_info(std::string analysis_tag, method_struct inmethod):  TMVAmethod(inmethod), identifier(analysis_tag+inmethod.bdt_tag), name(inmethod.bdt_name),binning(inmethod.bdt_binning),base_cuts("1"), pre_cuts("1"), mid_cuts("1"),post_cuts("1"), bdt_cosmic_cuts("1"), bdt_bnb_cuts("1"),signal_definition("1"),background_definition("1") { 
+	topo_name = "2#gamma1p";	
+    train_vars = TMVAmethod.bdt_train_vars;
+    spec_vars = TMVAmethod.bdt_spec_vars;
+    }
 
 	int setName(std::string in){ identifier = in;return 0;};
 	int setBaseCuts(std::string in){ base_cuts = in; return 0;}; 

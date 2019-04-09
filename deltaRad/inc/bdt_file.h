@@ -101,6 +101,7 @@ struct bdt_file{
 		int fillstyle;
 
 		bool is_data;
+        bool is_bnbext;
 		bool is_mc;
 
 		std::string leg;
@@ -117,8 +118,10 @@ struct bdt_file{
 		//copy tvertex into topovertex, but with topological cut.
 		TTree *topovertex;
 
+
 		TTree *tevent;
 		TTree *tpot;
+		TTree *teventweight;
 
 		std::string topological_list_name;
 		TEntryList * topological_list;
@@ -128,6 +131,9 @@ struct bdt_file{
 		TEntryList * cosmicbdt_list;
 		std::string bnbbdt_list_name;
 		TEntryList * bnbbdt_list;
+
+        //a function that splits a BDT file based on string and !string
+        int splitBDTfile(std::string split_string,std::string trueTAG, bdt_file* truesplit, std::string falseTAG, bdt_file *falsesplit);
 
 
 		int setStageEntryList(int j);
@@ -140,8 +146,21 @@ struct bdt_file{
 
 		int calcBaseEntryList(std::string);
 
+        double data_tor860_wcut;
+        double data_spills_E1DCNT_wcut;
+        double ext_spills_ext;
+        double N_samweb_ext;
+
+        int setAsMC();
+        int setAsOverlay();
+        int setAsOnBeamData(double in_tor860_wcut);
+        int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
+        int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext);
+
+        int calcPOT();
 
 
+        int makeRunSubRunList();
 
 		double scale_data;
 
@@ -167,9 +186,7 @@ struct bdt_file{
 		TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 		TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
-
 		TH2* getTH2(bdt_variable varx, bdt_variable vary, std::string cuts, std::string nam, double plot_POT);
-
 
 		std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
 		std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
