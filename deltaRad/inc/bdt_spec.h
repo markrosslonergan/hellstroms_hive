@@ -43,7 +43,7 @@ class bdt_stack{
 
 
 		bdt_stack(std::string in) : name(in){
-			plot_pot=6.6e20;
+			plot_pot=13.2e20;
             do_subtraction = false;
 		}
 

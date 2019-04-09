@@ -12,9 +12,9 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 	double label_size_upper=0.05;
 	double title_offset_upper = 1.45;
 
-	double plot_pot = 6.6e20;
+	double plot_pot = 13.2e20;
 
-	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
+	std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 
 	//REWRITE THIS USING file->getStageCuts
 	file->recomc_cols = recomc_cols;
@@ -30,7 +30,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 		for(auto &var: vars){
 			std::vector<TH1*> vec_reco_mc = file->getRecoMCTH1(var,"1","stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name,plot_pot);
 			TH1* all_reco_mc = (TH1*)file->getTH1(var , "1" ,"comb_stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name, plot_pot);
-			int Num = all_reco_mc->GetSumOfWeights();				
+			double Num = all_reco_mc->GetSumOfWeights();				
 
 			all_reco_mc->SetLineColor(kBlack);
 			all_reco_mc->SetFillStyle(3002);
@@ -46,7 +46,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 			fout->cd();
 
-			TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(), ("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),1600,1350);
+			TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(), ("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),1600,1450);
 			c->cd();
 
 
@@ -82,7 +82,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			std::cout<<"Drawn."<<std::endl;
 
 			s_reco_truth->GetXaxis()->SetTitle(var.unit.c_str());
-			s_reco_truth->GetYaxis()->SetTitle("Verticies");
+			s_reco_truth->GetYaxis()->SetTitle("Events [POT Normalized]");
 			s_reco_truth->GetYaxis()->SetTitleOffset(1.5);
 
 			TLatex latexsel;
@@ -97,7 +97,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			std::string pot_draw = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 			pottensel.DrawLatex(.7,.89, pot_draw.c_str());
 
-			TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation Preliminary");
+			TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation In-Progress");
 			tsel->Draw();
 
 
@@ -112,7 +112,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			l_reco_truth->SetLineWidth(0);
 
 
-			c->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth_stage_"+std::to_string(s)+".png").c_str(),"png");
+			c->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
 			/*
 			for(auto * t : vec_reco_mc) delete t;
@@ -246,7 +246,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 	fout->cd();
 
-	TCanvas *c_reco_truth = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag).c_str(), ("recomc_truth_"+var.name+"_"+file->tag).c_str(),2000,1600);
+	TCanvas *c_reco_truth = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag).c_str(), ("recomc_truth_"+var.name+"_"+file->tag).c_str(),2000,1650);
 	c_reco_truth->Divide(2,2);
 
 	//******************* All Verticies	*************************
@@ -499,7 +499,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 
 	c_reco_truth->Write();
-	c_reco_truth->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth.png").c_str(),"png");
+	c_reco_truth->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth.pdf").c_str(),"pdf");
 
 
 

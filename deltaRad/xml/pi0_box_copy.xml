@@ -28,7 +28,7 @@
 -->
 
 <!--Comsic BDT Training + Spectator Variables-->
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(50,0,1)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(30,0.16,1)">
     <method type = "COSMIC" use = "yes">
         <param>  NTrees=25 	</param>				
         <param>  MinNodeSize=2.5% </param>				
@@ -69,8 +69,8 @@
     <var def = "reco_shower_dEdx_amalgamated[(reco_shower_ordered_energy_index[0])]" binning = "(20,0,6.5)" unit = "Median Leading Shower dE/dx Amalgamated [MeV/cm]" type="d" spectator="true"/>
     <var def = "reco_shower_dEdx_amalgamated[(reco_shower_ordered_energy_index[1])]" binning = "(20,0,6.5)" unit = "Median Subleading Shower dE/dx Amalgamated [MeV/cm]" type="d" spectator="true"/>
 
-    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy [GeV]" type="d" spectator="true"/>
-    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy [GeV]" type="d" spectator="true"/>
+    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(10,0,0.6)" unit = "Reconstructed Shower Energy (Leading Photon) [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy [GeV]" type="d" spectator="false"/>
 
     <var def = "reco_shower_energy_plane0[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane1[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 1 [GeV]" type="d" spectator="true"/>
@@ -133,7 +133,7 @@
     <var def="sqrt((reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])]))/1000" binning = "(20, 0, 1)" unit = "Reco. #pi^{0} Transverse Momentum [GeV]" type = "d" spectator = "true" />
 
     <!-- Invariant mass -->
-    <var def="sqrt(2.0*reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*(1.0-cos((acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])))))/1000" binning = "(20, 0, 0.5)" unit = "Reco. #pi^{0} Invariant Mass [GeV]" type = "d" spectator = "true" />
+    <var def="sqrt(2.0*reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*(1.0-cos((acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])))))/1000" binning = "(20, 0, 0.3)" unit = "Reconstructed Diphoton Mass [GeV]" type = "d" spectator = "true" />
 
     <!-- Center-of-mass decay angle -->
     <var def="((reco_shower_energy_max[(reco_shower_ordered_energy_index[0])] - reco_shower_energy_max[(reco_shower_ordered_energy_index[1])])/(sqrt((reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])]))))" binning = "(20, 0, 1)" unit = "Reconstructed cos(#theta_{CM})" type = "d" spectator = "true" />
@@ -174,12 +174,12 @@
     <var def = "reco_track_endx[0]" binning = "(20,-10,260)" unit = " Reconstructed Track end X pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endy[0]" binning = "(20,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(20,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
-    <var def = "reco_track_spacepoint_principal0[0]" binning = "(20,0,1)" unit = "Recontstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
+    <var def = "reco_track_spacepoint_principal0[0]" binning = "(20,0,1)" unit = "Reconstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
 
 </mva>
 
 <!--BNB BDT Training + Spectator Variables-->
-<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(50,0,1)">
+<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(30,0.28,1)">
     <method type = "BNB" use = "yes">
         <param>  NTrees=25 	</param>				
         <param>  MinNodeSize=2.5% </param>				
@@ -221,8 +221,8 @@
     <var def = "reco_shower_dEdx_amalgamated[(reco_shower_ordered_energy_index[0])]" binning = "(20,0,6.5)" unit = "Median Leading Shower dE/dx Amalgamated [MeV/cm]" type="d" spectator="true"/>
     <var def = "reco_shower_dEdx_amalgamated[(reco_shower_ordered_energy_index[1])]" binning = "(20,0,6.5)" unit = "Median Subleading Shower dE/dx Amalgamated [MeV/cm]" type="d" spectator="true"/>
 
-    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy [GeV]" type="d" spectator="true"/>
-    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy [GeV]" type="d" spectator="true"/>
+    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,0.6)" unit = "Reconstructed Shower Energy (Leading Photon) [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy [GeV]" type="d" spectator="false"/>
 
     <var def = "reco_shower_energy_plane0[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane1[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 1 [GeV]" type="d" spectator="true"/>
@@ -285,7 +285,7 @@
     <var def="sqrt((reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])]))/1000" binning = "(20, 0, 1)" unit = "Reco. #pi^{0} Transverse Momentum [GeV]" type = "d" spectator = "true" />
 
     <!-- Invariant mass -->
-    <var def="sqrt(2.0*reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*(1.0-cos((acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])))))/1000" binning = "(20, 0, 0.5)" unit = "Reco. #pi^{0} Invariant Mass [GeV]" type = "d" spectator = "true" />
+    <var def="sqrt(2.0*reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*(1.0-cos((acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])))))/1000" binning = "(20, 0, 0.3)" unit = "Reconstructed Diphoton Mass [GeV]" type = "d" spectator = "true" />
 
     <!-- Center-of-mass decay angle -->
     <var def="((reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])] - reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])])/(sqrt((reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])]))))" binning = "(20, 0, 1)" unit = "Reconstructed cos(#theta_{CM})" type = "d" spectator = "true" />
@@ -326,6 +326,6 @@
     <var def = "reco_track_endx[0]" binning = "(20,-10,260)" unit = " Reconstructed Track end X pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endy[0]" binning = "(20,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(20,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
-    <var def = "reco_track_spacepoint_principal0[0]" binning = "(20,0,1)" unit = "Recontstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
+    <var def = "reco_track_spacepoint_principal0[0]" binning = "(20,0,1)" unit = "Reconstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
 
 </mva>
