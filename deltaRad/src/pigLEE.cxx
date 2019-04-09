@@ -361,10 +361,10 @@ int main (int argc, char *argv[]){
         std::string two_cosmic = "sim_shower_overlay_fraction[0]>0.8 && sim_shower_overlay_fraction[1]>0.8";
         std::string one_cosmic = "(sim_shower_overlay_fraction[0]>0.8 || sim_shower_overlay_fraction[1]>0.8) && !(sim_shower_overlay_fraction[0]>0.8 && sim_shower_overlay_fraction[1]>0.8)";
         // Other; defined as "!" versions of above
-        std::string other = "!("+signal_string+") && !("+signal_other_string+") && !("+bkg1+") && !("+bkg2+") && !("+bkg3+") && !("+bkg4+") && !("+bkg5+") && !("+bkg6+")";
+        std::string other = "!("+signal_string+") && !("+signal_other_string+") && !("+nc_bnb+") && !("+ncdelta+") && !("+cc_pi0+") && !("+cc_bnb+") && !("+two_cosmic+") && !("+one_cosmic+")";
        
         //std::vector<std::string> recomc_cuts = {signal_string, bkg1, bkg2, bkg3, bkg4, bkg5, bkg6, other}; 
-        std::vector<std::string> recomc_cuts = {signal_string, signal_other_string, bkg1, bkg2, bkg3, bkg4, bkg5, bkg6, other}; 
+        std::vector<std::string> recomc_cuts = {signal_string, signal_other_string, nc_bnb, ncdelta, cc_pi0, cc_bnb, two_cosmic, one_cosmic, other}; 
 
         bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 

@@ -182,10 +182,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             stk->SetMinimum(0.0001);
             stk->Draw("hist");
-            stk->SetTitle(stage_names.at(s).c_str());
+            stk->SetTitle("");
+            //stk->SetTitle(stage_names.at(s).c_str());
             stk->GetXaxis()->SetTitle(var.unit.c_str());
             stk->GetYaxis()->SetTitle("Events");
-            stk->GetYaxis()->SetTitleOffset(1.5);
+            stk->GetYaxis()->SetTitleOffset(0.9);
             stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
             stk->SetMinimum(min_val);
             tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
@@ -490,7 +491,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
         vec_stacks.at(k)->GetYaxis()->SetTitle("Events");
         vec_stacks.at(k)->GetYaxis()->SetTitleSize(0.05);
-        vec_stacks.at(k)->GetYaxis()->SetTitleOffset(0.8);
+        vec_stacks.at(k)->GetYaxis()->SetTitleOffset(0.9);
         vec_stacks.at(k)->GetYaxis()->SetLabelSize(label_size_upper);
         vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum())*max_modifier);
         vec_stacks.at(k)->SetMinimum(min_val);
