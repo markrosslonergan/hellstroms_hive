@@ -229,8 +229,8 @@ int main (int argc, char *argv[]){
 
     bdt_file *dirt = new bdt_file(dir,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
-    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",	  "hist","singlephoton/",  kBlue-4, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
 
     //Data files
     bdt_file *OnBeamData    = new bdt_file(dir9, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
@@ -328,8 +328,9 @@ int main (int argc, char *argv[]){
     double fbnbcut;
     if(analysis_tag == "track"){
         //0.677 0.6125
-        fcoscut =  0.6;
-        fbnbcut =  0.55;
+        //0.6, 0.55
+        fcoscut =  0.677;
+        fbnbcut =  0.60625;
     }else if(analysis_tag == "notrack"){
         //0.64 0.59875
         //0.673 0.5825
@@ -390,7 +391,7 @@ int main (int argc, char *argv[]){
         std::string ccpi0 = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==0 && !("+overlay+")";
         std::string ncpi0 = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==1 && !("+overlay+")";
         std::string othergamma =  "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative!=1 && !("+overlay+")";
-        std::string  nue = "abs(mctruth_lepton_pdg)==11 && abs(sim_shower_pdg[0]) ==11  && !("+overlay+")"; // && (exiting_electron_number==1 || exiting_antielectron_number==1)";
+        std::string  nue = "abs(mctruth_lepton_pdg[0])==11 && abs(sim_shower_pdg[0]) ==11  && !("+overlay+")"; // && (exiting_electron_number==1 || exiting_antielectron_number==1)";
         std::string  michel = "abs(sim_shower_pdg[0]) ==11 && abs(sim_shower_parent_pdg[0])==13 && !("+overlay+")";
         //std::string bnbother =  "sim_shower_pdg[0]!=22 && !("+nue+") && !("+michel+")  && !("+overlay+")";
        // std::string overlay = "sim_shower_overlay_fraction[0] == 1";
@@ -410,6 +411,8 @@ int main (int argc, char *argv[]){
 
        recomc_cuts.push_back(othernc);
        recomc_cuts.push_back(othercc);
+
+       std::cout<<"other nc = "<<othernc<<std::endl;
        
         std::string other = "!("+overlay+")";
         for(auto s: recomc_cuts){
