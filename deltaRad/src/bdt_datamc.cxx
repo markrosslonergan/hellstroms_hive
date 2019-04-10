@@ -188,6 +188,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             //stk->SetTitle(stage_names.at(s).c_str());
             stk->GetXaxis()->SetTitle(var.unit.c_str());
             stk->GetYaxis()->SetTitle("Events");
+            stk->GetYaxis()->SetTitleSize(0.05);
             stk->GetYaxis()->SetTitleOffset(0.9);
             stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
             stk->SetMinimum(min_val);
@@ -211,10 +212,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 if(do_subtraction){
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
-                l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
-                n++;
+               // l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
+                l0->AddEntry(h1,(f->plot_name).c_str(),"f");
+               n++;
             }
-
+            l0->AddEntry(tsum,"MC Stats Only Err","f");
             //			d0->Draw("same E1");
 
             std::cout<<"KSTEST: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -228,9 +230,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             d0->Draw("same E1");
 
 
-            l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
-
-
+            //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
+            l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
+ 
 
             l0->Draw();
             l0->SetLineWidth(0);
@@ -322,7 +324,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             ratpre->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
 
             ratpre->SetFillStyle(3144);
-            ratpre->Draw("E0 same");	
+            ratpre->Draw("E1 same");	
 
             ratpre->SetLineColor(kBlack);
             ratpre->SetTitle("");
@@ -384,6 +386,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
     double title_size_upper=0.15;
     double label_size_upper=0.05;
+     //double label_size_upper=0.1;
     double title_offset_upper = 1.45;
 
 
@@ -492,7 +495,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         vec_stacks.at(k)->SetTitle("");
         vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
         vec_stacks.at(k)->GetYaxis()->SetTitle("Events");
-        vec_stacks.at(k)->GetYaxis()->SetTitleSize(0.05);
+       // vec_stacks.at(k)->GetYaxis()->SetTitleSize(0.05);
+        vec_stacks.at(k)->GetYaxis()->SetTitleSize(0.1);
         vec_stacks.at(k)->GetYaxis()->SetTitleOffset(0.9);
         vec_stacks.at(k)->GetYaxis()->SetLabelSize(label_size_upper);
         vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum())*max_modifier);
@@ -601,7 +605,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         ratpre->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
 
         ratpre->SetFillStyle(3144);
-        ratpre->Draw("E0 same");	
+        ratpre->Draw("E1 same");	
 
         ratpre->SetLineColor(kBlack);
         ratpre->SetTitle("");

@@ -313,8 +313,8 @@ int main (int argc, char *argv[]){
 
     //Adding plot names
     training_signal->addPlotName("NC #Delta Radiative");
-    signal->addPlotName("Signal NC #Delta Rad");
-    signal_other->addPlotName("Other NC #Delta Rad");
+    signal->addPlotName("Signal NC #Delta Radiative");
+    signal_other->addPlotName("Other NC #Delta Radiative");
     training_bnb->addPlotName("BNB Backgrounds");
     bnb->addPlotName("BNB ");
     OnBeamData->addPlotName("On-Beam  Data");

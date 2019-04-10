@@ -306,7 +306,9 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
 
 	ftest->cd();
-
+  double hatch_width =  gStyle->GetHatchesLineWidth();
+  double hatch_space =  gStyle->GetHatchesSpacing(); 
+			
 	std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 	//Loop over all stages
 	for(int s = 0; s< 4; s++){
@@ -332,19 +334,30 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			//cobs->Divide(2,2,0.0025,0.0000001);
 
 			THStack *stk = (THStack*)this->getEntryStack(var,s);
-			TH1 * tsum = (TH1*)this->getEntrySum(var,s);
+            TH1 * tsum = (TH1*)this->getEntrySum(var,s);
 
 			tsum->SetMarkerSize(0);
 
 			cobs->cd();
-			stk->Draw("hist");
+            std::cout<<"hatch width/spacing = "<<hatch_width<<"/"<<hatch_space<<std::endl;
+            //gStyle->SetHatchesLineWidth(1);
+            //gStyle->SetHatchesSpacing(hatch_space);
+            
+            stk->Draw("hist");
 			stk->SetTitle("");
 			stk->GetXaxis()->SetTitle(var.unit.c_str());
 			stk->GetYaxis()->SetTitle("Events");
 			stk->GetYaxis()->SetTitleOffset(1.5);
 			stk->SetMaximum(stk->GetMaximum()*1.35);
 			TLegend *l3 = new TLegend(0.11,0.70,0.89,0.89);
-			tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);tsum->Draw("hist same");
+			//tsum->DrawCopy("Same E2"); 
+            //gStyle->SetHatchesLineWidth(2);
+            // gStyle->SetHatchesSpacing(1);
+
+            tsum->DrawCopy("Same E2");
+             
+            tsum->SetFillStyle(0);tsum->Draw("hist same");
+           
 		//	tsum->DrawCopy("Same E1"); tsum->SetFillStyle(0);tsum->Draw("hist same");
 			for(auto &f: this->stack){
 				double Nevents = f->GetEntries()*(plot_pot/f->pot )*f->scale_data;
@@ -358,6 +371,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 		        l3->AddEntry(h1,(f->plot_name).c_str(),"f");
 	
             }
+            l3->AddEntry(tsum,"MC Stats Only Err", "f");
 			l3->Draw();
 			l3->SetLineColor(kWhite);
 			l3->SetLineWidth(0);
@@ -382,9 +396,9 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 
 
 			//TText *titbdt2 = drawPrelim(0.91, 0.91, 0.035, stage_names.at(s).c_str());
-			TText *titbdt2 = drawPrelim(0.48, 0.6, 0.05, stage_names.at(s).c_str());
-			titbdt2->SetTextAlign(10);
-			titbdt2->Draw();
+			//TText *titbdt2 = drawPrelim(0.48, 0.6, 0.05, stage_names.at(s).c_str());
+			//titbdt2->SetTextAlign(10);
+			//titbdt2->Draw();
 
 			//cobs->Write();
 			cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
@@ -595,9 +609,9 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	TText *tbdt1 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tbdt1->Draw();
 
-	TText *titbdt1 = drawPrelim(0.89, 0.91, 0.035, "Cosmic BDT Cut");
-	titbdt1->SetTextAlign(30);
-	titbdt1->Draw();
+//	TText *titbdt1 = drawPrelim(0.89, 0.91, 0.035, "Cosmic BDT Cut");
+//	titbdt1->SetTextAlign(30);
+//	titbdt1->Draw();
 
 
 
@@ -648,9 +662,9 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	tbdt2->Draw();
 
 
-	TText *titbdt2 = drawPrelim(0.89, 0.91, 0.035, "BNB BDT Cut");
-	titbdt2->SetTextAlign(30);
-	titbdt2->Draw();
+//	TText *titbdt2 = drawPrelim(0.89, 0.91, 0.035, "BNB BDT Cut");
+//	titbdt2->SetTextAlign(30);
+//	titbdt2->Draw();
 
 
 
@@ -848,7 +862,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s3->GetYaxis()->SetTitle("Events");
 	s3->GetYaxis()->SetTitleOffset(1.5);
 	s3->SetMaximum(s3->GetMaximum()*10);
-	s3->SetMinimum(0.05);
+    s3->SetMinimum(0.05);
 	TLegend *l3 = new TLegend(0.11,0.70,0.89,0.89);
 	t3->DrawCopy("Same E2"); t3->SetFillStyle(0);t3->Draw("hist same");
 	for(auto &f: this->stack){
