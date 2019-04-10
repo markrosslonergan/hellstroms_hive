@@ -82,7 +82,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			std::cout<<"Drawn."<<std::endl;
 
 			s_reco_truth->GetXaxis()->SetTitle(var.unit.c_str());
-			s_reco_truth->GetYaxis()->SetTitle("Events [POT Normalized]");
+			s_reco_truth->GetYaxis()->SetTitle("Events");
 			s_reco_truth->GetYaxis()->SetTitleOffset(1.5);
 
 			TLatex latexsel;

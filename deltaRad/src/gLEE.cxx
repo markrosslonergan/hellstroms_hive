@@ -247,7 +247,7 @@ int main (int argc, char *argv[]){
 
     //For conviencance fill a vector with pointers to all the files to loop over.
     //std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData,dirt, bnb_cosmics_noabs, bnb_cosmics_nom, bnb_cosmics_undo, bnb_cosmics_noyz};
-    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData,dirt, OffBeamData};
+    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, dirt, OnBeamData, OffBeamData};
 
     //The LEE signal is bigger than the SM signal by this factor
     training_signal->scale_data = 3.0;
@@ -313,13 +313,13 @@ int main (int argc, char *argv[]){
 
     //Adding plot names
     training_signal->addPlotName("NC #Delta Radiative");
-    signal->addPlotName("Signal NC #Delta Rad w/ Overlays");
-    signal_other->addPlotName("Other NC #Delta Rad w/ Overlays");
+    signal->addPlotName("Signal NC #Delta Rad");
+    signal_other->addPlotName("Other NC #Delta Rad");
     training_bnb->addPlotName("BNB Backgrounds");
-    bnb->addPlotName("BNB w/Overlays");
+    bnb->addPlotName("BNB ");
     OnBeamData->addPlotName("On-Beam  Data");
-    OffBeamData->addPlotName("Off-Beam Data");
-    dirt->addPlotName("Dirt w/ Overlays");
+    OffBeamData->addPlotName("Cosmic Data");
+    dirt->addPlotName("Dirt");
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
@@ -473,8 +473,10 @@ int main (int argc, char *argv[]){
         //Add OffBeamData but change the color and style first
         OffBeamData->col;	
         OffBeamData->fillstyle = 3333;
-        histogram_stack.addToStack(OffBeamData);
         histogram_stack.addToStack(dirt);
+
+        histogram_stack.addToStack(OffBeamData);
+        //histogram_stack.addToStack(dirt);
 
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
         int ip=0;
@@ -561,10 +563,11 @@ int main (int argc, char *argv[]){
 
         histogram_stack->addToStack(bnb);
         OffBeamData->fillstyle = 3333;
+        histogram_stack->addToStack(dirt);
         histogram_stack->addToStack(OffBeamData);
 
 
-        histogram_stack->addToStack(dirt);
+        //histogram_stack->addToStack(dirt);
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){

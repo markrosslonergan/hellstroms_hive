@@ -146,6 +146,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             std::cout<<"2 "<<std::endl;
             tsum->SetMarkerSize(0);
             d0->SetMarkerSize(2);
+            gStyle->SetEndErrorSize(10);
 
             cobs->cd();
             TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
@@ -178,6 +179,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             }
 
             d0->SetMarkerStyle(20);
+            d0->SetMarkerSize(3);
             d0->SetLineColor(kBlack);
 
             stk->SetMinimum(0.0001);
@@ -300,7 +302,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             ratunit->SetLineColor(kBlack);
             ratunit->SetTitle("");
             //ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
-            ratunit->GetYaxis()->SetTitle("Data/(MC+Off-Beam)");
+            ratunit->GetYaxis()->SetTitle("Data/(MC+Cosmic)");
             ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
             ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY);
             ratunit->SetMinimum(rmin);	
@@ -579,7 +581,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         ratunit->SetLineColor(kBlack);
         ratunit->SetTitle("");
         //ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
-        ratunit->GetYaxis()->SetTitle("Data/(MC+Off-Beam)");
+        ratunit->GetYaxis()->SetTitle("Data/(MC+Cosmic)");
         ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
         ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY);
         ratunit->SetMinimum(rmin);	
