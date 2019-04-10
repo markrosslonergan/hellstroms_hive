@@ -11,20 +11,32 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
     double tmin =9999;
     double tmax = -9999;
+    
+    /*
     for(auto &f: mc_stack->stack){
         std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
 
         TH1 * tmp = f->getTH1((f->tag +"_"+whichbdt.identifier+ ".mva") ,(f->tag +"_"+whichbdt.identifier+ ".mva > 0")  , "tmpBDtstack_"+data_file->tag+"_"+whichbdt.name,1,0);
-
 
         tmax = std::max( tmax, f->tvertex->GetMaximum( (f->tag +"_"+whichbdt.identifier+ ".mva").c_str()   ));
         if(f->tag!="NCDeltaRadCosmics") tmin = std::min( tmin, tmp->GetBinCenter(tmp->FindFirstBinAbove(0.05)));
         std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
         delete tmp;
     }
+    
     std::string  binning = "(20,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
+    */
+    std::string  binning = whichbdt.binning;
 
     bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
+    dvar.is_logplot = true;
+    
+    /*std::vector<bdt_variable> tmp_v = {dvar};
+
+    return this->plotStacks(ftest, tmp_v ,c1,c2);
+    */
+
+    //run on old one
     return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
 }
 
@@ -170,11 +182,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             
             if(var.is_logplot == true){
                 pad0top->SetLogy();
+                max_modifier=50.0;
             }
             //     double max_modifier = 1.7;
             double min_val = 0.01;
             if(is_bdt_variable) {
-                max_modifier = 10.0;
+                max_modifier = 50.0;
                 min_val = 0.1;
             }
 
@@ -216,7 +229,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 l0->AddEntry(h1,(f->plot_name).c_str(),"f");
                n++;
             }
-            l0->AddEntry(tsum,"MC Stats Only Err","f");
+            l0->AddEntry(tsum,"MC Stats Only Error","f");
             //			d0->Draw("same E1");
 
             std::cout<<"KSTEST: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
