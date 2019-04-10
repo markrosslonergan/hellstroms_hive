@@ -22,8 +22,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
         std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
         delete tmp;
     }
-    std::string  binning = "(24,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
-
+    std::string  binning = "(20,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
 
     bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
     return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
@@ -165,8 +164,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 rmin=0; rmax = 1.99;
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
-            double max_modifier = 1.65;
-
+            //double max_modifier = 1.65;
+            double max_modifier = 2.0;
             
             if(var.is_logplot == true){
                 pad0top->SetLogy();
@@ -183,10 +182,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             stk->SetMinimum(0.0001);
             stk->Draw("hist");
-            stk->SetTitle(stage_names.at(s).c_str());
+            stk->SetTitle("");
+            //stk->SetTitle(stage_names.at(s).c_str());
             stk->GetXaxis()->SetTitle(var.unit.c_str());
             stk->GetYaxis()->SetTitle("Events");
-            stk->GetYaxis()->SetTitleOffset(1.6);
+            stk->GetYaxis()->SetTitleOffset(0.9);
             stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
             stk->SetMinimum(min_val);
             tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
@@ -253,9 +253,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress - Spectator Variable");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress - Training Variable");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
             pre->Draw();
@@ -299,7 +301,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             ratunit->SetTitle("");
             //ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
             ratunit->GetYaxis()->SetTitle("Data/(MC+Off-Beam)");
-            
             ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
             ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY);
             ratunit->SetMinimum(rmin);	
@@ -309,6 +310,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             ratunit->GetYaxis()->SetLabelSize(label_size_ratio);
             ratunit->GetXaxis()->SetLabelSize(label_size_ratio);
             ratunit->GetXaxis()->SetTitle(var.unit.c_str());
+            ratunit->GetYaxis()->SetNdivisions(505);
 
             TH1* ratpre = (TH1*)d0->Clone(("ratio_"+stage_names.at(s)).c_str());
             ratpre->Divide(rat_denom);		
@@ -331,7 +333,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
             t->SetTextSize(0.12);
-           // t->Draw("same");
+            //t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
             //var_precut.front()->GetYaxis()->SetTitle("Events");
@@ -446,13 +448,14 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
     std::vector<TH1*> vec_th1s = {sh0,sh1,sh2,sh3};	
     std::vector<std::string> data_cuts = {dat_cut_0, dat_cut_1, dat_cut_2, dat_cut_3};
     std::vector<TH1*> data_th1s = {d0,d1,d2,d3};
-    //std::vector<std::string> stage_name = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT Cut"};
-    std::vector<std::string> stage_name = {"Topological Selection","","Cosmic BDT Cut","BNB BDT Cut"};
+    std::vector<std::string> stage_name = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT Cut"};
+    //std::vector<std::string> stage_name = {"Topological Selection","","Cosmic BDT Cut","BNB BDT Cut"};
 
 
-    for(int k = 1; k<4; k++){
+    for(int k = 0; k<4; k++){
+      std::cout << "[PLOTBDTSTACKS:] On stage " << k << std::endl;
         TCanvas *cobs = new TCanvas("","",900,800);
-        //	cobs->cd(k+1);
+        //cobs->cd(k+1);
         cobs->cd();
         TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 
@@ -473,26 +476,29 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         }else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
 
 
-        double max_modifier = 1.4;
+        double max_modifier = 1.9;
         double min_val = 0.01;
         if(is_bdt_variable) {
-            max_modifier = 30.0;
+            max_modifier = 50.0;
             min_val = 0.1;
         }
 
         vec_stacks.at(k)->SetMaximum(vec_th1s.at(k)->GetMaximum()*1.4);
         vec_stacks.at(k)->SetMinimum(0.00001);
         vec_stacks.at(k)->Draw("hist");
-        vec_stacks.at(k)->SetTitle(stage_name.at(k).c_str());
+        //vec_stacks.at(k)->SetTitle(stage_name.at(k).c_str());
+        vec_stacks.at(k)->SetTitle("");
         vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
         vec_stacks.at(k)->GetYaxis()->SetTitle("Events");
-        vec_stacks.at(k)->GetYaxis()->SetTitleOffset(1.5);
+        vec_stacks.at(k)->GetYaxis()->SetTitleSize(0.05);
+        vec_stacks.at(k)->GetYaxis()->SetTitleOffset(0.9);
+        vec_stacks.at(k)->GetYaxis()->SetLabelSize(label_size_upper);
         vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum())*max_modifier);
         vec_stacks.at(k)->SetMinimum(min_val);
         vec_th1s.at(k)->DrawCopy("Same E2"); vec_th1s.at(k)->SetFillStyle(0);//vec_th1s.at(k)->Draw("hist same");
 
 
-        TLegend *l0 = new TLegend(0.11,0.66,0.89,0.89);
+        TLegend *l0 = new TLegend(0.11,0.62,0.89,0.89);
         l0->SetNColumns(2);
         double NeventsStack = 0;
 
@@ -503,7 +509,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
             h1->SetFillColor(f->col);
             h1->SetFillStyle(f->fillstyle);
             h1->SetLineColor(kBlack);
-            l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+            //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+            l0->AddEntry(h1,(f->plot_name.c_str()),"f");
         }
 
         data_th1s.at(k)->Rebin(data_rebin);
@@ -515,7 +522,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         double NdatEvents = data_file->GetEntries(data_cuts.at(k).c_str())*(plot_pot/data_file->pot )*data_file->scale_data;
 
-        l0->AddEntry(data_th1s.at(k),("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
+        l0->AddEntry(data_th1s.at(k),(data_file->plot_name).c_str(),"lp");	
+        //l0->AddEntry(data_th1s.at(k),("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
 
         l0->Draw();
         l0->SetLineWidth(0);
@@ -534,9 +542,9 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         pottex.SetNDC();
         std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-        pottex.DrawLatex(.6,.7, pot_draw.c_str());
+        pottex.DrawLatex(.7,.96, pot_draw.c_str());
 
-        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
         pre->Draw();
 
         //cobs->cd(k+1);	
@@ -572,7 +580,6 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         ratunit->SetTitle("");
         //ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
         ratunit->GetYaxis()->SetTitle("Data/(MC+Off-Beam)");
-       
         ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
         ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY);
         ratunit->SetMinimum(rmin);	
@@ -582,6 +589,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         ratunit->GetYaxis()->SetLabelSize(label_size_ratio);
         ratunit->GetXaxis()->SetLabelSize(label_size_ratio);
         ratunit->GetXaxis()->SetTitle(var.unit.c_str());
+        ratunit->GetYaxis()->SetNdivisions(505);
 
         TH1* ratpre = (TH1*)data_th1s.at(k)->Clone(("ratio_"+stage_name.at(k)).c_str());
         ratpre->Divide(rat_denom);		
@@ -619,7 +627,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
             cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(k)+".pdf").c_str(),"pdf");
         }
 
-        if(is_bdt_variable) return 0;
+        //if(is_bdt_variable) return 0;
     }
 
 

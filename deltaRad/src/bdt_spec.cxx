@@ -19,7 +19,7 @@ THStack* bdt_stack::getBDTStack(bdt_info whichbdt, std::string binning, int leve
 		hist->SetFillStyle(stack.at(t)->fillstyle);
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Events");
+		hist->GetYaxis()->SetTitle("Events [POT Normalized]");
 
 		stacked->Add(hist);
 	}
@@ -53,7 +53,7 @@ TH1* bdt_stack::getBDTSum(bdt_info whichbdt, std::string binning, int level, dou
 	summed->SetFillColor(kGray+3);
 
 	summed->GetXaxis()->SetTitle(var.unit.c_str());
-	summed->GetYaxis()->SetTitle("Events");
+	summed->GetYaxis()->SetTitle("Events [POT Normalized]");
 
 
 
@@ -108,7 +108,7 @@ TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
 	summed->SetLineWidth(1);
 
 	summed->GetXaxis()->SetTitle(var.unit.c_str());
-	summed->GetYaxis()->SetTitle("Events");
+	summed->GetYaxis()->SetTitle("Events [POT Normalized]");
 
 
 
@@ -144,7 +144,7 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 	summed->SetLineWidth(1);
 
 	summed->GetXaxis()->SetTitle(var.unit.c_str());
-	summed->GetYaxis()->SetTitle("Events");
+	summed->GetYaxis()->SetTitle("Events [POT Normalized]");
 
 
 
@@ -194,7 +194,7 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 		hist->Scale();		
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Events");
+		hist->GetYaxis()->SetTitle("Events [POT Normalized]");
 
 
 		to_sort.push_back(hist);
@@ -265,7 +265,7 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 		hist->Scale();		
 
 		hist->GetXaxis()->SetTitle(var.unit.c_str());
-		hist->GetYaxis()->SetTitle("Events");
+		hist->GetYaxis()->SetTitle("Events POT [Normalized]");
 
 
 		to_sort.push_back(hist);
@@ -336,10 +336,10 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			stk->Draw("hist");
 			stk->SetTitle("");
 			stk->GetXaxis()->SetTitle(var.unit.c_str());
-			stk->GetYaxis()->SetTitle("Events");
+			stk->GetYaxis()->SetTitle("Events [POT Normalized]");
 			stk->GetYaxis()->SetTitleOffset(1.5);
 			stk->SetMaximum(stk->GetMaximum()*1.35);
-			TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);
+			TLegend *l3 = new TLegend(0.11,0.70,0.89,0.89);
 			tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);tsum->Draw("hist same");
 			for(auto &f: this->stack){
 				double Nevents = f->GetEntries()*(plot_pot/f->pot )*f->scale_data;
@@ -362,26 +362,25 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			latexbdt2.SetTextSize(0.05);
 			latexbdt2.SetTextAlign(13);  //align at top
 			latexbdt2.SetNDC();
-			latexbdt2.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+			latexbdt2.DrawLatex(.48,.75,this->stack.at(0)->topo_name.c_str());
 			TLatex pottenbdt2;
 			pottenbdt2.SetTextSize(0.05);
 			pottenbdt2.SetTextAlign(13);  //align at top
 			pottenbdt2.SetNDC();
 			std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-			pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
+			pottenbdt2.DrawLatex(.48,.70, pot_draw_bdt2.c_str());
 
 			TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 			tbdt2->Draw();
 
 
-			TText *titbdt2 = drawPrelim(0.89, 0.91, 0.035, stage_names.at(s).c_str());
-			titbdt2->SetTextAlign(30);
+			//TText *titbdt2 = drawPrelim(0.91, 0.91, 0.035, stage_names.at(s).c_str());
+			TText *titbdt2 = drawPrelim(0.48, 0.6, 0.05, stage_names.at(s).c_str());
+			titbdt2->SetTextAlign(10);
 			titbdt2->Draw();
 
 			//cobs->Write();
-			//cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
-            cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),".pdf");
-
+			cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
 			delete cobs;
 			delete stk;
@@ -442,10 +441,10 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s0->Draw("hist");
 	s0->SetTitle("");
 	s0->GetXaxis()->SetTitle(var.unit.c_str());
-	s0->GetYaxis()->SetTitle("Events");
+	s0->GetYaxis()->SetTitle("Events [POT Normalized]");
 	s0->GetYaxis()->SetTitleOffset(1.5);
 	s0->SetMaximum(s0->GetMaximum()*1.3);
-	TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
+	TLegend *l0 = new TLegend(0.11,0.70,0.89,0.89);
 	l0->SetFillStyle(0);
 
 	std::vector<TH1F*> v0s;		
@@ -469,13 +468,13 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	latexsel.SetTextSize(0.05);
 	latexsel.SetTextAlign(13);  //align at top
 	latexsel.SetNDC();
-	latexsel.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexsel.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottensel;
 	pottensel.SetTextSize(0.05);
 	pottensel.SetTextAlign(13);  //align at top
 	pottensel.SetNDC();
 	std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottensel.DrawLatex(.66,.75, pot_draw_sel.c_str());
+	pottensel.DrawLatex(.62,.70, pot_draw_sel.c_str());
 
 
 	TText *tsel = drawPrelim(0.16,0.91,0.035,"MicroBooNE Simulation - In Progress");
@@ -493,10 +492,10 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s1->Draw("hist");
 	s1->SetTitle("");
 	s1->GetXaxis()->SetTitle(var.unit.c_str());
-	s1->GetYaxis()->SetTitle("Events");
+	s1->GetYaxis()->SetTitle("Events [POT Normalized]");
 	s1->GetYaxis()->SetTitleOffset(1.5);
 	s1->SetMaximum(s1->GetMaximum()*1.3);
-	TLegend *l1 = new TLegend(0.11,0.72,0.89,0.89);
+	TLegend *l1 = new TLegend(0.11,0.70,0.89,0.89);
 	l1->SetFillStyle(0);
 	t1->DrawCopy("Same E2"); t1->SetFillStyle(0);t1->Draw("hist same");
 
@@ -522,13 +521,13 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	latexpre.SetTextSize(0.05);
 	latexpre.SetTextAlign(13);  //align at top
 	latexpre.SetNDC();
-	latexpre.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexpre.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenpre;
 	pottenpre.SetTextSize(0.05);
 	pottenpre.SetTextAlign(13);  //align at top
 	pottenpre.SetNDC();
 	std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenpre.DrawLatex(.66,.75, pot_draw_pre.c_str());
+	pottenpre.DrawLatex(.62,.70, pot_draw_pre.c_str());
 
 
 
@@ -536,9 +535,9 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	TText *tpre = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tpre->Draw();
 
-	TText *titpre = drawPrelim(0.89, 0.91, 0.035, "Pre-Selection Cuts");
-	titpre->SetTextAlign(30);
-	titpre->Draw();
+	//TText *titpre = drawPrelim(0.89, 0.91, 0.035, "Pre-Selection Cuts");
+	//titpre->SetTextAlign(30);
+	//titpre->Draw();
 
 
 
@@ -551,10 +550,10 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s2->Draw("hist");
 	s2->SetTitle("");
 	s2->GetXaxis()->SetTitle(var.unit.c_str());
-	s2->GetYaxis()->SetTitle("Events");
+	s2->GetYaxis()->SetTitle("Events [POT Normalized]");
 	s2->GetYaxis()->SetTitleOffset(1.5);
 	s2->SetMaximum(s2->GetMaximum()*1.3);
-	TLegend *l2 = new TLegend(0.11,0.72,0.89,0.89);
+	TLegend *l2 = new TLegend(0.11,0.70,0.89,0.89);
 	t2->DrawCopy("Same E2"); t2->SetFillStyle(0);t2->Draw("hist same");
 
 	for(auto &f: this->stack){
@@ -577,13 +576,13 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	latexbdt1.SetTextSize(0.05);
 	latexbdt1.SetTextAlign(13);  //align at top
 	latexbdt1.SetNDC();
-	latexbdt1.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexbdt1.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenbdt1;
 	pottenbdt1.SetTextSize(0.05);
 	pottenbdt1.SetTextAlign(13);  //align at top
 	pottenbdt1.SetNDC();
 	std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenbdt1.DrawLatex(.66,.75, pot_draw_bdt1.c_str());
+	pottenbdt1.DrawLatex(.62,.70, pot_draw_bdt1.c_str());
 
 
 	TText *tbdt1 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
@@ -603,10 +602,10 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s3->Draw("hist");
 	s3->SetTitle("");
 	s3->GetXaxis()->SetTitle(var.unit.c_str());
-	s3->GetYaxis()->SetTitle("Events");
+	s3->GetYaxis()->SetTitle("Events [POT Normalized]");
 	s3->GetYaxis()->SetTitleOffset(1.5);
 	s3->SetMaximum(s3->GetMaximum()*1.35);
-	TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);
+	TLegend *l3 = new TLegend(0.11,0.70,0.89,0.89);
 	t3->DrawCopy("Same E2"); t3->SetFillStyle(0);t3->Draw("hist same");
 	for(auto &f: this->stack){
 		double Nevents = f->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
@@ -629,13 +628,13 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	latexbdt2.SetTextSize(0.05);
 	latexbdt2.SetTextAlign(13);  //align at top
 	latexbdt2.SetNDC();
-	latexbdt2.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexbdt2.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenbdt2;
 	pottenbdt2.SetTextSize(0.05);
 	pottenbdt2.SetTextAlign(13);  //align at top
 	pottenbdt2.SetNDC();
 	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
+	pottenbdt2.DrawLatex(.62,.70, pot_draw_bdt2.c_str());
 
 	TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 	tbdt2->Draw();
@@ -655,9 +654,6 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 
 	cobs->Write();
 	cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+".pdf").c_str(),"pdf");
-    //cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+".png").c_str(),"png");
-	//cobs->SaveAs(("stack/"+var.name+".png").c_str(),"png");
-
 
 	delete cobs;
 	delete s0; delete s1; delete s2; delete s3;		 
@@ -673,9 +669,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c2){
 	TCanvas *cobs = new TCanvas("","",1800,1600);
 	cobs->Divide(2,2,0.0025,0.0000001);
-	//double plot_pot=6.6e20;
-    double plot_pot=13.2e20;
-
+	double plot_pot=13.2e20;
 
 	ftest->cd();
 	THStack* s0 = this->getBDTStack(whichbdt,0,-9,-9);
@@ -704,11 +698,11 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s0->Draw("hist");
 	s0->SetTitle("Topological Selection");
 	s0->GetXaxis()->SetTitle(var.unit.c_str());
-	s0->GetYaxis()->SetTitle("Events");
+	s0->GetYaxis()->SetTitle("Events [Normalized]");
 	s0->GetYaxis()->SetTitleOffset(1.5);
 	s0->SetMaximum(s0->GetMaximum()*10);
     s0->SetMinimum(0.05);
-	TLegend *l0 = new TLegend(0.11,0.72,0.89,0.89);
+	TLegend *l0 = new TLegend(0.11,0.70,0.89,0.89);
 
 	t0->DrawCopy("Same E2"); t0->SetFillStyle(0);t0->Draw("hist same");
 	for(auto &f: this->stack){
@@ -729,13 +723,13 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	latexsel.SetTextSize(0.05);
 	latexsel.SetTextAlign(13);  //align at top
 	latexsel.SetNDC();
-	latexsel.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexsel.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottensel;
 	pottensel.SetTextSize(0.05);
 	pottensel.SetTextAlign(13);  //align at top
 	pottensel.SetNDC();
 	std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottensel.DrawLatex(.66,.75, pot_draw_sel.c_str());
+	pottensel.DrawLatex(.62,.70, pot_draw_sel.c_str());
 
 
 
@@ -748,12 +742,12 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s1->Draw("hist");
 	s1->SetTitle("Pre-Selection Cuts");
 	s1->GetXaxis()->SetTitle(var.unit.c_str());
-	s1->GetYaxis()->SetTitle("Events");
+	s1->GetYaxis()->SetTitle("Events [Normalized]");
 	s1->GetYaxis()->SetTitleOffset(1.5);
 	s1->SetMaximum(s1->GetMaximum()*50);
 	s1->SetMinimum(0.05);
 	t1->DrawCopy("Same E2"); t1->SetFillStyle(0);t1->Draw("hist same");
-	TLegend *l1 = new TLegend(0.11,0.72,0.89,0.89);
+	TLegend *l1 = new TLegend(0.11,0.70,0.89,0.89);
 	for(auto &f: this->stack){
 		auto h1 = new TH1F(("tmp2"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 		h1->SetFillColor(f->col);
@@ -773,13 +767,13 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	latexpre.SetTextSize(0.05);
 	latexpre.SetTextAlign(13);  //align at top
 	latexpre.SetNDC();
-	latexpre.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexpre.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenpre;
 	pottenpre.SetTextSize(0.05);
 	pottenpre.SetTextAlign(13);  //align at top
 	pottenpre.SetNDC();
 	std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenpre.DrawLatex(.66,.75, pot_draw_pre.c_str());
+	pottenpre.DrawLatex(.62,.70, pot_draw_pre.c_str());
 
 
 
@@ -793,11 +787,11 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s2->Draw("hist");
 	s2->SetTitle("Cosmic BDT cut");
 	s2->GetXaxis()->SetTitle(var.unit.c_str());
-	s2->GetYaxis()->SetTitle("Events");
+	s2->GetYaxis()->SetTitle("Events [Normalized]");
 	s2->GetYaxis()->SetTitleOffset(1.5);
 	s2->SetMaximum(s2->GetMaximum()*10);
 	s2->SetMinimum(0.05);
-	TLegend *l2 = new TLegend(0.11,0.72,0.89,0.89);
+	TLegend *l2 = new TLegend(0.11,0.70,0.89,0.89);
 	t2->DrawCopy("Same E2"); t2->SetFillStyle(0);t2->Draw("hist same");
 	for(auto &f: this->stack){
 
@@ -818,13 +812,13 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	latexbdt1.SetTextSize(0.05);
 	latexbdt1.SetTextAlign(13);  //align at top
 	latexbdt1.SetNDC();
-	latexbdt1.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexbdt1.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenbdt1;
 	pottenbdt1.SetTextSize(0.05);
 	pottenbdt1.SetTextAlign(13);  //align at top
 	pottenbdt1.SetNDC();
 	std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenbdt1.DrawLatex(.66,.75, pot_draw_bdt1.c_str());
+	pottenbdt1.DrawLatex(.62,.70, pot_draw_bdt1.c_str());
 
 
 
@@ -840,11 +834,11 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s3->Draw("hist");
 	s3->SetTitle("BNB BDT cut");
 	s3->GetXaxis()->SetTitle(var.unit.c_str());
-	s3->GetYaxis()->SetTitle("Events");
+	s3->GetYaxis()->SetTitle("Events [POT Normalized]");
 	s3->GetYaxis()->SetTitleOffset(1.5);
 	s3->SetMaximum(s3->GetMaximum()*10);
 	s3->SetMinimum(0.05);
-	TLegend *l3 = new TLegend(0.11,0.72,0.89,0.89);
+	TLegend *l3 = new TLegend(0.11,0.70,0.89,0.89);
 	t3->DrawCopy("Same E2"); t3->SetFillStyle(0);t3->Draw("hist same");
 	for(auto &f: this->stack){
 		auto h1 = new TH1F(("tmp4"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
@@ -867,13 +861,13 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	latexbdt2.SetTextSize(0.05);
 	latexbdt2.SetTextAlign(13);  //align at top
 	latexbdt2.SetNDC();
-	latexbdt2.DrawLatex(.66,.80,this->stack.at(0)->topo_name.c_str());
+	latexbdt2.DrawLatex(.62,.75,this->stack.at(0)->topo_name.c_str());
 	TLatex pottenbdt2;
 	pottenbdt2.SetTextSize(0.05);
 	pottenbdt2.SetTextAlign(13);  //align at top
 	pottenbdt2.SetNDC();
 	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	pottenbdt2.DrawLatex(.66,.75, pot_draw_bdt2.c_str());
+	pottenbdt2.DrawLatex(.62,.70, pot_draw_bdt2.c_str());
 
 
 
@@ -881,7 +875,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 
 
 	cobs->Write();
-	cobs->SaveAs(("stack/"+this->name+ "_response_"+var.safe_unit+".png").c_str(),"png");
+	cobs->SaveAs(("stack/"+this->name+ "_response_"+var.safe_unit+".pdf").c_str(),"pdf");
 
 	return 0;
 }

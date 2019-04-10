@@ -12,7 +12,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 	double label_size_upper=0.05;
 	double title_offset_upper = 1.45;
 
-	double plot_pot = 6.6e20;
+	double plot_pot = 13.2e20;
 
 	std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 
@@ -46,7 +46,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 			fout->cd();
 
-			TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(), ("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),1600,1350);
+			TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(), ("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),1600,1450);
 			c->cd();
 
 
@@ -82,7 +82,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			std::cout<<"Drawn."<<std::endl;
 
 			s_reco_truth->GetXaxis()->SetTitle(var.unit.c_str());
-			s_reco_truth->GetYaxis()->SetTitle("Events");
+			s_reco_truth->GetYaxis()->SetTitle("Events [POT Normalized]");
 			s_reco_truth->GetYaxis()->SetTitleOffset(1.5);
 
 			TLatex latexsel;
@@ -248,7 +248,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 	fout->cd();
 
-	TCanvas *c_reco_truth = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag).c_str(), ("recomc_truth_"+var.name+"_"+file->tag).c_str(),2000,1600);
+	TCanvas *c_reco_truth = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag).c_str(), ("recomc_truth_"+var.name+"_"+file->tag).c_str(),2000,1650);
 	c_reco_truth->Divide(2,2);
 
 	//******************* Topological Selection	*************************
