@@ -377,8 +377,8 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 				h1->SetFillStyle(f->fillstyle);
 				h1->SetFillColor(f->col);
 				h1->SetLineColor(kBlack);
-			//	l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
-		        l3->AddEntry(h1,(f->plot_name).c_str(),"f");
+				l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+		        //l3->AddEntry(h1,(f->plot_name).c_str(),"f");
 	
             }
             l3->AddEntry(tmp_tsum,"MC Stats Only Error", "f");
@@ -393,7 +393,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
             pottex.SetTextSize(0.045);
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
-            std::string pot_draw = this->stack[0]->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
+            std::string pot_draw = this->stack[0]->topo_name+" "+to_string_prec(plot_pot/1e20,1)+"e20 POT";
 
            //pottex.DrawLatex(.60,.64, pot_draw.c_str());
             pottex.DrawLatex(.6,.69, pot_draw.c_str());
@@ -501,7 +501,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	pottensel.SetTextSize(0.05);
 	pottensel.SetTextAlign(13);  //align at top
 	pottensel.SetNDC();
-	std::string pot_draw_sel = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+	std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottensel.DrawLatex(.62,.70, pot_draw_sel.c_str());
 
 
@@ -554,7 +554,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	pottenpre.SetTextSize(0.05);
 	pottenpre.SetTextAlign(13);  //align at top
 	pottenpre.SetNDC();
-	std::string pot_draw_pre = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+	std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenpre.DrawLatex(.62,.70, pot_draw_pre.c_str());
 
 
@@ -609,7 +609,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	pottenbdt1.SetTextSize(0.05);
 	pottenbdt1.SetTextAlign(13);  //align at top
 	pottenbdt1.SetNDC();
-	std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+	std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenbdt1.DrawLatex(.62,.70, pot_draw_bdt1.c_str());
 
 
@@ -662,7 +662,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	pottenbdt2.SetTextSize(0.05);
 	pottenbdt2.SetTextAlign(13);  //align at top
 	pottenbdt2.SetNDC();
-	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenbdt2.DrawLatex(.62,.70, pot_draw_bdt2.c_str());
 
 	TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
@@ -699,7 +699,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	TCanvas *cobs = new TCanvas("","",1800,1600);
 	cobs->Divide(2,2,0.0025,0.0000001);
 //	double plot_pot=13.2e20;
-    double plot_pot = 4.8e19;
+    double plot_pot = 13.2e20;
 
 	ftest->cd();
 	THStack* s0 = this->getBDTStack(whichbdt,0,-9,-9);
@@ -758,8 +758,8 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	pottensel.SetTextSize(0.05);
 	pottensel.SetTextAlign(13);  //align at top
 	pottensel.SetNDC();
-//	std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-	std::string pot_draw_sel = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+	std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+//	std::string pot_draw_sel = to_string_prec(plot_pot/1e,1)+"e19 POT";
 	pottensel.DrawLatex(.62,.70, pot_draw_sel.c_str());
 
 
@@ -803,8 +803,8 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	pottenpre.SetTextSize(0.05);
 	pottenpre.SetTextAlign(13);  //align at top
 	pottenpre.SetNDC();
-	//std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-    std::string pot_draw_pre = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+	std::string pot_draw_pre = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+//    std::string pot_draw_pre = to_string_prec(plot_pot/1e19,1)+"e19 POT";
 	pottenpre.DrawLatex(.62,.70, pot_draw_pre.c_str());
 
 
@@ -849,7 +849,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	pottenbdt1.SetTextSize(0.05);
 	pottenbdt1.SetTextAlign(13);  //align at top
 	pottenbdt1.SetNDC();
-	std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+	std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenbdt1.DrawLatex(.62,.70, pot_draw_bdt1.c_str());
 
 
@@ -900,7 +900,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	pottenbdt2.SetTextSize(0.05);
 	pottenbdt2.SetTextAlign(13);  //align at top
 	pottenbdt2.SetNDC();
-	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e19,1)+"e19 POT";
+	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenbdt2.DrawLatex(.62,.70, pot_draw_bdt2.c_str());
 
 

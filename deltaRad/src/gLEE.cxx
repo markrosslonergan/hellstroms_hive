@@ -203,7 +203,8 @@ int main (int argc, char *argv[]){
         signal_definition += "&&" + v_denom[i];
     }
 
-    std::string background_definition = "!mctruth_is_delta_radiative";
+    std::string ncpi0_background_definition = "!mctruth_is_delta_radiative && mctruth_cc_or_nc==1";
+    std::string other_background_definition = "!mctruth_is_delta_radiative && !(mctruth_cc_or_nc == 1 && mctruth_num_exiting_pi0==1) && !(fabs(mctruth_lepton_pdg)==11 && mctruth_cc_or_nc==0)";
     std::string topological_cuts = "(reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut+")";
     std::string postcuts = "1";  //We dont currently use postcuts
 
@@ -215,9 +216,10 @@ int main (int argc, char *argv[]){
     bdt_flow signal_other_flow(topological_cuts, 	"!("+signal_definition +")", 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
     bdt_flow signal_flow(topological_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-    bdt_flow bkg_flow(topological_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-    bdt_flow bkg_training_flow(topological_cuts,	background_definition+"&&"+ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-
+    bdt_flow other_bkg_flow(topological_cuts,		other_background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow ncpi0_bkg_flow(topological_cuts,		ncpi0_background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow ncpi0_training_flow(topological_cuts,	ncpi0_background_definition+"&&"+ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow nue_flow(topological_cuts, "fabs(mctruth_lepton_pdg)==11 && mctruth_cc_or_nc==0", vec_precuts, postcuts,cosmic_bdt_info, bnb_bdt_info);
     bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
     std::cout<<"Defining all our bdt_files."<<std::endl;
@@ -229,25 +231,17 @@ int main (int argc, char *argv[]){
 
     bdt_file *dirt = new bdt_file(dir10,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
-    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_v12.0.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_v12.0.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+    bdt_file *nueintrinsic = new bdt_file(dir,"nueintrinsic_overlay_v12.0.root","NueIntrinsic","hist","singlephoton/",kCyan, nue_flow);
+    bdt_file *training_ncpi0    = new bdt_file(dir, "ncpi0_overlay_v12.0.root", "NCpi0Train",	  "hist","singlephoton/",  kBlue-6, ncpi0_training_flow);
+    bdt_file *ncpi0    = new bdt_file(dir, "ncpi0_overlay_v12.0.root", "NCpi0",	  "hist","singlephoton/",  kBlue-6, ncpi0_bkg_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_v12.0.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, other_bkg_flow);
 
     //Data files
     bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v12.0.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v12.0.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 
-
-
-    /*  bdt_file *bnb_cosmics_noabs = new bdt_file(dir, "bnb_overlay_NoAbsGain.root", "BNBOverlay_noabs", "hist","singlephoton/",  kBlue-4, data_flow);
-        bdt_file *bnb_cosmics_nom = new bdt_file(dir, "bnb_overlay_nominal2.root", "BNBOverlay_Nomonal", "hist","singlephoton/",  kBlue-4, data_flow);
-        bdt_file *bnb_cosmics_undo = new bdt_file(dir, "bnb_overlay_undo2.root", "BNBOverlay_undo", "hist","singlephoton/",  kBlue-4, data_flow);
-        bdt_file *bnb_cosmics_noyz = new bdt_file(dir, "bnb_overlay_NoYZ.root", "BNBOverlay_noyz", "hist","singlephoton/",  kBlue-4, data_flow);
-        */
-
-    //For conviencance fill a vector with pointers to all the files to loop over.
-    //std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData,dirt, bnb_cosmics_noabs, bnb_cosmics_nom, bnb_cosmics_undo, bnb_cosmics_noyz};
-    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, dirt, OnBeamData, OffBeamData};
+    std::vector<bdt_file*> bdt_files = {nueintrinsic,signal, signal_other, training_signal, training_ncpi0, ncpi0,bnb, dirt, OnBeamData, OffBeamData};
 
     //The LEE signal is bigger than the SM signal by this factor
     training_signal->scale_data = 3.0;
@@ -316,8 +310,10 @@ int main (int argc, char *argv[]){
     training_signal->addPlotName("NC #Delta Radiative");
     signal->addPlotName("Signal NC #Delta Radiative");
     signal_other->addPlotName("Other NC #Delta Radiative");
-    training_bnb->addPlotName("BNB Backgrounds");
+    nueintrinsic->addPlotName("CC Nue Intrinsic");
     bnb->addPlotName("BNB ");
+    ncpi0->addPlotName("NCpi0");
+    training_ncpi0->addPlotName("NCpi0 Training");
     OnBeamData->addPlotName("On-Beam  Data");
     OffBeamData->addPlotName("Cosmic Data");
     dirt->addPlotName("Dirt");
@@ -330,8 +326,8 @@ int main (int argc, char *argv[]){
     if(analysis_tag == "track"){
         //0.677 0.6125
         //0.6, 0.55
-        fcoscut =  0.55;
-        fbnbcut =  0.60625;
+        fcoscut =  0.702;
+        fbnbcut =  0.574;
     }else if(analysis_tag == "notrack"){
         //0.64 0.59875
         //0.673 0.5825
@@ -349,7 +345,7 @@ int main (int argc, char *argv[]){
         std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
         if(run_cosmic) bdt_train(cosmic_bdt_info, training_signal, OffBeamData);
         std::cout<<"**********************Starting BNB BDT Training*************************"<<std::endl;
-        if(run_bnb) bdt_train(bnb_bdt_info, training_signal, training_bnb);
+        if(run_bnb) bdt_train(bnb_bdt_info, training_signal, training_ncpi0);
         return 0;
 
     }else if(mode_option == "app"){
@@ -375,7 +371,7 @@ int main (int argc, char *argv[]){
         }
 
         if(run_bnb){
-            bdt_response bnb_response(bnb_bdt_info, training_signal, training_bnb);
+            bdt_response bnb_response(bnb_bdt_info, training_signal, training_ncpi0);
             bnb_response.plot_bdt_response(ftest);
         }
     }	
@@ -459,7 +455,7 @@ int main (int argc, char *argv[]){
 
 
         TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-        std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
+        std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, ncpi0, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
         //std::vector<double> ans = lin_scan({signal}, {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
         std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
@@ -468,9 +464,12 @@ int main (int argc, char *argv[]){
 
     }else if(mode_option == "stack"){
         bdt_stack histogram_stack(analysis_tag+"_stack");
+        histogram_stack.plot_pot = 13.2e20;
         histogram_stack.addToStack(signal);
         histogram_stack.addToStack(signal_other);
         histogram_stack.addToStack(bnb);
+        histogram_stack.addToStack(nueintrinsic);
+        histogram_stack.addToStack(ncpi0);
         //Add OffBeamData but change the color and style first
         OffBeamData->col;	
         OffBeamData->fillstyle = 3333;
@@ -563,6 +562,8 @@ int main (int argc, char *argv[]){
 
 
         histogram_stack->addToStack(bnb);
+        histogram_stack->addToStack(nueintrinsic);
+        histogram_stack->addToStack(ncpi0);
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(dirt);
         histogram_stack->addToStack(OffBeamData);
@@ -619,11 +620,11 @@ int main (int argc, char *argv[]){
 
 
             if(number != -1){
-                plot_bdt_variable(training_signal, training_bnb, training_vars.at(number), bnb_bdt_info, false);
-                plot_bdt_variable(training_signal, training_bnb, plotting_vars.at(number), bnb_bdt_info, true);
+                plot_bdt_variable(training_signal, training_ncpi0, training_vars.at(number), bnb_bdt_info, false);
+                plot_bdt_variable(training_signal, training_ncpi0, plotting_vars.at(number), bnb_bdt_info, true);
             }else{
-                plot_bdt_variables(training_signal, training_bnb, training_vars, bnb_bdt_info, false);
-                plot_bdt_variables(training_signal, training_bnb, plotting_vars, bnb_bdt_info, true);
+                plot_bdt_variables(training_signal, training_ncpi0, training_vars, bnb_bdt_info, false);
+                plot_bdt_variables(training_signal, training_ncpi0, plotting_vars, bnb_bdt_info, true);
             }
 
         }

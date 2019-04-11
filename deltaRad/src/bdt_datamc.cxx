@@ -232,8 +232,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 if(do_subtraction){
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
-                // l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
-                l0->AddEntry(h1,(f->plot_name).c_str(),"f");
+                 l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
+                //l0->AddEntry(h1,(f->plot_name).c_str(),"f");
                 n++;
             }
             l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
