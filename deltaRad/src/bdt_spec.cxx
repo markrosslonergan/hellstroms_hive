@@ -10,7 +10,7 @@ THStack* bdt_stack::getBDTStack(bdt_info whichbdt, std::string binning, int leve
 		bdt_variable var = stack.at(t)->getBDTVariable(whichbdt, binning);
 
 		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot);
-
+		
 		hist->SetTitle((this->name+"_"+var.name).c_str());
 		hist->SetLineColor(kBlack);
 		hist->SetStats(0);
@@ -672,7 +672,9 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c2){
 	TCanvas *cobs = new TCanvas("","",1800,1600);
 	cobs->Divide(2,2,0.0025,0.0000001);
-	double plot_pot=6.6e20;
+	//double plot_pot=6.6e20;
+	double plot_pot=13.2e20;
+
 
 	ftest->cd();
 	THStack* s0 = this->getBDTStack(whichbdt,0,-9,-9);

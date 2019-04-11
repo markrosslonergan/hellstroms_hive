@@ -82,7 +82,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
     ftest->cd();
 
-    std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
+    std::vector<std::string> stage_names = {"All 1e1p Events","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
     //Loop over all stages
 
     for(int s = 0; s< 4; s++){
@@ -164,11 +164,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 rmin=0; rmax = 1.99;
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
-            double max_modifier = 1.7;
+            double max_modifier = 3.5;
 
             
             if(var.is_logplot == true){
-                pad0top->SetLogy();
+		max_modifier = 850;
+		pad0top->SetLogy();
             }
             //     double max_modifier = 1.7;
             double min_val = 0.01;
@@ -184,7 +185,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             stk->Draw("hist");
             stk->SetTitle(stage_names.at(s).c_str());
             stk->GetXaxis()->SetTitle(var.unit.c_str());
-            stk->GetYaxis()->SetTitle("Verticies");
+            stk->GetYaxis()->SetTitle("Events");
             stk->GetYaxis()->SetTitleOffset(1.6);
             stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
             stk->SetMinimum(min_val);
@@ -210,7 +211,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 if(do_subtraction){
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
-                l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
+                //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
+                l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{ }").c_str(),"f");
                 n++;
             }
 
@@ -227,7 +229,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             d0->Draw("same E1");
 
 
-            l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
+            //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
+            l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{}").c_str(),"lp");	
 
 
 
@@ -254,9 +257,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary - Spectator Variable");
+                pre = drawPrelim(0.12,0.91,"MicroBooNE Simulaton In Progress - Spectator Variable");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary - Training Variable");
+                pre = drawPrelim(0.12,0.91,"MicroBooNE Simulaton In Progress - Training Variable");
 
             }
             pre->Draw();
@@ -298,7 +301,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             line->Draw("same");
             ratunit->SetLineColor(kBlack);
             ratunit->SetTitle("");
-            ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
+            ratunit->GetYaxis()->SetTitle("Data/(MC+Cosmics)");
             ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
             ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY);
             ratunit->SetMinimum(rmin);	
@@ -330,7 +333,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
             t->SetTextSize(0.12);
-            t->Draw("same");
+            //t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
             //var_precut.front()->GetYaxis()->SetTitle("Verticies");
@@ -340,7 +343,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             std::cout<<"Writing pdf."<<std::endl;
             cobs->Write();
             cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
-            cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
+//            cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 
 
@@ -475,8 +478,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         double max_modifier = 1.4;
         double min_val = 0.01;
         if(is_bdt_variable) {
-            max_modifier = 50.0;
-            min_val = 0.01;
+            max_modifier = 300.0;
+            min_val = 0.1;
         }
 
         vec_stacks.at(k)->SetMaximum(vec_th1s.at(k)->GetMaximum()*1.4);
@@ -484,8 +487,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         vec_stacks.at(k)->Draw("hist");
         vec_stacks.at(k)->SetTitle(stage_name.at(k).c_str());
         vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
-        vec_stacks.at(k)->GetYaxis()->SetTitle("Verticies");
-        vec_stacks.at(k)->GetYaxis()->SetTitleOffset(1.5);
+        vec_stacks.at(k)->GetYaxis()->SetTitle("Events");
+        vec_stacks.at(k)->GetYaxis()->SetTitleOffset(1.3);
         vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum())*max_modifier);
         vec_stacks.at(k)->SetMinimum(min_val);
         vec_th1s.at(k)->DrawCopy("Same E2"); vec_th1s.at(k)->SetFillStyle(0);//vec_th1s.at(k)->Draw("hist same");
@@ -530,7 +533,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         pottex.DrawLatex(.6,.64, pot_draw.c_str());//(x,y,..) position
 
-        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton Preliminary");
+        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress");
         pre->Draw();
 
         //cobs->cd(k+1);	
@@ -564,7 +567,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         line->Draw("same");
         ratunit->SetLineColor(kBlack);
         ratunit->SetTitle("");
-        ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
+        ratunit->GetYaxis()->SetTitle("Data/(MC+Cosmics)");
         ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
         ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY);
         ratunit->SetMinimum(rmin);	
@@ -596,7 +599,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         t->SetTextColor(kRed-7);
         //t->SetTextFont(43);
         t->SetTextSize(0.12);
-        t->Draw("same");
+        //t->Draw("same");
 
         //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
         //var_precut.front()->GetYaxis()->SetTitle("Verticies");

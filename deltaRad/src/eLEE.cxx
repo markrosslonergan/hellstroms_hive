@@ -122,7 +122,7 @@ int main (int argc, char *argv[]){
                 return 0;
         }
     }
-
+//
     //===========================================================================================
     //===========================================================================================
     //			Begininning of main program here!
@@ -190,7 +190,7 @@ int main (int argc, char *argv[]){
     std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
     std::vector<std::string> v_denom = {"abs(mctruth_nu_pdg)==12"," ((mctruth_num_exiting_pi0+mctruth_num_exiting_pipm) ==0)", 
-				"(mctruth_leading_exiting_proton_energy-0.93828)>0.04" ,"mctruth_lepton_E[0]>0.02" ,fid_cut,"mctruth_nu_E<0.8"}; 
+				"(mctruth_leading_exiting_proton_energy-0.93828)>0.04" ,"mctruth_lepton_E[0]>0.02" ,fid_cut};//,"mctruth_nu_E<0.8"}; 
 
     std::string signal_definition = v_denom[0];
 
@@ -201,7 +201,7 @@ int main (int argc, char *argv[]){
     std::string background_definition = "abs(mctruth_nu_pdg)!=12";//||mctruth_cc_or_nc==1";
 //    std::string intrinsic_background = "(abs(mctruth_nu_pdg)==12&&mctruth_cc_or_nc==0)";
     std::string topological_cuts = "(reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut+")";
-    std::string postcuts = "1";  //We dont currently use postcuts
+    std::string postcuts = "1";  //We are not currently use postcuts
 
     //***************************************************************************************************/
     //***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
@@ -222,16 +222,16 @@ int main (int argc, char *argv[]){
     bdt_file *training_signal   = new bdt_file(dir, "nueintrinsic_overlay_v10.0.root"	, "LEEunfoldedTraining"	, "hist" ,  "singlephoton/",  kRed-7, signal_training_flow);
 
     bdt_file *signal		= new bdt_file(dir, "nueintrinsic_overlay_v10.0.root"	, "LEEunfolded"		, "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_other	= new bdt_file(dir, "nueintrinsic_overlay_v10.0.root"	, "LEEunfoldedOther"	, "hist","singlephoton/",  kRed-7, signal_other_flow);
-    signal_other->fillstyle = 3391;
+    bdt_file *signal_other	= new bdt_file(dir, "nueintrinsic_overlay_v10.0.root"	, "LEEunfoldedOther"	, "hist","singlephoton/",  kRed-10, signal_other_flow);
+    //signal_other->fillstyle = 3391;
 
-    bdt_file *nueintrinsic	= new bdt_file(dir,"nueintrinsic_overlay_v10.0.root"	,"NueIntrinsics"	,"hist","singlephoton/",kCyan-3,data_flow); //intrinsic_flow);
+    bdt_file *nueintrinsic	= new bdt_file(dir,"nueintrinsic_overlay_v10.0.root"	,"NueIntrinsics"	,"hist","singlephoton/",kCyan-8,data_flow); //intrinsic_flow);
 
 
     bdt_file *dirt		= new bdt_file(dir,"dirt_overlay_v10.0.root"		,"Dirt"			,"hist","singlephoton/", kOrange-7, data_flow);
 
-    bdt_file *training_bnb	= new bdt_file(dir, "bnb_overlay_v10.0.root"		, "BNBTrain"		, "hist","singlephoton/",  kBlue-4, bkg_training_flow);
-    bdt_file *bnb		= new bdt_file(dir, "bnb_overlay_v10.0.root"		, "BNBOverlays"		, "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *training_bnb	= new bdt_file(dir, "bnb_overlay_v10.0.root"		, "BNBTrain"		, "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    bdt_file *bnb		= new bdt_file(dir, "bnb_overlay_v10.0.root"		, "BNBOverlays"		, "hist","singlephoton/",  kAzure-9, bkg_flow);
 
     //Data files
     bdt_file *OnBeamData	= new bdt_file(dir9, "data5e19_v9.3.root"		,	"OnBeamData"	, "E1p","singlephoton/",  kBlack, data_flow);
@@ -321,13 +321,13 @@ int main (int argc, char *argv[]){
 
     //Adding plot names
     training_signal->addPlotName("LEE #nu_{e}(#bar{#nu}_{e})");
-    signal->addPlotName("Gloden LEE #nu_{e}(#bar{#nu}_{e}) w/ Overlays");
-    signal_other->addPlotName("Other LEE #nu_{e}(#bar{#nu}_{e}) w/ Overlays");
-    training_bnb->addPlotName("BNB Backgrounds");
-    bnb->addPlotName("BNB w/Overlays");
-    nueintrinsic->addPlotName("NueIntrinsics w/Overlays");
-    OnBeamData->addPlotName("On-Beam  Data");
-    OffBeamData->addPlotName("Off-Beam Data");
+    signal->addPlotName("Golden LEE #nu_{e}(#bar{#nu}_{e})");
+    signal_other->addPlotName("Other LEE #nu_{e}(#bar{#nu}_{e})");
+    training_bnb->addPlotName("BNB Neutrino Backgrounds");
+    bnb->addPlotName("BNB Neutrino Backgrounds");
+    nueintrinsic->addPlotName("#nu_{e}(#bar{#nu}_{e}) Intrinsics");
+    OnBeamData->addPlotName("On-Beam Data");
+    OffBeamData->addPlotName("Cosmic Background");
     dirt->addPlotName("Dirt");
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -517,7 +517,7 @@ int main (int argc, char *argv[]){
     else if(mode_option == "sig"){
 
 	TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-	std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
+	std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, nueintrinsic , OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
 	//std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
 	std::ofstream save_sig("sig.txt");
@@ -549,6 +549,7 @@ int main (int argc, char *argv[]){
         histogram_stack.addToStack(OffBeamData);
         histogram_stack.addToStack(dirt);
 
+	histogram_stack.plot_pot = 13.2e20;
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
         int ip=0;
 

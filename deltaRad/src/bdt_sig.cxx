@@ -50,11 +50,11 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 
 	//for nice plots make the 50, 25 is quicker tho
-	int nsteps_cosmic = 4;//50
+	int nsteps_cosmic = 10;//50
 	double cut_min_cosmic = 999;
 	double cut_max_cosmic = -999;
 
-	int nsteps_bnb = 4;//50
+	int nsteps_bnb = 10;//50
 	double cut_min_bnb = 999;//0.52;
 	double cut_max_bnb = -999;
 
@@ -77,8 +77,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	//cut_max_bnb =cut_max_bnb*1.0;
 
 	//Zoomed in notrack
-	cut_min_cosmic = 0.44; cut_max_cosmic = 0.455;
-	cut_min_bnb = 0.44; cut_max_bnb = 0.455;
+	cut_min_cosmic = 0.6; cut_max_cosmic = 0.65;
+	cut_min_bnb = 0.55; cut_max_bnb = 0.6;
 	//Zoomed in track
 	//	cut_min_cosmic = 0.54; cut_max_cosmic = 0.58;
 	//	cut_min_bnb = 0.515; cut_max_bnb = 0.53;
@@ -140,7 +140,30 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 		}
 
 
-		std::cout<<"ccut: "<<d<<" bcut: "<<d2<<" "<<" #signal: "<<signal<<" #bkg: "<<background<<" || "<<" bnb: "<<bkg.at(0)<<" cos: "<<bkg.at(1)<<" || "<<significance<<std::endl;
+	//	std::cout<<"ccut: "<<d<<" bcut: "<<d2<<" "<<" #signal: "<<signal<<" #bkg: "<<background<<" || "<<" bnb: "<<bkg.at(0)<<" cos: "<<bkg.at(1)<<" || "<<significance<<std::endl;
+    //OUTPUT
+    std::cout<<"ccut: ";
+    std::cout<<std::left<<std::setw(8)<<d;
+    std::cout<<", bcut: ";
+    std::cout<<std::setw(8)<<d2;
+    std::cout<<"; #signal: ";
+    std::cout<<std::left<<std::setw(8)<<signal;
+
+    if(signal>8){
+    std::cout<<", #bkg: ";
+    std::cout<<std::left<<std::setw(8)<<background;
+    std::cout<<"= ";
+    std::cout<<std::left<<std::setw(8)<<bkg.at(0);
+    std::cout<<"(BNB) + ";
+    std::cout<<std::left<<std::setw(8)<<bkg.at(1);
+    std::cout<<std::left<<"(cosmic) || "<<to_string_prec(significance,2);
+    
+    std::cout<<std::left<<std::setw(8);
+    }
+    double ref_numbers = 100*signal*signal/background;
+    std::cout<<std::left<<" >>Purity*signal#: "<<to_string_prec(ref_numbers,2)<<"%"<<endl;
+
+ 
 		vec_sig.push_back(significance);
 		vec_cut.push_back(d2);
 		h2_sig_cut->SetBinContent(di,di2, significance);
@@ -186,7 +209,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	double *best_cut;   best_cut = &max;
 	double *best_cut2;  best_cut2 = &max2;//allocate memory for the best significance info.
 
-	double plot_pot = 6.6e20;
+//	double plot_pot = 6.6e20;
+	double plot_pot = 5e19;
 
 	double cut_min_cosmic = 999;
 	double cut_max_cosmic = -999;
@@ -209,8 +233,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 *-------------------------------Set parameters below-----------------------------------------------
 *--------------------------------------------------------------------------------------------------
 */
-	cut_min_cosmic = cut_max_cosmic*0.65;
-	cut_min_bnb = cut_max_bnb*0.65;
+	cut_min_cosmic = cut_max_cosmic*0.6;
+	cut_min_bnb = cut_max_bnb*0.6;
 
 	//Zoomed in track
 	//cut_min_cosmic = 0.58; cut_max_cosmic = 0.61;
@@ -219,7 +243,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	//instead of steps, use resolution, i.e. the size of cuts step:
 	double resolution = 0.01;   //initial resolution; decreases it after finishing one 
 	double res_step = 0.5;	    //set of searches: resolution = resolution*resolution_step;
-	int zoom_times = 2;	    //set up the minimum resolution 
+	int zoom_times = 1;	    //set up the minimum resolution 
 
 	//the last set of searches has resolution:
 	double final_resolution = resolution * pow (res_step, zoom_times);
@@ -481,7 +505,8 @@ double get_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*>
     std::cout<<std::left<<"(cosmic) || "<<to_string_prec(significance,2);
 
     std::cout<<std::left<<std::setw(8);
-    std::cout<<std::left<<" >>Purity: "<<to_string_prec(100*signal/background,2)<<"%";
+    double ref_numbers = 100*signal*signal/background;
+    std::cout<<std::left<<" >>Purity*signal#: "<<to_string_prec(ref_numbers,2)<<"%";
 
     if( background == 0 ){ 
 	std::cout<<" (No background)"<<std::endl;
