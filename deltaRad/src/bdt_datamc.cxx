@@ -193,7 +193,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             //     double max_modifier = 1.7;
             double min_val = 0.01;
             if(is_bdt_variable) {
-                max_modifier = 30.0;
+                max_modifier = 40.0;
                 min_val = 0.1;
             }
 
@@ -320,7 +320,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             //ratunit->SetFillStyle(3354);
             //gStyle->SetHatchesLineWidth(1);
             //gStyle->SetHatchesSpacing(1);
-            
+
             ratunit->Draw("E2");	
 
             TLine *line = new TLine(ratunit->GetXaxis()->GetXmin(),1.0,ratunit->GetXaxis()->GetXmax(),1.0 );
@@ -349,7 +349,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             ratpre->SetFillStyle(3144);
             //ratpre->SetFillColor(kGray + 3);
-           ratpre->Draw("E1 same");	
+            ratpre->Draw("E1 same");	
 
             ratpre->SetLineColor(kBlack);
             ratpre->SetTitle("");
@@ -509,7 +509,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         double max_modifier = 1.9;
         double min_val = 0.01;
         if(is_bdt_variable) {
-            max_modifier = 50.0;
+            max_modifier = 100.0;
             min_val = 0.1;
         }
 
@@ -526,7 +526,11 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         vec_stacks.at(k)->GetYaxis()->SetLabelSize(label_size_upper);
         vec_stacks.at(k)->SetMaximum( std::max(vec_th1s.at(k)->GetMaximum(), data_th1s.at(k)->GetMaximum())*max_modifier);
         vec_stacks.at(k)->SetMinimum(min_val);
-        vec_th1s.at(k)->DrawCopy("Same E2"); vec_th1s.at(k)->SetFillStyle(0);//vec_th1s.at(k)->Draw("hist same");
+
+        vec_th1s.at(k)->DrawCopy("Same E2"); 
+        TH1 *tmp_tsum = (TH1*)vec_th1s.at(k)->Clone(("tmp_tsum"+std::to_string(k)).c_str());
+
+        vec_th1s.at(k)->SetFillStyle(0);//vec_th1s.at(k)->Draw("hist same");
 
 
         TLegend *l0 = new TLegend(0.11,0.62,0.89,0.89);
@@ -543,6 +547,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
             //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
             l0->AddEntry(h1,(f->plot_name.c_str()),"f");
         }
+
+        l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
 
         data_th1s.at(k)->Rebin(data_rebin);
         data_th1s.at(k)->SetMarkerStyle(20);
@@ -631,8 +637,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         ratpre->SetFillStyle(3144);
         ratpre->SetFillColor(kGray + 3);
-       // ratpre->SetFillStyle(3354);
-       // gStyle->SetHatchesLineWidth(2);
+        // ratpre->SetFillStyle(3354);
+        // gStyle->SetHatchesLineWidth(2);
         //gStyle->SetHatchesSpacing(1);
 
         ratpre->Draw("E1 same");	
