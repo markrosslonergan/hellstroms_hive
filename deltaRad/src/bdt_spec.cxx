@@ -49,9 +49,11 @@ TH1* bdt_stack::getBDTSum(bdt_info whichbdt, std::string binning, int level, dou
 	summed->SetLineColor(kBlack);
 	summed->SetStats(0);
 	summed->SetLineWidth(1);
-	summed->SetFillStyle(3002);
+//	summed->SetFillStyle(3002);
 	summed->SetFillColor(kGray+3);
-
+    summed->SetFillStyle(3354);
+    gStyle->SetHatchesLineWidth(2);
+    gStyle->SetHatchesSpacing(1);
 	summed->GetXaxis()->SetTitle(var.unit.c_str());
 	summed->GetYaxis()->SetTitle("Events");
 
