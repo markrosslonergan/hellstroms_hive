@@ -316,7 +316,7 @@ int main (int argc, char *argv[]){
     signal->addPlotName("Signal NC #Delta Radiative");
     signal_other->addPlotName("Other NC #Delta Radiative");
     training_bnb->addPlotName("BNB Backgrounds");
-    bnb->addPlotName("BNB ");
+    bnb->addPlotName("BNB Backgrounds ");
     OnBeamData->addPlotName("On-Beam  Data");
     OffBeamData->addPlotName("Cosmic Data");
     dirt->addPlotName("Dirt");
