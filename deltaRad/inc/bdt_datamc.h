@@ -28,7 +28,7 @@
 #include "TMVA/DataLoader.h"
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
-
+#include "TStyle.h"
 
 class bdt_datamc{
 	public:

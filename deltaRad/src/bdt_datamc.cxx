@@ -11,30 +11,30 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
     double tmin =9999;
     double tmax = -9999;
-    
+
     /*
-    for(auto &f: mc_stack->stack){
-        std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
+       for(auto &f: mc_stack->stack){
+       std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
 
-        TH1 * tmp = f->getTH1((f->tag +"_"+whichbdt.identifier+ ".mva") ,(f->tag +"_"+whichbdt.identifier+ ".mva > 0")  , "tmpBDtstack_"+data_file->tag+"_"+whichbdt.name,1,0);
+       TH1 * tmp = f->getTH1((f->tag +"_"+whichbdt.identifier+ ".mva") ,(f->tag +"_"+whichbdt.identifier+ ".mva > 0")  , "tmpBDtstack_"+data_file->tag+"_"+whichbdt.name,1,0);
 
-        tmax = std::max( tmax, f->tvertex->GetMaximum( (f->tag +"_"+whichbdt.identifier+ ".mva").c_str()   ));
-        if(f->tag!="NCDeltaRadCosmics") tmin = std::min( tmin, tmp->GetBinCenter(tmp->FindFirstBinAbove(0.05)));
-        std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
-        delete tmp;
-    }
-    
-    std::string  binning = "(20,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
-    */
+       tmax = std::max( tmax, f->tvertex->GetMaximum( (f->tag +"_"+whichbdt.identifier+ ".mva").c_str()   ));
+       if(f->tag!="NCDeltaRadCosmics") tmin = std::min( tmin, tmp->GetBinCenter(tmp->FindFirstBinAbove(0.05)));
+       std::cout<<"TAG: "<<f->tag<<" "<<tmax<<" "<<tmin<<std::endl;
+       delete tmp;
+       }
+
+       std::string  binning = "(20,"+std::to_string(tmin*0.975)+","+std::to_string(tmax*1.025)+")";
+       */
     std::string  binning = whichbdt.binning;
 
     bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
     dvar.is_logplot = true;
-    
+
     /*std::vector<bdt_variable> tmp_v = {dvar};
 
-    return this->plotStacks(ftest, tmp_v ,c1,c2);
-    */
+      return this->plotStacks(ftest, tmp_v ,c1,c2);
+      */
 
     //run on old one
     return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
@@ -179,7 +179,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             //double max_modifier = 1.65;
             double max_modifier = 2.0;
-            
+            if (s==1){
+                max_modifier = 1.4;
+            }
+            if (s==2){
+                max_modifier = 1.85;
+            }
+
             if(var.is_logplot == true){
                 pad0top->SetLogy();
                 max_modifier=50.0;
@@ -187,7 +193,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             //     double max_modifier = 1.7;
             double min_val = 0.01;
             if(is_bdt_variable) {
-                max_modifier = 50.0;
+                max_modifier = 10.0;
                 min_val = 0.1;
             }
 
@@ -205,9 +211,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             stk->GetYaxis()->SetTitleOffset(0.9);
             stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
             stk->SetMinimum(min_val);
-            tsum->DrawCopy("Same E2"); tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
+            tsum->DrawCopy("Same E2");
+            TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
 
-
+            tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
             TLegend *l0 = new TLegend(0.11,0.65,0.89,0.89);
             l0->SetNColumns(2);
             double NeventsStack = 0;
@@ -225,11 +232,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 if(do_subtraction){
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
-               // l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
+                // l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
                 l0->AddEntry(h1,(f->plot_name).c_str(),"f");
-               n++;
+                n++;
             }
-            l0->AddEntry(tsum,"MC Stats Only Error","f");
+            l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
             //			d0->Draw("same E1");
 
             std::cout<<"KSTEST: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -245,7 +252,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
             l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
- 
+
 
             l0->Draw();
             l0->SetLineWidth(0);
@@ -254,17 +261,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             l0->SetTextSize(0.04);
 
             //  TLatex latex;
-       // latex.SetTextSize(0.06);
-      //  latex.SetTextAlign(13);  //align at top
-      //  latex.SetNDC();
-      //  latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
+            // latex.SetTextSize(0.06);
+            //  latex.SetTextAlign(13);  //align at top
+            //  latex.SetNDC();
+            //  latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
             TLatex pottex;
             pottex.SetTextSize(0.06);
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-           pottex.DrawLatex(.60,.64, pot_draw.c_str());
+            pottex.DrawLatex(.60,.64, pot_draw.c_str());
 
 
 
@@ -310,6 +317,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             ratunit->SetMarkerStyle(0);
             ratunit->SetMarkerSize(0);
             ratunit->SetFillStyle(3001);
+            //ratunit->SetFillStyle(3354);
+            //gStyle->SetHatchesLineWidth(1);
+            //gStyle->SetHatchesSpacing(1);
+            
             ratunit->Draw("E2");	
 
             TLine *line = new TLine(ratunit->GetXaxis()->GetXmin(),1.0,ratunit->GetXaxis()->GetXmax(),1.0 );
@@ -337,7 +348,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             ratpre->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
 
             ratpre->SetFillStyle(3144);
-            ratpre->Draw("E1 same");	
+            //ratpre->SetFillColor(kGray + 3);
+           ratpre->Draw("E1 same");	
 
             ratpre->SetLineColor(kBlack);
             ratpre->SetTitle("");
@@ -399,7 +411,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
     double title_size_upper=0.15;
     double label_size_upper=0.05;
-     //double label_size_upper=0.1;
+    //double label_size_upper=0.1;
     double title_offset_upper = 1.45;
 
 
@@ -471,7 +483,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 
     for(int k = 0; k<4; k++){
-      std::cout << "[PLOTBDTSTACKS:] On stage " << k << std::endl;
+        std::cout << "[PLOTBDTSTACKS:] On stage " << k << std::endl;
         TCanvas *cobs = new TCanvas("","",900,800);
         //cobs->cd(k+1);
         cobs->cd();
@@ -508,7 +520,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         vec_stacks.at(k)->SetTitle("");
         vec_stacks.at(k)->GetXaxis()->SetTitle(var.unit.c_str());
         vec_stacks.at(k)->GetYaxis()->SetTitle("Events");
-       // vec_stacks.at(k)->GetYaxis()->SetTitleSize(0.05);
+        // vec_stacks.at(k)->GetYaxis()->SetTitleSize(0.05);
         vec_stacks.at(k)->GetYaxis()->SetTitleSize(0.1);
         vec_stacks.at(k)->GetYaxis()->SetTitleOffset(0.9);
         vec_stacks.at(k)->GetYaxis()->SetLabelSize(label_size_upper);
@@ -550,11 +562,11 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         l0->SetFillStyle(0);
         l0->SetTextSize(0.04);
 
-      //  TLatex latex;
-       // latex.SetTextSize(0.06);
-      //  latex.SetTextAlign(13);  //align at top
-      //  latex.SetNDC();
-      //  latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
+        //  TLatex latex;
+        // latex.SetTextSize(0.06);
+        //  latex.SetTextAlign(13);  //align at top
+        //  latex.SetNDC();
+        //  latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
         TLatex pottex;
         pottex.SetTextSize(0.06);
         pottex.SetTextAlign(13);  //align at top
@@ -617,7 +629,12 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         ratpre->SetMarkerStyle(20);
         ratpre->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
 
-        ratpre->SetFillStyle(3144);
+        // ratpre->SetFillStyle(3144);
+        ratpre->SetFillColor(kGray + 3);
+        ratpre->SetFillStyle(3354);
+        gStyle->SetHatchesLineWidth(2);
+        gStyle->SetHatchesSpacing(1);
+
         ratpre->Draw("E1 same");	
 
         ratpre->SetLineColor(kBlack);
