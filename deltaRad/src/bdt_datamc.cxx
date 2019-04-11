@@ -193,7 +193,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             //     double max_modifier = 1.7;
             double min_val = 0.01;
             if(is_bdt_variable) {
-                max_modifier = 10.0;
+                max_modifier = 30.0;
                 min_val = 0.1;
             }
 
@@ -629,11 +629,11 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         ratpre->SetMarkerStyle(20);
         ratpre->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
 
-        // ratpre->SetFillStyle(3144);
+        ratpre->SetFillStyle(3144);
         ratpre->SetFillColor(kGray + 3);
-        ratpre->SetFillStyle(3354);
-        gStyle->SetHatchesLineWidth(2);
-        gStyle->SetHatchesSpacing(1);
+       // ratpre->SetFillStyle(3354);
+       // gStyle->SetHatchesLineWidth(2);
+        //gStyle->SetHatchesSpacing(1);
 
         ratpre->Draw("E1 same");	
 
