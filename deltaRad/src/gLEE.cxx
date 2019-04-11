@@ -29,8 +29,8 @@ int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, s
 int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
-    std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10";
-    std::string dir9 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
+    std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v12";
+    std::string dir10 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10/";
 
 
     std::string mode_option = "fake"; 
@@ -170,7 +170,7 @@ int main (int argc, char *argv[]){
 
     if(analysis_tag == "track"){
         training_signal_cut = training_signal_cut+ "&& sim_track_overlay_fraction[0]< 0.5";
-        training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<0.5";
+        training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<1";
         num_track_cut =  "==1";
 
         bnb_bdt_info.setTopoName("1#gamma1p");
@@ -221,20 +221,20 @@ int main (int argc, char *argv[]){
     bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
     std::cout<<"Defining all our bdt_files."<<std::endl;
-    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
+    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v12.0.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_v12.0.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_v12.0.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
     //signal_other->fillstyle = 3390;
 
 
-    bdt_file *dirt = new bdt_file(dir,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
+    bdt_file *dirt = new bdt_file(dir10,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
-    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_v12.0.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_v12.0.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
 
     //Data files
-    bdt_file *OnBeamData    = new bdt_file(dir9, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *OffBeamData    = new bdt_file(dir9, "bnbext_run1_v9.3.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
+    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v12.0.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v12.0.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 
 
@@ -256,8 +256,9 @@ int main (int argc, char *argv[]){
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
-    OnBeamData->setAsOnBeamData(4.795e19);
-    OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+    OnBeamData->setAsOnBeamData(4.552e+19);
+    OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,37587321.0,483332.0);
+    //442794 
 
     //OffBeamData->makeRunSubRunList();
     //return 0;
@@ -329,7 +330,7 @@ int main (int argc, char *argv[]){
     if(analysis_tag == "track"){
         //0.677 0.6125
         //0.6, 0.55
-        fcoscut =  0.677;
+        fcoscut =  0.55;
         fbnbcut =  0.60625;
     }else if(analysis_tag == "notrack"){
         //0.64 0.59875
@@ -584,6 +585,8 @@ int main (int argc, char *argv[]){
                 bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
                 //real_datamc.setSubtractionVector(subv);
                 // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+             //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+
                 real_datamc.plotStacks(ftest, training_vars,fcoscut,fbnbcut);
                 real_datamc.SetSpectator();
                 real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
