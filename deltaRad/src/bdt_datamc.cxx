@@ -180,7 +180,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             //double max_modifier = 1.65;
             double max_modifier = 2.0;
             if (s==1){
-                max_modifier = 1.4;
+                max_modifier = 1.6;
             }
             if (s==2){
                 max_modifier = 1.85;
