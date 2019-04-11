@@ -380,7 +380,7 @@ int main (int argc, char *argv[]){
     }	
     else if(mode_option == "recomc"){
 
-        std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7,kOrange-3, kGreen+1 , kGray};
+        std::vector<int> recomc_cols = {kRed-7, kAzure+6, kBlue-7, kPink + 5, kMagenta-10, kYellow-7,kOrange+1, kGreen-6 , kCyan -1};
 //        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other Non #gamma",  "Overlay","Other"};
         //         std::vector<int> recomc_cols = { kYellow-7,kOrange-3, kGreen+1 ,kGray};
          std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}", "Other NC", "Other CC", "Cosmic (Overlay)"};
@@ -477,7 +477,10 @@ int main (int argc, char *argv[]){
 
         histogram_stack.addToStack(OffBeamData);
         //histogram_stack.addToStack(dirt);
-
+       
+       // histogram_stack.addToStack(signal);
+       // histogram_stack.addToStack(signal_other);
+       
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
         int ip=0;
 
@@ -565,6 +568,10 @@ int main (int argc, char *argv[]){
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(dirt);
         histogram_stack->addToStack(OffBeamData);
+
+        //histogram_stack->addToStack(signal);
+        //histogram_stack->addToStack(signal_other);
+
 
 
         //histogram_stack->addToStack(dirt);
