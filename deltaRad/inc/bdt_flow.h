@@ -26,8 +26,10 @@ struct bdt_flow{
 		std::string post_cuts;
 
 		std::vector<std::string> vec_pre_cuts;
+        std::vector<bdt_info> bdt_vector;
 
-		bdt_flow(){};	
+		bdt_flow(){};
+
 		bdt_flow(std::string intop, std::string indef, std::string inpre, std::string inpost, bdt_info incos, bdt_info inbnb) : topological_cuts(intop),  definition_cuts(indef), pre_cuts(inpre), post_cuts(inpost),bdt_cosmic_cuts(incos), bdt_bnb_cuts(inbnb) {
 
 			base_cuts = topological_cuts+"&&"+definition_cuts;
@@ -60,6 +62,21 @@ struct bdt_flow{
 
 		};	
 
+
+		bdt_flow(std::string intop, std::string indef, std::vector<std::string> invecpre, std::string inpost, std::vector<bdt_info>inbdtinfos) : topological_cuts(intop),  definition_cuts(indef), vec_pre_cuts(invecpre), post_cuts(inpost), bdt_vector(inbdtinfos) {
+
+			base_cuts = topological_cuts+"&&"+definition_cuts;
+
+            //fake for now
+            bdt_cosmic_cuts = bdt_vector[0];
+            bdt_bnb_cuts = bdt_vector[1];
+
+			pre_cuts = vec_pre_cuts.front();
+			for(int i=1; i<vec_pre_cuts.size(); i++){
+				pre_cuts = pre_cuts + "&&"+ vec_pre_cuts.at(i);
+			}
+
+		};	
 
 };
 

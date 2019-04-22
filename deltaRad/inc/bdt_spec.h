@@ -66,6 +66,12 @@ class bdt_stack{
 		TH1* getBDTSum(bdt_info which, int level, double c1, double c2);
 		TH1* getBDTSum(bdt_info which,std::string bin, int level, double c1, double c2);
 
+
+        TH1* getBDTEntrySum(bdt_info whichbdt);
+        THStack* getBDTEntryStack(bdt_info whichbdt);
+
+
+
 		int plotStacks(TFile*ftest, std::vector<bdt_variable> vars, double c1, double c2);
 		int plotStacks(TFile*f, bdt_variable var,double,double);
 		int plotBDTStacks(TFile*f, bdt_info,double,double);

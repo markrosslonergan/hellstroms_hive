@@ -185,7 +185,7 @@ int main (int argc, char *argv[]){
     std::string pmass = "0.938272";
     std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+20 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
-    //    std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
+
 
     std::vector<std::string> v_denom;
     if(analysis_tag == "notrack"){

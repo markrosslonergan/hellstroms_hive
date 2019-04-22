@@ -51,7 +51,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
     std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
 
-
+    vec_entry_lists.resize(flow.bdt_vector.size());
 
 /*
     //This is all old school mcc8 stuff for now.
@@ -245,10 +245,12 @@ int bdt_file::calcPOT(){
     std::string tnam_event = root_dir+"event_tree";
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
-
+    std::string tnam_slice = root_dir+"ncdelta_slice_tree";
  
     double potbranch = 0;
     int  numbranch = 0;
+
+    tslice = (TTree*)f->Get(tnam_slice.c_str());
 
 
     if(is_mc){
@@ -268,7 +270,10 @@ int bdt_file::calcPOT(){
             tmpnum += (double)numbranch;
             tmppot += potbranch;
         }
-        numberofevents = tmpnum;
+//        numberofevents = tmpnum;
+
+        numberofevents = tvertex->GetEntries();
+
         pot=tmppot;
         std::cout<<"bdt_file::bdt_file()\t||\t---> POT is MC/OVERLAY "<<std::endl;
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
@@ -425,6 +430,14 @@ int bdt_file::calcPrecutEntryList(){
     return 0;
 
 }
+
+int bdt_file::calcBDTEntryList(int stage, std::vector<double> bdt_cuts){
+    std::string tmp_list_name = "stage_"+std::to_string(stage)+"_BDT_" +this->tag;
+    this->tvertex->Draw((">>"+tmp_list_name).c_str(), this->getStageCuts(stage,bdt_cuts).c_str() , "entrylist");
+    vec_entry_lists[stage-2] = (TEntryList*)gDirectory->Get(tmp_list_name.c_str());
+    return 0;
+}
+
 
 
 int bdt_file::calcCosmicBDTEntryList(double c1, double c2){
@@ -765,6 +778,15 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
     return 0;
 }
 
+int bdt_file::addBDTResponses(bdt_info input_bdt_info){
+    topo_name = input_bdt_info.topo_name; 
+    auto method = input_bdt_info.TMVAmethod;
+
+        std::cout<<"Now adding TreeFriend: "<<input_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+        this->addFriend(this->tag +"_"+input_bdt_info.identifier,  input_bdt_info.identifier+"_"+this->tag+"_app"+".root");
+
+    return 0;
+}
 int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods){
     topo_name = bnb_bdt_info.topo_name; 
     for(auto &method: TMVAmethods){
@@ -785,19 +807,39 @@ int bdt_file::setStageEntryList(int j){
         this->tvertex->SetEntryList(topological_list);
     }else if(j==1){
         this->tvertex->SetEntryList(precut_list);
-    }else if (j==2){
-        this->tvertex->SetEntryList(cosmicbdt_list);
-    }else if (j==3){
-        this->tvertex->SetEntryList(bnbbdt_list);
-    }else if(j>3){
-        std::cout<<"bdt_file::setStageEntryList. Only up to level 3 allowed with Entry Lists"<<std::endl;
+    }else if(j>flow.bdt_vector.size()+1){
+        std::cout<<"bdt_file::setStageEntryList. Only up to level "<<flow.bdt_vector.size()<<" allowed with Entry Lists"<<std::endl;
         exit(EXIT_FAILURE);
-
+    }else if(j>1){
+        this->tvertex->SetEntryList(vec_entry_lists[j-2]);
     }
 
 
     return 0;
 }
+
+
+std::string bdt_file::getStageCuts(int stage, std::vector<double> bdt_cuts){
+
+    bool verbose = false;
+
+    std::string ans;
+    
+    if(stage==0){
+            ans = flow.base_cuts;
+    }else if(stage ==1){
+            ans = flow.base_cuts + "&&"+ flow.pre_cuts;
+            if(verbose)std::cout << "Stage 1 cuts: " << ans << std::endl;
+    }else if(stage > 1){
+                    ans = flow.base_cuts + "&&" + flow.pre_cuts;
+                    for(int i=0; i< stage-1; i++){
+                        bdt_variable stagevar = this->getBDTVariable(flow.bdt_vector[i]);		
+                        ans += "&& "+stagevar.name +">"+std::to_string(bdt_cuts[i]);
+                    }
+    }
+    return ans;
+}
+
 
 
 std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){

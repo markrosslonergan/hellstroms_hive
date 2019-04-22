@@ -10,10 +10,10 @@
 #include <numeric>
 /******** Our includes *****/
 
+#include  "bdt_flow.h"
 #include  "bdt_file.h"
 #include  "bdt_var.h"
 #include  "bdt_info.h"
-#include  "bdt_flow.h"
 #include  "method_struct.h"
 
 /******** Root includes *****/
@@ -122,6 +122,7 @@ struct bdt_file{
 		TTree *tevent;
 		TTree *tpot;
 		TTree *teventweight;
+        TTree *tslice;
 
 		std::string topological_list_name;
 		TEntryList * topological_list;
@@ -132,9 +133,10 @@ struct bdt_file{
 		std::string bnbbdt_list_name;
 		TEntryList * bnbbdt_list;
 
+        std::vector<TEntryList*> vec_entry_lists;
+
         //a function that splits a BDT file based on string and !string
         int splitBDTfile(std::string split_string,std::string trueTAG, bdt_file* truesplit, std::string falseTAG, bdt_file *falsesplit);
-
 
 		int setStageEntryList(int j);
 		int setStageEntryList(int j, double, double);
@@ -142,10 +144,9 @@ struct bdt_file{
 		int calcTopologicalEntryList();
 		int calcCosmicBDTEntryList(double,double);
 		int calcBNBBDTEntryList(double,double);
-
+        int calcBDTEntryList(int stage, std::vector<double> bdt_cuts);
 
 		int calcBaseEntryList(std::string);
-
         double data_tor860_wcut;
         double data_spills_E1DCNT_wcut;
         double ext_spills_ext;
@@ -193,12 +194,15 @@ struct bdt_file{
 
 		int addFriend(std::string in_friend_tree_nam, std::string in_friend_file);
 		int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
-		
+		int addBDTResponses(bdt_info input_bdt_info);
+
 		~bdt_file();
 
 
 		std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
-	
+        std::string getStageCuts(int stage, std::vector<double> bdt_cuts);
+
+
 		int writeStageFriendTree(std::string nam,double,double);
 		int addPlotName(std::string plotin);
 };

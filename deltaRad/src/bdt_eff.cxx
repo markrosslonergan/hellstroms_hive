@@ -1,5 +1,82 @@
 #include "bdt_eff.h"
 
+bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT) : file(filein){
+
+    double conversion = filein->scale_data*plot_POT/filein->pot;
+    double n_starting_events = 0;
+    denominator = "";
+
+    std::cout<<"File has  "<<filein->GetEntries("1")*conversion<<" events when scaled to "<<plot_POT<<std::endl;
+
+
+    for(int i=0; i<v_denomin.size();i++){
+            std::cout<<" On Cut "<<v_denomin[i]<<std::endl;
+            if(i==0){
+                denominator = v_denomin[i];
+            }else{
+                denominator += "&&"+v_denomin[i];
+            }
+            double tmp_events =  filein->GetEntries(denominator)*conversion;
+            std::cout<<"--- this file has: "<<tmp_events<<std::endl;
+            n_starting_events = tmp_events;
+    }
+    std::cout<<"So the DENOMINATOR is "<<n_starting_events<<std::endl;
+
+    std::cout<<"-----------------------------------------"<<std::endl;
+
+    std::string topocuts = "";
+    double n_topo_events = 0;
+    for(int i=0; i<v_topo.size();i++){
+            std::cout<<" On topo: "<<v_topo[i]<<std::endl;
+            if(i==0){
+                topocuts = v_topo[i];
+            }else{
+                topocuts += "&&"+v_topo[i];
+            }
+            double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts)*conversion;
+            double tmp_events_just_this =  filein->GetEntries(denominator+"&&"+v_topo[i])*conversion;
+            std::cout<<"--- this file has: "<<tmp_events<<" which on its own is a ("<<tmp_events_just_this/n_starting_events*100.0<<"%) effect"<<std::endl;
+            n_topo_events = tmp_events;
+    }
+    std::cout<<"So the DENOMINATOR + TOPOLOGICAL is "<<n_topo_events<<std::endl;
+    std::cout<<"So total Pandora Reco Efficiency is "<<n_topo_events/n_starting_events*100.0<<"%"<<std::endl;
+    
+    std::cout<<"-----------------------------------------"<<std::endl;
+
+    std::string precuts = "";
+    double n_precut_events = 0;
+    for(int i=0; i<v_precuts.size();i++){
+            std::cout<<" On precut: "<<v_precuts[i]<<std::endl;
+            if(i==0){
+                precuts = v_precuts[i];
+            }else{
+                precuts += "&&"+v_precuts[i];
+            }
+            double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
+            double tmp_events_just_this =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+v_precuts[i])*conversion;
+            std::cout<<"--- this file has: "<<tmp_events<<" which on its own is a ("<<tmp_events_just_this/n_topo_events*100.0<<"%) effect relative to topo"<<std::endl;
+            n_precut_events = tmp_events;
+    }
+    std::cout<<"So the DENOMINATOR + TOPOLOGICAL + PRECUTS is "<<n_precut_events<<std::endl;
+    std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_starting_events*100.0<<"% relative to denom"<<std::endl;
+    std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_topo_events*100.0<<"% relative to topo"<<std::endl;
+ 
+    std::cout<<"-----------------------------------------"<<std::endl;
+    
+    double n_final_events = 0;
+	for(int s=2; s<bdt_cuts.size()+2; s++){
+		file->calcBDTEntryList(s,bdt_cuts);
+		file->setStageEntryList(s);
+
+		double stage_entries = file->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
+		std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to denom: "<<stage_entries/n_starting_events*100.0<<"%"<<std::endl;
+		std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to topo: "<<stage_entries/n_topo_events*100.0<<"%"<<std::endl;
+		std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to precuts: "<<stage_entries/n_precut_events*100.0<<"%"<<std::endl;
+    }
+
+
+}
+
 
 bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts ,double c1, double c2, double plot_POT) : file(filein){
 

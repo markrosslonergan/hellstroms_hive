@@ -6,8 +6,8 @@ THStack* bdt_stack::getBDTStack(bdt_info whichbdt, std::string binning, int leve
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
 
 	for(int t=0; t<stack.size(); t++){
-		bdt_variable var = stack.at(t)->getBDTVariable(whichbdt, binning);
 
+        bdt_variable var = stack.at(t)->getBDTVariable(whichbdt, binning);
 		TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot);
 
 		hist->SetTitle((this->name+"_"+var.name).c_str());
@@ -32,6 +32,62 @@ THStack* bdt_stack::getBDTStack(bdt_info whichbdt, std::string binning, int leve
 THStack* bdt_stack::getBDTStack(bdt_info whichbdt, int level, double cut1, double cut2){
 	return this->getBDTStack(whichbdt, whichbdt.binning, level, cut1, cut2);
 }
+
+THStack* bdt_stack::getBDTEntryStack(bdt_info whichbdt){
+
+	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
+
+	for(int t=0; t<stack.size(); t++){
+
+        bdt_variable var = stack.at(t)->getBDTVariable(whichbdt, whichbdt.binning);
+		TH1* hist = (TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot);
+
+		hist->SetTitle((this->name+"_"+var.name).c_str());
+		hist->SetLineColor(kBlack);
+		hist->SetStats(0);
+		hist->SetLineWidth(1);
+		//hist->SetMarkerStyle(20);
+		hist->SetFillColor(stack.at(t)->col);
+		hist->SetFillStyle(stack.at(t)->fillstyle);
+
+		hist->GetXaxis()->SetTitle(var.unit.c_str());
+		hist->GetYaxis()->SetTitle("Events");
+
+		stacked->Add(hist);
+	}
+
+	return stacked;	
+
+}
+
+TH1* bdt_stack::getBDTEntrySum(bdt_info whichbdt){
+
+	bdt_variable var = stack.at(0)->getBDTVariable(whichbdt, whichbdt.binning);
+	TH1* summed = (TH1*)stack.at(0)->getTH1(var, "1", "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
+
+	for(int t=1; t<stack.size(); t++){
+		bdt_variable varo = stack.at(t)->getBDTVariable(whichbdt,whichbdt.binning);
+		TH1* hist = (TH1*)stack.at(t)->getTH1(varo, "1", "summed_"+std::to_string(t)+"_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot);
+		summed->Add(hist);
+	}
+
+	summed->SetTitle((this->name+"_"+var.name).c_str());
+	summed->SetLineColor(kBlack);
+	summed->SetStats(0);
+	summed->SetLineWidth(1);
+	summed->SetFillStyle(3002);
+	summed->SetFillColor(kGray+3);
+
+	summed->GetXaxis()->SetTitle(var.unit.c_str());
+	summed->GetYaxis()->SetTitle("Events");
+
+
+
+	return summed;	
+
+}
+
+
 
 TH1* bdt_stack::getBDTSum(bdt_info whichbdt, std::string binning, int level, double cut1, double cut2){
 

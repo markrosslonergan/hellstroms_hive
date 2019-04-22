@@ -15,8 +15,17 @@ struct method_struct {
     std::string bdt_binning;
     std::string bdt_tag;
 
+    std::vector<bdt_variable> bdt_all_vars;
     std::vector<bdt_variable> bdt_train_vars;
     std::vector<bdt_variable> bdt_spec_vars;
+
+    std::string filename;
+    std::string foldername;
+    std::string training_cut;
+    double training_fraction;
+
+    std::string topological_name;
+    std::string topological_definition;
 
     std::vector<std::string> precuts;
 

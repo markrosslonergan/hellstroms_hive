@@ -56,9 +56,13 @@ class bdt_datamc{
         }
 
 		int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
-		int plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt);
+        int plotStacks(TFile*f,std::vector<bdt_variable> vars, std::vector<double> cuts);
+		
+        int plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt);
 		int plotStacks(TFile*f, bdt_variable var,double,double);
-		int plotBDTStacks(TFile*f, bdt_info,double,double);
+
+        int plotBDTStacks(TFile*f, bdt_info,double,double);
+        int plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts);
 
     int SetSpectator();
 

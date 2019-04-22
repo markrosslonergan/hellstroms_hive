@@ -31,7 +31,6 @@ struct bdt_info{
     method_struct TMVAmethod;
     std::vector<bdt_variable> train_vars;
     std::vector<bdt_variable> spec_vars;
-
 	std::string topo_name;
 	
 	bdt_info(){identifier = "null"; name = "null"; binning = "null";};
