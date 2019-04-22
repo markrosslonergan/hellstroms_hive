@@ -317,10 +317,10 @@ int main (int argc, char *argv[]){
     signal->addPlotName("Signal NC #Delta Radiative");
     signal_other->addPlotName("Other NC #Delta Radiative");
     training_bnb->addPlotName("BNB Backgrounds");
-    bnb->addPlotName("BNB ");
+    bnb->addPlotName("BNB Backgrounds ");
     OnBeamData->addPlotName("On-Beam  Data");
-    OffBeamData->addPlotName("Cosmic Data");
-    dirt->addPlotName("Dirt");
+    OffBeamData->addPlotName("Cosmic Background");
+    dirt->addPlotName("Dirt Background");
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
@@ -381,11 +381,12 @@ int main (int argc, char *argv[]){
     }	
     else if(mode_option == "recomc"){
 
-        std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7,kOrange-3, kGreen+1 , kGray};
-//        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other Non #gamma",  "Overlay","Other"};
-        //         std::vector<int> recomc_cols = { kYellow-7,kOrange-3, kGreen+1 ,kGray};
-         std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}", "Other NC", "Other CC", "Cosmic (Overlay)"};
+        std::vector<int> recomc_cols = {kRed-7, kBlue-7, kPink + 5, kOrange+1, kGreen-6 };
+        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "NC #pi^{0}","Non #pi^{0} #gamma", "Misreconstructed", "Other"};
+       // std::vector<int> recomc_cols = {kRed-7, kAzure+6, kBlue-7, kPink + 5, kMagenta-10, kYellow-7,kOrange+1, kGreen-6 , kCyan -1};
+       // std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}", "Other NC", "Other CC", "Cosmic (Overlay)"};
        
+
         std::string overlay = "sim_shower_overlay_fraction[0] >= 0.8";
       
         std::string ncdelta = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative ==1 && !("+overlay+")";
@@ -394,12 +395,16 @@ int main (int argc, char *argv[]){
         std::string othergamma =  "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative!=1 && !("+overlay+")";
         std::string  nue = "abs(mctruth_lepton_pdg[0])==11 && abs(sim_shower_pdg[0]) ==11  && !("+overlay+")"; // && (exiting_electron_number==1 || exiting_antielectron_number==1)";
         std::string  michel = "abs(sim_shower_pdg[0]) ==11 && abs(sim_shower_parent_pdg[0])==13 && !("+overlay+")";
+     
+        std::string misreco = "((sim_shower_pdg[0]) == 2212 || abs(sim_shower_pdg[0]) == 13 || abs(sim_shower_pdg[0])==211 ) &&!("+overlay+")";
         //std::string bnbother =  "sim_shower_pdg[0]!=22 && !("+nue+") && !("+michel+")  && !("+overlay+")";
        // std::string overlay = "sim_shower_overlay_fraction[0] == 1";
         //std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel,bnbother};
-        std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel};
+        std::vector<std::string> recomc_cuts = {ncdelta,ncpi0,othergamma, misreco};
+        //std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel};
 
 
+/*
         std::string othercc = "!("+overlay+") && ! mctruth_cc_or_nc==0";
         for(auto s: recomc_cuts){
             othercc += "&& !("+s+")";
@@ -415,13 +420,14 @@ int main (int argc, char *argv[]){
 
        std::cout<<"other nc = "<<othernc<<std::endl;
        
+*/
         std::string other = "!("+overlay+")";
         for(auto s: recomc_cuts){
-            othernc += "&& !("+s+")";
+            other += "&& !("+s+")";
         }
 
-       // recomc_cuts.push_back(other);
-        recomc_cuts.push_back(overlay);
+        recomc_cuts.push_back(other);
+        //recomc_cuts.push_back(overlay);
       
 
         bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
@@ -478,7 +484,10 @@ int main (int argc, char *argv[]){
 
         histogram_stack.addToStack(OffBeamData);
         //histogram_stack.addToStack(dirt);
-
+       
+       // histogram_stack.addToStack(signal);
+       // histogram_stack.addToStack(signal_other);
+       
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
         int ip=0;
 
@@ -566,6 +575,10 @@ int main (int argc, char *argv[]){
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(dirt);
         histogram_stack->addToStack(OffBeamData);
+
+        //histogram_stack->addToStack(signal);
+        //histogram_stack->addToStack(signal_other);
+
 
 
         //histogram_stack->addToStack(dirt);
