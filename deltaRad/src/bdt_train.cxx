@@ -152,10 +152,10 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
             test_signal->Draw("hist");
             test_bkg->Draw("hist same");
 
-            test_signal->SetMinimum(0.001);
+            test_signal->SetMinimum(0.0);
             test_signal->GetXaxis()->SetRangeUser(min*0.9,max*1.1);
-            test_signal->GetXaxis()->SetTitle((name+"BDT Response").c_str());
-
+            test_signal->GetXaxis()->SetTitle((name+" BDT Response").c_str());
+            test_signal->SetTitle("");
 
             train_signal->Draw("E1P same");
             train_bkg->Draw("E1P same");
@@ -191,7 +191,10 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
             TPad *p2 = (TPad*)c_var->cd(2);
             p2->SetLogy();
 
-            test_signal->Draw("hist");
+            TH1D* test_signal2 = (TH1D*)test_signal->Clone(("tt"+name).c_str());
+            test_signal2->SetMinimum(0.001);
+
+            test_signal2->Draw("hist");
             test_bkg->Draw("hist same");
 
      //       test_signal->SetMinimum(0);
