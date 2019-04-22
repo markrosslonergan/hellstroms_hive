@@ -27,6 +27,7 @@ int main (int argc, char *argv[]){
     std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
     std::string mydir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/";
     std::string dirv10 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10/";
+    std::string dirv12 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v12/";
 
 
     std::string mode_option = "fake"; 
@@ -217,27 +218,33 @@ int main (int argc, char *argv[]){
     ///////////////// SAMPLES /////////////////////////
     std::cout<<"Defining all our bdt_files."<<std::endl;
     // MC+Overlay files
-    bdt_file *training_signal=new bdt_file(dirv10,"ncpi0_overlay_collins_v10.0.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dirv10, "ncpi0_overlay_collins_v10.0.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dirv10,"ncpi0_overlay_collins_v10.0.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
+    bdt_file *training_signal=new bdt_file(dirv12,"ncpi0_overlay_v12.2.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dirv12, "ncpi0_overlay_v12.2.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dirv12,"ncpi0_overlay_v12.2.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
     //signal_other->fillstyle = 3333;
 
-    bdt_file *training_bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+    bdt_file *training_bnb = new bdt_file(dirv12, "bnb_overlay_v12.2.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dirv12, "bnb_overlay_v12.2.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
     // Color was kBlue-4 or kAzure-9
 
     //Data files
-    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v9.3.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
-    bdt_file *dirt = new bdt_file(dirv10,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
+    bdt_file *OnBeamData    = new bdt_file(dirv12, "data5e19_v12.2.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *OffBeamData    = new bdt_file(dirv12, "bnbext_run1_v12.21.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
+    bdt_file *dirt = new bdt_file(dirv12,"dirt_overlay_v12.2.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
     //For conviencance fill a vector with pointers to all the files to loop over.
     std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData, dirt};
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
-    OnBeamData->setAsOnBeamData(4.795e19);
-    OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+
+    // v10
+    //OnBeamData->setAsOnBeamData(4.795e19);
+    //OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+    
+    // v12
+    OnBeamData->setAsOnBeamData(4.552e+19);
+    OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
 
     //OffBeamData->makeRunSubRunList();
     //return 0;

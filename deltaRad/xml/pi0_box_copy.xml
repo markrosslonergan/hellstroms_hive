@@ -175,6 +175,7 @@
     <var def = "reco_track_endy[0]" binning = "(20,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(20,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(20,0,1)" unit = "Reconstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
+    <var def = "reco_shower_energy_plane2[0]/1000+reco_shower_energy_plane2[1]/1000+reco_track_proton_kinetic_energy[0]" binning = "(20, 0, 2)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "true" />
 
 </mva>
 
@@ -327,5 +328,6 @@
     <var def = "reco_track_endy[0]" binning = "(20,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(20,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(20,0,1)" unit = "Reconstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
+    <var def = "reco_shower_energy_plane2[0]/1000+reco_shower_energy_plane2[1]/1000+reco_track_proton_kinetic_energy[0]" binning = "(20, 0, 2)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "true" />
 
 </mva>
