@@ -123,8 +123,8 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
             train_bkg->Scale(1.0/train_bkg->Integral());			
 
             //Some KS tests. 
-            double signal_KS = test_signal->KolmogorovTest(train_signal);
-            double bkg_KS = test_bkg->KolmogorovTest(train_bkg);
+            double signal_KS = train_signal->KolmogorovTest(test_signal,"X");
+            double bkg_KS = train_bkg->KolmogorovTest(test_bkg,"X");
 
             std::cout<<"KS Tests! -------"<<std::endl;
             std::cout<<"--- Signal Train V Test Samples : "<<signal_KS<<std::endl;
