@@ -4,14 +4,15 @@
 <precut def ="reco_flash_total_pe_in_beamgate[0] > 20" name ="Optical Filter 20 PE"/>
 <precut def = "(reco_vertex_x > 10 &amp;&amp; reco_vertex_x < 246 &amp;&amp; reco_vertex_y > -107 &amp;&amp; reco_vertex_y < 107 &amp;&amp; reco_vertex_z > 10 &amp;&amp; reco_vertex_z < 1026) " name = "Fiducial Vertex Cut" />
 <!-- Track Precuts -->
-<precut def = "reco_track_good_calo_best_plane[0]!=-1 " name = "Track Good Calo Cut" />
+<precut def = "reco_track_good_calo_best_plane[0]!=0 " name = "Track Good Calo Cut" />
 <precut def = "reco_track_displacement[0]<500" name = "Track Length Cut" />
 
 <!--Shower Precuts -->
 <precut def = "(reco_shower_dEdx_plane2_nhits[0]>1 || reco_shower_dEdx_plane0_nhits[0]>1 || reco_shower_dEdx_plane1_nhits[0]>1)" name = "Shower dE/dx Plane Min Nhits"/>
 <!-- Stuff I added or edited -->
 <precut def = "reco_shower_energy_max[0]>20.&amp;&amp; reco_shower_energy_max[1]>20." name = "Shower Energy Cut" /> 
-<precut def="reco_shower_conversion_distance[0]<200&amp;&amp;reco_shower_conversion_distance[1]<200" name="Shower Conversion Distance Cut"/> 
+<!-- <precut def="reco_shower_conversion_distance[0]<200&amp;&amp;reco_shower_conversion_distance[1]<200" name="Shower Conversion Distance Cut"/> -->
+<!-- <precut def = "(reco_shower_dEdx_amalgamated[0]==reco_shower_dEdx_amalgamated[0])" name = "Shower dE/dx Good Calo"/> -->
 
 <!--
 <precut def = "reco_shower_energy_max[0]>0.125" name = "Shower Energy Cut 100 mev" />
@@ -30,7 +31,7 @@
 <!--Comsic BDT Training + Spectator Variables-->
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(18,0.12,0.88)">
     <method type = "COSMIC" use = "yes">
-        <param>  NTrees=500 	</param>				
+        <param>  NTrees=100 	</param>				
         <param>  MinNodeSize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
         <param>  AdaBoostBeta=0.75 	</param>				
@@ -38,7 +39,7 @@
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
         <param>  nCuts=-1	</param>				
-        <param>  MaxDepth=3 	</param>				
+        <param>  MaxDepth=4 	</param>				
     </method>
     <!--Vertex Variables-->
     <var def = "sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))" binning = "(20,0,100)" unit = "Reco-True Vertex Dist [cm]" type = "d" spectator = "true" />
@@ -133,7 +134,7 @@
     <var def="sqrt((reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])]))/1000" binning = "(20, 0, 1)" unit = "Reco. #pi^{0} Transverse Momentum [GeV]" type = "d" spectator = "true" />
 
     <!-- Invariant mass -->
-    <var def="sqrt(2.0*reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*(1.0-cos((acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])))))/1000" binning = "(20, 0, 0.3)" unit = "Reconstructed Diphoton Mass [GeV]" type = "d" spectator = "false" />
+    <var def="sqrt(2.0*reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*(1.0-cos((acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])))))/1000" binning = "(20, 0, 0.3)" unit = "Reconstructed Diphoton Mass [GeV]" type = "d" spectator = "true" />
 
     <!-- Center-of-mass decay angle -->
     <var def="((reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])] - reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])])/(sqrt((reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])]))))" binning = "(20, 0, 1)" unit = "Reconstructed cos(#theta_{CM})" type = "d" spectator = "true" />
@@ -175,14 +176,14 @@
     <var def = "reco_track_endy[0]" binning = "(20,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "false"/>
     <var def = "reco_track_endz[0]" binning = "(20,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(20,0,1)" unit = "Reconstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
-    <var def = "reco_shower_energy_plane2[0]/1000+reco_shower_energy_plane2[1]/1000+reco_track_proton_kinetic_energy[0]" binning = "(20, 0, 2)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "false" />
+    <var def = "reco_shower_energy_plane2[0]/1000+reco_shower_energy_plane2[1]/1000+reco_track_proton_kinetic_energy[0]" binning = "(20, 0, 2)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "true" />
 
 </mva>
 
 <!--BNB BDT Training + Spectator Variables-->
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(18,0.24,0.9)">
     <method type = "BNB" use = "yes">
-        <param>  NTrees=500 	</param>				
+        <param>  NTrees=100 	</param>				
         <param>  MinNodeSize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
         <param>  AdaBoostBeta=0.75 	</param>				
@@ -190,7 +191,7 @@
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
         <param>  nCuts=-1	</param>				
-        <param>  MaxDepth=3 	</param>				
+        <param>  MaxDepth=4 	</param>				
     </method>
     <!--Vertex Variables-->
     <var def = "sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))" binning = "(20,0,100)" unit = "Reco-True Vertex Dist [cm]" type = "d" spectator = "true" />

@@ -188,8 +188,9 @@ int main (int argc, char *argv[]){
                                         "mctruth_num_exiting_pi0==1", 
                                         "mctruth_pi0_leading_photon_energy > 0.02", 
                                         "mctruth_pi0_subleading_photon_energy > 0.02", 
-                                        "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04"
-                                        //fid_cut
+                                        //"mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",
+                                        "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==1",
+                                        fid_cut
     }; 
 
     std::string signal_definition = v_denom[0];
@@ -218,9 +219,9 @@ int main (int argc, char *argv[]){
     ///////////////// SAMPLES /////////////////////////
     std::cout<<"Defining all our bdt_files."<<std::endl;
     // MC+Overlay files
-    bdt_file *training_signal=new bdt_file(dirv12,"ncpi0_overlay_v12.2.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dirv12, "ncpi0_overlay_v12.2.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dirv12,"ncpi0_overlay_v12.2.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
+    bdt_file *training_signal=new bdt_file(dirv12,"ncpi0_overlay_extra_v12.2.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dirv12, "ncpi0_overlay_extra_v12.2.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dirv12,"ncpi0_overlay_extra_v12.2.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
     //signal_other->fillstyle = 3333;
 
     bdt_file *training_bnb = new bdt_file(dirv12, "bnb_overlay_v12.2.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
