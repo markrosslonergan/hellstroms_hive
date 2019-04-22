@@ -188,8 +188,8 @@ int main (int argc, char *argv[]){
                                         "mctruth_num_exiting_pi0==1", 
                                         "mctruth_pi0_leading_photon_energy > 0.02", 
                                         "mctruth_pi0_subleading_photon_energy > 0.02", 
-                                        "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",
-                                        fid_cut
+                                        "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04"
+                                        //fid_cut
     }; 
 
     std::string signal_definition = v_denom[0];
