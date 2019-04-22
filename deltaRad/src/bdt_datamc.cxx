@@ -178,11 +178,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
             //double max_modifier = 1.65;
-            double max_modifier = 2.0;
+            double max_modifier = 1.7;
             if (s==1){
                 max_modifier = 1.6;
             }
             if (s==2){
+                max_modifier = 1.85;
+            }
+            if (s==3){
                 max_modifier = 1.85;
             }
 
@@ -269,7 +272,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             pottex.SetTextSize(0.06);
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
-            std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
+            std::string pot_draw = data_file->topo_name+"    "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
             pottex.DrawLatex(.60,.64, pot_draw.c_str());
 
@@ -277,10 +280,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
@@ -506,10 +509,10 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         }else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
 
 
-        double max_modifier = 1.9;
+        double max_modifier = 1.4;
         double min_val = 0.01;
         if(is_bdt_variable) {
-            max_modifier = 100.0;
+            max_modifier = 50.0;
             min_val = 0.1;
         }
 
@@ -581,7 +584,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         pottex.DrawLatex(.7,.96, pot_draw.c_str());
 
-        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
+        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
         pre->Draw();
 
         //cobs->cd(k+1);	

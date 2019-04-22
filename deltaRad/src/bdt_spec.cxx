@@ -358,7 +358,14 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
             else if(s == 3){
                 max_scale = 1.7;
             }
-			stk->SetMaximum(tsum->GetMaximum()*max_scale);
+			//stk->SetMaximum(tsum->GetMaximum()*max_scale);
+      if (s==0 || s==1) {
+        stk->SetMaximum(7300);
+      } 
+      else {
+        stk->SetMaximum(800);
+      }
+      std::cout << "Setting maximum " << tsum->GetMaximum()*max_scale << std::endl;
 			TLegend *l3 = new TLegend(0.11,0.70,0.89,0.89);
 			//tsum->DrawCopy("Same E2"); 
             //gStyle->SetHatchesLineWidth(2);
@@ -396,7 +403,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
             //std::string pot_draw = this->stack[0]->topo_name+"\t"+to_string_prec(plot_pot/1e19,1)+"e19 POT";
-            std::string pot_draw = this->stack[0]->topo_name+"\t\t\t \t"+to_string_prec(plot_pot/1e20,1)+"e20 POT";
+            std::string pot_draw = this->stack[0]->topo_name+"        "+to_string_prec(plot_pot/1e20,1)+"e20 POT";
 
            //pottex.DrawLatex(.60,.64, pot_draw.c_str());
             pottex.DrawLatex(.50,.69, pot_draw.c_str());
