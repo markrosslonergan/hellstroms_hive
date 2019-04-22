@@ -29,9 +29,9 @@ int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, s
 int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
-    std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10";
+    //std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10";
     std::string dir9 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
-
+    std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v12";
 
     std::string mode_option = "fake"; 
     std::string xml = "default.xml";
@@ -221,20 +221,20 @@ int main (int argc, char *argv[]){
     bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
     std::cout<<"Defining all our bdt_files."<<std::endl;
-    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
+    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v12.2.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_v12.2.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_v12.2.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
     //signal_other->fillstyle = 3390;
 
 
-    bdt_file *dirt = new bdt_file(dir,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
+    bdt_file *dirt = new bdt_file(dir,"dirt_overlay_v12.2.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
-    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_v12.2.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_v12.2.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
 
     //Data files
-    bdt_file *OnBeamData    = new bdt_file(dir9, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *OffBeamData    = new bdt_file(dir9, "bnbext_run1_v9.3.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
+    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v12.2.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v12.21.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 
 
@@ -256,9 +256,11 @@ int main (int argc, char *argv[]){
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
-    OnBeamData->setAsOnBeamData(4.795e19);
-    OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
-
+   // OnBeamData->setAsOnBeamData(4.795e19);
+   // OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+   OnBeamData->setAsOnBeamData(4.552e+19);
+   OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
+    
     //OffBeamData->makeRunSubRunList();
     //return 0;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
