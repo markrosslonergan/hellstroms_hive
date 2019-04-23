@@ -81,6 +81,9 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 
     int test_classID =0;
     int train_classID =0;
+    
+    float test_wei=0;
+    float train_wei=0;
 
     float test_response=0;
     float train_response=0;
@@ -89,6 +92,9 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
     trainTree->SetBranchAddress("classID",&train_classID);
     testTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&test_response);
     trainTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&train_response);
+    testTree->SetBranchAddress("weight",&test_wei);
+    trainTree->SetBranchAddress("weight",&train_wei);
+
 
     float min = FLT_MAX;
     float max = FLT_MIN;
@@ -96,9 +102,9 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
     for(int i=0; i< testTree->GetEntries(); i++){
             testTree->GetEntry(i);
             if(test_classID==0){
-                test_signal->Fill(test_response);
+                test_signal->Fill(test_response,test_wei);
             }else if(test_classID==1){
-                test_bkg->Fill(test_response);
+                test_bkg->Fill(test_response,test_wei);
             }
             min = std::min(min,test_response);
             max = std::max(max,test_response);
@@ -107,9 +113,9 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
     for(int i=0; i< trainTree->GetEntries(); i++){
             trainTree->GetEntry(i);
             if(train_classID==0){
-                train_signal->Fill(train_response);
+                train_signal->Fill(train_response,train_wei);
             }else if(train_classID==1){
-                train_bkg->Fill(train_response);
+                train_bkg->Fill(train_response,train_wei);
             }
             min = std::min(min,train_response);
             max = std::max(max,train_response);
