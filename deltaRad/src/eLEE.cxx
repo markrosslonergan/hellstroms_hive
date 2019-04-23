@@ -30,8 +30,8 @@ int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, s
 int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
-    std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10/";
-    std::string dir9 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
+    std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v12/";
+//    std::string dir9 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
 
 
     std::string mode_option = "fake"; 
@@ -190,7 +190,7 @@ int main (int argc, char *argv[]){
     std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
     std::vector<std::string> v_denom = {"abs(mctruth_nu_pdg)==12"," ((mctruth_num_exiting_pi0+mctruth_num_exiting_pipm) ==0)", 
-				"(mctruth_leading_exiting_proton_energy-0.93828)>0.04" ,"mctruth_lepton_E[0]>0.02" ,fid_cut};//,"mctruth_nu_E<0.8"}; 
+				"Sum$(mctruth_leading_exiting_proton_energy-0.93828>0.04)==1" ,"mctruth_lepton_E[0]>0.02" ,fid_cut};//,"mctruth_nu_E<0.8"}; 
 
     std::string signal_definition = v_denom[0];
 
@@ -219,23 +219,23 @@ int main (int argc, char *argv[]){
     
 
     std::cout<<"Defining all our bdt_files."<<std::endl;
-    bdt_file *training_signal   = new bdt_file(dir, "nueintrinsic_overlay_v10.0.root"	, "LEEunfoldedTraining"	, "hist" ,  "singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *training_signal   = new bdt_file(dir, "nueintrinsic_overlay_v12.2.root"	, "LEEunfoldedTraining"	, "hist" ,  "singlephoton/",  kRed-7, signal_training_flow);
 
-    bdt_file *signal		= new bdt_file(dir, "nueintrinsic_overlay_v10.0.root"	, "LEEunfolded"		, "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_other	= new bdt_file(dir, "nueintrinsic_overlay_v10.0.root"	, "LEEunfoldedOther"	, "hist","singlephoton/",  kRed-10, signal_other_flow);
+    bdt_file *signal		= new bdt_file(dir, "nueintrinsic_overlay_v12.2.root"	, "LEEunfolded"		, "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *signal_other	= new bdt_file(dir, "nueintrinsic_overlay_v12.2.root"	, "LEEunfoldedOther"	, "hist","singlephoton/",  kRed-10, signal_other_flow);
     //signal_other->fillstyle = 3391;
 
-    bdt_file *nueintrinsic	= new bdt_file(dir,"nueintrinsic_overlay_v10.0.root"	,"NueIntrinsics"	,"hist","singlephoton/",kCyan-8,data_flow); //intrinsic_flow);
+    bdt_file *nueintrinsic	= new bdt_file(dir,"nueintrinsic_overlay_v12.2.root"	,"NueIntrinsics"	,"hist","singlephoton/",kCyan-8,data_flow); //intrinsic_flow);
 
 
-    bdt_file *dirt		= new bdt_file(dir,"dirt_overlay_v10.0.root"		,"Dirt"			,"hist","singlephoton/", kOrange-7, data_flow);
+    bdt_file *dirt		= new bdt_file(dir,"dirt_overlay_v12.2.root"		,"Dirt"			,"hist","singlephoton/", kOrange-7, data_flow);
 
-    bdt_file *training_bnb	= new bdt_file(dir, "bnb_overlay_v10.0.root"		, "BNBTrain"		, "hist","singlephoton/",  kAzure-9, bkg_training_flow);
-    bdt_file *bnb		= new bdt_file(dir, "bnb_overlay_v10.0.root"		, "BNBOverlays"		, "hist","singlephoton/",  kAzure-9, bkg_flow);
+    bdt_file *training_bnb	= new bdt_file(dir, "bnb_overlay_v12.2.root"		, "BNBTrain"		, "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    bdt_file *bnb		= new bdt_file(dir, "bnb_overlay_v12.2.root"		, "BNBOverlays"		, "hist","singlephoton/",  kAzure-9, bkg_flow);
 
     //Data files
-    bdt_file *OnBeamData	= new bdt_file(dir9, "data5e19_v9.3.root"		,	"OnBeamData"	, "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *OffBeamData	= new bdt_file(dir9, "bnbext_run1_v9.3.root"		,	"OffBeamData"	, "E1p","singlephoton/",  kGreen-3, data_flow);
+    bdt_file *OnBeamData	= new bdt_file(dir, "data5e19_v12.2.root"		,	"OnBeamData"	, "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *OffBeamData	= new bdt_file(dir, "bnbext_run1_v12.21.root"		,	"OffBeamData"	, "E1p","singlephoton/",  kGreen-3, data_flow);
 
     
     
@@ -253,8 +253,10 @@ int main (int argc, char *argv[]){
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
-    OnBeamData->setAsOnBeamData(4.795e19);
-    OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+    OnBeamData->setAsOnBeamData(4.552e+19);
+    OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
+    //OnBeamData->setAsOnBeamData(4.795e19);
+    //OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
 
     //OffBeamData->makeRunSubRunList();
     //return 0;
@@ -273,7 +275,7 @@ int main (int argc, char *argv[]){
 
 	 f->weight_branch ="(lee_signal_weights.lee_weights)";
 	 
-	 f->tvertex->AddFriend("lee_signal_weights",(dir+"lee_weights_friend_for_nueintrinsic_overlay_v10.0.root").c_str());
+	 f->tvertex->AddFriend("lee_signal_weights",(dir+"lee_weights_friend_for_nueintrinsic_overlay_v12.2.root").c_str());
 	}
 
     }	

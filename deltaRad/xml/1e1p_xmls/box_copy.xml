@@ -11,7 +11,7 @@
 <precut def = "reco_track_good_calo_best_plane[0]!=-1" name = "good calo plane track" />
 
 <!--Comsic BDT Training + Spectator Variables-->
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(50,0,1)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(24,0.15,0.75)">
     <method type = "COSMIC" use = "yes">
         <param>  NTrees=10 	</param>				
         <param>  MinNodeSize=2.5% </param>				
@@ -25,7 +25,7 @@
     </method>
 
     <!-- Energies -->
-    <var def = "1/1*reco_shower_energy_max[0]/1000.0" binning = "(48,0,2)" unit = "Reconstructed Shower Energy [GeV]" type = "d" spectator = "false" />
+    <var def = "1/1*reco_shower_energy_max[0]/1000.0" binning = "(14,0,1)" unit = "Reconstructed Shower Energy [GeV]" type = "d" spectator = "false"/>
 
     <var def = "2/2*reco_track_proton_kinetic_energy[0]" binning = "(48,0,2)" unit = "Reconstructed Track Kinetic Energy [GeV]" type = "d" spectator = "false" />
     <var def = "3/3*reco_shower_energy_max[0]/1000.0+reco_track_proton_kinetic_energy[0]" binning = "(48,0,2)" unit = "DEMO Reconstructed Nue Energy [GeV]" type = "d" spectator = "true" />
@@ -73,7 +73,7 @@
 
 </mva>
 
-<mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(50,0,1)">
+<mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(24,0.25,0.68)">
     <method type = "BNB" use = "yes">
         <param>  NTrees=10 	</param>				
         <param>  MinNodeSize=2.5% </param>				

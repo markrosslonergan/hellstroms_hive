@@ -75,7 +75,6 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 	//cut_max_cosmic =cut_max_cosmic*1.0;
 	//cut_max_bnb =cut_max_bnb*1.0;
-
 	//Zoomed in notrack
 	cut_min_cosmic = 0.6; cut_max_cosmic = 0.65;
 	cut_min_bnb = 0.55; cut_max_bnb = 0.6;
@@ -532,7 +531,8 @@ std::vector<double> lin_scan(std::vector<bdt_file*> sig_files, std::vector<bdt_f
 	double best_mva_cut = DBL_MAX;
 	double best_mva_cut2 = DBL_MAX;
 
-	double plot_pot = 6.6e20;
+//	double plot_pot = 6.6e20;
+	double plot_pot = 13.2e20;
 	
 
 	std::vector<double> vec_sig;//some vectors to store TGraph info;

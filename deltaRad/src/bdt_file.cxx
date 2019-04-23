@@ -322,17 +322,12 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
         std::cout<<"Entry List file does not exists for "<<this->tag<<" creating it."<<std::endl;
 
-        std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
         this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0, -9,-9).c_str() , "entrylist");
-        std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
         topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
-        std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
 
 
         this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
-        std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
         precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
-        std::cout << "Entries: " << this->tvertex->GetEntries() << std::endl;
 
 
 
@@ -437,7 +432,7 @@ TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, 
     th1->SetLineWidth(1);
     th1->SetStats(0);
     th1->GetXaxis()->SetTitle(var.unit.c_str());
-    th1->GetYaxis()->SetTitle("Verticies");
+    th1->GetYaxis()->SetTitle("Events");
 
 
     return th1;
@@ -465,7 +460,7 @@ TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, doub
     th1->SetLineWidth(1);
     th1->SetStats(0);
     th1->GetXaxis()->SetTitle("Unit");
-    th1->GetYaxis()->SetTitle("Verticies");
+    th1->GetYaxis()->SetTitle("Events");
     th1->SetDirectory(0);	
 
     //delete ctmp;
@@ -516,7 +511,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
     th1->SetLineWidth(1);
     th1->SetStats(0);
     th1->GetXaxis()->SetTitle(var.unit.c_str());
-    th1->GetYaxis()->SetTitle("Verticies");
+    th1->GetYaxis()->SetTitle("Events");
     th1->SetDirectory(0);	
 
     //delete ctmp;
@@ -554,7 +549,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
         th1->SetLineWidth(1);
         th1->SetStats(0);
         th1->GetXaxis()->SetTitle(var.unit.c_str());
-        th1->GetYaxis()->SetTitle("Verticies");
+        th1->GetYaxis()->SetTitle("Events");
 
         other_cuts = other_cuts+ " && " +"!("+recomc_cuts.at(i)+")";	
 
@@ -796,7 +791,7 @@ TText * drawPrelim(double x, double y, double s, std::string ins){
 
 
 TText * drawPrelim(double x, double y, double s){
-    TText *tres = new TText(x, y,"MicroBooNE Preliminary");
+    TText *tres = new TText(x, y,"MicroBooNE - In Progress");
     tres->SetTextColor(kBlack);
     tres->SetTextSize(s);
     tres->SetNDC();
@@ -804,7 +799,7 @@ TText * drawPrelim(double x, double y, double s){
 }
 
 TText * drawPrelim(double x, double y){
-    TText *tres = new TText(x, y,"MicroBooNE Preliminary");
+    TText *tres = new TText(x, y,"MicroBooNE - In Progress");
     tres->SetTextColor(kBlack);//t90->SetTextSize(0.12);
     tres->SetNDC();
     return tres;

@@ -29,6 +29,7 @@
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
 #include "TObject.h"
+#include "TStyle.h"
 
 class bdt_stack{
 	public:
@@ -43,7 +44,9 @@ class bdt_stack{
 
 
 		bdt_stack(std::string in) : name(in){
-			plot_pot=6.6e20;
+		//	plot_pot=6.6e20;
+        //	plot_pot=13.2e20;
+            plot_pot = 4.8e19;
             do_subtraction = false;
 		}
 

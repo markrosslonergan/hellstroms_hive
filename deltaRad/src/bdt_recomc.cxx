@@ -12,9 +12,11 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 	double label_size_upper=0.05;
 	double title_offset_upper = 1.45;
 
-	double plot_pot = 6.6e20;
+//	double plot_pot = 13.2e20;
+	double plot_pot = 4.8e19;
 
-	std::vector<std::string> stage_names = {"All verticies","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
+
+	std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
 
 	//REWRITE THIS USING file->getStageCuts
 	file->recomc_cols = recomc_cols;
@@ -30,11 +32,14 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 		for(auto &var: vars){
 			std::vector<TH1*> vec_reco_mc = file->getRecoMCTH1(var,"1","stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name,plot_pot);
 			TH1* all_reco_mc = (TH1*)file->getTH1(var , "1" ,"comb_stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name, plot_pot);
-			int Num = all_reco_mc->GetSumOfWeights();				
+			double Num = all_reco_mc->GetSumOfWeights();				
 
 			all_reco_mc->SetLineColor(kBlack);
-			all_reco_mc->SetFillStyle(3002);
-			all_reco_mc->SetFillColor(kGray+3);
+		//	all_reco_mc->SetFillStyle(3002);
+		    all_reco_mc->SetFillStyle(3354);
+            all_reco_mc->SetFillColor(kGray+3);
+            gStyle->SetHatchesLineWidth(2);
+            gStyle->SetHatchesSpacing(1); 
 			all_reco_mc->SetLineWidth(1);
 
 			int nrebin = 1;
@@ -46,7 +51,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 			fout->cd();
 
-			TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(), ("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),1600,1350);
+			TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),"",1600,1450);
+			//TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(), ("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),1600,1450);
 			c->cd();
 
 
@@ -57,9 +63,12 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			pad->cd();               // pad becomes the current pad
 
 
-			THStack * s_reco_truth = new THStack(stage_names.at(s).c_str(),(stage_names.at(s)+" Total:"+to_string_prec(Num,1)).c_str());		
+			//THStack * s_reco_truth = new THStack(stage_names.at(s).c_str(),(stage_names.at(s)+" Total:"+to_string_prec(Num,2)).c_str());		
+			THStack * s_reco_truth = new THStack(stage_names.at(s).c_str(),"");		
 			TLegend * l_reco_truth = new TLegend(0.11,0.11,0.89,0.89);
-
+        
+            l_reco_truth->AddEntry(all_reco_mc,"MC Stats Only Error","f");
+		
 
 			int iv=0;
 			for(auto &v: vec_reco_mc){
@@ -75,14 +84,17 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 				std::cout<<"and add legend"<<std::endl;
 				l_reco_truth->AddEntry(v,("#splitline{"+ recomc_names.at(iv)+"}{#bf{"+to_string_prec(n,2)+"}     ("+to_string_prec(per,1)+"%)}"  ).c_str(),"f");
 				iv++;
-			}	
+			}
+        
+       	
+            s_reco_truth->SetMaximum(s_reco_truth->GetMaximum() * 1.5);    
 
 			s_reco_truth->Draw("hist");
 			all_reco_mc->Draw("E2 same");
 			std::cout<<"Drawn."<<std::endl;
 
 			s_reco_truth->GetXaxis()->SetTitle(var.unit.c_str());
-			s_reco_truth->GetYaxis()->SetTitle("Verticies");
+			s_reco_truth->GetYaxis()->SetTitle("Events");
 			s_reco_truth->GetYaxis()->SetTitleOffset(1.5);
 
 			TLatex latexsel;
@@ -94,10 +106,11 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			pottensel.SetTextSize(0.05);
 			pottensel.SetTextAlign(13);  //align at top
 			pottensel.SetNDC();
-			std::string pot_draw = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+		//	std::string pot_draw = to_string_prec(plot_pot/1e20,1)+"e20 POT";
+			std::string pot_draw = to_string_prec(plot_pot/1e19,1)+"e19 POT";
 			pottensel.DrawLatex(.7,.89, pot_draw.c_str());
 
-			TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation Preliminary");
+			TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 			tsel->Draw();
 
 
@@ -112,7 +125,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			l_reco_truth->SetLineWidth(0);
 
 
-			c->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth_stage_"+std::to_string(s)+".png").c_str(),"png");
+			c->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
 			/*
 			for(auto * t : vec_reco_mc) delete t;
@@ -141,7 +154,11 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	double label_size_upper=0.05;
 	double title_offset_upper = 1.45;
 
-	double plot_pot = 6.6e20;
+//	double plot_pot = 6.6e20;
+//	double plot_pot = 13.2e20;
+	double plot_pot = 4.8e19;
+
+
 
 	//The reco MC vectors (one for each file) currently only bnbcosmic has truth sooo
 	std::vector<TH1*> reco_mc_vec_sel;
@@ -165,7 +182,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	file->recomc_names = recomc_names;
 
 
-	//-------------- All Verticies -------------
+	//-------------- Topological Selection -------------
 	std::string selection = file->getStageCuts(0, -9, -9);
 
 	reco_mc_vec_sel = file->getRecoMCTH1(var, selection, "sel_"+file->tag+"_"+var.safe_name, plot_pot);
@@ -246,10 +263,10 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 	fout->cd();
 
-	TCanvas *c_reco_truth = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag).c_str(), ("recomc_truth_"+var.name+"_"+file->tag).c_str(),2000,1600);
+	TCanvas *c_reco_truth = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag).c_str(), ("recomc_truth_"+var.name+"_"+file->tag).c_str(),2000,1650);
 	c_reco_truth->Divide(2,2);
 
-	//******************* All Verticies	*************************
+	//******************* Topological Selection	*************************
 	c_reco_truth->cd(1);
 
 	TPad *padsel = new TPad("padsel", "padsel", 0, 0, 0.7, 1.0);
@@ -259,7 +276,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	padsel->cd();               // padsel becomes the current pad
 
 
-	THStack * s_reco_truth_sel = new THStack("All Verticies",("All Verticies Total:"+to_string_prec(N_selection,1)).c_str());		
+	THStack * s_reco_truth_sel = new THStack("Topological Selection",("Topological Selection Total:"+to_string_prec(N_selection,1)).c_str());		
 	TLegend * l_reco_truth_sel = new TLegend(0.11,0.11,0.89,0.89);
 
 
@@ -283,7 +300,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 	std::cout<<"1"<<std::endl;
 	s_reco_truth_sel->GetXaxis()->SetTitle(var.unit.c_str());
-	s_reco_truth_sel->GetYaxis()->SetTitle("Verticies");
+	s_reco_truth_sel->GetYaxis()->SetTitle("Events");
 	s_reco_truth_sel->GetYaxis()->SetTitleOffset(1.5);
 
 	TLatex latexsel;
@@ -298,7 +315,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottensel.DrawLatex(.7,.89, pot_draw_sel.c_str());
 
-	TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation Preliminary");
+	TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 	tsel->Draw();
 
 
@@ -340,7 +357,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	s_reco_truth_pre->Draw("hist");
 	reco_mc_all_pre->Draw("E2 same");
 	s_reco_truth_pre->GetXaxis()->SetTitle(var.unit.c_str());
-	s_reco_truth_pre->GetYaxis()->SetTitle("Verticies");
+	s_reco_truth_pre->GetYaxis()->SetTitle("Events");
 	s_reco_truth_pre->GetYaxis()->SetTitleOffset(1.5);
 
 	TLatex latexpre;
@@ -356,7 +373,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	pottenpre.DrawLatex(.7,.89, pot_draw_pre.c_str());
 
 
-	TText *tpre = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation Preliminary");
+	TText *tpre = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 	tpre->Draw();
 
 
@@ -400,7 +417,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	reco_mc_all_bdt1->Draw("E2 same");
 
 	s_reco_truth_bdt1->GetXaxis()->SetTitle(var.unit.c_str());
-	s_reco_truth_bdt1->GetYaxis()->SetTitle("Verticies");
+	s_reco_truth_bdt1->GetYaxis()->SetTitle("Events");
 	s_reco_truth_bdt1->GetYaxis()->SetTitleOffset(1.5);
 
 	TLatex latexbdt1;
@@ -415,7 +432,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenbdt1.DrawLatex(.7,.89, pot_draw_bdt1.c_str());
 
-	TText *tbdt1 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation Preliminary");
+	TText *tbdt1 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 	tbdt1->Draw();
 
 
@@ -463,7 +480,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	reco_mc_all_bdt2->Draw("E2 same");
 
 	s_reco_truth_bdt2->GetXaxis()->SetTitle(var.unit.c_str());
-	s_reco_truth_bdt2->GetYaxis()->SetTitle("Verticies");
+	s_reco_truth_bdt2->GetYaxis()->SetTitle("Events");
 	s_reco_truth_bdt2->GetYaxis()->SetTitleOffset(1.5);
 
 	TLatex latexbdt2;
@@ -478,7 +495,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenbdt2.DrawLatex(.7,.89, pot_draw_bdt2.c_str());
 
-	TText *tbdt2 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation Preliminary");
+	TText *tbdt2 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 	tbdt2->Draw();
 
 
@@ -499,7 +516,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 
 	c_reco_truth->Write();
-	c_reco_truth->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth.png").c_str(),"png");
+	c_reco_truth->Print(("recomc/"+tag+"_"+var.safe_unit+"_"+file->tag+"_recotruth.pdf").c_str(),"pdf");
 
 
 
