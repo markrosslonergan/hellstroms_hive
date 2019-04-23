@@ -178,7 +178,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
             //double max_modifier = 1.65;
-            double max_modifier = 1.7;
+            double max_modifier = 1.9;
+            /*
             if (s==1){
                 max_modifier = 1.6;
             }
@@ -188,6 +189,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             if (s==3){
                 max_modifier = 1.85;
             }
+            */
 
             if(var.is_logplot == true){
                 pad0top->SetLogy();
@@ -218,7 +220,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
 
             tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
-            TLegend *l0 = new TLegend(0.11,0.65,0.89,0.89);
+            TLegend *l0 = new TLegend(0.11,0.55,0.89,0.89);
             l0->SetNColumns(2);
             double NeventsStack = 0;
 
@@ -235,8 +237,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 if(do_subtraction){
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
-                // l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
-                l0->AddEntry(h1,(f->plot_name).c_str(),"f");
+                l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
+                //l0->AddEntry(h1,(f->plot_name).c_str(),"f");
                 n++;
             }
             l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
@@ -253,8 +255,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             d0->Draw("same E1");
 
 
-            //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
-            l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
+            l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
+            //l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
 
 
             l0->Draw();
@@ -363,9 +365,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             TText *t = new TText(0.11,0.41,mean.c_str());
             t->SetNDC();
             t->SetTextColor(kRed-7);
-            //t->SetTextFont(43);
+            t->SetTextFont(43);
             t->SetTextSize(0.12);
-            //t->Draw("same");
+            t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
             //var_precut.front()->GetYaxis()->SetTitle("Events");
@@ -536,7 +538,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         vec_th1s.at(k)->SetFillStyle(0);//vec_th1s.at(k)->Draw("hist same");
 
 
-        TLegend *l0 = new TLegend(0.11,0.62,0.89,0.89);
+        TLegend *l0 = new TLegend(0.11,0.55,0.89,0.89);
         l0->SetNColumns(2);
         double NeventsStack = 0;
 
@@ -547,8 +549,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
             h1->SetFillColor(f->col);
             h1->SetFillStyle(f->fillstyle);
             h1->SetLineColor(kBlack);
-            //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
-            l0->AddEntry(h1,(f->plot_name.c_str()),"f");
+            l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+            //l0->AddEntry(h1,(f->plot_name.c_str()),"f");
         }
 
         l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
@@ -562,8 +564,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         double NdatEvents = data_file->GetEntries(data_cuts.at(k).c_str())*(plot_pot/data_file->pot )*data_file->scale_data;
 
-        l0->AddEntry(data_th1s.at(k),(data_file->plot_name).c_str(),"lp");	
-        //l0->AddEntry(data_th1s.at(k),("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
+        //l0->AddEntry(data_th1s.at(k),(data_file->plot_name).c_str(),"lp");	
+        l0->AddEntry(data_th1s.at(k),("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
 
         l0->Draw();
         l0->SetLineWidth(0);
@@ -655,9 +657,9 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         TText *t = new TText(0.11,0.41,mean.c_str());
         t->SetNDC();
         t->SetTextColor(kRed-7);
-        //t->SetTextFont(43);
+        t->SetTextFont(43);
         t->SetTextSize(0.12);
-//        t->Draw("same");
+        t->Draw("same");
 
         //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
         //var_precut.front()->GetYaxis()->SetTitle("Verticies");
