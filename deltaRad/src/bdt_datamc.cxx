@@ -97,7 +97,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
     //Loop over all stages
 
-    for(int s = 1; s< 4; s++){
+    for(int s = 1; s< 2; s++){
 
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage

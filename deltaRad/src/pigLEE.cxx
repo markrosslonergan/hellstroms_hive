@@ -219,9 +219,9 @@ int main (int argc, char *argv[]){
     ///////////////// SAMPLES /////////////////////////
     std::cout<<"Defining all our bdt_files."<<std::endl;
     // MC+Overlay files
-    bdt_file *training_signal=new bdt_file(dirv12,"ncpi0_overlay_extra_v12.2.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dirv12, "ncpi0_overlay_extra_v12.2.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dirv12,"ncpi0_overlay_extra_v12.2.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
+    bdt_file *training_signal=new bdt_file(dirv12,"ncpi0_overlay_v12.2.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dirv12, "ncpi0_overlay_v12.2.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dirv12,"ncpi0_overlay_v12.2.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
     //signal_other->fillstyle = 3333;
 
     bdt_file *training_bnb = new bdt_file(dirv12, "bnb_overlay_v12.2.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
@@ -418,7 +418,6 @@ int main (int argc, char *argv[]){
 
     }else if(mode_option == "stack"){
         bdt_stack histogram_stack(analysis_tag+"_stack");
-        /*
         histogram_stack.addToStack(signal);
         histogram_stack.addToStack(signal_other);
         histogram_stack.addToStack(bnb);
@@ -428,9 +427,9 @@ int main (int argc, char *argv[]){
         OffBeamData->col;	
         OffBeamData->fillstyle = 3333;
         histogram_stack.addToStack(OffBeamData);
-        */
         
         // Reverse order for last two stages
+        /*
         OffBeamData->col;	
         OffBeamData->fillstyle = 3333;
         histogram_stack.addToStack(OffBeamData);
@@ -438,6 +437,7 @@ int main (int argc, char *argv[]){
         histogram_stack.addToStack(bnb);
         histogram_stack.addToStack(signal_other);
         histogram_stack.addToStack(signal);
+        */
 
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
         int ip=0;
@@ -465,7 +465,6 @@ int main (int argc, char *argv[]){
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
-        /*
         histogram_stack->plot_pot = OnBeamData->pot;
         histogram_stack->addToStack(signal);
         histogram_stack->addToStack(signal_other);
@@ -473,9 +472,9 @@ int main (int argc, char *argv[]){
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(OffBeamData);
         histogram_stack->addToStack(dirt);
-        */
 
         // Reverse order for last two stages
+        /*
         histogram_stack->plot_pot = OnBeamData->pot;
         histogram_stack->addToStack(OffBeamData);
         histogram_stack->addToStack(dirt);
@@ -483,6 +482,7 @@ int main (int argc, char *argv[]){
         histogram_stack->addToStack(signal_other);
         histogram_stack->addToStack(signal);
         OffBeamData->fillstyle = 3333;
+        */
 
         int ip=0;
         std::vector<bool> subv = {false,false,true};
