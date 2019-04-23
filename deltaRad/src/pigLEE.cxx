@@ -299,8 +299,8 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "2g1p"){
-        fcoscut =   0.64284;
-        fbnbcut = 0.632225;
+        fcoscut =   0.653728;
+        fbnbcut = 0.6804;
     }else if(analysis_tag == "2g0p"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;
