@@ -31,8 +31,8 @@ int main (int argc, char *argv[]){
 
 
     std::string mode_option = "fake"; 
-    std::string xml = "../../xml/pi0_box_copy.xml";
-    std::string topo_tag = "2g1p";
+    std::string xml = "../../xml/pi0_box_copy_2g0p.xml";
+    std::string topo_tag = "2g0p";
     std::string bdt_tag = "cosmic";
     std::string analysis_tag = topo_tag;
 
@@ -164,34 +164,44 @@ int main (int argc, char *argv[]){
     std::string training_bkg_cut = "sim_shower_overlay_fraction[0]<1. && sim_shower_overlay_fraction[1]<1. && !(sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111)";
     std::string num_track_cut;
 
-    if(analysis_tag == "2g1p"){
-        training_signal_cut = training_signal_cut+ "&& sim_track_overlay_fraction[0]< 1.";
-        training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<1.";
-        num_track_cut =  "==1";
-
-        bnb_bdt_info.setTopoName("2#gamma1p");
-    }else if (analysis_tag == "2g0p") {
-        num_track_cut = "==0";
-        bnb_bdt_info.setTopoName("2#gamma0p");
-    }
-    else {
-      std::cout << "Invalid analysis tag" << std::endl;
-      return 1;
-    }
-
+    // Fiducial volume definition
     std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
     std::string pmass = "0.938272";
     std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+20 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
     // MC-truth signal cuts
-    std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1",
-                                        "mctruth_num_exiting_pi0==1", 
-                                        "mctruth_pi0_leading_photon_energy > 0.02", 
-                                        "mctruth_pi0_subleading_photon_energy > 0.02", 
-                                        //"mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",
-                                        "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==1",
-                                        fid_cut
-    }; 
+    std::vector<std::string> v_denom;
+
+    if(analysis_tag == "2g1p"){
+        training_signal_cut = training_signal_cut+ "&& sim_track_overlay_fraction[0]< 1.";
+        training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<1.";
+        num_track_cut =  "==1";
+        bnb_bdt_info.setTopoName("2#gamma1p");
+
+        v_denom = {"mctruth_cc_or_nc == 1",
+                  "mctruth_num_exiting_pi0==1", 
+                  "mctruth_pi0_leading_photon_energy > 0.02", 
+                  "mctruth_pi0_subleading_photon_energy > 0.02", 
+                  //"mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",
+                  "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==1",
+                  fid_cut
+        };
+    }else if (analysis_tag == "2g0p") {
+        num_track_cut = "==0";
+        bnb_bdt_info.setTopoName("2#gamma0p");
+
+        v_denom = {"mctruth_cc_or_nc == 1",
+                  "mctruth_num_exiting_pi0==1", 
+                  "mctruth_pi0_leading_photon_energy > 0.02", 
+                  "mctruth_pi0_subleading_photon_energy > 0.02", 
+                  //"mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",
+                  fid_cut
+        };
+    }
+    else {
+      std::cout << "Invalid analysis tag" << std::endl;
+      return 1;
+    }
 
     std::string signal_definition = v_denom[0];
 
