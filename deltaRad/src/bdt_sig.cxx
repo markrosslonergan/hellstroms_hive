@@ -209,7 +209,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	double *best_cut2;  best_cut2 = &max2;//allocate memory for the best significance info.
 
 //	double plot_pot = 6.6e20;
-	double plot_pot = 5e19;
+	double plot_pot = 4.6e19;
 
 	double cut_min_cosmic = 999;
 	double cut_max_cosmic = -999;
