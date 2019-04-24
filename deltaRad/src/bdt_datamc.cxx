@@ -166,7 +166,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             cobs->cd();
             TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
 
-            //if(is_bdt_variable ) 
+            if(is_bdt_variable ) 
                 pad0top->SetLogy();
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
@@ -190,8 +190,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 max_modifier = 1.85;
             }
 
-            //if(var.is_logplot == true){
-            if(true){
+            if(false && var.is_logplot == true){
+            //if(true){
                 pad0top->SetLogy();
                 max_modifier=50.0;
             }
