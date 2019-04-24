@@ -97,7 +97,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
     //Loop over all stages
 
-    for(int s = 1; s< 2; s++){
+    for(int s = 1; s< 4; s++){
 
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
@@ -487,7 +487,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
     //std::vector<std::string> stage_name = {"Topological Selection","","Cosmic BDT Cut","BNB BDT Cut"};
 
 
-    for(int k = 0; k<4; k++){
+    for(int k = 1; k<2; k++){
         std::cout << "[PLOTBDTSTACKS:] On stage " << k << std::endl;
         TCanvas *cobs = new TCanvas("","",900,800);
         //cobs->cd(k+1);
@@ -495,7 +495,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 
 
-        if(is_bdt_variable) pad0top->SetLogy();
+        //if(is_bdt_variable) pad0top->SetLogy();
         pad0top->SetBottomMargin(0); // Upper and lower plot are joined
         pad0top->Draw();             // Draw the upper pad: pad2top
         pad0top->cd();               // pad2top becomes the current pad
@@ -511,10 +511,10 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         }else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
 
 
-        double max_modifier = 1.4;
+        double max_modifier = 1.7;
         double min_val = 0.01;
         if(is_bdt_variable) {
-            max_modifier = 50.0;
+            //max_modifier = 50.0;
             min_val = 0.1;
         }
 

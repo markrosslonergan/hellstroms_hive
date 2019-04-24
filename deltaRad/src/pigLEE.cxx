@@ -309,8 +309,8 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "2g1p"){
-        fcoscut =   0.677;
-        fbnbcut = 0.7092;
+        fcoscut =   0.54;
+        fbnbcut = 0.49;
     }else if(analysis_tag == "2g0p"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;
@@ -523,7 +523,7 @@ int main (int argc, char *argv[]){
 
     }else if(mode_option == "vars"){
 
-        std::vector<std::string> title = {"All Vertices","Pre-Selection Cuts"};
+        std::vector<std::string> title = {"Topological Selection","Pre-Selection Cuts"};
 
         if(run_cosmic){
 
