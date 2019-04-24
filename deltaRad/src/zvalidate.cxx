@@ -41,7 +41,7 @@ int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
     std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
-    std::string dir10 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10/";
+    std::string dir12 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v12/";
 
 
     std::string mode_option = "fake"; 
@@ -175,17 +175,16 @@ int main (int argc, char *argv[]){
     bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
     
-    bdt_file *bnb_cosmics_caliSCE = new bdt_file(dir10, "bnb_overlay_v10.01.root", "BNBOverlay_caliSCE", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    //bdt_file *bnb_cosmics_caliSCE = new bdt_file(dir, "bnb_overlay_v9.9901.root", "BNBOverlay_caliSCE", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    bdt_file *data5e19_caliSCE    = new bdt_file(dir, "data5e19_v9.3.root",	"On-BeamData_caliSCE",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *bnbext_caliSCE    = new bdt_file(dir, "bnbext_run1_v9.3.root",	"Off-BeamData_caliSCE",	"hist","singlephoton/",  kRed, data_flow);
+    bdt_file *bnb_cosmics_caliSCE = new bdt_file(dir12, "bnb_overlay_v12.0.root", "BNBOverlay_caliSCE", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *data5e19_caliSCE    = new bdt_file(dir12, "data5e19_v12.0.root",	"On-BeamData_caliSCE",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *bnbext_caliSCE    = new bdt_file(dir12, "bnbext_run1_v12.0.root",	"Off-BeamData_caliSCE",	"hist","singlephoton/",  kRed, data_flow);
     bdt_file *bnb_corsika_caliSCE    = new bdt_file(dir, "bnb_corsika_v9.3.root",	"BNBCorsika_caliSCE",	"hist","singlephoton/",  kGreen-3, bkg_flow);
     
 
-    //THIS IS ACTUALLY pandoracalo
-    bdt_file *bnb_cosmics_calo = new bdt_file(dir, "bnb_overlay_v9.99.root", "BNBOverlay_calo", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    bdt_file *data5e19_calo    = new bdt_file(dir, "data5e19_v9.99.root",	"On-BeamData_calo",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *bnbext_calo    = new bdt_file(dir, "bnbext_run1_v9.99.root",	"Off-BeamData_calo",	"hist","singlephoton/",  kRed, data_flow);
+    //THIS IS ACTUALLY pandoracaloSCE excete corsika
+    bdt_file *bnb_cosmics_calo = new bdt_file(dir12, "bnb_overlay_v12.1.root", "BNBOverlay_calo", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *data5e19_calo    = new bdt_file(dir12, "data5e19_v12.1.root",	"On-BeamData_calo",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *bnbext_calo    = new bdt_file(dir12, "bnbext_run1_v12.1.root",	"Off-BeamData_calo",	"hist","singlephoton/",  kRed, data_flow);
     bdt_file *bnb_corsika_calo    = new bdt_file(dir, "bnb_corsika_v9.99.root",	"BNBCorsika_calo",	"hist","singlephoton/",  kGreen-3, bkg_flow);
 
 
@@ -204,9 +203,38 @@ int main (int argc, char *argv[]){
         bdt_variable v_tdedxtrun1("reco_track_mean_trunc_dEdx_plane1","(35,0,7)","Truncated Mean dEdx Plane 1 [MeV/cm]","false","d");
         bdt_variable v_tdedxtrun2("reco_track_mean_trunc_dEdx_plane2","(35,0,7)","Truncated Mean dEdx Plane 2 [MeV/cm]","false","d");
 
+        std::string s_reco_shower_dedx_plane2 ="reco_shower_dEdx_plane2_median[0]";
+        bdt_variable v_reco_shower_dedx_plane2 (s_reco_shower_dedx_plane2,"(24,0,6)", "Median Shower dE/dx plane 2 [MeV/cm]",false,"d");
+        std::string s_reco_shower_dedx_plane1 ="reco_shower_dEdx_plane1_median[0]";
+        bdt_variable v_reco_shower_dedx_plane1 (s_reco_shower_dedx_plane1,"(24,0,6)", "Median Shower dE/dx plane 1 [MeV/cm]",false,"d");
+        std::string s_reco_shower_dedx_plane0 ="reco_shower_dEdx_plane0_median[0]";
+        bdt_variable v_reco_shower_dedx_plane0 (s_reco_shower_dedx_plane0,"(24,0,6)", "Median Shower dE/dx plane 0 [MeV/cm]",false,"d");
+
+
 
 
         std::string calcut = "1";
+    
+        validateOverlay({v_reco_shower_dedx_plane0},{bnb_cosmics_caliSCE}, {" (reco_shower_dEdx_plane0_nhits[0]>1) && reco_asso_showers>0&& "+calcut}, {data5e19_caliSCE,bnbext_caliSCE}, "(reco_shower_dEdx_plane0_nhits[0]>1) && reco_asso_showers>0 &&"+calcut, "median_shower_dedx_plane0",false,true,0.5,0.5);
+        validateOverlay({v_reco_shower_dedx_plane1},{bnb_cosmics_caliSCE}, {" (reco_shower_dEdx_plane1_nhits[0]>1) && reco_asso_showers>0&& "+calcut}, {data5e19_caliSCE,bnbext_caliSCE}, "(reco_shower_dEdx_plane1_nhits[0]>1) && reco_asso_showers>0 &&"+calcut, "median_shower_dedx_plane1",false,true,0.5,0.5);
+        validateOverlay({v_reco_shower_dedx_plane2},{bnb_cosmics_caliSCE}, {" (reco_shower_dEdx_plane2_nhits[0]>1) && reco_asso_showers>0&& "+calcut}, {data5e19_caliSCE,bnbext_caliSCE}, "(reco_shower_dEdx_plane2_nhits[0]>1) && reco_asso_showers>0 &&"+calcut, "median_shower_dedx_plane2",false,true,0.5,0.5);
+
+ 
+        validateOverlay({v_reco_shower_dedx_plane0},{bnb_cosmics_caliSCE}, {" (reco_shower_dEdx_plane0_nhits[0]>1) && reco_asso_showers>0&& fabs(sim_shower_pdg)==11 && "+calcut}, {data5e19_caliSCE,bnbext_caliSCE}, "(reco_shower_dEdx_plane0_nhits[0]>1) && reco_asso_showers>0 &&"+calcut, "median_electron_shower_dedx_plane0",false,true,0.5,0.5);
+        validateOverlay({v_reco_shower_dedx_plane1},{bnb_cosmics_caliSCE}, {" (reco_shower_dEdx_plane1_nhits[0]>1) && reco_asso_showers>0&& fabs(sim_shower_pdg)==11 &&"+calcut}, {data5e19_caliSCE,bnbext_caliSCE}, "(reco_shower_dEdx_plane1_nhits[0]>1) && reco_asso_showers>0 &&"+calcut, "median_electron_shower_dedx_plane1",false,true,0.5,0.5);
+        validateOverlay({v_reco_shower_dedx_plane2},{bnb_cosmics_caliSCE}, {" (reco_shower_dEdx_plane2_nhits[0]>1) && reco_asso_showers>0&& fabs(sim_shower_pdg)==11 &&"+calcut}, {data5e19_caliSCE,bnbext_caliSCE}, "(reco_shower_dEdx_plane2_nhits[0]>1) && reco_asso_showers>0 &&"+calcut, "median_electron_shower_dedx_plane2",false,true,0.5,0.5);
+
+
+        validateOverlay({v_reco_shower_dedx_plane0},{bnb_cosmics_caliSCE}, {" (reco_shower_dEdx_plane0_nhits[0]>1) && reco_asso_showers>0&& fabs(sim_shower_pdg)==22 && "+calcut}, {data5e19_caliSCE,bnbext_caliSCE}, "(reco_shower_dEdx_plane0_nhits[0]>1) && reco_asso_showers>0 &&"+calcut, "median_photon_shower_dedx_plane0",false,true,0.5,0.5);
+        validateOverlay({v_reco_shower_dedx_plane1},{bnb_cosmics_caliSCE}, {" (reco_shower_dEdx_plane1_nhits[0]>1) && reco_asso_showers>0&& fabs(sim_shower_pdg)==22 &&"+calcut}, {data5e19_caliSCE,bnbext_caliSCE}, "(reco_shower_dEdx_plane1_nhits[0]>1) && reco_asso_showers>0 &&"+calcut, "median_photon_shower_dedx_plane1",false,true,0.5,0.5);
+        validateOverlay({v_reco_shower_dedx_plane2},{bnb_cosmics_caliSCE}, {" (reco_shower_dEdx_plane2_nhits[0]>1) && reco_asso_showers>0&& fabs(sim_shower_pdg)==22 &&"+calcut}, {data5e19_caliSCE,bnbext_caliSCE}, "(reco_shower_dEdx_plane2_nhits[0]>1) && reco_asso_showers>0 &&"+calcut, "median_photon_shower_dedx_plane2",false,true,0.5,0.5);
+
+
+
+
+
+
+
         validateOverlay({v_tdedxtrun0},{bnb_cosmics_caliSCE}, {"reco_track_good_calo_plane0 > 0 && reco_asso_tracks>0&&"+calcut}, {data5e19_caliSCE,bnbext_caliSCE,bnb_corsika_caliSCE}, "reco_track_good_calo_plane0 && reco_asso_tracks>0&&"+calcut, "track_trun_dedx_plane0",false,true,0.5,0.5);
 
         validateOverlay({v_tdedxtrun1},{bnb_cosmics_caliSCE}, {"reco_track_good_calo_plane1 > 0 && reco_asso_tracks>0 &&"+calcut}, {data5e19_caliSCE,bnbext_caliSCE,bnb_corsika_caliSCE}, "reco_track_good_calo_plane1 && reco_asso_tracks>0 && "+calcut, "track_trun_dedx_plane1",false,true,0.5,0.5);

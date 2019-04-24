@@ -56,6 +56,8 @@ int main (int argc, char *argv[]){
     std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v7/";
     std::string dir8 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v8/";
     std::string dir9 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
+    std::string dir12 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v12/";
+
 
     std::string olddir5 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
     std::string olddir6 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v6/";
@@ -175,11 +177,11 @@ int main (int argc, char *argv[]){
     bdt_flow bkg_flow(base_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow data_flow(base_cuts,		"1",					vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
-    bdt_file *signal_cosmics = new bdt_file(dir9, "ncdeltarad_overlay_collins_v9.31.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
-    //bdt_file *bnb_cosmics = new bdt_file(dir, "bnb_overlay_combined_v7.3.root", "BNBCosmics", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    bdt_file *bnb_cosmics = new bdt_file(dir9, "bnb_overlay_v9.9901.root", "BNBOverlay", "hist","singlephoton/",  kBlue-4, bkg_flow);
-    bdt_file *data5e19    = new bdt_file(dir9, "data5e19_v9.3.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *bnbext    = new bdt_file(dir9, "bnbext_run1_v9.3.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
+    bdt_file *signal_cosmics = new bdt_file(dir12, "ncdeltarad_overlay_v12.0.root", "NCDeltaRadCosmics", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *bnb_cosmics = new bdt_file(dir12, "bnb_overlay_v12.0.root", "BNBOverlay", "hist","singlephoton/",  kBlue-4, bkg_flow);
+    bdt_file *data5e19    = new bdt_file(dir12, "data5e19_v12.0.root",	"Data5e19",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *bnbext    = new bdt_file(dir12, "bnbext_run1_v12.0.root",	"BNBext",	"hist","singlephoton/",  kBlack, data_flow);
+
     bdt_file *bnb_corsika    = new bdt_file(dir9, "bnb_corsika_v9.3.root",	"BNBCorsika",	"hist","singlephoton/",  kGreen-3, bkg_flow);
 
     std::vector<bdt_file *> files = {signal_cosmics, bnb_cosmics, data5e19, bnbext,bnb_corsika};
@@ -452,15 +454,33 @@ int main (int argc, char *argv[]){
         validateOverlay({v_reco_shower_dedx_plane0 },{bnb_cosmics}, {"reco_asso_showers>0 "}, {data5e19,bnbext},"reco_asso_showers>0  ", "shower_dedx_plane0",false,false);
 
         std::string data_conditions_shower = "reco_asso_showers>0";
-        std::string mc_conditions_shower = data_conditions_shower + "&& sim_shower_is_true_shower" ;
+        std::string mc_conditions_shower = data_conditions_shower   ;
+        std::string mc_conditions_e_shower = data_conditions_shower + "&& abs(sim_shower_pdg)==11" ;
+        std::string mc_conditions_g_shower = data_conditions_shower + "&& sim_shower_pdg==22" ;
         
        //  makeIncrementPlots ("median_shower_dedx_plane2_wrt_nhits",  v_reco_shower_dedx_plane2,  s_reco_shower_dEdx_plane2_nhits, bnb_cosmics, data5e19, bnbext, 16,0., 16., data_conditions_shower, mc_conditions_shower);
        //   makeIncrementPlots ("median_shower_dedx_plane1_wrt_nhits",  v_reco_shower_dedx_plane1,  s_reco_shower_dEdx_plane1_nhits, bnb_cosmics, data5e19, bnbext, 16,0., 16., data_conditions_shower, mc_conditions_shower);
        //  makeIncrementPlots ("median_shower_dedx_plane0_wrt_nhits",  v_reco_shower_dedx_plane0,  s_reco_shower_dEdx_plane0_nhits, bnb_cosmics, data5e19, bnbext, 16,0., 16., data_conditions_shower, mc_conditions_shower);
        
-        makeIncrementPlots ("median_shower_dedx_plane2_wrt_angle",  v_reco_shower_dedx_plane2, s_reco_shower_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0., data_conditions_shower, mc_conditions_shower);
-        makeIncrementPlots ("median_shower_dedx_plane1_wrt_angle",  v_reco_shower_dedx_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
-        makeIncrementPlots ("median_shower_dedx_plane0_wrt_angle",  v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
+        makeIncrementPlots ("median_shower_dedx_plane2_wrt_angle",  v_reco_shower_dedx_plane2, s_reco_shower_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 4, M_PI/2, 0., data_conditions_shower, mc_conditions_shower);
+        makeIncrementPlots ("median_shower_dedx_plane1_wrt_angle",  v_reco_shower_dedx_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 4, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
+        makeIncrementPlots ("median_shower_dedx_plane0_wrt_angle",  v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 4, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
+
+
+ 
+        makeIncrementPlots ("median_electron_shower_dedx_plane2_wrt_angle",  v_reco_shower_dedx_plane2, s_reco_shower_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 4, M_PI/2, 0., data_conditions_shower, mc_conditions_e_shower);
+        makeIncrementPlots ("median_electron_shower_dedx_plane1_wrt_angle",  v_reco_shower_dedx_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 4, M_PI/2, 0.,  data_conditions_shower, mc_conditions_e_shower);
+        makeIncrementPlots ("median_electron_shower_dedx_plane0_wrt_angle",  v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 4, M_PI/2, 0.,  data_conditions_shower, mc_conditions_e_shower);
+
+ 
+        makeIncrementPlots ("median_photon_shower_dedx_plane2_wrt_angle",  v_reco_shower_dedx_plane2, s_reco_shower_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 4, M_PI/2, 0., data_conditions_shower, mc_conditions_g_shower);
+        makeIncrementPlots ("median_photon_shower_dedx_plane1_wrt_angle",  v_reco_shower_dedx_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 4, M_PI/2, 0.,  data_conditions_shower, mc_conditions_g_shower);
+        makeIncrementPlots ("median_photon_shower_dedx_plane0_wrt_angle",  v_reco_shower_dedx_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 4, M_PI/2, 0.,  data_conditions_shower, mc_conditions_g_shower);
+
+
+
+
+
 
         std::string s_reco_shower_energy_max = "reco_shower_energy_max[0]/1000.0";
         makeIncrementPlots ("median_shower_dedx_plane2_wrt_energy",  v_reco_shower_dedx_plane2, s_reco_shower_energy_max, bnb_cosmics, data5e19,bnbext,  4, 400., 0., data_conditions_shower, mc_conditions_shower); 
@@ -499,9 +519,9 @@ int main (int argc, char *argv[]){
         validateOverlay({v_reco_shower_num_hits_plane1},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_nhits_plane1",false);
         validateOverlay({v_reco_shower_num_hits_plane2},{bnb_cosmics}, {"reco_asso_showers>0 && reco_asso_tracks > 0"}, data5e19, "reco_asso_showers>0 && reco_asso_tracks>0", "shower_nhits_plane2",false);
 
-        makeIncrementPlots ("shower_nhits_plane2_wrt_angle", v_reco_shower_num_hits_plane2, s_reco_shower_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0., data_conditions_shower, mc_conditions_shower);
-        makeIncrementPlots ("shower_nhits_plane1_wrt_angle",  v_reco_shower_num_hits_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
-        makeIncrementPlots ("shower_nhits_plane0_wrt_angle",  v_reco_shower_num_hits_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
+        //makeIncrementPlots ("shower_nhits_plane2_wrt_angle", v_reco_shower_num_hits_plane2, s_reco_shower_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0., data_conditions_shower, mc_conditions_shower);
+        //makeIncrementPlots ("shower_nhits_plane1_wrt_angle",  v_reco_shower_num_hits_plane1, s_reco_shower_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
+        //makeIncrementPlots ("shower_nhits_plane0_wrt_angle",  v_reco_shower_num_hits_plane0, s_reco_shower_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_conditions_shower, mc_conditions_shower);
 
 
 
@@ -557,16 +577,17 @@ int main (int argc, char *argv[]){
         //      validateOverlay( { v_reco_track_spacepointPCA2},{bnb_cosmics}, {mc_track_conditions}, {data5e19,bnbext}, {data_track_conditions}, "track_principal2",false, false);
 
 
-        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane2",  v_tdedxtrun2, s_reco_track_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0., data_track_conditions, mc_track_conditions);
-        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane1",  v_tdedxtrun1, s_reco_track_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
-        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane0",  v_tdedxtrun0, s_reco_track_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 9, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane2",  v_tdedxtrun2, s_reco_track_angle_wire_plane2, bnb_cosmics, data5e19, bnbext, 4, M_PI/2, 0., data_track_conditions, mc_track_conditions);
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane1",  v_tdedxtrun1, s_reco_track_angle_wire_plane1, bnb_cosmics, data5e19, bnbext, 4, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_angle_plane0",  v_tdedxtrun0, s_reco_track_angle_wire_plane0, bnb_cosmics, data5e19, bnbext, 4, M_PI/2, 0.,  data_track_conditions, mc_track_conditions);
 
-        makeIncrementPlots ("mean_trunc_track_dedx_wrt_proton_KE",  v_tdedxtrun2,  s_reco_track_energy, bnb_cosmics, data5e19, bnbext, 9, 1., 0., data_track_conditions, mc_track_conditions);
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_proton_KE",  v_tdedxtrun2,  s_reco_track_energy, bnb_cosmics, data5e19, bnbext, 4, 1., 0., data_track_conditions, mc_track_conditions);
 
         bdt_variable v_tln ("reco_track_displacement","(48,0,300)","Reconstructed Track Length [cm]","true","d");
-        makeIncrementPlots ("mean_trunc_track_dedx_wrt_track_length_p0",  v_tdedxtrun0,  "reco_track_displacement", bnb_cosmics, data5e19, bnbext, 9, 300., 0., data_track_conditions, mc_track_conditions);
-        makeIncrementPlots ("mean_trunc_track_dedx_wrt_track_length_p1",  v_tdedxtrun1,  "reco_track_displacement", bnb_cosmics, data5e19, bnbext, 9, 300., 0., data_track_conditions, mc_track_conditions);
-        makeIncrementPlots ("mean_trunc_track_dedx_wrt_track_length_p2",  v_tdedxtrun2,  "reco_track_displacement", bnb_cosmics, data5e19, bnbext, 9, 300., 0., data_track_conditions, mc_track_conditions);
+        
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_track_length_p0",  v_tdedxtrun0,  "reco_track_displacement", bnb_cosmics, data5e19, bnbext, 4, 300., 0., data_track_conditions, mc_track_conditions);
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_track_length_p1",  v_tdedxtrun1,  "reco_track_displacement", bnb_cosmics, data5e19, bnbext, 4, 300., 0., data_track_conditions, mc_track_conditions);
+        makeIncrementPlots ("mean_trunc_track_dedx_wrt_track_length_p2",  v_tdedxtrun2,  "reco_track_displacement", bnb_cosmics, data5e19, bnbext, 4, 300., 0., data_track_conditions, mc_track_conditions);
 
 
 
@@ -631,7 +652,7 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
 int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::vector<bdt_file *> datas, std::string datacut, TCanvas *c, int which_c, std::string pdfname, bool islog, bool cutup){
 
     double maxval = -9999;
-    TLegend* leg=new TLegend(0.5,0.5,0.7,0.7);
+    TLegend* leg=new TLegend(0.6,0.6,0.89,0.89);
 
     if(islog) c->SetLogy();
 
@@ -847,11 +868,11 @@ std::string getAnglewrtWire(int plane, std::string var_in_x, std::string var_in_
     if (plane == 2){
         s_var = "abs((3.14/2) - acos(" + var_in_x + "*0 + " + var_in_y+ "*1.0))";
     }
-    if (plane ==1 ){
-        s_var = "abs( acos(" + var_in_x + "*(-0.5) + " + var_in_y+ "*(sqrt(3)/2)))";
+    if (plane == 1){
+        s_var = "abs((3.14/2) - acos(" + var_in_x + "*(0.5) + " + var_in_y+ "*(sqrt(3)/2)))";
     }
     if (plane == 0){
-        s_var = "abs( acos(" + var_in_x + "*(0.5) + " + var_in_y+ "*(sqrt(3)/2)))";
+        s_var = "abs((3.14/2) - acos(" + var_in_x + "*(-0.5) + " + var_in_y+ "*(sqrt(3)/2)))";
     } 
 
     return s_var;

@@ -642,7 +642,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         t->SetTextColor(kRed-7);
         //t->SetTextFont(43);
         t->SetTextSize(0.12);
-        //t->Draw("same");
+//        t->Draw("same");
 
         //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
         //var_precut.front()->GetYaxis()->SetTitle("Events");

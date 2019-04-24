@@ -27,10 +27,10 @@
 <!--Comsic BDT Training + Spectator Variables-->
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(20,0.05,0.92)">
     <method type = "COSMIC" use = "yes">
-        <param>  NTrees=100 	</param>				
+        <param>  NTrees=1000 	</param>				
         <param>  MinNodeSize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
-        <param>  AdaBoostBeta=0.75 	</param>				
+        <param>  AdaBoostBeta=0.2 	</param>				
         <param>  SeparationType=GiniIndex</param>				
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
@@ -106,6 +106,7 @@
     <var def = "reco_track_end_to_nearest_dead_wire_plane2[0]" binning = "(24,0,200)" unit = " Reconstructed Track End dead wire dist plane 2 pos [cm]" type = "d" spectator = "true" />
     <var def =  "reco_track_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Track Associated Slice Neutrino Score LOG" type = "d" spectator = "true" logplot = "true"/>
     <var def =  "reco_track_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Track Associated Slice Neutrino Score" type = "d" spectator = "true"/>
+    <var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(20,0.0, 1600)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "true" />
 
 
     <!--Track Geom Variables-->
@@ -136,15 +137,15 @@
 
 <mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(20,0.1,0.75)">
     <method type = "BNB" use = "yes">
-        <param>  NTrees=100 	</param>				
+        <param>  NTrees=1000 	</param>				
         <param>  MinNodeSize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
-        <param>  AdaBoostBeta=0.75 	</param>				
+        <param>  AdaBoostBeta=0.2 	</param>				
         <param>  SeparationType=GiniIndex</param>				
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
         <param>  nCuts=-1	</param>				
-        <param>  MaxDepth=4 	</param>				
+        <param>  MaxDepth=3 	</param>				
     </method>
     <!--Vertex Variables-->
     <var def = "sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))" binning = "(24,0,100)" unit = "Reco-True Vertex Dist [cm]" type = "d" spectator = "true" />
@@ -237,6 +238,8 @@
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" spectator = "true" /> 
     <var def = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum [GeV]" type = "d" spectator = "true"/>
+    <var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(20,0.0, 1600)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "true" />
+
 
 
 
