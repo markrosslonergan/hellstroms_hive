@@ -31,7 +31,7 @@ int main (int argc, char *argv[]){
 
 
     std::string mode_option = "fake"; 
-    std::string xml = "../../xml/pi0_box_copy.xml";
+    std::string xml = "../../xml/pi0_box_copy_apr2019.xml";
     std::string topo_tag = "2g1p";
     std::string bdt_tag = "cosmic";
     std::string analysis_tag = topo_tag;
