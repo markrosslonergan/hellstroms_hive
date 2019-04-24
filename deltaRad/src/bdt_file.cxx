@@ -268,7 +268,7 @@ int bdt_file::calcPOT(){
             tmpnum += (double)numbranch;
             tmppot += potbranch;
         }
-        numberofevents = tvertex->GetEntries();
+        //numberofevents = tvertex->GetEntries();
         pot=tmppot;
         std::cout<<"bdt_file::bdt_file()\t||\t---> POT is MC/OVERLAY "<<std::endl;
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;

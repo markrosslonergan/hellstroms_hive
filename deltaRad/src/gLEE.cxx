@@ -29,10 +29,10 @@ int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, s
 int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
-   //std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10";
+    std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10";
     std::string dir9 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
-    std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v12";
-  // std::string dir10 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10/";
+   // std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v12";
+    // std::string dir10 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10/";
 
     std::string mode_option = "fake"; 
     std::string xml = "default.xml";
@@ -172,6 +172,7 @@ int main (int argc, char *argv[]){
     if(analysis_tag == "track"){
         training_signal_cut = training_signal_cut+ "&& sim_track_overlay_fraction[0]< 0.5";
         training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<1";
+       // training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<0.5";
         num_track_cut =  "==1";
 
         bnb_bdt_info.setTopoName("1#gamma1p");
@@ -216,13 +217,33 @@ int main (int argc, char *argv[]){
     bdt_flow signal_other_flow(topological_cuts, 	"!("+signal_definition +")", 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
     bdt_flow signal_flow(topological_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-    bdt_flow bkg_flow(topological_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow bkg_flow(topological_cuts,		background_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    //bdt_flow bkg_flow(topological_cuts,		background_definition + "&& !(mctruth_cc_or_nc == 1 && mctruth_num_exiting_pi0 >= 1) ", 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    //    bdt_flow ncpi0_flow(topological_cuts,		background_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_training_flow(topological_cuts,	background_definition+"&&"+ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
     bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
     std::cout<<"Defining all our bdt_files."<<std::endl;
 
+    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
+    //signal_other->fillstyle = 3390;
+
+
+    bdt_file *dirt = new bdt_file(dir,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
+
+    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+
+    //Data files
+    bdt_file *OnBeamData    = new bdt_file(dir9, "data5e19_v9.3.root",  "OnBeamData",      "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *OffBeamData    = new bdt_file(dir9, "bnbext_run1_v9.3.root",  "OffBeamData",  "E1p","singlephoton/",  kGreen-3, data_flow);
+
+ 
+
+/*
     bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v12.2.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
     bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_v12.2.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
     bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_v12.2.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
@@ -233,11 +254,11 @@ int main (int argc, char *argv[]){
 
     bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_v12.2.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
     bdt_file *bnb = new bdt_file(dir, "bnb_overlay_v12.2.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
-
+    // bdt_file *ncpi0 = new bdt_file(dir, "bnb_overlay_filtered_exiting_ncpi0_v12.2.root","NCPi0", "hist","singlephoton/",  kBlue-6, ncpi0_flow );
     //Data files
     bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v12.2.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v12.21.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
-
+*/
     /*  bdt_file *bnb_cosmics_noabs = new bdt_file(dir, "bnb_overlay_NoAbsGain.root", "BNBOverlay_noabs", "hist","singlephoton/",  kBlue-4, data_flow);
         bdt_file *bnb_cosmics_nom = new bdt_file(dir, "bnb_overlay_nominal2.root", "BNBOverlay_Nomonal", "hist","singlephoton/",  kBlue-4, data_flow);
         bdt_file *bnb_cosmics_undo = new bdt_file(dir, "bnb_overlay_undo2.root", "BNBOverlay_undo", "hist","singlephoton/",  kBlue-4, data_flow);
@@ -246,7 +267,9 @@ int main (int argc, char *argv[]){
 
     //For conviencance fill a vector with pointers to all the files to loop over.
     //std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData,dirt, bnb_cosmics_noabs, bnb_cosmics_nom, bnb_cosmics_undo, bnb_cosmics_noyz};
+    //std::vector<bdt_file*> bdt_files = {ncpi0, signal, signal_other, training_signal, training_bnb, bnb, dirt, OnBeamData, OffBeamData};
     std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, dirt, OnBeamData, OffBeamData};
+
 
     //The LEE signal is bigger than the SM signal by this factor
     training_signal->scale_data = 3.0;
@@ -255,12 +278,12 @@ int main (int argc, char *argv[]){
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
-  // OnBeamData->setAsOnBeamData(4.795e19);
-   // OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
-   OnBeamData->setAsOnBeamData(4.552e+19);
-   OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
-    
-   //OffBeamData->makeRunSubRunList();
+    // OnBeamData->setAsOnBeamData(4.795e19);
+    // OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+    OnBeamData->setAsOnBeamData(4.552e+19);
+    OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
+
+    //OffBeamData->makeRunSubRunList();
     //return 0;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -317,10 +340,11 @@ int main (int argc, char *argv[]){
     signal->addPlotName("Signal NC #Delta Radiative");
     signal_other->addPlotName("Other NC #Delta Radiative");
     training_bnb->addPlotName("BNB Backgrounds");
-    bnb->addPlotName("BNB Backgrounds ");
+    bnb->addPlotName("BNB Backgrounds");
     OnBeamData->addPlotName("On-Beam  Data");
     OffBeamData->addPlotName("Cosmic Background");
     dirt->addPlotName("Dirt Background");
+    //ncpi0->addPlotName("NC #pi^{0} Background");
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
@@ -330,8 +354,10 @@ int main (int argc, char *argv[]){
     if(analysis_tag == "track"){
         //0.677 0.6125
         //0.6, 0.55
-        fcoscut =  0.55;
-        fbnbcut =  0.60625;
+        // 0.618187 0.544957
+        // 0.636184 0.568691
+        fcoscut = 0.677;
+        fbnbcut = 0.60625;
     }else if(analysis_tag == "notrack"){
         //0.64 0.59875
         //0.673 0.5825
@@ -383,43 +409,43 @@ int main (int argc, char *argv[]){
 
         std::vector<int> recomc_cols = {kRed-7, kBlue-7, kPink + 5, kOrange+1, kGreen-6 };
         std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "NC #pi^{0}","Non #pi^{0} #gamma", "Misreconstructed", "Other"};
-       // std::vector<int> recomc_cols = {kRed-7, kAzure+6, kBlue-7, kPink + 5, kMagenta-10, kYellow-7,kOrange+1, kGreen-6 , kCyan -1};
-       // std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}", "Other NC", "Other CC", "Cosmic (Overlay)"};
-       
+        // std::vector<int> recomc_cols = {kRed-7, kAzure+6, kBlue-7, kPink + 5, kMagenta-10, kYellow-7,kOrange+1, kGreen-6 , kCyan -1};
+        // std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}", "Other NC", "Other CC", "Cosmic (Overlay)"};
+
 
         std::string overlay = "sim_shower_overlay_fraction[0] >= 0.8";
-      
+
         std::string ncdelta = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative ==1 && !("+overlay+")";
         std::string ccpi0 = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==0 && !("+overlay+")";
         std::string ncpi0 = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==1 && !("+overlay+")";
         std::string othergamma =  "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative!=1 && !("+overlay+")";
         std::string  nue = "abs(mctruth_lepton_pdg[0])==11 && abs(sim_shower_pdg[0]) ==11  && !("+overlay+")"; // && (exiting_electron_number==1 || exiting_antielectron_number==1)";
         std::string  michel = "abs(sim_shower_pdg[0]) ==11 && abs(sim_shower_parent_pdg[0])==13 && !("+overlay+")";
-     
+
         std::string misreco = "((sim_shower_pdg[0]) == 2212 || abs(sim_shower_pdg[0]) == 13 || abs(sim_shower_pdg[0])==211 ) &&!("+overlay+")";
         //std::string bnbother =  "sim_shower_pdg[0]!=22 && !("+nue+") && !("+michel+")  && !("+overlay+")";
-       // std::string overlay = "sim_shower_overlay_fraction[0] == 1";
+        // std::string overlay = "sim_shower_overlay_fraction[0] == 1";
         //std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel,bnbother};
         std::vector<std::string> recomc_cuts = {ncdelta,ncpi0,othergamma, misreco};
         //std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel};
 
 
-/*
-        std::string othercc = "!("+overlay+") && ! mctruth_cc_or_nc==0";
-        for(auto s: recomc_cuts){
-            othercc += "&& !("+s+")";
-        }
-        
-        std::string othernc = "!("+overlay+") && ! mctruth_cc_or_nc==1";
-        for(auto s: recomc_cuts){
-            othernc += "&& !("+s+")";
-        }
+        /*
+           std::string othercc = "!("+overlay+") && ! mctruth_cc_or_nc==0";
+           for(auto s: recomc_cuts){
+           othercc += "&& !("+s+")";
+           }
 
-       recomc_cuts.push_back(othernc);
-       recomc_cuts.push_back(othercc);
+           std::string othernc = "!("+overlay+") && ! mctruth_cc_or_nc==1";
+           for(auto s: recomc_cuts){
+           othernc += "&& !("+s+")";
+           }
 
-       std::cout<<"other nc = "<<othernc<<std::endl;
-       
+           recomc_cuts.push_back(othernc);
+           recomc_cuts.push_back(othercc);
+
+           std::cout<<"other nc = "<<othernc<<std::endl;
+
 */
         std::string other = "!("+overlay+")";
         for(auto s: recomc_cuts){
@@ -428,7 +454,7 @@ int main (int argc, char *argv[]){
 
         recomc_cuts.push_back(other);
         //recomc_cuts.push_back(overlay);
-      
+
 
         bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
@@ -466,6 +492,7 @@ int main (int argc, char *argv[]){
 
         TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
         std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
+        //std::vector<double> ans = scan_significance(fsig, {signal} , {bnb,ncpi0, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
         //std::vector<double> ans = lin_scan({signal}, {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
         std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
@@ -476,6 +503,7 @@ int main (int argc, char *argv[]){
         bdt_stack histogram_stack(analysis_tag+"_stack");
         histogram_stack.addToStack(signal);
         histogram_stack.addToStack(signal_other);
+        // histogram_stack.addToStack(ncpi0);
         histogram_stack.addToStack(bnb);
         //Add OffBeamData but change the color and style first
         OffBeamData->col;	
@@ -484,10 +512,10 @@ int main (int argc, char *argv[]){
 
         histogram_stack.addToStack(OffBeamData);
         //histogram_stack.addToStack(dirt);
-       
-       // histogram_stack.addToStack(signal);
-       // histogram_stack.addToStack(signal_other);
-       
+
+        // histogram_stack.addToStack(signal);
+        // histogram_stack.addToStack(signal_other);
+
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
         int ip=0;
 
@@ -540,14 +568,14 @@ int main (int argc, char *argv[]){
         TFriendElement *fr1 = (TFriendElement*)t_sbnfit_eventweight_tree->GetListOfFriends()->FindObject((file->tag +"_"+bnb_bdt_info.identifier).c_str());
         t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(fr0);
         t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(fr1);
-        
+
 
         TFriendElement *fr2 = (TFriendElement*)t_sbnfit_tree->GetListOfFriends()->FindObject((file->tag +"_"+cosmic_bdt_info.identifier).c_str() );
         TFriendElement *fr3 = (TFriendElement*)t_sbnfit_tree->GetListOfFriends()->FindObject((file->tag +"_"+bnb_bdt_info.identifier).c_str());
         t_sbnfit_tree->GetListOfFriends()->Remove(fr2);
         t_sbnfit_tree->GetListOfFriends()->Remove(fr3);
 
-        
+
         std::cout<<"Writing to file"<<std::endl;
         cdtof->cd();
         t_sbnfit_tree->Write();
@@ -570,7 +598,7 @@ int main (int argc, char *argv[]){
         histogram_stack->addToStack(signal);
         histogram_stack->addToStack(signal_other);
 
-
+        //  histogram_stack->addToStack(ncpi0);
         histogram_stack->addToStack(bnb);
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(dirt);
@@ -598,7 +626,7 @@ int main (int argc, char *argv[]){
                 bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
                 //real_datamc.setSubtractionVector(subv);
                 // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-             //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+                //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 
                 real_datamc.plotStacks(ftest, training_vars,fcoscut,fbnbcut);
                 real_datamc.SetSpectator();

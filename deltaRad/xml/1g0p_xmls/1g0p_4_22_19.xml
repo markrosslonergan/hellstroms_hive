@@ -25,15 +25,15 @@
 <!--Comsic BDT Training + Spectator Variables-->
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(15,0.1,1)">
     <method type = "COSMIC" use = "yes">
-        <param>  NTrees=50 	</param>				
+        <param>  NTrees=500 	</param>				
         <param>  MinNodeSize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
-        <param>  AdaBoostBeta=0.75 	</param>				
+        <param>  AdaBoostBeta=0.3 	</param>				
         <param>  SeparationType=GiniIndex</param>				
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
         <param>  nCuts=-1	</param>				
-        <param>  MaxDepth=4 	</param>				
+        <param>  MaxDepth=3 	</param>				
     </method>
     <!--Vertex Variables-->
     <var def = "sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))" binning = "(24,0,100)" unit = "Reco-True Vertex Dist [cm]" type = "d" spectator = "true" />
@@ -89,15 +89,15 @@
 
 <mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(15,0.25,0.75)">
     <method type = "BNB" use = "yes">
-        <param>  NTrees=50 	</param>				
+        <param>  NTrees=500 	</param>				
         <param>  MinNodeSize=2.5% </param>				
-        <param>  BoostType=RealAdaBoost</param>
-        <param>  AdaBoostBeta=0.75 	</param>				
+        <param>  BoostType=RealAdaBoost</param>         
+        <param>  AdaBoostBeta=0.3 	</param>				
         <param>  SeparationType=GiniIndex</param>				
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
         <param>  nCuts=-1	</param>				
-        <param>  MaxDepth=4 	</param>				
+        <param>  MaxDepth=3 	</param>				
     </method>
     <!--Vertex Variables-->
     <var def = "sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))" binning = "(24,0,100)" unit = "Reco-True Vertex Dist [cm]" type = "d" spectator = "true" />
