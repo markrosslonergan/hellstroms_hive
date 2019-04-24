@@ -164,8 +164,10 @@ int main (int argc, char *argv[]){
     std::string training_signal_cut = "abs(sim_shower_pdg[0])==11" 
 		    "&& sim_shower_matched[0]==1"
 		    "&& sim_shower_overlay_fraction[0] < 0.5" //Non cosmic events
-		    "&&(reco_shower_energy_max[0]/1000>(mctruth_lepton_E[0]^2+0.02))"//Shape shower energy
-		    "&&(reco_shower_energy_max[0]/1000<(mctruth_lepton_E[0]*0.8+0.1))"
+		    "&&0.9*mctruth_lepton_E+0.05>reco_shower_energy_max[0]/1000"
+		    "&&0.7*mctruth_lepton_E-0.1<reco_shower_energy_max[0]/1000"
+//		    "&&(reco_shower_energy_max[0]/1000>(mctruth_lepton_E[0]^2+0.02))"//Shape shower energy
+//		    "&&(reco_shower_energy_max[0]/1000<(mctruth_lepton_E[0]*0.8+0.1))";
 		    "&&reco_track_proton_kinetic_energy[0]<(mctruth_leading_exiting_proton_energy[0]-0.93828)+0.05"//Shape track energy
 		    "&&reco_track_proton_kinetic_energy[0]>(mctruth_leading_exiting_proton_energy[0]-0.93828)-0.05";
 

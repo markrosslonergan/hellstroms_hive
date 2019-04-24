@@ -1,5 +1,4 @@
 #include "bdt_train.h"
-using namespace std;
 
 int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
 
@@ -26,28 +25,24 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 
 	//TTree * background_ttree_prefiltered = (TTree*)background_file->tvertex->CopyTree(back_tcut);
 	//TTree * signal_ttree_prefiltered = (TTree*)signal_file->tvertex->CopyTree(sig_tcut);
-
 	//dataloader->AddSignalTree(signal_ttree_prefiltered);
 	dataloader->AddSignalTree(signal_file->tvertex);
-	int signal_entries = signal_file->tvertex->GetEntries(sig_tcut);//get events number, that depends on sig_tcut
+	int signal_entries = signal_file->tvertex->GetEntries(sig_tcut);
 
+	dataloader->AddBackgroundTree(background_file->tvertex); 
 	//dataloader->AddBackgroundTree(background_ttree_prefiltered);
-	dataloader->AddBackgroundTree(background_file->tvertex);
 	int background_entries = background_file->tvertex->GetEntries(back_tcut);
 
 
 	dataloader->SetSignalWeightExpression(signal_file->weight_branch.c_str());
-	cout<<"CHECK WEIGHT BRANCH for signal: "<<signal_file->weight_branch<<endl;	
-
 	dataloader->SetBackgroundWeightExpression(background_file->weight_branch.c_str());
-	cout<<"CHECK WEIGHT BRANCH for background: "<<background_file->weight_branch<<endl;	
 
 	for(bdt_variable &var: variables) dataloader->AddVariable(var.name.c_str());
-					//signal_entries determine the number of events that go into training.
-	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
-//	std::cout<<"PREFILTERED signal_entries: "<<signal_ttree_prefiltered->GetEntries()<<" background_entries: "<<background_ttree_prefiltered->GetEntries()<<std::endl;
 
-	//CHECK should sig_tcut adopt the LEE weight here?
+	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
+	//std::cout<<"PREFILTERED signal_entries: "<<signal_ttree_prefiltered->GetEntries()<<" background_entries: "<<background_ttree_prefiltered->GetEntries()<<std::endl;
+
+
 	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
 	  "nTrain_Signal="+std::to_string(floor(signal_entries*0.65))+":nTrain_Background="+std::to_string(floor(background_entries*0.65))+":SplitMode=Random:NormMode=NumEvents:!V");
   // "nTrain_Signal=66629:nTrain_Background=49472:nTest_Signal=15578:nTest_Background=11885:SplitMode=Random:NormMode=NumEvents:!V"
@@ -72,8 +67,7 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 
 // Separate training and plotting variables
 int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, std::vector<bdt_variable> train_variables, std::vector<bdt_variable> plot_variables, std::vector<method_struct> & methods){
-	cout<<"OLD SCHOOL THINGS, GOT a problem? come and see line 73 of bdt_train.cxx"<<endl;
-	/*
+
 	std::string const name = info.identifier;
 	TFile * outfile = TFile::Open((name+"_training.root").c_str(), "recreate");
 
@@ -87,13 +81,16 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	TCut sig_tcut =  TCut(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 	TCut back_tcut = TCut(background_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 
-  TTree * background_ttree_prefiltered = (TTree*)background_file->tvertex->CopyTree(back_tcut);
-  TTree * signal_ttree_prefiltered = (TTree*)signal_file->tvertex->CopyTree(sig_tcut);
+	//TTree * background_ttree_prefiltered = (TTree*)background_file->tvertex->CopyTree(back_tcut);
+	//TTree * signal_ttree_prefiltered = (TTree*)signal_file->tvertex->CopyTree(sig_tcut);
 
-	dataloader->AddSignalTree(signal_ttree_prefiltered);
+
+	//dataloader->AddSignalTree(signal_ttree_prefiltered);
+	dataloader->AddSignalTree(signal_file->tvertex);
 	int signal_entries = signal_file->tvertex->GetEntries(sig_tcut);
 
-	dataloader->AddBackgroundTree(background_ttree_prefiltered);
+	//dataloader->AddBackgroundTree(background_ttree_prefiltered);
+	dataloader->AddBackgroundTree(background_file->tvertex);
 	int background_entries = background_file->tvertex->GetEntries(back_tcut);
 
 
@@ -105,7 +102,7 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	for(bdt_variable &var: train_variables) dataloader->AddVariable(var.name.c_str());
 
 	std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
-	std::cout<<"PREFILTERED signal_entries: "<<signal_ttree_prefiltered->GetEntries()<<" background_entries: "<<background_ttree_prefiltered->GetEntries()<<std::endl;
+	//std::cout<<"PREFILTERED signal_entries: "<<signal_ttree_prefiltered->GetEntries()<<" background_entries: "<<background_ttree_prefiltered->GetEntries()<<std::endl;
 
 
 	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
@@ -128,5 +125,4 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	delete dataloader;
 
 	return 0;
-*/
 }

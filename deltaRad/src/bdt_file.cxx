@@ -1,5 +1,7 @@
 #include "bdt_file.h"
-using namespace std;
+
+
+
 
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
     dir(indir),
@@ -19,15 +21,13 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     rangen = new TRandom3();
 
     scale_data =1.0;
-    std::cout<<"\nLoading : "<<name<<std::endl;
+    std::cout<<"Loading : "<<name<<std::endl;
     f = new TFile((dir+"/"+name).c_str(), "read");	
 
     if(!f->IsOpen() || !f){
         std::cout<<"ERROR: didnt open file right: "<<dir<<"/"<<name<<std::endl;
         exit(EXIT_FAILURE);
     }
-
-
     std::cout<<"bdt_file::bdt_file || "<<name<<" Opened correctly by root."<<std::endl;
 
     std::string tnam_event = root_dir+"event_tree";
@@ -38,7 +38,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     fillstyle = 1001;
     scale_data = 1.0;
 
-    
     std::cout<<"Getting vertex tree"<<std::endl;
     tvertex = (TTree*)f->Get(tnam.c_str());
 
@@ -51,6 +50,156 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::cout<<"Getting eventweight tree"<<std::endl;
     teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
     std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
+
+
+
+/*
+    //This is all old school mcc8 stuff for now.
+    if(tag == "IntimeCosmics"){
+        std::cout<<"Getting POT for CosmicIntime: "<<std::endl;
+        //Found in 
+        double intime_modifier = 10.279;
+
+        //Guarrenteed for fresh_mcc8.9
+        double N_gen_bnb = 2146800.0;
+        double N_gen_cos = 991914.0;
+
+        double pot_bnb_cosmic = 2.16562e+21;
+        double pot_plot = 6.6e20;
+
+        pot = pot_plot; 
+        this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos)*pot_plot/pot_bnb_cosmic;
+        std::cout<<"--> value: "<<pot<<" with scale factor: "<<scale_data<<std::endl;
+    }else{
+        leg = "l";
+        std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
+        tpot = (TTree*)f->Get(tnam_pot.c_str());
+        std::cout << "tpot name: " << tnam_pot.c_str() << std::endl;
+        tpot->SetBranchAddress("number_of_events", &numbranch);
+        tpot->SetBranchAddress("POT",&potbranch);
+
+        std::cout<<"Set the POT branch"<<std::endl;
+        int tmpnum = 0;
+        double tmppot=0;
+        std::cout << "tpot entries: " << tpot->GetEntries() << std::endl;
+        for(int i=0; i<tpot->GetEntries(); i++) {
+            tpot->GetEntry(i);
+            tmpnum += (double)numbranch;
+            tmppot += potbranch;
+        }
+        numberofevents = tmpnum;
+        pot=tmppot;
+        std::cout<<"--> POT is MC: ";
+        std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+
+        weight_branch = "1";
+        numberofevents_raw = numberofevents;
+    }
+}
+
+if(tag == "BNBPure" || tag == "BNBCosmics"){
+    //MCC9 pot issues
+    //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
+    pot = 2.16562e21*(double)numberofevents/2154500.0;
+    std::cout<<"REAL MCC9: --> POT is MC: ";
+    std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+}
+
+if(tag == "NCPi0" || tag=="NCPi0Cosmics"){
+    //MCC9 pot issues
+    //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
+    // nc_fraction calculated by opening bnb_nu_overlay_combined_whatever and
+    // diving the number of NC events with > 0 exiting pi0s by the total no. entries
+    double nc_fraction = 0.061877;
+    pot = 2.16562e21*(double)numberofevents/2154500.0/nc_fraction;
+    std::cout<<"REAL MCC9: --> POT is MC: ";
+    std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+}
+
+if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure" || tag == "NCDeltaRad"){
+    double volCryo = 199668.427885;
+    double volTPC = 101510.0;
+    double volTPCActive=  86698.6;
+
+    //numberofevents = numberofevents*volTPCActive/volTPC;	
+    numberofevents = numberofevents;//*volTPCActive/volCryo;
+
+    //in MCC9 POT is broken so lets fudge it here: OLD mcc8 1.64282e+24 NumEvents: 350189
+    //pot = 1.64282e24*((double)numberofevents/350189.0);
+    pot = 1.64282e24*(39954.0/350189.0);
+
+    std::cout<<"REAL MCC9: --> POT is MC: ";
+    std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
+
+    tvertex->ResetBranchAddresses();
+}
+
+
+
+if(tag == "Data5e19"){
+    leg = "lp";
+    pot = 4.898e19; //old mcc84.393e19;// tor860_wcut
+    weight_branch = "1";
+    //so MCC9, we have 197772 events in file and 197833 evnts in samweb (lets ignore that) so 
+    std::cout<<"--> value: "<<pot<<std::endl;
+}
+if(tag == "BNBext"){
+    std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
+    tpot = (TTree*)f->Get(tnam_pot.c_str());
+    tpot->SetBranchAddress("number_of_events", &numbranch);
+    tpot->SetBranchAddress("POT",&potbranch);
+
+    std::cout<<"Set the POT branch"<<std::endl;
+    int tmpnum = 0;
+    double tmppot=0;
+    for(int i=0; i<tpot->GetEntries(); i++){
+        tpot->GetEntry(i);
+        tmpnum += (double)numbranch;
+    }
+    numberofevents = tmpnum;
+    std::cout<<"BNBEXT number of events: "<<numberofevents<<std::endl;
+
+
+    leg = "lp";
+    double sca = 1.23;//from 1.23
+    //https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
+
+    //MCC9: 
+    //Data samweb is 197833 events. defname: data_bnb_run1_unblind_mcc9.0_nov_reco_2d_reco2_slim
+    //tor860_wcut: 4.898e+19,  E1DCNT_wcut: 11595542.0
+    //
+    //bnbext samweb is  200433 events, defname: data_extbnb_run1_dev_mcc9.0_nov_reco_2d_reco2_slim
+    //EXT spills: 15435961.0
+
+
+    //so that is
+    double ext=15435961.0;//47953078.0; //External spills in each sample (EXT)
+    double spill_on=11595542.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
+    double datanorm =4.898e19;// tor860_wcut run-subrunlist;
+
+    double Noff_full = 200433.0; //this is full samweb events
+    double Noff_have = numberofevents;
+
+    //This is old MCC8 one
+    //double ext=33752562+40051674;//47953078.0; //External spills in each sample (EXT)
+    //double spill_on=10312906;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
+    //double datanorm =4.393e19;// tor860_wcut run-subrunlist;
+
+
+    double mod = spill_on/ext*(Noff_full/Noff_have);
+
+
+    std::cout<<"--> POT is data: From Zarkos tool..";
+    //going to scale by how many events I actually have in MCC9
+    pot =datanorm/mod;
+    std::cout<<"--> value: "<<pot<<std::endl;
+
+    weight_branch = "1";
+}
+
+*/
+
+
 
 
 };
@@ -652,24 +801,21 @@ int bdt_file::setStageEntryList(int j){
 
 
 std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
-    //HERE DETERMINES CUTS for the training SAMPLE
 
     bool verbose = false;
 
-//    std::string ans = weight_branch ;
-
-    std::string ans = "1";
+    std::string ans;
     switch(stage) {
         case 0:
-            ans += "&&" + flow.base_cuts;
+            ans = flow.base_cuts;
             break;
         case 1:
-            ans += "&&"+ flow.base_cuts + "&&"+ flow.pre_cuts;
+            ans = flow.base_cuts + "&&"+ flow.pre_cuts;
             if(verbose)std::cout << "Stage 1 cuts: " << ans << std::endl;
             break;
         case 2: {
                     bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
-                    ans += "&&" + flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1);
+                    ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1);
                     if(verbose)std::cout << "Stage 2 cuts: " << ans << std::endl;
                     break;
                 }
@@ -677,7 +823,7 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
         case 3: {
                     bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
                     bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
-                    ans += "&&" + flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2);
+                    ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2);
                     if(verbose)std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
                     if(verbose)std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
                     if(verbose)std::cout << "Stage 3 cuts: " << ans << std::endl;
@@ -688,7 +834,7 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
                     bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
                     if(verbose)std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
                     if(verbose)std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
-                    ans += "&&" + flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2) +"&&" +flow.post_cuts;
+                    ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2) +"&&" +flow.post_cuts;
                     if(verbose)std::cout << "Stage 4 cuts: " << ans << std::endl;
                     break;
                 }
