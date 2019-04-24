@@ -31,8 +31,8 @@ int main (int argc, char *argv[]){
 
 
     std::string mode_option = "fake"; 
-    std::string xml = "../../xml/pi0_box_copy_2g0p.xml";
-    std::string topo_tag = "2g0p";
+    std::string xml = "../../xml/pi0_box_copy.xml";
+    std::string topo_tag = "2g1p";
     std::string bdt_tag = "cosmic";
     std::string analysis_tag = topo_tag;
 
@@ -210,7 +210,7 @@ int main (int argc, char *argv[]){
     }
 
     std::string background_definition = "(mctruth_num_exiting_pi0!=1 || mctruth_cc_or_nc==0)";
-    std::string topological_cuts = "(reco_vertex_size > 0 && reco_asso_showers == 2 && reco_asso_tracks"+num_track_cut+")";
+    std::string topological_cuts = "(reco_vertex_size==1 && reco_asso_showers == 2 && reco_asso_tracks"+num_track_cut+")";
     std::string postcuts = "1";  //We dont currently use postcuts
 
     //***************************************************************************************************/
@@ -229,9 +229,9 @@ int main (int argc, char *argv[]){
     ///////////////// SAMPLES /////////////////////////
     std::cout<<"Defining all our bdt_files."<<std::endl;
     // MC+Overlay files
-    bdt_file *training_signal=new bdt_file(dirv12,"ncpi0_overlay_v12.2.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dirv12, "ncpi0_overlay_v12.2.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dirv12,"ncpi0_overlay_v12.2.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
+    bdt_file *training_signal=new bdt_file(dirv12,"ncpi0_overlay_extra_v12.2.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dirv12, "ncpi0_overlay_extra_v12.2.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dirv12,"ncpi0_overlay_extra_v12.2.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
     //signal_other->fillstyle = 3333;
 
     bdt_file *training_bnb = new bdt_file(dirv12, "bnb_overlay_v12.2.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
@@ -309,8 +309,8 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "2g1p"){
-        fcoscut =   0.653728;
-        fbnbcut = 0.6804;
+        fcoscut =   0.677;
+        fbnbcut = 0.7092;
     }else if(analysis_tag == "2g0p"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;
@@ -430,8 +430,8 @@ int main (int argc, char *argv[]){
         bdt_stack histogram_stack(analysis_tag+"_stack");
         histogram_stack.addToStack(signal);
         histogram_stack.addToStack(signal_other);
-        histogram_stack.addToStack(bnb);
         histogram_stack.addToStack(dirt);
+        histogram_stack.addToStack(bnb);
 
         //Add OffBeamData but change the color and style first
         OffBeamData->col;	
@@ -479,9 +479,9 @@ int main (int argc, char *argv[]){
         histogram_stack->addToStack(signal);
         histogram_stack->addToStack(signal_other);
         histogram_stack->addToStack(bnb);
+        histogram_stack->addToStack(dirt);
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(OffBeamData);
-        histogram_stack->addToStack(dirt);
 
         // Reverse order for last two stages
         /*
@@ -554,9 +554,11 @@ int main (int argc, char *argv[]){
 
     } else if(mode_option == "eff"){
 
-        std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==2","reco_asso_tracks==1"};
+        std::vector<std::string> v_topo =  {"reco_vertex_size==1","reco_asso_showers==2","reco_asso_tracks==1"};
 
-        bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
+        //bdt_efficiency(OnBeamData, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 4.6e19);
+        bdt_efficiency(OnBeamData, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
+        //bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
         //bdt_efficiency(bnb, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 5e19);
 
 

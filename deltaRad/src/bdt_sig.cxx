@@ -71,11 +71,11 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 	}
   // Normally *0.7 or *0.8
-	cut_min_cosmic = cut_max_cosmic*0.7;
+	cut_min_cosmic = cut_max_cosmic*0.8;
 	cut_min_bnb = cut_max_bnb*0.8;
 
   // These are normally *1.0
-	cut_max_cosmic =cut_max_cosmic*0.9;
+	cut_max_cosmic =cut_max_cosmic*1.0;
 	cut_max_bnb =cut_max_bnb*1.0; 
 
 	//Zoomed in notrack
@@ -84,8 +84,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 	//Best Fit Significance: 0.601552 0.533678 1.63658
 	//Zoomed in track
-	cut_min_cosmic = 0.65352; cut_max_cosmic = 0.6556;
-	cut_min_bnb = 0.66825; cut_max_bnb = 0.68175;
+	cut_min_cosmic = 0.675; cut_max_cosmic = 0.685;
+	cut_min_bnb = 0.708; cut_max_bnb = 0.714;
 
 
 
