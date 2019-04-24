@@ -495,7 +495,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 
 
-        //if(is_bdt_variable) pad0top->SetLogy();
+        if(is_bdt_variable) pad0top->SetLogy();
         pad0top->SetBottomMargin(0); // Upper and lower plot are joined
         pad0top->Draw();             // Draw the upper pad: pad2top
         pad0top->cd();               // pad2top becomes the current pad
@@ -514,7 +514,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         double max_modifier = 1.7;
         double min_val = 0.01;
         if(is_bdt_variable) {
-            //max_modifier = 50.0;
+            max_modifier = 50.0;
             min_val = 0.1;
         }
 

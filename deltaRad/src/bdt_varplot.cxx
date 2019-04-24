@@ -4,7 +4,7 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
 
     std::vector<std::string> title = {"Topological Selection","Pre-Selection Cuts"};
 
-    for(int j=0; j<2;j++){	
+    for(int j=1; j<2;j++){	
 
         std::cout<<"on stage : "<<j<<std::endl;
         std::cout<<" Setting sig stage entry lists."<<std::endl;
@@ -35,7 +35,7 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
             bkg->SetLineColor(background_pure->col);
             sig->SetLineWidth(2);
             bkg->SetLineWidth(2);
-            c_var->cd();
+            //c_var->cd();
 
             sig->SetFillColor(signal_pure->col);
             bkg->SetFillColor(background_pure->col);

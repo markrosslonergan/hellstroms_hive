@@ -358,13 +358,15 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
             else if(s == 3){
                 max_scale = 1.7;
             }
-			//stk->SetMaximum(tsum->GetMaximum()*max_scale);
+			stk->SetMaximum(tsum->GetMaximum()*max_scale);
+      /*
       if (s==0 || s==1) {
         stk->SetMaximum(7300);
       } 
       else {
         stk->SetMaximum(800);
       }
+      */
       std::cout << "Setting maximum " << tsum->GetMaximum()*max_scale << std::endl;
 			TLegend *l3 = new TLegend(0.11,0.70,0.89,0.89);
 			//tsum->DrawCopy("Same E2"); 

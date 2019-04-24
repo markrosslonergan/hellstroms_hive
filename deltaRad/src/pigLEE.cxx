@@ -244,7 +244,8 @@ int main (int argc, char *argv[]){
     bdt_file *dirt = new bdt_file(dirv12,"dirt_overlay_v12.2.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
     //For conviencance fill a vector with pointers to all the files to loop over.
-    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData, dirt};
+    //std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData, dirt};
+    std::vector<bdt_file*> bdt_files = {signal, signal_other, bnb, OnBeamData, OffBeamData, dirt};
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
@@ -309,8 +310,8 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "2g1p"){
-        fcoscut =   0.54;
-        fbnbcut = 0.49;
+        fcoscut =   0.7079;
+        fbnbcut = 0.524;
     }else if(analysis_tag == "2g0p"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;
@@ -430,8 +431,8 @@ int main (int argc, char *argv[]){
         bdt_stack histogram_stack(analysis_tag+"_stack");
         histogram_stack.addToStack(signal);
         histogram_stack.addToStack(signal_other);
-        histogram_stack.addToStack(dirt);
         histogram_stack.addToStack(bnb);
+        histogram_stack.addToStack(dirt);
 
         //Add OffBeamData but change the color and style first
         OffBeamData->col;	
