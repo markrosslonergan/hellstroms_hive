@@ -278,10 +278,10 @@ int main (int argc, char *argv[]){
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
-    // OnBeamData->setAsOnBeamData(4.795e19);
-    // OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
-    OnBeamData->setAsOnBeamData(4.552e+19);
-    OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
+     OnBeamData->setAsOnBeamData(4.795e19);
+     OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+//    OnBeamData->setAsOnBeamData(4.552e+19);
+  //  OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
 
     //OffBeamData->makeRunSubRunList();
     //return 0;
