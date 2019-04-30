@@ -190,7 +190,7 @@ int main (int argc, char *argv[]){
     std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
     std::vector<std::string> v_denom = {"abs(mctruth_nu_pdg)==12"," ((mctruth_num_exiting_pi0+mctruth_num_exiting_pipm) ==0)", 
-				"(mctruth_leading_exiting_proton_energy-0.93828)>0.04" ,"mctruth_lepton_E[0]>0.02" ,fid_cut};//,"mctruth_nu_E<0.8"}; 
+				"(mctruth_leading_exiting_proton_energy-0.93828)>0.04" ,"mctruth_lepton_E[0]>0.02" ,fid_cut,"mctruth_nu_E<0.8"}; 
 
     std::string signal_definition = v_denom[0];
 
@@ -711,6 +711,8 @@ int main (int argc, char *argv[]){
 
         bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
         //bdt_efficiency(bnb, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 5e19);
+	//bdt_efficiency(signal, signal_definition, fcoscut,fbnbcut, true);
+	        
 
 
     }else {

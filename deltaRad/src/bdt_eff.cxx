@@ -1,11 +1,12 @@
 #include "bdt_eff.h"
-
+#include "TGaxis.h"
+using namespace std;
 
 bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts ,double c1, double c2, double plot_POT) : file(filein){
 
     double conversion = filein->scale_data*plot_POT/filein->pot;
-    double n_starting_events = 0;
-    denominator = "";
+    double n_starting_events = 0;//Number of golden signal, 1e1p events with any topologies.
+    denominator = "";//Requirement that leads to n_starting_events - Number of golden signal.
 
     std::cout<<"File has  "<<filein->GetEntries("1")*conversion<<" events when scaled to "<<plot_POT<<std::endl;
 
@@ -26,7 +27,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<"-----------------------------------------"<<std::endl;
 
     std::string topocuts = "";
-    double n_topo_events = 0;
+    double n_topo_events = 0;//Number of 1e1p events with 1 reco_track and 1 reco_shower.
     for(int i=0; i<v_topo.size();i++){
             std::cout<<" On topo: "<<v_topo[i]<<std::endl;
             if(i==0){
@@ -45,7 +46,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<"-----------------------------------------"<<std::endl;
 
     std::string precuts = "";
-    double n_precut_events = 0;
+    double n_precut_events = 0;//Number of 1e1p events with 1 reco_track and 1 reco_shower that pass through the pre-cuts.
     for(int i=0; i<v_precuts.size();i++){
             std::cout<<" On precut: "<<v_precuts[i]<<std::endl;
             if(i==0){
@@ -63,26 +64,296 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_topo_events*100.0<<"% relative to topo"<<std::endl;
  
     std::cout<<"-----------------------------------------"<<std::endl;
-    
-    double n_final_events = 0;
-	for(int s=2; s<4; s++){
-		if(s==2) file->calcCosmicBDTEntryList(c1, c2);
-		if(s==3) file->calcBNBBDTEntryList(c1, c2);
-		file->setStageEntryList(s);
 
-		double stage_entries = file->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
-		std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to denom: "<<stage_entries/n_starting_events*100.0<<"%"<<std::endl;
-		std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to topo: "<<stage_entries/n_topo_events*100.0<<"%"<<std::endl;
-		std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to precuts: "<<stage_entries/n_precut_events*100.0<<"%"<<std::endl;
+
+//----- Below: INITIATE THE DENOMINATOR HERE BEFORE PERFORMING THE BDT CUT.. FOR the Efficiancy plot.
+    bdt_variable true_nue("mctruth_nu_E[0]","(15 , 0 , 1)","True Nue Energy [GeV]",true,"d");
+					    //(varaibles, signal_definition, name?,final POT?) 
+    //Get all entries;
+    //TH1* true_nue_denom = (TH1*) file->getTH1(true_nue, denominator, "True Nue Energy [Gev]", plot_POT);
+    TH1* true_nue_denom = (TH1*) file->getTH1(true_nue, denominator, "True Nue Energy [Gev]", plot_POT);
+//    cout<<"Events in nue_denom: "<< true_nue_denom->GetEntries()<<endl;	//see file.cxx line 520 to check the object
+//    cout<<"Events in nue_denom (This is correct): "<< file->GetEntries()<<endl;	
+//    cout<<"Events in nue_denom: "<< denominator<<endl;	
+
+//----- Above: INITIATE THE DENOMINATOR HERE BEFORE PERFORMING THE BDT CUT.. FOR the Efficiancy plot.
+
+    
+    double stage_entries = 0;//cosmicBDT, BNBBDT
+    double finaleff=0;
+
+	for(int s=2; s<4; s++){
+	    if(s==2) file->calcCosmicBDTEntryList(c1, c2);
+	    if(s==3) file->calcBNBBDTEntryList(c1, c2);
+	    file->setStageEntryList(s);
+
+	    stage_entries = file->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
+	    finaleff=stage_entries/n_starting_events*100.0;
+	    std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to denom: "<<finaleff<<"%"<<std::endl;
+	    //std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to topo: "<<stage_entries/n_topo_events*100.0<<"%"<<std::endl;
+	    //std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to precuts: "<<stage_entries/n_precut_events*100.0<<"%"<<std::endl;
+	}
+
+
+//    bdt_file* filein;
+//    double n_starting_events = 0;//Number of golden signal, 1e1p events with any topologies.
+//    double n_topo_events = 0;    //Number of 1e1p events with 1 reco_track and 1 reco_shower.
+//    double n_precut_events = 0;  //Number of 1e1p events with 1 reco_track and 1 reco_shower that pass through the pre-cuts.
+//    double stage_entries = 0;    //cosmicBDT, BNBBDT
+//
+//--------------   Try to migrate the effciency plot here.
+
+
+    TFile * feff = new TFile("eff.1e1p.root","recreate");
+
+    //Now the file contains the BDT cuts
+    TH1* true_nue_numer = (TH1*) file->getTH1(true_nue, denominator, "True Nue Energy [Gev]", plot_POT);
+
+    feff->cd();
+    true_nue_numer->Write();
+    true_nue_denom->Write();
+
+    TH1* true_nue_ratio = (TH1*)true_nue_numer->Clone("true_nue_ratio");
+    true_nue_ratio->Divide(true_nue_denom);//numer/denom to get efficiency.
+//    true_nue_ratio->Divide(true_nue_numer);//CHECK 100% efficiency
+    feff->cd();
+    true_nue_ratio->Write();
+    
+    //create canvas for drawing the plot
+    TCanvas * c = new TCanvas();
+    c->cd();
+
+////NOT Plotting denominator for now, because the efficiency is low.
+//
+// true_nue_denom->Scale(scale_factor);//true_nue_denom->Integral());//Scale to less than 100, share the "Efficiancy" axis. 
+//    true_nue_denom->SetFillStyle(3444);
+//    true_nue_denom->SetFillColor(kBlue-6);
+//    true_nue_denom->SetLineColor(kBlue-6);
+//    true_nue_denom->Draw("hist");//draw the events number, "same" means on the same plot.
+    
+    true_nue_ratio->SetLineColor(kBlack);
+    true_nue_ratio->SetMarkerColor(kBlack);
+    true_nue_ratio->SetLineWidth(2);
+    true_nue_ratio->SetMarkerStyle(20);
+    true_nue_ratio->Scale(100);// change 1 -> 100 [%]
+    true_nue_ratio->GetYaxis()->SetTitle("Efficiency [%]");    
+    true_nue_ratio->SetTitle("Efficiency Respected to Truth Neutrino Nenergy");    
+
+    double ratio_maximum = true_nue_ratio->GetBinContent(true_nue_ratio->GetMaximumBin()); 
+    double numer_maximum = true_nue_numer->GetBinContent(true_nue_numer->GetMaximumBin()); 
+    
+    //NOTE: change the forllowing for proper axis. Note that the GetMaximum will also change to some value that IS NOT THE REAL MAXIMUM VALUE of the data.
+    //use true_nue_ratio->GetBinContent(true_nue_ratio->GetMaximumBin()) to get the real maximum.
+    
+    true_nue_ratio->SetMaximum(1.5*true_nue_ratio->GetMaximum());
+    true_nue_ratio->SetMinimum(0);
+    
+    //This draw writes down the title and y-axis on the left.
+    true_nue_ratio->Draw("hist p");//draw the efficiency dot on top, "E1" contains error bar
+    
+
+    double scale_factor = ratio_maximum/numer_maximum; //scale the maximum to 20%
+    cout<<"Maximum numer: "<<true_nue_numer->GetMaximum()<<endl;
+    true_nue_numer->Scale(scale_factor);//Scale the same amount as efficiency's maximum.
+    true_nue_numer->SetFillStyle(3444);
+    true_nue_numer->SetFillColor(kRed-6);
+    true_nue_numer->SetLineColor(kRed-6);
+    
+    true_nue_numer->Draw("hist same");//draw the events number, "same" means on the same plot.
+    true_nue_ratio->Draw("hist p same");//draw the efficiency again to put the dot on top, "E1" contains error bar
+    //
+    //The following right axis functions as visual aid only.
+    c->Update();
+    double rightmax = 1.5*numer_maximum;//this equivalent to call the value of 120% of the heighest bin.
+
+    TGaxis*axis = new TGaxis(gPad->GetUxmax(),gPad->GetUymin(),
+	    gPad->GetUxmax(),gPad->GetUymax(),
+	    0,rightmax,6+100*5,"+L");
+	    //min, max, division, style
+    axis->SetLineColor(kRed);
+    axis->SetLabelColor(kRed);
+    axis->SetTitleColor(kRed);
+    axis->SetTitle("Events Rate (13.2e20 POT)");
+    axis->Draw();
+
+
+ 
+    TLegend *l = new TLegend(0.13,0.79,0.89,0.89);
+    l->SetLineColor(kWhite);
+    l->SetLineWidth(0);
+    l->SetNColumns(2);
+    l->AddEntry(true_nue_ratio,"Efficiency: Final-Selection/All Golden Signal","lp");
+    l->AddEntry(true_nue_numer,"#splitline{}{Golden LEE #nu_e(#bar{#nu}_e) [Selected Events]}","fl");
+//    l->AddEntry(true_nue_denom,"#splitline{}{Golden LEE #nu_e(#bar{#nu}_e) [Raw Events]}","fl");
+    l->Draw();
+
+    TLatex txt;
+    txt.SetTextSize(0.05);
+    txt.SetTextAlign(13);  //align at top
+    txt.SetNDC();
+    txt.DrawLatex(.60,.80,("#splitline{Total Efficiency:}{"+to_string_prec(finaleff,2)+"%}").c_str());
+
+    c->Write();
+    c->SaveAs("eff_a.pdf","pdf");
+
+    feff->Close();
+
+    return; 
+
+//OLD CODE:
+/*
+    bdt_variable true_photon("mctruth_nu_E","(10, 0 , 1.0)","True Nue Energy [GeV]",false,"d");
+    bdt_variable true_proton("mctruth_nu_E","(10, 0 , 1.0)","True Nue Energy [GeV]",false,"d");
+
+    TH1* h_true_proton_denom = (TH1*)file->getTH1(true_proton, denominator, "proton_true_denom", 6.6e20);
+
+    TH2* h2_true_photon_proton_denom = (TH2*)file->getTH2(true_proton, true_photon, denominator,"2d proton photon denom",6.6e20);
+
+    TH1* h_true_photon_numer;
+    TH1* h_true_proton_numer;
+    TH2* h2_true_photon_proton_numer;
+    true_nue_ratio->Divide(true_nue_denom);
+
+    double nverticies;
+    double finaleff;
+    for(int s=0; s<4; s++){
+	if(s==2) file->calcCosmicBDTEntryList(c1, c2);
+	if(s==3) file->calcBNBBDTEntryList(c1, c2);
+	file->setStageEntryList(s);
+
+	double stage_entries = file->GetEntries("1")*MOD;
+	if(s==0) nverticies = stage_entries;
+	std::cout<<"Stage: "<<s<<" Verticies: "<<stage_entries<<" Efficiency: "<<stage_entries/true_denominator<<std::endl;
+
+	if(s==3){
+	    std::cout<<"Getting true photon and proton energues"<<std::endl;
+	    h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator, "photon_true_numer", 6.6e20);
+	    h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator, "proton_true_numer", 6.6e20);
+	    h2_true_photon_proton_numer = (TH2*)file->getTH2(true_proton, true_photon, denominator,"2d proton photon numer",6.6e20);
+	    finaleff = stage_entries/true_denominator*100.0;
+
+	}
+
     }
+
+    h_true_photon_denom->Scale(MOD/vertex_eff);
+    h_true_proton_denom->Scale(MOD/vertex_eff);
+    h_true_photon_numer->Scale(MOD/vertex_eff);
+    h_true_proton_numer->Scale(MOD/vertex_eff);
+
+    h2_true_photon_proton_numer->Scale(MOD/vertex_eff);
+    h2_true_photon_proton_denom->Scale(MOD/vertex_eff);
+    std::cout<<"Writing"<<std::endl;
+
+    feff->cd();
+//    h_true_photon_numer->Write();
+    h_true_proton_numer->Write();
+    h_true_proton_denom->Write();
+//    h_true_photon_denom->Write();
+//    h2_true_photon_proton_numer->Write();
+//    h2_true_photon_proton_denom->Write();
+
+
+    TH1* h_true_photon_ratio = (TH1*)h_true_photon_numer->Clone("h_true_photon_ratio");
+    TH1* h_true_proton_ratio = (TH1*)h_true_proton_numer->Clone("h_true_proton_ratio");
+    TH2* h2_true_photon_proton_ratio = (TH2*)h2_true_photon_proton_numer->Clone("h2_true_photon_proton_ratio");
+
+    h_true_photon_ratio->Divide(h_true_photon_denom);
+    h_true_proton_ratio->Divide(h_true_proton_denom);
+    h2_true_photon_proton_ratio->Divide(h2_true_photon_proton_denom);
+    feff->cd();
+
+//    h_true_photon_ratio->Write();
+    h_true_proton_ratio->Write();
+//  h2_true_photon_proton_ratio->Write();
+
+
+    //Std::plotting
+    //
+    TCanvas * c = new TCanvas();
+    c->cd();
+
+    h_true_photon_ratio->Scale(100);
+    h_true_proton_ratio->Scale(100);
+
+//THIS LINE GIVES THE LABEL "EFFICIENCY", Y-AXIS
+    h_true_photon_ratio->Draw("E1");
+
+    h_true_photon_denom->Scale(80/h_true_photon_denom->Integral());
+    h_true_photon_denom->SetFillStyle(3454);
+    h_true_photon_denom->SetFillColor(kRed-6);
+    h_true_photon_denom->SetLineColor(kRed-6);
+    h_true_photon_denom->Draw("hist same");
+
+    h_true_proton_denom->Scale(80/h_true_proton_denom->Integral());
+    h_true_proton_denom->SetFillStyle(3444);
+    h_true_proton_denom->SetFillColor(kBlue-6);
+    h_true_proton_denom->SetLineColor(kBlue-6);
+    h_true_proton_denom->Draw("hist same");
+
+
+    //sig_notrack->Scale(200);
+    //sig_notrack->Draw("hist same");
+
+
+
+    h_true_photon_ratio->DrawCopy("E1 same");
+    h_true_photon_ratio->SetTitle("");
+    h_true_proton_ratio->Draw("E1 same");
+
+    h_true_photon_ratio->SetLineColor(kRed);
+    h_true_photon_ratio->SetLineWidth(2);
+    h_true_photon_ratio->SetMarkerStyle(20);
+    h_true_photon_ratio->SetMarkerColor(kRed);
+
+    h_true_proton_ratio->SetLineColor(kBlue);
+    h_true_proton_ratio->SetMarkerColor(kBlue);
+    h_true_proton_ratio->SetLineWidth(2);
+    h_true_proton_ratio->SetMarkerStyle(20);
+
+    h_true_photon_ratio->GetYaxis()->SetTitle("Efficiency [%]");
+    //	h_true_photon_ratio->GetXaxis()->SetTitle("True Photon/Proton Energy [GeV]");
+    h_true_photon_ratio->GetXaxis()->SetTitle("True Neutrino Energy [GeV]");
+
+    h_true_photon_ratio->SetMaximum(110);
+    h_true_photon_ratio->SetMinimum(0);
+    h_true_photon_ratio->GetXaxis()->SetRangeUser(0,1);
+
+    TLegend *l = new TLegend(0.13,0.79,0.89,0.89);
+    l->SetLineColor(kWhite);
+    l->SetLineWidth(0);
+    l->SetNColumns(2);
+    l->AddEntry(h_true_proton_ratio,"Efficiency: True Neutrino Energy","lp");
+    //	l->AddEntry(h_true_photon_ratio,"Efficiency: True Photon Energy","lp");
+    l->AddEntry(h_true_proton_denom,"#splitline{}{True Neutrino Spectum (au)}","fl");
+    //	l->AddEntry(h_true_photon_denom,"#splitline{}{True Photon Spectum (au)}","fl");
+    l->Draw();
+
+
+    TLatex txt;
+    txt.SetTextSize(0.05);
+    txt.SetTextAlign(13);  //align at top
+    txt.SetNDC();
+    txt.DrawLatex(.60,.70,("#splitline{Total Efficiency:}{"+to_string_prec(finaleff,2)+"%}").c_str());
+
+
+    c->Write();
+    c->SaveAs("eff_a.pdf","pdf");
+
+
+
+
+    feff->Close();
+
+*/
 
 
 }
 
 
 bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1, double c2) : file(filein), denominator(denomin){
-
-
+cout<<"CHECK eff.cxx line 84, if you see this"<<endl;
+/*
 	//First step, find event entrylist. In future we must actually track this from the event_tree
 	int  event_number=0;
 	int  run_number=0;
@@ -179,7 +450,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1,
 	}
 
 
-
+	*/
 
 }
 
@@ -188,222 +459,241 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1,
 bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1, double c2,bool in) : file(filein), denominator(denomin){
 
 
-	TFile * feff = new TFile("eff.1g1p.root","recreate");
-	//First step, find event entrylist. In future we must actually track this from the event_tree
-	int  event_number=0;
-	int  run_number=0;
-	int  subrun_number=0;
-	double wei=0;
-	int pass_denom = 0;
+    TFile * feff = new TFile("eff.1g1p.root","recreate");
 
-	double weighted_num = 0;
-	double base_num = 0;
+    //First step, find event entrylist. In future we must actually track this from the event_tree
+    int  event_number=0;
+    int  run_number=0;
+    int  subrun_number=0;
+    double wei=0;
+    int pass_denom = 0;
 
-	file->tvertex->ResetBranchAddresses();
+    double weighted_num = 0;
+    double base_num = 0;
 
-	file->tvertex->SetBranchAddress("event_number",&event_number);
-	file->tvertex->SetBranchAddress("bnbcorrection_info.weight",&wei);
+    file->tvertex->ResetBranchAddresses();
 
-	//TPCActive
-	//Z: 0 to 1036.8
-	//X: 0 to 256.35
-	//Y: -116.5 to 116.5
+    file->tvertex->SetBranchAddress("event_number",&event_number);
+    //	file->tvertex->SetBranchAddress("(lee_signal_weights.lee_weights)",&wei);
+    file->tvertex->SetBranchAddress("lee_weights",&wei);
 
-	std::set<int> eventIDs;
-	event_entry_list = new TEntryList(file->tvertex);
+    //TPCActive
+    //Z: 0 to 1036.8
+    //X: 0 to 256.35
+    //Y: -116.5 to 116.5
 
-	for(int k=0; k< file->tvertex->GetEntries();k++){
-		file->tvertex->GetEntry(k);
-		if(k%10000==0) std::cout<<k<<std::endl;	
-		if(eventIDs.count(event_number)==0){
-			eventIDs.insert(event_number);
-			event_entry_list->Enter(k,file->tvertex);
-			weighted_num+=wei;
-			base_num++;
-		}	
+    std::set<int> eventIDs;
+    event_entry_list = new TEntryList(file->tvertex);
+
+    int N = file->tvertex->GetEntries();
+    for(int k=0; k< N;k++){
+	file->tvertex->GetEntry(k);
+	if( k%(N/100) == 0){
+	    std::cout.precision(3);
+	    std::cout<<"\r"<< 100*k/N+1 <<"\% of "<< N <<" entries complete.";//+1 is for the display 100%
+	    std::cout.flush();
+	}
+	//if(k%10000==0) std::cout<<k<<std::endl;	
+	if(eventIDs.count(event_number)==0){
+	    eventIDs.insert(event_number);
+	    event_entry_list->Enter(k,file->tvertex);
+	    weighted_num+=wei;
+	    base_num++;
+	}	
+    }
+
+    //	double MOD =file->scale_data*6.6e20/file->pot;
+    //	double volCryo = 199668.427885;
+    //	double volTPC =  101510.0;
+    //	double volTPCActive=  86698.6;
+
+    double MOD =file->scale_data*13.2e20/file->pot;//Rescale the event number.
+    double volCryo = 199668.427885;
+    double volTPC =  101510.0;
+    double volTPCActive=  86698.6;
+    file->tvertex->SetEntryList(event_entry_list);
+
+
+    double Ndenominator = file->GetEntries(denominator.c_str());
+    
+       std::cout<<"====================Raw Numbers of Events==================="<<std::endl;
+
+       std::cout<<"1: Number of events in FillLightFiles : "<<file->numberofevents_raw<<std::endl;
+       std::cout<<"2: Number of events in FillLightFiles scaled to TPCActive: "<<file->numberofevents_raw*volTPCActive/volTPC<<std::endl;
+       std::cout<<"3: Number of unique events in vertexed_files : "<<base_num<<std::endl;
+   //    std::cout<<"4: Number of unique events in vertexed_files with BNB_correction : "<<weighted_num<<std::endl;
+       std::cout<<"4: Number of unique events in vertexed_files with LEE_weight : "<<weighted_num<<std::endl;
+       std::cout<<"5: Number of approximated events in FillLightFiles with LEE_weight : "<<file->numberofevents_raw*weighted_num/base_num<<std::endl;
+       std::cout<<"6: Same scaled to TPCActive: "<<file->numberofevents_raw*weighted_num/base_num*volTPCActive/volTPC<<std::endl;
+
+    double vertex_eff = (weighted_num)/(file->numberofevents_raw*weighted_num/base_num*volTPCActive/volTPC);
+    std::cout<<"7: Ratio of (6) and (4): This is a measure of vertexing efficiency : "<<vertex_eff<<std::endl;
+    
+       std::cout<<"==================== Denominator events (Here on x3.1) ==================="<<std::endl;
+       std::cout<<"Number of events in vertexed_files that pass denominator with LEE_weight : "<<Ndenominator<<std::endl;
+       std::cout<<"Number of events in vertexed_files that pass denominator with LEE_weight with vertex eff removed : "<<Ndenominator/vertex_eff<<std::endl;
+
+    double true_denominator = 264.94;//Ndenominator/vertex_eff*MOD;
+    std::cout<<"Same scaled to 6.6e20 "<<true_denominator<<std::endl; 
+
+    //	bdt_variable true_photon("delta_photon_energy","(20, 0 , 1.0)","True Photon Energy [GeV]",false,"d");
+    bdt_variable true_photon("mctruth_nu_E","(10, 0 , 1.0)","True Nue Energy [GeV]",false,"d");
+    //	bdt_variable true_proton("delta_proton_energy-0.938272","(20, 0 , 1.0)","True Proton Kinetic Energy [GeV]",false,"d");
+    bdt_variable true_proton("mctruth_nu_E","(10, 0 , 1.0)","True Nue Energy [GeV]",false,"d");
+
+    TH1* h_true_photon_denom = (TH1*)file->getTH1(true_photon, denominator, "photon_true_denom", 6.6e20);
+    TH1* h_true_proton_denom = (TH1*)file->getTH1(true_proton, denominator, "proton_true_denom", 6.6e20);
+
+    TH2* h2_true_photon_proton_denom = (TH2*)file->getTH2(true_proton, true_photon, denominator,"2d proton photon denom",6.6e20);
+
+    TH1* h_true_photon_numer;
+    TH1* h_true_proton_numer;
+    TH2* h2_true_photon_proton_numer;
+
+    double nverticies;
+    double finaleff;
+    for(int s=0; s<4; s++){
+	if(s==2) file->calcCosmicBDTEntryList(c1, c2);
+	if(s==3) file->calcBNBBDTEntryList(c1, c2);
+	file->setStageEntryList(s);
+
+	double stage_entries = file->GetEntries("1")*MOD;
+	if(s==0) nverticies = stage_entries;
+	std::cout<<"Stage: "<<s<<" Verticies: "<<stage_entries<<" Efficiency: "<<stage_entries/true_denominator<<std::endl;
+
+	if(s==3){
+	    std::cout<<"Getting true photon and proton energues"<<std::endl;
+	    h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator, "photon_true_numer", 6.6e20);
+	    h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator, "proton_true_numer", 6.6e20);
+	    h2_true_photon_proton_numer = (TH2*)file->getTH2(true_proton, true_photon, denominator,"2d proton photon numer",6.6e20);
+	    finaleff = stage_entries/true_denominator*100.0;
+
 	}
 
-	double MOD =file->scale_data*6.6e20/file->pot;
-	double volCryo = 199668.427885;
-	double volTPC =  101510.0;
-	double volTPCActive=  86698.6;
+    }
 
-	file->tvertex->SetEntryList(event_entry_list);
+    h_true_photon_denom->Scale(MOD/vertex_eff);
+    h_true_proton_denom->Scale(MOD/vertex_eff);
+    h_true_photon_numer->Scale(MOD/vertex_eff);
+    h_true_proton_numer->Scale(MOD/vertex_eff);
 
+    h2_true_photon_proton_numer->Scale(MOD/vertex_eff);
+    h2_true_photon_proton_denom->Scale(MOD/vertex_eff);
+    std::cout<<"Writing"<<std::endl;
 
-	double Ndenominator = file->GetEntries(denominator.c_str());
-
-	std::cout<<"====================Raw Numbers of Events==================="<<std::endl;
-	std::cout<<"1: Number of events in FillLightFiles : "<<file->numberofevents_raw<<std::endl;
-	std::cout<<"2: Number of events in FillLightFiles scaled to TPCActive: "<<file->numberofevents_raw*volTPCActive/volTPC<<std::endl;
-	std::cout<<"3: Number of unique events in vertexed_files : "<<base_num<<std::endl;
-	std::cout<<"4: Number of unique events in vertexed_files with BNB_correction : "<<weighted_num<<std::endl;
-	std::cout<<"5: Number of approximated events in FillLightFiles with BNB_correction : "<<file->numberofevents_raw*weighted_num/base_num<<std::endl;
-	std::cout<<"6: Same scaled to TPCActive: "<<file->numberofevents_raw*weighted_num/base_num*volTPCActive/volTPC<<std::endl;
-	double vertex_eff = (weighted_num)/(file->numberofevents_raw*weighted_num/base_num*volTPCActive/volTPC);
-	std::cout<<"7: Ratio of (6) and (4): This is a measure of vertexing efficiency : "<<vertex_eff<<std::endl;
-
-	std::cout<<"==================== Denominator events (Here on x3.1) ==================="<<std::endl;
-	std::cout<<"Number of events in vertexed_files that pass denominator with BNB_correction : "<<Ndenominator<<std::endl;
-	std::cout<<"Number of events in vertexed_files that pass denominator with BNB_correction with vertex eff removed : "<<Ndenominator/vertex_eff<<std::endl;
-	double true_denominator = Ndenominator/vertex_eff*MOD;
-	std::cout<<"Same scaled to 6.6e20 "<<true_denominator<<std::endl; 
+    feff->cd();
+//    h_true_photon_numer->Write();
+    h_true_proton_numer->Write();
+    h_true_proton_denom->Write();
+//    h_true_photon_denom->Write();
+//    h2_true_photon_proton_numer->Write();
+//    h2_true_photon_proton_denom->Write();
 
 
-	bdt_variable true_photon("delta_photon_energy","(20, 0 , 1.0)","True Photon Energy [GeV]",false,"d");
-	bdt_variable true_proton("delta_proton_energy-0.938272","(20, 0 , 1.0)","True Proton Kinetic Energy [GeV]",false,"d");
+    TH1* h_true_photon_ratio = (TH1*)h_true_photon_numer->Clone("h_true_photon_ratio");
+    TH1* h_true_proton_ratio = (TH1*)h_true_proton_numer->Clone("h_true_proton_ratio");
+    TH2* h2_true_photon_proton_ratio = (TH2*)h2_true_photon_proton_numer->Clone("h2_true_photon_proton_ratio");
 
-	TH1* h_true_photon_denom = (TH1*)file->getTH1(true_photon, denominator, "photon_true_denom", 6.6e20);
-	TH1* h_true_proton_denom = (TH1*)file->getTH1(true_proton, denominator, "proton_true_denom", 6.6e20);
+    h_true_photon_ratio->Divide(h_true_photon_denom);
+    h_true_proton_ratio->Divide(h_true_proton_denom);
+    h2_true_photon_proton_ratio->Divide(h2_true_photon_proton_denom);
+    feff->cd();
 
-	TH2* h2_true_photon_proton_denom = (TH2*)file->getTH2(true_proton, true_photon, denominator,"2d proton photon denom",6.6e20);
-
-	TH1* h_true_photon_numer;
-	TH1* h_true_proton_numer;
-	TH2* h2_true_photon_proton_numer;
-
-	double nverticies;
-	double finaleff;
-	for(int s=0; s<4; s++){
-		if(s==2) file->calcCosmicBDTEntryList(c1, c2);
-		if(s==3) file->calcBNBBDTEntryList(c1, c2);
-		file->setStageEntryList(s);
-
-		double stage_entries = file->GetEntries("1")*MOD;
-		if(s==0) nverticies = stage_entries;
-		std::cout<<"Stage: "<<s<<" Verticies: "<<stage_entries<<" Efficiency: "<<stage_entries/true_denominator<<std::endl;
-
-		if(s==3){
-			std::cout<<"Getting true photon and proton energues"<<std::endl;
-			h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator, "photon_true_numer", 6.6e20);
-			h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator, "proton_true_numer", 6.6e20);
-			h2_true_photon_proton_numer = (TH2*)file->getTH2(true_proton, true_photon, denominator,"2d proton photon numer",6.6e20);
-			finaleff = stage_entries/true_denominator*100.0;
-
-		}
-
-	}
-
-	h_true_photon_denom->Scale(MOD/vertex_eff);
-	h_true_proton_denom->Scale(MOD/vertex_eff);
-	h_true_photon_numer->Scale(MOD/vertex_eff);
-	h_true_proton_numer->Scale(MOD/vertex_eff);
-
-	h2_true_photon_proton_numer->Scale(MOD/vertex_eff);
-	h2_true_photon_proton_denom->Scale(MOD/vertex_eff);
-	std::cout<<"Writing"<<std::endl;
-
-	feff->cd();
-	h_true_photon_numer->Write();
-	h_true_proton_numer->Write();
-	h_true_photon_denom->Write();
-	h_true_proton_denom->Write();
-	h2_true_photon_proton_numer->Write();
-	h2_true_photon_proton_denom->Write();
+//    h_true_photon_ratio->Write();
+    h_true_proton_ratio->Write();
+//  h2_true_photon_proton_ratio->Write();
 
 
-	TH1* h_true_photon_ratio = (TH1*)h_true_photon_numer->Clone("h_true_photon_ratio");
-	TH1* h_true_proton_ratio = (TH1*)h_true_proton_numer->Clone("h_true_proton_ratio");
-	TH2* h2_true_photon_proton_ratio = (TH2*)h2_true_photon_proton_numer->Clone("h2_true_photon_proton_ratio");
+    //Std::plotting
+    //
+    TCanvas * c = new TCanvas();
+    c->cd();
 
-	h_true_photon_ratio->Divide(h_true_photon_denom);
-	h_true_proton_ratio->Divide(h_true_proton_denom);
-	h2_true_photon_proton_ratio->Divide(h2_true_photon_proton_denom);
-	feff->cd();
+    h_true_photon_ratio->Scale(100);
+    h_true_proton_ratio->Scale(100);
 
-	h_true_photon_ratio->Write();
-	h_true_proton_ratio->Write();
-	h2_true_photon_proton_ratio->Write();
+//THIS LINE GIVES THE LABEL "EFFICIENCY", Y-AXIS
+    h_true_photon_ratio->Draw("E1");
+
+    h_true_photon_denom->Scale(80/h_true_photon_denom->Integral());
+    h_true_photon_denom->SetFillStyle(3454);
+    h_true_photon_denom->SetFillColor(kRed-6);
+    h_true_photon_denom->SetLineColor(kRed-6);
+    h_true_photon_denom->Draw("hist same");
+
+    h_true_proton_denom->Scale(80/h_true_proton_denom->Integral());
+    h_true_proton_denom->SetFillStyle(3444);
+    h_true_proton_denom->SetFillColor(kBlue-6);
+    h_true_proton_denom->SetLineColor(kBlue-6);
+    h_true_proton_denom->Draw("hist same");
 
 
-	//Std::plotting
-	//
-	TCanvas * c = new TCanvas();
-	c->cd();
-
-	h_true_photon_ratio->Scale(100);
-	h_true_proton_ratio->Scale(100);
-
-	h_true_photon_ratio->Draw("E1");
-
-	h_true_photon_denom->Scale(80/h_true_photon_denom->Integral());
-	h_true_photon_denom->SetFillStyle(3454);
-	h_true_photon_denom->SetFillColor(kRed-6);
-	h_true_photon_denom->SetLineColor(kRed-6);
-	h_true_photon_denom->Draw("hist same");
-
-	h_true_proton_denom->Scale(80/h_true_proton_denom->Integral());
-	h_true_proton_denom->SetFillStyle(3444);
-	h_true_proton_denom->SetFillColor(kBlue-6);
-	h_true_proton_denom->SetLineColor(kBlue-6);
-	h_true_proton_denom->Draw("hist same");
-
-	
-	//sig_notrack->Scale(200);
-	//sig_notrack->Draw("hist same");
+    //sig_notrack->Scale(200);
+    //sig_notrack->Draw("hist same");
 
 
 
-	h_true_photon_ratio->DrawCopy("E1 same");
-	h_true_photon_ratio->SetTitle("");
-	h_true_proton_ratio->Draw("E1 same");
+    h_true_photon_ratio->DrawCopy("E1 same");
+    h_true_photon_ratio->SetTitle("");
+    h_true_proton_ratio->Draw("E1 same");
 
-	h_true_photon_ratio->SetLineColor(kRed);
-	h_true_photon_ratio->SetLineWidth(2);
-	h_true_photon_ratio->SetMarkerStyle(20);
-	h_true_photon_ratio->SetMarkerColor(kRed);
+    h_true_photon_ratio->SetLineColor(kRed);
+    h_true_photon_ratio->SetLineWidth(2);
+    h_true_photon_ratio->SetMarkerStyle(20);
+    h_true_photon_ratio->SetMarkerColor(kRed);
 
-	h_true_proton_ratio->SetLineColor(kBlue);
-	h_true_proton_ratio->SetMarkerColor(kBlue);
-	h_true_proton_ratio->SetLineWidth(2);
-	h_true_proton_ratio->SetMarkerStyle(20);
+    h_true_proton_ratio->SetLineColor(kBlue);
+    h_true_proton_ratio->SetMarkerColor(kBlue);
+    h_true_proton_ratio->SetLineWidth(2);
+    h_true_proton_ratio->SetMarkerStyle(20);
 
-	h_true_photon_ratio->GetYaxis()->SetTitle("Efficiency [%]");
-	h_true_photon_ratio->GetXaxis()->SetTitle("True Photon/Proton Energy [GeV]");
+    h_true_photon_ratio->GetYaxis()->SetTitle("Efficiency [%]");
+    //	h_true_photon_ratio->GetXaxis()->SetTitle("True Photon/Proton Energy [GeV]");
+    h_true_photon_ratio->GetXaxis()->SetTitle("True Neutrino Energy [GeV]");
 
-	h_true_photon_ratio->SetMaximum(32);
-	h_true_photon_ratio->SetMinimum(0);
-	h_true_photon_ratio->GetXaxis()->SetRangeUser(0,1);
+    h_true_photon_ratio->SetMaximum(110);
+    h_true_photon_ratio->SetMinimum(0);
+    h_true_photon_ratio->GetXaxis()->SetRangeUser(0,1);
 
-	TLegend *l = new TLegend(0.13,0.79,0.89,0.89);
-	l->SetLineColor(kWhite);
-	l->SetLineWidth(0);
-	l->SetNColumns(2);
-	l->AddEntry(h_true_proton_ratio,"Efficiency: True Proton Energy","lp");
-	l->AddEntry(h_true_photon_ratio,"Efficiency: True Photon Energy","lp");
-	l->AddEntry(h_true_proton_denom,"#splitline{}{True Proton Spectum (au)}","fl");
-	l->AddEntry(h_true_photon_denom,"#splitline{}{True Photon Spectum (au)}","fl");
-	l->Draw();
-
-
-		TLatex txt;
-		txt.SetTextSize(0.05);
-		txt.SetTextAlign(13);  //align at top
-		txt.SetNDC();
-		txt.DrawLatex(.60,.70,("#splitline{Total Efficiency:}{"+to_string_prec(finaleff,2)+"%}").c_str());
-		
+    TLegend *l = new TLegend(0.13,0.79,0.89,0.89);
+    l->SetLineColor(kWhite);
+    l->SetLineWidth(0);
+    l->SetNColumns(2);
+    l->AddEntry(h_true_proton_ratio,"Efficiency: True Neutrino Energy","lp");
+    //	l->AddEntry(h_true_photon_ratio,"Efficiency: True Photon Energy","lp");
+    l->AddEntry(h_true_proton_denom,"#splitline{}{True Neutrino Spectum (au)}","fl");
+    //	l->AddEntry(h_true_photon_denom,"#splitline{}{True Photon Spectum (au)}","fl");
+    l->Draw();
 
 
-
-	c->Write();
-	c->SaveAs("eff_a.pdf","pdf");
-
-	TCanvas * c2d = new TCanvas();
-	c2d->cd();
-
-	gStyle->SetPalette(kDarkBodyRadiator);	
-	h2_true_photon_proton_ratio->Draw("colz");
-	h2_true_photon_proton_ratio->GetXaxis()->SetTitle("True Photon Energy [GeV]");
-	h2_true_photon_proton_ratio->GetYaxis()->SetTitle("True Proton Kinetic Energy [GeV]");
-	
-	c2d->SaveAs("eff_b.pdf","pdf");
-
-	
+    TLatex txt;
+    txt.SetTextSize(0.05);
+    txt.SetTextAlign(13);  //align at top
+    txt.SetNDC();
+    txt.DrawLatex(.60,.70,("#splitline{Total Efficiency:}{"+to_string_prec(finaleff,2)+"%}").c_str());
 
 
-	feff->Close();
 
-	return;
+
+    c->Write();
+    c->SaveAs("eff_a.pdf","pdf");
+
+    //	TCanvas * c2d = new TCanvas();
+    //	c2d->cd();
+
+    //	gStyle->SetPalette(kDarkBodyRadiator);	
+    //	h2_true_photon_proton_ratio->Draw("colz");
+    //	h2_true_photon_proton_ratio->GetXaxis()->SetTitle("True Photon Energy [GeV]");
+    //	h2_true_photon_proton_ratio->GetYaxis()->SetTitle("True Proton Kinetic Energy [GeV]");
+
+    //	c2d->SaveAs("eff_b.pdf","pdf");
+
+
+
+
+    feff->Close();
+
+    return;
 
 
 

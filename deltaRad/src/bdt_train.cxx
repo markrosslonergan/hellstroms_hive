@@ -49,7 +49,7 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 
 	//CHECK should sig_tcut adopt the LEE weight here?
 	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
-	  "nTrain_Signal="+std::to_string(floor(signal_entries*0.75))+":nTrain_Background="+std::to_string(floor(background_entries*0.75))+":SplitMode=Random:NormMode=NumEvents:!V");
+	  "nTrain_Signal="+std::to_string(floor(signal_entries*0.65))+":nTrain_Background="+std::to_string(floor(background_entries*0.65))+":SplitMode=Random:NormMode=NumEvents:!V");
   // "nTrain_Signal=66629:nTrain_Background=49472:nTest_Signal=15578:nTest_Background=11885:SplitMode=Random:NormMode=NumEvents:!V"
 			//"SplitMode=Random:NormMode=NumEvents:!V");
 
@@ -109,7 +109,7 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 
 
 	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
-	  "nTrain_Signal="+std::to_string(floor(signal_entries*0.75))+":nTrain_Background="+std::to_string(floor(background_entries*0.75))+":SplitMode=Random:NormMode=NumEvents:!V");
+	  "nTrain_Signal="+std::to_string(floor(signal_entries*0.65))+":nTrain_Background="+std::to_string(floor(background_entries*0.65))+":SplitMode=Random:NormMode=NumEvents:!V");
   // "nTrain_Signal=66629:nTrain_Background=49472:nTest_Signal=15578:nTest_Background=11885:SplitMode=Random:NormMode=NumEvents:!V"
 			//"SplitMode=Random:NormMode=NumEvents:!V");
 
