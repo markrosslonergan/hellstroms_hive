@@ -4,18 +4,18 @@
 <precut def ="Sum$(reco_flash_total_pe_in_beamgate) > 20" name ="Optical Filter 20 PE"/> 
 <precut def = "(reco_vertex_x > 10 &amp;&amp; reco_vertex_x < 246 &amp;&amp; reco_vertex_y > -107 &amp;&amp; reco_vertex_y < 107 &amp;&amp; reco_vertex_z > 10 &amp;&amp; reco_vertex_z < 1026) " name = "Fiducial Vertex Cut" />
 <!-- Track Precuts -->
-<precut def = "reco_track_good_calo_best_plane[0]!=0 " name = "Track Good Calo Cut" /> 
+<precut def = "reco_track_good_calo_best_plane[0]!=0" name = "Track Good Calo Cut" /> 
 <!-- <precut def = "(reco_track_startx[0] > 10 &amp;&amp; reco_track_startx[0] < 256-10 &amp;&amp; reco_track_starty[0] > -117+10 &amp;&amp; reco_track_starty[0] < 117-10 &amp;&amp; reco_track_endz[0] > 10 &amp;&amp; reco_track_endz[0] < 1036-10) &amp;&amp; (reco_track_endx[0] > 10 &amp;&amp; reco_track_endx[0] < 256-10 &amp;&amp; reco_track_endy[0] > -117+10 &amp;&amp; reco_track_endy[0] < 117-10 &amp;&amp; reco_track_endz[0] > 10 &amp;&amp; reco_track_endz[0] < 1036-10)" name = "Contained Track Cut" /> -->
-<!-- <precut def = "reco_track_displacement[0]<500" name = "Track Length Cut" /> -->
+<precut def = "reco_track_displacement[0]<500" name = "Track Length Cut" /> 
 
 <!--Shower Precuts -->
-<precut def = "(reco_shower_dEdx_amalgamated[0]==reco_shower_dEdx_amalgamated[0] &amp;&amp; reco_shower_dEdx_amalgamated[1]==reco_shower_dEdx_amalgamated[1])" name = "Shower dE/dx Good Calo"/> 
-<precut def = "acos(reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz[0]*reco_shower_dirz[1])>25*3.14159/180.0" name = "Showers Not Overlapping" />
+<precut def = "(reco_shower_dEdx_plane2_nhits[0]>1 || reco_shower_dEdx_plane0_nhits[0]>1 || reco_shower_dEdx_plane1_nhits[0]>1)" name = "Shower dE/dx Plane Min Nhits"/> 
+<!-- <precut def = "(reco_shower_dEdx_amalgamated[0]==reco_shower_dEdx_amalgamated[0] &amp;&amp; reco_shower_dEdx_amalgamated[1]==reco_shower_dEdx_amalgamated[1])" name = "Shower dE/dx Good Calo"/> -->
+<!-- <precut def = "acos(reco_shower_dirx[0]*reco_shower_dirx[1]+reco_shower_diry[0]*reco_shower_diry[1]+reco_shower_dirz[0]*reco_shower_dirz[1])>25*3.14159/180.0" name = "Showers Not Overlapping" /> -->
 <!-- <precut def = "(reco_shower_dEdx_plane2_nhits[0]>1 &amp;&amp; reco_shower_dEdx_plane2_nhits[1]>1)" name = "Shower dE/dx Plane Min Nhits"/> -->
-<!-- <precut def = "(reco_shower_dEdx_plane2_nhits[0]>1 || reco_shower_dEdx_plane0_nhits[0]>1 || reco_shower_dEdx_plane1_nhits[0]>1)" name = "Shower dE/dx Plane Min Nhits"/> -->
 
 <!-- Stuff I added or edited -->
-<precut def = "reco_shower_energy_plane2[reco_shower_ordered_energy_index[0]]>20. &amp;&amp; reco_shower_energy_plane2[reco_shower_ordered_energy_index[1]]>20." name = "Shower Energy Cut" /> 
+<precut def = "reco_shower_energy_max[reco_shower_ordered_energy_index[0]]>10. &amp;&amp; reco_shower_energy_max[reco_shower_ordered_energy_index[1]]>10." name = "Shower Energy Cut" /> 
 <!-- <precut def="reco_shower_conversion_distance[0]<200&amp;&amp;reco_shower_conversion_distance[1]<200" name="Shower Conversion Distance Cut"/> -->
 
 <!--
@@ -107,7 +107,7 @@
     <var def = "reco_shower_opening_angle[(reco_shower_ordered_energy_index[0])]" binning = "(16,0,0.8)" unit = "Leading Shower Opening Angle" type = "d" spectator = "true" />
     <var def = "reco_shower_opening_angle[(reco_shower_ordered_energy_index[1])]" binning = "(16,0,0.8)" unit = "Subleading Shower Opening Angle" type = "d" spectator = "true" />
 
-    <var def = "reco_shower_phi_yx[(reco_shower_ordered_energy_index[0])]" binning = "(16,-3.14,3.14)" unit = "Reco. Leading Shower #Phi_{yx}" type = "d" spectator = "true"/>
+    <var def = "reco_shower_phi_yx[(reco_shower_ordered_energy_index[0])]" binning = "(16,-3.14,3.14)" unit = "Reco. Leading Shower #Phi_{yx}" type = "d" spectator = "false"/>
     <var def = "reco_shower_phi_yx[(reco_shower_ordered_energy_index[1])]" binning = "(16,-3.14,3.14)" unit = "Reco. Subleading Shower #Phi_{yx}" type = "d" spectator = "true"/>
 
     <var def = "reco_shower_startx[(reco_shower_ordered_energy_index[0])]" binning = "(16,-10,260)" unit = " Reco. Leading Shower start X pos [cm]" type = "d" spectator = "true"/>
@@ -145,7 +145,7 @@
 
     <!--Track Calo Variables-->
     <var def = "reco_track_proton_kinetic_energy[0]" binning = "(16,0,1)" unit = "Reconstructed Track Kinetic Energy [GeV]" type = "d" spectator = "false"/>
-    <var def = "reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(16,0,12)" unit = "Truncated Mean Track dE/dx Best Plane [MeV/cm]" type = "d" spectator = "true"/>
+    <var def = "reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(16,0,12)" unit = "Truncated Mean Track dE/dx Best Plane [MeV/cm]" type = "d" spectator = "false"/>
     <var def = "reco_track_mean_trunc_dEdx_plane2[0]" binning =  "(16,0,12)" unit = "Truncated Mean Track dE/dx Plane 2 [MeV/cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dEdx_plane1[0]" binning =  "(16,0,12)" unit = "Truncated mean track de/dx plane 1 [mev/cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dEdx_plane0[0]" binning =  "(16,0,12)" unit = "Truncated mean track de/dx plane 0 [mev/cm]" type = "d" spectator = "true"/>
@@ -173,7 +173,7 @@
     <var def = "reco_track_starty[0]" binning = "(16,-120,+120)" unit = " Reconstructed Track start Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_startz[0]" binning = "(16,-10,1060)" unit = " Reconstructed Track start Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endx[0]" binning = "(16,-10,260)" unit = " Reconstructed Track end X pos [cm]" type = "d" spectator = "true"/>
-    <var def = "reco_track_endy[0]" binning = "(16,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "false"/>
+    <var def = "reco_track_endy[0]" binning = "(16,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(16,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(16,0,1)" unit = "Reconstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
     <var def = "reco_shower_energy_plane2[0]/1000+reco_shower_energy_plane2[1]/1000+reco_track_proton_kinetic_energy[0]" binning = "(16, 0, 2)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "true" />
@@ -246,7 +246,7 @@
     <var def = "reco_shower_length[(reco_shower_ordered_energy_index[1])]/(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]/1000.0)" binning = "(16,0 ,2000 )" unit = "Ratio Reco. Subleading Shower Length/Energy [cm/GeV]" type = "d" spectator = "true"/>
 
     <!--Shower Geom Variables-->
-    <var def = "(acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1]))" binning = "(16,0,3.14)" unit = "Reco. Two-Shower Opening Angle [rad]" type = "d" spectator="true"/>
+    <var def = "(acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1]))" binning = "(16,0,3.14)" unit = "Reco. Two-Shower Opening Angle [rad]" type = "d" spectator="false"/>
     <var def = "reco_shower_theta_yz[(reco_shower_ordered_energy_index[0])]" binning = "(16,-3.14,3.14)" unit = "Reco. Leading Shower #theta_{yz} [rad]" type = "d" spectator="false"/>
     <var def = "reco_shower_theta_yz[(reco_shower_ordered_energy_index[1])]" binning = "(16,-3.14,3.14)" unit = "Reco. Subleading Shower #theta_{yz} [rad]" type = "d" spectator="true"/>
     <var def = "reco_shower_phi_yx[(reco_shower_ordered_energy_index[0])]" binning = "(16,-3.14,3.14)" unit = "Reco. Leading Shower #Phi_{yx}" type = "d" spectator = "true"/>
@@ -287,21 +287,21 @@
     <var def="sqrt((reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])]))/1000" binning = "(16, 0, 1)" unit = "Reco. #pi^{0} Transverse Momentum [GeV]" type = "d" spectator = "true" />
 
     <!-- Invariant mass -->
-    <var def="sqrt(2.0*reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*(1.0-cos((acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])))))/1000" binning = "(16, 0, 0.25)" unit = "Reconstructed Diphoton Mass [GeV]" type = "d" spectator = "false" />
+    <var def="sqrt(2.0*reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*(1.0-cos((acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])))))/1000" binning = "(16, 0, 0.25)" unit = "Reconstructed Diphoton Mass [GeV]" type = "d" spectator = "true" />
 
     <!-- Center-of-mass decay angle -->
     <var def="((reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])] - reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])])/(sqrt((reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])]))))" binning = "(16, 0, 1)" unit = "Reconstructed cos(#theta_{CM})" type = "d" spectator = "true" />
 
     <!--Track Calo Variables-->
     <var def = "reco_track_proton_kinetic_energy[0]" binning = "(16,0,1)" unit = "Reconstructed Track Kinetic Energy [GeV]" type = "d" spectator = "false"/>
-    <var def = "reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(16,0,12)" unit = "Truncated Mean Track dE/dx Best Plane [MeV/cm]" type = "d" spectator = "true"/>
+    <var def = "reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(16,0,12)" unit = "Truncated Mean Track dE/dx Best Plane [MeV/cm]" type = "d" spectator = "false"/>
     <var def = "reco_track_mean_trunc_dEdx_plane2[0]" binning =  "(16,0,12)" unit = "Truncated Mean Track dE/dx Plane 2 [MeV/cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dEdx_plane1[0]" binning =  "(16,0,12)" unit = "Truncated mean track de/dx plane 1 [mev/cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dEdx_plane0[0]" binning =  "(16,0,12)" unit = "Truncated mean track de/dx plane 0 [mev/cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0]" binning = "(16,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 2" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dEdx_start_half_plane1[0]/reco_track_mean_trunc_dEdx_end_half_plane1[0]" binning = "(16,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 1" type = "d" spectator = "true"/>
     <var def = "reco_track_mean_trunc_dEdx_start_half_plane0[0]/reco_track_mean_trunc_dEdx_end_half_plane0[0]" binning = "(16,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 0" type = "d" spectator = "true"/>
-    <var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0]" binning = "(16,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d" spectator = "false"/>
+    <var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0]" binning = "(16,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d" spectator = "true"/>
     <var def =  "reco_track_best_calo_plane[0]" binning = "(8, -1, 3)" unit = "Reconstructed Track Best Calo Plane" type = "i" spectator = "true"/>
     <var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(16, 0, 30)" unit = "Reconstructed Track PIDA Best Plane" type = "d" spectator = "true"/>
     <var def =  "reco_track_trunc_PIDA_plane0[0]" binning = "(16, 0, 30)" unit = "Reconstructed Track PIDA Plane 0" type = "d" spectator = "true"/>

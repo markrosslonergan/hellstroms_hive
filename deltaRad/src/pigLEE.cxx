@@ -229,23 +229,26 @@ int main (int argc, char *argv[]){
     ///////////////// SAMPLES /////////////////////////
     std::cout<<"Defining all our bdt_files."<<std::endl;
     // MC+Overlay files
-    bdt_file *training_signal=new bdt_file(dirv12,"ncpi0_overlay_extra_v12.2.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dirv12, "ncpi0_overlay_extra_v12.2.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dirv12,"ncpi0_overlay_extra_v12.2.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
+    bdt_file *training_signal=new bdt_file(dirv10,"ncpi0_overlay_collins_v10.0.root","NCPi0Train","hist","singlephoton/", kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dirv10, "ncpi0_overlay_collins_v10.0.root", "NCPi0Overlay", "hist","singlephoton/", kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dirv10,"ncpi0_overlay_collins_v10.0.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
     //signal_other->fillstyle = 3333;
 
-    bdt_file *training_bnb = new bdt_file(dirv12, "bnb_overlay_v12.2.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dirv12, "bnb_overlay_v12.2.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+    bdt_file *training_bnb = new bdt_file(dirv10, "bnb_overlay_combined_v10.1.root", "BNBTrain", "hist","singlephoton/", kAzure-9, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dirv10, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
     // Color was kBlue-4 or kAzure-9
 
     //Data files
-    bdt_file *OnBeamData    = new bdt_file(dirv12, "data5e19_v12.2.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *OffBeamData    = new bdt_file(dirv12, "bnbext_run1_v12.21.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
-    bdt_file *dirt = new bdt_file(dirv12,"dirt_overlay_v12.2.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
+    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.3.root", "OnBeamData", "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v9.3.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
+    bdt_file *dirt = new bdt_file(dirv10,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
+
+    // NC deltaRad, for checks
+    bdt_file *deltarad = new bdt_file(dirv10,"ncdeltarad_overlay_v10.1.root","NC #Delta Rad","hist","singlephoton/", kAzure+2, data_flow);
 
     //For conviencance fill a vector with pointers to all the files to loop over.
-    //std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData, dirt};
-    std::vector<bdt_file*> bdt_files = {signal, signal_other, bnb, OnBeamData, OffBeamData, dirt};
+    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData, dirt, deltarad};
+    //std::vector<bdt_file*> bdt_files = {signal, signal_other, bnb, OnBeamData, OffBeamData, dirt};
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
@@ -432,6 +435,7 @@ int main (int argc, char *argv[]){
         histogram_stack.addToStack(signal);
         histogram_stack.addToStack(signal_other);
         histogram_stack.addToStack(bnb);
+        histogram_stack.addToStack(deltarad);
         histogram_stack.addToStack(dirt);
 
         //Add OffBeamData but change the color and style first
@@ -490,6 +494,7 @@ int main (int argc, char *argv[]){
         histogram_stack->plot_pot = OnBeamData->pot;
         histogram_stack->addToStack(OffBeamData);
         histogram_stack->addToStack(dirt);
+        histogram_stack->addToStack(deltarad);
         histogram_stack->addToStack(bnb);
         histogram_stack->addToStack(signal_other);
         histogram_stack->addToStack(signal);
