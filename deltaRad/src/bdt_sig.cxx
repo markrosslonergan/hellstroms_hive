@@ -37,7 +37,7 @@ which for v3.0_with calo is 2.38091e+21
 std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt){
 
 
-    bool quick_search = true;//use the original detail search via false value;
+    bool quick_search = false;//use the original detail search via false value;
     //the if statement is the old program; change quick_search to enable it.
     if(!quick_search){//Scan significance steps by steps
 
@@ -46,7 +46,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	double best_mva_cut = DBL_MAX;
 	double best_mva_cut2 = DBL_MAX;
 
-	double plot_pot = 6.6e20;
+	//double plot_pot = 6.6e20;
+	double plot_pot=5e19;
 
 
 	//for nice plots make the 50, 25 is quicker tho
@@ -76,8 +77,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	//cut_max_cosmic =cut_max_cosmic*1.0;
 	//cut_max_bnb =cut_max_bnb*1.0;
 	//Zoomed in notrack
-	cut_min_cosmic = 0.6; cut_max_cosmic = 0.65;
-	cut_min_bnb = 0.55; cut_max_bnb = 0.6;
+	cut_min_cosmic = 0.65; cut_max_cosmic = 0.7;
+	cut_min_bnb = 0.55; cut_max_bnb = 0.63;
 	//Zoomed in track
 	//	cut_min_cosmic = 0.54; cut_max_cosmic = 0.58;
 	//	cut_min_bnb = 0.515; cut_max_bnb = 0.53;
@@ -148,7 +149,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
     std::cout<<"; #signal: ";
     std::cout<<std::left<<std::setw(8)<<signal;
 
-    if(signal>8){
+    if(true){
     std::cout<<", #bkg: ";
     std::cout<<std::left<<std::setw(8)<<background;
     std::cout<<"= ";

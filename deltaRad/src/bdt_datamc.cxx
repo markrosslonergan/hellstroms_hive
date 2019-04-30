@@ -226,7 +226,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 if(do_subtraction){
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
-                l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
+                l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"("+to_string_prec(Nevents*132.0e19/plot_pot,2)+")}").c_str(),"f");
                //APS l0->AddEntry(h1,(f->plot_name).c_str(),"f");
                 n++;
             }
@@ -244,7 +244,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             d0->Draw("same E1");
 
 
-            l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
+            l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"("+to_string_prec(NdatEvents*132.0e19/plot_pot,2)+")}").c_str(),"lp");	
             //APS l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
 
 
@@ -263,10 +263,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             pottex.SetTextSize(0.06);
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
-            std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
+            std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT (13.2e20 POT)";
 
 //            pottex.DrawLatex(.60,.64, pot_draw.c_str());
-            pottex.DrawLatex(.60,.44, pot_draw.c_str());
+            pottex.DrawLatex(.40,.44, pot_draw.c_str());
 
 
 
@@ -537,7 +537,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
             h1->SetFillColor(f->col);
             h1->SetFillStyle(f->fillstyle);
             h1->SetLineColor(kBlack);
-            l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+            //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
+            l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"("+to_string_prec(Nevents*132.0e19/plot_pot,2)+")}").c_str(),"f");	//"lp" makes the "color" part of the legend disappear
             //APS l0->AddEntry(h1,(f->plot_name.c_str()),"f");
         }
 
@@ -565,9 +566,9 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         pottex.SetTextSize(0.06);
         pottex.SetTextAlign(13);  //align at top
         pottex.SetNDC();
-        std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
+        std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT (13.2e20 POT)";
 
-        pottex.DrawLatex(.7,.96, pot_draw.c_str());
+        pottex.DrawLatex(.5,.96, pot_draw.c_str());
 
         TText *pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
         pre->Draw();

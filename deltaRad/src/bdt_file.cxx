@@ -589,12 +589,14 @@ TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, 
 
 
 TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
-    return getTH1(var, cuts,nam,plot_POT,1);
+
+    return getTH1(var, cuts, nam, plot_POT, 1);
 
 }
 
 TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin){
-
+    cout<<"IF YOU SEE THIS, COME TO line 454 at bdt_file.cxx"<<endl;/*
+    
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
     this->tvertex->Draw((invar+">>"+nam).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
@@ -610,10 +612,12 @@ TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, doub
     th1->SetStats(0);
     th1->GetXaxis()->SetTitle("Unit");
     th1->GetYaxis()->SetTitle("Events");
+//    th1->GetYaxis()->SetTitle("Verticies");
     th1->SetDirectory(0);	
 
     //delete ctmp;
     return th1;
+*/
 }
 
 TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std::string nam, double plot_POT){
@@ -642,6 +646,7 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
 
 TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin){
 
+    //HERE initialize the setting of the plot for the TH1* object in ROOT.
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
     this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
@@ -655,6 +660,8 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
         th1->Scale(this->scale_data*plot_POT/this->pot);
     }
     //std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
+    //std::cout<<"IS THIS: "<<this->GetEntries()*scale_data*plot_POT/pot<<" "<<th1->GetSumOfWeights()<<std::endl;//this->GetEntries() is a customized function in this .cxx file. 
+    //std::cout<<"IS THIS: "<<th1->GetEntries()<<std::endl;
     if(rebin>1) th1->Rebin(rebin);
     th1->SetLineColor(col);
     th1->SetLineWidth(1);
