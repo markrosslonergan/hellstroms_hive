@@ -516,9 +516,8 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
         th1->Scale(this->scale_data*plot_POT/this->pot);
     }
     //std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
-    //std::cout<<"IS THIS: "<<this->GetEntries(cuts)*scale_data*plot_POT/pot<<" "<<th1->GetSumOfWeights()<<std::endl;
+    //std::cout<<"IS THIS: "<<this->GetEntries()*scale_data*plot_POT/pot<<" "<<th1->GetSumOfWeights()<<std::endl;//this->GetEntries() is a customized function in this .cxx file. 
     //std::cout<<"IS THIS: "<<th1->GetEntries()<<std::endl;
-    //th1->GetEntries is problematic different?
     if(rebin>1) th1->Rebin(rebin);
     th1->SetLineColor(col);
     th1->SetLineWidth(1);

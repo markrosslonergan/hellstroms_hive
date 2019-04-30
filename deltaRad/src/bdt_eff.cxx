@@ -69,12 +69,10 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 //----- Below: INITIATE THE DENOMINATOR HERE BEFORE PERFORMING THE BDT CUT.. FOR the Efficiancy plot.
     bdt_variable true_nue("mctruth_nu_E[0]","(15 , 0 , 1)","True Nue Energy [GeV]",true,"d");
 					    //(varaibles, signal_definition, name?,final POT?) 
-    //Get all entries;
-    //TH1* true_nue_denom = (TH1*) file->getTH1(true_nue, denominator, "True Nue Energy [Gev]", plot_POT);
+    //Use the following to check if the plot works well.
+    //bdt_variable true_nue("mctruth_nu_E[0]","(1 , 0 , 1)","True Nue Energy [GeV]",true,"d");
+
     TH1* true_nue_denom = (TH1*) file->getTH1(true_nue, denominator, "True Nue Energy [Gev]", plot_POT);
-//    cout<<"Events in nue_denom: "<< true_nue_denom->GetEntries()<<endl;	//see file.cxx line 520 to check the object
-//    cout<<"Events in nue_denom (This is correct): "<< file->GetEntries()<<endl;	
-//    cout<<"Events in nue_denom: "<< denominator<<endl;	
 
 //----- Above: INITIATE THE DENOMINATOR HERE BEFORE PERFORMING THE BDT CUT.. FOR the Efficiancy plot.
 
