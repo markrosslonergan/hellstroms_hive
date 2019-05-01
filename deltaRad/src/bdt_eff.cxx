@@ -135,7 +135,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     true_nue_ratio->SetMarkerStyle(20);
     true_nue_ratio->Scale(100);// change 1 -> 100 [%]
     true_nue_ratio->GetYaxis()->SetTitle("Efficiency [%]");    
-    true_nue_ratio->SetTitle("Efficiency Respected to Truth Neutrino Nenergy");    
+    true_nue_ratio->SetTitle("Efficiency Respected to True Neutrino Nenergy");    
 
     double ratio_maximum = true_nue_ratio->GetBinContent(true_nue_ratio->GetMaximumBin()); 
     double numer_maximum = true_nue_numer->GetBinContent(true_nue_numer->GetMaximumBin()); 
