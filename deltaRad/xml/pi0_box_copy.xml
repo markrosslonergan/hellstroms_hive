@@ -9,6 +9,7 @@
 
 <!--Shower Precuts -->
 <precut def = "(reco_shower_dEdx_plane2_nhits[0]>1 || reco_shower_dEdx_plane0_nhits[0]>1 || reco_shower_dEdx_plane1_nhits[0]>1)" name = "Shower dE/dx Plane Min Nhits"/>
+<precut def="reco_shower_conversion_distance[0]>1&amp;&amp;reco_shower_conversion_distance[1]>1" name="Shower Conversion Distance Cut"/>
 <!-- Stuff I added or edited -->
 <precut def = "reco_shower_energy_max[0]>10.&amp;&amp; reco_shower_energy_max[1]>10." name = "Shower Energy Cut" /> 
 <!-- <precut def="reco_shower_conversion_distance[0]<200&amp;&amp;reco_shower_conversion_distance[1]<200" name="Shower Conversion Distance Cut"/> -->
@@ -28,7 +29,7 @@
 -->
 
 <!--Comsic BDT Training + Spectator Variables-->
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(30,0.16,1)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(16,0.05,1.0)">
     <method type = "COSMIC" use = "yes">
         <param>  NTrees=25 	</param>				
         <param>  MinNodeSize=2.5% </param>				
@@ -69,16 +70,16 @@
     <var def = "reco_shower_dEdx_amalgamated[(reco_shower_ordered_energy_index[0])]" binning = "(20,0,6.5)" unit = "Median Leading Shower dE/dx Amalgamated [MeV/cm]" type="d" spectator="true"/>
     <var def = "reco_shower_dEdx_amalgamated[(reco_shower_ordered_energy_index[1])]" binning = "(20,0,6.5)" unit = "Median Subleading Shower dE/dx Amalgamated [MeV/cm]" type="d" spectator="true"/>
 
-    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(10,0,0.6)" unit = "Reconstructed Leading Photon Energy [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,0.6)" unit = "Reconstructed Leading Photon Energy [GeV]" type="d" spectator="false"/>
     <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy [GeV]" type="d" spectator="false"/>
 
     <var def = "reco_shower_energy_plane0[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane1[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 1 [GeV]" type="d" spectator="true"/>
-    <var def = "reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 2 [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 2 [GeV]" type="d" spectator="true"/>
 
     <var def = "reco_shower_energy_plane0[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane1[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy Plane 1 [GeV]" type="d" spectator="true"/>
-    <var def = "reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy Plane 2 [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy Plane 2 [GeV]" type="d" spectator="true"/>
 
     <var def = "reco_shower_dQdx_plane0_median[(reco_shower_ordered_energy_index[(reco_shower_ordered_energy_index[0])])]" binning = "(20,0,400000)" unit = "Median Shower dQ/dx plane 0" type="d" spectator="true"/>
     <var def = "reco_shower_dQdx_plane1_median[(reco_shower_ordered_energy_index[(reco_shower_ordered_energy_index[0])])]" binning = "(20,0,400000)" unit = "Median Shower dQ/dx plane 1" type="d" spectator="true"/>
@@ -167,7 +168,7 @@
     <!-- <var def = "cos(reco_track_theta_yz[0])" binning = "(20,-1,1)" unit = "Reconstructed Track - Cosine Theta yz" type = "d" spectator = "false"/> -->
     <!-- <var def = "cos(reco_track_phi_yx[0])" binning = "(20,-1,1)" unit = "Reco. Track #Phi_{yx}" type = "d" spectator = "false"/> -->
     <var def = "reco_track_phi_yx[0]" binning = "(20,-3.14,3.14)" unit = "Reconstructed Track #Phi_{yx}" type = "d" spectator = "true"/>
-    <var def = "reco_track_theta_yz[0]" binning = "(20,-3.14,3.14)" unit = "Reconstructed Track #theta_{yz}" type = "d" spectator = "false"/>
+    <var def = "reco_track_theta_yz[0]" binning = "(10,-3.14,3.14)" unit = "Reconstructed Track #theta_{yz}" type = "d" spectator = "false"/>
     <var def = "reco_track_startx[0]" binning = "(20,-10,260)" unit = " Reconstructed Track start X pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_starty[0]" binning = "(20,-120,+120)" unit = " Reconstructed Track start Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_startz[0]" binning = "(20,-10,1060)" unit = " Reconstructed Track start Z pos [cm]" type = "d" spectator = "true"/>
@@ -175,13 +176,14 @@
     <var def = "reco_track_endy[0]" binning = "(20,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(20,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(20,0,1)" unit = "Reconstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
+    <var def = "reco_shower_energy_plane2[0]/1000.+reco_shower_energy_plane2[1]/1000.+reco_track_proton_kinetic_energy[0]" binning = "(16,0,1.5)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "true"/>
 
 </mva>
 
 <!--BNB BDT Training + Spectator Variables-->
-<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(30,0.28,1)">
+<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(16,0.25,0.92)">
     <method type = "BNB" use = "yes">
-        <param>  NTrees=25 	</param>				
+        <param>  NTrees=50 	</param>				
         <param>  MinNodeSize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
         <param>  AdaBoostBeta=0.75 	</param>				
@@ -189,7 +191,7 @@
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
         <param>  nCuts=-1	</param>				
-        <param>  MaxDepth=4 	</param>				
+        <param>  MaxDepth=3 	</param>				
     </method>
     <!--Vertex Variables-->
     <var def = "sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))" binning = "(20,0,100)" unit = "Reco-True Vertex Dist [cm]" type = "d" spectator = "true" />
@@ -221,16 +223,16 @@
     <var def = "reco_shower_dEdx_amalgamated[(reco_shower_ordered_energy_index[0])]" binning = "(20,0,6.5)" unit = "Median Leading Shower dE/dx Amalgamated [MeV/cm]" type="d" spectator="true"/>
     <var def = "reco_shower_dEdx_amalgamated[(reco_shower_ordered_energy_index[1])]" binning = "(20,0,6.5)" unit = "Median Subleading Shower dE/dx Amalgamated [MeV/cm]" type="d" spectator="true"/>
 
-    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(10,0,0.6)" unit = "Reconstructed Leading Photon Energy [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,0.6)" unit = "Reconstructed Leading Photon Energy [GeV]" type="d" spectator="false"/>
     <var def = "reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy [GeV]" type="d" spectator="false"/>
 
     <var def = "reco_shower_energy_plane0[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane1[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 1 [GeV]" type="d" spectator="true"/>
-    <var def = "reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 2 [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_plane2[(reco_shower_ordered_energy_index[0])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Leading Shower Energy Plane 2 [GeV]" type="d" spectator="true"/>
 
     <var def = "reco_shower_energy_plane0[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane1[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy Plane 1 [GeV]" type="d" spectator="true"/>
-    <var def = "reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy Plane 2 [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_plane2[(reco_shower_ordered_energy_index[1])]/1000.0" binning = "(20,0,1.0)" unit = "Reco. Subleading Shower Energy Plane 2 [GeV]" type="d" spectator="true"/>
 
     <var def = "reco_shower_dQdx_plane0_median[(reco_shower_ordered_energy_index[(reco_shower_ordered_energy_index[0])])]" binning = "(20,0,400000)" unit = "Median Shower dQ/dx plane 0" type="d" spectator="true"/>
     <var def = "reco_shower_dQdx_plane1_median[(reco_shower_ordered_energy_index[(reco_shower_ordered_energy_index[0])])]" binning = "(20,0,400000)" unit = "Median Shower dQ/dx plane 1" type="d" spectator="true"/>
@@ -327,5 +329,6 @@
     <var def = "reco_track_endy[0]" binning = "(20,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(20,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(20,0,1)" unit = "Reconstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
+    <var def = "reco_shower_energy_plane2[0]/1000.+reco_shower_energy_plane2[1]/1000.+reco_track_proton_kinetic_energy[0]" binning = "(16,0,1.5)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "true"/>
 
 </mva>

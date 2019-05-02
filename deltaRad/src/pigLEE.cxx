@@ -31,7 +31,7 @@ int main (int argc, char *argv[]){
 
 
     std::string mode_option = "fake"; 
-    std::string xml = "../../xml/pi0_box_copy_apr2019.xml";
+    std::string xml = "../../xml/pi0_box_copy.xml";
     std::string topo_tag = "2g1p";
     std::string bdt_tag = "cosmic";
     std::string analysis_tag = topo_tag;
@@ -182,8 +182,8 @@ int main (int argc, char *argv[]){
                   "mctruth_num_exiting_pi0==1", 
                   "mctruth_pi0_leading_photon_energy > 0.02", 
                   "mctruth_pi0_subleading_photon_energy > 0.02", 
-                  //"mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",
-                  "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==1",
+                  "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",
+                  //"Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==1",
                   fid_cut
         };
     }else if (analysis_tag == "2g0p") {
@@ -210,7 +210,7 @@ int main (int argc, char *argv[]){
     }
 
     std::string background_definition = "(mctruth_num_exiting_pi0!=1 || mctruth_cc_or_nc==0)";
-    std::string topological_cuts = "(reco_vertex_size==1 && reco_asso_showers == 2 && reco_asso_tracks"+num_track_cut+")";
+    std::string topological_cuts = "(reco_vertex_size>0 && reco_asso_showers == 2 && reco_asso_tracks"+num_track_cut+")";
     std::string postcuts = "1";  //We dont currently use postcuts
 
     //***************************************************************************************************/
@@ -234,8 +234,8 @@ int main (int argc, char *argv[]){
     bdt_file *signal_other = new bdt_file(dirv10,"ncpi0_overlay_collins_v10.0.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
     //signal_other->fillstyle = 3333;
 
-    bdt_file *training_bnb = new bdt_file(dirv10, "bnb_overlay_combined_v10.1.root", "BNBTrain", "hist","singlephoton/", kAzure-9, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dirv10, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+    bdt_file *training_bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBTrain", "hist","singlephoton/", kAzure-9, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
     // Color was kBlue-4 or kAzure-9
 
     //Data files
@@ -243,23 +243,27 @@ int main (int argc, char *argv[]){
     bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v9.3.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
     bdt_file *dirt = new bdt_file(dirv10,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
-    // NC deltaRad, for checks
-    bdt_file *deltarad = new bdt_file(dirv10,"ncdeltarad_overlay_v10.1.root","NC #Delta Rad","hist","singlephoton/", kAzure+2, data_flow);
+    // NC deltaRad and LEE files, for blindness checks
+    bdt_file *deltarad = new bdt_file(dirv10,"ncdeltarad_overlay_v10.1.root","NCDeltaRad","hist","singlephoton/", kAzure+1, bkg_flow);
+    bdt_file *nue = new bdt_file(dirv10,"nueintrinsic_overlay_v10.0.root","LEENuE","hist","singlephoton/", kBlue-3, bkg_flow);
+
+    //nue->weight_branch ="(lee_signal_weights.lee_weights)";
+    //nue->tvertex->AddFriend("lee_signal_weights",(dir+"lee_weights_friend_for_nueintrinsic_overlay_v10.0.root").c_str());
 
     //For conviencance fill a vector with pointers to all the files to loop over.
-    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData, dirt, deltarad};
+    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData, dirt, deltarad, nue};
     //std::vector<bdt_file*> bdt_files = {signal, signal_other, bnb, OnBeamData, OffBeamData, dirt};
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
 
     // v10
-    //OnBeamData->setAsOnBeamData(4.795e19);
-    //OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+    OnBeamData->setAsOnBeamData(4.795e19);
+    OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
     
     // v12
-    OnBeamData->setAsOnBeamData(4.552e+19);
-    OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
+    //OnBeamData->setAsOnBeamData(4.552e+19);
+    //OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
 
     //OffBeamData->makeRunSubRunList();
     //return 0;
@@ -306,6 +310,7 @@ int main (int argc, char *argv[]){
     OnBeamData->addPlotName("On-Beam  Data");
     OffBeamData->addPlotName("Cosmic Backgrounds");
     dirt->addPlotName("Dirt Backgrounds");
+    deltarad->addPlotName("NC #Delta Rad");
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
@@ -313,8 +318,8 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "2g1p"){
-        fcoscut =   0.7079;
-        fbnbcut = 0.524;
+        fcoscut =   0.727676;
+        fbnbcut = 0.702514;
     }else if(analysis_tag == "2g0p"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;
@@ -435,6 +440,7 @@ int main (int argc, char *argv[]){
         histogram_stack.addToStack(signal);
         histogram_stack.addToStack(signal_other);
         histogram_stack.addToStack(bnb);
+        histogram_stack.addToStack(nue);
         histogram_stack.addToStack(deltarad);
         histogram_stack.addToStack(dirt);
 
@@ -480,17 +486,18 @@ int main (int argc, char *argv[]){
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
-        /*
         histogram_stack->plot_pot = OnBeamData->pot;
+        histogram_stack->addToStack(nue);
+        histogram_stack->addToStack(deltarad);
         histogram_stack->addToStack(signal);
         histogram_stack->addToStack(signal_other);
         histogram_stack->addToStack(bnb);
         histogram_stack->addToStack(dirt);
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(OffBeamData);
-        */
 
         // Reverse order for last two stages
+        /*
         histogram_stack->plot_pot = OnBeamData->pot;
         histogram_stack->addToStack(OffBeamData);
         histogram_stack->addToStack(dirt);
@@ -499,6 +506,7 @@ int main (int argc, char *argv[]){
         histogram_stack->addToStack(signal_other);
         histogram_stack->addToStack(signal);
         OffBeamData->fillstyle = 3333;
+        */
 
         int ip=0;
         std::vector<bool> subv = {false,false,true};

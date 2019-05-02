@@ -351,7 +351,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			stk->GetXaxis()->SetTitle(var.unit.c_str());
 			stk->GetYaxis()->SetTitle("Events");
 			stk->GetYaxis()->SetTitleOffset(1.5);
-            double max_scale = 1.35;
+            double max_scale = 1.5;
             if (s==2){
                 max_scale = 1.7;
             }
@@ -368,7 +368,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
       }
       */
       std::cout << "Setting maximum " << tsum->GetMaximum()*max_scale << std::endl;
-			TLegend *l3 = new TLegend(0.11,0.70,0.89,0.89);
+			TLegend *l3 = new TLegend(0.11,0.60,0.89,0.89);
 			//tsum->DrawCopy("Same E2"); 
             //gStyle->SetHatchesLineWidth(2);
             // gStyle->SetHatchesSpacing(1);
@@ -484,7 +484,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s0->GetYaxis()->SetTitle("Events");
 	s0->GetYaxis()->SetTitleOffset(1.5);
 	s0->SetMaximum(s0->GetMaximum()*1.3);
-	TLegend *l0 = new TLegend(0.11,0.70,0.89,0.89);
+	TLegend *l0 = new TLegend(0.11,0.60,0.89,0.89);
 	l0->SetFillStyle(0);
 
 	std::vector<TH1F*> v0s;		
@@ -535,7 +535,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s1->GetYaxis()->SetTitle("Events");
 	s1->GetYaxis()->SetTitleOffset(1.5);
 	s1->SetMaximum(s1->GetMaximum()*1.3);
-	TLegend *l1 = new TLegend(0.11,0.70,0.89,0.89);
+	TLegend *l1 = new TLegend(0.11,0.60,0.89,0.89);
 	l1->SetFillStyle(0);
 	t1->DrawCopy("Same E2"); t1->SetFillStyle(0);t1->Draw("hist same");
 
@@ -594,7 +594,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s2->GetYaxis()->SetTitleOffset(1.5);
 	//s2->SetMaximum(s2->GetMaximum()*1.3);
 	s2->SetMaximum(s2->GetMaximum()*1.2);
-	TLegend *l2 = new TLegend(0.11,0.70,0.89,0.89);
+	TLegend *l2 = new TLegend(0.11,0.60,0.89,0.89);
 	t2->DrawCopy("Same E2"); t2->SetFillStyle(0);t2->Draw("hist same");
 
 	for(auto &f: this->stack){
@@ -647,7 +647,7 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s3->GetYaxis()->SetTitleOffset(1.5);
 	//s3->SetMaximum(s3->GetMaximum()*1.35);
 	s3->SetMaximum(s3->GetMaximum()*1.1);
-	TLegend *l3 = new TLegend(0.11,0.70,0.89,0.89);
+	TLegend *l3 = new TLegend(0.11,0.60,0.89,0.89);
 	t3->DrawCopy("Same E2"); t3->SetFillStyle(0);t3->Draw("hist same");
 	for(auto &f: this->stack){
 		double Nevents = f->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
@@ -746,7 +746,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s0->GetYaxis()->SetTitleOffset(1.5);
 	s0->SetMaximum(s0->GetMaximum()*10);
     s0->SetMinimum(0.05);
-	TLegend *l0 = new TLegend(0.11,0.70,0.89,0.89);
+	TLegend *l0 = new TLegend(0.11,0.60,0.89,0.89);
 
 	t0->DrawCopy("Same E2"); t0->SetFillStyle(0);t0->Draw("hist same");
 	for(auto &f: this->stack){
@@ -792,7 +792,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s1->SetMaximum(s1->GetMaximum()*50);
 	s1->SetMinimum(0.05);
 	t1->DrawCopy("Same E2"); t1->SetFillStyle(0);t1->Draw("hist same");
-	TLegend *l1 = new TLegend(0.11,0.70,0.89,0.89);
+	TLegend *l1 = new TLegend(0.11,0.60,0.89,0.89);
 	for(auto &f: this->stack){
 		auto h1 = new TH1F(("tmp2"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);
 		h1->SetFillColor(f->col);
@@ -837,7 +837,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s2->GetYaxis()->SetTitleOffset(1.5);
 	s2->SetMaximum(s2->GetMaximum()*10);
 	s2->SetMinimum(0.05);
-	TLegend *l2 = new TLegend(0.11,0.70,0.89,0.89);
+	TLegend *l2 = new TLegend(0.11,0.60,0.89,0.89);
 	t2->DrawCopy("Same E2"); t2->SetFillStyle(0);t2->Draw("hist same");
 	for(auto &f: this->stack){
 
@@ -884,7 +884,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	s3->GetYaxis()->SetTitleOffset(1.5);
 	s3->SetMaximum(s3->GetMaximum()*10);
   s3->SetMinimum(0.05);
-	TLegend *l3 = new TLegend(0.11,0.70,0.89,0.89);
+	TLegend *l3 = new TLegend(0.11,0.60,0.89,0.89);
 	t3->DrawCopy("Same E2"); t3->SetFillStyle(0);t3->Draw("hist same");
 	for(auto &f: this->stack){
 		auto h1 = new TH1F(("tmp4"+var.name+f->tag).c_str(),"TLegend Example",200,-10,10);

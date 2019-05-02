@@ -97,7 +97,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
     //Loop over all stages
 
-    for(int s = 1; s< 4; s++){
+    for(int s = 0; s< 4; s++){
 
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
@@ -276,7 +276,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             pottex.SetNDC();
             std::string pot_draw = data_file->topo_name+"    "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-            pottex.DrawLatex(.60,.64, pot_draw.c_str());
+            pottex.DrawLatex(.60,.55, pot_draw.c_str());
 
 
 
