@@ -461,30 +461,56 @@ int main (int argc, char *argv[]){
  * 1091: CC CCDIS 
  * 1092: NC NCDIS
  */
-    
-	std::vector<std::string> recomc_names = {
-	    "#nu_{#mu} CC QE",
-	    "#nu_{#mu} NC QE",
-	    "#nu_{#mu} CC Res. #pi^{+}",
-	    "#nu_{#mu} CC Res. #pi^{0}",
-	    "#nu_{#mu} NC Res. #pi^{-}",
-	    "#nu_{#mu} NC Res. #pi^{0}",
-	    "#nu_{#mu} CC DIS",
-	    "#nu_{#mu} NC DIS",
-	    "Other",
+	vector< vector <string> > recomc_list = {
+	   { "#nu_{#mu} CC QE"		, "mctruth_interaction_type==1001 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
+	   { "#nu_{#mu} NC QE"		, "mctruth_interaction_type==1002 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
+	   { "#nu_{#mu} CC Res. #pi^{+}", "(mctruth_interaction_type==1003 || mctruth_interaction_type==1005) && mctruth_nu_pdg==14 && mctruth_cc_or_nc"},
+	   { "#nu_{#mu} CC Res. #pi^{0}", "mctruth_interaction_type==1004 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
+	   { "#nu_{#mu} NC Res. #pi^{-}", "mctruth_interaction_type==1009 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
+	   { "#nu_{#mu} NC Res. #pi^{0}", "(mctruth_interaction_type==1006 || mctruth_interaction_type==1008) && mctruth_nu_pdg==14 && mctruth_cc_or_nc"},
+	   { "#nu_{#mu} CC DIS"		, "mctruth_interaction_type==1091 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
+	   { "#nu_{#mu} NC DIS"		, "mctruth_interaction_type==1092 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
 	};
+	
+	std::vector<std::string> recomc_names, recomc_cuts;
+	//prepare "others" category.
+	string recomc_other_cut = "!(";
 
-	std::vector<std::string> recomc_cuts = {//Look at number of hardrons && leptons only.
-	    "mctruth_interaction_type==1001 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0",
-	    "mctruth_interaction_type==1002 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1",
-	    "(mctruth_interaction_type==1003 || mctruth_interaction_type==1005) && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0",
-	    "mctruth_interaction_type==1004 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0",
-	    "mctruth_interaction_type==1009 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1",
-	    "(mctruth_interaction_type==1006 || mctruth_interaction_type==1008) && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1",
-	    "mctruth_interaction_type==1091 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0",
-	    "mctruth_interaction_type==1092 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1",
-	    "(mctruth_interaction_type<1001||mctruth_interaction_type==1007||mctruth_interaction_type>1009||mctruth_interaction_type<1091||mctruth_interaction_type>1092)&&mctruth_nu_pdg!=14",
-	};
+	for(int i=0; i<recomc_list.size(); i++){
+	recomc_names.push_back(recomc_list[i][0]);
+	recomc_cuts.push_back(recomc_list[i][1]);
+
+	if(i>0)recomc_other_cut+="||";
+	recomc_other_cut +="("+recomc_list[i][1] + ")";
+	}
+	recomc_other_cut += ")";
+
+	recomc_names.push_back("others");
+	recomc_cuts.push_back(recomc_other_cut);
+	
+//	std::vector<std::string> recomc_names = {
+//	    "#nu_{#mu} CC QE",
+//	    "#nu_{#mu} NC QE",
+//	    "#nu_{#mu} CC Res. #pi^{+}",
+//	    "#nu_{#mu} CC Res. #pi^{0}",
+//	    "#nu_{#mu} NC Res. #pi^{-}",
+//	    "#nu_{#mu} NC Res. #pi^{0}",
+//	    "#nu_{#mu} CC DIS",
+//	    "#nu_{#mu} NC DIS",
+//	    "Other",
+//	};
+//
+//	std::vector<std::string> recomc_cuts = {//Look at number of hardrons && leptons only.
+//	    "mctruth_interaction_type==1001 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0",
+//	    "mctruth_interaction_type==1002 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1",
+//	    "(mctruth_interaction_type==1003 || mctruth_interaction_type==1005) && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0",
+//	    "mctruth_interaction_type==1004 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0",
+//	    "mctruth_interaction_type==1009 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1",
+//	    "(mctruth_interaction_type==1006 || mctruth_interaction_type==1008) && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1",
+//	    "mctruth_interaction_type==1091 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0",
+//	    "mctruth_interaction_type==1092 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1",
+//	    "(mctruth_interaction_type<1001||mctruth_interaction_type==1007||mctruth_interaction_type>1009||mctruth_interaction_type<1091||mctruth_interaction_type>1092)&&mctruth_nu_pdg!=14",
+//	};
 
 	bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 

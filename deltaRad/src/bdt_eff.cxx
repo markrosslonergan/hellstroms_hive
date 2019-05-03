@@ -1,5 +1,7 @@
 #include "bdt_eff.h"
 #include "TGaxis.h"
+//#include "TGraphAsymmErrors.h"
+//#include "TEfficiency.h"
 using namespace std;
 
 bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts ,double c1, double c2, double plot_POT) : file(filein){
@@ -7,8 +9,9 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     double conversion = filein->scale_data*plot_POT/filein->pot;
     double n_starting_events = 0;//Number of golden signal, 1e1p events with any topologies.
     denominator = "";//Requirement that leads to n_starting_events - Number of golden signal.
-
-    std::cout<<"File has  "<<filein->GetEntries("1")*conversion<<" events when scaled to "<<plot_POT<<std::endl;
+    
+    double all_events = filein->GetEntries("1");//Save this for efficiency calculation.
+    std::cout<<"File has  "<<all_events*conversion<<" events when scaled to "<<plot_POT<<std::endl;
 
 
     for(int i=0; i<v_denomin.size();i++){
@@ -42,64 +45,64 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     }
     std::cout<<"So the DENOMINATOR + TOPOLOGICAL is "<<n_topo_events<<std::endl;
     std::cout<<"So total Pandora Reco Efficiency is "<<n_topo_events/n_starting_events*100.0<<"%"<<std::endl;
-    
+
     std::cout<<"-----------------------------------------"<<std::endl;
 
     std::string precuts = "";
     double n_precut_events = 0;//Number of 1e1p events with 1 reco_track and 1 reco_shower that pass through the pre-cuts.
     for(int i=0; i<v_precuts.size();i++){
-            std::cout<<" On precut: "<<v_precuts[i]<<std::endl;
-            if(i==0){
-                precuts = v_precuts[i];
-            }else{
-                precuts += "&&"+v_precuts[i];
-            }
-            double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
-            double tmp_events_just_this =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+v_precuts[i])*conversion;
-            std::cout<<"--- this file has: "<<tmp_events<<" which on its own is a ("<<tmp_events_just_this/n_topo_events*100.0<<"%) effect relative to topo"<<std::endl;
-            n_precut_events = tmp_events;
+	std::cout<<" On precut: "<<v_precuts[i]<<std::endl;
+	if(i==0){
+	    precuts = v_precuts[i];
+	}else{
+	    precuts += "&&"+v_precuts[i];
+	}
+	double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
+	double tmp_events_just_this =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+v_precuts[i])*conversion;
+	std::cout<<"--- this file has: "<<tmp_events<<" which on its own is a ("<<tmp_events_just_this/n_topo_events*100.0<<"%) effect relative to topo"<<std::endl;
+	n_precut_events = tmp_events;
     }
     std::cout<<"So the DENOMINATOR + TOPOLOGICAL + PRECUTS is "<<n_precut_events<<std::endl;
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_starting_events*100.0<<"% relative to denom"<<std::endl;
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_topo_events*100.0<<"% relative to topo"<<std::endl;
- 
+
     std::cout<<"-----------------------------------------"<<std::endl;
 
 
-//----- Below: INITIATE THE DENOMINATOR HERE BEFORE PERFORMING THE BDT CUT.. FOR the Efficiancy plot.
+    //----- Below: INITIATE THE DENOMINATOR HERE BEFORE PERFORMING THE BDT CUT.. FOR the Efficiancy plot.
     bdt_variable true_nue("mctruth_nu_E[0]","(15 , 0 , 1)","True Nue Energy [GeV]",true,"d");
-					    //(varaibles, signal_definition, name?,final POT?) 
+    //(varaibles, signal_definition, name?,final POT?) 
     //Use the following to check if the plot works well.
     //bdt_variable true_nue("mctruth_nu_E[0]","(1 , 0 , 1)","True Nue Energy [GeV]",true,"d");
 
     TH1* true_nue_denom = (TH1*) file->getTH1(true_nue, denominator, "True Nue Energy [Gev]", plot_POT);
 
-//----- Above: INITIATE THE DENOMINATOR HERE BEFORE PERFORMING THE BDT CUT.. FOR the Efficiancy plot.
+    //----- Above: INITIATE THE DENOMINATOR HERE BEFORE PERFORMING THE BDT CUT.. FOR the Efficiancy plot.
 
-    
+
     double stage_entries = 0;//cosmicBDT, BNBBDT
     double finaleff=0;
 
-	for(int s=2; s<4; s++){
-	    if(s==2) file->calcCosmicBDTEntryList(c1, c2);
-	    if(s==3) file->calcBNBBDTEntryList(c1, c2);
-	    file->setStageEntryList(s);
+    for(int s=2; s<4; s++){
+	if(s==2) file->calcCosmicBDTEntryList(c1, c2);
+	if(s==3) file->calcBNBBDTEntryList(c1, c2);
+	file->setStageEntryList(s);
 
-	    stage_entries = file->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
-	    finaleff=stage_entries/n_starting_events*100.0;
-	    std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to denom: "<<finaleff<<"%"<<std::endl;
-	    //std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to topo: "<<stage_entries/n_topo_events*100.0<<"%"<<std::endl;
-	    //std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to precuts: "<<stage_entries/n_precut_events*100.0<<"%"<<std::endl;
-	}
+	stage_entries = file->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
+	finaleff=stage_entries/n_starting_events*100.0;
+	std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to denom: "<<finaleff<<"%"<<std::endl;
+	//std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to topo: "<<stage_entries/n_topo_events*100.0<<"%"<<std::endl;
+	//std::cout<<"Stage: "<<s<<" "<<stage_entries<<" Efficiency relative to precuts: "<<stage_entries/n_precut_events*100.0<<"%"<<std::endl;
+    }
 
 
-//    bdt_file* filein;
-//    double n_starting_events = 0;//Number of golden signal, 1e1p events with any topologies.
-//    double n_topo_events = 0;    //Number of 1e1p events with 1 reco_track and 1 reco_shower.
-//    double n_precut_events = 0;  //Number of 1e1p events with 1 reco_track and 1 reco_shower that pass through the pre-cuts.
-//    double stage_entries = 0;    //cosmicBDT, BNBBDT
-//
-//--------------   Try to migrate the effciency plot here.
+    //    bdt_file* filein;
+    //    double n_starting_events = 0;//Number of golden signal, 1e1p events with any topologies.
+    //    double n_topo_events = 0;    //Number of 1e1p events with 1 reco_track and 1 reco_shower.
+    //    double n_precut_events = 0;  //Number of 1e1p events with 1 reco_track and 1 reco_shower that pass through the pre-cuts.
+    //    double stage_entries = 0;    //cosmicBDT, BNBBDT
+    //
+    //--------------   Try to migrate the effciency plot here.
 
 
     TFile * feff = new TFile("eff.1e1p.root","recreate");
@@ -113,33 +116,47 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
     TH1* true_nue_ratio = (TH1*)true_nue_numer->Clone("true_nue_ratio");
     true_nue_ratio->Divide(true_nue_denom);//numer/denom to get efficiency.
-//    true_nue_ratio->Divide(true_nue_numer);//CHECK 100% efficiency
+    //    true_nue_ratio->Divide(true_nue_numer);//CHECK 100% efficiency
     feff->cd();
     true_nue_ratio->Write();
-    
+
     //create canvas for drawing the plot
     TCanvas * c = new TCanvas();
     c->cd();
 
-////NOT Plotting denominator for now, because the efficiency is low.
-//
-// true_nue_denom->Scale(scale_factor);//true_nue_denom->Integral());//Scale to less than 100, share the "Efficiancy" axis. 
-//    true_nue_denom->SetFillStyle(3444);
-//    true_nue_denom->SetFillColor(kBlue-6);
-//    true_nue_denom->SetLineColor(kBlue-6);
-//    true_nue_denom->Draw("hist");//draw the events number, "same" means on the same plot.
-    
+    ////NOT Plotting denominator for now, because the efficiency is low.
+    //
+    // true_nue_denom->Scale(scale_factor);//true_nue_denom->Integral());//Scale to less than 100, share the "Efficiancy" axis. 
+    //    true_nue_denom->SetFillStyle(3444);
+    //    true_nue_denom->SetFillColor(kBlue-6);
+    //    true_nue_denom->SetLineColor(kBlue-6);
+    //    true_nue_denom->Draw("hist");//draw the events number, "same" means on the same plot.
+
     true_nue_ratio->SetLineColor(kBlack);
     true_nue_ratio->SetMarkerColor(kBlack);
     true_nue_ratio->SetLineWidth(2);
     true_nue_ratio->SetMarkerStyle(20);
-    true_nue_ratio->Scale(100);// change 1 -> 100 [%]
-    true_nue_ratio->GetYaxis()->SetTitle("Efficiency [%]");    
-    true_nue_ratio->SetTitle("Efficiency Respected to Truth Neutrino Nenergy");    
+    // true_nue_ratio->Scale(100);// change 1 -> 100 [%]
+    true_nue_ratio->GetYaxis()->SetTitle("Efficiency");    
+    true_nue_ratio->SetTitle("Efficiency Respected to True Neutrino Nenergy");    
+    //cout<<true_nue_ratio->GetSize()<<endl; //This works for TH1D class
+
+    for (int index = 1; index <= true_nue_ratio->GetNbinsX(); index++){
+	double bin_value = true_nue_ratio->GetBinContent(index);
+	double error_value = 1;
+	double bin_events = true_nue_numer->GetBinContent(index)/conversion;
+	if(bin_value!=0 && bin_value !=1 && bin_events !=0){
+	    error_value = sqrt(bin_value*(1-bin_value)/all_events);
+	}
+	true_nue_ratio->SetBinError(index, error_value);//Error_value); 
+    }
+
+
+    true_nue_ratio->SetMarkerStyle(20);
 
     double ratio_maximum = true_nue_ratio->GetBinContent(true_nue_ratio->GetMaximumBin()); 
     double numer_maximum = true_nue_numer->GetBinContent(true_nue_numer->GetMaximumBin()); 
-    
+
     //NOTE: change the forllowing for proper axis. Note that the GetMaximum will also change to some value that IS NOT THE REAL MAXIMUM VALUE of the data.
     //use true_nue_ratio->GetBinContent(true_nue_ratio->GetMaximumBin()) to get the real maximum.
     
@@ -147,9 +164,8 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     true_nue_ratio->SetMinimum(0);
     
     //This draw writes down the title and y-axis on the left.
-    true_nue_ratio->Draw("hist p");//draw the efficiency dot on top, "E1" contains error bar
-    
-
+   true_nue_ratio->Draw("hist p");//draw the efficiency dot on top, "E1" contains error bar
+ 
     double scale_factor = ratio_maximum/numer_maximum; //scale the maximum to 20%
     cout<<"Maximum numer: "<<true_nue_numer->GetMaximum()<<endl;
     true_nue_numer->Scale(scale_factor);//Scale the same amount as efficiency's maximum.
@@ -158,8 +174,18 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     true_nue_numer->SetLineColor(kRed-6);
     
     true_nue_numer->Draw("hist same");//draw the events number, "same" means on the same plot.
-    true_nue_ratio->Draw("hist p same");//draw the efficiency again to put the dot on top, "E1" contains error bar
-    //
+
+
+    true_nue_ratio->Draw("E1 same");//draw the efficiency again to put the dot on top, "E1" contains error bar
+
+    //Add Errors
+    //upper: error = sqrt[eff*(1-eff)/#events]
+//    TGraphAsymmErrors* gr = new TGraphAsymmErrors(true_nue_ratio);
+//    gr->Divide(true_nue_numer,true_nue_denom,"v");
+//    gr->Draw("P same");
+//    TEfficiency * Eff = new TEfficiency(*true_nue_denom, *true_nue_denom);
+//    Eff->Draw("P same");
+
     //The following right axis functions as visual aid only.
     c->Update();
     double rightmax = 1.5*numer_maximum;//this equivalent to call the value of 120% of the heighest bin.
