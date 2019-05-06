@@ -1,8 +1,9 @@
+
 <?xml version="1.0" ?>
 
 <!--General Precuts -->
-    <precut def ="reco_flash_total_pe_in_beamgate[0] > 20" name ="Optical Filter 20 PE"/>
-    <precut def = "(reco_vertex_x > 10 &amp;&amp; reco_vertex_x < 246 &amp;&amp; reco_vertex_y > -107 &amp;&amp; reco_vertex_y < 107 &amp;&amp; reco_vertex_z > 10 &amp;&amp; reco_vertex_z < 1026) " name = "Fiducial Vertex Cut" />
+<precut def ="reco_flash_total_pe_in_beamgate[0] > 20" name ="Optical Filter 20 PE"/>
+<precut def = "(reco_vertex_x > 10 &amp;&amp; reco_vertex_x < 246 &amp;&amp; reco_vertex_y > -107 &amp;&amp; reco_vertex_y < 107 &amp;&amp; reco_vertex_z > 10 &amp;&amp; reco_vertex_z < 1026) " name = "Fiducial Vertex Cut" />
 
 <!--Shower & Track Precuts -->
 <precut def = "reco_shower_energy_max[0]>0.02" name = "Shower Energy Cut" />
@@ -11,128 +12,150 @@
 <precut def = "reco_track_good_calo_best_plane[0]!=-1" name = "good calo plane track" />
 
 <!--Comsic BDT Training + Spectator Variables-->
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(24,0.15,0.75)">
-    <method type = "COSMIC" use = "yes">
-        <param>  NTrees=10 	</param>				
-        <param>  MinNodeSize=2.5% </param>				
-        <param>  BoostType=RealAdaBoost</param>
-        <param>  AdaBoostBeta=0.75 	</param>				
-        <param>  SeparationType=GiniIndex</param>				
-        <param>  UseBaggedBoost</param> 
-        <param>  BaggedSampleFraction=0.5	</param>				
-        <param>  nCuts=-1	</param>				
-        <param>  MaxDepth=3 	</param>				
-    </method>
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(26,0.15,0.75)">
+<method type = "COSMIC" use = "yes">
+<param>  NTrees=3000	        </param>		
+<param>  MinNodeSize=2.5%       </param>		
+<param>  BoostType=RealAdaBoost	    </param>
+<param>  AdaBoostBeta=0.25      </param>		
+<param>  SeparationType=GiniIndex   </param>		    
+<param>  UseBaggedBoost	        </param> 
+<param>  BaggedSampleFraction=0.5   </param>		    
+<param>  nCuts=-1	    </param>		    
+<param>  MaxDepth=2	    </param>		    
+</method>
 
-    <!-- Energies -->
-    <var def = "1/1*reco_shower_energy_max[0]/1000.0" binning = "(14,0,1)" unit = "Reconstructed Shower Energy [GeV]" type = "d" spectator = "false"/>
 
-    <var def = "2/2*reco_track_proton_kinetic_energy[0]" binning = "(48,0,2)" unit = "Reconstructed Track Kinetic Energy [GeV]" type = "d" spectator = "false" />
-    <var def = "3/3*reco_shower_energy_max[0]/1000.0+reco_track_proton_kinetic_energy[0]" binning = "(48,0,2)" unit = "DEMO Reconstructed Nue Energy [GeV]" type = "d" spectator = "true" />
-	
-    <var def = "4/4*(0.5*(2*(0.93957-0.04)*(reco_shower_energy_max[0]/1000)-(pow((0.93957-0.04),2)+(-pow(0.93827,2))))/((0.93957-0.04)-(reco_shower_energy_max[0]/1000)+(reco_shower_energy_max[0])/1000*reco_shower_dirz[0]))-reco_shower_energy_max[0]/1000+(reco_track_proton_kinetic_energy[0]+0.938272)-(0.93957-0.04)" binning = "(20,0,2)" unit = "QE_{#nu}^{QE}[e]-E^{range} [GeV]" type = "d" spectator = "false" />
 
-    <!-- Momentum -->
-    <var def = "5/5*0.5*(abs(reco_shower_diry[0]+reco_track_diry[0]))" binning = "(32,0,2)" unit = "Portion of Total Momentum Aligned to the y-direction" type = "d" spectator = "false" /> <!-- Cosmic Exclusive-->
 
-    <var def = "6/6*(sqrt(1-reco_track_dirz[0]*reco_track_dirz[0])*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+sqrt(1-reco_shower_dirz[0]*reco_shower_dirz[0])*reco_shower_energy_max[0]/1000)" binning = "(40,0,1.5)" unit = "Total Momentum Perpendicular to the z-direction [GeV]" type = "d" spectator = "false" /><!-- Cosmic Exclusive-->
-	
+<!-- Energies -->
+<var def = "mctruth_leading_exiting_proton_energy-0.93828" binning = "(48,0,1)" unit = "true proton energy [GeV]" type = "d" spectator = "true"/>
+<var def = "0+reco_shower_energy_max[0]/1000.0" binning = "(14,0,1)" unit = "Reconstructed Shower Energy [GeV]" type = "d" spectator = "false" />
+<var def = "0+reco_shower_energy_max[0]/1000.0" binning = "(14,0,1)" unit = "Reconstructed Shower Energy Log [GeV]" type = "d" spectator = "true" logplot = "true"/>
+<var def = "1/1*reco_track_proton_kinetic_energy[0]" binning = "(28,0,2)" unit = "Reconstructed Track Kinetic Energy [GeV]" type = "d" spectator = "true" />
 
-    <var def = "8/8*abs((reco_track_dirz[0]*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+reco_shower_dirz[0]*reco_shower_energy_max[0]/1000))" binning = "(30,0,2)" unit = "Total Momentum on beam-direction [GeV/c]" type = "d" spectator = "false" />
+<var def = "3/3*reco_shower_energy_max[0]/1000.0+reco_track_proton_kinetic_energy[0]" binning = "(48,0,2)" unit = "DEMO Reconstructed Nue Energy [GeV]" type = "d" spectator = "true" />
 
-    <var def = "9/9*((reco_track_dirz[0]*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+reco_shower_dirz[0]*reco_shower_energy_max[0]/1000)/(sqrt(1-reco_track_dirz[0]*reco_track_dirz[0])*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+sqrt(1-reco_shower_dirz[0]*reco_shower_dirz[0])*reco_shower_energy_max[0]/1000))" binning = "(30,0,8)" unit = "Ratio of Momentum on z-direction versus on xy-plane" type = "d" spectator = "false" />
-    <!-- Stopping Power -->
+<var def = "4/4*(0.5*(2*(0.93957-0.04)*(reco_shower_energy_max[0]/1000)-(pow((0.93957-0.04),2)+(-pow(0.93827,2))))/((0.93957-0.04)-(reco_shower_energy_max[0]/1000)+(reco_shower_energy_max[0])/1000*reco_shower_dirz[0]))-reco_shower_energy_max[0]/1000+(reco_track_proton_kinetic_energy[0]+0.938272)-(0.93957-0.04)" binning = "(20,0,2)" unit = "QE_{#nu}^{QE}[e]-E^{range} [GeV]" type = "d" spectator = "false" />
 
-    <var def = "10/10*(fabs(max(reco_track_mean_trunc_dEdx_start_half_best_plane[0],reco_track_mean_trunc_dEdx_end_half_best_plane[0])-reco_shower_dEdx_plane2_max[0]))" binning = "(30,-10,10)" unit =  "Difference of dE/dx btw a Track and a Shower v2 [MeV/cm]" type = "d" spectator = "false" />
-    <var def = "11/11*reco_track_trunc_PIDA[0]" binning = "(48,0,24)" unit = "Track PIDA" type = "d" spectator = "true" />
-    <var def = "12/12*(max( reco_track_mean_trunc_dEdx_start_half_best_plane[0], reco_track_mean_trunc_dEdx_end_half_best_plane[0]))" binning = "(48,0,24)" unit = "Track Edge Maximum dEdx" type = "d" spectator = "false" />
+<!-- Momentum -->
+<!-- Cosmic Exclusive-->
+<var def = "5/5*0.5*(abs(reco_shower_diry[0]+reco_track_diry[0]))" binning = "(32,0,2)" unit = "Portion of Total Momentum Aligned to the y-direction" type = "d" spectator = "false" /> 
+<!-- Cosmic Exclusive-->
+<var def = "6/6*sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Nue Transverse (YX) Momentum [GeV]" type = "d" spectator = "false"/>
 
-    <!-- Length -->
 
-    <var def = "13/13*abs(max(reco_track_displacement[0],reco_shower_length[0]))" binning = "(30,0,150)" unit = "Maximum Length of a Track or a Shower [cm]" type = "d" spectator = "false" />
 
-    <!-- Distance btw shower and track-->
+<var def = "7/7*abs((reco_track_dirz[0]*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+reco_shower_dirz[0]*reco_shower_energy_max[0]/1000))" binning = "(30,0,2)" unit = "Total Momentum on beam-direction [GeV/c]" type = "d" spectator = "false" />
 
-    <var def = "14/14*min(min(reco_track_endz[0]-reco_shower_startz[0],(reco_track_startz[0]-reco_shower_startz[0])),min(min(-reco_track_endy[0]+reco_shower_starty[0],(-reco_track_starty[0]+reco_shower_starty[0])),min(reco_track_endx[0]-reco_shower_startx[0],(reco_track_startx[0]-reco_shower_startx[0]))))" binning = "(50,-100,5)" unit = "A Track Ahead of a Shower (all-direction)[cm]" type = "d" spectator = "false" />
+<var def = "8/8*((reco_track_dirz[0]*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+reco_shower_dirz[0]*reco_shower_energy_max[0]/1000)/(sqrt(1-reco_track_dirz[0]*reco_track_dirz[0])*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+sqrt(1-reco_shower_dirz[0]*reco_shower_dirz[0])*reco_shower_energy_max[0]/1000))" binning = "(30,0,8)" unit = "Ratio of Momentum on z-direction versus on xy-plane" type = "d" spectator = "false" />
+<!-- Stopping Power -->
 
-    <!-- Others -->
-    <var def = "15/15*reco_shower_opening_angle[0]" binning = "(20,0,0.8)" unit = "Shower Opening Angle [rad]" type = "d" spectator = "false" />
-    <var def = "16/16*2*(reco_shower_length[0]*tan(reco_shower_opening_angle[0]/2))" binning = "(25,0,20)" unit = "Base Length of a Shower [cm]" type = "d" spectator = "false" />
+<var def = "9/9*reco_shower_dEdx_plane2_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane2 [mev/cm]" type="d" spectator="false"/>
+<var def = "10/10*(fabs(max(reco_track_mean_trunc_dEdx_start_half_best_plane[0],reco_track_mean_trunc_dEdx_end_half_best_plane[0])-reco_shower_dEdx_plane2_max[0]))" binning = "(30,0,15)" unit =  "Difference of dE/dx btw a Track and a Shower v2 [MeV/cm]" type = "d" spectator = "false" />
+<var def = "11/11*abs(reco_track_trunc_PIDA_best_plane[0]-10)" binning = "(28,0,24)" unit = "Track PIDA (respected to 10)" type = "d" spectator = "false" />
 
-    <var def = "17/17*min(reco_track_endz[0]-reco_shower_startz[0],(reco_track_startz[0]-reco_shower_startz[0]))" binning = "(50,-100,5)" unit =  "DEMO A Track Ahead of a Shower (z-direction)[cm]" type = "d" spectator = "true" />
-    <var def = "18/18*min(-reco_track_endy[0]+reco_shower_starty[0],(-reco_track_starty[0]+reco_shower_starty[0]))" binning = "(50,-100,5)" unit =  "DEMO A Track Ahead of a Shower (y-direction)[cm]" type = "d" spectator = "true" />
-    <var def = "19/19*min(reco_track_endx[0]-reco_shower_startx[0],(reco_track_startx[0]-reco_shower_startx[0]))" binning = "(50,-100,5)" unit =  "DEMO A Track Ahead of a Shower (x-direction)[cm]" type = "d" spectator = "true" />
-    <var def = "20/20*(0.5* (2* (0.93957-0.04)* (reco_shower_energy_max[0]/1000)-(pow((0.93957-0.04),2)+(-pow(0.93827,2))))/((0.93957-0.04)-(reco_shower_energy_max[0]/1000)+reco_shower_energy_max[0]/1000*reco_shower_dirz[0]))" binning = "(40,0,1)" unit =  "DEMO Nue QE [GeV]" type = "d" spectator = "true" />
-	    <!--P for precuts -->
-    <var def = "21/21*reco_flash_total_pe_in_beamgate[0]" binning = "(180,0,200)" unit =  "DEMOP Number of Photo-Electrons in Beam Gate" type = "d" spectator = "true" />
-    <var def = "22/22*reco_shower_energy_max[0]/1000" binning = "(40,0,1)" unit =  "DEMOP Reco. Shower Energy" type = "d" spectator = "true" />
-    <var def = "23/23*reco_track_displacement[0]" binning = "(80,-5,400)" unit =  "DEMOP Reco. Track Length" type = "d" spectator = "true" />
-    <var def = "24/24* reco_track_good_calo_best_plane[0]" binning = "(90,0,200)" unit =  "DEMOP Calometric hits of reco. Track" type = "d" spectator = "true" />
-    <var def = "25/25*reco_shower_dEdx_plane2_median[0]" binning = "(30,0,10)" unit =  "DEMOP Shower dE/dx the Median of a 2x4 Region[MeV/cm]" type = "d" spectator = "true" />
-    <var def = "26/26*(reco_shower_dEdx_plane2_nhits[0]>1)" binning = "(48,0,100)" unit = "DEMOP Shower dE/dx Plane Nhits" type = "d" spectator = "true"/>
+<var def = "13/13*abs((max( reco_track_mean_trunc_dEdx_start_half_best_plane[0], reco_track_mean_trunc_dEdx_end_half_best_plane[0])))" binning = "(48,0,24)" unit = "Track Edge Maximum dEdx [MeV/m]" type = "d" spectator = "false" />
+<!-- Length -->
+
+<var def = "14/14*reco_shower_length[0]" binning = "(24,0,100)" unit = "Shower Length [cm]" type = "d" spectator="false"/>
+<var def = "15/15*reco_track_displacement[0]" binning = "(14,0,300)" unit = "Track Displacement [cm]" type = "d" spectator = "false" />
+<var def = "16/16*abs(max(reco_track_displacement[0],reco_shower_length[0])-50)" binning = "(30,0,350)" unit = "Maximum Length of a Track or a Shower (respected to 50) [cm]" type = "d" spectator = "false" />
+<var def = "17/17*abs(max(reco_track_displacement[0],reco_shower_length[0]))" binning = "(30,0,350)" unit = "Maximum Length of a Track or a Shower [cm]" type = "d" spectator = "true" />
+
+<!-- Distance btw shower and track-->
+
+<var def = "18/18*min(min(reco_track_endz[0]-reco_shower_startz[0],(reco_track_startz[0]-reco_shower_startz[0])),min(min(-reco_track_endy[0]+reco_shower_starty[0],(-reco_track_starty[0]+reco_shower_starty[0])),min(reco_track_endx[0]-reco_shower_startx[0],(reco_track_startx[0]-reco_shower_startx[0]))))" binning = "(50,-100,5)" unit = "A Track Ahead of a Shower (all-direction)[cm]" type = "d" spectator = "false" />
+
+<!-- Others -->
+
+<var def =  "19/19*reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Reco. Shower Associated Slice Neutrino Score" type = "d" spectator = "false" />
+<var def = "20/20*reco_shower_opening_angle[0]" binning = "(20,0,0.8)" unit = "Shower Opening Angle [rad]" type = "d" spectator = "false" />
+<var def = "21/21*2*(reco_shower_length[0]*tan(reco_shower_opening_angle[0]/2))" binning = "(25,0,20)" unit = "Base Length of a Shower [cm]" type = "d" spectator = "false" />
+
+<var def = "100/100*min(reco_track_endz[0]-reco_shower_startz[0],(reco_track_startz[0]-reco_shower_startz[0]))" binning = "(50,-100,5)" unit =  "DEMO A Track Ahead of a Shower (z-direction)[cm]" type = "d" spectator = "true" />
+<var def = "101/101*min(-reco_track_endy[0]+reco_shower_starty[0],(-reco_track_starty[0]+reco_shower_starty[0]))" binning = "(50,-100,5)" unit =  "DEMO A Track Ahead of a Shower (y-direction)[cm]" type = "d" spectator = "true" />
+<var def = "102/102*min(reco_track_endx[0]-reco_shower_startx[0],(reco_track_startx[0]-reco_shower_startx[0]))" binning = "(50,-100,5)" unit =  "DEMO A Track Ahead of a Shower (x-direction)[cm]" type = "d" spectator = "true" />
+<var def = "103/103*(0.5* (2* (0.93957-0.04)* (reco_shower_energy_max[0]/1000)-(pow((0.93957-0.04),2)+(-pow(0.93827,2))))/((0.93957-0.04)-(reco_shower_energy_max[0]/1000)+reco_shower_energy_max[0]/1000*reco_shower_dirz[0]))" binning = "(40,0,1)" unit =  "DEMO Nue QE [GeV]" type = "d" spectator = "true" />
+<!--P for precuts -->
+<var def = "104/104*reco_flash_total_pe_in_beamgate[0]" binning = "(10,0,200)" unit =  "DEMOP Number of Photo-Electrons in Beam Gate" type = "d" spectator = "true" />
+<var def = "105/105*reco_shower_energy_max[0]/1000" binning = "(40,0,1)" unit =  "DEMOP Reco. Shower Energy" type = "d" spectator = "true" />
+<var def = "106/106*reco_track_displacement[0]" binning = "(80,-5,400)" unit =  "DEMOP Reco. Track Length" type = "d" spectator = "true" />
+<var def = "107/107* reco_track_good_calo_best_plane[0]" binning = "(120,0,200)" unit =  "DEMOP Calometric hits of reco. Track" type = "d" spectator = "true" />
+<var def = "108/108*reco_shower_dEdx_plane2_median[0]" binning = "(30,0,10)" unit =  "DEMOP Shower dE/dx the Median of a 2x4 Region[MeV/cm]" type = "d" spectator = "true" />
+<var def = "109/109*reco_shower_dEdx_plane2_nhits[0]" binning = "(28,0,10)" unit = "DEMOP Shower dE/dx Plane Nhits" type = "d" spectator = "true"/>
+
+</mva>
+
+<mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(26,0.25,0.66)">
+<method type = "BNB" use = "yes">
+<param>  NTrees=3200   </param>		    
+<param>  MinNodeSize=2.5% </param>		
+<param>  BoostType=RealAdaBoost</param>
+<param>  AdaBoostBeta=0.38	    </param>		    
+<param>  SeparationType=GiniIndex   </param>		
+<param>  UseBaggedBoost</param> 
+<param>  BaggedSampleFraction=0.5	</param>		
+<param>  nCuts=-1	</param>		
+<param>  MaxDepth=2	    </param>		    
+</method>
+
+<!-- Energies -->
+<var def = "0+reco_shower_energy_max[0]/1000.0" binning = "(14,0,1.0)" unit = "Reconstructed Shower Energy [GeV]" type = "d" spectator = "false" />
+<var def = "0+reco_shower_energy_max[0]/1000.0" binning = "(14,0,1.0)" unit = "Reconstructed Shower Energy Log [GeV]" type = "d" spectator = "true" logplot = "true"/>
+
+<var def = "1/1*reco_track_proton_kinetic_energy[0]" binning = "(28,0,2)" unit = "Reconstructed Track Kinetic Energy [GeV]" type = "d" spectator = "false" />
+<var def = "100/100*reco_shower_energy_max[0]/1000.0+reco_track_proton_kinetic_energy[0]" binning = "(48,0,2)" unit = "DEMO Reconstructed Nue Energy [GeV]" type = "d" spectator = "true" />
+
+<var def = "2/2*(0.5*(2*(0.93957-0.04)*(reco_shower_energy_max[0]/1000)-(pow((0.93957-0.04),2)+(-pow(0.93827,2))))/((0.93957-0.04)-(reco_shower_energy_max[0]/1000)+(reco_shower_energy_max[0])/1000*reco_shower_dirz[0]))-reco_shower_energy_max[0]/1000+(reco_track_proton_kinetic_energy[0]+0.938272)-(0.93957-0.04)" binning = "(20,0,2)" unit = "QE_{#nu}^{QE}[e]-E^{range} [GeV]" type = "d" spectator = "false" />
+
+<!-- Momentum -->
+<!-- Cosmic Exclusive-->
+
+<!-- Cosmic Exclusive-->
+<var def = "101/101*0.5*(abs(reco_shower_diry[0]+reco_track_diry[0]))" binning = "(32,0,2)" unit = "Portion of Total Momentum Aligned to the y-direction" type = "d" spectator = "true" /> 
+
+<!-- Cosmic Exclusive-->
+<var def = "102/102*(sqrt(1-reco_track_dirz[0]*reco_track_dirz[0])*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+sqrt(1-reco_shower_dirz[0]*reco_shower_dirz[0])*reco_shower_energy_max[0]/1000)" binning = "(40,0,1.5)" unit = "Total Momentum Perpendicular to the z-direction [GeV]" type = "d" spectator = "true" />
+
+<var def = "3/3*(reco_track_dirz[0]*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+reco_shower_dirz[0]*reco_shower_energy_max[0]/1000)" binning = "(24,-2,2)" unit = "Reconstructed Neutrino Momentum Z [GeV]" type = "d" spectator = "false" /> 
+
+<var def = "5/5*((reco_track_dirz[0]*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+reco_shower_dirz[0]*reco_shower_energy_max[0]/1000)/(sqrt(1-reco_track_dirz[0]*reco_track_dirz[0])*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+sqrt(1-reco_shower_dirz[0]*reco_shower_dirz[0])*reco_shower_energy_max[0]/1000))" binning = "(30,0,8)" unit = "Ratio of Momentum on z-direction versus on xy-plane" type = "d" spectator = "false" />
+<!-- Stopping Power -->
+
+<var def = "6/6*(fabs(max(reco_track_mean_trunc_dEdx_start_half_best_plane[0],reco_track_mean_trunc_dEdx_end_half_best_plane[0])-reco_shower_dEdx_plane2_max[0]))" binning = "(30,0,15)" unit =  "Difference of dE/dx btw a Track and a Shower v2 [MeV/cm]" type = "d" spectator = "false" />
+<var def = "7/7*abs(reco_track_trunc_PIDA_best_plane[0]-10)" binning = "(28,0,24)" unit = "Track PIDA (respected to 10)" type = "d" spectator = "false" />
+
+<var def = "8/8*reco_shower_dEdx_plane2_median[0]" binning = "(24,0,6.5)" unit = "Median shower de/dx plane 2 [mev/cm]" type="d" spectator="false"/>
+
+<var def = "9/9*reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(24,0,12)" unit = "Truncated Mean Track dE/dx Best Plane [MeV/cm]" type = "d" spectator = "false"/>
+<!-- Length -->
+
+<var def = "10/10*abs(max(reco_track_displacement[0],reco_shower_length[0])-50)" binning = "(30,0,350)" unit = "Maximum Length of a Track or a Shower (respected to 50) [cm]" type = "d" spectator = "false" />
+<var def = "103/103*abs(max(reco_track_displacement[0],reco_shower_length[0]))" binning = "(30,0,350)" unit = "Maximum Length of a Track or a Shower [cm]" type = "d" spectator = "true" />
+<var def = "104/104*reco_shower_length[0]" binning = "(30,0,350)" unit = " Length of a Shower [cm]" type = "d" spectator = "true" />
+
+<!-- Distance btw shower and track-->
+
+<var def = "14/14*min(min(reco_track_endz[0]-reco_shower_startz[0],(reco_track_startz[0]-reco_shower_startz[0])),min(min(-reco_track_endy[0]+reco_shower_starty[0],(-reco_track_starty[0]+reco_shower_starty[0])),min(reco_track_endx[0]-reco_shower_startx[0],(reco_track_startx[0]-reco_shower_startx[0]))))" binning = "(50,-100,5)" unit = "A Track Ahead of a Shower (all-direction)[cm]" type = "d" spectator = "false" />
+
+<!-- Others -->
+<var def = "15/15*reco_shower_opening_angle[0]" binning = "(20,0,0.8)" unit = "Shower Opening Angle [rad]" type = "d" spectator = "false" />
+<var def = "16/16*2*(reco_shower_length[0]*tan(reco_shower_opening_angle[0]/2))" binning = "(25,0,20)" unit = "Base Length of a Shower [cm]" type = "d" spectator = "false" />
+
+<var def = "17/17*min(reco_track_endz[0]-reco_shower_startz[0],(reco_track_startz[0]-reco_shower_startz[0]))" binning = "(50,-100,5)" unit =  "DEMO A Track Ahead of a Shower (z-direction)[cm]" type = "d" spectator = "true" />
+<var def = "18/18*min(-reco_track_endy[0]+reco_shower_starty[0],(-reco_track_starty[0]+reco_shower_starty[0]))" binning = "(50,-100,5)" unit =  "DEMO A Track Ahead of a Shower (y-direction)[cm]" type = "d" spectator = "true" />
+<var def = "19/19*min(reco_track_endx[0]-reco_shower_startx[0],(reco_track_startx[0]-reco_shower_startx[0]))" binning = "(50,-100,5)" unit =  "DEMO A Track Ahead of a Shower (x-direction)[cm]" type = "d" spectator = "true" />
+<var def = "20/20*(0.5* (2* (0.93957-0.04)* (reco_shower_energy_max[0]/1000)-(pow((0.93957-0.04),2)+(-pow(0.93827,2))))/((0.93957-0.04)-(reco_shower_energy_max[0]/1000)+reco_shower_energy_max[0]/1000*reco_shower_dirz[0]))" binning = "(40,0,1)" unit =  "DEMO Nue QE [GeV]" type = "d" spectator = "true" />
+<!--P for precuts -->
+<var def = "21/21*reco_flash_total_pe_in_beamgate[0]" binning = "(10,0,200)" unit =  "DEMOP Number of Photo-Electrons in Beam Gate" type = "d" spectator = "true" />
+<var def = "22/22*reco_shower_energy_max[0]/1000" binning = "(40,0,1)" unit =  "DEMOP Reco. Shower Energy" type = "d" spectator = "true" />
+<var def = "23/23*reco_track_displacement[0]" binning = "(80,-5,400)" unit =  "DEMOP Reco. Track Length" type = "d" spectator = "true" />
+<var def = "24/24* reco_track_good_calo_best_plane[0]" binning = "(120,0,200)" unit =  "DEMOP Calometric hits of reco. Track" type = "d" spectator = "true" />
+<var def = "25/25*reco_shower_dEdx_plane2_median[0]" binning = "(30,0,10)" unit =  "DEMOP Shower dE/dx the Median of a 2x4 Region[MeV/cm]" type = "d" spectator = "true" />
+<var def = "26/26*reco_shower_dEdx_plane2_nhits[0]" binning = "(28,0,10)" unit = "DEMOP Shower dE/dx Plane Nhits" type = "d" spectator = "true"/>
 
 </mva>
 
-<mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(24,0.25,0.68)">
-    <method type = "BNB" use = "yes">
-        <param>  NTrees=10 	</param>				
-        <param>  MinNodeSize=2.5% </param>				
-        <param>  BoostType=RealAdaBoost</param>
-        <param>  AdaBoostBeta=0.75 	</param>				
-        <param>  SeparationType=GiniIndex</param>				
-        <param>  UseBaggedBoost</param> 
-        <param>  BaggedSampleFraction=0.5	</param>				
-        <param>  nCuts=-1	</param>				
-        <param>  MaxDepth=3 	</param>				
-    </method>
-    <!-- Energies -->
-    <var def = "1/1*reco_shower_energy_max[0]/1000.0" binning = "(48,0,2)" unit = "Reconstructed Shower Energy [GeV]" type = "d" spectator = "false" />
-
-    <var def = "2/2*reco_track_proton_kinetic_energy[0]" binning = "(48,0,2)" unit = "Reconstructed Track Kinetic Energy [GeV]" type = "d" spectator = "false" />
-    <var def = "3/3*reco_shower_energy_max[0]/1000.0+reco_track_proton_kinetic_energy[0]" binning = "(48,0,2)" unit = "DEMO Reconstructed Nue Energy [GeV]" type = "d" spectator = "true" />
-	
-    <var def = "4/4*(0.5*(2*(0.93957-0.04)*(reco_shower_energy_max[0]/1000)-(pow((0.93957-0.04),2)+(-pow(0.93827,2))))/((0.93957-0.04)-(reco_shower_energy_max[0]/1000)+(reco_shower_energy_max[0])/1000*reco_shower_dirz[0]))-reco_shower_energy_max[0]/1000+(reco_track_proton_kinetic_energy[0]+0.938272)-(0.93957-0.04)" binning = "(20,0,2)" unit = "QE_{#nu}^{QE}[e]-E^{range} [GeV]" type = "d" spectator = "false" />
-
-    <!-- Momentum -->
-	<!-- Cosmic Exclusive-->
-    <var def = "5/5*0.5*(abs(reco_shower_diry[0]+reco_track_diry[0]))" binning = "(32,0,2)" unit = "Portion of Total Momentum Aligned to the y-direction" type = "d" spectator = "true" /> 
-	
-	<!-- Cosmic Exclusive-->
-    <var def = "6/6*(sqrt(1-reco_track_dirz[0]*reco_track_dirz[0])*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+sqrt(1-reco_shower_dirz[0]*reco_shower_dirz[0])*reco_shower_energy_max[0]/1000)" binning = "(40,0,1.5)" unit = "Total Momentum Perpendicular to the z-direction [GeV]" type = "d" spectator = "true" />
-	
-
-    <var def = "8/8*abs((reco_track_dirz[0]*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+reco_shower_dirz[0]*reco_shower_energy_max[0]/1000))" binning = "(30,0,2)" unit = "Total Momentum on beam-direction [GeV/c]" type = "d" spectator = "false" />
-
-    <var def = "9/9*((reco_track_dirz[0]*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+reco_shower_dirz[0]*reco_shower_energy_max[0]/1000)/(sqrt(1-reco_track_dirz[0]*reco_track_dirz[0])*sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-pow(0.938272,2))+sqrt(1-reco_shower_dirz[0]*reco_shower_dirz[0])*reco_shower_energy_max[0]/1000))" binning = "(30,0,8)" unit = "Ratio of Momentum on z-direction versus on xy-plane" type = "d" spectator = "false" />
-    <!-- Stopping Power -->
-
-    <var def = "10/10*(fabs(max(reco_track_mean_trunc_dEdx_start_half_best_plane[0],reco_track_mean_trunc_dEdx_end_half_best_plane[0])-reco_shower_dEdx_plane2_max[0]))" binning = "(30,-10,10)" unit =  "Difference of dE/dx btw a Track and a Shower v2 [MeV/cm]" type = "d" spectator = "false" />
-    <var def = "11/11*reco_track_trunc_PIDA[0]" binning = "(48,0,24)" unit = "Track PIDA" type = "d" spectator = "true" />
-    <var def = "12/12*(max( reco_track_mean_trunc_dEdx_start_half_best_plane[0], reco_track_mean_trunc_dEdx_end_half_best_plane[0]))" binning = "(48,0,24)" unit = "Track Edge Maximum dEdx" type = "d" spectator = "false" />
-    <!-- Length -->
-
-    <var def = "13/13*abs(max(reco_track_displacement[0],reco_shower_length[0]))" binning = "(30,0,150)" unit = "Maximum Length of a Track or a Shower [cm]" type = "d" spectator = "false" />
-
-    <!-- Distance btw shower and track-->
-
-    <var def = "14/14*min(min(reco_track_endz[0]-reco_shower_startz[0],(reco_track_startz[0]-reco_shower_startz[0])),min(min(-reco_track_endy[0]+reco_shower_starty[0],(-reco_track_starty[0]+reco_shower_starty[0])),min(reco_track_endx[0]-reco_shower_startx[0],(reco_track_startx[0]-reco_shower_startx[0]))))" binning = "(50,-100,5)" unit = "A Track Ahead of a Shower (all-direction)[cm]" type = "d" spectator = "false" />
-
-    <!-- Others -->
-    <var def = "15/15*reco_shower_opening_angle[0]" binning = "(20,0,0.8)" unit = "Shower Opening Angle [rad]" type = "d" spectator = "false" />
-    <var def = "16/16*2*(reco_shower_length[0]*tan(reco_shower_opening_angle[0]/2))" binning = "(25,0,20)" unit = "Base Length of a Shower [cm]" type = "d" spectator = "false" />
-
-    <var def = "17/17*min(reco_track_endz[0]-reco_shower_startz[0],(reco_track_startz[0]-reco_shower_startz[0]))" binning = "(50,-100,5)" unit =  "DEMO A Track Ahead of a Shower (z-direction)[cm]" type = "d" spectator = "true" />
-    <var def = "18/18*min(-reco_track_endy[0]+reco_shower_starty[0],(-reco_track_starty[0]+reco_shower_starty[0]))" binning = "(50,-100,5)" unit =  "DEMO A Track Ahead of a Shower (y-direction)[cm]" type = "d" spectator = "true" />
-    <var def = "19/19*min(reco_track_endx[0]-reco_shower_startx[0],(reco_track_startx[0]-reco_shower_startx[0]))" binning = "(50,-100,5)" unit =  "DEMO A Track Ahead of a Shower (x-direction)[cm]" type = "d" spectator = "true" />
-    <var def = "20/20*(0.5* (2* (0.93957-0.04)* (reco_shower_energy_max[0]/1000)-(pow((0.93957-0.04),2)+(-pow(0.93827,2))))/((0.93957-0.04)-(reco_shower_energy_max[0]/1000)+reco_shower_energy_max[0]/1000*reco_shower_dirz[0]))" binning = "(40,0,1)" unit =  "DEMO Nue QE [GeV]" type = "d" spectator = "true" />
-	    <!--P for precuts -->
-    <var def = "21/21*reco_flash_total_pe_in_beamgate[0]" binning = "(180,0,200)" unit =  "DEMOP Number of Photo-Electrons in Beam Gate" type = "d" spectator = "true" />
-    <var def = "22/22*reco_shower_energy_max[0]/1000" binning = "(40,0,1)" unit =  "DEMOP Reco. Shower Energy" type = "d" spectator = "true" />
-    <var def = "23/23*reco_track_displacement[0]" binning = "(80,-5,400)" unit =  "DEMOP Reco. Track Length" type = "d" spectator = "true" />
-    <var def = "24/24* reco_track_good_calo_best_plane[0]" binning = "(90,0,200)" unit =  "DEMOP Calometric hits of reco. Track" type = "d" spectator = "true" />
-    <var def = "25/25*reco_shower_dEdx_plane2_median[0]" binning = "(30,0,10)" unit =  "DEMOP Shower dE/dx the Median of a 2x4 Region[MeV/cm]" type = "d" spectator = "true" />
-    <var def = "26/26*(reco_shower_dEdx_plane2_nhits[0]>1)" binning = "(48,0,100)" unit = "DEMOP Shower dE/dx Plane Nhits" type = "d" spectator = "true"/>
-
-</mva>
 
 
