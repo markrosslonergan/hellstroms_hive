@@ -408,14 +408,14 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
             std::string pot_draw = this->stack[0]->topo_name+"        "+to_string_prec(plot_pot/1e20,1)+"e20 POT";
 
            //pottex.DrawLatex(.60,.64, pot_draw.c_str());
-            pottex.DrawLatex(.50,.69, pot_draw.c_str());
+            pottex.DrawLatex(.50,.58, pot_draw.c_str());
 
 			TText *tbdt2 = drawPrelim(0.11,0.91,0.035,"MicroBooNE Simulation - In Progress");
 			tbdt2->Draw();
 
 
 			//TText *titbdt2 = drawPrelim(0.91, 0.91, 0.035, stage_names.at(s).c_str());
-			TText *titbdt2 = drawPrelim(0.50, 0.6, 0.045, stage_names.at(s).c_str());
+			TText *titbdt2 = drawPrelim(0.50, 0.48, 0.045, stage_names.at(s).c_str());
 			titbdt2->SetTextAlign(10);
 			titbdt2->Draw();
 

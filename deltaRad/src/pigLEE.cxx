@@ -164,6 +164,7 @@ int main (int argc, char *argv[]){
     std::string training_bkg_cut = "sim_shower_overlay_fraction[0]<1. && sim_shower_overlay_fraction[1]<1. && !(sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111)";
     std::string num_track_cut;
 
+
     // Fiducial volume definition
     std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
     std::string pmass = "0.938272";
@@ -171,6 +172,10 @@ int main (int argc, char *argv[]){
 
     // MC-truth signal cuts
     std::vector<std::string> v_denom;
+
+    // Keng's and Kathryn's signal definitions
+    std::string nue_definition = "abs(mctruth_nu_pdg)==12 && (mctruth_num_exiting_pi0+mctruth_num_exiting_pipm) == 0 && mctruth_leading_exiting_proton_energy-0.93828>0.04==1 && mctruth_lepton_E[0]>0.02 && "+fid_cut;
+    std::string deltarad_definition = "mctruth_cc_or_nc == 1 && mctruth_is_delta_radiative==1 && mctruth_num_exiting_pi0==0 && mctruth_exiting_photon_energy > 0.02 && mctruth_leading_exiting_proton_energy > "+pmass+"+0.04 && "+fid_cut;
 
     if(analysis_tag == "2g1p"){
         training_signal_cut = training_signal_cut+ "&& sim_track_overlay_fraction[0]< 1.";
@@ -218,11 +223,13 @@ int main (int argc, char *argv[]){
     //***************************************************************************************************/
     std::cout<<"Defining all out bdt_flows."<<std::endl;
     bdt_flow signal_training_flow(topological_cuts,signal_definition +"&&"+ training_signal_cut,vec_precuts,postcuts,cosmic_bdt_info,bnb_bdt_info);
-    bdt_flow signal_other_flow(topological_cuts, 	"!("+signal_definition +")", 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow signal_other_flow(topological_cuts, "!("+signal_definition +")", vec_precuts, postcuts, cosmic_bdt_info, bnb_bdt_info);
 
     bdt_flow signal_flow(topological_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_flow(topological_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_training_flow(topological_cuts,	background_definition+"&&"+ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow nue_bkg_flow(topological_cuts,	nue_definition,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow deltarad_bkg_flow(topological_cuts,	deltarad_definition,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
     bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
@@ -244,8 +251,9 @@ int main (int argc, char *argv[]){
     bdt_file *dirt = new bdt_file(dirv10,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
     // NC deltaRad and LEE files, for blindness checks
-    bdt_file *deltarad = new bdt_file(dirv10,"ncdeltarad_overlay_v10.1.root","NCDeltaRad","hist","singlephoton/", kAzure+1, bkg_flow);
-    bdt_file *nue = new bdt_file(dirv10,"nueintrinsic_overlay_v10.0.root","LEENuE","hist","singlephoton/", kBlue-3, bkg_flow);
+    bdt_file *deltarad = new bdt_file(dirv10,"ncdeltarad_overlay_v10.1.root","NCDeltaRad","hist","singlephoton/", kAzure+1, deltarad_bkg_flow);
+    deltarad->scale_data = 3.0; // Factor of 3 for LEE sensitivity 
+    bdt_file *nue = new bdt_file(dirv10,"nueintrinsic_overlay_v10.0.root","LEENuE","hist","singlephoton/", kBlue-3, nue_bkg_flow);
 
     //nue->weight_branch ="(lee_signal_weights.lee_weights)";
     //nue->tvertex->AddFriend("lee_signal_weights",(dir+"lee_weights_friend_for_nueintrinsic_overlay_v10.0.root").c_str());
@@ -428,7 +436,7 @@ int main (int argc, char *argv[]){
 
 
         TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-        std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
+        std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData, deltarad, nue, dirt}, cosmic_bdt_info, bnb_bdt_info);
         //std::vector<double> ans = lin_scan({signal}, {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
         std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
@@ -513,6 +521,7 @@ int main (int argc, char *argv[]){
         if(!response_only){
             if(number != -1){
                 bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
+                //bdt_datamc datamc(OffBeamData, histogram_stack, analysis_tag+"_datamc");	
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
 

@@ -487,7 +487,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
     //std::vector<std::string> stage_name = {"Topological Selection","","Cosmic BDT Cut","BNB BDT Cut"};
 
 
-    for(int k = 1; k<2; k++){
+    for(int k = 0; k<2; k++){
         std::cout << "[PLOTBDTSTACKS:] On stage " << k << std::endl;
         TCanvas *cobs = new TCanvas("","",900,800);
         //cobs->cd(k+1);
