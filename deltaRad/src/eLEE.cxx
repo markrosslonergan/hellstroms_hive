@@ -419,7 +419,7 @@ int main (int argc, char *argv[]){
 	}
 
 
-	if(false){//This section is used to search evetns that pass through BDTs
+	if(true){//This section is used to search evetns that pass through BDTs
 	    for(auto &f: bdt_files){
 		std::cout<<"\nLooking for events that pass cosmiccut in "<< f->tag << std::endl;
 		std::string cosmiccut = f->getStageCuts(2, fcoscut, -9);
@@ -539,7 +539,6 @@ int main (int argc, char *argv[]){
 	bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
 	TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-	number = 0;//use this to make less plot.
 	if(!response_only){
 	    int h=0;
 
@@ -698,7 +697,7 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
 
-                //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
+                datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
 
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};

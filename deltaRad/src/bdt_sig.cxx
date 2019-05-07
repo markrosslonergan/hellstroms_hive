@@ -37,7 +37,7 @@ which for v3.0_with calo is 2.38091e+21
 std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt){
 
 
-    bool quick_search = false;//use the original detail search via false value;
+    bool quick_search = true;//use the original detail search via false value;
     //the if statement is the old program; change quick_search to enable it.
     if(!quick_search){//Scan significance steps by steps
 
