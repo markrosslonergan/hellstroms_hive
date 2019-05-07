@@ -19,6 +19,7 @@
 #include "bdt_spec.h"
 #include "bdt_eff.h"
 #include "bdt_test.h"
+#include "TTreePlayer.h"
 #include <sys/stat.h>
 
 using namespace std;
@@ -422,22 +423,22 @@ int main (int argc, char *argv[]){
 	    for(auto &f: bdt_files){
 		std::cout<<"\nLooking for events that pass cosmiccut in "<< f->tag << std::endl;
 		std::string cosmiccut = f->getStageCuts(2, fcoscut, -9);
-		if(f->tag.compare(0,10,"BNBCosmics",0,10) == 0 ||
-		f->tag.compare(0,13,"IntimeCosmics",0,13) == 0){ 
+		if(f->tag.compare(0,11,"BNBOverlays",0,11) == 0){
 //		    f->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_helper_energy[0]:reco_track_displacement[0]", cosmiccut.c_str());
-		    f->tvertex->Scan("run_number:subrun_number:event_number:interaction_type:nu_pdg:lep_pdg:exiting_proton_number:exiting_electron_number:exiting_muon_number:exiting_piplus_number:exiting_pi0_number", cosmiccut.c_str());
+//		    f->tvertex->Scan("run_number:subrun_number:event_number:mctruth_interaction_type:mctruth_nu_pdg", cosmiccut.c_str());
 
 		}else{
 		    std::cout<<"Skip this file."<< std::endl;
 		}
 	    }
 	    for(auto &f: bdt_files){
-		std::cout<<"\nLooking for events that pass bnbcut in "<< f->tag << std::endl;
+		std::cout<<"\nLooking for events that pass both cuts in "<< f->tag << std::endl;
 		std::string bnbcut = f->getStageCuts(3, fcoscut, fbnbcut);
-		if(f->tag.compare(0,10,"BNBCosmics",0,10) == 0 ||
-		f->tag.compare(0,13,"IntimeCosmics",0,13) == 0){ 
+		if(f->tag.compare(0,11,"BNBOverlays",0,11) == 0){
 //		    f->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_helper_energy[0]:reco_track_displacement[0]",bnbcut.c_str());
-		    f->tvertex->Scan("run_number:subrun_number:event_number:nu_pdg:interaction_type:lep_pdg:exiting_electron_number:exiting_muon_number:exiting_piplus_number:exiting_pi0_number", bnbcut.c_str());
+			((TTreePlayer*)(f->tvertex->GetPlayer()))->SetScanRedirect(true); 
+			((TTreePlayer*)(f->tvertex->GetPlayer()))->SetScanFileName("Sneaky_Events.txt"); 
+		    f->tvertex->Scan("run_number:subrun_number:event_number:mctruth_interaction_type:mctruth_nu_pdg:mctruth_cc_or_nc:mctruth_mode", bnbcut.c_str());
 		}else{
 		    std::cout<<"Skip this file."<< std::endl;
 		}
@@ -448,7 +449,9 @@ int main (int argc, char *argv[]){
 
 	std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7, kOrange-3, kGreen+1 ,kGray};
 
-/*Reference of interaction type:
+/* https://nusoft.fnal.gov/larsoft/doxsvn/html/MCNeutrino_8h_source.html;
+ *
+ * Reference of interaction type:
  * 1000: CC Nuance Offset
  * 1001: CC CCQE
  * 1002: NC NCQE 
@@ -460,18 +463,39 @@ int main (int argc, char *argv[]){
  * 1009: NC ResNCNuNeutronPiMinus 
  * 1091: CC CCDIS 
  * 1092: NC NCDIS
+ * check this: https://github.com/LArbys/LArCV/wiki/ROI-Interaction-Information-Codes
+ *
+ * Refernce of mctruth_mode:
+ * 0: QE
+ * 1: Res
+ * 2: DIS
+ * 3: Coh
+ * 10:??
+ * 
  */
+
 	vector< vector <string> > recomc_list = {
-	   { "#nu_{#mu} CC QE"		, "mctruth_interaction_type==1001 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
-	   { "#nu_{#mu} NC QE"		, "mctruth_interaction_type==1002 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
-	   { "#nu_{#mu} CC Res. #pi^{+}", "(mctruth_interaction_type==1003 || mctruth_interaction_type==1005) && mctruth_nu_pdg==14 && mctruth_cc_or_nc"},
-	   { "#nu_{#mu} CC Res. #pi^{0}", "mctruth_interaction_type==1004 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
-	   { "#nu_{#mu} NC Res. #pi^{-}", "mctruth_interaction_type==1009 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
-	   { "#nu_{#mu} NC Res. #pi^{0}", "(mctruth_interaction_type==1006 || mctruth_interaction_type==1008) && mctruth_nu_pdg==14 && mctruth_cc_or_nc"},
-	   { "#nu_{#mu} CC DIS"		, "mctruth_interaction_type==1091 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
-	   { "#nu_{#mu} NC DIS"		, "mctruth_interaction_type==1092 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
+	   { "#nu_{#mu} CC Coh"	, "mctruth_mode==3  && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
+	   { "#nu_{#mu} NC Coh"	, "mctruth_mode==3  && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
+	   { "#nu_{#mu} CC QE"	, "mctruth_mode==0  && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
+	   { "#nu_{#mu} NC QE"	, "mctruth_mode==0  && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
+	   { "#nu_{#mu} CC Res.", "mctruth_mode==1  && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
+	   { "#nu_{#mu} NC Res.", "mctruth_mode==1  && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
+	   { "#nu_{#mu} DIS"	, "mctruth_mode==2  && mctruth_nu_pdg==14"},
+	   { "#nu_{#mu} MEC"	, "mctruth_mode==10 && mctruth_nu_pdg==14"},
 	};
-	
+	/*	vector< vector <string> > recomc_list = {
+	   { "#nu_{#mu} Nuance Offset","mctruth_interaction_type==1000 && mctruth_nu_pdg==14"},
+	   { "#nu_{#mu} CC QE"			, "mctruth_interaction_type==1001 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
+	   { "#nu_{#mu} NC QE"			, "mctruth_interaction_type==1002 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
+//	   { "#nu_{#mu} CC Res. #pi^{+}", "(mctruth_interaction_type==1003 || mctruth_interaction_type==1005) && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
+	   { "#nu_{#mu} CC Res."		, "mctruth_interaction_type>1002 && mctruth_interaction_type<1006 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
+	   { "#nu_{#mu} NC Res."		, "mctruth_interaction_type>1005 && mctruth_interaction_type<1010 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
+//	   { "#nu_{#mu} NC Res. #pi^{0}", "(mctruth_interaction_type==1006 || mctruth_interaction_type==1008) && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
+	   { "#nu_{#mu} CC DIS"			, "mctruth_interaction_type==1091 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
+	   { "#nu_{#mu} NC DIS"			, "mctruth_interaction_type==1092 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
+	};
+*/	
 	std::vector<std::string> recomc_names, recomc_cuts;
 	//prepare "others" category.
 	string recomc_other_cut = "!(";
@@ -515,6 +539,7 @@ int main (int argc, char *argv[]){
 	bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
 	TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+	number = 0;//use this to make less plot.
 	if(!response_only){
 	    int h=0;
 
