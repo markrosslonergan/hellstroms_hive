@@ -19,6 +19,7 @@
 #include "bdt_spec.h"
 #include "bdt_eff.h"
 #include "bdt_test.h"
+#include "bdt_scatter.h"
 
 
 int main (int argc, char *argv[]){
@@ -326,8 +327,13 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "2g1p"){
+        // Maximize for signal/sqrt(background)
         fcoscut =   0.727676;
         fbnbcut = 0.702514;
+
+        // Maximize for E*P
+        //fcoscut =   0.727676;
+        //fbnbcut = 0.639468;
     }else if(analysis_tag == "2g0p"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;
@@ -442,6 +448,13 @@ int main (int argc, char *argv[]){
         std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
         fsig->Close();
 
+
+    }else if (mode_option=="scatter") {
+        TFile *fscat = new TFile(("scatter_"+analysis_tag+".root").c_str(), "recreate");
+        std::vector<bdt_file*> bdt_scat_files = {signal, OffBeamData};
+        getBDTScatter(fscat, bdt_scat_files, cosmic_bdt_info, bnb_bdt_info); 
+
+        fscat->Close();
 
     }else if(mode_option == "stack"){
         bdt_stack histogram_stack(analysis_tag+"_stack");

@@ -174,8 +174,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 			if(signal==0){
 				 significance =0;
 			}else if(background !=0){
-                //significance = signal/(signal+background)*signal/total_sig*100;
-				significance = signal/sqrt(background);
+        //significance = signal/(signal+background)*signal/total_sig*100;
+        significance = signal/sqrt(background);
 			}else{
 				std::cout<<"method_best_significane_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<<d<<", cut2: "<<d2<<std::endl;
 				break;
