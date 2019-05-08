@@ -115,6 +115,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
         if(s==2) data_file->calcCosmicBDTEntryList(c1, c2);
         if(s==3) data_file->calcBNBBDTEntryList(c1, c2);
 
+        if (s==3){
+            printPassingDataEvents("passingEvents", s, c1,c2);
+        }
+
+
         data_file->setStageEntryList(s);
 
         //And all variables in the vector var
@@ -139,9 +144,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 rmin=0; rmax = 1.99;
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
-
-            //tsum->Rebin(data_rebin);
-            d0->Rebin(data_rebin);
+                //tsum->Rebin(data_rebin);
+                d0->Rebin(data_rebin);
 
             if(false &&do_subtraction){
                 std::cout<<"Actually doing the subtracting"<<std::endl;
@@ -232,7 +236,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 if(do_subtraction){
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
-               // l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
+                // l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
                 l0->AddEntry(h1,(f->plot_name +": "+ string_events).c_str(),"f");
                 //l0->AddEntry(h1,(f->plot_name).c_str(),"f");
                 n++;
@@ -375,8 +379,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             cobs->Write();
             cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
             //cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
-
-
 
 
             delete cobs;
@@ -563,7 +565,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         double NdatEvents = data_file->GetEntries(data_cuts.at(k).c_str())*(plot_pot/data_file->pot )*data_file->scale_data;
 
         //l0->AddEntry(data_th1s.at(k),(data_file->plot_name).c_str(),"lp");	
-       // l0->AddEntry(data_th1s.at(k),("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
+        // l0->AddEntry(data_th1s.at(k),("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
         l0->AddEntry(data_th1s.at(k),(data_file->plot_name+": "+ to_string_prec(NdatEvents,2)).c_str(),"lp");	
 
 
@@ -659,7 +661,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         t->SetTextColor(kRed-7);
         //t->SetTextFont(43);
         t->SetTextSize(0.12);
-//        t->Draw("same");
+        //        t->Draw("same");
 
         //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
         //var_precut.front()->GetYaxis()->SetTitle("Verticies");

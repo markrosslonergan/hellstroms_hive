@@ -380,7 +380,8 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 				h1->SetFillColor(f->col);
 				h1->SetLineColor(kBlack);
 			//	l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
-		        l3->AddEntry(h1,(f->plot_name).c_str(),"f");
+		       	l3->AddEntry(h1,(f->plot_name+": "+to_string_prec(Nevents,2)).c_str(),"f");
+		       // l3->AddEntry(h1,(f->plot_name).c_str(),"f");
 	
             }
             l3->AddEntry(tmp_tsum,"MC Stats Only Error", "f");
@@ -646,7 +647,8 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 		h1->SetFillColor(f->col);
 		h1->SetLineColor(kBlack);
 		//l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
-	    l3->AddEntry(h1,(f->plot_name).c_str(),"f");
+	    l3->AddEntry(h1,(f->plot_name+": "+to_string_prec(Nevents,2)).c_str(),"f");
+	    //l3->AddEntry(h1,(f->plot_name).c_str(),"f");
 	}
 	l3->Draw();
 	l3->SetLineColor(kWhite);
@@ -882,7 +884,9 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 
     	double Nevents = f->GetEntries( f->getStageCuts(3,c1,c2).c_str())*(plot_pot/f->pot )*f->scale_data;
 		//l3->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
-        l3->AddEntry(h1,(f->plot_name).c_str(),"f");
+        l3->AddEntry(h1,(f->plot_name+": "+to_string_prec(Nevents,2)).c_str(),"f");
+        
+        //l3->AddEntry(h1,(f->plot_name).c_str(),"f");
 	
     }
 	l3->Draw();
