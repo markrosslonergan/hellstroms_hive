@@ -534,7 +534,7 @@ int main (int argc, char *argv[]){
         if(!response_only){
             if(number != -1){
                 bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
-                //bdt_datamc datamc(OffBeamData, histogram_stack, analysis_tag+"_datamc");	
+                //bdt_datamc datamc(deltarad, histogram_stack, analysis_tag+"_datamc");	
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
 
