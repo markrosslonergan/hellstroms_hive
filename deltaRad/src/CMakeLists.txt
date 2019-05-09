@@ -15,6 +15,8 @@ add_executable (validate validate.cxx)
 add_executable (zvalidate zvalidate.cxx)
 #add_executable (invar invarTest.cxx)
 add_executable (pigLEE pigLEE.cxx)
+add_executable (slice_studies slice_studies.cxx)
+
 
 #target_link_libraries (deltaRad tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
 target_link_libraries (gLEE tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
@@ -24,3 +26,4 @@ target_link_libraries (deltaRad_pi0 tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
 #target_link_libraries (deltaRad_template tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
 #target_link_libraries (invar tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
 target_link_libraries (pigLEE tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
+target_link_libraries (slice_studies tinyxmllib deltaRadlib ${ROOT_LIBRARIES})

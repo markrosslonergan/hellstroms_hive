@@ -59,6 +59,7 @@
     <var def = "reco_shower_dEdx_amalgamated[0]" binning = "(24,0,6.5)" unit = "median shower de/dx amalgamated [mev/cm]" type="d" spectator="true"/>
 
     <var def = "reco_shower_energy_max[0]/1000.0" binning = "(24,0,0.6)" unit = "Reconstructed Shower Energy [GeV]" type="d" spectator="false"/>
+    <var def = "reco_shower_energy_max[0]" binning = "(24,100,500)" unit = "Total Visible Energy [MeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane0[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane1[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 1 [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane2[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 2 [GeV]" type="d" spectator="true"/>

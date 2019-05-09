@@ -166,6 +166,7 @@ int main (int argc, char *argv[]){
 
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
     std::string training_signal_cut = "sim_shower_pdg[0]==22 && sim_shower_overlay_fraction[0] < 0.5";
+   // std::string training_signal_cut = "sim_shower_overlay_fraction[0] < 0.5";
     std::string training_bkg_cut    = "sim_shower_overlay_fraction[0]<1.0";
     std::string num_track_cut;
 
@@ -194,7 +195,9 @@ int main (int argc, char *argv[]){
         v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy < "+pmass+"+0.04",fid_cut}; 
 
     } else{
-        v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
+//        v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
+        v_denom = {fid_cut, "mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04"}; 
+
 
     }
 
@@ -278,10 +281,10 @@ int main (int argc, char *argv[]){
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
-    // OnBeamData->setAsOnBeamData(4.795e19);
-    // OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
-    OnBeamData->setAsOnBeamData(4.552e+19);
-    OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
+     OnBeamData->setAsOnBeamData(4.795e19);
+     OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+//    OnBeamData->setAsOnBeamData(4.552e+19);
+  //  OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
 
     //OffBeamData->makeRunSubRunList();
     //return 0;
@@ -674,8 +677,10 @@ int main (int argc, char *argv[]){
 
         std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==1"};
 
-        bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
-        //bdt_efficiency(bnb, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 5e19);
+        bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut,13.2e20);
+        //bdt_efficiency(bnb, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 4.8e19);
+        //bdt_efficiency(OffBeamData, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 4.8e19);
+
 
 
     }else {
