@@ -43,11 +43,11 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	
 
 	//for nice plots make the 50, 25 is quicker tho
-	int nsteps_cosmic = 40;//50
+	int nsteps_cosmic = 20;//50
 	double cut_min_cosmic = 999;
 	double cut_max_cosmic = -999;
 
-	int nsteps_bnb = 40;//50
+	int nsteps_bnb = 20;//50
 	double cut_min_bnb = 999;//0.52;
 	double cut_max_bnb = -999;
 	
@@ -84,8 +84,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 	//Best Fit Significance: 0.601552 0.533678 1.63658
 	//Zoomed in track
-//	cut_min_cosmic = 0.6428; cut_max_cosmic = 0.6432;
-//	cut_min_bnb = 0.632; cut_max_bnb = 0.640;
+	//cut_min_cosmic = 0.8145; cut_max_cosmic = 0.8170;
+	//cut_min_bnb = 0.785; cut_max_bnb = 0.790;
 
 
 
@@ -174,8 +174,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 			if(signal==0){
 				 significance =0;
 			}else if(background !=0){
-                //significance = signal/(signal+background)*signal/total_sig*100;
-				significance = signal/sqrt(background);
+        //significance = signal/(signal+background)*signal/total_sig*100;
+        significance = signal/sqrt(background);
 			}else{
 				std::cout<<"method_best_significane_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<<d<<", cut2: "<<d2<<std::endl;
 				break;

@@ -97,7 +97,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
     //Loop over all stages
 
-    for(int s = 1; s< 4; s++){
+    for(int s = 0; s< 4; s++){
 
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
@@ -182,13 +182,18 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
             //double max_modifier = 1.65;
-            double max_modifier = 2.0;
+            double max_modifier = 1.9;
+            /*
             if (s==1){
-                max_modifier = 1.4;
+                max_modifier = 1.6;
             }
             if (s==2){
                 max_modifier = 1.85;
             }
+            if (s==3){
+                max_modifier = 1.85;
+            }
+            */
 
             if(var.is_logplot == true){
                 pad0top->SetLogy();
@@ -219,7 +224,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
 
             tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
-            TLegend *l0 = new TLegend(0.11,0.65,0.89,0.89);
+            TLegend *l0 = new TLegend(0.11,0.55,0.89,0.89);
             l0->SetNColumns(2);
             double NeventsStack = 0;
 
@@ -236,9 +241,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 if(do_subtraction){
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
-                // l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
+                //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
                 l0->AddEntry(h1,(f->plot_name +": "+ string_events).c_str(),"f");
-                //l0->AddEntry(h1,(f->plot_name).c_str(),"f");
                 n++;
             }
             l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
@@ -257,7 +261,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
             l0->AddEntry(d0,(data_file->plot_name + ": " + to_string_prec(NdatEvents,2)).c_str(),"lp");
-            //l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
 
 
             l0->Draw();
@@ -275,19 +278,19 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             pottex.SetTextSize(0.06);
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
-            std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
+            std::string pot_draw = data_file->topo_name+"    "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-            pottex.DrawLatex(.60,.64, pot_draw.c_str());
+            pottex.DrawLatex(.60,.55, pot_draw.c_str());
 
 
 
             TText *pre; 
             if (isSpectator) {
                 pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
-                //pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress  [Spectator Variable]");
+                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
                 pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
-                //pre = drawPrelim(0.12,0.92,"MicroBooNE In Progress [Training Variable]");
+                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
             pre->Draw();
@@ -366,9 +369,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             TText *t = new TText(0.11,0.41,mean.c_str());
             t->SetNDC();
             t->SetTextColor(kRed-7);
-            //t->SetTextFont(43);
+            t->SetTextFont(43);
             t->SetTextSize(0.12);
-            //t->Draw("same");
+            t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
             //var_precut.front()->GetYaxis()->SetTitle("Events");
@@ -486,7 +489,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
     //std::vector<std::string> stage_name = {"Topological Selection","","Cosmic BDT Cut","BNB BDT Cut"};
 
 
-    for(int k = 0; k<4; k++){
+    for(int k = 0; k<2; k++){
         std::cout << "[PLOTBDTSTACKS:] On stage " << k << std::endl;
         TCanvas *cobs = new TCanvas("","",900,800);
         //cobs->cd(k+1);
@@ -510,10 +513,10 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         }else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
 
 
-        double max_modifier = 1.9;
+        double max_modifier = 1.7;
         double min_val = 0.01;
         if(is_bdt_variable) {
-            max_modifier = 100.0;
+            max_modifier = 50.0;
             min_val = 0.1;
         }
 
@@ -537,7 +540,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         vec_th1s.at(k)->SetFillStyle(0);//vec_th1s.at(k)->Draw("hist same");
 
 
-        TLegend *l0 = new TLegend(0.11,0.62,0.89,0.89);
+        TLegend *l0 = new TLegend(0.11,0.55,0.89,0.89);
         l0->SetNColumns(2);
         double NeventsStack = 0;
 
@@ -550,7 +553,6 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
             h1->SetLineColor(kBlack);
             //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
             l0->AddEntry(h1,(f->plot_name+": "+to_string_prec(Nevents,2)).c_str(),"f");
-            //l0->AddEntry(h1,(f->plot_name.c_str()),"f");
         }
 
         l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
@@ -659,9 +661,9 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         TText *t = new TText(0.11,0.41,mean.c_str());
         t->SetNDC();
         t->SetTextColor(kRed-7);
-        //t->SetTextFont(43);
+        t->SetTextFont(43);
         t->SetTextSize(0.12);
-        //        t->Draw("same");
+        //t->Draw("same");
 
         //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
         //var_precut.front()->GetYaxis()->SetTitle("Verticies");

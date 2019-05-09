@@ -19,6 +19,7 @@
 #include "bdt_spec.h"
 #include "bdt_eff.h"
 #include "bdt_test.h"
+#include "bdt_scatter.h"
 
 
 int main (int argc, char *argv[]){
@@ -27,6 +28,7 @@ int main (int argc, char *argv[]){
     std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
     std::string mydir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/";
     std::string dirv10 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10/";
+    std::string dirv12 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v12/";
 
 
     std::string mode_option = "fake"; 
@@ -163,33 +165,49 @@ int main (int argc, char *argv[]){
     std::string training_bkg_cut = "sim_shower_overlay_fraction[0]<1. && sim_shower_overlay_fraction[1]<1. && !(sim_shower_pdg[0]==22 && sim_shower_pdg[1]==22 && sim_shower_parent_pdg[0]==111 && sim_shower_parent_pdg[1]==111)";
     std::string num_track_cut;
 
-    if(analysis_tag == "2g1p"){
-        training_signal_cut = training_signal_cut+ "&& sim_track_overlay_fraction[0]< 1.";
-        training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<1.";
-        num_track_cut =  "==1";
 
-        bnb_bdt_info.setTopoName("2#gamma1p");
-    }else if (analysis_tag == "2g0p") {
-        num_track_cut = "==0";
-        bnb_bdt_info.setTopoName("2#gamma0p");
-    }
-    else {
-      std::cout << "Invalid analysis tag" << std::endl;
-      return 1;
-    }
-
+    // Fiducial volume definition
     std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
     std::string pmass = "0.938272";
     std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+20 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
     // MC-truth signal cuts
-    std::vector<std::string> v_denom = {"mctruth_cc_or_nc == 1",
-                                        "mctruth_num_exiting_pi0==1", 
-                                        "mctruth_pi0_leading_photon_energy > 0.02", 
-                                        "mctruth_pi0_subleading_photon_energy > 0.02", 
-                                        "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",
-                                        fid_cut
-    }; 
+    std::vector<std::string> v_denom;
+
+    // Keng's and Kathryn's signal definitions
+    std::string nue_definition = "abs(mctruth_nu_pdg)==12 && (mctruth_num_exiting_pi0+mctruth_num_exiting_pipm) == 0 && mctruth_leading_exiting_proton_energy-0.93828>0.04==1 && mctruth_lepton_E[0]>0.02 && "+fid_cut;
+    std::string deltarad_definition = "mctruth_cc_or_nc == 1 && mctruth_is_delta_radiative==1 && mctruth_num_exiting_pi0==0 && mctruth_exiting_photon_energy > 0.02 && mctruth_leading_exiting_proton_energy > "+pmass+"+0.04 && "+fid_cut;
+
+    if(analysis_tag == "2g1p"){
+        training_signal_cut = training_signal_cut+ "&& sim_track_overlay_fraction[0]< 1.";
+        training_bkg_cut = training_bkg_cut +"&& sim_track_overlay_fraction[0]<1.";
+        num_track_cut =  "==1";
+        bnb_bdt_info.setTopoName("2#gamma1p");
+
+        v_denom = {"mctruth_cc_or_nc == 1",
+                  "mctruth_num_exiting_pi0==1", 
+                  "mctruth_pi0_leading_photon_energy > 0.02", 
+                  "mctruth_pi0_subleading_photon_energy > 0.02", 
+                  "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",
+                  //"Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==1",
+                  fid_cut
+        };
+    }else if (analysis_tag == "2g0p") {
+        num_track_cut = "==0";
+        bnb_bdt_info.setTopoName("2#gamma0p");
+
+        v_denom = {"mctruth_cc_or_nc == 1",
+                  "mctruth_num_exiting_pi0==1", 
+                  "mctruth_pi0_leading_photon_energy > 0.02", 
+                  "mctruth_pi0_subleading_photon_energy > 0.02", 
+                  //"mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",
+                  fid_cut
+        };
+    }
+    else {
+      std::cout << "Invalid analysis tag" << std::endl;
+      return 1;
+    }
 
     std::string signal_definition = v_denom[0];
 
@@ -198,7 +216,7 @@ int main (int argc, char *argv[]){
     }
 
     std::string background_definition = "(mctruth_num_exiting_pi0!=1 || mctruth_cc_or_nc==0)";
-    std::string topological_cuts = "(reco_vertex_size > 0 && reco_asso_showers == 2 && reco_asso_tracks"+num_track_cut+")";
+    std::string topological_cuts = "(reco_vertex_size>0 && reco_asso_showers == 2 && reco_asso_tracks"+num_track_cut+")";
     std::string postcuts = "1";  //We dont currently use postcuts
 
     //***************************************************************************************************/
@@ -206,11 +224,13 @@ int main (int argc, char *argv[]){
     //***************************************************************************************************/
     std::cout<<"Defining all out bdt_flows."<<std::endl;
     bdt_flow signal_training_flow(topological_cuts,signal_definition +"&&"+ training_signal_cut,vec_precuts,postcuts,cosmic_bdt_info,bnb_bdt_info);
-    bdt_flow signal_other_flow(topological_cuts, 	"!("+signal_definition +")", 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow signal_other_flow(topological_cuts, "!("+signal_definition +")", vec_precuts, postcuts, cosmic_bdt_info, bnb_bdt_info);
 
     bdt_flow signal_flow(topological_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_flow(topological_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_training_flow(topological_cuts,	background_definition+"&&"+ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow nue_bkg_flow(topological_cuts,	nue_definition,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow deltarad_bkg_flow(topological_cuts,	deltarad_definition,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
     bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
@@ -222,22 +242,37 @@ int main (int argc, char *argv[]){
     bdt_file *signal_other = new bdt_file(dirv10,"ncpi0_overlay_collins_v10.0.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
     //signal_other->fillstyle = 3333;
 
-    bdt_file *training_bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    bdt_file *training_bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBTrain", "hist","singlephoton/", kAzure-9, bkg_training_flow);
     bdt_file *bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
-    // Color was kBlue-4
+    // Color was kBlue-4 or kAzure-9
 
     //Data files
-    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.3.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_v9.3.root", "OnBeamData", "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v9.3.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
     bdt_file *dirt = new bdt_file(dirv10,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
+    // NC deltaRad and LEE files, for blindness checks
+    bdt_file *deltarad = new bdt_file(dirv10,"ncdeltarad_overlay_v10.1.root","NCDeltaRad","hist","singlephoton/", kAzure+1, deltarad_bkg_flow);
+    deltarad->scale_data = 3.0; // Factor of 3 for LEE sensitivity 
+    bdt_file *nue = new bdt_file(dirv10,"nueintrinsic_overlay_v10.0.root","LEENuE","hist","singlephoton/", kBlue-3, nue_bkg_flow);
+
+    //nue->weight_branch ="(lee_signal_weights.lee_weights)";
+    //nue->tvertex->AddFriend("lee_signal_weights",(dir+"lee_weights_friend_for_nueintrinsic_overlay_v10.0.root").c_str());
+
     //For conviencance fill a vector with pointers to all the files to loop over.
-    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData, dirt};
+    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData, dirt, deltarad, nue};
+    //std::vector<bdt_file*> bdt_files = {signal, signal_other, bnb, OnBeamData, OffBeamData, dirt};
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
+
+    // v10
     OnBeamData->setAsOnBeamData(4.795e19);
     OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+    
+    // v12
+    //OnBeamData->setAsOnBeamData(4.552e+19);
+    //OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
 
     //OffBeamData->makeRunSubRunList();
     //return 0;
@@ -282,8 +317,9 @@ int main (int argc, char *argv[]){
     training_bnb->addPlotName("BNB Backgrounds");
     bnb->addPlotName("BNB Backgrounds");
     OnBeamData->addPlotName("On-Beam  Data");
-    OffBeamData->addPlotName("Cosmic Data");
-    dirt->addPlotName("Dirt");
+    OffBeamData->addPlotName("Cosmic Backgrounds");
+    dirt->addPlotName("Dirt Backgrounds");
+    deltarad->addPlotName("NC #Delta Rad");
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
@@ -291,8 +327,13 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "2g1p"){
-        fcoscut =   0.64284;
-        fbnbcut = 0.632225;
+        // Maximize for signal/sqrt(background)
+        fcoscut =   0.727676;
+        fbnbcut = 0.702514;
+
+        // Maximize for E*P
+        //fcoscut =   0.727676;
+        //fbnbcut = 0.639468;
     }else if(analysis_tag == "2g0p"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;
@@ -401,24 +442,44 @@ int main (int argc, char *argv[]){
 
 
         TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-        std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
+        std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData, deltarad, nue, dirt}, cosmic_bdt_info, bnb_bdt_info);
         //std::vector<double> ans = lin_scan({signal}, {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
         std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
         fsig->Close();
 
 
+    }else if (mode_option=="scatter") {
+        TFile *fscat = new TFile(("scatter_"+analysis_tag+".root").c_str(), "recreate");
+        std::vector<bdt_file*> bdt_scat_files = {signal, OffBeamData};
+        getBDTScatter(fscat, bdt_scat_files, cosmic_bdt_info, bnb_bdt_info); 
+
+        fscat->Close();
+
     }else if(mode_option == "stack"){
         bdt_stack histogram_stack(analysis_tag+"_stack");
         histogram_stack.addToStack(signal);
         histogram_stack.addToStack(signal_other);
         histogram_stack.addToStack(bnb);
+        histogram_stack.addToStack(nue);
+        histogram_stack.addToStack(deltarad);
+        histogram_stack.addToStack(dirt);
 
         //Add OffBeamData but change the color and style first
         OffBeamData->col;	
         OffBeamData->fillstyle = 3333;
         histogram_stack.addToStack(OffBeamData);
+        
+        // Reverse order for last two stages
+        /*
+        OffBeamData->col;	
+        OffBeamData->fillstyle = 3333;
+        histogram_stack.addToStack(OffBeamData);
         histogram_stack.addToStack(dirt);
+        histogram_stack.addToStack(bnb);
+        histogram_stack.addToStack(signal_other);
+        histogram_stack.addToStack(signal);
+        */
 
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
         int ip=0;
@@ -447,18 +508,33 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
         histogram_stack->plot_pot = OnBeamData->pot;
+        histogram_stack->addToStack(nue);
+        histogram_stack->addToStack(deltarad);
         histogram_stack->addToStack(signal);
         histogram_stack->addToStack(signal_other);
         histogram_stack->addToStack(bnb);
+        histogram_stack->addToStack(dirt);
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(OffBeamData);
+
+        // Reverse order for last two stages
+        /*
+        histogram_stack->plot_pot = OnBeamData->pot;
+        histogram_stack->addToStack(OffBeamData);
         histogram_stack->addToStack(dirt);
+        histogram_stack->addToStack(deltarad);
+        histogram_stack->addToStack(bnb);
+        histogram_stack->addToStack(signal_other);
+        histogram_stack->addToStack(signal);
+        OffBeamData->fillstyle = 3333;
+        */
 
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
             if(number != -1){
                 bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
+                //bdt_datamc datamc(deltarad, histogram_stack, analysis_tag+"_datamc");	
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
 
@@ -483,7 +559,7 @@ int main (int argc, char *argv[]){
 
     }else if(mode_option == "vars"){
 
-        std::vector<std::string> title = {"All Vertices","Pre-Selection Cuts"};
+        std::vector<std::string> title = {"Topological Selection","Pre-Selection Cuts"};
 
         if(run_cosmic){
 
@@ -514,9 +590,11 @@ int main (int argc, char *argv[]){
 
     } else if(mode_option == "eff"){
 
-        std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==2","reco_asso_tracks==1"};
+        std::vector<std::string> v_topo =  {"reco_vertex_size==1","reco_asso_showers==2","reco_asso_tracks==1"};
 
-        bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
+        //bdt_efficiency(OnBeamData, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 4.6e19);
+        bdt_efficiency(OnBeamData, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
+        //bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
         //bdt_efficiency(bnb, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 5e19);
 
 
