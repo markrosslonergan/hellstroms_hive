@@ -9,7 +9,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     double conversion = filein->scale_data*plot_POT/filein->pot;
     double n_starting_events = 0;//Number of golden signal, 1e1p events with any topologies.
     denominator = "";//Requirement that leads to n_starting_events - Number of golden signal.
-    
+
     double all_events = filein->GetEntries("1");//Save this for efficiency calculation.
     std::cout<<"File has  "<<all_events*conversion<<" events when scaled to "<<plot_POT<<std::endl;
 

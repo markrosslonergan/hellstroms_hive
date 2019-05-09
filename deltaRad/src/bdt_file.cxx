@@ -1,9 +1,6 @@
 #include "bdt_file.h"
 using namespace std;
 
-
-
-
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
     dir(indir),
     name(inname),
@@ -16,7 +13,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     is_bnbext("false"),
     is_mc("true")
 {
-
     plot_name = tag;
 
     rangen = new TRandom3();

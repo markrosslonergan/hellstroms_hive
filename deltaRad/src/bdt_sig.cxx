@@ -1,4 +1,5 @@
 #include "bdt_sig.h"
+#include <unistd.h>//Use these 2 header to get current directory locartion.
 
 using namespace std;
 
@@ -35,7 +36,152 @@ which for v3.0_with calo is 2.38091e+21
 
 
 std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt){
+	
+	if(true){//Produce BDT scatter plots here.
+	int number_of_files = sig_files.size()+bkg_files.size();
+	string current_directory = "./";
 
+	cout<<"Working on "<< number_of_files<<" files.";
+	vector<bdt_file*> MCfiles;
+	MCfiles.reserve(number_of_files);
+	MCfiles.insert( MCfiles.end(), sig_files.begin(), sig_files.end() );
+	MCfiles.insert( MCfiles.end(), bkg_files.begin(), bkg_files.end() );
+	
+	vector< vector<string> > BDTfiles(number_of_files , vector<string> (2,current_directory));//app.root files with BDT responses.
+	vector< vector<string> > new_var(number_of_files , vector<string> (2,""));//TTree in app.root.
+	
+	cout<<"I got the path in a 2d vector:"<<BDTfiles[0][0]<<endl;
+//	identifier+"_"+files[i]->tag+"_app"+".root"
+	for(int index = 0; index<number_of_files; index++){//0 for cosmic, 1 for bnb!
+	BDTfiles[index][0]+=cosmic_focused_bdt.identifier+"_"+MCfiles[index]->tag+"_app"+".root";
+	cout<<BDTfiles[index][0]<<endl;//CLEAN
+	BDTfiles[index][1]+=bnb_focused_bdt.identifier+"_"+MCfiles[index]->tag+"_app"+".root";
+
+	new_var[index][0]+=MCfiles[index]->tag+"_"+cosmic_focused_bdt.identifier;
+	cout<<new_var[index][0]<<endl;//CLEAN
+	new_var[index][1]+=MCfiles[index]->tag+"_"+bnb_focused_bdt.identifier;
+	}
+
+
+	//------------- NAMES to be changed
+//    string current_folder = "build/";
+//    string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
+
+//    string working_dir = "/uboone/app/users/klin/hellstroms_hive3/hellstroms_hive/deltaRad/"; 
+			    //signal, bnbbkg, cosmicbkg
+//    vector<string> MCfiles = {"nueintrinsic_overlay_mcc9_v5.0.root" , "bnb_overlay_v4_mcc9_v5.0.root" , "bnbext_mcc9_v5.0.root"};
+//    vector< vector<string> > new_var = {
+//			{"LEEunfoldedCosmics_bnb_electron1" , "LEEunfoldedCosmics_cosmic_electron1"},
+//			{"BNBCosmics_bnb_electron1"			, "BNBCosmics_cosmic_electron1"},
+//			{"BNBext_bnb_electron1"				, "BNBext_cosmic_electron1"},
+//			};
+
+    //for each MC sample, quotes two BDT Scores;
+//    string weight_branch = "lee_signal_weights";
+//    string weight_file = "lee_weights_for_nueintrinsic_overlay_mcc9_v5.0.root";
+//    vector< vector<string> > BDTfiles = { {"src/bnb_electron1_LEEunfoldedCosmics_app.root","src/cosmic_electron1_LEEunfoldedCosmics_app.root"},
+//	{"src/bnb_electron1_BNBCosmics_app.root","src/cosmic_electron1_BNBCosmics_app.root"},
+//	{"src/bnb_electron1_BNBext_app.root","src/cosmic_electron1_BNBext_app.root"}
+//  };
+
+    vector<string> new_tree = { "treecosmic", "treebnb"};
+//---------------- NAMES are ready!
+
+	//Prepare Canvase for drawing:
+	TCanvas * c = new TCanvas();
+															//xaxis:Cosmic... yaxis:BNB	
+	TH2D *dummyhist = new TH2D("dummyhist", "BDT Scores", 60,0.2,0.7,60,0.3,0.6);//TO be updated, CHECK
+	dummyhist->GetXaxis()->SetTitle("Cosmic BDT Score");
+	dummyhist->GetYaxis()->SetTitle("BNB BDT Score");
+	dummyhist->Draw();
+
+
+	vector<TGraph*> contents(number_of_files);
+	TLegend *l = new TLegend(0.1,0.7,0.48,0.9);
+
+	for (int index= number_of_files-1; index >= 0 ; index--){//Loop over bkg1,bkg2 ... signal
+//		bool lee_file = false;//by default, dont apply lee_weight.
+
+//		string MCfile_loc = dir + MCfiles.at(index);
+
+		//Add friend tree
+//		TFile* f1=TFile::Open( MCfile_loc.c_str() );//work on different file as index changes
+//		TTree * Tree_name = (TTree* )f1->Get("singlephoton/vertex_tree");
+
+//		if(index==0){
+//			lee_file = true;
+//			string current_weight = dir + weight_file;
+//			Tree_name->AddFriend((new_tree.at(0)+" = "+ MCfiles[index]->weight_branch).c_str() , current_weight.c_str() ); //quote LEEweight, varaible .lee_weights
+//		}
+//		string bnbresponse = working_dir+current_folder+BDTfiles[index][0];
+//		string cosmicresponse = working_dir+current_folder+BDTfiles[index][1];
+//		 f->tvertex->AddFriend("lee_signal_weights",(dir+"lee_weights_friend_for_nueintrinsic_overlay_v12.2.root").c_str());
+		MCfiles.at(index)->tvertex->AddFriend((new_tree.at(0)+" = "+ new_var[index][0]).c_str() , BDTfiles[index][0].c_str() );
+		MCfiles.at(index)->tvertex->AddFriend((new_tree.at(1)+" = "+ new_var[index][1]).c_str() , BDTfiles[index][1].c_str() );
+	//	double temp2; //SetBranchAddress needs the exact variable names, no () is allowed.
+	//	MCfiles.at(index)->tvertex->SetBranchAddress(MCfiles[index]->weight_branch.c_str(),  &temp2);
+	//	MCfiles.at(index)->tvertex->Scan(MCfiles[index]->weight_branch.c_str());
+	//	exit(0);
+		//Friend Trees are ready! Variables (.mva) can be called in the tree named "new_tree"
+
+		//Feed in TGraph object with values.
+//		TTree* readThis = 0;//create an empty object for new stuff.
+//		f1->GetObject("singlephoton/vertex_tree", readThis);
+		Int_t num_events = MCfiles.at(index)->tvertex->GetEntries();
+		cout<<"Get number of events at "<< MCfiles.at(index)->tag <<": "<<num_events<<endl;
+		
+		double *cos = new double[num_events];//Dynamically memory allocation!!
+		//Thanks https://www.learncpp.com/cpp-tutorial/69-dynamic-memory-allocation-with-new-and-delete/
+		double *bnb = new double[num_events];
+		//Double_t cos[num_events],bnb[num_events]; //allocate #(num_events) of addresses for double values.
+
+		Double_t weight=1;
+		Double_t cosbdt,bnbbdt;//weight value to store and be used for checking lee_weights
+		Int_t count = 0;
+		//link the address of given variable to the address of TTree variable:
+		if(index==0){
+		cout<<"Set Branch for "<<MCfiles.at(index)->tag<<endl;
+		MCfiles.at(index)->tvertex->SetBranchAddress(MCfiles[index]->weight_branch.c_str(),  &weight);
+		}
+		MCfiles.at(index)->tvertex->SetBranchAddress((new_tree.at(0)+".mva").c_str(),  &cosbdt);
+		MCfiles.at(index)->tvertex->SetBranchAddress((new_tree.at(1)+".mva").c_str(),  &bnbbdt);
+
+		for(Int_t i = 0 ; i < num_events; i++){
+			MCfiles.at(index)->tvertex->GetEntry(i);
+			cos[count]= cosbdt;
+			bnb[count]= bnbbdt;
+			count++;
+			if(weight==0)count--;//if the weight is 0, redo this entry
+			
+			if(i%(num_events/100)==0){
+				cout.precision(3);
+				cout<<"\r"<<100*i/num_events+1<<"\% of "<< num_events << " entries complete.";
+				cout.flush();
+				}
+		}
+		cout<<"  Moving to the next file\n"<<endl;
+										//(n, x, y)
+		contents.at(index) = new TGraph (num_events, cos, bnb); //TGraph(Int_t , Double_t *, Double_t *);
+		contents.at(index)->SetMarkerColor(index+2);
+		contents.at(index)->SetMarkerStyle((number_of_files-index)/number_of_files+1);
+		contents.at(index)->Draw("P same");
+		
+		l->AddEntry(contents.at(index),MCfiles.at(index)->tag.c_str(),"p");
+	}
+	//Fill in dummyhist
+//	l->AddEntry(contents.at(1),"BNB bkg","p");
+//	l->AddEntry(contents.at(2),"Cosmic bkg","p");
+	l->Draw();
+
+	c->Write();
+	c->SaveAs("BDTscattering.pdf","pdf");
+
+	cout<<"The 2D histogram is created. (Topo Cuts and Pre Cuts are not included.)"<<endl;
+
+	//std::vector<double> p;
+	//return p;
+	exit(0);
+	}
 
     bool quick_search = true;//use the original detail search via false value;
     //the if statement is the old program; change quick_search to enable it.

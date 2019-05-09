@@ -50,16 +50,16 @@ int main (int argc, char *argv[]){
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
     {
-        {"dir", 		required_argument, 	0, 'd'},
-        {"option",		required_argument,	0, 'o'},
-        {"xml"	,		required_argument,	0, 'x'},
-        {"topo_tag",	required_argument,	0, 't'},
-        {"cosmic",		no_argument,	0, 'b'},
-        {"bnb",		    no_argument,	0, 'c'},
-        {"sbnfit",		required_argument,	0, 's'},
-        {"help",		required_argument,	0, 'h'},
-        {"number",		required_argument,	0, 'n'},
-        {0,			no_argument, 		0,  0},
+        {"dir"		, required_argument	, 	0, 'd'},
+        {"option"	, required_argument	,	0, 'o'},
+        {"xml"		, required_argument	,	0, 'x'},
+        {"topo_tag"	, required_argument	,	0, 't'},
+        {"cosmic"	, no_argument		,	0, 'b'},
+        {"bnb"		, no_argument		,	0, 'c'},
+        {"sbnfit"	, required_argument	,	0, 's'},
+        {"help"		, required_argument	,	0, 'h'},
+        {"number"	, required_argument	,	0, 'n'},
+        {0			, no_argument		, 	0,  0},
     };
 
     int iarg = 0; opterr=1; int index;
@@ -275,8 +275,8 @@ int main (int argc, char *argv[]){
 	 if(f->tag.compare(0,11,"LEEunfolded",0,11)==0){
 	 
 	 cout<<"Add Branch as weight\n\n"<<endl;
-
-	 f->weight_branch ="(lee_signal_weights.lee_weights)";
+	 f->weight_branch ="lee_signal_weights.lee_weights";
+//	 f->weight_branch ="lee_weights";
 	 
 	 f->tvertex->AddFriend("lee_signal_weights",(dir+"lee_weights_friend_for_nueintrinsic_overlay_v12.2.root").c_str());
 	}
@@ -566,9 +566,7 @@ int main (int argc, char *argv[]){
 	    recomc.is_log = false;
 	}
 
-    }
-
-    else if(mode_option == "sig"){
+    }else if(mode_option == "sig"){
 
 	TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
 	std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, nueintrinsic , OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
@@ -594,8 +592,8 @@ int main (int argc, char *argv[]){
         bdt_stack histogram_stack(analysis_tag+"_stack");
         histogram_stack.addToStack(signal);
         histogram_stack.addToStack(signal_other);
-	histogram_stack.addToStack(nueintrinsic);
-	histogram_stack.addToStack(bnb);
+		histogram_stack.addToStack(nueintrinsic);
+		histogram_stack.addToStack(bnb);
 
         //Add OffBeamData but change the color and style first
         OffBeamData->col;	
@@ -665,8 +663,17 @@ int main (int argc, char *argv[]){
 
         return 0;
 
+//	}else if(mode_option == "bdtsca"){
+	//CHECK
+	//std::vector<bdt_file*> bdt_files = {signal,training_signal, signal_other, training_bnb, bnb, OnBeamData, OffBeamData,dirt,nueintrinsic};
+	//cosmic_bdt_info? bnb_bdt_info?
+//	cout<<"Producing Scater plots for the BDT's"<<endl;
+//	foo(bdt_files, cosmic_bdt_info, bnb_bdt_info);
 
-    }else if(mode_option == "datamc"){
+
+//	return 0;
+	
+	}else if(mode_option == "datamc"){
 
 	if (access("datamc",F_OK) == -1){
 	    mkdir("datamc",0777);//Create a folder for pdf.
@@ -684,14 +691,14 @@ int main (int argc, char *argv[]){
         histogram_stack->plot_pot = OnBeamData->pot;
         histogram_stack->addToStack(signal);
         histogram_stack->addToStack(signal_other);
-	histogram_stack->addToStack(nueintrinsic);
+		histogram_stack->addToStack(nueintrinsic);
 
         histogram_stack->addToStack(bnb);
         OffBeamData->fillstyle = 3333;
         histogram_stack->addToStack(OffBeamData);
         histogram_stack->addToStack(dirt);
-        
-	int ip=0;
+
+		int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
             if(number != -1){
