@@ -162,7 +162,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 		cout<<"  Moving to the next file\n"<<endl;
 										//(n, x, y)
 		contents.at(index) = new TGraph (num_events, cos, bnb); //TGraph(Int_t , Double_t *, Double_t *);
-		contents.at(index)->SetMarkerColor(index+2);
+		contents.at(index)->SetMarkerColor(index+2);//see https://root.cern.ch/doc/master/classTAttMarker.html#M2
 		contents.at(index)->SetMarkerStyle((number_of_files-index)/number_of_files+1);
 		contents.at(index)->Draw("P same");
 		

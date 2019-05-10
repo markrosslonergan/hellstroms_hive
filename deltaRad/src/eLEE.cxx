@@ -419,7 +419,7 @@ int main (int argc, char *argv[]){
 	}
 
 
-	if(true){//This section is used to search evetns that pass through BDTs
+	if(false){//This section is used to search evetns that pass through BDTs
 	    for(auto &f: bdt_files){
 		std::cout<<"\nLooking for events that pass cosmiccut in "<< f->tag << std::endl;
 		std::string cosmiccut = f->getStageCuts(2, fcoscut, -9);
@@ -438,7 +438,7 @@ int main (int argc, char *argv[]){
 //		    f->tvertex->Scan("run_number:subrun_number:event_number:reco_shower_helper_energy[0]:reco_track_displacement[0]",bnbcut.c_str());
 			((TTreePlayer*)(f->tvertex->GetPlayer()))->SetScanRedirect(true); 
 			((TTreePlayer*)(f->tvertex->GetPlayer()))->SetScanFileName("Sneaky_Events.txt"); 
-		    f->tvertex->Scan("run_number:subrun_number:event_number:mctruth_interaction_type:mctruth_nu_pdg:mctruth_cc_or_nc:mctruth_mode", bnbcut.c_str());
+		    f->tvertex->Scan("run_number:subrun_number:event_number:mctruth_interaction_type:mctruth_nu_pdg:mctruth_cc_or_nc:mctruth_mode:mctruth_nu_E:reco_track_mean_dEdx_plane0[0]:reco_track_mean_dEdx_plane1[0]:reco_track_mean_dEdx_plane2[0]:reco_shower_dEdx_plane0_median[0]:reco_shower_dEdx_plane1_median[0]:reco_shower_dEdx_plane2_median[0]", bnbcut.c_str());
 		}else{
 		    std::cout<<"Skip this file."<< std::endl;
 		}

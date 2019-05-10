@@ -12,8 +12,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 	double label_size_upper=0.05;
 	double title_offset_upper = 1.45;
 
-//	double plot_pot = 13.2e20;
-	double plot_pot = 4.8e19;
+	double plot_pot = 13.2e20;
+//	double plot_pot = 4.8e19;
 
 
 	std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
