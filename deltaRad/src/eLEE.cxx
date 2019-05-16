@@ -172,7 +172,8 @@ int main (int argc, char *argv[]){
 		    "&&reco_track_proton_kinetic_energy[0]<(mctruth_leading_exiting_proton_energy[0]-0.93828)+0.05"//Shape track energy
 		    "&&reco_track_proton_kinetic_energy[0]>(mctruth_leading_exiting_proton_energy[0]-0.93828)-0.05";
 
-    std::string training_bkg_cut = "sim_shower_overlay_fraction[0]<0.5";
+    std::string training_bkg_cut = "sim_shower_matched[0]==1&&sim_shower_overlay_fraction[0]<0.5"
+							"&&mctruth_mode==1 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1";
     std::string num_track_cut;
 
     if(analysis_tag == "1e1p"){
@@ -193,7 +194,7 @@ int main (int argc, char *argv[]){
     std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
     std::vector<std::string> v_denom = {"abs(mctruth_nu_pdg)==12"," ((mctruth_num_exiting_pi0+mctruth_num_exiting_pipm) ==0)", 
-				"Sum$(mctruth_leading_exiting_proton_energy-0.93828>0.04)==1" ,"mctruth_lepton_E[0]>0.02" ,fid_cut};//,"mctruth_nu_E<0.8"}; 
+				"Sum$(mctruth_exiting_proton_energy-0.93828>0.04)==1" ,"Sum$(mctruth_lepton_E>0.02)==1" ,fid_cut};//,"mctruth_nu_E<0.8"}; 
 
     std::string signal_definition = v_denom[0];
 
@@ -201,7 +202,9 @@ int main (int argc, char *argv[]){
         signal_definition += "&&" + v_denom[i];
     }
 
-    std::string background_definition = "abs(mctruth_nu_pdg)!=12";//||mctruth_cc_or_nc==1";
+//    std::string background_definition = "abs(mctruth_nu_pdg)!=12";//||mctruth_cc_or_nc==1";
+		std::string background_definition = "(mctruth_mode==1 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1)";
+
 //    std::string intrinsic_background = "(abs(mctruth_nu_pdg)==12&&mctruth_cc_or_nc==0)";
     std::string topological_cuts = "(reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut+")";
     std::string postcuts = "1";  //We are not currently use postcuts
@@ -329,7 +332,8 @@ int main (int argc, char *argv[]){
     signal->addPlotName("Golden LEE #nu_{e}(#bar{#nu}_{e})");
     signal_other->addPlotName("Other LEE #nu_{e}(#bar{#nu}_{e})");
     training_bnb->addPlotName("BNB Neutrino Backgrounds");
-    bnb->addPlotName("BNB Neutrino Backgrounds");
+    bnb->addPlotName("BNB Numu NcRes Backgrounds");
+    //bnb->addPlotName("BNB Neutrino Backgrounds");
     nueintrinsic->addPlotName("#nu_{e}(#bar{#nu}_{e}) Intrinsics");
     OnBeamData->addPlotName("On-Beam Data");
     OffBeamData->addPlotName("Cosmic Background");

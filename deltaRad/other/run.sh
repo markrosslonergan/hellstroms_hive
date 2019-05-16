@@ -1,7 +1,7 @@
 #! /bin/bash
 
 echo "Going to delete old files, if you dont stop."
-sleep(10)
+sleep 10
 rm  *.root
 rm -r BDT*
 

@@ -37,7 +37,7 @@ which for v3.0_with calo is 2.38091e+21
 
 std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt){
 	
-	if(true){//Produce BDT scatter plots here.
+	if(false){//Produce BDT scatter plots here.
 	int number_of_files = sig_files.size()+bkg_files.size();
 	string current_directory = "./";
 
@@ -163,7 +163,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 										//(n, x, y)
 		contents.at(index) = new TGraph (num_events, cos, bnb); //TGraph(Int_t , Double_t *, Double_t *);
 		contents.at(index)->SetMarkerColor(index+2);//see https://root.cern.ch/doc/master/classTAttMarker.html#M2
-		contents.at(index)->SetMarkerStyle((number_of_files-index)/number_of_files+1);
+		contents.at(index)->SetMarkerStyle((number_of_files-index)/number_of_files*24+1);//25 or 1.
 		contents.at(index)->Draw("P same");
 		
 		l->AddEntry(contents.at(index),MCfiles.at(index)->tag.c_str(),"p");
