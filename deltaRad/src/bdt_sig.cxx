@@ -1,39 +1,7 @@
 #include "bdt_sig.h"
-#include <unistd.h>//Use these 2 header to get current directory locartion.
+#include <unistd.h>//this is for exit(0)
 
 using namespace std;
-
-
-/*
-How do I normalize..
-
-Two cuts( on this single cut)
-
-INTIME
-RECO2 has 1013198 events in 31497 files
-DETSIM has 1030055 events in 31980 files
-I ended with 989875 events
-
-
-BNBCOSMIC
-DETSIM has 2412300 in 48246 files
-RECO2 should have 2360950 events
-I ended with 2360950 events //ooohh all of them 
-
-Weight each intime cosmic event with a factor 10.279*N_gen_BNB/(N_gen_cosmic*my_rate)
-= 10.279*2412300/(1030055*989875/1013198) = 24.639718178714663
-
-times whatever POT scaling we need to put on the BNB events to get to 6.6e20
-which for v3.0_with calo is 2.38091e+21
-= 24.6397*6.6e20/2.38091e21  = 6.830246418386248
-
-	precut--
-	for loop over BDT1
-	for loop over BDT2
-		calc S/sqrt(S+S+BKG)
-
-*/
-
 
 std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt){
 	
@@ -62,28 +30,6 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	new_var[index][1]+=MCfiles[index]->tag+"_"+bnb_focused_bdt.identifier;
 	}
 
-
-	//------------- NAMES to be changed
-//    string current_folder = "build/";
-//    string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v5/";
-
-//    string working_dir = "/uboone/app/users/klin/hellstroms_hive3/hellstroms_hive/deltaRad/"; 
-			    //signal, bnbbkg, cosmicbkg
-//    vector<string> MCfiles = {"nueintrinsic_overlay_mcc9_v5.0.root" , "bnb_overlay_v4_mcc9_v5.0.root" , "bnbext_mcc9_v5.0.root"};
-//    vector< vector<string> > new_var = {
-//			{"LEEunfoldedCosmics_bnb_electron1" , "LEEunfoldedCosmics_cosmic_electron1"},
-//			{"BNBCosmics_bnb_electron1"			, "BNBCosmics_cosmic_electron1"},
-//			{"BNBext_bnb_electron1"				, "BNBext_cosmic_electron1"},
-//			};
-
-    //for each MC sample, quotes two BDT Scores;
-//    string weight_branch = "lee_signal_weights";
-//    string weight_file = "lee_weights_for_nueintrinsic_overlay_mcc9_v5.0.root";
-//    vector< vector<string> > BDTfiles = { {"src/bnb_electron1_LEEunfoldedCosmics_app.root","src/cosmic_electron1_LEEunfoldedCosmics_app.root"},
-//	{"src/bnb_electron1_BNBCosmics_app.root","src/cosmic_electron1_BNBCosmics_app.root"},
-//	{"src/bnb_electron1_BNBext_app.root","src/cosmic_electron1_BNBext_app.root"}
-//  };
-
     vector<string> new_tree = { "treecosmic", "treebnb"};
 //---------------- NAMES are ready!
 
@@ -94,34 +40,16 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 	dummyhist->GetXaxis()->SetTitle("Cosmic BDT Score");
 	dummyhist->GetYaxis()->SetTitle("BNB BDT Score");
 	dummyhist->Draw();
-
+	
+	vector<BST<double>> t(number_of_files);
 
 	vector<TGraph*> contents(number_of_files);
 	TLegend *l = new TLegend(0.1,0.7,0.48,0.9);
 
 	for (int index= number_of_files-1; index >= 0 ; index--){//Loop over bkg1,bkg2 ... signal
-//		bool lee_file = false;//by default, dont apply lee_weight.
-
-//		string MCfile_loc = dir + MCfiles.at(index);
-
-		//Add friend tree
-//		TFile* f1=TFile::Open( MCfile_loc.c_str() );//work on different file as index changes
-//		TTree * Tree_name = (TTree* )f1->Get("singlephoton/vertex_tree");
-
-//		if(index==0){
-//			lee_file = true;
-//			string current_weight = dir + weight_file;
-//			Tree_name->AddFriend((new_tree.at(0)+" = "+ MCfiles[index]->weight_branch).c_str() , current_weight.c_str() ); //quote LEEweight, varaible .lee_weights
-//		}
-//		string bnbresponse = working_dir+current_folder+BDTfiles[index][0];
-//		string cosmicresponse = working_dir+current_folder+BDTfiles[index][1];
-//		 f->tvertex->AddFriend("lee_signal_weights",(dir+"lee_weights_friend_for_nueintrinsic_overlay_v12.2.root").c_str());
 		MCfiles.at(index)->tvertex->AddFriend((new_tree.at(0)+" = "+ new_var[index][0]).c_str() , BDTfiles[index][0].c_str() );
 		MCfiles.at(index)->tvertex->AddFriend((new_tree.at(1)+" = "+ new_var[index][1]).c_str() , BDTfiles[index][1].c_str() );
-	//	double temp2; //SetBranchAddress needs the exact variable names, no () is allowed.
-	//	MCfiles.at(index)->tvertex->SetBranchAddress(MCfiles[index]->weight_branch.c_str(),  &temp2);
-	//	MCfiles.at(index)->tvertex->Scan(MCfiles[index]->weight_branch.c_str());
-	//	exit(0);
+		
 		//Friend Trees are ready! Variables (.mva) can be called in the tree named "new_tree"
 
 		//Feed in TGraph object with values.
@@ -168,9 +96,8 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 		
 		l->AddEntry(contents.at(index),MCfiles.at(index)->tag.c_str(),"p");
 	}
+	
 	//Fill in dummyhist
-//	l->AddEntry(contents.at(1),"BNB bkg","p");
-//	l->AddEntry(contents.at(2),"Cosmic bkg","p");
 	l->Draw();
 
 	c->Write();
