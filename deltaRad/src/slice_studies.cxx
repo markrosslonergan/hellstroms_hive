@@ -53,8 +53,8 @@ int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, s
 int main (int argc, char *argv[]){
 
     //location of the input file, should move to pnfs really...
-    std::string dir = "uboone/app/users/ksutton/mcc9_singlephoton_v4/srcs/ubana/ubana/SinglePhotonAnalysis/v12_vertexed_singlephoton.root";
-    
+    std::string dir = "uboone/app/users/ksutton/mcc9_singlephoton_v4/srcs/ubana/ubana/SinglePhotonAnalysis/v12_1file_vertexed.root";
+
     std::string mode_option = "fake"; 
     std::string xml = "default.xml";
     std::string analysis_tag ="track";
@@ -156,12 +156,12 @@ int main (int argc, char *argv[]){
     bdt_info bnb_bdt_info("bnb_"+analysis_tag, "BNB focused BDT","(60,0.2,0.7");
     bdt_info cosmic_bdt_info("cosmic_"+analysis_tag, "Cosmic focused BDT","(80,0.1,0.8)");
 
-   // std::string base_cuts = "reco_vertex_size==1 && reco_asso_showers > 0";
-   // std::string signal_definition = "1";
-   // std::string background_definition = "1";
-   // std::vector<std::string> vec_precuts = {"1"};
+    // std::string base_cuts = "reco_vertex_size==1 && reco_asso_showers > 0";
+    // std::string signal_definition = "1";
+    // std::string background_definition = "1";
+    // std::vector<std::string> vec_precuts = {"1"};
 
-  //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
+    //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
     std::string training_signal_cut = "sim_shower_pdg[0]==22 && sim_shower_overlay_fraction[0] < 0.5";
     std::string training_bkg_cut    = "sim_shower_overlay_fraction[0]<1.0";
     std::string num_track_cut;
@@ -200,8 +200,8 @@ int main (int argc, char *argv[]){
 
     std::string background_definition = "!mctruth_is_delta_radiative";
     std::string topological_cuts = "(reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut+")";
-   
-     std::vector<std::string> vec_precuts = {"1"}; //will need to put in the real precuts here
+
+    std::vector<std::string> vec_precuts = {"1"}; //will need to put in the real precuts here
 
 
 
@@ -210,7 +210,7 @@ int main (int argc, char *argv[]){
     //***************************************************************************************************/
     bdt_flow signal_flow(topological_cuts, 	signal_definition, vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_file *signal= new bdt_file("", dir, "NCDeltaRad", "hist","singlephoton/",  kRed-7, signal_flow);
-    
+
     std::vector<bdt_file *> files = {signal};
 
     for(auto &f: files){
@@ -224,6 +224,7 @@ int main (int argc, char *argv[]){
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     for(auto &f: bdt_files){
         std::cout<<"Loading "<<f->tag<<"\t with "<<f->tvertex->GetEntries()<<"\t verticies. (unweighted)"<<std::endl;
+        std::cout<<"\t with "<<f->tslice->GetEntries()<<"\t entries in slice tree.(unweighted)"<<std::endl;
         std::cout<<"POT of file loaded is: "<<f->pot<<"\t\t "<<std::endl;
         std::cout<<"Scale factor is then: "<<f->scale_data<<std::endl;
     }	
@@ -249,7 +250,7 @@ int main (int argc, char *argv[]){
 
     //Adding plot names
     signal->addPlotName("NC #Delta Rad w/ Overlay");
-  
+
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
@@ -261,8 +262,13 @@ int main (int argc, char *argv[]){
 
     if(mode_option == "valid"){
 
+        std::string s_is_matched_1g0p = "is_matched_1g0p";
+        bdt_variable v_is_matched_1g0p(s_is_matched_1g0p,"(2,0,1)","Is matched 1g0p",false,"i");
 
-      
+        validateOverlay({ v_is_matched_1g0p},{signal}, {"1"}, {},"1", "matched_1g0p",false,false);
+
+
+
     } //end valid
     return 0;
 
@@ -330,11 +336,11 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
         if(cutup){
             //       TH1* th1_overlay =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& 1" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
             //      TH1* th1_mcish =  (TH1*) files[i]->getTH1(vars[i], cuts[i] +"&& 0" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
-            th1_overlay =  (TH1*) files[i]->getTH1(vars[i], testcut+"&&"+cuts[i] +"&& sim_track_overlay_fraction > 0.5" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
-            th1_mcish =  (TH1*) files[i]->getTH1(vars[i], testcut+"&&"+cuts[i] +"&& sim_track_overlay_fraction < 0.5" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
+            th1_overlay =  (TH1*) files[i]->getTH1Slice(vars[i], testcut+"&&"+cuts[i] +"&& sim_track_overlay_fraction > 0.5" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
+            th1_mcish =  (TH1*) files[i]->getTH1Slice(vars[i], testcut+"&&"+cuts[i] +"&& sim_track_overlay_fraction < 0.5" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
         }else{
-            th1_overlay =  (TH1*) files[i]->getTH1(vars[i], testcut+"&&"+cuts[i] +"&& 1" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
-            th1_mcish =  (TH1*) files[i]->getTH1(vars[i], testcut+"&&"+cuts[i] +"&& 0" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
+            th1_overlay =  (TH1*) files[i]->getTH1Slice(vars[i], testcut+"&&"+cuts[i] +"&& 1" , "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
+            th1_mcish =  (TH1*) files[i]->getTH1Slice(vars[i], testcut+"&&"+cuts[i] +"&& 0" , "photon_truth_mcish"+std::to_string(i), 6.6e20, 1);
         }
 
         THStack * ts1 = new THStack();
@@ -352,8 +358,8 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
             // return 1;
         }
         double norm = th1_overlay->Integral()+ th1_mcish->Integral();
-        th1_overlay->Scale(1.0/norm);
-        th1_mcish->Scale(1.0/norm);
+        //th1_overlay->Scale(1.0/norm);
+        //th1_mcish->Scale(1.0/norm);
 
         ts1->Add(th1_overlay);
         ts1->Add(th1_mcish);
@@ -365,14 +371,14 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
         ts1->GetXaxis()->SetTitle(vars[i].unit.c_str());
         ts1->SetTitle(pdfname.c_str());
 
-          leg->AddEntry(th1_overlay,"BNB w/ Overlay","f");
-     //   leg->AddEntry(th1_overlay,"BNB w/ Overlay: >50\% overlay","f");
-       // leg->AddEntry(th1_mcish,"BNB w/ Overlay: <50\% overlay","f");
+        leg->AddEntry(th1_overlay,"BNB w/ Overlay","f");
+        //   leg->AddEntry(th1_overlay,"BNB w/ Overlay: >50\% overlay","f");
+        // leg->AddEntry(th1_mcish,"BNB w/ Overlay: <50\% overlay","f");
     }
 
     if(datas.size()>1){
         c->cd(which_c);
-        TH1* h_bnbext =  (TH1*) datas[1]->getTH1(vars[0], datacut , "bnbext", 0, 1);
+        TH1* h_bnbext =  (TH1*) datas[1]->getTH1Slice(vars[0], datacut , "bnbext", 0, 1);
         c->cd(which_c);
         h_bnbext->SetLineColor(kRed);
         h_bnbext->SetLineWidth(2);
@@ -383,23 +389,23 @@ int validateOverlay(std::vector<bdt_variable> vars, std::vector<bdt_file*> files
     }
     if(datas.size()>0){
         c->cd(which_c);
-        TH1* h_data =  (TH1*) datas[0]->getTH1(vars[v], datacut , "data_truth_overlay", 0, 1);
+        TH1* h_data =  (TH1*) datas[0]->getTH1Slice(vars[v], datacut , "data_truth_overlay", 0, 1);
         c->cd(which_c);
         h_data->SetLineColor(kBlack);
         h_data->SetMarkerStyle(20);
         h_data->Draw("E1 same");
 
-    if(datas.size()==3){
-        c->cd(which_c);
-        TH1* h_bnbcorsika =  (TH1*) datas[2]->getTH1(vars[0], datacut , "bnbcorsika", 0, 1);
-        c->cd(which_c);
-        h_bnbcorsika->SetLineColor(kGreen-3);
-        h_bnbcorsika->SetLineWidth(2);
-        h_bnbcorsika->Draw("hist same");
+        if(datas.size()==3){
+            c->cd(which_c);
+            TH1* h_bnbcorsika =  (TH1*) datas[2]->getTH1Slice(vars[0], datacut , "bnbcorsika", 0, 1);
+            c->cd(which_c);
+            h_bnbcorsika->SetLineColor(kGreen-3);
+            h_bnbcorsika->SetLineWidth(2);
+            h_bnbcorsika->Draw("hist same");
 
-        leg->AddEntry(h_bnbcorsika,"BNB w/ Corsika","lp");
-        leg->Draw("same");
-    }
+            leg->AddEntry(h_bnbcorsika,"BNB w/ Corsika","lp");
+            leg->Draw("same");
+        }
 
         leg->AddEntry(h_data,"Data5e19","lp");
         leg->Draw("same");

@@ -196,7 +196,9 @@ int main (int argc, char *argv[]){
 
     } else{
 //        v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
-        v_denom = {fid_cut, "mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04"}; 
+//        v_denom = {fid_cut, "mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04"}; 
+    v_denom = {fid_cut, "mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.04)==1"}; 
+
 
 
     }
