@@ -39,6 +39,8 @@
 
 #include "TEntryList.h"
 
+using namespace std;
+
 template <typename T>
 std::string to_string_prec(const T a_value, const int n = 6)
 {
@@ -139,9 +141,11 @@ struct bdt_file{
 	    int setStageEntryList(int j);
 	    int setStageEntryList(int j, double, double);
 	    int calcPrecutEntryList();
-	    int calcTopologicalEntryList();
-	    int calcCosmicBDTEntryList(double,double);
-	    int calcBNBBDTEntryList(double,double);
+		int calcTopologicalEntryList();
+
+		int BDTSelectedEntrylist(vector<vector <double>> target_bdt_cuts , bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, double sensitivity);
+		int calcCosmicBDTEntryList(double,double);
+		int calcBNBBDTEntryList(double,double);
 
 
 	    int calcBaseEntryList(std::string);

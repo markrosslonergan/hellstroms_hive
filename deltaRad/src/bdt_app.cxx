@@ -1,5 +1,6 @@
 #include "bdt_app.h"
 
+using namespace std;
 
 bdt_app_tree_struct::bdt_app_tree_struct(std::string const & tree_name, bool const extra) {
 	tree = new TTree(tree_name.c_str(), "");
@@ -20,7 +21,8 @@ void bdt_app_update_formula(std::vector<TTreeFormula*> & tfv, std::vector<float 
 
 void bdt_app_update(void_vec const & tvv, std::vector<float *> & rvv) {
 	//OBSOLETE not called anymore
-
+	cout<<"See line 23 of bdt_app.cxx for complain."<<endl;
+/*
 	for(size_t i = 0; i < tvv.size(); ++i) {
 		if(tvv.get_type(i) == typeid(int).name()) {
 			*rvv.at(i) = *tvv.at<int>(i);
@@ -28,7 +30,7 @@ void bdt_app_update(void_vec const & tvv, std::vector<float *> & rvv) {
 		else if(tvv.get_type(i) == typeid(double).name()) {
 			*rvv.at(i) = *tvv.at<double>(i);
 		}
-	}
+	}*/
 }
 
 void bdt_topological_update(std::vector<double*> *topv){
@@ -194,7 +196,7 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 
 
 }
-
+//call this initially
 int bdt_app(bdt_info ininfo, std::vector<bdt_file*> & infiles){
     std::vector<method_struct> t_methods = {ininfo.TMVAmethod};
         return bdt_app(ininfo, infiles, ininfo.train_vars, t_methods);
@@ -216,7 +218,7 @@ int bdt_app(bdt_info info, std::vector<bdt_file*> & files, std::vector<bdt_varia
 		files.at(i)->tvertex->ResetBranchAddresses();
 
 		std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
-		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
+		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);//REPEATed? CHECK
 		bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
     
     app_ofile->Close();
@@ -228,7 +230,6 @@ int bdt_app(bdt_info info, std::vector<bdt_file*> & files, std::vector<bdt_varia
 
 	return 0;
 }
-
 
 
 int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variable> train_vars, std::vector<bdt_variable> plot_vars, std::vector<method_struct> & method){

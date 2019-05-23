@@ -423,6 +423,13 @@ int bdt_file::calcPrecutEntryList(){
 
 }
 
+int bdt_file::BDTSelectedEntrylist(vector<vector <double>> target_bdt_cuts , bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, double sensitivity){
+// target_bdt_cuts are 2d (for now) points hwere the cuts should be centered on.
+// this, is the file, on which we want to apply cuts.
+// sensitivity adjusts the width.
+cout<<"Hi"<<endl;
+
+}
 
 int bdt_file::calcCosmicBDTEntryList(double c1, double c2){
 
