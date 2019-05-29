@@ -7,6 +7,7 @@
 /******** Our includes *****/
 #include "bdt_info.h"
 /******** Root includes *****/
+using namespace std;
 
 struct bdt_flow{
 
@@ -21,6 +22,7 @@ struct bdt_flow{
 		std::string pre_cuts;
 		bdt_info bdt_cosmic_cuts;
 		bdt_info bdt_bnb_cuts;
+		bdt_info bdt_contour_cuts;//CHECK
 
 		std::string mid_cuts;
 		std::string post_cuts;
@@ -29,7 +31,8 @@ struct bdt_flow{
 
 		bdt_flow(){};	
 		bdt_flow(std::string intop, std::string indef, std::string inpre, std::string inpost, bdt_info incos, bdt_info inbnb) : topological_cuts(intop),  definition_cuts(indef), pre_cuts(inpre), post_cuts(inpost),bdt_cosmic_cuts(incos), bdt_bnb_cuts(inbnb) {
-
+	cout<<"Complaint? see line 34 of bdt_flow.h"<<endl;
+	/*
 			base_cuts = topological_cuts+"&&"+definition_cuts;
 
 			std::string s = pre_cuts;
@@ -45,7 +48,7 @@ struct bdt_flow{
 			}
 			//grab last one
 			vec_pre_cuts.push_back(s);
-
+	*/
 		};	
 
 
@@ -60,6 +63,16 @@ struct bdt_flow{
 
 		};	
 
+		bdt_flow(std::string intop, std::string indef, std::vector<std::string> invecpre, std::string inpost, bdt_info incos, bdt_info inbnb, bdt_info incontour) : topological_cuts(intop),  definition_cuts(indef), vec_pre_cuts(invecpre), post_cuts(inpost),bdt_cosmic_cuts(incos), bdt_bnb_cuts(inbnb), bdt_contour_cuts(incontour) {
+
+			base_cuts = topological_cuts+"&&"+definition_cuts;
+
+			pre_cuts = vec_pre_cuts.front();
+			for(int i=1; i<vec_pre_cuts.size(); i++){
+				pre_cuts = pre_cuts + "&&"+ vec_pre_cuts.at(i);
+			}
+
+		};	
 
 };
 

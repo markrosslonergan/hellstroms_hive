@@ -1,6 +1,8 @@
 #include "bdt_sig.h"
 #include "TMath.h"
 #include "TTreeIndex.h"//Use the TTreeIndex class
+//#include "TMultiGraph.h"//draw markers
+
 #include <fstream>//read and write txt file.
 #include <unistd.h>//this is for exit(0)
 #include <sys/stat.h>
@@ -28,6 +30,283 @@ vector<double> file_reader( string str ){
 
 		return content;
 }*/
+TH2D *event_grid (vector<bdt_file*> files, vector<bdt_info> bdt_infos, string hist_name, int step, vector<double> limits,  bool bkg){
+//Put things into histogram!
+
+	double tmin_cos = limits[0] , tmax_cos = limits[1], tmin_bnb = limits[2], tmax_bnb =limits[3];
+
+	TH2D *finished_grid = new TH2D((hist_name+to_string(files[0]->target_pot)).c_str(), hist_name.c_str(),
+					step,tmin_cos, tmax_cos, step, tmin_bnb, tmax_bnb);//Book the grids, and fill it.
+	cout<<"looping over 2D histogram"<<endl;
+	for(int di=1; di<=step; di++) {
+		for(int di2=1; di2<=step; di2++) {
+			double events_rate = 0;
+
+
+			for(size_t i = 0; i < files.size(); ++i) {
+				double pot_scale = (files.at(i)->target_pot/files.at(i)->pot )*files.at(i)->scale_data;//target_pot is introduced in the bdt_file.h.
+				double lower_cos_cut = (di-1.0)/(double)step*(tmax_cos-tmin_cos)+tmin_cos;
+				double lower_bnb_cut = (di2-1.0)/(double)step*(tmax_bnb-tmin_bnb)+tmin_bnb;
+				double upper_cos_cut = (di-0.0)/(double)step*(tmax_cos-tmin_cos)+tmin_cos;
+				double upper_bnb_cut = (di2-0.0)/(double)step*(tmax_bnb-tmin_bnb)+tmin_bnb;
+
+//				cout<<"CHECK!!"<<pot_scale<<". "<<lower_cos_cut<<" "<<upper_cos_cut<<"; "<<lower_bnb_cut<<" "<<upper_bnb_cut<<endl;
+
+				string bottom_left = files.at(i)->getStageCuts(3,lower_cos_cut,lower_bnb_cut);//stage,cos,bnb
+				string right_boundary = files.at(i)->getStageCuts(2,upper_cos_cut,0);//Get the opposite of this to make a box!
+				string top_boundary = files.at(i)->getStageCuts(3,0,upper_bnb_cut);//Get the opposite of this to make a box!
+				string selected_region = "("+bottom_left+")&&!("+right_boundary+")&&!("+top_boundary+")";
+				events_rate += files.at(i)->GetEntries(selected_region.c_str())*pot_scale;
+
+			}
+
+			if(bkg){
+				if(events_rate==0) events_rate = 1e-26;//make up a small number
+				finished_grid->SetBinContent(di, di2, sqrt(events_rate) );//special treatment for bkg
+			}else{
+				finished_grid->SetBinContent(di, di2, events_rate );
+			}
+			cout.precision(3);
+			cout<<"\r Filling grids: "<<(di-1)*step+di2<<" of "<< step*step << " complete.";
+			cout.flush();
+//			cout<<" Finish "<<di<<" "<<di2<<" with "<<events_rate<<endl;
+			//CHECK 
+		}
+	}
+	
+	TCanvas* a_canvas = new TCanvas(files[0]->tag.c_str()," ",2000,1600);
+	finished_grid->SetStats(false);
+	finished_grid->Draw("colz");
+	finished_grid->GetXaxis()->SetTitle("Cosmic BDT Score");
+	finished_grid->GetYaxis()->SetTitle("BNB BDT Score");
+//	a_canvas->Write();//I dont need to write~
+	a_canvas->Update();
+	a_canvas->SaveAs((hist_name+".pdf").c_str(),"pdf");
+
+
+	cout<<"Finish producing 2D event grid for "<<hist_name<<endl;
+	return finished_grid;
+}
+
+int shrinks_boundary(TH2D* sig_grid, int step, int fix_x, int fix_y, int const max_position ){
+
+	double temp=0;
+	int mndex = 1;// track one of the coordinate in a coordinate pair 
+	double reference; 
+	if(fix_x == 0)//fix_x goes 0 means its a value determined through this loop.
+		while(1){
+			reference = sig_grid->GetBinContent(mndex,fix_y);
+			cout<<"with fixed y: searching "<<  mndex<<endl;
+			if( temp < reference){
+				temp = reference;
+			}else if( temp > reference){
+				return mndex-1;//mndex passes the maximum sig, step back!
+			}else if( mndex == max_position ){
+				return mndex;
+			}
+			mndex++;
+		}
+
+	if(fix_y == 0)
+		while(1){
+			reference =  sig_grid->GetBinContent( fix_x , mndex );
+			cout<<"with fixed x: searching "<<  mndex<<endl;
+			if( temp < reference){
+				temp = reference;
+			}else if( temp > reference ){
+				return mndex-1;
+			}else if( mndex == max_position ){
+				return mndex;
+			}
+			mndex++;
+		}
+
+	cout<<"Fail searching boundary."<<endl;
+	exit(EXIT_FAILURE);
+	return 0;
+}
+
+void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
+	//strictness from 0 to 1 means easy to strict.
+
+
+	TCanvas* a_canvas = new TCanvas("Signal/Bkg Ratio"," ",2000,1600);
+	sig_grid->SetStats(false);
+	sig_grid->Draw("colz");
+	sig_grid->SetTitle("Regional Significance 2D Histogram");
+	sig_grid->GetXaxis()->SetTitle("Cosmic BDT Score");
+	sig_grid->GetYaxis()->SetTitle("BNB BDT Score");
+
+	TLegend *legend = new TLegend();//0.1,0.7,0.48,0.9);
+//	TMultiGraph * markers = new TMultiGraph();
+	vector<TGraph*> temp_marker(strictness.size()) ;// = new TGraph(boundary.size(), px, py);
+	for(int index = 0; index < strictness.size(); index++){//do this for different strictness;
+	//CHECK
+
+		double max_sig = 0;
+		int max_x, max_y;
+		for(int jndex = 1; jndex <= step; jndex++){//each value fixed a column of the 2D histgram
+
+			for(int jndex2 = 1; jndex2 <= step; jndex2++){//each value fixed a row
+
+			cout.precision(3);
+			cout<<"\r Evaluating grids for max sig.: "<<jndex<<" "<<jndex2;
+			cout.flush();
+
+				double temp = sig_grid->GetBinContent(jndex, jndex2);
+				if(max_sig<temp&& temp<10){
+					max_sig = temp;
+					max_x=jndex;
+					max_y=jndex2;
+					cout<<" Maximum regional significance is "<<max_sig<<" at "<<max_x<<" "<<max_y<<";"<<endl;
+					}
+			}
+		}
+		//now find the boundary max_sig*strictness[i];
+
+		vector< vector<double> > boundary;
+		for(int jndex = 1; jndex <= step; jndex ++){//Search targeted significance diagonally until we locate it
+			double temp2 = sig_grid->GetBinContent(jndex, jndex);
+
+			cout.precision(3);
+			cout<<"\r Evaluating grids for boundaries: "<<jndex<<" "<<jndex;
+//			cout.flush();
+			cout<<" significance "<< temp2<<", compared to the boundary requirement: " << max_sig*strictness[index]<<endl;
+
+			if(jndex == step){
+				cout<<"Warning: CANT FIND target significance along the diagonal?? How about relax the cut?"<<endl;
+				cout<<strictness[index]<<" of significance will results in a small reginal selection.\n"<<endl;
+//				exit(EXIT_FAILURE);
+			}else if(temp2>max_sig*strictness[index]){//locate where the target bounrady starts.
+
+				cout<< "Locate the first mark of boundary, with sig = "<<temp2<<" at "<<jndex<<" " <<jndex<<endl;
+				//Prepare some tedious values
+				double xmin = sig_grid->GetXaxis()->GetBinLowEdge(1);
+				double ymin = sig_grid->GetYaxis()->GetBinLowEdge(1);
+				double dx = sig_grid->GetXaxis()->GetBinWidth(1);
+				double dy = sig_grid->GetYaxis()->GetBinWidth(1);
+				cout<<"CHECK"<<xmin<<" and dx "<<dx<<endl;
+
+				vector<vector<double> > default_boundary(step-jndex + 1 ,{xmin,ymin});
+				boundary = default_boundary;//one side
+				boundary.push_back({xmin+dx*(jndex-1),ymin+dy*(jndex-1)});//center
+				boundary.insert(boundary.end(), default_boundary.begin(), default_boundary.end() );//another side
+
+				//e.g.	0< 6 - 5 + 1 gives 0,1
+				for (int kndex = 0; kndex < step-jndex + 1; kndex++){//work on the top most; boundaries.
+					//e.g. (4,4) where max are (5,5), edge at (6,6)
+					//do (n,6), n from 1 to 5; (n,5)...
+					//do (n,5), n from 1 to 5; (n,5)...
+
+					int temp_y = (step-kndex+1);
+					int temp_x = shrinks_boundary(sig_grid, step, 0, temp_y , jndex);//fixing y, varying x.
+					cout<<"Shrink rows   "<<temp_y<<" landed on "<<temp_x<<" "<<temp_y<<"("<<xmin+dx*(temp_x-1)<<","<<ymin+dy*(temp_y - 1)<<endl;
+					boundary[kndex] = { xmin+dx*(temp_x-1) , ymin+dy*(temp_y - 1)};//head of the line
+					cout<<"CHECK THIS! "<<boundary[kndex][0]<<" "<<boundary[kndex][1]<<endl;
+
+					//do (5,n), n from 1 to 5; (n,5)...
+					//do (6,n), n from 1 to 5; (n,5)...
+
+					temp_x = jndex+kndex+1;
+					temp_y = shrinks_boundary(sig_grid, step, temp_x, 0 , jndex);//fixing x, varying y.
+					cout<<"Shrink columns "<<temp_x<<" landed on "<<temp_x<<" "<<temp_y<<endl;
+					boundary[step-jndex + 1 +kndex+1] = { xmin+dx*(temp_x-1), ymin+dy*(temp_y-1) };//tail of the line
+
+					cout<<"Boundary has dimension: "<<boundary.size()<<endl;
+					//move on next coordiante pair in the boundary vector
+				}
+
+//				boundary[0] = {boundary[1][0],boundary[1][1]+dy};//extent the lines
+//				boundary.back() = {boundary[boundary.size()-2][0]+dx,boundary[boundary.size()-2][1]};//extent the lines
+
+				cout<<" Boundaries are determined at tied "<<strictness[index]<<endl;
+				break;
+			}
+		}
+		//this shrinks horizontally;
+		cout<<"Boundary really has dimension: "<<boundary.size()<<endl;
+		double px[boundary.size()], py[boundary.size()];
+		for(int i = 0; i<boundary.size(); i++){
+			px[i]=boundary[i][0];
+			py[i]=boundary[i][1];
+			cout<<"Feed x :"<<px[i]<<endl;
+		
+		}
+		temp_marker[index] = new TGraph(boundary.size(), px, py);
+		temp_marker[index]->SetTitle((to_string(strictness[index])+"sig").c_str());
+		temp_marker[index]->SetMarkerStyle(index+21);
+		temp_marker[index]->SetMarkerSize(2);
+		temp_marker[index]->SetMarkerColor(40+index);
+		temp_marker[index]->SetLineColor(40+index);
+//		temp_marker[index]->SetDrawOption("AP");
+		temp_marker[index]->Draw("same lp");
+//		markers->Add(temp_marker[index]);
+
+		//Save bdt_info.
+		string txt_name = "./contour_cut/curve_selection"+to_string_prec(strictness.at(index),4)+".txt";
+		ofstream curve_selection(txt_name);
+		curve_selection.close();
+		curve_selection.open(txt_name, ios::app);
+
+		for( int kndex = 0 ; kndex < boundary.size(); kndex++){
+			curve_selection<<boundary[kndex][0]<<" "<<boundary[kndex][1]<<endl;
+//			cout<<"Recording line "<<kndex<<" with "<<boundary[kndex][0]<<endl;
+		}
+
+		curve_selection.close();
+		cout<<"Curve info is saved to "<<txt_name<<endl;
+		//Save bdt_info. Finish!
+
+		legend->AddEntry(temp_marker[index],(to_string_prec(strictness[index],4)+" of the best significance").c_str(),"p");
+	}
+	legend->Draw();
+	a_canvas->Update();
+//	a_canvas->BuildLegend();
+	a_canvas->SaveAs("Regional_Significance.pdf","pdf");
+}
+
+
+void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, vector<double> percent_sig){
+	int step = 12;
+	
+	double tmin_cos = 0 , tmin_bnb = 0 , tmax_cos = 0, tmax_bnb = 0;
+	double temp_tmin_cos = 0 , temp_tmin_bnb = 0 , temp_tmax_cos = 0, temp_tmax_bnb = 0;
+	cout<<"Finding the extremum of responses:";
+
+	vector<bdt_file*> files;
+	files.reserve(sig_files.size()+bkg_files.size());
+	files.insert( files.end(), sig_files.begin(), sig_files.end() );
+	files.insert( files.end(), bkg_files.begin(), bkg_files.end() );
+	
+
+	for(int index = 0; index<files.size(); index++){
+	//get the minimum bnb info;
+	temp_tmin_cos = files.at(index)->tvertex->GetMinimum( (files.at(index)->getBDTVariable(cosmic_focused_bdt).name + ">0").c_str()    );
+	temp_tmin_bnb = files.at(index)->tvertex->GetMinimum( (files.at(index)->getBDTVariable(bnb_focused_bdt).name + ">0").c_str()    );
+	temp_tmax_cos = files.at(index)->tvertex->GetMaximum( files.at(index)->getBDTVariable(cosmic_focused_bdt).name.c_str()    );
+	temp_tmax_bnb = files.at(index)->tvertex->GetMaximum( files.at(index)->getBDTVariable(bnb_focused_bdt).name.c_str()    );
+	if (temp_tmin_cos<tmin_cos) tmin_cos = temp_tmin_cos;
+	if (temp_tmin_bnb<tmin_bnb) tmin_bnb = temp_tmin_bnb;
+	if (temp_tmax_cos>tmax_cos) tmax_cos = temp_tmax_cos;
+	if (temp_tmax_bnb>tmax_bnb) tmax_bnb = temp_tmax_bnb;
+
+	}
+	cout<<"Range of Responses: Cosmic:"<<tmin_cos<<" "<<tmax_cos<<" BNB:"<<tmin_bnb<<" "<<tmax_bnb<<endl;
+
+
+	TH2D* signal_grid	= event_grid (sig_files, {cosmic_focused_bdt, bnb_focused_bdt}, "Signal_events_rate", step, {tmin_cos, tmax_cos+0.1, tmin_bnb, tmax_bnb+0.1} , false);//this function maps events into the 2d grid.
+	TH2D* bkg_grid		= event_grid (bkg_files, {cosmic_focused_bdt, bnb_focused_bdt}, "Background_events_rate_SquareRoot", step, {tmin_cos, tmax_cos+0.1, tmin_bnb, tmax_bnb+0.1}, true);//this function maps events into the 2d grid.
+	cout<<"Finish Two Event Grids"<<endl;
+
+	signal_grid->Divide(bkg_grid);//signal over background!
+
+	define_boundary (signal_grid, step, percent_sig);//perform selection with 0.8 efficiency.
+	exit(0);
+
+}
+
+
+
 
 std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt){
 
@@ -115,6 +394,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 				ofstream entries_list("./contour_cut/"+MCfiles.at(index)->tag+".txt");//create a new file
 				entries_list.close();
+
 				entries_list.open("./contour_cut/"+MCfiles.at(index)->tag+".txt",std::ios::app);
 
 				cout<<"Saving (cosmic && BNB) BDT responses on signal sample to ./contour_cut/wheretocuts.txt."<<endl;
@@ -306,7 +586,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 		TH2D * h2_sig_cut = new TH2D( "significance_2D",  "significance_2D",nsteps_cosmic, cut_min_cosmic, cut_max_cosmic, nsteps_bnb, cut_min_bnb, cut_max_bnb);
 		std::vector<double> vec_sig;//some vectors to store TGraph info;
-		std::vector<double> vec_cut;	
+		std::vector<double> vec_cut;
 
 		for(int di=1; di<=nsteps_cosmic; di++) {
 			double d  = (double)(di-1.0)*step_cosmic + cut_min_cosmic; ;	
@@ -738,9 +1018,9 @@ double get_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*>
 	return significance;
 }
 
-std::vector<double> lin_scan(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, double c1, double c2){
+/*std::vector<double> lin_scan(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, double c1, double c2){
 	cout<<"GO AND CHECK sig.cxx\n\n\n\n\n"<<endl;
-	/*	std::cout<<"Starting to Scan Significance"<<std::endl;
+		std::cout<<"Starting to Scan Significance"<<std::endl;
 		double best_significance = 0;
 		double best_mva_cut = DBL_MAX;
 		double best_mva_cut2 = DBL_MAX;
@@ -809,6 +1089,6 @@ std::vector<double> lin_scan(std::vector<bdt_file*> sig_files, std::vector<bdt_f
 
 
 	return std::vector<double>{best_mva_cut, best_mva_cut2, best_significance};
-	*/
 }
+	*/
 

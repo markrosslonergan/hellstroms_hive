@@ -39,7 +39,7 @@ int main (int argc, char *argv[]){
 
 
 	std::string mode_option = "fake"; 
-	std::string xml = "default.xml";
+	std::string xml = "box_copy.xml";
 	std::string topo_tag = "1e1p";
 	std::string bdt_tag = "cosmic";
 	std::string analysis_tag = topo_tag;
@@ -154,6 +154,7 @@ int main (int argc, char *argv[]){
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	bdt_info cosmic_bdt_info(analysis_tag, TMVAmethods[0]);
 	bdt_info bnb_bdt_info(analysis_tag, TMVAmethods[1]);
+	bdt_info contour_bdt_info(analysis_tag, TMVAmethods[0]);//CHECK
 
 	//Get all the variables you want to use	
 	vars = cosmic_bdt_info.train_vars;
@@ -217,14 +218,14 @@ int main (int argc, char *argv[]){
 	//***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
 	//***************************************************************************************************/
 	std::cout<<"Defining all out bdt_flows."<<std::endl;
-	bdt_flow signal_training_flow   (topological_cuts, 	signal_definition +"&&"+ training_signal_cut, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow signal_flow	    (topological_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow signal_other_flow	    (topological_cuts, 	"!("+signal_definition +")", 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow signal_training_flow   (topological_cuts, 	signal_definition +"&&"+ training_signal_cut, 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info, contour_bdt_info);
+	bdt_flow signal_flow	    (topological_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info, contour_bdt_info);
+	bdt_flow signal_other_flow	    (topological_cuts, 	"!("+signal_definition +")", 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info, contour_bdt_info);
 
-	bdt_flow bkg_flow(topological_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
-	bdt_flow bkg_training_flow(topological_cuts,	background_definition+"&&"+ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+	bdt_flow bkg_flow(topological_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info, contour_bdt_info);
+	bdt_flow bkg_training_flow(topological_cuts,	background_definition+"&&"+ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info, contour_bdt_info);
 
-	bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
+	bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info, contour_bdt_info);
 	//    bdt_flow intrinsic_flow(topological_cuts,	intrinsic_background	,		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
 
 
@@ -320,7 +321,8 @@ int main (int argc, char *argv[]){
 		for(auto &f: bdt_files){
 
 			if(mode_option != "app" && mode_option != "train"){
-				f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
+				//f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
+				f->addBDTResponses_v2(cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, TMVAmethods);
 			}
 			if(mode_option != "train" && mode_option != "app"){
 				f->calcBaseEntryList(analysis_tag);
@@ -347,6 +349,7 @@ int main (int argc, char *argv[]){
 
 	double fcoscut = 0;
 	double fbnbcut = 0;
+	vector<double> contour_width = {0.001};
 
 	if (access("sig.txt",F_OK) == -1){//no file
 		std::cout<<"Warning: No sig.txt is found in the current directory. Proceed without BDT cuts."<<std::endl;
@@ -417,8 +420,7 @@ int main (int argc, char *argv[]){
 			bdt_response bnb_response(bnb_bdt_info, training_signal, training_bnb);
 			bnb_response.plot_bdt_response(ftest);
 		}
-	}	
-	else if(mode_option == "recomc"){
+	}else if(mode_option == "recomc"){
 
 		if (access("recomc",F_OK) == -1){
 			mkdir("recomc",0777);//Create a folder for pdf.
@@ -577,16 +579,19 @@ int main (int argc, char *argv[]){
 		}
 	}else if(mode_option == "contour"){
 
-		contour_selection({signal} , {OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut);
+		contour_selection({signal} , {signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut);
 
 		cout<<"Scattering plot is produced!"<<endl;
 
 		//	cout<<"Contour Selection is finished! See root files for detail."<<endl;
 
 	}else if(mode_option == "sig"){
+		
+		select_events({signal}, {signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, {0.005,0.15,0.3});
+		exit(0);
 
 		TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-		std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, nueintrinsic , OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
+		std::vector<double> ans = scan_significance(fsig, {signal} , {signal_other, bnb, nueintrinsic , OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
 		//std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
 		std::ofstream save_sig("sig.txt");
@@ -717,15 +722,17 @@ int main (int argc, char *argv[]){
 
 	int ip=0;
 	std::vector<bool> subv = {false,false,true};
-	if(!response_only){
-		if(number != -1){
+	//contour_width can be used!
+	if(!response_only){//goes here by default.
+		if(number != -1){//without specific requirement of variable.
 			bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
 
 			datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
 
 			//datamc.setSubtractionVector(subv);
 			std::vector<bdt_variable> tmp_var = {vars.at(number)};
-			datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
+			//datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
+			datamc.plotStacks_v2(ftest,  tmp_var , contour_width, true);//turn on contour cut
 		}else{
 
 			bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
@@ -735,7 +742,7 @@ int main (int argc, char *argv[]){
 			real_datamc.SetSpectator();
 			real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
 		}
-	}else{
+	}else{//BDTResponses go 
 		bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
 
 		if(run_bnb) real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
@@ -770,18 +777,11 @@ int main (int argc, char *argv[]){
 
 	}
 	if(run_bnb){
-
-
-		if(number != -1){
-			plot_bdt_variable(training_signal, training_bnb, training_vars.at(number), bnb_bdt_info, false);
 			plot_bdt_variable(training_signal, training_bnb, plotting_vars.at(number), bnb_bdt_info, true);
 		}else{
 			plot_bdt_variables(training_signal, training_bnb, training_vars, bnb_bdt_info, false);
 			plot_bdt_variables(training_signal, training_bnb, plotting_vars, bnb_bdt_info, true);
 		}
-
-	}
-
 
 }else if(mode_option == "eff"){
 

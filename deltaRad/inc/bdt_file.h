@@ -113,6 +113,7 @@ struct bdt_file{
 	    int numberofevents;
 	    int numberofevents_raw;
 	    double pot;
+		double target_pot = 13.2e20;//CHECK
 
 	    TFile *f;
 	    TTree *tvertex;
@@ -133,6 +134,8 @@ struct bdt_file{
 	    TEntryList * cosmicbdt_list;
 	    std::string bnbbdt_list_name;
 	    TEntryList * bnbbdt_list;
+	    std::string contourbdt_list_name;
+	    TEntryList * contourbdt_list;
 
 	    //a function that splits a BDT file based on string and !string
 	    int splitBDTfile(std::string split_string,std::string trueTAG, bdt_file* truesplit, std::string falseTAG, bdt_file *falsesplit);
@@ -143,7 +146,8 @@ struct bdt_file{
 	    int calcPrecutEntryList();
 		int calcTopologicalEntryList();
 
-		int BDTSelectedEntrylist(vector<vector <double>> target_bdt_cuts , bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, double sensitivity);
+
+		int BDTSelectedEntrylist(double radius);//CHECK
 		int calcCosmicBDTEntryList(double,double);
 		int calcBNBBDTEntryList(double,double);
 
@@ -170,6 +174,7 @@ struct bdt_file{
 
 	    bdt_flow flow;
 	    bdt_variable getBDTVariable(bdt_info info);
+	    bdt_variable getBDTVariable_contour(bdt_info info);//CHECK
 	    bdt_variable getBDTVariable(bdt_info info, std::string bin);
 	    //legacy code, and damned lazy too
 	    //bdt_variable getBDTVariable(std::string cut);
@@ -198,6 +203,7 @@ struct bdt_file{
 	    int addFriend(std::string in_friend_tree_nam, std::string in_friend_file);
 	    int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
 
+		int addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info, bdt_info contour_bdt_info,  std::vector<method_struct> TMVAmethods);
 	    ~bdt_file();
 
 

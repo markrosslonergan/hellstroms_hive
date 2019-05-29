@@ -41,7 +41,8 @@ struct bdt_info{
 	};
 
 
-    bdt_info(std::string analysis_tag, method_struct inmethod):  TMVAmethod(inmethod), identifier(analysis_tag+inmethod.bdt_tag), name(inmethod.bdt_name),binning(inmethod.bdt_binning),base_cuts("1"), pre_cuts("1"), mid_cuts("1"),post_cuts("1"), bdt_cosmic_cuts("1"), bdt_bnb_cuts("1"),signal_definition("1"),background_definition("1") { 
+    bdt_info(std::string analysis_tag, method_struct inmethod):
+	TMVAmethod(inmethod), identifier(analysis_tag+inmethod.bdt_tag), name(inmethod.bdt_name),binning(inmethod.bdt_binning),base_cuts("1"), pre_cuts("1"), mid_cuts("1"),post_cuts("1"), bdt_cosmic_cuts("1"), bdt_bnb_cuts("1"),signal_definition("1"),background_definition("1") { 
 	topo_name = "2#gamma1p";	
     train_vars = TMVAmethod.bdt_train_vars;
     spec_vars = TMVAmethod.bdt_spec_vars;

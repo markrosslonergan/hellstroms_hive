@@ -423,11 +423,14 @@ int bdt_file::calcPrecutEntryList(){
 
 }
 
-int bdt_file::BDTSelectedEntrylist(vector<vector <double>> target_bdt_cuts , bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, double sensitivity){
-// target_bdt_cuts are 2d (for now) points hwere the cuts should be centered on.
-// this, is the file, on which we want to apply cuts.
-// sensitivity adjusts the width.
-cout<<"Hi"<<endl;
+int bdt_file::BDTSelectedEntrylist(double radius){
+
+	cout<<"Working on countour list: "<<endl;
+    contourbdt_list_name = "contourbdt_list_"+std::to_string(radius)+"_" +this->tag;
+//CHECK
+    this->tvertex->Draw((">>"+contourbdt_list_name).c_str(), this->getStageCuts(5,radius,0).c_str() , "entrylist");
+    contourbdt_list = (TEntryList*)gDirectory->Get(contourbdt_list_name.c_str());
+	 return 0;
 
 }
 
@@ -757,6 +760,9 @@ bdt_variable bdt_file::getBDTVariable(bdt_info info, std::string binning){
 }
 
 
+bdt_variable bdt_file::getBDTVariable_contour(bdt_info info){//CHECK, no identifier
+    return bdt_variable(this->tag + ".contour_radius", info.binning, info.name+" Response" ,false,"d");
+}
 
 
 bdt_file::~bdt_file(){
@@ -790,21 +796,46 @@ int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,  
     return 0;
 }
 
+int bdt_file::addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info, bdt_info contour_bdt_info,  std::vector<method_struct> TMVAmethods){
+    topo_name = bnb_bdt_info.topo_name; 
+    for(auto &method: TMVAmethods){
+
+        std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+        this->addFriend(this->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_"+this->tag+"_app"+".root");
+
+        std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+        this->addFriend(this->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_"+this->tag+"_app"+".root");
+
+		cout<<"Now adding TreeFriend: "<<this->tag<<"_contour.root"<<" "<<this->tag<<endl;//CHECK
+		this->addFriend(this->tag , this->tag+"_contour"+".root");
+		}
+
+    return 0;
+}
+
 int bdt_file::setStageEntryList(int j){
 
-    if(j==0){
-        this->tvertex->SetEntryList(topological_list);
-    }else if(j==1){
-        this->tvertex->SetEntryList(precut_list);
-    }else if (j==2){
-        this->tvertex->SetEntryList(cosmicbdt_list);
-    }else if (j==3){
-        this->tvertex->SetEntryList(bnbbdt_list);
-    }else if(j>3){
-        std::cout<<"bdt_file::setStageEntryList. Only up to level 3 allowed with Entry Lists"<<std::endl;
-        exit(EXIT_FAILURE);
+	switch(j){
+		case 0:
+			this->tvertex->SetEntryList(topological_list);
+			break;
+		case 1:
+			this->tvertex->SetEntryList(precut_list);
+			break;
+		case 2:
+			this->tvertex->SetEntryList(cosmicbdt_list);
+			break;
+		case 3:
+			this->tvertex->SetEntryList(bnbbdt_list);
+			break;
+		case 5:
+			this->tvertex->SetEntryList(contourbdt_list);
+			break;
+		default:
+			std::cout<<"bdt_file::setStageEntryList fails."<<std::endl;
+			exit(EXIT_FAILURE);
 
-    }
+	}
 
 
     return 0;
@@ -812,35 +843,36 @@ int bdt_file::setStageEntryList(int j){
 
 
 std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
+//Condition as BDT CUTs
 
     bool verbose = false;
 
     std::string ans;
     switch(stage) {
-        case 0:
+        case 0://base_cut
             ans = flow.base_cuts;
             break;
-        case 1:
+        case 1://base_cut+pre_cut
             ans = flow.base_cuts + "&&"+ flow.pre_cuts;
             if(verbose)std::cout << "Stage 1 cuts: " << ans << std::endl;
             break;
-        case 2: {
-                    bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
+        case 2: {//base_cut+pre_cut+cosmicBDT_cut
+                    bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);
                     ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1);
                     if(verbose)std::cout << "Stage 2 cuts: " << ans << std::endl;
                     break;
                 }
 
-        case 3: {
-                    bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
-                    bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
+        case 3: {//base_cut+pre_cut+cosBDT_cut+bnbBDT_cut
+                    bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);
+                    bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);
                     ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2);
                     if(verbose)std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
                     if(verbose)std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
                     if(verbose)std::cout << "Stage 3 cuts: " << ans << std::endl;
                     break;
                 }
-        case 4: {
+        case 4: {//? seems not using.
                     bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
                     bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
                     if(verbose)std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
@@ -849,6 +881,12 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
                     if(verbose)std::cout << "Stage 4 cuts: " << ans << std::endl;
                     break;
                 }
+		case 5: {//CHECK , add contour cut but now ready to be used.
+				bdt_variable contourvar = this->getBDTVariable_contour(flow.bdt_contour_cuts);
+                    ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+contourvar.name +"<" +std::to_string(bdtvar1);//NO post_cuts. bdtvar2==0 as defined in the eLEE.cxx, 2nd argument of a function under datamc section;
+					break;
+				}
+
         default: 
                 ans = "1";
                 break;
