@@ -91,39 +91,90 @@ TH2D *event_grid (vector<bdt_file*> files, vector<bdt_info> bdt_infos, string hi
 int shrinks_boundary(TH2D* sig_grid, int step, int fix_x, int fix_y, int const max_position ){
 
 	double temp=0;
+	int best_mndex = (fix_x==0)? fix_y: fix_x;//this contrains the final spot along the diagonal.
 	int mndex = 1;// track one of the coordinate in a coordinate pair 
-	double reference; 
-	if(fix_x == 0)//fix_x goes 0 means its a value determined through this loop.
-		while(1){
-			reference = sig_grid->GetBinContent(mndex,fix_y);
-			cout<<"with fixed y: searching "<<  mndex<<endl;
-			if( temp < reference){
-				temp = reference;
-			}else if( temp > reference){
-				return mndex-1;//mndex passes the maximum sig, step back!
-			}else if( mndex == max_position ){
-				return mndex;
-			}
-			mndex++;
-		}
+	double reference;
+	double fix_ref = sig_grid->GetBinContent( max_position, max_position );
 
-	if(fix_y == 0)
-		while(1){
+	while(1){
+		if(fix_x==0){//fix_x goes 0 means its a value determined through this loop.
+			reference = sig_grid->GetBinContent( mndex , fix_y );
+			cout<<"with fixed y: searching "<<  mndex<<endl;
+		}else if(fix_y == 0){
 			reference =  sig_grid->GetBinContent( fix_x , mndex );
 			cout<<"with fixed x: searching "<<  mndex<<endl;
-			if( temp < reference){
-				temp = reference;
-			}else if( temp > reference ){
-				return mndex-1;
-			}else if( mndex == max_position ){
-				return mndex;
-			}
-			mndex++;
+		}else{
+			cout<<"Fail searching boundary. One of the coordinate needs to be fixed."<<endl;
+			exit(EXIT_FAILURE);
 		}
 
-	cout<<"Fail searching boundary."<<endl;
-	exit(EXIT_FAILURE);
+		int diagonal = (fix_x==0)? fix_y : fix_x;
+		if( reference > fix_ref){//boundary is found, when a higher sig is found;
+			return mndex;
+		}else if( mndex >= diagonal ){//reach the edge!
+			if(diagonal>best_mndex){
+				return best_mndex;//best_mndex shrinks/expands as the searching proceeds;
+			}else{
+				return diagonal;//nothing can exceed the diagonal grids;
+			}
+		}
+
+		if( temp < reference){//find a relative higher sig.? update it
+			temp= reference;
+			best_mndex = mndex;
+		}
+		mndex++;
+	}
+
 	return 0;
+}
+
+void tailer_boundary (vector< vector <double> > & boundary){
+		//Remove redundant points: those adjacent that are identical;
+		vector< double > remove_index;
+		for(int i = 0 ; i < boundary.size()-1; i ++){
+			if(boundary[i][0]==boundary[i+1][0] && boundary[i][1]==boundary[i+1][1]){
+				remove_index.push_back(i);
+				cout<<"going to remove the "<<i+1<<"th element in the boundary;"<<endl;
+			}
+		}
+		vector<vector<double>>::iterator remove_this;
+		while(remove_index.size()>0){
+			remove_this = boundary.begin()+remove_index.back();
+			boundary.erase( remove_this, remove_this + 1 );//remove 1 element;
+			remove_index.pop_back();
+		}
+		
+		//now find the overlap points to determine the final contour;
+		int temp_index = 0;
+		int temp_indexb = 0;
+		int temp_boundary_length = (boundary.size()-3)/2;
+		for( int i = temp_boundary_length-1; i >=0; i--){
+			for (int j = temp_boundary_length+3; j < boundary.size() ; j++){
+				if(boundary[i][0] == boundary[j][0] && boundary[i][1] == boundary[j][1]){
+					temp_index = i;
+					temp_indexb = boundary.size()-1-j;
+					cout<<"Two identical elements: "<< i <<"th and the last "<<temp_indexb<<"th element;"<<endl;
+					goto founded;
+				}
+			}
+		}
+
+founded:
+		if(temp_index < 1 && temp_indexb < 1){
+			cout<<"Not need to tailer the boundary, because the boundary is open." <<endl;
+		}else{
+			cout<<"Tailer the boundary by cutting "<<temp_index+temp_indexb<<" elements."<<endl;
+			for(int i = 0; i<temp_indexb; i++){
+				boundary.pop_back();
+			}
+			boundary.erase(boundary.begin(),boundary.begin()+temp_index);//clean up the first
+		}
+
+		if(boundary.size()<3){
+			cout<<"WARNING: NO BOUNDARY is available!"<<endl;
+				exit(EXIT_FAILURE);
+		}
 }
 
 void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
@@ -154,7 +205,7 @@ void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
 			cout.flush();
 
 				double temp = sig_grid->GetBinContent(jndex, jndex2);
-				if(max_sig<temp&& temp<10){
+				if(max_sig<temp && temp<1){//centering reasonable max_sig; dont want pure signal grid
 					max_sig = temp;
 					max_x=jndex;
 					max_y=jndex2;
@@ -180,20 +231,29 @@ void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
 			}else if(temp2>max_sig*strictness[index]){//locate where the target bounrady starts.
 
 				cout<< "Locate the first mark of boundary, with sig = "<<temp2<<" at "<<jndex<<" " <<jndex<<endl;
+
 				//Prepare some tedious values
 				double xmin = sig_grid->GetXaxis()->GetBinLowEdge(1);
 				double ymin = sig_grid->GetYaxis()->GetBinLowEdge(1);
 				double dx = sig_grid->GetXaxis()->GetBinWidth(1);
 				double dy = sig_grid->GetYaxis()->GetBinWidth(1);
 				cout<<"CHECK"<<xmin<<" and dx "<<dx<<endl;
-
-				vector<vector<double> > default_boundary(step-jndex + 1 ,{xmin,ymin});
+				
+				int boundary_half_length=2*(step-jndex + 1);
+				
+				vector<vector<double> > default_boundary(boundary_half_length ,{xmin,ymin});
 				boundary = default_boundary;//one side
+				boundary.push_back({xmin+dx*(jndex-1),ymin+dy*(jndex)});//center to top
 				boundary.push_back({xmin+dx*(jndex-1),ymin+dy*(jndex-1)});//center
+				boundary.push_back({xmin+dx*(jndex),ymin+dy*(jndex-1)});//center to right
+				//spit out the location of the best sig
+				std::ofstream save_sig("sig.txt");
+				save_sig<< xmin+dx*(jndex-1) <<" "<<ymin+dy*(jndex-1)<<std::endl;
+
 				boundary.insert(boundary.end(), default_boundary.begin(), default_boundary.end() );//another side
 
 				//e.g.	0< 6 - 5 + 1 gives 0,1
-				for (int kndex = 0; kndex < step-jndex + 1; kndex++){//work on the top most; boundaries.
+				for (int kndex = 0; 2*kndex < boundary_half_length; kndex++){//work on the top most; boundaries.
 					//e.g. (4,4) where max are (5,5), edge at (6,6)
 					//do (n,6), n from 1 to 5; (n,5)...
 					//do (n,5), n from 1 to 5; (n,5)...
@@ -201,8 +261,9 @@ void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
 					int temp_y = (step-kndex+1);
 					int temp_x = shrinks_boundary(sig_grid, step, 0, temp_y , jndex);//fixing y, varying x.
 					cout<<"Shrink rows   "<<temp_y<<" landed on "<<temp_x<<" "<<temp_y<<"("<<xmin+dx*(temp_x-1)<<","<<ymin+dy*(temp_y - 1)<<endl;
-					boundary[kndex] = { xmin+dx*(temp_x-1) , ymin+dy*(temp_y - 1)};//head of the line
-					cout<<"CHECK THIS! "<<boundary[kndex][0]<<" "<<boundary[kndex][1]<<endl;
+					boundary[2*kndex+1] = { xmin+dx*(temp_x-1) , ymin+dy*(temp_y - 1)};//head of the line
+					boundary[2*kndex] = { xmin+dx*(temp_x-1) , ymin+dy*(temp_y)};//add one to the top;
+//					cout<<"CHECK THIS! "<<boundary[kndex][0]<<" "<<boundary[kndex][1]<<endl;
 
 					//do (5,n), n from 1 to 5; (n,5)...
 					//do (6,n), n from 1 to 5; (n,5)...
@@ -210,19 +271,25 @@ void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
 					temp_x = jndex+kndex+1;
 					temp_y = shrinks_boundary(sig_grid, step, temp_x, 0 , jndex);//fixing x, varying y.
 					cout<<"Shrink columns "<<temp_x<<" landed on "<<temp_x<<" "<<temp_y<<endl;
-					boundary[step-jndex + 1 +kndex+1] = { xmin+dx*(temp_x-1), ymin+dy*(temp_y-1) };//tail of the line
+					//+2 for 3 additional elements at the center.
+					boundary[boundary_half_length+2 +2*kndex+1] = { xmin+dx*(temp_x-1), ymin+dy*(temp_y-1) };//tail of the line
+					boundary[boundary_half_length+2 +2*kndex+2] = { xmin+dx*(temp_x), ymin+dy*(temp_y-1) };//add one to the right;
 
 					cout<<"Boundary has dimension: "<<boundary.size()<<endl;
 					//move on next coordiante pair in the boundary vector
 				}
 
-//				boundary[0] = {boundary[1][0],boundary[1][1]+dy};//extent the lines
-//				boundary.back() = {boundary[boundary.size()-2][0]+dx,boundary[boundary.size()-2][1]};//extent the lines
+//				boundary[0] = {boundary[1][0],boundary[1][1]+dy};//correct the edges of lines
+//				boundary.back() = {boundary[boundary.size()-2][0]+dx,boundary[boundary.size()-2][1]};//correct the edges of lines
 
 				cout<<" Boundaries are determined at tied "<<strictness[index]<<endl;
 				break;
 			}
 		}
+		//Add a piece of code to tailer boundaries
+		tailer_boundary(boundary);
+
+
 		//this shrinks horizontally;
 		cout<<"Boundary really has dimension: "<<boundary.size()<<endl;
 		double px[boundary.size()], py[boundary.size()];
@@ -273,7 +340,7 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 	double temp_tmin_cos = 0 , temp_tmin_bnb = 0 , temp_tmax_cos = 0, temp_tmax_bnb = 0;
 	cout<<"Finding the extremum of responses:";
 
-	vector<bdt_file*> files;
+	vector<bdt_file*> files;//Concate signal file and bkg files into a vector.
 	files.reserve(sig_files.size()+bkg_files.size());
 	files.insert( files.end(), sig_files.begin(), sig_files.end() );
 	files.insert( files.end(), bkg_files.begin(), bkg_files.end() );
@@ -293,9 +360,9 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 	}
 	cout<<"Range of Responses: Cosmic:"<<tmin_cos<<" "<<tmax_cos<<" BNB:"<<tmin_bnb<<" "<<tmax_bnb<<endl;
 
-
-	TH2D* signal_grid	= event_grid (sig_files, {cosmic_focused_bdt, bnb_focused_bdt}, "Signal_events_rate", step, {tmin_cos, tmax_cos+0.1, tmin_bnb, tmax_bnb+0.1} , false);//this function maps events into the 2d grid.
-	TH2D* bkg_grid		= event_grid (bkg_files, {cosmic_focused_bdt, bnb_focused_bdt}, "Background_events_rate_SquareRoot", step, {tmin_cos, tmax_cos+0.1, tmin_bnb, tmax_bnb+0.1}, true);//this function maps events into the 2d grid.
+	double more = 0.1;
+	TH2D* signal_grid	= event_grid (sig_files, {cosmic_focused_bdt, bnb_focused_bdt}, "Signal_events_rate", step, {tmin_cos, tmax_cos+more, tmin_bnb, tmax_bnb+more} , false);//this function maps events into the 2d grid.
+	TH2D* bkg_grid		= event_grid (bkg_files, {cosmic_focused_bdt, bnb_focused_bdt}, "Background_events_rate_SquareRoot", step, {tmin_cos, tmax_cos+more, tmin_bnb, tmax_bnb+more}, true);//this function maps events into the 2d grid.
 	cout<<"Finish Two Event Grids"<<endl;
 
 	signal_grid->Divide(bkg_grid);//signal over background!

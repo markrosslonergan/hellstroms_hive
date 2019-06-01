@@ -49,6 +49,7 @@ int main (int argc, char *argv[]){
 	int number = -1;
 	bool response_only = false;
 	int sbnfit_stage = 1;
+	vector<double> target_sig = {0.005,0.3};
 
 	//All of this is just to load in command-line arguments, its not that important
 	const struct option longopts[] = 
@@ -579,7 +580,9 @@ int main (int argc, char *argv[]){
 		}
 	}else if(mode_option == "contour"){
 
-		contour_selection({signal} , {signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut);
+		contour_selection({signal} , {signal_other}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, true, target_sig);
+		exit(0);
+		contour_selection({signal} , {signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, false, target_sig);
 
 		cout<<"Scattering plot is produced!"<<endl;
 
@@ -587,8 +590,9 @@ int main (int argc, char *argv[]){
 
 	}else if(mode_option == "sig"){
 		
-		select_events({signal}, {signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, {0.005,0.15,0.3});
+		select_events({signal}, {signal_other}, cosmic_bdt_info, bnb_bdt_info, target_sig);
 		exit(0);
+		select_events({signal}, {signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, target_sig);
 
 		TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
 		std::vector<double> ans = scan_significance(fsig, {signal} , {signal_other, bnb, nueintrinsic , OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);

@@ -49,6 +49,8 @@ int shrinks_boundary(TH2D* sig_grid, int step, int fix_x, int fix_y, int const m
 
 void define_boundary (TH2D * sig_grid, int step, vector<double> strictness);
 
+void tailer_boundary (vector< vector <double> > & boundary);
+
 void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, vector<double> percent_sig);
 
 
