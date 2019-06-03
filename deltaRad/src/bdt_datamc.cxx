@@ -509,7 +509,6 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
             d0->SetMarkerSize(2);
             gStyle->SetEndErrorSize(10);
 
-			cout<<"CHECK"<<endl;
             cobs->cd();
             TPad *pad0top = new TPad(("pad0top_"+stage_names.at(stage)).c_str(), ("pad0top_"+stage_names.at(stage)).c_str(), 0, 0.35, 1, 1.0);
 
@@ -524,7 +523,6 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 //            }else if(stage==2){ data_rebin = 2;}else if(stage==3){data_rebin=2;};
 
             double max_modifier =3.5;
-			cout<<"CHECK"<<endl;
 			if(var.is_logplot == true){
 				max_modifier = 850;
 				pad0top->SetLogy();

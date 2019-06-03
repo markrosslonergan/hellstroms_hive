@@ -129,58 +129,70 @@ int shrinks_boundary(TH2D* sig_grid, int step, int fix_x, int fix_y, int const m
 	return 0;
 }
 
-void tailer_boundary (vector< vector <double> > & boundary){
-		//Remove redundant points: those adjacent that are identical;
-		vector< double > remove_index;
-		for(int i = 0 ; i < boundary.size()-1; i ++){
-			if(boundary[i][0]==boundary[i+1][0] && boundary[i][1]==boundary[i+1][1]){
-				remove_index.push_back(i);
-				cout<<"going to remove the "<<i+1<<"th element in the boundary;"<<endl;
+void tailor_boundary (vector< vector <double> > & boundary){
+	//Remove redundant points: those adjacent that are identical or inline by 3 points;
+	vector< double > remove_index;
+	for(int i = 0 ; i < boundary.size()-1; i++){//remove the identical
+		if(boundary[i][0]==boundary[i+1][0] && boundary[i][1]==boundary[i+1][1]){
+			remove_index.push_back(i+1);
+			cout<<"going to remove the "<<i+2<<"th element in the boundary;"<<endl;
+
+		}else if(i+2<boundary.size()-1){
+			if((boundary[i][0]==boundary[i+1][0] && boundary[i+1][0]==boundary[i+2][0])
+					|| (boundary[i][1]==boundary[i+1][1] && boundary[i+1][1]==boundary[i+2][1])){
+				//remove inline points;
+				remove_index.push_back(i+1);
+				cout<<"going to remove the "<<i+2<<"th element in the boundary;"<<endl;
 			}
 		}
-		vector<vector<double>>::iterator remove_this;
-		while(remove_index.size()>0){
-			remove_this = boundary.begin()+remove_index.back();
-			boundary.erase( remove_this, remove_this + 1 );//remove 1 element;
-			remove_index.pop_back();
-		}
-		
-		//now find the overlap points to determine the final contour;
-		int temp_index = 0;
-		int temp_indexb = 0;
-		int temp_boundary_length = (boundary.size()-3)/2;
-		for( int i = temp_boundary_length-1; i >=0; i--){
-			for (int j = temp_boundary_length+3; j < boundary.size() ; j++){
-				if(boundary[i][0] == boundary[j][0] && boundary[i][1] == boundary[j][1]){
-					temp_index = i;
-					temp_indexb = boundary.size()-1-j;
-					cout<<"Two identical elements: "<< i <<"th and the last "<<temp_indexb<<"th element;"<<endl;
-					goto founded;
-				}
+	}
+
+	vector<vector<double>>::iterator remove_this;
+	while(remove_index.size()>0){
+		remove_this = boundary.begin()+remove_index.back();
+		boundary.erase( remove_this, remove_this + 1 );//remove 1 element;
+		remove_index.pop_back();
+	}
+
+	//now find the overlap points to determine the final contour;
+	int temp_index = 0;
+	int temp_indexb = 0;
+	int temp_boundary_length = (boundary.size()-3)/2;
+	for( int i = temp_boundary_length-1; i >=0; i--){
+		for (int j = temp_boundary_length+3; j < boundary.size() ; j++){
+			if(boundary[i][0] == boundary[j][0] && boundary[i][1] == boundary[j][1]){
+				temp_index = i;
+				temp_indexb = boundary.size()-1-j;
+				cout<<"Two identical elements: "<< i <<"th and the last "<<temp_indexb<<"th element;"<<endl;
+				goto founded;
 			}
 		}
+	}
 
 founded:
-		if(temp_index < 1 && temp_indexb < 1){
-			cout<<"Not need to tailer the boundary, because the boundary is open." <<endl;
-		}else{
-			cout<<"Tailer the boundary by cutting "<<temp_index+temp_indexb<<" elements."<<endl;
-			for(int i = 0; i<temp_indexb; i++){
-				boundary.pop_back();
-			}
-			boundary.erase(boundary.begin(),boundary.begin()+temp_index);//clean up the first
+	if(temp_index < 1 && temp_indexb < 1){
+		cout<<"Not need to tailer the boundary, because the boundary is open." <<endl;
+	}else{
+		cout<<"Tailer the boundary by cutting "<<temp_index+temp_indexb<<" elements."<<endl;
+		for(int i = 0; i<temp_indexb; i++){
+			boundary.pop_back();
 		}
+		boundary.erase(boundary.begin(),boundary.begin()+temp_index);//clean up the first
+	}
 
-		if(boundary.size()<3){
-			cout<<"WARNING: NO BOUNDARY is available!"<<endl;
-				exit(EXIT_FAILURE);
-		}
+	if(boundary.size()<3){
+		cout<<"WARNING: NO BOUNDARY is available! Required significance might be too high."<<endl;
+		exit(EXIT_FAILURE);
+	}
 }
 
 void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
 	//strictness from 0 to 1 means easy to strict.
 	double hard_cut_off = 10;//the target maximum significance cannot exceed this number.
 
+		if (access("contour_cut",F_OK) == -1){
+			mkdir("contour_cut",0777);//Create a folder for pdf.
+		}
 
 	TCanvas* a_canvas = new TCanvas("Signal/Bkg Ratio"," ",2000,1600);
 	sig_grid->SetStats(false);
@@ -288,7 +300,7 @@ void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
 			}
 		}
 		//Add a piece of code to tailer boundaries
-		tailer_boundary(boundary);
+		tailor_boundary(boundary);
 
 
 		//this shrinks horizontally;
@@ -335,7 +347,7 @@ void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
 
 
 void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, vector<double> percent_sig){
-	int step = 6;
+	int step = 7;
 	
 	double tmin_cos = 0 , tmin_bnb = 0 , tmax_cos = 0, tmax_bnb = 0;
 	double temp_tmin_cos = 0 , temp_tmin_bnb = 0 , temp_tmax_cos = 0, temp_tmax_bnb = 0;

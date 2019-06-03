@@ -56,7 +56,7 @@ void define_boundary (TH2D * sig_grid, int step, vector<double> strictness);
 int shrinks_boundary(TH2D* sig_grid, int step, int fix_x, int fix_y, int const max_position );
 
 //after boundary is found, remove unnecessary vertices of the boundary.
-void tailer_boundary (vector< vector <double> > & boundary);
+void tailor_boundary (vector< vector <double> > & boundary);
 
 
 
