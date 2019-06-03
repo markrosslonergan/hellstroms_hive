@@ -179,6 +179,7 @@ founded:
 
 void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
 	//strictness from 0 to 1 means easy to strict.
+	double hard_cut_off = 10;//the target maximum significance cannot exceed this number.
 
 
 	TCanvas* a_canvas = new TCanvas("Signal/Bkg Ratio"," ",2000,1600);
@@ -205,7 +206,7 @@ void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
 			cout.flush();
 
 				double temp = sig_grid->GetBinContent(jndex, jndex2);
-				if(max_sig<temp && temp<1){//centering reasonable max_sig; dont want pure signal grid
+				if(max_sig<temp && temp<hard_cut_off){//centering reasonable max_sig; dont want pure signal grid
 					max_sig = temp;
 					max_x=jndex;
 					max_y=jndex2;
@@ -334,7 +335,7 @@ void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
 
 
 void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, vector<double> percent_sig){
-	int step = 12;
+	int step = 6;
 	
 	double tmin_cos = 0 , tmin_bnb = 0 , tmax_cos = 0, tmax_bnb = 0;
 	double temp_tmin_cos = 0 , temp_tmin_bnb = 0 , temp_tmax_cos = 0, temp_tmax_bnb = 0;

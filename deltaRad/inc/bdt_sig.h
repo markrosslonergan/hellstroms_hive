@@ -45,13 +45,19 @@ TH2D *event_grid (vector<bdt_file*> files, vector<bdt_info> bdt_infos, string hi
 
 
 
-int shrinks_boundary(TH2D* sig_grid, int step, int fix_x, int fix_y, int const max_position );
 
+//Produce signal/sqrt(bkg) 2D histogram;
+void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, vector<double> percent_sig);
+
+//find a boundary of contour for significance that satifies the wanted significance respected to the local maximum (a reasonable value that is < 10, but not the peak value);
 void define_boundary (TH2D * sig_grid, int step, vector<double> strictness);
 
+//shrinks the boundary into a finer region, used in the define_boundary function.
+int shrinks_boundary(TH2D* sig_grid, int step, int fix_x, int fix_y, int const max_position );
+
+//after boundary is found, remove unnecessary vertices of the boundary.
 void tailer_boundary (vector< vector <double> > & boundary);
 
-void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, vector<double> percent_sig);
 
 
 

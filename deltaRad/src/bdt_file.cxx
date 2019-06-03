@@ -761,7 +761,8 @@ bdt_variable bdt_file::getBDTVariable(bdt_info info, std::string binning){
 
 
 bdt_variable bdt_file::getBDTVariable_contour(bdt_info info){//CHECK, no identifier
-    return bdt_variable(this->tag + ".contour_radius", info.binning, info.name+" Response" ,false,"d");
+//    return bdt_variable(this->tag + ".contour_radius", info.binning, info.name+" Response" ,false,"d");
+    return bdt_variable(this->tag + ".distance", info.binning, info.name+" Response" ,false,"d");
 }
 
 
@@ -806,8 +807,10 @@ int bdt_file::addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info
         std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
         this->addFriend(this->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_"+this->tag+"_app"+".root");
 
-		cout<<"Now adding TreeFriend: "<<this->tag<<"_contour.root"<<" "<<this->tag<<endl;//CHECK
-		this->addFriend(this->tag , this->tag+"_contour"+".root");
+//		cout<<"Now adding TreeFriend: "<<this->tag<<"_contour.root"<<" "<<this->tag<<endl;//CHECK
+//		this->addFriend(this->tag , this->tag+"_contour"+".root");
+		cout<<"Now adding TreeFriend: "<<this->tag<<"_contour_v2.root"<<" "<<this->tag<<endl;//CHECK
+		this->addFriend(this->tag , this->tag+"_contour_v2.root");
 		}
 
     return 0;

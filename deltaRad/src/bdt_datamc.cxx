@@ -406,7 +406,10 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 	stage_names.push_back("All Events");
 	stage_names.push_back("Pre-Selection Cuts");
 	if(contour){
-		stage_names.push_back("Contour Cut");
+		stage_names.push_back(" ");
+		stage_names.push_back(" ");
+		stage_names.push_back(" ");
+		stage_names.push_back("Contour Cut");//CHECK; I know! this is because I assign it as stage 5;
 	}else{
 		stage_names.push_back("Cosmic BDT cut");
 		stage_names.push_back("BNB BDT cut");
@@ -444,8 +447,8 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 		switch (stage){
 			case 2: data_file->calcCosmicBDTEntryList(cut[0], cut[1]);
 					break;
-			case 3:  data_file->calcBNBBDTEntryList(cut[0], cut[1]);
-					 break;
+			case 3: data_file->calcBNBBDTEntryList(cut[0], cut[1]);
+					break;
 			case 5: data_file->BDTSelectedEntrylist(cut[0]);
 					break;
 			default:
@@ -501,15 +504,17 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
             }
 
 
-            std::cout<<"2 "<<std::endl;
+            //std::cout<<"2 "<<std::endl;
             tsum->SetMarkerSize(0);
             d0->SetMarkerSize(2);
             gStyle->SetEndErrorSize(10);
 
+			cout<<"CHECK"<<endl;
             cobs->cd();
             TPad *pad0top = new TPad(("pad0top_"+stage_names.at(stage)).c_str(), ("pad0top_"+stage_names.at(stage)).c_str(), 0, 0.35, 1, 1.0);
 
             if(is_bdt_variable ) pad0top->SetLogy();
+
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
             pad0top->cd();               // pad2top becomes the current pad
@@ -519,6 +524,7 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 //            }else if(stage==2){ data_rebin = 2;}else if(stage==3){data_rebin=2;};
 
             double max_modifier =3.5;
+			cout<<"CHECK"<<endl;
 			if(var.is_logplot == true){
 				max_modifier = 850;
 				pad0top->SetLogy();

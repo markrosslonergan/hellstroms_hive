@@ -28,7 +28,8 @@ using namespace std;
 int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 
 //declare this function first..
-void contour_selection(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt);
+//CHECK, need to remove this
+//void contour_selection(std::vector<bdt_file*> files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt);
 
 
 int main (int argc, char *argv[]){
@@ -49,7 +50,7 @@ int main (int argc, char *argv[]){
 	int number = -1;
 	bool response_only = false;
 	int sbnfit_stage = 1;
-	vector<double> target_sig = {0.005,0.3};
+	vector<double> target_sig = {0.3};
 
 	//All of this is just to load in command-line arguments, its not that important
 	const struct option longopts[] = 
@@ -350,7 +351,8 @@ int main (int argc, char *argv[]){
 
 	double fcoscut = 0;
 	double fbnbcut = 0;
-	vector<double> contour_width = {0.001};
+	//one value for contour cut; use {fcoscut,fbnbcut} for dual BDT cut.
+	vector<double> contour_distance = {900};//
 
 	if (access("sig.txt",F_OK) == -1){//no file
 		std::cout<<"Warning: No sig.txt is found in the current directory. Proceed without BDT cuts."<<std::endl;
@@ -580,9 +582,10 @@ int main (int argc, char *argv[]){
 		}
 	}else if(mode_option == "contour"){
 
-		contour_selection({signal} , {signal_other}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, true, target_sig);
+//		contour_selection({signal}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, true, target_sig);
+		contour_selection({signal, signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, true, target_sig);
 		exit(0);
-		contour_selection({signal} , {signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, false, target_sig);
+		contour_selection({signal, signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, false, target_sig);
 
 		cout<<"Scattering plot is produced!"<<endl;
 
@@ -590,7 +593,7 @@ int main (int argc, char *argv[]){
 
 	}else if(mode_option == "sig"){
 		
-		select_events({signal}, {signal_other}, cosmic_bdt_info, bnb_bdt_info, target_sig);
+		select_events({signal}, {signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, target_sig);
 		exit(0);
 		select_events({signal}, {signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, target_sig);
 
@@ -726,9 +729,10 @@ int main (int argc, char *argv[]){
 
 	int ip=0;
 	std::vector<bool> subv = {false,false,true};
-	//contour_width can be used!
+	//contour_distance can be used!
 	if(!response_only){//goes here by default.
 		if(number != -1){//without specific requirement of variable.
+			//TESTING THIS ONE!
 			bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
 
 			datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
@@ -736,7 +740,8 @@ int main (int argc, char *argv[]){
 			//datamc.setSubtractionVector(subv);
 			std::vector<bdt_variable> tmp_var = {vars.at(number)};
 			//datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
-			datamc.plotStacks_v2(ftest,  tmp_var , contour_width, true);//turn on contour cut
+			//datamc.plotStacks_v2(ftest,  tmp_var , {fcoscut,fbnbcut}, false);//old BDT cut;
+			datamc.plotStacks_v2(ftest,  tmp_var , contour_distance, true);//use contour cut, when true
 		}else{
 
 			bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
