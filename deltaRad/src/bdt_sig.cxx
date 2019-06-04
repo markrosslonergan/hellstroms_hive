@@ -347,7 +347,7 @@ void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
 
 
 void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, vector<double> percent_sig){
-	int step = 7;
+	int step = 4;
 	
 	double tmin_cos = 0 , tmin_bnb = 0 , tmax_cos = 0, tmax_bnb = 0;
 	double temp_tmin_cos = 0 , temp_tmin_bnb = 0 , temp_tmax_cos = 0, temp_tmax_bnb = 0;
@@ -373,14 +373,61 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 	}
 	cout<<"Range of Responses: Cosmic:"<<tmin_cos<<" "<<tmax_cos<<" BNB:"<<tmin_bnb<<" "<<tmax_bnb<<endl;
 
-	double more = 0.1;
-	TH2D* signal_grid	= event_grid (sig_files, {cosmic_focused_bdt, bnb_focused_bdt}, "Signal_events_rate", step, {tmin_cos, tmax_cos+more, tmin_bnb, tmax_bnb+more} , false);//this function maps events into the 2d grid.
-	TH2D* bkg_grid		= event_grid (bkg_files, {cosmic_focused_bdt, bnb_focused_bdt}, "Background_events_rate_SquareRoot", step, {tmin_cos, tmax_cos+more, tmin_bnb, tmax_bnb+more}, true);//this function maps events into the 2d grid.
-	cout<<"Finish Two Event Grids"<<endl;
+	vector< string > saved_name = {"signal_bkg_events.root","dimension", "Signal_events_rate", "Background_events_rate_SquareRoot"};
 
-	signal_grid->Divide(bkg_grid);//signal over background!
+	TH2D* signal_grid;
+	TH2D* bkg_grid;
+	TFile* signal_bkg_events;//Open files in the if,else section; and close it at the end.
 
-	define_boundary (signal_grid, step, percent_sig);//perform selection with 0.8 efficiency.
+	if (access(saved_name[0].c_str(),F_OK) == 0){//it exist, maybe no need to write it?
+
+		cout<<"Grids for events were previously generated; I am just gonna load them directly;"<<endl;
+
+		signal_bkg_events = TFile::Open(saved_name[0].c_str(), "READ");
+
+		//load the file!
+		TObject * temp_pointer;
+		signal_bkg_events->GetObject(saved_name[1].c_str(),temp_pointer);
+		cout<<"CHECK"<<endl;
+		UInt_t test_step = temp_pointer->GetUniqueID();
+		
+		if( test_step != step){
+			cout<<"The step has been changed, ";
+			cout<<"from "<<test_step<<" to "<<step<<"."<<endl;
+			goto writeit;
+		}
+		signal_grid = (TH2D*) signal_bkg_events->Get(saved_name[2].c_str());
+		bkg_grid = (TH2D*) signal_bkg_events->Get(saved_name[3].c_str());
+
+		cout<<"Finish Loading Two Event Grids"<<endl;
+
+	} else{//it does not exist, write it!
+writeit:
+		cout<<"Generate grids for events"<<endl;
+		double more = 0.1;
+		signal_grid = event_grid (sig_files, {cosmic_focused_bdt, bnb_focused_bdt}, saved_name[2], step, {tmin_cos, tmax_cos+more, tmin_bnb, tmax_bnb+more} , false);//this function maps events into the 2d grid.
+		bkg_grid    = event_grid (bkg_files, {cosmic_focused_bdt, bnb_focused_bdt}, saved_name[3], step, {tmin_cos, tmax_cos+more, tmin_bnb, tmax_bnb+more}, true);//this function maps events into the 2d grid.
+
+		//save histograms to the file
+		signal_bkg_events = TFile::Open(saved_name[0].c_str(), "recreate");
+		
+//		signal_bkg_events->WriteObjectAny(&dimension, "int" ,saved_name[1].c_str());
+		cout<<step<<endl;
+
+		TObject dimension;
+		dimension.SetUniqueID(step);//Reference: https://root.cern.ch/root/roottalk/roottalk00/2311.html
+		dimension.Write(saved_name[1].c_str());
+		signal_grid->Write(saved_name[2].c_str());
+		bkg_grid->Write(saved_name[3].c_str());
+
+		cout<<"Write 2 histograms: "<<saved_name[2]<<" and "<< saved_name[3]<<" into the root file "<<saved_name[0]<<"."<<endl;
+	}
+
+	TH2D* significance_grid(signal_grid);
+	significance_grid->Divide(bkg_grid);//signal over background!
+
+	define_boundary (significance_grid, step, percent_sig);//perform selection with 0.8 efficiency.
+	signal_bkg_events->Close();
 	exit(0);
 
 }

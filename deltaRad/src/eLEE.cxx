@@ -593,7 +593,7 @@ int main (int argc, char *argv[]){
 
 	}else if(mode_option == "sig"){
 		
-		select_events({signal}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, target_sig);
+		select_events({signal}, {signal_other/*, bnb, nueintrinsic, OffBeamData, dirt*/}, cosmic_bdt_info, bnb_bdt_info, target_sig);
 		exit(0);
 		select_events({signal}, {signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, target_sig);
 
