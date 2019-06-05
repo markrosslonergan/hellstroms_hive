@@ -36,7 +36,7 @@ int main (int argc, char *argv[]){
 
 	//This is a standardized location on /pnfs/ that everyone can use. 
 	std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v12/";
-	//    std::string dir9 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
+	std::string dir10 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10/";
 
 
 	std::string mode_option = "fake"; 
@@ -50,7 +50,7 @@ int main (int argc, char *argv[]){
 	int number = -1;
 	bool response_only = false;
 	int sbnfit_stage = 1;
-	vector<double> target_sig = {0.35};
+	vector<double> target_sig = {0.37};
 
 	//All of this is just to load in command-line arguments, its not that important
 	const struct option longopts[] = 
@@ -179,7 +179,8 @@ int main (int argc, char *argv[]){
 		"&&reco_track_proton_kinetic_energy[0]<(mctruth_leading_exiting_proton_energy[0]-0.93828)+0.05"//Shape track energy
 		"&&reco_track_proton_kinetic_energy[0]>(mctruth_leading_exiting_proton_energy[0]-0.93828)-0.05";
 
-	std::string training_bkg_cut = "sim_shower_matched[0]==1&&sim_shower_overlay_fraction[0]<0.5"
+	std::string training_bkg_cut = "(abs(mctruth_nu_pdg)!=12||mctruth_cc_or_nc==1)"
+		"&&sim_shower_matched[0]==1&&sim_shower_overlay_fraction[0]<0.5"
 		"&&mctruth_mode==1 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1";
 	std::string num_track_cut;
 
@@ -209,8 +210,8 @@ int main (int argc, char *argv[]){
 		signal_definition += "&&" + v_denom[i];
 	}
 
-	//    std::string background_definition = "abs(mctruth_nu_pdg)!=12";//||mctruth_cc_or_nc==1";
-	std::string background_definition = "(mctruth_mode==1 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1)";
+	std::string background_definition = "abs(mctruth_nu_pdg)!=12";//||mctruth_cc_or_nc==1";
+//	std::string background_definition = "(mctruth_mode==1 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1)";
 
 	//    std::string intrinsic_background = "(abs(mctruth_nu_pdg)==12&&mctruth_cc_or_nc==0)";
 	std::string topological_cuts = "(reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut+")";
@@ -225,7 +226,8 @@ int main (int argc, char *argv[]){
 	bdt_flow signal_other_flow	    (topological_cuts, 	"!("+signal_definition +")", 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info, contour_bdt_info);
 
 	bdt_flow bkg_flow(topological_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info, contour_bdt_info);
-	bdt_flow bkg_training_flow(topological_cuts,	background_definition+"&&"+ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info, contour_bdt_info);
+	//CHECK triaining_bkg includes non-nue cc events
+	bdt_flow bkg_training_flow(topological_cuts,	/*background_definition+"&&"+*/ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info, contour_bdt_info);
 
 	bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info, contour_bdt_info);
 	//    bdt_flow intrinsic_flow(topological_cuts,	intrinsic_background	,		vec_precuts,	postcuts,	cosmic_bdt_info, 	bnb_bdt_info);
@@ -238,7 +240,7 @@ int main (int argc, char *argv[]){
 	bdt_file *signal_other	= new bdt_file(dir, "nueintrinsic_overlay_v12.2.root"	, "LEEunfoldedOther"	, "hist","singlephoton/",  kRed-10, signal_other_flow);
 	//signal_other->fillstyle = 3391;
 
-	bdt_file *nueintrinsic	= new bdt_file(dir,"nueintrinsic_overlay_v12.2.root"	,"NueIntrinsics"	,"hist","singlephoton/",kCyan-8,data_flow); //intrinsic_flow);
+	bdt_file *nueintrinsic	= new bdt_file(dir10,"nueintrinsic_overlay_v10.0.root"	,"NueIntrinsics"	,"hist","singlephoton/",kCyan-8,data_flow); //intrinsic_flow);
 
 
 	bdt_file *dirt		= new bdt_file(dir,"dirt_overlay_v12.2.root"		,"Dirt"			,"hist","singlephoton/", kOrange-7, data_flow);
@@ -340,7 +342,7 @@ int main (int argc, char *argv[]){
 	signal->addPlotName("Golden LEE #nu_{e}(#bar{#nu}_{e})");
 	signal_other->addPlotName("Other LEE #nu_{e}(#bar{#nu}_{e})");
 	training_bnb->addPlotName("BNB Neutrino Backgrounds");
-	bnb->addPlotName("BNB Numu NcRes Backgrounds");
+	bnb->addPlotName("BNB Backgrounds");
 	//bnb->addPlotName("BNB Neutrino Backgrounds");
 	nueintrinsic->addPlotName("#nu_{e}(#bar{#nu}_{e}) Intrinsics");
 	OnBeamData->addPlotName("On-Beam Data");
@@ -582,8 +584,8 @@ int main (int argc, char *argv[]){
 		}
 	}else if(mode_option == "contour"){
 
-		contour_selection({signal}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, true, target_sig);
-//		contour_selection({signal, signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, true, target_sig);
+//		contour_selection({signal}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, true, target_sig);
+		contour_selection({signal, signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, true, target_sig);
 		exit(0);
 		contour_selection({signal, signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, false, target_sig);
 
@@ -593,9 +595,8 @@ int main (int argc, char *argv[]){
 
 	}else if(mode_option == "sig"){
 		
-		select_events({signal}, {signal_other/*, bnb, nueintrinsic, OffBeamData, dirt*/}, cosmic_bdt_info, bnb_bdt_info, target_sig);
+		select_events({signal}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, target_sig, 60);//30 stpes on x,y-axies;
 		exit(0);
-		select_events({signal}, {signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, target_sig);
 
 		TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
 		std::vector<double> ans = scan_significance(fsig, {signal} , {signal_other, bnb, nueintrinsic , OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);

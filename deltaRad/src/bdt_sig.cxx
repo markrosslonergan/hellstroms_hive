@@ -346,12 +346,11 @@ void define_boundary (TH2D * sig_grid, int step, vector<double> strictness){
 }
 
 
-void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, vector<double> percent_sig){
-	int step = 4;
+void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, vector<double> percent_sig, int step){
 	
-	double tmin_cos = 0 , tmin_bnb = 0 , tmax_cos = 0, tmax_bnb = 0;
+	double tmin_cos = 99 , tmin_bnb = 99 , tmax_cos = 0, tmax_bnb = 0;
 	double temp_tmin_cos = 0 , temp_tmin_bnb = 0 , temp_tmax_cos = 0, temp_tmax_bnb = 0;
-	cout<<"Finding the extremum of responses:";
+	cout<<"Finding the extremum of responses: ";
 
 	vector<bdt_file*> files;//Concate signal file and bkg files into a vector.
 	files.reserve(sig_files.size()+bkg_files.size());
@@ -360,18 +359,35 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 	
 
 	for(int index = 0; index<files.size(); index++){
-	//get the minimum bnb info;
-	temp_tmin_cos = files.at(index)->tvertex->GetMinimum( (files.at(index)->getBDTVariable(cosmic_focused_bdt).name + ">0").c_str()    );
-	temp_tmin_bnb = files.at(index)->tvertex->GetMinimum( (files.at(index)->getBDTVariable(bnb_focused_bdt).name + ">0").c_str()    );
-	temp_tmax_cos = files.at(index)->tvertex->GetMaximum( files.at(index)->getBDTVariable(cosmic_focused_bdt).name.c_str()    );
-	temp_tmax_bnb = files.at(index)->tvertex->GetMaximum( files.at(index)->getBDTVariable(bnb_focused_bdt).name.c_str()    );
-	if (temp_tmin_cos<tmin_cos) tmin_cos = temp_tmin_cos;
-	if (temp_tmin_bnb<tmin_bnb) tmin_bnb = temp_tmin_bnb;
-	if (temp_tmax_cos>tmax_cos) tmax_cos = temp_tmax_cos;
-	if (temp_tmax_bnb>tmax_bnb) tmax_bnb = temp_tmax_bnb;
+		//get the extremum BDT info by creating a histogram and extract the extremum from the histogram;
+		bdt_variable cos_var = 	files.at(index)->getBDTVariable(cosmic_focused_bdt);
+		TH1* temp_hist = files[index]->getTH1(cos_var, "1", cos_var.safe_name,1.0); 
+
+		int temp_bin = temp_hist->GetMinimumBin();
+		temp_tmin_cos = temp_hist->GetXaxis()->GetBinLowEdge(temp_bin);
+		temp_bin = temp_hist->GetMaximumBin()+1;
+		temp_tmax_cos = temp_hist->GetXaxis()->GetBinLowEdge(temp_bin);
+
+		delete temp_hist;
+
+		bdt_variable bnb_var = 	files.at(index)->getBDTVariable(bnb_focused_bdt);
+		temp_hist = files[index]->getTH1(bnb_var, "1", bnb_var.safe_name,1.0); 
+
+		temp_bin = temp_hist->GetMinimumBin();
+		temp_tmin_bnb = temp_hist->GetXaxis()->GetBinLowEdge(temp_bin);
+		temp_bin = temp_hist->GetMaximumBin()+1;
+		temp_tmax_bnb = temp_hist->GetXaxis()->GetBinLowEdge(temp_bin);
+
+		delete temp_hist;
+
+		if (temp_tmin_cos<tmin_cos) tmin_cos = temp_tmin_cos;
+		if (temp_tmin_bnb<tmin_bnb) tmin_bnb = temp_tmin_bnb;
+		if (temp_tmax_cos>tmax_cos) tmax_cos = temp_tmax_cos;
+		if (temp_tmax_bnb>tmax_bnb) tmax_bnb = temp_tmax_bnb;
 
 	}
 	cout<<"Range of Responses: Cosmic:"<<tmin_cos<<" "<<tmax_cos<<" BNB:"<<tmin_bnb<<" "<<tmax_bnb<<endl;
+	exit(0);
 
 	vector< string > saved_name = {"signal_bkg_events.root","dimension", "Signal_events_rate", "Background_events_rate_SquareRoot"};
 
@@ -381,7 +397,7 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 
 	if (access(saved_name[0].c_str(),F_OK) == 0){//it exist, maybe no need to write it?
 
-		cout<<"Grids for events were previously generated; I am just gonna load them directly;"<<endl;
+		cout<<"Grids for events were previously generated; I might just load them directly;"<<endl;
 
 		signal_bkg_events = TFile::Open(saved_name[0].c_str(), "READ");
 
@@ -405,8 +421,8 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 writeit:
 		cout<<"Generate grids for events"<<endl;
 		double more = 0.1;
-		signal_grid = event_grid (sig_files, {cosmic_focused_bdt, bnb_focused_bdt}, saved_name[2], step, {tmin_cos, tmax_cos+more, tmin_bnb, tmax_bnb+more} , false);//this function maps events into the 2d grid.
-		bkg_grid    = event_grid (bkg_files, {cosmic_focused_bdt, bnb_focused_bdt}, saved_name[3], step, {tmin_cos, tmax_cos+more, tmin_bnb, tmax_bnb+more}, true);//this function maps events into the 2d grid.
+		signal_grid = event_grid (sig_files, {cosmic_focused_bdt, bnb_focused_bdt}, saved_name[2], step, {tmin_cos-more, tmax_cos+more, tmin_bnb-more, tmax_bnb+more} , false);//this function maps events into the 2d grid.
+		bkg_grid    = event_grid (bkg_files, {cosmic_focused_bdt, bnb_focused_bdt}, saved_name[3], step, {tmin_cos-more, tmax_cos+more, tmin_bnb-more, tmax_bnb+more}, true);//this function maps events into the 2d grid.
 
 		//save histograms to the file
 		signal_bkg_events = TFile::Open(saved_name[0].c_str(), "recreate");
@@ -682,7 +698,7 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 
 		for(size_t i = 0; i < sig_files.size(); ++i) {
-			//	double tmin_cos = sig_files.at(i)->tvertex->GetMinimum( (sig_files.at(i)->getBDTVariable(cosmic_focused_bdt).name + ">0").c_str()    );
+			//	double tmin_cos = sig_files.at(i)->tvertex->GetMinimum( (sig_files.at(i)->getBDTVariable(cosmic_focused_bdt).name + ">0").c_str()    );//THIS DOES NOT WORK;
 			double tmax_cos = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(cosmic_focused_bdt).name.c_str()    );
 			double tmax_bnb = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bnb_focused_bdt).name.c_str()    );
 
