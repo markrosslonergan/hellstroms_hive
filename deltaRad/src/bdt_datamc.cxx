@@ -513,10 +513,10 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         }else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
 
 
-        double max_modifier = 1.7;
+        double max_modifier =1.7;
         double min_val = 0.01;
         if(is_bdt_variable) {
-            max_modifier = 50.0;
+            max_modifier = 500.0;
             min_val = 0.1;
         }
 

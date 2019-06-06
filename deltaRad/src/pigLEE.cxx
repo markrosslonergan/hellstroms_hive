@@ -452,7 +452,7 @@ int main (int argc, char *argv[]){
     }else if (mode_option=="scatter") {
         TFile *fscat = new TFile(("scatter_"+analysis_tag+".root").c_str(), "recreate");
         std::vector<bdt_file*> bdt_scat_files = {signal, OffBeamData};
-        getBDTScatter(fscat, bdt_scat_files, cosmic_bdt_info, bnb_bdt_info); 
+       // getBDTScatter(fscat, bdt_scat_files, cosmic_bdt_info, bnb_bdt_info); 
 
         fscat->Close();
 

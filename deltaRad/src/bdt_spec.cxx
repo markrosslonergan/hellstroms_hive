@@ -356,7 +356,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
                 max_scale = 1.7;
             }
             else if(s == 3){
-                max_scale = 1.7;
+                max_scale = 2.3;
             }
 			stk->SetMaximum(tsum->GetMaximum()*max_scale);
       /*
@@ -405,8 +405,8 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
             pottex.SetTextSize(0.045);
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
-            //std::string pot_draw = this->stack[0]->topo_name+"\t"+to_string_prec(plot_pot/1e19,1)+"e19 POT";
-            std::string pot_draw = this->stack[0]->topo_name+"        "+to_string_prec(plot_pot/1e20,1)+"e20 POT";
+            std::string pot_draw = this->stack[0]->topo_name+"\t"+to_string_prec(plot_pot/1e19,1)+"e19 POT";
+          //  std::string pot_draw = this->stack[0]->topo_name+"        "+to_string_prec(plot_pot/1e20,1)+"e20 POT";
 
            //pottex.DrawLatex(.60,.64, pot_draw.c_str());
             pottex.DrawLatex(.50,.58, pot_draw.c_str());
@@ -418,7 +418,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			//TText *titbdt2 = drawPrelim(0.91, 0.91, 0.035, stage_names.at(s).c_str());
 			TText *titbdt2 = drawPrelim(0.50, 0.48, 0.045, stage_names.at(s).c_str());
 			titbdt2->SetTextAlign(10);
-			titbdt2->Draw();
+		//	titbdt2->Draw();
 
 			//cobs->Write();
 			cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
@@ -646,8 +646,8 @@ int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	s3->GetXaxis()->SetTitle(var.unit.c_str());
 	s3->GetYaxis()->SetTitle("Events");
 	s3->GetYaxis()->SetTitleOffset(1.5);
-	//s3->SetMaximum(s3->GetMaximum()*1.35);
-	s3->SetMaximum(s3->GetMaximum()*1.1);
+	s3->SetMaximum(s3->GetMaximum()*1.35);
+	//s3->SetMaximum(s3->GetMaximum()*1.1);
 	TLegend *l3 = new TLegend(0.11,0.60,0.89,0.89);
 	t3->DrawCopy("Same E2"); t3->SetFillStyle(0);t3->Draw("hist same");
 	for(auto &f: this->stack){
@@ -880,7 +880,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
 	p3->SetLogy();		
 
 	s3->Draw("hist");
-	s3->SetTitle("BNB BDT cut");
+//	s3->SetTitle("BNB BDT cut");
 	s3->GetXaxis()->SetTitle(var.unit.c_str());
 	s3->GetYaxis()->SetTitle("Events");
 	s3->GetYaxis()->SetTitleOffset(1.5);

@@ -33,6 +33,7 @@ int main (int argc, char *argv[]){
     std::string dir9 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v9/";
    // std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v12";
     // std::string dir10 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v10/";
+    std::string dir13 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v13/";
 
     std::string mode_option = "fake"; 
     std::string xml = "default.xml";
@@ -198,6 +199,8 @@ int main (int argc, char *argv[]){
 //        v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
 //        v_denom = {fid_cut, "mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04"}; 
     v_denom = {fid_cut, "mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.04)==1"}; 
+//    v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.04)==1"}; 
+
 
 
 
@@ -231,16 +234,22 @@ int main (int argc, char *argv[]){
 
     std::cout<<"Defining all our bdt_files."<<std::endl;
 
-    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    //bdt_file *training_signal    = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
+    //bdt_file *signal = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    //bdt_file *signal_other = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
+     bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
+     bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
     bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
-    //signal_other->fillstyle = 3390;
+   //signal_other->fillstyle = 3390;
 
 
     bdt_file *dirt = new bdt_file(dir,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
+  //  bdt_file *training_bnb    = new bdt_file(dir13, "ncpi0_overlay_v13.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+   // bdt_file *bnb = new bdt_file(dir13, "ncpi0_overlay_v13.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
     bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
     bdt_file *bnb = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+
 
     //Data files
     bdt_file *OnBeamData    = new bdt_file(dir9, "data5e19_v9.3.root",  "OnBeamData",      "E1p","singlephoton/",  kBlack, data_flow);
@@ -357,12 +366,10 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "track"){
-        //0.677 0.6125
-        //0.6, 0.55
-        // 0.618187 0.544957
-        // 0.636184 0.568691
-        fcoscut = 0.677;
+       fcoscut = 0.677;
         fbnbcut = 0.60625;
+        //fcoscut = 0.6;
+        //fbnbcut = 0.5;
     }else if(analysis_tag == "notrack"){
         //0.64 0.59875
         //0.673 0.5825
