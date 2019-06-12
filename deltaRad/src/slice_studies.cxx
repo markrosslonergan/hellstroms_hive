@@ -400,7 +400,7 @@ int main (int argc, char *argv[]){
         int signal_def_entries_1shower0track = signal->tslice->GetEntries(("matched_signal_track_num == 0 && matched_signal_shower_num == 1 && "+signal_definition).c_str());
         int signal_def_entries_1shower2track = signal->tslice->GetEntries(("matched_signal_track_num > 1 && matched_signal_shower_num == 1 && "+signal_definition).c_str());
 
-
+        int signal_def_entries_1shower1track = signal->tslice->GetEntries(("matched_signal_track_num > 0 && matched_signal_shower_num == 1 && "+signal_definition).c_str());
 
         std::cout<<"--------------------------------------------------"<<std::endl;
         std::cout<<"The total number of events with 0 signal showers: "<< signal->tslice->GetEntries("matched_signal_shower_num == 0")<<"/ "<<signal->tslice->GetEntries(("matched_signal_shower_num == 0 && "+signal_definition).c_str()) <<std::endl;
@@ -478,9 +478,18 @@ int main (int argc, char *argv[]){
         }//if track
 
         std::cout<<"-----------------------Failure Modes For Signal Def: "<<analysis_tag<<"---------------------------"<<std::endl;
-        std::cout<<"No shower was reconstructed: "<<signal_def_entries_0shower<<"/ "<<" ("<<signal_def_entries_0shower*100/signal_def_entries<<"%)" <<std::endl;   
+        std::cout<<"No shower was reconstructed: "<<signal_def_entries_0shower<<"/"<<signal_def_entries<<" ("<<(double)signal_def_entries_0shower*100/signal_def_entries<<"%)" <<std::endl;   
 
         if (analysis_tag == "notrack"){
+            std::cout<<"One shower was reconstructed but 1+ signal tracks were reconstructed as well: "<<signal_def_entries_1shower1track<<"/"<<signal_def_entries<<" ("<<(double)signal_def_entries_1shower1track*100/signal_def_entries<<"%)" <<std::endl;   
+                
+            std::cout<<"One shower and 0 signal tracks were reconstructed it wasn't selected as the neutrino slice: "<<signal_def_entries_1g0p -signal_def_entries_1g0p_nuslice<<"/"<<signal_def_entries<<" ("<<(double)( signal_def_entries_1g0p- signal_def_entries_1g0p_nuslice)*100/signal_def_entries<<"%)" <<std::endl;  
+
+       std::cout<<"One shower and 0 signal tracks were reconstructed in neutrino slice but there's more than 1 shower inside the slice: "<<-signal_def_entries_1g1p_nuslice +signal_def_entries_1g0p_nuslice_1shower<<"/"<<signal_def_entries<<" ("<<(double)(-signal_def_entries_1g1p_nuslice+ signal_def_entries_1g0p_nuslice_1shower)*100/signal_def_entries<<"%)" <<std::endl;  
+
+       std::cout<<"One shower and 0 signal tracks were reconstructed in neutrino slice but there's more than 1 shower or track inside the slice: "<<signal_def_entries_1g0p_nuslice_1shower- signal_def_entries_1g0p_nuslice_1shower0track<<"/"<<signal_def_entries<<" ("<<(double)(signal_def_entries_1g0p_nuslice_1shower - signal_def_entries_1g0p_nuslice_1shower0track)*100/signal_def_entries<<"%)" <<std::endl;  
+
+
 
         }else {
             std::cout<<"One shower was reconstructed but no track was reconstructed: "<<signal_def_entries_1shower0track<<"/"<<signal_def_entries<<" ("<<(double)signal_def_entries_1shower0track*100/signal_def_entries<<"%)" <<std::endl;   
@@ -490,9 +499,6 @@ int main (int argc, char *argv[]){
          std::cout<<"One shower and one track were reconstructed in same slice but it wasn't selected as the neutrino slice: "<<signal_def_entries_1g1p_same_slice - signal_def_entries_1g1p_nuslice<<"/"<<signal_def_entries<<" ("<<(double)(signal_def_entries_1g1p_same_slice - signal_def_entries_1g1p_nuslice)*100/signal_def_entries<<"%)" <<std::endl;  
 
         std::cout<<"One shower and one track were reconstructed in neutrino slice but there are more than 1 track and 1 shower inside the slice: "<<signal_def_entries_1g1p_nuslice - signal_def_entries_1g1p_nuslice_1shower1track<<"/"<<signal_def_entries<<" ("<<(double)(signal_def_entries_1g1p_nuslice- signal_def_entries_1g1p_nuslice_1shower1track)*100/signal_def_entries<<"%)" <<std::endl;  
-
-
-
 
 
         }
