@@ -56,7 +56,9 @@ int validateOverlay3(std::vector<bdt_variable> vars, std::vector<bdt_file*> file
 int main (int argc, char *argv[]){
 
     //location of the input file, should move to pnfs really...
-    std::string dir = "uboone/app/users/ksutton/mcc9_singlephoton_v4/srcs/ubana/ubana/SinglePhotonAnalysis/v12_1000_vertexed.root";
+    //    std::string dir = "uboone/app/users/ksutton/mcc9_singlephoton_v4/srcs/ubana/ubana/SinglePhotonAnalysis/v12_vertexed_singlephoton.root";
+    std::string dir = "uboone/app/users/ksutton/mcc9_singlephoton_v4/srcs/ubana/ubana/SinglePhotonAnalysis/v12_1000_vertexed_v3.root";
+
 
     std::string mode_option = "fake"; 
     std::string xml = "default.xml";
@@ -342,10 +344,104 @@ int main (int argc, char *argv[]){
         validateOverlay3({v_reco_shower_trackscore, v_reco_track_trackscore},{signal}, {signal_definition, photon_cut},false, false, "reco_trackscore_photon_signaldef","Track/Shower score for true photons","Number of reconstructed objects", analysis_tag);
 
 
+        // std::string photon_shower_reco_cuts  = "sim_shower_pdg== 22";
+        std::string photon_shower_reco_cuts  = "sim_shower_pdg== 22 && reco_shower_energy_max > 0.02";
+        bdt_variable v_matched_signal_shower_is_nuslice("reco_shower_is_nuslice","(4,-1,2)","matched_signal_shower_isnuslice",false,"d");
+        validateOverlay({ v_matched_signal_shower_is_nuslice},{signal}, {signal_definition, photon_shower_reco_cuts}, {},"1", "matched_signal_shower_is_nuslice",false,false, analysis_tag);
+
+        std::string photon_shower_nuslice_reco_cuts  = "sim_shower_pdg== 22 && reco_shower_energy_max > 0.02 && reco_shower_is_nuslice";
+        bdt_variable v_reco_shower_nuscore("reco_shower_nuscore","(20,0,1)","matched_signal_shower_nuscore",false,"d");
+        validateOverlay({ v_reco_shower_nuscore},{signal}, {signal_definition, photon_shower_nuslice_reco_cuts}, {},"1", "reco_shower_nuscore",false,false, analysis_tag);
+
+
+        bdt_variable v_reco_shower_energy("reco_shower_energy_max","(20,0,1000)","reco_shower_energy",false,"d");
+
+        // validateOverlay({ v_reco_shower_energy},{signal}, {signal_definition}, {},"1", "reco_shower_energy",false,false, analysis_tag);
+
+
+        bdt_variable v_num_reco_objects_per_slice("reco_slice_num_showers + reco_slice_num_tracks","(10,0,10)","num_reco_objects_per_slice",false,"d");
+        bdt_variable v_num_reco_showers_per_slice("reco_slice_num_showers","(10,0,10)","num_reco_showers_per_slice",false,"d");
+        bdt_variable v_num_reco_tracks_per_slice("reco_slice_num_tracks","(10,0,10)","num_reco_tracks_per_slice",false,"d");
+
+
+        validateOverlay({v_num_reco_showers_per_slice},{signal}, {signal_definition}, {},"1", "num_reco_showers_per_slice",false,false, analysis_tag);
+        validateOverlay({v_num_reco_tracks_per_slice},{signal}, {signal_definition}, {},"1", "num_reco_tracks_per_slice",false,false, analysis_tag);
+        validateOverlay({v_num_reco_objects_per_slice},{signal}, {signal_definition}, {},"1", "num_reco_objects_per_slice",false,false, analysis_tag);
+
+
 
 
 
     } //end valid
+
+    if(mode_option == "eff"){
+
+        std::cout<<"------------Starting slice eff --------------"<<std::endl;
+        int total_entries = signal->tvertex->GetEntries();
+        int signal_def_entries = signal->tvertex->GetEntries((signal_definition).c_str());
+        std::cout<<"The total number events in the file: "<<total_entries<<std::endl;
+        std::cout<<"The number of events that pass the 1g1p signal definition: "<< signal_def_entries<<std::endl;
+
+        int signal_def_entries_0shower = signal->tslice->GetEntries(("matched_signal_shower_num == 0 && "+signal_definition).c_str());
+
+        std::cout<<"--------------------------------------------------"<<std::endl;
+        std::cout<<"The total number of events with 0 signal showers: "<< signal->tslice->GetEntries("matched_signal_shower_num == 0")<<"/ "<<signal->tslice->GetEntries(("matched_signal_shower_num == 0 && "+signal_definition).c_str()) <<std::endl;
+        std::cout<<"The total number of events with 1 signal  showers: "<< signal->tslice->GetEntries("matched_signal_shower_num == 1")<<"/ "<<signal->tslice->GetEntries(("    matched_signal_shower_num == 1 && "+signal_definition).c_str()) <<std::endl;
+        std::cout<<"The total number of events with 2+ signal showers: "<< signal->tslice->GetEntries("matched_signal_shower_num > 1")<<"/ "<<signal->tslice->GetEntries(("    matched_signal_shower_num > 1 && "+signal_definition).c_str()) <<std::endl;
+
+        std::cout<<"--------------------------------------------------"<<std::endl;
+        std::cout<<"The total number of events with 0 signal tracks: "<< signal->tslice->GetEntries("matched_signal_track_num == 0") <<std::endl;
+        std::cout<<"The total number of events with 1 signal tracks: "<< signal->tslice->GetEntries("matched_signal_track_num == 1") <<std::endl;
+        std::cout<<"The total number of events with 2+ signal tracks: "<< signal->tslice->GetEntries("matched_signal_track_num > 1") <<std::endl;
+
+
+        std::cout<<"--------------------------------------------------"<<std::endl;
+        if (analysis_tag == "notrack"){
+            std::cout<<"The total number of events with 1 signal shower and 0 signal tracks (1g0p candidates): "<< signal->tslice->GetEntries("matched_signal_shower_num == 1 && matched_signal_track_num == 0") <<std::endl;
+
+
+
+        }else {
+            int entries_1g1p = signal->tslice->GetEntries("matched_signal_shower_num == 1 && matched_signal_track_num == 1");
+            int entries_1g1p_same_slice = signal->tslice->GetEntries("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_same_slice");
+            int entries_1g1p_nuslice = signal->tslice->GetEntries("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_nuslice");
+            int entries_1g1p_nuslice_1shower = signal->tslice->GetEntries("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_nuslice && reco_slice_num_showers ==1");
+            int entries_1g1p_nuslice_1shower1track = signal->tslice->GetEntries("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_nuslice && reco_slice_num_showers ==1 && reco_slice_num_tracks ==1 ");
+
+
+
+            int signal_def_entries_1g1p = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 &&" + signal_definition).c_str());
+            int signal_def_entries_1g1p_same_slice = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_same_slice&& "+ signal_definition).c_str());
+            int signal_def_entries_1g1p_nuslice = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_nuslice &&" + signal_definition).c_str());
+            int signal_def_entries_1g1p_nuslice_1shower = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_nuslice && reco_slice_num_showers ==1 && "+ signal_definition).c_str());
+            int signal_def_entries_1g1p_nuslice_1shower1track = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_nuslice && reco_slice_num_showers ==1 && reco_slice_num_tracks ==1 && "+ signal_definition).c_str());
+
+
+
+            std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates): "<<entries_1g1p<<" ("<<entries_1g1p*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g1p<<" ("<<signal_def_entries_1g1p*100/signal_def_entries<<"%)" <<std::endl;
+
+            std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) in the same slice: "<< entries_1g1p_same_slice<<" ("<<entries_1g1p_same_slice*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g1p_same_slice<<" ("<<signal_def_entries_1g1p_same_slice*100/signal_def_entries<<"%)"  <<std::endl;
+
+            std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) both in the neutrino slice: "<< entries_1g1p_nuslice<<" ("<<entries_1g1p_nuslice*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g1p_nuslice<<" ("<<signal_def_entries_1g1p_nuslice*100/signal_def_entries<<"%)"  <<std::endl;
+
+            std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) both in the neutrino slice with only 1 shower in the slice: "<< entries_1g1p_nuslice_1shower<<" ("<<entries_1g1p_nuslice_1shower*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g1p_nuslice_1shower<<" ("<<signal_def_entries_1g1p_nuslice_1shower*100/signal_def_entries<<"%)"  <<std::endl;
+
+            std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) both in the neutrino slice with only 1 shower and 1 track in the slice: "<< entries_1g1p_nuslice_1shower1track<<" ("<<entries_1g1p_nuslice_1shower1track*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g1p_nuslice_1shower1track<<" ("<<signal_def_entries_1g1p_nuslice_1shower1track*100/signal_def_entries<<"%)"  <<std::endl;
+
+
+        }//if track
+
+        std::cout<<"-----------------------Failure Modes For Signal Def---------------------------"<<std::endl;
+        std::cout<<"No shower was reconstructed: "<<signal_def_entries_0shower<<"/ "<<" ("<<signal_def_entries_0shower*100/signal_def_entries<<"%)" <<std::endl;   
+
+        if (analysis_tag == "notrack"){
+                    }else {
+
+        }
+
+    }//end eff
+
+
     return 0;
 
     }
