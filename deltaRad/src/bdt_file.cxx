@@ -423,12 +423,13 @@ int bdt_file::calcPrecutEntryList(){
 
 }
 
-int bdt_file::BDTSelectedEntrylist(double radius){
-
+int bdt_file::BDTSelectedEntrylist(double distance){
+	//Perform contour selection;
+	//distance gives the cut, strictness gives the name;
 	cout<<"Working on countour list: "<<endl;
-    contourbdt_list_name = "contourbdt_list_"+std::to_string(radius)+"_" +this->tag;
+    contourbdt_list_name = "contourbdt_list_"+std::to_string(distance)+"_" +this->tag;
 //CHECK
-    this->tvertex->Draw((">>"+contourbdt_list_name).c_str(), this->getStageCuts(5,radius,0).c_str() , "entrylist");
+    this->tvertex->Draw((">>"+contourbdt_list_name).c_str(), this->getStageCuts_v2(5,distance,0).c_str() , "entrylist");
     contourbdt_list = (TEntryList*)gDirectory->Get(contourbdt_list_name.c_str());
 	 return 0;
 
@@ -762,7 +763,8 @@ bdt_variable bdt_file::getBDTVariable(bdt_info info, std::string binning){
 
 bdt_variable bdt_file::getBDTVariable_contour(bdt_info info){//CHECK, no identifier
 //    return bdt_variable(this->tag + ".contour_radius", info.binning, info.name+" Response" ,false,"d");
-    return bdt_variable(this->tag + ".distance", info.binning, info.name+" Response" ,false,"d");
+//	string strict_name =to_string_prec(strictness,4);
+    return bdt_variable(this->tag/*+strict_name*/ + ".distance", info.binning, info.name+" Response" ,false,"d");
 }
 
 
@@ -797,7 +799,7 @@ int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,  
     return 0;
 }
 
-int bdt_file::addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info, bdt_info contour_bdt_info,  std::vector<method_struct> TMVAmethods){
+int bdt_file::addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info, std::vector<method_struct> TMVAmethods){//Add one more friend free, for contour selection;
     topo_name = bnb_bdt_info.topo_name; 
     for(auto &method: TMVAmethods){
 
@@ -806,12 +808,16 @@ int bdt_file::addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info
 
         std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
         this->addFriend(this->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_"+this->tag+"_app"+".root");
+					//file->tag; info.identifier; use it as this->tag +"_"+bnb_bdt_info.identifier+".mva"..
 
 //		cout<<"Now adding TreeFriend: "<<this->tag<<"_contour.root"<<" "<<this->tag<<endl;//CHECK
 //		this->addFriend(this->tag , this->tag+"_contour"+".root");
-		cout<<"Now adding TreeFriend: "<<this->tag<<"_contour_v2.root"<<" "<<this->tag<<endl;//CHECK
-		this->addFriend(this->tag , this->tag+"_contour_v2.root");
-		}
+//		for(int i = 0; i<strictness.size() ; i++){
+//			string strict_name =to_string_prec(strictness[i],4);
+			cout<<"Now adding TreeFriend: "<<this->tag<<"_contour_v3.root"<<" "<<this->tag<<endl;//strictness is introduced for multiple trees in the same .root file; see below:
+			this->addFriend(this->tag/*+strict_name*/ , this->tag+"_contour_v3.root");
+//		}
+	}
 
     return 0;
 }
@@ -844,6 +850,86 @@ int bdt_file::setStageEntryList(int j){
     return 0;
 }
 
+std::string bdt_file::getStageCuts_v2(int stage, double bdtvar1, double bdtvar2){
+//strictness gives name, but vdtvar1 gives the cut for stage 5;
+//COPY THIS AND ADD strictness
+//Condition as BDT CUTs
+
+    bool verbose = false;
+
+	std::string ans = "1";
+	bdt_variable contourvar = this->getBDTVariable_contour(flow.bdt_contour_cuts);
+	bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);
+	bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);
+
+	switch(stage){
+		case 5: //CHECK , add contour cut but now ready to be used.
+			ans += "&&"+contourvar.name +">" +std::to_string(bdtvar1);
+			goto basic_cut;
+
+		case 4: //base_cut+pre_cut+bnbBDT_cut
+			ans += "&&"+stage3var.name +">" +std::to_string(bdtvar2);
+			goto basic_cut;
+		case 3: //base_cut+pre_cut+cosBDT_cut+bnbBDT_cut
+			ans += "&&"+stage3var.name +">" +std::to_string(bdtvar2);
+
+		case 2: //base_cut+pre_cut+cosmicBDT_cut
+			ans += "&&" + stage2var.name+ ">" +std::to_string(bdtvar1);
+		case 1://base_cut+pre_cut
+basic_cut:
+            ans += "&&" + flow.pre_cuts;
+		case 0://base_cut
+            ans += "&&" + flow.base_cuts;
+            break;
+        default: 
+			break;
+    }
+	if(verbose)std::cout << "Stage "<<stage<<" var name: " << ans << std::endl;
+//    switch(stage) {
+//        case 0://base_cut
+//            ans = flow.base_cuts;
+//            break;
+//        case 1://base_cut+pre_cut
+//            ans = flow.base_cuts + "&&"+ flow.pre_cuts;
+//            if(verbose)std::cout << "Stage 1 cuts: " << ans << std::endl;
+//            break;
+//        case 2: {//base_cut+pre_cut+cosmicBDT_cut
+//                    bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);
+//                    ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1);
+//                    if(verbose)std::cout << "Stage 2 cuts: " << ans << std::endl;
+//                    break;
+//                }
+//        case 3: {//base_cut+pre_cut+cosBDT_cut+bnbBDT_cut
+//                    bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);
+//                    bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);
+//                    ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2);
+//                    if(verbose)std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
+//                    if(verbose)std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
+//                    if(verbose)std::cout << "Stage 3 cuts: " << ans << std::endl;
+//                    break;
+//                }
+//        case 4: {//? seems not using.
+//                    bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
+//                    bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
+//                    if(verbose)std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
+//                    if(verbose)std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
+//                    ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2) +"&&" +flow.post_cuts;
+//                    if(verbose)std::cout << "Stage 4 cuts: " << ans << std::endl;
+//                    break;
+//                }
+//		case 5: {//CHECK , add contour cut but now ready to be used.
+//				bdt_variable contourvar = this->getBDTVariable_contour(flow.bdt_contour_cuts,strictness);
+//                    ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+contourvar.name +"<" +std::to_string(bdtvar1);//NO post_cuts. bdtvar2==0 as defined in the eLEE.cxx, 2nd argument of a function under datamc section;
+//					break;
+//				}
+//
+//        default: 
+//                ans = "1";
+//                break;
+//
+//    }	
+    return ans;
+}
 
 std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 //Condition as BDT CUTs
@@ -885,7 +971,7 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
                     break;
                 }
 		case 5: {//CHECK , add contour cut but now ready to be used.
-				bdt_variable contourvar = this->getBDTVariable_contour(flow.bdt_contour_cuts);
+				bdt_variable contourvar = this->getBDTVariable_contour(flow.bdt_contour_cuts);//this is not expected to be working;
                     ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+contourvar.name +"<" +std::to_string(bdtvar1);//NO post_cuts. bdtvar2==0 as defined in the eLEE.cxx, 2nd argument of a function under datamc section;
 					break;
 				}

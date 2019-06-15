@@ -147,7 +147,7 @@ struct bdt_file{
 		int calcTopologicalEntryList();
 
 
-		int BDTSelectedEntrylist(double radius);//CHECK
+		int BDTSelectedEntrylist(double distance);//CHECK
 		int calcCosmicBDTEntryList(double,double);
 		int calcBNBBDTEntryList(double,double);
 
@@ -203,11 +203,12 @@ struct bdt_file{
 	    int addFriend(std::string in_friend_tree_nam, std::string in_friend_file);
 	    int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
 
-		int addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info, bdt_info contour_bdt_info,  std::vector<method_struct> TMVAmethods);
+		int addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info, std::vector<method_struct> TMVAmethods);
 	    ~bdt_file();
 
 
 	    std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
+	    std::string getStageCuts_v2(int stage, double bdtvar1, double bdtvar2);
 
 	    int writeStageFriendTree(std::string nam,double,double);
 	    int addPlotName(std::string plotin);
