@@ -384,6 +384,7 @@ int main (int argc, char *argv[]){
 
         int signal_def_entries_1g1p ;
         int signal_def_entries_1g1p_same_slice;
+        int  signal_def_entries_1g1p_same_slice_1shower1track;
         int signal_def_entries_1g1p_nuslice;
         int signal_def_entries_1g1p_nuslice_1shower ;
         int signal_def_entries_1g1p_nuslice_1shower1track ;
@@ -417,7 +418,7 @@ int main (int argc, char *argv[]){
         if (analysis_tag == "notrack"){
 
             int entries_1g0p = signal->tslice->GetEntries("matched_signal_shower_num == 1 && matched_signal_track_num == 0");
-       //     int entries_1g0p_same_slice = signal->tslice->GetEntries("matched_signal_shower_num == 1 && matched_signal_track_num == 0 && reco_1g0p_is_same_slice");
+            //     int entries_1g0p_same_slice = signal->tslice->GetEntries("matched_signal_shower_num == 1 && matched_signal_track_num == 0 && reco_1g0p_is_same_slice");
             int entries_1g0p_nuslice = signal->tslice->GetEntries("matched_signal_shower_num == 1 && matched_signal_track_num == 0 && reco_1g0p_is_nuslice");
             int entries_1g0p_nuslice_1shower = signal->tslice->GetEntries("matched_signal_shower_num == 1 && matched_signal_track_num ==0 && reco_1g0p_is_nuslice && reco_slice_num_showers ==1");
             int entries_1g0p_nuslice_1shower0track = signal->tslice->GetEntries("matched_signal_shower_num == 1 && matched_signal_track_num == 0 && reco_1g0p_is_nuslice && reco_slice_num_showers ==1 && reco_slice_num_tracks ==0 ");
@@ -425,16 +426,16 @@ int main (int argc, char *argv[]){
 
             signal_def_entries_1g0p = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 0 &&" + signal_definition).c_str());
 
-       //     signal_def_entries_1g0p_same_slice = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 0 && reco_1g0p_is_same_slice&& "+ signal_definition).c_str());
+            //     signal_def_entries_1g0p_same_slice = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 0 && reco_1g0p_is_same_slice&& "+ signal_definition).c_str());
             signal_def_entries_1g0p_nuslice = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 0 && reco_1g0p_is_nuslice &&" + signal_definition).c_str());
             signal_def_entries_1g0p_nuslice_1shower = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 0 && reco_1g0p_is_nuslice && reco_slice_num_showers ==1 && "+ signal_definition).c_str());
             signal_def_entries_1g0p_nuslice_1shower0track = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 0 && reco_1g0p_is_nuslice && reco_slice_num_showers ==1 && reco_slice_num_tracks ==0 && "+ signal_definition).c_str());
 
 
-//            std::cout<<"The total number of events with 1 signal shower and 0 signal tracks (1g0p candidates): "<< entries_1g0p <<std::endl;
-     std::cout<<"The total number of events with 1 signal shower and 0 signal tracks (1g0p candidates): "<<entries_1g0p<<" ("<<entries_1g0p*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g0p<<" ("<<signal_def_entries_1g0p*100/signal_def_entries<<"%)" <<std::endl;
+            //            std::cout<<"The total number of events with 1 signal shower and 0 signal tracks (1g0p candidates): "<< entries_1g0p <<std::endl;
+            std::cout<<"The total number of events with 1 signal shower and 0 signal tracks (1g0p candidates): "<<entries_1g0p<<" ("<<entries_1g0p*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g0p<<" ("<<signal_def_entries_1g0p*100/signal_def_entries<<"%)" <<std::endl;
 
-        //    std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g0p candidates) in the same slice: "<< entries_1g0p_same_slice<<" ("<<entries_1g0p_same_slice*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g0p_same_slice<<" ("<<signal_def_entries_1g0p_same_slice*100/signal_def_entries<<"%)"  <<std::endl;
+            //    std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g0p candidates) in the same slice: "<< entries_1g0p_same_slice<<" ("<<entries_1g0p_same_slice*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g0p_same_slice<<" ("<<signal_def_entries_1g0p_same_slice*100/signal_def_entries<<"%)"  <<std::endl;
 
             std::cout<<"The total number of events with 1 signal shower and 0 signal tracks (1g0p candidates) in the neutrino slice: "<< entries_1g0p_nuslice<<" ("<<entries_1g0p_nuslice*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g0p_nuslice<<" ("<<signal_def_entries_1g0p_nuslice*100/signal_def_entries<<"%)"  <<std::endl;
 
@@ -458,6 +459,7 @@ int main (int argc, char *argv[]){
             signal_def_entries_1g1p = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 &&" + signal_definition).c_str());
 
             signal_def_entries_1g1p_same_slice = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_same_slice&& "+ signal_definition).c_str());
+            signal_def_entries_1g1p_same_slice_1shower1track = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_same_slice&& !reco_1g1p_is_nuslice &&reco_slice_num_showers ==1 && reco_slice_num_tracks ==1&& "+ signal_definition).c_str());
             signal_def_entries_1g1p_nuslice = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_nuslice &&" + signal_definition).c_str());
             signal_def_entries_1g1p_nuslice_1shower = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_nuslice && reco_slice_num_showers ==1 && "+ signal_definition).c_str());
             signal_def_entries_1g1p_nuslice_1shower1track = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_nuslice && reco_slice_num_showers ==1 && reco_slice_num_tracks ==1 && "+ signal_definition).c_str());
@@ -467,6 +469,9 @@ int main (int argc, char *argv[]){
             std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates): "<<entries_1g1p<<" ("<<entries_1g1p*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g1p<<" ("<<signal_def_entries_1g1p*100/signal_def_entries<<"%)" <<std::endl;
 
             std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) in the same slice: "<< entries_1g1p_same_slice<<" ("<<entries_1g1p_same_slice*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g1p_same_slice<<" ("<<signal_def_entries_1g1p_same_slice*100/signal_def_entries<<"%)"  <<std::endl;
+
+            std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) in the same slice that isn't the neutrino slice with  only 1 reconstructed track and 1 reconstructed shower in the slice: "<<signal_def_entries_1g1p_same_slice_1shower1track<<" ("<<signal_def_entries_1g1p_same_slice_1shower1track*100/signal_def_entries<<"%)"  <<std::endl;
+
 
             std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) both in the neutrino slice: "<< entries_1g1p_nuslice<<" ("<<entries_1g1p_nuslice*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g1p_nuslice<<" ("<<signal_def_entries_1g1p_nuslice*100/signal_def_entries<<"%)"  <<std::endl;
 
@@ -482,12 +487,12 @@ int main (int argc, char *argv[]){
 
         if (analysis_tag == "notrack"){
             std::cout<<"One shower was reconstructed but 1+ signal tracks were reconstructed as well: "<<signal_def_entries_1shower1track<<"/"<<signal_def_entries<<" ("<<(double)signal_def_entries_1shower1track*100/signal_def_entries<<"%)" <<std::endl;   
-                
+
             std::cout<<"One shower and 0 signal tracks were reconstructed it wasn't selected as the neutrino slice: "<<signal_def_entries_1g0p -signal_def_entries_1g0p_nuslice<<"/"<<signal_def_entries<<" ("<<(double)( signal_def_entries_1g0p- signal_def_entries_1g0p_nuslice)*100/signal_def_entries<<"%)" <<std::endl;  
 
-       std::cout<<"One shower and 0 signal tracks were reconstructed in neutrino slice but there's more than 1 shower inside the slice: "<<-signal_def_entries_1g1p_nuslice +signal_def_entries_1g0p_nuslice_1shower<<"/"<<signal_def_entries<<" ("<<(double)(-signal_def_entries_1g1p_nuslice+ signal_def_entries_1g0p_nuslice_1shower)*100/signal_def_entries<<"%)" <<std::endl;  
+            std::cout<<"One shower and 0 signal tracks were reconstructed in neutrino slice but there's more than 1 shower inside the slice: "<<-signal_def_entries_1g1p_nuslice +signal_def_entries_1g0p_nuslice_1shower<<"/"<<signal_def_entries<<" ("<<(double)(-signal_def_entries_1g1p_nuslice+ signal_def_entries_1g0p_nuslice_1shower)*100/signal_def_entries<<"%)" <<std::endl;  
 
-       std::cout<<"One shower and 0 signal tracks were reconstructed in neutrino slice but there's more than 1 shower or track inside the slice: "<<signal_def_entries_1g0p_nuslice_1shower- signal_def_entries_1g0p_nuslice_1shower0track<<"/"<<signal_def_entries<<" ("<<(double)(signal_def_entries_1g0p_nuslice_1shower - signal_def_entries_1g0p_nuslice_1shower0track)*100/signal_def_entries<<"%)" <<std::endl;  
+            std::cout<<"One shower and 0 signal tracks were reconstructed in neutrino slice but there's more than 1 shower or track inside the slice: "<<signal_def_entries_1g0p_nuslice_1shower- signal_def_entries_1g0p_nuslice_1shower0track<<"/"<<signal_def_entries<<" ("<<(double)(signal_def_entries_1g0p_nuslice_1shower - signal_def_entries_1g0p_nuslice_1shower0track)*100/signal_def_entries<<"%)" <<std::endl;  
 
 
 
@@ -496,9 +501,11 @@ int main (int argc, char *argv[]){
             std::cout<<"One shower was reconstructed but multiple tracks were reconstructed: "<<signal_def_entries_1shower2track<<"/"<<signal_def_entries<<" ("<<(double)signal_def_entries_1shower2track*100/signal_def_entries<<"%)" <<std::endl;  
             std::cout<<"One shower and one track were reconstructed but in different slices: "<<signal_def_entries_1g1p - signal_def_entries_1g1p_same_slice<<"/"<<signal_def_entries<<" ("<<(double)(signal_def_entries_1g1p -signal_def_entries_1g1p_same_slice)*100/signal_def_entries<<"%)" <<std::endl;  
 
-         std::cout<<"One shower and one track were reconstructed in same slice but it wasn't selected as the neutrino slice: "<<signal_def_entries_1g1p_same_slice - signal_def_entries_1g1p_nuslice<<"/"<<signal_def_entries<<" ("<<(double)(signal_def_entries_1g1p_same_slice - signal_def_entries_1g1p_nuslice)*100/signal_def_entries<<"%)" <<std::endl;  
+            std::cout<<"One shower and one track were reconstructed in same slice but it wasn't selected as the neutrino slice: "<<signal_def_entries_1g1p_same_slice - signal_def_entries_1g1p_nuslice<<"/"<<signal_def_entries<<" ("<<(double)(signal_def_entries_1g1p_same_slice - signal_def_entries_1g1p_nuslice)*100/signal_def_entries<<"%)" <<std::endl; 
 
-        std::cout<<"One shower and one track were reconstructed in neutrino slice but there are more than 1 track and 1 shower inside the slice: "<<signal_def_entries_1g1p_nuslice - signal_def_entries_1g1p_nuslice_1shower1track<<"/"<<signal_def_entries<<" ("<<(double)(signal_def_entries_1g1p_nuslice- signal_def_entries_1g1p_nuslice_1shower1track)*100/signal_def_entries<<"%)" <<std::endl;  
+        std::cout<<"---- of which: "<<signal_def_entries_1g1p_same_slice_1shower1track<<"/"<<signal_def_entries<<" ("<<(double)(signal_def_entries_1g1p_same_slice_1shower1track)*100/signal_def_entries<<"%)" <<" had only 1 track and 1 shower in the slice"<<std::endl; 
+
+            std::cout<<"One shower and one track were reconstructed in neutrino slice but there are more than 1 track and 1 shower inside the slice: "<<signal_def_entries_1g1p_nuslice - signal_def_entries_1g1p_nuslice_1shower1track<<"/"<<signal_def_entries<<" ("<<(double)(signal_def_entries_1g1p_nuslice- signal_def_entries_1g1p_nuslice_1shower1track)*100/signal_def_entries<<"%)" <<std::endl;  
 
 
         }
