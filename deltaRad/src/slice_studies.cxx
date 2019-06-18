@@ -507,6 +507,8 @@ int main (int argc, char *argv[]){
 
             std::cout<<"One shower and one track were reconstructed in neutrino slice but there are more than 1 track and 1 shower inside the slice: "<<signal_def_entries_1g1p_nuslice - signal_def_entries_1g1p_nuslice_1shower1track<<"/"<<signal_def_entries<<" ("<<(double)(signal_def_entries_1g1p_nuslice- signal_def_entries_1g1p_nuslice_1shower1track)*100/signal_def_entries<<"%)" <<std::endl;  
 
+            std::cout<<"Percent of slices that have both the signal track and shower and only these reco objcets that are selected as the neutrino slice: "<<signal_def_entries_1g1p_nuslice_1shower1track<<"/"<<(signal_def_entries_1g1p_nuslice_1shower1track + signal_def_entries_1g1p_same_slice_1shower1track)<<" ("<<(double)100*signal_def_entries_1g1p_nuslice_1shower1track/(signal_def_entries_1g1p_nuslice_1shower1track + signal_def_entries_1g1p_same_slice_1shower1track) <<")"<<std::endl;
+
 
         }
 

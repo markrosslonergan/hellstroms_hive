@@ -194,14 +194,14 @@ int main (int argc, char *argv[]){
     std::vector<std::string> v_denom;
     if(analysis_tag == "notrack"){
         v_denom = {"mctruth_cc_or_nc == 1","mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy < "+pmass+"+0.04",fid_cut}; 
-//        v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy < "+pmass+"+0.04",fid_cut}; 
+        //        v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy < "+pmass+"+0.04",fid_cut}; 
 
 
     } else{
         //        v_denom = {"mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04",fid_cut}; 
         //        v_denom = {fid_cut, "mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02",     "mctruth_leading_exiting_proton_energy > "+pmass+"+0.04"}; 
- //       v_denom = {fid_cut, "mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.04)==1"}; 
-          v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.04)==1"}; 
+        //       v_denom = {fid_cut, "mctruth_cc_or_nc == 1","mctruth_is_delta_radiative" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.04)==1"}; 
+        v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.04)==1"}; 
 
 
     }
@@ -234,19 +234,27 @@ int main (int argc, char *argv[]){
 
     std::cout<<"Defining all our bdt_files."<<std::endl;
 
-    bdt_file *training_signal    = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
+ //   bdt_file *training_signal    = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
+   // bdt_file *signal = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+   // bdt_file *signal_other = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
+     bdt_file *training_signal    = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
     //  bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
     // bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
     //bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
     //signal_other->fillstyle = 3390;
 
 
-    //  bdt_file *dirt = new bdt_file(dir,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
+    bdt_file *dirt = new bdt_file(dir13,"dirt_overlay_v13.1.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
-    bdt_file *training_bnb    = new bdt_file(dir13, "bnb_overlay_merged_run1_run3_v13.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dir13, "bnb_overlay_merged_run1_run3_v13.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+    //bdt_file *training_bnb    = new bdt_file(dir13, "bnb_overlay_merged_run1_run3_v13.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    //bdt_file *bnb = new bdt_file(dir13, "bnb_overlay_merged_run1_run3_v13.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+
+    bdt_file *training_bnb    = new bdt_file(dir13, "bnb_overlay_run1_v13.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dir13, "bnb_overlay_run1_v13.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+
+
     // bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
     // bdt_file *bnb = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
 
@@ -256,7 +264,9 @@ int main (int argc, char *argv[]){
     // bdt_file *offbeamdata    = new bdt_file(dir9, "bnbext_merged_run1_run3_v9.3.root",  "offbeamdata",  "e1p","singlephoton/",  kgreen-3, data_flow);
 
     bdt_file *OnBeamData    = new bdt_file(dir13, "data5e19_v13.1.root",  "onbeamdata",      "e1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *OffBeamData    = new bdt_file(dir13, "bnbext_merged_run1_run3_v13.1.root",  "offbeamdata",  "e1p","singlephoton/",  kGreen-3, data_flow);
+    //bdt_file *OffBeamData    = new bdt_file(dir13, "bnbext_merged_run1_run3_v13.1.root",  "offbeamdata",  "e1p","singlephoton/",  kGreen-3, data_flow);
+    bdt_file *OffBeamData    = new bdt_file(dir13, "bnbext_run1_v13.1.root",  "offbeamdata",  "e1p","singlephoton/",  kGreen-3, data_flow);
+
 
 
 
@@ -285,8 +295,8 @@ int main (int argc, char *argv[]){
     //For conviencance fill a vector with pointers to all the files to loop over.
     //std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData,dirt, bnb_cosmics_noabs, bnb_cosmics_nom, bnb_cosmics_undo, bnb_cosmics_noyz};
     //std::vector<bdt_file*> bdt_files = {ncpi0, signal, signal_other, training_signal, training_bnb, bnb, dirt, OnBeamData, OffBeamData};
-    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb,  OnBeamData, OffBeamData};
-   // std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, dirt, OnBeamData, OffBeamData};
+    //   std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb,  OnBeamData, OffBeamData};
+    std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, dirt, OnBeamData, OffBeamData};
 
 
 
@@ -297,8 +307,18 @@ int main (int argc, char *argv[]){
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
-    OnBeamData->setAsOnBeamData(4.795e19);
-    OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+
+    //v10
+    // OnBeamData->setAsOnBeamData(4.795e19);
+    // OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+
+    //v13
+    OnBeamData->setAsOnBeamData(3.535e+19);
+    OffBeamData->setAsOffBeamData(3.535e+19, 7827989.0, 60306440.0);
+
+
+
+
     //    OnBeamData->setAsOnBeamData(4.552e+19);
     //  OffBeamData->setAsOffBeamData(4.552e+19,10096723.0,64275293.0);
 
@@ -362,7 +382,7 @@ int main (int argc, char *argv[]){
     bnb->addPlotName("BNB Backgrounds");
     OnBeamData->addPlotName("On-Beam  Data");
     OffBeamData->addPlotName("Cosmic Background");
-   // dirt->addPlotName("Dirt Background");
+    dirt->addPlotName("Dirt Background");
     //ncpi0->addPlotName("NC #pi^{0} Background");
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -508,8 +528,8 @@ int main (int argc, char *argv[]){
 
 
         TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-         std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info);
-        //std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
+        //  std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info);
+        std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
         //std::vector<double> ans = scan_significance(fsig, {signal} , {bnb,ncpi0, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
         //std::vector<double> ans = lin_scan({signal}, {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
@@ -526,7 +546,7 @@ int main (int argc, char *argv[]){
         //Add OffBeamData but change the color and style first
         OffBeamData->col;	
         OffBeamData->fillstyle = 3333;
-     //   histogram_stack.addToStack(dirt);
+        histogram_stack.addToStack(dirt);
 
         histogram_stack.addToStack(OffBeamData);
         //histogram_stack.addToStack(dirt);
@@ -619,7 +639,7 @@ int main (int argc, char *argv[]){
         //  histogram_stack->addToStack(ncpi0);
         histogram_stack->addToStack(bnb);
         OffBeamData->fillstyle = 3333;
-     //   histogram_stack->addToStack(dirt);
+        histogram_stack->addToStack(dirt);
         histogram_stack->addToStack(OffBeamData);
 
         //histogram_stack->addToStack(signal);
