@@ -389,6 +389,18 @@ int main (int argc, char *argv[]){
         int signal_def_entries_1g1p_nuslice_1shower ;
         int signal_def_entries_1g1p_nuslice_1shower1track ;
 
+        int signal_def_entries_1g1p_noshower_1track;
+        int signal_def_entries_1g1p_noshower_1track_clearcosmic;
+
+        int   signal_def_entries_1g1p_1shower_notrack_clearcosmic;
+        int   signal_def_entries_1g1p_1shower_notrack_nuslice;
+
+        int  signal_def_entries_1g1p_diff_slice_photon_nuslice;
+        int  signal_def_entries_1g1p_diff_slice_photon_clearcosmic;
+        int  signal_def_entries_1g1p_diff_slice_proton_clearcosmic;
+
+
+
         int signal_def_entries_1g0p ;
         int signal_def_entries_1g0p_same_slice;
         int signal_def_entries_1g0p_nuslice;
@@ -464,9 +476,40 @@ int main (int argc, char *argv[]){
             signal_def_entries_1g1p_nuslice_1shower = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_nuslice && reco_slice_num_showers ==1 && "+ signal_definition).c_str());
             signal_def_entries_1g1p_nuslice_1shower1track = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && reco_1g1p_is_nuslice && reco_slice_num_showers ==1 && reco_slice_num_tracks ==1 && "+ signal_definition).c_str());
 
+            //there's no reco shower but there is a reco track
+            signal_def_entries_1g1p_noshower_1track = signal->tslice->GetEntries(("matched_signal_shower_num == 0 && matched_signal_track_num == 1 &&" + signal_definition).c_str());
+          //  signal_def_entries_1g1p_noshower_1track_nuslice = signal->tslice->GetEntries(("matched_signal_shower_num == 0 && matched_signal_track_num == 1 &&" + signal_definition).c_str());
+            signal_def_entries_1g1p_noshower_1track_clearcosmic = signal->tslice->GetEntries(("matched_signal_shower_num == 0 && matched_signal_track_num == 1 && matched_signal_track_is_clearcosmic &&" + signal_definition).c_str());
+
+            signal_def_entries_1g1p_1shower_notrack_clearcosmic =  signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 0 && matched_signal_shower_is_clearcosmic &&" + signal_definition).c_str());
+         signal_def_entries_1g1p_1shower_notrack_nuslice =  signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 0 && matched_signal_shower_is_nuslice &&" + signal_definition).c_str());
+
+
+          signal_def_entries_1g1p_diff_slice_photon_clearcosmic = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && !reco_1g1p_is_same_slice&& (matched_signal_shower_is_clearcosmic|| matched_signal_track_is_clearcosmic) && "+ signal_definition).c_str());
+         signal_def_entries_1g1p_diff_slice_proton_clearcosmic = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && !reco_1g1p_is_same_slice&& matched_signal_track_is_clearcosmic &&"+ signal_definition).c_str());
+
+          signal_def_entries_1g1p_diff_slice_photon_nuslice = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && !reco_1g1p_is_same_slice&& matched_signal_shower_is_nuslice && !(matched_signal_shower_is_clearcosmic|| matched_signal_track_is_clearcosmic)&&"+ signal_definition).c_str());
+ 
+
+
+
+            std::cout<<"The total number of events with 0 signal shower and 1 signal tracks (1g1p candidates): " <<signal_def_entries_1g1p_noshower_1track<<" ("<<signal_def_entries_1g1p_noshower_1track*100/signal_def_entries<<"%)" <<std::endl;
+           std::cout<<"The total number of events with 0 signal shower and 1 signal tracks (1g1p candidates) with the track in a clear cosmic slice: " <<signal_def_entries_1g1p_noshower_1track_clearcosmic<<" ("<<signal_def_entries_1g1p_noshower_1track_clearcosmic*100/signal_def_entries<<"%)" <<std::endl;
+
+           std::cout<<"The total number of events with 1 signal shower and 0 signal tracks (1g1p candidates) with the shower in a clear cosmic slice: " <<signal_def_entries_1g1p_1shower_notrack_clearcosmic<<" ("<<signal_def_entries_1g1p_1shower_notrack_clearcosmic*100/signal_def_entries<<"%)" <<std::endl;
+
+           std::cout<<"The total number of events with 1 signal shower and 0 signal tracks (1g1p candidates) with the shower in nuslice: " <<signal_def_entries_1g1p_1shower_notrack_nuslice<<" ("<<signal_def_entries_1g1p_1shower_notrack_nuslice*100/signal_def_entries<<"%)" <<std::endl;
+
+     std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) split across slices with the shower in nuslice and neither in clear cosmic: " <<signal_def_entries_1g1p_diff_slice_photon_nuslice<<" ("<<signal_def_entries_1g1p_diff_slice_photon_nuslice*100/signal_def_entries<<"%)" <<std::endl;
+     std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) split across slices with the shower or track in a clear cosmic slice: " <<signal_def_entries_1g1p_diff_slice_photon_clearcosmic<<" ("<<signal_def_entries_1g1p_diff_slice_photon_clearcosmic*100/signal_def_entries<<"%)" <<std::endl;
+
+   std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) split across slices with the track in a clear cosmic slice: " <<signal_def_entries_1g1p_diff_slice_proton_clearcosmic<<" ("<<signal_def_entries_1g1p_diff_slice_proton_clearcosmic*100/signal_def_entries<<"%)" <<std::endl;
+
 
 
             std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates): "<<entries_1g1p<<" ("<<entries_1g1p*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g1p<<" ("<<signal_def_entries_1g1p*100/signal_def_entries<<"%)" <<std::endl;
+
+
 
             std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) in the same slice: "<< entries_1g1p_same_slice<<" ("<<entries_1g1p_same_slice*100/total_entries<<"%)"<<"/  " <<signal_def_entries_1g1p_same_slice<<" ("<<signal_def_entries_1g1p_same_slice*100/signal_def_entries<<"%)"  <<std::endl;
 
