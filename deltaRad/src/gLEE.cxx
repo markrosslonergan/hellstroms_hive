@@ -234,10 +234,10 @@ int main (int argc, char *argv[]){
 
     std::cout<<"Defining all our bdt_files."<<std::endl;
 
- //   bdt_file *training_signal    = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
-   // bdt_file *signal = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-   // bdt_file *signal_other = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
-     bdt_file *training_signal    = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
+    //   bdt_file *training_signal    = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
+    // bdt_file *signal = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    // bdt_file *signal_other = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
+    bdt_file *training_signal    = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
     bdt_file *signal = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
     bdt_file *signal_other = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
     //  bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
@@ -391,10 +391,13 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "track"){
-        fcoscut = 0.677;
-        fbnbcut = 0.60625;
-        //fcoscut = 0.6;
-        //fbnbcut = 0.5;
+        //fcoscut = 0.599;
+        fcoscut = 0.5;
+        fbnbcut =   0.561;
+
+
+        // fcoscut =0.594401;
+        // fbnbcut =  0.55185;
     }else if(analysis_tag == "notrack"){
         //0.64 0.59875
         //0.673 0.5825

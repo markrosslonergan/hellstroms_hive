@@ -1,16 +1,16 @@
 <?xml version="1.0" ?>
 
 <!--General Precuts -->
-    <precut def ="reco_flash_total_pe_in_beamgate[0] > 20" name ="Optical Filter 20 PE"/>
-    <precut def = "(reco_vertex_x > 10 &amp;&amp; reco_vertex_x < 246 &amp;&amp; reco_vertex_y > -107 &amp;&amp; reco_vertex_y < 107 &amp;&amp; reco_vertex_z > 10 &amp;&amp; reco_vertex_z < 1026) " name = "Fiducial Vertex Cut" />
+   <precut def = "(reco_vertex_x > 10 &amp;&amp; reco_vertex_x < 246 &amp;&amp; reco_vertex_y > -107 &amp;&amp; reco_vertex_y < 107 &amp;&amp; reco_vertex_z > 10 &amp;&amp; reco_vertex_z < 1026) " name = "Fiducial Vertex Cut" />
 
 <!--Shower Precuts -->
 <precut def = "reco_shower_energy_max[0]>0.02" name = "Shower Energy Cut" />
-<precut def = "(reco_shower_dEdx_plane2_nhits[0]>1)" name = "Shower dE/dx Plane Min Nhits"/>
-<precut def = "reco_track_displacement[0]<500" name = "Track Length Cut" />
-<precut def = "reco_track_good_calo_best_plane[0]!=-1" name = "good calo plane track" />
+<precut def = "(TMath::Finite(reco_shower_dEdx_amalgamated[0]))" name = "Shower dE/dx Plane Min Nhits"/>
+<precut def = "(TMath::Finite(reco_track_good_calo_best_plane[0]))" name = "good calo plane track" />
 
 <!--
+ <precut def = "reco_track_displacement[0]<500" name = "Track Length Cut" />
+<precut def ="reco_flash_total_pe_in_beamgate[0] > 20" name ="Optical Filter 20 PE"/>
 <precut def = "reco_shower_energy_max[0]>0.125" name = "Shower Energy Cut 100 mev" />
 <precut def = " (reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) >-0.99  &amp;&amp; (reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) < 0.99" name = "Back to Back track shower cut"/>
 <precut def = "reco_track_good_calo_best_plane[0]!=-1 " name = "Track Good Calo Cut" />
@@ -25,12 +25,12 @@
 -->
 
 <!--Comsic BDT Training + Spectator Variables-->
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(20,0.05,0.92)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(36,0.05,0.92)">
     <method type = "COSMIC" use = "yes">
-        <param>  NTrees=1000 	</param>				
+        <param>  NTrees=3000 	</param>				
         <param>  MinNodeSize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
-        <param>  AdaBoostBeta=0.2 	</param>				
+        <param>  AdaBoostBeta=0.1 	</param>				
         <param>  SeparationType=GiniIndex</param>				
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
@@ -57,8 +57,8 @@
     <!-- Shower Calo Variables-->
     <var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 1 [mev/cm]" type="d" spectator="true"/>
     <var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 0 [mev/cm]" type="d" spectator="true"/>
-    <var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 2 [mev/cm]" type="d" spectator="false"/>
-    <var def = "reco_shower_dEdx_amalgamated[0]" binning = "(24,0,6.5)" unit = "median shower de/dx amalgamated [mev/cm]" type="d" spectator="true"/>
+    <var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 2 [mev/cm]" type="d" spectator="true"/>
+    <var def = "reco_shower_dEdx_amalgamated[0]" binning = "(24,0,6.5)" unit = "median shower de/dx amalgamated [mev/cm]" type="d" spectator="false"/>
 
     <var def = "reco_shower_energy_max[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy [GeV]" type="d" spectator="false"/>
     <var def = "reco_shower_energy_plane0[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
@@ -135,12 +135,12 @@
 
 </mva>
 
-<mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(20,0.1,0.75)">
+<mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(36,0.1,0.75)">
     <method type = "BNB" use = "yes">
-        <param>  NTrees=1000 	</param>				
+        <param>  NTrees=3000 	</param>				
         <param>  MinNodeSize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
-        <param>  AdaBoostBeta=0.2 	</param>				
+        <param>  AdaBoostBeta=0.1 	</param>				
         <param>  SeparationType=GiniIndex</param>				
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
@@ -167,8 +167,8 @@
     <!-- Shower Calo Variables-->
     <var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 1 [mev/cm]" type="d" spectator="true"/>
     <var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 0 [mev/cm]" type="d" spectator="true"/>
-    <var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 2 [mev/cm]" type="d" spectator="false"/>
-    <var def = "reco_shower_dEdx_amalgamated[0]" binning = "(24,0,6.5)" unit = "median shower de/dx amalgamated [mev/cm]" type="d" spectator="true"/>
+    <var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,6.5)" unit = "median shower de/dx plane 2 [mev/cm]" type="d" spectator="true"/>
+    <var def = "reco_shower_dEdx_amalgamated[0]" binning = "(24,0,6.5)" unit = "median shower de/dx amalgamated [mev/cm]" type="d" spectator="false"/>
 
     <var def = "reco_shower_energy_max[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy [GeV]" type="d" spectator="false"/>
     <var def = "reco_shower_energy_plane0[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
@@ -224,8 +224,8 @@
     <var def = "reco_track_displacement[0]" binning = "(24,0,500)" unit = "Track Displacement [cm]" type = "d" spectator = "false" />
     <var def = "cos(reco_track_theta_yz[0])" binning = "(24,-1,1)" unit = "Reconstructed Track - Cosine #theta_{yz}" type = "d" spectator = "true"/>
     <var def = "cos(reco_track_phi_yx[0])" binning = "(24,-1,1)" unit = "Reconstructed Track - Cosine Phi yx" type = "d" spectator = "true"/>
-    <var def = "reco_track_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track Phi yx" type = "d" spectator = "true"/>
-    <var def = "reco_track_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #theta_{yz}" type = "d" spectator = "true"/>
+    <var def = "reco_track_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track Phi yx" type = "d" spectator = "false"/>
+    <var def = "reco_track_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #theta_{yz}" type = "d" spectator = "false"/>
     <var def = "reco_track_startx[0]" binning = "(24,-10,260)" unit = " Reconstructed Track start X pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_starty[0]" binning = "(24,-120,+120)" unit = " Reconstructed Track start Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_startz[0]" binning = "(24,-10,1060)" unit = " Reconstructed Track start Z pos [cm]" type = "d" spectator = "true"/>
