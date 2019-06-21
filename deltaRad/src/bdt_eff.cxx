@@ -513,3 +513,169 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1,
 
 
 
+bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool is_ok) : file(filein){
+
+
+    double conversion = filein->scale_data*plot_POT/filein->pot;
+    double n_starting_events = 0;
+    denominator = "";
+
+    std::cout<<"File has  "<<filein->GetEntries("1")*conversion<<" events when scaled to "<<plot_POT<<std::endl;
+
+
+    for(int i=0; i<v_denomin.size();i++){
+            std::cout<<" On Cut "<<v_denomin[i]<<std::endl;
+            if(i==0){
+                denominator = v_denomin[i];
+            }else{
+                denominator += "&&"+v_denomin[i];
+            }
+            double tmp_events =  filein->GetEntries(denominator)*conversion;
+            std::cout<<"--- this file has: "<<tmp_events<<std::endl;
+            n_starting_events = tmp_events;
+    }
+    std::cout<<"So the DENOMINATOR is "<<n_starting_events<<std::endl;
+
+    std::cout<<"-----------------------------------------"<<std::endl;
+
+    std::string topocuts = "";
+    double n_topo_events = 0;
+    for(int i=0; i<v_topo.size();i++){
+            std::cout<<" On topo: "<<v_topo[i]<<std::endl;
+            if(i==0){
+                topocuts = v_topo[i];
+            }else{
+                topocuts += "&&"+v_topo[i];
+            }
+            double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts)*conversion;
+            double tmp_events_just_this =  filein->GetEntries(denominator+"&&"+v_topo[i])*conversion;
+            std::cout<<"--- this file has: "<<tmp_events<<" which on its own is a ("<<tmp_events_just_this/n_starting_events*100.0<<"%) effect"<<std::endl;
+            n_topo_events = tmp_events;
+    }
+    std::cout<<"So the DENOMINATOR + TOPOLOGICAL is "<<n_topo_events<<std::endl;
+    std::cout<<"So total Pandora Reco Efficiency is "<<n_topo_events/n_starting_events*100.0<<"%"<<std::endl;
+    
+    std::string precuts = "";
+    double n_precut_events = 0;
+    for(int i=0; i<v_precuts.size();i++){
+            std::cout<<" On precut: "<<v_precuts[i]<<std::endl;
+            if(i==0){
+                precuts = v_precuts[i];
+            }else{
+                precuts += "&&"+v_precuts[i];
+            }
+            double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
+            double tmp_events_just_this =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+v_precuts[i])*conversion;
+            std::cout<<"--- this file has: "<<tmp_events<<" which on its own is a ("<<tmp_events_just_this/n_topo_events*100.0<<"%) effect relative to topo"<<std::endl;
+            n_precut_events = tmp_events;
+    }
+
+
+    std::cout<<"So the DENOMINATOR + TOPOLOGICAL + PRECUTS is "<<n_precut_events<<std::endl;
+    std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_starting_events*100.0<<"% relative to denom"<<std::endl;
+    std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_topo_events*100.0<<"% relative to topo"<<std::endl;
+ 
+
+
+	bdt_variable true_photon("mctruth_exiting_photon_energy","(20, 0 , 0.8)","True Photon Energy [GeV]",false,"d");
+	bdt_variable true_proton("Max$(mctruth_exiting_proton_energy)-0.938272","(20, 0 , 0.8)","True Proton Kinetic Energy [GeV]",false,"d");
+
+
+	TH1* h_true_photon_denom = (TH1*)file->getTH1(true_photon, denominator, "photon_true_denom", 13.2e20);
+	TH1* h_true_proton_denom = (TH1*)file->getTH1(true_proton, denominator, "proton_true_denom", 13.2e20);
+
+	TH1* h_true_photon_numer;
+	TH1* h_true_proton_numer;
+
+
+    		file->calcBDTEntryList(3,bdt_cuts);
+	    	file->setStageEntryList(3);
+		    double stage_entries = file->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
+
+
+			h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator+"&&"+topocuts +"&&"+precuts, "photon_true_numer", 13.2e20);
+			h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator+"&&"+topocuts +"&&"+precuts, "proton_true_numer", 13.2e20);
+
+
+	TH1* h_true_photon_ratio = (TH1*)h_true_photon_numer->Clone("h_true_photon_ratio");
+	TH1* h_true_proton_ratio = (TH1*)h_true_proton_numer->Clone("h_true_proton_ratio");
+
+	h_true_photon_ratio->Divide(h_true_photon_denom);
+	h_true_proton_ratio->Divide(h_true_proton_denom);
+
+    double finaleff = n_topo_events/n_starting_events*100.0;
+    finaleff = n_precut_events/n_starting_events*100.0;
+    finaleff = stage_entries/n_starting_events*100.0;
+    std::cout<<"Relative to topo: "<<stage_entries/n_topo_events*100.0<<std::endl;
+	//Std::plotting
+	//
+	TCanvas * c = new TCanvas();
+	c->cd();
+
+	h_true_photon_ratio->Scale(100);
+	h_true_proton_ratio->Scale(100);
+
+	h_true_photon_ratio->Draw("E1");
+
+	h_true_photon_denom->Scale(250/h_true_photon_denom->Integral());
+	h_true_photon_denom->SetFillStyle(3454);
+	h_true_photon_denom->SetFillColor(kRed-6);
+	h_true_photon_denom->SetLineColor(kRed-6);
+	h_true_photon_denom->Draw("hist same");
+
+	h_true_proton_denom->Scale(250/h_true_proton_denom->Integral());
+	h_true_proton_denom->SetFillStyle(3444);
+	h_true_proton_denom->SetFillColor(kBlue-6);
+	h_true_proton_denom->SetLineColor(kBlue-6);
+	h_true_proton_denom->Draw("hist same");
+
+	
+	//sig_notrack->Scale(200);
+	//sig_notrack->Draw("hist same");
+
+	h_true_photon_ratio->DrawCopy("E1 same");
+	h_true_photon_ratio->SetTitle("");
+	h_true_proton_ratio->Draw("E1 same");
+
+	h_true_photon_ratio->SetLineColor(kRed);
+	h_true_photon_ratio->SetLineWidth(2);
+	h_true_photon_ratio->SetMarkerStyle(20);
+	h_true_photon_ratio->SetMarkerColor(kRed);
+
+	h_true_proton_ratio->SetLineColor(kBlue);
+	h_true_proton_ratio->SetMarkerColor(kBlue);
+	h_true_proton_ratio->SetLineWidth(2);
+	h_true_proton_ratio->SetMarkerStyle(20);
+
+	h_true_photon_ratio->GetYaxis()->SetTitle("Efficiency [%]");
+	h_true_photon_ratio->GetXaxis()->SetTitle("True Photon/Proton Energy [GeV]");
+
+	h_true_photon_ratio->SetMaximum(80.0);
+	h_true_photon_ratio->SetMinimum(0);
+	h_true_photon_ratio->GetXaxis()->SetRangeUser(0,1);
+
+	TLegend *l = new TLegend(0.13,0.79,0.89,0.89);
+	l->SetLineColor(kWhite);
+	l->SetLineWidth(0);
+	l->SetNColumns(2);
+	l->AddEntry(h_true_proton_ratio,"Efficiency: True Proton Energy","lp");
+	l->AddEntry(h_true_photon_ratio,"Efficiency: True Photon Energy","lp");
+	l->AddEntry(h_true_proton_denom,"#splitline{}{True Proton Spectum (au)}","fl");
+	l->AddEntry(h_true_photon_denom,"#splitline{}{True Photon Spectum (au)}","fl");
+	l->Draw();
+
+
+		TLatex txt;
+		txt.SetTextSize(0.05);
+		txt.SetTextAlign(13);  //align at top
+		txt.SetNDC();
+		txt.DrawLatex(.60,.70,("#splitline{Total Efficiency:}{"+to_string_prec(finaleff,2)+"%}").c_str());
+		
+
+
+
+	c->SaveAs("eff_a.pdf","pdf");
+
+
+}
+

@@ -184,21 +184,21 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //double max_modifier = 1.65;
             double max_modifier = 2.0;
             if (s==1){
-                max_modifier = 1.4;
-            }
-            if (s==2){
                 max_modifier = 1.85;
             }
+            if (s==2){
+                max_modifier = 2.0;
+            }
 
-            if(false && var.is_logplot == true){
+            if(var.is_logplot == true){
             //if(true){
                 pad0top->SetLogy();
-                max_modifier=50.0;
+                max_modifier=100.0;
             }
             //     double max_modifier = 1.7;
             double min_val = 0.01;
             if(is_bdt_variable) {
-                max_modifier = 10.0;
+                max_modifier = 15.0;
                 min_val = 0.1;
             }
 
@@ -278,7 +278,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pottex.SetNDC();
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-            pottex.DrawLatex(.60,.64, pot_draw.c_str());
+            pottex.DrawLatex(.60,.68, pot_draw.c_str());
 
 
 
@@ -478,7 +478,6 @@ int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
         int data_rebin = 1;
         if(s==0 || s == 1){
             rmin=0.0; rmax = 1.999;
-
         }//else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
 
@@ -588,7 +587,7 @@ int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
             pottex.SetNDC();
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-            pottex.DrawLatex(.60,.64, pot_draw.c_str());
+            pottex.DrawLatex(.60,.68, pot_draw.c_str());
 
             TText *pre; 
             if (isSpectator) {
@@ -810,7 +809,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         if(k==0 || k == 1){
             rmin=0.0; rmax = 1.999;
 
-        }else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
+        };//else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
 
 
         double max_modifier = 1.9;

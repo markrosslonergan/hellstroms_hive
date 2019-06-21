@@ -818,14 +818,15 @@ int bdt_file::setStageEntryList(int j){
     return 0;
 }
 
-
 std::string bdt_file::getStageCuts(int stage, std::vector<double> bdt_cuts){
 
     bool verbose = false;
 
     std::string ans;
-    
-    if(stage==0){
+   
+    if(stage==-1){
+            ans = flow.topological_cuts;
+    }else if(stage==0){
             ans = flow.base_cuts;
     }else if(stage ==1){
             ans = flow.base_cuts + "&&"+ flow.pre_cuts;
@@ -992,3 +993,4 @@ TText * drawPrelim(double x, double y){
     tres->SetNDC();
     return tres;
 }
+

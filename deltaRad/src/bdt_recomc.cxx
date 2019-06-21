@@ -23,9 +23,10 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 	for(int s = 0;s<4; s++){ //Loop over all stages
 		std::cout<<"Calculating any necessary EntryLists for "<<file->tag<<" On stage "<<s<<"."<<std::endl;
-		if(s==2) file->calcCosmicBDTEntryList(cut_cosmic_val, cut_bnb_val);
-		if(s==3) file->calcBNBBDTEntryList(cut_cosmic_val, cut_bnb_val);
-		file->setStageEntryList(s);
+    
+        if(s>1) file->calcBDTEntryList(s,{cut_cosmic_val,cut_bnb_val});
+        file->setStageEntryList(s);
+        
 
 		for(auto &var: vars){
 			std::vector<TH1*> vec_reco_mc = file->getRecoMCTH1(var,"1","stage_"+std::to_string(s)+"_"+file->tag+"_"+var.safe_name,plot_pot);

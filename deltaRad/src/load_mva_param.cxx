@@ -173,17 +173,17 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             std::string var_binning = pVar->Attribute("binning");
             std::string var_unit = pVar->Attribute("unit");
             std::string var_type = pVar->Attribute("type");
-            std::string var_spectator = pVar->Attribute("spectator");
+            //std::string var_spectator = pVar->Attribute("spectator");
             const char* var_logplot = pVar->Attribute("logplot");
             bool var_logplot_bool;
-            if (var_logplot ==NULL){
+            if (var_logplot ==NULL || var_logplot =="false"){
                 var_logplot_bool= false;
             }else{
-                var_logplot_bool= true;
+                var_logplot_bool= false;
             }
             
             bool is_spec = false;
-            if(var_spectator=="true") is_spec = true;
+            //if(var_spectator=="true") is_spec = true;
 
             bdt_variable t(var_def,var_binning,var_unit,"false",var_type);
             t.is_logplot = var_logplot_bool;
