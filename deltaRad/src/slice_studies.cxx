@@ -57,7 +57,9 @@ int main (int argc, char *argv[]){
 
     //location of the input file, should move to pnfs really...
     //    std::string dir = "uboone/app/users/ksutton/mcc9_singlephoton_v4/srcs/ubana/ubana/SinglePhotonAnalysis/v12_vertexed_singlephoton.root";
-    std::string dir = "uboone/app/users/ksutton/mcc9_singlephoton_v4/srcs/ubana/ubana/SinglePhotonAnalysis/v12_1000_vertexed_v3.root";
+//    std::string dir = "uboone/app/users/ksutton/mcc9_singlephoton_v4/srcs/ubana/ubana/SinglePhotonAnalysis/v12_1000_vertexed_v3.root";
+  std::string dir = "uboone/app/users/ksutton/mcc9_singlephoton_v4/srcs/ubana/ubana/SinglePhotonAnalysis/v12_1000_vertexed_v4.root";
+
 
 
     std::string mode_option = "fake"; 
@@ -391,11 +393,14 @@ int main (int argc, char *argv[]){
 
         int signal_def_entries_1g1p_noshower_1track;
         int signal_def_entries_1g1p_noshower_1track_clearcosmic;
+         int signal_def_entries_1g1p_noshower_1track_nuslice;
+
 
         int   signal_def_entries_1g1p_1shower_notrack_clearcosmic;
         int   signal_def_entries_1g1p_1shower_notrack_nuslice;
 
         int  signal_def_entries_1g1p_diff_slice_photon_nuslice;
+         int  signal_def_entries_1g1p_diff_slice_proton_nuslice;
         int  signal_def_entries_1g1p_diff_slice_photon_clearcosmic;
         int  signal_def_entries_1g1p_diff_slice_proton_clearcosmic;
 
@@ -478,7 +483,7 @@ int main (int argc, char *argv[]){
 
             //there's no reco shower but there is a reco track
             signal_def_entries_1g1p_noshower_1track = signal->tslice->GetEntries(("matched_signal_shower_num == 0 && matched_signal_track_num == 1 &&" + signal_definition).c_str());
-          //  signal_def_entries_1g1p_noshower_1track_nuslice = signal->tslice->GetEntries(("matched_signal_shower_num == 0 && matched_signal_track_num == 1 &&" + signal_definition).c_str());
+            signal_def_entries_1g1p_noshower_1track_nuslice = signal->tslice->GetEntries(("matched_signal_shower_num == 0 && matched_signal_track_num == 1 && matched_signal_track_is_nuslice && " + signal_definition).c_str());
             signal_def_entries_1g1p_noshower_1track_clearcosmic = signal->tslice->GetEntries(("matched_signal_shower_num == 0 && matched_signal_track_num == 1 && matched_signal_track_is_clearcosmic &&" + signal_definition).c_str());
 
             signal_def_entries_1g1p_1shower_notrack_clearcosmic =  signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 0 && matched_signal_shower_is_clearcosmic &&" + signal_definition).c_str());
@@ -489,18 +494,23 @@ int main (int argc, char *argv[]){
          signal_def_entries_1g1p_diff_slice_proton_clearcosmic = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && !reco_1g1p_is_same_slice&& matched_signal_track_is_clearcosmic &&"+ signal_definition).c_str());
 
           signal_def_entries_1g1p_diff_slice_photon_nuslice = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && !reco_1g1p_is_same_slice&& matched_signal_shower_is_nuslice && !(matched_signal_shower_is_clearcosmic|| matched_signal_track_is_clearcosmic)&&"+ signal_definition).c_str());
+        signal_def_entries_1g1p_diff_slice_proton_nuslice = signal->tslice->GetEntries(("matched_signal_shower_num == 1 && matched_signal_track_num == 1 && !reco_1g1p_is_same_slice&& matched_signal_track_is_nuslice && !(matched_signal_shower_is_clearcosmic|| matched_signal_track_is_clearcosmic)&&"+ signal_definition).c_str());
  
+
 
 
 
             std::cout<<"The total number of events with 0 signal shower and 1 signal tracks (1g1p candidates): " <<signal_def_entries_1g1p_noshower_1track<<" ("<<signal_def_entries_1g1p_noshower_1track*100/signal_def_entries<<"%)" <<std::endl;
            std::cout<<"The total number of events with 0 signal shower and 1 signal tracks (1g1p candidates) with the track in a clear cosmic slice: " <<signal_def_entries_1g1p_noshower_1track_clearcosmic<<" ("<<signal_def_entries_1g1p_noshower_1track_clearcosmic*100/signal_def_entries<<"%)" <<std::endl;
+     std::cout<<"The total number of events with 0 signal shower and 1 signal tracks (1g1p candidates) with the track in the neutrino slice: " <<signal_def_entries_1g1p_noshower_1track_nuslice<<" ("<<signal_def_entries_1g1p_noshower_1track_nuslice*100/signal_def_entries<<"%)" <<std::endl;
+
 
            std::cout<<"The total number of events with 1 signal shower and 0 signal tracks (1g1p candidates) with the shower in a clear cosmic slice: " <<signal_def_entries_1g1p_1shower_notrack_clearcosmic<<" ("<<signal_def_entries_1g1p_1shower_notrack_clearcosmic*100/signal_def_entries<<"%)" <<std::endl;
 
            std::cout<<"The total number of events with 1 signal shower and 0 signal tracks (1g1p candidates) with the shower in nuslice: " <<signal_def_entries_1g1p_1shower_notrack_nuslice<<" ("<<signal_def_entries_1g1p_1shower_notrack_nuslice*100/signal_def_entries<<"%)" <<std::endl;
 
      std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) split across slices with the shower in nuslice and neither in clear cosmic: " <<signal_def_entries_1g1p_diff_slice_photon_nuslice<<" ("<<signal_def_entries_1g1p_diff_slice_photon_nuslice*100/signal_def_entries<<"%)" <<std::endl;
+      std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) split across slices with the track in nuslice and neither in clear cosmic: " <<signal_def_entries_1g1p_diff_slice_proton_nuslice<<" ("<<signal_def_entries_1g1p_diff_slice_proton_nuslice*100/signal_def_entries<<"%)" <<std::endl;
      std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) split across slices with the shower or track in a clear cosmic slice: " <<signal_def_entries_1g1p_diff_slice_photon_clearcosmic<<" ("<<signal_def_entries_1g1p_diff_slice_photon_clearcosmic*100/signal_def_entries<<"%)" <<std::endl;
 
    std::cout<<"The total number of events with 1 signal shower and 1 signal tracks (1g1p candidates) split across slices with the track in a clear cosmic slice: " <<signal_def_entries_1g1p_diff_slice_proton_clearcosmic<<" ("<<signal_def_entries_1g1p_diff_slice_proton_clearcosmic*100/signal_def_entries<<"%)" <<std::endl;
