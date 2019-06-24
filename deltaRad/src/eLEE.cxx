@@ -24,6 +24,16 @@
 
 using namespace std;
 
+void gadget_buildfolder( string name){
+	if (access(name.c_str(),F_OK) == -1){
+			mkdir(name.c_str(),0777);//Create a folder for pdf.
+		}
+		else{
+			std::cout<<"Overwrite "<<name<<"/ in 2 seconds, 1 seconds, ..."<<std::endl;
+			sleep(2);
+		}
+}
+
 int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 
 //declare this function first..
@@ -49,10 +59,12 @@ int main (int argc, char *argv[]){
 	int number = -1;
 	bool response_only = false;
 	int sbnfit_stage = 1;
-	vector<double> a_number = {0.221988};//, 0.221729, 0.226397};//30,20,10%
+
+	vector<double> cuts_at = {0.221988, 0.221729, 0.226397};//30,20,10%
+	bool contour = false;
 //	vector<double> strictness = a_number;//,0.35, 0.9};
 //	vector<double> labels = a_number;//,0.35, 0.9};
-	vector<double> cuts_at = a_number;
+//	vector<double> cuts_at = a_number;
 
 	//All of this is just to load in command-line arguments, its not that important
 	const struct option longopts[] = 
@@ -157,7 +169,10 @@ int main (int argc, char *argv[]){
 	//We have 2 BDT's one for cosmics and one for BNB related backgrounds only
 	bdt_info cosmic_bdt_info(analysis_tag, TMVAmethods[0]);
 	bdt_info bnb_bdt_info(analysis_tag, TMVAmethods[1]);
-	bdt_info contour_bdt_info(analysis_tag, TMVAmethods[0]);//CHECK
+	bdt_info contour_bdt_info(analysis_tag, TMVAmethods[0]);//CHECK, just a non-functioning label, bc nothing in .xml file is about it.
+	cout<<contour_bdt_info.name<<endl;
+	//exit(0);
+
 
 	//Get all the variables you want to use	
 	vars = cosmic_bdt_info.train_vars;
@@ -265,7 +280,23 @@ int main (int argc, char *argv[]){
 	//For conviencance fill a vector with pointers to all the files to loop over.
 	//std::vector<bdt_file*> bdt_files = {signal, signal_other, training_signal, training_bnb, bnb, OnBeamData, OffBeamData,dirt, bnb_cosmics_noabs, bnb_cosmics_nom, bnb_cosmics_undo, bnb_cosmics_noyz};
 	std::vector<bdt_file*> bdt_files = {signal,training_signal, signal_other, training_bnb, bnb, OnBeamData, OffBeamData,dirt,nueintrinsic};
+	double target_plot_pot = 13.2e20;
 
+	//Adding plot names
+	training_signal->addPlotName("LEE #nu_{e}(#bar{#nu}_{e})");
+	signal->addPlotName("Golden LEE #nu_{e}(#bar{#nu}_{e})");
+	signal_other->addPlotName("Other LEE #nu_{e}(#bar{#nu}_{e})");
+	training_bnb->addPlotName("BNB Neutrino Backgrounds");
+	bnb->addPlotName("BNB Backgrounds");
+	//bnb->addPlotName("BNB Neutrino Backgrounds");
+	nueintrinsic->addPlotName("#nu_{e}(#bar{#nu}_{e}) Intrinsics");
+	OnBeamData->addPlotName("On-Beam Data");
+	OffBeamData->addPlotName("Cosmic Background");
+	dirt->addPlotName("Dirt");
+
+	for (int i = 0; i < bdt_files.size(); i++){//set POT for plotting
+		bdt_files[i]->target_pot = target_plot_pot;
+	}
 
 	//int setAsOnBeamData(double in_tor860_wcut);
 	//int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
@@ -337,25 +368,11 @@ int main (int argc, char *argv[]){
 	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
 
-	//Adding plot names
-	training_signal->addPlotName("LEE #nu_{e}(#bar{#nu}_{e})");
-	signal->addPlotName("Golden LEE #nu_{e}(#bar{#nu}_{e})");
-	signal_other->addPlotName("Other LEE #nu_{e}(#bar{#nu}_{e})");
-	training_bnb->addPlotName("BNB Neutrino Backgrounds");
-	bnb->addPlotName("BNB Backgrounds");
-	//bnb->addPlotName("BNB Neutrino Backgrounds");
-	nueintrinsic->addPlotName("#nu_{e}(#bar{#nu}_{e}) Intrinsics");
-	OnBeamData->addPlotName("On-Beam Data");
-	OffBeamData->addPlotName("Cosmic Background");
-	dirt->addPlotName("Dirt");
-	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-	std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-
 	double fcoscut = 0;
 	double fbnbcut = 0;
 	//one value for contour cut; use {fcoscut,fbnbcut} for dual BDT cut.
 
-	if (access("sig.txt",F_OK) == -1){//no file
+	if (access("sig_best.txt",F_OK) == -1){//no file
 		std::cout<<"Warning: No sig.txt is found in the current directory. Proceed without BDT cuts."<<std::endl;
 	}
 	else{
@@ -405,14 +422,8 @@ int main (int argc, char *argv[]){
 		return 0;
 	}
 	else if(mode_option == "response"){
+		gadget_buildfolder("response");
 
-		if (access("response",F_OK) == -1){
-			mkdir("response",0777);//Create a folder for pdf.
-		}
-		else{
-			std::cout<<"Overwrite response/ in 2 seconds, 1 seconds, ..."<<std::endl;
-			sleep(2);
-		}
 		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 		//Ok print out Cosmic BDT
 		if(run_cosmic){
@@ -426,13 +437,14 @@ int main (int argc, char *argv[]){
 		}
 	}else if(mode_option == "recomc"){
 
-		if (access("recomc",F_OK) == -1){
-			mkdir("recomc",0777);//Create a folder for pdf.
-		}
-		else{
-			std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-			sleep(2);
-		}
+		gadget_buildfolder("recomc");
+//		if (access("recomc",F_OK) == -1){
+//			mkdir("recomc",0777);//Create a folder for pdf.
+//		}
+//		else{
+//			std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
+//			sleep(2);
+//		}
 
 
 		if(false){//This section is used to search evetns that pass through BDTs
@@ -500,18 +512,7 @@ int main (int argc, char *argv[]){
 			{ "#nu_{#mu} DIS"	, "mctruth_mode==2  && mctruth_nu_pdg==14"},
 			{ "#nu_{#mu} MEC"	, "mctruth_mode==10 && mctruth_nu_pdg==14"},
 		};
-		/*	vector< vector <string> > recomc_list = {
-			{ "#nu_{#mu} Nuance Offset","mctruth_interaction_type==1000 && mctruth_nu_pdg==14"},
-			{ "#nu_{#mu} CC QE"			, "mctruth_interaction_type==1001 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
-			{ "#nu_{#mu} NC QE"			, "mctruth_interaction_type==1002 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
-		//	   { "#nu_{#mu} CC Res. #pi^{+}", "(mctruth_interaction_type==1003 || mctruth_interaction_type==1005) && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
-		{ "#nu_{#mu} CC Res."		, "mctruth_interaction_type>1002 && mctruth_interaction_type<1006 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
-		{ "#nu_{#mu} NC Res."		, "mctruth_interaction_type>1005 && mctruth_interaction_type<1010 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
-		//	   { "#nu_{#mu} NC Res. #pi^{0}", "(mctruth_interaction_type==1006 || mctruth_interaction_type==1008) && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
-		{ "#nu_{#mu} CC DIS"			, "mctruth_interaction_type==1091 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==0"},
-		{ "#nu_{#mu} NC DIS"			, "mctruth_interaction_type==1092 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1"},
-		};
-		*/	
+	
 		std::vector<std::string> recomc_names, recomc_cuts;
 		//prepare "others" category.
 		string recomc_other_cut = "!(";
@@ -582,38 +583,34 @@ int main (int argc, char *argv[]){
 			recomc.is_log = false;
 		}
 	}else if(mode_option == "sig"){
-//		select_events_v2({signal, OnBeamData},{signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, strictness, 5);//number is the step on x,y-axies;
+		//		select_events({signal, OnBeamData},{signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, strictness, 5);//number is the step on x,y-axies;
+		if(contour){
+			select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, {0.8, 0.45, 0.1} , 70);//number is the step on x,y-axies;
 
-//		select_events_v2({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, {0.8, 0.45, 0.1} , 70);//number is the step on x,y-axies;
+			//this gives the significance versus the signal eff;
+			significance_eff({signal,OnBeamData} , {bnb, nueintrinsic , OffBeamData, dirt}, contour_bdt_info);
+		}else{
 
-		//this gives the significance versus the signal eff;
-		significance_eff({signal,OnBeamData} , {bnb, nueintrinsic , OffBeamData, dirt}, contour_bdt_info);
-		
-		//this gives the spectrum of events;
-		
-//		select_events({signal}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, strictness, 60);//number is the step on x,y-axies;
+			//the code below is for the box-cut;
+			TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
+			std::vector<double> ans = scan_significance(fsig, {signal} , {signal_other, bnb, nueintrinsic , OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
+			//std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
-		exit(0);
-		//the code below is for the box-cut;
-		TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-		std::vector<double> ans = scan_significance(fsig, {signal} , {signal_other, bnb, nueintrinsic , OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
-		//std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
+			std::ofstream save_sig("sig_best.txt");
+			save_sig<<ans.at(0)<<" "<<ans.at(1)<<std::endl;
 
-		std::ofstream save_sig("sig.txt");
-		save_sig<<ans.at(0)<<" "<<ans.at(1)<<std::endl;
-
-		std::cout<<"Best Fit Significance: cosmic_cut "<<ans.at(0)<<", bnb_cut: "<<ans.  at(1)<<" with significance: "<<ans.at(2)<<"."<<std::endl;
-		fsig->Close();
-
+			std::cout<<"Best Fit Significance: cosmic_cut "<<ans.at(0)<<", bnb_cut: "<<ans.  at(1)<<" with significance: "<<ans.at(2)<<"."<<std::endl;
+			fsig->Close();
+		}
 	}else if(mode_option == "stack"){//not applying contour cut here;
-
-		if (access("stack",F_OK) == -1){
-			mkdir("stack",0777);//Create a folder for pdf.
-		}
-		else{
-			std::cout<<"Overwrite stack/ in 2 seconds, 1 seconds, ..."<<std::endl;
-			sleep(2);
-		}
+		gadget_buildfolder("stack");
+//		if (access("stack",F_OK) == -1){
+//			mkdir("stack",0777);//Create a folder for pdf.
+//		}
+//		else{
+//			std::cout<<"Overwrite stack/ in 2 seconds, 1 seconds, ..."<<std::endl;
+//			sleep(2);
+//		}
 
 
 		bdt_stack histogram_stack(analysis_tag+"_stack");
@@ -700,15 +697,17 @@ int main (int argc, char *argv[]){
 
 		//	return 0;
 
-}else if(mode_option == "datamc"){
-
-	if (access("datamc",F_OK) == -1){
-		mkdir("datamc",0777);//Create a folder for pdf.
-	}
-	else{
-		std::cout<<"Overwrite datamc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-		sleep(2);
-	}
+}else if(mode_option == "datamc"){//check cuts_at variable around line 53 for contour selections
+	gadget_buildfolder("datamc");
+	if(!contour)cuts_at = {fcoscut,fbnbcut}; //update cuts_at using cos, bnb bdt responses.
+	
+//	if (access("datamc",F_OK) == -1){
+//		mkdir("datamc",0777);//Create a folder for pdf.
+//	}
+//	else{
+//		std::cout<<"Overwrite datamc/ in 2 seconds, 1 seconds, ..."<<std::endl;
+//		sleep(2);
+//	}
 
 
 	std::cout<<"Starting datamc"<<std::endl;
@@ -727,48 +726,55 @@ int main (int argc, char *argv[]){
 
 	int ip=0;
 	std::vector<bool> subv = {false,false,true};
-	if(!response_only){//goes here by default.
-		if(number != -1){//without specific requirement of variable.
+	if(response_only){//BDTResponses goes here.
+		bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
+
+//		if(run_bnb) real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+//		if(run_cosmic) real_datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+		//CHECK
+//		if(true) real_datamc.plotBDTStack_v2(ftest, contour_bdt_info); //need to improve this;
+	}else{//goes here by default.
+		if(number == -1){//do all vars
+
+			bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
+
+				real_datamc.plotStacks_v2(ftest,  vars , cuts_at , contour);//use contour cut, when contour;
+				real_datamc.plotStacks_v2(ftest,  training_vars , cuts_at , contour);//use contour cut, when contour;
+				real_datamc.SetSpectator();
+				real_datamc.plotStacks_v2(ftest,  plotting_vars , cuts_at , contour);//use contour cut, when contour;
+				//real_datamc.setSubtractionVector(subv);
+
+				//real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+				//real_datamc.plotStacks(ftest, training_vars,fcoscut,fbnbcut);
+				//real_datamc.SetSpectator();
+				//real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
+				
+		}else{//without specific requirement of variable.
 			//TESTING THIS ONE!
 			bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
 
-//			datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
+			//datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
 
 			//datamc.setSubtractionVector(subv);
 			std::vector<bdt_variable> tmp_var = {vars.at(number)};
 			//datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut); //OUTDATE THIS ONE
 
 			//datamc.plotStacks_v2(ftest,  tmp_var , {fcoscut,fbnbcut}, false);//old BDT cut, when false;
-			datamc.plotStacks_v2(ftest,  tmp_var , cuts_at , true);//use contour cut, when true;
-		}else{
-
-			bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
-			//real_datamc.setSubtractionVector(subv);
-			// real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-			real_datamc.plotStacks_v2(ftest,  vars , cuts_at , true);//use contour cut, when true;
-//			real_datamc.plotStacks(ftest, training_vars,fcoscut,fbnbcut);
-			real_datamc.SetSpectator();
-//			real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
-			real_datamc.plotStacks_v2(ftest,  vars , cuts_at , true);//use contour cut, when true;
+			datamc.plotStacks_v2(ftest,  tmp_var , cuts_at , contour);//use contour cut, when contour;
 		}
-	}else{//BDTResponses go 
-		bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
-
-		if(run_bnb) real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
-		if(run_cosmic) real_datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
 	}
 
 }else if(mode_option == "vars"|| mode_option == "var"){
 //			real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
 
-
-	if (access("var",F_OK) == -1){
-		mkdir("var",0777);//Create a folder for pdf.
-	}
-	else{
-		std::cout<<"Overwrite var/ in 2 seconds, 1 seconds, ..."<<std::endl;
-		sleep(2);
-	}
+	gadget_buildfolder("var");
+//	if (access("var",F_OK) == -1){
+//		mkdir("var",0777);//Create a folder for pdf.
+//	}
+//	else{
+//		std::cout<<"Overwrite var/ in 2 seconds, 1 seconds, ..."<<std::endl;
+//		sleep(2);
+//	}
 
 
 	std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};

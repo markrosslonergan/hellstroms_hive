@@ -113,7 +113,7 @@ struct bdt_file{
 	    int numberofevents;
 	    int numberofevents_raw;
 	    double pot;
-		double target_pot = 13.2e20;//CHECK
+		double target_pot;// = 13.2e20;//CHECK
 
 	    TFile *f;
 	    TTree *tvertex;
@@ -202,12 +202,14 @@ struct bdt_file{
 
 	    int addFriend(std::string in_friend_tree_nam, std::string in_friend_file);
 	    int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
-
+		
+		//the following function adds friend tree from *contour.root
 		int addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info, std::vector<method_struct> TMVAmethods);
 	    ~bdt_file();
 
 
 	    std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
+		//the following applies contour cuts at stage5
 	    std::string getStageCuts_v2(int stage, double bdtvar1, double bdtvar2);
 
 	    int writeStageFriendTree(std::string nam,double,double);

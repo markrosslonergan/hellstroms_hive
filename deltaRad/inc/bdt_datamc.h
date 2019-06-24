@@ -57,7 +57,7 @@ class bdt_datamc{
 
 		int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
 		
-		//same as plotStacks when contour is false; in the function, the contour seletion is performed in the stage 5;
+		//same as plotStacks when contour is set to be false; the contour seletion is performed in the stage 5;
 		int plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vector<double> cut, bool contour);
 		int plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt);
 

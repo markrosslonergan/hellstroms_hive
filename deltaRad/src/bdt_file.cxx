@@ -18,7 +18,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     rangen = new TRandom3();
 
     scale_data =1.0;
-    std::cout<<"Loading : "<<name<<std::endl;
+    std::cout<<"\nLoading : "<<name<<std::endl;
     f = new TFile((dir+"/"+name).c_str(), "read");	
 
     if(!f->IsOpen() || !f){
@@ -810,14 +810,16 @@ int bdt_file::addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info
 
         std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
         this->addFriend(this->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_"+this->tag+"_app"+".root");
-					//file->tag; info.identifier; use it as this->tag +"_"+bnb_bdt_info.identifier+".mva"..
+		
+		//file->tag; info.identifier; use it as this->tag +"_"+bnb_bdt_info.identifier+".mva"..
+		//the following commented section allows multiple trees inside one root file.
 
 //		cout<<"Now adding TreeFriend: "<<this->tag<<"_contour.root"<<" "<<this->tag<<endl;//CHECK
 //		this->addFriend(this->tag , this->tag+"_contour"+".root");
 //		for(int i = 0; i<strictness.size() ; i++){
 //			string strict_name =to_string_prec(strictness[i],4);
-			cout<<"Now adding TreeFriend: "<<this->tag<<"_contour_v3.root"<<" "<<this->tag<<endl;//strictness is introduced for multiple trees in the same .root file; see below:
-			this->addFriend(this->tag/*+strict_name*/ , this->tag+"_contour_v3.root");
+			cout<<"Now adding TreeFriend: "<<this->tag<<"_contour.root"<<" "<<this->tag<<endl;//strictness is introduced for multiple trees in the same .root file; see below:
+			this->addFriend(this->tag/*+strict_name*/ , this->tag+"_contour.root");
 //		}
 	}
 

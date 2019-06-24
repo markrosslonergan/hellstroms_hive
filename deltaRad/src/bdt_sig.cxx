@@ -89,10 +89,11 @@ TH2D *event_grid (vector<bdt_file*> files, vector<bdt_info> bdt_infos, string hi
 	return finished_grid;
 }
 
-//THIs is new, use this to evaluate the "cut_info", possible cuts for signal and associated eff.;
-vector<double> evaluate_events(bdt_file* file, int entries,  int * row, double * cos, double* bnb, vector<double> focus1, vector<double> focus2, bool draw_eff){
+//This is new, use this to evaluate the "cut_info", possible cuts for signal and associated eff.;
+//when the out_put is true, print out efficiency and corresponding cuts in cut_eff.txt
+vector<double> evaluate_events(bdt_file* file, int entries,  int * row, double * cos, double* bnb, vector<double> focus1, vector<double> focus2, bool out_put){
 
-	TFile * contour_cut = TFile::Open((file->tag+"_contour_v3.root").c_str(), "recreate");
+	TFile * contour_cut = TFile::Open((file->tag+"_contour.root").c_str(), "recreate");
 
 	int index_tracker = 0;
 	Int_t num_events = file->tvertex->GetEntries();
@@ -111,7 +112,7 @@ vector<double> evaluate_events(bdt_file* file, int entries,  int * row, double *
 			 double temp_dis = sqrt(pow(cos[index_tracker]-focus2[0],2)+pow(bnb[index_tracker]-focus2[1],2))
 				-sqrt(pow(cos[index_tracker]-focus1[0],2)+pow(bnb[index_tracker]-focus1[1],2));
 			contour_info.distance = temp_dis;
-			if(draw_eff) signal_distances.push_back(temp_dis);
+			if(out_put) signal_distances.push_back(temp_dis);
 //			cout<<"Ding "<<contour_info.distance<<endl;
 			index_tracker++;
 		}
@@ -122,7 +123,7 @@ vector<double> evaluate_events(bdt_file* file, int entries,  int * row, double *
 
 //	contour_cut->Close();
 	cout<<"	Finish recording contour_info for the file "<<file->tag<<endl;
-	if(draw_eff){
+	if(out_put){
 		sort(signal_distances.begin(),signal_distances.end());
 
 		//output cuts along with efficiency for reference;
@@ -220,7 +221,9 @@ vector< double> get_peaks (TH2D* grid){
 	}
 }
 
-//OK,, this is an experimental function
+//efficiencies: a set of boundaries that yield to target efficiencies (relative to pre-cut) will be drawn in the plot.
+//step: the dimension of the plot would be (step x step);
+//3 plots will be produced: signal-bkg, signal-bkg_enhanced, BDTResponsesScatter.
 void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, vector<double> efficiencies, int step){
 	
 	double tmin_cos = 99 , tmin_bnb = 99 , tmax_cos = 0, tmax_bnb = 0;
@@ -523,7 +526,7 @@ writeit:
 	}
 	boundary_legend->Draw();
 	a_canvas3->Write();//we might not need this
-	a_canvas3->SaveAs("BDTscatter.pdf","pdf");
+	a_canvas3->SaveAs("BDTResponsescatter.pdf","pdf");
 	}else{
 		cout<<"THIS DOES NOT CHANGE THE ROOT FILES!"<<endl;
 //		exit(EXIT_FAILURE);

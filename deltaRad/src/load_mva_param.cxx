@@ -141,7 +141,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
                         temp_struct.bdt_spec_vars = bdt_spec_vars;
                         temp_struct.precuts = precuts;
 
-                        vec_methods.push_back(temp_struct);		
+                        vec_methods.push_back(temp_struct);
 
                         if(isVerbose) std::cout<<" MVALoader::MVALoader || Loading a method: "<<mva_type<<"::"<<method_type<<" with params: "<<param_string<<std::endl;
 

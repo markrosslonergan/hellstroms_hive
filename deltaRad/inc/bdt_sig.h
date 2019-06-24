@@ -29,6 +29,8 @@
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
 
+
+//This struct is for writing TTree in a ROOT file.
 struct contour_struct {
 	TTree *tree;
 	double distance;
@@ -38,13 +40,13 @@ struct contour_struct {
 };
 
 //this function helps search better foci by considering events near by.
-vector<double> get_peaks (TH2D* grid);
+vector<double> get_max (TH2D* grid);
 
 //This maps out the significance versus efficiency;
 void significance_eff(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info contour_bdt_info);
 
 //assign each events according to the signal/bkg peaks that are previously determined.
-vector<double> evaluate_events(bdt_file* file, int entries,  int * row, double * cos, double* bnb, vector<double> focus1, vector<double> focus2, bool draw_eff);
+vector<double> evaluate_events(bdt_file* file, int entries,  int * row, double * cos, double* bnb, vector<double> focus1, vector<double> focus2, bool out_put);
 
 std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files,
 	std::vector<bdt_file*> bkg_files, bdt_info cosmic_cut, bdt_info bnb_cut);
