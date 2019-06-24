@@ -94,7 +94,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
     ftest->cd();
 
-    std::vector<std::string> stage_names = {"All Events","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
+    std::vector<std::string> stage_names = {"All Candidate Events","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
     //Loop over all stages
 
     for(int s = 0; s< 4; s++){
@@ -280,12 +280,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             }
             pre->Draw();
 
-            /* TText *spec;
-               if (isSpectator) {
-               TText *spec = drawPrelim(0.82, 0.52, "Spectator Variable");
-               spec->Draw("same");
-               }
-               */
             //cobs->cd(k+1);	
             cobs->cd();
             TPad *pad0bot = new TPad(("padbot_"+stage_names.at(s)).c_str(),("padbot_"+stage_names.at(s)).c_str(), 0, 0.05, 1, 0.35);
@@ -403,7 +397,7 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 
 	ftest->cd();
 	std::vector<std::string> stage_names;
-	stage_names.push_back("All Events");
+	stage_names.push_back("All Candidate Events");
 	stage_names.push_back("Pre-Selection Cuts");
 	if(contour){
 		stage_names.push_back(" ");
@@ -416,10 +410,17 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 	}
 	//loop over all stage
 	for(int stage = 0; stage< 4; stage++){
-		int count_cut = 0;
-		stage = 5;
+		int count_cut = 0;//repeat selected cuts in the contour selections;
+//		stage = 5;//demand stage 5 for fast plotting on only the contour selections;
 		
 		while(count_cut<cut.size()){
+
+			string strict_name =to_string_prec(cut.at(count_cut),4);
+		// go to this if stagements;
+			if(contour&& stage==2){//jump to stage 5 and get into the loop if it comes to the stage 2;
+				stage = 5;
+				count_cut = 0;//reset for contour_cut;
+			}
 			std::cout<<"On stage: "<<stage<<std::endl;
 			//First set the files at this stage
 			for(auto &f: mc_stack->stack){
@@ -440,8 +441,7 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 				}
 				std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<stage<<"."<<std::endl;
 				f->setStageEntryList(stage);
-			}	
-
+			}
 
 			std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 			switch (stage){
@@ -467,8 +467,9 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 					mc_stack->setSubtractionVector(subtraction_vec);
 				}
 
-				THStack *stk = (THStack*)mc_stack->getEntryStack(var,stage);
+				THStack *stk = (THStack*)mc_stack->getEntryStack(var,stage);//MC stack?
 				TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,stage);
+				//d0 for data;
 				TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(stage)+"_d0_"+std::to_string(cut[0])+"_"+std::to_string(cut[1])+data_file->tag+"_"+var.safe_name, plot_pot);
 
 				double rmin = 0;
@@ -489,7 +490,7 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 				}
 
 
-				//tsum->Rebin(data_rebin);
+//				tsum->Rebin(data_rebin); //this is done in bdt_spec.cxx line 169? this only applies in error, so dont do it.
 				d0->Rebin(data_rebin);
 
 				if(false &&do_subtraction){
@@ -565,7 +566,7 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 					store_events_num.push_back(Nevents);
 					//CHECK
 					NeventsStack+=Nevents;
-					auto h1 = new TH1F(("tmp"+stage_names.at(stage)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
+					auto h1 = new TH1F(("tmp"+stage_names.at(stage)+var.safe_name+f->tag+strict_name).c_str(),"TLegend Example",200,-10,10);
 					std::cout<<"Adding legend for "<<f->tag<<" entries "<<Nevents<<std::endl;
 					h1->SetFillColor(f->col);
 					h1->SetFillStyle(f->fillstyle);
@@ -604,29 +605,21 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 				l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"("+to_string_prec(NdatEvents*132.0e19/plot_pot,2)+")}").c_str(),"lp");	
 				//APS l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
 
-
+				//draw histograms
 				l0->Draw();
 				l0->SetLineWidth(0);
 				l0->SetLineColor(0);
 				l0->SetFillStyle(0);
 				l0->SetTextSize(0.04);
-
-				//  TLatex latex;
-				// latex.SetTextSize(0.06);
-				//  latex.SetTextAlign(13);  //align at top
-				//  latex.SetNDC();
-				//  latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
+				//draw POT info. in a latex box
 				TLatex pottex;
 				pottex.SetTextSize(0.06);
 				pottex.SetTextAlign(13);  //align at top
 				pottex.SetNDC();
 				std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT (13.2e20 POT)";
-
-				//            pottex.DrawLatex(.60,.64, pot_draw.c_str());
 				pottex.DrawLatex(.40,.44, pot_draw.c_str());
 
-
-
+				//title
 				TText *pre; 
 				if (isSpectator) {
 					pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
@@ -650,9 +643,6 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 				pad0bot->SetGridx(); // vertical grid
 				pad0bot->Draw();
 				pad0bot->cd();       // pad0bot becomes the current pad
-
-
-
 
 				//tsum->Rebin(data_rebin);
 				TH1* rat_denom = (TH1*)tsum->Clone(("ratio_denom_"+stage_names.at(stage)).c_str());
@@ -721,7 +711,6 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 
 				std::cout<<"Writing pdf."<<std::endl;
 				cobs->Write();
-				string strict_name =to_string_prec(cut.at(count_cut),4);
 				if(stage == 5){
 					cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_"+strict_name+"_stage_"+std::to_string(stage)+".pdf").c_str(),"pdf");
 				}else{
@@ -739,10 +728,7 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 				delete rat_denom;
 			}
 			count_cut++;
-			if(contour&& stage==2){
-				stage = 5;
-				count_cut = 0;//reset for contour_cut;
-			}else if (stage != 5){
+			if (stage != 5){//while loop does not apply unless in stage 5.
 				break;//normally, just break the loop;
 			}
 		}

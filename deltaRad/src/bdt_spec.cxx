@@ -89,8 +89,7 @@ TH1* bdt_stack::getEntrySum(bdt_variable var){
 
 TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
 	int stack_rebin = 1;
-	if(level ==2) stack_rebin=2;
-	if(level ==3) stack_rebin=2;
+	if(level >1) stack_rebin=2;
 
 
 	TH1* summed = (TH1*)stack.at(0)->getTH1(var, "1", "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
@@ -166,8 +165,7 @@ THStack* bdt_stack::getEntryStack(bdt_variable var){
 THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
 	int stack_rebin = 1;
-	if(level ==2) stack_rebin=2;
-	if(level ==3) stack_rebin=2;
+	if(level >1) stack_rebin=2;
 
 	/*
 

@@ -19,7 +19,6 @@
 #include "bdt_spec.h"
 #include "bdt_eff.h"
 #include "bdt_test.h"
-#include "bdt_contourcut.h"
 #include "TTreePlayer.h"
 #include <sys/stat.h>
 
@@ -50,7 +49,7 @@ int main (int argc, char *argv[]){
 	int number = -1;
 	bool response_only = false;
 	int sbnfit_stage = 1;
-	vector<double> a_number = {0.212393, 0.221729, 0.226397};//30,20,10%
+	vector<double> a_number = {0.221988};//, 0.221729, 0.226397};//30,20,10%
 //	vector<double> strictness = a_number;//,0.35, 0.9};
 //	vector<double> labels = a_number;//,0.35, 0.9};
 	vector<double> cuts_at = a_number;
@@ -117,7 +116,6 @@ int main (int argc, char *argv[]){
 				std::cout<<"\t\t\t\t train:"<<std::endl;
 				std::cout<<"\t\t\t\t app:"<<std::endl;
 				std::cout<<"\t\t\t\t response:"<<std::endl;
-				std::cout<<"\t\t\t\t contour:"<<std::endl;
 				std::cout<<"\t\t\t\t sig:"<<std::endl;
 				std::cout<<"\t\t\t\t stack:"<<std::endl;
 				std::cout<<"\t\t\t\t recomc:"<<std::endl;
@@ -328,10 +326,9 @@ int main (int argc, char *argv[]){
 		for(auto &f: bdt_files){
 
 			if(mode_option != "app" && mode_option != "train"){
+			//prepare entrylist for topo. cut and pre-cut.
 				//f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
 				f->addBDTResponses_v2(cosmic_bdt_info, bnb_bdt_info, TMVAmethods );
-			}
-			if(mode_option != "train" && mode_option != "app"){
 				f->calcBaseEntryList(analysis_tag);
 			}
 		}
@@ -584,27 +581,20 @@ int main (int argc, char *argv[]){
 
 			recomc.is_log = false;
 		}
-	}else if(mode_option == "contour"){
-
-//		contour_selection({signal}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, true, strictness);
-//		contour_selection({signal, signal_other, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, true, strictness);//Make the cut, this process should be after -o sig;
-//		contour_selection({signal, signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, true, strictness);//Make the cut, this process should be after -o sig;
-		exit(0);
-//		contour_selection({signal, signal_other, OnBeamData, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, fcoscut, fbnbcut, false, strictness);//get the scattering plot only, no need -o sig for this;
-
-		cout<<"Scattering plot is produced!"<<endl;
-
-		//	cout<<"Contour Selection is finished! See root files for detail."<<endl;
-
 	}else if(mode_option == "sig"){
 //		select_events_v2({signal, OnBeamData},{signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, strictness, 5);//number is the step on x,y-axies;
 
 //		select_events_v2({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, {0.8, 0.45, 0.1} , 70);//number is the step on x,y-axies;
-		significance_eff({signal} , {bnb, nueintrinsic , OffBeamData, dirt}, contour_bdt_info);
+
+		//this gives the significance versus the signal eff;
+		significance_eff({signal,OnBeamData} , {bnb, nueintrinsic , OffBeamData, dirt}, contour_bdt_info);
+		
+		//this gives the spectrum of events;
 		
 //		select_events({signal}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, strictness, 60);//number is the step on x,y-axies;
-		exit(0);
 
+		exit(0);
+		//the code below is for the box-cut;
 		TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
 		std::vector<double> ans = scan_significance(fsig, {signal} , {signal_other, bnb, nueintrinsic , OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
 		//std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
@@ -615,7 +605,7 @@ int main (int argc, char *argv[]){
 		std::cout<<"Best Fit Significance: cosmic_cut "<<ans.at(0)<<", bnb_cut: "<<ans.  at(1)<<" with significance: "<<ans.at(2)<<"."<<std::endl;
 		fsig->Close();
 
-	}else if(mode_option == "stack"){
+	}else if(mode_option == "stack"){//not applying contour cut here;
 
 		if (access("stack",F_OK) == -1){
 			mkdir("stack",0777);//Create a folder for pdf.
@@ -746,7 +736,8 @@ int main (int argc, char *argv[]){
 
 			//datamc.setSubtractionVector(subv);
 			std::vector<bdt_variable> tmp_var = {vars.at(number)};
-			//datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
+			//datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut); //OUTDATE THIS ONE
+
 			//datamc.plotStacks_v2(ftest,  tmp_var , {fcoscut,fbnbcut}, false);//old BDT cut, when false;
 			datamc.plotStacks_v2(ftest,  tmp_var , cuts_at , true);//use contour cut, when true;
 		}else{
@@ -754,9 +745,11 @@ int main (int argc, char *argv[]){
 			bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
 			//real_datamc.setSubtractionVector(subv);
 			// real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-			real_datamc.plotStacks(ftest, training_vars,fcoscut,fbnbcut);
+			real_datamc.plotStacks_v2(ftest,  vars , cuts_at , true);//use contour cut, when true;
+//			real_datamc.plotStacks(ftest, training_vars,fcoscut,fbnbcut);
 			real_datamc.SetSpectator();
-			real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
+//			real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
+			real_datamc.plotStacks_v2(ftest,  vars , cuts_at , true);//use contour cut, when true;
 		}
 	}else{//BDTResponses go 
 		bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
@@ -766,6 +759,7 @@ int main (int argc, char *argv[]){
 	}
 
 }else if(mode_option == "vars"|| mode_option == "var"){
+//			real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
 
 
 	if (access("var",F_OK) == -1){
@@ -804,6 +798,7 @@ int main (int argc, char *argv[]){
 	std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==1"};
 
 	bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
+	bdt_efficiency(OnBeamData, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 13.2e20);
 	//bdt_efficiency(bnb, {"1"}, v_topo, vec_precuts, fcoscut, fbnbcut, 5e19);
 	//bdt_efficiency(signal, signal_definition, fcoscut,fbnbcut, true);
 

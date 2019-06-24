@@ -385,7 +385,9 @@ int bdt_file::makeRunSubRunList(){
 }
 
 int bdt_file::calcPrecutEntryList(){
-
+	cout<<"See a problem? come to line 388 datamc.cxx"<<endl;
+	exit(EXIT_FAILURE);
+	/*
     //first check if a file exists with a precut entry list in it!
 
     std::string filename = this->tag+"_entrylists.root";
@@ -420,7 +422,7 @@ int bdt_file::calcPrecutEntryList(){
 
     }
     return 0;
-
+	*/
 }
 
 int bdt_file::BDTSelectedEntrylist(double distance){
@@ -482,11 +484,11 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
         this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0, -9,-9).c_str() , "entrylist");
         topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
 
-
+		//Pre-cut list is created here.
         this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
+//		cout<<"CHECK!\n\n"<<endl;
+//		cout<<this->getStageCuts(1, -9,-9).c_str()<<endl;
         precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
-
-
 
         TFile* fpre = new TFile(filename.c_str(),"update");	
         fpre->cd();
