@@ -111,11 +111,30 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 		stage_names.push_back("Cosmic BDT cut");
 		stage_names.push_back("BNB BDT cut");
 	}
+
 	//loop over all stage
 	for(int stage = 0; stage< 4; stage++){
 		int count_cut = 0;//repeat selected cuts in the contour selections;
 		//		stage = 5;//demand stage 5 for fast plotting on only the contour selections;
 
+		double rmin = 0;
+		double rmax = 2.99;
+		int data_rebin = 1;
+		int stack_rebin = 1;
+		switch (stage){
+			case 0:
+			case 1:
+				rmin=0; rmax = 1.99;
+				break;
+			case 2:
+			case 3:
+			case 5:
+				data_rebin = 2;
+				stack_rebin = 2;
+				break;
+			default:
+				;
+		}
 		while(count_cut<cut.size()){
 
 			string strict_name =to_string_prec(cut.at(count_cut),4);
@@ -170,27 +189,11 @@ int bdt_datamc::plotStacks_v2(TFile *ftest, std::vector<bdt_variable> vars, vect
 					mc_stack->setSubtractionVector(subtraction_vec);
 				}
 
-				THStack *stk = (THStack*)mc_stack->getEntryStack(var,stage);//MC stack?
-				TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,stage);
+				THStack *stk = (THStack*)mc_stack->getEntryStack(var,stage, stack_rebin);//MC stack?
+				TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,stage, stack_rebin);
 				//d0 for data;
 				TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(stage)+"_d0_"+std::to_string(cut[0])+"_"+std::to_string(cut[1])+data_file->tag+"_"+var.safe_name, plot_pot);
 
-				double rmin = 0;
-				double rmax = 2.99;
-				int data_rebin = 1;
-				switch (stage){
-					case 0:
-					case 1:
-						rmin=0; rmax = 1.99;
-						break;
-					case 2:
-					case 3:
-					case 5:
-						data_rebin = 2;//this only applies to the data;
-						break;
-					default:
-						;
-				}
 
 
 				//				tsum->Rebin(data_rebin); //this is done in bdt_spec.cxx line 169? this only applies in the error shade, so dont do it.
@@ -482,8 +485,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 mc_stack->setSubtractionVector(subtraction_vec);
             }
 
-            THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
-            TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
+            THStack *stk = (THStack*)mc_stack->getEntryStack(var,s,1);
+            TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s,1);
             TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(c1)+"_"+std::to_string(c2)+data_file->tag+"_"+var.safe_name, plot_pot);
 
             double rmin = 0;
@@ -740,7 +743,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 //5 arguments
 int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt){
-//REsponses goes here.
+//responses goes here.
 //var is the responses, e.g. mva.
     //TCanvas *cobs = new TCanvas("","",1800,1600);
     //cobs->Divide(2,2,0.0025,0.0000001);

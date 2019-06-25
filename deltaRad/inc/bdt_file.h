@@ -174,7 +174,7 @@ struct bdt_file{
 
 	    bdt_flow flow;
 	    bdt_variable getBDTVariable(bdt_info info);
-	    bdt_variable getBDTVariable_contour(bdt_info info);//CHECK
+//	    bdt_variable getBDTVariable_contour(bdt_info info);//CHECK
 	    bdt_variable getBDTVariable(bdt_info info, std::string bin);
 	    //legacy code, and damned lazy too
 	    //bdt_variable getBDTVariable(std::string cut);
@@ -204,7 +204,7 @@ struct bdt_file{
 	    int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
 		
 		//the following function adds friend tree from *contour.root
-		int addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info, std::vector<method_struct> TMVAmethods);
+		int addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info, bdt_info contour_bdt_info, std::vector<method_struct> TMVAmethods);
 	    ~bdt_file();
 
 

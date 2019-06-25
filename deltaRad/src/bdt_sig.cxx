@@ -13,16 +13,16 @@
 
 using namespace std;
 
-contour_struct::contour_struct( string const & tree_name) {
+contour_struct::contour_struct( string const & tree_name) {//Copy the struct from app.cxx
 	tree = new TTree(tree_name.c_str(), "");
-	tree->Branch("distance", &distance, "distance/D");
+	tree->Branch("mva", &mva, "mva/D");
 }
 contour_struct::~contour_struct() {
 	delete tree;
 }
 
 
-TH2D *event_grid (vector<bdt_file*> files, vector<bdt_info> bdt_infos, string hist_name, int step){
+TH2D *event_grid (vector<bdt_file*> files, string hist_name, int step){
 //Put things into histogram!
 
 	double tmin_cos = 0 , tmax_cos = 1, tmin_bnb = 0, tmax_bnb = 1;
@@ -91,7 +91,7 @@ TH2D *event_grid (vector<bdt_file*> files, vector<bdt_info> bdt_infos, string hi
 
 //This is new, use this to evaluate the "cut_info", possible cuts for signal and associated eff.;
 //when the out_put is true, print out efficiency and corresponding cuts in cut_eff.txt
-vector<double> evaluate_events(bdt_file* file, int entries,  int * row, double * cos, double* bnb, vector<double> focus1, vector<double> focus2, bool out_put){
+vector<double> evaluate_events(bdt_file* file, bdt_info contour_bdt, int entries,  int * row, double * cos, double* bnb, vector<double> focus1, vector<double> focus2, bool out_put){
 
 	TFile * contour_cut = TFile::Open((file->tag+"_contour.root").c_str(), "recreate");
 
@@ -99,19 +99,19 @@ vector<double> evaluate_events(bdt_file* file, int entries,  int * row, double *
 	Int_t num_events = file->tvertex->GetEntries();
 
 	//make more trees!!
-	string friend_tree_name = file->tag;//+strict_name;
+	string friend_tree_name = file->tag+"_"+contour_bdt.identifier;//+strict_name;
 	contour_struct contour_info(friend_tree_name);
 	cout<<"	Evaluating distance of each entries in file "<<file->tag<<endl;
 	vector<double> signal_distances;
 	for( int index = 0; index < num_events ; index++){
 					
-		contour_info.distance = -999;
+		contour_info.mva = -999;
 
 		if(row[index_tracker] == index){//an entry that we want to use, which has positive responses
 			
 			 double temp_dis = sqrt(pow(cos[index_tracker]-focus2[0],2)+pow(bnb[index_tracker]-focus2[1],2))
 				-sqrt(pow(cos[index_tracker]-focus1[0],2)+pow(bnb[index_tracker]-focus1[1],2));
-			contour_info.distance = temp_dis;
+			contour_info.mva = temp_dis;
 			if(out_put) signal_distances.push_back(temp_dis);
 //			cout<<"Ding "<<contour_info.distance<<endl;
 			index_tracker++;
@@ -139,6 +139,7 @@ vector<double> evaluate_events(bdt_file* file, int entries,  int * row, double *
 		save_cuteff.close();
 	}
 
+	contour_cut->Close();
 	return signal_distances;
 }
 
@@ -224,15 +225,15 @@ vector< double> get_peaks (TH2D* grid){
 //efficiencies: a set of boundaries that yield to target efficiencies (relative to pre-cut) will be drawn in the plot.
 //step: the dimension of the plot would be (step x step);
 //3 plots will be produced: signal-bkg, signal-bkg_enhanced, BDTResponsesScatter.
-void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, vector<double> efficiencies, int step){
-	
+void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, bdt_info contour_bdt, vector<double> efficiencies, int step, vector<double> adjustment){
 	double tmin_cos = 99 , tmin_bnb = 99 , tmax_cos = 0, tmax_bnb = 0;
 	double temp_tmin_cos = 0 , temp_tmin_bnb = 0 , temp_tmax_cos = 0, temp_tmax_bnb = 0;
 	double more = 0.05;//apply this value to push the limit of responses shown on axies.
+	bool quick_plot = false;//turn this on, the scattering plot will produced quickly, but the BDT responses for bkg are not prepared;
 
 	vector< string > saved_name = {"signal_bkg_events.root","dimension", "Signal_events_rate", "Background_events_rate_SquareRoot"};
 
-	cout<<"Finding the extremum of responses: ";
+	cout<<"Finding the extremum of responses: "<<endl;
 
 	vector<bdt_file*> files;//Concate signal file and bkg files into a vector.
 	files.reserve(sig_files.size()+bkg_files.size());
@@ -241,29 +242,17 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 	
 
 	for(int index = 0; index<files.size(); index++){//get the extremum BDT info by creating a histogram and extract the extremum from the histogram;
+		cout<<"\rFinish examining "<<index+1<<" of "<< files.size() << " files.";
+		cout.flush();
 		bdt_file* temp_file = files[index];
 		temp_file->calcBNBBDTEntryList(0,0);
 		temp_file->setStageEntryList(3);//apply cos and BNB BDT cuts on 0;
 
-//		bdt_variable cos_var = 	temp_file->getBDTVariable(cosmic_focused_bdt);
-//		TH1* temp_hist = temp_file->getTH1(cos_var, "1", cos_var.safe_name,1.0); 
-//
-//		int temp_bin = temp_hist->GetMinimumBin();
 		temp_tmin_cos = temp_file->tvertex->GetMinimum( temp_file->getBDTVariable(cosmic_focused_bdt).name.c_str());
-//		temp_bin = temp_hist->GetMaximumBin()+1;
 		temp_tmax_cos = temp_file->tvertex->GetMaximum( temp_file->getBDTVariable(cosmic_focused_bdt).name.c_str());
-
-//
-//		bdt_variable bnb_var = 	temp_file->getBDTVariable(bnb_focused_bdt);
-//		temp_hist = temp_file->getTH1(bnb_var, "1", bnb_var.safe_name,1.0); 
-//
-//		temp_bin = temp_hist->GetMinimumBin();
 		temp_tmin_bnb = temp_file->tvertex->GetMinimum( temp_file->getBDTVariable(bnb_focused_bdt).name.c_str() );
 		temp_tmax_bnb = temp_file->tvertex->GetMaximum( temp_file->getBDTVariable(bnb_focused_bdt).name.c_str() );
-//		temp_bin = temp_hist->GetMaximumBin()+1;
-//
-//		delete temp_hist;
-//		delete temp_file;
+
 		temp_file = NULL;
 
 		if (temp_tmin_cos<tmin_cos) tmin_cos = temp_tmin_cos;
@@ -271,6 +260,7 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 		if (temp_tmax_cos>tmax_cos) tmax_cos = temp_tmax_cos;
 		if (temp_tmax_bnb>tmax_bnb) tmax_bnb = temp_tmax_bnb;
 	}
+
 	tmin_cos -= more;
 	tmax_cos += more;
 	tmin_bnb -= more;
@@ -281,7 +271,7 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 	save_siglimits<< tmin_bnb <<" "<<tmax_bnb<<std::endl;
 	save_siglimits.close();
 
-	cout<<"Range of Responses: Cosmic:"<<tmin_cos<<" "<<tmax_cos<<" BNB:"<<tmin_bnb<<" "<<tmax_bnb<<endl;
+	cout<<"\nRange of Responses: Cosmic:"<<tmin_cos<<" "<<tmax_cos<<" BNB:"<<tmin_bnb<<" "<<tmax_bnb<<endl;
 	//OK, limit is determined, for plotting;
 
 
@@ -318,8 +308,8 @@ writeit:
 		cout<<"Generate event grids"<<endl;
 
 		//Note that sig_files[1] is ommitted, which is the data file.
-		signal_grid = event_grid ({sig_files[0]}, {cosmic_focused_bdt, bnb_focused_bdt}, saved_name[2], step);//this function maps events into the 2d grid.
-		bkg_grid    = event_grid (bkg_files, {cosmic_focused_bdt, bnb_focused_bdt}, saved_name[3], step);//this function maps events into the 2d grid.
+		signal_grid = event_grid ({sig_files[0]}, saved_name[2], step);//this function maps events into the 2d grid.
+		bkg_grid    = event_grid (bkg_files, saved_name[3], step);//this function maps events into the 2d grid.
 
 		//save histograms to the file
 		signal_bkg_events = TFile::Open(saved_name[0].c_str(), "recreate");
@@ -348,29 +338,25 @@ writeit:
 										//x1,y1,x2,y2
 	vector<TGraph*> contents(files.size());//SCATTER
 
-	bool quick_plot = false;
 	vector<double> focus1(2), focus2(2);
 	if(true){//figuring out the boundary;
 		
 		focus1 = get_peaks( signal_grid);
 		cout<<"Got signal peak above; see the following around bkg peak;"<<endl;
 		focus2 = get_peaks( bkg_grid);
-		focus1[0]+=0.028;
-		focus1[1]+=0.015;
-		focus2[0]+=0.142;
-		focus2[1]-=0.031;
+		focus1[0]+=adjustment[0];//use adjustment to change the foci
+		focus1[1]+=adjustment[1];
+		focus2[0]+=adjustment[2];
+		focus2[1]-=adjustment[3];
 		//CHECK!!
 		cout<<"\nTwo FOCI:"<<endl;
 		cout<<"For signal: "<<focus1[0]<<","<<focus1[1]<<endl;
 		cout<<"For bkg   : "<<focus2[0]<<","<<focus2[1]<<endl;
 
-
-		//I Get the foci now..
-		//cout<<focus1[0]<<endl;
-		
 		//prepare TF2 objects for showing boundary;
 		for(int index = 0; index<files.size(); index++){//Construct root file for each sample.
 
+			cout<<"\rPreparing root files: "<<index+1<<" of "<< files.size() << " finished."<<endl;
 			//use a fake list to capture entry numbers
 			string fake = "a_fake_entry_list";
 			files[index]->tvertex->Draw((">>"+fake).c_str(), files[index]->getStageCuts_v2(3,0,0).c_str() , "entrylist");
@@ -420,7 +406,7 @@ writeit:
 
 			double pot_scale = (files.at(index)->target_pot/files.at(index)->pot )*files.at(index)->scale_data;//target_pot is introduced in the bdt_file.h.
 			
-			vector< double > cut_info = evaluate_events(files.at(index), num_events, row, cos, bnb, focus1, focus2, index == 0);//calculate raw_number with different efficiencies;
+			vector< double > cut_info = evaluate_events(files.at(index), contour_bdt, num_events, row, cos, bnb, focus1, focus2, index == 0);//calculate raw_number with different efficiencies;
 			int jndex = 0;
 
 			while(index == 0 && jndex < efficiencies_choices){
@@ -540,7 +526,7 @@ void significance_eff(vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, 
 
 	int num_bins = 90;//divide the x-axis into bins;
 	double min_distance = 0;
-	double max_distance = sig_files[0]->tvertex->GetMaximum( sig_files[0]->getBDTVariable_contour(contour_bdt_info).name.c_str());
+	double max_distance = sig_files[0]->tvertex->GetMaximum( sig_files[0]->getBDTVariable(contour_bdt_info).name.c_str());
 	min_distance = max_distance * 0.8;
 
 	//the limits are loaded

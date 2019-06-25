@@ -55,14 +55,14 @@ class bdt_stack{
 			return 0;
 		}
 		THStack* getEntryStack(bdt_variable var);
-		THStack* getEntryStack(bdt_variable var,int);
+		THStack* getEntryStack(bdt_variable var,int level, int stack_rebin);
 		THStack* getStack(bdt_variable var, int level,double c1, double c2);
 		THStack* getBDTStack(bdt_info, int level,double c1, double c2);
 		THStack* getBDTStack(bdt_info,std::string bin, int level,double c1, double c2);
 		
 		TH1* getSum(bdt_variable, int level, double c1, double c2);
 		TH1* getEntrySum(bdt_variable);
-		TH1* getEntrySum(bdt_variable,int);
+		TH1* getEntrySum(bdt_variable,int level, int stack_rebin);
 		TH1* getBDTSum(bdt_info which, int level, double c1, double c2);
 		TH1* getBDTSum(bdt_info which,std::string bin, int level, double c1, double c2);
 

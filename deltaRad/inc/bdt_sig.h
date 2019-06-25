@@ -29,11 +29,9 @@
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
 
-
-//This struct is for writing TTree in a ROOT file.
 struct contour_struct {
 	TTree *tree;
-	double distance;
+	double mva;
 
 	contour_struct( string const & tree_name);
 	~contour_struct();
@@ -46,7 +44,7 @@ vector<double> get_max (TH2D* grid);
 void significance_eff(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info contour_bdt_info);
 
 //assign each events according to the signal/bkg peaks that are previously determined.
-vector<double> evaluate_events(bdt_file* file, int entries,  int * row, double * cos, double* bnb, vector<double> focus1, vector<double> focus2, bool out_put);
+vector<double> evaluate_events(bdt_file* file, bdt_info contour_bdt, int entries,  int * row, double * cos, double* bnb, vector<double> focus1, vector<double> focus2, bool draw_eff);
 
 std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files,
 	std::vector<bdt_file*> bkg_files, bdt_info cosmic_cut, bdt_info bnb_cut);
@@ -55,11 +53,11 @@ double get_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*>
 	double *best_mva_cut , double *best_mva_cut2, std::vector<double> *vec_sig,    std::vector<double> *vec_cut);	
 
 
-TH2D *event_grid (vector<bdt_file*> files, vector<bdt_info> bdt_infos, string hist_name, int step);
+TH2D *event_grid (vector<bdt_file*> files, string hist_name, int step);
 
 //Produce signal/sqrt(bkg) 2D histogram;
 
-void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, vector<double> efficiencies, int step );
+void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, bdt_info contour_bdt, vector<double> efficiencies, int step , vector<double> adjustment);
 
 
 

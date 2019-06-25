@@ -605,7 +605,9 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 }
 
 TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin){
-    cout<<"IF YOU SEE THIS, COME TO line 454 at bdt_file.cxx"<<endl;/*
+    cout<<"IF YOU SEE THIS, COME TO line 454 at bdt_file.cxx"<<endl;
+	exit(EXIT_FAILURE);
+	/*
     
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
@@ -763,11 +765,11 @@ bdt_variable bdt_file::getBDTVariable(bdt_info info, std::string binning){
 }
 
 
-bdt_variable bdt_file::getBDTVariable_contour(bdt_info info){//CHECK, no identifier
-//    return bdt_variable(this->tag + ".contour_radius", info.binning, info.name+" Response" ,false,"d");
-//	string strict_name =to_string_prec(strictness,4);
-    return bdt_variable(this->tag/*+strict_name*/ + ".distance", info.binning, info.name+" Response" ,false,"d");
-}
+//bdt_variable bdt_file::getBDTVariable_contour(bdt_info info){//CHECK, no identifier
+////    return bdt_variable(this->tag + ".contour_radius", info.binning, info.name+" Response" ,false,"d");
+////	string strict_name =to_string_prec(strictness,4);
+//    return bdt_variable(this->tag/*+strict_name*/ + ".distance", info.binning, info.name+" Response" ,false,"d");
+//}
 
 
 bdt_file::~bdt_file(){
@@ -801,14 +803,15 @@ int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,  
     return 0;
 }
 
-int bdt_file::addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info, std::vector<method_struct> TMVAmethods){//Add one more friend free, for contour selection;
+int bdt_file::addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info, bdt_info contour_bdt_info, std::vector<method_struct> TMVAmethods){//Add one more friend free, for contour selection;
     topo_name = bnb_bdt_info.topo_name; 
+	std::cout<<"Now adding TreeFriend: "<<endl;
     for(auto &method: TMVAmethods){
 
-        std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+        std::cout<<"                       "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
         this->addFriend(this->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_"+this->tag+"_app"+".root");
 
-        std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+        std::cout<<"                       "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
         this->addFriend(this->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_"+this->tag+"_app"+".root");
 		
 		//file->tag; info.identifier; use it as this->tag +"_"+bnb_bdt_info.identifier+".mva"..
@@ -818,8 +821,8 @@ int bdt_file::addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info
 //		this->addFriend(this->tag , this->tag+"_contour"+".root");
 //		for(int i = 0; i<strictness.size() ; i++){
 //			string strict_name =to_string_prec(strictness[i],4);
-			cout<<"Now adding TreeFriend: "<<this->tag<<"_contour.root"<<" "<<this->tag<<endl;//strictness is introduced for multiple trees in the same .root file; see below:
-			this->addFriend(this->tag/*+strict_name*/ , this->tag+"_contour.root");
+			cout<<"                       "<<this->tag<<"_contour.root"<<" "<<this->tag<<endl;//strictness is introduced for multiple trees in the same .root file; see below:
+			this->addFriend(this->tag+"_"+contour_bdt_info.identifier/*+strict_name*/ , this->tag+"_contour.root");
 //		}
 	}
 
@@ -862,7 +865,7 @@ std::string bdt_file::getStageCuts_v2(int stage, double bdtvar1, double bdtvar2)
     bool verbose = false;
 
 	std::string ans = "1";
-	bdt_variable contourvar = this->getBDTVariable_contour(flow.bdt_contour_cuts);
+	bdt_variable contourvar = this->getBDTVariable(flow.bdt_contour_cuts);
 	bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);
 	bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);
 
@@ -975,9 +978,9 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
                     break;
                 }
 		case 5: {//CHECK , add contour cut but now ready to be used.
-				bdt_variable contourvar = this->getBDTVariable_contour(flow.bdt_contour_cuts);//this is not expected to be working;
-                    ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+contourvar.name +"<" +std::to_string(bdtvar1);//NO post_cuts. bdtvar2==0 as defined in the eLEE.cxx, 2nd argument of a function under datamc section;
-					break;
+				bdt_variable contourvar = this->getBDTVariable(flow.bdt_contour_cuts);//this is not expected to be working;
+				ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+contourvar.name +"<" +std::to_string(bdtvar1);//NO post_cuts. bdtvar2==0 as defined in the eLEE.cxx, 2nd argument of a function under datamc section;
+				break;
 				}
 
         default: 

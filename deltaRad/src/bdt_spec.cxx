@@ -83,13 +83,15 @@ int bdt_stack::makeSBNspec(std::string tagin, bdt_variable var, double c1, doubl
 }
 
 TH1* bdt_stack::getEntrySum(bdt_variable var){
-	return getEntrySum(var, 0);
+	cout<<"Problem? COme see spec.cxx line 86"<<endl;
+	exit(EXIT_FAILURE);
+	return getEntrySum(var, 0, 1);
 }
 
 
-TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
-	int stack_rebin = 1;
-	if(level >1) stack_rebin=2;
+TH1* bdt_stack::getEntrySum(bdt_variable var, int level, int stack_rebin){
+//	int stack_rebin = 1;
+//	if(level >1) stack_rebin=2;
 
 
 	TH1* summed = (TH1*)stack.at(0)->getTH1(var, "1", "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
@@ -159,13 +161,16 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 }
 
 THStack* bdt_stack::getEntryStack(bdt_variable var){
-	return getEntryStack(var, 0);
+	cout<<"Problem? COme see spec.cxx line 164."<<endl;
+	exit(EXIT_FAILURE);
+
+	return getEntryStack(var, 0, 1);//Binning
 
 }
-THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
+THStack* bdt_stack::getEntryStack(bdt_variable var, int level, int stack_rebin){
 	THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
-	int stack_rebin = 1;
-	if(level >1) stack_rebin=2;
+//	int stack_rebin = 1;
+//	if(level >1) stack_rebin=2;
 
 	/*
 
@@ -335,8 +340,8 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 			TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1800,1600);
 			//cobs->Divide(2,2,0.0025,0.0000001);
 
-			THStack *stk = (THStack*)this->getEntryStack(var,s);
-            TH1 * tsum = (TH1*)this->getEntrySum(var,s);
+			THStack *stk = (THStack*)this->getEntryStack(var,s,1);
+            TH1 * tsum = (TH1*)this->getEntrySum(var,s,1);
 
 			tsum->SetMarkerSize(0);
 
