@@ -139,7 +139,7 @@ vector<double> evaluate_events(bdt_file* file, bdt_info contour_bdt, int entries
 		save_cuteff.close();
 	}
 
-	contour_cut->Close();
+//	contour_cut->Close();
 	return signal_distances;
 }
 
@@ -232,45 +232,53 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 	bool quick_plot = false;//turn this on, the scattering plot will produced quickly, but the BDT responses for bkg are not prepared;
 
 	vector< string > saved_name = {"signal_bkg_events.root","dimension", "Signal_events_rate", "Background_events_rate_SquareRoot"};
-
-	cout<<"Finding the extremum of responses: "<<endl;
-
 	vector<bdt_file*> files;//Concate signal file and bkg files into a vector.
-	files.reserve(sig_files.size()+bkg_files.size());
-	files.insert( files.end(), sig_files.begin(), sig_files.end() );
-	files.insert( files.end(), bkg_files.begin(), bkg_files.end() );
-	
 
-	for(int index = 0; index<files.size(); index++){//get the extremum BDT info by creating a histogram and extract the extremum from the histogram;
-		cout<<"\rFinish examining "<<index+1<<" of "<< files.size() << " files.";
-		cout.flush();
-		bdt_file* temp_file = files[index];
-		temp_file->calcBNBBDTEntryList(0,0);
-		temp_file->setStageEntryList(3);//apply cos and BNB BDT cuts on 0;
+	if (access("sig_limits.txt",F_OK) == -1){//no file
+		cout<<"Finding the extremum of responses: "<<endl;
 
-		temp_tmin_cos = temp_file->tvertex->GetMinimum( temp_file->getBDTVariable(cosmic_focused_bdt).name.c_str());
-		temp_tmax_cos = temp_file->tvertex->GetMaximum( temp_file->getBDTVariable(cosmic_focused_bdt).name.c_str());
-		temp_tmin_bnb = temp_file->tvertex->GetMinimum( temp_file->getBDTVariable(bnb_focused_bdt).name.c_str() );
-		temp_tmax_bnb = temp_file->tvertex->GetMaximum( temp_file->getBDTVariable(bnb_focused_bdt).name.c_str() );
+		files.reserve(sig_files.size()+bkg_files.size());
+		files.insert( files.end(), sig_files.begin(), sig_files.end() );
+		files.insert( files.end(), bkg_files.begin(), bkg_files.end() );
 
-		temp_file = NULL;
 
-		if (temp_tmin_cos<tmin_cos) tmin_cos = temp_tmin_cos;
-		if (temp_tmin_bnb<tmin_bnb) tmin_bnb = temp_tmin_bnb;
-		if (temp_tmax_cos>tmax_cos) tmax_cos = temp_tmax_cos;
-		if (temp_tmax_bnb>tmax_bnb) tmax_bnb = temp_tmax_bnb;
+		for(int index = 0; index<files.size(); index++){//get the extremum BDT info by creating a histogram and extract the extremum from the histogram;
+			cout<<"\rFinish examining "<<index+1<<" of "<< files.size() << " files.";
+			cout.flush();
+			bdt_file* temp_file = files[index];
+			temp_file->calcBNBBDTEntryList(0,0);
+			temp_file->setStageEntryList(3);//apply cos and BNB BDT cuts on 0;
+
+			temp_tmin_cos = temp_file->tvertex->GetMinimum( temp_file->getBDTVariable(cosmic_focused_bdt).name.c_str());
+			temp_tmax_cos = temp_file->tvertex->GetMaximum( temp_file->getBDTVariable(cosmic_focused_bdt).name.c_str());
+			temp_tmin_bnb = temp_file->tvertex->GetMinimum( temp_file->getBDTVariable(bnb_focused_bdt).name.c_str() );
+			temp_tmax_bnb = temp_file->tvertex->GetMaximum( temp_file->getBDTVariable(bnb_focused_bdt).name.c_str() );
+
+			temp_file = NULL;
+
+			if (temp_tmin_cos<tmin_cos) tmin_cos = temp_tmin_cos;
+			if (temp_tmin_bnb<tmin_bnb) tmin_bnb = temp_tmin_bnb;
+			if (temp_tmax_cos>tmax_cos) tmax_cos = temp_tmax_cos;
+			if (temp_tmax_bnb>tmax_bnb) tmax_bnb = temp_tmax_bnb;
+		}
+
+		tmin_cos -= more;
+		tmax_cos += more;
+		tmin_bnb -= more;
+		tmax_bnb += more;
+
+		std::ofstream save_siglimits("sig_limits.txt");//recored limits of boundary;
+		save_siglimits<< tmin_cos <<" "<<tmax_cos<<std::endl;
+		save_siglimits<< tmin_bnb <<" "<<tmax_bnb<<std::endl;
+		save_siglimits.close();
+	} else{
+		std::cout<<"	Read off limits on axies from sig_limits.txt for cos & bnb responses. ";
+
+		std::fstream best_responses("sig_limits.txt", std::ios_base::in);
+
+		best_responses >> tmin_cos >> tmax_cos;
+		best_responses >> tmin_bnb >> tmax_bnb;
 	}
-
-	tmin_cos -= more;
-	tmax_cos += more;
-	tmin_bnb -= more;
-	tmax_bnb += more;
-
-	std::ofstream save_siglimits("sig_limits.txt");//recored limits of boundary;
-	save_siglimits<< tmin_cos <<" "<<tmax_cos<<std::endl;
-	save_siglimits<< tmin_bnb <<" "<<tmax_bnb<<std::endl;
-	save_siglimits.close();
-
 	cout<<"\nRange of Responses: Cosmic:"<<tmin_cos<<" "<<tmax_cos<<" BNB:"<<tmin_bnb<<" "<<tmax_bnb<<endl;
 	//OK, limit is determined, for plotting;
 
@@ -498,10 +506,10 @@ writeit:
 //draw BDTscater_plot
 	if(!quick_plot){
 	TCanvas* a_canvas3 = new TCanvas();
-	TH2D *responses_scattering = new TH2D("dummyhist", "BDT Scores", 60, tmin_cos, tmax_cos, 60, tmin_bnb, tmax_bnb);//To be updated, CHECK
+	TH2D *responses_scattering = new TH2D("dummyhist", "BDT Responses", 60, tmin_cos, tmax_cos, 60, tmin_bnb, tmax_bnb);//To be updated, CHECK
 	responses_scattering->SetStats(false);
-	responses_scattering->GetXaxis()->SetTitle("Cosmic BDT Score");
-	responses_scattering->GetYaxis()->SetTitle("BNB BDT Score");
+	responses_scattering->GetXaxis()->SetTitle("Cosmic BDT Responses");
+	responses_scattering->GetYaxis()->SetTitle("BNB BDT Responses");
 	responses_scattering->Draw();
 	for (int i =0 ; i < files.size(); i++){
 		contents[i]->Draw("P same");
@@ -524,10 +532,11 @@ writeit:
 void significance_eff(vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bdt_info contour_bdt_info){
 	//Load the limits
 
-	int num_bins = 90;//divide the x-axis into bins;
+	int num_bins = 800;//divide the x-axis into bins;
 	double min_distance = 0;
 	double max_distance = sig_files[0]->tvertex->GetMaximum( sig_files[0]->getBDTVariable(contour_bdt_info).name.c_str());
-	min_distance = max_distance * 0.8;
+	double factor = 0.4;//Max efficiency;
+	min_distance = max_distance * factor;
 
 	//the limits are loaded
 	string hist_title =  "significance versus signal efficiency (0 means not calculated)";
@@ -584,9 +593,10 @@ void significance_eff(vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, 
 
 		//update best info;
 		if(temp_sig>best_sig[0]){
-			if(0.05*(signal+background)>data-signal-background){
-				double best_data = temp_sig;
-				int best_data_at = current_index;
+		cout<<"Compare agreement "<<signal+background<<" and "<<data-signal-background<<endl;
+			if(0.5*(signal+background)>abs(data-signal-background)){
+				best_data = temp_sig;
+				best_data_at = current_index;
 				cout<<"Find a Data-MC agreement cut"<<endl;
 			}
 
@@ -679,7 +689,8 @@ void significance_eff(vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, 
 
 	TCanvas* a_canvas = new TCanvas();
 	sig_hist->SetStats(false);
-	sig_hist->GetXaxis()->SetTitle("Cut Value (Efficiency from 0.2 to 0) ");
+	string plot_name = "Cut Value (Efficiency from" + to_string_prec( factor, 2) + " to 0) ";
+	sig_hist->GetXaxis()->SetTitle(plot_name.c_str());
 	sig_hist->GetYaxis()->SetTitle("Significance [13.2e20 POT]");
 	sig_hist->Draw("L");
 

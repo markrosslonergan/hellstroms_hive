@@ -60,7 +60,7 @@ int main (int argc, char *argv[]){
 	bool response_only = false;
 	int sbnfit_stage = 1;
 
-	vector<double> cuts_at = {0.221988, 0.221729, 0.226397};//30,20,10%
+	vector<double> cuts_at = {0.215894,0.222546};
 	bool contour = true;
 //	vector<double> strictness = a_number;//,0.35, 0.9};
 //	vector<double> labels = a_number;//,0.35, 0.9};
@@ -585,7 +585,8 @@ int main (int argc, char *argv[]){
 	}else if(mode_option == "sig"){
 		if(contour){
 		cout<<"Prepare for Contour Selection"<<endl;
-		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 70, {0.028,0.015,0.142,0.031});//number is the step on x,y-axies;
+//		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 70, {0,0,0,0});//number is the step on x,y-axies;
+//		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 70, {0.028,0.015,0.142,0.031});//number is the step on x,y-axies;
 
 			//this gives the significance versus the signal eff;
 		for(auto &f: bdt_files){//add new contour friend tree;
