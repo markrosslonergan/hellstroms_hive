@@ -4,9 +4,9 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
 
     std::vector<std::string> title = {"Topological Selection","Pre-Selection Cuts"};
 
-    for(int j=0; j<2;j++){	
+    for(int j=1; j<2;j++){	
 
-        std::cout<<"on stage : "<<j<<std::endl;
+                std::cout<<"on stage : "<<j<<std::endl;
         std::cout<<" Setting sig stage entry lists."<<std::endl;
         signal_pure->setStageEntryList(j);
         std::cout<<" Setting back stage entry lists."<<std::endl;
@@ -29,6 +29,16 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
             TH1* bkg = background_pure->getTH1(v,"1",v.safe_name+"_bkg_var" ,1.0);
 
             std::cout<<"Integrals: "<<sig->Integral()<<" "<<bkg->Integral()<<std::endl;
+    
+            if(!TMath::Finite(sig->Integral())){
+                std::cout<<"scanning"<<std::endl;
+                signal_pure->tvertex->Scan(v.name.c_str());
+            }else{
+                std::cout<<"So its fnite"<<std::endl;
+            }
+
+
+
             sig->Scale(1.0/sig->Integral());			
             bkg->Scale(1.0/bkg->Integral());			
             sig->SetLineColor(signal_pure->col);

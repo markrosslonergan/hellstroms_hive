@@ -33,6 +33,7 @@
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
 #include "TText.h"
+#include "TMath.h"
 
 int plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::vector<bdt_variable> vars, bdt_info input_bdt_info, bool isSpectator);
 int plot_bdt_variable(bdt_file * signal_pure, bdt_file * background_pure, bdt_variable v, bdt_info input_bdt_info, bool isSpectator);
