@@ -4,7 +4,7 @@
 //#include "TMultiGraph.h"//draw markers
 //#include "TF1.h"
 #include "TF2.h"
-//#include "assert.h"
+#include "assert.h"
 
 #include <fstream>//read and write txt file.
 #include <unistd.h>//this is for exit(0)
@@ -22,7 +22,7 @@ contour_struct::~contour_struct() {
 }
 
 
-TH2D *event_grid (vector<bdt_file*> files, string hist_name, int step){
+TH2D *fillin_grid (vector<bdt_file*> files, string hist_name, int step){
 //Put things into histogram!
 
 	double tmin_cos = 0 , tmax_cos = 1, tmin_bnb = 0, tmax_bnb = 1;
@@ -68,9 +68,11 @@ TH2D *event_grid (vector<bdt_file*> files, string hist_name, int step){
 				events_rate = 1e-26;//make up a small number
 			}
 			finished_grid->SetBinContent(di, di2, events_rate );//no need to do square root now.
-			cout.precision(3);
-			cout<<"\r Filling grids: "<<(di-1)*step+di2<<" of "<< step*step << " complete.";
-			cout.flush();
+			if(((di-1)*step+di2)%(step*step/100)==0){
+			cerr.precision(3);
+			cerr<<"\r Filling "<< step*step << " grid. "<<100*((di-1)*step+di2)/(step*step)<< "%";
+			cerr.flush();
+			}
 //			cout<<" Finish "<<di<<" "<<di2<<" with "<<events_rate<<endl;
 			//CHECK 
 		}
@@ -231,16 +233,15 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 	double more = 0.05;//apply this value to push the limit of responses shown on axies.
 	bool quick_plot = false;//turn this on, the scattering plot will produced quickly, but the BDT responses for bkg are not prepared;
 
-	vector< string > saved_name = {"signal_bkg_events.root","dimension", "Signal_events_rate", "Background_events_rate_SquareRoot"};
+	vector< string > saved_name = {"signal_bkg_events.root","dimension", "signal_events_rate", "Background_events_rate_SquareRoot"};
 	vector<bdt_file*> files;//Concate signal file and bkg files into a vector.
 
-	if (access("sig_limits.txt",F_OK) == -1){//no file
+	files.reserve(sig_files.size()+bkg_files.size());
+	files.insert( files.end(), sig_files.begin(), sig_files.end() );
+	files.insert( files.end(), bkg_files.begin(), bkg_files.end() );
+
+	if (access("sig_limits.txt",F_OK) == -1){//file does not exist, then figure it out here.
 		cout<<"Finding the extremum of responses: "<<endl;
-
-		files.reserve(sig_files.size()+bkg_files.size());
-		files.insert( files.end(), sig_files.begin(), sig_files.end() );
-		files.insert( files.end(), bkg_files.begin(), bkg_files.end() );
-
 
 		for(int index = 0; index<files.size(); index++){//get the extremum BDT info by creating a histogram and extract the extremum from the histogram;
 			cout<<"\rFinish examining "<<index+1<<" of "<< files.size() << " files.";
@@ -280,6 +281,10 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 		best_responses >> tmin_bnb >> tmax_bnb;
 	}
 	cout<<"\nRange of Responses: Cosmic:"<<tmin_cos<<" "<<tmax_cos<<" BNB:"<<tmin_bnb<<" "<<tmax_bnb<<endl;
+	if(tmin_cos<0 || tmin_bnb<0){
+		cout<<"Something wrong with the range of respones"<<endl;
+		exit(EXIT_FAILURE);
+	}
 	//OK, limit is determined, for plotting;
 
 
@@ -316,8 +321,8 @@ writeit:
 		cout<<"Generate event grids"<<endl;
 
 		//Note that sig_files[1] is ommitted, which is the data file.
-		signal_grid = event_grid ({sig_files[0]}, saved_name[2], step);//this function maps events into the 2d grid.
-		bkg_grid    = event_grid (bkg_files, saved_name[3], step);//this function maps events into the 2d grid.
+		signal_grid = fillin_grid ({sig_files[0]}, saved_name[2], step);//this function maps events into the 2d grid.
+		bkg_grid    = fillin_grid (bkg_files, saved_name[3], step);//this function maps events into the 2d grid.
 
 		//save histograms to the file
 		signal_bkg_events = TFile::Open(saved_name[0].c_str(), "recreate");
@@ -344,6 +349,7 @@ writeit:
 
 	TLegend *scatter_legend = new TLegend(0.75,0.11,0.99,0.56);//SCATTER
 										//x1,y1,x2,y2
+	assert(files.size());	
 	vector<TGraph*> contents(files.size());//SCATTER
 
 	vector<double> focus1(2), focus2(2);
@@ -443,10 +449,12 @@ writeit:
 
 			delete cos,bnb,row;//clear memory and assign them to NULL again.
 			cos = 0, bnb = 0, row = 0;
-	if(quick_plot)		break;//This break helps to make quick plot;
+
+			if(quick_plot)		break;//This break helps to make quick plot;
 		}
 	}
 //try a likelihood grids;
+	if(false){
 	TH2D* likelihood_norm = (TH2D*) signal_grid->Clone();
 	TH2D* likelihood_deno = (TH2D*) signal_grid->Clone();
 	likelihood_deno->Add(bkg_grid);
@@ -458,7 +466,7 @@ writeit:
 	likelihood_norm->GetXaxis()->SetTitle("Cosmic BDT Responses");
 	likelihood_norm->GetYaxis()->SetTitle("BNB BDT Responses");
 	e_canvas->SaveAs("signal_likelihood.pdf","pdf");
-
+	}
 
 
 //draw a normal one;
@@ -612,7 +620,7 @@ void significance_eff(vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, 
 			best_at[2] = current_index;
 			cout<<"Update the 3rd best sig."<<endl;
 		}
-		cout<<"The best sig  (2nd, 3rd to the best) are found: "<<best_at[0]<<","<<best_at[1]<<","<<best_at[2]<<" ";
+		cout<<"The best sig  (2nd, 3rd to the best) are found at indices: "<<best_at[0]<<","<<best_at[1]<<","<<best_at[2]<<" ";
 		if((best_at[1]+best_at[2]-2*best_at[0]==0&& best_at[0]>best_at[1]&&best_at[0]>best_at[2]) || temp_list.size()<2){//best is at the middle and the 2nd,3rd best are next to it;
 			break;
 		}
@@ -627,19 +635,19 @@ void significance_eff(vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, 
 			
 		//modify vector for searching significance;
 		temp_list.erase( temp_list.begin()+dangerous_index, temp_list.begin()+dangerous_index+1);
-//		if(dangerous_index !=0){
-			if(best_at[0]>best_at[1] && best_at[1]>best_at[2]){
-				cout<<" erase front; ";
-				temp_list.erase( temp_list.begin(), temp_list.begin()+dangerous_index );//monotonic increasing, then remove elements before best_at[0];
+		//		if(dangerous_index !=0){
+		if(best_at[0]>best_at[1] && best_at[1]>best_at[2]){
+			cout<<" cut the front; ";
+			temp_list.erase( temp_list.begin(), temp_list.begin()+dangerous_index );//monotonic increasing, then remove elements before best_at[0];
 
-			}else if( best_at[0]<best_at[1] && best_at[1]<best_at[2]){
-				cout<<" erase back; ";
-				//	temp_list.erase( temp_list.begin()+best_at[2]+2, temp_list.end() );//monotonic decreasing, then remove elements after best_at[2];+2 is due to the removal of temp_index.
-				for(int i = 0; i < dangerous_index; i++){
-					temp_list.pop_back();
-				}
+		}else if( best_at[0]<best_at[1] && best_at[1]<best_at[2]){
+			cout<<" cut the tail; ";
+			//	temp_list.erase( temp_list.begin()+best_at[2]+2, temp_list.end() );//monotonic decreasing, then remove elements after best_at[2];+2 is due to the removal of temp_index.
+			for(int i = 0; i < dangerous_index; i++){
+				temp_list.pop_back();
 			}
-//		}
+		}
+		//		}
 
 		if(temp_index-1+jump<temp_list.size()){
 			temp_index+=jump-1;
@@ -654,7 +662,12 @@ void significance_eff(vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, 
 		cout<<"-----"<<endl;
 		}
 
-	}
+	}		
+	std::ofstream save_sig("sig_ref.txt");//recored limits of boundary;
+	save_sig<< best_data <<" "<<best_sig[0]<<std::endl;
+	save_sig.close();
+	cout<<"Saved the aboved two cuts for selection."<<endl;
+
 
 	if(false){
 	for(int index = 1; index <= num_bins; index++ ){

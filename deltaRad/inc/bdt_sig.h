@@ -53,7 +53,7 @@ double get_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*>
 	double *best_mva_cut , double *best_mva_cut2, std::vector<double> *vec_sig,    std::vector<double> *vec_cut);	
 
 
-TH2D *event_grid (vector<bdt_file*> files, string hist_name, int step);
+TH2D *fillin_grid (vector<bdt_file*> files, string hist_name, int step);
 
 //Produce signal/sqrt(bkg) 2D histogram;
 

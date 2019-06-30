@@ -49,7 +49,7 @@ int main (int argc, char *argv[]){
 
 
 	std::string mode_option = "fake"; 
-	std::string xml = "box_copy.xml";
+	std::string xml = "variables.xml";
 	std::string topo_tag = "1e1p";
 	std::string bdt_tag = "cosmic";
 	std::string analysis_tag = topo_tag;
@@ -61,7 +61,7 @@ int main (int argc, char *argv[]){
 	int sbnfit_stage = 1;
 
 	vector<double> cuts_at = {0.215894,0.222546};
-	bool contour = true;
+	bool contour = false;
 //	vector<double> strictness = a_number;//,0.35, 0.9};
 //	vector<double> labels = a_number;//,0.35, 0.9};
 //	vector<double> cuts_at = a_number;
@@ -188,12 +188,13 @@ int main (int argc, char *argv[]){
 	std::string training_signal_cut = "abs(sim_shower_pdg[0])==11" 
 		"&& sim_shower_matched[0]==1"
 		"&& sim_shower_overlay_fraction[0] < 0.5" //Non cosmic events
-		"&&0.9*mctruth_lepton_E+0.05>reco_shower_energy_max[0]/1000"
+		"&&0.9*mctruth_lepton_E+0.05>reco_shower_energy_max[0]/1000"//Shape shower energy
 		"&&0.7*mctruth_lepton_E-0.1<reco_shower_energy_max[0]/1000"
-		//		    "&&(reco_shower_energy_max[0]/1000>(mctruth_lepton_E[0]^2+0.02))"//Shape shower energy
+		//		    "&&(reco_shower_energy_max[0]/1000>(mctruth_lepton_E[0]^2+0.02))"
 		//		    "&&(reco_shower_energy_max[0]/1000<(mctruth_lepton_E[0]*0.8+0.1))";
 		"&&reco_track_proton_kinetic_energy[0]<(mctruth_leading_exiting_proton_energy[0]-0.93828)+0.05"//Shape track energy
-		"&&reco_track_proton_kinetic_energy[0]>(mctruth_leading_exiting_proton_energy[0]-0.93828)-0.05";
+		"&&reco_track_proton_kinetic_energy[0]>(mctruth_leading_exiting_proton_energy[0]-0.93828)-0.05"
+		"&&abs(reco_shower_startx[0]-reco_track_startx[0])+abs(reco_shower_starty[0]-reco_track_starty[0])+abs(reco_shower_startz[0]-reco_track_startz[0])<2";
 
 	std::string training_bkg_cut = "(abs(mctruth_nu_pdg)!=12||mctruth_cc_or_nc==1)"
 		"&&sim_shower_matched[0]==1&&sim_shower_overlay_fraction[0]<0.5"
@@ -373,7 +374,7 @@ int main (int argc, char *argv[]){
 	//one value for contour cut; use {fcoscut,fbnbcut} for dual BDT cut.
 
 	if (access("sig_best.txt",F_OK) == -1){//no file
-		std::cout<<"Warning: No sig.txt is found in the current directory. Proceed without BDT cuts."<<std::endl;
+		std::cout<<"Warning: No sig_best.txt is found in the current directory. Proceed without BDT cuts."<<std::endl;
 	}
 	else{
 		std::cout<<"Read off significance from sig.txt for coscut & bnbcut."<<std::endl;
@@ -382,6 +383,18 @@ int main (int argc, char *argv[]){
 
 		sig_file >> fcoscut >> fbnbcut;
 		std::cout<<"coscut: "<<fcoscut<<"; bnbcut: "<<fbnbcut<<std::endl;
+	}
+
+	if (access("sig_ref.txt",F_OK) == -1){//no file
+		std::cout<<"Warning: No sig_ref.txt is found in the current directory. Now use the default contour cuts defined by the vector cut_at."<<std::endl;
+	}
+	else{
+		std::cout<<"Read off significance from sig.txt for coscut & bnbcut."<<std::endl;
+
+		std::fstream sig_file("sig_ref.txt", std::ios_base::in);
+
+		sig_file >> cuts_at[0] >> cuts_at[1];
+		std::cout<<"Trying two contour cuts: "<<cuts_at[0]<<" and "<<cuts_at[1]<<endl;
 	}
 	//    double fcoscut;
 	//    double fbnbcut;
@@ -585,8 +598,8 @@ int main (int argc, char *argv[]){
 	}else if(mode_option == "sig"){
 		if(contour){
 		cout<<"Prepare for Contour Selection"<<endl;
-//		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 70, {0,0,0,0});//number is the step on x,y-axies;
-		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 70, {0.028,0.015,0.142,0.031});//number is the step on x,y-axies;
+		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 10, {0,0,0,0});//number is the step on x,y-axies;
+//		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 70, {0.028,0.015,0.142,0.031});//number is the step on x,y-axies;
 
 			//this gives the significance versus the signal eff;
 		for(auto &f: bdt_files){//add new contour friend tree;

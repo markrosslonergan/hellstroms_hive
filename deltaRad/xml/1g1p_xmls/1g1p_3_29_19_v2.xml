@@ -27,22 +27,22 @@
 <!--Comsic BDT Training + Spectator Variables-->
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(20,0.05,0.92)">
     <method type = "COSMIC" use = "yes">
-        <param>  NTrees=1000 	</param>				
+        <param>  NTrees=100 	</param>				
         <param>  MinNodeSize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
-        <param>  AdaBoostBeta=0.2 	</param>				
+        <param>  AdaBoostBeta=0.75 	</param>				
         <param>  SeparationType=GiniIndex</param>				
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
         <param>  nCuts=-1	</param>				
-        <param>  MaxDepth=3 	</param>				
+        <param>  MaxDepth=4 	</param>				
     </method>
     <!--Vertex Variables-->
     <var def = "sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))" binning = "(24,0,100)" unit = "Reco-True Vertex Dist [cm]" type = "d" spectator = "true" />
     <var def = "reco_shower_flash_shortest_distz[0]" binning = "(24,0,520)" unit = "Distance from Shower to Flashcenter Z [cm]" type = "d" spectator = "true" />
-    <var def = "reco_num_flashes[0]" binning = "(5,0,5)" unit = "Reconstructed Number of Flashes" type = "i" spectator = "true" />
+    <var def = "reco_num_flashes[0]" binning = "(24,0,4)" unit = "Reconstructed Number of Flashes" type = "i" spectator = "true" />
     <var def = "reco_flash_total_pe[0]" binning = "(24,0,10000)" unit = "Reconstructed Flash Total PE" type = "d" spectator = "true" />
-    <var def = "reco_flash_time[0]" binning = "(24,3,5.5)" unit = "Reconstructed Flash Time" type = "d" spectator = "true" />
+    <var def = "reco_flash_time[0]" binning = "(24,-30,30)" unit = "Reconstructed Flash Time" type = "d" spectator = "true" />
     <var def = "reco_flash_zcenter[0]" binning = "(24,-10,+1060)" unit = "Reconstructed Flash Z Center" type = "d" spectator = "true" />
     <var def = "reco_vertex_x[0]" binning = "(24,-10,260)" unit = " Reconstructed vertex X pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_vertex_y[0]" binning = "(24,-120,+120)" unit = " Reconstructed vertex Y pos [cm]" type = "d" spectator = "true"/>
@@ -106,8 +106,7 @@
     <var def = "reco_track_end_to_nearest_dead_wire_plane2[0]" binning = "(24,0,200)" unit = " Reconstructed Track End dead wire dist plane 2 pos [cm]" type = "d" spectator = "true" />
     <var def =  "reco_track_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Track Associated Slice Neutrino Score LOG" type = "d" spectator = "true" logplot = "true"/>
     <var def =  "reco_track_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Track Associated Slice Neutrino Score" type = "d" spectator = "true"/>
-    <var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(20,0.0, 1600)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "true" />
-
+    <var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(16,100, 900)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "true" />
 
     <!--Track Geom Variables-->
     <var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning ="(24,-1,1)" unit="Cosine Angle between photon and proton [rad]" type = "d" spectator = "true"/>
@@ -124,7 +123,10 @@
     <var def = "reco_track_endy[0]" binning = "(24,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(24,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(24,0,1)" unit = "Recontstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
-    <var def = "sqrt(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,0.938,1.85)" unit = "Invariant Mass of Photon-Proton Pair [GeV]" type  = "d" spectator = "true"/>
+    <var def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,0.938,1.85)" unit = "Invariant Mass^{2} of Photon-Proton Pair [GeV^{ 2}]" type  = "d" spectator = "true"/>
+    <var def = "sqrt(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,1,1.4)" unit = "Invariant Mass of Photon-Proton Pair [GeV]" type  = "d" spectator = "true"/>
+
+
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" spectator = "true" /> 
@@ -137,22 +139,22 @@
 
 <mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(20,0.1,0.75)">
     <method type = "BNB" use = "yes">
-        <param>  NTrees=1000 	</param>				
+        <param>  NTrees=100 	</param>				
         <param>  MinNodeSize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
-        <param>  AdaBoostBeta=0.2 	</param>				
+        <param>  AdaBoostBeta=0.75 	</param>				
         <param>  SeparationType=GiniIndex</param>				
         <param>  UseBaggedBoost</param> 
         <param>  BaggedSampleFraction=0.5	</param>				
         <param>  nCuts=-1	</param>				
-        <param>  MaxDepth=3 	</param>				
+        <param>  MaxDepth=4 	</param>				
     </method>
     <!--Vertex Variables-->
     <var def = "sqrt( pow(mctruth_nu_vertex_x-reco_vertex_x,2)+ pow(mctruth_nu_vertex_y-reco_vertex_y,2)+ pow(mctruth_nu_vertex_z-reco_vertex_z,2))" binning = "(24,0,100)" unit = "Reco-True Vertex Dist [cm]" type = "d" spectator = "true" />
     <var def = "reco_shower_flash_shortest_distz[0]" binning = "(24,0,520)" unit = "Distance from Shower to Flashcenter Z [cm]" type = "d" spectator = "true" />
-    <var def = "reco_num_flashes[0]" binning = "(5,0,5)" unit = "Reconstructed Number of Flashes" type = "i" spectator = "true" />
+    <var def = "reco_num_flashes[0]" binning = "(24,0,4)" unit = "Reconstructed Number of Flashes" type = "i" spectator = "true" />
     <var def = "reco_flash_total_pe[0]" binning = "(24,0,10000)" unit = "Reconstructed Flash Total PE" type = "d" spectator = "true" />
-    <var def = "reco_flash_time[0]" binning = "(24,3,5.5)" unit = "Reconstructed Flash Time" type = "d" spectator = "true" />
+    <var def = "reco_flash_time[0]" binning = "(24,-30,30)" unit = "Reconstructed Flash Time" type = "d" spectator = "true" />
     <var def = "reco_flash_zcenter[0]" binning = "(24,-10,+1060)" unit = "Reconstructed Flash Z Center" type = "d" spectator = "true" />
     <var def = "reco_vertex_x[0]" binning = "(24,-10,260)" unit = " Reconstructed vertex X pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_vertex_y[0]" binning = "(24,-120,+120)" unit = " Reconstructed vertex Y pos [cm]" type = "d" spectator = "true"/>
@@ -216,6 +218,8 @@
     <var def = "reco_track_end_to_nearest_dead_wire_plane2[0]" binning = "(24,0,200)" unit = " Reconstructed Track End dead wire dist plane 2 pos [cm]" type = "d" spectator = "true" />
     <var def =  "reco_track_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Track Associated Slice Neutrino Score LOG" type = "d" spectator = "true" logplot = "true"/>
     <var def =  "reco_track_nuscore[0]" binning = "(24, 0, 1)" unit = "Reconstructed Track Associated Slice Neutrino Score" type = "d" spectator = "true"/>
+    <var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(16,100, 900)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "true" />
+
 
 
     <!--Track Geom Variables-->
@@ -233,13 +237,15 @@
     <var def = "reco_track_endy[0]" binning = "(24,-120,+120)" unit = " Reconstructed Track end Y pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_endz[0]" binning = "(24,-10,1060)" unit = " Reconstructed Track end Z pos [cm]" type = "d" spectator = "true"/>
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(24,0,1)" unit = "Recontstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
-    <var def = "sqrt(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,0.938,1.85)" unit = "Invariant Mass of Photon-Proton Pair [GeV]" type  = "d" spectator = "true"/>
+    <var def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,0.938,1.85)" unit = "Invariant Mass^{2} of Photon-Proton Pair [GeV^{ 2}]" type  = "d" spectator = "true"/>
+   <var def = "sqrt(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,1,1.4)" unit = "Invariant Mass of Photon-Proton Pair [GeV]" type  = "d" spectator = "true"/>
+
+
+
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" spectator = "true" /> 
     <var def = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum [GeV]" type = "d" spectator = "true"/>
-    <var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(20,0.0, 1600)" unit = "Total Visible Energy [MeV]" type = "d" spectator = "true" />
-
 
 
 
