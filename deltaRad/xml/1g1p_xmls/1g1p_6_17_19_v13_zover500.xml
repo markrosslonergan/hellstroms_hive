@@ -8,16 +8,19 @@
 <precut def = "(TMath::Finite(reco_shower_dEdx_amalgamated[0]))" name = "Shower dE/dx Plane Min Nhits"/>
 <precut def = "(TMath::Finite(reco_track_good_calo_best_plane[0]))" name = "good calo plane track" />
 
-<precut def = "reco_shower_theta_yz[0] < -1.5" name = "shower theta_yz max cut"/>
+<precut def = "reco_shower_startz[0]  > 513" name = "shower start z  cut"/>
+<precut def = "reco_vertex_z[0]  > 513" name = "vertex z cut"/>
+<precut def = "reco_track_startz[0]  > 513" name = "track start z cut"/>
+<precut def = "reco_track_endz[0]  > 513" name = "track end z cut"/>  
+
+
+<!--<precut def = "reco_shower_theta_yz[0] < -1.5" name = "shower theta_yz max cut"/>
 <precut def = "reco_shower_theta_yz[0]  >-2.5" name = "shower theta_yz min cut"/>
 
-<!--
 <precut def = "(reco_shower_startz[0]  < 650 || reco_shower_startz[0]  > 800)" name = "shower start z  cut"/>
 <precut def = "(reco_vertex_z[0]  < 650 || reco_vertex_z[0]  > 800)" name = "vertex z cut"/>
 <precut def = "(reco_track_startz[0]  < 650 || reco_track_startz[0]  > 800)" name = "track start z cut"/>
-<precut def = "(reco_track_endz[0]  < 650 || reco_track_endz[0]  > 800)" name = "track end z cut"/> 
--->
-
+<precut def = "(reco_track_endz[0]  < 650 || reco_track_endz[0]  > 800)" name = "track end z cut"/>  -->
 
 <!--
  <precut def = "reco_track_displacement[0]<500" name = "Track Length Cut" />
