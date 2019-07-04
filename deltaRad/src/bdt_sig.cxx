@@ -77,7 +77,7 @@ TH2D *fillin_grid (vector<bdt_file*> files, string hist_name, int step){
 			//CHECK 
 		}
 	}
-	
+	if(false){	
 	TCanvas* a_canvas = new TCanvas(files[0]->tag.c_str()," ",2000,1600);
 	finished_grid->SetStats(false);
 	finished_grid->Draw("colz");
@@ -86,7 +86,8 @@ TH2D *fillin_grid (vector<bdt_file*> files, string hist_name, int step){
 //	a_canvas->Write();//I dont need to write~
 //	a_canvas->Update();
 	a_canvas->SaveAs((hist_name+".pdf").c_str(),"pdf");
-
+	}
+	
 	cout<<"\nFinish producing 2D event grid for "<<hist_name<<endl;
 	return finished_grid;
 }
@@ -233,7 +234,7 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 	double more = 0.05;//apply this value to push the limit of responses shown on axies.
 	bool quick_plot = false;//turn this on, the scattering plot will produced quickly, but the BDT responses for bkg are not prepared;
 
-	vector< string > saved_name = {"signal_bkg_events.root","dimension", "signal_events_rate", "Background_events_rate_SquareRoot"};
+	vector< string > saved_name = {"signal_bkg_events.root","dimension", "signal_events_rate", "background_events_rate_SquareRoot"};
 	vector<bdt_file*> files;//Concate signal file and bkg files into a vector.
 
 	files.reserve(sig_files.size()+bkg_files.size());
@@ -702,7 +703,7 @@ void significance_eff(vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, 
 
 	TCanvas* a_canvas = new TCanvas();
 	sig_hist->SetStats(false);
-	string plot_name = "Cut Value (Efficiency from" + to_string_prec( factor, 2) + " to 0) ";
+	string plot_name = "Contour Response (links to efficiencies from" + to_string_prec( factor, 2) + " to 0) ";
 	sig_hist->GetXaxis()->SetTitle(plot_name.c_str());
 	sig_hist->GetYaxis()->SetTitle("Significance [13.2e20 POT]");
 	sig_hist->Draw("L");

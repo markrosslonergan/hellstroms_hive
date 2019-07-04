@@ -60,8 +60,8 @@ int main (int argc, char *argv[]){
 	bool response_only = false;
 	int sbnfit_stage = 1;
 
-	vector<double> cuts_at = {0.215894,0.222546};
 	bool contour = false;
+	vector<double> cuts_at = {0.215894,0.222546};
 //	vector<double> strictness = a_number;//,0.35, 0.9};
 //	vector<double> labels = a_number;//,0.35, 0.9};
 //	vector<double> cuts_at = a_number;
@@ -385,6 +385,7 @@ int main (int argc, char *argv[]){
 		std::cout<<"coscut: "<<fcoscut<<"; bnbcut: "<<fbnbcut<<std::endl;
 	}
 
+if(cuts_at.size()==2){//automatically load the optimized cuts
 	if (access("sig_ref.txt",F_OK) == -1){//no file
 		std::cout<<"Warning: No sig_ref.txt is found in the current directory. Now use the default contour cuts defined by the vector cut_at."<<std::endl;
 	}
@@ -396,6 +397,7 @@ int main (int argc, char *argv[]){
 		sig_file >> cuts_at[0] >> cuts_at[1];
 		std::cout<<"Trying two contour cuts: "<<cuts_at[0]<<" and "<<cuts_at[1]<<endl;
 	}
+}
 	//    double fcoscut;
 	//    double fbnbcut;
 	//    if(analysis_tag == "track"){
