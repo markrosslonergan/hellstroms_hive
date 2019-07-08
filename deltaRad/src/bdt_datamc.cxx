@@ -45,11 +45,14 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
 
     data_file->calcCosmicBDTEntryList(c1, c2);
     data_file->calcBNBBDTEntryList(c1, c2);
-    data_file->setStageEntryList(3);
+   // data_file->setStageEntryList(3);
+     data_file->setStageEntryList(stage);
+
 
     std::string fake = "fake_bnbbdt_list_"+std::to_string(c1)+"_"+std::to_string(c2)+"_" +data_file->tag;
 
-    data_file->tvertex->Draw((">>"+fake).c_str(), data_file->getStageCuts(3,c1,c2).c_str() , "entrylist");
+    data_file->tvertex->Draw((">>"+fake).c_str(), data_file->getStageCuts(stage,c1,c2).c_str() , "entrylist");
+    // data_file->tvertex->Draw((">>"+fake).c_str(), data_file->getStageCuts(3,c1,c2).c_str() , "entrylist");
     TEntryList * fake_list = (TEntryList*)gDirectory->Get(fake.c_str());
 
 

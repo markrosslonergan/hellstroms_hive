@@ -658,7 +658,9 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
 
-                //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
+                //print the events that pass 
+                
+                datamc.printPassingDataEvents("tmp", 2, fcoscut, fbnbcut);
 
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
