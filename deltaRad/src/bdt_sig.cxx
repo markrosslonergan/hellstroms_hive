@@ -1346,7 +1346,7 @@ do_nothing:
 
 double get_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, double plot_pot, double cosmic_cut, double bnb_cut, double *best_significance,
 		double *best_mva_cut , double *best_mva_cut2, std::vector<double>* vec_sig,    std::vector<double>* vec_cut){
-
+//bkg_files = {bnb, nueintrinsic , OffBeamData, signal_other, dirt};
 	double signal = 0;
 	double background = 0;
 	std::vector<double> bkg;	
@@ -1375,15 +1375,6 @@ double get_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*>
 	if( background != 0){
 		significance = signal/sqrt(background);
 	}
-	//disable this section of print out if background is 0.
-	/*if(signal == 0){
-	  significance = 0;
-	  }else if(background != 0){
-	  significance = signal/sqrt(background);
-	  }
-	  else{
-	  std::cout<<"method_best_significane_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<< cosmic_cut <<", cut2: "<< bnb_cut<<std::endl;
-	  }*/
 
 	if(significance > *best_significance) {
 		*best_significance = significance;
@@ -1403,14 +1394,18 @@ double get_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*>
 	std::cout<<", #bkg: ";
 	std::cout<<std::left<<std::setw(8)<<background;
 	std::cout<<"= ";
-	std::cout<<std::left<<std::setw(8)<<bkg.at(0);
-	std::cout<<"(BNB) + ";
-	std::cout<<std::left<<std::setw(8)<<bkg.at(1);
-	std::cout<<std::left<<"(cosmic) || "<<to_string_prec(significance,2);
-
+	for(int i = 0; i<3; i++){
+	std::cout<<std::left<<std::setw(8)<<bkg.at(i);//Check the bkg_files for correct order.
+	std::cout<<"("<<bkg_files.at(i)->tag<<") + ";
+	}
+//	std::cout<<std::left<<std::setw(8)<<bkg.at(1);
+//	std::cout<<"(Intr. Nue) + ";
+//	std::cout<<std::left<<std::setw(8)<<bkg.at(2);
+//	std::cout<<std::left<<"(cosmic) || ";	
+	std::cout<<to_string_prec(significance,2);
 	std::cout<<std::left<<std::setw(8);
 	double ref_numbers = 100*signal*signal/background;
-	std::cout<<std::left<<" >>Purity*signal#: "<<to_string_prec(ref_numbers,2)<<"%";
+//	std::cout<<std::left<<" >>Purity*signal#: "<<to_string_prec(ref_numbers,2)<<"%";
 
 	if( background == 0 ){ 
 		std::cout<<" (No background)"<<std::endl;

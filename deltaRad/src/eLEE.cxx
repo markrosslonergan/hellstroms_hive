@@ -51,7 +51,7 @@ int main (int argc, char *argv[]){
 	std::string mode_option = "fake"; 
 	std::string xml = "variables.xml";
 	std::string topo_tag = "1e1p";
-	std::string bdt_tag = "cosmic";
+//	std::string bdt_tag = "cosmic";
 	std::string analysis_tag = topo_tag;
 
 	bool run_cosmic = true;
@@ -193,12 +193,12 @@ int main (int argc, char *argv[]){
 		//		    "&&(reco_shower_energy_max[0]/1000>(mctruth_lepton_E[0]^2+0.02))"
 		//		    "&&(reco_shower_energy_max[0]/1000<(mctruth_lepton_E[0]*0.8+0.1))";
 		"&&reco_track_proton_kinetic_energy[0]<(mctruth_leading_exiting_proton_energy[0]-0.93828)+0.05"//Shape track energy
-		"&&reco_track_proton_kinetic_energy[0]>(mctruth_leading_exiting_proton_energy[0]-0.93828)-0.05"
-		"&&abs(reco_shower_startx[0]-reco_track_startx[0])+abs(reco_shower_starty[0]-reco_track_starty[0])+abs(reco_shower_startz[0]-reco_track_startz[0])<2";
+		"&&reco_track_proton_kinetic_energy[0]>(mctruth_leading_exiting_proton_energy[0]-0.93828)-0.05";
+//		"&&abs(reco_shower_startx[0]-reco_track_startx[0])+abs(reco_shower_starty[0]-reco_track_starty[0])+abs(reco_shower_startz[0]-reco_track_startz[0])<2";
 
 	std::string training_bkg_cut = "(abs(mctruth_nu_pdg)!=12||mctruth_cc_or_nc==1)"
 		"&&sim_shower_matched[0]==1&&sim_shower_overlay_fraction[0]<0.5"
-		"&&mctruth_mode==1 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1";
+		"&&!(mctruth_mode==1 && abs(mctruth_nu_pdg)==14 && mctruth_cc_or_nc==1)";
 	std::string num_track_cut;
 
 	if(analysis_tag == "1e1p"){
@@ -216,7 +216,7 @@ int main (int argc, char *argv[]){
 
 	std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
 	std::string pmass = "0.938272";
-	std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
+	std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-10 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
 
 	std::vector<std::string> v_denom = {"abs(mctruth_nu_pdg)==12"," ((mctruth_num_exiting_pi0+mctruth_num_exiting_pipm) ==0)", 
 		"Sum$(mctruth_exiting_proton_energy-0.93828>0.04)==1" ,"Sum$(mctruth_lepton_E>0.02)==1" ,fid_cut};
@@ -228,7 +228,8 @@ int main (int argc, char *argv[]){
 	}
 
 	std::string background_definition = "abs(mctruth_nu_pdg)!=12";//||mctruth_cc_or_nc==1";
-//	std::string background_definition = "(mctruth_mode==1 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1)";
+	std::string res_definition = "(mctruth_mode==1 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1)";
+	background_definition += "&&!"+res_definition;
 
 	//    std::string intrinsic_background = "(abs(mctruth_nu_pdg)==12&&mctruth_cc_or_nc==0)";
 	std::string topological_cuts = "(reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut+")";
@@ -287,8 +288,8 @@ int main (int argc, char *argv[]){
 	training_signal->addPlotName("LEE #nu_{e}(#bar{#nu}_{e})");
 	signal->addPlotName("Golden LEE #nu_{e}(#bar{#nu}_{e})");
 	signal_other->addPlotName("Other LEE #nu_{e}(#bar{#nu}_{e})");
-	training_bnb->addPlotName("BNB Neutrino Backgrounds");
-	bnb->addPlotName("BNB Backgrounds");
+	training_bnb->addPlotName("BNB Neutrino Backgrounds (no NumuNCRes)");
+	bnb->addPlotName("BNB Backgrounds (no NumuNCRes)");
 	//bnb->addPlotName("BNB Neutrino Backgrounds");
 	nueintrinsic->addPlotName("#nu_{e}(#bar{#nu}_{e}) Intrinsics");
 	OnBeamData->addPlotName("On-Beam Data");
@@ -600,8 +601,8 @@ if(cuts_at.size()==2){//automatically load the optimized cuts
 	}else if(mode_option == "sig"){
 		if(contour){
 		cout<<"Prepare for Contour Selection"<<endl;
-		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 10, {0,0,0,0});//number is the step on x,y-axies;
-//		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 70, {0.028,0.015,0.142,0.031});//number is the step on x,y-axies;
+//		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 10, {0,0,0,0});//number is the step on x,y-axies;
+		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 70, {0.028,0.015,0.142,0.031});//number is the step on x,y-axies;
 
 			//this gives the significance versus the signal eff;
 		for(auto &f: bdt_files){//add new contour friend tree;
@@ -611,7 +612,7 @@ if(cuts_at.size()==2){//automatically load the optimized cuts
 		}else{
 			//the code below is for the box-cut;
 			TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-			std::vector<double> ans = scan_significance(fsig, {signal} , {signal_other, bnb, nueintrinsic , OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
+			std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, nueintrinsic , OffBeamData, signal_other, dirt}, cosmic_bdt_info, bnb_bdt_info);
 			//std::vector<double> ans = lin_scan({signal_cosmics}, {bnb_cosmics, bnbext}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
 			std::ofstream save_sig("sig_best.txt");
@@ -738,11 +739,11 @@ if(cuts_at.size()==2){//automatically load the optimized cuts
 	std::vector<bool> subv = {false,false,true};
 	if(response_only){//BDTResponses goes here.
 		bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
-
+		
+		//need to add a boolean to determine if friend tree (root file) exists; otherwise error "bad numerical value" might come out.
 		if(run_bnb) real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
 		if(run_cosmic) real_datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
-		//CHECK
-		if(true) real_datamc.plotBDTStacks(ftest, contour_bdt_info,0,0); //need to improve this;
+		if(true) real_datamc.plotBDTStacks(ftest, contour_bdt_info,0,0);
 	}else{//goes here by default.
 		if(number == -1){//do all vars
 
@@ -778,13 +779,6 @@ if(cuts_at.size()==2){//automatically load the optimized cuts
 //			real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
 
 	gadget_buildfolder("var");
-//	if (access("var",F_OK) == -1){
-//		mkdir("var",0777);//Create a folder for pdf.
-//	}
-//	else{
-//		std::cout<<"Overwrite var/ in 2 seconds, 1 seconds, ..."<<std::endl;
-//		sleep(2);
-//	}
 
 
 	std::vector<std::string> title = {"All Verticies","Pre-Selection Cuts"};

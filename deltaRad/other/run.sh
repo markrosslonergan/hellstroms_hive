@@ -29,17 +29,18 @@ echo "Now runs app:" | tee -a ./$log
 echo "Finish!!!!!!!!!!!" >> ./$log 2>&1
 
 now=$(date +"%T")
-echo "-------------------------------------------------------------------------------------------" >> ./$log 2>&1
-echo "Now runs -o datamc -r:" | tee -a ./$log 
-./eLEE -x $xml_file -o datamc -r >> ./$log 2>&1
-echo "Finish!!!!!!!!!!!" >> ./$log 2>&1
-
-now=$(date +"%T")
 echo "Current time : $now"
 echo "-------------------------------------------------------------------------------------------" >> ./$log 2>&1
 echo "Now runs -o sig:" | tee -a ./$log 
 ./eLEE -x $xml_file -o sig  >> ./$log 2>&1
 echo "Finish!!!!!!!!!!!" >> ./$log 2>&1
+
+now=$(date +"%T")
+echo "-------------------------------------------------------------------------------------------" >> ./$log 2>&1
+echo "Now runs -o datamc -r:" | tee -a ./$log 
+./eLEE -x $xml_file -o datamc -r >> ./$log 2>&1
+echo "Finish!!!!!!!!!!!" >> ./$log 2>&1
+
 
 now=$(date +"%T")
 echo "Current time : $now"

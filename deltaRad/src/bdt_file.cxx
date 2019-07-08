@@ -806,24 +806,17 @@ int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,  
 int bdt_file::addBDTResponses_v2(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info, bdt_info contour_bdt_info, std::vector<method_struct> TMVAmethods){//Add one more friend free, for contour selection;
     topo_name = bnb_bdt_info.topo_name; 
 	std::cout<<"Now adding TreeFriend: "<<endl;
-    for(auto &method: TMVAmethods){
+	for(auto &method: TMVAmethods){
 
-        std::cout<<"                       "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
-        this->addFriend(this->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_"+this->tag+"_app"+".root");
 
-        std::cout<<"                       "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
-        this->addFriend(this->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_"+this->tag+"_app"+".root");
-		
-		//file->tag; info.identifier; use it as this->tag +"_"+bnb_bdt_info.identifier+".mva"..
-		//the following commented section allows multiple trees inside one root file.
+		std::cout<<"                       "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+		this->addFriend(this->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_"+this->tag+"_app"+".root");
 
-//		cout<<"Now adding TreeFriend: "<<this->tag<<"_contour.root"<<" "<<this->tag<<endl;//CHECK
-//		this->addFriend(this->tag , this->tag+"_contour"+".root");
-//		for(int i = 0; i<strictness.size() ; i++){
-//			string strict_name =to_string_prec(strictness[i],4);
-			cout<<"                       "<<this->tag<<"_contour.root"<<" "<<this->tag<<endl;//strictness is introduced for multiple trees in the same .root file; see below:
-			this->addFriend(this->tag+"_"+contour_bdt_info.identifier/*+strict_name*/ , this->tag+"_contour.root");
-//		}
+		std::cout<<"                       "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+		this->addFriend(this->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_"+this->tag+"_app"+".root");
+
+		cout<<"                       "<<this->tag<<"_contour.root"<<" "<<this->tag<<endl;
+		this->addFriend(this->tag+"_"+contour_bdt_info.identifier, this->tag+"_contour.root");
 	}
 
     return 0;
