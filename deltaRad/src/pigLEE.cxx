@@ -208,7 +208,7 @@ int main (int argc, char *argv[]){
     bdt_flow signal_training_flow(topological_cuts,signal_definition +"&&"+ training_signal_cut,vec_precuts,postcuts,cosmic_bdt_info,bnb_bdt_info);
     bdt_flow signal_other_flow(topological_cuts, 	"!("+signal_definition +")", 	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
-    bdt_flow signal_flow(topological_cuts, 	signal_definition , 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
+    bdt_flow signal_flow(topological_cuts, 	signal_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_flow(topological_cuts,		background_definition, 			vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
     bdt_flow bkg_training_flow(topological_cuts,	background_definition+"&&"+ training_bkg_cut ,	vec_precuts,	postcuts,	cosmic_bdt_info,	bnb_bdt_info);
 
@@ -222,8 +222,8 @@ int main (int argc, char *argv[]){
     bdt_file *signal_other = new bdt_file(dirv10,"ncpi0_overlay_collins_v10.0.root","NCPi0OverlayOther","hist","singlephoton/",kRed-10,signal_other_flow);
     //signal_other->fillstyle = 3333;
 
-    bdt_file *training_bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dirv10, "bnb_overlay_v10.0.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+    bdt_file *training_bnb = new bdt_file(dirv10, "bnb_overlay_run1_v10.1.root", "BNBTrain",	  "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dirv10, "bnb_overlay_run1_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
     // Color was kBlue-4
 
     //Data files
@@ -291,8 +291,10 @@ int main (int argc, char *argv[]){
     double fcoscut;
     double fbnbcut;
     if(analysis_tag == "2g1p"){
-        fcoscut =   0.64284;
-        fbnbcut = 0.632225;
+        //fcoscut =   0.64284;
+        //fbnbcut = 0.632225;
+        fcoscut =   0.724;
+        fbnbcut = 0.59;
     }else if(analysis_tag == "2g0p"){
         fcoscut = 0.5; //0.612701;//0.587101;
         fbnbcut =  0.569627;

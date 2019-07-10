@@ -232,8 +232,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 if(do_subtraction){
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
-                // l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
-                l0->AddEntry(h1,(f->plot_name).c_str(),"f");
+                l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
+                //l0->AddEntry(h1,(f->plot_name).c_str(),"f");
                 n++;
             }
             l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
@@ -250,8 +250,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             d0->Draw("same E1");
 
 
-            //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
-            l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
+            l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
+            //l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
 
 
             l0->Draw();
@@ -482,7 +482,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
     //std::vector<std::string> stage_name = {"Topological Selection","","Cosmic BDT Cut","BNB BDT Cut"};
 
 
-    for(int k = 0; k<4; k++){
+    for(int k = 1; k<2; k++){
         std::cout << "[PLOTBDTSTACKS:] On stage " << k << std::endl;
         TCanvas *cobs = new TCanvas("","",900,800);
         //cobs->cd(k+1);
@@ -581,7 +581,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         pottex.DrawLatex(.7,.96, pot_draw.c_str());
 
-        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
+        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
         pre->Draw();
 
         //cobs->cd(k+1);	
