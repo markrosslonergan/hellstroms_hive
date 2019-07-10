@@ -237,22 +237,22 @@ int main (int argc, char *argv[]){
     //   bdt_file *training_signal    = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
     // bdt_file *signal = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
     // bdt_file *signal_other = new bdt_file(dir13, "ncdeltarad_overlay_combined_run1_run3_v13.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
-    bdt_file *training_signal    = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
+    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
     //  bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root",   "NCDeltaRadTrain",     "hist","singlephoton/",  kRed-7, signal_training_flow);
     // bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
     //bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_v10.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
     //signal_other->fillstyle = 3390;
 
 
-    bdt_file *dirt = new bdt_file(dir13,"dirt_overlay_v13.1.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
+    bdt_file *dirt = new bdt_file(dir,"dirt_overlay_v10.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
 
     //bdt_file *training_bnb    = new bdt_file(dir13, "bnb_overlay_merged_run1_run3_v13.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
     //bdt_file *bnb = new bdt_file(dir13, "bnb_overlay_merged_run1_run3_v13.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
 
-    bdt_file *training_bnb    = new bdt_file(dir13, "bnb_overlay_run1_v13.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dir13, "bnb_overlay_run1_v13.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
 
 
     // bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
@@ -260,12 +260,12 @@ int main (int argc, char *argv[]){
 
 
     //Data files
-    // bdt_file *onbeamdata    = new bdt_file(dir9, "data5e19_v9.3.root",  "onbeamdata",      "e1p","singlephoton/",  kblack, data_flow);
-    // bdt_file *offbeamdata    = new bdt_file(dir9, "bnbext_merged_run1_run3_v9.3.root",  "offbeamdata",  "e1p","singlephoton/",  kgreen-3, data_flow);
+     bdt_file *OnBeamData    = new bdt_file(dir9, "data5e19_v9.3.root",  "OnBeamData",      "e1p","singlephoton/",  kBlack, data_flow);
+     bdt_file *OffBeamData    = new bdt_file(dir9, "bnbext_run1_v9.3.root",  "OffBeamData",  "e1p","singlephoton/",  kGreen-3, data_flow);
 
-    bdt_file *OnBeamData    = new bdt_file(dir13, "data5e19_v13.1.root",  "onbeamdata",      "e1p","singlephoton/",  kBlack, data_flow);
+  //  bdt_file *OnBeamData    = new bdt_file(dir13, "data5e19_v13.1.root",  "onbeamdata",      "e1p","singlephoton/",  kBlack, data_flow);
     //bdt_file *OffBeamData    = new bdt_file(dir13, "bnbext_merged_run1_run3_v13.1.root",  "offbeamdata",  "e1p","singlephoton/",  kGreen-3, data_flow);
-    bdt_file *OffBeamData    = new bdt_file(dir13, "bnbext_run1_v13.1.root",  "offbeamdata",  "e1p","singlephoton/",  kGreen-3, data_flow);
+   // bdt_file *OffBeamData    = new bdt_file(dir13, "bnbext_run1_v13.1.root",  "offbeamdata",  "e1p","singlephoton/",  kGreen-3, data_flow);
 
 
 
@@ -309,14 +309,12 @@ int main (int argc, char *argv[]){
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
 
     //v10
-    // OnBeamData->setAsOnBeamData(4.795e19);
-    // OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
+    OnBeamData->setAsOnBeamData(4.795e19);
+    OffBeamData->setAsOffBeamData(4.795e19,10708042.0,14073757.0);//,176093.0);
 
     //v13
-    OnBeamData->setAsOnBeamData(3.535e+19);
-    OffBeamData->setAsOffBeamData(3.535e+19, 7827989.0, 60306440.0);
-
-
+   // OnBeamData->setAsOnBeamData(3.535e+19);
+   // OffBeamData->setAsOffBeamData(3.535e+19, 7827989.0, 60306440.0);
 
 
     //    OnBeamData->setAsOnBeamData(4.552e+19);
@@ -392,9 +390,9 @@ int main (int argc, char *argv[]){
     double fbnbcut;
     if(analysis_tag == "track"){
     //    fcoscut = 0.599;
-        fcoscut = 0.5;
+        fcoscut = 0.677;
      //   fcoscut = 0.4;
-        fbnbcut =   0.561;
+        fbnbcut = 0.60625;
 
 
         // fcoscut =0.594401;
@@ -660,7 +658,7 @@ int main (int argc, char *argv[]){
 
                 //print the events that pass 
                 
-                datamc.printPassingDataEvents("tmp", 2, fcoscut, fbnbcut);
+                //datamc.printPassingDataEvents("tmp", 2, fcoscut, fbnbcut);
 
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
