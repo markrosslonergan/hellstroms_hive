@@ -1,0 +1,16 @@
+((reco_shower_energy_max[(reco_shower_ordered_energy_index[0])] - reco_shower_energy_max[(reco_shower_ordered_energy_index[1])])/(sqrt((reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirx[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirx[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_diry[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_diry[(reco_shower_ordered_energy_index[1])]) + (reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])])*(reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]*reco_shower_dirz[(reco_shower_ordered_energy_index[0])] + reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]*reco_shower_dirz[(reco_shower_ordered_energy_index[1])]))))
+reco_shower_length[(reco_shower_ordered_energy_index[0])]
+reco_shower_length[(reco_shower_ordered_energy_index[1])]
+reco_shower_opening_angle[(reco_shower_ordered_energy_index[0])]
+reco_shower_opening_angle[(reco_shower_ordered_energy_index[1])]
+reco_shower_flash_shortest_distz[(reco_shower_ordered_energy_index[1])]
+reco_shower_theta_yz[(reco_shower_ordered_energy_index[1])]
+reco_shower_phi_yx[(reco_shower_ordered_energy_index[1])]
+reco_shower_startx[(reco_shower_ordered_energy_index[0])]
+reco_shower_startx[(reco_shower_ordered_energy_index[1])]
+reco_shower_starty[(reco_shower_ordered_energy_index[0])]
+reco_shower_starty[(reco_shower_ordered_energy_index[1])]
+reco_shower_startz[(reco_shower_ordered_energy_index[0])]
+reco_shower_startz[(reco_shower_ordered_energy_index[1])]
+reco_shower_delaunay_area_plane2[(reco_shower_ordered_energy_index[0])]
+max(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_end_half_plane2[0]/reco_track_mean_trunc_dEdx_start_half_plane2[0])
