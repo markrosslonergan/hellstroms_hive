@@ -29,6 +29,8 @@
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
 #include "TStyle.h"
+#include "TError.h"
+#include "TGraphAsymmErrors.h"
 
 class bdt_datamc{
 	public:

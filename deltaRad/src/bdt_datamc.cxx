@@ -45,8 +45,8 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
 
     data_file->calcCosmicBDTEntryList(c1, c2);
     data_file->calcBNBBDTEntryList(c1, c2);
-   // data_file->setStageEntryList(3);
-     data_file->setStageEntryList(stage);
+    // data_file->setStageEntryList(3);
+    data_file->setStageEntryList(stage);
 
 
     std::string fake = "fake_bnbbdt_list_"+std::to_string(c1)+"_"+std::to_string(c2)+"_" +data_file->tag;
@@ -147,8 +147,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                 rmin=0; rmax = 1.99;
             }else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
-                //tsum->Rebin(data_rebin);
-                d0->Rebin(data_rebin);
+            //tsum->Rebin(data_rebin);
+            d0->Rebin(data_rebin);
+
+            d0->SetBinErrorOption(TH1::kPoisson);
 
             if(false &&do_subtraction){
                 std::cout<<"Actually doing the subtracting"<<std::endl;
@@ -187,16 +189,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             //double max_modifier = 1.65;
             double max_modifier = 1.9;
             /*
-            if (s==1){
-                max_modifier = 1.6;
-            }
-            if (s==2){
-                max_modifier = 1.85;
-            }
-            if (s==3){
-                max_modifier = 1.85;
-            }
-            */
+               if (s==1){
+               max_modifier = 1.6;
+               }
+               if (s==2){
+               max_modifier = 1.85;
+               }
+               if (s==3){
+               max_modifier = 1.85;
+               }
+               */
 
             if(var.is_logplot == true){
                 pad0top->SetLogy();
@@ -245,7 +247,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
                 //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
-                l0->AddEntry(h1,(f->plot_name +": "+ string_events).c_str(),"f");
+                //l0->AddEntry(h1,(f->plot_name +": "+ string_events).c_str(),"f");
+                l0->AddEntry(h1,(f->plot_name).c_str(),"f");
                 n++;
             }
             l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
@@ -263,7 +266,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
-            l0->AddEntry(d0,(data_file->plot_name + ": " + to_string_prec(NdatEvents,2)).c_str(),"lp");
+            // l0->AddEntry(d0,(data_file->plot_name + ": " + to_string_prec(NdatEvents,2)).c_str(),"lp");
+            l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");
+
 
 
             l0->Draw();
@@ -353,6 +358,55 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             ratunit->GetYaxis()->SetNdivisions(505);
 
             TH1* ratpre = (TH1*)d0->Clone(("ratio_"+stage_names.at(s)).c_str());
+
+
+
+            std::vector<double> x;
+            std::vector<double> y;
+            for(int b=1; b<d0->GetNbinsX()+1;b++){
+                double is_zero = rat_denom->GetBinContent(b);
+                if(is_zero!=0.0){
+                    y.push_back(d0->GetBinContent(b)/is_zero);
+                    x.push_back(d0->GetBinCenter(b));
+                }
+
+            }
+
+            //std::vector<double> err(x.size(),0);
+            // TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err[0],&err[0],&err[0],&err[0]);
+
+            std::vector<double> err_x_left(x.size(),0);
+            std::vector<double> err_x_right(x.size(),0);
+            std::vector<double> err_y_high(x.size(),0);
+            std::vector<double> err_y_low(x.size(),0);
+
+
+            for(int i=0; i<x.size(); i++){
+                double is_zero = rat_denom->GetBinContent(i+1);
+                if(is_zero!=0.0){
+                    err_x_left[i] = d0->GetBinWidth(i+1)/2.0;
+                    err_x_right[i] = d0->GetBinWidth(i+1)/2.0;
+
+                    err_y_high[i] = (d0->GetBinErrorUp(i+1))/is_zero;
+                    err_y_low[i] =  (d0->GetBinErrorLow(i+1))/is_zero;
+                }
+
+                //probably need a special case for if data is zero
+                //
+            }
+
+
+            TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_low[0],&err_y_high[0]);
+        //    TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_high[0],&err_y_low[0]);
+
+
+
+            // gr->Divide(d0,rat_denom,"pois");
+            //   gr->Divide(d0,tsum,"pois");
+            // gr->SetLineWidth(1);
+            // ratpre->Divide(rat_denom);    
+
+            gr->SetLineWidth(1);
             ratpre->Divide(rat_denom);		
 
             ratpre->SetFillColor(kGray+1);
@@ -361,7 +415,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             ratpre->SetFillStyle(3144);
             //ratpre->SetFillColor(kGray + 3);
-            ratpre->Draw("E1 same");	
+            // ratpre->Draw("E1 same");
+
+            ratpre->Draw("same P0");
+            gr->Draw("P same");   
+            gr->DrawClone("same e0"); 
 
             ratpre->SetLineColor(kBlack);
             ratpre->SetTitle("");
@@ -555,7 +613,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
             h1->SetFillStyle(f->fillstyle);
             h1->SetLineColor(kBlack);
             //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+to_string_prec(Nevents,2)+"}").c_str(),"f");
-            l0->AddEntry(h1,(f->plot_name+": "+to_string_prec(Nevents,2)).c_str(),"f");
+            //l0->AddEntry(h1,(f->plot_name+": "+to_string_prec(Nevents,2)).c_str(),"f");
+            l0->AddEntry(h1,(f->plot_name).c_str(),"f");
         }
 
         l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
@@ -571,7 +630,9 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         //l0->AddEntry(data_th1s.at(k),(data_file->plot_name).c_str(),"lp");	
         // l0->AddEntry(data_th1s.at(k),("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
-        l0->AddEntry(data_th1s.at(k),(data_file->plot_name+": "+ to_string_prec(NdatEvents,2)).c_str(),"lp");	
+        //        l0->AddEntry(data_th1s.at(k),(data_file->plot_name+": "+ to_string_prec(NdatEvents,2)).c_str(),"lp");	
+        l0->AddEntry(data_th1s.at(k),(data_file->plot_name).c_str(),"lp");	
+
 
 
         l0->Draw();
