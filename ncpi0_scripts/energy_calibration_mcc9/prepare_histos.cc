@@ -197,7 +197,10 @@ int main() {
 // Energy correction functions
 // Parameters extracted from fit performed in energy_cal.cc
 double energyCorr(double energy) {
-    double corr = 1.24476*energy + 0.015528;
+    // MCC8
+    //double corr = 1.24476*energy + 0.015528;
+    // MCC9ish (v10)
+    double corr = 1.24288*energy + 8.64122;
     return corr;
 }
 

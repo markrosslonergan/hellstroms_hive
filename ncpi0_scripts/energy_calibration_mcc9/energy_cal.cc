@@ -45,6 +45,8 @@ void doCalibration() {
                                                 fitSlices.at(i).first, 
                                                 fitSlices.at(i).second );
 
+        cout << "Entries in projection " << i << ": " << h_max_projections.at(i)->GetEntries() << endl;
+
         h_max_projections_corr.at(i) = (TH1D*)h_max_corr->ProjectionY(projName_corr,
                                                           fitSlices.at(i).first, 
                                                           fitSlices.at(i).second );
@@ -52,17 +54,17 @@ void doCalibration() {
         int maxBin = h_max_projections.at(i)->GetMaximumBin();
         cout << "maxBin = " << maxBin << endl;
         int maxBin_corr = h_max_projections_corr.at(i)->GetMaximumBin();
-        //double binToMev = 0.01; // 0.01 MeV per bin, since bins are in GeV 
 
         // Fill xvals with center of true energy slices; x-errors are just
         // one-half slice width 
-        //xvals[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.)*binToMev;
-        //xvals_corr[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.)*binToMev;
-        //xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.*binToMev;
-        xvals[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.);
-        cout << "xval: " << xvals[i] << endl;
-        xvals_corr[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.);
-        xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.;
+        double binConv = 10; // To make units work out
+        xvals[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.)*binConv;
+        xvals_corr[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.)*binConv;
+        xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.*binConv;
+        //xvals[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.);
+        //cout << "xval: " << xvals[i] << endl;
+        //xvals_corr[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.);
+        //xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.;
         yvals[i] = h_max_projections.at(i)->GetXaxis()->GetBinCenter(maxBin);
         cout << "yval: " << yvals[i] << endl;
         yvals_corr[i] = h_max_projections_corr.at(i)->GetXaxis()->GetBinCenter(maxBin_corr);
@@ -120,7 +122,6 @@ void doCalibration() {
 
     c1->SaveAs("plot_max.png", "PNG");
 
-    /*
     TCanvas *c2 = new TCanvas("c2", "c2", 1000, 700);
     c2->cd();
     gStyle->SetOptStat(0);
@@ -136,7 +137,7 @@ void doCalibration() {
     f1->Draw("same");
 
     // Fit line
-    TF1 *fit_corr = new TF1("fit_corr", "pol1", 0.05, h_max_corr->GetNbinsX() );
+    TF1 *fit_corr = new TF1("fit_corr", "pol1", 500, h_max_corr->GetNbinsX() );
     fit_corr->SetLineColor(kWhite);
     fit_corr->SetLineStyle(8);
 
@@ -148,7 +149,8 @@ void doCalibration() {
     g_corr->Fit("fit_corr", "R");
     g_corr->Draw("ep same");
 
-    c2->SaveAs("plot_finalCal_leading_corr.png", "PNG");
+    c2->SaveAs("plot_max_corr.png", "PNG");
+    /*
 
     TCanvas *c3 = new TCanvas("c3", "c3", 1000, 700);
     c3->cd();

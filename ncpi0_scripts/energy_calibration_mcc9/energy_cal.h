@@ -39,6 +39,30 @@
 // Ex: To project between 100 and 150 MeV, use (10, 15) as bin numbers
 std::vector<std::pair<int,int> > leadingProjBins() {
     std::vector<std::pair<int,int> > ranges;
+    //ranges.push_back(std::make_pair(2, 3) );
+    ranges.push_back(std::make_pair(3, 4) );
+    ranges.push_back(std::make_pair(4, 5) );
+    ranges.push_back(std::make_pair(5, 6) );
+    ranges.push_back(std::make_pair(6, 7) );
+    ranges.push_back(std::make_pair(7, 8) );
+    ranges.push_back(std::make_pair(8, 9) );
+    ranges.push_back(std::make_pair(9, 10) );
+    ranges.push_back(std::make_pair(10, 11) );
+    ranges.push_back(std::make_pair(11, 12) );
+    ranges.push_back(std::make_pair(12, 13) );
+    ranges.push_back(std::make_pair(13, 14) );
+    ranges.push_back(std::make_pair(14, 15) );
+    ranges.push_back(std::make_pair(15, 16) );
+    ranges.push_back(std::make_pair(16, 17) );
+    ranges.push_back(std::make_pair(17, 18) );
+    ranges.push_back(std::make_pair(18, 20) );
+    ranges.push_back(std::make_pair(20, 22) );
+    ranges.push_back(std::make_pair(22, 25) );
+    ranges.push_back(std::make_pair(25, 30) );
+    ranges.push_back(std::make_pair(30, 35) );
+    ranges.push_back(std::make_pair(35, 40) );
+    ranges.push_back(std::make_pair(40, 45) );
+    /*
     ranges.push_back(std::make_pair(20, 30) );
     ranges.push_back(std::make_pair(30, 40) );
     ranges.push_back(std::make_pair(40, 50) );
@@ -53,5 +77,6 @@ std::vector<std::pair<int,int> > leadingProjBins() {
     ranges.push_back(std::make_pair(180, 220) );
     ranges.push_back(std::make_pair(220, 300) );
     ranges.push_back(std::make_pair(300, 500) );
+    */
     return ranges;
 }

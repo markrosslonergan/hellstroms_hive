@@ -215,7 +215,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
 
             tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
-            TLegend *l0 = new TLegend(0.11,0.55,0.89,0.89);
+            TLegend *l0 = new TLegend(0.11,0.60,0.89,0.89);
             l0->SetNColumns(2);
             double NeventsStack = 0;
 
@@ -271,16 +271,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             pottex.SetNDC();
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-            pottex.DrawLatex(.60,.64, pot_draw.c_str());
+            pottex.DrawLatex(.50,.64, pot_draw.c_str());
 
 
 
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
