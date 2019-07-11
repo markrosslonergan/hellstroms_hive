@@ -7,3 +7,7 @@ dataset
 test
 tmva
 run
+*.exe
+*.root
+*.png
+*.pdf
