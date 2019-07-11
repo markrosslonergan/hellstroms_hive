@@ -294,10 +294,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE ");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
@@ -654,7 +654,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         pottex.DrawLatex(.7,.96, pot_draw.c_str());
 
-        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
+        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE");
+        //TText *pre = drawPrelim(0.12,0.92,"MicroBooNE - In Progress");
         pre->Draw();
 
         //cobs->cd(k+1);	
