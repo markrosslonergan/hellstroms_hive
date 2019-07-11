@@ -33,8 +33,6 @@
 class bdt_datamc{
 	public:
 	
-
-	
 		bdt_file* data_file;
 		bdt_stack *mc_stack;
 		std::string tag;

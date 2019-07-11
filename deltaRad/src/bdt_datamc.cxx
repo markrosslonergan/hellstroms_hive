@@ -158,6 +158,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             std::cout<<"2 "<<std::endl;
             tsum->SetMarkerSize(0);
             d0->SetMarkerSize(2);
+            d0->SetBinErrorOption(TH1::kPoisson);
             gStyle->SetEndErrorSize(10);
 
             cobs->cd();
