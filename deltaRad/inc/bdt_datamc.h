@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <fstream>
 /******** Our includes *****/
 
 #include  "bdt_file.h"
@@ -29,6 +30,7 @@
 #include "TMVA/Reader.h"
 #include "TFriendElement.h"
 #include "TStyle.h"
+#include "TGraphAsymmErrors.h"
 
 class bdt_datamc{
 	public:

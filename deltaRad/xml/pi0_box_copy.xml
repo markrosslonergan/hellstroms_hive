@@ -11,6 +11,7 @@
 <precut def = "(reco_shower_dEdx_plane2_nhits[0]>1 || reco_shower_dEdx_plane0_nhits[0]>1 || reco_shower_dEdx_plane1_nhits[0]>1)" name = "Shower dE/dx Plane Min Nhits"/>
 <!-- Stuff I added or edited -->
 <precut def = "reco_shower_energy_max[0]>10.&amp;&amp; reco_shower_energy_max[1]>10." name = "Shower Energy Cut" /> 
+<precut def="sqrt(2.0*(1.24288*reco_shower_energy_max[(reco_shower_ordered_energy_index[0])]+8.64122)*(1.24288*reco_shower_energy_max[(reco_shower_ordered_energy_index[1])]+8.64122)*(1.0-cos((acos(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])))))/1000 > 0.22" name = "Corrected Diphoton Mass Cut" />
 <!-- <precut def="reco_shower_conversion_distance[0]<200&amp;&amp;reco_shower_conversion_distance[1]<200" name="Shower Conversion Distance Cut"/> -->
 
 <!--

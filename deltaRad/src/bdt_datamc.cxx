@@ -43,6 +43,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
 
 int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, double c1, double c2){
 
+    std::cout << "In printPassingDataEvents" << std::endl;
     data_file->calcCosmicBDTEntryList(c1, c2);
     data_file->calcBNBBDTEntryList(c1, c2);
     data_file->setStageEntryList(3);
@@ -52,24 +53,61 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
     data_file->tvertex->Draw((">>"+fake).c_str(), data_file->getStageCuts(3,c1,c2).c_str() , "entrylist");
     TEntryList * fake_list = (TEntryList*)gDirectory->Get(fake.c_str());
 
-
+    std::cout << "Defining vars" << std::endl;
     int n_run_number = 0;
     int n_subrun_number = 0;
     int n_event_number = 0;
     double n_vertex_z =0;
-
+    std::vector<unsigned long> *reco_shower_ordered_energy_index = 0;
+    std::vector<double> *reco_shower_energy_max = 0;
+    std::vector<double> *reco_shower_dirx = 0;
+    std::vector<double> *reco_shower_diry = 0;
+    std::vector<double> *reco_shower_dirz = 0;
+    std::vector<double> *sim_shower_energy = 0;
+    
+    // Necessary for vectors, for some reason
+    TBranch *breco_shower_energy_max = 0;
+    TBranch *breco_shower_ordered_energy_index = 0;
+    TBranch *breco_shower_dirx = 0;
+    TBranch *breco_shower_diry = 0;
+    TBranch *breco_shower_dirz = 0;
+    
+    std::cout << "Setting branch addresses" << std::endl;
     data_file->tvertex->SetBranchAddress("run_number",    &n_run_number);
     data_file->tvertex->SetBranchAddress("subrun_number", &n_subrun_number);
     data_file->tvertex->SetBranchAddress("event_number",  &n_event_number);
     data_file->tvertex->SetBranchAddress("reco_vertex_z", &n_vertex_z);
 
+    data_file->tvertex->SetBranchAddress("reco_shower_ordered_energy_index", &reco_shower_ordered_energy_index, &breco_shower_ordered_energy_index);
+    data_file->tvertex->SetBranchAddress("reco_shower_energy_max", &reco_shower_energy_max, &breco_shower_energy_max);
+    data_file->tvertex->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx, &breco_shower_dirx);
+    data_file->tvertex->SetBranchAddress("reco_shower_diry", &reco_shower_diry, &breco_shower_diry);
+    data_file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz, &breco_shower_dirz);
+
     std::cout<<"Starting printPassingDataEvents() "<<std::endl;
 
+    double invar = 0;
+    double corr1 = 1.24288, corr2 = 8.64122; // From energy calibration script
+    std::ofstream f1("passing_runSubrun_list.txt");
+    std::ofstream f2("passing_kinematics.txt");
+    f2 << "Entry \t\t Run \t Sub \t Evt \t VertZ \t Opang \t Invar" <<std::endl;
+    f2 << "------------------------------------------------------------------------" << std::endl;
     for(int i=0;i < fake_list->GetN(); i++ ){
         data_file->tvertex->GetEntry( fake_list->GetEntry(i));
-        std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<" "<<n_vertex_z<<std::endl;
+        // Invariant mass using individual corrections
+        double opAng = reco_shower_dirx->at(0)*reco_shower_dirx->at(1)+
+                       reco_shower_diry->at(0)*reco_shower_diry->at(1)+
+                       reco_shower_dirz->at(0)*reco_shower_dirz->at(1);
+        double E1 = reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(0));
+        double E2 = reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(1));
+        invar = sqrt(2*(corr1*E1 + corr2)*(corr1*E2 + corr2)*(1 - opAng) );
+        f1 << n_run_number << "\t" << n_subrun_number << "\t" << n_event_number << std::endl; 
+        f2 << fake_list->GetEntry(i)<<"\t"<<n_run_number<<"\t"<<n_subrun_number<<"\t"<<n_event_number<<"\t"<<
+          n_vertex_z<<"\t"<<opAng<<"\t"<<invar<<std::endl;
     }
     std::cout<<"End printPassingDataEvents() "<<std::endl;
+    f1.close();
+    f2.close();
 
 
     return 0;
@@ -344,13 +382,65 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             TH1* ratpre = (TH1*)d0->Clone(("ratio_"+stage_names.at(s)).c_str());
             ratpre->Divide(rat_denom);		
 
+            std::vector<double> x;
+            std::vector<double> y;
+            for(int b=1; b<d0->GetNbinsX()+1;b++){
+                double is_zero = rat_denom->GetBinContent(b);
+                if(is_zero!=0.0){
+                    y.push_back(d0->GetBinContent(b)/is_zero);
+                    x.push_back(d0->GetBinCenter(b));
+                }
+            }
+
+            std::vector<double> err_x_left(x.size(),0);
+            std::vector<double> err_x_right(x.size(),0);
+            std::vector<double> err_y_high(x.size(),0);
+            std::vector<double> err_y_low(x.size(),0);
+
+
+            for(int i=0; i<x.size(); i++){
+                double is_zero = rat_denom->GetBinContent(i+1);
+                if(is_zero!=0.0){
+                    err_x_left[i] = d0->GetBinWidth(i+1)/2.0;
+                    err_x_right[i] = d0->GetBinWidth(i+1)/2.0;
+
+                    err_y_high[i] = (d0->GetBinErrorUp(i+1))/is_zero;
+                    err_y_low[i] =  (d0->GetBinErrorLow(i+1))/is_zero;
+                }
+                //probably need a special case for if data is zero
+            }
+
+
+            TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_low[0],&err_y_high[0]);
+            //TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_high[0],&err_y_low[0]);
+            /*
+            gr->Divide(d0,rat_denom,"pois");
+            gr->Divide(d0,tsum,"pois");
+            gr->SetLineWidth(1);
+            ratpre->Divide(rat_denom);    
+            */
+
+            gr->SetLineWidth(1);
+            //ratpre->Divide(rat_denom);    
+
             ratpre->SetFillColor(kGray+1);
             ratpre->SetMarkerStyle(20);
             ratpre->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
 
             ratpre->SetFillStyle(3144);
+            ratpre->SetFillColor(kGray + 3);
+            //ratpre->Draw("E1 same");
+            ratpre->Draw("same P0");
+            gr->Draw("P same");   
+            gr->DrawClone("same e0"); 
+
+            //ratpre->SetFillColor(kGray+1);
+            //ratpre->SetMarkerStyle(20);
+            //ratpre->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
+
+            //ratpre->SetFillStyle(3144);
             //ratpre->SetFillColor(kGray + 3);
-            ratpre->Draw("E1 same");	
+            //ratpre->Draw("E1 same");	
 
             ratpre->SetLineColor(kBlack);
             ratpre->SetTitle("");
