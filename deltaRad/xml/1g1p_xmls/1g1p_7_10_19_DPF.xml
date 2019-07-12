@@ -63,6 +63,7 @@
     <var def = "reco_shower_dEdx_amalgamated[0]" binning = "(24,0,6.5)" unit = "median shower de/dx amalgamated [mev/cm]" type="d" spectator="true"/>
 
     <var def = "reco_shower_energy_max[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy [GeV]" type="d" spectator="false"/>
+    <var def = "(1.24288 * reco_shower_energy_max[0]+ 8.64122)/1000.0" binning = "(24,0,1.0)" unit = "Corrected Reconstructed Shower Energy [GeV]" type="d" spectator="false"/>
     <var def = "reco_shower_energy_plane0[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 0 [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane1[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 1 [GeV]" type="d" spectator="true"/>
     <var def = "reco_shower_energy_plane2[0]/1000.0" binning = "(24,0,1.0)" unit = "Reconstructed Shower Energy Plane 2 [GeV]" type="d" spectator="true"/>
@@ -128,7 +129,10 @@
     <var def = "reco_track_spacepoint_principal0[0]" binning = "(24,0,1)" unit = "Recontstructed Track Spacepoint Principal0" type = "d" spectator = "true"/>
     <!--    <var def = "sqrt(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,0.938,1.85)" unit = "Invariant Mass of Photon-Proton Pair [GeV]" type  = "d" spectator = "true"/>
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" spectator = "true" /> -->
-    <var def = "sqrt(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,0.95,1.45)" unit = "Invariant Mass of Photon-Proton Pair [GeV]" type  = "d" spectator = "true"/>
+    <var def = "sqrt(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,0.95,1.55)" unit = "Invariant Mass of Photon-Proton Pair [GeV]" type  = "d" spectator = "true"/>
+
+    <var def = "sqrt(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*((1.24288 * reco_shower_energy_max[0]+ 8.64122)*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*((1.24288 * reco_shower_energy_max[0]+ 8.64122)*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(24,0.95,1.55)" unit = "Invariant Mass of Photon-Proton Pair (Corrected) [GeV]" type  = "d" spectator = "true"/>
+
 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" spectator = "true" /> 
     <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" spectator = "true" /> 

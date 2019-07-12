@@ -217,7 +217,8 @@ int bdt_response::plot_bdt_response(TFile *fout){
     latex.SetNDC();
     latex.DrawLatex(.15,.433,bdt_sig->topo_name.c_str());
 
-    TText *pre = drawPrelim(0.13,0.86,0.1,"MicroBooNE Simulation - In Progress");
+    TText *pre = drawPrelim(0.13,0.86,0.1,"MicroBooNE");
+    // TText *pre = drawPrelim(0.13,0.86,0.1,"MicroBooNE Simulation - In Progress");
     pre->Draw();
 
 

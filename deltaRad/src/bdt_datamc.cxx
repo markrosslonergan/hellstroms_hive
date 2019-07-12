@@ -78,8 +78,6 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
     return 0;
 }
 
-
-
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
     // NEW ONE
     double plot_pot=data_file->pot;

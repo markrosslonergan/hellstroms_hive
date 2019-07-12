@@ -110,7 +110,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			std::string pot_draw = to_string_prec(plot_pot/1e19,1)+"e19 POT";
 			pottensel.DrawLatex(.7,.89, pot_draw.c_str());
 
-			TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
+			TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation ");
+	        //TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 			tsel->Draw();
 
 
@@ -315,7 +316,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	std::string pot_draw_sel = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottensel.DrawLatex(.7,.89, pot_draw_sel.c_str());
 
-	TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
+	TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation");
+	//TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 	tsel->Draw();
 
 
@@ -373,7 +375,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	pottenpre.DrawLatex(.7,.89, pot_draw_pre.c_str());
 
 
-	TText *tpre = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
+	TText *tpre = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation ");
+//	TText *tpre = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 	tpre->Draw();
 
 
@@ -432,7 +435,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	std::string pot_draw_bdt1 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenbdt1.DrawLatex(.7,.89, pot_draw_bdt1.c_str());
 
-	TText *tbdt1 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
+	TText *tbdt1 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation");
+	//TText *tbdt1 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 	tbdt1->Draw();
 
 
@@ -495,7 +499,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 	std::string pot_draw_bdt2 = to_string_prec(plot_pot/1e20,1)+"e20 POT";
 	pottenbdt2.DrawLatex(.7,.89, pot_draw_bdt2.c_str());
 
-	TText *tbdt2 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
+	TText *tbdt2 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation");
+	//TText *tbdt2 = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
 	tbdt2->Draw();
 
 
