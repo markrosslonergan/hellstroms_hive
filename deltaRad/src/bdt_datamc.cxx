@@ -395,7 +395,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
             TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_low[0],&err_y_high[0]);
-        //    TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_high[0],&err_y_low[0]);
+            //    TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_high[0],&err_y_low[0]);
 
 
 
@@ -617,7 +617,9 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
 
+        //data_th1s.at(k)->SetBinErrorOption(TH1::kPoisson);
         data_th1s.at(k)->Rebin(data_rebin);
+        data_th1s.at(k)->SetBinErrorOption(TH1::kPoisson);
         data_th1s.at(k)->SetMarkerStyle(20);
         data_th1s.at(k)->SetLineColor(kBlack);
         data_th1s.at(k)->Draw("same E1");
@@ -701,19 +703,68 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         ratunit->GetYaxis()->SetNdivisions(505);
 
         TH1* ratpre = (TH1*)data_th1s.at(k)->Clone(("ratio_"+stage_name.at(k)).c_str());
-        ratpre->Divide(rat_denom);		
+        ratpre->Divide(rat_denom);	
 
+        std::vector<double> x;
+        std::vector<double> y;
+        for(int b=1; b<d0->GetNbinsX()+1;b++){
+            double is_zero = rat_denom->GetBinContent(b);
+            if(is_zero!=0.0){
+                y.push_back(d1->GetBinContent(b)/is_zero);
+                x.push_back(d1->GetBinCenter(b));
+            }
+
+        }
+
+        //std::vector<double> err(x.size(),0);
+        // TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err[0],&err[0],&err[0],&err[0]);
+
+        std::vector<double> err_x_left(x.size(),0);
+        std::vector<double> err_x_right(x.size(),0);
+        std::vector<double> err_y_high(x.size(),0);
+        std::vector<double> err_y_low(x.size(),0);
+
+
+        for(int i=0; i<x.size(); i++){
+            double is_zero = rat_denom->GetBinContent(i+1);
+            if(is_zero!=0.0){
+                err_x_left[i] = d1->GetBinWidth(i+1)/2.0;
+                err_x_right[i] = d1->GetBinWidth(i+1)/2.0;
+
+                err_y_high[i] = (d1->GetBinErrorUp(i+1))/is_zero;
+                err_y_low[i] =  (d1->GetBinErrorLow(i+1))/is_zero;
+            }
+
+            //probably need a special case for if data is zero
+            //
+        }
+
+
+        TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_low[0],&err_y_high[0]);
+
+        gr->SetLineWidth(1);
+        //  ratpre->Divide(rat_denom);
         ratpre->SetFillColor(kGray+1);
         ratpre->SetMarkerStyle(20);
         ratpre->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
 
         ratpre->SetFillStyle(3144);
-        ratpre->SetFillColor(kGray + 3);
+        // ratpre->SetFillColor(kGray + 3);
         // ratpre->SetFillStyle(3354);
         // gStyle->SetHatchesLineWidth(2);
         //gStyle->SetHatchesSpacing(1);
 
-        ratpre->Draw("E1 same");	
+        // ratpre->Draw("E1 same");	
+
+        ratpre->Draw("same P0");
+        //gr->Draw("P same");
+        //gr->DrawClone("same e0");
+
+        //gr->SetMarkerColor(4);
+       // gr->SetMarkerStyle(20);
+
+       // gr->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
+     //   gr->Draw("same AP0");
 
         ratpre->SetLineColor(kBlack);
         ratpre->SetTitle("");
