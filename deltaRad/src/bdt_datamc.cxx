@@ -90,7 +90,7 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
     double corr1 = 1.24288, corr2 = 8.64122; // From energy calibration script
     std::ofstream f1("passing_runSubrun_list.txt");
     std::ofstream f2("passing_kinematics.txt");
-    f2 << "Entry \t\t Run \t Sub \t Evt \t VertZ \t Opang \t Invar" <<std::endl;
+    f2 << "Run \t Sub \t Evt \t E1 \t E2 \t VertZ \t Opang \t Invar" <<std::endl;
     f2 << "------------------------------------------------------------------------" << std::endl;
     for(int i=0;i < fake_list->GetN(); i++ ){
         data_file->tvertex->GetEntry( fake_list->GetEntry(i));
@@ -102,8 +102,8 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
         double E2 = reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(1));
         invar = sqrt(2*(corr1*E1 + corr2)*(corr1*E2 + corr2)*(1 - opAng) );
         f1 << n_run_number << "\t" << n_subrun_number << "\t" << n_event_number << std::endl; 
-        f2 << fake_list->GetEntry(i)<<"\t"<<n_run_number<<"\t"<<n_subrun_number<<"\t"<<n_event_number<<"\t"<<
-          n_vertex_z<<"\t"<<opAng<<"\t"<<invar<<std::endl;
+        f2 << n_run_number<<"\t"<<n_subrun_number<<"\t"<<n_event_number<<"\t"<<
+          E1 << "\t" << E2 << "\t" << n_vertex_z<<"\t"<<opAng<<"\t"<<invar<<std::endl;
     }
     std::cout<<"End printPassingDataEvents() "<<std::endl;
     f1.close();
