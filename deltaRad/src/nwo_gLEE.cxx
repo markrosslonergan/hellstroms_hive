@@ -28,7 +28,6 @@ int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, s
 int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
-    std::string dir13 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v13/";
     std::string dir17 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v17/";
     std::string dir = dir17;
 
@@ -192,31 +191,21 @@ int main (int argc, char *argv[]){
     bdt_flow nue_flow(topological_cuts, "fabs(mctruth_lepton_pdg)==11 && mctruth_cc_or_nc==0", vec_precuts, postcuts, bdt_infos);
     bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts, bdt_infos);
 
+
+    //***************************************************************************************/
     std::cout<<"Defining all our bdt_files."<<std::endl;
-    bdt_file *training_signal    = new bdt_file(dir13, "ncdeltarad_overlay_run_3_v13.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_other = new bdt_file(dir13, "ncdeltarad_overlay_v13.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
-    //signal_other->fillstyle = 3390;
-
-    bdt_file *dirt = new bdt_file(dir13,"dirt_overlay_v13.1.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
-
-
-    //    bdt_file *nueintrinsic = new bdt_file(dir,"nueintrinsic_overlay_v12.2.root","NueIntrinsic","hist","singlephoton/",kCyan, nue_flow);
-    bdt_file *ncpi0    = new bdt_file(dir13, "ncpi0_overlay_v13.1.root", "NCpi0",	  "hist","singlephoton/",  kBlue-6, ncpi0_bkg_flow);
-
-    //v13
-    bdt_file *bnb = new bdt_file(dir13, "bnb_overlay_run1_v13.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, other_bkg_flow);
-    bdt_file *OnBeamData    = new bdt_file(dir13, "data5e19_v13.1.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *OffBeamData    = new bdt_file(dir13, "bnbext_run1_v13.1.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
-
-    bdt_file *d17 = new bdt_file(dir17,"data5e19_run1_v17.0.root","D17","hist","singlephoton/",kBlack,data_flow);
-    bdt_file *e17 = new bdt_file(dir17,"bnbext_run1_v17.0.root","E17","hist","singlephoton/",kBlack,data_flow);
+    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
+    bdt_file *dirt = new bdt_file(dir,"dirt_overlay_run1_v17.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
+    bdt_file *ncpi0    = new bdt_file(dir, "ncpi0_overlay_run1_v17.0.root", "NCpi0",	  "hist","singlephoton/",  kBlue-6, ncpi0_bkg_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_run1_v17.0.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, other_bkg_flow);
+    //bdt_file *nueintrinsic = new bdt_file(dir,"nueintrinsic_overlay_v12.2.root","NueIntrinsic","hist","singlephoton/",kCyan, nue_flow);
+    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_run1_v17.0.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v17.0.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
 
     std::vector<bdt_file*> bdt_files = {bnb, OnBeamData, OffBeamData,dirt,signal,signal_other,training_signal};
-
-    e17->makeRunSubRunList();
-    return 0;
 
     //The LEE signal is bigger than the SM signal by this factor
     signal->scale_data =3.0; 
@@ -224,11 +213,8 @@ int main (int argc, char *argv[]){
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
-    //v13.1
-    OnBeamData->setAsOnBeamData(3.535e+19);
-    OffBeamData->setAsOffBeamData(3.535e+19, 7827989.0, 60306440.0);
-    //OffBeamData->setAsOffBeamData(3.535e+19, 7827989.0, 60306440.0+147811120.0);
-
+    OBeamData->setAsOnBeamData(3.746e+19); //tor860_wcut
+    OffBeamData->setAsOffBeamData(3.746e+19, 8295281.0, 61202687.0 );  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
