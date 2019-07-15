@@ -252,8 +252,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             double NdatEvents = data_file->GetEntries()*(plot_pot/data_file->pot )*data_file->scale_data;
 
-            //d0->Scale(NeventsStack/NdatEvents);
-            d0->Draw("same E1");
+            d0->SetBinErrorOption(TH1::kPoisson);
+            d0->Draw("same E1 E0");
+
 
 
            // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
@@ -563,7 +564,8 @@ int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
 
             double NdatEvents = data_file->GetEntries()*(plot_pot/data_file->pot )*data_file->scale_data;
 
-            d0->Draw("same E1");
+            d0->SetBinErrorOption(TH1::kPoisson);
+            d0->Draw("same E1 E0");
 
            // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
@@ -655,7 +657,52 @@ int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
             ratunit->GetYaxis()->SetNdivisions(505);
 
             TH1* ratpre = (TH1*)d0->Clone(("ratio_"+stage_names.at(s)).c_str());
+
+    
+            std::vector<double> x;
+            std::vector<double> y;
+            for(int b=1; b<d0->GetNbinsX()+1;b++){
+                double is_zero = rat_denom->GetBinContent(b);
+                if(is_zero!=0.0){
+                    y.push_back(d0->GetBinContent(b)/is_zero);
+                    x.push_back(d0->GetBinCenter(b));
+                }
+            
+            }
+            
+            std::vector<double> err_x_left(x.size(),0);
+            std::vector<double> err_x_right(x.size(),0);
+            std::vector<double> err_y_high(x.size(),0);
+            std::vector<double> err_y_low(x.size(),0);
+    
+
+            for(int i=0; i<x.size(); i++){
+                double is_zero = rat_denom->GetBinContent(i+1);
+                if(is_zero!=0.0){
+                    err_x_left[i] = d0->GetBinWidth(i+1)/2.0;
+                    err_x_right[i] = d0->GetBinWidth(i+1)/2.0;
+            
+                    err_y_high[i] = (d0->GetBinErrorUp(i+1))/is_zero;
+                    err_y_low[i] =  (d0->GetBinErrorLow(i+1))/is_zero;
+                }
+
+                //probably need a special case for if data is zero
+                //
+            }
+            
+            
+            TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_high[0],&err_y_low[0]);
+
+            //gr->Divide(d0,tsum,"pois");
+            //gr->Divide(d0,rat_denom,"pois");
+    
+            gr->SetLineWidth(1);
             ratpre->Divide(rat_denom);		
+
+  //              ratpre->
+//
+  //          }
+
 
             ratpre->SetFillColor(kGray+1);
             ratpre->SetMarkerStyle(20);
@@ -663,7 +710,8 @@ int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
 
             ratpre->SetFillStyle(3144);
             //ratpre->SetFillColor(kGray + 3);
-           ratpre->Draw("E1 same");	
+            ratpre->Draw("same P0");	
+            gr->Draw("P same");
 
             ratpre->SetLineColor(kBlack);
             ratpre->SetTitle("");

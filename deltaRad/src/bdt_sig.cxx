@@ -99,18 +99,15 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
         std::cout<<bdt_infos[i].identifier<<" min: "<<minvals[i]<<" "<<maxvals[i]<<std::endl;
     }
 
-    double scal_up = 1.01;
-    double scal_down = 0.99;
+    double scal_up = 1.05;
+    double scal_down = 0.95;
 //    std::vector<double> cval = {0.469232, 0.575191, 0.528824, 0.325369};
-    double fcoscut = 0.461523;
-    double fbnbcut = 0.565039;
+    double fcoscut = 0.465128;
+    double fbnbcut = 0.586543; //0.464029 0.558237
 
-    //this is for no SSS
-    fcoscut = 0.340845;
-    fbnbcut = 0.565182;
 
     std::vector<double> cval = {fcoscut,fbnbcut};
-    if(true){
+    if(false){
             minvals[0]=cval[0]*scal_down;
             maxvals[0]=cval[0]*scal_up;
            
@@ -138,22 +135,23 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
   }
 
     TRandom3 *rangen  = new TRandom3(0);  
-
+    std::cout<<"Starting"<<std::endl;
     for(int t=0; t < 10000; t++){
 
             std::vector<double> d (bdt_infos.size(),0);
             for(int i=0; i< bdt_infos.size(); i++){
                 d[i] = rangen->Uniform(minvals[i], maxvals[i]);
             }
-
             double impact = rangen->Uniform(0,16);
-            //std::string s_impact = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>"+std::to_string(impact)+") ";
-            std::string s_impact = "1";//"((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>"+std::to_string(impact)+") ";
-			double signal = 0;
+//            double dist = rangen->Uniform(0,16);
+            //std::string s_impact = "((sss_num_candidates==0) ||  Min$(sss_candidate_impact_parameter)>"+std::to_string(impact) +") ";
+            std::string s_impact = "((sss_num_candidates==0)|| Sum$(sss_candidate_impact_parameter<"+std::to_string(impact)+ "&& sss_candidate_min_dist<70.0)==0 )";
+			
+            double signal = 0;
 			double background = 0;
 			std::vector<double> bkg;	
-
-			for(size_t i = 0; i < sig_files.size(); ++i) {
+		    	
+            for(size_t i = 0; i < sig_files.size(); ++i) {
 				double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
 			
 				std::string bnbcut = sig_files.at(i)->getStageCuts(1+bdt_infos.size(), d)+"&&"+s_impact; 
@@ -161,16 +159,19 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
 
 			}
 
+            std::cout<<"d"<<std::endl;
 			for(size_t i = 0; i < bkg_files.size(); ++i) {
 				double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
-		
-	
+
+                
 				std::string bnbcut = bkg_files.at(i)->getStageCuts(1+bdt_infos.size(),d)+"&&"+s_impact; 
-				bkg.push_back(	bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
+           //     std::cout<<bnbcut<<std::endl;
+				bkg.push_back(bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
 
 				background += bkg.back();
 			}
 
+            std::cout<<"e"<<std::endl;
 
 			double significance =0;
 			if(signal==0){
@@ -184,7 +185,7 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
 				//break;
 			}
 
-
+            std::cout<<"f"<<std::endl;
 			if(significance > best_significance) {
 				best_significance = significance;
 				best_mva = d;
