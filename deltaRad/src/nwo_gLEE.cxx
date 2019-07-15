@@ -213,7 +213,7 @@ int main (int argc, char *argv[]){
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
-    OBeamData->setAsOnBeamData(3.746e+19); //tor860_wcut
+    OnBeamData->setAsOnBeamData(3.746e+19); //tor860_wcut
     OffBeamData->setAsOffBeamData(3.746e+19, 8295281.0, 61202687.0 );  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -887,7 +887,7 @@ return 0;
 
 
 }*/
-else if(mode_option == "vars"){
+}else if(mode_option == "vars"){
 
 	 if (access("vars",F_OK) == -1){
 	   	 mkdir("vars",0777);//Create a folder for pdf.

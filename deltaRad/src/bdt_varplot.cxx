@@ -100,7 +100,7 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
             sig->SetMaximum(max_height*1.3);
 
 
-            c_var->Print(("var/"+input_bdt_info.identifier+"_"+v.safe_unit+"_stage_"+std::to_string(j)+".pdf").c_str(),"pdf");
+            c_var->Print(("vars/"+input_bdt_info.identifier+"_"+v.safe_unit+"_stage_"+std::to_string(j)+".pdf").c_str(),"pdf");
 
 
             delete sig;
