@@ -37,10 +37,10 @@ int main (int argc, char *argv[]){
 
     int number = -1;
     bool response_only = false;
-    int sbnfit_stage = 1;
     double what_pot = -1;
     int which_file = -1;
     int which_bdt = -1;
+    int which_stage = -1;
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -50,7 +50,7 @@ int main (int argc, char *argv[]){
         {"xml"	,		required_argument,	0, 'x'},
         {"topo_tag",	required_argument,	0, 't'},
         {"bdt",		    required_argument,	0, 'b'},
-        {"sbnfit",		required_argument,	0, 's'},
+        {"stage",		required_argument,	0, 's'},
         {"help",		required_argument,	0, 'h'},
         {"pot",		    required_argument,	0, 'p'},
         {"number",		required_argument,	0, 'n'},
@@ -91,8 +91,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"Setting POT to : "<<what_pot<<std::endl;
                 break;
             case 's':
-                mode_option = "sbnfit";
-                sbnfit_stage = strtod(optarg,NULL);
+                which_stage = strtod(optarg,NULL);
                 break;
             case 't':
                 topo_tag = optarg;
@@ -113,11 +112,12 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t\t\t\t datamc:"<<std::endl;
                 std::cout<<"\t\t\t\t eff:"<<std::endl;
                 std::cout<<"\t\t\t\t tplot:"<<std::endl;
+                std::cout<<"\t\t\t\t sbnfit: Makes a file at stage S (se set with --stage S) for file set with --file"<<std::endl;
                 std::cout<<"\t-b\t--bdt\t\t Run only N BDT training/app, or BDT specific option"<<std::endl;
                 std::cout<<"\t-f\t--file\t\t Which file in bdt_files you want to run over, for file specifc options."<<std::endl;
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag"<<std::endl;
-                std::cout<<"\t-s\t--sbnfit\t\tProduce a sbnfit-file for file 'file' at stage S"<<std::endl;
+                std::cout<<"\t-s\t--stage\t\tSet what stage to do things at."<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
                 return 0;
         }
@@ -160,6 +160,8 @@ int main (int argc, char *argv[]){
     std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
     std::string pmass = "0.938272";
     std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-10 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
+
+
 
     std::vector<std::string> v_denom;
     v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.04)==1"};
@@ -271,8 +273,8 @@ int main (int argc, char *argv[]){
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-    double fcoscut = 0.461244;
-    double fbnbcut = 0.586056;
+    double fcoscut = 0.539569;
+    double fbnbcut = 0.599827;
     std::vector<double> fcuts = {fcoscut,fbnbcut}; 
 
     //===========================================================================================
@@ -627,20 +629,21 @@ int main (int argc, char *argv[]){
     else if(mode_option == "eff"){
 
         std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==1"};
-
-        bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcuts, 13.2e20,false);
+        if(which_stage==-1)which_stage=3;
+        bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcuts, 13.2e20,false,which_stage);
 
 
 
     }else if(mode_option == "sbnfit"){
         if(which_file==-1) which_file ==0;
+        if(which_stage==-1) which_stage ==1;
 
         bdt_file * file = bdt_files.at(which_file);
 
         //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
         file->teventweight->AddFriend(file->tvertex);
 
-        std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(sbnfit_stage)+"_"+file->tag+".root";
+        std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+file->tag+".root";
 
         std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
         TFile* f_sbnfit = new TFile(output_file_name.c_str(),"recreate");
@@ -651,8 +654,8 @@ int main (int argc, char *argv[]){
         cdtof->cd();    
 
 
-        std::string sbnfit_cuts = file->getStageCuts(sbnfit_stage,fcuts);
-        //std::string sbnfit_cuts = "mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0 >0"; //file->getStageCuts(sbnfit_stage,fcoscut,fbnbcut);
+        std::string sbnfit_cuts = file->getStageCuts(which_stage,fcuts);
+        //std::string sbnfit_cuts = "mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0 >0"; //file->getStageCuts(which_stage,fcoscut,fbnbcut);
 
         std::cout<<"Copying vertex tree"<<std::endl;
         TTree * t_sbnfit_tree = (TTree*)file->tvertex->CopyTree(sbnfit_cuts.c_str());

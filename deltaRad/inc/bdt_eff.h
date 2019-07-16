@@ -44,7 +44,7 @@ class bdt_efficiency{
         bdt_efficiency(bdt_file* filein, std::vector<std::string> denomin, std::vector<std::string> topoin, std::vector<std::string> precuts, double c1, double c2, double p);
         bdt_efficiency(bdt_file* filein, std::vector<std::string> denomin, std::vector<std::string> topoin, std::vector<std::string> precuts, std::vector<double>, double p);
 
-        bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool);
+        bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool,int);
 };
 
 

@@ -633,7 +633,7 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
 
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
-    this->tvertex->Draw((varx.name+":"+vary.name+">>"+nam+"(16,0.0,0.8,16,0.0,0.8)").c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+    this->tvertex->Draw((varx.name+":"+vary.name+">>"+nam+"(30,0.0,0.6,30,0.0,0.6)").c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH2* th2 = (TH2*)gDirectory->Get(nam.c_str()) ;
     //th1->Sumw2();

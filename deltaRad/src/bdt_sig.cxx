@@ -159,7 +159,6 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
 
 			}
 
-            std::cout<<"d"<<std::endl;
 			for(size_t i = 0; i < bkg_files.size(); ++i) {
 				double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
 
@@ -171,7 +170,6 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
 				background += bkg.back();
 			}
 
-            std::cout<<"e"<<std::endl;
 
 			double significance =0;
 			if(signal==0){
@@ -185,7 +183,6 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
 				//break;
 			}
 
-            std::cout<<"f"<<std::endl;
 			if(significance > best_significance) {
 				best_significance = significance;
 				best_mva = d;
