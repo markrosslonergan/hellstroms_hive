@@ -79,6 +79,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     return this->plotStacks(ftest,vars,{c1,c2});
 }
 
+
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
 
 
@@ -691,7 +692,7 @@ int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
             }
             
             
-            TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_high[0],&err_y_low[0]);
+            TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_low[0],&err_y_high[0]);
 
             //gr->Divide(d0,tsum,"pois");
             //gr->Divide(d0,rat_denom,"pois");
@@ -699,19 +700,14 @@ int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
             gr->SetLineWidth(1);
             ratpre->Divide(rat_denom);		
 
-  //              ratpre->
-//
-  //          }
-
-
             ratpre->SetFillColor(kGray+1);
             ratpre->SetMarkerStyle(20);
             ratpre->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
 
             ratpre->SetFillStyle(3144);
             //ratpre->SetFillColor(kGray + 3);
-            ratpre->Draw("same P0");	
-            gr->Draw("P same");
+            ratpre->Draw("same P0 hist");	
+            gr->Draw("E1 same");
 
             ratpre->SetLineColor(kBlack);
             ratpre->SetTitle("");
