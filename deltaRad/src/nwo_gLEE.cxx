@@ -164,7 +164,7 @@ int main (int argc, char *argv[]){
 
 
     std::vector<std::string> v_denom;
-    v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.04)==1"};
+    v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.02)==1"};
 
     std::string signal_definition = v_denom[0];
     for(int i=1; i< v_denom.size();i++){
@@ -273,8 +273,11 @@ int main (int argc, char *argv[]){
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-    double fcoscut = 0.539569;
-    double fbnbcut = 0.599827;
+    //0.510918 0.632981
+    //
+    //0.482015 0.603554
+    double fcoscut = 0.4;
+    double fbnbcut = 0.603554;
     std::vector<double> fcuts = {fcoscut,fbnbcut}; 
 
     //===========================================================================================
