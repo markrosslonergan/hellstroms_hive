@@ -164,8 +164,13 @@ int main (int argc, char *argv[]){
 
 
     std::vector<std::string> v_denom;
-    v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.02)==1"};
 
+    if (topo_tag =="notrack"){
+         v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.02)==0"};
+    }else{
+         v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.02)==1"};
+  
+    }
     std::string signal_definition = v_denom[0];
     for(int i=1; i< v_denom.size();i++){
         signal_definition += "&&" + v_denom[i];
@@ -276,8 +281,9 @@ int main (int argc, char *argv[]){
     //0.510918 0.632981
     //
     //0.482015 0.603554
-    double fcoscut = 0.4;
-    double fbnbcut = 0.603554;
+    //0.540533 0.587009
+    double fcoscut = 0.540533;
+    double fbnbcut = 0.587009;
     std::vector<double> fcuts = {fcoscut,fbnbcut}; 
 
     //===========================================================================================
@@ -802,14 +808,14 @@ std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, ncpi0, nueint
 std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
 fsig->Close();
 
-
+*/
 }else if(mode_option == "stack"){
 bdt_stack histogram_stack(analysis_tag+"_stack");
 histogram_stack.plot_pot = 13.2e20;
 histogram_stack.addToStack(signal);
 histogram_stack.addToStack(signal_other);
 histogram_stack.addToStack(bnb);
-histogram_stack.addToStack(nueintrinsic);
+//histogram_stack.addToStack(nueintrinsic);
 histogram_stack.addToStack(ncpi0);
 //Add OffBeamData but change the color and style first
 OffBeamData->col;	
@@ -833,11 +839,11 @@ std::vector<bdt_variable> v_tmp = {vars.at(number)};
 histogram_stack.plotStacks(ftest,v_tmp,fcoscut,fbnbcut);
 }
 }else{
-histogram_stack.plotBDTStacks(ftest, bnb_bdt_info, fcoscut, fbnbcut);
-histogram_stack.plotBDTStacks(ftest, cosmic_bdt_info, fcoscut, fbnbcut);
+histogram_stack.plotBDTStacks(ftest, bdt_infos[1], fcoscut, fbnbcut);
+histogram_stack.plotBDTStacks(ftest, bdt_infos[0], fcoscut, fbnbcut);
 return 0;
 }
-
+/*
 }else if(mode_option == "sbnfit"){
 if(number==-1) number ==0;
 
