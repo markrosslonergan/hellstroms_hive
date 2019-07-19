@@ -99,11 +99,11 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
         std::cout<<bdt_infos[i].identifier<<" min: "<<minvals[i]<<" "<<maxvals[i]<<std::endl;
     }
 
-    double scal_up = 1.05;
-    double scal_down = 0.95;
+    double scal_up = 1.2;
+    double scal_down = 0.8;
 //    std::vector<double> cval = {0.469232, 0.575191, 0.528824, 0.325369};
-    double fcoscut = 0.465128;
-    double fbnbcut = 0.586543; //0.464029 0.558237
+    double fcoscut = 0.5;
+    double fbnbcut = 0.6; //0.464029 0.558237
 
 
     std::vector<double> cval = {fcoscut,fbnbcut};
@@ -142,10 +142,11 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
             for(int i=0; i< bdt_infos.size(); i++){
                 d[i] = rangen->Uniform(minvals[i], maxvals[i]);
             }
-            double impact = rangen->Uniform(0,16);
+            double impact = rangen->Uniform(0,18);
 //            double dist = rangen->Uniform(0,16);
             //std::string s_impact = "((sss_num_candidates==0) ||  Min$(sss_candidate_impact_parameter)>"+std::to_string(impact) +") ";
             std::string s_impact = "((sss_num_candidates==0)|| Sum$(sss_candidate_impact_parameter<"+std::to_string(impact)+ "&& sss_candidate_min_dist<70.0)==0 )";
+            //std::string s_impact = "((sss_num_candidates==0)|| Min$(sss_candidate_impact_parameter/sss_candidate_min_dist)<"+std::to_string(impact)+ ")";
 			
             double signal = 0;
 			double background = 0;
