@@ -273,8 +273,9 @@ int main (int argc, char *argv[]){
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-    double fcoscut = 0.539569;
-    double fbnbcut = 0.599827;
+    double fcoscut = 0.554892;
+    double fbnbcut = 0.582304;
+    //sig.3:ccut: 0.554892 0.582304  #signal: 24.8171 #bkg: 45.9445 ||  bnb: 45.9445 cos: 0 || impact 14.4716 3.66129
     std::vector<double> fcuts = {fcoscut,fbnbcut}; 
 
     //===========================================================================================
@@ -630,7 +631,7 @@ int main (int argc, char *argv[]){
 
         std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==1"};
         if(which_stage==-1)which_stage=3;
-        bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcuts, 13.2e20,false,which_stage);
+        bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcuts, 3.7e19,false,which_stage);
 
 
 

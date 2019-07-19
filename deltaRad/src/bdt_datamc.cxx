@@ -189,6 +189,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
             if (s==2){
                 max_modifier = 2.0;
+            }if(s==3){
+                max_modifier=4.3;
             }
 
             if(var.is_logplot == true){
@@ -215,7 +217,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->GetYaxis()->SetTitle("Events");
             stk->GetYaxis()->SetTitleSize(0.05);
             stk->GetYaxis()->SetTitleOffset(0.9);
-            stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
+            stk->SetMaximum(std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
             stk->SetMinimum(min_val);
             tsum->DrawCopy("Same E2");
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
@@ -371,7 +373,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
             t->SetTextSize(0.12);
-            t->Draw("same");
+            //t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
             //var_precut.front()->GetYaxis()->SetTitle("Events");
@@ -692,6 +694,7 @@ int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
             }
             
             
+            //TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_high[0],&err_y_low[0]);
             TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_low[0],&err_y_high[0]);
 
             //gr->Divide(d0,tsum,"pois");
@@ -840,7 +843,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 
 
-        if(is_bdt_variable) pad0top->SetLogy();
+        if(var.is_logplot || is_bdt_variable) pad0top->SetLogy();
         pad0top->SetBottomMargin(0); // Upper and lower plot are joined
         pad0top->Draw();             // Draw the upper pad: pad2top
         pad0top->cd();               // pad2top becomes the current pad
@@ -858,7 +861,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         double max_modifier = 1.9;
         double min_val = 0.01;
-        if(is_bdt_variable) {
+        if(is_bdt_variable || var.is_logplot) {
             max_modifier = 50.0;
             min_val = 0.1;
         }
