@@ -5,7 +5,7 @@
 <precut def = "(reco_vertex_x > 10 &amp;&amp; reco_vertex_x < 246 &amp;&amp; reco_vertex_y > -107 &amp;&amp; reco_vertex_y < 107 &amp;&amp; reco_vertex_z > 10 &amp;&amp; reco_vertex_z < 1026) " name = "Fiducial Vertex Cut" />
 <precut def = "(TMath::Finite(reco_shower_dEdx_amalgamated[0]))" name = "Finite dE/dx"/>
 <precut def = "(TMath::Finite(reco_track_mean_trunc_dEdx_best_plane[0]))" name = "Finite Track dE/dx"/>
-<precut def = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>13.9062)" name = "Second Shower Veto"/>
+<!--<precut def = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>13.9062)" name = "Second Shower Veto"/> -->
 <precut def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) > 0.05 &amp;&amp;acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) < 3.13149-0.05 " name = "Back-to-Back cut"/>
 <precut def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] > 0.2 " name = "Stopping Track Cut" />
 <!--<precut def = "((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0])>0" name = "forward delta" />-->
@@ -30,7 +30,7 @@
 -->
 
 
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(20,0.12,0.83)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(20,0.1,0.85)">
     <method type = "COSMIC" use = "yes">
         <param>  NTrees=2000	</param>				 
         <param>  MinNodESize=2.5% </param>				
@@ -50,7 +50,7 @@
         />
 </mva>
 
-<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(20,0.17,0.72)">
+<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(20,0.12,0.75)">
     <method type = "BNB" use = "yes">
         <param>  NTrees=2000 	</param>			
         <param>  MinNodESize=2.5% </param>				
@@ -75,7 +75,7 @@
 
 
 <var def = "log10(reco_shower_impact_parameter[0])" binning = "(40,-1,3)" unit = "Shower Impact Parameter log[cm]" type="d" logplot="false" training="01"/>
-<var def = "reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0]" binning = "(40,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d" logplot="false" training="01"/>
+<var def = "log10(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(40,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d" logplot="false" training="01"/>
 <var def = "reco_shower_implied_dirx/reco_shower_dirx" binning = "(40,-2,2)" unit = "Shower Implied Dirx/Pandora Dirx" type="d" logplot="false" training="01"/>
 <var def = "reco_shower_implied_diry/reco_shower_diry" binning = "(40,-2,2)" unit = "Shower Implied Diry/Pandora Diry" type="d" logplot="false" training="01"/>
 <var def = "reco_shower_implied_dirz/reco_shower_dirz" binning = "(40,-2,2)" unit = "Shower Implied Dirz/Pandora Dirz" type="d" logplot="false" training="01"/>
@@ -85,7 +85,7 @@
 <var def = "Sum$(isolation_num_shr_hits_win_2cm_trk)" binning = "(40,0,40)" unit = "Num Shr hits in 2cm" type="d" logplot="false" training="01"/>
 <var def = "Sum$(isolation_num_unassoc_hits_win_2cm_trk)" binning = "(40,0,40)" unit = "Num Unnass hits in 2cm" type="d" logplot="false" training="01"/>
 
-<var def = "reco_shower_energy_max[0]/1000.0" binning = "(40,0,0.6)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="01"/>
+<var def = "reco_shower_energy_max[0]/1000.0" binning = "(24,0,0.6)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_shower_length[0]" binning = "(40,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(40,0 ,2000)" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="01"/>
 
@@ -115,7 +115,7 @@
 <var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(40, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" logplot = "false" training = "01"/>
 <var def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(40,0.8,2.)" unit = "Invariant Mass^2 of photon-proton pair" type  = "d" training = ""/>
 
-<var def = "sqrt(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(20,0.9,1.5)" unit = "Invariant Mass of photon-proton pair" type  = "d" training = "01"/>
+<var def = "sqrt(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(20,0.93838383838383838383838383838383838383838383838383838383838383838383838383838,1.5)" unit = "Invariant Mass of photon-proton pair" type  = "d" training = "01"/>
 
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(40,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" logplot = "false" training = "01" /> 
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(40,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" logplot = "false" training = "01" /> 
