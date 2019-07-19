@@ -819,7 +819,7 @@ int bdt_file::setStageEntryList(int j){
 }
 
 std::string bdt_file::getStageCuts(int stage, std::vector<double> bdt_cuts){
-
+    //modern
     bool verbose = false;
 
     std::string ans;
@@ -836,6 +836,7 @@ std::string bdt_file::getStageCuts(int stage, std::vector<double> bdt_cuts){
                     for(int i=0; i< stage-1; i++){
                         bdt_variable stagevar = this->getBDTVariable(flow.bdt_vector[i]);		
                         ans += "&& "+stagevar.name +">"+std::to_string(bdt_cuts[i]);
+                        //ans += "&& "+stagevar.name +"> 0.58" +"&&"+ stagevar.name + "< 0.62";
                     }
     }
     return ans;
