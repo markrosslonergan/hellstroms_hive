@@ -328,10 +328,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(s)).c_str());
             ratunit->Divide(rat_denom);		
 
-            ratunit->SetFillColor(kGray+3);
+            ratunit->SetFillColor(kGray+1);
+           //  ratunit->SetFillColor(kGray+3);
             ratunit->SetMarkerStyle(0);
             ratunit->SetMarkerSize(0);
-            ratunit->SetFillStyle(3001);
+          //  ratunit->SetFillStyle(3001);
+             ratunit->SetFillStyle(3354);
             //ratunit->SetFillStyle(3354);
             //gStyle->SetHatchesLineWidth(1);
             //gStyle->SetHatchesSpacing(1);
@@ -679,11 +681,16 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         TH1* ratunit = (TH1*)vec_th1s.at(k)->Clone(("ratio_unit_"+stage_name.at(k)).c_str());
         ratunit->Divide(rat_denom);		
 
-        ratunit->SetFillColor(kGray+3);
+        //ratunit->SetFillColor(kGray+3);
+        ratunit->SetFillColor(kGray+1);
+        //ratunit->SetMarkerStyle(21);
         ratunit->SetMarkerStyle(0);
         ratunit->SetMarkerSize(0);
-        ratunit->SetFillStyle(3001);
+        // ratunit->SetFillStyle(3001);
+        ratunit->SetFillStyle(3354);
+
         ratunit->Draw("E2");	
+
 
         TLine *line = new TLine(ratunit->GetXaxis()->GetXmin(),1.0,ratunit->GetXaxis()->GetXmax(),1.0 );
         line->Draw("same");
@@ -748,7 +755,9 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         ratpre->SetMarkerStyle(20);
         ratpre->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
 
-        ratpre->SetFillStyle(3144);
+        ratpre->SetFillStyle(3354);
+        //   ratpre->SetFillStyle(3144);
+
         // ratpre->SetFillColor(kGray + 3);
         // ratpre->SetFillStyle(3354);
         // gStyle->SetHatchesLineWidth(2);
@@ -761,10 +770,10 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         //gr->DrawClone("same e0");
 
         //gr->SetMarkerColor(4);
-       // gr->SetMarkerStyle(20);
+        // gr->SetMarkerStyle(20);
 
-       // gr->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
-     //   gr->Draw("same AP0");
+        // gr->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
+        //   gr->Draw("same AP0");
 
         ratpre->SetLineColor(kBlack);
         ratpre->SetTitle("");
