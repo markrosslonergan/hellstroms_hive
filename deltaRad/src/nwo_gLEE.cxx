@@ -154,7 +154,7 @@ int main (int argc, char *argv[]){
     //*******************************************
     //Here is the whole Signal definition
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-    std::string training_signal_cut = "sim_shower_overlay_fraction[0] < 0.5 && sim_track_overlay_fraction[0]<0.5 ";
+    std::string training_signal_cut = "sim_shower_overlay_fraction[0] < 0.3 && sim_track_overlay_fraction[0]<0.3 && sim_track_pdg[0]==2212 && sim_shower_pdg[0]==22";
     std::string num_track_cut;
 
     std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
@@ -183,8 +183,9 @@ int main (int argc, char *argv[]){
 
     bdt_flow signal_training_flow(topological_cuts, 	signal_definition +"&&"+ training_signal_cut, 	vec_precuts,	postcuts,	bdt_infos);
     bdt_flow signal_other_flow(topological_cuts, 	"!("+signal_definition +")", 	vec_precuts,	postcuts,	bdt_infos);
-
     bdt_flow signal_flow(topological_cuts, 	signal_definition , 			vec_precuts,	postcuts,	bdt_infos);
+    bdt_flow signal_all(topological_cuts, "1",vec_precuts,postcuts,bdt_infos);
+
     bdt_flow other_bkg_flow(topological_cuts,		other_background_definition, 			vec_precuts,	postcuts, bdt_infos);
     bdt_flow other_bkg_training_flow(topological_cuts, "sim_track_overlay_fraction < 0.2" , 		vec_precuts,	postcuts, bdt_infos);
 
@@ -198,6 +199,7 @@ int main (int argc, char *argv[]){
     std::cout<<"Defining all our bdt_files."<<std::endl;
     bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
     bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *signal_SM = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root", "NCDeltaRadOverlaySM", "hist","singlephoton/",  kRed-6, signal_all);
     bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
     bdt_file *dirt = new bdt_file(dir,"dirt_overlay_run1_v17.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
     bdt_file *ncpi0    = new bdt_file(dir, "ncpi0_overlay_run1_v17.0.root", "NCpi0",	  "hist","singlephoton/",  kBlue-6, ncpi0_bkg_flow);
@@ -206,12 +208,10 @@ int main (int argc, char *argv[]){
     bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_run1_v17.0.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v17.0.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
-
-    std::vector<bdt_file*> bdt_files = {bnb, OnBeamData, OffBeamData,dirt,signal,signal_other,training_signal};
-
+    std::vector<bdt_file*> bdt_files = {bnb, OnBeamData, OffBeamData,dirt,signal,signal_other,training_signal, signal_SM};
     //The LEE signal is bigger than the SM signal by this factor
-    signal->scale_data =3.0; 
-    signal_other->scale_data = 3.0; 
+    signal->scale_data =2.0; 
+    signal_other->scale_data = 2.0; 
 
     //int setAsOnBeamData(double in_tor860_wcut);
     //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
@@ -226,14 +226,11 @@ int main (int argc, char *argv[]){
         f->calcPOT();
         std::cout<<"Scale factor is then: "<<f->scale_data<<std::endl;
     }	
-
-
     //===========================================================================================
     //===========================================================================================
     //		Main flow of the program , using OPTIONS
     //===========================================================================================
     //===========================================================================================
-
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
@@ -261,7 +258,8 @@ int main (int argc, char *argv[]){
 
 
     //Adding plot names
-    signal->addPlotName("Signal NC #Delta Radiative");
+    signal->addPlotName("LEE NC #Delta Radiative");
+    signal_SM->addPlotName("SM NC #Delta Radiative");
     signal_other->addPlotName("Other NC #Delta Radiative");
     //nueintrinsic->addPlotName("CC #nu_{e} Intrinsic");
     bnb->addPlotName("BNB other");
@@ -375,6 +373,9 @@ int main (int argc, char *argv[]){
         }else{
             histogram_stack->plot_pot = what_pot;
         }
+        
+        signal_SM->fillstyle = 3333;
+ //       histogram_stack->addToStack(signal_SM);
         histogram_stack->addToStack(signal);
         histogram_stack->addToStack(signal_other);
         histogram_stack->addToStack(bnb);
@@ -491,6 +492,7 @@ int main (int argc, char *argv[]){
             padtop->cd();
             tmp->SetFillColor(f->col);
             stacked->Add(tmp);
+
 
             std::cout<<"Starting a s/sqrt(b) scan of "<<f->tag<<std::endl;
             //now for sig/sqrt b

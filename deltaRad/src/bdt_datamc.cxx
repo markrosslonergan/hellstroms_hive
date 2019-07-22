@@ -135,6 +135,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
             TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
             TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
+        
+//            std::vector<double> ks_sum = data_file->getVector(var,s);
 
             double rmin = 0;
             double rmax = 2.99;
@@ -248,7 +250,24 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
             //			d0->Draw("same E1");
 
-            std::cout<<"KSTEST: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
+            std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
+            std::cout<<"Binned Chi-test standard: "<<var.name<<" "<<tsum->Chi2Test(d0,"CHI2")<<std::endl;
+            std::cout<<"Binned Chi-test: "<<var.name<<" "<<tsum->Chi2Test(d0,"UW CHI2")<<std::endl;
+            std::cout<<"Binned Chi-test (rev): "<<var.name<<" "<<d0->Chi2Test(tsum,"UW CHI2")<<std::endl;
+   
+            double mychi =0;
+            for(int p=0; p<d0->GetNbinsX();p++){
+                double da = d0->GetBinContent(p+1);
+                double bk = tsum->GetBinContent(p+1);
+                double da_err = d0->GetBinError(p+1);
+                double bk_err = tsum->GetBinError(p+1);
+                //std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<std::endl;
+                double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
+                if(tk==tk){
+                    mychi+=tk;
+                }
+            }
+            std::cout<<"MyChi: "<<var.name<<" "<<mychi<<std::endl;
 
 
             stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
@@ -354,16 +373,67 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1* ratpre = (TH1*)d0->Clone(("ratio_"+stage_names.at(s)).c_str());
             ratpre->Divide(rat_denom);		
 
+    
+            std::vector<double> x;
+            std::vector<double> y;
+            for(int b=1; b<d0->GetNbinsX()+1;b++){
+                double is_zero = rat_denom->GetBinContent(b);
+                if(is_zero!=0.0){
+                    y.push_back(d0->GetBinContent(b)/is_zero);
+                    x.push_back(d0->GetBinCenter(b));
+                }
+            
+            }
+           
+
+
+            std::vector<double> err_x_left(x.size(),0);
+            std::vector<double> err_x_right(x.size(),0);
+            std::vector<double> err_y_high(x.size(),0);
+            std::vector<double> err_y_low(x.size(),0);
+    
+
+            for(int i=0; i<x.size(); i++){
+                double is_zero = rat_denom->GetBinContent(i+1);
+                if(is_zero!=0.0){
+                    err_x_left[i] = d0->GetBinWidth(i+1)/2.0;
+                    err_x_right[i] = d0->GetBinWidth(i+1)/2.0;
+            
+                    err_y_high[i] = (d0->GetBinErrorUp(i+1))/is_zero;
+                    err_y_low[i] =  (d0->GetBinErrorLow(i+1))/is_zero;
+                }
+
+                //probably need a special case for if data is zero
+                //
+            }
+            
+            
+            //TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_high[0],&err_y_low[0]);
+            TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_low[0],&err_y_high[0]);
+
+            //gr->Divide(d0,tsum,"pois");
+            //gr->Divide(d0,rat_denom,"pois");
+    
+            gr->SetLineWidth(1);
+
+
+            ratpre->SetLineColor(kBlack);
+            ratpre->SetTitle("");
+
+
+            //gr->Divide(d0,tsum,"pois");
+            //gr->Divide(d0,rat_denom,"pois");
+    
+            gr->SetLineWidth(1);
+
             ratpre->SetFillColor(kGray+1);
             ratpre->SetMarkerStyle(20);
             ratpre->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
 
             ratpre->SetFillStyle(3144);
             //ratpre->SetFillColor(kGray + 3);
-           ratpre->Draw("E1 same");	
-
-            ratpre->SetLineColor(kBlack);
-            ratpre->SetTitle("");
+            ratpre->Draw("same P E0 hist");	
+            gr->Draw("E1 same");
 
 
             std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+" / "+to_string_prec(d0->Integral()/tsum->Integral() ,2); ;
@@ -672,7 +742,9 @@ int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
                 }
             
             }
-            
+           
+
+
             std::vector<double> err_x_left(x.size(),0);
             std::vector<double> err_x_right(x.size(),0);
             std::vector<double> err_y_high(x.size(),0);
