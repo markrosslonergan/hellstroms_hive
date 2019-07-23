@@ -143,7 +143,7 @@
 
 </mva>
 
-<mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(20,0.1,0.75)">
+<mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(20,0.1,0.8)">
     <method type = "BNB" use = "yes">
         <param>  NTrees=1000 	</param>				
         <param>  MinNodeSize=2.5% </param>				

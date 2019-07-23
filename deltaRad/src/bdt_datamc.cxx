@@ -329,11 +329,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             ratunit->Divide(rat_denom);		
 
             ratunit->SetFillColor(kGray+1);
-           //  ratunit->SetFillColor(kGray+3);
+            //  ratunit->SetFillColor(kGray+3);
             ratunit->SetMarkerStyle(0);
             ratunit->SetMarkerSize(0);
-          //  ratunit->SetFillStyle(3001);
-             ratunit->SetFillStyle(3354);
+            //  ratunit->SetFillStyle(3001);
+            ratunit->SetFillStyle(3354);
             //ratunit->SetFillStyle(3354);
             //gStyle->SetHatchesLineWidth(1);
             //gStyle->SetHatchesSpacing(1);
@@ -359,18 +359,41 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
             TH1* ratpre = (TH1*)d0->Clone(("ratio_"+stage_names.at(s)).c_str());
 
-
-
             std::vector<double> x;
-            std::vector<double> y;
+            std::vector<double> y; 
+            std::vector<double> err_x_left;
+            std::vector<double> err_x_right;
+            std::vector<double> err_y_high;
+            std::vector<double> err_y_low;
             for(int b=1; b<d0->GetNbinsX()+1;b++){
                 double is_zero = rat_denom->GetBinContent(b);
                 if(is_zero!=0.0){
                     y.push_back(d0->GetBinContent(b)/is_zero);
                     x.push_back(d0->GetBinCenter(b));
+
+                    err_x_left.push_back(d0->GetBinWidth(b)/2.0);
+                    err_x_right.push_back(d0->GetBinWidth(b)/2.0);
+
+                    //                std::cout<<"for bin "<<i <<"filling errors for y with error up "<<data_th1s.at(k)->GetBinErrorUp(i+1)<<" and error down "<<data_th1s.at(k)->GetBinErrorLow(i+1)<<    " with is_zero "<<is_zero<<std::endl;
+                    err_y_high.push_back((d0->GetBinErrorUp(b))/is_zero);
+                    err_y_low.push_back((d0->GetBinErrorLow(b))/is_zero);
+
                 }
 
             }
+
+
+            /*
+               std::vector<double> x;
+               std::vector<double> y;
+               for(int b=1; b<d0->GetNbinsX()+1;b++){
+               double is_zero = rat_denom->GetBinContent(b);
+               if(is_zero!=0.0){
+               y.push_back(d0->GetBinContent(b)/is_zero);
+               x.push_back(d0->GetBinCenter(b));
+               }
+
+               }
 
             //std::vector<double> err(x.size(),0);
             // TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err[0],&err[0],&err[0],&err[0]);
@@ -382,20 +405,20 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 
 
             for(int i=0; i<x.size(); i++){
-                double is_zero = rat_denom->GetBinContent(i+1);
-                if(is_zero!=0.0){
-                    err_x_left[i] = d0->GetBinWidth(i+1)/2.0;
-                    err_x_right[i] = d0->GetBinWidth(i+1)/2.0;
+            double is_zero = rat_denom->GetBinContent(i+1);
+            if(is_zero!=0.0){
+            err_x_left[i] = d0->GetBinWidth(i+1)/2.0;
+            err_x_right[i] = d0->GetBinWidth(i+1)/2.0;
 
-                    err_y_high[i] = (d0->GetBinErrorUp(i+1))/is_zero;
-                    err_y_low[i] =  (d0->GetBinErrorLow(i+1))/is_zero;
-                }
-
-                //probably need a special case for if data is zero
-                //
+            err_y_high[i] = (d0->GetBinErrorUp(i+1))/is_zero;
+            err_y_low[i] =  (d0->GetBinErrorLow(i+1))/is_zero;
             }
 
+            //probably need a special case for if data is zero
+            //
+            }
 
+*/
             TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_low[0],&err_y_high[0]);
             //    TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_high[0],&err_y_low[0]);
 
@@ -417,9 +440,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             //ratpre->SetFillColor(kGray + 3);
             // ratpre->Draw("E1 same");
 
-            ratpre->Draw("same P0");
-            gr->Draw("P same");   
-            gr->DrawClone("same e0"); 
+            ratpre->Draw("same P E0 hist");
+            gr->Draw("E1 same");   
+            //   gr->Draw("P same");   
+            // gr->DrawClone("same e0"); 
 
             ratpre->SetLineColor(kBlack);
             ratpre->SetTitle("");
@@ -577,8 +601,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         double max_modifier =1.7;
         double min_val = 0.01;
         if(is_bdt_variable) {
-            max_modifier = 500.0;
-            min_val = 0.1;
+            max_modifier = 15000.0;
+            min_val = 0.01;
         }
 
         vec_stacks.at(k)->SetMaximum(vec_th1s.at(k)->GetMaximum()*1.4);
@@ -620,7 +644,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
 
         //data_th1s.at(k)->SetBinErrorOption(TH1::kPoisson);
-        data_th1s.at(k)->Rebin(data_rebin);
+        //  data_th1s.at(k)->Rebin(data_rebin);
         data_th1s.at(k)->SetBinErrorOption(TH1::kPoisson);
         data_th1s.at(k)->SetMarkerStyle(20);
         data_th1s.at(k)->SetLineColor(kBlack);
@@ -672,7 +696,7 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
 
 
-        vec_th1s.at(k)->Rebin(data_rebin);
+        //  vec_th1s.at(k)->Rebin(data_rebin);
         TH1* rat_denom = (TH1*)vec_th1s.at(k)->Clone(("ratio_denom_"+stage_name.at(k)).c_str());
         for(int i=0; i<rat_denom->GetNbinsX(); i++){
             rat_denom->SetBinError(i,0.0);
@@ -714,11 +738,24 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         std::vector<double> x;
         std::vector<double> y;
-        for(int b=1; b<d0->GetNbinsX()+1;b++){
+
+        std::vector<double> err_x_left;
+        std::vector<double> err_x_right;
+        std::vector<double> err_y_high;
+        std::vector<double> err_y_low;
+        for(int b=1; b<data_th1s.at(k)->GetNbinsX()+1;b++){
             double is_zero = rat_denom->GetBinContent(b);
             if(is_zero!=0.0){
-                y.push_back(d1->GetBinContent(b)/is_zero);
-                x.push_back(d1->GetBinCenter(b));
+                y.push_back(data_th1s.at(k)->GetBinContent(b)/is_zero);
+                x.push_back(data_th1s.at(k)->GetBinCenter(b));
+
+                err_x_left.push_back(data_th1s.at(k)->GetBinWidth(b)/2.0);
+                err_x_right.push_back(data_th1s.at(k)->GetBinWidth(b)/2.0);
+
+                //                std::cout<<"for bin "<<i <<"filling errors for y with error up "<<data_th1s.at(k)->GetBinErrorUp(i+1)<<" and error down "<<data_th1s.at(k)->GetBinErrorLow(i+1)<<    " with is_zero "<<is_zero<<std::endl;
+                err_y_high.push_back((data_th1s.at(k)->GetBinErrorUp(b))/is_zero);
+                err_y_low.push_back((data_th1s.at(k)->GetBinErrorLow(b))/is_zero);
+
             }
 
         }
@@ -726,30 +763,40 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         //std::vector<double> err(x.size(),0);
         // TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err[0],&err[0],&err[0],&err[0]);
 
-        std::vector<double> err_x_left(x.size(),0);
-        std::vector<double> err_x_right(x.size(),0);
-        std::vector<double> err_y_high(x.size(),0);
-        std::vector<double> err_y_low(x.size(),0);
+        /*    std::vector<double> err_x_left(x.size(),0);
+              std::vector<double> err_x_right(x.size(),0);
+              std::vector<double> err_y_high(x.size(),0);
+              std::vector<double> err_y_low(x.size(),0);
 
 
-        for(int i=0; i<x.size(); i++){
-            double is_zero = rat_denom->GetBinContent(i+1);
-            if(is_zero!=0.0){
-                err_x_left[i] = d1->GetBinWidth(i+1)/2.0;
-                err_x_right[i] = d1->GetBinWidth(i+1)/2.0;
+              for(int i=0; i<x.size(); i++){
+              double is_zero = rat_denom->GetBinContent(i+1);
 
-                err_y_high[i] = (d1->GetBinErrorUp(i+1))/is_zero;
-                err_y_low[i] =  (d1->GetBinErrorLow(i+1))/is_zero;
-            }
+              if(is_zero!=0.0){
+              err_x_left[i] = data_th1s.at(k)->GetBinWidth(i+1)/2.0;
+              err_x_right[i] = data_th1s.at(k)->GetBinWidth(i+1)/2.0;
 
-            //probably need a special case for if data is zero
-            //
+        //                std::cout<<"for bin "<<i <<"filling errors for y with error up "<<data_th1s.at(k)->GetBinErrorUp(i+1)<<" and error down "<<data_th1s.at(k)->GetBinErrorLow(i+1)<<" with is_zero "<<is_zero<<std::endl;
+        err_y_high[i] = (double)(data_th1s.at(k)->GetBinErrorUp(i+1))/is_zero;
+        err_y_low[i] =  (double)(data_th1s.at(k)->GetBinErrorLow(i+1))/is_zero;
+
+        //              std::cout<<"the upper y error is "<<err_y_high[i]<<" and the low error is "<<err_y_low[i]<<std::endl;
+        } else{
+        std::cout<<"for bin "<<i<<" is_zero = "<<is_zero<<std::endl;
         }
 
+        //probably need a special case for if data is zero
+        //
+        }
+        */
 
         TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_low[0],&err_y_high[0]);
 
-        gr->SetLineWidth(1);
+   //     for (int i = 0; i < y.size(); i++){
+     //       std::cout<<"for bin "<<i<<" the cv in y is "<<y[i]<<", the upper y error is "<<err_y_high[i]<<" and the low error is "<<err_y_low[i]<<std::endl;
+       // }
+
+        /*  gr->SetLineWidth(1);
         //  ratpre->Divide(rat_denom);
         ratpre->SetFillColor(kGray+1);
         ratpre->SetMarkerStyle(20);
@@ -775,8 +822,31 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         // gr->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
         //   gr->Draw("same AP0");
 
+
         ratpre->SetLineColor(kBlack);
         ratpre->SetTitle("");
+        */
+
+        gr->SetLineWidth(1);
+
+
+        ratpre->SetLineColor(kBlack);
+        ratpre->SetTitle("");
+
+
+        //gr->Divide(d0,tsum,"pois");
+        //gr->Divide(d0,rat_denom,"pois");
+
+        gr->SetLineWidth(1);
+
+        ratpre->SetFillColor(kGray+1);
+        ratpre->SetMarkerStyle(20);
+        ratpre->SetMarkerSize(ratpre->GetMarkerSize()*0.7);
+
+        ratpre->SetFillStyle(3144);
+        //ratpre->SetFillColor(kGray + 3);
+        ratpre->Draw("same P E0 hist"); 
+        gr->Draw("E1 same");
 
 
 
