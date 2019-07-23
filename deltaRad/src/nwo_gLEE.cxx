@@ -199,7 +199,7 @@ int main (int argc, char *argv[]){
     std::cout<<"Defining all our bdt_files."<<std::endl;
     bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
     bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_SM = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root", "NCDeltaRadOverlaySM", "hist","singlephoton/",  kRed-6, signal_all);
+    bdt_file *signal_SM = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root", "NCDeltaRadOverlaySM", "hist","singlephoton/",  kMagenta-7, signal_all);
     bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
     bdt_file *dirt = new bdt_file(dir,"dirt_overlay_run1_v17.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
     bdt_file *ncpi0    = new bdt_file(dir, "ncpi0_overlay_run1_v17.0.root", "NCpi0",	  "hist","singlephoton/",  kBlue-6, ncpi0_bkg_flow);
@@ -374,8 +374,8 @@ int main (int argc, char *argv[]){
             histogram_stack->plot_pot = what_pot;
         }
         
-        signal_SM->fillstyle = 3333;
- //       histogram_stack->addToStack(signal_SM);
+//        signal_SM->fillstyle = 3333;
+        histogram_stack->addToStack(signal_SM);
         histogram_stack->addToStack(signal);
         histogram_stack->addToStack(signal_other);
         histogram_stack->addToStack(bnb);

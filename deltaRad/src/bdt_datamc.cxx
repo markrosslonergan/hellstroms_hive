@@ -301,7 +301,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pottex.SetNDC();
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-            pottex.DrawLatex(.60,.68, pot_draw.c_str());
+            pottex.DrawLatex(.60,.60, pot_draw.c_str());
 
 
 
