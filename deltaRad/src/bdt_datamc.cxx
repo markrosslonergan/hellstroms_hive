@@ -191,6 +191,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 max_modifier = 2.0;
             }
 
+          if (s==3){
+                max_modifier = 5;
+            }
+
+
             if(var.is_logplot == true){
             //if(true){
                 pad0top->SetLogy();
@@ -200,6 +205,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             double min_val = 0.01;
             if(is_bdt_variable) {
                 max_modifier = 15.0;
+              //  max_modifier = 25.0;
                 min_val = 0.1;
             }
 
@@ -215,8 +221,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->GetYaxis()->SetTitle("Events");
             stk->GetYaxis()->SetTitleSize(0.05);
             stk->GetYaxis()->SetTitleOffset(0.9);
-            stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
-            stk->SetMinimum(min_val);
+           stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
+                         stk->SetMinimum(min_val);
             tsum->DrawCopy("Same E2");
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
 

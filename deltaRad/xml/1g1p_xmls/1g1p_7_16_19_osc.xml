@@ -5,9 +5,19 @@
 <precut def = "(reco_vertex_x > 10 &amp;&amp; reco_vertex_x < 246 &amp;&amp; reco_vertex_y > -107 &amp;&amp; reco_vertex_y < 107 &amp;&amp; reco_vertex_z > 10 &amp;&amp; reco_vertex_z < 1026) " name = "Fiducial Vertex Cut" />
 <precut def = "(TMath::Finite(reco_shower_dEdx_amalgamated[0]))" name = "Finite dE/dx"/>
 <precut def = "(TMath::Finite(reco_track_mean_trunc_dEdx_best_plane[0]))" name = "Finite Track dE/dx"/>
-<!--<precut def = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>13.9062)" name = "Second Shower Veto"/> -->
-<precut def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) > 0.05 &amp;&amp;acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) < 3.13149-0.05 " name = "Back-to-Back cut"/>
-<precut def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] > 0.2 " name = "Stopping Track Cut" />
+<precut def = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>14.4716)" name = "Second Shower Veto"/>
+<!--<precut def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) > 0.05 &amp;&amp;acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) < 3.13149-0.05 " name = "Back-to-Back cut"/>
+<precut def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] > 0.2 " name = "Stopping Track Cut" /> -->
+
+<!-- mark's enhanced precuts-->
+<precut def = "(reco_track_endz[0] > 5 &amp;    &amp; reco_track_endz[0] < 1036-5) &amp;&amp;   (reco_track_endx[0] > 5 &amp;&amp; reco_track_endx[0] < 256-5 &amp;&amp; reco_track_endy[0] > -117+5 &amp;&amp; reco_track_endy[0] < 117-5 &amp;&amp; rec    o_track_endz[0] > 5  &amp;&amp; reco_track_endz[0] < 1036-5)" name = "Contained Track Cut" />
+<precut def = "(reco_shower_energy_max[0]>30 &amp;&amp; reco_shower_energy_max[0]<3000)" name = "Shower Energy"/>
+<precut def = "(sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2)))< 5" name = "Distance from Track Start to Vertex"/>
+<prceut def = "(reco_shower_conversion_distance[0] < 120)" name = "Shower Conv Distance"/>
+<precut def = "reco_track_displacement[0]<300" name = "Track Disp"/>
+<precut def = "(reco_shower_dEdx_amalgamated[0] < 8) " name = "Shower dedx low"/>
+
+
 <!--<precut def = "((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0])>0" name = "forward delta" />-->
 
 <!--
@@ -30,7 +40,7 @@
 -->
 
 
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(20,0.1,0.85)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(24,0.16,0.82)">
     <method type = "COSMIC" use = "yes">
         <param>  NTrees=2000	</param>				 
         <param>  MinNodESize=2.5% </param>				
@@ -50,7 +60,7 @@
         />
 </mva>
 
-<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(20,0.12,0.75)">
+<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.17,0.68)">
     <method type = "BNB" use = "yes">
         <param>  NTrees=2000 	</param>			
         <param>  MinNodESize=2.5% </param>				

@@ -165,7 +165,7 @@ int main (int argc, char *argv[]){
 
     std::vector<std::string> v_denom;
 
-    if (topo_tag =="notrack"){
+    if (topo_tag == "notrack"){
          v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.02)==0"};
     }else{
          v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.02)==1"};
@@ -282,8 +282,9 @@ int main (int argc, char *argv[]){
     //
     //0.482015 0.603554
     //0.540533 0.587009
-    double fcoscut = 0.540533;
-    double fbnbcut = 0.587009;
+    //0.554892  0.582304
+    double fcoscut = 0.554892;
+    double fbnbcut = 0.582304;
     std::vector<double> fcuts = {fcoscut,fbnbcut}; 
 
     //===========================================================================================
