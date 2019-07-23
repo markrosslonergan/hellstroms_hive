@@ -388,10 +388,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 if(is_zero!=0.0){
                     y.push_back(d0->GetBinContent(b)/is_zero);
                     x.push_back(d0->GetBinCenter(b));
-                    err_x_left.push_back(d0->GetBinWidth(i+1)/2.0);
-                    err_x_right.push_back(d0->GetBinWidth(i+1)/2.0);
-                    err_y_high.push_back((d0->GetBinErrorUp(i+1))/is_zero);
-                    err_y_low.push_back((d0->GetBinErrorLow(i+1))/is_zero);
+                    err_x_left.push_back(d0->GetBinWidth(b)/2.0);
+                    err_x_right.push_back(d0->GetBinWidth(b)/2.0);
+                    err_y_high.push_back((d0->GetBinErrorUp(b))/is_zero);
+                    err_y_low.push_back((d0->GetBinErrorLow(b))/is_zero);
 
                 }
             
@@ -735,10 +735,10 @@ int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
                 if(is_zero!=0.0){
                     y.push_back(d0->GetBinContent(b)/is_zero);
                     x.push_back(d0->GetBinCenter(b));
-                    err_x_left.push_back(d0->GetBinWidth(i+1)/2.0);
-                    err_x_right.push_back(d0->GetBinWidth(i+1)/2.0);
-                    err_y_high.push_back((d0->GetBinErrorUp(i+1))/is_zero);
-                    err_y_low.push_back((d0->GetBinErrorLow(i+1))/is_zero);
+                    err_x_left.push_back(d0->GetBinWidth(b)/2.0);
+                    err_x_right.push_back(d0->GetBinWidth(b)/2.0);
+                    err_y_high.push_back((d0->GetBinErrorUp(b))/is_zero);
+                    err_y_low.push_back((d0->GetBinErrorLow(b))/is_zero);
 
                 }
             
