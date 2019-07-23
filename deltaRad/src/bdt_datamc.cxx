@@ -723,36 +723,27 @@ int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
     
             std::vector<double> x;
             std::vector<double> y;
+
+            std::vector<double> err_x_left;
+            std::vector<double> err_x_right;
+            std::vector<double> err_y_high;
+            std::vector<double> err_y_low;
+    
+
             for(int b=1; b<d0->GetNbinsX()+1;b++){
                 double is_zero = rat_denom->GetBinContent(b);
                 if(is_zero!=0.0){
                     y.push_back(d0->GetBinContent(b)/is_zero);
                     x.push_back(d0->GetBinCenter(b));
+                    err_x_left.push_back(d0->GetBinWidth(i+1)/2.0);
+                    err_x_right.push_back(d0->GetBinWidth(i+1)/2.0);
+                    err_y_high.push_back((d0->GetBinErrorUp(i+1))/is_zero);
+                    err_y_low.push_back((d0->GetBinErrorLow(i+1))/is_zero);
+
                 }
             
             }
-
-            std::vector<double> err_x_left(x.size(),0);
-            std::vector<double> err_x_right(x.size(),0);
-            std::vector<double> err_y_high(x.size(),0);
-            std::vector<double> err_y_low(x.size(),0);
-    
-
-            for(int i=0; i<x.size(); i++){
-                double is_zero = rat_denom->GetBinContent(i+1);
-                if(is_zero!=0.0){
-                    err_x_left[i] = d0->GetBinWidth(i+1)/2.0;
-                    err_x_right[i] = d0->GetBinWidth(i+1)/2.0;
-            
-                    err_y_high[i] = (d0->GetBinErrorUp(i+1))/is_zero;
-                    err_y_low[i] =  (d0->GetBinErrorLow(i+1))/is_zero;
-                }
-
-                //probably need a special case for if data is zero
-                //
-            }
-            
-
+           
             //TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_high[0],&err_y_low[0]);
             TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_low[0],&err_y_high[0]);
 
