@@ -202,16 +202,16 @@ int main (int argc, char *argv[]){
 
     //***************************************************************************************/
     std::cout<<"Defining all our bdt_files."<<std::endl;
-    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_SM = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root", "NCDeltaRadOverlaySM", "hist","singlephoton/",  kMagenta-7, signal_all);
-    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.0.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
-    bdt_file *dirt = new bdt_file(dir,"dirt_overlay_run1_v17.0.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
-    bdt_file *ncpi0    = new bdt_file(dir, "ncpi0_overlay_run1_v17.0.root", "NCpi0",	  "hist","singlephoton/",  kBlue-6, ncpi0_bkg_flow);
-    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_run1_v17.0.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, other_bkg_flow);
+    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
+    bdt_file *signal_SM = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root", "NCDeltaRadOverlaySM", "hist","singlephoton/",  kMagenta-7, signal_all);
+    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
+    bdt_file *dirt = new bdt_file(dir,"dirt_overlay_run1_v17.1.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
+    bdt_file *ncpi0    = new bdt_file(dir, "ncpi0_overlay_run1_v17.1.root", "NCpi0",	  "hist","singlephoton/",  kBlue-6, ncpi0_bkg_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_run1_v17.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, other_bkg_flow);
     //bdt_file *nueintrinsic = new bdt_file(dir,"nueintrinsic_overlay_v12.2.root","NueIntrinsic","hist","singlephoton/",kCyan, nue_flow);
-    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_run1_v17.0.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v17.0.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
+    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_run1_v17.1.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
+    bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v17.1.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
     std::vector<bdt_file*> bdt_files = {bnb, OnBeamData, OffBeamData,dirt,signal,signal_other,training_signal, signal_SM};
     //The LEE signal is bigger than the SM signal by this factor
