@@ -99,15 +99,15 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
         std::cout<<bdt_infos[i].identifier<<" min: "<<minvals[i]<<" "<<maxvals[i]<<std::endl;
     }
 
-    double scal_up = 1.2;
-    double scal_down = 0.8;
+    double scal_up = 1.05;
+    double scal_down = 0.95;
 //    std::vector<double> cval = {0.469232, 0.575191, 0.528824, 0.325369};
-    double fcoscut = 0.5;
-    double fbnbcut = 0.6; //0.464029 0.558237
+    double fcoscut = 0.551752; //sig.1:ccut: 0.551752 0.581527  #signal: 24.1207 #bkg: 46.2715 ||  bnb: 46.2715 cos: 0 || impact 17.9759 3.54595
+    double fbnbcut = 0.581527; //0.464029 0.558237
 
 
     std::vector<double> cval = {fcoscut,fbnbcut};
-    if(false){
+    if(true){
             minvals[0]=cval[0]*scal_down;
             maxvals[0]=cval[0]*scal_up;
            

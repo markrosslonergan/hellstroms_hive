@@ -18,8 +18,9 @@ int plot_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
     TPad *p1 = (TPad*)c_var->cd(1);
 
     p1->SetLogy();
-    int nbins = 50;
-    TH1D * train_signal = new TH1D("trainsignal","trainsignal",nbins,0,1);
+//   int nbins = 50;
+   int nbins = 60;
+   TH1D * train_signal = new TH1D("trainsignal","trainsignal",nbins,0,1);
     TH1D * test_signal = new TH1D("testsignal","testsignal",nbins,0,1);
 
     TH1D * train_bkg = new TH1D("trainbkg","trainbkg",nbins,0,1);
