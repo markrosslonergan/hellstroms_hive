@@ -1023,8 +1023,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             pottex.DrawLatex(.7,.96, pot_draw.c_str());
 
-            TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
+            TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
+       
             pre->Draw();
+
+           // TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
+           // pre->Draw();
 
            //cobs->cd(k+1);	
             cobs->cd();
@@ -1035,10 +1039,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pad0bot->Draw();
             pad0bot->cd();       // pad0bot becomes the current pad
 //        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
-        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
-        pre->Draw();
-
-
+    
 
             vec_th1s.at(k)->Rebin(data_rebin);
             TH1* rat_denom = (TH1*)vec_th1s.at(k)->Clone(("ratio_denom_"+stage_name.at(k)).c_str());
