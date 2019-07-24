@@ -441,8 +441,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
             std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+" / "+to_string_prec(d0->Integral()/tsum->Integral() ,2); ;
-            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0)) + ")/     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")";
-          
+            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0)) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")";
+
             //std::string mean = "Ratio: Normalized" ;
             TLatex *t = new TLatex(0.11,0.41,ks.c_str());
             t->SetNDC();
@@ -782,15 +782,38 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             ratpre->SetLineColor(kBlack);
             ratpre->SetTitle("");
 
+            double mychi =0;
+            int ndof = 0;
+            for(int p=0; p<d0->GetNbinsX();p++){
+                double da = d0->GetBinContent(p+1);
+                double bk = tsum->GetBinContent(p+1);
 
+                if (da == 0 || bk ==0){
+                    std::cout<<"ERROR mychi, for bin "<<p<<" n_data= "<<da<<" and n_mc= "<<bk<<std::endl;
+
+                } else{
+
+                    double da_err = sqrt(d0->GetBinContent(p+1));
+                    double bk_err = tsum->GetBinError(p+1);
+                    //std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<std::endl;
+                    double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
+                    if(tk==tk){
+                        mychi+=tk;
+                        ndof++;
+                    }
+                }
+            }
+
+
+            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0)) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")";
             std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+" / "+to_string_prec(d0->Integral()/tsum->Integral() ,2); ;
             //std::string mean = "Ratio: Normalized" ;
-            TText *t = new TText(0.11,0.41,mean.c_str());
+            TLatex *t = new TLatex(0.11,0.41,ks.c_str());
             t->SetNDC();
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
-            t->SetTextSize(0.12);
-            //t->Draw("same");
+            t->SetTextSize(0.10);
+            t->Draw("same");
 
 
 
@@ -1063,14 +1086,38 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             ratpre->SetTitle("");
 
 
+            double mychi =0;
+            int ndof = 0;
+            for(int p=0; p<data_th1s.at(k)->GetNbinsX();p++){
+                double da = data_th1s.at(k)->GetBinContent(p+1);
+                double bk = vec_th1s.at(k)->GetBinContent(p+1);
+
+                if (da == 0 || bk ==0){
+                    std::cout<<"ERROR mychi, for bin "<<p<<" n_data= "<<da<<" and n_mc= "<<bk<<std::endl;
+
+                } else{
+
+                    double da_err = sqrt(data_th1s.at(k)->GetBinContent(p+1));
+                    double bk_err = vec_th1s.at(k)->GetBinError(p+1);
+                    //std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<std::endl;
+                    double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
+                    if(tk==tk){
+                        mychi+=tk;
+                        ndof++;
+                    }
+                }
+            }
+
 
             std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2) ;
-            TText *t = new TText(0.11,0.41,mean.c_str());
+            std::string ks = "(KS: "+to_string_prec(vec_th1s.at(k)->KolmogorovTest(data_th1s.at(k))) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")";
+
+            TLatex *t = new TLatex(0.11,0.41,ks.c_str());
             t->SetNDC();
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
-            t->SetTextSize(0.12);
-            //        t->Draw("same");
+            t->SetTextSize(0.10);
+            t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
             //var_precut.front()->GetYaxis()->SetTitle("Verticies");
