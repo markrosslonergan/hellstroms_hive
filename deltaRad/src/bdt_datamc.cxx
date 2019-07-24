@@ -441,9 +441,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
             std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+" / "+to_string_prec(d0->Integral()/tsum->Integral() ,2); ;
-            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0)) + ")/(chi2/ndof: "+to_string_prec(mychi) + "/"+to_string_prec(ndof) +")";
+            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0)) + ")/     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")";
+          
             //std::string mean = "Ratio: Normalized" ;
-            TText *t = new TText(0.11,0.41,ks.c_str());
+            TLatex *t = new TLatex(0.11,0.41,ks.c_str());
             t->SetNDC();
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
