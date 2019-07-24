@@ -195,6 +195,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 max_modifier=4.3;
             }
 
+          if (s==3){
+                max_modifier = 5;
+            }
+
+
             if(var.is_logplot == true){
             //if(true){
                 pad0top->SetLogy();
@@ -204,6 +209,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             double min_val = 0.01;
             if(is_bdt_variable) {
                 max_modifier = 15.0;
+              //  max_modifier = 25.0;
                 min_val = 0.1;
             }
 
@@ -219,9 +225,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->GetYaxis()->SetTitle("Events");
             stk->GetYaxis()->SetTitleSize(0.05);
             stk->GetYaxis()->SetTitleOffset(0.9);
-            stk->SetMaximum(std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
+           stk->SetMaximum(std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
             stk->SetMinimum(min_val);
-            tsum->DrawCopy("Same E2");
+           tsum->DrawCopy("Same E2");
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
 
             tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
@@ -307,10 +313,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton");
+                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton ");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
@@ -432,7 +439,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
             t->SetTextSize(0.12);
-            //t->Draw("same");
+            t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
             //var_precut.front()->GetYaxis()->SetTitle("Events");
@@ -651,14 +658,16 @@ int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
             pottex.SetNDC();
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-            pottex.DrawLatex(.60,.68, pot_draw.c_str());
+            pottex.DrawLatex(.60,.64, pot_draw.c_str());
 
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton");
+                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton");
+                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
@@ -980,7 +989,8 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
 
         pottex.DrawLatex(.7,.96, pot_draw.c_str());
 
-        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
+//        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
+        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
         pre->Draw();
 
         //cobs->cd(k+1);	
