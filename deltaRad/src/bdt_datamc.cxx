@@ -322,10 +322,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton");
+                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton ");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
@@ -668,14 +669,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pottex.SetNDC();
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
 
-            pottex.DrawLatex(.60,.68, pot_draw.c_str());
+            pottex.DrawLatex(.60,.64, pot_draw.c_str());
 
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton");
+                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton");
+                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
@@ -1023,7 +1026,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
             pre->Draw();
 
-            //cobs->cd(k+1);	
+           //cobs->cd(k+1);	
             cobs->cd();
             TPad *pad0bot = new TPad(("padbot_"+stage_name.at(k)).c_str(),("padbot_"+stage_name.at(k)).c_str(), 0, 0.05, 1, 0.35);
             pad0bot->SetTopMargin(0);
@@ -1031,7 +1034,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pad0bot->SetGridx(); // vertical grid
             pad0bot->Draw();
             pad0bot->cd();       // pad0bot becomes the current pad
-
+//        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
+        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
+        pre->Draw();
 
 
 

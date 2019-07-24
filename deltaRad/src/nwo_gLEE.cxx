@@ -176,8 +176,8 @@ int main (int argc, char *argv[]){
         signal_definition += "&&" + v_denom[i];
     }
 
-    std::string ncpi0_background_definition = "!mctruth_is_delta_radiative && mctruth_cc_or_nc==1";
-    std::string other_background_definition = "!mctruth_is_delta_radiative" ;//&& !(mctruth_cc_or_nc == 1 && mctruth_num_exiting_pi0==1) && !(fabs(mctruth_lepton_pdg)==11 && mctruth_cc_or_nc==0)";
+    std::string ncpi0_background_definition = "!mctruth_is_delta_radiative && mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1";
+    std::string other_background_definition = "!mctruth_is_delta_radiative && !(mctruth_cc_or_nc == 1 && mctruth_num_exiting_pi0==1)";// && !(fabs(mctruth_lepton_pdg)==11 && mctruth_cc_or_nc==0)";
     std::string topological_cuts = TMVAmethods[0].topological_definition;
     std::string postcuts = "1";  //We dont currently use postcuts
 
@@ -194,7 +194,6 @@ int main (int argc, char *argv[]){
     bdt_flow other_bkg_flow(topological_cuts,		other_background_definition, 			vec_precuts,	postcuts, bdt_infos);
     bdt_flow other_bkg_training_flow(topological_cuts, "sim_track_overlay_fraction < 0.2" , 		vec_precuts,	postcuts, bdt_infos);
 
-
     bdt_flow ncpi0_bkg_flow(topological_cuts,		ncpi0_background_definition, 			vec_precuts,	postcuts, bdt_infos);
     bdt_flow nue_flow(topological_cuts, "fabs(mctruth_lepton_pdg)==11 && mctruth_cc_or_nc==0", vec_precuts, postcuts, bdt_infos);
     bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts, bdt_infos);
@@ -202,18 +201,19 @@ int main (int argc, char *argv[]){
 
     //***************************************************************************************/
     std::cout<<"Defining all our bdt_files."<<std::endl;
-    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
+    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_run3_v17.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
     bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_SM = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root", "NCDeltaRadOverlaySM", "hist","singlephoton/",  kMagenta-7, signal_all);
+    bdt_file *signal_SM = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root", "NCDeltaRadOverlaySM", "hist","singlephoton/",  kOrange+6, signal_all);
     bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
     bdt_file *dirt = new bdt_file(dir,"dirt_overlay_run1_v17.1.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
-    bdt_file *ncpi0    = new bdt_file(dir, "ncpi0_overlay_run1_v17.1.root", "NCpi0",	  "hist","singlephoton/",  kBlue-6, ncpi0_bkg_flow);
-    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_run1_v17.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, other_bkg_flow);
+    bdt_file *ncpi0    = new bdt_file(dir, "ncpi0_overlay_run1_v17.1.root", "NCpi0",	  "hist","singlephoton/", kAzure-9, ncpi0_bkg_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_run1_v17.1.root", "BNBOverlays", "hist","singlephoton/",  kBlue-7, other_bkg_flow);
     //bdt_file *nueintrinsic = new bdt_file(dir,"nueintrinsic_overlay_v12.2.root","NueIntrinsic","hist","singlephoton/",kCyan, nue_flow);
     bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_run1_v17.1.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
     bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v17.1.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
 
-    std::vector<bdt_file*> bdt_files = {bnb, OnBeamData, OffBeamData,dirt,signal,signal_other,training_signal, signal_SM};
+
+    std::vector<bdt_file*> bdt_files = {ncpi0, bnb, OnBeamData, OffBeamData,dirt,signal,signal_other,training_signal, signal_SM};
     //The LEE signal is bigger than the SM signal by this factor
     signal->scale_data =2.0; 
     signal_other->scale_data = 2.0; 
@@ -263,13 +263,13 @@ int main (int argc, char *argv[]){
 
 
     //Adding plot names
-    signal->addPlotName("LEE NC #Delta Radiative");
+    signal->addPlotName("LEE 1#gamma1p NC #Delta Radiative");
     signal_SM->addPlotName("SM NC #Delta Radiative");
-    signal_other->addPlotName("Other NC #Delta Radiative");
+    signal_other->addPlotName("LEE Other NC #Delta Radiative");
     //nueintrinsic->addPlotName("CC #nu_{e} Intrinsic");
-    bnb->addPlotName("BNB other");
+    bnb->addPlotName("BNB Other");
     ncpi0->addPlotName("NC#pi^{0}");
-    OnBeamData->addPlotName("On-Beam  Data v12");
+    OnBeamData->addPlotName("On-Beam Data");
     OffBeamData->addPlotName("Cosmic Data");
     dirt->addPlotName("Dirt");
 
@@ -281,10 +281,10 @@ int main (int argc, char *argv[]){
     //0.482015 0.603554
     //0.540533 0.587009
     //0.554892  0.582304
-    // 0.569627 0.580616
+   // 0.569627 0.580616
     double fcoscut = 0.569627;
     double fbnbcut = 0.580616;
-   //sig.3:ccut: 0.554892 0.582304  #signal: 24.8171 #bkg: 45.9445 ||  bnb: 45.9445 cos: 0 || impact 14.4716 3.66129
+  //sig.3:ccut: 0.554892 0.582304  #signal: 24.8171 #bkg: 45.9445 ||  bnb: 45.9445 cos: 0 || impact 14.4716 3.66129
    std::vector<double> fcuts = {fcoscut,fbnbcut}; 
 
     //===========================================================================================
@@ -386,9 +386,10 @@ int main (int argc, char *argv[]){
         }
         
 //        signal_SM->fillstyle = 3333;
-        histogram_stack->addToStack(signal_SM);
         histogram_stack->addToStack(signal);
+        histogram_stack->addToStack(signal_SM);
         histogram_stack->addToStack(signal_other);
+        histogram_stack->addToStack(ncpi0); 
         histogram_stack->addToStack(bnb);
         histogram_stack->addToStack(dirt);
         OffBeamData->fillstyle = 3333;
@@ -553,7 +554,7 @@ int main (int argc, char *argv[]){
         return 0;
     }else if(mode_option == "sig"){
 
-        scan_significance({signal, signal_other} , {bnb, OffBeamData, dirt}, bdt_infos);
+        scan_significance({signal, signal_SM, signal_other} , {bnb, OffBeamData, dirt,ncpi0}, bdt_infos);
 
     }else if(mode_option == "sss"){
 
