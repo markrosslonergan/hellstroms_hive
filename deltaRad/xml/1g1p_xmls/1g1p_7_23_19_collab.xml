@@ -6,6 +6,8 @@
 <precut def = "(TMath::Finite(reco_shower_dEdx_amalgamated[0]))" name = "Finite dE/dx"/>
 <precut def = "(TMath::Finite(reco_track_mean_trunc_dEdx_best_plane[0]))" name = "Finite Track dE/dx"/>
 <precut def = "reco_track_pid_three_plane_proton_pid>0" name = "3D PID"/>
+<precut def = "(TMath::Finite(reco_track_spacepoint_principal0[0]))" name = "track spacepoint principal"/>
+
 <!--<precut def = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>14.4716)" name = "Second Shower Veto"/>-->
 <!--<precut def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) > 0.05 &amp;&amp;acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) < 3.13149-0.05 " name = "Back-to-Back cut"/>
 <precut def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] > 0.2 " name = "Stopping Track Cut" /> -->
