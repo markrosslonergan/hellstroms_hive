@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 
-<topology name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1 &amp;&amp; reco_asso_tracks==0" />
+<topology name ="1#gamma 0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1 &amp;&amp; reco_asso_tracks==0" />
 
 <precut def = "(reco_vertex_x > 10 &amp;&amp; reco_vertex_x < 246 &amp;&amp; reco_vertex_y > -107 &amp;&amp; reco_vertex_y < 107 &amp;&amp; reco_vertex_z > 10 &amp;&amp; reco_vertex_z < 1026) " name = "Fiducial Vertex Cut" />
 <precut def = "(TMath::Finite(reco_shower_dEdx_amalgamated[0]))" name = "Finite dE/dx"/>
@@ -45,7 +45,7 @@
 -->
 
 
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(18,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(15,0.05,0.9)">
     <method type = "COSMIC" use = "yes">
         <param>  NTrees=500	</param>				 
         <param>  MinNodESize=2.5% </param>				
@@ -65,9 +65,9 @@
         />
 </mva>
 
-<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(18,0.1,0.9)">
+<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(15,0.17,0.65)">
     <method type = "BNB" use = "yes">
-        <param>  NTrees=1000 	</param>			
+        <param>  NTrees=500 	</param>			
         <param>  MinNodESize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
         <param>  AdaBoostBeta=0.075 	</param>				
@@ -78,7 +78,7 @@
         <param>  MaxDepth=3 	</param>				
     </method>
     <file
-        filename = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v17/bnb_overlay_run1_v17.1.root"
+        filename = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v17/bnb_overlay_run3_v17.1.root"
         foldername = "singlephoton/"
         training_cut = "sim_shower_overlay_fraction[0]<0.8"
 
@@ -111,13 +111,14 @@
 <var def = "reco_shower_theta_yz[0]" binning = "(40,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_shower_nuscore[0]" binning = "(40, 0, 1)" unit = "Reconstructed Shower Associated Slice Neutrino Score" type = "d" logplot = "false"  training="01"/>
 
+<var def = "reco_shower_conversion_distance[0]" binning = "(40,0,500)" unit = " Reconstructed Shower conversion distance Log[cm]" type = "d"   logplot="true" training=""/>
+
 <!--
 <var def = "reco_track_displacement[0]" binning = "(40,0,500)" unit = "Track Displacement [cm]" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_track_phi_yx[0]" binning = "(40,-3.14,3.14)" unit = "Reconstructed Track Phi yx" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_track_theta_yz[0]" binning = "(40,-3.14,3.14)" unit = "Reconstructed Track Theta yz" type = "d" logplot = "false"  training="01"/>
 <var def = "(TMath::Min(TMath::Min(TMath::Min(fabs(reco_track_endy[0]+117), fabs(reco_track_endy[0]-117)) ,  TMath::Min(fabs(reco_track_endx[0]-0), fabs(reco_track_endx[0]-256))), TMath::Min(fabs(reco_track_endz[0]-0), fabs(reco_track_endz[0]-1036))))" binning = "(40,0,125)" unit = " Reconstructed Track End distance to wall [cm]" type = "d" logplot = "false"  training="01"/>
 <var def = "(TMath::Min(TMath::Min(TMath::Min(fabs(reco_track_starty[0]+117), fabs(reco_track_starty[0]-117)) ,  TMath::Min(fabs(reco_track_startx[0]-0), fabs(reco_track_startx[0]-256))), TMath::Min(fabs(reco_track_startz[0]-0), fabs(reco_track_startz[0]-1036))))" binning = "(40,0,125)" unit = " Reconstructed Track Start distance to wall [cm]" type = "d" logplot = "false"  training="01"/>
-<var def = "reco_shower_conversion_distance[0]" binning = "(40,0,500)" unit = " Reconstructed Shower conversion distance Log[cm]" type = "d"   logplot="true" training="01"/>
 <var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(40,0.0, 1600)" unit = "Total Visible Energy [MeV]" type = "d" training="" />
 <var def = "TMath::Min(sqrt(pow(reco_track_endx[0]-reco_shower_startx[0],2)+pow(reco_track_endy[0]-reco_shower_starty[0],2)+pow(reco_track_endz[0]-reco_shower_startz[0],2)), sqrt(pow(reco_track_startx[0]-reco_shower_startx[0],2)+pow(reco_track_starty[0]-reco_shower_starty[0],2)+pow(reco_track_startz[0]-reco_shower_startz[0],2)))" binning = "(40,0,100)" unit = "Min distance from Shower to track start or end  cm" type="d" training="01"/>
 -->

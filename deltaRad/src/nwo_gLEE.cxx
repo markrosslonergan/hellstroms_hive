@@ -272,7 +272,7 @@ int main (int argc, char *argv[]){
 
 
     //Adding plot names
-    signal->addPlotName("LEE 1#gamma1p NC #Delta Radiative");
+    signal->addPlotName("LEE Signal NC #Delta Radiative");
     signal_SM->addPlotName("SM NC #Delta Radiative");
     signal_other->addPlotName("LEE Other NC #Delta Radiative");
     //nueintrinsic->addPlotName("CC #nu_{e} Intrinsic");
@@ -652,11 +652,17 @@ int main (int argc, char *argv[]){
     }
     else if(mode_option == "eff"){
 
-        std::vector<std::string> v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==1"};
+        std::vector<std::string> v_topo;
+        if (topo_tag == "notrack"){
+            v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==0"};
+
+        } else{
+            v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==1"};
+        }
+
         if(which_stage==-1)which_stage=3;
+
         bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcuts, 3.7e19,false,which_stage);
-
-
 
     }else if(mode_option == "sbnfit"){
         if(which_file==-1) which_file ==0;

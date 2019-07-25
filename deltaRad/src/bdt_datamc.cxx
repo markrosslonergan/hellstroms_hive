@@ -550,7 +550,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             THStack *stk = (THStack*)mc_stack->getBDTEntryStack(info);
             TH1 * tsum = (TH1*)mc_stack->getBDTEntrySum(info);
 
-            bdt_variable dvar = data_file->getBDTVariable(info, info.binning);
+            bdt_variable dvar = data_file->getBDTVariable(info);
             dvar.is_logplot = true;
             TH1 * d0 = (TH1*)data_file->getTH1(dvar, "1", scuts+"_"+data_file->tag+"_"+dvar.safe_name, plot_pot);
 
