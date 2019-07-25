@@ -714,8 +714,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             ratunit->SetFillColor(kGray+3);
             ratunit->SetMarkerStyle(0);
             ratunit->SetMarkerSize(0);
-            ratunit->SetFillStyle(3001);
-            //ratunit->SetFillStyle(3354);
+        //    ratunit->SetFillStyle(3001);
+            ratunit->SetFillStyle(3354);
             //gStyle->SetHatchesLineWidth(1);
             //gStyle->SetHatchesSpacing(1);
 
