@@ -359,11 +359,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(s)).c_str());
             ratunit->Divide(rat_denom);		
 
-            ratunit->SetFillColor(kGray+3);
+            ratunit->SetFillColor(kGray+1);
             ratunit->SetMarkerStyle(0);
             ratunit->SetMarkerSize(0);
-            ratunit->SetFillStyle(3001);
-            //ratunit->SetFillStyle(3354);
+         //   ratunit->SetFillStyle(3001);
+            ratunit->SetFillStyle(3354);
             //gStyle->SetHatchesLineWidth(1);
             //gStyle->SetHatchesSpacing(1);
 
@@ -711,7 +711,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(s)).c_str());
             ratunit->Divide(rat_denom);		
 
-            ratunit->SetFillColor(kGray+3);
+            ratunit->SetFillColor(kGray+1);
             ratunit->SetMarkerStyle(0);
             ratunit->SetMarkerSize(0);
         //    ratunit->SetFillStyle(3001);

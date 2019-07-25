@@ -63,7 +63,8 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
     }
 
     std::vector<double> minvals = maxvals;
-    for(auto &v: minvals) v=v*0.5;
+    //for(auto &v: minvals) v=v*0.2;
+    for(auto &v: minvals) v=0.0;
 
 	//Create N2tempoary TEntryLists  at minimum
 	std::vector<TEntryList*> sig_min_lists;
@@ -107,7 +108,7 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
 
 
     std::vector<double> cval = {fcoscut,fbnbcut};
-    if(true){
+    if(false){
             minvals[0]=cval[0]*scal_down;
             maxvals[0]=cval[0]*scal_up;
            
@@ -145,7 +146,9 @@ std::vector<double> scan_significance( std::vector<bdt_file*> sig_files, std::ve
             double impact = rangen->Uniform(13,20);
 //            double dist = rangen->Uniform(0,16);
             //std::string s_impact = "((sss_num_candidates==0) ||  Min$(sss_candidate_impact_parameter)>"+std::to_string(impact) +") ";
-            std::string s_impact = "((sss_num_candidates==0)|| Sum$(sss_candidate_impact_parameter<"+std::to_string(impact)+ "&& sss_candidate_min_dist<70.0)==0 )";
+           
+            std::string s_impact = "1";
+          //  std::string s_impact = "((sss_num_candidates==0)|| Sum$(sss_candidate_impact_parameter<"+std::to_string(impact)+ "&& sss_candidate_min_dist<70.0)==0 )";
             //std::string s_impact = "((sss_num_candidates==0)|| Min$(sss_candidate_impact_parameter/sss_candidate_min_dist)<"+std::to_string(impact)+ ")";
 			
             double signal = 0;
