@@ -154,7 +154,16 @@ int main (int argc, char *argv[]){
     //*******************************************
     //Here is the whole Signal definition
     //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-    std::string training_signal_cut = "sim_shower_overlay_fraction[0] < 0.3 && sim_track_overlay_fraction[0]<0.3 && sim_track_pdg[0]==2212 && sim_shower_pdg[0]==22";
+
+    std::string training_signal_cut ;
+
+    if (topo_tag == "notrack"){
+        training_signal_cut = "sim_shower_overlay_fraction[0] < 0.3 && sim_shower_pdg[0]==22";
+    } else {
+        training_signal_cut = "sim_shower_overlay_fraction[0] < 0.3 && sim_track_overlay_fraction[0]<0.3 && sim_track_pdg[0]==2212 && sim_shower_pdg[0]==22";
+
+    }
+
     std::string num_track_cut;
 
     std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
@@ -166,10 +175,10 @@ int main (int argc, char *argv[]){
     std::vector<std::string> v_denom;
 
     if (topo_tag == "notrack"){
-         v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.02)==0"};
+        v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.02)==0"};
     }else{
-         v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.02)==1"};
-  
+        v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.02)==1"};
+
     }
     std::string signal_definition = v_denom[0];
     for(int i=1; i< v_denom.size();i++){
@@ -276,16 +285,16 @@ int main (int argc, char *argv[]){
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-   //0.510918 0.632981
+    //0.510918 0.632981
     //
     //0.482015 0.603554
     //0.540533 0.587009
     //0.554892  0.582304
-   // 0.569627 0.580616
+    // 0.569627 0.580616
     double fcoscut = 0.569627;
     double fbnbcut = 0.580616;
-  //sig.3:ccut: 0.554892 0.582304  #signal: 24.8171 #bkg: 45.9445 ||  bnb: 45.9445 cos: 0 || impact 14.4716 3.66129
-   std::vector<double> fcuts = {fcoscut,fbnbcut}; 
+    //sig.3:ccut: 0.554892 0.582304  #signal: 24.8171 #bkg: 45.9445 ||  bnb: 45.9445 cos: 0 || impact 14.4716 3.66129
+    std::vector<double> fcuts = {fcoscut,fbnbcut}; 
 
     //===========================================================================================
     //===========================================================================================
@@ -356,7 +365,7 @@ int main (int argc, char *argv[]){
                 bdt_app(bdt_infos[i], tf);
             }
         }else{
-                bdt_app(bdt_infos[which_bdt], tf);
+            bdt_app(bdt_infos[which_bdt], tf);
         }
         return 0;
     }
@@ -365,13 +374,13 @@ int main (int argc, char *argv[]){
     else if(mode_option == "datamc"){
         std::cout<<"Starting datamc "<<std::endl;
 
-	 if (access("datamc",F_OK) == -1){
-	   	 mkdir("datamc",0777);//Create a folder for pdf.
-	 }
-	 else{
-	  	std::cout<<"Overwrite datamc/ in 5 seconds, 4 seconds, ..."<<std::endl;
-	    sleep(5);
-	}
+        if (access("datamc",F_OK) == -1){
+            mkdir("datamc",0777);//Create a folder for pdf.
+        }
+        else{
+            std::cout<<"Overwrite datamc/ in 5 seconds, 4 seconds, ..."<<std::endl;
+            sleep(5);
+        }
 
 
 
@@ -384,8 +393,8 @@ int main (int argc, char *argv[]){
         }else{
             histogram_stack->plot_pot = what_pot;
         }
-        
-//        signal_SM->fillstyle = 3333;
+
+        //        signal_SM->fillstyle = 3333;
         histogram_stack->addToStack(signal);
         histogram_stack->addToStack(signal_SM);
         histogram_stack->addToStack(signal_other);
@@ -426,7 +435,7 @@ int main (int argc, char *argv[]){
                     real_datamc.plotBDTStacks(bdt_infos[k] , fcuts);
                 }
             }else{
-                    real_datamc.plotBDTStacks(bdt_infos[which_bdt],fcuts);
+                real_datamc.plotBDTStacks(bdt_infos[which_bdt],fcuts);
             }
         }
     }else if(mode_option == "test"){
@@ -711,149 +720,149 @@ int main (int argc, char *argv[]){
     }
 
     else if(mode_option == "recomc"){
-	 if (access("recomc",F_OK) == -1){
-	   	 mkdir("recomc",0777);//Create a folder for pdf.
-	 }
-	 else{
-	  	std::cout<<"Overwrite recomc/ in 5 seconds, 4 seconds, ..."<<std::endl;
-	    sleep(5);
-	
-        std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7,kOrange-3, kGreen+1 , kGray};
-        //        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other Non #gamma",  "Overlay","Other"};
-        //         std::vector<int> recomc_cols = { kYellow-7,kOrange-3, kGreen+1 ,kGray};
-        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}", "Other NC", "Other CC", "Cosmic (Overlay)"};
-
-        std::string overlay = "sim_shower_overlay_fraction[0] >= 0.8";
-
-        std::string ncdelta = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative ==1 && !("+overlay+")";
-        std::string ccpi0 = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==0 && !("+overlay+")";
-        std::string ncpi0 = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==1 && !("+overlay+")";
-        std::string othergamma =  "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative!=1 && !("+overlay+")";
-        std::string  nue = "abs(mctruth_lepton_pdg[0])==11 && abs(sim_shower_pdg[0]) ==11  && !("+overlay+")"; // && (exiting_electron_number==1 || exiting_antielectron_number==1)";
-        std::string  michel = "abs(sim_shower_pdg[0]) ==11 && abs(sim_shower_parent_pdg[0])==13 && !("+overlay+")";
-        //std::string bnbother =  "sim_shower_pdg[0]!=22 && !("+nue+") && !("+michel+")  && !("+overlay+")";
-        // std::string overlay = "sim_shower_overlay_fraction[0] == 1";
-        //std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel,bnbother};
-        std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel};
-
-
-        std::string othercc = "!("+overlay+") && ! mctruth_cc_or_nc==0";
-        for(auto s: recomc_cuts){
-            othercc += "&& !("+s+")";
+        if (access("recomc",F_OK) == -1){
+            mkdir("recomc",0777);//Create a folder for pdf.
         }
+        else{
+            std::cout<<"Overwrite recomc/ in 5 seconds, 4 seconds, ..."<<std::endl;
+            sleep(5);
 
-        std::string othernc = "!("+overlay+") && ! mctruth_cc_or_nc==1";
-        for(auto s: recomc_cuts){
-            othernc += "&& !("+s+")";
-        }
+            std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7,kOrange-3, kGreen+1 , kGray};
+            //        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other Non #gamma",  "Overlay","Other"};
+            //         std::vector<int> recomc_cols = { kYellow-7,kOrange-3, kGreen+1 ,kGray};
+            std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}", "Other NC", "Other CC", "Cosmic (Overlay)"};
 
-        recomc_cuts.push_back(othernc);
-        recomc_cuts.push_back(othercc);
+            std::string overlay = "sim_shower_overlay_fraction[0] >= 0.8";
 
-        std::cout<<"other nc = "<<othernc<<std::endl;
+            std::string ncdelta = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative ==1 && !("+overlay+")";
+            std::string ccpi0 = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==0 && !("+overlay+")";
+            std::string ncpi0 = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==1 && !("+overlay+")";
+            std::string othergamma =  "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative!=1 && !("+overlay+")";
+            std::string  nue = "abs(mctruth_lepton_pdg[0])==11 && abs(sim_shower_pdg[0]) ==11  && !("+overlay+")"; // && (exiting_electron_number==1 || exiting_antielectron_number==1)";
+            std::string  michel = "abs(sim_shower_pdg[0]) ==11 && abs(sim_shower_parent_pdg[0])==13 && !("+overlay+")";
+            //std::string bnbother =  "sim_shower_pdg[0]!=22 && !("+nue+") && !("+michel+")  && !("+overlay+")";
+            // std::string overlay = "sim_shower_overlay_fraction[0] == 1";
+            //std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel,bnbother};
+            std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel};
 
-        std::string other = "!("+overlay+")";
-        for(auto s: recomc_cuts){
-            othernc += "&& !("+s+")";
-        }
 
-        // recomc_cuts.push_back(other);
-        recomc_cuts.push_back(overlay);
+            std::string othercc = "!("+overlay+") && ! mctruth_cc_or_nc==0";
+            for(auto s: recomc_cuts){
+                othercc += "&& !("+s+")";
+            }
+
+            std::string othernc = "!("+overlay+") && ! mctruth_cc_or_nc==1";
+            for(auto s: recomc_cuts){
+                othernc += "&& !("+s+")";
+            }
+
+            recomc_cuts.push_back(othernc);
+            recomc_cuts.push_back(othercc);
+
+            std::cout<<"other nc = "<<othernc<<std::endl;
+
+            std::string other = "!("+overlay+")";
+            for(auto s: recomc_cuts){
+                othernc += "&& !("+s+")";
+            }
+
+            // recomc_cuts.push_back(other);
+            recomc_cuts.push_back(overlay);
 
 
-        bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
+            bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
 
-        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-        if(!response_only){
-            int h=0;
+            TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+            if(!response_only){
+                int h=0;
 
-            if(number !=-1){
-                std::vector<bdt_variable> tmp = {vars.at(number)};
-                recomc.plot_recomc(ftest, bnb, tmp, fcoscut, fbnbcut);
-                return 0;
+                if(number !=-1){
+                    std::vector<bdt_variable> tmp = {vars.at(number)};
+                    recomc.plot_recomc(ftest, bnb, tmp, fcoscut, fbnbcut);
+                    return 0;
 
-            }else{
-                recomc.plot_recomc(ftest, bnb, vars, fcoscut, fbnbcut);
-            }	
-        }
+                }else{
+                    recomc.plot_recomc(ftest, bnb, vars, fcoscut, fbnbcut);
+                }	
+            }
 
-        if(response_only){
-            recomc.is_log = true;
+            if(response_only){
+                recomc.is_log = true;
                 // recomc.plot_recomc(ftest, signal, (std::vector<bdt_variable>){signal->getBDTVariable(cosmic_bdt_info)} , fcoscut,fbnbcut);
                 // recomc.plot_recomc(ftest, bnb, (std::vector<bdt_variable>){bnb->getBDTVariable(cosmic_bdt_info)} , fcoscut,fbnbcut);
                 //  recomc.plot_recomc(ftest, bnb, (std::vector<bdt_variable>){bnb->getBDTVariable(bnb_bdt_info)} , fcoscut,fbnbcut);
                 //  recomc.plot_recomc(ftest, signal, (std::vector<bdt_variable>){signal->getBDTVariable(bnb_bdt_info)} , fcoscut,fbnbcut);
 
-            recomc.is_log = false;
-        }
+                recomc.is_log = false;
+            }
 
-    }/*
+        }/*
 
-        else if(mode_option == "response"){
+            else if(mode_option == "response"){
 
-        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-//Ok print out Cosmic BDT
-if(run_cosmic){
-bdt_response cosmic_response(cosmic_bdt_info, training_signal, OffBeamData);
-cosmic_response.plot_bdt_response(ftest);
-}
+            TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+    //Ok print out Cosmic BDT
+    if(run_cosmic){
+    bdt_response cosmic_response(cosmic_bdt_info, training_signal, OffBeamData);
+    cosmic_response.plot_bdt_response(ftest);
+    }
 
-if(run_bnb){
-bdt_response bnb_response(bnb_bdt_info, training_signal, training_ncpi0);
-bnb_response.plot_bdt_response(ftest);
-}
-}	
+    if(run_bnb){
+    bdt_response bnb_response(bnb_bdt_info, training_signal, training_ncpi0);
+    bnb_response.plot_bdt_response(ftest);
+    }
+    }	
 
-else if(mode_option == "sig"){
+    else if(mode_option == "sig"){
 
 
-TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, ncpi0, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
-//std::vector<double> ans = lin_scan({signal}, {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
+    TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
+    std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, ncpi0, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
+    //std::vector<double> ans = lin_scan({signal}, {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
 
-std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
-fsig->Close();
+    std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
+    fsig->Close();
 
 */
 }else if(mode_option == "stack"){
-bdt_stack histogram_stack(analysis_tag+"_stack");
-histogram_stack.plot_pot = 13.2e20;
-histogram_stack.addToStack(signal);
-histogram_stack.addToStack(signal_other);
-histogram_stack.addToStack(bnb);
-//histogram_stack.addToStack(nueintrinsic);
-histogram_stack.addToStack(ncpi0);
-//Add OffBeamData but change the color and style first
-OffBeamData->col;	
-OffBeamData->fillstyle = 3333;
-histogram_stack.addToStack(dirt);
+    bdt_stack histogram_stack(analysis_tag+"_stack");
+    histogram_stack.plot_pot = 13.2e20;
+    histogram_stack.addToStack(signal);
+    histogram_stack.addToStack(signal_other);
+    histogram_stack.addToStack(bnb);
+    //histogram_stack.addToStack(nueintrinsic);
+    histogram_stack.addToStack(ncpi0);
+    //Add OffBeamData but change the color and style first
+    OffBeamData->col;	
+    OffBeamData->fillstyle = 3333;
+    histogram_stack.addToStack(dirt);
 
-histogram_stack.addToStack(OffBeamData);
-//histogram_stack.addToStack(dirt);
+    histogram_stack.addToStack(OffBeamData);
+    //histogram_stack.addToStack(dirt);
 
-TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-int ip=0;
+    TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+    int ip=0;
 
 
-if(!response_only){
-if(number == -1){
-histogram_stack.plotStacks(ftest,vars,fcoscut,fbnbcut);
-}else{
-std::cout<<"Starting to make a stack of : "<<vars.at(number).name<<std::endl;
+    if(!response_only){
+        if(number == -1){
+            histogram_stack.plotStacks(ftest,vars,fcoscut,fbnbcut);
+        }else{
+            std::cout<<"Starting to make a stack of : "<<vars.at(number).name<<std::endl;
 
-std::vector<bdt_variable> v_tmp = {vars.at(number)};
-histogram_stack.plotStacks(ftest,v_tmp,fcoscut,fbnbcut);
-}
-}else{
-histogram_stack.plotBDTStacks(ftest, bdt_infos[1], fcoscut, fbnbcut);
-histogram_stack.plotBDTStacks(ftest, bdt_infos[0], fcoscut, fbnbcut);
-return 0;
-}
-/*
-}else if(mode_option == "sbnfit"){
-if(number==-1) number ==0;
+            std::vector<bdt_variable> v_tmp = {vars.at(number)};
+            histogram_stack.plotStacks(ftest,v_tmp,fcoscut,fbnbcut);
+        }
+    }else{
+        histogram_stack.plotBDTStacks(ftest, bdt_infos[1], fcoscut, fbnbcut);
+        histogram_stack.plotBDTStacks(ftest, bdt_infos[0], fcoscut, fbnbcut);
+        return 0;
+    }
+    /*
+       }else if(mode_option == "sbnfit"){
+       if(number==-1) number ==0;
 
-bdt_file * file = bdt_files.at(number);
+       bdt_file * file = bdt_files.at(number);
 
 //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
 file->teventweight->AddFriend(file->tvertex);
@@ -907,13 +916,13 @@ return 0;
 }*/
 }else if(mode_option == "vars"){
 
-	 if (access("vars",F_OK) == -1){
-	   	 mkdir("vars",0777);//Create a folder for pdf.
-	 }
-	 else{
-	  	std::cout<<"Overwrite vars/ in 5 seconds, 4 seconds, ..."<<std::endl;
-	    sleep(5);
-	}
+    if (access("vars",F_OK) == -1){
+        mkdir("vars",0777);//Create a folder for pdf.
+    }
+    else{
+        std::cout<<"Overwrite vars/ in 5 seconds, 4 seconds, ..."<<std::endl;
+        sleep(5);
+    }
 
 
     std::vector<std::string> title = {"Topological Selection","Pre-Selection Cuts"};
@@ -935,18 +944,18 @@ return 0;
 
         for(int k=0; k< bdt_infos.size(); k++){
             if(number != -1){
-                 plot_bdt_variable(training_signal, training_background_files[k], vars.at(number), bdt_infos[k], false);
+                plot_bdt_variable(training_signal, training_background_files[k], vars.at(number), bdt_infos[k], false);
             }else{
-                 plot_bdt_variables(training_signal, training_background_files[k], vars, bdt_infos[k], false);
+                plot_bdt_variables(training_signal, training_background_files[k], vars, bdt_infos[k], false);
             }
         }
 
     }else{
-            if(number != -1){
-                 plot_bdt_variable(training_signal, training_background_files[which_bdt], vars.at(number), bdt_infos[which_bdt], false);
-            }else{
-                 plot_bdt_variables(training_signal, training_background_files[which_bdt], vars, bdt_infos[which_bdt], false);
-            }
+        if(number != -1){
+            plot_bdt_variable(training_signal, training_background_files[which_bdt], vars.at(number), bdt_infos[which_bdt], false);
+        }else{
+            plot_bdt_variables(training_signal, training_background_files[which_bdt], vars, bdt_infos[which_bdt], false);
+        }
     }
 
 
