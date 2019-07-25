@@ -282,8 +282,8 @@ int main (int argc, char *argv[]){
     //0.540533 0.587009
     //0.554892  0.582304
    // 0.569627 0.580616
-    double fcoscut = 0.569627;
-    double fbnbcut = 0.580616;
+    double fcoscut = 0.543804;//first pass 0.546478;
+    double fbnbcut = 0.55777;
   //sig.3:ccut: 0.554892 0.582304  #signal: 24.8171 #bkg: 45.9445 ||  bnb: 45.9445 cos: 0 || impact 14.4716 3.66129
    std::vector<double> fcuts = {fcoscut,fbnbcut}; 
 

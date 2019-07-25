@@ -592,8 +592,8 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 	file->calcBDTEntryList(plot_stage,bdt_cuts);
    	file->setStageEntryList(plot_stage);
     double stage_entries ;
-    if(plot_stage>0) file->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
-    if(plot_stage==0) file->GetEntries(denominator+"&&"+topocuts)*conversion;
+    if(plot_stage>0) stage_entries = file->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
+    if(plot_stage==0) stage_entries = file->GetEntries(denominator+"&&"+topocuts)*conversion;
 
     if(plot_stage==0){
 			h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator+"&&"+topocuts , "photon_true_numer", 13.2e20);
