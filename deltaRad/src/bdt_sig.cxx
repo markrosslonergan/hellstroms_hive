@@ -241,7 +241,6 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 	files.insert( files.end(), sig_files.begin(), sig_files.end() );
 	files.insert( files.end(), bkg_files.begin(), bkg_files.end() );
 
-	if (access("sig_limits.txt",F_OK) == -1){//file does not exist, then figure it out here.
 		cout<<"Finding the extremum of responses: "<<endl;
 
 		for(int index = 0; index<files.size(); index++){//get the extremum BDT info by creating a histogram and extract the extremum from the histogram;
@@ -273,15 +272,8 @@ void select_events (vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, bd
 		save_siglimits<< tmin_cos <<" "<<tmax_cos<<std::endl;
 		save_siglimits<< tmin_bnb <<" "<<tmax_bnb<<std::endl;
 		save_siglimits.close();
-	} else{
-		std::cout<<"	Read off limits on axies from sig_limits.txt for cos & bnb responses. ";
 
-		std::fstream best_responses("sig_limits.txt", std::ios_base::in);
-
-		best_responses >> tmin_cos >> tmax_cos;
-		best_responses >> tmin_bnb >> tmax_bnb;
-	}
-	cout<<"\nRange of Responses: Cosmic:"<<tmin_cos<<" "<<tmax_cos<<" BNB:"<<tmin_bnb<<" "<<tmax_bnb<<endl;
+		cout<<"\nRange of Responses: Cosmic:"<<tmin_cos<<" "<<tmax_cos<<" BNB:"<<tmin_bnb<<" "<<tmax_bnb<<endl;
 	if(tmin_cos<0 || tmin_bnb<0){
 		cout<<"Something wrong with the range of respones"<<endl;
 		exit(EXIT_FAILURE);
@@ -665,9 +657,9 @@ void significance_eff(vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, 
 
 	}		
 	std::ofstream save_sig("sig_ref.txt");//recored limits of boundary;
-	save_sig<< best_data <<" "<<best_sig[0]<<std::endl;
+	save_sig<< min_distance + (best_at[0]-1)* gap <<" "<<min_distance + (best_data_at-1)* gap<<std::endl;
 	save_sig.close();
-	cout<<"Saved the aboved two cuts for selection."<<endl;
+	cout<<"Saved the aboved two cuts (best/with Data-MC agreement) for selection."<<endl;
 
 
 	if(false){
@@ -698,7 +690,7 @@ void significance_eff(vector<bdt_file*> sig_files, vector<bdt_file*> bkg_files, 
 	cout<<"\n Filling finished! The best sig "<<best_sig[0];
 	cout<<" is found at "<< min_distance + (best_at[0]-1)* gap<<endl;
 
-	cout<<"With Data-MC aggrement, the best sig "<<best_data;
+	cout<<"With Data-MC agreement, the best sig "<<best_data;
 	cout<<" is found at "<< min_distance + (best_data_at-1)* gap<<endl;
 
 	TCanvas* a_canvas = new TCanvas();

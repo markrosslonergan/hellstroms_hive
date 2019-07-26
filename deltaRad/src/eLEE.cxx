@@ -60,7 +60,7 @@ int main (int argc, char *argv[]){
 	bool response_only = false;
 	int sbnfit_stage = 1;
 
-	bool contour = false;
+	bool contour = true;
 	vector<double> cuts_at = {0.215894,0.222546};
 //	vector<double> strictness = a_number;//,0.35, 0.9};
 //	vector<double> labels = a_number;//,0.35, 0.9};
@@ -197,8 +197,8 @@ int main (int argc, char *argv[]){
 //		"&&abs(reco_shower_startx[0]-reco_track_startx[0])+abs(reco_shower_starty[0]-reco_track_starty[0])+abs(reco_shower_startz[0]-reco_track_startz[0])<2";
 
 	std::string training_bkg_cut = "(abs(mctruth_nu_pdg)!=12||mctruth_cc_or_nc==1)"
-		"&&sim_shower_matched[0]==1&&sim_shower_overlay_fraction[0]<0.5"
-		"&&!(mctruth_mode==1 && abs(mctruth_nu_pdg)==14 && mctruth_cc_or_nc==1)";
+		"&&sim_shower_matched[0]==1&&sim_shower_overlay_fraction[0]<0.5";
+//		"&&!(mctruth_mode==1 && abs(mctruth_nu_pdg)==14 && mctruth_cc_or_nc==1)";
 	std::string num_track_cut;
 
 	if(analysis_tag == "1e1p"){
@@ -228,8 +228,8 @@ int main (int argc, char *argv[]){
 	}
 
 	std::string background_definition = "abs(mctruth_nu_pdg)!=12";//||mctruth_cc_or_nc==1";
-	std::string res_definition = "(mctruth_mode==1 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1)";
-	background_definition += "&&!"+res_definition;
+//	std::string res_definition = "(mctruth_mode==1 && mctruth_nu_pdg==14 && mctruth_cc_or_nc==1)";
+//	background_definition += "&&!"+res_definition;
 
 	//    std::string intrinsic_background = "(abs(mctruth_nu_pdg)==12&&mctruth_cc_or_nc==0)";
 	std::string topological_cuts = "(reco_vertex_size > 0 && reco_asso_showers == 1 && reco_asso_tracks "+num_track_cut+")";
@@ -288,8 +288,8 @@ int main (int argc, char *argv[]){
 	training_signal->addPlotName("LEE #nu_{e}(#bar{#nu}_{e})");
 	signal->addPlotName("Golden LEE #nu_{e}(#bar{#nu}_{e})");
 	signal_other->addPlotName("Other LEE #nu_{e}(#bar{#nu}_{e})");
-	training_bnb->addPlotName("BNB Neutrino Backgrounds (no NumuNCRes)");
-	bnb->addPlotName("BNB Backgrounds (no NumuNCRes)");
+	training_bnb->addPlotName("BNB Neutrino Backgrounds");
+	bnb->addPlotName("BNB Backgrounds");
 	//bnb->addPlotName("BNB Neutrino Backgrounds");
 	nueintrinsic->addPlotName("#nu_{e}(#bar{#nu}_{e}) Intrinsics");
 	OnBeamData->addPlotName("On-Beam Data");
@@ -360,8 +360,11 @@ int main (int argc, char *argv[]){
 
 			if(mode_option != "app" && mode_option != "train"){
 			//prepare entrylist for topo. cut and pre-cut.
-				//f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
-				f->addBDTResponses_v2(cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, TMVAmethods );
+				if(contour){
+					f->addBDTResponses_v2(cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, TMVAmethods );
+				}else{
+					f->addBDTResponses(cosmic_bdt_info, bnb_bdt_info, TMVAmethods);
+				}
 				f->calcBaseEntryList(analysis_tag);
 			}
 		}
@@ -415,7 +418,61 @@ if(cuts_at.size()==2){//automatically load the optimized cuts
 	//===========================================================================================
 	//===========================================================================================
 
-	if(mode_option == "train") {
+	if(mode_option == "test"){
+		cout<<"Use test mode to figure out CosmicBDT and BNBBDT Setting;"<<endl;
+	//std::vector<bdt_file*> bdt_files = {signal,training_signal, signal_other, training_bnb, bnb, OnBeamData, OffBeamData,dirt,nueintrinsic};
+		if(run_cosmic){
+			//train
+			bdt_train(cosmic_bdt_info, training_signal, OffBeamData);
+
+			//app
+			std::vector<bdt_file*> tmp_f =  {bdt_files[0],bdt_files[5],bdt_files[6]};
+			bdt_app(cosmic_bdt_info,tmp_f);
+			
+			//check BDTResponse
+			std::cout<<"Starting datamc cosmic"<<std::endl;
+			TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+
+			bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
+			histogram_stack->plot_pot = OnBeamData->pot;
+			histogram_stack->addToStack(signal);
+
+//			histogram_stack->addToStack(bnb);
+			OffBeamData->fillstyle = 3333;
+			histogram_stack->addToStack(OffBeamData);
+
+			bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
+			real_datamc.plotBDTStacks(ftest, cosmic_bdt_info ,fcoscut,fbnbcut);
+
+		}
+		
+		if(run_bnb){
+			//train
+			bdt_train(bnb_bdt_info, training_signal, training_bnb);
+			
+			//app
+			std::vector<bdt_file*> tmp_f =  {bdt_files[0],bdt_files[4],bdt_files[5]};
+			bdt_app(bnb_bdt_info, tmp_f);
+			
+			//check BDTResponse
+			std::cout<<"Starting datamc bnb"<<std::endl;
+			TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+
+			bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
+			histogram_stack->plot_pot = OnBeamData->pot;
+			histogram_stack->addToStack(signal);
+
+			histogram_stack->addToStack(bnb);
+//			OffBeamData->fillstyle = 3333;
+//			histogram_stack->addToStack(OffBeamData);
+
+			bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
+			real_datamc.plotBDTStacks(ftest, bnb_bdt_info ,fcoscut,fbnbcut);
+		}
+		
+		
+		return 0;
+	}else if(mode_option == "train") {
 		std::cout<<"**********************Starting COSMIC BDT Training*************************"<<std::endl;
 		if(run_cosmic) bdt_train(cosmic_bdt_info, training_signal, OffBeamData);
 
@@ -601,8 +658,8 @@ if(cuts_at.size()==2){//automatically load the optimized cuts
 	}else if(mode_option == "sig"){
 		if(contour){
 		cout<<"Prepare for Contour Selection"<<endl;
-//		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 10, {0,0,0,0});//number is the step on x,y-axies;
-		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 70, {0.028,0.015,0.142,0.031});//number is the step on x,y-axies;
+		//{signal_x,signal_y,bkg_x,bkg_y}
+//		select_events({signal,OnBeamData}, {signal_other, bnb, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info, contour_bdt_info, {0.8, 0.45, 0.1} , 60, {0.005,-0.005,0.2,0});//number is the step on x,y-axies;
 
 			//this gives the significance versus the signal eff;
 		for(auto &f: bdt_files){//add new contour friend tree;
@@ -628,13 +685,13 @@ if(cuts_at.size()==2){//automatically load the optimized cuts
 		histogram_stack.addToStack(signal);
 		histogram_stack.addToStack(signal_other);
 		histogram_stack.addToStack(nueintrinsic);
-		histogram_stack.addToStack(bnb);
+//		histogram_stack.addToStack(bnb);
 
 		//Add OffBeamData but change the color and style first
 		OffBeamData->col;	
 		OffBeamData->fillstyle = 3333;
-		histogram_stack.addToStack(OffBeamData);
-		histogram_stack.addToStack(dirt);
+//		histogram_stack.addToStack(OffBeamData);
+//`		histogram_stack.addToStack(dirt);
 
 		histogram_stack.plot_pot = 13.2e20;
 		TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
@@ -712,15 +769,6 @@ if(cuts_at.size()==2){//automatically load the optimized cuts
 	gadget_buildfolder("datamc");
 	if(!contour)cuts_at = {fcoscut,fbnbcut}; //update cuts_at using cos, bnb bdt responses.
 	
-//	if (access("datamc",F_OK) == -1){
-//		mkdir("datamc",0777);//Create a folder for pdf.
-//	}
-//	else{
-//		std::cout<<"Overwrite datamc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-//		sleep(2);
-//	}
-
-
 	std::cout<<"Starting datamc"<<std::endl;
 	TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 

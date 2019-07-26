@@ -438,6 +438,7 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
 
 int bdt_stack::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
 	cout<<"COME AND VISIT 405 of bdt_spec.cxx\n\n\n\n"<<endl;
+	exit(EXIT_FAILURE);
 	/*
 	TCanvas *cobs = new TCanvas("","",1800,1600);
 	cobs->Divide(2,2,0.0025,0.0000001);
