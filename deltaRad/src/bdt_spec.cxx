@@ -453,7 +453,9 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
             pottex.SetTextSize(0.045);
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
-            std::string pot_draw = this->stack[0]->topo_name+" "+to_string_prec(plot_pot/1e20,1)+"e20 POT";
+            std::string pot_draw = this->stack[0]->topo_name+" "+to_string_prec(plot_pot/1e19,1)+"e19 POT";
+            //   std::string pot_draw = this->stack[0]->topo_name+" "+to_string_prec(plot_pot/1e20,1)+"e20 POT";
+
 
             //pottex.DrawLatex(.60,.64, pot_draw.c_str());
             pottex.DrawLatex(.6,.69, pot_draw.c_str());
@@ -467,8 +469,10 @@ int bdt_stack::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c
             //titbdt2->SetTextAlign(10);
             //titbdt2->Draw();
 
-            //cobs->Write();
+            cobs->Write();
+            //    cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
             cobs->SaveAs(("stack/"+this->name+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+
 
             delete cobs;
             delete stk;
@@ -759,7 +763,7 @@ int bdt_stack::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c
     TCanvas *cobs = new TCanvas("","",1800,1600);
     cobs->Divide(2,2,0.0025,0.0000001);
     //	double plot_pot=13.2e20;
-    double plot_pot = 13.2e20;
+    double plot_pot = 3.7e19;
 
     ftest->cd();
     THStack* s0 = this->getBDTStack(whichbdt,0,-9,-9);

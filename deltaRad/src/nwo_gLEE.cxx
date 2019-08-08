@@ -406,7 +406,7 @@ int main (int argc, char *argv[]){
         histogram_stack->addToStack(bnb);
         histogram_stack->addToStack(dirt);
         OffBeamData->fillstyle = 3333;
-        histogram_stack->addToStack(OffBeamData);
+         //histogram_stack->addToStack(OffBeamData);
 
 
         int ip=0;
@@ -415,7 +415,7 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
 
-                datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
+             //   datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
 
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
@@ -838,7 +838,8 @@ int main (int argc, char *argv[]){
 */
 }else if(mode_option == "stack"){
     bdt_stack histogram_stack(analysis_tag+"_stack");
-    histogram_stack.plot_pot = 13.2e20;
+    histogram_stack.plot_pot = 3.7e19;
+    // histogram_stack.plot_pot = 13.2e20;
     histogram_stack.addToStack(signal);
     histogram_stack.addToStack(signal_other);
     histogram_stack.addToStack(bnb);
