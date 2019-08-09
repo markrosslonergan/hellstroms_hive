@@ -406,7 +406,7 @@ int main (int argc, char *argv[]){
         histogram_stack->addToStack(bnb);
         histogram_stack->addToStack(dirt);
         OffBeamData->fillstyle = 3333;
-         //histogram_stack->addToStack(OffBeamData);
+        histogram_stack->addToStack(OffBeamData);
 
 
         int ip=0;
@@ -419,7 +419,8 @@ int main (int argc, char *argv[]){
 
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                datamc.plotStacks(ftest,  tmp_var , fcuts);
+
+                datamc.plotStacks(ftest,  tmp_var , fcuts, true);
             }else{
 
                 bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
@@ -427,7 +428,8 @@ int main (int argc, char *argv[]){
                 // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
                 //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 
-                real_datamc.plotStacks(ftest, vars, fcuts);
+                real_datamc.plotStacks(ftest, vars, fcuts, true);
+
                 real_datamc.SetSpectator();
                 //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
@@ -863,8 +865,12 @@ int main (int argc, char *argv[]){
         }else{
             std::cout<<"Starting to make a stack of : "<<vars.at(number).name<<std::endl;
 
+            bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_stack");
             std::vector<bdt_variable> v_tmp = {vars.at(number)};
-            histogram_stack.plotStacks(ftest,v_tmp,fcoscut,fbnbcut);
+            datamc.plotStacks(ftest,  v_tmp , fcuts, false);
+                 
+            
+            // histogram_stack.plotStacks(ftest,v_tmp,fcoscut,fbnbcut);
         }
     }else{
         histogram_stack.plotBDTStacks(ftest, bdt_infos[1], fcoscut, fbnbcut);

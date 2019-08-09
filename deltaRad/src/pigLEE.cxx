@@ -464,15 +464,15 @@ int main (int argc, char *argv[]){
 
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut);
+                datamc.plotStacks(ftest,  tmp_var ,fcoscut,fbnbcut, true);
             }else{
 
                 bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
                 //real_datamc.setSubtractionVector(subv);
                 // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-                real_datamc.plotStacks(ftest, training_vars,fcoscut,fbnbcut);
+                real_datamc.plotStacks(ftest, training_vars,fcoscut,fbnbcut, true);
                 real_datamc.SetSpectator();
-                real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
+                real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut, true);
             }
         }else{
             bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	

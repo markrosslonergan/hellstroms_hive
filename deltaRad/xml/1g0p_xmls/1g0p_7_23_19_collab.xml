@@ -101,6 +101,8 @@
 <var def = "Sum$(isolation_num_unassoc_hits_win_2cm_trk)" binning = "(40,0,40)" unit = "Num Unnass hits in 2cm" type="d" logplot="false" training="01"/>
 -->
 
+<var def = "mctruth_nu_E[0]" binning = "(20, 0 ,3)" unit = "True Neutrino Energy" type = "d" logpot = "false" training = ""/>
+
 <var def = "reco_shower_energy_max[0]/1000.0" binning = "(24,0,0.6)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_shower_length[0]" binning = "(40,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(40,0 ,2000)" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="01"/>
@@ -112,6 +114,7 @@
 <var def = "reco_shower_nuscore[0]" binning = "(40, 0, 1)" unit = "Reconstructed Shower Associated Slice Neutrino Score" type = "d" logplot = "false"  training="01"/>
 
 <var def = "reco_shower_conversion_distance[0]" binning = "(40,0,500)" unit = " Reconstructed Shower conversion distance Log[cm]" type = "d"   logplot="true" training=""/>
+<var def = "reco_shower_energy_max[0]" binning = "(40,0.0, 1000)" unit = "Total Visible Energy [MeV]" type = "d" training="" />
 
 <!--
 <var def = "reco_track_displacement[0]" binning = "(40,0,500)" unit = "Track Displacement [cm]" type = "d" logplot = "false"  training="01"/>
