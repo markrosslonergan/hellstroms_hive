@@ -24,6 +24,10 @@ struct method_struct {
     std::string training_cut;
     double training_fraction;
 
+    double scan_max;
+    double scan_min;
+    double scan_steps;
+
     std::string topological_name;
     std::string topological_definition;
 

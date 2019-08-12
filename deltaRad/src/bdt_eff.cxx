@@ -589,8 +589,10 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
 
 
-	file->calcBDTEntryList(plot_stage,bdt_cuts);
-   	file->setStageEntryList(plot_stage);
+	if(plot_stage>1)file->calcBDTEntryList(plot_stage,bdt_cuts);
+   	
+    file->calcBaseEntryList("tmp");
+    file->setStageEntryList(plot_stage);
     double stage_entries ;
     if(plot_stage>0) stage_entries = file->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
     if(plot_stage==0) stage_entries = file->GetEntries(denominator+"&&"+topocuts)*conversion;
@@ -620,7 +622,8 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
 	h_true_photon_ratio->Scale(100);
 	h_true_proton_ratio->Scale(100);
-
+    h_true_photon_ratio->SetLineColor(kRed-6);
+    h_true_proton_ratio->SetLineColor(kBlue-6);
 	h_true_photon_ratio->Draw("E1");
 
 	h_true_photon_denom->Scale(350/h_true_photon_denom->Integral());
@@ -656,7 +659,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 	h_true_photon_ratio->GetYaxis()->SetTitle("Efficiency [%]");
 	h_true_photon_ratio->GetXaxis()->SetTitle("True Photon/Proton Energy [GeV]");
 
-	h_true_photon_ratio->SetMaximum(80.0);
+	h_true_photon_ratio->SetMaximum(120.0);
 	h_true_photon_ratio->SetMinimum(0);
 	h_true_photon_ratio->GetXaxis()->SetRangeUser(0,1);
 
@@ -680,7 +683,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
 
 
-	c->SaveAs(("eff_stage_"+std::to_string(plot_stage)+".pdf").c_str(),"pdf");
+	c->SaveAs(("eff_"+file->tag+"_stage_"+std::to_string(plot_stage)+".pdf").c_str(),"pdf");
 
 
 	TH2* h2_true_photon_proton_denom = (TH2*)file->getTH2(true_proton, true_photon, denominator,"2d proton photon denom",13.2e20);

@@ -102,7 +102,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
     std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NCPi0 BDT Cut","NUE BDT Cut","tmp"};
     //Loop over all stages
 
-    for(int s = 1; s< bdt_cuts.size()+2; s++){
+    for(int s = 0; s< bdt_cuts.size()+2; s++){
 
 
         std::cout<<"On stage: "<<s<<std::endl;
@@ -196,7 +196,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             if (s==3){
-                max_modifier = 5;
+                max_modifier = 3;
             }
 
 
@@ -359,11 +359,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(s)).c_str());
             ratunit->Divide(rat_denom);		
 
-            ratunit->SetFillColor(kGray+3);
+            ratunit->SetFillColor(kGray+1);
             ratunit->SetMarkerStyle(0);
             ratunit->SetMarkerSize(0);
-            ratunit->SetFillStyle(3001);
-            //ratunit->SetFillStyle(3354);
+         //   ratunit->SetFillStyle(3001);
+            ratunit->SetFillStyle(3354);
             //gStyle->SetHatchesLineWidth(1);
             //gStyle->SetHatchesSpacing(1);
 
@@ -450,7 +450,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
             t->SetTextSize(0.10);
-            t->Draw("same");
+            //t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
             //var_precut.front()->GetYaxis()->SetTitle("Events");
@@ -550,7 +550,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             THStack *stk = (THStack*)mc_stack->getBDTEntryStack(info);
             TH1 * tsum = (TH1*)mc_stack->getBDTEntrySum(info);
 
-            bdt_variable dvar = data_file->getBDTVariable(info, info.binning);
+            bdt_variable dvar = data_file->getBDTVariable(info);
             dvar.is_logplot = true;
             TH1 * d0 = (TH1*)data_file->getTH1(dvar, "1", scuts+"_"+data_file->tag+"_"+dvar.safe_name, plot_pot);
 
@@ -711,11 +711,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(s)).c_str());
             ratunit->Divide(rat_denom);		
 
-            ratunit->SetFillColor(kGray+3);
+            ratunit->SetFillColor(kGray+1);
             ratunit->SetMarkerStyle(0);
             ratunit->SetMarkerSize(0);
-            ratunit->SetFillStyle(3001);
-            //ratunit->SetFillStyle(3354);
+        //    ratunit->SetFillStyle(3001);
+            ratunit->SetFillStyle(3354);
             //gStyle->SetHatchesLineWidth(1);
             //gStyle->SetHatchesSpacing(1);
 
@@ -1123,7 +1123,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
             t->SetTextSize(0.10);
-            t->Draw("same");
+            //t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
             //var_precut.front()->GetYaxis()->SetTitle("Verticies");
