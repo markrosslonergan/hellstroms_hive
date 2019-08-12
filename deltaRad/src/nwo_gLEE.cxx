@@ -319,9 +319,11 @@ int main (int argc, char *argv[]){
         if(which_bdt == -1){
             for(int i=0; i< bdt_infos.size(); i++){
                 bdt_train(bdt_infos[i], training_signal, training_background_files[i]);
+                plot_train(bdt_infos[i], training_signal, training_background_files[i]);
             }
         }else{
             bdt_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
+            plot_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
         }
         return 0;
 

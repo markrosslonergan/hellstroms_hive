@@ -217,10 +217,6 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
 
     double plot_pot = 13.2e20;
 
-    //for nice plots make the 50, 25 is quicker tho
-    int nsteps = 5;
-    std::vector<double>maxvals(bdt_infos.size(),-999);
-
     std::cout<<"Setting stage entry lists"<<std::endl;
     for(size_t i = 0; i < sig_files.size(); ++i) {
         sig_files.at(i)->setStageEntryList(1);
@@ -229,19 +225,43 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         bkg_files.at(i)->setStageEntryList(1);
     }
 
-    for(size_t i = 0; i < sig_files.size(); ++i) {
-        for(size_t k=0; k< bdt_infos.size(); k++){
-            double tmax_1 = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
-            double tmax_2 = bkg_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
-            maxvals[k] = std::max(maxvals[k], std::max(tmax_1,tmax_2));
-        }
+    std::vector<double> in_min_vals;
+    std::vector<double> in_max_vals;
+    std::vector<double> n_steps;
+
+    for(size_t b=0; b<bdt_infos.size();b++){
+            in_min_vals.push_back(bdt_infos[b].TMVAmethod.scan_min);
+            in_max_vals.push_back(bdt_infos[b].TMVAmethod.scan_max);
+            n_steps.push_back(bdt_infos[b].TMVAmethod.scan_steps);
+            //std::cout<<"AGHR "<<in_min_vals.back()<<" "<<in_max_vals.back()<<" "<<n_steps.back()<<std::endl;
     }
 
+    //So if min_max val vectors are negative, we calculate it ourselves.
+    double sum_of_elems = std::accumulate(in_max_vals.begin(), in_max_vals.end(), 0.0);
+    std::vector<double>maxvals(bdt_infos.size(),-999);
     std::vector<double> minvals = maxvals;
-    //for(auto &v: minvals) v=v*0.2;
-    for(auto &v: minvals) v=0.0;
+    std::cout<<sum_of_elems<<std::endl;
+    if(sum_of_elems >0){
+        std::cout<<"Taking scanning range from xml "<<std::endl;
+        maxvals = in_max_vals;
+        minvals = in_min_vals;
+        n_steps = std::vector<double>(bdt_infos.size(),10.0);
+    }else{
+        std::cout<<"Automatically calculting scanning range"<<std::endl;
+        for(size_t i = 0; i < sig_files.size(); ++i) {
+            for(size_t k=0; k< bdt_infos.size(); k++){
+                double tmax_1 = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
+                double tmax_2 = bkg_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
+                maxvals[k] = std::max(maxvals[k], std::max(tmax_1,tmax_2));
+            }
+        }
 
-    //Create N2tempoary TEntryLists  at minimum
+        //for(auto &v: minvals) v=v*0.2;
+        for(auto &v: minvals) v=0.0;
+
+    }
+
+     //Create N2tempoary TEntryLists  at minimum
     std::vector<TEntryList*> sig_min_lists;
     std::vector<TEntryList*> bkg_min_lists;
 
@@ -268,38 +288,13 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
 
     std::vector<double> steps(bdt_infos.size(),0.0);
     for(int i=0; i< bdt_infos.size(); i++){
-        steps[i] = (maxvals[i]-minvals[i])/((double)nsteps);
+        steps[i] = (maxvals[i]-minvals[i])/((double)n_steps[i]);
     }
 
+    std::cout<<"We are going to scan between these values "<<std::endl;
     for(int i=0; i< bdt_infos.size();i++){
-        std::cout<<bdt_infos[i].identifier<<" min: "<<minvals[i]<<" "<<maxvals[i]<<std::endl;
+        std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<std::endl;
     }
-
-    double scal_up = 1.04;
-    double scal_down = 0.96;
-    //    std::vector<double> cval = {0.469232, 0.575191, 0.528824, 0.325369};
-    double fcoscut = 0.418564;// 0.542626; //sig.1:ccut: 0.551752 0.581527  #signal: 24.1207 #bkg: 46.2715 ||  bnb: 46.2715 cos: 0 || impact 17.9759 3.54595
-    double fbnbcut = 0.590574; //0.464029 0.558237
-
-    //aug 0.418564 0.590574
-
-    std::vector<double> cval = {fcoscut,fbnbcut};
-    if(false){
-        minvals[0]=cval[0]*scal_down;
-        maxvals[0]=cval[0]*scal_up;
-
-        minvals[1]=cval[1]*scal_down;
-        maxvals[1]=cval[1]*scal_up;
-
-        minvals[2]=cval[2]*scal_down;
-        maxvals[2]=cval[2]*scal_up;
-
-        minvals[3]=cval[3]*scal_down;
-        maxvals[3]=cval[3]*scal_up;
-
-    }
-
-
     // Calculate total signal for efficiency 
     double total_sig = 0.;
 
@@ -394,9 +389,9 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
 }
 
 
-
 int scan_likelihood(std::vector<bdt_file*> stack_files, std::vector<bdt_info> bdt_infos){
 
+    std::cout<<"Starting the (somewhat) experimental likelihood combination of BDTs"<<std::endl;
     TCanvas *ctest = new TCanvas();
     TPad *padtop = new TPad("padtop_just", "padtop_just", 0, 0.35, 1, 1.0);
     padtop->SetLogy();
