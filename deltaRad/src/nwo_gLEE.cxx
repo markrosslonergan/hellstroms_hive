@@ -379,8 +379,7 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
 
-                datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
-
+                //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fcuts);
@@ -392,7 +391,7 @@ int main (int argc, char *argv[]){
                 //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 
                 real_datamc.plotStacks(ftest, vars, fcuts);
-                real_datamc.SetSpectator();
+                //real_datamc.SetSpectator();
                 //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
         }else{

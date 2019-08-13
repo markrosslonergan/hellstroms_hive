@@ -280,23 +280,23 @@ pMVA = pMVA->NextSiblingElement("mva");
             while(pData){
            
                 const char* t_use = pData->Attribute("use");
-                if(t_use="no"){break;}
+                if(t_use=="no"){break;}
 
                 const char* t_type = pData->Attribute("type");
                 if(t_type==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated data, but not given a `type` attribute! wither OnBeam or OffBeam!! "<<std::endl; exit(EXIT_FAILURE);}
-                if(t_type == "OnBeam"){
+                std::string s_type = t_type;
+                if(s_type == "OnBeam"){
                     bdt_is_onbeam_data.push_back(true);
                     is_data = true;
-                }else if(t_type == "OffBeam"){
+                }else if(s_type == "OffBeam"){
                     bdt_is_offbeam_data.push_back(true);
                     is_data = true;
                 }else{
-                    std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated data, but its `type` attribute is neither OnBeam or OffBeam!! "<<std::endl; exit(EXIT_FAILURE);
+                    std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated data, but its `type` attribute is neither OnBeam or OffBeam!! "<<t_type<<" "<<std::endl; exit(EXIT_FAILURE);
                 }
                 bdt_onbeam_pot.push_back(0);
                 bdt_offbeam_spills.push_back(0);
                 bdt_onbeam_spills.push_back(0);
-
 
                 TiXmlElement *pTor = pData->FirstChildElement("tor860_wcut");
                 while(pTor){
