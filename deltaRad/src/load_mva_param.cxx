@@ -43,6 +43,18 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         pTopoCut = pTopoCut->NextSiblingElement("topology");
     }
 
+    TiXmlElement *pFileDir;
+    pFileDir = doc.FirstChildElement("filedir");
+    if(pFileDir)
+    {
+        filedir =std::string(pFileDir->GetText());
+        pFileDir = pFileDir->NextSiblingElement("filedir");
+    }else{
+        filedir = "./";
+    }
+
+
+
 
 
     TiXmlElement *pPreCut;

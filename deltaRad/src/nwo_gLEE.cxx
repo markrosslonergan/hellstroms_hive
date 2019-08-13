@@ -28,8 +28,7 @@ int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, s
 int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
-    std::string dir17 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v17/";
-    std::string dir = dir17;
+    std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v17/";
 
     std::string mode_option = "fake"; 
     std::string xml = "default.xml";
@@ -121,7 +120,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-s\t--stage\t\tSet what stage to do things at."<<std::endl;
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag [Superseeded by XML defined tag]"<<std::endl;
-                std::cout<<"\t-d\t--dir\t\tDirectory for file inputs"<<std::endl;
+                std::cout<<"\t-d\t--dir\t\tDirectory for file inputs [Superseeded by XML]"<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
                 return 0;
         }
@@ -143,6 +142,9 @@ int main (int argc, char *argv[]){
     std::cout<<"Getting xml variables"<<std::endl;
     MVALoader XMLconfig(xml);
     std::vector<method_struct> TMVAmethods  = XMLconfig.GetMethods(); 
+    
+    dir = XMLconfig.filedir;
+    std::cout<<"Core File dir set as "<<dir<<std::endl;
 
     std::cout<<"We have "<<TMVAmethods.size()<<" Different BDT's we are going to train today"<<std::endl;
     std::vector<bdt_info> bdt_infos;
@@ -239,27 +241,13 @@ int main (int argc, char *argv[]){
             }
         }
     }
-    std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-    std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-
-
-    //Adding plot names
-    //signal->addPlotName("LEE Signal NC #Delta Radiative");
-    //signal_SM->addPlotName("SM All NC #Delta Radiative");
-    //signal_other->addPlotName("LEE Other NC #Delta Radiative");
-    //nueintrinsic->addPlotName("CC #nu_{e} Intrinsic");
-    //bnb->addPlotName("BNB Other");
-    //ncpi0->addPlotName("NC#pi^{0}");
-    //OnBeamData->addPlotName("On-Beam Data");
-    //OffBeamData->addPlotName("Cosmic Data");
-    //dirt->addPlotName("Dirt");
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
     //double fcoscut = 0.543804;//first pass 0.546478;
     //double fbnbcut = 0.55777;
-  //sig.3:ccut: 0.554892 0.582304  #signal: 24.8171 #bkg: 45.9445 ||  bnb: 45.9445 cos: 0 || impact 14.4716 3.66129
+    //sig.3:ccut: 0.554892 0.582304  #signal: 24.8171 #bkg: 45.9445 ||  bnb: 45.9445 cos: 0 || impact 14.4716 3.66129
     double fcoscut = 0.533454;
     double fbnbcut = 0.55777;
     //sig.3:ccut: 0.554892 0.582304  #signal: 24.8171 #bkg: 45.9445 ||  bnb: 45.9445 cos: 0 || impact 14.4716 3.66129
@@ -355,8 +343,8 @@ int main (int argc, char *argv[]){
             mkdir("datamc",0777);//Create a folder for pdf.
         }
         else{
-            std::cout<<"Overwrite datamc/ in 5 seconds, 4 seconds, ..."<<std::endl;
-            sleep(5);
+            std::cout<<"Overwrite datamc/ in 2 seconds, 1 seconds, ..."<<std::endl;
+            sleep(2);
         }
 
 
@@ -602,8 +590,8 @@ int main (int argc, char *argv[]){
             mkdir("recomc",0777);//Create a folder for pdf.
         }
         else{
-            std::cout<<"Overwrite recomc/ in 5 seconds, 4 seconds, ..."<<std::endl;
-            sleep(5);
+            std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
+            sleep(2);
 
             std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7,kOrange-3, kGreen+1 , kGray};
             //        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other Non #gamma",  "Overlay","Other"};
@@ -798,8 +786,8 @@ return 0;
         mkdir("vars",0777);//Create a folder for pdf.
     }
     else{
-        std::cout<<"Overwrite vars/ in 5 seconds, 4 seconds, ..."<<std::endl;
-        sleep(5);
+        std::cout<<"Overwrite vars/ in 2 seconds, 1 seconds, ..."<<std::endl;
+        sleep(2);
     }
 
 
