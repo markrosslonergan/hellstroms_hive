@@ -1,9 +1,9 @@
 #include "bdt_file.h"
 
 
+bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) : bdt_file(indir, inname, intag,inops,inrootdir,incol,1001,inflow){}
 
-
-bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) :
+bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, bdt_flow inflow) :
     dir(indir),
     name(inname),
     tag(intag),
@@ -35,7 +35,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::string tnam_pot = root_dir+"pot_tree";
 
     weight_branch = "1";
-    fillstyle = 1001;
+    fillstyle = infillstyle;
     scale_data = 1.0;
 
     std::cout<<"Getting vertex tree"<<std::endl;

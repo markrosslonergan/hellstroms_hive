@@ -173,6 +173,7 @@ struct bdt_file{
 		//bdt_variable getBDTVariable(std::string cut);
 
 		bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir,  int incol, bdt_flow inflow);	
+		bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir,  int incol, int fillstyle,bdt_flow inflow);	
 		
 		//legacy code OBSOLETE
 		//bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, std::string infriend, std::string infriendtree, int incol, bool indata);	

@@ -102,7 +102,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
     std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NCPi0 BDT Cut","NUE BDT Cut","tmp"};
     //Loop over all stages
 
-    for(int s = 0; s< bdt_cuts.size()+2; s++){
+    int s_min = 0;
+    int s_max = bdt_cuts.size()+2;
+    if(plot_stage >=0){
+        s_min = plot_stage;
+        s_max = plot_stage+1;
+    }
+
+    for(int s = s_min; s< s_max; s++){
 
 
         std::cout<<"On stage: "<<s<<std::endl;

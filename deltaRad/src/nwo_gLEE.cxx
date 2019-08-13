@@ -179,7 +179,7 @@ int main (int argc, char *argv[]){
         }
         bdt_flow analysis_flow(topological_cuts, def, 	vec_precuts,	postcuts,	bdt_infos);
    
-        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() ,analysis_flow));
+        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() ,XMLconfig.bdt_fillstyles[f] , analysis_flow));
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
 
@@ -194,6 +194,7 @@ int main (int argc, char *argv[]){
             std::cout<<" -- Scaling "<<XMLconfig.bdt_tags[f]<<" file by a factor of "<<XMLconfig.bdt_scales[f]<<std::endl;
             bdt_files.back()->scale_data = XMLconfig.bdt_scales[f];
         }
+
 
         if(XMLconfig.bdt_is_onbeam_data[f]){
             std::cout<<" -- Setting as ON beam data with "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
@@ -366,9 +367,9 @@ int main (int argc, char *argv[]){
 
         histogram_stack->plot_pot = tagToFileMap["Data5e19"]->pot;
 
-        for(auto &f: bdt_files){
-            if(f->is_data) continue;
-            histogram_stack->addToStack(f);
+        for(size_t f =0; f< bdt_files.size(); ++f){
+            if(bdt_files[f]->is_data) continue;
+            histogram_stack->addToStack(bdt_files[f]);
         }
     
         //OffBeamData->fillstyle = 3333;
@@ -378,7 +379,8 @@ int main (int argc, char *argv[]){
         if(!response_only){
             if(number != -1){
                 bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
-
+                datamc.setPlotStage(which_stage);                
+                
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
@@ -386,6 +388,8 @@ int main (int argc, char *argv[]){
             }else{
 
                 bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
+                real_datamc.setPlotStage(which_stage);                
+                
                 //real_datamc.setSubtractionVector(subv);
                 // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
                 //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
@@ -397,6 +401,7 @@ int main (int argc, char *argv[]){
         }else{
             bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
 
+               
             if(which_bdt ==-1){
                 for(int k=0; k< bdt_infos.size(); k++){
                     real_datamc.plotBDTStacks(bdt_infos[k] , fcuts);
