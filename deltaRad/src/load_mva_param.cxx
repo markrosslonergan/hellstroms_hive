@@ -269,10 +269,16 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }
 
         const char* t_signals = pBDTfile->Attribute("signal");
-        if(t_signals=="true"){
-            bdt_is_signal.push_back(true);
-        }else{
+        if(t_signals==NULL){
             bdt_is_signal.push_back(false);
+        }else{
+            std::string sig = t_signals;
+            if(sig=="true"){
+                bdt_is_signal.push_back(true);
+            }else{
+                bdt_is_signal.push_back(false);
+
+            }
         }
 
         const char* t_plotname = pBDTfile->Attribute("plotname");
@@ -300,8 +306,9 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         //next lets check if its the Signal Training
         TiXmlElement *pTrain = pBDTfile->FirstChildElement("training");
         std::vector<std::string> this_tcut; 
+        bool is_train = false;
         while(pTrain){
-
+            is_train = true;
             TiXmlElement *pTCut = pTrain->FirstChildElement("cut");
             while(pTCut){
                 std::string unpar =  pTCut->GetText();
@@ -314,6 +321,11 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             pTrain = pTrain->NextSiblingElement("training");
         }//-->end training cuts           
         bdt_training_cuts.push_back(this_tcut);
+        if(is_train){
+            bdt_is_training_signal.push_back(true);
+        }else{
+            bdt_is_training_signal.push_back(false);
+        }
 
         //So, some book-keeping if its data!
         bool is_data = false;

@@ -165,6 +165,9 @@ int main (int argc, char *argv[]){
     //**** Setting up bdt_files NWO style
 
     std::vector<bdt_file*> bdt_files;
+    std::vector<bdt_file*> signal_bdt_files;
+    std::vector<bdt_file*> bkg_bdt_files;
+
     std::map<std::string, bdt_file*> tagToFileMap;
 
     std::cout<<"================================================================================"<<std::endl;
@@ -180,7 +183,7 @@ int main (int argc, char *argv[]){
                 def += "&&" + XMLconfig.bdt_definitions[f][i];
         }
         bdt_flow analysis_flow(topological_cuts, def, 	vec_precuts,	postcuts,	bdt_infos);
-   
+  
         bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , analysis_flow));
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
@@ -206,14 +209,27 @@ int main (int argc, char *argv[]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOffBeamData( XMLconfig.bdt_onbeam_pot[f], XMLconfig.bdt_onbeam_spills[f], XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
         }
-        
+ 
+            if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f] ){
+                if(XMLconfig.bdt_is_signal[f]){
+                    std::cout<<" -- For the purposes of calculting a significance, this is a signal file"<<std::endl;
+                    signal_bdt_files.push_back(bdt_files.back());
+                }else{
+                    std::cout<<" -- For the purposes of calculting a significance, this is a BKG file"<<std::endl;
+                    bkg_bdt_files.push_back(bdt_files.back());
+                }
+            }
+      
         bdt_files.back()->calcPOT();
     }
 
+
     bdt_file * training_signal = tagToFileMap["NCDeltaRadOverlayTrain"];
     bdt_file * signal = tagToFileMap["NCDeltaRadOverlay"];
-
     
+    std::vector<bdt_file*> stack_bdt_files = signal_bdt_files;
+    stack_bdt_files.insert(stack_bdt_files.end(), bkg_bdt_files.begin(), bkg_bdt_files.end());
+
     //===========================================================================================
     //===========================================================================================
     //		Main flow of the program , using OPTIONS
@@ -344,13 +360,11 @@ int main (int argc, char *argv[]){
 
         histogram_stack->plot_pot = tagToFileMap["Data5e19"]->pot;
 
-        for(size_t f =0; f< bdt_files.size(); ++f){
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
             if(bdt_files[f]->is_data) continue;
-            histogram_stack->addToStack(bdt_files[f]);
+            histogram_stack->addToStack(stack_bdt_files[f]);
         }
     
-        //OffBeamData->fillstyle = 3333;
-
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
@@ -396,13 +410,13 @@ int main (int argc, char *argv[]){
 
         switch(number){
             case 0:
-             //   scan_significance({signal, signal_SM, signal_other} , {bnb, OffBeamData, dirt,ncpi0}, bdt_infos,what_pot);
+                scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot);
                 break;
             case 1:
-             //   scan_likelihood({signal,signal_SM, signal_other, bnb, OffBeamData,dirt,ncpi0}, bdt_infos);
+                scan_likelihood(stack_bdt_files, bdt_infos);
                 break;
             case 2:
-             //   scan_significance_random({signal,signal_SM,signal_other},{bnb,OffBeamData,dirt,ncpi0},bdt_infos);
+                scan_significance_random(signal_bdt_files, bkg_bdt_files,bdt_infos);
                 break;
             default:
                 break;

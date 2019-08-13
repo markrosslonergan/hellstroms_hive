@@ -55,7 +55,6 @@ class MVALoader {
     std::vector<bool> bdt_is_signal;
     std::vector<bool> bdt_is_training_signal;
 
-
     std::map<std::string,std::string> aliasMap; 
     std::string AliasParse(std::string in);
 
