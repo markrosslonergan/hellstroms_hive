@@ -222,10 +222,10 @@ int main (int argc, char *argv[]){
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-    if(mode_option != "precalc" ){
+    if(true){
 
         std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-        std::cout<<" Going to add any precomputed tree friends, or any trained BDT responses   "<<std::endl;
+        std::cout<<" Going to add any trained BDT responses  and precal some EntryLists  "<<std::endl;
         std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
         std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
@@ -244,20 +244,9 @@ int main (int argc, char *argv[]){
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-
-    //double fcoscut = 0.543804;//first pass 0.546478;
-    //double fbnbcut = 0.55777;
-    //sig.3:ccut: 0.554892 0.582304  #signal: 24.8171 #bkg: 45.9445 ||  bnb: 45.9445 cos: 0 || impact 14.4716 3.66129
-    double fcoscut = 0.533454;
-    double fbnbcut = 0.55777;
-    //sig.3:ccut: 0.554892 0.582304  #signal: 24.8171 #bkg: 45.9445 ||  bnb: 45.9445 cos: 0 || impact 14.4716 3.66129
-
-    //these are 1gNp
-    fcoscut = 0.512701;
-    fbnbcut = 0.590563;
+    
     
     std::vector<double> fcuts = {fcoscut,fbnbcut}; 
-
     
     //===========================================================================================
     //===========================================================================================
