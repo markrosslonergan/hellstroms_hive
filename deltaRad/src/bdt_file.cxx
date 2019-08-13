@@ -11,9 +11,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     root_dir(inrootdir),
     col(incol),
     flow(inflow),
-    is_data("false"),
-    is_bnbext("false"),
-    is_mc("true")
+    is_data(false),
+    is_bnbext(false),
+    is_mc(true)
 {
 
     plot_name = tag;
@@ -403,6 +403,17 @@ int bdt_file::calcPrecutEntryList(){
 
     //first check if a file exists with a precut entry list in it!
 
+    std::string precut_key;
+    for(auto &s: this->flow.vec_pre_cuts){
+        precut_key+=s;
+    }
+    precut_key+=this->flow.base_cuts;
+
+
+    unsigned long precut_hash = this->jenkins_hash(precut_key); 
+    std::cout<<"These particular precuts have a hash of "<<precut_hash<<std::endl;
+    std::string s_precut_hash = std::to_string(precut_hash);
+
     std::string filename = this->tag+"_entrylists.root";
     precut_list_name = "precut_list_"+this->tag;
 
@@ -412,24 +423,35 @@ int bdt_file::calcPrecutEntryList(){
 
         std::cout<<"Entry List File already exists for "<<this->tag<<std::endl;
         TFile* fpre = new TFile(filename.c_str(),"update");	
-        if(fpre->GetListOfKeys()->Contains(precut_list_name.c_str()) ){
 
-            std::cout<<"And it contains a list. loading."<<std::endl;
+        bool hash_right = fpre->GetListOfKeys()->Contains(s_precut_hash.c_str());
+        if(hash_right){
+            std::cout<<"File has correct hash"<<std::endl;
+        }else{
+            std::cout<<"File does not have a valid hash, regenerating!"<<std::endl;
+        }
+
+
+        if(fpre->GetListOfKeys()->Contains(precut_list_name.c_str()) &&hash_right  ) {
+        
+            std::cout<<"And it contains a list. Loading"<<std::endl;
 
             precut_list = (TEntryList*)fpre->Get(precut_list_name.c_str());
         } else{
 
             std::cout<<"Precut Entry List does not exists for "<<this->tag<<" creating it."<<std::endl;
             f->cd();
+        
+            TVectorT<double> * stored_hash;
 
             this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
 
             precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
-
+            fpre->cd();
+            precut_list->Write();
+            stored_hash->Write(s_precut_hash.c_str(),TObject::kWriteDelete);
         }
 
-        fpre->cd();
-        precut_list->Write();
         fpre->Close();
         f->cd();
 
@@ -473,39 +495,65 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
     //first check if a file exists with a topological entry list in it!
 
+    std::string precut_key;
+    for(auto &s: this->flow.vec_pre_cuts){
+        precut_key+=s;
+    }
+    precut_key+=this->flow.base_cuts;
+
+    unsigned long precut_hash = this->jenkins_hash(precut_key); 
+    std::cout<<"These particular precuts have a hash of "<<precut_hash<<std::endl;
+    std::string s_precut_hash = std::to_string(precut_hash);
+
+
     std::string filename = this->tag+"_"+analysis_tag+"_entrylists.root";
     topological_list_name = "topological_list_"+analysis_tag+"_"+this->tag;
     precut_list_name = "precut_list_"+analysis_tag+"_"+this->tag;
 
     std::ifstream ifile(filename.c_str());
     bool does_local_exist = (bool)ifile;
+    bool hash_right = false;
     if(does_local_exist){
 
         std::cout<<"Entry List file already exists for "<<this->tag<<std::endl;
         TFile* fpre = new TFile(filename.c_str(),"read");	
-        topological_list = (TEntryList*)fpre->Get(topological_list_name.c_str());
-        precut_list = (TEntryList*)fpre->Get(precut_list_name.c_str());
 
-    }else{
+        hash_right = fpre->GetListOfKeys()->Contains(s_precut_hash.c_str());
+        if(hash_right){
+            std::cout<<"File has correct hash"<<std::endl;
+            topological_list = (TEntryList*)fpre->Get(topological_list_name.c_str());
+            precut_list = (TEntryList*)fpre->Get(precut_list_name.c_str());
+
+        }else{
+            std::cout<<"File does not have a valid hash, regenerating!"<<std::endl;
+            
+        }
+        
+    }
+
+    if(!does_local_exist || !hash_right){
         //create it
 
-        std::cout<<"Entry List file does not exists for "<<this->tag<<" creating it."<<std::endl;
+        std::cout<<"Entry List file does not exists (or hash is wrong) "<<this->tag<<" creating it."<<std::endl;
 
         this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0, -9,-9).c_str() , "entrylist");
         topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
-
 
         this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
         precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
 
 
-
         TFile* fpre = new TFile(filename.c_str(),"update");	
+
+        TVectorT<double> stored_hash;
+        
         fpre->cd();
+        stored_hash.Write(s_precut_hash.c_str(),TObject::kWriteDelete);
         topological_list->Write();
         precut_list->Write();
         fpre->Close();
         f->cd();
+
 
     }
 
@@ -1002,4 +1050,21 @@ TText * drawPrelim(double x, double y){
     tres->SetNDC();
     return tres;
 }
+
+
+unsigned long  bdt_file::jenkins_hash(std::string key) {
+    size_t length = key.size();
+    size_t i = 0;
+    unsigned long hash = 0;
+    while (i != length) {
+        hash += key[i++];
+        hash += hash << 10;
+        hash ^= hash >> 6;
+    }
+    hash += hash << 3;
+    hash ^= hash >> 11;
+    hash += hash << 15;
+    return hash;
+}
+
 

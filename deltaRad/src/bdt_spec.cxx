@@ -287,7 +287,6 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 
     return stacked;	
 
-
 }
 
 

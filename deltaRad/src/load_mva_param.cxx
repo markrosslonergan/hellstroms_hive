@@ -205,7 +205,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
         const char* t_fillstyles = pBDTfile->Attribute("fillstyle");
         if(t_fillstyles==NULL){ bdt_fillstyles.push_back(1001);}else{
-            bdt_fillstyles.push_back((int)strtod(t_fillstyles));
+            bdt_fillstyles.push_back((int)std::stoi(t_fillstyles,nullptr,10));
         }
 
 
