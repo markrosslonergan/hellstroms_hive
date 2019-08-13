@@ -27,6 +27,23 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
     TiXmlHandle hDoc(&doc);
 
+    std::cout<<"########################### alias ###########################"<<std::endl;
+    TiXmlElement *pAlias;
+    pAlias = doc.FirstChildElement("alias");
+    int n_alias = 0;
+    while(pAlias)
+    {
+        std::string key = pAlias->Attribute("key");
+        std::string val = pAlias->Attribute("value");
+        aliasMap[key] = val; 
+        std::cout<<"Setting up an XML-Alias between "<<key<<" and "<<val<<std::endl;
+        n_alias++;
+        pAlias = pAlias->NextSiblingElement("alias");
+    }
+
+
+
+
     std::cout<<"########################### Topology ###########################"<<std::endl;
 
     TiXmlElement *pTopoCut;
@@ -66,7 +83,10 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
     while(pPreCut )
     {
 
-        std::string cut_def = pPreCut->Attribute("def");
+        std::string cut_def_unparsed = pPreCut->Attribute("def");
+        std::string cut_def = this->AliasParse(cut_def_unparsed); 
+        
+
         std::string cut_name = pPreCut->Attribute("name");
 
         std::cout<<"Loading Precut number "<<precuts.size()<<" "<<cut_name<<std::endl;
@@ -134,8 +154,6 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
                     temp_struct.bdt_tag = bdt_tag;
                     temp_struct.bdt_name = bdt_name;
                     temp_struct.bdt_binning = bdt_binning;
-                    // temp_struct.bdt_train_vars = bdt_train_vars;
-                    // temp_struct.bdt_spec_vars = bdt_spec_vars;
                     temp_struct.precuts = precuts;
 
                     vec_methods.push_back(temp_struct);		
@@ -154,7 +172,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
                 //filename, foldername, traning_cut, training_fraction
                 vec_methods.back().filename = pMVAfile->Attribute("filename"); 
                 vec_methods.back().foldername = pMVAfile->Attribute("foldername"); 
-                vec_methods.back().training_cut = pMVAfile->Attribute("training_cut"); 
+                vec_methods.back().training_cut = this->AliasParse(pMVAfile->Attribute("training_cut")); 
                 vec_methods.back().training_fraction= strtof(pMVAfile->Attribute("training_fraction"),NULL); 
 
                 pMVAfile = pMVA->NextSiblingElement("file");
@@ -270,7 +288,9 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         while(pDefinition){
             TiXmlElement *pCut = pDefinition->FirstChildElement("cut");
             while(pCut){
-                this_denom.push_back(std::string(pCut->GetText()));
+                std::string unpar =  pCut->GetText();
+                std::string parsed = this->AliasParse(unpar);
+                this_denom.push_back(parsed);
                 pCut = pCut->NextSiblingElement("cut");
             }
             pDefinition = pDefinition->NextSiblingElement("definition");
@@ -284,7 +304,10 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
             TiXmlElement *pTCut = pTrain->FirstChildElement("cut");
             while(pTCut){
-                this_tcut.push_back(std::string(pTCut->GetText()));
+                std::string unpar =  pTCut->GetText();
+                std::string parsed = this->AliasParse(unpar);
+
+                this_tcut.push_back(parsed);
                 pTCut = pTCut->NextSiblingElement("cut");
             }
 
@@ -296,11 +319,11 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         bool is_data = false;
         TiXmlElement *pData = pBDTfile->FirstChildElement("data");
 
-            bdt_is_onbeam_data.push_back(false);
-            bdt_is_offbeam_data.push_back(false);
-            bdt_onbeam_pot.push_back(-999);
-            bdt_offbeam_spills.push_back(-999);
-            bdt_onbeam_spills.push_back(-999);
+        bdt_is_onbeam_data.push_back(false);
+        bdt_is_offbeam_data.push_back(false);
+        bdt_onbeam_pot.push_back(-999);
+        bdt_offbeam_spills.push_back(-999);
+        bdt_onbeam_spills.push_back(-999);
 
 
         while(pData){
@@ -372,7 +395,9 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
     std::vector<bdt_variable> bdt_spec_vars;
     int n_var = 0;
     while(pVar){
-        std::string var_def = pVar->Attribute("def");
+        std::string var_def_unparsed = pVar->Attribute("def");
+        std::string var_def = this->AliasParse(var_def_unparsed); 
+        
         std::string var_binning = pVar->Attribute("binning");
         std::string var_unit = pVar->Attribute("unit");
         std::string var_type = pVar->Attribute("type");
@@ -433,4 +458,40 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
 std::vector<method_struct> MVALoader::GetMethods(){
     return vec_methods; 
+}
+
+
+
+std::string MVALoader::AliasParse(std::string in){
+    std::string delim = "#";
+    std::string compressed = in;
+
+    size_t pos = 0;
+    size_t cur = 0;
+    size_t n_del = std::count(compressed.begin(), compressed.end(), '#');
+
+    if(n_del%2!=0){
+            std::cerr<<"ERROR! AliasParse has found an ODD number of deliminters # "<<n_del<<" in the string "<<in<<std::endl;
+            exit(EXIT_FAILURE);
+    }
+    
+    std::string key;
+    while ((pos = compressed.find(delim,0)) != std::string::npos) {
+
+        size_t start = pos+1;
+        size_t end = compressed.find(delim,start);
+
+        key = compressed.substr(start, end-start);
+        //std::cout<<start<<" "<<end<<" "<<key<<std::endl;
+
+        if(aliasMap.count(key)==0){
+            std::cerr<<"ERROR! AliasParse has found a key "<<key<<" that is not in the map. Check your spelling"<<std::endl;
+            exit(EXIT_FAILURE);
+        }
+
+        compressed.replace(start-1,key.size()+2,aliasMap[key]);
+        //std::cout<<compressed<<std::endl; 
+    }
+
+    return compressed;
 }
