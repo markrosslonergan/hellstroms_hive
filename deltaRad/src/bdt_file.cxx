@@ -502,9 +502,8 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
     precut_key+=this->flow.base_cuts;
 
     unsigned long precut_hash = this->jenkins_hash(precut_key); 
-    std::cout<<"These particular precuts have a hash of "<<precut_hash<<std::endl;
+    std::cout<<"These particular precuts and definitions have a hash of "<<precut_hash<<std::endl;
     std::string s_precut_hash = std::to_string(precut_hash);
-
 
     std::string filename = this->tag+"_"+analysis_tag+"_entrylists.root";
     topological_list_name = "topological_list_"+analysis_tag+"_"+this->tag;
@@ -520,7 +519,7 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
         hash_right = fpre->GetListOfKeys()->Contains(s_precut_hash.c_str());
         if(hash_right){
-            std::cout<<"File has correct hash"<<std::endl;
+            std::cout<<"File has correct hash! Just going to load the TEntryLists"<<std::endl;
             topological_list = (TEntryList*)fpre->Get(topological_list_name.c_str());
             precut_list = (TEntryList*)fpre->Get(precut_list_name.c_str());
 
