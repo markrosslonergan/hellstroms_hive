@@ -37,7 +37,7 @@ int main (int argc, char *argv[]){
 
     int number = -1;
     bool response_only = false;
-    double what_pot = -1;
+    double what_pot = 13.2e20;
     int which_file = -1;
     int which_bdt = -1;
     int which_stage = -1;
@@ -99,25 +99,29 @@ int main (int argc, char *argv[]){
             case '?':
             case 'h':
                 std::cout<<"Allowed arguments:"<<std::endl;
-                std::cout<<"\t-d\t--dir\t\tDirectory for file inputs"<<std::endl;
                 std::cout<<"\t-x\t--xml\t\tInput .xml file for configuring what MVA/BDT & param"<<std::endl;
                 std::cout<<"\t-o\t--option\t\tOptional mode to run, train, app..etc.."<<std::endl;
-                std::cout<<"\t\t\t\t Options are:"<<std::endl;
-                std::cout<<"\t\t\t\t train:"<<std::endl;
-                std::cout<<"\t\t\t\t app:"<<std::endl;
-                std::cout<<"\t\t\t\t response:"<<std::endl;
-                std::cout<<"\t\t\t\t sig:"<<std::endl;
-                std::cout<<"\t\t\t\t stack:"<<std::endl;
+                std::cout<<"\t\t\t\t --Options are:"<<std::endl;
+                std::cout<<"\t\t\t\t train: Train all BDT (Or just BDT number B defined with -b/--bdt B)"<<std::endl;
+                std::cout<<"\t\t\t\t app: Apply the BDT to all files in bdt_files, (Or just file F --f/--file on BDB -b/--bdt B)"<<std::endl;
+                std::cout<<"\t\t\t\t response: Make a training BDT response [bit obsolete, -o train makes it anyway] "<<std::endl;
+                std::cout<<"\t\t\t\t sig: Significance scan, combined with -n/--number N "<<std::endl;
+                std::cout<<"\t\t\t\t\t -- N=0 (default) Do a simple box scan between XML defined values "<<std::endl;
+                std::cout<<"\t\t\t\t\t -- N=1 Combine BDT's into a likelihood (experimental) "<<std::endl;
+                std::cout<<"\t\t\t\t\t -- N=2 Random points within XML defined regions (experimental) "<<std::endl;
+                std::cout<<"\t\t\t\t stack: Produce a Stacked PDF for BDT variable -n/--number N, at stage -s/--stage S for POT -p/--pot P"<<std::endl;
+                std::cout<<"\t\t\t\t datamc: Produce a Stacked MV V data PDF for BDT variable -n/--number N, at stage -s/--stage S for POT -p/--pot P"<<std::endl;
                 std::cout<<"\t\t\t\t recomc:"<<std::endl;
-                std::cout<<"\t\t\t\t datamc:"<<std::endl;
-                std::cout<<"\t\t\t\t eff:"<<std::endl;
-                std::cout<<"\t\t\t\t tplot:"<<std::endl;
-                std::cout<<"\t\t\t\t sbnfit: Makes a file at stage S (se set with --stage S) for file set with --file"<<std::endl;
+                std::cout<<"\t\t\t\t eff: Produce an efficiency plot for 1g1p for stage -s/--stage S"<<std::endl;
+                std::cout<<"\t\t\t\t tplot: Produces a test/training for BDT -b/--bdt B (auto ran at train mode too)"<<std::endl;
+                std::cout<<"\t\t\t\t sbnfit: Makes a file at stage S (set with --stage S) for file set with --file"<<std::endl;
                 std::cout<<"\t-b\t--bdt\t\t Run only N BDT training/app, or BDT specific option"<<std::endl;
                 std::cout<<"\t-f\t--file\t\t Which file in bdt_files you want to run over, for file specifc options."<<std::endl;
-                std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
-                std::cout<<"\t-t\t--topo_tag\t\tTopological Tag"<<std::endl;
+                std::cout<<"\t-p\t--pot\t\tSet POT for plots"<<std::endl;
                 std::cout<<"\t-s\t--stage\t\tSet what stage to do things at."<<std::endl;
+                std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
+                std::cout<<"\t-t\t--topo_tag\t\tTopological Tag [Superseeded by XML defined tag]"<<std::endl;
+                std::cout<<"\t-d\t--dir\t\tDirectory for file inputs"<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
                 return 0;
         }
@@ -130,12 +134,15 @@ int main (int argc, char *argv[]){
     //===========================================================================================
 
     std::string analysis_tag = topo_tag;
+    std::cout<<"================================================================================"<<std::endl;
+    std::cout<<"=================  Beginning New World Order gLEE run =========================="<<std::endl;
+    std::cout<<"================================================================================"<<std::endl;
     std::cout<<"Working with analysis tag: "<<analysis_tag<<std::endl;
 
     //Most TMVA arguments are loaded in here via XML
     std::cout<<"Getting xml variables"<<std::endl;
-    MVALoader xml_methods(xml);
-    std::vector<method_struct> TMVAmethods  = xml_methods.GetMethods(); 
+    MVALoader XMLconfig(xml);
+    std::vector<method_struct> TMVAmethods  = XMLconfig.GetMethods(); 
 
     std::cout<<"We have "<<TMVAmethods.size()<<" Different BDT's we are going to train today"<<std::endl;
     std::vector<bdt_info> bdt_infos;
@@ -149,96 +156,61 @@ int main (int argc, char *argv[]){
     std::vector<std::string> vec_precuts = TMVAmethods[0].precuts;
     //Get all the variables you want to use	
     std::vector<bdt_variable> vars = TMVAmethods[0].bdt_all_vars;
-
-
-    //*******************************************
-    //Here is the whole Signal definition
-    //Train on "good" signals, defined as ones matched to the ncdelta and have little "clutter" around.	
-
-    std::string training_signal_cut ;
-
-    if (topo_tag == "notrack"){
-        training_signal_cut = "sim_shower_overlay_fraction[0] < 0.3 && sim_shower_pdg[0]==22";
-    } else {
-        training_signal_cut = "sim_shower_overlay_fraction[0] < 0.3 && sim_track_overlay_fraction[0]<0.3 && sim_track_pdg[0]==2212 && sim_shower_pdg[0]==22";
-    }
-
-    std::string num_track_cut;
-
-    std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
-    std::string pmass = "0.938272";
-    std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+10 && mctruth_nu_vertex_y <"+ YMAX+"-10 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
-
-
-
-    std::vector<std::string> v_denom;
-
-    if (topo_tag == "notrack"){
-        v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.02)==0"};
-    }else{
-        v_denom = {fid_cut, "mctruth_cc_or_nc == 1" ,"mctruth_num_exiting_pi0==0", "mctruth_exiting_photon_energy > 0.02", "Sum$(mctruth_exiting_proton_energy-.93827>0.02)>0"};
-
-    }
-    std::string signal_definition = v_denom[0];
-    for(int i=1; i< v_denom.size();i++){
-        signal_definition += "&&" + v_denom[i];
-    }
-
-    std::string ncpi0_background_definition = "!mctruth_is_delta_radiative && mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0==1";
-    std::string other_background_definition = "!mctruth_is_delta_radiative && !(mctruth_cc_or_nc == 1 && mctruth_num_exiting_pi0==1)";// && !(fabs(mctruth_lepton_pdg)==11 && mctruth_cc_or_nc==0)";
-    std::string topological_cuts = TMVAmethods[0].topological_definition;
     std::string postcuts = "1";  //We dont currently use postcuts
 
-    //***************************************************************************************************/
-    //***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
-    //***************************************************************************************************/
-    std::cout<<"Defining all out bdt_flows."<<std::endl;
 
-    bdt_flow signal_training_flow(topological_cuts, 	signal_definition +"&&"+ training_signal_cut, 	vec_precuts,	postcuts,	bdt_infos);
-    bdt_flow signal_other_flow(topological_cuts, 	"!("+signal_definition +")", 	vec_precuts,	postcuts,	bdt_infos);
-    bdt_flow signal_flow(topological_cuts, 	signal_definition , 			vec_precuts,	postcuts,	bdt_infos);
-    bdt_flow signal_all(topological_cuts, "1",vec_precuts,postcuts,bdt_infos);
+    std::string topological_cuts = TMVAmethods[0].topological_definition;
+    //**** Setting up bdt_files NWO style
 
-    bdt_flow other_bkg_flow(topological_cuts,		other_background_definition, 			vec_precuts,	postcuts, bdt_infos);
-    bdt_flow other_bkg_training_flow(topological_cuts, "sim_track_overlay_fraction < 0.2" , 		vec_precuts,	postcuts, bdt_infos);
+    std::vector<bdt_file*> bdt_files;
+    std::map<std::string, bdt_file*> tagToFileMap;
 
-    bdt_flow ncpi0_bkg_flow(topological_cuts,		ncpi0_background_definition, 			vec_precuts,	postcuts, bdt_infos);
-    bdt_flow nue_flow(topological_cuts, "fabs(mctruth_lepton_pdg)==11 && mctruth_cc_or_nc==0", vec_precuts, postcuts, bdt_infos);
-    bdt_flow data_flow(topological_cuts,		"1",		vec_precuts,	postcuts, bdt_infos);
+    std::cout<<"================================================================================"<<std::endl;
+    std::cout<<"=============== Loading all BDT files for this analysis ========================"<<std::endl;
+    std::cout<<"================================================================================"<<std::endl;
+    
+    for(size_t f = 0; f < XMLconfig.GetNFiles(); ++f){
+     
+        std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
+        //First build a bdt_flow for this file.
+        std::string def = "1";  
+        for(int i=0; i< XMLconfig.bdt_definitions[f].size(); ++i){
+                def += "&&" + XMLconfig.bdt_definitions[f][i];
+        }
+        bdt_flow analysis_flow(topological_cuts, def, 	vec_precuts,	postcuts,	bdt_infos);
+   
+        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() ,analysis_flow));
+        bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
+        tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
 
+        std::cout<<" -- Filename "<<XMLconfig.bdt_filenames[f]<<" subdir "<<XMLconfig.bdt_dirs[f]<<std::endl;
+        std::cout<<" -- Color ";XMLconfig.bdt_cols[f]->Print();std::cout<<" and hist style "<<XMLconfig.bdt_hist_styles[f]<<std::endl;
+        std::cout<<" -- With the following Definition Cuts: "<<std::endl;
+        for(int i=0; i< XMLconfig.bdt_definitions[f].size(); ++i){
+            std::cout<<" -- ---> "<<XMLconfig.bdt_definitions[f][i]<<std::endl;
+        }
 
-    //***************************************************************************************/
-    std::cout<<"Defining all our bdt_files."<<std::endl;
-    bdt_file *training_signal    = new bdt_file(dir, "ncdeltarad_overlay_run3_v17.1.root",	"NCDeltaRadTrain",	   "hist","singlephoton/",  kRed-7, signal_training_flow);
-    bdt_file *signal = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root", "NCDeltaRadOverlay", "hist","singlephoton/",  kRed-7, signal_flow);
-    bdt_file *signal_SM = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root", "NCDeltaRadOverlaySM", "hist","singlephoton/",  kOrange+6, signal_all);
-    bdt_file *signal_other = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root", "NCDeltaRadOverlayOther", "hist","singlephoton/",  kRed-10, signal_other_flow);
-    bdt_file *dirt = new bdt_file(dir,"dirt_overlay_run1_v17.1.root","Dirt","hist","singlephoton/", kOrange-7, data_flow);
-    bdt_file *ncpi0    = new bdt_file(dir, "ncpi0_overlay_run1_v17.1.root", "NCpi0",	  "hist","singlephoton/", kAzure-9, ncpi0_bkg_flow);
-    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_run1_v17.1.root", "BNBOverlays", "hist","singlephoton/",  kBlue-7, other_bkg_flow);
-    //bdt_file *nueintrinsic = new bdt_file(dir,"nueintrinsic_overlay_v12.2.root","NueIntrinsic","hist","singlephoton/",kCyan, nue_flow);
-    bdt_file *OnBeamData    = new bdt_file(dir, "data5e19_run1_v17.1.root",	"OnBeamData",	   "E1p","singlephoton/",  kBlack, data_flow);
-    bdt_file *OffBeamData    = new bdt_file(dir, "bnbext_run1_v17.1.root",	"OffBeamData",	"E1p","singlephoton/",  kGreen-3, data_flow);
+        if(XMLconfig.bdt_scales[f] != 1.0){
+            std::cout<<" -- Scaling "<<XMLconfig.bdt_tags[f]<<" file by a factor of "<<XMLconfig.bdt_scales[f]<<std::endl;
+            bdt_files.back()->scale_data = XMLconfig.bdt_scales[f];
+        }
 
+        if(XMLconfig.bdt_is_onbeam_data[f]){
+            std::cout<<" -- Setting as ON beam data with "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
+            bdt_files.back()->setAsOnBeamData(XMLconfig.bdt_onbeam_pot[f]); //tor860_wc
+        }
+        if(XMLconfig.bdt_is_offbeam_data[f]){
+            std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
+            bdt_files.back()->setAsOffBeamData( XMLconfig.bdt_onbeam_pot[f], XMLconfig.bdt_onbeam_spills[f], XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
+        }
+        
+        bdt_files.back()->calcPOT();
+    }
 
-    std::vector<bdt_file*> bdt_files = {ncpi0, bnb, OnBeamData, OffBeamData,dirt,signal,signal_other,training_signal, signal_SM};
-    //The LEE signal is bigger than the SM signal by this factor
-    signal->scale_data =2.0; 
-    signal_other->scale_data = 2.0; 
+    bdt_file * training_signal = tagToFileMap["NCDeltaRadOverlayTrain"];
+    bdt_file * signal = tagToFileMap["NCDeltaRadOverlay"];
 
-    //int setAsOnBeamData(double in_tor860_wcut);
-    //int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext, double N_samweb_ext);
-    OnBeamData->setAsOnBeamData(3.746e+19); //tor860_wcut
-    OffBeamData->setAsOffBeamData(3.746e+19, 8295281.0, 61202687.0 );  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
-
-    std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-    std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-    for(auto &f: bdt_files){
-        std::cout<<"On file "<<f->name<<std::endl;
-        std::cout<<"Loading "<<f->tag<<"\t with "<<f->tvertex->GetEntries()<<"\t entries.(unweighted)"<<std::endl;
-        f->calcPOT();
-        std::cout<<"Scale factor is then: "<<f->scale_data<<std::endl;
-    }	
+    
     //===========================================================================================
     //===========================================================================================
     //		Main flow of the program , using OPTIONS
@@ -271,15 +243,15 @@ int main (int argc, char *argv[]){
 
 
     //Adding plot names
-    signal->addPlotName("LEE Signal NC #Delta Radiative");
-    signal_SM->addPlotName("SM All NC #Delta Radiative");
-    signal_other->addPlotName("LEE Other NC #Delta Radiative");
+    //signal->addPlotName("LEE Signal NC #Delta Radiative");
+    //signal_SM->addPlotName("SM All NC #Delta Radiative");
+    //signal_other->addPlotName("LEE Other NC #Delta Radiative");
     //nueintrinsic->addPlotName("CC #nu_{e} Intrinsic");
-    bnb->addPlotName("BNB Other");
-    ncpi0->addPlotName("NC#pi^{0}");
-    OnBeamData->addPlotName("On-Beam Data");
-    OffBeamData->addPlotName("Cosmic Data");
-    dirt->addPlotName("Dirt");
+    //bnb->addPlotName("BNB Other");
+    //ncpi0->addPlotName("NC#pi^{0}");
+    //OnBeamData->addPlotName("On-Beam Data");
+    //OffBeamData->addPlotName("Cosmic Data");
+    //dirt->addPlotName("Dirt");
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -392,28 +364,20 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
 
-        if(what_pot == -1){ 
-            histogram_stack->plot_pot = OnBeamData->pot;
-        }else{
-            histogram_stack->plot_pot = what_pot;
+        histogram_stack->plot_pot = tagToFileMap["Data5e19"]->pot;
+
+        for(auto &f: bdt_files){
+            if(f->is_data) continue;
+            histogram_stack->addToStack(f);
         }
-
-        //        signal_SM->fillstyle = 3333;
-        histogram_stack->addToStack(signal);
-        histogram_stack->addToStack(signal_SM);
-        histogram_stack->addToStack(signal_other);
-        histogram_stack->addToStack(ncpi0); 
-        histogram_stack->addToStack(bnb);
-        histogram_stack->addToStack(dirt);
-        OffBeamData->fillstyle = 3333;
-        histogram_stack->addToStack(OffBeamData);
-
+    
+        //OffBeamData->fillstyle = 3333;
 
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
             if(number != -1){
-                bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
+                bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
 
                 datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
 
@@ -422,7 +386,7 @@ int main (int argc, char *argv[]){
                 datamc.plotStacks(ftest,  tmp_var , fcuts);
             }else{
 
-                bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
+                bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
                 //real_datamc.setSubtractionVector(subv);
                 // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
                 //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
@@ -432,7 +396,7 @@ int main (int argc, char *argv[]){
                 //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
         }else{
-            bdt_datamc real_datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
+            bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
 
             if(which_bdt ==-1){
                 for(int k=0; k< bdt_infos.size(); k++){
@@ -444,20 +408,20 @@ int main (int argc, char *argv[]){
         }
     }else if(mode_option == "test"){
 
-        plot_bdt_variables(signal, ncpi0, vars, fcuts, 5);
+        //plot_bdt_variables(signal, ncpi0, vars, fcuts, 5);
 
         return 0;
     }else if(mode_option == "sig"){
 
         switch(number){
             case 0:
-                scan_significance({signal, signal_SM, signal_other} , {bnb, OffBeamData, dirt,ncpi0}, bdt_infos,13.2e20);
+             //   scan_significance({signal, signal_SM, signal_other} , {bnb, OffBeamData, dirt,ncpi0}, bdt_infos,what_pot);
                 break;
             case 1:
-                scan_likelihood({signal,signal_SM, signal_other, bnb, OffBeamData,dirt,ncpi0}, bdt_infos);
+             //   scan_likelihood({signal,signal_SM, signal_other, bnb, OffBeamData,dirt,ncpi0}, bdt_infos);
                 break;
             case 2:
-                scan_significance_random({signal,signal_SM,signal_other},{bnb,OffBeamData,dirt,ncpi0},bdt_infos);
+             //   scan_significance_random({signal,signal_SM,signal_other},{bnb,OffBeamData,dirt,ncpi0},bdt_infos);
                 break;
             default:
                 break;
@@ -466,7 +430,7 @@ int main (int argc, char *argv[]){
 
     }else if(mode_option == "sss"){
 
-
+        /*
         std::vector<std::vector<double>> signal_eff;
         std::vector<std::vector<double>> bkg_eff;
         std::vector<double> impact;
@@ -547,9 +511,12 @@ int main (int argc, char *argv[]){
         l->Draw();
         cimpact->Update();
         cimpact->SaveAs("Impact.pdf","pdf");
-
+    */
     }
     else if(mode_option == "eff"){
+
+        std::vector<std::string> v_denom;
+
 
         std::vector<std::string> v_topo;
         if (topo_tag == "notrack"){
@@ -561,7 +528,9 @@ int main (int argc, char *argv[]){
 
         if(which_stage==-1)which_stage=0;
 
-        bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcuts, 13.2e20,false,which_stage);
+        bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcuts, what_pot,false,which_stage);
+
+
 
     }else if(mode_option == "sbnfit"){
         if(which_file==-1) which_file ==0;
@@ -622,8 +591,8 @@ int main (int argc, char *argv[]){
         return 0;
 
 
-    }
-
+    
+/*
     else if(mode_option == "recomc"){
         if (access("recomc",F_OK) == -1){
             mkdir("recomc",0777);//Create a folder for pdf.
@@ -701,7 +670,7 @@ int main (int argc, char *argv[]){
                 recomc.is_log = false;
             }
 
-        }/*
+        }
 
             else if(mode_option == "response"){
 
@@ -728,10 +697,10 @@ int main (int argc, char *argv[]){
     std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
     fsig->Close();
 
-*/
+
 }else if(mode_option == "stack"){
     bdt_stack histogram_stack(analysis_tag+"_stack");
-    histogram_stack.plot_pot = 13.2e20;
+    histogram_stack.plot_pot = what_pot;
     histogram_stack.addToStack(signal);
     histogram_stack.addToStack(signal_other);
     histogram_stack.addToStack(bnb);
@@ -763,7 +732,7 @@ int main (int argc, char *argv[]){
         histogram_stack.plotBDTStacks(ftest, bdt_infos[0], fcoscut, fbnbcut);
         return 0;
     }
-    /*
+    
        }else if(mode_option == "sbnfit"){
        if(number==-1) number ==0;
 

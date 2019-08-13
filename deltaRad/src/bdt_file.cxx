@@ -204,6 +204,13 @@ if(tag == "BNBext"){
 
 };
 
+int bdt_file::setTColor(TColor & tin){
+    f_TColor = tin;
+    return f_TColor.GetNumber();
+
+}
+
+
 int bdt_file::setAsMC(){
 
 }

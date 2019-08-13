@@ -21,6 +21,7 @@
 #include "TTreeFormula.h"
 #include "TFile.h"
 #include "TCanvas.h"
+#include "TColor.h"
 #include "TPad.h"
 #include "TH1.h"
 #include "TH2.h"
@@ -176,7 +177,7 @@ struct bdt_file{
 		//legacy code OBSOLETE
 		//bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, std::string infriend, std::string infriendtree, int incol, bool indata);	
 
-
+        
 		int scale(double scalein);
 		int setPOT(double inpot);
 		
@@ -205,6 +206,8 @@ struct bdt_file{
 
 		int writeStageFriendTree(std::string nam,double,double);
 		int addPlotName(std::string plotin);
+        int setTColor(TColor &);
+        TColor f_TColor;
 };
 
 
