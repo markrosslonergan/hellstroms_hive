@@ -1,6 +1,3 @@
-#include "load_mva_param.h"
-#include "tinyxml.h"
-
 #include <getopt.h>
 #include <sys/stat.h> 
 
@@ -23,6 +20,9 @@
 #include "bdt_spec.h"
 #include "bdt_eff.h"
 #include "bdt_test.h"
+#include "load_mva_param.h"
+#include "tinyxml.h"
+
 
 int compareQuick(std::vector<bdt_variable> vars, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 
@@ -31,10 +31,9 @@ int main (int argc, char *argv[]){
     //This is a standardized location on /pnfs/ that everyone can use. 
     std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v17/";
 
-
-    std::string mode_option = "fake"; 
+    std::string mode_option = "enter_a_mode_please"; 
     std::string xml = "default.xml";
-    std::string topo_tag = "track";
+    std::string topo_tag = "this_is_xml_now";
 
     int number = -1;
     bool response_only = false;
@@ -134,15 +133,15 @@ int main (int argc, char *argv[]){
     //===========================================================================================
     //===========================================================================================
 
-    std::string analysis_tag = topo_tag;
     std::cout<<"================================================================================"<<std::endl;
     std::cout<<"=================  Beginning New World Order gLEE run =========================="<<std::endl;
     std::cout<<"================================================================================"<<std::endl;
-    std::cout<<"Working with analysis tag: "<<analysis_tag<<std::endl;get_joy();
+    std::cout<<"Welcome."<<std::endl;get_joy();
     //Most TMVA arguments are loaded in here via XML
     std::cout<<"Getting xml variables"<<std::endl;
     MVALoader XMLconfig(xml);
     std::vector<method_struct> TMVAmethods  = XMLconfig.GetMethods(); 
+    std::string analysis_tag = XMLconfig.analysis_tag;
 
     dir = XMLconfig.filedir;
     std::cout<<"Core File dir set as "<<dir<<std::endl;

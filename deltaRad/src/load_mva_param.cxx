@@ -20,6 +20,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
     }else{
 
         std::cerr<<"ERROR: MVALoader::MVALoader || Failed to load "<<whichxml<<std::endl;
+        std::cerr<<"ERROR: MVALoader::MVALoader || You probably just forgot to add a --xml my_analysis.xml , or maybe you missed a </>"<<std::endl;
 
         exit(EXIT_FAILURE);
     }
@@ -55,6 +56,8 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
         topo_def = pTopoCut->Attribute("def");
         topo_name = pTopoCut->Attribute("name");
+        
+        analysis_tag = pTopoCut->Attribute("tag");
 
         std::cout<<"Loading Topology "<<topo_name<<" with definition "<<topo_def<<std::endl;
         pTopoCut = pTopoCut->NextSiblingElement("topology");

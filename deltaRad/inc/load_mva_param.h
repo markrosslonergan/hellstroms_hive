@@ -34,6 +34,8 @@ class MVALoader {
     //BDT file info
     //bdt_file *signal_SM = new bdt_file(dir, "ncdeltarad_overlay_run1_v17.1.root", "NCDeltaRadOverlaySM", "hist","singlephoton/",  kOrange+6, signal_all);
 
+    std::string analysis_tag;
+
     std::string filedir;
     size_t n_bdt_files;
     std::vector<std::string> bdt_filenames;
