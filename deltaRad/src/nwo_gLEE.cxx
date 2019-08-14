@@ -403,6 +403,7 @@ int main (int argc, char *argv[]){
         }
     }else if(mode_option == "test"){
 
+        bdt_XGtrain();
         //plot_bdt_variables(signal, ncpi0, vars, fcuts, 5);
 
         return 0;

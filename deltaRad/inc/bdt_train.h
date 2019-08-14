@@ -18,7 +18,15 @@
 #include "bdt_var.h"
 #include "bdt_info.h"
 
+#include <xgboost/c_api.h>
 
+#define safe_xgboost(call) {                                            \
+int err = (call);                                                       \
+if (err != 0) {                                                         \
+  fprintf(stderr, "%s:%d: error in %s: %s\n", __FILE__, __LINE__, #call, XGBGetLastError()); \
+  exit(1);                                                              \
+}                                                                       \
+}
 
 /*
 int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, std::vector<bdt_variable> variables, std::vector<method_struct> & methods);
@@ -32,6 +40,6 @@ int bdt_train(bdt_info, bdt_file*, bdt_file*, std::vector<bdt_variable>, std::ve
 int bdt_train(bdt_info, bdt_file*, bdt_file*, std::vector<bdt_variable>, std::vector<bdt_variable>, std::vector<method_struct> & );
 
 
-
+int bdt_XGtrain();
 
 #endif
