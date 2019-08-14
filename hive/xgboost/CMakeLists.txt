@@ -21,7 +21,6 @@ set(XGBOOST_DEFINITIONS
   -DXGBOOST_VER_PATCH=${xgboost_VERSION_PATCH})
 set_default_configuration_release()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/xgboost/include/)
 
 #-- Options
 option(BUILD_C_DOC "Build documentation for C APIs using Doxygen." OFF)
