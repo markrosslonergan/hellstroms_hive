@@ -6,7 +6,7 @@
 <precut def = "(TMath::Finite(reco_shower_dEdx_amalgamated[0]))" name = "Finite dE/dx"/>
 <precut def = "(TMath::Finite(reco_track_mean_trunc_dEdx_best_plane[0]))" name = "Finite Track dE/dx"/>
 <precut def = "reco_track_pid_three_plane_proton_pid>0" name = "3D PID"/>
-<!--<precut def = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>17.8946)" name = "Second Shower Veto"/>-->
+<!--<precut def = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>18.2183)" name = "Second Shower Veto"/> -->
 <!--<precut def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) > 0.05 &amp;&amp;acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) < 3.13149-0.05 " name = "Back-to-Back cut"/>
 <precut def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] > 0.2 " name = "Stopping Track Cut" /> -->
 
@@ -41,7 +41,7 @@
 -->
 
 
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(20,0.05,0.9)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(21,0.05,0.9)">
     <method type = "COSMIC" use = "yes">
         <param>  NTrees=1250	</param>				 
         <param>  MinNodESize=2.5% </param>				
@@ -124,7 +124,7 @@
 <var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(8, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" logplot = "false" training = ""/>
 
 <!--pip's PID-->
-<var def =  "log10(reco_track_pid_three_plane_proton_pid)" binning = "(8,-2,2)"  unit ="3 plane PID [LOG]" type = "d" logplot = "false" training="01"/>
+<var def =  "log10(reco_track_pid_three_plane_proton_pid)" binning = "(20,-2.5,2)"  unit ="3 plane PID [LOG]" type = "d" logplot = "false" training="01"/>
 
 <!-- other PID algorithms-->
 <var def =  "reco_track_pid_chi2_plane2" binning = "(8,0,80)"  unit ="chi2 PID plane 2" type = "d" logplot = "false" training=""/>
@@ -137,7 +137,7 @@
 
 <var def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(8,0.8,2.)" unit = "Invariant Mass^2 of photon-proton pair" type  = "d" training = ""/>
 
-<var def = "sqrt(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(8,0.938,1.5)" unit = "Invariant Mass of photon-proton pair" type  = "d" training = "01"/>
+<var def = "sqrt(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))" binning = "(15,0.938,1.5)" unit = "Invariant Mass of Photon-Proton Pair [GeV]" type  = "d" training = "01"/>
 
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(8,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" logplot = "false" training = "01" /> 
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(8,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" logplot = "false" training = "01" /> 
@@ -163,8 +163,9 @@
 -->
 
 
+
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(20,0,100)" unit = "Second Shower Search Impact Param [cm]" type ="d" training=""/> 
 <!--
-<var def = "Min$(sss_candidate_impact_parameter)" binning="(25,0,100)" unit = "impact" type ="d" training="01"/>
 <var def = "(sss_candidate_impact_parameter==Min$(sss_candidate_impact_parameter))*sss_candidate_min_dist" binning = "(8,0,100)" unit = "mindist" type="d" training="01"/>
 
 <var def = "(sss_candidate_impact_parameter==Min$(sss_candidate_impact_parameter))*sss_candidate_PCA" binning = "(8,0,1)" unit = "PCA" type="d" training="2"/>

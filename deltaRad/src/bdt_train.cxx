@@ -248,8 +248,8 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	TCut sig_tcut =  TCut(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 	TCut back_tcut = TCut(background_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 
-  TTree * background_ttree_prefiltered = (TTree*)background_file->tvertex->CopyTree(back_tcut);
-  TTree * signal_ttree_prefiltered = (TTree*)signal_file->tvertex->CopyTree(sig_tcut);
+    TTree * background_ttree_prefiltered = (TTree*)background_file->tvertex->CopyTree(back_tcut);
+    TTree * signal_ttree_prefiltered = (TTree*)signal_file->tvertex->CopyTree(sig_tcut);
 
 	dataloader->AddSignalTree(signal_ttree_prefiltered);
 	int signal_entries = signal_file->tvertex->GetEntries(sig_tcut);
@@ -302,8 +302,8 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 int bdt_XGtrain(){
 
     DMatrixHandle dtrain, dtest;
-  int silent = 0;
-  int use_gpu = 0;  // set to 1 to use the GPU for training
+    int silent = 0;
+    int use_gpu = 0;  // set to 1 to use the GPU for training
  
     safe_xgboost(XGDMatrixCreateFromFile("/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/BluWoOr/hellstroms_hive/deltaRad/xgboost/demo/data/agaricus.txt.train", silent, &dtrain));
     safe_xgboost(XGDMatrixCreateFromFile("/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/BluWoOr/hellstroms_hive/deltaRad/xgboost/demo/data/agaricus.txt.test", silent, &dtest));
@@ -313,7 +313,7 @@ int bdt_XGtrain(){
   DMatrixHandle eval_dmats[2] = {dtrain, dtest};
   safe_xgboost(XGBoosterCreate(eval_dmats, 2, &booster));
 
-
+  
   // configure the training
   // available parameters are described here:
   //   https://xgboost.readthedocs.io/en/latest/parameter.html
@@ -347,7 +347,9 @@ int bdt_XGtrain(){
   // predict
   bst_ulong out_len = 0;
   const float* out_result = NULL;
-  int n_print = 10;
+  int n_print = 20;
+
+  safe_xgboost(XGBoosterLoadModel(booster,"test.mod"));
 
   safe_xgboost(XGBoosterPredict(booster, dtest, 0, 0, &out_len, &out_result));
   printf("y_pred: ");
@@ -364,8 +366,11 @@ int bdt_XGtrain(){
   }
   printf("\n");
 
- safe_xgboost(XGDMatrixFree(dtrain));
-    safe_xgboost(XGDMatrixFree(dtest));
+    
+  safe_xgboost(XGBoosterSaveModel(booster,"test.mod"));
+
+  safe_xgboost(XGDMatrixFree(dtrain));
+  safe_xgboost(XGDMatrixFree(dtest));
 
     return 0;
 

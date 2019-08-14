@@ -197,10 +197,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 max_modifier = 1.85;
             }
             if (s==2){
-                max_modifier = 2.0;
-            }if(s==3){
-                max_modifier=4.3;
+                max_modifier = 1.85;
             }
+            //if(s==3){
+            //    max_modifier=4.3;
+           // }
 
             if (s==3){
                 max_modifier = 3;
@@ -232,6 +233,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->GetYaxis()->SetTitle("Events");
             stk->GetYaxis()->SetTitleSize(0.05);
             stk->GetYaxis()->SetTitleOffset(0.9);
+            //stk->SetMaximum(9);
             stk->SetMaximum(std::max(tsum->GetMaximum(), d0->GetMaximum())*max_modifier);
             stk->SetMinimum(min_val);
             tsum->DrawCopy("Same E2");
