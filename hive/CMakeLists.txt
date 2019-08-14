@@ -36,7 +36,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/xgboost/include/)
 
 add_subdirectory(tinyxml)
 add_subdirectory(src)
-#add_subdirectory(xgboost)
+add_subdirectory(xgboost)
 
 #file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/xml/default.xml DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/build/src/)
 

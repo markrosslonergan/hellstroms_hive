@@ -21,6 +21,8 @@ set(XGBOOST_DEFINITIONS
   -DXGBOOST_VER_PATCH=${xgboost_VERSION_PATCH})
 set_default_configuration_release()
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/xgboost/include/)
+
 #-- Options
 option(BUILD_C_DOC "Build documentation for C APIs using Doxygen." OFF)
 option(USE_OPENMP "Build with OpenMP support." ON)
@@ -154,8 +156,8 @@ set_target_properties(
 #-- End CLI for xgboost
 
 set_output_directory(runxgboost ${PROJECT_SOURCE_DIR})
-#set_output_directory(xgboost ${PROJECT_SOURCE_DIR}/../build/xgboost/lib)
-set_output_directory(xgboost ${PROJECT_SOURCE_DIR}/lib)
+set_output_directory(xgboost ${PROJECT_SOURCE_DIR}/../build/xgboost/lib)
+#set_output_directory(xgboost ${PROJECT_SOURCE_DIR}/lib)
 
 # Ensure these two targets do not build simultaneously, as they produce outputs with conflicting names
 add_dependencies(xgboost runxgboost)

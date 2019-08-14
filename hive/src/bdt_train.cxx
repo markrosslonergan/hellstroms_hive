@@ -296,12 +296,6 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 
 	return 0;
 }
-
-int bdt_XGtrain(){
-return 0;
-}
-/*
-
 int bdt_XGtrain(){
 
     DMatrixHandle dtrain, dtest;
@@ -378,4 +372,3 @@ int bdt_XGtrain(){
     return 0;
 
 }
-*/
