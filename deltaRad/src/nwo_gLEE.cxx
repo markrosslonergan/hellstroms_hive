@@ -168,6 +168,9 @@ int main (int argc, char *argv[]){
     std::vector<bdt_file*> signal_bdt_files;
     std::vector<bdt_file*> bkg_bdt_files;
 
+    bdt_file * signal;
+    bdt_file * training_signal;
+
     std::map<std::string, bdt_file*> tagToFileMap;
 
     std::cout<<"================================================================================"<<std::endl;
@@ -220,12 +223,17 @@ int main (int argc, char *argv[]){
             }
         }
 
+        if(XMLconfig.bdt_is_training_signal[f]){
+            training_signal = bdt_files.back();
+        }
+
+
         bdt_files.back()->calcPOT();
     }
 
+    //BAD practice! 
+    signal = tagToFileMap["NCDeltaRadOverlay"];
 
-    bdt_file * training_signal = tagToFileMap["NCDeltaRadOverlayTrain"];
-    bdt_file * signal = tagToFileMap["NCDeltaRadOverlay"];
 
     std::vector<bdt_file*> stack_bdt_files = signal_bdt_files;
     stack_bdt_files.insert(stack_bdt_files.end(), bkg_bdt_files.begin(), bkg_bdt_files.end());
