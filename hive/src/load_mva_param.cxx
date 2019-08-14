@@ -53,8 +53,27 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
         topo_def = pTopoCut->Attribute("def");
         topo_name = pTopoCut->Attribute("name");
-        
         analysis_tag = pTopoCut->Attribute("tag");
+
+        const char* t_cut = pTopoCut->Attribute("bdtcut");
+        if(t_cut==NULL){ 
+        
+        }else{
+            std::string s_cuts = t_cut;
+            s_cuts.erase(std::remove(s_cuts.begin(), s_cuts.end(), '('), s_cuts.end());
+            s_cuts.erase(std::remove(s_cuts.begin(), s_cuts.end(), ')'), s_cuts.end());
+
+            size_t pos = 0;
+            std::string delim = ",";
+            std::string token;
+            while ((pos = s_cuts.find(delim)) != std::string::npos) {
+                token = s_cuts.substr(0, pos);
+                bdt_cuts.push_back(std::stod(token));
+                s_cuts.erase(0, pos + delim.length());
+            }
+            bdt_cuts.push_back(std::stod(s_cuts));
+        }
+   
 
         std::cout<<"Loading Topology "<<topo_name<<" with definition "<<topo_def<<std::endl;
         pTopoCut = pTopoCut->NextSiblingElement("topology");

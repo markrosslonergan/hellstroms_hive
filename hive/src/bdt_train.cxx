@@ -305,8 +305,8 @@ int bdt_XGtrain(){
     int silent = 0;
     int use_gpu = 0;  // set to 1 to use the GPU for training
  
-    safe_xgboost(XGDMatrixCreateFromFile("/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/BluWoOr/hellstroms_hive/deltaRad/xgboost/demo/data/agaricus.txt.train", silent, &dtrain));
-    safe_xgboost(XGDMatrixCreateFromFile("/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/BluWoOr/hellstroms_hive/deltaRad/xgboost/demo/data/agaricus.txt.test", silent, &dtest));
+    safe_xgboost(XGDMatrixCreateFromFile("/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/BluWoOr/hellstroms_hive/hive/xgboost/demo/data/agaricus.txt.train", silent, &dtrain));
+    safe_xgboost(XGDMatrixCreateFromFile("/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/BluWoOr/hellstroms_hive/hive/xgboost/demo/data/agaricus.txt.test", silent, &dtest));
   
   // create the booster
   BoosterHandle booster;

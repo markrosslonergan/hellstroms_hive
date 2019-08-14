@@ -30,6 +30,7 @@ struct method_struct {
 
     std::string topological_name;
     std::string topological_definition;
+    std::vector<std::string> v_topological_definition;
 
     std::vector<std::string> precuts;
 

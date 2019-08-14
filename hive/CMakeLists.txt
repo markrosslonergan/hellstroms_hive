@@ -1,10 +1,10 @@
 cmake_minimum_required (VERSION 3.3)
-project (DeltaRad)
+project (Hive VERSION 2.0.0 )
 include(xgboost/cmake/Utils.cmake)
 
 # The version number.
-set (DeltaRad_VERSION_MAJOR 1)
-set (DeltaRad_VERSION_MINOR 0)
+set (Hive_VERSION_MAJOR 2)
+set (Hive_VERSION_MINOR 0)
 
 
 if (CMAKE_VERSION VERSION_LESS "3.1")

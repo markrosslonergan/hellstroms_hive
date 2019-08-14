@@ -61,6 +61,8 @@ class MVALoader {
     std::string AliasParse(std::string in);
 
 
+    std::vector<double> bdt_cuts;
+
     std::vector<std::string> recomc_names;
     std::vector<std::string> recomc_defs;
     std::vector<TColor*> recomc_cols;

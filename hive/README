@@ -18,80 +18,9 @@
  *
  *The authors make no guarrentee of the behaviour, stability or bug-free-ness of this code.
  *****************************************************************************
- ************************* Building *****************************************
- *****************************************************************************
-
-If root was built with cmake this is trivial. otherwise will requre some compiler flags
 
 
--->enter build directory
-cd build
-
--->run cmake on project core directory
-cmake ..
-
--->should produce output and makefiles, to make
-make
-
--->and deltaRes should be in the src folder, built and ready to go.
-
- *****************************************************************************
- ************************* Running   *****************************************
- *****************************************************************************
-Usage takes arguments
-
-./deltaRes --dir ../../../sample/mcc8 --option train --xml default.xml 
-
-	Options are:
-	-d  --dir  : Directory with root files, default "../../../sample/mcc82"
-	-o --option : what mode to run in, train, app, sig,merge ..etc, default trian
-	-x --xml :  xml that we take the TMVA parameters from, default: "default.xml"
-	-h --help:  displays this:
-
- *****************************************************************************
- *************************    ToDo   *****************************************
- *****************************************************************************
-
-	(1) remove hardcoded values, cuts..etc... Maybe have a cut.xml that contains them?
-	(2) mva. weights, many are -1000?
-	(3) running "app" should add the mva value to a copy of the original tree, not just a "app.root" containing only the mva value. (i.e should have all the other variables too)
-	(4) What is the mva currently being trained on maximizing? We later on choose best cut of s/sqrt(s+b) but the BDT is trained on something different?
-	(5) Seems to be some training issues with BDT,
-	(6) training on enough samples? nah definitely need more stats but thats a known thing
-	(7) How to make those final plots?  (AddFriend! plotstack.C)
-
-	NOTRACKS:
-		 Signal     -- training events            : 327
-		 Background -- training events            : 1030
-	TRACKONLY:
-		 Signal     -- training events            : 375
-		 Background -- training events            : 2638
-
-	 : the option *InverseBoostNegWeights* does not exist for BoostType=Grad --> change
-	 : to new default for GradBoost *Pray*
-
-	Whats This:
-			Dataset[dataset] :  you have opted for interpreting the requested number of training/testing events
-					 :  to be the number of events AFTER your preselection cuts
-
-	Total Pre: cut efficiencies: 0.46
-
- *****************************************************************************
- *************************    Log    *****************************************
- *****************************************************************************
-
-
-Friday Nov 10th. Mark. What I've changed:
-	(1) Split most of the XX.hpp files into a header (XX.h) which is now in /inc and a source file (CC.cxx) which is now in /src
-	(2) Renamed run.cpp to DeltaRad.cxx (All prgrams needs a catchy title, and ASCII art name..)
-	(3) Started commenting random things.
-	(4) Changed how the template<class T> in object_helper works a little to bring it more in line with c++ standards
-	(5) Renamed tlimits.hpp -> gen_tlimit.h (as was wierd there being a TLimits.h in root and a tlimits.h here)
-	(6) Moved to an "out-of-source build" centric model, so no build code or results is in same directory as source-code (saftey)
-	(7) Moved from "makefile" to "CMake", generally gives a cross-platform/computer stability and makes building faster if only small changes
-	(8) whitespacing, tap and indenting, also might hate me for that if you use emacs or something other than vim..sorry..
-
-	A lot of this wasnt "necessary" but as I was reading through, copying and commenting to learn whats happening, it seemed a good time
+OK, going to rewrite this..
 
                                                     cNX;     .;llcll;.                              
                                                    ;KN0k,   ,xo,...,ox,                             

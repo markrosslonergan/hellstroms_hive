@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="track" name ="1#gammaNp" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1 &amp;&amp; reco_asso_tracks>0" />
+<topology tag="track" name ="1#gammaNp" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1 &amp;&amp; reco_asso_tracks>0" bdtcut = "(0.5,0.6)" />
 
 <!-- ================================================== BDT FILES ==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v17/</filedir>
@@ -140,8 +140,6 @@
 <!--<precut def = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>17.8001)" name = "Second Shower Veto"/>-->
 <!--<precut def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) > 0.05 &amp;&amp;acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) < 3.13149-0.05 " name = "Back-to-Back cut"/>
 <precut def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] > 0.2 " name = "Stopping Track Cut" /> -->
-
-<!-- mark's enhanced precuts-->
 <precut def = "(reco_track_endz[reco_track_ordered_energy_index[0]] > 5 &amp;    &amp; reco_track_endz[reco_track_ordered_energy_index[0]] < 1036-5) &amp;&amp;   (reco_track_endx[reco_track_ordered_energy_index[0]] > 5 &amp;&amp; reco_track_endx[reco_track_ordered_energy_index[0]] < 256-5 &amp;&amp; reco_track_endy[reco_track_ordered_energy_index[0]] > -117+5 &amp;&amp; reco_track_endy[reco_track_ordered_energy_index[0]] < 117-5 &amp;&amp; reco_track_endz[reco_track_ordered_energy_index[0]] > 5  &amp;&amp; reco_track_endz[reco_track_ordered_energy_index[0]] < 1036-5)" name = "Contained Track Cut" />
 <precut def = "(reco_shower_energy_max[0]>30 &amp;&amp; reco_shower_energy_max[0]<3000)" name = "Shower Energy"/>
 <precut def = "(sqrt(pow(reco_track_startx[reco_track_ordered_energy_index[0]]-reco_vertex_x,2)+pow(reco_track_starty[reco_track_ordered_energy_index[0]]-reco_vertex_y,2)+pow(reco_track_startz[reco_track_ordered_energy_index[0]]-reco_vertex_z,2)))< 5" name = "Distance from Track Start to Vertex"/>
@@ -149,30 +147,6 @@
 <precut def = "reco_track_displacement[reco_track_ordered_energy_index[0]]<300" name = "Track Disp"/>
 <precut def = "(reco_shower_dEdx_amalgamated[0]< 20) " name = "Shower dedx low"/>
 
-
-
-
-
-<!--<precut def = "((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0])>0" name = "forward delta" />-->
-
-<!--
-<precut def = "(reco_track_startx[0] > 10 &amp;&amp; reco_track_startx[0] < 256-10 &amp;&amp; reco_track_starty[0] > -117+10 &amp;&amp; reco_track_starty[0] < 117-10 &amp;&amp; reco_track_endz[0] > 10 &amp;&amp; reco_track_endz[0] < 1036-10) &amp;&amp;   (reco_track_endx[0] > 10 &amp;&amp; reco_track_endx[0] < 256-10 &amp;&amp; reco_track_endy[0] > -117+10 &amp;&amp; reco_track_endy[0] < 117-10 &amp;&amp; reco_track_endz[0] > 10 &amp;&amp; reco_track_endz[0] < 1036-10)" name = "Contained Track Cut" />
-
-<precut def = "(reco_track_startx > 10 &amp;&amp; reco_track_startx < 256-10 &amp;&amp; reco_track_starty > -117+10 &amp;&amp; reco_track_starty < 117-10 &amp;&amp; reco_track_endz > 10 &amp;&amp; reco_track_endz < 1036-10) &amp;&amp;   (reco_track_endx > 10 &amp;&amp; reco_track_endx < 256-10 &amp;&amp; reco_track_endy > -117+10 &amp;&amp; reco_track_endy < 117-10 &amp;&amp; reco_track_endz > 10 &amp;&amp; reco_track_endz < 1036-10)" name = "Contained Track Cut" />
-<precut def = "reco_shower_energy_plane2/1000.0>0.01" name = "Shower Energy Cut" />
-<precut def ="Sum$(reco_flash_total_pe_in_beamgate) > 20" name ="Optical Filter 20 PE"/>
-<precut def = "reco_track_displacement[0]<250" name = "Track Length Cut" />
-<precut def = "reco_track_good_calo_best_plane[0]!=0" name = "good calo plane track" />
-<precut def = "reco_shower_flash_shortest_distz[0]<150" name = "dist z"/>
-<precut def = "(0.938272*0.938272+2.0*((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_shower_energy_max[0]*0.001)-sqrt((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_proton_kinetic_energy[0]+0.938272)-0.938272*0.938272)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])))< 2 " name = "invar " />
-<precut def = "reco_flash_total_pe[0]< 5000" name = "big flash cut" />
-<precut def = "reco_track_spacepoint_principal0[0]>0.6" name="track straightness cut"/>
-<precut def = "reco_shower_conversion_distance[0] < 200" name = "conv cut"/>
--->
-
-<!--<precut def = "reco_shower_trackscore[0] < 0.20" name = "Good Showers"/>
- <precut def = "Sum$(isolation_num_shr_hits_win_2cm_trk) < 15" name = "isolation"/>
--->
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
@@ -229,6 +203,8 @@
 <var def =  "reco_track_pid_bragg_likelihood_plane1[reco_track_ordered_energy_index[0]]" binning = "(8,0,1.2)"  unit ="bragg likelihood PID plane 1" type = "d" logplot = "false" training=""/>
 <var def =  "reco_track_pid_bragg_likelihood_plane0[reco_track_ordered_energy_index[0]]" binning = "(8,0,1.2)"  unit ="bragg likelihood PID plane 0" type = "d" logplot = "false" training=""/>
 
+<var def = "sqrt(#PM# +#PE#)*12.0" binning = "(10,0,1)" unit = "My Fake Variable [GeV]" type = "d"  training = "01"/>
+
 <var def = "sqrt(#PM#*#PM#+2.0*(#PE#*(reco_shower_energy_max[0]*0.001)-sqrt(#PE#*#PE#)-#PM#*#PM#)*(reco_shower_energy_max[0]*0.001)*(reco_track_dirx[reco_track_ordered_energy_index[0]]*reco_shower_dirx[reco_track_ordered_energy_index[0]]+reco_track_diry[reco_track_ordered_energy_index[0]]*reco_shower_diry[0]+reco_track_dirz[reco_track_ordered_energy_index[0]]*reco_shower_dirz[0]))" binning = "(8,0.8,2.)" unit = "Invariant Mass of photon-proton pair [GeV]" type  = "d" training = "01"/>
 
 <var def = "Min$(sss_candidate_impact_parameter)" binning="(8,0,60)" unit = "Second Shower candidate Impact Parameter [cm]" type ="d" training=""/>
@@ -276,4 +252,3 @@
 
 <alias key="PM" value ="(0.938272)"/>
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[reco_track_ordered_energy_index[0]]+0.938272)"/>
-<alias key="P_KIN" value="(reco_track_proton_kinetic_energy[reco_track_ordered_energy_index[0]]+0.938272)"/>
