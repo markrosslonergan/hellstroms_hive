@@ -1,5 +1,7 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.3)
 project (DeltaRad)
+include(xgboost/cmake/Utils.cmake)
+
 # The version number.
 set (DeltaRad_VERSION_MAJOR 1)
 set (DeltaRad_VERSION_MINOR 0)
@@ -36,5 +38,5 @@ add_subdirectory(tinyxml)
 add_subdirectory(src)
 add_subdirectory(xgboost)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/xml/default.xml DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/build/src/)
+#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/xml/default.xml DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/build/src/)
 

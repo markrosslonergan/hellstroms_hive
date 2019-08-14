@@ -1,30 +1,21 @@
 include_directories (${CMAKE_SOURCE_DIR}/inc/)
 include_directories ( ${CMAKE_SOURCE_DIR}/tinyxml/)
 
-
 add_library (deltaRadlib bdt_eff.cxx variable_list.cxx bdt_datamc.cxx bdt_varplot.cxx bdt_spec.cxx bdt_sig.cxx bdt_recomc.cxx bdt_response.cxx bdt_app.cxx bdt_train.cxx bdt_file.cxx load_mva_param.cxx bdt_precalc.cxx TruncMean.cxx bdt_boxcut.cxx bdt_test.cxx bdt_vertex_eff.cxx)
 target_link_libraries (deltaRadlib tinyxmllib xgboost ${ROOT_LIBRARIES})
 
 message(STATUS "ROOT_LIBRARIES @: ${ROOT_LIBRARIES}")
 
-#add_executable (gLEE gLEE.cxx)
-add_executable (nwo_gLEE nwo_gLEE.cxx)
-#add_executable (deltaRad deltaRad.cxx)
-add_executable (deltaRad_pi0 deltaRad_pi0.cxx)
-#add_executable (deltaRad_template deltaRad_template.cxx)
-#add_executable (validate validate.cxx)
-add_executable (det_validate det_validate.cxx)
-add_executable (set_validate set_validate.cxx)
-#add_executable (invar invarTest.cxx)
-add_executable (pigLEE pigLEE.cxx)
 
-#target_link_libraries (deltaRad tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
-#target_link_libraries (gLEE tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
+add_executable (nwo_gLEE nwo_gLEE.cxx)
 target_link_libraries (nwo_gLEE tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
-#target_link_libraries (validate tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
-target_link_libraries (det_validate tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
-target_link_libraries (set_validate tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
-target_link_libraries (deltaRad_pi0 tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
-#target_link_libraries (deltaRad_template tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
-#target_link_libraries (invar tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
-target_link_libraries (pigLEE tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
+
+set_output_directory(nwo_gLEE ${CMAKE_SOURCE_DIR}/build/bin)
+
+#Comment these in to build some lagacy code
+#add_subdirectory(obsol)
+
+#this is where quite validation scripts can live
+#add_subdirectory(validates)
+
+
