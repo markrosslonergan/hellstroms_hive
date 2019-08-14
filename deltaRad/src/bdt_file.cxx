@@ -1051,9 +1051,9 @@ TText * drawPrelim(double x, double y){
 }
 
 void get_joy(){
-    std::ifstream f("/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/NWO/hellstroms_hive/deltaRad/inc/division.h");
+    std::ifstream f("/pnfs/uboone/resilient/users/markross/tars/division.h");
     if (f.is_open())std::cout << f.rdbuf();
-    std::ifstream h("/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/NWO/hellstroms_hive/deltaRad/inc/hippo.h");
+    std::ifstream h("/pnfs/uboone/resilient/users/markross/tars/hippo.h");
     if (h.is_open())std::cout << h.rdbuf();
     return;
 }
