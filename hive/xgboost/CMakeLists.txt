@@ -154,7 +154,9 @@ set_target_properties(
 #-- End CLI for xgboost
 
 set_output_directory(runxgboost ${PROJECT_SOURCE_DIR})
-set_output_directory(xgboost ${PROJECT_SOURCE_DIR}/../build/xgboost/lib)
+#set_output_directory(xgboost ${PROJECT_SOURCE_DIR}/../build/xgboost/lib)
+set_output_directory(xgboost ${PROJECT_SOURCE_DIR}/lib)
+
 # Ensure these two targets do not build simultaneously, as they produce outputs with conflicting names
 add_dependencies(xgboost runxgboost)
 
