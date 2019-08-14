@@ -1,7 +1,12 @@
 #include "bdt_recomc.h"
 
-
 int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variable> vars, double cut_cosmic_val, double cut_bnb_val){
+    std::vector<double> tmp={cut_cosmic_val,cut_bnb_val};
+    return plot_recomc(fout,file,vars,tmp,13.2e20);
+}
+
+
+int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variable> vars, std::vector<double> fcuts, double plot_pot){
 
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
@@ -12,19 +17,24 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 	double label_size_upper=0.05;
 	double title_offset_upper = 1.45;
 
-	double plot_pot = 13.2e20;
-
-	std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut"};
+	std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","","","","",""};
 
 	//REWRITE THIS USING file->getStageCuts
 	file->recomc_cols = recomc_cols;
 	file->recomc_cuts = recomc_cuts;
 	file->recomc_names = recomc_names;
 
-	for(int s = 0;s<4; s++){ //Loop over all stages
+    int s_min = 0;
+    int s_max = fcuts.size()+2;
+    if(plot_stage >=0){
+        s_min = plot_stage;
+        s_max = plot_stage+1;
+    }
+
+    for(int s = s_min; s< s_max; s++){
 		std::cout<<"Calculating any necessary EntryLists for "<<file->tag<<" On stage "<<s<<"."<<std::endl;
     
-        if(s>1) file->calcBDTEntryList(s,{cut_cosmic_val,cut_bnb_val});
+        if(s>1) file->calcBDTEntryList(s,fcuts);
         file->setStageEntryList(s);
         
 
@@ -129,10 +139,13 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 }
 
 
-
-
 int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, double cut_cosmic_val, double cut_bnb_val){
 
+    std::cout<<"OBSOLETE----  MARK STOP RUNNING THIS YOU KNOW BETTER_----------"<<std::endl;
+    std::cout<<"OBSOLETE----  MARK STOP RUNNING THIS YOU KNOW BETTER_----------"<<std::endl;
+    std::cout<<"OBSOLETE----  MARK STOP RUNNING THIS YOU KNOW BETTER_----------"<<std::endl;
+    std::cout<<"OBSOLETE----  MARK STOP RUNNING THIS YOU KNOW BETTER_----------"<<std::endl;
+    std::cout<<"OBSOLETE----  MARK STOP RUNNING THIS YOU KNOW BETTER_----------"<<std::endl;
 	double title_size_ratio=0.1;
 	double label_size_ratio=0.1;
 	double title_offset_ratioY = 0.3 ;

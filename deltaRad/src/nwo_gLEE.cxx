@@ -30,6 +30,7 @@ int main (int argc, char *argv[]){
     //This is a standardized location on /pnfs/ that everyone can use. 
     std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v17/";
 
+
     std::string mode_option = "fake"; 
     std::string xml = "default.xml";
     std::string topo_tag = "track";
@@ -136,13 +137,12 @@ int main (int argc, char *argv[]){
     std::cout<<"================================================================================"<<std::endl;
     std::cout<<"=================  Beginning New World Order gLEE run =========================="<<std::endl;
     std::cout<<"================================================================================"<<std::endl;
-    std::cout<<"Working with analysis tag: "<<analysis_tag<<std::endl;
-
+    std::cout<<"Working with analysis tag: "<<analysis_tag<<std::endl;get_joy();
     //Most TMVA arguments are loaded in here via XML
     std::cout<<"Getting xml variables"<<std::endl;
     MVALoader XMLconfig(xml);
     std::vector<method_struct> TMVAmethods  = XMLconfig.GetMethods(); 
-    
+
     dir = XMLconfig.filedir;
     std::cout<<"Core File dir set as "<<dir<<std::endl;
 
@@ -173,17 +173,17 @@ int main (int argc, char *argv[]){
     std::cout<<"================================================================================"<<std::endl;
     std::cout<<"=============== Loading all BDT files for this analysis ========================"<<std::endl;
     std::cout<<"================================================================================"<<std::endl;
-    
+
     for(size_t f = 0; f < XMLconfig.GetNFiles(); ++f){
-     
+
         std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
         //First build a bdt_flow for this file.
         std::string def = "1";  
         for(int i=0; i< XMLconfig.bdt_definitions[f].size(); ++i){
-                def += "&&" + XMLconfig.bdt_definitions[f][i];
+            def += "&&" + XMLconfig.bdt_definitions[f][i];
         }
         bdt_flow analysis_flow(topological_cuts, def, 	vec_precuts,	postcuts,	bdt_infos);
-  
+
         bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , analysis_flow));
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
@@ -209,24 +209,24 @@ int main (int argc, char *argv[]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOffBeamData( XMLconfig.bdt_onbeam_pot[f], XMLconfig.bdt_onbeam_spills[f], XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
         }
- 
-            if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f] ){
-                if(XMLconfig.bdt_is_signal[f]){
-                    std::cout<<" -- For the purposes of calculting a significance, this is a signal file"<<std::endl;
-                    signal_bdt_files.push_back(bdt_files.back());
-                }else{
-                    std::cout<<" -- For the purposes of calculting a significance, this is a BKG file"<<std::endl;
-                    bkg_bdt_files.push_back(bdt_files.back());
-                }
+
+        if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f] ){
+            if(XMLconfig.bdt_is_signal[f]){
+                std::cout<<" -- For the purposes of calculting a significance, this is a signal file"<<std::endl;
+                signal_bdt_files.push_back(bdt_files.back());
+            }else{
+                std::cout<<" -- For the purposes of calculting a significance, this is a BKG file"<<std::endl;
+                bkg_bdt_files.push_back(bdt_files.back());
             }
-      
+        }
+
         bdt_files.back()->calcPOT();
     }
 
 
     bdt_file * training_signal = tagToFileMap["NCDeltaRadOverlayTrain"];
     bdt_file * signal = tagToFileMap["NCDeltaRadOverlay"];
-    
+
     std::vector<bdt_file*> stack_bdt_files = signal_bdt_files;
     stack_bdt_files.insert(stack_bdt_files.end(), bkg_bdt_files.begin(), bkg_bdt_files.end());
 
@@ -260,10 +260,10 @@ int main (int argc, char *argv[]){
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-    
-    
+
+
     std::vector<double> fcuts = {0,0}; 
-    
+
     //===========================================================================================
     //===========================================================================================
     //		Main flow of the program , using OPTIONS
@@ -364,14 +364,14 @@ int main (int argc, char *argv[]){
             if(bdt_files[f]->is_data) continue;
             histogram_stack->addToStack(stack_bdt_files[f]);
         }
-    
+
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
             if(number != -1){
                 bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);                
-                
+
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
@@ -380,7 +380,7 @@ int main (int argc, char *argv[]){
 
                 bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
                 real_datamc.setPlotStage(which_stage);                
-                
+
                 //real_datamc.setSubtractionVector(subv);
                 // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
                 //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
@@ -392,7 +392,7 @@ int main (int argc, char *argv[]){
         }else{
             bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
 
-               
+
             if(which_bdt ==-1){
                 for(int k=0; k< bdt_infos.size(); k++){
                     real_datamc.plotBDTStacks(bdt_infos[k] , fcuts);
@@ -426,312 +426,276 @@ int main (int argc, char *argv[]){
     }else if(mode_option == "sss"){
 
         /*
-        std::vector<std::vector<double>> signal_eff;
-        std::vector<std::vector<double>> bkg_eff;
-        std::vector<double> impact;
+           std::vector<std::vector<double>> signal_eff;
+           std::vector<std::vector<double>> bkg_eff;
+           std::vector<double> impact;
 
-        for(double im =0; im<40.0; im+=0.20){
-            impact.push_back(im);
-        }
+           for(double im =0; im<40.0; im+=0.20){
+           impact.push_back(im);
+           }
 
-        for(int stage = 1; stage<4; stage++){
-            if(stage>1){
-                signal->calcBDTEntryList(stage,fcuts);
-                bnb->calcBDTEntryList(stage,fcuts);
-            }	
+           for(int stage = 1; stage<4; stage++){
+           if(stage>1){
+           signal->calcBDTEntryList(stage,fcuts);
+           bnb->calcBDTEntryList(stage,fcuts);
+           }	
 
-            signal->setStageEntryList(stage);
-            bnb->setStageEntryList(stage);
+           signal->setStageEntryList(stage);
+           bnb->setStageEntryList(stage);
 
-            double N_s = signal->GetEntries("1");
-            double N_b = bnb->GetEntries("1");
+           double N_s = signal->GetEntries("1");
+           double N_b = bnb->GetEntries("1");
 
-            std::vector<double> ts;
-            std::vector<double> tb;
+           std::vector<double> ts;
+           std::vector<double> tb;
 
-            for(double im =0; im<40.0; im+=0.2){
+           for(double im =0; im<40.0; im+=0.2){
 
-                std::string s_impact = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>"+std::to_string(im)+") ";
-                tb.push_back(bnb->GetEntries(s_impact)/N_b*100.0);
-                ts.push_back(signal->GetEntries(s_impact)/N_s*100.0);
-            }
-            signal_eff.push_back(ts);
-            bkg_eff.push_back(tb);
-        }
-        TCanvas *cimpact = new TCanvas();
-        cimpact->cd();
+           std::string s_impact = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>"+std::to_string(im)+") ";
+           tb.push_back(bnb->GetEntries(s_impact)/N_b*100.0);
+           ts.push_back(signal->GetEntries(s_impact)/N_s*100.0);
+           }
+           signal_eff.push_back(ts);
+           bkg_eff.push_back(tb);
+           }
+           TCanvas *cimpact = new TCanvas();
+           cimpact->cd();
 
-        std::vector<TGraph*> gb;
-        std::vector<TGraph*> gs;
+           std::vector<TGraph*> gb;
+           std::vector<TGraph*> gs;
 
-        for(int i=0; i<signal_eff.size(); i++){
-            gs.push_back( new TGraph(impact.size(),&impact[0],&signal_eff[i][0]));
-            gb.push_back( new TGraph(impact.size(),&impact[0],&bkg_eff[i][0]));
-        }
+           for(int i=0; i<signal_eff.size(); i++){
+           gs.push_back( new TGraph(impact.size(),&impact[0],&signal_eff[i][0]));
+           gb.push_back( new TGraph(impact.size(),&impact[0],&bkg_eff[i][0]));
+           }
 
-        gs[0]->Draw("al");
-        gs[0]->GetXaxis()->SetLimits(0.,40.0);                 // along X
-        gs[0]->GetHistogram()->SetMaximum(100.0);   // along          
-        gs[0]->GetHistogram()->SetMinimum(0.0);  //   Y     
-        gs[0]->SetLineColor(signal->col);
+           gs[0]->Draw("al");
+           gs[0]->GetXaxis()->SetLimits(0.,40.0);                 // along X
+           gs[0]->GetHistogram()->SetMaximum(100.0);   // along          
+           gs[0]->GetHistogram()->SetMinimum(0.0);  //   Y     
+           gs[0]->SetLineColor(signal->col);
 
-        gs[0]->SetTitle("");
-        gs[0]->GetXaxis()->SetTitle("Impact Parameter Cut [cm]");
-        gs[0]->GetYaxis()->SetTitle("Second Shower Veto Efficiency [%]");
+           gs[0]->SetTitle("");
+           gs[0]->GetXaxis()->SetTitle("Impact Parameter Cut [cm]");
+           gs[0]->GetYaxis()->SetTitle("Second Shower Veto Efficiency [%]");
 
-        TLegend *l = new TLegend(0.59,0.89,0.59,0.89);
-        l->SetNColumns(2);
-        l->SetLineWidth(0);
-        l->SetLineColor(kWhite);
+           TLegend *l = new TLegend(0.59,0.89,0.59,0.89);
+           l->SetNColumns(2);
+           l->SetLineWidth(0);
+           l->SetLineColor(kWhite);
 
-        std::vector<int> ls_i = {1,2,7};
-        std::vector<std::string> s_i {"Precuts","Cosmic","BNB"};
-        for(int i=0; i<signal_eff.size();i++){
-            gs[i]->Draw("l same");
-            gb[i]->Draw("l same");
+           std::vector<int> ls_i = {1,2,7};
+           std::vector<std::string> s_i {"Precuts","Cosmic","BNB"};
+           for(int i=0; i<signal_eff.size();i++){
+           gs[i]->Draw("l same");
+           gb[i]->Draw("l same");
 
-            gs[i]->SetLineColor(signal->col);
-            gb[i]->SetLineColor(bnb->col);
+           gs[i]->SetLineColor(signal->col);
+           gb[i]->SetLineColor(bnb->col);
 
-            gs[i]->SetLineWidth(3);
-            gb[i]->SetLineWidth(3);
+           gs[i]->SetLineWidth(3);
+           gb[i]->SetLineWidth(3);
 
-            gs[i]->SetLineStyle(ls_i[i]);
-            gb[i]->SetLineStyle(ls_i[i]);
+        gs[i]->SetLineStyle(ls_i[i]);
+    gb[i]->SetLineStyle(ls_i[i]);
 
-            l->AddEntry(gs[i],("Signal "+s_i[i]).c_str(),"l");
-            l->AddEntry(gb[i],("BNB "+s_i[i]).c_str(),"l");
-        }
+    l->AddEntry(gs[i],("Signal "+s_i[i]).c_str(),"l");
+    l->AddEntry(gb[i],("BNB "+s_i[i]).c_str(),"l");
+}
 
-        l->Draw();
-        cimpact->Update();
-        cimpact->SaveAs("Impact.pdf","pdf");
-    */
+l->Draw();
+cimpact->Update();
+cimpact->SaveAs("Impact.pdf","pdf");
+*/
+}else if(mode_option == "eff"){
+
+    std::vector<std::string> v_denom;
+
+
+    std::vector<std::string> v_topo;
+    if (topo_tag == "notrack"){
+        v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==0"};
+
+    } else{
+        v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks>0"};
     }
-    else if(mode_option == "eff"){
 
-        std::vector<std::string> v_denom;
+    if(which_stage==-1)which_stage=0;
 
-
-        std::vector<std::string> v_topo;
-        if (topo_tag == "notrack"){
-            v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks==0"};
-
-        } else{
-            v_topo =  {"reco_vertex_size>0","reco_asso_showers==1","reco_asso_tracks>0"};
-        }
-
-        if(which_stage==-1)which_stage=0;
-
-        bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcuts, what_pot,false,which_stage);
+    bdt_efficiency(signal, v_denom, v_topo, vec_precuts, fcuts, what_pot,false,which_stage);
 
 
 
-    }else if(mode_option == "sbnfit"){
-        if(which_file==-1) which_file ==0;
-        if(which_stage==-1) which_stage ==1;
+}else if(mode_option == "sbnfit"){
+    if(which_file==-1) which_file ==0;
+    if(which_stage==-1) which_stage ==1;
 
-        bdt_file * file = bdt_files.at(which_file);
+    bdt_file * file = bdt_files.at(which_file);
 
-        //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
-        file->teventweight->AddFriend(file->tvertex);
+    //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
+    file->teventweight->AddFriend(file->tvertex);
 
-        std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+file->tag+".root";
+    std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+file->tag+".root";
 
-        std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
-        TFile* f_sbnfit = new TFile(output_file_name.c_str(),"recreate");
-
-
-        std::cout<<"Creating directory structure"<<std::endl;
-        TDirectory *cdtof = f_sbnfit->mkdir("singlephoton");
-        cdtof->cd();    
+    std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
+    TFile* f_sbnfit = new TFile(output_file_name.c_str(),"recreate");
 
 
-        std::string sbnfit_cuts = file->getStageCuts(which_stage,fcuts);
-        //std::string sbnfit_cuts = "mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0 >0"; //file->getStageCuts(which_stage,fcoscut,fbnbcut);
-
-        std::cout<<"Copying vertex tree"<<std::endl;
-        TTree * t_sbnfit_tree = (TTree*)file->tvertex->CopyTree(sbnfit_cuts.c_str());
-        std::cout<<"Copying POT tree"<<std::endl;
-        TTree * t_sbnfit_pot_tree = (TTree*)file->tpot->CopyTree("1");
-        std::cout<<"Copying eventweight tree (via friends)"<<std::endl;
-        TTree * t_sbnfit_eventweight_tree = (TTree*)file->teventweight->CopyTree(sbnfit_cuts.c_str());
-        std::cout<<"Copying Slice tree "<<std::endl;
-        TTree * t_sbnfit_slice_tree = (TTree*)file->tslice->CopyTree("1");
+    std::cout<<"Creating directory structure"<<std::endl;
+    TDirectory *cdtof = f_sbnfit->mkdir("singlephoton");
+    cdtof->cd();    
 
 
+    std::string sbnfit_cuts = file->getStageCuts(which_stage,fcuts);
+    //std::string sbnfit_cuts = "mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0 >0"; //file->getStageCuts(which_stage,fcoscut,fbnbcut);
 
-        // TFriendElement *fr0 = (TFriendElement*)t_sbnfit_eventweight_tree->GetListOfFriends()->FindObject((file->tag +"_"+cosmic_bdt_info.identifier).c_str());
-        // TFriendElement *fr1 = (TFriendElement*)t_sbnfit_eventweight_tree->GetListOfFriends()->FindObject((file->tag +"_"+bnb_bdt_info.identifier).c_str());
-        // t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(fr0);
-        // t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(fr1);
-
-
-        // TFriendElement *fr2 = (TFriendElement*)t_sbnfit_tree->GetListOfFriends()->FindObject((file->tag +"_"+cosmic_bdt_info.identifier).c_str() );
-        // TFriendElement *fr3 = (TFriendElement*)t_sbnfit_tree->GetListOfFriends()->FindObject((file->tag +"_"+bnb_bdt_info.identifier).c_str());
-        //t_sbnfit_tree->GetListOfFriends()->Remove(fr2);
-        //t_sbnfit_tree->GetListOfFriends()->Remove(fr3);
-
-
-        std::cout<<"Writing to file"<<std::endl;
-        cdtof->cd();
-        t_sbnfit_tree->Write();
-        t_sbnfit_pot_tree->Write();
-        t_sbnfit_eventweight_tree->Write(); 
-        t_sbnfit_slice_tree->Write();
-        f_sbnfit->Close();
-        std::cout<<"Done!"<<std::endl;
+    std::cout<<"Copying vertex tree"<<std::endl;
+    TTree * t_sbnfit_tree = (TTree*)file->tvertex->CopyTree(sbnfit_cuts.c_str());
+    std::cout<<"Copying POT tree"<<std::endl;
+    TTree * t_sbnfit_pot_tree = (TTree*)file->tpot->CopyTree("1");
+    std::cout<<"Copying eventweight tree (via friends)"<<std::endl;
+    TTree * t_sbnfit_eventweight_tree = (TTree*)file->teventweight->CopyTree(sbnfit_cuts.c_str());
+    std::cout<<"Copying Slice tree "<<std::endl;
+    TTree * t_sbnfit_slice_tree = (TTree*)file->tslice->CopyTree("1");
 
 
+
+    // TFriendElement *fr0 = (TFriendElement*)t_sbnfit_eventweight_tree->GetListOfFriends()->FindObject((file->tag +"_"+cosmic_bdt_info.identifier).c_str());
+    // TFriendElement *fr1 = (TFriendElement*)t_sbnfit_eventweight_tree->GetListOfFriends()->FindObject((file->tag +"_"+bnb_bdt_info.identifier).c_str());
+    // t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(fr0);
+    // t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(fr1);
+
+
+    // TFriendElement *fr2 = (TFriendElement*)t_sbnfit_tree->GetListOfFriends()->FindObject((file->tag +"_"+cosmic_bdt_info.identifier).c_str() );
+    // TFriendElement *fr3 = (TFriendElement*)t_sbnfit_tree->GetListOfFriends()->FindObject((file->tag +"_"+bnb_bdt_info.identifier).c_str());
+    //t_sbnfit_tree->GetListOfFriends()->Remove(fr2);
+    //t_sbnfit_tree->GetListOfFriends()->Remove(fr3);
+
+
+    std::cout<<"Writing to file"<<std::endl;
+    cdtof->cd();
+    t_sbnfit_tree->Write();
+    t_sbnfit_pot_tree->Write();
+    t_sbnfit_eventweight_tree->Write(); 
+    t_sbnfit_slice_tree->Write();
+    f_sbnfit->Close();
+    std::cout<<"Done!"<<std::endl;
+
+
+    return 0;
+
+
+}else if(mode_option == "recomc"){
+    if (access("recomc",F_OK) == -1){
+        mkdir("recomc",0777);//Create a folder for pdf.
+    }
+    else{
+        std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
+        sleep(2);
+    }
+
+
+    std::vector<int> recomc_cols;
+    for(auto &c: XMLconfig.recomc_cols){
+        recomc_cols.push_back(c->GetNumber());
+    }
+    recomc_cols.push_back(kGray);
+
+    std::vector<std::string> recomc_names = XMLconfig.recomc_names; 
+    recomc_names.push_back("Other");
+
+
+    std::vector<std::string> recomc_cuts = XMLconfig.recomc_defs;
+
+    std::string other = "1";
+    for(auto &c: XMLconfig.recomc_defs){
+        other += "!("+c+")";
+    }
+    recomc_cuts.push_back(other);
+
+    bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
+    recomc.setPlotStage(which_stage);                
+
+    TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+    int h=0;
+    if(which_file == -1) which_file =0;
+
+    if(number != -1){
+        std::vector<bdt_variable> tmp = {vars.at(number)};
+        recomc.plot_recomc(ftest, bdt_files[which_file], tmp, fcuts,what_pot);
         return 0;
-
-
-    
-/*
-    else if(mode_option == "recomc"){
-        if (access("recomc",F_OK) == -1){
-            mkdir("recomc",0777);//Create a folder for pdf.
-        }
-        else{
-            std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
-
-            std::vector<int> recomc_cols = {kRed-7, kBlue+3, kBlue, kBlue-7, kMagenta-3, kYellow-7,kOrange-3, kGreen+1 , kGray};
-            //        std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}","BNB Other Non #gamma",  "Overlay","Other"};
-            //         std::vector<int> recomc_cols = { kYellow-7,kOrange-3, kGreen+1 ,kGray};
-            std::vector<std::string> recomc_names = {"NC #Delta Radiative #gamma", "CC #pi^{0}", "NC #pi^{0}","Non #pi^{0} #gamma","Intrinsic #nu_{e} electron","BNB Michel e^{#pm}", "Other NC", "Other CC", "Cosmic (Overlay)"};
-
-            std::string overlay = "sim_shower_overlay_fraction[0] >= 0.8";
-
-            std::string ncdelta = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative ==1 && !("+overlay+")";
-            std::string ccpi0 = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==0 && !("+overlay+")";
-            std::string ncpi0 = "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] == 111 && mctruth_cc_or_nc==1 && !("+overlay+")";
-            std::string othergamma =  "sim_shower_pdg[0] == 22 && sim_shower_parent_pdg[0] != 111 && mctruth_is_delta_radiative!=1 && !("+overlay+")";
-            std::string  nue = "abs(mctruth_lepton_pdg[0])==11 && abs(sim_shower_pdg[0]) ==11  && !("+overlay+")"; // && (exiting_electron_number==1 || exiting_antielectron_number==1)";
-            std::string  michel = "abs(sim_shower_pdg[0]) ==11 && abs(sim_shower_parent_pdg[0])==13 && !("+overlay+")";
-            //std::string bnbother =  "sim_shower_pdg[0]!=22 && !("+nue+") && !("+michel+")  && !("+overlay+")";
-            // std::string overlay = "sim_shower_overlay_fraction[0] == 1";
-            //std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel,bnbother};
-            std::vector<std::string> recomc_cuts = {ncdelta,ccpi0,ncpi0,othergamma,nue,michel};
-
-
-            std::string othercc = "!("+overlay+") && ! mctruth_cc_or_nc==0";
-            for(auto s: recomc_cuts){
-                othercc += "&& !("+s+")";
-            }
-
-            std::string othernc = "!("+overlay+") && ! mctruth_cc_or_nc==1";
-            for(auto s: recomc_cuts){
-                othernc += "&& !("+s+")";
-            }
-
-            recomc_cuts.push_back(othernc);
-            recomc_cuts.push_back(othercc);
-
-            std::cout<<"other nc = "<<othernc<<std::endl;
-
-            std::string other = "!("+overlay+")";
-            for(auto s: recomc_cuts){
-                othernc += "&& !("+s+")";
-            }
-
-            // recomc_cuts.push_back(other);
-            recomc_cuts.push_back(overlay);
-
-
-            bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
-
-            TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-            if(!response_only){
-                int h=0;
-
-                if(number !=-1){
-                    std::vector<bdt_variable> tmp = {vars.at(number)};
-                    recomc.plot_recomc(ftest, bnb, tmp, fcoscut, fbnbcut);
-                    return 0;
-
-                }else{
-                    recomc.plot_recomc(ftest, bnb, vars, fcoscut, fbnbcut);
-                }	
-            }
-
-            if(response_only){
-                recomc.is_log = true;
-                // recomc.plot_recomc(ftest, signal, (std::vector<bdt_variable>){signal->getBDTVariable(cosmic_bdt_info)} , fcoscut,fbnbcut);
-                // recomc.plot_recomc(ftest, bnb, (std::vector<bdt_variable>){bnb->getBDTVariable(cosmic_bdt_info)} , fcoscut,fbnbcut);
-                //  recomc.plot_recomc(ftest, bnb, (std::vector<bdt_variable>){bnb->getBDTVariable(bnb_bdt_info)} , fcoscut,fbnbcut);
-                //  recomc.plot_recomc(ftest, signal, (std::vector<bdt_variable>){signal->getBDTVariable(bnb_bdt_info)} , fcoscut,fbnbcut);
-
-                recomc.is_log = false;
-            }
-
-        }
-
-            else if(mode_option == "response"){
-
-            TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-    //Ok print out Cosmic BDT
-    if(run_cosmic){
-    bdt_response cosmic_response(cosmic_bdt_info, training_signal, OffBeamData);
-    cosmic_response.plot_bdt_response(ftest);
-    }
-
-    if(run_bnb){
-    bdt_response bnb_response(bnb_bdt_info, training_signal, training_ncpi0);
-    bnb_response.plot_bdt_response(ftest);
-    }
+    }else{
+        recomc.plot_recomc(ftest, bdt_files[which_file], vars, fcuts,what_pot);
     }	
 
-    else if(mode_option == "sig"){
 
 
-    TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
-    std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, ncpi0, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
-    //std::vector<double> ans = lin_scan({signal}, {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
+    /*
+       else if(mode_option == "response"){
 
-    std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
-    fsig->Close();
+       TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+//Ok print out Cosmic BDT
+if(run_cosmic){
+bdt_response cosmic_response(cosmic_bdt_info, training_signal, OffBeamData);
+cosmic_response.plot_bdt_response(ftest);
+}
+
+if(run_bnb){
+bdt_response bnb_response(bnb_bdt_info, training_signal, training_ncpi0);
+bnb_response.plot_bdt_response(ftest);
+}
+}	
+
+else if(mode_option == "sig"){
+
+
+TFile *fsig = new TFile(("significance_"+analysis_tag+".root").c_str(),"recreate");
+std::vector<double> ans = scan_significance(fsig, {signal} , {bnb, ncpi0, nueintrinsic, OffBeamData, dirt}, cosmic_bdt_info, bnb_bdt_info);
+//std::vector<double> ans = lin_scan({signal}, {bnb, OffBeamData}, cosmic_bdt_info, bnb_bdt_info,fcoscut,fbnbcut);
+
+std::cout<<"Best Fit Significance: "<<ans.at(0)<<" "<<ans.at(1)<<" "<<ans.at(2)<<std::endl;
+fsig->Close();
 
 
 }else if(mode_option == "stack"){
-    bdt_stack histogram_stack(analysis_tag+"_stack");
-    histogram_stack.plot_pot = what_pot;
-    histogram_stack.addToStack(signal);
-    histogram_stack.addToStack(signal_other);
-    histogram_stack.addToStack(bnb);
-    //histogram_stack.addToStack(nueintrinsic);
-    histogram_stack.addToStack(ncpi0);
-    //Add OffBeamData but change the color and style first
-    OffBeamData->col;	
-    OffBeamData->fillstyle = 3333;
-    histogram_stack.addToStack(dirt);
+bdt_stack histogram_stack(analysis_tag+"_stack");
+histogram_stack.plot_pot = what_pot;
+histogram_stack.addToStack(signal);
+histogram_stack.addToStack(signal_other);
+histogram_stack.addToStack(bnb);
+//histogram_stack.addToStack(nueintrinsic);
+histogram_stack.addToStack(ncpi0);
+//Add OffBeamData but change the color and style first
+OffBeamData->col;	
+OffBeamData->fillstyle = 3333;
+histogram_stack.addToStack(dirt);
 
-    histogram_stack.addToStack(OffBeamData);
-    //histogram_stack.addToStack(dirt);
+histogram_stack.addToStack(OffBeamData);
+//histogram_stack.addToStack(dirt);
 
-    TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-    int ip=0;
+TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+int ip=0;
 
 
-    if(!response_only){
-        if(number == -1){
-            histogram_stack.plotStacks(ftest,vars,fcoscut,fbnbcut);
-        }else{
-            std::cout<<"Starting to make a stack of : "<<vars.at(number).name<<std::endl;
+if(!response_only){
+if(number == -1){
+histogram_stack.plotStacks(ftest,vars,fcoscut,fbnbcut);
+}else{
+std::cout<<"Starting to make a stack of : "<<vars.at(number).name<<std::endl;
 
-            std::vector<bdt_variable> v_tmp = {vars.at(number)};
-            histogram_stack.plotStacks(ftest,v_tmp,fcoscut,fbnbcut);
-        }
-    }else{
-        histogram_stack.plotBDTStacks(ftest, bdt_infos[1], fcoscut, fbnbcut);
-        histogram_stack.plotBDTStacks(ftest, bdt_infos[0], fcoscut, fbnbcut);
-        return 0;
-    }
-    
-       }else if(mode_option == "sbnfit"){
-       if(number==-1) number ==0;
+std::vector<bdt_variable> v_tmp = {vars.at(number)};
+histogram_stack.plotStacks(ftest,v_tmp,fcoscut,fbnbcut);
+}
+}else{
+histogram_stack.plotBDTStacks(ftest, bdt_infos[1], fcoscut, fbnbcut);
+histogram_stack.plotBDTStacks(ftest, bdt_infos[0], fcoscut, fbnbcut);
+return 0;
+}
 
-       bdt_file * file = bdt_files.at(number);
+}else if(mode_option == "sbnfit"){
+if(number==-1) number ==0;
+
+bdt_file * file = bdt_files.at(number);
 
 //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
 file->teventweight->AddFriend(file->tvertex);

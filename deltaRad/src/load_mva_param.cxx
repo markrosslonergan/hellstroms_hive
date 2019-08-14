@@ -85,7 +85,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
         std::string cut_def_unparsed = pPreCut->Attribute("def");
         std::string cut_def = this->AliasParse(cut_def_unparsed); 
-        
+
 
         std::string cut_name = pPreCut->Attribute("name");
 
@@ -249,6 +249,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         s_col.erase(std::remove(s_col.begin(), s_col.end(), '('), s_col.end());
         s_col.erase(std::remove(s_col.begin(), s_col.end(), ')'), s_col.end());
         std::vector<double> v_col; 
+
         size_t pos = 0;
         std::string delim = ",";
         std::string token;
@@ -409,7 +410,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
     while(pVar){
         std::string var_def_unparsed = pVar->Attribute("def");
         std::string var_def = this->AliasParse(var_def_unparsed); 
-        
+
         std::string var_binning = pVar->Attribute("binning");
         std::string var_unit = pVar->Attribute("unit");
         std::string var_type = pVar->Attribute("type");
@@ -463,7 +464,52 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         v.bdt_all_vars = bdt_all_vars;
     }
 
-    //type_instance.DestroyInstance();
+    std::cout<<"####################### RECO-MC Matching ########################################"<<std::endl;
+
+
+
+    TiXmlElement *pRecoMC = doc.FirstChildElement("recomc");
+    while(pRecoMC){
+
+
+        TiXmlElement *pDef = pRecoMC->FirstChildElement("def");
+        while(pDef){
+
+            const char* t_recomc_name = pDef->Attribute("name");
+            if(t_recomc_name==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || recomc has no `name` attribute! "<<std::endl; exit(EXIT_FAILURE);}
+            recomc_names.push_back(t_recomc_name);
+
+            const char* t_col = pDef->Attribute("col");
+            if(t_col==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || recomc has no `col` attribute! "<<std::endl; exit(EXIT_FAILURE);}
+            std::string s_col = t_col;
+            s_col.erase(std::remove(s_col.begin(), s_col.end(), '('), s_col.end());
+            s_col.erase(std::remove(s_col.begin(), s_col.end(), ')'), s_col.end());
+            std::vector<double> v_col; 
+
+            size_t pos = 0;
+            std::string delim = ",";
+            std::string token;
+            while ((pos = s_col.find(delim)) != std::string::npos) {
+                token = s_col.substr(0, pos);
+                v_col.push_back(std::stod(token));
+                s_col.erase(0, pos + delim.length());
+            }
+            v_col.push_back(std::stod(s_col));
+            recomc_cols.push_back(new TColor(TColor::GetFreeColorIndex(),v_col[0],v_col[1],v_col[2]) );
+
+
+            std::string unpar =  pDef->GetText();
+            std::string parsed = this->AliasParse(unpar);
+            recomc_defs.push_back(parsed);
+            pDef = pDef->NextSiblingElement("def");
+
+            std::cout<<"RecoMC cut "<<recomc_names.back()<<" "<<recomc_defs.back()<<" Color: ";recomc_cols.back()->Print();std::cout<<std::endl;
+
+        }
+        pRecoMC = pRecoMC->NextSiblingElement("recomc");
+    }//-->end definition
+
+
 };
 
 
@@ -483,10 +529,10 @@ std::string MVALoader::AliasParse(std::string in){
     size_t n_del = std::count(compressed.begin(), compressed.end(), '#');
 
     if(n_del%2!=0){
-            std::cerr<<"ERROR! AliasParse has found an ODD number of deliminters # "<<n_del<<" in the string "<<in<<std::endl;
-            exit(EXIT_FAILURE);
+        std::cerr<<"ERROR! AliasParse has found an ODD number of deliminters # "<<n_del<<" in the string "<<in<<std::endl;
+        exit(EXIT_FAILURE);
     }
-    
+
     std::string key;
     while ((pos = compressed.find(delim,0)) != std::string::npos) {
 

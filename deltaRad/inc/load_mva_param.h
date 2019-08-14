@@ -58,7 +58,11 @@ class MVALoader {
     std::map<std::string,std::string> aliasMap; 
     std::string AliasParse(std::string in);
 
-};
 
+    std::vector<std::string> recomc_names;
+    std::vector<std::string> recomc_defs;
+    std::vector<TColor*> recomc_cols;
+
+};
 
 #endif

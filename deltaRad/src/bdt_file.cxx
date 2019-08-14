@@ -1050,6 +1050,14 @@ TText * drawPrelim(double x, double y){
     return tres;
 }
 
+void get_joy(){
+    std::ifstream f("/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/NWO/hellstroms_hive/deltaRad/inc/division.h");
+    if (f.is_open())std::cout << f.rdbuf();
+    std::ifstream h("/uboone/app/users/markrl/SinglePhotonMCC9_Mar2019/workingdir/NWO/hellstroms_hive/deltaRad/inc/hippo.h");
+    if (h.is_open())std::cout << h.rdbuf();
+    return;
+}
+
 
 unsigned long  bdt_file::jenkins_hash(std::string key) {
     size_t length = key.size();

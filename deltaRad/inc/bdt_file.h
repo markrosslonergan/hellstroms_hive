@@ -216,8 +216,6 @@ struct bdt_file{
         int setTColor(TColor &);
         TColor f_TColor;
 };
-
-
-
+void get_joy();
 
 #endif
