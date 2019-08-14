@@ -5,6 +5,7 @@
 #include <sys/stat.h> 
 
 #include "TFriendElement.h"
+#include "TList.h"
 
 #include "variable_list.h"
 #include "bdt_file.h"
@@ -559,18 +560,11 @@ cimpact->SaveAs("Impact.pdf","pdf");
     TTree * t_sbnfit_slice_tree = (TTree*)file->tslice->CopyTree("1");
 
 
+    TList * lf1 = (TList*)t_sbnfit_tree->GetListOfFriends();
+    for(const auto&& obj: *lf1) t_sbnfit_tree->GetListOfFriends()->Remove(obj);
 
-    // TFriendElement *fr0 = (TFriendElement*)t_sbnfit_eventweight_tree->GetListOfFriends()->FindObject((file->tag +"_"+cosmic_bdt_info.identifier).c_str());
-    // TFriendElement *fr1 = (TFriendElement*)t_sbnfit_eventweight_tree->GetListOfFriends()->FindObject((file->tag +"_"+bnb_bdt_info.identifier).c_str());
-    // t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(fr0);
-    // t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(fr1);
-
-
-    // TFriendElement *fr2 = (TFriendElement*)t_sbnfit_tree->GetListOfFriends()->FindObject((file->tag +"_"+cosmic_bdt_info.identifier).c_str() );
-    // TFriendElement *fr3 = (TFriendElement*)t_sbnfit_tree->GetListOfFriends()->FindObject((file->tag +"_"+bnb_bdt_info.identifier).c_str());
-    //t_sbnfit_tree->GetListOfFriends()->Remove(fr2);
-    //t_sbnfit_tree->GetListOfFriends()->Remove(fr3);
-
+    TList * lf2 = (TList*)t_sbnfit_eventweight_tree->GetListOfFriends();
+    for(const auto&& obj: *lf2) t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(obj);
 
     std::cout<<"Writing to file"<<std::endl;
     cdtof->cd();
