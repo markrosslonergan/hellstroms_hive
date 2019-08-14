@@ -609,7 +609,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     std::string other = "1";
     for(auto &c: XMLconfig.recomc_defs){
-        other += "!("+c+")";
+        other += "&& !("+c+")";
     }
     recomc_cuts.push_back(other);
 
@@ -772,9 +772,7 @@ return 0;
     }
 
 
-
     if(which_bdt==-1){
-
         for(int k=0; k< bdt_infos.size(); k++){
             if(number != -1){
                 plot_bdt_variable(training_signal, training_background_files[k], vars.at(number), bdt_infos[k], false);
@@ -782,7 +780,6 @@ return 0;
                 plot_bdt_variables(training_signal, training_background_files[k], vars, bdt_infos[k], false);
             }
         }
-
     }else{
         if(number != -1){
             plot_bdt_variable(training_signal, training_background_files[which_bdt], vars.at(number), bdt_infos[which_bdt], false);
@@ -790,7 +787,6 @@ return 0;
             plot_bdt_variables(training_signal, training_background_files[which_bdt], vars, bdt_infos[which_bdt], false);
         }
     }
-
 
 }else {
     std::cout << "WARNING: " << mode_option << " is an invalid option\n";
