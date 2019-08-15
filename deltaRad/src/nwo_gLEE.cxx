@@ -840,6 +840,17 @@ int main (int argc, char *argv[]){
 */
 }else if(mode_option == "stack"){
 
+    std::cout<<"Starting stack "<<std::endl;
+
+    if (access("stack",F_OK) == -1){
+        mkdir("stack",0777);//Create a folder for pdf.
+    }
+    else{
+        std::cout<<"Overwrite stack/ in 5 seconds, 4 seconds, ..."<<std::endl;
+        sleep(5);
+    }
+
+
     bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
     //  bdt_stack histogram_stack(analysis_tag+"_stack");
     /*  histogram_stack.plot_pot = 3.7e19;
@@ -861,7 +872,7 @@ int main (int argc, char *argv[]){
     OffBeamData->col;	
     OffBeamData->fillstyle = 3333;
     histogram_stack->addToStack(dirt);
-//  histogram_stack.addToStack(dirt);
+    //  histogram_stack.addToStack(dirt);
 
 
     histogram_stack->addToStack(OffBeamData);
