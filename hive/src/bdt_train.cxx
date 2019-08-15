@@ -438,15 +438,15 @@ int bdt_XGtrain(){
   safe_xgboost(XGBoosterSetParam(booster, "n_gpus", "0"));
   safe_xgboost(XGBoosterSetParam(booster, "objective", "binary:logistic")); //
   safe_xgboost(XGBoosterSetParam(booster, "eval_metric", "logloss")); //auc , error, rmsle , ams@0.15i
-  safe_xgboost(XGBoosterSetParam(booster, "eval_metric", "auc")); //auc , error, rmsle , ams@0.15i
+  //safe_xgboost(XGBoosterSetParam(booster, "eval_metric", "auc")); //auc , error, rmsle , ams@0.15i
   safe_xgboost(XGBoosterSetParam(booster, "min_child_weight", "1"));
-//  safe_xgboost(XGBoosterSetParam(booster, "gamma", "0.00"));
+  safe_xgboost(XGBoosterSetParam(booster, "gamma", "15.00")); //regular
   safe_xgboost(XGBoosterSetParam(booster, "max_depth", "6"));
   safe_xgboost(XGBoosterSetParam(booster, "verbosity", "1"));
   safe_xgboost(XGBoosterSetParam(booster, "eta", "0.02"));
   safe_xgboost(XGBoosterSetParam(booster, "subsample", "0.8"));
   
-  int n_trees = 1200;
+  int n_trees = 800;
   std::vector<double> iteration;
   std::vector<double> test_error;
   std::vector<double> train_error;
@@ -484,7 +484,17 @@ int bdt_XGtrain(){
   const float* out_result = NULL;
 
   //safe_xgboost(XGBoosterLoadModel(booster,"test.mod"));
-  
+
+
+  /*std::cout<<"TEST"<<std::endl;
+  const float* tester = NULL;
+  safe_xgboost(XGDMatrixGetFloatInfo(dtest, "logloss", &out_len, &tester));
+  for (int i = 0; i < out_len; ++i) {
+        std::cout<<tester[i]<<std::endl;
+  }
+  std::cout<<"TEST"<<std::endl;
+*/
+
   const float* test_score = NULL;
   const float* test_label = NULL;
   safe_xgboost(XGDMatrixGetFloatInfo(dtest, "label", &out_len, &test_label));
@@ -581,3 +591,4 @@ int bdt_XGtrain(){
     return 0;
 
 }
+
