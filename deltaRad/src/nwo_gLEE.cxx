@@ -415,7 +415,7 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_datamc");	
 
-             //   datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
+                //   datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
 
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
@@ -786,7 +786,7 @@ int main (int argc, char *argv[]){
 
             TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 
-         
+
             if(!response_only){
                 int h=0;
 
@@ -839,20 +839,33 @@ int main (int argc, char *argv[]){
 
 */
 }else if(mode_option == "stack"){
-    bdt_stack histogram_stack(analysis_tag+"_stack");
-    histogram_stack.plot_pot = 3.7e19;
+
+    bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
+    //  bdt_stack histogram_stack(analysis_tag+"_stack");
+    /*  histogram_stack.plot_pot = 3.7e19;
     // histogram_stack.plot_pot = 13.2e20;
     histogram_stack.addToStack(signal);
     histogram_stack.addToStack(signal_other);
     histogram_stack.addToStack(bnb);
     //histogram_stack.addToStack(nueintrinsic);
     histogram_stack.addToStack(ncpi0);
+    */
+
+    histogram_stack->plot_pot = 3.7e19;
+    histogram_stack->addToStack(signal);
+    histogram_stack->addToStack(signal_other);
+    histogram_stack->addToStack(bnb);
+    histogram_stack->addToStack(ncpi0);
+
     //Add OffBeamData but change the color and style first
     OffBeamData->col;	
     OffBeamData->fillstyle = 3333;
-    histogram_stack.addToStack(dirt);
+    histogram_stack->addToStack(dirt);
+//  histogram_stack.addToStack(dirt);
 
-    histogram_stack.addToStack(OffBeamData);
+
+    histogram_stack->addToStack(OffBeamData);
+    //    histogram_stack.addToStack(OffBeamData);
     //histogram_stack.addToStack(dirt);
 
     TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
@@ -861,20 +874,23 @@ int main (int argc, char *argv[]){
 
     if(!response_only){
         if(number == -1){
-            histogram_stack.plotStacks(ftest,vars,fcoscut,fbnbcut);
+            //   histogram_stack.plotStacks(ftest,vars,fcoscut,fbnbcut);
+            histogram_stack->plotStacks(ftest,vars,fcoscut,fbnbcut);
         }else{
             std::cout<<"Starting to make a stack of : "<<vars.at(number).name<<std::endl;
 
             bdt_datamc datamc(OnBeamData, histogram_stack, analysis_tag+"_stack");
             std::vector<bdt_variable> v_tmp = {vars.at(number)};
             datamc.plotStacks(ftest,  v_tmp , fcuts, false);
-                 
-            
+
+
             // histogram_stack.plotStacks(ftest,v_tmp,fcoscut,fbnbcut);
         }
     }else{
-        histogram_stack.plotBDTStacks(ftest, bdt_infos[1], fcoscut, fbnbcut);
-        histogram_stack.plotBDTStacks(ftest, bdt_infos[0], fcoscut, fbnbcut);
+        //     histogram_stack.plotBDTStacks(ftest, bdt_infos[1], fcoscut, fbnbcut);
+        //  histogram_stack.plotBDTStacks(ftest, bdt_infos[0], fcoscut, fbnbcut);
+        histogram_stack->plotBDTStacks(ftest, bdt_infos[1], fcoscut, fbnbcut);
+        histogram_stack->plotBDTStacks(ftest, bdt_infos[0], fcoscut, fbnbcut);
         return 0;
     }
     /*
