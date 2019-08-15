@@ -1,4 +1,14 @@
-OK, going to rewrite this..
+git clone https://github.com/markrosslonergan/hellstroms_hive.git
+cd hellstroms_hive
+git checkout -b feature/markross_hive_v2.0 origin/feature/markross_hive_v2.0
+cd hive
+source gpvm_setup.sh
+cd build
+cmake ..
+make -j4
+
+
+
 
                                                     cNX;     .;llcll;.                              
                                                    ;KN0k,   ,xo,...,ox,                             
