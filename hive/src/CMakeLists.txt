@@ -9,7 +9,7 @@ message(STATUS "ROOT_LIBRARIES @: ${ROOT_LIBRARIES}")
 
 
 add_executable (hive hive.cxx)
-target_link_libraries (hive tinyxmllib hiveLib ${ROOT_LIBRARIES})
+target_link_libraries (hive tinyxmllib hiveLib xgboost ${ROOT_LIBRARIES})
 
 set_output_directory(hive ${CMAKE_SOURCE_DIR}/build/bin)
 

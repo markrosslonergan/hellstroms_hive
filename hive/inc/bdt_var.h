@@ -26,6 +26,7 @@ struct bdt_variable{
 
 	public:
 		std::string name;
+        int id;
 		std::string safe_name;
 		std::string binning;
 		std::string unit;
@@ -34,12 +35,15 @@ struct bdt_variable{
 		std::string type;
         bool is_logplot;
 
-		bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack, std::string intype) : 
+		bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack, std::string intype) : bdt_variable(inname,inbin,inunit,intrack,intype,-1){}; 
+		
+        bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack, std::string intype,int in_id) : 
 			name(inname), 
 			binning(inbin),
 			unit(inunit),
 			is_track(intrack),
 			type(intype),
+            id(in_id),
             is_logplot(false)
 		{
 			safe_name = name;

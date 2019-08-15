@@ -1,6 +1,8 @@
 #ifndef BDT_TRAIN_H
 #define BDT_TRAIN_H
 
+#include <iostream>
+#include <fstream>
 
 #include <string>
 #include <vector>
@@ -39,7 +41,7 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file);
 int bdt_train(bdt_info, bdt_file*, bdt_file*, std::vector<bdt_variable>, std::vector<method_struct> & );
 int bdt_train(bdt_info, bdt_file*, bdt_file*, std::vector<bdt_variable>, std::vector<bdt_variable>, std::vector<method_struct> & );
 
-
+int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_file);
 int bdt_XGtrain();
 
 #endif

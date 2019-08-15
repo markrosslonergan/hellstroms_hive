@@ -301,7 +301,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             }
         }
 
-        const char* t_plotname = pBDTfile->Attribute("plotname");
+        const char* t_plotname = pBDTfile->Attribute("plot_name");
         if(t_plotname==NULL){
             bdt_plotnames.push_back(bdt_tags.back());
         }else{
@@ -445,7 +445,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         bool is_spec = false;
         //if(var_spectator=="true") is_spec = true;
 
-        bdt_variable t(var_def,var_binning,var_unit,"false",var_type);
+        bdt_variable t(var_def,var_binning,var_unit,"false",var_type,n_var);
         t.is_logplot = var_logplot_bool;
 
         std::cout<<"Variable Number "<<n_var<<" is "<<var_unit<<" with definiton: "<<var_def<<std::endl;

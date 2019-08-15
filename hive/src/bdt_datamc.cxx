@@ -331,11 +331,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton ");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
@@ -682,11 +682,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton");
+                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
