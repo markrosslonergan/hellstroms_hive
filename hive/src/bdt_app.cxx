@@ -290,8 +290,6 @@ int bdt_XGapp(bdt_info info, std::vector<bdt_file*> files){
 
         XGBoosterPredict(booster, dfile, 0, 0, &out_len, &out_result);
 
-
-
         size_t have_filled = 0;
         size_t working_index = f->precut_list->GetEntry(0);
         for (int i = 0; i < out_len; ++i) {

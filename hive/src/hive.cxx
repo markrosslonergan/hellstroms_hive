@@ -222,6 +222,8 @@ int main (int argc, char *argv[]){
         if(XMLconfig.bdt_is_offbeam_data[f]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOffBeamData( XMLconfig.bdt_onbeam_pot[f], XMLconfig.bdt_onbeam_spills[f], XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
+
+                bkg_bdt_files.push_back(bdt_files.back());
         }
 
         if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f] ){
@@ -435,8 +437,8 @@ int main (int argc, char *argv[]){
         }
     
         for(int i=0; i< bdt_infos.size(); i++){
-         //bdt_XGtrain(bdt_infos[i]);
-         bdt_XGapp(bdt_infos[i], bdt_files);
+         bdt_XGtrain(bdt_infos[i]);
+         //bdt_XGapp(bdt_infos[i], bdt_files);
         }
 
         //plot_bdt_variables(signal, ncpi0, vars, fbdtcuts, 5);

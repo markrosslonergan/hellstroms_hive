@@ -66,7 +66,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
         std::cout<<"Taking scanning range from xml "<<std::endl;
         maxvals = in_max_vals;
         minvals = in_min_vals;
-        n_steps = std::vector<double>(bdt_infos.size(),10.0);
+        //n_steps = s;
     }else{
         std::cout<<"Automatically calculting scanning range"<<std::endl;
         for(size_t i = 0; i < sig_files.size(); ++i) {
@@ -314,7 +314,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         for(int i=0; i< bdt_infos.size(); i++){
             d[i] = rangen->Uniform(minvals[i], maxvals[i]);
         }
-        double impact = rangen->Uniform(0,20);
+        double impact = rangen->Uniform(16,22);
         //double dist = rangen->Uniform(0,20);
         //std::string s_impact = "((sss_num_candidates==0) ||  Min$(sss_candidate_impact_parameter)>"+std::to_string(impact) +") ";
 

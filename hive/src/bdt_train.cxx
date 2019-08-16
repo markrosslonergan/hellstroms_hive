@@ -471,7 +471,7 @@ int bdt_XGtrain(bdt_info info){
 
     std::string const name = info.identifier;
 
-    TFile *f = new TFile("Tampa.root","recreate");
+    TFile *f = new TFile(("Tampa"+name+".root").c_str(),"recreate");
     
     TH1* btest = new TH1D("btest","btest",100,0,1);
     TH1* btrain = new TH1D("btrain","btrain",100,0,1);
@@ -518,13 +518,13 @@ int bdt_XGtrain(bdt_info info){
   safe_xgboost(XGBoosterSetParam(booster, "eval_metric", "logloss")); //auc , error, rmsle , ams@0.15i
   //safe_xgboost(XGBoosterSetParam(booster, "eval_metric", "auc")); //auc , error, rmsle , ams@0.15i
   safe_xgboost(XGBoosterSetParam(booster, "min_child_weight", "1"));
-  safe_xgboost(XGBoosterSetParam(booster, "gamma", "15.00")); //regular
-  safe_xgboost(XGBoosterSetParam(booster, "max_depth", "6"));
+  safe_xgboost(XGBoosterSetParam(booster, "gamma", "5.00")); //regular
+  safe_xgboost(XGBoosterSetParam(booster, "max_depth", "5"));
   safe_xgboost(XGBoosterSetParam(booster, "verbosity", "1"));
   safe_xgboost(XGBoosterSetParam(booster, "eta", "0.02"));
-  safe_xgboost(XGBoosterSetParam(booster, "subsample", "0.8"));
+  safe_xgboost(XGBoosterSetParam(booster, "subsample", "0.9"));
   
-  int n_trees = 800;
+  int n_trees = 3000;
   std::vector<double> iteration;
   std::vector<double> test_error;
   std::vector<double> train_error;
