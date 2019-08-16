@@ -10,6 +10,7 @@
 #include "bdt_file.h"
 #include "bdt_info.h"
 #include "bdt_flow.h"
+#include "bdt_train.h"
 /******** Root includes *****/
 
 #include "TTreeFormula.h"
@@ -44,5 +45,9 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 int bdt_app(bdt_info info, std::vector<bdt_file*> & files);
 int bdt_app(bdt_info info, std::vector<bdt_file*> & files, std::vector<bdt_variable> vars, std::vector<method_struct> & method);
 int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variable> train_vars, std::vector<bdt_variable> plot_vars, std::vector<method_struct> & method);
+
+
+int bdt_XGapp(bdt_info info, std::vector<bdt_file*> files);
+
 
 #endif

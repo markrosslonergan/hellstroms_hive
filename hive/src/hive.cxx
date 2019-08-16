@@ -422,7 +422,7 @@ int main (int argc, char *argv[]){
     }else if(mode_option == "test"){
 
         //First lets create the bdt_file's* and flows for training
-        
+       
         if(false){
         std::vector<bdt_file*> training_background_files;
         for(int i=0; i< bdt_infos.size(); i++){
@@ -430,13 +430,15 @@ int main (int argc, char *argv[]){
             bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
             training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
             training_background_files.back()->calcPOT();
+            convertToLibSVM(bdt_infos[i], training_signal, training_background_files[i]);
+        }
+        }
+    
+        for(int i=0; i< bdt_infos.size(); i++){
+         //bdt_XGtrain(bdt_infos[i]);
+         bdt_XGapp(bdt_infos[i], bdt_files);
         }
 
-         convertToLibSVM(bdt_infos[0], training_signal, training_background_files[0]);
-        }else{
-    
-         bdt_XGtrain();
-        }
         //plot_bdt_variables(signal, ncpi0, vars, fbdtcuts, 5);
 
         return 0;

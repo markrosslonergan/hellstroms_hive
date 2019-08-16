@@ -297,19 +297,70 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	return 0;
 }
 
+int convertToLibSVM(bdt_info info, bdt_file *file){
+
+    std::vector<bdt_variable> variables = info.train_vars;
+    std::string const name = info.identifier;
+    std::cout<<"Beginninng to convert files into a libSVM format for XGBoost"<<std::endl;
+
+    std::ofstream sslibSVM;
+    sslibSVM.open (name+"_"+file->tag+".libSVM.dat");
+    TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
+
+    TTreeFormula* weight = new TTreeFormula("sig_w",file->weight_branch.c_str(),file->tvertex);
+        
+    std::vector<TTreeFormula*> tree_formulas_v;
+    std::vector<int> id_v;
+	for(bdt_variable &var : variables) {
+        tree_formulas_v.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),file->tvertex));
+	    id_v.push_back(var.id);
+    }
+
+
+    size_t next_entry = file->precut_list->GetEntry(0);
+    size_t num = 0;
+    while(num<file->precut_list->GetN()){
+
+        file->tvertex->GetEntry(next_entry);
+   
+        weight->GetNdata();
+        double wei = weight->EvalInstance();
+
+        sslibSVM<<"0:"<<wei<<" ";
+
+        for(int t=0; t< tree_formulas_v.size();++t){
+            tree_formulas_v[t]->GetNdata();
+            double val = tree_formulas_v[t]->EvalInstance();
+            int id = id_v[t];
+                sslibSVM<<id<<":"<<val<<" ";
+
+        }
+
+        sslibSVM<<std::endl;
+
+       next_entry = file->precut_list->Next();
+       num++;
+    } 
+
+
+        sslibSVM.close();
+    outfile->Close();
+	return 0;
+}
+
+
 
 int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
 
     std::vector<bdt_variable> variables = info.train_vars;
-    
+    std::string const name = info.identifier;
     std::cout<<"Beginninng to convert training/testing files into a libSVM format for XGBoost"<<std::endl;
 
-    std::ofstream sslibSVM,bblibSVM;
-    sslibSVM.open ("sig_libSVM.txt");
-    bblibSVM.open ("bkg_libSVM.txt");
+    std::ofstream sslibSVMtrain,sslibSVMtest;
+    sslibSVMtest.open (name+".libSVM.test.dat");
+    sslibSVMtrain.open (name+".libSVM.train.dat");
 
-    std::string const name = info.identifier;
-	TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
+    TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
 
 	int bdt_precut_stage = 1;
 	TCut sig_tcut =  TCut(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
@@ -336,7 +387,9 @@ int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_f
         bkg_tree_formulas_v.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),background_ttree_prefiltered));
 	    id_v.push_back(var.id);
     }
-
+    
+    int sig_train_num = info.TMVAmethod.training_fraction*signal_entries;
+    int bkg_train_num = info.TMVAmethod.training_fraction*background_entries;
 
     for(int i = 0; i < signal_entries; ++i) {
         signal_ttree_prefiltered->GetEntry(i);
@@ -344,54 +397,79 @@ int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_f
         sig_weight->GetNdata();
         double wei = sig_weight->EvalInstance();
 
-        sslibSVM<<"1:"<<wei<<" ";
+        if(i < sig_train_num){
+            sslibSVMtrain<<"1:"<<wei<<" ";
+        }else{
+            sslibSVMtest<<"1:"<<wei<<" ";
+        }
+
         for(int t=0; t< sig_tree_formulas_v.size();++t){
             sig_tree_formulas_v[t]->GetNdata();
             double val = sig_tree_formulas_v[t]->EvalInstance();
             int id = id_v[t];
-            sslibSVM<<id<<":"<<val<<" ";
+
+            if(i < sig_train_num){
+                sslibSVMtrain<<id<<":"<<val<<" ";
+            }else{
+                sslibSVMtest<<id<<":"<<val<<" ";
+            }
+
         }
-        sslibSVM<<std::endl;
+
+        if(i < sig_train_num){
+        sslibSVMtrain<<std::endl;
+        }else{
+        sslibSVMtest<<std::endl;
+        }
+
     } 
+
 
     for(int i = 0; i < background_entries; ++i) {
         background_ttree_prefiltered->GetEntry(i);
+   
         bkg_weight->GetNdata();
         double wei = bkg_weight->EvalInstance();
 
-        bblibSVM<<"0:"<<wei<<" ";
+        if(i < bkg_train_num){
+            sslibSVMtrain<<"0:"<<wei<<" ";
+        }else{
+            sslibSVMtest<<"0:"<<wei<<" ";
+        }
+
         for(int t=0; t< bkg_tree_formulas_v.size();++t){
             bkg_tree_formulas_v[t]->GetNdata();
             double val = bkg_tree_formulas_v[t]->EvalInstance();
             int id = id_v[t];
-            bblibSVM<<id<<":"<<val<<" ";
+
+            if(i < bkg_train_num){
+                sslibSVMtrain<<id<<":"<<val<<" ";
+            }else{
+                sslibSVMtest<<id<<":"<<val<<" ";
+            }
+
         }
-        bblibSVM<<std::endl;
-    } 
 
+        if(i < bkg_train_num){
+        sslibSVMtrain<<std::endl;
+        }else{
+        sslibSVMtest<<std::endl;
+        }
 
-    sslibSVM.close();
-    bblibSVM.close();
+    }
+   
+
+    sslibSVMtest.close();
+    sslibSVMtrain.close();
     outfile->Close();
 	return 0;
 }
 
 
 
+int bdt_XGtrain(bdt_info info){
 
-
-
-
-
-
-
-
-
-
-
-
-int bdt_XGtrain(){
-
+    std::string const name = info.identifier;
 
     TFile *f = new TFile("Tampa.root","recreate");
     
@@ -422,8 +500,8 @@ int bdt_XGtrain(){
     int silent = 0;
     int use_gpu = 0;  // set to 1 to use the GPU for training
  
-  safe_xgboost(XGDMatrixCreateFromFile("libSVM.train.txt", silent, &dtrain));
-  safe_xgboost(XGDMatrixCreateFromFile("libSVM.test.txt", silent, &dtest));
+  safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.train.dat").c_str(), silent, &dtrain));
+  safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.test.dat").c_str(), silent, &dtest));
   
   // create the booster
   BoosterHandle booster;
@@ -531,7 +609,7 @@ int bdt_XGtrain(){
   }
 
     
-  safe_xgboost(XGBoosterSaveModel(booster,"test.mod"));
+  safe_xgboost(XGBoosterSaveModel(booster,(name+".XGBoost.mod").c_str() ));
   safe_xgboost(XGDMatrixFree(dtrain));
   safe_xgboost(XGDMatrixFree(dtest));
 
