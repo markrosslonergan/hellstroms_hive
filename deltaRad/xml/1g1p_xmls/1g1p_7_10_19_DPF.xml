@@ -27,7 +27,8 @@
 -->
 
 <!--Comsic BDT Training + Spectator Variables-->
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(20,0.05,0.92)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(23,0.05,0.92)">
+
     <method type = "COSMIC" use = "yes">
         <param>  NTrees=1000 	</param>				
         <param>  MinNodeSize=2.5% </param>				
@@ -143,7 +144,7 @@
 
 </mva>
 
-<mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(20,0.1,0.8)">
+<mva type="BDT" use="yes" tag ="BNB" name ="BNB focused BDT" binning = "(22,0.1,0.8)">
     <method type = "BNB" use = "yes">
         <param>  NTrees=1000 	</param>				
         <param>  MinNodeSize=2.5% </param>				

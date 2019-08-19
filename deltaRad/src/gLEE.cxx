@@ -251,8 +251,8 @@ int main (int argc, char *argv[]){
     //bdt_file *training_bnb    = new bdt_file(dir13, "bnb_overlay_merged_run1_run3_v13.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
     //bdt_file *bnb = new bdt_file(dir13, "bnb_overlay_merged_run1_run3_v13.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
 
-    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);
-    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",  kAzure-9, bkg_flow);
+    bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",      "hist","singlephoton/",   kAzure-9, bkg_training_flow);
+    bdt_file *bnb = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBOverlays", "hist","singlephoton/",   kAzure-9, bkg_flow);
 
 
     // bdt_file *training_bnb    = new bdt_file(dir, "bnb_overlay_combined_v10.1.root", "BNBTrain",      "hist","singlephoton/",  kAzure-9, bkg_training_flow);

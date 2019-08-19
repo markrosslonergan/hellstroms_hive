@@ -226,6 +226,32 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             tsum->DrawCopy("Same E2");
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
 
+
+    /*
+            /////// Print resolution for diphoton mass ////////
+            //// First, find variables containing the string of interest
+            std::string massSearch("Invariant");
+            std::size_t found = var.unit.find(massSearch);
+            //// Fit Gaussian to that variable
+            if (found != std::string::npos) {
+                std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
+                TF1 *gausfit = new TF1("gausfit", "gaus");
+                double lowFit, highFit;
+                double mass = 0., mass_err = 0;
+                double mass_res = 0., mass_res_err = 0.; 
+                lowFit = d0->GetXaxis()->GetBinLowEdge(1);
+                lowFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
+                d0->Fit(gausfit, "q", "", lowFit, highFit);
+                mass = gausfit->GetParameter(1);
+                mass_err = gausfit->GetParError(1);
+                mass_res = gausfit->GetParameter(2);
+                mass_res_err = gausfit->GetParError(2);
+                std::cout << "[BLARG] Mass: " << mass << " +/- " << mass_err << std::endl;
+                std::cout << "[BLARG] Mass resolution: " << mass_res << " +/- " << mass_res_err << std::endl;
+                gausfit->SetLineColor(kRed);
+                gausfit->Draw("same");
+            } 
+*/
             tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
             TLegend *l0 = new TLegend(0.11,0.55,0.89,0.89);
             l0->SetNColumns(2);
@@ -245,8 +271,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
                 //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
-                //l0->AddEntry(h1,(f->plot_name +": "+ string_events).c_str(),"f");
-                l0->AddEntry(h1,(f->plot_name).c_str(),"f");
+                l0->AddEntry(h1,(f->plot_name +": "+ string_events).c_str(),"f");
+               // l0->AddEntry(h1,(f->plot_name).c_str(),"f");
                 n++;
             }
             l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
@@ -476,7 +502,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
             std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+" / "+to_string_prec(d0->Integral()/tsum->Integral() ,2); ;
 
             //  std::string ks = "KS: " + to_string_prec(tsum->KolmogorovTest(d0));
-            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0)) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")";
+            std::string ks = "(#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")";
+            //        std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0)) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")";
             TLatex *t = new TLatex(0.11,0.41,ks.c_str());
             t->SetNDC();
             t->SetTextColor(kRed-7);
@@ -891,12 +918,17 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
             double da = data_th1s.at(k)->GetBinContent(p+1);
             double bk = vec_th1s.at(k)->GetBinContent(p+1);
 
-            if (da == 0 || bk ==0){
+            if ( bk ==0){
                 std::cout<<"ERROR mychi, for bin "<<p<<" n_data= "<<da<<" and n_mc= "<<bk<<std::endl;
 
             } else{
 
-                double da_err = sqrt(data_th1s.at(k)->GetBinContent(p+1));
+                double da_err;
+                if (da == 0){
+                    da_err = 1; 
+                }else{
+                    da_err= sqrt(data_th1s.at(k)->GetBinContent(p+1));
+                }
                 double bk_err = vec_th1s.at(k)->GetBinError(p+1);
                 //std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<std::endl;
                 double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
@@ -908,8 +940,9 @@ int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, 
         }
 
 
+        std::string ks = "(#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(     ndof) +")"; 
 
-        std::string ks = "(KS: "+to_string_prec(vec_th1s.at(k)->KolmogorovTest(data_th1s.at(k))) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(     ndof) +")"; 
+        //        std::string ks = "(KS: "+to_string_prec(vec_th1s.at(k)->KolmogorovTest(data_th1s.at(k))) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(     ndof) +")"; 
         //   std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0)) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")";
         //     std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+" / "+to_string_prec(d0->Integral()/tsum->Integral() ,2); ;
         //std::string mean = "Ratio: Normalized" ;6       

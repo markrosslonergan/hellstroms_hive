@@ -72,7 +72,7 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
                 pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulation");
                //pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulaton In-Progress - Spectator Variable");
             }else {
-                pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulaton");
+                pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulation");
               //  pre = drawPrelim(0.1,0.915,0.03,"MicroBooNE Simulaton In-Progress - Training Variable");
 
 

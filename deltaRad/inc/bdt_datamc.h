@@ -31,6 +31,7 @@
 #include "TStyle.h"
 #include "TError.h"
 #include "TGraphAsymmErrors.h"
+#include "TF1.h"
 
 class bdt_datamc{
 	public:
