@@ -9,8 +9,8 @@ void make_2dHisto() {
     ////////////////////////////////////////////////////////
 
     // Get signal file and TTree
-    TString dir = "/uboone/app/users/ksutton/hellstroms_hive_mcc9/hellstroms_hive/deltaRad/genie_files/";
-    TFile *fin = new TFile(dir+"gntp.neutrino.gst.root", "READ");
+    TString dir = "/pnfs/uboone/persistent/users/ksutton/ncgamma_genie/";
+    TFile *fin = new TFile(dir+"gntp.nu_coh_1GeV.gst.root", "READ");
     TTree *t = (TTree*)fin->Get("gst");
 
     // Declare necessary tree variables and set branch address
@@ -38,10 +38,10 @@ void make_2dHisto() {
 
     // Define output file and histograms
     TFile *fout = new TFile("ncgamma_xsec_out.root", "RECREATE");
-    TH1D *h_Eg = new TH1D("h_Eg", "h_Eg", 10, 0, 1);
-    TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 10, 0, 3.14);
-    TH1D *h_phig = new TH1D("h_phig", "h_phig", 10, -3.14, 3.14);
-    TH1D *h_thetal = new TH1D("h_thetal", "h_thetal", 10, 0, 3.14);
+    TH1D *h_Eg = new TH1D("h_Eg", "h_Eg", 100, 0, 1);
+    TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14);
+    TH1D *h_phig = new TH1D("h_phig", "h_phig", 100, -3.14, 3.14);
+    TH1D *h_thetal = new TH1D("h_thetal", "h_thetal", 100, 0, 3.14);
 
 
     /////////////////////////////////////////////////////////
@@ -83,10 +83,11 @@ void make_2dHisto() {
             // std::cout<<"lepton at n=0: pg(x, y, z) = "<<pxf[0]<<", "<<pyf[0]<<", "<< pzf[0]<<", El = "<<Ef[0]<<std::endl;
             // std::cout<<"photon at n=1: pg(x, y, z) = "<<pxf[1]<<", "<<pyf[1]<<", "<< pzf[1]<<", Ef = "<<Ef[1]<<std::endl;
         }
-        std::cout<<"--------------------------- on event "<<i<<" ----------------------------------"<<std::endl;
-        std::cout<<"photon: pg(x, y, z) = "<<  p4_gamma.Px()<<", "<< p4_gamma.Py()<<", "<< p4_gamma.Pz() <<", Eg = "<<p4_gamma.E()<<std::endl;
-        std::cout<<"lepton: pl(x, y, z) = "<<  p4_lepton.Px()<<", "<< p4_lepton.Py()<<", "<< p4_lepton.Pz() <<", Eg = "<<p4_lepton.E()<<std::endl;
-
+        /*
+           std::cout<<"--------------------------- on event "<<i<<" ----------------------------------"<<std::endl;
+           std::cout<<"photon: pg(x, y, z) = "<<  p4_gamma.Px()<<", "<< p4_gamma.Py()<<", "<< p4_gamma.Pz() <<", Eg = "<<p4_gamma.E()<<std::endl;
+           std::cout<<"lepton: pl(x, y, z) = "<<  p4_lepton.Px()<<", "<< p4_lepton.Py()<<", "<< p4_lepton.Pz() <<", Eg = "<<p4_lepton.E()<<std::endl;
+           */
         Eg = p4_gamma.E();
         theta_g = p4_gamma.Theta();
         phi_g = p4_gamma.Phi();
