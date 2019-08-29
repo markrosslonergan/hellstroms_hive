@@ -17,7 +17,7 @@ add_executable (zvalidate zvalidate.cxx)
 add_executable (pigLEE pigLEE.cxx)
 add_executable (slice_studies slice_studies.cxx)
 add_executable (reco_true_energy reco_true_energy.cc)
-
+add_executable (ncgamma_xsec ncgamma_xsec.cc)
 
 
 #target_link_libraries (deltaRad tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
@@ -30,3 +30,4 @@ target_link_libraries (deltaRad_pi0 tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
 target_link_libraries (pigLEE tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
 target_link_libraries (slice_studies tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
 target_link_libraries (reco_true_energy tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
+target_link_libraries (ncgamma_xsec tinyxmllib deltaRadlib ${ROOT_LIBRARIES})
