@@ -1,7 +1,7 @@
 #include "ncgamma_xsec.h"
 using std::cout;
 using std::endl;
-double energyCorr(double);
+//double energyCorr(double);
 
 void make_2dHisto() {
     /////////////////////////////////////////////////////////
@@ -39,9 +39,9 @@ void make_2dHisto() {
     // Define output file and histograms
     TFile *fout = new TFile("ncgamma_xsec_out.root", "RECREATE");
     TH1D *h_Eg = new TH1D("h_Eg", "h_Eg", 10, 0, 1);
-    TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 10, 0, 1.15);
-    TH1D *h_phig = new TH1D("h_phig", "h_phig", 10, 0, 2*3.14);
-    TH1D *h_thetal = new TH1D("h_thetal", "h_thetal", 10, 0, 1.15);
+    TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 10, 0, 3.14);
+    TH1D *h_phig = new TH1D("h_phig", "h_phig", 10, -3.14, 3.14);
+    TH1D *h_thetal = new TH1D("h_thetal", "h_thetal", 10, 0, 3.14);
 
 
     /////////////////////////////////////////////////////////
@@ -52,20 +52,20 @@ void make_2dHisto() {
     //need to check which of the final particles is l and g since assuming coh nc gamma
 
     double Eg; //energy of photon fsp
-    double theta_g;
+    double theta_g; 
     double phi_g;
     double theta_l;
 
     TLorentzVector p4_gamma;
     TLorentzVector p4_lepton;
 
-   for (int i = 0; i < t->GetEntries(); i++) {
+    for (int i = 0; i < t->GetEntries(); i++) {
 
         t->GetEntry(i);
         if (nf != 2){
             std::cout<<"ERROR! expect only two particles, nf = "<<nf<<std::endl;
         }
-      
+
         //  std::cout<<"lepton at n=0: pg(x, y, z) = "<<pxf[0]<<", "<<pyf[0]<<", "<< pzf[0]<<", El = "<<Ef[0]<<std::endl;
         //std::cout<<"photon at n=1: pg(x, y, z) = "<<pxf[1]<<", "<<pyf[1]<<", "<< pzf[1]<<", Ef = "<<Ef[1]<<std::endl;
 
@@ -99,6 +99,21 @@ void make_2dHisto() {
 
     }
 
+    //area normalize the histogramsi
+    double norm = 1.0;
+
+    h_Eg->Scale(norm/(h_Eg->Integral()));
+    h_thetag->Scale(norm/(h_thetag->Integral()));
+    h_phig->Scale(norm/(h_phig->Integral()));
+    h_thetal->Scale(norm/(h_thetal->Integral()));
+
+    h_Eg->SetOption("hist");
+    h_thetag->SetOption("hist");
+    h_phig->SetOption("hist");
+    h_thetal->SetOption("hist");
+
+
+
     fin->Close();
     fout->Write();
     fout->Close();
@@ -110,14 +125,16 @@ int main() {
     return 0;
 }
 
+/*
 // Energy correction functions
 // Parameters extracted from fit performed in energy_cal.cc
 double energyCorr(double energy) {
-    // MCC8
-    //double corr = 1.24476*energy + 0.015528;
-    // MCC9ish (v10)
-    double corr = 1.24288*energy + 8.64122;
-    return corr;
+// MCC8
+//double corr = 1.24476*energy + 0.015528;
+// MCC9ish (v10)
+double corr = 1.24288*energy + 8.64122;
+return corr;
 }
+*/
 
 
