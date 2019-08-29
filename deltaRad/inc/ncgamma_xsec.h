@@ -33,6 +33,7 @@
 #include "TString.h"
 #include "TF1.h"
 #include "TProfile.h"
+#include "TLorentzVector.h"
 
 // Define bin ranges for projection histograms
 // Each bin is 10 MeV, so the energy range will be bin_num/10
