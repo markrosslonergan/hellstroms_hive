@@ -23,14 +23,15 @@ void make_2dHisto() {
     double pdgf[2] = {}; //pdg's of particles
     double Ef[2] = {}; //energy of particles
     int nf = 0;        //number of final state particles
-    
+    double Ev = 0.; 
 
     TBranch *bpxf = 0;
     TBranch *bpyf = 0;
     TBranch *bpzf = 0;
     TBranch *bpdgf = 0;
     TBranch *bEf = 0;
-    TBranch *bnf = 0;  
+    TBranch *bnf = 0; 
+    TBranch * bEv = 0; 
 
     t->SetBranchAddress("pxf", &pxf, &bpxf);
     t->SetBranchAddress("pyf", &pyf, &bpyf);
@@ -38,6 +39,8 @@ void make_2dHisto() {
     t->SetBranchAddress("pdgf", &pdgf, &bpdgf);
     t->SetBranchAddress("Ef", &Ef, &bEf);
     t->SetBranchAddress("nf", &nf, &bnf);
+    t->SetBranchAddress("Ev", &Ev, &bEv);
+
 
 
     // Define output file and histograms
@@ -59,6 +62,7 @@ void make_2dHisto() {
     double theta_g; 
     double phi_g;
     double theta_l;
+    double this_Ev; //assumes same Ev for a file
 
     TLorentzVector p4_gamma;
     TLorentzVector p4_lepton;
@@ -68,6 +72,10 @@ void make_2dHisto() {
         t->GetEntry(i);
         if (nf != 2){
             std::cout<<"ERROR! expect only two particles, nf = "<<nf<<std::endl;
+        }
+
+        if (i ==0){
+            this_Ev = Ev;
         }
 
         //  std::cout<<"lepton at n=0: pg(x, y, z) = "<<pxf[0]<<", "<<pyf[0]<<", "<< pzf[0]<<", El = "<<Ef[0]<<std::endl;
@@ -105,13 +113,13 @@ void make_2dHisto() {
     }
 
     //area normalize the histograms
-    double norm = gxsec->Eval(1.0);//want to read in the value from xsec as a function of E
-    std::cout<<"The total xsec for Ev= "<<1.0<<" is "<<norm<<std::endl;
+    double norm = gxsec->Eval(this_Ev) * 1e-38; //read in total xsec for the energy
+    std::cout<<"The total xsec for Ev= "<<this_Ev<<" is "<<norm<<std::endl;
 
-    h_Eg->Scale((h_Eg->GetXaxis()->GetBinWidth(1))/h_Eg->Integral());
-    h_thetag->Scale((h_thetag->GetXaxis()->GetBinWidth(1))/h_thetag->Integral());
-    h_phig->Scale((h_phig->GetXaxis()->GetBinWidth(1))/h_phig->Integral());
-    h_thetal->Scale((h_thetal->GetXaxis()->GetBinWidth(1))/h_thetal->Integral());
+    h_Eg->Scale(norm*(h_Eg->GetXaxis()->GetBinWidth(1))/h_Eg->Integral());
+    h_thetag->Scale(norm*(h_thetag->GetXaxis()->GetBinWidth(1))/h_thetag->Integral());
+    h_phig->Scale(norm*(h_phig->GetXaxis()->GetBinWidth(1))/h_phig->Integral());
+    h_thetal->Scale(norm*(h_thetal->GetXaxis()->GetBinWidth(1))/h_thetal->Integral());
 
 
 
@@ -125,6 +133,14 @@ void make_2dHisto() {
     h_thetag->SetOption("hist");
     h_phig->SetOption("hist");
     h_thetal->SetOption("hist");
+
+    h_Eg->GetXaxis()->SetTitle("E_{#gamma} [GeV]");
+    h_thetag->GetXaxis()->SetTitle("#theta_{#gamma}");
+    h_phig->GetXaxis()->SetTitle("#phi_{#gamma} [GeV]");
+    h_thetal->GetXaxis()->SetTitle("#theta_{l} [GeV]");
+
+
+
 
 
     fxsec -> Close();
