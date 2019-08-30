@@ -140,9 +140,12 @@ void make_2dHisto() {
     h_thetag->GetXaxis()->SetTitle("#theta_{#gamma}");
     h_phig->GetXaxis()->SetTitle("#phi_{#gamma} [GeV]");
     h_thetal->GetXaxis()->SetTitle("#theta_{l} [GeV]");
-
-
-    //h_Eg->GetXaxis()-> SetTitleSize(0.5);
+/*
+    h_Eg->GetXaxis()-> SetTitleSize(0.05);
+    h_thetag->GetXaxis()-> SetTitleSize(0.06);
+    h_phig->GetXaxis()-> SetTitleSize(0.06);
+    h_thetal->GetXaxis()-> SetTitleSize(0.06);
+*/
 
     //y axis labels
     h_Eg->GetYaxis()->SetTitle("#frac{d#sigma}{dE_{#gamma}} [cm^{2}GeV^{-1}]");
@@ -150,7 +153,14 @@ void make_2dHisto() {
     h_phig->GetYaxis()->SetTitle("#frac{d#sigma}{d#phi_{#gamma}} [cm^{2}GeV^{-1}]");
     h_thetal->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{l}} [cm^{2}GeV^{-1}]");
 
-    std::string title = "E_{#nu}= "+ to_string_prec(this_Ev, 1) + ", ^{40}Ar";
+  /*  h_Eg->GetYaxis()-> SetTitleSize(0.04);
+    h_thetag->GetYaxis()-> SetTitleSize(0.04);
+    h_phig->GetYaxis()-> SetTitleSize(0.04);
+    h_thetal->GetYaxis()-> SetTitleSize(0.04);
+*/
+
+    //add title with neutrino energy and target
+    std::string title = "E_{#nu}= "+ to_string_prec(this_Ev, 1) + " GeV, ^{40}Ar";
 
     h_Eg->SetTitle(title.c_str());
     h_thetag->SetTitle(title.c_str());
