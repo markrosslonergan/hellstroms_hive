@@ -13,6 +13,9 @@ void make_2dHisto() {
     TFile *fin = new TFile(dir+"gntp.nu_coh_1GeV.gst.root", "READ");
     TTree *t = (TTree*)fin->Get("gst");
 
+    TFile *fxsec = new TFile(dir+"gxsec.root", "READ");
+    TGraph *gxsec = (TGraph*)fxsec->Get("nu_mu_Ar40/coh_nc"); //need to select correct target and nu/nubar get the coh nc component
+
     // Declare necessary tree variables and set branch address
     double pxf[2] = {}; //vector of momenta for final state particles
     double pyf[2] = {};
@@ -20,6 +23,7 @@ void make_2dHisto() {
     double pdgf[2] = {}; //pdg's of particles
     double Ef[2] = {}; //energy of particles
     int nf = 0;        //number of final state particles
+    
 
     TBranch *bpxf = 0;
     TBranch *bpyf = 0;
@@ -39,9 +43,9 @@ void make_2dHisto() {
     // Define output file and histograms
     TFile *fout = new TFile("ncgamma_xsec_out.root", "RECREATE");
     TH1D *h_Eg = new TH1D("h_Eg", "h_Eg", 100, 0, 1);
-    TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14);
+    TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14/2);
     TH1D *h_phig = new TH1D("h_phig", "h_phig", 100, -3.14, 3.14);
-    TH1D *h_thetal = new TH1D("h_thetal", "h_thetal", 100, 0, 3.14);
+    TH1D *h_thetal = new TH1D("h_thetal", "h_thetal", 100, 0, 3.14/2);
 
 
     /////////////////////////////////////////////////////////
@@ -100,13 +104,22 @@ void make_2dHisto() {
 
     }
 
-    //area normalize the histogramsi
-    double norm = 1.0;
+    //area normalize the histograms
+    double norm = gxsec->Eval(1.0);//want to read in the value from xsec as a function of E
+    std::cout<<"The total xsec for Ev= "<<1.0<<" is "<<norm<<std::endl;
 
-    h_Eg->Scale(norm/(h_Eg->Integral()));
-    h_thetag->Scale(norm/(h_thetag->Integral()));
-    h_phig->Scale(norm/(h_phig->Integral()));
-    h_thetal->Scale(norm/(h_thetal->Integral()));
+    h_Eg->Scale((h_Eg->GetXaxis()->GetBinWidth(1))/h_Eg->Integral());
+    h_thetag->Scale((h_thetag->GetXaxis()->GetBinWidth(1))/h_thetag->Integral());
+    h_phig->Scale((h_phig->GetXaxis()->GetBinWidth(1))/h_phig->Integral());
+    h_thetal->Scale((h_thetal->GetXaxis()->GetBinWidth(1))/h_thetal->Integral());
+
+
+
+    /*    h_Eg->Scale(norm/(h_Eg->Integral()));
+          h_thetag->Scale(norm/(h_thetag->Integral()));
+          h_phig->Scale(norm/(h_phig->Integral()));
+          h_thetal->Scale(norm/(h_thetal->Integral()));
+          */
 
     h_Eg->SetOption("hist");
     h_thetag->SetOption("hist");
@@ -114,7 +127,7 @@ void make_2dHisto() {
     h_thetal->SetOption("hist");
 
 
-
+    fxsec -> Close();
     fin->Close();
     fout->Write();
     fout->Close();
