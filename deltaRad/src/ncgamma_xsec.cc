@@ -24,7 +24,7 @@ void make_2dHisto() {
     double pdgf[2] = {}; //pdg's of particles
     double Ef[2] = {}; //energy of particles
     int nf = 0;        //number of final state particles
-    double Ev = 0.; 
+    double Ev = 0.;    //energy of initial neutrino 
 
     TBranch *bpxf = 0;
     TBranch *bpyf = 0;
@@ -50,7 +50,7 @@ void make_2dHisto() {
     TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14/2);
     TH1D *h_phig = new TH1D("h_phig", "h_phig", 100, -3.14, 3.14);
     TH1D *h_thetal = new TH1D("h_thetal", "h_thetal", 100, 0, 3.14/2);
-
+    TGraph * xsec_copy = (TGraph*)gxsec->Clone();
 
     /////////////////////////////////////////////////////////
     ////////////// HISTO FILL LOOP /////////////////////////
@@ -79,15 +79,11 @@ void make_2dHisto() {
             this_Ev = Ev;
         }
 
-        //  std::cout<<"lepton at n=0: pg(x, y, z) = "<<pxf[0]<<", "<<pyf[0]<<", "<< pzf[0]<<", El = "<<Ef[0]<<std::endl;
-        //std::cout<<"photon at n=1: pg(x, y, z) = "<<pxf[1]<<", "<<pyf[1]<<", "<< pzf[1]<<", Ef = "<<Ef[1]<<std::endl;
-
         //check which of the fsp's is the photon
         if (pdgf[0] == 22){ 
             p4_gamma = TLorentzVector(TVector3(pxf[0],pyf[0],pzf[0]), Ef[0] ); //4vector for g and l          
             p4_lepton = TLorentzVector(TVector3(pxf[1],pyf[1],pzf[1]), Ef[1] ); //4vector for g and l          
 
-            //std::cout<<"photon at n=0: pg(x, y, z) = "<<pxf[0]<<", "<<pyf[0]<<", "<< pzf[0]<<", Eg = "<<Eg<<std::endl;
         } else{
             p4_gamma = TLorentzVector(TVector3(pxf[1],pyf[1],pzf[1]), Ef[1] ); //4vector for g and l          
             p4_lepton = TLorentzVector(TVector3(pxf[0],pyf[0],pzf[0]), Ef[0] ); //4vector for g and l          
@@ -140,12 +136,12 @@ void make_2dHisto() {
     h_thetag->GetXaxis()->SetTitle("#theta_{#gamma}");
     h_phig->GetXaxis()->SetTitle("#phi_{#gamma} [GeV]");
     h_thetal->GetXaxis()->SetTitle("#theta_{l} [GeV]");
-/*
-    h_Eg->GetXaxis()-> SetTitleSize(0.05);
-    h_thetag->GetXaxis()-> SetTitleSize(0.06);
-    h_phig->GetXaxis()-> SetTitleSize(0.06);
-    h_thetal->GetXaxis()-> SetTitleSize(0.06);
-*/
+    /*
+       h_Eg->GetXaxis()-> SetTitleSize(0.05);
+       h_thetag->GetXaxis()-> SetTitleSize(0.06);
+       h_phig->GetXaxis()-> SetTitleSize(0.06);
+       h_thetal->GetXaxis()-> SetTitleSize(0.06);
+       */
 
     //y axis labels
     h_Eg->GetYaxis()->SetTitle("#frac{d#sigma}{dE_{#gamma}} [cm^{2}GeV^{-1}]");
@@ -153,11 +149,11 @@ void make_2dHisto() {
     h_phig->GetYaxis()->SetTitle("#frac{d#sigma}{d#phi_{#gamma}} [cm^{2}GeV^{-1}]");
     h_thetal->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{l}} [cm^{2}GeV^{-1}]");
 
-  /*  h_Eg->GetYaxis()-> SetTitleSize(0.04);
-    h_thetag->GetYaxis()-> SetTitleSize(0.04);
-    h_phig->GetYaxis()-> SetTitleSize(0.04);
-    h_thetal->GetYaxis()-> SetTitleSize(0.04);
-*/
+    /*  h_Eg->GetYaxis()-> SetTitleSize(0.04);
+        h_thetag->GetYaxis()-> SetTitleSize(0.04);
+        h_phig->GetYaxis()-> SetTitleSize(0.04);
+        h_thetal->GetYaxis()-> SetTitleSize(0.04);
+        */
 
     //add title with neutrino energy and target
     std::string title = "E_{#nu}= "+ to_string_prec(this_Ev, 1) + " GeV, ^{40}Ar";
@@ -167,8 +163,10 @@ void make_2dHisto() {
     h_phig->SetTitle(title.c_str());
     h_thetal->SetTitle(title.c_str());
 
-
-
+    xsec_copy->GetXaxis()->SetRangeUser(0, 1.6);
+    xsec_copy->GetYaxis()->SetRangeUser(0, 0.01);
+    xsec_copy->Write("xsec");
+    //close files
     fxsec -> Close();
     fin->Close();
     fout->Write();
