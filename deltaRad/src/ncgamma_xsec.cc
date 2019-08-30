@@ -134,14 +134,20 @@ void make_2dHisto() {
     h_phig->SetOption("hist");
     h_thetal->SetOption("hist");
 
+    //x axis labels
     h_Eg->GetXaxis()->SetTitle("E_{#gamma} [GeV]");
     h_thetag->GetXaxis()->SetTitle("#theta_{#gamma}");
     h_phig->GetXaxis()->SetTitle("#phi_{#gamma} [GeV]");
     h_thetal->GetXaxis()->SetTitle("#theta_{l} [GeV]");
 
 
+    //h_Eg->GetXaxis()-> SetTitleSize(0.5);
 
-
+    //y axis labels
+    h_Eg->GetYaxis()->SetTitle("#frac{d#sigma}{dE_{#gamma}} [cm^{2}GeV^{-1}]");
+    h_thetag->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{#gamma}} [cm^{2}GeV^{-1}]");
+    h_phig->GetYaxis()->SetTitle("#frac{d#sigma}{d#phi_{#gamma}} [cm^{2}GeV^{-1}]");
+    h_thetal->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{l}} [cm^{2}GeV^{-1}]");
 
     fxsec -> Close();
     fin->Close();
