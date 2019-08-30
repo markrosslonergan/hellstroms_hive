@@ -1,4 +1,5 @@
 #include "ncgamma_xsec.h"
+#include "bdt_file.h"
 using std::cout;
 using std::endl;
 //double energyCorr(double);
@@ -148,6 +149,15 @@ void make_2dHisto() {
     h_thetag->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{#gamma}} [cm^{2}GeV^{-1}]");
     h_phig->GetYaxis()->SetTitle("#frac{d#sigma}{d#phi_{#gamma}} [cm^{2}GeV^{-1}]");
     h_thetal->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{l}} [cm^{2}GeV^{-1}]");
+
+    std::string title = "E_{#nu}= "+ to_string_prec(this_Ev, 1) + ", ^{40}Ar";
+
+    h_Eg->SetTitle(title.c_str());
+    h_thetag->SetTitle(title.c_str());
+    h_phig->SetTitle(title.c_str());
+    h_thetal->SetTitle(title.c_str());
+
+
 
     fxsec -> Close();
     fin->Close();
