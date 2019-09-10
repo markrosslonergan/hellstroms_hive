@@ -304,7 +304,7 @@ int main (int argc, char *argv[]){
             std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
             bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
             training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
-            training_background_files.back()->calcPOT();
+            //training_background_files.back()->calcPOT();
             if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
                 convertToLibSVM(bdt_infos[i], training_signal, training_background_files[i]);
             }
