@@ -590,7 +590,8 @@ cimpact->SaveAs("Impact.pdf","pdf");
     if(which_file == -1)which_file = 0;
 
     std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
-    std::vector<std::string> v_topo = {TMVAmethods[which_file].topological_definition};
+    std::vector<std::string> v_topo = {TMVAmethods[0].topological_definition};
+
 
     if(which_stage==-1)which_stage=0;
 

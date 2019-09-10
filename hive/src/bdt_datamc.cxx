@@ -121,7 +121,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             f->setStageEntryList(s);
         }	
 
-
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 
         if(s>1) data_file->calcBDTEntryList(s,bdt_cuts);

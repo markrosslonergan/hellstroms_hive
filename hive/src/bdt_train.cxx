@@ -330,9 +330,12 @@ int convertToLibSVM(bdt_info info, bdt_file *file){
         for(int t=0; t< tree_formulas_v.size();++t){
             tree_formulas_v[t]->GetNdata();
             double val = tree_formulas_v[t]->EvalInstance();
+
+            if(val==val){
             int id = id_v[t];
                 sslibSVM<<id<<":"<<val<<" ";
 
+            }
         }
 
         sslibSVM<<std::endl;
@@ -407,10 +410,14 @@ int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_f
             double val = sig_tree_formulas_v[t]->EvalInstance();
             int id = id_v[t];
 
+            //if nan, lets do something
+            if(val==val){ 
+
             if(i < sig_train_num){
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }else{
                 sslibSVMtest<<id<<":"<<val<<" ";
+            }
             }
 
         }
@@ -441,10 +448,14 @@ int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_f
             double val = bkg_tree_formulas_v[t]->EvalInstance();
             int id = id_v[t];
 
+            //if its a missing value, lets ignore it, lets do something
+            if(val==val){
+
             if(i < bkg_train_num){
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }else{
                 sslibSVMtest<<id<<":"<<val<<" ";
+            }
             }
 
         }
