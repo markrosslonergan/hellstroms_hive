@@ -731,7 +731,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
         c->cd();
 
         h_true_nu_energy_cut->Divide(h_true_nu_energy);
-        h_true_nu_energy_cut->Draw("same hist");
+        h_true_nu_energy_cut->Draw("same lp");
         h_true_nu_energy_cut->SetMaximum(1);
         h_true_nu_energy_cut->SetMinimum(0);
         h_true_nu_energy_cut->SetTitle("");
