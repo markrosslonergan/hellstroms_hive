@@ -54,6 +54,7 @@ int main (int argc, char *argv[]){
         {"help",		required_argument,	0, 'h'},
         {"pot",		    required_argument,	0, 'p'},
         {"number",		required_argument,	0, 'n'},
+        {"response",	no_argument,	0, 'r'},
         {"file",		required_argument,	0, 'f'},
         {0,			    no_argument, 		0,  0},
     };
@@ -245,12 +246,12 @@ int main (int argc, char *argv[]){
         }
 
 
-//        bdt_files.back()->calcPOT();
+        bdt_files.back()->calcPOT();
     }
 
     //BAD practice! 
-    signal = tagToFileMap["NCPi0"];
-    //signal = tagToFileMap["NCPi0eltaRadOverlay"];
+    //signal = tagToFileMap["NCPi0"];
+    signal = tagToFileMap["NCPi0eltaRadOverlay"];
 
 
     std::vector<bdt_file*> stack_bdt_files = signal_bdt_files;
