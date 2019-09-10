@@ -57,7 +57,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
         const char* t_cut = pTopoCut->Attribute("bdtcut");
         if(t_cut==NULL){ 
-        
+
         }else{
             std::string s_cuts = t_cut;
             s_cuts.erase(std::remove(s_cuts.begin(), s_cuts.end(), '('), s_cuts.end());
@@ -73,7 +73,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             }
             bdt_cuts.push_back(std::stod(s_cuts));
         }
-   
+
 
         std::cout<<"Loading Topology "<<topo_name<<" with definition "<<topo_def<<std::endl;
         pTopoCut = pTopoCut->NextSiblingElement("topology");
@@ -169,11 +169,34 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
                         param_string = param_string + ":" +p;
                     }	
 
+
+                    std::vector<std::pair<std::string,std::string>> xg_config;
+                    if(method_type=="XGBoost"){
+                        //Loop over all parameters, splitting by "=" sign and saving parameters into a vector of pairs of strings.
+
+                        for(auto &p: vec_params){
+                            size_t pos = 0;
+                            std::string delim = "=";
+                            std::string firstone;
+                            while((pos = p.find(delim)) != std::string::npos) {
+                                firstone = p.substr(0, pos);
+                                p.erase(0, pos + delim.length());
+                            }
+                            std::string secondone = p;
+                            std::pair<std::string,std::string> pairs = std::make_pair(firstone,secondone);
+                            xg_config.push_back(pairs);
+                            std::cout<<"Reading XGBoost config "<<firstone<<"  =  "<<secondone<<std::endl;
+                        }
+                    }
+
+
+
                     method_struct temp_struct = {tmva_type , method_type, param_string};
                     temp_struct.bdt_tag = bdt_tag;
                     temp_struct.bdt_name = bdt_name;
                     temp_struct.bdt_binning = bdt_binning;
                     temp_struct.precuts = precuts;
+                    temp_struct.xg_config = xg_config;
 
                     vec_methods.push_back(temp_struct);		
 

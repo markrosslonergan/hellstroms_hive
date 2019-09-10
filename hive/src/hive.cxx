@@ -278,7 +278,7 @@ int main (int argc, char *argv[]){
                     f->addBDTResponses(bdt_infos[k]);
                 }
             }
-            if(mode_option != "train" && mode_option != "app" && mode_option != "sbnfit"){
+            if(mode_option != "train"  && mode_option != "sbnfit"){
                 f->calcBaseEntryList(analysis_tag);
             }
         }
@@ -303,18 +303,33 @@ int main (int argc, char *argv[]){
             std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
             bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
             training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
-            //training_background_files.back()->calcPOT();
+            training_background_files.back()->calcPOT();
+            if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
+                convertToLibSVM(bdt_infos[i], training_signal, training_background_files[i]);
+            }
+
         }
 
         //Then we train!
         if(which_bdt == -1){
             for(int i=0; i< bdt_infos.size(); i++){
-                bdt_train(bdt_infos[i], training_signal, training_background_files[i]);
-                plot_train(bdt_infos[i], training_signal, training_background_files[i]);
+             
+                if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
+                    bdt_XGtrain(bdt_infos[i]);
+                }else{
+                    bdt_train(bdt_infos[i], training_signal, training_background_files[i]);
+                    plot_train(bdt_infos[i], training_signal, training_background_files[i]);
+                }
+
             }
         }else{
-            bdt_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
-            plot_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
+
+                if(bdt_infos[which_bdt].TMVAmethod.str=="XGBoost"){
+                    bdt_XGtrain(bdt_infos[which_bdt]);
+                }else{
+                    bdt_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
+                    plot_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
+                }
         }
         return 0;
 
@@ -357,10 +372,22 @@ int main (int argc, char *argv[]){
         }
         if(which_bdt == -1){
             for(int i=0; i< bdt_infos.size();i++){
-                bdt_app(bdt_infos[i], tf);
+              
+                if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
+                                 bdt_XGapp(bdt_infos[i], tf);
+
+                }else{
+                                  bdt_app(bdt_infos[i], tf);
+                }
             }
         }else{
-            bdt_app(bdt_infos[which_bdt], tf);
+ 
+                if(bdt_infos[which_bdt].TMVAmethod.str=="XGBoost"){
+                                  bdt_XGapp(bdt_infos[which_bdt], tf);
+                }else{
+                                  bdt_app(bdt_infos[which_bdt], tf);
+                }
+
         }
         return 0;
     }

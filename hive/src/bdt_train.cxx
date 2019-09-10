@@ -191,8 +191,8 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	TCut sig_tcut =  TCut(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 	TCut back_tcut = TCut(background_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 
-  TTree * background_ttree_prefiltered = (TTree*)background_file->tvertex->CopyTree(back_tcut);
-  TTree * signal_ttree_prefiltered = (TTree*)signal_file->tvertex->CopyTree(sig_tcut);
+    TTree * background_ttree_prefiltered = (TTree*)background_file->tvertex->CopyTree(back_tcut);
+    TTree * signal_ttree_prefiltered = (TTree*)signal_file->tvertex->CopyTree(sig_tcut);
 
 	dataloader->AddSignalTree(signal_ttree_prefiltered);
 	int signal_entries = signal_file->tvertex->GetEntries(sig_tcut);
@@ -305,17 +305,16 @@ int convertToLibSVM(bdt_info info, bdt_file *file){
 
     std::ofstream sslibSVM;
     sslibSVM.open (name+"_"+file->tag+".libSVM.dat");
-    TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
+    //TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
 
     TTreeFormula* weight = new TTreeFormula("sig_w",file->weight_branch.c_str(),file->tvertex);
-        
+       
     std::vector<TTreeFormula*> tree_formulas_v;
     std::vector<int> id_v;
 	for(bdt_variable &var : variables) {
         tree_formulas_v.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),file->tvertex));
 	    id_v.push_back(var.id);
     }
-
 
     size_t next_entry = file->precut_list->GetEntry(0);
     size_t num = 0;
@@ -343,8 +342,8 @@ int convertToLibSVM(bdt_info info, bdt_file *file){
     } 
 
 
-        sslibSVM.close();
-    outfile->Close();
+    sslibSVM.close();
+    //outfile->Close();
 	return 0;
 }
 
@@ -360,7 +359,7 @@ int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_f
     sslibSVMtest.open (name+".libSVM.test.dat");
     sslibSVMtrain.open (name+".libSVM.train.dat");
 
-    TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
+    //TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
 
 	int bdt_precut_stage = 1;
 	TCut sig_tcut =  TCut(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
@@ -461,7 +460,7 @@ int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_f
 
     sslibSVMtest.close();
     sslibSVMtrain.close();
-    outfile->Close();
+    //outfile->Close();
 	return 0;
 }
 
@@ -471,7 +470,7 @@ int bdt_XGtrain(bdt_info info){
 
     std::string const name = info.identifier;
 
-    TFile *f = new TFile(("Tampa"+name+".root").c_str(),"recreate");
+    TFile *f = new TFile(("XGBoost_train_output_"+name+".root").c_str(),"recreate");
     
     TH1* btest = new TH1D("btest","btest",100,0,1);
     TH1* btrain = new TH1D("btrain","btrain",100,0,1);
@@ -494,14 +493,12 @@ int bdt_XGtrain(bdt_info info){
     double v_btest = 0;
     t_btest->Branch("bkg_test",&v_btest);
 
-
-
     DMatrixHandle dtrain, dtest;
     int silent = 0;
     int use_gpu = 0;  // set to 1 to use the GPU for training
  
-  safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.train.dat").c_str(), silent, &dtrain));
-  safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.test.dat").c_str(), silent, &dtest));
+    safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.train.dat").c_str(), silent, &dtrain));
+    safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.test.dat").c_str(), silent, &dtest));
   
   // create the booster
   BoosterHandle booster;
@@ -512,6 +509,21 @@ int bdt_XGtrain(bdt_info info){
   // configure the training
   // available parameters are described here:
   // https://xgboost.readthedocs.io/en/latest/parameter.html
+  
+  
+ int n_trees = 250;
+
+ std::cout<<"XGBoost being setup with "<<std::endl;
+ for(auto &pairs: info.TMVAmethod.xg_config){
+      if(pairs.first == "n_trees"){
+            n_trees = (int)std::stod(pairs.second);
+      }else{
+          safe_xgboost(XGBoosterSetParam(booster,pairs.first.c_str(),pairs.second.c_str()));
+          std::cout<<"--"<<pairs.first<<" with a value of "<<pairs.second<<std::endl;
+      }
+ }
+
+  /*
   safe_xgboost(XGBoosterSetParam(booster, "tree_method", "exact"));
   safe_xgboost(XGBoosterSetParam(booster, "n_gpus", "0"));
   safe_xgboost(XGBoosterSetParam(booster, "objective", "binary:logistic")); //
@@ -523,8 +535,8 @@ int bdt_XGtrain(bdt_info info){
   safe_xgboost(XGBoosterSetParam(booster, "verbosity", "1"));
   safe_xgboost(XGBoosterSetParam(booster, "eta", "0.02"));
   safe_xgboost(XGBoosterSetParam(booster, "subsample", "0.9"));
-  
-  int n_trees = 250;
+  */
+
   std::vector<double> iteration;
   std::vector<double> test_error;
   std::vector<double> train_error;
@@ -554,7 +566,7 @@ int bdt_XGtrain(bdt_info info){
         cotr=0;
     }
     }
-    if(cotr>10) break;
+    //if(cotr>10) break;
   }
 
   // predict
