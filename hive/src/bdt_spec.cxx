@@ -39,6 +39,7 @@ THStack* bdt_stack::getBDTEntryStack(bdt_info whichbdt){
 
     for(int t=0; t<stack.size(); t++){
 
+
         bdt_variable var = stack.at(t)->getBDTVariable(whichbdt, whichbdt.binning);
         TH1* hist = (TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot);
 

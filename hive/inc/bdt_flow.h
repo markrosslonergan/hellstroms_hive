@@ -69,7 +69,7 @@ struct bdt_flow{
 
             //fake for now
             bdt_cosmic_cuts = bdt_vector[0];
-            bdt_bnb_cuts = bdt_vector[1];
+            //bdt_bnb_cuts = bdt_vector[1];
 
 			pre_cuts = vec_pre_cuts.front();
 			for(int i=1; i<vec_pre_cuts.size(); i++){

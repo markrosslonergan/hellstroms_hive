@@ -497,6 +497,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         double plot_pot=data_file->pot;
         std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
 
+
+
         double title_size_ratio=0.1;
         double label_size_ratio=0.1;
         double title_offset_ratioY = 0.3 ;
@@ -515,8 +517,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
         //Loop over all stages, currently just looking at 1
-        for(int s = 1; s< bdt_cuts.size()+2; s++){
+        //for(int s = 1; s< bdt_cuts.size()+2; s++){
 
+        {int s=1;
             std::cout<<"On stage: "<<s<<std::endl;
             //First set the files at this stage
             for(auto &f: mc_stack->stack){

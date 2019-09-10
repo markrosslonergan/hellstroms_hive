@@ -518,13 +518,13 @@ int bdt_XGtrain(bdt_info info){
   safe_xgboost(XGBoosterSetParam(booster, "eval_metric", "logloss")); //auc , error, rmsle , ams@0.15i
   //safe_xgboost(XGBoosterSetParam(booster, "eval_metric", "auc")); //auc , error, rmsle , ams@0.15i
   safe_xgboost(XGBoosterSetParam(booster, "min_child_weight", "1"));
-  safe_xgboost(XGBoosterSetParam(booster, "gamma", "5.00")); //regular
+  safe_xgboost(XGBoosterSetParam(booster, "gamma", "1.0")); //regular
   safe_xgboost(XGBoosterSetParam(booster, "max_depth", "5"));
   safe_xgboost(XGBoosterSetParam(booster, "verbosity", "1"));
   safe_xgboost(XGBoosterSetParam(booster, "eta", "0.02"));
   safe_xgboost(XGBoosterSetParam(booster, "subsample", "0.9"));
   
-  int n_trees = 3000;
+  int n_trees = 250;
   std::vector<double> iteration;
   std::vector<double> test_error;
   std::vector<double> train_error;
