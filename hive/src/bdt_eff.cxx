@@ -719,11 +719,20 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
     for(size_t f=0; f< vec_files.size(); f++){
         bdt_file * file = vec_files[f];
+
+
+        //basically irrelavent now as its a ratio
         double conversion = file->scale_data*13.2e20/file->pot;
+
+        file->tvertex->SetEntryList(NULL);
+
+        //The "definition" cuts, i.e the denominator, and wahts definied in the XML
         std::string defin_cut = file->flow.definition_cuts;
         double n_starting_events = file->GetEntries(defin_cut)*conversion;
 
         std::cout<<"File "<<file->tag<<" has  "<<n_starting_events<<" events when scaled to "<<13.2e20<<std::endl;
+      
+
         c->cd();
     	TH1* h_true_nu_energy = (TH1*)file->getTH1(true_energy, defin_cut , "true_energy_num_"+file->tag, 13.2e20);
         c->cd();
