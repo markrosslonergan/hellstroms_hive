@@ -704,6 +704,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut){
     //OK this file will simply make an effciciey curves for all files in vec_files. 
 
+    // we want to make this a function for Nu_E
     bdt_variable true_energy("mctruth_nu_E","(50, 0 , 2)","True Neutrino Energy [GeV]",false,"d");
 
     TCanvas * c = new TCanvas();
@@ -738,7 +739,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
         h_true_nu_energy_cut->SetMaximum(1);
         //if log, minimum cant be 0, make it small
         h_true_nu_energy_cut->SetMinimum(0);
-
+        h_true_nu_energy_cut->SetTitle("");
 	    l->AddEntry(h_true_nu_energy_cut,file->plot_name.c_str() ,"lp");
     }
 
