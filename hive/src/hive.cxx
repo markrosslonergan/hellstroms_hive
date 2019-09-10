@@ -557,6 +557,11 @@ cimpact->SaveAs("Impact.pdf","pdf");
     bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage);
 
 
+    //Ok, 
+    std::string full_cut = "reco_asso_showers==1 && reco_asso_tracks==1";
+    bdt_efficiency(bdt_files,full_cut);
+
+
 }else if(mode_option == "sbnfit"){
     if(which_file==-1) which_file ==0;
     if(which_stage==-1) which_stage ==1;

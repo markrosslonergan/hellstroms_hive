@@ -701,3 +701,44 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
 }
 
+    bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut){
+    //OK this file will simply make an effciciey curves for all files in vec_files. 
+
+    bdt_variable true_energy("mctruth_nu_E","(50, 0 , 2)","True Neutrino Energy [GeV]",false,"d");
+
+    TCanvas * c = new TCanvas();
+	TPad *p1 = (TPad*)c->cd();
+
+	TLegend *l = new TLegend(0.13,0.79,0.89,0.89);
+	l->SetLineColor(kWhite);
+	l->SetLineWidth(0);
+//	l->SetNColumns(2);
+
+
+
+    for(size_t f=0; f< vec_files.size(); f++){
+        bdt_file * file = vec_files[f];
+        double conversion = file->scale_data*13.2e20/file->pot;
+        std::string defin_cut = file->flow.definition_cuts;
+        double n_starting_events = file->GetEntries(defin_cut)*conversion;
+
+        std::cout<<"File "<<file->tag<<" has  "<<n_starting_events<<" events when scaled to "<<13.2e20<<std::endl;
+        c->cd();
+    	TH1* h_true_nu_energy = (TH1*)file->getTH1(true_energy, defin_cut , "true_energy_num_"+file->tag, 13.2e20);
+        c->cd();
+    	TH1* h_true_nu_energy_cut = (TH1*)file->getTH1(true_energy, defin_cut+"&&"+cut , "true_energy_cut_"+file->tag, 13.2e20);
+        c->cd();
+
+        h_true_nu_energy_cut->Divide(h_true_nu_energy);
+        h_true_nu_energy_cut->Draw("same hist");
+        h_true_nu_energy_cut->SetMaximum(1);
+        h_true_nu_energy_cut->SetMinimum(0);
+
+	    l->AddEntry(h_true_nu_energy_cut,file->plot_name.c_str() ,"lp");
+    }
+
+    l->Draw();
+    c->SaveAs("EFFICIENCY_test.pdf","pdf");
+
+
+}
