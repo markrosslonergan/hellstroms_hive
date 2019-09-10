@@ -305,7 +305,7 @@ int convertToLibSVM(bdt_info info, bdt_file *file){
 
     std::ofstream sslibSVM;
     sslibSVM.open (name+"_"+file->tag+".libSVM.dat");
-    //TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
+    TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
 
     TTreeFormula* weight = new TTreeFormula("sig_w",file->weight_branch.c_str(),file->tvertex);
        
@@ -343,7 +343,7 @@ int convertToLibSVM(bdt_info info, bdt_file *file){
 
 
     sslibSVM.close();
-    //outfile->Close();
+    outfile->Close();
 	return 0;
 }
 
@@ -359,7 +359,7 @@ int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_f
     sslibSVMtest.open (name+".libSVM.test.dat");
     sslibSVMtrain.open (name+".libSVM.train.dat");
 
-    //TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
+    TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
 
 	int bdt_precut_stage = 1;
 	TCut sig_tcut =  TCut(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
@@ -460,7 +460,7 @@ int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_f
 
     sslibSVMtest.close();
     sslibSVMtrain.close();
-    //outfile->Close();
+    outfile->Close();
 	return 0;
 }
 
