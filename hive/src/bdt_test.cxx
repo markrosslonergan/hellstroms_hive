@@ -32,11 +32,7 @@ int bdt_test::CompareVars(std::vector<bdt_file*> comp_files){
             c->SaveAs(("test_compare_"+v.safe_name+".pdf").c_str(),"pdf");
         }
 
-
-
-
     return 0;
-
 }
 
 

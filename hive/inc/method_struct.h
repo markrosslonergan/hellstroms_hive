@@ -10,6 +10,8 @@ struct method_struct {
 	TMVA::Types::EMVA  type;
 	std::string  str;
 	std::string option;
+    std::vector<std::pair<std::string,std::string>> xg_config;
+
 
     std::string bdt_name;
     std::string bdt_binning;
