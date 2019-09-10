@@ -147,8 +147,8 @@ int main (int argc, char *argv[]){
 
     std::vector<double> fbdtcuts = XMLconfig.bdt_cuts;
     if(fbdtcuts.size()==0){
-            std::cout<<"No BDT cuts set, so setting all to 0 for now"<<std::endl;
-            fbdtcuts.resize(TMVAmethods.size(),0);
+        std::cout<<"No BDT cuts set, so setting all to 0 for now"<<std::endl;
+        fbdtcuts.resize(TMVAmethods.size(),0);
     }else{
         std::cout<<"BDT cuts have been loaded and set as: "<<std::endl;
         for(auto &c: fbdtcuts)std::cout<<c<<" ";
@@ -207,12 +207,12 @@ int main (int argc, char *argv[]){
         for(int i=0; i< XMLconfig.bdt_definitions[f].size(); ++i){
             std::cout<<" -- ---> "<<XMLconfig.bdt_definitions[f][i]<<std::endl;
         }
-       
+
         bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , analysis_flow));
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
 
-        
+
 
         if(XMLconfig.bdt_scales[f] != 1.0){
             std::cout<<" -- Scaling "<<XMLconfig.bdt_tags[f]<<" file by a factor of "<<XMLconfig.bdt_scales[f]<<std::endl;
@@ -228,7 +228,7 @@ int main (int argc, char *argv[]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOffBeamData( XMLconfig.bdt_onbeam_pot[f], XMLconfig.bdt_onbeam_spills[f], XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
 
-                bkg_bdt_files.push_back(bdt_files.back());
+            bkg_bdt_files.push_back(bdt_files.back());
         }
 
         if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f] ){
@@ -314,7 +314,7 @@ int main (int argc, char *argv[]){
         //Then we train!
         if(which_bdt == -1){
             for(int i=0; i< bdt_infos.size(); i++){
-             
+
                 if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
                     bdt_XGtrain(bdt_infos[i]);
                 }else{
@@ -325,12 +325,12 @@ int main (int argc, char *argv[]){
             }
         }else{
 
-                if(bdt_infos[which_bdt].TMVAmethod.str=="XGBoost"){
-                    bdt_XGtrain(bdt_infos[which_bdt]);
-                }else{
-                    bdt_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
-                    plot_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
-                }
+            if(bdt_infos[which_bdt].TMVAmethod.str=="XGBoost"){
+                bdt_XGtrain(bdt_infos[which_bdt]);
+            }else{
+                bdt_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
+                plot_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
+            }
         }
         return 0;
 
@@ -373,21 +373,21 @@ int main (int argc, char *argv[]){
         }
         if(which_bdt == -1){
             for(int i=0; i< bdt_infos.size();i++){
-              
+
                 if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
-                                 bdt_XGapp(bdt_infos[i], tf);
+                    bdt_XGapp(bdt_infos[i], tf);
 
                 }else{
-                                  bdt_app(bdt_infos[i], tf);
+                    bdt_app(bdt_infos[i], tf);
                 }
             }
         }else{
- 
-                if(bdt_infos[which_bdt].TMVAmethod.str=="XGBoost"){
-                                  bdt_XGapp(bdt_infos[which_bdt], tf);
-                }else{
-                                  bdt_app(bdt_infos[which_bdt], tf);
-                }
+
+            if(bdt_infos[which_bdt].TMVAmethod.str=="XGBoost"){
+                bdt_XGapp(bdt_infos[which_bdt], tf);
+            }else{
+                bdt_app(bdt_infos[which_bdt], tf);
+            }
 
         }
         return 0;
@@ -456,22 +456,22 @@ int main (int argc, char *argv[]){
     }else if(mode_option == "test"){
 
         //First lets create the bdt_file's* and flows for training
-       
+
         if(true){
-        std::vector<bdt_file*> training_background_files;
-        for(int i=0; i< bdt_infos.size(); i++){
-            std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
-            bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
-            training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
-            training_background_files.back()->calcPOT();
-            convertToLibSVM(bdt_infos[i], training_signal, training_background_files[i]);
+            std::vector<bdt_file*> training_background_files;
+            for(int i=0; i< bdt_infos.size(); i++){
+                std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
+                bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
+                training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
+                training_background_files.back()->calcPOT();
+                convertToLibSVM(bdt_infos[i], training_signal, training_background_files[i]);
+            }
         }
-        }
-    
+
         for(int i=2; i< bdt_infos.size(); i++){
-         bdt_XGtrain(bdt_infos[i]);
-         bdt_XGapp(bdt_infos[i], bdt_files);
-         break;
+            bdt_XGtrain(bdt_infos[i]);
+            bdt_XGapp(bdt_infos[i], bdt_files);
+            break;
         }
 
         //plot_bdt_variables(signal, ncpi0, vars, fbdtcuts, 5);

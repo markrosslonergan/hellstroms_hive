@@ -709,6 +709,10 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
     TCanvas * c = new TCanvas();
 	TPad *p1 = (TPad*)c->cd();
+    
+    //might need log y?
+    //p1->SetLogy();
+
 
 	TLegend *l = new TLegend(0.13,0.79,0.89,0.89);
 	l->SetLineColor(kWhite);
@@ -742,6 +746,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
         h_true_nu_energy_cut->Divide(h_true_nu_energy);
         h_true_nu_energy_cut->Draw("same lp");
         h_true_nu_energy_cut->SetMaximum(1);
+        //if log, minimum cant be 0, make it small
         h_true_nu_energy_cut->SetMinimum(0);
         h_true_nu_energy_cut->SetTitle("");
 	    l->AddEntry(h_true_nu_energy_cut,file->plot_name.c_str() ,"lp");
