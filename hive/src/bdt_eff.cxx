@@ -554,7 +554,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     }
     std::cout<<"So the DENOMINATOR + TOPOLOGICAL is "<<n_topo_events<<std::endl;
     std::cout<<"So total Pandora Reco Efficiency is "<<n_topo_events/n_starting_events*100.0<<"%"<<std::endl;
-    
+
     std::string precuts = "";
     double n_precut_events = 0;
     for(int i=0; i<v_precuts.size();i++){
@@ -574,7 +574,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<"So the DENOMINATOR + TOPOLOGICAL + PRECUTS is "<<n_precut_events<<std::endl;
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_starting_events*100.0<<"% relative to denom"<<std::endl;
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_topo_events*100.0<<"% relative to topo"<<std::endl;
- 
+    std::cout<<"This is "<<filein->tvertex->GetEntries((denominator+"&&"+topocuts+"&&"+precuts).c_str())<<" actuall MC events"<<std::endl;
 
 
 	bdt_variable true_photon("mctruth_exiting_photon_energy","(30, 0 , 0.6)","True Photon Energy [GeV]",false,"d");

@@ -210,7 +210,7 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 	std::cout<<"PREFILTERED signal_entries: "<<signal_ttree_prefiltered->GetEntries()<<" background_entries: "<<background_ttree_prefiltered->GetEntries()<<std::endl;
 
 
-	dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
+	dataloader->PrepareTrainingAndTestTree("1","1",
 	  "nTrain_Signal="+std::to_string(floor(signal_entries*info.TMVAmethod.training_fraction))+":nTrain_Background="+std::to_string(floor(background_entries*info.TMVAmethod.training_fraction))+":SplitMode=Random:NormMode=NumEvents:!V");
   // "nTrain_Signal=66629:nTrain_Background=49472:nTest_Signal=15578:nTest_Background=11885:SplitMode=Random:NormMode=NumEvents:!V"
 			//"SplitMode=Random:NormMode=NumEvents:!V");

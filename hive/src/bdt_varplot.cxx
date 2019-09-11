@@ -13,6 +13,7 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
         background_pure->setStageEntryList(j);
         std::cout<<" Set stage entry lists."<<std::endl;
 
+        int nv = 0;
         for(auto &v: vars){
 
             //std::string cut_signal = signal_pure->getStageCuts(j,-9,-9); 
@@ -100,12 +101,13 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
             sig->SetMaximum(max_height*1.3);
 
 
-            c_var->Print(("vars/"+input_bdt_info.identifier+"_"+v.safe_unit+"_stage_"+std::to_string(j)+".pdf").c_str(),"pdf");
+            c_var->Print(("vars/"+std::to_string(nv)+"_"+input_bdt_info.identifier+"_"+v.safe_unit+"_stage_"+std::to_string(j)+".pdf").c_str(),"pdf");
 
 
             delete sig;
             delete bkg;
             delete c_var;
+            nv++;
         }
 
     }
