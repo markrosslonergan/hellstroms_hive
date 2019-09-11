@@ -318,6 +318,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         //double dist = rangen->Uniform(0,20);
         //std::string s_impact = "((sss_num_candidates==0) ||  Min$(sss_candidate_impact_parameter)>"+std::to_string(impact) +") ";
 
+        //Yarp
         std::string s_impact = "1";
         //std::string s_impact = "((sss_num_candidates==0)|| Sum$(sss_candidate_impact_parameter<"+std::to_string(impact)+ "&& sss_candidate_min_dist<70.0)==0 )";
         //std::string s_impact = "((sss_num_candidates==0)|| Min$(sss_candidate_impact_parameter/sss_candidate_min_dist)<"+std::to_string(impact)+ ")";
