@@ -251,7 +251,7 @@ int main (int argc, char *argv[]){
 
     //BAD practice! 
     //signal = tagToFileMap["NCPi0"];
-    signal = tagToFileMap["NCPi0eltaRadOverlay"];
+    signal = tagToFileMap["NCDeltaRadOverlay"];
 
 
     std::vector<bdt_file*> stack_bdt_files = signal_bdt_files;
