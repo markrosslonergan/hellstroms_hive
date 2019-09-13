@@ -19,7 +19,7 @@ int plot_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
 
     //p1->SetLogy();
 //   int nbins = 50;
-   int nbins = 60;
+   int nbins = 75;
     TH1D * train_signal = new TH1D("trainsignal","trainsignal",nbins,0,1);
     TH1D * test_signal = new TH1D("testsignal","testsignal",nbins,0,1);
 
@@ -37,8 +37,11 @@ int plot_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
 
     testTree->SetBranchAddress("classID",&test_classID);
     trainTree->SetBranchAddress("classID",&train_classID);
-    testTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&test_response);
-    trainTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&train_response);
+//    testTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&test_response);
+ //   trainTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&train_response);
+    testTree->SetBranchAddress("BDT",&test_response);
+    trainTree->SetBranchAddress("BDT",&train_response);
+
     testTree->SetBranchAddress("weight",&test_wei);
     trainTree->SetBranchAddress("weight",&train_wei);
 
@@ -92,10 +95,10 @@ int plot_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
             train_bkg->SetMarkerColor(background_file->col);
             test_bkg->SetLineColor(background_file->col);
 
-            train_signal->SetLineWidth(2);
-            train_signal->SetLineWidth(2);
-            test_signal->SetLineWidth(2);
-            test_bkg->SetLineWidth(2);
+            train_signal->SetLineWidth(1);
+            train_signal->SetLineWidth(1);
+            test_signal->SetLineWidth(1);
+            test_bkg->SetLineWidth(1);
 
             train_signal->SetMarkerStyle(20);
             train_bkg->SetMarkerStyle(20);
@@ -107,6 +110,7 @@ int plot_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
 
             test_signal->SetMinimum(0.0);
             test_signal->GetXaxis()->SetRangeUser(min*0.9,max*1.1);
+//            test_signal->GetXaxis()->SetRangeUser(0.1,1);
             test_signal->GetXaxis()->SetTitle((name+" BDT Response").c_str());
             test_signal->SetTitle("");
 
