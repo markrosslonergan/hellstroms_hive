@@ -6,6 +6,8 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     double n_starting_events = 0;
     denominator = "";
 
+    std::cout << "------------ [EFF] On file " << filein->tag << " -----------------" << std::endl;
+
     std::cout<<"File has  "<<filein->GetEntries("1")*conversion<<" events when scaled to "<<plot_POT<<std::endl;
 
 
@@ -83,6 +85,8 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     double conversion = filein->scale_data*plot_POT/filein->pot;
     double n_starting_events = 0;
     denominator = "";
+
+    std::cout << "------------ [EFF] On file " << filein->tag << " -----------------" << std::endl;
 
     std::cout<<"File has  "<<filein->GetEntries("1")*conversion<<" events when scaled to "<<plot_POT<<std::endl;
 
@@ -519,6 +523,8 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     double conversion = filein->scale_data*plot_POT/filein->pot;
     double n_starting_events = 0;
     denominator = "";
+
+    std::cout << "------------ [EFF] On file " << filein->tag << " -----------------" << std::endl;
 
     std::cout<<"File has  "<<filein->GetEntries("1")*conversion<<" events when scaled to "<<plot_POT<<std::endl;
 
