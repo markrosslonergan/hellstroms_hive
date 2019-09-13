@@ -513,7 +513,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1,
 
 //One being used right now
 
-bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool is_ok,int plot_stage) : file(filein){
+bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool is_ok,int plot_stage,std::string tag) : file(filein){
 
 
     double conversion = filein->scale_data*plot_POT/filein->pot;
@@ -577,8 +577,8 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<"This is "<<filein->tvertex->GetEntries((denominator+"&&"+topocuts+"&&"+precuts).c_str())<<" actuall MC events"<<std::endl;
 
 
-	bdt_variable true_photon("mctruth_exiting_photon_energy","(30, 0 , 0.6)","True Photon Energy [GeV]",false,"d");
-	bdt_variable true_proton("Max$(mctruth_exiting_proton_energy)-0.938272","(30, 0 , 0.6)","True Proton Kinetic Energy [GeV]",false,"d");
+	bdt_variable true_photon("mctruth_exiting_photon_energy","(25, 0 , 0.6)","True Photon Energy [GeV]",false,"d");
+	bdt_variable true_proton("Max$(mctruth_exiting_proton_energy)-0.938272","(25, 0 , 0.6)","True Proton Kinetic Energy [GeV]",false,"d");
 
 
 	TH1* h_true_photon_denom = (TH1*)file->getTH1(true_photon, denominator, "photon_true_denom", 13.2e20);
@@ -588,15 +588,16 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 	TH1* h_true_proton_numer;
 
 
-
 	if(plot_stage>1)file->calcBDTEntryList(plot_stage,bdt_cuts);
    	
-    file->calcBaseEntryList("tmp");
+    file->calcBaseEntryList(tag);
     file->setStageEntryList(plot_stage);
     double stage_entries ;
     if(plot_stage>0) stage_entries = file->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
     if(plot_stage==0) stage_entries = file->GetEntries(denominator+"&&"+topocuts)*conversion;
-
+    std::cout<<plot_stage<<" "<<conversion<<" "<<stage_entries<<" topo: "<<topocuts<<std::endl;
+    std::cout<<file->GetEntries(denominator)<<" "<<file->GetEntries(topocuts)<<std::endl;
+    
     if(plot_stage==0){
 			h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator+"&&"+topocuts , "photon_true_numer", 13.2e20);
 			h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator+"&&"+topocuts , "proton_true_numer", 13.2e20);
@@ -610,6 +611,8 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
 	h_true_photon_ratio->Divide(h_true_photon_denom);
 	h_true_proton_ratio->Divide(h_true_proton_denom);
+
+    std::cout<<plot_stage<<" "<<conversion<<" "<<stage_entries<<std::endl;
 
     double finaleff = n_topo_events/n_starting_events*100.0;
     if(plot_stage==1)   finaleff = n_precut_events/n_starting_events*100.0;
@@ -659,7 +662,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 	h_true_photon_ratio->GetYaxis()->SetTitle("Efficiency [%]");
 	h_true_photon_ratio->GetXaxis()->SetTitle("True Photon/Proton Energy [GeV]");
 
-	h_true_photon_ratio->SetMaximum(120.0);
+	h_true_photon_ratio->SetMaximum(90.0);
 	h_true_photon_ratio->SetMinimum(0);
 	h_true_photon_ratio->GetXaxis()->SetRangeUser(0,1);
 
@@ -683,7 +686,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
 
 
-	c->SaveAs(("eff_"+file->tag+"_stage_"+std::to_string(plot_stage)+".pdf").c_str(),"pdf");
+	c->SaveAs(("eff_"+tag+"_"+file->tag+"_stage_"+std::to_string(plot_stage)+".pdf").c_str(),"pdf");
 
 
 	TH2* h2_true_photon_proton_denom = (TH2*)file->getTH2(true_proton, true_photon, denominator,"2d proton photon denom",13.2e20);
