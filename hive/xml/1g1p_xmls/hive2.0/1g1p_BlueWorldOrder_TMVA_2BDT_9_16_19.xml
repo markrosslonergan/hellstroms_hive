@@ -89,7 +89,7 @@
 
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(25,0,1)">
     <method type = "TMVA" use = "yes">
-        <param>  NTrees=1500 	</param>			 <!--2000-->
+        <param>  NTrees=1000 	</param>			 <!--2000-->
         <param>  MinNodESize=2.5% </param>				
         <param>  BoostType=RealAdaBoost</param>
         <param>  AdaBoostBeta=0.075 	</param>				
@@ -103,9 +103,9 @@
         filename = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v19/bnbext_run1_v19.31.root"
         foldername = "singlephoton/"
         training_cut = "Entry$%2==0"       
-        training_fraction = "0.5"
+        training_fraction = "0.7"
         />
-    <scan min = "0.5" max = "0.84265" steps="10"/>
+    <scan min = "0.7" max = "0.84265" steps="10"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(25,0,1)">
@@ -178,7 +178,7 @@
 
 <!-- ================================================== PRE-CUTS   ==================================================== -->
 
-<precut def = "(reco_vertex_x > 10 &amp;&amp; reco_vertex_x < 256-10 &amp;&amp; reco_vertex_y > -117+10 &amp;&amp; reco_vertex_y < 117-10 &amp;&amp; reco_vertex_z > 10 &amp;&amp; reco_vertex_z < 1036-10) " name = "Fiducial Vertex Cut" />
+<precut def = "(reco_vertex_x > 5 &amp;&amp; reco_vertex_x < 256-5 &amp;&amp; reco_vertex_y > -117+5 &amp;&amp; reco_vertex_y < 117-5 &amp;&amp; reco_vertex_z > 5 &amp;&amp; reco_vertex_z < 1036-5) " name = "Fiducial Vertex Cut" />
 
 <!--<precut def = "(TMath::Finite(reco_track_mean_trunc_dEdx_best_plane[0]))" name = "Finite Track dE/dx"/>-->
 
@@ -186,18 +186,19 @@
 
 <!--<precut def = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>17.8001)" name = "Second Shower Veto"/>-->
 
-<precut def = "(reco_track_endz[0] > 5 &amp;    &amp; reco_track_endz[0] < 1036-5) &amp;&amp;   (reco_track_endx[0] > 5 &amp;&amp; reco_track_endx[0] < 256-5 &amp;&amp; reco_track_endy[0] > -117+5 &amp;&amp; reco_track_endy[0] < 117-5 &amp;&amp; reco_track_endz[0] > 5  &amp;&amp; reco_track_endz[0] < 1036-5)" name = "Contained Track Cut" />
+<precut def = "reco_track_spacepoint_principal0[0]==reco_track_spacepoint_principal0[0]" name="pron"/> 
+
+<precut def = "(reco_track_endz[0] > 2 &amp;    &amp; reco_track_endz[0] < 1036-2) &amp;&amp;   (reco_track_endx[0] > 2 &amp;&amp; reco_track_endx[0] < 256-2 &amp;&amp; reco_track_endy[0] > -117+2 &amp;&amp; reco_track_endy[0] < 117-2 &amp;&amp; reco_track_endz[0] > 2  &amp;&amp; reco_track_endz[0] < 1036-2)" name = "Contained Track Cut" />
 <precut def = "(reco_shower_energy_max[0]>30 &amp;&amp; reco_shower_energy_max[0]<2000)" name = "Shower Energy"/>
 <precut def = "(sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2)))<20" name = "Distance from Track Start to Vertex"/>
 <precut def = "(reco_shower_conversion_distance[0] <150)" name = "Shower Conv Distance"/>
 <precut def = "reco_track_displacement[0]<300" name = "Track Disp"/>
 <precut def = "reco_shower_kalman_exists" name = "Finite kalman dE/dx"/> 
- <precut def = "reco_shower_kalman_median_dEdx_plane0[0] > 0" name = "Finite kalman dE/dx plane 0"/> 
+<!-- <precut def = "reco_shower_kalman_median_dEdx_plane0[0] > 0" name = "Finite kalman dE/dx plane 0"/> -->
  
 <!--<precut def = "reco_shower3d_exists" name = "Finite kalman dE/dx"/> 
 <precut def = "reco_shower3d_dEdx_plane0[0] > 0" name = "Finite kalman dE/dx plane 0"/> 
 -->
-<!--<precut def = "reco_track_spacepoint_principal0[0]==reco_track_spacepoint_principal0[0]" name="pron"/> -->
 <!--<precut def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) > 0.05 &amp;&amp;acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0]) < 3.13149-0.05 " name = "Back-to-Back cut"/>
 <precut def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] > 0.2 " name = "Stopping Track Cut" /> -->
 <!--<precut def = "(reco_shower_dEdx_amalgamated[0]< 20) " name = "Shower dedx low"/>-->
