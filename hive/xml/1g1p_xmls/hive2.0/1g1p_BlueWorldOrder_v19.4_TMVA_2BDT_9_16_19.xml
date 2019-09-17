@@ -123,12 +123,13 @@
     <file
         filename = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v19/bnb_overlay_run3_v19.4.root"
         foldername = "singlephoton/"
-        training_cut = "!(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>0)    &amp;&amp; sim_shower_overlay_fraction[0]<0.8 &amp;&amp; sim_track_overlay_fraction[0]<0.8"        
+        training_cut = "sim_shower_overlay_fraction[0]<0.8 &amp;&amp; sim_track_overlay_fraction[0]<0.8 &amp;&amp; Entry$%2==0"        
         training_fraction = "0.65"
         />
     <scan min = "0.5" max = "0.717002" steps="10"/>
 </mva>
 
+<!--
 <mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(25,0,1)">
     <method type = "TMVA" use = "yes">
         <param>  NTrees=500 	</param>			 
@@ -149,6 +150,7 @@
         />
     <scan min = "0.5" max = "0.759" steps="10"/>
 </mva>
+-->
 
 <!--
 
@@ -193,7 +195,10 @@
 <precut def = "(sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2)))<20" name = "Distance from Track Start to Vertex"/>
 <precut def = "(reco_shower_conversion_distance[0] <150)" name = "Shower Conv Distance"/>
 <precut def = "reco_track_displacement[0]<300" name = "Track Disp"/>
-<precut def = "reco_shower_kalman_exists" name = "Finite kalman dE/dx"/> 
+
+<precut def = "TMath::Finite(reco_shower_kalman_dEdx_allplane_median[0])" name = "Finite kalman dE/dx"/> 
+
+<!--<precut def = "reco_shower_kalman_exists" name = "Finite kalman dE/dx"/> -->
 <!-- <precut def = "reco_shower_kalman_median_dEdx_plane0[0] > 0" name = "Finite kalman dE/dx plane 0"/> -->
  
 <!--<precut def = "reco_shower3d_exists" name = "Finite kalman dE/dx"/> 
@@ -212,6 +217,7 @@
 <var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(45,0,10.0)" unit = "kalman dedx median plane 2 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_kalman_dEdx_plane1_median[0]" binning = "(45,0,10.0)" unit = "kalman dedx median plane 1 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_kalman_dEdx_plane0_median[0]" binning = "(45,0,10.0)" unit = "kalman dedx median plane 0 [mev/cm]" type = "d" logplot = "false" training =""/>
+<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(45,0,10.0)" unit = "kalman dedx median plane 0 [mev/cm]" type = "d" logplot = "false" training ="01"/>
 
 <var def = "reco_shower3d_dEdx_plane2[0]" binning = "(45,0,10.0)" unit = "Shower3D dedx plane 2 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower3d_dEdx_plane1[0]" binning = "(45,0,10.0)" unit = "Shower3D dedx plane 1 [mev/cm]" type = "d" logplot = "false" training =""/>
@@ -236,25 +242,25 @@
 <var def = "reco_shower_length[0]" binning = "(45,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(45,0 ,2000)" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="01"/>
 <var def = "reco_shower_opening_angle[0]" binning = "(45,0,1)" unit = "Reconstructed Shower OpAng [cm]" type = "d" logplot = "false"  training="01"/>
-<var def = "reco_shower_phi_yx[0]" binning = "(45,-3.14,3.14)" unit = "Reconstructed Shower  #phi_{yx} [rad]" type = "d" logplot = "false"  training="012"/>
-<var def = "reco_shower_theta_yz[0]" binning = "(45,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d" logplot = "false"  training="012"/>
+<var def = "reco_shower_phi_yx[0]" binning = "(45,-3.14,3.14)" unit = "Reconstructed Shower  #phi_{yx} [rad]" type = "d" logplot = "false"  training="01"/>
+<var def = "reco_shower_theta_yz[0]" binning = "(45,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_shower_nuscore[0]" binning = "(45, 0, 1)" unit = "Reconstructed Shower Associated Slice Neutrino Score" type = "d" logplot = "false"  training="01"/>
 <var def = "(reco_shower_trackscore[0])" binning = "(45,0,0.5)" unit = "Shower Score" type ="d" training ="01"/>
 <var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "(distance from shower start to nearest dead wire)" binning ="(45,0,3)" type="d" training="01"/>
 <var def = "reco_shower_num_daughters" binning = "(3,0,3)" unit = "Num Dau Shower" type="d" training=""/>
 
 <!--- SSS BDT variable --> 
-<var def = "log10(Min$(isolation_min_dist_trk_shr))" binning = "(45,-1,3)" unit = "Min Dist from track to shower hit log[cm]" type="d" logplot="false" training="2"/>
-<var def = "log10(Min$(isolation_min_dist_trk_unassoc))" binning = "(45,-1,3)" unit = "Min Dist from track to Unnass hit log[cm]" type="d" logplot="false" training="2"/>
-<var def = "Sum$(isolation_num_shr_hits_win_2cm_trk)" binning = "(45,0,40)" unit = "Num Shr hits in 2cm" type="d" logplot="false" training="2"/>
-<var def = "Sum$(isolation_num_unassoc_hits_win_2cm_trk)" binning = "(45,0,40)" unit = "Num Unnass hits in 2cm" type="d" logplot="false" training="2"/>
-<var def = "Sum$(isolation_num_unassoc_hits_win_10cm_trk)" binning = "(45,0,200)" unit = "Num Unnass hits in 10cm" type="d" logplot="false" training="2"/>
-<var def = "Min$(sss_candidate_impact_parameter)" binning="(45,0,30)" unit = "Min Second Shower candidate Impact Parameter [cm]" type ="d" training="2"/>
-<var def = "sss_num_candidates" binning="(45,0,15)" unit = "Second Shower Number of  candidate" type ="d" training="2"/>
-<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(45,0,1)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d" training="2"/>
-<var def = "log10(sss_num_unassociated_hits)" binning="(45,0,4)" unit = "Number of unassocaited hits in slice log10" type ="d" training="2"/>
-<var def = "log10(Min$(sss_candidate_min_dist))" binning="(45,-1,3)" unit = "Min Min dist" type = "d" training = "2"/>
-<var def = "log10(Sum$(sss_candidate_min_dist)/Length$(sss_candidate_min_dist))" binning="(45,-1,3)" unit = "Mean Min dist" type = "d" training = "2"/>
+<var def = "log10(Min$(isolation_min_dist_trk_shr))" binning = "(45,-1,3)" unit = "Min Dist from track to shower hit log[cm]" type="d" logplot="false" training=""/>
+<var def = "log10(Min$(isolation_min_dist_trk_unassoc))" binning = "(45,-1,3)" unit = "Min Dist from track to Unnass hit log[cm]" type="d" logplot="false" training=""/>
+<var def = "Sum$(isolation_num_shr_hits_win_2cm_trk)" binning = "(45,0,40)" unit = "Num Shr hits in 2cm" type="d" logplot="false" training=""/>
+<var def = "Sum$(isolation_num_unassoc_hits_win_2cm_trk)" binning = "(45,0,40)" unit = "Num Unnass hits in 2cm" type="d" logplot="false" training=""/>
+<var def = "Sum$(isolation_num_unassoc_hits_win_10cm_trk)" binning = "(45,0,200)" unit = "Num Unnass hits in 10cm" type="d" logplot="false" training=""/>
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(45,0,30)" unit = "Min Second Shower candidate Impact Parameter [cm]" type ="d" training=""/>
+<var def = "sss_num_candidates" binning="(45,0,15)" unit = "Second Shower Number of  candidate" type ="d" training=""/>
+<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(45,0,1)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d" training=""/>
+<var def = "log10(sss_num_unassociated_hits)" binning="(45,0,4)" unit = "Number of unassocaited hits in slice log10" type ="d" training=""/>
+<var def = "log10(Min$(sss_candidate_min_dist))" binning="(45,-1,3)" unit = "Min Min dist" type = "d" training = ""/>
+<var def = "log10(Sum$(sss_candidate_min_dist)/Length$(sss_candidate_min_dist))" binning="(45,-1,3)" unit = "Mean Min dist" type = "d" training = ""/>
 <var def = "sss_candidate_veto_score*(sss_num_candidates>0)" binning = "(45,0,1)" unit = "SSS v1 Candidate Score" type="d" training=""/>
 
 <!-- shower + track vars -->
@@ -263,15 +269,15 @@
 <var def = "log10(sqrt(pow(reco_track_startx[0]-reco_shower_startx[0],2)+pow(reco_track_starty[0]-reco_shower_starty[0],2)+pow(reco_track_startz[0]-reco_shower_startz[0],2)))" binning = "(45,-2,3)" unit = "Distance from Track Start to Shower Start Log10[cm]" type="d" training=""/>
 <var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(45,0.0, 1600)" unit = "Total Visible Energy [MeV]" type = "d" training="01" />
 <var def = "TMath::Min(sqrt(pow(reco_track_endx[0]-reco_shower_startx[0],2)+pow(reco_track_endy[0]-reco_shower_starty[0],2)+pow(reco_track_endz[0]-reco_shower_startz[0],2)), sqrt(pow(reco_track_startx[0]-reco_shower_startx[0],2)+pow(reco_track_starty[0]-reco_shower_starty[0],2)+pow(reco_track_startz[0]-reco_shower_startz[0],2)))" binning = "(45,0,100)" unit = "Min distance from Shower to track start or end  cm" type="d" training="01"/>
-<var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning = "(45,-1,1)" unit = "Cosine Angle Between Track and Shower" type ="d" training ="012"/>
+<var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning = "(45,-1,1)" unit = "Cosine Angle Between Track and Shower" type ="d" training ="01"/>
 <var def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning = "(45,-0.1,3.3)" unit = "Angle Between Track and Shower" type ="d" training =""/>
-<var def = "(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])" binning = "(45,-1,1)" unit = "Cosine Angle Between Track and Shower (implied)" type ="d" training ="012"/>
+<var def = "(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])" binning = "(45,-1,1)" unit = "Cosine Angle Between Track and Shower (implied)" type ="d" training ="01"/>
 
 <!-- track calo + geom -->
 <var def = "reco_track_displacement[0]" binning = "(45,0,500)" unit = "Track Displacement [cm]" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_track_phi_yx[0]" binning = "(45,-3.14,3.14)" unit = "Reconstructed Track Phi yx" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_track_theta_yz[0]" binning = "(45,-3.14,3.14)" unit = "Reconstructed Track Theta yz" type = "d" logplot = "false"  training="01"/>
-<var def = "log10(reco_track_spacepoint_max_dist[0])" binning = "(45,-2,2)" unit = "Reco Track Max Dist Spacepoint from Line" type = "d" training = "012"/>
+<var def = "log10(reco_track_spacepoint_max_dist[0])" binning = "(45,-2,2)" unit = "Reco Track Max Dist Spacepoint from Line" type = "d" training = "01"/>
 <var def = "(TMath::Min(TMath::Min(TMath::Min(fabs(reco_track_endy[0]+117), fabs(reco_track_endy[0]-117)) ,  TMath::Min(fabs(reco_track_endx[0]-0), fabs(reco_track_endx[0]-256))), TMath::Min(fabs(reco_track_endz[0]-0), fabs(reco_track_endz[0]-1036))))" binning = "(45,0,125)" unit = " Reconstructed Track End distance to wall [cm]" type = "d" logplot = "false"  training="01"/>
 <var def = "(TMath::Min(TMath::Min(TMath::Min(fabs(reco_track_starty[0]+117), fabs(reco_track_starty[0]-117)) ,  TMath::Min(fabs(reco_track_startx[0]-0), fabs(reco_track_startx[0]-256))), TMath::Min(fabs(reco_track_startz[0]-0), fabs(reco_track_startz[0]-1036))))" binning = "(45,0,125)" unit = " Reconstructed Track Start distance to wall [cm]" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(45,0,12)" unit = "Reco Track Truncated Mean dE/dx Best Plane [MeV/cm]" type = "d" logplot = "false"  training="01"/>
@@ -286,7 +292,7 @@
 
 <!-- Track PID -->
 <var def = "log(reco_track_pid_bragg_likelihood_mip_plane2[#LT#]/reco_track_pid_bragg_likelihood_p_plane2[#LT#])" binning = "(45, 0, 10)" unit = "Log Bragg Likelihood MIP/p Plane 2" type = "d" training = "01"/>
-<var def = "reco_track_pid_chi2_mu_plane2[#LT#] - reco_track_pid_chi2_p_plane2[#LT#]" binning = "(45, -20, 40)" unit = "#Chi^{2} #mu - p Plane 2" type = "d" training = "01"/>   
+<var def = "reco_track_pid_chi2_mu_plane2[#LT#] - reco_track_pid_chi2_p_plane2[#LT#]" binning = "(45, -100, 200)" unit = "#chi^{2} #mu - p Plane 2" type = "d" training = "01"/>   
 <var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(45, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" logplot = "false" training = ""/>
 <var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(45,-2,2)"  unit ="Log( Three Plane Track PID )" type = "d" logplot = "false" training="01"/>
 
@@ -296,11 +302,11 @@
 <var def = "reco_vertex_z" binning = "(45,-20,1100)" unit = "Reco Vertex Z [cm]" type="d" logplot="false" training=""/>
 
 <!-- Delta variables -->
-<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(45,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" logplot = "false" training = "012" /> 
-<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(45,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" logplot = "false" training = "012" /> 
-<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(45,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" logplot = "false" training = "012" /> 
-<var def = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0],2))" binning = "(45,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum [GeV]" type = "d" logplot = "false" training = "012"/>
-<var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(45,0.85,1.8)" unit = "Implied Invariant Mass of photon-proton pair [GeV]" type  = "d" training = "012"/>
+<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(45,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" logplot = "false" training = "01" /> 
+<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(45,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" logplot = "false" training = "01" /> 
+<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(45,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" logplot = "false" training = "01" /> 
+<var def = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0],2))" binning = "(45,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum [GeV]" type = "d" logplot = "false" training = "01"/>
+<var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(45,0.85,1.8)" unit = "Implied Invariant Mass of photon-proton pair [GeV]" type  = "d" training = "01"/>
 
 <!-- Mark is Bored on flight to Korea variables but he remembered to grab a local copy of all stage 0 vertexed files so is doing 14 hours of "feature development" wooo -->
 
