@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="stage1_2BDT_TMVA" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==0 &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.91,0.97,0.94)" />
+<topology tag="stage1_2BDT_TMVA_1g0p" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1 &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.91,0.97,0.94)" />
 
 <!-- ================================================== BDT FILES ==================================================== -->
 
@@ -182,8 +182,11 @@
 <precut def = "(reco_shower_energy_max[0]>30 &amp;&amp; reco_shower_energy_max[0]<2000)" name = "Shower Energy"/>
 
 <precut def = "TMath::Finite(reco_shower_kalman_dEdx_allplane_median[0])" name = "Finite kalman dE/dx"/> 
+<!--<precut def = "TMath::Finite(reco_shower_kalman_dEdx_plane2_median[0])" name = "Finite kalman plane 2dE/dx"/> -->
 
-<!--<precut def = "reco_shower_kalman_exists" name = "Finite kalman dE/dx"/> -->
+
+<precut def = "reco_shower_kalman_exists" name = "Finite kalman dE/dx"/>
+
 <!-- <precut def = "reco_shower_kalman_median_dEdx_plane0[0] > 0" name = "Finite kalman dE/dx plane 0"/> -->
  
 <!--<precut def = "reco_shower3d_exists" name = "Finite kalman dE/dx"/> 
