@@ -37,10 +37,13 @@ int plot_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
 
     testTree->SetBranchAddress("classID",&test_classID);
     trainTree->SetBranchAddress("classID",&train_classID);
-//    testTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&test_response);
- //   trainTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&train_response);
-    testTree->SetBranchAddress("BDT",&test_response);
-    trainTree->SetBranchAddress("BDT",&train_response);
+    testTree->SetBranchAddress((info.TMVAmethod.str).c_str(),&test_response);
+    trainTree->SetBranchAddress((info.TMVAmethod.str).c_str(),&train_response);
+ 
+    //testTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&test_response);
+    //trainTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&train_response);
+ //   testTree->SetBranchAddress("BDT",&test_response);
+   // trainTree->SetBranchAddress("BDT",&train_response);
 
     testTree->SetBranchAddress("weight",&test_wei);
     trainTree->SetBranchAddress("weight",&train_wei);
