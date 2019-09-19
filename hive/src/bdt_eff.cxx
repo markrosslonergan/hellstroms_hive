@@ -707,14 +707,14 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
 }
 
-    bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut){
+bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut){
     //OK this file will simply make an effciciey curves for all files in vec_files. 
 
     // we want to make this a function for Nu_E
     bdt_variable true_energy("mctruth_nu_E","(50, 0 , 2)","True Neutrino Energy [GeV]",false,"d");
 
     TCanvas * c = new TCanvas();
-	TPad *p1 = (TPad*)c->cd();
+	  TPad *p1 = (TPad*)c->cd();
     
     //might need log y?
     //p1->SetLogy();

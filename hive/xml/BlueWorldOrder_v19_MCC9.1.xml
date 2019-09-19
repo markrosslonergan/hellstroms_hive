@@ -74,7 +74,7 @@
 </bdtfile>
 
 <bdtfile filename = "bnbext_run1_v19.31.root" tag = "BNBext" hist_style = "hist" dirs = "singlephoton/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "2">
-    <definition>
+  <definition>
         <cut>Entry$%2==1</cut>
     </definition>
     <data type="OffBeam">
