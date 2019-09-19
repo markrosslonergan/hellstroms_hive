@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="stage1_2BDT_TMVA_1g0p" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1 &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.678936, 0.521572)" />
+<topology tag="stage1_2BDT_TMVA_1g0p" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1 &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.665, 0.54 )" />
 
 <!-- ================================================== BDT FILES ==================================================== -->
 
@@ -84,7 +84,7 @@
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
 <!-- ========================================= This is the classic 2BDT setup with a third for the SSS ================================ -->
 
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(25,0.15,0.85)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(25,0.28,0.85)">
     <method type = "TMVA" use = "yes">
         <param>  NTrees=1000 	</param>			 <!--2000-->
         <param>  MinNodESize=2.5% </param>				
@@ -102,7 +102,7 @@
         training_cut = "Entry$%2==0"       
         training_fraction = "0.7"
         />
-    <scan min = "0.65" max = "0.7" steps="10"/>
+    <scan min = "0.45" max = "0.9" steps="10"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(25,0.25,0.65)">
@@ -123,7 +123,7 @@
         training_cut = "sim_shower_overlay_fraction[0]<0.8"        
         training_fraction = "0.65"
         />
-    <scan min = "0.45" max = "0.55" steps="10"/>
+    <scan min = "0.45" max = "0.9" steps="10"/>
 </mva>
 
 <!--
