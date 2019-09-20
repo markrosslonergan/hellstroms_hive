@@ -723,7 +723,7 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut
     TLegend *l = new TLegend(0.13,0.69,0.89,0.89);
     l->SetLineColor(kWhite);
     l->SetLineWidth(2);
-    l->SetNColumns(3);
+    l->SetNColumns(2);
 
 
 
@@ -751,7 +751,8 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut
         h_true_nu_energy_cut->Divide(h_true_nu_energy);
         h_true_nu_energy_cut->SetLineWidth(2);
         h_true_nu_energy_cut->Draw("same lp");
-        h_true_nu_energy_cut->SetMaximum(0.5);
+        h_true_nu_energy_cut->SetMaximum(1);
+        h_true_nu_energy_cut->GetYaxis()->SetRangeUser(0, 0.4);
         //if log, minimum cant be 0, make it small
         h_true_nu_energy_cut->SetMinimum(0);
         h_true_nu_energy_cut->SetTitle("");
