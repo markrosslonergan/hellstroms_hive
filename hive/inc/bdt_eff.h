@@ -47,6 +47,8 @@ class bdt_efficiency{
         bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool,int);
 
         bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut);
+        // For NC pi0 filter stuff
+        bdt_efficiency(std::vector<bdt_file*> vec_files, std::vector<bdt_file*> filtered_files);
 
 
 };

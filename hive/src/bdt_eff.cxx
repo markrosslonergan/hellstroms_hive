@@ -720,10 +720,10 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut
     //p1->SetLogy();
 
 
-    TLegend *l = new TLegend(0.13,0.69,0.89,0.89);
+    TLegend *l = new TLegend(0.13,0.64,0.45,0.89);
     l->SetLineColor(kWhite);
     l->SetLineWidth(2);
-    l->SetNColumns(2);
+    l->SetNColumns(1);
 
 
 
@@ -752,7 +752,7 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut
         h_true_nu_energy_cut->SetLineWidth(2);
         h_true_nu_energy_cut->Draw("same lp");
         h_true_nu_energy_cut->SetMaximum(1);
-        h_true_nu_energy_cut->GetYaxis()->SetRangeUser(0, 0.4);
+        h_true_nu_energy_cut->GetYaxis()->SetRangeUser(0, 0.3);
         //if log, minimum cant be 0, make it small
         h_true_nu_energy_cut->SetMinimum(0);
         h_true_nu_energy_cut->SetTitle("");
@@ -761,6 +761,70 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut
 
     l->Draw();
     c->SaveAs("EFFICIENCY_test.pdf","pdf");
+
+
+}
+
+bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::vector<bdt_file*> filt_files){
+    // OK this file will simply make an efficiency curve for all files in vec_files. 
+
+    // we want to make this a function for Nu_E
+    std::cout << "[EFF] Starting filter efficiency function" << std::endl;
+    bdt_variable true_energy("mctruth_nu_E","(20, 0 , 2)","True Neutrino Energy [GeV]",false,"d");
+
+    TCanvas * c = new TCanvas();
+	  TPad *p1 = (TPad*)c->cd();
+    
+    //might need log y?
+    //p1->SetLogy();
+
+
+    TLegend *l = new TLegend(0.13,0.64,0.45,0.89);
+    l->SetLineColor(kWhite);
+    l->SetLineWidth(2);
+    l->SetNColumns(1);
+
+    if (vec_files.size() != filt_files.size() ) {
+        std::cout << "[EFF] WARNING: Uneven number of filtered and unfiltered files" << std::endl;
+    }
+
+    for(size_t f=0; f< vec_files.size(); f++){
+        bdt_file * unfiltered_file = vec_files[f];
+        bdt_file * filtered_file = filt_files[f];
+
+        //basically irrelavent now as its a ratio
+        //double conversion = unfiltered_file->scale_data*13.2e20/file->pot;
+
+        unfiltered_file->tvertex->SetEntryList(NULL);
+
+        //The "definition" cuts, i.e the denominator, and what's defined in the XML
+        std::string unfiltered_cut = unfiltered_file->flow.definition_cuts;
+        std::string filtered_cut = filtered_file->flow.definition_cuts;
+        //double n_starting_events = unfiltered_file->GetEntries(unfiltered_cut)*conversion;
+
+        //std::cout<<"unfiltered_file "<<unfiltered_file->tag<<" has  "<<n_starting_events<<" events when scaled to "<<13.2e20<<std::endl;
+
+        c->cd();
+    	  TH1* h_true_nu_energy_unfiltered = (TH1*)unfiltered_file->getTH1(true_energy, unfiltered_cut , "true_energy_unfilt_"+unfiltered_file->tag, 13.2e20);
+        c->cd();
+    	  TH1* h_true_nu_energy_filtered = (TH1*)filtered_file->getTH1(true_energy, filtered_cut, "true_energy_filt_"+filtered_file->tag, 13.2e20);
+        c->cd();
+
+        h_true_nu_energy_filtered->Divide(h_true_nu_energy_unfiltered);
+        h_true_nu_energy_filtered->SetLineWidth(2);
+        h_true_nu_energy_filtered->Draw("same lp");
+        h_true_nu_energy_filtered->SetMaximum(1);
+        h_true_nu_energy_filtered->GetYaxis()->SetRangeUser(0, 0.3);
+        //if log, minimum cant be 0, make it small
+        h_true_nu_energy_filtered->SetMinimum(0);
+        h_true_nu_energy_filtered->SetTitle("");
+	      l->AddEntry(h_true_nu_energy_filtered,unfiltered_file->plot_name.c_str() ,"lp");
+    }
+
+    c->cd();
+    l->Draw();
+    c->cd();
+    c->SaveAs("EFFICIENCY2_test.pdf","pdf");
 
 
 }

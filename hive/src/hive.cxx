@@ -30,6 +30,7 @@ int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
     std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v17/";
+    std::string mydir = "/uboone/app/users/amogan/wes_ncpi0_filter/workdir/";
 
     std::string mode_option = "enter_a_mode_please"; 
     std::string xml = "default.xml";
@@ -596,13 +597,132 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     if(which_stage==-1)which_stage=0;
 
+    bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage);
+    //normally stops here
+
+    //Ok, this runs now for a full cut
+    // Cut for NC pi0 filter
+    //std::string full_cut = "reco_asso_showers==2 && reco_asso_tracks==1 && reco_vertex_size>0 && (reco_vertex_x > 5.0 && reco_vertex_x < 251 && reco_vertex_y > -112 && reco_vertex_y < 112 && reco_vertex_z > 5 && reco_vertex_z < 1031) && reco_shower_conversion_distance[0]>1 && reco_shower_conversion_distance[1]>1";
+    //bdt_efficiency(bdt_files,full_cut);
+
+
+}
+
+// Last-minute garbage function I added for NC pi0 filter studies. Ignore
+else if(mode_option == "eff2"){
+
+    // Fiducial volume definition
+    //std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
+    std::string ZMIN = "0.0"; std::string ZMAX = "1036.8"; 	std::string XMIN = "0.0"; std::string XMAX = "256.35"; std::string YMIN = "-116.5"; std::string YMAX = "116.5";
+    std::string pmass = "0.938272";
+    std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+20 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
+    //std::string fid_cut = "(mctruth_nu_vertex_x >"+XMIN+"+10 && mctruth_nu_vertex_x < "+XMAX+"-10 && mctruth_nu_vertex_y >"+ YMIN+"+20 && mctruth_nu_vertex_y <"+ YMAX+"-20 && mctruth_nu_vertex_z >"+ ZMIN +" +10 && mctruth_nu_vertex_z < "+ZMAX+"-10)";
+
+    // Signal NC pi0
+    std::vector<std::string> v_denom_signal_ncpi0 = {"mctruth_cc_or_nc == 1",
+                                                     "mctruth_num_exiting_pi0==1", 
+                                                     "mctruth_pi0_leading_photon_energy > 0.02", 
+                                                     "mctruth_pi0_subleading_photon_energy > 0.02", 
+                                                     "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==1",
+                                                     fid_cut
+    };
+    std::string signal_ncpi0_def = v_denom_signal_ncpi0[0];
+    for(int i=1; i< v_denom_signal_ncpi0.size();i++){
+        signal_ncpi0_def += "&&" + v_denom_signal_ncpi0[i];
+    }
+
+    // Other NC pi0
+    std::vector<std::string> v_denom_other_ncpi0 = {"mctruth_cc_or_nc == 1",
+                                                    "mctruth_num_exiting_pi0==1", 
+                                                    "(mctruth_pi0_leading_photon_energy < 0.02 || mctruth_pi0_subleading_photon_energy < 0.02 || Sum$(mctruth_exiting_proton_energy-0.93827>0.04)!=1 || !("+fid_cut+") )"
+    };
+    std::string other_ncpi0_def = v_denom_other_ncpi0[0];
+    for(int i=1; i< v_denom_other_ncpi0.size();i++){
+        other_ncpi0_def += "&&" + v_denom_other_ncpi0[i];
+    }
+
+    // Intrinsic nue's
+    std::vector<std::string> v_denom_nue_intrinsic = {"mctruth_cc_or_nc == 0",
+                                                      "abs(mctruth_nu_pdg)==12", 
+                                                      "mctruth_nu_E > 0.05",
+                                                      "mctruth_nu_E < 1.5"
+    };
+    std::string nue_intrinsic_def = v_denom_nue_intrinsic[0];
+    for(int i=1; i< v_denom_nue_intrinsic.size();i++){
+        nue_intrinsic_def += "&&" + v_denom_nue_intrinsic[i];
+    }
+
+    // Deltarad 1g1p
+    std::vector<std::string> v_denom_deltarad_1g1p = {"mctruth_cc_or_nc == 1", 
+                                                      "mctruth_is_delta_radiative==1",
+                                                      "mctruth_num_exiting_pi0==0",
+                                                      "mctruth_num_exiting_photons==1",
+                                                      "mctruth_exiting_photon_energy > 0.02", 
+                                                      "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==1",
+                                                      fid_cut
+    };
+    std::string deltarad_1g1p_def = v_denom_deltarad_1g1p[0];
+    for(int i=1; i< v_denom_deltarad_1g1p.size();i++){
+        deltarad_1g1p_def += "&&" + v_denom_deltarad_1g1p[i];
+    }
+
+    // Deltarad 1g0p
+    std::vector<std::string> v_denom_deltarad_1g0p = {"mctruth_cc_or_nc == 1", 
+                                                      "mctruth_is_delta_radiative==1",
+                                                      "mctruth_num_exiting_pi0==0",
+                                                      "mctruth_exiting_photon_energy > 0.02", 
+                                                      "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==0",
+                                                      fid_cut
+    };
+    std::string deltarad_1g0p_def = v_denom_deltarad_1g0p[0];
+    for(int i=1; i< v_denom_deltarad_1g0p.size();i++){
+        deltarad_1g0p_def += "&&" + v_denom_deltarad_1g0p[i];
+    }
+
+    std::string topological_cuts = "(reco_vertex_size>0 && reco_asso_showers == 2 && reco_asso_tracks==1)";
+
+    //***************************************************************************************************/
+    //***********	The bdt_flows define the "flow" of the analysis, i.e what cuts at what stage  *******/
+    //***************************************************************************************************/
+    std::cout<<"[EFF] Defining all bdt_flows, old-school style!"<<std::endl;
+    bdt_flow signal_flow(topological_cuts, 	signal_ncpi0_def,	vec_precuts,	postcuts,	bdt_infos[0],	bdt_infos[1]);
+    bdt_flow signal_other_flow(topological_cuts, other_ncpi0_def, vec_precuts, postcuts, bdt_infos[0], bdt_infos[1]);
+    bdt_flow nue_bkg_flow(topological_cuts,	nue_intrinsic_def,	vec_precuts,	postcuts,	bdt_infos[0],	bdt_infos[1]);
+    bdt_flow deltarad_1g1p_flow(topological_cuts,	deltarad_1g1p_def, vec_precuts,	postcuts,	bdt_infos[0],	bdt_infos[1]);
+    bdt_flow deltarad_1g0p_flow(topological_cuts,	deltarad_1g0p_def, vec_precuts,	postcuts,	bdt_infos[0],	bdt_infos[1]);
+
+    bdt_file *ncpi0 = new bdt_file(mydir, "filtered_ncpi0_overlay_run1.root", "NCPi0Overlay", "hist","singlephotonana/", kRed-7, signal_flow);
+    bdt_file *ncpi0_other = new bdt_file(mydir, "filtered_ncpi0_overlay_run1.root", "NCPi0Other", "hist","singlephotonana/", kRed-10, signal_other_flow);
+    bdt_file *nue = new bdt_file(mydir,"filtered_nueintrinsic_overlay_run1.root","IntrinsicNuE","hist","singlephotonana/", kGreen+1, nue_bkg_flow);
+    bdt_file *deltarad_1g1p = new bdt_file(mydir,"filtered_ncdeltarad_overlay_run1.root","NCDeltaRad","hist","singlephotonana/", kAzure+1, deltarad_1g1p_flow);
+    bdt_file *deltarad_1g0p = new bdt_file(mydir,"filtered_ncdeltarad_overlay_run1.root","NCDeltaRad","hist","singlephotonana/", kAzure+4, deltarad_1g0p_flow);
+
+    ncpi0->calcPOT();
+    ncpi0_other->calcPOT();
+    nue->calcPOT();
+    deltarad_1g1p->calcPOT();
+    deltarad_1g0p->calcPOT();
+
+    std::cout << "[EFF] Done with old-school BDT files" << std::endl;
+
+    std::vector<bdt_file*> filtered_files = {ncpi0, ncpi0_other, nue, deltarad_1g1p, deltarad_1g0p};
+
+    if(which_file == -1)which_file = 0;
+
+    //which_file = 7;//checking ext
+    std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
+    std::vector<std::string> v_topo = {TMVAmethods[0].topological_definition};
+
+    if(which_stage==-1)which_stage=0;
+
     //bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage);
     //normally stops here
 
     //Ok, this runs now for a full cut
     // Cut for NC pi0 filter
-    std::string full_cut = "reco_asso_showers==2 && reco_asso_tracks==1 && reco_vertex_size>0 && (reco_vertex_x > 5.0 && reco_vertex_x < 251 && reco_vertex_y > -112 && reco_vertex_y < 112 && reco_vertex_z > 5 && reco_vertex_z < 1031) && reco_shower_conversion_distance[0]>1 && reco_shower_conversion_distance[1]>1";
-    bdt_efficiency(bdt_files,full_cut);
+    //std::string full_cut = "reco_asso_showers==2 && reco_asso_tracks==1 && reco_vertex_size>0 && (reco_vertex_x > 5.0 && reco_vertex_x < 251 && reco_vertex_y > -112 && reco_vertex_y < 112 && reco_vertex_z > 5 && reco_vertex_z < 1031) && reco_shower_conversion_distance[0]>1 && reco_shower_conversion_distance[1]>1";
+    //bdt_efficiency(bdt_files,full_cut);
+    bdt_efficiency(bdt_files, filtered_files);
 
 
 }else if(mode_option == "sbnfit"){
