@@ -720,23 +720,22 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut
     //p1->SetLogy();
 
 
-	TLegend *l = new TLegend(0.13,0.79,0.89,0.89);
-	l->SetLineColor(kWhite);
-	l->SetLineWidth(0);
-//	l->SetNColumns(2);
+    TLegend *l = new TLegend(0.13,0.69,0.89,0.89);
+    l->SetLineColor(kWhite);
+    l->SetLineWidth(2);
+    l->SetNColumns(3);
 
 
 
     for(size_t f=0; f< vec_files.size(); f++){
         bdt_file * file = vec_files[f];
 
-
         //basically irrelavent now as its a ratio
         double conversion = file->scale_data*13.2e20/file->pot;
 
         file->tvertex->SetEntryList(NULL);
 
-        //The "definition" cuts, i.e the denominator, and wahts definied in the XML
+        //The "definition" cuts, i.e the denominator, and what's defined in the XML
         std::string defin_cut = file->flow.definition_cuts;
         double n_starting_events = file->GetEntries(defin_cut)*conversion;
 
@@ -744,18 +743,19 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut
       
 
         c->cd();
-    	TH1* h_true_nu_energy = (TH1*)file->getTH1(true_energy, defin_cut , "true_energy_num_"+file->tag, 13.2e20);
+    	  TH1* h_true_nu_energy = (TH1*)file->getTH1(true_energy, defin_cut , "true_energy_num_"+file->tag, 13.2e20);
         c->cd();
-    	TH1* h_true_nu_energy_cut = (TH1*)file->getTH1(true_energy, defin_cut+"&&"+cut , "true_energy_cut_"+file->tag, 13.2e20);
+    	  TH1* h_true_nu_energy_cut = (TH1*)file->getTH1(true_energy, defin_cut+"&&"+cut , "true_energy_cut_"+file->tag, 13.2e20);
         c->cd();
 
         h_true_nu_energy_cut->Divide(h_true_nu_energy);
+        h_true_nu_energy_cut->SetLineWidth(2);
         h_true_nu_energy_cut->Draw("same lp");
-        h_true_nu_energy_cut->SetMaximum(1);
+        h_true_nu_energy_cut->SetMaximum(0.5);
         //if log, minimum cant be 0, make it small
         h_true_nu_energy_cut->SetMinimum(0);
         h_true_nu_energy_cut->SetTitle("");
-	    l->AddEntry(h_true_nu_energy_cut,file->plot_name.c_str() ,"lp");
+	      l->AddEntry(h_true_nu_energy_cut,file->plot_name.c_str() ,"lp");
     }
 
     l->Draw();
