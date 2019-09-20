@@ -123,7 +123,7 @@
     <file
         filename = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v19/bnb_overlay_run3_v19.4.root"
         foldername = "singlephoton/"
-        training_cut = "!(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>0) &amp&amp; sim_shower_overlay_fraction[0]<0.8 &amp;&amp; sim_track_overlay_fraction[0]<0.8"        
+        training_cut = "!(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>0) &amp;&amp; sim_shower_overlay_fraction[0]<0.8 &amp;&amp; sim_track_overlay_fraction[0]<0.8"        
         training_fraction = "0.65"
         />
     <scan min = "0.575" max = "0.625" steps="10"/>
