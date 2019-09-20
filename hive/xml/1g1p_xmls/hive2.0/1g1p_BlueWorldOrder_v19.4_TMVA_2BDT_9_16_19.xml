@@ -217,7 +217,7 @@
 <var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(45,0,10.0)" unit = "kalman dedx median plane 2 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_kalman_dEdx_plane1_median[0]" binning = "(45,0,10.0)" unit = "kalman dedx median plane 1 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_kalman_dEdx_plane0_median[0]" binning = "(45,0,10.0)" unit = "kalman dedx median plane 0 [mev/cm]" type = "d" logplot = "false" training =""/>
-<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(45,0,10.0)" unit = "kalman dedx median plane 0 [mev/cm]" type = "d" logplot = "false" training ="01"/>
+<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(45,0,10.0)" unit = "kalman dedx median all plane [mev/cm]" type = "d" logplot = "false" training ="01"/>
 
 <var def = "reco_shower3d_dEdx_plane2[0]" binning = "(45,0,10.0)" unit = "Shower3D dedx plane 2 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower3d_dEdx_plane1[0]" binning = "(45,0,10.0)" unit = "Shower3D dedx plane 1 [mev/cm]" type = "d" logplot = "false" training =""/>
@@ -291,8 +291,8 @@
 <var def = "reco_track_num_daughters" binning = "(3,0,3)" unit = "Num Daughters from Track" type="d" training=""/>
 
 <!-- Track PID -->
-<var def = "log(reco_track_pid_bragg_likelihood_mip_plane2[#LT#]/reco_track_pid_bragg_likelihood_p_plane2[#LT#])" binning = "(45, 0, 10)" unit = "Log Bragg Likelihood MIP/p Plane 2" type = "d" training = "01"/>
-<var def = "reco_track_pid_chi2_mu_plane2[#LT#] - reco_track_pid_chi2_p_plane2[#LT#]" binning = "(45, -100, 200)" unit = "#chi^{2} #mu - p Plane 2" type = "d" training = "01"/>   
+<var def = "log(reco_track_pid_bragg_likelihood_mip_plane2[#LT#]/reco_track_pid_bragg_likelihood_p_plane2[#LT#])" binning = "(45, -5, 7)" unit = "Log Bragg Likelihood MIP/p Plane 2" type = "d" training = "01"/>
+<var def = "reco_track_pid_chi2_mu_plane2[#LT#] - reco_track_pid_chi2_p_plane2[#LT#]" binning = "(45, -400, 75)" unit = "#chi^{2}_{#mu} - #chi^{2}_{p} Plane 2" type = "d" training = "01"/>   
 <var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(45, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" logplot = "false" training = ""/>
 <var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(45,-2,2)"  unit ="Log( Three Plane Track PID )" type = "d" logplot = "false" training="01"/>
 
