@@ -249,9 +249,8 @@ int main (int argc, char *argv[]){
         bdt_files.back()->calcPOT();
     }
 
-    //BAD practice! 
-    //signal = tagToFileMap["NCPi0"];
-    signal = tagToFileMap["NCDeltaRadOverlay"];
+    //The "signal" is whichever signal BDT you define first.
+    signal = signal_bdt_files[0];
 
 
     std::vector<bdt_file*> stack_bdt_files = signal_bdt_files;
