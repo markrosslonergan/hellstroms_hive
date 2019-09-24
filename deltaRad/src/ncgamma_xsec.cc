@@ -11,11 +11,14 @@ void make_2dHisto() {
 
     // Get signal file and TTree
     TString dir = "/pnfs/uboone/persistent/users/ksutton/ncgamma_genie/";
-    TFile *fin = new TFile(dir+"gntp.nu_coh_1GeV.gst.root", "READ");
+  //  TFile *fin = new TFile(dir+"gntp.nu_coh_1GeV.gst.root", "READ");
+    TFile *fin = new TFile(dir+"gntp.nu_coh_C12_1GeV.gst.root", "READ");
     TTree *t = (TTree*)fin->Get("gst");
 
     TFile *fxsec = new TFile(dir+"gxsec.root", "READ");
-    TGraph *gxsec = (TGraph*)fxsec->Get("nu_mu_Ar40/coh_nc"); //need to select correct target and nu/nubar get the coh nc component
+    TGraph *gxsec = (TGraph*)fxsec->Get("nu_mu_C12/coh_nc"); //need to select correct target and nu/nubar get the coh nc component
+//  TGraph *gxsec = (TGraph*)fxsec->Get("nu_mu_Ar40/coh_nc"); //need to select correct target and nu/nubar get the coh nc component
+
 
     // Declare necessary tree variables and set branch address
     double pxf[2] = {}; //vector of momenta for final state particles
@@ -46,11 +49,21 @@ void make_2dHisto() {
 
     // Define output file and histograms
     TFile *fout = new TFile("ncgamma_xsec_out.root", "RECREATE");
+    //1D
     TH1D *h_Eg = new TH1D("h_Eg", "h_Eg", 100, 0, 1);
-    TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14/2);
+    TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14);
+    // TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14/2);
     TH1D *h_phig = new TH1D("h_phig", "h_phig", 100, -3.14, 3.14);
     TH1D *h_thetal = new TH1D("h_thetal", "h_thetal", 100, 0, 3.14/2);
     TGraph * xsec_copy = (TGraph*)gxsec->Clone();
+    //2D
+    TH2D *h_Egthetag = new TH2D("h_Egthetag", "h_Egthetag", 100, 0, 1, 100,  0, 3.14/2);
+    TH2D *h_Egthetal = new TH2D("h_Egthetal", "h_Egthetal", 100, 0, 1, 100,  0, 3.14/2);
+    TH2D *h_Egphig = new TH2D("h_Egphig", "h_Egphig", 100, 0, 1, 100,  -3.14, 3.14);
+    TH2D *h_thetagthetal = new TH2D("h_thetagthetal", "h_thetagthetal", 100, 0, 3.14/2, 100,  0, 3.14/2);
+    TH2D *h_thetagphig = new TH2D("h_thetagphig", "h_thetagphig", 100, 0, 3.14/2, 100,  -3.14, 3.14);
+    TH2D *h_phigthetal = new TH2D("h_phigthetal", "h_phigthetal", 100, -3.14, 3.14, 100,  0, 3.14/2);
+
 
     /////////////////////////////////////////////////////////
     ////////////// HISTO FILL LOOP /////////////////////////
@@ -107,8 +120,18 @@ void make_2dHisto() {
         h_phig->Fill(phi_g);
         h_thetal->Fill(theta_l);
 
+        h_Egthetag->Fill(Eg, theta_g);
+        h_Egthetal->Fill(Eg, theta_l);
+        h_Egphig->Fill(Eg, phi_g);
+        h_thetagthetal->Fill(theta_g, theta_l);
+        h_phigthetal->Fill(phi_g, theta_l);
+        h_thetagphig->Fill(theta_g,phi_g);
+
+
     }
 
+
+    //1D
     //area normalize the histograms
     double norm = gxsec->Eval(this_Ev) * 1e-38; //read in total xsec for the energy
     std::cout<<"The total xsec for Ev= "<<this_Ev<<" is "<<norm<<std::endl;
@@ -145,9 +168,9 @@ void make_2dHisto() {
 
     //y axis labels
     h_Eg->GetYaxis()->SetTitle("#frac{d#sigma}{dE_{#gamma}} [cm^{2}GeV^{-1}]");
-    h_thetag->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{#gamma}} [cm^{2}GeV^{-1}]");
-    h_phig->GetYaxis()->SetTitle("#frac{d#sigma}{d#phi_{#gamma}} [cm^{2}GeV^{-1}]");
-    h_thetal->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{l}} [cm^{2}GeV^{-1}]");
+    h_thetag->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{#gamma}} [cm^{2}rad^{-1}]");
+    h_phig->GetYaxis()->SetTitle("#frac{d#sigma}{d#phi_{#gamma}} [cm^{2}rad^{-1}]");
+    h_thetal->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{l}} [cm^{2}rad^{-1}]");
 
     /*  h_Eg->GetYaxis()-> SetTitleSize(0.04);
         h_thetag->GetYaxis()-> SetTitleSize(0.04);
@@ -156,16 +179,51 @@ void make_2dHisto() {
         */
 
     //add title with neutrino energy and target
-    std::string title = "E_{#nu}= "+ to_string_prec(this_Ev, 1) + " GeV, ^{40}Ar";
+    std::string title = "E_{#nu}= "+ to_string_prec(this_Ev, 1) + " GeV, ^{12}C";
+    // std::string title = "E_{#nu}= "+ to_string_prec(this_Ev, 1) + " GeV, ^{40}Ar";
+
 
     h_Eg->SetTitle(title.c_str());
     h_thetag->SetTitle(title.c_str());
     h_phig->SetTitle(title.c_str());
     h_thetal->SetTitle(title.c_str());
 
+    //2D
+    h_Egthetag->SetOption("colz");
+    h_Egthetal->SetOption("colz");
+    h_Egphig->SetOption("colz");
+    h_thetagthetal->SetOption("colz");
+    h_thetagphig ->SetOption("colz");
+    h_phigthetal->SetOption("colz");
+
+
+    h_Egthetag->GetXaxis()->SetTitle("E_{#gamma} [GeV]");
+    h_Egthetal->GetXaxis()->SetTitle("E_{#gamma} [GeV]");
+    h_Egphig->GetXaxis()->SetTitle("E_{#gamma} [GeV]");
+    h_thetagthetal->GetXaxis()->SetTitle("#theta_{#gamma}");
+    h_thetagphig->GetXaxis()->SetTitle("#theta_{#gamma}");  
+    h_phigthetal->GetXaxis()->SetTitle("#phi_{#gamma} [GeV]");
+
+    h_Egthetag->GetYaxis()->SetTitle("#theta_{#gamma}");
+    h_Egphig->GetYaxis()->SetTitle("#phi_{#gamma}");
+    h_thetagphig->GetYaxis()->SetTitle("#phi_{#gamma}");
+    h_phigthetal->GetYaxis()->SetTitle("#theta_{l}");
+    h_thetagthetal->GetYaxis()->SetTitle("#theta_{l}");
+    h_Egthetal->GetYaxis()->SetTitle("#theta_{l}");
+
+
+
+
+    //Tgraph
     xsec_copy->GetXaxis()->SetRangeUser(0, 1.6);
     xsec_copy->GetYaxis()->SetRangeUser(0, 0.01);
+   
+ //   for (int i=0;i<xsec_copy->GetN();i++) xsec_copy->GetY()[i] *= 1e3;
+   //convert to e-14 to match eduardo
+
     xsec_copy->Write("xsec");
+
+
     //close files
     fxsec -> Close();
     fin->Close();
