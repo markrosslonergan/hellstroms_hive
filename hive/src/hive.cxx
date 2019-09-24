@@ -249,9 +249,8 @@ int main (int argc, char *argv[]){
         bdt_files.back()->calcPOT();
     }
 
-    //BAD practice! 
-    //signal = tagToFileMap["NCPi0"];
-    signal = tagToFileMap["NCDeltaRadOverlay"];
+    //The "signal" is whichever signal BDT you define first.
+    signal = signal_bdt_files[0];
 
 
     std::vector<bdt_file*> stack_bdt_files = signal_bdt_files;
@@ -599,7 +598,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     if(which_stage==-1)which_stage=0;
 
-    bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage);
+    bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag);
     //normally stops here
 
     //Ok, this runs now for a full cut
