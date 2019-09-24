@@ -73,6 +73,7 @@ class bdt_datamc{
     int SetSpectator();
 
     int printPassingDataEvents(std::string outfilename, int stage, double c1, double c2);
+    int printPassingDataEvents(std::string outfilename, int stage, std::vector<double> cuts);
  
 
 };

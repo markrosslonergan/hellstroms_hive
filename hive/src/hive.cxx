@@ -428,6 +428,8 @@ int main (int argc, char *argv[]){
                 bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);                
 
+                datamc.printPassingDataEvents("tmp", 3, fbdtcuts);
+                
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};

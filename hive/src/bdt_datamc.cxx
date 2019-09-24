@@ -40,6 +40,41 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
     return this->plotStacks(ftest, dvar,c1,c2,whichbdt);
 }
 
+int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, std::vector<double> cuts){
+
+    //data_file->calcCosmicBDTEntryList(c1, c2);
+    //data_file->calcBNBBDTEntryList(c1, c2);
+    //data_file->setStageEntryList(3);
+
+    //   std::string fake = "fake_bnbbdt_list_"+std::to_string(c1)+"_"+std::to_string(c2)+"_" +data_file->tag;
+
+    std::string fake = "";
+    data_file->tvertex->Draw((">>"+fake).c_str(), data_file->getStageCuts(stage,cuts).c_str() , "entrylist");
+    TEntryList * fake_list = (TEntryList*)gDirectory->Get(fake.c_str());
+
+
+    int n_run_number = 0;
+    int n_subrun_number = 0;
+    int n_event_number = 0;
+    double n_vertex_z =0;
+
+    data_file->tvertex->SetBranchAddress("run_number",    &n_run_number);
+    data_file->tvertex->SetBranchAddress("subrun_number", &n_subrun_number);
+    data_file->tvertex->SetBranchAddress("event_number",  &n_event_number);
+    data_file->tvertex->SetBranchAddress("reco_vertex_z", &n_vertex_z);
+
+    std::cout<<"Starting printPassingDataEvents() "<<std::endl;
+
+    for(int i=0;i < fake_list->GetN(); i++ ){
+        data_file->tvertex->GetEntry( fake_list->GetEntry(i));
+        std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<" "<<n_vertex_z<<std::endl;
+    }
+    std::cout<<"End printPassingDataEvents() "<<std::endl;
+
+
+    return 0;
+}
+
 
 int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, double c1, double c2){
 
@@ -200,7 +235,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
             //if(s==3){
             //    max_modifier=4.3;
-           // }
+            // }
 
             if (s==3){
                 max_modifier = 3;
@@ -370,7 +405,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             ratunit->SetFillColor(kGray+1);
             ratunit->SetMarkerStyle(0);
             ratunit->SetMarkerSize(0);
-         //   ratunit->SetFillStyle(3001);
+            //   ratunit->SetFillStyle(3001);
             ratunit->SetFillStyle(3354);
             //gStyle->SetHatchesLineWidth(1);
             //gStyle->SetHatchesSpacing(1);
@@ -455,7 +490,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::string combined = mean + "     " +ks;
             //std::string mean = "Ratio: Normalized" ;
             TLatex *t = new TLatex(0.11,0.41,combined.c_str());
-          //   TLatex *t = new TLatex(0.11,0.41,ks.c_str());
+            //   TLatex *t = new TLatex(0.11,0.41,ks.c_str());
             t->SetNDC();
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
@@ -727,7 +762,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             ratunit->SetFillColor(kGray+1);
             ratunit->SetMarkerStyle(0);
             ratunit->SetMarkerSize(0);
-        //    ratunit->SetFillStyle(3001);
+            //    ratunit->SetFillStyle(3001);
             ratunit->SetFillStyle(3354);
             //gStyle->SetHatchesLineWidth(1);
             //gStyle->SetHatchesSpacing(1);
@@ -1037,13 +1072,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pottex.DrawLatex(.7,.96, pot_draw.c_str());
 
             TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
-       
+
             pre->Draw();
 
-           // TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
-           // pre->Draw();
+            // TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
+            // pre->Draw();
 
-           //cobs->cd(k+1);	
+            //cobs->cd(k+1);	
             cobs->cd();
             TPad *pad0bot = new TPad(("padbot_"+stage_name.at(k)).c_str(),("padbot_"+stage_name.at(k)).c_str(), 0, 0.05, 1, 0.35);
             pad0bot->SetTopMargin(0);
@@ -1051,8 +1086,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pad0bot->SetGridx(); // vertical grid
             pad0bot->Draw();
             pad0bot->cd();       // pad0bot becomes the current pad
-//        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
-    
+            //        TText *pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation - In Progress");
+
 
             vec_th1s.at(k)->Rebin(data_rebin);
             TH1* rat_denom = (TH1*)vec_th1s.at(k)->Clone(("ratio_denom_"+stage_name.at(k)).c_str());
