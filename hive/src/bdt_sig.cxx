@@ -108,7 +108,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
     std::cout<<"We are going to scan between these values "<<std::endl;
     for(int i=0; i< bdt_infos.size();i++){
-        std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<std::endl;
+        std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<" (n_steps:  "<<n_steps[i]<<")"<<std::endl;
     }
 
     //Calculate total signal for efficiency 
@@ -137,7 +137,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
             for(int j=i+1; j< bdt_infos.size(); j++){
                 if(i==j)continue;
 
-                for(int jp =0; jp < n_steps[i]; jp++){
+                for(int jp =0; jp < n_steps[j]; jp++){
 
                     cur_pt[j] = minvals[j] + jp*steps[j];
 
@@ -145,19 +145,17 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
                     double background = 0;
                     std::vector<double> bkg;	
 
-                    for(size_t i = 0; i < sig_files.size(); ++i) {
-                        double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
-                        std::string bnbcut = sig_files.at(i)->getStageCuts(1+bdt_infos.size(), cur_pt); 
-                        signal += sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
+                    for(size_t is = 0; is < sig_files.size(); ++is) {
+                        double pot_scale = (plot_pot/sig_files.at(is)->pot )*sig_files.at(is)->scale_data;
+                        std::string bnbcut = sig_files.at(is)->getStageCuts(1+bdt_infos.size(), cur_pt); 
+                        signal += sig_files.at(is)->GetEntries(bnbcut.c_str())*pot_scale;
 
                     }
 
-                    for(size_t i = 0; i < bkg_files.size(); ++i) {
-                        double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
-
-                        std::string bnbcut = bkg_files.at(i)->getStageCuts(1+bdt_infos.size(),cur_pt); 
-                        bkg.push_back(bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
-
+                    for(size_t ib = 0; ib < bkg_files.size(); ++ib) {
+                        double pot_scale = (plot_pot/bkg_files.at(ib)->pot)*bkg_files.at(ib)->scale_data;
+                        std::string bnbcut = bkg_files.at(ib)->getStageCuts(1+bdt_infos.size(),cur_pt); 
+                        bkg.push_back(bkg_files.at(ib)->GetEntries(bnbcut.c_str())*pot_scale);			
                         background += bkg.back();
                     }
 
@@ -319,7 +317,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
       //  std::string s_impact = "((sss_num_candidates==0) ||  Min$(sss_candidate_impact_parameter)>"+std::to_string(impact) +") ";
 
         //Yarp
-       // std::string s_impact = "1";
+        //std::string s_impact = "1";
         std::string s_impact = "((sss_num_candidates==0)|| Sum$(sss_candidate_impact_parameter<"+std::to_string(impact)+ "&& sss_candidate_min_dist<70.0)==0 )";
         //std::string s_impact = "((sss_num_candidates==0)|| Min$(sss_candidate_impact_parameter/sss_candidate_min_dist)<"+std::to_string(impact)+ ")";
 
