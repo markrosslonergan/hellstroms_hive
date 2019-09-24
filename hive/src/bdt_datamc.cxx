@@ -57,17 +57,23 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, std::
     int n_subrun_number = 0;
     int n_event_number = 0;
     double n_vertex_z =0;
+    double n_vertex_y =0;
+    double n_vertex_x =0;
+
 
     data_file->tvertex->SetBranchAddress("run_number",    &n_run_number);
     data_file->tvertex->SetBranchAddress("subrun_number", &n_subrun_number);
     data_file->tvertex->SetBranchAddress("event_number",  &n_event_number);
     data_file->tvertex->SetBranchAddress("reco_vertex_z", &n_vertex_z);
+    data_file->tvertex->SetBranchAddress("reco_vertex_y", &n_vertex_y);
+    data_file->tvertex->SetBranchAddress("reco_vertex_x", &n_vertex_x);
+
 
     std::cout<<"Starting printPassingDataEvents() "<<std::endl;
 
     for(int i=0;i < fake_list->GetN(); i++ ){
         data_file->tvertex->GetEntry( fake_list->GetEntry(i));
-        std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<" "<<n_vertex_z<<std::endl;
+        std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<" ("<<n_vertex_x<<", "<<n_vertex_y<<", "<<n_vertex_z<< ")"<<std::endl;
     }
     std::cout<<"End printPassingDataEvents() "<<std::endl;
 
