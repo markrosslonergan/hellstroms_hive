@@ -149,7 +149,6 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
                         double pot_scale = (plot_pot/sig_files.at(is)->pot )*sig_files.at(is)->scale_data;
                         std::string bnbcut = sig_files.at(is)->getStageCuts(1+bdt_infos.size(), cur_pt); 
                         signal += sig_files.at(is)->GetEntries(bnbcut.c_str())*pot_scale;
-
                     }
 
                     for(size_t ib = 0; ib < bkg_files.size(); ++ib) {
@@ -184,10 +183,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
                     s_mod = "";
                     n_pt++;
                 }//END-JP
-
             }//end J
-
-
         }//END-IP
     }//end I
 
