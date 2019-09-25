@@ -184,7 +184,7 @@
 <precut def = "TMath::Finite(reco_shower_kalman_dEdx_allplane_median[0])" name = "Finite kalman dE/dx"/> 
 <!--<precut def = "TMath::Finite(reco_shower_kalman_dEdx_plane2_median[0])" name = "Finite kalman plane 2dE/dx"/> -->
 
-<precut def = "reco_shower_conversion_distance[0]>100" name = "long pandora conv dist"/>
+<precut def = "reco_shower_conversion_distance[0]>300" name = "long pandora conv dist"/>
 
 <precut def = "reco_shower_kalman_exists" name = "Finite kalman dE/dx"/>
 
