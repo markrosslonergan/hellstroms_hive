@@ -139,6 +139,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
     int n_pt = 0;
     int best_pt = -9;
 
+
     for(int i=0; i < max_pts; i++){
 
         std::vector<double> cur_pt(bdt_infos.size(),0.0);
@@ -222,6 +223,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos){
     std::cout<<"Starting to Scan Significance (randomly)"<<std::endl;
     double best_significance = 0;
+    double best_impact = 0;
     std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
 
     double plot_pot = 13.2e20;
@@ -315,6 +317,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         total_sig += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
     }
 
+    std::string s_mod = "";
     TRandom3 *rangen  = new TRandom3(0);  
     std::cout<<"Starting"<<std::endl;
     for(int t=0; t < 10000; t++){
@@ -372,19 +375,18 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         if(significance > best_significance) {
             best_significance = significance;
             best_mva = d;
-            std::cout<<"Best Sig: "<<best_significance<<std::endl;
-
-            std::cout<<"  --ccut: IMACT: "<<impact<<" ";
-            for(int p=0; p< best_mva.size();p++){
-                std::cout<<best_mva[p]<<" dist( "<<std::min(fabs(minvals[p]-best_mva[p])/(minvals[p]+best_mva[p]),fabs(maxvals[p]-best_mva[p])/(maxvals[p]+best_mva[p]))<<")";   
-            }
+            best_impact = impact;
+            s_mod = "(Current Best)";
         }
 
-        std::cout<<"ccut: ";
         for(auto &dd:d){
-            std::cout<<dd<<" ";   
+            std::cout<<dd<<",";   
         }
-        std::cout<<" #signal: "<<signal<<" #bkg: "<<background<<" || "<<" bnb: "<<bkg.at(0)<<" cos: "<<bkg.at(1)<<" || impact "<<impact<<" "<<significance<<std::endl;
+        std::cout<<") w/ Impact: "<<impact<<" N_signal: "<<signal<<" N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+
+        s_mod = "";
+
+    
     }
 
     std::cout<<"------------_FINAL Best Sig: "<<best_significance<<std::endl;
