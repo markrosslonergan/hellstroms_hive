@@ -8,7 +8,7 @@
 
 <filedir>/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v19/</filedir>
 
-<bdtfile filename = "ncdeltarad_overlay_run1_v19.4.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephoton/" col = "(1.0,0.4,0.4)" plot_name = "LEE Signal NC #Delta Radiative" scale = "2.0" signal = "true">
+<!--<bdtfile filename = "ncdeltarad_overlay_run1_v19.4.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephoton/" col = "(1.0,0.4,0.4)" plot_name = "2xSM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>  
         <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
@@ -20,11 +20,12 @@
         <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02)==1</cut>
     </definition>
 </bdtfile>
+-->
 
-<bdtfile filename = "ncdeltarad_overlay_run1_v19.4.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephoton/" col = "(1.0,0.6,0.4)" plot_name = "SM NC #Delta Radiative" signal = "true" >
-    <definition>
-        <cut> mctruth_is_delta_radiative==1 </cut>  
-    </definition>
+<bdtfile filename = "ncdeltarad_overlay_run1_v19.4.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephoton/" col = "(1.0,0.4,0.4)" plot_name = "2x SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true">
+          <definition>
+               <cut> mctruth_is_delta_radiative==1 </cut>  
+          </definition>
 </bdtfile>
 
 <bdtfile filename = "ncdeltarad_overlay_run3_v19.4.root" tag = "NCDeltaRadOverlayTrain" hist_style = "hist" dirs = "singlephoton/" col = "(1.0,0.4,0.4)" plot_name = "NC Delta Train">
@@ -65,6 +66,14 @@
 <bdtfile filename = "dirt_overlay_run1_v19.4.root" tag = "Dirt" hist_style = "hist" dirs = "singlephoton/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
     <definition><cut>1</cut></definition>
 </bdtfile>
+
+<bdtfile filename = "ncdeltarad_overlay_run1_v19.4.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephoton/" col = "(0.97,0.75,0.0)" plot_name = "1x SM NC #Delta Radiative" signal = "true" >
+    <definition>
+        <cut> mctruth_is_delta_radiative==1 </cut>  
+    </definition>
+</bdtfile>
+
+
 <bdtfile filename = "data5e19_run1_v19.4.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
@@ -87,7 +96,7 @@
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
 <!-- ========================================= This is the classic 2BDT setup with a third for the SSS ================================ -->
 
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(25,0.1,0.95)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(25,0.14,0.95)">
     <method type = "TMVA" use = "yes">
         <param>  NTrees=1000 	</param>			 <!--2000-->
         <param>  MinNodESize=2.5% </param>				
@@ -108,7 +117,7 @@
     <scan min = "0.4" max = "0.73" steps="10"/>
 </mva>
 
-<mva type="BDT" use="yes" tag = "BNBother" name ="BNB Other focused BDT" binning = "(25,0.2,0.75)">
+<mva type="BDT" use="yes" tag = "BNBother" name ="BNB Other focused BDT" binning = "(25,0.22,0.77)">
     <method type = "TMVA" use = "yes">
         <param>  NTrees=1500 	</param>			 <!--2000-->
         <param>  MinNodESize=2.5% </param>				
@@ -130,7 +139,7 @@
 </mva>
 
 
-<mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(25,.28,0.8)">
+<mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(25,.28,0.78)">
     <method type = "TMVA" use = "yes">
         <param>  NTrees=500 	</param>			 
         <param>  MinNodESize=2.5% </param>				
