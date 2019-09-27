@@ -326,7 +326,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         for(int i=0; i< bdt_infos.size(); i++){
             d[i] = rangen->Uniform(minvals[i], maxvals[i]);
         }
-        double impact = rangen->Uniform(16,22);
+        double impact = rangen->Uniform(10,22);
         //double impact = rangen->Uniform(0.5,0.7);
         //  std::string s_impact = "((sss_num_candidates==0) ||  Min$(sss_candidate_impact_parameter)>"+std::to_string(impact) +") ";
 

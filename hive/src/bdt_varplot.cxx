@@ -1,13 +1,20 @@
 #include "bdt_varplot.h"
 
-int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::vector<bdt_variable> vars, bdt_info input_bdt_info, bool isSpectator){
+int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::vector<bdt_variable> vars, bdt_info input_bdt_info, bool isSpectator, int stage, std::vector<double> bdtcuts){
 
-    std::vector<std::string> title = {"Topological Selection","Pre-Selection Cuts"};
+    std::vector<std::string> title = {"Topological Selection","Pre-Selection Cuts","Cosmic","BNB","Pi0","Other"};
 
-    for(int j=1; j<2;j++){	
+    {
+        int j = stage;
 
                 std::cout<<"on stage : "<<j<<std::endl;
         std::cout<<" Setting sig stage entry lists."<<std::endl;
+        if(j>1){
+            signal_pure->calcBDTEntryList(j,bdtcuts);
+            background_pure->calcBDTEntryList(j,bdtcuts);
+        }
+
+
         signal_pure->setStageEntryList(j);
         std::cout<<" Setting back stage entry lists."<<std::endl;
         background_pure->setStageEntryList(j);
@@ -117,10 +124,10 @@ int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std:
 }
 
 
-int plot_bdt_variable(bdt_file * signal_pure, bdt_file * background_pure, bdt_variable v,bdt_info input_bdt_info, bool isSpectator){
+int plot_bdt_variable(bdt_file * signal_pure, bdt_file * background_pure, bdt_variable v,bdt_info input_bdt_info, bool isSpectator,int stage, std::vector<double> bdtcuts){
 
     std::vector<bdt_variable> vars = {v};
-    return plot_bdt_variables(signal_pure, background_pure, vars, input_bdt_info, isSpectator);
+    return plot_bdt_variables(signal_pure, background_pure, vars, input_bdt_info, isSpectator,stage, bdtcuts);
 }
 
 

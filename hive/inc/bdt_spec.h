@@ -40,7 +40,8 @@ class bdt_stack{
 
         bool do_subtraction; 
         std::vector<bool> subtraction_vec;
-
+    
+        std::vector<bool> signal_on_top;
 
 
 		bdt_stack(std::string in) : name(in){
@@ -50,8 +51,15 @@ class bdt_stack{
             do_subtraction = false;
 		}
 
+		int addToStack(bdt_file* in,bool signalish){
+			stack.push_back(in);
+            signal_on_top.push_back(signalish);
+			return 0;
+		}
+
 		int addToStack(bdt_file* in){
 			stack.push_back(in);
+            signal_on_top.push_back(false);
 			return 0;
 		}
 		THStack* getEntryStack(bdt_variable var);
