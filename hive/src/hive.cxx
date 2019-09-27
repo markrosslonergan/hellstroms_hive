@@ -500,7 +500,7 @@ int main (int argc, char *argv[]){
                 bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);                
 
-                datamc.printPassingDataEvents("tmp", which_stage, fbdtcuts);
+               // datamc.printPassingDataEvents("tmp", 1, fbdtcuts);
                 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
