@@ -511,7 +511,6 @@ int main (int argc, char *argv[]){
             }
 
         }
-
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
