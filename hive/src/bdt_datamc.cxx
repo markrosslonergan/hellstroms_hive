@@ -176,6 +176,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
         //And all variables in the vector var
         for(auto &var: vars){
+
+
+            //var.is_logplot = true;
+
+
             std::cout<<"Starting on variable "<<var.name<<std::endl;
             TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1800,1600);
             cobs->cd();
@@ -432,9 +437,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             ratunit->Divide(rat_denom);		
 
             TH1 * signal_hist = mc_stack->vec_hists[which_signal];
-            signal_hist->Add(tsum);
             TH1* rat_signal = (TH1*)signal_hist->Clone(("ratio_signal_"+stage_names.at(s)).c_str());
-            rat_signal->Divide(tsum);
+//            rat_signal->Add(tsum);
+  //          rat_signal->Divide(tsum);
+            for(int b=0; b< rat_signal->GetNbinsX()+1; b++){
+                double val = (signal_hist->GetBinContent(b)+tsum->GetBinContent(b))/tsum->GetBinContent(b);
+                std::cout<<b<<" "<<val<<" "<<tsum->GetBinContent(b)<<" "<<signal_hist->GetBinContent(b)<<std::endl;
+                if(val !=val) val = 0;
+                rat_signal->SetBinContent(b,val);
+            }
+
 
             ratunit->SetFillColor(kGray+1);
             ratunit->SetMarkerStyle(0);
@@ -450,6 +462,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             rat_signal->SetLineColor(mc_stack->stack[which_signal]->col);
             rat_signal->SetLineWidth(2);
             rat_signal->Draw("hist same");
+            ratunit->DrawCopy("E2 same");	
 
 
             TLine *line = new TLine(ratunit->GetXaxis()->GetXmin(),1.0,ratunit->GetXaxis()->GetXmax(),1.0 );
@@ -457,7 +470,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             ratunit->SetLineColor(kBlack);
             ratunit->SetTitle("");
             //ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
-            ratunit->GetYaxis()->SetTitle(  (stack_mode ? "Signal/MC+Cosmic" : "Data/(MC+Cosmic)"));
+            ratunit->GetYaxis()->SetTitle(  (stack_mode ? "Signal +CV/CV" : "Data/(MC+Cosmic)"));
             ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
             ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY);
             ratunit->SetMinimum(rmin);	
@@ -705,7 +718,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->SetMinimum(min_val);
             tsum->DrawCopy("Same E2");
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
-                        tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
+            tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
+
             TLegend *l0 = new TLegend(0.11,0.65,0.89,0.89);
             l0->SetNColumns(2);
             double NeventsStack = 0;
@@ -754,7 +768,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             l0->SetFillStyle(0);
             l0->SetTextSize(0.04);
 
-            tsum->DrawCopy("Same E2");
+        //    tsum->DrawCopy("Same E2");
 
             //  TLatex latex;
             // latex.SetTextSize(0.06);

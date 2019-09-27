@@ -486,12 +486,12 @@ int main (int argc, char *argv[]){
 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
             if(bdt_files[f]->is_data) continue;
-            if(bdt_files[f]==signal)  continue;
+            if(bdt_files[f]==signal && !response_only )  continue;
             histogram_stack->addToStack(stack_bdt_files[f]);
         }
 
         //signal->fillstyle = 0;
-        histogram_stack->addToStack(signal,true);
+        if( !response_only) histogram_stack->addToStack(signal,true);
 
         int ip=0;
         std::vector<bool> subv = {false,false,true};
