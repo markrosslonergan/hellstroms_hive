@@ -117,7 +117,7 @@
     <scan min = "0.4" max = "0.73" steps="10"/>
 </mva>
 
-<mva type="BDT" use="yes" tag = "BNBother" name ="BNB Other focused BDT" binning = "(25,0.22,0.77)">
+<mva type="BDT" use="yes" tag = "BNBother" name ="BNB Other focused BDT" binning = "(25,0.20,0.77)">
     <method type = "TMVA" use = "yes">
         <param>  NTrees=1500 	</param>			 <!--2000-->
         <param>  MinNodESize=2.5% </param>				
