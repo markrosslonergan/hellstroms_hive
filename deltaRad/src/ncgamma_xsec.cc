@@ -9,25 +9,43 @@ void make_2dHisto() {
     ////////////// INITIALIZATION /////////////////////
     ////////////////////////////////////////////////////////
 
+    bool targetC12 = true; //if true = c12, false = Ar40
+
+
     // Get signal file and TTree
-    TString dir = "/pnfs/uboone/persistent/users/ksutton/ncgamma_genie/";
-  //  TFile *fin = new TFile(dir+"gntp.nu_coh_1GeV.gst.root", "READ");
-    TFile *fin = new TFile(dir+"gntp.nu_coh_C12_1GeV.gst.root", "READ");
+    TString dir = "/pnfs/uboone/persistent/users/ksutton/ncgamma_genie/9_30_19/";
+
+    TFile *fin;
+    if (!targetC12){
+        fin = new TFile(dir+"gntp.nu_coh_1GeV.gst.root", "READ");
+    } else{
+        fin = new TFile(dir+"gntp.nu_coh_C12_1GeV.gst.root", "READ");
+    }
     TTree *t = (TTree*)fin->Get("gst");
 
     TFile *fxsec = new TFile(dir+"gxsec.root", "READ");
-    TGraph *gxsec = (TGraph*)fxsec->Get("nu_mu_C12/coh_nc"); //need to select correct target and nu/nubar get the coh nc component
-//  TGraph *gxsec = (TGraph*)fxsec->Get("nu_mu_Ar40/coh_nc"); //need to select correct target and nu/nubar get the coh nc component
-
+    TGraph *gxsec;
+    if (targetC12) {
+        gxsec = (TGraph*)fxsec->Get("nu_mu_C12/coh_nc");
+    } else{
+        gxsec = (TGraph*)fxsec->Get("nu_mu_Ar40/coh_nc");
+    } //need to select correct target and nu/nubar get the coh nc component
 
     // Declare necessary tree variables and set branch address
+    //final state
     double pxf[2] = {}; //vector of momenta for final state particles
     double pyf[2] = {};
     double pzf[2] = {};
     double pdgf[2] = {}; //pdg's of particles
     double Ef[2] = {}; //energy of particles
     int nf = 0;        //number of final state particles
-    double Ev = 0.;    //energy of initial neutrino 
+
+    //probe
+    double Ev = 0.;    //energy of initial neutrino
+    double pxv[1] = {}; //vector of initial momentum
+    double pyv[1] = {};
+    double pzv[1] = {};
+
 
     TBranch *bpxf = 0;
     TBranch *bpyf = 0;
@@ -36,15 +54,20 @@ void make_2dHisto() {
     TBranch *bEf = 0;
     TBranch *bnf = 0; 
     TBranch * bEv = 0; 
+    TBranch *bpxv = 0;
+    TBranch *bpyv = 0;
+    TBranch *bpzv = 0;
 
-    t->SetBranchAddress("pxf", &pxf, &bpxf);
+    t->SetBranchAddress("pxf", &pxf, &bpxf); //p of final state particles (photon and neutrino)
     t->SetBranchAddress("pyf", &pyf, &bpyf);
     t->SetBranchAddress("pzf", &pzf, &bpzf);
-    t->SetBranchAddress("pdgf", &pdgf, &bpdgf);
-    t->SetBranchAddress("Ef", &Ef, &bEf);
-    t->SetBranchAddress("nf", &nf, &bnf);
-    t->SetBranchAddress("Ev", &Ev, &bEv);
-
+    t->SetBranchAddress("pdgf", &pdgf, &bpdgf); //pdg of "
+    t->SetBranchAddress("Ef", &Ef, &bEf);//energies of "
+    t->SetBranchAddress("nf", &nf, &bnf);//number of final state particles
+    t->SetBranchAddress("Ev", &Ev, &bEv);//energy of probe (neutrino)
+    t->SetBranchAddress("pxv", &pxv, &bpxv); //p of initial state particles (neutrino)
+    t->SetBranchAddress("pyv", &pyv, &bpyv);
+    t->SetBranchAddress("pzv", &pzv, &bpzv);
 
 
     // Define output file and histograms
@@ -78,8 +101,11 @@ void make_2dHisto() {
     double theta_l;
     double this_Ev; //assumes same Ev for a file
 
-    TLorentzVector p4_gamma;
-    TLorentzVector p4_lepton;
+    TVector3 p3_probe = TVector3(pxv[0],pyv[0],pzv[0]); //incoming neutrino
+    TLorentzVector p4_gamma; //outgoing photon
+    TLorentzVector p4_lepton; //outgoing neutrino
+
+    std::cout<<"the incoming neutrino momentum = ("<< p3_probe.X() <<", "<<p3_probe.Y() <<", "<<p3_probe.Z() <<")"<<std::endl;
 
     for (int i = 0; i < t->GetEntries(); i++) {
 
@@ -92,19 +118,21 @@ void make_2dHisto() {
             this_Ev = Ev;
         }
 
+        //the outgoing photon and lepton should be relative to the incoming neutrino direction 
         //check which of the fsp's is the photon
         if (pdgf[0] == 22){ 
-            p4_gamma = TLorentzVector(TVector3(pxf[0],pyf[0],pzf[0]), Ef[0] ); //4vector for g and l          
-            p4_lepton = TLorentzVector(TVector3(pxf[1],pyf[1],pzf[1]), Ef[1] ); //4vector for g and l          
+            p4_gamma = TLorentzVector(TVector3(pxf[0],pyf[0],pzf[0]) - p3_probe, Ef[0] ); //4vector for g and l          
+            p4_lepton = TLorentzVector(TVector3(pxf[1],pyf[1],pzf[1]) - p3_probe, Ef[1] ); //4vector for g and l          
 
         } else{
-            p4_gamma = TLorentzVector(TVector3(pxf[1],pyf[1],pzf[1]), Ef[1] ); //4vector for g and l          
-            p4_lepton = TLorentzVector(TVector3(pxf[0],pyf[0],pzf[0]), Ef[0] ); //4vector for g and l          
+            p4_gamma = TLorentzVector(TVector3(pxf[1],pyf[1],pzf[1])- p3_probe, Ef[1] ); //4vector for g and l          
+            p4_lepton = TLorentzVector(TVector3(pxf[0],pyf[0],pzf[0])- p3_probe, Ef[0] ); //4vector for g and l          
 
 
             // std::cout<<"lepton at n=0: pg(x, y, z) = "<<pxf[0]<<", "<<pyf[0]<<", "<< pzf[0]<<", El = "<<Ef[0]<<std::endl;
             // std::cout<<"photon at n=1: pg(x, y, z) = "<<pxf[1]<<", "<<pyf[1]<<", "<< pzf[1]<<", Ef = "<<Ef[1]<<std::endl;
         }
+
         /*
            std::cout<<"--------------------------- on event "<<i<<" ----------------------------------"<<std::endl;
            std::cout<<"photon: pg(x, y, z) = "<<  p4_gamma.Px()<<", "<< p4_gamma.Py()<<", "<< p4_gamma.Pz() <<", Eg = "<<p4_gamma.E()<<std::endl;
@@ -179,8 +207,12 @@ void make_2dHisto() {
         */
 
     //add title with neutrino energy and target
-    std::string title = "E_{#nu}= "+ to_string_prec(this_Ev, 1) + " GeV, ^{12}C";
-    // std::string title = "E_{#nu}= "+ to_string_prec(this_Ev, 1) + " GeV, ^{40}Ar";
+    std::string title;
+    if (targetC12){
+        title = "E_{#nu}= "+ to_string_prec(this_Ev, 1) + " GeV, ^{12}C";
+    }else{
+        title = "E_{#nu}= "+ to_string_prec(this_Ev, 1) + " GeV, ^{40}Ar";
+    }
 
 
     h_Eg->SetTitle(title.c_str());
@@ -217,9 +249,9 @@ void make_2dHisto() {
     //Tgraph
     xsec_copy->GetXaxis()->SetRangeUser(0, 1.6);
     xsec_copy->GetYaxis()->SetRangeUser(0, 0.01);
-   
- //   for (int i=0;i<xsec_copy->GetN();i++) xsec_copy->GetY()[i] *= 1e3;
-   //convert to e-14 to match eduardo
+
+    //   for (int i=0;i<xsec_copy->GetN();i++) xsec_copy->GetY()[i] *= 1e3;
+    //convert to e-14 to match eduardo
 
     xsec_copy->Write("xsec");
 
