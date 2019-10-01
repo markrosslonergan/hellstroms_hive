@@ -13,7 +13,7 @@ void make_2dHisto() {
 
 
     // Get signal file and TTree
-    TString dir = "/pnfs/uboone/persistent/users/ksutton/ncgamma_genie/9_30_19/";
+    TString dir = "/pnfs/uboone/persistent/users/ksutton/ncgamma_genie/10_1_19/";
 
     TFile *fin;
     if (!targetC12){
@@ -42,9 +42,9 @@ void make_2dHisto() {
 
     //probe
     double Ev = 0.;    //energy of initial neutrino
-    double pxv[1] = {}; //vector of initial momentum
-    double pyv[1] = {};
-    double pzv[1] = {};
+    double pxv= 0  ; //vector of initial momentum
+    double pyv = 0. ;  
+    double pzv = 1. ;
 
 
     TBranch *bpxf = 0;
@@ -54,7 +54,7 @@ void make_2dHisto() {
     TBranch *bEf = 0;
     TBranch *bnf = 0; 
     TBranch * bEv = 0; 
-    TBranch *bpxv = 0;
+    TBranch *bpxv ;
     TBranch *bpyv = 0;
     TBranch *bpzv = 0;
 
@@ -101,11 +101,11 @@ void make_2dHisto() {
     double theta_l;
     double this_Ev; //assumes same Ev for a file
 
-    TVector3 p3_probe = TVector3(pxv[0],pyv[0],pzv[0]); //incoming neutrino
+    TVector3 p3_probe = TVector3(pxv,pyv,pzv); //incoming neutrino
     TLorentzVector p4_gamma; //outgoing photon
     TLorentzVector p4_lepton; //outgoing neutrino
 
-    std::cout<<"the incoming neutrino momentum = ("<< p3_probe.X() <<", "<<p3_probe.Y() <<", "<<p3_probe.Z() <<")"<<std::endl;
+    std::cout<<"the incoming neutrino momentum = ("<<  p3_probe.X()<<", "<< p3_probe.Y()<<", "<<  p3_probe.Z()<<")"<<std::endl;
 
     for (int i = 0; i < t->GetEntries(); i++) {
 
@@ -120,13 +120,26 @@ void make_2dHisto() {
 
         //the outgoing photon and lepton should be relative to the incoming neutrino direction 
         //check which of the fsp's is the photon
+        TVector3 p3_gamma;
+        TVector3 p3_lepton;
         if (pdgf[0] == 22){ 
-            p4_gamma = TLorentzVector(TVector3(pxf[0],pyf[0],pzf[0]) - p3_probe, Ef[0] ); //4vector for g and l          
-            p4_lepton = TLorentzVector(TVector3(pxf[1],pyf[1],pzf[1]) - p3_probe, Ef[1] ); //4vector for g and l          
+            p3_gamma = TVector3(pxf[0],pyf[0],pzf[0]);
+            p3_lepton = TVector3(pxf[1],pyf[1],pzf[1]);
+
+            p4_gamma = TLorentzVector(p3_gamma,  Ef[0] );
+            p4_lepton = TLorentzVector(p3_lepton,  Ef[1] );
+            // p4_gamma = TLorentzVector(TVector3(pxf[0],pyf[0],pzf[0]), Ef[0] ); //4vector for g and l          
+            //p4_lepton = TLorentzVector(TVector3(pxf[1],pyf[1],pzf[1]), Ef[1] ); //4vector for g and l          
 
         } else{
-            p4_gamma = TLorentzVector(TVector3(pxf[1],pyf[1],pzf[1])- p3_probe, Ef[1] ); //4vector for g and l          
-            p4_lepton = TLorentzVector(TVector3(pxf[0],pyf[0],pzf[0])- p3_probe, Ef[0] ); //4vector for g and l          
+            p3_gamma = TVector3(pxf[1],pyf[1],pzf[1]);
+            p3_lepton = TVector3(pxf[0],pyf[0],pzf[0]);
+
+            p4_gamma = TLorentzVector(p3_gamma,  Ef[1] );
+            p4_lepton = TLorentzVector(p3_lepton,  Ef[0] );
+
+            //   p4_gamma = TLorentzVector(TVector3(pxf[1],pyf[1],pzf[1])- p3_probe, Ef[1] ); //4vector for g and l          
+            //  p4_lepton = TLorentzVector(TVector3(pxf[0],pyf[0],pzf[0])- p3_probe, Ef[0] ); //4vector for g and l          
 
 
             // std::cout<<"lepton at n=0: pg(x, y, z) = "<<pxf[0]<<", "<<pyf[0]<<", "<< pzf[0]<<", El = "<<Ef[0]<<std::endl;
@@ -139,9 +152,9 @@ void make_2dHisto() {
            std::cout<<"lepton: pl(x, y, z) = "<<  p4_lepton.Px()<<", "<< p4_lepton.Py()<<", "<< p4_lepton.Pz() <<", Eg = "<<p4_lepton.E()<<std::endl;
            */
         Eg = p4_gamma.E();
-        theta_g = p4_gamma.Theta();
-        phi_g = p4_gamma.Phi();
-        theta_l = p4_lepton.Theta();
+        theta_g = p3_gamma.Theta()-p3_probe.Theta() ;
+        phi_g = p3_gamma.Phi()-p3_probe.Phi();
+        theta_l = p3_lepton.Theta() -p3_probe.Theta();
 
         h_Eg->Fill(Eg);
         h_thetag->Fill(theta_g);
@@ -248,7 +261,7 @@ void make_2dHisto() {
 
     //Tgraph
     xsec_copy->GetXaxis()->SetRangeUser(0, 1.6);
-    xsec_copy->GetYaxis()->SetRangeUser(0, 0.01);
+    xsec_copy->GetYaxis()->SetRangeUser(0, 0.025);
 
     //   for (int i=0;i<xsec_copy->GetN();i++) xsec_copy->GetY()[i] *= 1e3;
     //convert to e-14 to match eduardo
