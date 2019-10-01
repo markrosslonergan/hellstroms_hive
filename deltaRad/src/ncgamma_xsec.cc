@@ -44,7 +44,7 @@ void make_2dHisto() {
     double Ev = 0.;    //energy of initial neutrino
     double pxv= 0  ; //vector of initial momentum
     double pyv = 0. ;  
-    double pzv = 1. ;
+    double pzv = 0. ;
 
 
     TBranch *bpxf = 0;
@@ -53,8 +53,8 @@ void make_2dHisto() {
     TBranch *bpdgf = 0;
     TBranch *bEf = 0;
     TBranch *bnf = 0; 
-    TBranch * bEv = 0; 
-    TBranch *bpxv ;
+    TBranch *bEv = 0; 
+    TBranch *bpxv = 0;
     TBranch *bpyv = 0;
     TBranch *bpzv = 0;
 
@@ -101,13 +101,15 @@ void make_2dHisto() {
     double theta_l;
     double this_Ev; //assumes same Ev for a file
 
-    TVector3 p3_probe = TVector3(pxv,pyv,pzv); //incoming neutrino
+    TVector3 p3_probe;// = TVector3(pxv,pyv,pzv); //incoming neutrino
     TLorentzVector p4_gamma; //outgoing photon
     TLorentzVector p4_lepton; //outgoing neutrino
 
     std::cout<<"the incoming neutrino momentum = ("<<  p3_probe.X()<<", "<< p3_probe.Y()<<", "<<  p3_probe.Z()<<")"<<std::endl;
 
     for (int i = 0; i < t->GetEntries(); i++) {
+        p3_probe= TVector3(pxv,pyv,pzv);
+  //      std::cout<<"the incoming neutrino momentum = ("<<  p3_probe.X()<<", "<< p3_probe.Y()<<", "<<  p3_probe.Z()<<")"<<std::endl;
 
         t->GetEntry(i);
         if (nf != 2){
