@@ -495,15 +495,15 @@ int main (int argc, char *argv[]){
             }
 
             //signal->fillstyle = 0;
-            histogram_stack->addToStack(signal,true);
+            histogram_stack->addToStack(signal);
         }else{
             //first add the signal
-            histogram_stack->addToStack(signal,true);
-            histogram_stack->addToStack(stack_bdt_files[4]);
+            histogram_stack->addToStack(signal);
+            //histogram_stack->addToStack(stack_bdt_files[4]);
 
             //then add SM
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if (f==4) continue;
+                //if (f==4) continue;
                 if(bdt_files[f]->is_data) continue;
                 if(bdt_files[f]==signal)  continue;
                 histogram_stack->addToStack(stack_bdt_files[f]);
@@ -575,6 +575,8 @@ int main (int argc, char *argv[]){
         return 0;
     }else if(mode_option == "sig"){
 
+        int sig_type = number; // Tells the function to use efficiency times purity for significance 
+
         switch(number){
             case 0:
                 scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot);
@@ -584,6 +586,9 @@ int main (int argc, char *argv[]){
                 break;
             case 2:
                 scan_significance_random(signal_bdt_files, bkg_bdt_files,bdt_infos);
+                break;
+            case 3:
+                scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot, sig_type);
                 break;
             default:
                 break;

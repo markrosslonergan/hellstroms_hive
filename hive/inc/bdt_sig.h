@@ -35,8 +35,13 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 
 std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, double plot_pot);
 
+// Added by A. Mogan, 10/1/19, for running sig with efficiency times purity as significance metric
+std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, double plot_pot, int sig_type);
+
 
 std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos);
+
+
 
 
 int scan_likelihood(std::vector<bdt_file*> stack_files, std::vector<bdt_info> bdt_infos);
