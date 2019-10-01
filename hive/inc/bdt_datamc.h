@@ -35,6 +35,13 @@ class bdt_datamc{
 	public:
 	
 
+        bool stack_mode;
+        double stack_pot;
+        bool setStackMode(double s){
+            stack_pot = s;
+            stack_mode = true;
+            return true;
+        }
 	
 		bdt_file* data_file;
 		bdt_stack *mc_stack;
@@ -46,9 +53,9 @@ class bdt_datamc{
     int plot_stage;
     std::vector<bool> subtraction_vec;
 
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;};
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1; };
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;};
+		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;stack_mode=false;};
+		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1;stack_mode=false; };
+		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;stack_mode=false;};
 
         int setPlotStage(int s){
            plot_stage =s;
@@ -73,6 +80,7 @@ class bdt_datamc{
     int SetSpectator();
 
     int printPassingDataEvents(std::string outfilename, int stage, double c1, double c2);
+    int printPassingDataEvents(std::string outfilename, int stage, std::vector<double> cuts);
  
 
 };

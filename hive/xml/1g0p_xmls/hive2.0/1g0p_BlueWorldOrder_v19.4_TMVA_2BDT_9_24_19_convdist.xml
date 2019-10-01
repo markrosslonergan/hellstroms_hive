@@ -7,10 +7,23 @@
 
 <filedir>/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v19/</filedir>
 
-<bdtfile filename = "ncdeltarad_overlay_run1_v19.4.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephoton/" col = "(1.0,0.4,0.4)" plot_name = "2x SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true">
+<bdtfile filename = "ncdeltarad_overlay_run1_v19.4.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephoton/" col = "(1.0,0.4,0.4)" plot_name = "LEE Signal NC #Delta Radiative" scale = "2.0" signal = "true">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>  
-      </definition>
+        <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -106.5 &amp;&amp; mctruth_nu_vertex_y &lt; 106.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 10.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1026.8 </cut>
+        <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 0</cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02) &lt; 1 </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "ncdeltarad_overlay_run1_v19.4.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephoton/" col = "(1.0,0.6,0.4)" plot_name = "SM NC #Delta Radiative" signal = "true" >
+    <definition>
+        <cut> mctruth_is_delta_radiative==1 </cut>  
+    </definition>
 </bdtfile>
 
 <bdtfile filename = "ncdeltarad_overlay_run3_v19.4.root" tag = "NCDeltaRadOverlayTrain" hist_style = "hist" dirs = "singlephoton/" col = "(1.0,0.4,0.4)" plot_name = "NC Delta Train">
@@ -49,14 +62,6 @@
 <bdtfile filename = "dirt_overlay_run1_v19.4.root" tag = "Dirt" hist_style = "hist" dirs = "singlephoton/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
     <definition><cut>1</cut></definition>
 </bdtfile>
-
-<bdtfile filename = "ncdeltarad_overlay_run1_v19.4.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephoton/" col = "(0.97,0.75,0.0)" plot_name = "1x SM NC #Delta Radiative" signal = "true" >
-    <definition>
-        <cut> mctruth_is_delta_radiative==1 </cut>  
-    </definition>
-</bdtfile>
-
-
 <bdtfile filename = "data5e19_run1_v19.4.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
@@ -79,7 +84,7 @@
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
 <!-- ========================================= This is the classic 2BDT setup with a third for the SSS ================================ -->
 
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(25,0.26,0.85)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(25,0.28,0.85)">
     <method type = "TMVA" use = "yes">
         <param>  NTrees=1000 	</param>			 <!--2000-->
         <param>  MinNodESize=2.5% </param>				
@@ -100,7 +105,7 @@
     <scan min = "0.45" max = "0.9" steps="10"/>
 </mva>
 
-<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(25,0.26,0.63)">
+<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(25,0.25,0.65)">
     <method type = "TMVA" use = "yes">
         <param>  NTrees=1500 	</param>			 <!--2000-->
         <param>  MinNodESize=2.5% </param>				
@@ -179,6 +184,7 @@
 <precut def = "TMath::Finite(reco_shower_kalman_dEdx_allplane_median[0])" name = "Finite kalman dE/dx"/> 
 <!--<precut def = "TMath::Finite(reco_shower_kalman_dEdx_plane2_median[0])" name = "Finite kalman plane 2dE/dx"/> -->
 
+<precut def = "reco_shower_conversion_distance[0]>300" name = "long pandora conv dist"/>
 
 <precut def = "reco_shower_kalman_exists" name = "Finite kalman dE/dx"/>
 
@@ -221,7 +227,7 @@
 <var def = "reco_shower_implied_dirx/reco_shower_dirx" binning = "(45,-1,3)" unit = "Shower Implied Dirx/Pandora Dirx" type="d" logplot="false" training=""/>
 <var def = "reco_shower_implied_diry/reco_shower_diry" binning = "(45,-1,3)" unit = "Shower Implied Diry/Pandora Diry" type="d" logplot="false" training=""/>
 <var def = "reco_shower_implied_dirz/reco_shower_dirz" binning = "(46,-1,3)" unit = "Shower Implied Dirz/Pandora Dirz" type="d" logplot="false" training=""/>
-<var def = "reco_shower_energy_max[0]/1000.0" binning = "(12,0.02,0.6)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="01"/>
+<var def = "reco_shower_energy_max[0]/1000.0" binning = "(20,0,0.6)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_shower_length[0]" binning = "(45,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d" logplot = "false"  training="01"/>
 <var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(45,0 ,2000)" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="01"/>
 <var def = "reco_shower_opening_angle[0]" binning = "(45,0,1)" unit = "Reconstructed Shower OpAng [cm]" type = "d" logplot = "false"  training="01"/>

@@ -179,6 +179,7 @@ int main (int argc, char *argv[]){
     //**** Setting up bdt_files NWO style
 
     std::vector<bdt_file*> bdt_files;
+    std::vector<bdt_file*> stack_bdt_files;
     std::vector<bdt_file*> signal_bdt_files;
     std::vector<bdt_file*> bkg_bdt_files;
 
@@ -213,7 +214,7 @@ int main (int argc, char *argv[]){
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
 
-
+        bool incl_in_stack = true;
 
         if(XMLconfig.bdt_scales[f] != 1.0){
             std::cout<<" -- Scaling "<<XMLconfig.bdt_tags[f]<<" file by a factor of "<<XMLconfig.bdt_scales[f]<<std::endl;
@@ -224,6 +225,7 @@ int main (int argc, char *argv[]){
         if(XMLconfig.bdt_is_onbeam_data[f]){
             std::cout<<" -- Setting as ON beam data with "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOnBeamData(XMLconfig.bdt_onbeam_pot[f]); //tor860_wc
+            incl_in_stack = false;
         }
         if(XMLconfig.bdt_is_offbeam_data[f]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
@@ -244,19 +246,17 @@ int main (int argc, char *argv[]){
 
         if(XMLconfig.bdt_is_training_signal[f]){
             training_signal = bdt_files.back();
+            incl_in_stack = false;
         }
 
 
         bdt_files.back()->calcPOT();
+        if(incl_in_stack) stack_bdt_files.push_back(bdt_files.back());
     }
 
-    //BAD practice! 
-    //signal = tagToFileMap["NCPi0"];
-    signal = tagToFileMap["NCDeltaRadOverlay"];
+    //The "signal" is whichever signal BDT you define first.
+    signal = signal_bdt_files[0];
 
-
-    std::vector<bdt_file*> stack_bdt_files = signal_bdt_files;
-    stack_bdt_files.insert(stack_bdt_files.end(), bkg_bdt_files.begin(), bkg_bdt_files.end());
 
     //===========================================================================================
     //===========================================================================================
@@ -307,7 +307,7 @@ int main (int argc, char *argv[]){
             training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
             training_background_files.back()->setAsOnBeamData(13.2e20);
             training_background_files.back()->calcPOT();
-                       
+
             if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
                 convertToLibSVM(bdt_infos[i], training_signal, training_background_files[i]);
             }
@@ -397,7 +397,76 @@ int main (int argc, char *argv[]){
         return 0;
     }
 
+    else if(mode_option=="stack"){
+        std::cout<<"Starting stack "<<std::endl;
 
+        if (access("stack",F_OK) == -1){
+            mkdir("stack",0777);//Create a folder for pdf.
+        }
+        else{
+            std::cout<<"Overwrite stack/ in 2 seconds, 1 seconds, ..."<<std::endl;
+            sleep(2);
+        }
+
+        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+
+        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
+
+        histogram_stack->plot_pot =13.2e20;
+
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            if(bdt_files[f]->is_data) continue;
+            if(bdt_files[f]==signal)  continue;
+            histogram_stack->addToStack(stack_bdt_files[f]);
+            //std::cout<<"adding to stack "<<stack_bdt_files[f]->name<<std::endl;
+        }
+
+        //signal->fillstyle = 0;
+        histogram_stack->addToStack(signal,true);
+
+        tagToFileMap["Data5e19"]->col = kWhite;
+        tagToFileMap["Data5e19"]->fillstyle = 0;
+
+        int ip=0;
+        std::vector<bool> subv = {false,false,true};
+        if(!response_only){
+            if(number != -1){
+                bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_stack");	
+                datamc.setPlotStage(which_stage);                
+                datamc.setStackMode(13.2e20);
+
+                //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
+                //datamc.setSubtractionVector(subv);
+                std::vector<bdt_variable> tmp_var = {vars.at(number)};
+                datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+            }else{
+
+                bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_stack");	
+                real_datamc.setPlotStage(which_stage);                
+                real_datamc.setStackMode(13.2e20);
+
+                //real_datamc.setSubtractionVector(subv);
+                // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+                //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+
+                real_datamc.plotStacks(ftest, vars, fbdtcuts);
+                //real_datamc.SetSpectator();
+                //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
+            }
+        }else{
+            bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_stack");	
+
+            real_datamc.setStackMode(13.2e20);
+            if(which_bdt ==-1){
+                for(int k=0; k< bdt_infos.size(); k++){
+                    real_datamc.plotBDTStacks(bdt_infos[k] , fbdtcuts);
+                }
+            }else{
+                real_datamc.plotBDTStacks(bdt_infos[which_bdt],fbdtcuts);
+            }
+        }
+
+    }
     else if(mode_option == "datamc"){
         std::cout<<"Starting datamc "<<std::endl;
 
@@ -417,17 +486,40 @@ int main (int argc, char *argv[]){
 
         histogram_stack->plot_pot = tagToFileMap["Data5e19"]->pot;
 
-        for(size_t f =0; f< stack_bdt_files.size(); ++f){
-            if(bdt_files[f]->is_data) continue;
-            histogram_stack->addToStack(stack_bdt_files[f]);
-        }
+        if (!response_only){
+            for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                if(bdt_files[f]->is_data) continue;
+                if(bdt_files[f]==signal)  continue;
+                histogram_stack->addToStack(stack_bdt_files[f]);
+                std::cout<<"adding to stack"<<stack_bdt_files[f]->name<<std::endl;
+            }
 
+            //signal->fillstyle = 0;
+            histogram_stack->addToStack(signal,true);
+        }else{
+            //first add the signal
+            histogram_stack->addToStack(signal,true);
+            histogram_stack->addToStack(stack_bdt_files[4]);
+
+            //then add SM
+            for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                if (f==4) continue;
+                if(bdt_files[f]->is_data) continue;
+                if(bdt_files[f]==signal)  continue;
+                histogram_stack->addToStack(stack_bdt_files[f]);
+                std::cout<<"adding to stack "<<stack_bdt_files[f]->tag<<std::endl;
+
+            }
+
+        }
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
             if(number != -1){
                 bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);                
+
+                 //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
@@ -886,6 +978,8 @@ return 0;
 
     std::vector<std::string> title = {"Topological Selection","Pre-Selection Cuts"};
 
+    if(which_stage == -1) which_stage = 1;
+
     std::vector<bdt_file*> training_background_files;
     for(int i=0; i< bdt_infos.size(); i++){
         std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
@@ -895,23 +989,36 @@ return 0;
         training_background_files.back()->calcPOT();
         training_background_files.back()->calcBaseEntryList(analysis_tag);
 
+        if(which_stage>1){
+
+            std::vector<bdt_file*> rmp =    {training_background_files.back()};
+            for(int k=0; k< bdt_infos.size(); k++){
+                if(bdt_infos[k].TMVAmethod.str=="XGBoost"){
+                    bdt_XGapp(bdt_infos[k], rmp);
+                }else{
+                    bdt_app(bdt_infos[k], rmp);
+                }
+                training_background_files.back()->addBDTResponses(bdt_infos[k]);
+            }
+        }
 
     }
+
 
 
     if(which_bdt==-1){
         for(int k=0; k< bdt_infos.size(); k++){
             if(number != -1){
-                plot_bdt_variable(training_signal, training_background_files[k], vars.at(number), bdt_infos[k], false);
+                plot_bdt_variable(training_signal, training_background_files[k], vars.at(number), bdt_infos[k], false,which_stage,fbdtcuts);
             }else{
-                plot_bdt_variables(training_signal, training_background_files[k], vars, bdt_infos[k], false);
+                plot_bdt_variables(training_signal, training_background_files[k], vars, bdt_infos[k], false,which_stage,fbdtcuts);
             }
         }
     }else{
         if(number != -1){
-            plot_bdt_variable(training_signal, training_background_files[which_bdt], vars.at(number), bdt_infos[which_bdt], false);
+            plot_bdt_variable(training_signal, training_background_files[which_bdt], vars.at(number), bdt_infos[which_bdt], false,which_stage,fbdtcuts);
         }else{
-            plot_bdt_variables(training_signal, training_background_files[which_bdt], vars, bdt_infos[which_bdt], false);
+            plot_bdt_variables(training_signal, training_background_files[which_bdt], vars, bdt_infos[which_bdt], false,which_stage,fbdtcuts);
         }
     }
 

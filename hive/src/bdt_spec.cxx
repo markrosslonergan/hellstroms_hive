@@ -156,9 +156,11 @@ TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
     std::cout<<"Summed: "<<summed->GetSumOfWeights()<<std::endl;
 
     for(int t=1; t<stack.size(); t++){
-        TH1* hist = (TH1*)stack.at(t)->getTH1(var, "1", "summed_"+std::to_string(t)+"_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, stack_rebin);
-        summed->Add(hist);
-        std::cout<<"Summed: "<<summed->Integral()<<std::endl;
+        if(!signal_on_top[t]){
+            TH1* hist = (TH1*)stack.at(t)->getTH1(var, "1", "summed_"+std::to_string(t)+"_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, stack_rebin);
+            summed->Add(hist);
+            std::cout<<"Summed: "<<summed->Integral()<<std::endl;
+        }
     }
 
     summed->SetTitle((this->name+"_"+var.name).c_str());
@@ -250,9 +252,15 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
         vec_hists.push_back((TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin));
         TH1* hist = vec_hists.back();
         hist->SetTitle((this->name+"_"+var.name).c_str());
-        hist->SetLineColor(kBlack);
+
+        //if(signal_on_top[t]){
+        //    hist->SetLineColor(stack[t]->col);
+        //    hist->SetLineWidth(3);
+        //}else{
+            hist->SetLineColor(kBlack);
+            hist->SetLineWidth(1);
+        //}
         hist->SetStats(0);
-        hist->SetLineWidth(1);
         //hist->SetMarkerStyle(20);
         hist->SetFillColor(stack.at(t)->col);
         hist->SetFillStyle(stack.at(t)->fillstyle);
