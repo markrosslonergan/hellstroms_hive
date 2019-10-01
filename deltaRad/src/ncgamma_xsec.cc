@@ -77,7 +77,7 @@ void make_2dHisto() {
     TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14);
     // TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14/2);
     TH1D *h_phig = new TH1D("h_phig", "h_phig", 100, -3.14, 3.14);
-    TH1D *h_phil = new TH1D("h_phil", "h_phil", 100, -3.14, 3.14);
+    //TH1D *h_phil = new TH1D("h_phil", "h_phil", 100, -3.14, 3.14);
     TH1D *h_thetal = new TH1D("h_thetal", "h_thetal", 100, 0, 3.14/2);
     TGraph * xsec_copy = (TGraph*)gxsec->Clone();
     //2D
@@ -104,14 +104,14 @@ void make_2dHisto() {
     double this_Ev; //assumes same Ev for a file
 
     TVector3 p3_probe;// = TVector3(pxv,pyv,pzv); //incoming neutrino
+    TLorentzVector p4_probe;
     TLorentzVector p4_gamma; //outgoing photon
     TLorentzVector p4_lepton; //outgoing neutrino
 
- //   std::cout<<"the incoming neutrino momentum = ("<<  p3_probe.X()<<", "<< p3_probe.Y()<<", "<<  p3_probe.Z()<<")"<<std::endl;
+    //   std::cout<<"the incoming neutrino momentum = ("<<  p3_probe.X()<<", "<< p3_probe.Y()<<", "<<  p3_probe.Z()<<")"<<std::endl;
 
     for (int i = 0; i < t->GetEntries(); i++) {
-        p3_probe= TVector3(pxv,pyv,pzv);
-  //      std::cout<<"the incoming neutrino momentum = ("<<  p3_probe.X()<<", "<< p3_probe.Y()<<", "<<  p3_probe.Z()<<")"<<std::endl;
+        //      std::cout<<"the incoming neutrino momentum = ("<<  p3_probe.X()<<", "<< p3_probe.Y()<<", "<<  p3_probe.Z()<<")"<<std::endl;
 
         t->GetEntry(i);
         if (nf != 2){
@@ -121,6 +121,10 @@ void make_2dHisto() {
         if (i ==0){
             this_Ev = Ev;
         }
+
+        pxv = 0.2;
+        p3_probe= TVector3(pxv,pyv,pzv);
+        p4_probe = TLorentzVector(p3_probe, Ev);
 
         //the outgoing photon and lepton should be relative to the incoming neutrino direction 
         //check which of the fsp's is the photon
@@ -155,17 +159,51 @@ void make_2dHisto() {
            std::cout<<"photon: pg(x, y, z) = "<<  p4_gamma.Px()<<", "<< p4_gamma.Py()<<", "<< p4_gamma.Pz() <<", Eg = "<<p4_gamma.E()<<std::endl;
            std::cout<<"lepton: pl(x, y, z) = "<<  p4_lepton.Px()<<", "<< p4_lepton.Py()<<", "<< p4_lepton.Pz() <<", Eg = "<<p4_lepton.E()<<std::endl;
            */
+
         Eg = p4_gamma.E();
-        theta_g = p3_gamma.Theta()-p3_probe.Theta() ;
-        phi_g = p3_gamma.Phi()-p3_probe.Phi();
-        phi_l = p3_lepton.Phi()-p3_probe.Phi();
-        theta_l = p3_lepton.Theta() -p3_probe.Theta();
+
+        //get angle between probe and z axis
+        TVector3 z = TVector3(0, 0, 1);
+
+        //make copy
+        TVector3 p3_gamma_r = p3_gamma;
+        TVector3 p3_lepton_r = p3_lepton;
+        TVector3 p3_probe_r = p3_probe;
+
+        double angle;
+        TVector3 cross =  p4_probe.Vect().Cross(z);
+        std::cout<<"angle between probe and z axis is "<<angle<<std::endl;
+
+        std::cout<<"photon before rotation: pg(x, y, z) = "<<  p3_gamma.Px()<<", "<< p3_gamma.Py()<<", "<< p3_gamma.Pz() <<std::endl;
+        std::cout<<"lepton before rotation: pl(x, y, z) = "<<  p3_lepton.Px()<<", "<< p3_lepton.Py()<<", "<< p3_lepton.Pz() <<std::endl;
+        std::cout<<"lepton after rotation: pl(x, y, z) = "<<  p3_probe.Px()<<", "<< p3_probe.Py()<<", "<< p3_probe.Pz() <<std::endl;
+
+        //if there is a rotation
+        if (angle !=0.0){
+            //rotate the gamma, lepton,probe
+            p3_gamma_r.Rotate(angle,z);
+            p3_lepton_r.Rotate(angle,z);  
+            p3_probe_r.Rotate(angle,z);  
+        }
+
+        std::cout<<"photon after rotation: pg(x, y, z) = "<<  p3_gamma_r.Px()<<", "<< p3_gamma_r.Py()<<", "<< p3_gamma_r.Pz() <<std::endl;
+        std::cout<<"lepton after rotation: pl(x, y, z) = "<<  p3_lepton_r.Px()<<", "<< p3_lepton_r.Py()<<", "<< p3_lepton_r.Pz() <<std::endl;
+        std::cout<<"lepton after rotation: pl(x, y, z) = "<<  p3_probe_r.Px()<<", "<< p3_probe_r.Py()<<", "<< p3_probe_r.Pz() <<std::endl;
+
+
+        //then get the delta phi 
+        phi_g = p3_gamma_r.DeltaPhi(p3_probe_r);
+        phi_l = p3_lepton_r.DeltaPhi(p3_probe_r);
+
+        //angle between the photon and lepton and the probe
+        theta_l = p4_lepton.Angle(p4_probe.Vect());
+        theta_g = p4_gamma.Angle(p4_probe.Vect());
 
         h_Eg->Fill(Eg);
         h_thetag->Fill(theta_g);
         h_phig->Fill(phi_g);
         h_thetal->Fill(theta_l);
-        h_phil->Fill(phi_l);
+        //h_phil->Fill(phi_l);
 
         h_Egthetag->Fill(Eg, theta_g);
         h_Egthetal->Fill(Eg, theta_l);
@@ -187,8 +225,7 @@ void make_2dHisto() {
     h_thetag->Scale(norm*(h_thetag->GetXaxis()->GetBinWidth(1))/h_thetag->Integral());
     h_phig->Scale(norm*(h_phig->GetXaxis()->GetBinWidth(1))/h_phig->Integral());
     h_thetal->Scale(norm*(h_thetal->GetXaxis()->GetBinWidth(1))/h_thetal->Integral());
-    h_phil->Scale(norm*(h_phil->GetXaxis()->GetBinWidth(1))/h_phil->Integral());
-
+    //    h_phil->Scale(norm*(h_phil->GetXaxis()->GetBinWidth(1))/h_phil->Integral());
 
 
 
@@ -201,13 +238,13 @@ void make_2dHisto() {
     h_Eg->SetOption("hist");
     h_thetag->SetOption("hist");
     h_phig->SetOption("hist");
-    h_phil->SetOption("hist");
+    // h_phil->SetOption("hist");
     h_thetal->SetOption("hist");
 
     //x axis labels
     h_Eg->GetXaxis()->SetTitle("E_{#gamma} [GeV]");
     h_thetag->GetXaxis()->SetTitle("#theta_{#gamma} [rad]");
-    h_phil->GetXaxis()->SetTitle("#phi_{l} [rad]");
+    //    h_phil->GetXaxis()->SetTitle("#phi_{l} [rad]");
     h_phig->GetXaxis()->SetTitle("#phi_{#gamma} [rad]");
     h_thetal->GetXaxis()->SetTitle("#theta_{l} [rad]");
     /*
@@ -221,7 +258,7 @@ void make_2dHisto() {
     h_Eg->GetYaxis()->SetTitle("#frac{d#sigma}{dE_{#gamma}} [cm^{2}GeV^{-1}]");
     h_thetag->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{#gamma}} [cm^{2}rad^{-1}]");
     h_phig->GetYaxis()->SetTitle("#frac{d#sigma}{d#phi_{#gamma}} [cm^{2}rad^{-1}]");
-    h_phil->GetYaxis()->SetTitle("#frac{d#sigma}{d#phi_{l}} [cm^{2}rad^{-1}]");
+    //  h_phil->GetYaxis()->SetTitle("#frac{d#sigma}{d#phi_{l}} [cm^{2}rad^{-1}]");
     h_thetal->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{l}} [cm^{2}rad^{-1}]");
 
     /*  h_Eg->GetYaxis()-> SetTitleSize(0.04);
