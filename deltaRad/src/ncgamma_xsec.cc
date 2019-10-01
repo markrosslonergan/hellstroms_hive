@@ -77,6 +77,7 @@ void make_2dHisto() {
     TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14);
     // TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14/2);
     TH1D *h_phig = new TH1D("h_phig", "h_phig", 100, -3.14, 3.14);
+    TH1D *h_phil = new TH1D("h_phil", "h_phil", 100, -3.14, 3.14);
     TH1D *h_thetal = new TH1D("h_thetal", "h_thetal", 100, 0, 3.14/2);
     TGraph * xsec_copy = (TGraph*)gxsec->Clone();
     //2D
@@ -98,6 +99,7 @@ void make_2dHisto() {
     double Eg; //energy of photon fsp
     double theta_g; 
     double phi_g;
+    double phi_l;
     double theta_l;
     double this_Ev; //assumes same Ev for a file
 
@@ -105,7 +107,7 @@ void make_2dHisto() {
     TLorentzVector p4_gamma; //outgoing photon
     TLorentzVector p4_lepton; //outgoing neutrino
 
-    std::cout<<"the incoming neutrino momentum = ("<<  p3_probe.X()<<", "<< p3_probe.Y()<<", "<<  p3_probe.Z()<<")"<<std::endl;
+ //   std::cout<<"the incoming neutrino momentum = ("<<  p3_probe.X()<<", "<< p3_probe.Y()<<", "<<  p3_probe.Z()<<")"<<std::endl;
 
     for (int i = 0; i < t->GetEntries(); i++) {
         p3_probe= TVector3(pxv,pyv,pzv);
@@ -156,12 +158,14 @@ void make_2dHisto() {
         Eg = p4_gamma.E();
         theta_g = p3_gamma.Theta()-p3_probe.Theta() ;
         phi_g = p3_gamma.Phi()-p3_probe.Phi();
+        phi_l = p3_lepton.Phi()-p3_probe.Phi();
         theta_l = p3_lepton.Theta() -p3_probe.Theta();
 
         h_Eg->Fill(Eg);
         h_thetag->Fill(theta_g);
         h_phig->Fill(phi_g);
         h_thetal->Fill(theta_l);
+        h_phil->Fill(phi_l);
 
         h_Egthetag->Fill(Eg, theta_g);
         h_Egthetal->Fill(Eg, theta_l);
@@ -183,6 +187,8 @@ void make_2dHisto() {
     h_thetag->Scale(norm*(h_thetag->GetXaxis()->GetBinWidth(1))/h_thetag->Integral());
     h_phig->Scale(norm*(h_phig->GetXaxis()->GetBinWidth(1))/h_phig->Integral());
     h_thetal->Scale(norm*(h_thetal->GetXaxis()->GetBinWidth(1))/h_thetal->Integral());
+    h_phil->Scale(norm*(h_phil->GetXaxis()->GetBinWidth(1))/h_phil->Integral());
+
 
 
 
@@ -195,13 +201,15 @@ void make_2dHisto() {
     h_Eg->SetOption("hist");
     h_thetag->SetOption("hist");
     h_phig->SetOption("hist");
+    h_phil->SetOption("hist");
     h_thetal->SetOption("hist");
 
     //x axis labels
     h_Eg->GetXaxis()->SetTitle("E_{#gamma} [GeV]");
-    h_thetag->GetXaxis()->SetTitle("#theta_{#gamma}");
-    h_phig->GetXaxis()->SetTitle("#phi_{#gamma} [GeV]");
-    h_thetal->GetXaxis()->SetTitle("#theta_{l} [GeV]");
+    h_thetag->GetXaxis()->SetTitle("#theta_{#gamma} [rad]");
+    h_phil->GetXaxis()->SetTitle("#phi_{l} [rad]");
+    h_phig->GetXaxis()->SetTitle("#phi_{#gamma} [rad]");
+    h_thetal->GetXaxis()->SetTitle("#theta_{l} [rad]");
     /*
        h_Eg->GetXaxis()-> SetTitleSize(0.05);
        h_thetag->GetXaxis()-> SetTitleSize(0.06);
@@ -213,6 +221,7 @@ void make_2dHisto() {
     h_Eg->GetYaxis()->SetTitle("#frac{d#sigma}{dE_{#gamma}} [cm^{2}GeV^{-1}]");
     h_thetag->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{#gamma}} [cm^{2}rad^{-1}]");
     h_phig->GetYaxis()->SetTitle("#frac{d#sigma}{d#phi_{#gamma}} [cm^{2}rad^{-1}]");
+    h_phil->GetYaxis()->SetTitle("#frac{d#sigma}{d#phi_{l}} [cm^{2}rad^{-1}]");
     h_thetal->GetYaxis()->SetTitle("#frac{d#sigma}{d#theta_{l}} [cm^{2}rad^{-1}]");
 
     /*  h_Eg->GetYaxis()-> SetTitleSize(0.04);
