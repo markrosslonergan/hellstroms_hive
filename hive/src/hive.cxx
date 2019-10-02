@@ -518,7 +518,7 @@ int main (int argc, char *argv[]){
                 bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);                
 
-                 //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
+                //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
@@ -548,7 +548,39 @@ int main (int argc, char *argv[]){
                 real_datamc.plotBDTStacks(bdt_infos[which_bdt],fbdtcuts);
             }
         }
-    }else if(mode_option == "test"){
+    }
+    else if(mode_option == "var2D"){
+        std::cout<<"Starting var2D "<<std::endl;
+
+        if (access("var2D",F_OK) == -1){
+            mkdir("var2D",0777);//Create a folder for pdf.
+        }
+        else{
+            std::cout<<"Overwrite var2D/ in 2 seconds, 1 seconds, ..."<<std::endl;
+            sleep(2);
+        }
+
+
+        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+
+        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_var2D");
+
+        histogram_stack->plot_pot = tagToFileMap["Data5e19"]->pot;
+
+        //add MC files to stack
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            if(bdt_files[f]->is_data) continue;
+            histogram_stack->addToStack(stack_bdt_files[f]);
+            std::cout<<"adding to stack"<<stack_bdt_files[f]->name<<std::endl;
+        }
+        std::vector<bdt_variable> tmp_var = {vars.at(number)};
+
+        bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_var2D");	
+        real_datamc.setPlotStage(which_stage);                
+
+        real_datamc.plot2D(ftest, vars, fbdtcuts);
+    }
+    else if(mode_option == "test"){
 
         //First lets create the bdt_file's* and flows for training
 

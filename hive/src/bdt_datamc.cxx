@@ -153,7 +153,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
         s_max = plot_stage+1;
     }
 
-    
+
     //for each stage
     for(int s = s_min; s< s_max; s++){
 
@@ -173,35 +173,36 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
         data_file->setStageEntryList(s);
 
         //And all variables in the vector var
-        for(auto &var: vars){
+        //make pairs of all combos
+        for(int i = 0; i < vars.size(); i++){
+            bdt_variable var1 = vars[i];
 
-            //if it's a 2d variable
+            for(int j = 0; j < vars.size(); j++){
 
-            std::cout<<"Starting on variable "<<var.name<<std::endl;
-            TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1800,1600);
-            cobs->cd();
-
-            //THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
-            //TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
-            TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
-
-     
-            std::cout<<"Writing pdf."<<std::endl;
-            cobs->Write();
-            if(stack_mode){
-                cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
-            }else{
-                cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
-            }
-            //cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
+                //only want to plot different variables, but also not duplicate i.e. 12 and 21
+                if (i!= j && i < j){
+                    bdt_variable var2= vars[j];
 
 
+                    std::cout<<"Starting on variable "<<var1.name<<std::endl;
+                    TCanvas *cobs = new TCanvas(("can_"+var1.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)).c_str(),1800,1600);
+                    cobs->cd();
+
+                    //THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
+                    //TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
+                    TH1 * d0 = (TH1*)data_file->getTH1(var1, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
 
 
-            delete cobs;
-            delete d0;
+                    std::cout<<"Writing pdf."<<std::endl;
+                    cobs->Write();
+                    cobs->SaveAs(("2dplot/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
-        }//var
+                    delete cobs;
+                    delete d0;
+                }//if different variables and haven't already used the combo
+
+            }//var2
+        }//var1
     }//stage
 
     return 0;
