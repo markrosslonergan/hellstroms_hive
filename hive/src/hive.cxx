@@ -573,12 +573,18 @@ int main (int argc, char *argv[]){
             histogram_stack->addToStack(stack_bdt_files[f]);
             std::cout<<"adding to stack"<<stack_bdt_files[f]->name<<std::endl;
         }
-        std::vector<bdt_variable> tmp_var = {vars.at(number)};
 
+        //make the datamc object 
         bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_var2D");	
-        real_datamc.setPlotStage(which_stage);                
 
-        real_datamc.plot2D(ftest, vars, fbdtcuts);
+        if (number != -1){//if passed a single var
+            std::vector<bdt_variable> tmp_var = {vars.at(number)};
+            real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
+        }else{    
+            real_datamc.setPlotStage(which_stage);                
+
+            real_datamc.plot2D(ftest, vars, fbdtcuts);
+        }//if passed a vector
     }
     else if(mode_option == "test"){
 

@@ -125,6 +125,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 }
 
 int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
+    if (vars.size() < 2){
+        std::cout<<"need min 2 vars to make 2D plots"<<std::endl;
+        return 0;
+    } 
+
     // NEW ONE
     double plot_pot=data_file->pot;
     if(stack_mode) plot_pot = stack_pot;
@@ -195,7 +200,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
                     std::cout<<"Writing pdf."<<std::endl;
                     cobs->Write();
-                    cobs->SaveAs(("2dplot/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+                    cobs->SaveAs(("var2D/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
                     delete cobs;
                     delete d0;
