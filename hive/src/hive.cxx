@@ -41,6 +41,7 @@ int main (int argc, char *argv[]){
     int which_file = -1;
     int which_bdt = -1;
     int which_stage = -1;
+    std::string vector = "";
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -54,8 +55,9 @@ int main (int argc, char *argv[]){
         {"help",		required_argument,	0, 'h'},
         {"pot",		    required_argument,	0, 'p'},
         {"number",		required_argument,	0, 'n'},
-        {"response",	no_argument,	0, 'r'},
+        {"response",	no_argument,	    0, 'r'},
         {"file",		required_argument,	0, 'f'},
+        {"vector",      required_argument,  0, 'v'},
         {0,			    no_argument, 		0,  0},
     };
 
@@ -97,6 +99,8 @@ int main (int argc, char *argv[]){
             case 't':
                 topo_tag = optarg;
                 break;
+            case 'v':
+                vector = optarg;
             case '?':
             case 'h':
                 std::cout<<"Allowed arguments:"<<std::endl;
@@ -124,6 +128,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag [Superseeded by XML defined tag]"<<std::endl;
                 std::cout<<"\t-d\t--dir\t\tDirectory for file inputs [Superseeded by XML]"<<std::endl;
+                std::cout<<"\t-v\t--vector\t\tA list of variable numbers, currently only works for var2D. Should be comma separated and enclosed in quotes like \"1,2,3\" "<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
                 return 0;
         }
