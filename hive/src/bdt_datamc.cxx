@@ -125,11 +125,30 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 }
 
 std::vector<bdt_variable> bdt_datamc::GetSelectVars(std::string vector, std::vector<bdt_variable> vars){
-    std::vector<bdt_variable> select_vars;
+    std::vector<bdt_variable> select_vars = {};
     //first parse string as a vector
-    //then for each number, add that variable to the vars list
+  
+    std::vector<int> vect;
+    std::stringstream ss(vector);
 
-    return select_vars;
+    //for each character in the string add the ints
+    for (int i; ss >> i;) {
+        vect.push_back(i);    
+        if (ss.peek() == ',')
+            ss.ignore();
+    }
+
+    //then for each number, add that variable to the vars list
+    for (std::size_t i = 0; i < vect.size(); i++){
+        select_vars.push_back(vars[vect[i]]);
+    }
+        
+    for(auto vars: select_vars){
+        std::cout<<"added vars to list "<<vars.safe_unit<<std::endl;
+
+    }
+
+        return select_vars;
 }
 
 int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){

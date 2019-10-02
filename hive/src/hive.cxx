@@ -435,14 +435,14 @@ int main (int argc, char *argv[]){
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
-            if(vector != ""){
+            if(number != -1){
                 bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_stack");	
                 datamc.setPlotStage(which_stage);                
                 datamc.setStackMode(13.2e20);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
-                std::vector<bdt_variable> tmp_var = datamc.GetSelectVars(vector, vars);
+                std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
             }else{
 
@@ -583,8 +583,8 @@ int main (int argc, char *argv[]){
         //make the datamc object 
         bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_var2D");	
 
-        if (number != -1){//if passed a single var
-            std::vector<bdt_variable> tmp_var = {vars.at(number)};
+        if (vector != ""){//if passed a single var
+            std::vector<bdt_variable> tmp_var =  real_datamc.GetSelectVars(vector, vars);
             real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
         }else{    
             real_datamc.setPlotStage(which_stage);                
