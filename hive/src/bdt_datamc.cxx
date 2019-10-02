@@ -124,6 +124,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
     return this->plotStacks(ftest,vars,{c1,c2});
 }
 
+std::vector<bdt_variable> bdt_datamc::GetSelectVars(std::string vector, std::vector<bdt_variable> vars){
+    std::vector<bdt_variable> select_vars;
+    //first parse string as a vector
+    //then for each number, add that variable to the vars list
+
+    return select_vars;
+}
+
 int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
     if (vars.size() < 2){
         std::cout<<"need min 2 vars to make 2D plots"<<std::endl;

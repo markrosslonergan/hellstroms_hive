@@ -64,7 +64,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:n:rh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:n:v:rh?", longopts, &index);
 
         switch(iarg)
         {
@@ -101,6 +101,7 @@ int main (int argc, char *argv[]){
                 break;
             case 'v':
                 vector = optarg;
+                break;
             case '?':
             case 'h':
                 std::cout<<"Allowed arguments:"<<std::endl;
@@ -434,14 +435,14 @@ int main (int argc, char *argv[]){
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
-            if(number != -1){
+            if(vector != ""){
                 bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_stack");	
                 datamc.setPlotStage(which_stage);                
                 datamc.setStackMode(13.2e20);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
-                std::vector<bdt_variable> tmp_var = {vars.at(number)};
+                std::vector<bdt_variable> tmp_var = datamc.GetSelectVars(vector, vars);
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
             }else{
 
