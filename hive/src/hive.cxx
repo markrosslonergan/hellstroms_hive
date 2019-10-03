@@ -306,7 +306,7 @@ int main (int argc, char *argv[]){
             training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
             training_background_files.back()->setAsOnBeamData(13.2e20);
             training_background_files.back()->calcPOT();
-                       
+
             if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
                 convertToLibSVM(bdt_infos[i], training_signal, training_background_files[i]);
             }
@@ -397,7 +397,7 @@ int main (int argc, char *argv[]){
     }
 
     else if(mode_option=="stack"){
-    std::cout<<"Starting stack "<<std::endl;
+        std::cout<<"Starting stack "<<std::endl;
 
         if (access("stack",F_OK) == -1){
             mkdir("stack",0777);//Create a folder for pdf.
@@ -417,6 +417,7 @@ int main (int argc, char *argv[]){
             if(bdt_files[f]->is_data) continue;
             if(bdt_files[f]==signal)  continue;
             histogram_stack->addToStack(stack_bdt_files[f]);
+            //std::cout<<"adding to stack "<<stack_bdt_files[f]->name<<std::endl;
         }
 
         //signal->fillstyle = 0;
@@ -454,7 +455,7 @@ int main (int argc, char *argv[]){
         }else{
             bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_stack");	
 
-                real_datamc.setStackMode(13.2e20);
+            real_datamc.setStackMode(13.2e20);
             if(which_bdt ==-1){
                 for(int k=0; k< bdt_infos.size(); k++){
                     real_datamc.plotBDTStacks(bdt_infos[k] , fbdtcuts);
@@ -484,15 +485,32 @@ int main (int argc, char *argv[]){
 
         histogram_stack->plot_pot = tagToFileMap["Data5e19"]->pot;
 
-        for(size_t f =0; f< stack_bdt_files.size(); ++f){
-            if(bdt_files[f]->is_data) continue;
-            if(bdt_files[f]==signal && !response_only )  continue;
-            histogram_stack->addToStack(stack_bdt_files[f]);
+        if (!response_only){
+            for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                if(bdt_files[f]->is_data) continue;
+                if(bdt_files[f]==signal)  continue;
+                histogram_stack->addToStack(stack_bdt_files[f]);
+                std::cout<<"adding to stack"<<stack_bdt_files[f]->name<<std::endl;
+            }
+
+            //signal->fillstyle = 0;
+            histogram_stack->addToStack(signal,true);
+        }else{
+            //first add the signal
+            histogram_stack->addToStack(signal,true);
+            histogram_stack->addToStack(stack_bdt_files[4]);
+
+            //then add SM
+            for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                if (f==4) continue;
+                if(bdt_files[f]->is_data) continue;
+                if(bdt_files[f]==signal)  continue;
+                histogram_stack->addToStack(stack_bdt_files[f]);
+                std::cout<<"adding to stack "<<stack_bdt_files[f]->tag<<std::endl;
+
+            }
+
         }
-
-        //signal->fillstyle = 0;
-        if( !response_only) histogram_stack->addToStack(signal,true);
-
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
@@ -500,8 +518,8 @@ int main (int argc, char *argv[]){
                 bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);                
 
-               // datamc.printPassingDataEvents("tmp", 1, fbdtcuts);
-                
+                 //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
+
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
@@ -853,15 +871,15 @@ return 0;
 
         if(which_stage>1){
 
-                std::vector<bdt_file*> rmp =    {training_background_files.back()};
-                for(int k=0; k< bdt_infos.size(); k++){
+            std::vector<bdt_file*> rmp =    {training_background_files.back()};
+            for(int k=0; k< bdt_infos.size(); k++){
                 if(bdt_infos[k].TMVAmethod.str=="XGBoost"){
                     bdt_XGapp(bdt_infos[k], rmp);
-                 }else{
+                }else{
                     bdt_app(bdt_infos[k], rmp);
-             }
-               training_background_files.back()->addBDTResponses(bdt_infos[k]);
                 }
+                training_background_files.back()->addBDTResponses(bdt_infos[k]);
+            }
         }
 
     }

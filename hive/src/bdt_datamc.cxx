@@ -48,7 +48,7 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, std::
 
     //   std::string fake = "fake_bnbbdt_list_"+std::to_string(c1)+"_"+std::to_string(c2)+"_" +data_file->tag;
 
-    data_file=  mc_stack->stack[0];
+   // data_file=  mc_stack->stack[0];
     std::string fake = "";
     data_file->tvertex->Draw((">>"+fake).c_str(), data_file->getStageCuts(stage,cuts).c_str() , "entrylist");
     TEntryList * fake_list = (TEntryList*)gDirectory->Get(fake.c_str());
