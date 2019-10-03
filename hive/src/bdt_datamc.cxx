@@ -232,7 +232,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
                     pad->cd();
 
-                    d0->Draw();
+                    d0->Draw("COLZ");
                     std::cout<<"Writing pdf."<<std::endl;
                     cobs->Write();
                     cobs->SaveAs(("var2D/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
