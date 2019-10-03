@@ -127,7 +127,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double 
 std::vector<bdt_variable> bdt_datamc::GetSelectVars(std::string vector, std::vector<bdt_variable> vars){
     std::vector<bdt_variable> select_vars = {};
     //first parse string as a vector
-  
+
     std::vector<int> vect;
     std::stringstream ss(vector);
 
@@ -142,13 +142,13 @@ std::vector<bdt_variable> bdt_datamc::GetSelectVars(std::string vector, std::vec
     for (std::size_t i = 0; i < vect.size(); i++){
         select_vars.push_back(vars[vect[i]]);
     }
-        
+
     for(auto vars: select_vars){
         std::cout<<"added vars to list "<<vars.safe_unit<<std::endl;
 
     }
 
-        return select_vars;
+    return select_vars;
 }
 
 int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
@@ -244,11 +244,17 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
 
                     //now repeat for all of the MC files
-                    //THStack *stk1 = (THStack*)mc_stack->getEntryStack(var1,s);
-                    //THStack *stk2 = (THStack*)mc_stack->getEntryStack(var2,s);
+
+               for(auto &f: mc_stack->stack){
+
+                    std::cout<<"Stack "<<f->tag<<" level "<<s<<std::endl;
+                    
+                    TH2 * mc = (TH2*)f->getTH2(var1,var2, "1", std::to_string(s)+"_mc_"+std::to_string(bdt_cuts[s])+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
 
 
+                    delete mc;
 
+                    }//for each item in the mc stack
 
                 }//if different variables and haven't already used the combo
 

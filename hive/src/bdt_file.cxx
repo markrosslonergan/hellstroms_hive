@@ -690,8 +690,8 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
     std::string binx_c = binx;
     std::string biny_c = biny;
 
-    std::cout<<"binx_c"<< binx_c<<std::endl;
-    std::cout<<"biny_c"<< biny_c<<std::endl;
+   // std::cout<<"binx_c"<< binx_c<<std::endl;
+   // std::cout<<"biny_c"<< biny_c<<std::endl;
 
     binx_c.erase(binx_c.end()- 1);
     biny_c.erase(biny_c.begin()+ 0); 

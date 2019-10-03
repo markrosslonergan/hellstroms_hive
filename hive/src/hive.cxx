@@ -585,11 +585,11 @@ int main (int argc, char *argv[]){
         real_datamc.setPlotStage(which_stage);                
 
 
-        if (vector != ""){//if passed a single var
+        if (vector != ""){//if passed specific variables
             std::vector<bdt_variable> tmp_var =  real_datamc.GetSelectVars(vector, vars);
             real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
         }else{    
-            real_datamc.plot2D(ftest, vars, fbdtcuts);
+            real_datamc.plot2D(ftest, vars, fbdtcuts); //warning this will make a lot of plots
         }//if passed a vector
     }
     else if(mode_option == "test"){
