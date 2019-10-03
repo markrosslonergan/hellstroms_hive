@@ -220,11 +220,16 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                     TCanvas *cobs = new TCanvas(("can_"+var1.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)).c_str(),1800,1600);
                     cobs->cd();
 
+                    TPad *pad = new TPad(("pad_"+stage_names.at(s)).c_str(), ("pad_"+stage_names.at(s)).c_str(), 0, 0, 1, 1.0);
+                    pad->Draw();
+                    pad->cd();
+
                     //THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
                     //TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
-                    TH1 * d0 = (TH1*)data_file->getTH1(var1, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
+                    TH2 * d0 = (TH2*)data_file->getTH2(var1,var2, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
 
 
+                    d0->Draw();
                     std::cout<<"Writing pdf."<<std::endl;
                     cobs->Write();
                     cobs->SaveAs(("var2D/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
