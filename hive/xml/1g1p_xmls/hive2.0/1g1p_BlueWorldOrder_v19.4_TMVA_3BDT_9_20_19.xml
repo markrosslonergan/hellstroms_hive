@@ -283,6 +283,9 @@
 <var def = "(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])" binning = "(45,-1,1)" unit = "Cosine Angle Between Track and Shower (implied)" type ="d" training ="012"/>
 
 <!-- track calo + geom -->
+<var def = "reco_track_startx[0]" binning = "(45, 0,256)" unit = "Track Start X [cm]" type = "d" logplot = "false" training = ''/>
+<var def = "reco_track_starty[0]" binning = "(45, -117,117)" unit = "Track Start Y [cm]" type = "d" logplot = "false" training = ''/>
+<var def = "reco_track_startz[0]" binning = "(45, 0,1036)" unit = "Track Start Z [cm]" type = "d" logplot = "false" training = ''/>
 <var def = "reco_track_displacement[0]" binning = "(45,0,500)" unit = "Track Displacement [cm]" type = "d" logplot = "false"  training="012"/>
 <var def = "reco_track_phi_yx[0]" binning = "(45,-3.14,3.14)" unit = "Reconstructed Track Phi yx" type = "d" logplot = "false"  training="012"/>
 <var def = "reco_track_theta_yz[0]" binning = "(45,-3.14,3.14)" unit = "Reconstructed Track Theta yz" type = "d" logplot = "false"  training="012"/>
