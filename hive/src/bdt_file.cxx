@@ -701,9 +701,9 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
 
     std::string bin = binx_c + std::string(", ") + biny_c ;
 
-    std::cout<<"Starting to get for "<<(varx.name+">>"+bin ).c_str()<<std::endl;
+    std::cout<<"Starting to get for "<<(varx.name+vary.name+">>"+bin ).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
-    this->tvertex->Draw((varx.name+":"+vary.name+">>"+nam+bin).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+    this->tvertex->Draw((vary.name+":"+varx.name+">>"+nam+bin).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH2* th2 = (TH2*)gDirectory->Get(nam.c_str()) ;
     //th1->Sumw2();
@@ -718,7 +718,7 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
     th2->SetDirectory(0);	
 
     //delete ctmp;
-    return th2;
+     return th2;
 }
 
 
