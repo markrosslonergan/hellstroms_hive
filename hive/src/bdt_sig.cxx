@@ -335,10 +335,10 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         //  std::string s_impact = "((sss_num_candidates==0) ||  Min$(sss_candidate_impact_parameter)>"+std::to_string(impact) +") ";
 
         //Yarp
-        //std::string s_impact = "1";
+        std::string s_impact = "1";
         //std::string s_impact = "((sss_num_candidates==0)|| Sum$(sss_candidate_impact_parameter<"+std::to_string(impact)+ "&& sss_candidate_min_dist<70.0)==0 )";
 
-        std::string s_impact = "((sss_num_candidates==0)|| Max$(sss_candidate_veto_score)<"+std::to_string(s1)+  " )";
+        //std::string s_impact = "((sss_num_candidates==0)|| Max$(sss_candidate_veto_score)<"+std::to_string(s1)+  " )";
 
         double signal = 0;
         double background = 0;

@@ -359,7 +359,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"MyChi: "<<var.name<<" "<<mychi<<std::endl;
 
 
-            stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
+            //stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
 
             double NdatEvents = data_file->GetEntries()*(plot_pot/data_file->pot )*data_file->scale_data;
 
