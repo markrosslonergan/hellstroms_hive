@@ -234,6 +234,12 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
                     d0->Draw("COLZ");
                     d0 ->SetTitle((data_file->tag + ", stage " + std::to_string(s)).c_str());
+                    d0->GetYaxis()->SetTitleSize(0.05);
+                    d0->GetYaxis()->SetTitleOffset(0.9);
+                    d0->GetXaxis()->SetTitleSize(0.05);
+                    d0->GetXaxis()->SetTitleOffset(0.9);
+                    pad->SetRightMargin(0.15);
+                    
                     std::cout<<"Writing pdf."<<std::endl;
                     cobs->Write();
                     cobs->SaveAs(("var2D/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
@@ -260,7 +266,12 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                     padmc->cd();
 
                     mc->Draw("COLZ");
-                    mc ->SetTitle((data_file->tag + ", stage " + std::to_string(s)).c_str());
+                    mc ->SetTitle((f->tag + ", stage " + std::to_string(s)).c_str());
+                    mc->GetYaxis()->SetTitleSize(0.05);
+                    mc->GetYaxis()->SetTitleOffset(0.9);
+                    mc->GetXaxis()->SetTitleSize(0.05);
+                    mc->GetXaxis()->SetTitleOffset(0.9);
+                    padmc->SetRightMargin(0.15);
                     std::cout<<"Writing pdf."<<std::endl;
                     cobsmc->Write();
                     cobsmc->SaveAs(("var2D/"+tag+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
