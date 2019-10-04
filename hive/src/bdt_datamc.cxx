@@ -48,7 +48,7 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, std::
 
     //   std::string fake = "fake_bnbbdt_list_"+std::to_string(c1)+"_"+std::to_string(c2)+"_" +data_file->tag;
 
-   // data_file=  mc_stack->stack[0];
+    // data_file=  mc_stack->stack[0];
     std::string fake = "";
     data_file->tvertex->Draw((">>"+fake).c_str(), data_file->getStageCuts(stage,cuts).c_str() , "entrylist");
     TEntryList * fake_list = (TEntryList*)gDirectory->Get(fake.c_str());
@@ -123,6 +123,174 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
     return this->plotStacks(ftest,vars,{c1,c2});
 }
+
+std::vector<bdt_variable> bdt_datamc::GetSelectVars(std::string vector, std::vector<bdt_variable> vars){
+    std::vector<bdt_variable> select_vars = {};
+    //first parse string as a vector
+
+    std::vector<int> vect;
+    std::stringstream ss(vector);
+
+    //for each character in the string add the ints
+    for (int i; ss >> i;) {
+        vect.push_back(i);    
+        if (ss.peek() == ',')
+            ss.ignore();
+    }
+
+    //then for each number, add that variable to the vars list
+    for (std::size_t i = 0; i < vect.size(); i++){
+        select_vars.push_back(vars[vect[i]]);
+    }
+
+    for(auto vars: select_vars){
+        std::cout<<"added vars to list "<<vars.safe_unit<<std::endl;
+
+    }
+
+    return select_vars;
+}
+
+int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
+    if (vars.size() < 2){
+        std::cout<<"need min 2 vars to make 2D plots"<<std::endl;
+        return 0;
+    } 
+
+    // NEW ONE
+    double plot_pot=data_file->pot;
+    if(stack_mode) plot_pot = stack_pot;
+
+    std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
+
+    double title_size_ratio=0.1;
+    double label_size_ratio=0.1;
+    double title_offset_ratioY = 0.3 ;
+    double title_offset_ratioX = 1.1;
+
+    double title_size_upper=0.15;
+    double label_size_upper=0.05;
+    double title_offset_upper = 1.45;
+
+
+    ftest->cd();
+
+    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NCPi0 BDT Cut","NUE BDT Cut","tmp"};
+    //Loop over all stages
+
+    int s_min = 0;
+    int s_max = bdt_cuts.size()+2;
+    if(plot_stage >=0){
+        s_min = plot_stage;
+        s_max = plot_stage+1;
+    }
+
+
+    //for each stage
+    for(int s = s_min; s< s_max; s++){
+
+        std::cout<<"On stage: "<<s<<std::endl;
+        //First set the files at this stage
+        for(auto &f: mc_stack->stack){
+            std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
+            if(s>1) f->calcBDTEntryList(s,bdt_cuts);
+            std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
+            f->setStageEntryList(s);
+        }	
+
+        std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
+
+        if(s>1) data_file->calcBDTEntryList(s,bdt_cuts);
+
+        data_file->setStageEntryList(s);
+
+        //And all variables in the vector var
+        //make pairs of all combos
+        for(int i = 0; i < vars.size(); i++){
+            bdt_variable var1 = vars[i];
+
+            for(int j = 0; j < vars.size(); j++){
+
+                //only want to plot different variables, but also not duplicate i.e. 12 and 21
+                if (i!= j && i < j){
+                    bdt_variable var2= vars[j];
+
+
+                    std::cout<<"Starting on variable "<<var1.name<<std::endl;
+
+                    //make file for data
+                    TCanvas *cobs = new TCanvas(("can_"+var1.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)).c_str(),1800,1600);
+                    cobs->cd();
+
+                    TPad *pad = new TPad(("pad_"+stage_names.at(s)).c_str(), ("pad_"+stage_names.at(s)).c_str(), 0, 0, 1, 1.0);
+                    pad->Draw();
+                    pad->cd();
+
+                    //THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
+                    //TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
+                    TH2 * d0 = (TH2*)data_file->getTH2(var1,var2, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
+
+                    pad->cd();
+
+                    d0->Draw("COLZ");
+                    d0 ->SetTitle((data_file->tag + ", stage " + std::to_string(s)).c_str());
+                    d0->GetYaxis()->SetTitleSize(0.05);
+                    d0->GetYaxis()->SetTitleOffset(0.9);
+                    d0->GetXaxis()->SetTitleSize(0.05);
+                    d0->GetXaxis()->SetTitleOffset(0.9);
+                    pad->SetRightMargin(0.15);
+                    
+                    std::cout<<"Writing pdf."<<std::endl;
+                    cobs->Write();
+                    cobs->SaveAs(("var2D/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+
+
+                    delete cobs;
+                    delete d0;
+
+
+                    //now repeat for all of the MC files
+
+               for(auto &f: mc_stack->stack){
+
+                    std::cout<<"Stack "<<f->tag<<" level "<<s<<std::endl;
+                    TCanvas *cobsmc = new TCanvas(("can_"+var1.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)).c_str(),1800,1600);
+                    cobsmc->cd();
+
+                    TPad *padmc = new TPad(("pad_"+stage_names.at(s)).c_str(), ("pad_"+stage_names.at(s)).c_str(), 0, 0, 1, 1.0);
+                    padmc->Draw();
+                    padmc->cd();
+
+                                
+                    TH2 * mc = (TH2*)f->getTH2(var1,var2, "1", std::to_string(s)+"_mc_"+std::to_string(bdt_cuts[s])+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
+                    padmc->cd();
+
+                    mc->Draw("COLZ");
+                    mc ->SetTitle((f->tag + ", stage " + std::to_string(s)).c_str());
+                    mc->GetYaxis()->SetTitleSize(0.05);
+                    mc->GetYaxis()->SetTitleOffset(0.9);
+                    mc->GetXaxis()->SetTitleSize(0.05);
+                    mc->GetXaxis()->SetTitleOffset(0.9);
+                    padmc->SetRightMargin(0.15);
+                    std::cout<<"Writing pdf."<<std::endl;
+                    cobsmc->Write();
+                    cobsmc->SaveAs(("var2D/"+tag+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+
+
+                    delete cobsmc;
+                    delete mc;
+
+                    }//for each item in the mc stack
+
+                }//if different variables and haven't already used the combo
+
+            }//var2
+        }//var1
+    }//stage
+
+    return 0;
+}
+
 
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
@@ -311,19 +479,19 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //    h1->SetLineColor(f->col);
                 //    h1->SetLineWidth(3);
                 //}else{
-                    h1->SetLineColor(kBlack);
+                h1->SetLineColor(kBlack);
                 //}
                 std::string string_events = to_string_prec(Nevents,2);
                 if(do_subtraction){
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
                 std::string leg_type = "f";   
-                
+
                 //if(mc_stack->signal_on_top[n]) leg_type = "l";
                 //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
                 l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
                 //l0->AddEntry(h1,(f->plot_name).c_str(),"f");
-                
+
                 if(mc_stack->signal_on_top[n]) which_signal = n;
                 n++;
             }
@@ -388,7 +556,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pottex.SetTextSize(0.06);
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
-           
+
             double pot_unit = stack_mode ? 1e20 : 1e19;
             std::string pot_unit_s = stack_mode ? "e20" : "e19";
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/pot_unit,1)+ pot_unit_s+" POT";
@@ -438,8 +606,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             TH1 * signal_hist = mc_stack->vec_hists[which_signal];
             TH1* rat_signal = (TH1*)signal_hist->Clone(("ratio_signal_"+stage_names.at(s)).c_str());
-//            rat_signal->Add(tsum);
-  //          rat_signal->Divide(tsum);
+            //            rat_signal->Add(tsum);
+            //          rat_signal->Divide(tsum);
             for(int b=0; b< rat_signal->GetNbinsX()+1; b++){
                 double val = (signal_hist->GetBinContent(b)+tsum->GetBinContent(b))/tsum->GetBinContent(b);
                 std::cout<<b<<" "<<val<<" "<<tsum->GetBinContent(b)<<" "<<signal_hist->GetBinContent(b)<<std::endl;
@@ -741,7 +909,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
                 l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),"f");
                 //l0->AddEntry(h1,(f->plot_name).c_str(),"f");
-                               n++;
+                n++;
             }
 
 
@@ -768,7 +936,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             l0->SetFillStyle(0);
             l0->SetTextSize(0.04);
 
-        //    tsum->DrawCopy("Same E2");
+            //    tsum->DrawCopy("Same E2");
 
             //  TLatex latex;
             // latex.SetTextSize(0.06);
@@ -826,7 +994,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(s)).c_str());
             ratunit->Divide(rat_denom);		
 
-            
+
 
 
             ratunit->SetFillColor(kGray+1);
@@ -839,7 +1007,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             ratunit->Draw("E2");	
 
-                        TLine *line = new TLine(ratunit->GetXaxis()->GetXmin(),1.0,ratunit->GetXaxis()->GetXmax(),1.0 );
+            TLine *line = new TLine(ratunit->GetXaxis()->GetXmin(),1.0,ratunit->GetXaxis()->GetXmax(),1.0 );
             line->Draw("same");
             ratunit->SetLineColor(kBlack);
             ratunit->SetTitle("");
