@@ -248,10 +248,25 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                for(auto &f: mc_stack->stack){
 
                     std::cout<<"Stack "<<f->tag<<" level "<<s<<std::endl;
-                    
+                    TCanvas *cobsmc = new TCanvas(("can_"+var1.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)).c_str(),1800,1600);
+                    cobsmc->cd();
+
+                    TPad *padmc = new TPad(("pad_"+stage_names.at(s)).c_str(), ("pad_"+stage_names.at(s)).c_str(), 0, 0, 1, 1.0);
+                    padmc->Draw();
+                    padmc->cd();
+
+                                
                     TH2 * mc = (TH2*)f->getTH2(var1,var2, "1", std::to_string(s)+"_mc_"+std::to_string(bdt_cuts[s])+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
+                    padmc->cd();
+
+                    mc->Draw("COLZ");
+                    mc ->SetTitle((data_file->tag + ", stage " + std::to_string(s)).c_str());
+                    std::cout<<"Writing pdf."<<std::endl;
+                    cobsmc->Write();
+                    cobsmc->SaveAs(("var2D/"+tag+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
 
+                    delete cobsmc;
                     delete mc;
 
                     }//for each item in the mc stack
