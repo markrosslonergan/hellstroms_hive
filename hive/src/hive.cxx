@@ -416,13 +416,13 @@ int main (int argc, char *argv[]){
 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
             if(bdt_files[f]->is_data) continue;
-            if(bdt_files[f]==signal)  continue;
+            //if(bdt_files[f]==signal)  continue;
             histogram_stack->addToStack(stack_bdt_files[f]);
             //std::cout<<"adding to stack "<<stack_bdt_files[f]->name<<std::endl;
         }
 
         //signal->fillstyle = 0;
-        histogram_stack->addToStack(signal,true);
+        //histogram_stack->addToStack(signal,true);
 
         tagToFileMap["Data5e19"]->col = kWhite;
         tagToFileMap["Data5e19"]->fillstyle = 0;

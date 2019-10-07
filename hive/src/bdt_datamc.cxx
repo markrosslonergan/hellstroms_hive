@@ -255,7 +255,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // }
 
             if (s==3){
-                max_modifier = (stack_mode ? 1.5 : 3);
+                max_modifier = (stack_mode ? 2.0 : 3.0);
             }
 
 
@@ -285,6 +285,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->GetYaxis()->SetTitleSize(0.05);
             stk->GetYaxis()->SetTitleOffset(0.9);
             stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
+            //stk->SetMaximum(500);
+            std::cout << "[DEBUG] tsum max = " << tsum->GetMaximum() << std::endl;
+            std::cout << "[DEBUG] tsum max times mod = " << tsum->GetMaximum()*max_modifier << std::endl;
+            std::cout << "[DEBUG] stack max = " << stk->GetMaximum() << std::endl; 
+            std::cout << "[DEBUG] max of two = " << std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum())) << std::endl; 
             stk->SetMinimum(min_val);
             tsum->SetLineWidth(3);
             tsum->DrawCopy("Same E2");
@@ -358,8 +363,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
             std::cout<<"MyChi: "<<var.name<<" "<<mychi<<std::endl;
 
-
-            stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
+            //stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
 
             double NdatEvents = data_file->GetEntries()*(plot_pot/data_file->pot )*data_file->scale_data;
 
