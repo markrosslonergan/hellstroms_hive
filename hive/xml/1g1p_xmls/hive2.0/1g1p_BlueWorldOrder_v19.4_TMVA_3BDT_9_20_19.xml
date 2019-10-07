@@ -242,9 +242,9 @@
 -->
 
 <!-- shower geometry + calorimetry -->
-<var def = "reco_shower_startx[0]" binning = "(45, 0,256)" unit = "Shower Start X [cm]" type = "d" logplot = "false" training = ''/>
-<var def = "reco_shower_starty[0]" binning = "(45, -117,117)" unit = "Shower Start Y [cm]" type = "d" logplot = "false" training = ''/>
-<var def = "reco_shower_startz[0]" binning = "(45, 0,1036)" unit = "Shower Start Z [cm]" type = "d" logplot = "false" training = ''/>
+<var def = "reco_shower_startx[0]" binning = "(45,-20,270)" unit = "Shower Start X [cm]" type = "d" logplot = "false" training = ''/>
+<var def = "reco_shower_starty[0]" binning = "(45, -140,140)" unit = "Shower Start Y [cm]" type = "d" logplot = "false" training = ''/>
+<var def = "reco_shower_startz[0]" binning = "(45, -30,1100)" unit = "Shower Start Z [cm]" type = "d" logplot = "false" training = ''/>
 
 <var def = "reco_shower_impact_parameter[0]" binning = "(45,0,1000)" unit = "Shower Impact Parameter [cm]" type="d" logplot="false" training="012"/>
 <var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(45,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d" logplot="false" training="012"/>
@@ -287,12 +287,12 @@
 <var def = "(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])" binning = "(45,-1,1)" unit = "Cosine Angle Between Track and Shower (implied)" type ="d" training ="012"/>
 
 <!-- track calo + geom -->
-<var def = "reco_track_startx[0]" binning = "(45, 0,256)" unit = "Track Start X [cm]" type = "d" logplot = "false" training = ''/>
-<var def = "reco_track_starty[0]" binning = "(45, -117,117)" unit = "Track Start Y [cm]" type = "d" logplot = "false" training = ''/>
-<var def = "reco_track_startz[0]" binning = "(45, 0,1036)" unit = "Track Start Z [cm]" type = "d" logplot = "false" training = ''/>
-<var def = "reco_track_endx[0]" binning = "(45, 0,256)" unit = "Track End X [cm]" type = "d" logplot = "false" training = ''/>
-<var def = "reco_track_endy[0]" binning = "(45, -117,117)" unit = "Track End Y [cm]" type = "d" logplot = "false" training = ''/>
-<var def = "reco_track_endz[0]" binning = "(45, 0,1036)" unit = "Track End Z [cm]" type = "d" logplot = "false" training = ''/>
+<var def = "reco_track_startx[0]" binning = "(45, -20,270)" unit = "Track Start X [cm]" type = "d" logplot = "false" training = ''/>
+<var def = "reco_track_starty[0]" binning = "(45, -140,140)" unit = "Track Start Y [cm]" type = "d" logplot = "false" training = ''/>
+<var def = "reco_track_startz[0]" binning = "(45, -30,1100)" unit = "Track Start Z [cm]" type = "d" logplot = "false" training = ''/>
+<var def = "reco_track_endx[0]" binning = "(45, -20,270)" unit = "Track End X [cm]" type = "d" logplot = "false" training = ''/>
+<var def = "reco_track_endy[0]" binning = "(45, -140,140)" unit = "Track End Y [cm]" type = "d" logplot = "false" training = ''/>
+<var def = "reco_track_endz[0]" binning = "(45, -30,1100)" unit = "Track End Z [cm]" type = "d" logplot = "false" training = ''/>
 <var def = "reco_track_displacement[0]" binning = "(45,0,500)" unit = "Track Displacement [cm]" type = "d" logplot = "false"  training="012"/>
 <var def = "reco_track_phi_yx[0]" binning = "(45,-3.14,3.14)" unit = "Reconstructed Track Phi yx" type = "d" logplot = "false"  training="012"/>
 <var def = "reco_track_theta_yz[0]" binning = "(45,-3.14,3.14)" unit = "Reconstructed Track Theta yz" type = "d" logplot = "false"  training="012"/>
@@ -316,9 +316,10 @@
 <var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(45,-2,2)"  unit ="Log( Three Plane Track PID )" type = "d" logplot = "false" training="012"/>
 
 <!-- vertex vars-->
-<var def = "reco_vertex_x" binning = "(25,-20,270)" unit = "Reco Vertex X [cm]" type="d" logplot="false" training=""/>
-<var def = "reco_vertex_y" binning = "(25,-140,140)" unit = "Reco Vertex Y [cm]" type="d" logplot="false" training=""/>
-<var def = "reco_vertex_z" binning = "(25,-20,1100)" unit = "Reco Vertex Z [cm]" type="d" logplot="false" training=""/>
+<var def = "reco_vertex_x" binning = "(45,-20,270)" unit = "Reco Vertex X [cm]" type="d" logplot="false" training=""/>
+
+<var def = "reco_vertex_y" binning = "(45,-140,140)" unit = "Reco Vertex Y [cm]" type="d" logplot="false" training=""/>
+<var def = "reco_vertex_z" binning = "(45,-30,1100)" unit = "Reco Vertex Z [cm]" type="d" logplot="false" training=""/>
 
 <!-- Delta variables -->
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(45,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" logplot = "false" training = "012" /> 
