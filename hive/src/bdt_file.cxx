@@ -45,7 +45,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
     //topovertex = (TTree*)tvertex->CopyTree(flow.topological_cuts.c_str());
     //std::cout<<"Copied to topological tree: "<<topovertex->GetEntries()<<std::endl;
-    
+
 
     std::cout<<"Getting eventweight tree"<<std::endl;
     teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
@@ -53,59 +53,59 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     vec_entry_lists.resize(flow.bdt_vector.size());
 
-/*
+    /*
     //This is all old school mcc8 stuff for now.
     if(tag == "IntimeCosmics"){
-        std::cout<<"Getting POT for CosmicIntime: "<<std::endl;
-        //Found in 
-        double intime_modifier = 10.279;
+    std::cout<<"Getting POT for CosmicIntime: "<<std::endl;
+    //Found in 
+    double intime_modifier = 10.279;
 
-        //Guarrenteed for fresh_mcc8.9
-        double N_gen_bnb = 2146800.0;
-        double N_gen_cos = 991914.0;
+    //Guarrenteed for fresh_mcc8.9
+    double N_gen_bnb = 2146800.0;
+    double N_gen_cos = 991914.0;
 
-        double pot_bnb_cosmic = 2.16562e+21;
-        double pot_plot = 6.6e20;
+    double pot_bnb_cosmic = 2.16562e+21;
+    double pot_plot = 6.6e20;
 
-        pot = pot_plot; 
-        this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos)*pot_plot/pot_bnb_cosmic;
-        std::cout<<"--> value: "<<pot<<" with scale factor: "<<scale_data<<std::endl;
+    pot = pot_plot; 
+    this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos)*pot_plot/pot_bnb_cosmic;
+    std::cout<<"--> value: "<<pot<<" with scale factor: "<<scale_data<<std::endl;
     }else{
-        leg = "l";
-        std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
-        tpot = (TTree*)f->Get(tnam_pot.c_str());
-        std::cout << "tpot name: " << tnam_pot.c_str() << std::endl;
-        tpot->SetBranchAddress("number_of_events", &numbranch);
-        tpot->SetBranchAddress("POT",&potbranch);
+    leg = "l";
+    std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
+    tpot = (TTree*)f->Get(tnam_pot.c_str());
+    std::cout << "tpot name: " << tnam_pot.c_str() << std::endl;
+    tpot->SetBranchAddress("number_of_events", &numbranch);
+    tpot->SetBranchAddress("POT",&potbranch);
 
-        std::cout<<"Set the POT branch"<<std::endl;
-        int tmpnum = 0;
-        double tmppot=0;
-        std::cout << "tpot entries: " << tpot->GetEntries() << std::endl;
-        for(int i=0; i<tpot->GetEntries(); i++) {
-            tpot->GetEntry(i);
-            tmpnum += (double)numbranch;
-            tmppot += potbranch;
-        }
-        numberofevents = tmpnum;
-        pot=tmppot;
-        std::cout<<"--> POT is MC: ";
-        std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
-
-        weight_branch = "1";
-        numberofevents_raw = numberofevents;
+    std::cout<<"Set the POT branch"<<std::endl;
+    int tmpnum = 0;
+    double tmppot=0;
+    std::cout << "tpot entries: " << tpot->GetEntries() << std::endl;
+    for(int i=0; i<tpot->GetEntries(); i++) {
+    tpot->GetEntry(i);
+    tmpnum += (double)numbranch;
+    tmppot += potbranch;
     }
-}
+    numberofevents = tmpnum;
+    pot=tmppot;
+    std::cout<<"--> POT is MC: ";
+    std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
 
-if(tag == "BNBPure" || tag == "BNBCosmics"){
+    weight_branch = "1";
+    numberofevents_raw = numberofevents;
+    }
+    }
+
+    if(tag == "BNBPure" || tag == "BNBCosmics"){
     //MCC9 pot issues
     //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
     pot = 2.16562e21*(double)numberofevents/2154500.0;
     std::cout<<"REAL MCC9: --> POT is MC: ";
     std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
-}
+    }
 
-if(tag == "NCPi0" || tag=="NCPi0Cosmics"){
+    if(tag == "NCPi0" || tag=="NCPi0Cosmics"){
     //MCC9 pot issues
     //OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
     // nc_fraction calculated by opening bnb_nu_overlay_combined_whatever and
@@ -114,9 +114,9 @@ if(tag == "NCPi0" || tag=="NCPi0Cosmics"){
     pot = 2.16562e21*(double)numberofevents/2154500.0/nc_fraction;
     std::cout<<"REAL MCC9: --> POT is MC: ";
     std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
-}
+    }
 
-if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure" || tag == "NCDeltaRad"){
+    if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure" || tag == "NCDeltaRad"){
     double volCryo = 199668.427885;
     double volTPC = 101510.0;
     double volTPCActive=  86698.6;
@@ -253,7 +253,7 @@ int bdt_file::calcPOT(){
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
     std::string tnam_slice = root_dir+"ncdelta_slice_tree";
- 
+
     double potbranch = 0;
     int  numbranch = 0;
 
@@ -277,7 +277,7 @@ int bdt_file::calcPOT(){
             tmpnum += (double)numbranch;
             tmppot += potbranch;
         }
-//        numberofevents = tmpnum;
+        //        numberofevents = tmpnum;
 
         numberofevents = tvertex->GetEntries();
 
@@ -342,16 +342,16 @@ int bdt_file::calcPOT(){
 
 
         //so that is
-     //   double ext=15435961.0;//47953078.0; //External spills in each sample (EXT)
-      //  double spill_on = data_tor860_wcut;   //11595542.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
-      //  double datanorm =4.898e19;// tor860_wcut run-subrunlist;
+        //   double ext=15435961.0;//47953078.0; //External spills in each sample (EXT)
+        //  double spill_on = data_tor860_wcut;   //11595542.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
+        //  double datanorm =4.898e19;// tor860_wcut run-subrunlist;
 
         //This is old MCC8 one
         //double ext=33752562+40051674;//47953078.0; //External spills in each sample (EXT)
         //double spill_on=10312906;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
         //double datanorm =4.393e19;// tor860_wcut run-subrunlist;
 
-//        double mod = spill_on/ext*(Noff_full/Noff_have);
+        //        double mod = spill_on/ext*(Noff_full/Noff_have);
 
         if(N_samweb_ext ==-1) N_samweb_ext = numberofevents;
 
@@ -433,7 +433,7 @@ int bdt_file::calcPrecutEntryList(){
 
 
         if(fpre->GetListOfKeys()->Contains(precut_list_name.c_str()) &&hash_right  ) {
-        
+
             std::cout<<"And it contains a list. Loading"<<std::endl;
 
             precut_list = (TEntryList*)fpre->Get(precut_list_name.c_str());
@@ -441,7 +441,7 @@ int bdt_file::calcPrecutEntryList(){
 
             std::cout<<"Precut Entry List does not exists for "<<this->tag<<" creating it."<<std::endl;
             f->cd();
-        
+
             TVectorT<double> * stored_hash;
 
             this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
@@ -525,9 +525,9 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
         }else{
             std::cout<<"File does not have a valid hash, regenerating!"<<std::endl;
-            
+
         }
-        
+
     }
 
     if(!does_local_exist || !hash_right){
@@ -545,7 +545,7 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
         TFile* fpre = new TFile(filename.c_str(),"update");	
 
         TVectorT<double> stored_hash;
-        
+
         fpre->cd();
         stored_hash.Write(s_precut_hash.c_str(),TObject::kWriteDelete);
         topological_list->Write();
@@ -684,10 +684,26 @@ TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, doub
 }
 
 TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std::string nam, double plot_POT){
+    std::string binx = varx.binning;
+    std::string biny = vary.binning;
 
-    //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
+    std::string binx_c = binx;
+    std::string biny_c = biny;
+
+   // std::cout<<"binx_c"<< binx_c<<std::endl;
+   // std::cout<<"biny_c"<< biny_c<<std::endl;
+
+    binx_c.erase(binx_c.end()- 1);
+    biny_c.erase(biny_c.begin()+ 0); 
+
+   // std::cout<<"binx_c"<< binx_c<<std::endl;
+   // std::cout<<"biny_c"<< biny_c<<std::endl;
+
+    std::string bin = binx_c + std::string(", ") + biny_c ;
+
+    std::cout<<"Starting to get for "<<(varx.name+vary.name+">>"+bin ).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
-    this->tvertex->Draw((varx.name+":"+vary.name+">>"+nam+"(1000,0.0,1,1000,0.0,1)").c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+    this->tvertex->Draw((vary.name+":"+varx.name+">>"+nam+bin).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH2* th2 = (TH2*)gDirectory->Get(nam.c_str()) ;
     //th1->Sumw2();
@@ -702,7 +718,7 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
     th2->SetDirectory(0);	
 
     //delete ctmp;
-    return th2;
+     return th2;
 }
 
 
@@ -808,7 +824,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 }
 
 bdt_variable bdt_file::getBDTVariable(bdt_info info){
- //   std::cout<<"Getting bdt_file var bdt : "<<this->tag+"_"+info.identifier+".mva"<<std::endl;
+    //   std::cout<<"Getting bdt_file var bdt : "<<this->tag+"_"+info.identifier+".mva"<<std::endl;
     return bdt_variable(this->tag +"_"+info.identifier+ ".mva", info.binning, info.name+" Response" ,false,"d");
 }
 
@@ -840,8 +856,8 @@ int bdt_file::addBDTResponses(bdt_info input_bdt_info){
     topo_name = input_bdt_info.topo_name; 
     auto method = input_bdt_info.TMVAmethod;
 
-        std::cout<<"Now adding TreeFriend: "<<input_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
-        this->addFriend(this->tag +"_"+input_bdt_info.identifier,  input_bdt_info.identifier+"_"+this->tag+"_app"+".root");
+    std::cout<<"Now adding TreeFriend: "<<input_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+    this->addFriend(this->tag +"_"+input_bdt_info.identifier,  input_bdt_info.identifier+"_"+this->tag+"_app"+".root");
 
     return 0;
 }
@@ -881,21 +897,21 @@ std::string bdt_file::getStageCuts(int stage, std::vector<double> bdt_cuts){
     bool verbose = false;
 
     std::string ans;
-   
+
     if(stage==-1){
-            ans = flow.topological_cuts;
+        ans = flow.topological_cuts;
     }else if(stage==0){
-            ans = flow.base_cuts;
+        ans = flow.base_cuts;
     }else if(stage ==1){
-            ans = flow.base_cuts + "&&"+ flow.pre_cuts;
-            if(verbose)std::cout << "Stage 1 cuts: " << ans << std::endl;
+        ans = flow.base_cuts + "&&"+ flow.pre_cuts;
+        if(verbose)std::cout << "Stage 1 cuts: " << ans << std::endl;
     }else if(stage > 1){
-                    ans = flow.base_cuts + "&&" + flow.pre_cuts;
-                    for(int i=0; i< stage-1; i++){
-                        bdt_variable stagevar = this->getBDTVariable(flow.bdt_vector[i]);		
-                        ans += "&& "+stagevar.name +">"+std::to_string(bdt_cuts[i]);
-                        //ans += "&& "+stagevar.name +"> 0.52" +"&&"+ stagevar.name + "< 0.56";
-                    }
+        ans = flow.base_cuts + "&&" + flow.pre_cuts;
+        for(int i=0; i< stage-1; i++){
+            bdt_variable stagevar = this->getBDTVariable(flow.bdt_vector[i]);		
+            ans += "&& "+stagevar.name +">"+std::to_string(bdt_cuts[i]);
+            //ans += "&& "+stagevar.name +"> 0.52" +"&&"+ stagevar.name + "< 0.56";
+        }
     }
     return ans;
 }

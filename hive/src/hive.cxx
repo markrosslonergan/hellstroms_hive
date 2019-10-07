@@ -42,6 +42,7 @@ int main (int argc, char *argv[]){
     int which_file = -1;
     int which_bdt = -1;
     int which_stage = -1;
+    std::string vector = "";
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -55,15 +56,16 @@ int main (int argc, char *argv[]){
         {"help",		required_argument,	0, 'h'},
         {"pot",		    required_argument,	0, 'p'},
         {"number",		required_argument,	0, 'n'},
-        {"response",	no_argument,	0, 'r'},
+        {"response",	no_argument,	    0, 'r'},
         {"file",		required_argument,	0, 'f'},
+        {"vector",      required_argument,  0, 'v'},
         {0,			    no_argument, 		0,  0},
     };
 
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:n:rh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:n:v:rh?", longopts, &index);
 
         switch(iarg)
         {
@@ -98,6 +100,9 @@ int main (int argc, char *argv[]){
             case 't':
                 topo_tag = optarg;
                 break;
+            case 'v':
+                vector = optarg;
+                break;
             case '?':
             case 'h':
                 std::cout<<"Allowed arguments:"<<std::endl;
@@ -125,6 +130,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag [Superseeded by XML defined tag]"<<std::endl;
                 std::cout<<"\t-d\t--dir\t\tDirectory for file inputs [Superseeded by XML]"<<std::endl;
+                std::cout<<"\t-v\t--vector\t\tA list of variable numbers, currently only works for var2D. Should be comma separated and enclosed in quotes like \"1,2,3\" "<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
                 return 0;
         }
@@ -519,7 +525,7 @@ int main (int argc, char *argv[]){
                 bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);                
 
-                 //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
+                //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
@@ -549,7 +555,45 @@ int main (int argc, char *argv[]){
                 real_datamc.plotBDTStacks(bdt_infos[which_bdt],fbdtcuts);
             }
         }
-    }else if(mode_option == "test"){
+    }
+    else if(mode_option == "var2D"){
+        std::cout<<"Starting var2D "<<std::endl;
+
+        if (access("var2D",F_OK) == -1){
+            mkdir("var2D",0777);//Create a folder for pdf.
+        }
+        else{
+            std::cout<<"Overwrite var2D/ in 2 seconds, 1 seconds, ..."<<std::endl;
+            sleep(2);
+        }
+
+
+        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+
+        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_var2D");
+
+        histogram_stack->plot_pot = tagToFileMap["Data5e19"]->pot;
+
+        //add MC files to stack
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            if(bdt_files[f]->is_data) continue;
+            histogram_stack->addToStack(stack_bdt_files[f]);
+            std::cout<<"adding to stack"<<stack_bdt_files[f]->name<<std::endl;
+        }
+
+        //make the datamc object 
+        bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_var2D");	
+        real_datamc.setPlotStage(which_stage);                
+
+
+        if (vector != ""){//if passed specific variables
+            std::vector<bdt_variable> tmp_var =  real_datamc.GetSelectVars(vector, vars);
+            real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
+        }else{    
+            real_datamc.plot2D(ftest, vars, fbdtcuts); //warning this will make a lot of plots
+        }//if passed a vector
+    }
+    else if(mode_option == "test"){
 
         //First lets create the bdt_file's* and flows for training
 

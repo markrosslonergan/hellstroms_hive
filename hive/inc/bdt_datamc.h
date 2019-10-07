@@ -32,8 +32,8 @@
 #include "TGraphAsymmErrors.h"
 
 class bdt_datamc{
-	public:
-	
+    public:
+
 
         bool stack_mode;
         double stack_pot;
@@ -42,24 +42,24 @@ class bdt_datamc{
             stack_mode = true;
             return true;
         }
-	
-		bdt_file* data_file;
-		bdt_stack *mc_stack;
-		std::string tag;
 
-    bool isSpectator = false;
-		bool is_bdt_variable;
-    bool do_subtraction; 
-    int plot_stage;
-    std::vector<bool> subtraction_vec;
+        bdt_file* data_file;
+        bdt_stack *mc_stack;
+        std::string tag;
 
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;stack_mode=false;};
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1;stack_mode=false; };
-		bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;stack_mode=false;};
+        bool isSpectator = false;
+        bool is_bdt_variable;
+        bool do_subtraction; 
+        int plot_stage;
+        std::vector<bool> subtraction_vec;
+
+        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;stack_mode=false;};
+        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1;stack_mode=false; };
+        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;stack_mode=false;};
 
         int setPlotStage(int s){
-           plot_stage =s;
-           return s;
+            plot_stage =s;
+            return s;
         }
 
         int setSubtractionVector(std::vector<bool> trac){
@@ -67,21 +67,22 @@ class bdt_datamc{
             do_subtraction=true;
             return 0;
         }
-
-		int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
+        std::vector<bdt_variable> GetSelectVars(std::string vector, std::vector<bdt_variable> vars);
+        int plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts);
+        int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
         int plotStacks(TFile*f,std::vector<bdt_variable> vars, std::vector<double> cuts);
-		
+
         int plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt);
-		int plotStacks(TFile*f, bdt_variable var,double,double);
+        int plotStacks(TFile*f, bdt_variable var,double,double);
 
         int plotBDTStacks(TFile*f, bdt_info,double,double);
         int plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts);
 
-    int SetSpectator();
+        int SetSpectator();
 
-    int printPassingDataEvents(std::string outfilename, int stage, double c1, double c2);
-    int printPassingDataEvents(std::string outfilename, int stage, std::vector<double> cuts);
- 
+        int printPassingDataEvents(std::string outfilename, int stage, double c1, double c2);
+        int printPassingDataEvents(std::string outfilename, int stage, std::vector<double> cuts);
+
 
 };
 
