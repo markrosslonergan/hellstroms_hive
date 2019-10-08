@@ -42,12 +42,14 @@ int main (int argc, char *argv[]){
     int which_bdt = -1;
     int which_stage = -1;
     std::string vector = "";
+    std::string input_string = "";
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
     {
         {"dir", 		required_argument, 	0, 'd'},
         {"option",		required_argument,	0, 'o'},
+        {"input",		required_argument,	0, 'i'},
         {"xml"	,		required_argument,	0, 'x'},
         {"topo_tag",	required_argument,	0, 't'},
         {"bdt",		    required_argument,	0, 'b'},
@@ -64,7 +66,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:n:v:rh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:i:n:v:rh?", longopts, &index);
 
         switch(iarg)
         {
@@ -101,6 +103,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'v':
                 vector = optarg;
+                break;
+            case 'i':
+                input_string = optarg;
                 break;
             case '?':
             case 'h':
@@ -780,12 +785,36 @@ cimpact->SaveAs("Impact.pdf","pdf");
     TList * lf2 = (TList*)t_sbnfit_eventweight_tree->GetListOfFriends();
     for(const auto&& obj: *lf2) t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(obj);
 
+
+    TTree * t_sbnfit_simpletree = new TTree("simple_tree","simple_tree");
+    double simple_var = 0;
+    double simple_wei = 0;
+    t_sbnfit_simpletree->Branch("simple_variable",&simple_var);
+    t_sbnfit_simpletree->Branch("simple_weight",&simple_wei);
+
+    TTreeFormula* weight = new TTreeFormula("weight_formula",file->weight_branch.c_str(),t_sbnfit_tree);
+    TTreeFormula* var = new TTreeFormula("var_formula",input_string.c_str(),t_sbnfit_tree);
+
+    if(input_string != ""){
+        std::cout<<"Starting to make a simpletree with variable "<<input_string<<std::endl;
+        for(int i=0; i< t_sbnfit_tree->GetEntries(); i++){
+            t_sbnfit_tree->GetEntry(i); 
+
+            weight->GetNdata();
+            var->GetNdata();
+            simple_wei = weight->EvalInstance();
+            simple_var = var->EvalInstance();
+
+            t_sbnfit_simpletree->Fill();
+        }
+    }
     std::cout<<"Writing to file"<<std::endl;
     cdtof->cd();
     t_sbnfit_tree->Write();
     t_sbnfit_pot_tree->Write();
     t_sbnfit_eventweight_tree->Write(); 
     t_sbnfit_slice_tree->Write();
+    if(input_string!="") t_sbnfit_simpletree->Write();
     f_sbnfit->Close();
     std::cout<<"Done!"<<std::endl;
 
