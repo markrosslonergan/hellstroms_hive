@@ -19,7 +19,7 @@ int plot_scatter(bdt_file *file,  std::vector<bdt_info> infos){
             H1->SetMarkerColor(file->col);
             H1->Draw();
 
-            c->SaveAs(("scatter/scatterplot"+file->tag+"_"+infos[i].name+"_"+infos[j].name+".pdf").c_str());
+            c->SaveAs(("scatter/scatterplot"+file->tag+"_"+infos[i].identifier+"_"+infos[j].identifier+".pdf").c_str());
 
         }
     }
