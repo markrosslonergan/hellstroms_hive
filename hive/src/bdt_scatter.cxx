@@ -1,33 +1,31 @@
 #include "bdt_scatter.h"
 
 
-int plot_scatter(bdt_file *f1, bdt_file *f2, bdt_info b1, bdt_info b2 ){
+int plot_scatter(bdt_file *file,  std::vector<bdt_info> infos){
+
+    for(int i=0; i< infos.size();i++){
+        for(int j=i+1; j< infos.size();j++){
 
 
-    TCanvas *c = new TCanvas();
-    c->cd();
+            TCanvas *c = new TCanvas();
+            c->cd();
+
+            bdt_variable vari = file->getBDTVariable(infos[i]);
+            bdt_variable varj = file->getBDTVariable(infos[j]);
 
 
-    bdt_variable var_1_1 = f1->getBDTVariable(b1);
-    bdt_variable var_1_2 = f1->getBDTVariable(b2);
+            TH2 * H1 = (TH2*)file->getTH2(vari,varj, vari.name+">0 && "+ varj.name+">0", file->tag+"scatter" , 1);
+            c->cd();
+            H1->SetMarkerColor(file->col);
+            H1->Draw();
 
-    bdt_variable var_2_1 = f2->getBDTVariable(b1);
-    bdt_variable var_2_2 = f2->getBDTVariable(b2);
+            c->SaveAs(("scatter/scatterplot"+file->tag+"_"+infos[i].identifier+"_"+infos[j].identifier+".pdf").c_str());
 
+        }
+    }
 
-    TH2 * H1 = (TH2*)f1->getTH2(var_1_1,var_1_2, var_1_1.name+">0 && "+ var_1_2.name+">0", f1->tag+"scatter" , 1);
-    c->cd();
-    H1->SetMarkerColor(f1->col);
-    H1->Draw();
+    
 
-    TH2 * H2 = (TH2*)f2->getTH2(var_2_1,var_2_2, var_2_1.name+">0 && "+ var_2_2.name+">0", f2->tag+"scatter" , 1);
-    c->cd();
-    H2->SetMarkerColor(f2->col);
-    H2->Draw("same");
-
-
-
-    c->SaveAs("test.pdf");
 
 
 

@@ -633,7 +633,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             rat_signal->SetFillStyle(0);
             rat_signal->SetLineColor(mc_stack->stack[which_signal]->col);
             rat_signal->SetLineWidth(2);
-            rat_signal->Draw("hist same");
+            //rat_signal->Draw("hist same");
             ratunit->DrawCopy("E2 same");	
 
 
