@@ -33,7 +33,7 @@
 
 
 
-int plot_scatter(bdt_file *f1, bdt_file *f2, bdt_info b1, bdt_info b2 );
+int plot_scatter(bdt_file *f1, std::vector<bdt_info> b1);
 
 
 

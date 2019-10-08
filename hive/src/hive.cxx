@@ -640,7 +640,22 @@ int main (int argc, char *argv[]){
         return 0;
     }else if(mode_option == "scatter"){
 
-        plot_scatter(bdt_files[0], bdt_files[5], bdt_infos[0], bdt_infos[1]);
+        std::cout<<"Starting Scatter "<<std::endl;
+
+        if (access("scatter",F_OK) == -1){
+            mkdir("scatter",0777);//Create a folder for pdf.
+        }
+        else{
+            std::cout<<"Overwrite scatter/ in 2 seconds, 1 seconds, ..."<<std::endl;
+            sleep(2);
+        }
+
+        if(which_file==-1){
+            plot_scatter(bdt_files[0], bdt_infos);
+        }else{
+            plot_scatter(bdt_files[which_file], bdt_infos);
+        }
+
 
         return 0;
 
