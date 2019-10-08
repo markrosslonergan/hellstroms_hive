@@ -793,8 +793,8 @@ cimpact->SaveAs("Impact.pdf","pdf");
     t_sbnfit_simpletree->Branch("simple_variable",&simple_var);
     t_sbnfit_simpletree->Branch("simple_weight",&simple_wei);
 
-    TTreeFormula* weight = new TTreeFormula(("weight_formula | "+file->weight_branch).c_str(),file->weight_branch.c_str(),t_sbnfit_tree);
-    TTreeFormula* var = new TTreeFormula(("var_formula | "+input_string).c_str(),input_string.c_str(),t_sbnfit_tree);
+    TTreeFormula* weight = new TTreeFormula("weight_formula ",file->weight_branch.c_str(),t_sbnfit_tree);
+    TTreeFormula* var = new TTreeFormula("var_formula ",input_string.c_str(),t_sbnfit_tree);
 
     if(input_string != ""){
         std::cout<<"Starting to make a simpletree with variable "<<input_string<<std::endl;
