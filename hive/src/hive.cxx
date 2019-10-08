@@ -792,8 +792,8 @@ cimpact->SaveAs("Impact.pdf","pdf");
     t_sbnfit_simpletree->Branch("simple_variable",&simple_var);
     t_sbnfit_simpletree->Branch("simple_weight",&simple_wei);
 
-    TTreeFormula* weight = new TTreeFormula("weight_formula",file->weight_branch.c_str(),t_sbnfit_tree);
-    TTreeFormula* var = new TTreeFormula("var_formula",input_string.c_str(),t_sbnfit_tree);
+    TTreeFormula* weight = new TTreeFormula(("weight_formula | "+file->weight_branch).c_str(),file->weight_branch.c_str(),t_sbnfit_tree);
+    TTreeFormula* var = new TTreeFormula(("var_formula | "+input_string).c_str(),input_string.c_str(),t_sbnfit_tree);
 
     if(input_string != ""){
         std::cout<<"Starting to make a simpletree with variable "<<input_string<<std::endl;
@@ -807,6 +807,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
             t_sbnfit_simpletree->Fill();
         }
+
     }
     std::cout<<"Writing to file"<<std::endl;
     cdtof->cd();
@@ -814,7 +815,15 @@ cimpact->SaveAs("Impact.pdf","pdf");
     t_sbnfit_pot_tree->Write();
     t_sbnfit_eventweight_tree->Write(); 
     t_sbnfit_slice_tree->Write();
-    if(input_string!="") t_sbnfit_simpletree->Write();
+    if(input_string!=""){
+            t_sbnfit_simpletree->Write();
+            weight->Write();
+            var->Write();
+            }
+    TVectorD POT_value(1);
+    POT_value[0] = file->pot;
+    POT_value.Write("POT_value");
+
     f_sbnfit->Close();
     std::cout<<"Done!"<<std::endl;
 
