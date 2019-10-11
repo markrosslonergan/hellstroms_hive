@@ -75,11 +75,11 @@ void make_2dHisto() {
     //1D
     TH1D *h_Eg = new TH1D("h_Eg", "h_Eg", 100, 0, 1);
     TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14);
-    // TH1D *h_thetag = new TH1D("h_thetag", "h_thetag", 100, 0, 3.14/2);
     TH1D *h_phig = new TH1D("h_phig", "h_phig", 100, -3.14, 3.14);
     //TH1D *h_phil = new TH1D("h_phil", "h_phil", 100, -3.14, 3.14);
     TH1D *h_thetal = new TH1D("h_thetal", "h_thetal", 100, 0, 3.14/2);
     TGraph * xsec_copy = (TGraph*)gxsec->Clone();
+
     //2D
     TH2D *h_Egthetag = new TH2D("h_Egthetag", "h_Egthetag", 100, 0, 1, 100,  0, 3.14/2);
     TH2D *h_Egthetal = new TH2D("h_Egthetal", "h_Egthetal", 100, 0, 1, 100,  0, 3.14/2);
@@ -108,8 +108,6 @@ void make_2dHisto() {
     TLorentzVector p4_gamma; //outgoing photon
     TLorentzVector p4_lepton; //outgoing neutrino
 
-    //   std::cout<<"the incoming neutrino momentum = ("<<  p3_probe.X()<<", "<< p3_probe.Y()<<", "<<  p3_probe.Z()<<")"<<std::endl;
-
     for (int i = 0; i < t->GetEntries(); i++) {
         //      std::cout<<"the incoming neutrino momentum = ("<<  p3_probe.X()<<", "<< p3_probe.Y()<<", "<<  p3_probe.Z()<<")"<<std::endl;
 
@@ -122,8 +120,10 @@ void make_2dHisto() {
             this_Ev = Ev;
         }
 
-        pxv = 0.2;
+        pxv = 0.2; //for testing purposes
         p3_probe= TVector3(pxv,pyv,pzv);
+        p3_probe = p3_probe.Unit(); //for testing purposes
+      
         p4_probe = TLorentzVector(p3_probe, Ev);
 
         //the outgoing photon and lepton should be relative to the incoming neutrino direction 
@@ -136,8 +136,6 @@ void make_2dHisto() {
 
             p4_gamma = TLorentzVector(p3_gamma,  Ef[0] );
             p4_lepton = TLorentzVector(p3_lepton,  Ef[1] );
-            // p4_gamma = TLorentzVector(TVector3(pxf[0],pyf[0],pzf[0]), Ef[0] ); //4vector for g and l          
-            //p4_lepton = TLorentzVector(TVector3(pxf[1],pyf[1],pzf[1]), Ef[1] ); //4vector for g and l          
 
         } else{
             p3_gamma = TVector3(pxf[1],pyf[1],pzf[1]);
@@ -146,12 +144,6 @@ void make_2dHisto() {
             p4_gamma = TLorentzVector(p3_gamma,  Ef[1] );
             p4_lepton = TLorentzVector(p3_lepton,  Ef[0] );
 
-            //   p4_gamma = TLorentzVector(TVector3(pxf[1],pyf[1],pzf[1])- p3_probe, Ef[1] ); //4vector for g and l          
-            //  p4_lepton = TLorentzVector(TVector3(pxf[0],pyf[0],pzf[0])- p3_probe, Ef[0] ); //4vector for g and l          
-
-
-            // std::cout<<"lepton at n=0: pg(x, y, z) = "<<pxf[0]<<", "<<pyf[0]<<", "<< pzf[0]<<", El = "<<Ef[0]<<std::endl;
-            // std::cout<<"photon at n=1: pg(x, y, z) = "<<pxf[1]<<", "<<pyf[1]<<", "<< pzf[1]<<", Ef = "<<Ef[1]<<std::endl;
         }
 
         /*
@@ -174,9 +166,10 @@ void make_2dHisto() {
         TVector3 cross =  p4_probe.Vect().Cross(z);
         std::cout<<"angle between probe and z axis is "<<angle<<std::endl;
 
+        std::cout<<"---------------------------------------"<<std::endl;
         std::cout<<"photon before rotation: pg(x, y, z) = "<<  p3_gamma.Px()<<", "<< p3_gamma.Py()<<", "<< p3_gamma.Pz() <<std::endl;
         std::cout<<"lepton before rotation: pl(x, y, z) = "<<  p3_lepton.Px()<<", "<< p3_lepton.Py()<<", "<< p3_lepton.Pz() <<std::endl;
-        std::cout<<"lepton after rotation: pl(x, y, z) = "<<  p3_probe.Px()<<", "<< p3_probe.Py()<<", "<< p3_probe.Pz() <<std::endl;
+        std::cout<<"lepton before rotation: pl(x, y, z) = "<<  p3_probe.Px()<<", "<< p3_probe.Py()<<", "<< p3_probe.Pz() <<std::endl;
 
         //if there is a rotation
         if (angle !=0.0){
@@ -186,6 +179,7 @@ void make_2dHisto() {
             p3_probe_r.Rotate(angle,z);  
         }
 
+        std::cout<<"---------------------------------------"<<std::endl; 
         std::cout<<"photon after rotation: pg(x, y, z) = "<<  p3_gamma_r.Px()<<", "<< p3_gamma_r.Py()<<", "<< p3_gamma_r.Pz() <<std::endl;
         std::cout<<"lepton after rotation: pl(x, y, z) = "<<  p3_lepton_r.Px()<<", "<< p3_lepton_r.Py()<<", "<< p3_lepton_r.Pz() <<std::endl;
         std::cout<<"lepton after rotation: pl(x, y, z) = "<<  p3_probe_r.Px()<<", "<< p3_probe_r.Py()<<", "<< p3_probe_r.Pz() <<std::endl;
@@ -226,14 +220,6 @@ void make_2dHisto() {
     h_phig->Scale(norm*(h_phig->GetXaxis()->GetBinWidth(1))/h_phig->Integral());
     h_thetal->Scale(norm*(h_thetal->GetXaxis()->GetBinWidth(1))/h_thetal->Integral());
     //    h_phil->Scale(norm*(h_phil->GetXaxis()->GetBinWidth(1))/h_phil->Integral());
-
-
-
-    /*    h_Eg->Scale(norm/(h_Eg->Integral()));
-          h_thetag->Scale(norm/(h_thetag->Integral()));
-          h_phig->Scale(norm/(h_phig->Integral()));
-          h_thetal->Scale(norm/(h_thetal->Integral()));
-          */
 
     h_Eg->SetOption("hist");
     h_thetag->SetOption("hist");
