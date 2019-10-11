@@ -123,7 +123,7 @@ void make_2dHisto() {
         pxv = 0.2; //for testing purposes
         p3_probe= TVector3(pxv,pyv,pzv);
         p3_probe = p3_probe.Unit(); //for testing purposes
-      
+
         p4_probe = TLorentzVector(p3_probe, Ev);
 
         //the outgoing photon and lepton should be relative to the incoming neutrino direction 
@@ -154,40 +154,56 @@ void make_2dHisto() {
 
         Eg = p4_gamma.E();
 
-        //get angle between probe and z axis
         TVector3 z = TVector3(0, 0, 1);
 
+        TVector3 cross =  p4_probe.Vect().Cross(z);
+        std::cout<<cross.X()<<", "<<cross.Y()<<", "<<cross.Z()<<std::endl;
+
+
+        /*
+        //get angle between probe and z axis
         //make copy
         TVector3 p3_gamma_r = p3_gamma;
         TVector3 p3_lepton_r = p3_lepton;
         TVector3 p3_probe_r = p3_probe;
 
-        double angle;
-        TVector3 cross =  p4_probe.Vect().Cross(z);
-        std::cout<<"angle between probe and z axis is "<<angle<<std::endl;
+        double angle =  p3_probe.Angle(z);//get angle between probe and z
+        // TVector3 cross =  p4_probe.Vect().Cross(z);
+
+        // std::cout<<"angle between probe and z axis is "<<angle<<std::endl;
 
         std::cout<<"---------------------------------------"<<std::endl;
         std::cout<<"photon before rotation: pg(x, y, z) = "<<  p3_gamma.Px()<<", "<< p3_gamma.Py()<<", "<< p3_gamma.Pz() <<std::endl;
         std::cout<<"lepton before rotation: pl(x, y, z) = "<<  p3_lepton.Px()<<", "<< p3_lepton.Py()<<", "<< p3_lepton.Pz() <<std::endl;
-        std::cout<<"lepton before rotation: pl(x, y, z) = "<<  p3_probe.Px()<<", "<< p3_probe.Py()<<", "<< p3_probe.Pz() <<std::endl;
+        std::cout<<"probe before rotation: pl(x, y, z) = "<<  p3_probe.Px()<<", "<< p3_probe.Py()<<", "<< p3_probe.Pz() <<std::endl;
 
         //if there is a rotation
         if (angle !=0.0){
-            //rotate the gamma, lepton,probe
-            p3_gamma_r.Rotate(angle,z);
-            p3_lepton_r.Rotate(angle,z);  
-            p3_probe_r.Rotate(angle,z);  
+        //rotate the gamma, lepton,probe
+
+        // p3_gamma_r.Rotate(angle,z);
+        // p3_lepton_r.Rotate(angle,z);  
+        // p3_probe_r.Rotate(angle,z);
         }
 
         std::cout<<"---------------------------------------"<<std::endl; 
         std::cout<<"photon after rotation: pg(x, y, z) = "<<  p3_gamma_r.Px()<<", "<< p3_gamma_r.Py()<<", "<< p3_gamma_r.Pz() <<std::endl;
         std::cout<<"lepton after rotation: pl(x, y, z) = "<<  p3_lepton_r.Px()<<", "<< p3_lepton_r.Py()<<", "<< p3_lepton_r.Pz() <<std::endl;
-        std::cout<<"lepton after rotation: pl(x, y, z) = "<<  p3_probe_r.Px()<<", "<< p3_probe_r.Py()<<", "<< p3_probe_r.Pz() <<std::endl;
+        std::cout<<"probe after rotation: pl(x, y, z) = "<<  p3_probe_r.Px()<<", "<< p3_probe_r.Py()<<", "<< p3_probe_r.Pz() <<std::endl;
 
 
         //then get the delta phi 
         phi_g = p3_gamma_r.DeltaPhi(p3_probe_r);
-        phi_l = p3_lepton_r.DeltaPhi(p3_probe_r);
+        //phi_l = p3_lepton_r.DeltaPhi(p3_probe_r);
+
+*/
+
+        TVector3 vers_l = p4_probe.Vect().Cross( p4_lepton.Vect() ) ;
+        TVector3 vers_g = p4_probe.Vect().Cross( p4_gamma.Vect() ) ;
+
+        phi_g = vers_l.Angle( vers_g ) ;
+
+
 
         //angle between the photon and lepton and the probe
         theta_l = p4_lepton.Angle(p4_probe.Vect());
