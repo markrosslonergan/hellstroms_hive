@@ -423,7 +423,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // }
 
             if (s==3){
-                max_modifier = (stack_mode ? 2.0 : 3.0);
+                max_modifier = (stack_mode ? 2.0 : 1.85);
             }
 
 
@@ -567,7 +567,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             pottex.DrawLatex(.60,.60, pot_draw.c_str());
 
-
+            // Draw stage name. Added by A. Mogan 10/14/19
+            TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
+            stage->SetTextAlign(31); // Right-adjusted 
+            stage->Draw();
 
             TText *pre; 
             if (isSpectator) {
