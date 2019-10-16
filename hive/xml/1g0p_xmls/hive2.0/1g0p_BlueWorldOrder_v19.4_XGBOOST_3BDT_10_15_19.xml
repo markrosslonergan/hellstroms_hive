@@ -259,7 +259,8 @@
 <var def = "reco_shower_implied_dirx/reco_shower_dirx" binning = "(25,-1,3)" unit = "Shower Implied Dirx/Pandora Dirx" type="d" logplot="false" training=""/>
 <var def = "reco_shower_implied_diry/reco_shower_diry" binning = "(25,-1,3)" unit = "Shower Implied Diry/Pandora Diry" type="d" logplot="false" training=""/>
 <var def = "reco_shower_implied_dirz/reco_shower_dirz" binning = "(46,-1,3)" unit = "Shower Implied Dirz/Pandora Dirz" type="d" logplot="false" training=""/>
-<var def = "reco_shower_energy_max[0]/1000.0" binning = "(25,0,0.6)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="012"/>
+<var def = "reco_shower_energy_max[0]/1000.0" binning = "(24,0,0.6)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="012"/>
+<var def = "reco_shower_energy_max[0]/1000.0" binning = "(10,0,0.6)" unit = "Reconstructed Shower energy [GeV]" type = "d" logplot = "false"  training="012"/>
 <var def = "reco_shower_length[0]" binning = "(25,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d" logplot = "false"  training="012"/>
 <var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(25,0 ,2000)" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="012"/>
 <var def = "reco_shower_opening_angle[0]" binning = "(25,0,1)" unit = "Reconstructed Shower OpAng [cm]" type = "d" logplot = "false"  training="012"/>
