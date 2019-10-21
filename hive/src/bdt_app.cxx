@@ -279,7 +279,9 @@ int bdt_XGapp(bdt_info info, std::vector<bdt_file*> files){
         app_ofile->cd();
         TTree * tree = new TTree(bdt_response_friend_tree_name.c_str(), "");
         double mva;
+        double mva2;
         tree->Branch("mva", &mva, "mva/D");
+        tree->Branch((info.identifier+"_mva").c_str(), &mva2, (info.identifier+"_mva/D").c_str());
 
 
         DMatrixHandle dfile;
@@ -296,6 +298,7 @@ int bdt_XGapp(bdt_info info, std::vector<bdt_file*> files){
 
             while(have_filled < working_index){
                     mva = -999;
+                    mva2 =mva;
                     tree->Fill();
                     have_filled++;  
             }
@@ -303,6 +306,7 @@ int bdt_XGapp(bdt_info info, std::vector<bdt_file*> files){
 
                 std::cout<<have_filled<<" "<<working_index<<" "<<i<<" "<<out_result[i]<<std::endl;      
                 mva = out_result[i];
+                mva2 = mva;
                 tree->Fill();
                 working_index = f->precut_list->Next();
                 have_filled++;
@@ -312,6 +316,7 @@ int bdt_XGapp(bdt_info info, std::vector<bdt_file*> files){
         }
         while(have_filled < f->tvertex->GetEntries()){
                      mva = -999;
+                     mva2 = mva;
                     tree->Fill();
                     have_filled++;  
         }

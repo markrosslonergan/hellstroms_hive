@@ -34,8 +34,19 @@ struct bdt_variable{
 		bool is_track;
 		std::string type;
         bool is_logplot;
+        bool has_covar;
+        std::string covar_name;
+        std::string covar_file;
+
 
         std::vector<double> edges;
+
+        int addCovar(std::string name, std::string file){
+            has_covar=true;
+            covar_name = name;
+            covar_file = file;
+            return 0;
+        }
 
 		bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack, std::string intype) : bdt_variable(inname,inbin,inunit,intrack,intype,-1){}; 
 		
@@ -75,7 +86,8 @@ struct bdt_variable{
 			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '-'), safe_unit.end());
 			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '*'), safe_unit.end());
 			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '|'), safe_unit.end());
-	
+
+            has_covar = false;
 
             std::string bins = binning;
             edges.clear();

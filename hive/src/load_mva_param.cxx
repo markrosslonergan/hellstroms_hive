@@ -465,11 +465,33 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             var_logplot_bool= false;
         }
 
+        std::string covar_file;
+        std::string covar_name;
+        bool has_covar = false;
+        const char* var_covar_file = pVar->Attribute("covarfile");
+        const char* var_covar_name = pVar->Attribute("covarname");
+        if (var_covar_file==NULL || var_covar_name==NULL){
+            has_covar= false;
+        }else{
+            has_covar= true;
+            covar_file = var_covar_file;
+            covar_name = var_covar_name;
+        }
+
+
         bool is_spec = false;
         //if(var_spectator=="true") is_spec = true;
 
         bdt_variable t(var_def,var_binning,var_unit,"false",var_type,n_var);
         t.is_logplot = var_logplot_bool;
+        if(has_covar){
+            std::cout<<"Adding a covariance matrix "<<covar_name<<" from file "<<covar_file<<std::endl;
+            t.addCovar(covar_name,covar_file);
+        }
+
+
+        
+
 
         std::cout<<"Variable Number "<<n_var<<" is "<<var_unit<<" with definiton: "<<var_def<<std::endl;
 

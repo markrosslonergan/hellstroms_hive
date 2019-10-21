@@ -286,7 +286,7 @@ int main (int argc, char *argv[]){
 
         for(auto &f: bdt_files){
 
-            if(mode_option != "app" && mode_option != "train" ){
+            if(mode_option != "app" ){
                 for(int k=0; k<bdt_infos.size(); k++){
                     f->addBDTResponses(bdt_infos[k]);
                 }
@@ -427,13 +427,18 @@ int main (int argc, char *argv[]){
 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
             if(bdt_files[f]->is_data) continue;
-            if(bdt_files[f]==signal)  continue;
-            histogram_stack->addToStack(stack_bdt_files[f]);
-            //std::cout<<"adding to stack "<<stack_bdt_files[f]->name<<std::endl;
+            
+            bool is_signal = false;
+            for(auto &sig: signal_bdt_files){
+                if(bdt_files[f]== sig)  is_signal=true;
+            }
+            if(!is_signal) histogram_stack->addToStack(stack_bdt_files[f]);
         }
 
         //signal->fillstyle = 0;
-        histogram_stack->addToStack(signal,true);
+        for(int s = signal_bdt_files.size()-1; s>=0; s--){
+            histogram_stack->addToStack(signal_bdt_files[s],true);
+        }
 
         tagToFileMap["Data5e19"]->col = kWhite;
         tagToFileMap["Data5e19"]->fillstyle = 0;
@@ -500,12 +505,13 @@ int main (int argc, char *argv[]){
         if (!response_only){
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
                 if(bdt_files[f]->is_data) continue;
-                if(bdt_files[f]==signal)  continue;
+                if(bdt_files[f]==signal || bdt_files[f]->tag == "NCDeltaRadOverlaySM" )  continue;
                 histogram_stack->addToStack(stack_bdt_files[f]);
                 std::cout<<"adding to stack"<<stack_bdt_files[f]->name<<std::endl;
             }
 
             //signal->fillstyle = 0;
+            histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlaySM"],true);
             histogram_stack->addToStack(signal,true);
         }else{
             //first add the signal
@@ -651,7 +657,9 @@ int main (int argc, char *argv[]){
         }
 
         if(which_file==-1){
-            plot_scatter(bdt_files[0], bdt_infos);
+            for(auto &f: bdt_files){
+                plot_scatter(f, bdt_infos);
+            }
         }else{
             plot_scatter(bdt_files[which_file], bdt_infos);
         }
@@ -765,6 +773,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 }else if(mode_option == "sbnfit"){
     if(which_file==-1) which_file ==0;
     if(which_stage==-1) which_stage ==1;
+
 
     bdt_file * file = bdt_files.at(which_file);
 
