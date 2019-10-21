@@ -431,7 +431,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 max_modifier = 1.85;
             }
             if (s==2){
-                max_modifier = 1.85;
+                max_modifier = 2;
             }
             //if(s==3){
             //    max_modifier=4.3;
@@ -1253,10 +1253,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             };//else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
 
 
-            double max_modifier = 1.9;
+            double max_modifier = 10;
+           //  double max_modifier = 1.9;
             double min_val = 0.01;
             if(is_bdt_variable || var.is_logplot) {
-                max_modifier = 50.0;
+                //max_modifier = 500.0;
+                 max_modifier = 50.0;
                 min_val = 0.1;
             }
 
