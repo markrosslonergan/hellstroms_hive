@@ -538,6 +538,30 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             d0->SetBinErrorOption(TH1::kPoisson);
             if(!stack_mode) d0->Draw("same E1 E0");
 
+            /////// Print resolution for diphoton mass ////////
+            // First, find variables containing the string of interest
+            std::string massSearch("Invariant");
+            std::size_t found = var.unit.find(massSearch);
+
+            // Fit Gaussian to that variable
+            if (found != std::string::npos) {
+                std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
+                TF1 *gausfit = new TF1("gausfit", "gaus");
+                double lowFit, highFit;
+                double mass = 0., mass_err = 0;
+                double mass_res = 0., mass_res_err = 0.;
+                lowFit = d0->GetXaxis()->GetBinLowEdge(1);
+                lowFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
+                d0->Fit(gausfit, "q", "", lowFit, highFit);
+                mass = gausfit->GetParameter(1);
+                mass_err = gausfit->GetParError(1);
+                mass_res = gausfit->GetParameter(2);
+                mass_res_err = gausfit->GetParError(2);
+                std::cout << "[BLARG] Mass: " << mass << " +/- " << mass_err << std::endl;
+                std::cout << "[BLARG] Mass resolution: " << mass_res << " +/- " << mass_res_err << std::endl;
+                gausfit->SetLineColor(kRed);
+                gausfit->Draw("same");
+            }
 
 
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	

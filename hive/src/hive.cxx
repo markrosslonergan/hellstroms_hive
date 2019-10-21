@@ -533,7 +533,7 @@ int main (int argc, char *argv[]){
 
                 //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
 
-                //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
+                datamc.printPassingDataEvents("tmp", 3, fbdtcuts);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
