@@ -8,7 +8,7 @@
 
 <filedir>/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v19/</filedir>
 
-<bdtfile filename = "ncdeltarad_overlay_run1_v19.4.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephoton/" col = "(1.0,0.4,0.4)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true">
+<bdtfile filename = "ncdeltarad_overlay_run1_v19.4.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephoton/" col = "(1.0,0.4,0.4)" plot_name = "2x SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>  
         <!-- <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
