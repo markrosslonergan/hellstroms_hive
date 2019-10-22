@@ -426,11 +426,11 @@ int main (int argc, char *argv[]){
         histogram_stack->plot_pot =13.2e20;
 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
-            if(bdt_files[f]->is_data) continue;
+            if(stack_bdt_files[f]->is_data) continue;
 
             bool is_signal = false;
             for(auto &sig: signal_bdt_files){
-                if(bdt_files[f]== sig)  is_signal=true;
+                if(stack_bdt_files[f]== sig)  is_signal=true;
             }
             if(!is_signal) histogram_stack->addToStack(stack_bdt_files[f]);
         }
