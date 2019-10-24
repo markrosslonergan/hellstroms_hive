@@ -362,10 +362,25 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
             TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
 
+            //Check Covar for plotting
+            if(var.has_covar){
+                TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
+                TMatrixD * covar_m = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
+
+                for(int c=0; c< tsum->GetNbinsX()+1;c++){
+                    tsum->SetBinError(c+1, sqrt((*covar_m)(c,c)));
+                    //tsum->SetBinError(c+1, 0.0001);
+                }
+                covar_f->Close();
+            }
+            cobs->cd();
+
+
+
             //            std::vector<double> ks_sum = data_file->getVector(var,s);
 
-            double rmin = 0;
-            double rmax = 2.99;
+            double rmin = 0.5;
+            double rmax = 1.5;
             int data_rebin = 1;
             if(s==0 || s == 1){
                 rmin=0; rmax = 1.99;
@@ -416,7 +431,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 max_modifier = 1.85;
             }
             if (s==2){
-                max_modifier = 1.85;
+                max_modifier = 2;
             }
             //if(s==3){
             //    max_modifier=4.3;
@@ -496,7 +511,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 if(mc_stack->signal_on_top[n]) which_signal = n;
                 n++;
             }
-            l0->AddEntry(tmp_tsum,"MC Stats Only Error","f");
+            l0->AddEntry(tmp_tsum,"Flux & XS Systematics Error","f");
             //			d0->Draw("same E1");
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -1287,7 +1302,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //double min_val = 0.01;
             double min_val = 0.01;
             if(is_bdt_variable || var.is_logplot) {
-                max_modifier = 50.0;
+                //max_modifier = 500.0;
+                 max_modifier = 50.0;
                 min_val = 0.1;
             }
 

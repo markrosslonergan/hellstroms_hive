@@ -287,7 +287,7 @@ int main (int argc, char *argv[]){
 
         for(auto &f: bdt_files){
 
-            if(mode_option != "app" && mode_option != "train" ){
+            if(mode_option != "app" ){
                 for(int k=0; k<bdt_infos.size(); k++){
                     f->addBDTResponses(bdt_infos[k]);
                 }
@@ -499,11 +499,12 @@ int main (int argc, char *argv[]){
         histogram_stack->plot_pot = tagToFileMap["Data5e19"]->pot;
 
         if (!response_only){
+
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
                 if(bdt_files[f]->is_data) continue;
                 //if(bdt_files[f]==signal)  continue;
                 histogram_stack->addToStack(stack_bdt_files[f]);
-                std::cout<<"adding to stack"<<stack_bdt_files[f]->name<<std::endl;
+                std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
             }
 
             //signal->fillstyle = 0;
@@ -657,7 +658,9 @@ int main (int argc, char *argv[]){
         }
 
         if(which_file==-1){
-            plot_scatter(bdt_files[0], bdt_infos);
+            for(auto &f: bdt_files){
+                plot_scatter(f, bdt_infos);
+            }
         }else{
             plot_scatter(bdt_files[which_file], bdt_infos);
         }
@@ -891,6 +894,7 @@ else if(mode_option == "eff2"){
     if(which_file==-1) which_file ==0;
     if(which_stage==-1) which_stage ==1;
 
+
     bdt_file * file = bdt_files.at(which_file);
 
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
@@ -957,10 +961,10 @@ else if(mode_option == "eff2"){
     t_sbnfit_eventweight_tree->Write(); 
     t_sbnfit_slice_tree->Write();
     if(input_string!=""){
-            t_sbnfit_simpletree->Write();
-            weight->Write();
-            var->Write();
-            }
+        t_sbnfit_simpletree->Write();
+        weight->Write();
+        var->Write();
+    }
     TVectorD POT_value(1);
     POT_value[0] = file->pot;
     POT_value.Write("POT_value");
