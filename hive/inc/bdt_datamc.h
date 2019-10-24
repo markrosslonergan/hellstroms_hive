@@ -83,6 +83,7 @@ class bdt_datamc{
 
         int printPassingDataEvents(std::string outfilename, int stage, double c1, double c2);
         int printPassingDataEvents(std::string outfilename, int stage, std::vector<double> cuts);
+        int printPassingPi0DataEvents(std::string outfilename, int stage, std::vector<double> cuts);
 
 
 };

@@ -1497,3 +1497,48 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         this->isSpectator = true;
         return 0;
     }
+
+int bdt_datamc::printPassingPi0DataEvents(std::string outfilename, int stage, std::vector<double> cuts){
+
+    //data_file->calcCosmicBDTEntryList(c1, c2);
+    //data_file->calcBNBBDTEntryList(c1, c2);
+    //data_file->setStageEntryList(3);
+
+    //   std::string fake = "fake_bnbbdt_list_"+std::to_string(c1)+"_"+std::to_string(c2)+"_" +data_file->tag;
+
+    // data_file=  mc_stack->stack[0];
+    std::string fake = "";
+    data_file->tvertex->Draw((">>"+fake).c_str(), data_file->getStageCuts(stage,cuts).c_str() , "entrylist");
+    TEntryList * fake_list = (TEntryList*)gDirectory->Get(fake.c_str());
+
+
+    int n_run_number = 0;
+    int n_subrun_number = 0;
+    int n_event_number = 0;
+    double n_vertex_z =0;
+    double n_vertex_y =0;
+    double n_vertex_x =0;
+    double n_reco_shower_energy_max = 0;
+
+
+    data_file->tvertex->SetBranchAddress("run_number",    &n_run_number);
+    data_file->tvertex->SetBranchAddress("subrun_number", &n_subrun_number);
+    data_file->tvertex->SetBranchAddress("event_number",  &n_event_number);
+    data_file->tvertex->SetBranchAddress("reco_vertex_z", &n_vertex_z);
+    data_file->tvertex->SetBranchAddress("reco_vertex_y", &n_vertex_y);
+    data_file->tvertex->SetBranchAddress("reco_vertex_x", &n_vertex_x);
+    data_file->tvertex->SetBranchAddress("reco_shower_energy_max", &n_reco_shower_energy_max);
+
+
+
+    std::cout<<"Starting printPassingDataEvents() for "<<data_file->name<<std::endl;
+
+    for(int i=0;i < fake_list->GetN(); i++ ){
+        data_file->tvertex->GetEntry( fake_list->GetEntry(i));
+        std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<" ("<<n_vertex_x<<", "<<n_vertex_y<<", "<<n_vertex_z<< ")"<<" and shower energy = "<<n_reco_shower_energy_max<<std::endl;
+    }
+    std::cout<<"End printPassingDataEvents()  for "<<data_file->name<<std::endl;
+
+
+    return 0;
+}
