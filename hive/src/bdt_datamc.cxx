@@ -454,10 +454,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->GetYaxis()->SetTitleOffset(0.9);
             stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
             //stk->SetMaximum(500);
-            std::cout << "[DEBUG] tsum max = " << tsum->GetMaximum() << std::endl;
-            std::cout << "[DEBUG] tsum max times mod = " << tsum->GetMaximum()*max_modifier << std::endl;
-            std::cout << "[DEBUG] stack max = " << stk->GetMaximum() << std::endl; 
-            std::cout << "[DEBUG] max of two = " << std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum())) << std::endl; 
             stk->SetMinimum(min_val);
             tsum->SetLineWidth(3);
             tsum->DrawCopy("Same E2");
@@ -544,24 +540,41 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::size_t found = var.unit.find(massSearch);
 
             // Fit Gaussian to that variable
+            /*
             if (found != std::string::npos) {
                 std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
-                TF1 *gausfit = new TF1("gausfit", "gaus");
+                TF1 *gausfit_data = new TF1("gausfit_data", "gaus");
+                TF1 *gausfit_mc = new TF1("gausfit_mc", "gaus");
+                TH1 *tmp_hist = stk->GetHistogram();
                 double lowFit, highFit;
-                double mass = 0., mass_err = 0;
-                double mass_res = 0., mass_res_err = 0.;
+                double mass_data = 0., mass_err_data = 0;
+                double mass_res_data = 0., mass_res_err_data = 0.;
+                double mass_mc = 0., mass_err_mc = 0;
+                double mass_res_mc = 0., mass_res_err_mc = 0.;
+                // Fit range should be similar for data and MC
                 lowFit = d0->GetXaxis()->GetBinLowEdge(1);
-                lowFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
-                d0->Fit(gausfit, "q", "", lowFit, highFit);
-                mass = gausfit->GetParameter(1);
-                mass_err = gausfit->GetParError(1);
-                mass_res = gausfit->GetParameter(2);
-                mass_res_err = gausfit->GetParError(2);
-                std::cout << "[BLARG] Mass: " << mass << " +/- " << mass_err << std::endl;
-                std::cout << "[BLARG] Mass resolution: " << mass_res << " +/- " << mass_res_err << std::endl;
-                gausfit->SetLineColor(kRed);
-                gausfit->Draw("same");
+                highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
+                d0->Fit(gausfit_data, "lv", "", lowFit, highFit);
+                tmp_hist->Fit(gausfit_data, "q", "", lowFit, highFit);
+                std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
+                mass_data = gausfit_data->GetParameter(1);
+                mass_err_data = gausfit_data->GetParError(1);
+                mass_res_data = gausfit_data->GetParameter(2);
+                mass_res_err_data = gausfit_data->GetParError(2);
+                mass_mc = gausfit_mc->GetParameter(1);
+                mass_err_mc = gausfit_mc->GetParError(1);
+                mass_res_mc = gausfit_mc->GetParameter(2);
+                mass_res_err_mc = gausfit_mc->GetParError(2);
+                std::cout << "[BLARG] Data mass: " << mass_data << " +/- " << mass_err_data << std::endl;
+                std::cout << "[BLARG] Data mass resolution: " << mass_res_data << " +/- " << mass_res_err_data << std::endl;
+                std::cout << "[BLARG] MC mass: " << mass_mc << " +/- " << mass_err_mc << std::endl;
+                std::cout << "[BLARG] MC mass resolution: " << mass_res_mc << " +/- " << mass_res_err_mc << std::endl;
+                gausfit_data->SetLineColor(kRed);
+                gausfit_mc->SetLineColor(kAzure+1);
+                gausfit_data->Draw("same");
+                gausfit_mc->Draw("same");
             }
+            */
 
 
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
@@ -871,7 +884,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             double min_val = 0.01;
             if(is_bdt_variable) {
                 max_modifier = 50.0;
-                min_val = 0.01;
+                //min_val = 0.01;
+                min_val = 0.1; // Changed from 0.01 to 0.1 by A. Mogan, 10/22/19, for collab meeting
             }
             d0->Rebin(data_rebin);
 
@@ -1270,6 +1284,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
             double max_modifier = 1.9;
+            //double min_val = 0.01;
             double min_val = 0.01;
             if(is_bdt_variable || var.is_logplot) {
                 max_modifier = 50.0;
