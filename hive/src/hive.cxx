@@ -426,11 +426,11 @@ int main (int argc, char *argv[]){
         histogram_stack->plot_pot =13.2e20;
 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
-            if(bdt_files[f]->is_data) continue;
-            
+            if(stack_bdt_files[f]->is_data) continue;
+
             bool is_signal = false;
             for(auto &sig: signal_bdt_files){
-                if(bdt_files[f]== sig)  is_signal=true;
+                if(stack_bdt_files[f]== sig)  is_signal=true;
             }
             if(!is_signal) histogram_stack->addToStack(stack_bdt_files[f]);
         }
@@ -503,26 +503,36 @@ int main (int argc, char *argv[]){
         histogram_stack->plot_pot = tagToFileMap["Data5e19"]->pot;
 
         if (!response_only){
+
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if(bdt_files[f]->is_data) continue;
-                if(bdt_files[f]==signal || bdt_files[f]->tag == "NCDeltaRadOverlaySM" )  continue;
+                if(stack_bdt_files[f]->is_data) continue;
+                if(stack_bdt_files[f]==signal || stack_bdt_files[f]->tag == "NCDeltaRadOverlaySM" )  continue;
+                if(stack_bdt_files[f]==signal || stack_bdt_files[f]->tag == "NCDeltaRadOverlay" )  continue;
+
+
                 histogram_stack->addToStack(stack_bdt_files[f]);
-                std::cout<<"adding to stack"<<stack_bdt_files[f]->name<<std::endl;
+                std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
             }
 
             //signal->fillstyle = 0;
             histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlaySM"],true);
-            histogram_stack->addToStack(signal,true);
+            histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlay"],true);
+            // histogram_stack->addToStack(signal,true);
         }else{
             //first add the signal
-            histogram_stack->addToStack(signal,true);
-            histogram_stack->addToStack(stack_bdt_files[4]);
+            histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlay"],true);
+            histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlaySM"],true);
+            //histogram_stack->addToStack(signal,true);
+            // histogram_stack->addToStack(stack_bdt_files[4]);
 
             //then add SM
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
                 if (f==4) continue;
-                if(bdt_files[f]->is_data) continue;
-                if(bdt_files[f]==signal)  continue;
+                if(stack_bdt_files[f]->is_data) continue;
+                //  if(bdt_files[f]==signal)  continue;
+                if(stack_bdt_files[f]==signal || stack_bdt_files[f]->tag == "NCDeltaRadOverlaySM" )  continue;
+                if(stack_bdt_files[f]==signal || stack_bdt_files[f]->tag == "NCDeltaRadOverlay" )  continue;
+
                 histogram_stack->addToStack(stack_bdt_files[f]);
                 std::cout<<"adding to stack "<<stack_bdt_files[f]->tag<<std::endl;
 
@@ -841,10 +851,10 @@ cimpact->SaveAs("Impact.pdf","pdf");
     t_sbnfit_eventweight_tree->Write(); 
     t_sbnfit_slice_tree->Write();
     if(input_string!=""){
-            t_sbnfit_simpletree->Write();
-            weight->Write();
-            var->Write();
-            }
+        t_sbnfit_simpletree->Write();
+        weight->Write();
+        var->Write();
+    }
     TVectorD POT_value(1);
     POT_value[0] = file->pot;
     POT_value.Write("POT_value");
