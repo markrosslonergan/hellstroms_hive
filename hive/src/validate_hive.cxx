@@ -312,15 +312,15 @@ int main (int argc, char *argv[]){
 
     for(auto &f: bdt_files){
             std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<which_stage<<"."<<std::endl;
-            if(s>1) f->calcBDTEntryList(which_stage,fbdtcuts);
-            std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<shich_stage<<"."<<std::endl;
+            if(which_stage>1) f->calcBDTEntryList(which_stage,fbdtcuts);
+            std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<which_stage<<"."<<std::endl;
             f->setStageEntryList(which_stage);
     }	
 
 
     for(auto &var: vars){
         std::vector<std::string> cuts(bdt_files.size(),"1");
-        compareQuick(var,bdt_files,"VALID_"+var.safe_unit,true);
+        compareQuick(var,bdt_files,cuts,"VALID_"+var.safe_unit,true);
     }
 
 
@@ -352,7 +352,7 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
         }   
  
 
-    std::vector<int> cols = {kRed-7,  kBlue-7, kGreen+1 , kPurple,kOrange,,kGray};
+    std::vector<int> cols = {kRed-7,  kBlue-7, kGreen+1 , kMagenta,kOrange,kGray};
     std::vector<TH1*> tvec;
     TLegend* leg=new TLegend(0.55,0.55,0.9,0.9);
     double max = -99;
