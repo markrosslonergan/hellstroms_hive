@@ -199,6 +199,9 @@ int main (int argc, char *argv[]){
 
     std::map<std::string, bdt_file*> tagToFileMap;
 
+    std::map<bdt_file*,bool> plotOnTopMap;
+
+
     std::cout<<"================================================================================"<<std::endl;
     std::cout<<"=============== Loading all BDT files for this analysis ========================"<<std::endl;
     std::cout<<"================================================================================"<<std::endl;
@@ -253,6 +256,12 @@ int main (int argc, char *argv[]){
                 std::cout<<" -- For the purposes of calculting a significance, this is a BKG file"<<std::endl;
                 bkg_bdt_files.push_back(bdt_files.back());
             }
+        }
+
+        if(XMLconfig.bdt_on_top[f]){
+            plotOnTopMap[bdt_files.back()] = true;
+        }else{
+            plotOnTopMap[bdt_files.back()] = false;
         }
 
         if(XMLconfig.bdt_is_training_signal[f]){
@@ -503,38 +512,35 @@ int main (int argc, char *argv[]){
         histogram_stack->plot_pot = tagToFileMap["Data5e19"]->pot;
 
         if (!response_only){
-
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
                 if(stack_bdt_files[f]->is_data) continue;
-                if(stack_bdt_files[f]==signal || stack_bdt_files[f]->tag == "NCDeltaRadOverlaySM" )  continue;
-                if(stack_bdt_files[f]==signal || stack_bdt_files[f]->tag == "NCDeltaRadOverlay" )  continue;
-
-
-                histogram_stack->addToStack(stack_bdt_files[f]);
-                std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
+                if(!plotOnTopMap[stack_bdt_files[f]] ){
+                   histogram_stack->addToStack(stack_bdt_files[f]);
+                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+                }
+            }
+            
+            for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                if(stack_bdt_files[f]->is_data) continue;
+                if(plotOnTopMap[stack_bdt_files[f]] ){
+                    histogram_stack->addToStack(stack_bdt_files[f],true);
+                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+                }
             }
 
-            //signal->fillstyle = 0;
-            histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlaySM"],true);
-            histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlay"],true);
-            // histogram_stack->addToStack(signal,true);
         }else{
-            //first add the signal
-            histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlay"],true);
-            histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlaySM"],true);
-            //histogram_stack->addToStack(signal,true);
-            // histogram_stack->addToStack(stack_bdt_files[4]);
-
             //then add SM
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if (f==4) continue;
                 if(stack_bdt_files[f]->is_data) continue;
-                //  if(bdt_files[f]==signal)  continue;
-                if(stack_bdt_files[f]==signal || stack_bdt_files[f]->tag == "NCDeltaRadOverlaySM" )  continue;
-                if(stack_bdt_files[f]==signal || stack_bdt_files[f]->tag == "NCDeltaRadOverlay" )  continue;
+                if( plotOnTopMap[stack_bdt_files[f]] ){
+                    histogram_stack->addToStack(stack_bdt_files[f],true);
+                    std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
 
-                histogram_stack->addToStack(stack_bdt_files[f]);
-                std::cout<<"adding to stack "<<stack_bdt_files[f]->tag<<std::endl;
+                }else{
+                    histogram_stack->addToStack(stack_bdt_files[f]);
+                    std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
+
+                }
 
             }
 
