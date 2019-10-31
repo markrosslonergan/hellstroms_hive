@@ -121,6 +121,8 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t\t\t\t\t -- N=0 (default) Do a simple box scan between XML defined values "<<std::endl;
                 std::cout<<"\t\t\t\t\t -- N=1 Combine BDT's into a likelihood (experimental) "<<std::endl;
                 std::cout<<"\t\t\t\t\t -- N=2 Random points within XML defined regions (experimental) "<<std::endl;
+                std::cout<<"\t\t\t\t\t -- N=3 Similar to N=0, but cut values maximized for efficiency*purity "<<std::endl;
+                std::cout<<"\t\t\t\t\t -- N=4 Similar to N=0, but cut values maximized efficiency"<<std::endl;
                 std::cout<<"\t\t\t\t stack: Produce a Stacked PDF for BDT variable -n/--number N, at stage -s/--stage S for POT -p/--pot P"<<std::endl;
                 std::cout<<"\t\t\t\t datamc: Produce a Stacked MV V data PDF for BDT variable -n/--number N, at stage -s/--stage S for POT -p/--pot P"<<std::endl;
                 std::cout<<"\t\t\t\t recomc:"<<std::endl;
@@ -535,7 +537,7 @@ int main (int argc, char *argv[]){
                 //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
 
                 //datamc.printPassingDataEvents("tmp", 3, fbdtcuts);
-                datamc.printPassingPi0DataEvents("tmp", 3, fbdtcuts);
+                //datamc.printPassingPi0DataEvents("tmp", 3, fbdtcuts);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
@@ -627,7 +629,11 @@ int main (int argc, char *argv[]){
         return 0;
     }else if(mode_option == "sig"){
 
-        int sig_type = number; // Tells the function to use efficiency times purity for significance 
+        // sig_type tells the function which cut metric to maximize for
+        //    sig_type == 3: efficiency times purity
+        //    sig_Type == 4: efficinecy
+        //    sig_type == 5: purity 
+        int sig_type = number; 
 
         switch(number){
             case 0:

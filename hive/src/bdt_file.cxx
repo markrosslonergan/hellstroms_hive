@@ -49,6 +49,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     std::cout<<"Getting eventweight tree"<<std::endl;
     teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
+    tvertex->AddFriend(teventweight);
     std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
 
     vec_entry_lists.resize(flow.bdt_vector.size());

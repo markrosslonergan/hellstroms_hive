@@ -511,7 +511,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 if(mc_stack->signal_on_top[n]) which_signal = n;
                 n++;
             }
-            l0->AddEntry(tmp_tsum,"Flux & XS Systematics Error","f");
+            //l0->AddEntry(tmp_tsum,"Flux & XS Systematics Error","f");
+            l0->AddEntry(tmp_tsum,"MC Stats-Only Error","f");
             //			d0->Draw("same E1");
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -613,8 +614,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
 
-            double pot_unit = stack_mode ? 1e20 : 1e19;
-            std::string pot_unit_s = stack_mode ? "e20" : "e19";
+            //double pot_unit = stack_mode ? 1e20 : 1e19;
+            //std::string pot_unit_s = stack_mode ? "e20" : "e19";
+            double pot_unit = 1e20;
+            std::string pot_unit_s = "e20";
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/pot_unit,1)+ pot_unit_s+" POT";
 
             pottex.DrawLatex(.60,.60, pot_draw.c_str());
@@ -1008,8 +1011,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
 
-            double pot_unit = stack_mode ? 1e20 : 1e19;
-            std::string pot_unit_s = stack_mode ? "e20" : "e19";
+            //double pot_unit = stack_mode ? 1e20 : 1e19;
+            //std::string pot_unit_s = stack_mode ? "e20" : "e19";
+            double pot_unit = 1e20;
+            std::string pot_unit_s = "e20";
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/pot_unit,1)+ pot_unit_s+" POT";
 
             pottex.DrawLatex(.60,.64, pot_draw.c_str());
@@ -1511,31 +1516,81 @@ int bdt_datamc::printPassingPi0DataEvents(std::string outfilename, int stage, st
     data_file->tvertex->Draw((">>"+fake).c_str(), data_file->getStageCuts(stage,cuts).c_str() , "entrylist");
     TEntryList * fake_list = (TEntryList*)gDirectory->Get(fake.c_str());
 
-
     int n_run_number = 0;
     int n_subrun_number = 0;
     int n_event_number = 0;
-    double n_vertex_z =0;
-    double n_vertex_y =0;
-    double n_vertex_x =0;
-    double n_reco_shower_energy_max = 0;
+    double n_vertex_x = 0;
+    double n_vertex_y = 0;
+    double n_vertex_z = 0;
+    std::vector<unsigned long> *i_shr = 0;
+    std::vector<unsigned long> *i_trk = 0;
+    std::vector<double> *reco_shower_energy_max = 0;
+    std::vector<double> *reco_shower_dirx = 0;
+    std::vector<double> *reco_shower_diry = 0;
+    std::vector<double> *reco_shower_dirz = 0;
+    std::vector<double> *reco_track_displacement = 0;
+    std::vector<double> *reco_track_proton_kinetic_energy = 0;
 
-
+    // Necessary for vectors, for some reason
+    TBranch *bi_shr = 0;
+    TBranch *bi_trk = 0;
+    TBranch *breco_shower_energy_max = 0;
+    TBranch *bsim_shower_energy = 0;
+    TBranch *breco_shower_dirx = 0;
+    TBranch *breco_shower_diry = 0;
+    TBranch *breco_shower_dirz = 0;
+    TBranch *breco_track_displacement = 0;
+    TBranch *breco_track_proton_kinetic_energy = 0;
+    
     data_file->tvertex->SetBranchAddress("run_number",    &n_run_number);
     data_file->tvertex->SetBranchAddress("subrun_number", &n_subrun_number);
     data_file->tvertex->SetBranchAddress("event_number",  &n_event_number);
-    data_file->tvertex->SetBranchAddress("reco_vertex_z", &n_vertex_z);
-    data_file->tvertex->SetBranchAddress("reco_vertex_y", &n_vertex_y);
     data_file->tvertex->SetBranchAddress("reco_vertex_x", &n_vertex_x);
-    data_file->tvertex->SetBranchAddress("reco_shower_energy_max", &n_reco_shower_energy_max);
+    data_file->tvertex->SetBranchAddress("reco_vertex_y", &n_vertex_y);
+    data_file->tvertex->SetBranchAddress("reco_vertex_z", &n_vertex_z);
 
+    data_file->tvertex->SetBranchAddress("i_shr", &i_shr, &bi_shr);
+    data_file->tvertex->SetBranchAddress("i_trk", &i_trk, &bi_trk);
+    data_file->tvertex->SetBranchAddress("reco_shower_energy_max", &reco_shower_energy_max, &breco_shower_energy_max);
+    data_file->tvertex->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx, &breco_shower_dirx);
+    data_file->tvertex->SetBranchAddress("reco_shower_diry", &reco_shower_diry, &breco_shower_diry);
+    data_file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz, &breco_shower_dirz);
+    data_file->tvertex->SetBranchAddress("reco_track_displacement", &reco_track_displacement, &breco_track_displacement);
+    data_file->tvertex->SetBranchAddress("reco_track_proton_kinetic_energy", &reco_track_proton_kinetic_energy, &breco_track_proton_kinetic_energy);
 
-
-    std::cout<<"Starting printPassingDataEvents() for "<<data_file->name<<std::endl;
+    std::cout<<"Starting printPassingPi0DataEvents() for "<<data_file->name<<std::endl;
 
     for(int i=0;i < fake_list->GetN(); i++ ){
         data_file->tvertex->GetEntry( fake_list->GetEntry(i));
-        std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<" ("<<n_vertex_x<<", "<<n_vertex_y<<", "<<n_vertex_z<< ")"<<" and shower energy = "<<n_reco_shower_energy_max<<std::endl;
+
+        // Shower kinematics
+        double E1 = reco_shower_energy_max->at(i_shr->at(0));
+        double E2 = reco_shower_energy_max->at(i_shr->at(1));
+        // Correction factors from output of energy correction script in hive/other/
+        E1 = 1.24607*E1 + 4.11138;
+        E2 = 1.24607*E2 + 4.11138;
+
+        double opAng = TMath::ACos(reco_shower_dirx->at(0)*reco_shower_dirx->at(1)+
+                       reco_shower_diry->at(0)*reco_shower_diry->at(1)+
+                       reco_shower_dirz->at(0)*reco_shower_dirz->at(1)) ;
+        double invMass = sqrt(2*E1*E2*(1 - opAng) );
+
+        // Track kinematics
+
+        // Print kinematics
+        /*
+        std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number <<" "
+                        <<n_subrun_number<<" "
+                        << n_event_number <<" ("
+                        <<n_vertex_x<<", "<<n_vertex_y<<", "<<n_vertex_z<< ")"<<" " 
+                        << E1 << " " 
+                        << E2 << " "
+                        << opAng << " " 
+                        << invMass << " " 
+                        << reco_track_displacement->at(i_trk->at(0)) << " " 
+                        << reco_track_proton_kinetic_energy->at(i_trk->at(0)) << " " << std::endl;
+        */
+        std::cout <<  opAng*57.2958 << std::endl;
     }
     std::cout<<"End printPassingDataEvents()  for "<<data_file->name<<std::endl;
 
