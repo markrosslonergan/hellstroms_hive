@@ -311,10 +311,10 @@ int main (int argc, char *argv[]){
 
 
     for(auto &f: bdt_files){
-            std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<which_stage<<"."<<std::endl;
-            if(which_stage>1) f->calcBDTEntryList(which_stage,fbdtcuts);
-            std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<which_stage<<"."<<std::endl;
-            f->setStageEntryList(which_stage);
+        std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<which_stage<<"."<<std::endl;
+        if(which_stage>1) f->calcBDTEntryList(which_stage,fbdtcuts);
+        std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<which_stage<<"."<<std::endl;
+        f->setStageEntryList(which_stage);
     }	
 
 
@@ -333,7 +333,7 @@ int main (int argc, char *argv[]){
 
 
 
-return 0;
+    return 0;
 
 }
 
@@ -346,7 +346,7 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name, bool shape_only){
 
     TCanvas *c = new TCanvas();
- 
+
     TH1* rat_CV; 
 
 
@@ -357,23 +357,33 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
 
     std::string testcut = "1";
 
+    double title_size_ratio=0.1;
+    double label_size_ratio=0.1;
+    double title_offset_ratioY = 0.3 ;
+    double title_offset_ratioX = 1.1;
 
-       
-        c->cd();
-        TPad *pad0top = new TPad(("pad0top_"+var.safe_unit).c_str(), ("pad0top_"+var.safe_unit).c_str(), 0, 0.35, 1, 1.0);
-
-        pad0top->SetBottomMargin(0); // Upper and lower plot are joined
-            pad0top->Draw();             // Draw the upper pad: pad2top
-            pad0top->cd();               // pad2top becomes the current pad
+    double title_size_upper=0.15;
+    double label_size_upper=0.05;
+    double title_offset_upper = 1.45;
 
 
 
-        c->cd();
-        TPad *pad0bot = new TPad(("padbot_"+var.safe_unit).c_str(),("padbot_"+var.safe_unit).c_str(), 0, 0.05, 1, 0.35);
-            pad0bot->SetTopMargin(0);
-            pad0bot->SetBottomMargin(0.351);
-            pad0bot->SetGridx(); // vertical grid
-            pad0bot->Draw();
+
+    c->cd();
+    TPad *pad0top = new TPad(("pad0top_"+var.safe_unit).c_str(), ("pad0top_"+var.safe_unit).c_str(), 0, 0.35, 1, 1.0);
+
+    pad0top->SetBottomMargin(0); // Upper and lower plot are joined
+    pad0top->Draw();             // Draw the upper pad: pad2top
+    pad0top->cd();               // pad2top becomes the current pad
+
+
+
+    c->cd();
+    TPad *pad0bot = new TPad(("padbot_"+var.safe_unit).c_str(),("padbot_"+var.safe_unit).c_str(), 0, 0.05, 1, 0.35);
+    pad0bot->SetTopMargin(0);
+    pad0bot->SetBottomMargin(0.351);
+    pad0bot->SetGridx(); // vertical grid
+    pad0bot->Draw();
 
     double rmin  = 1.1;
     double rmax = 1.1;
@@ -386,7 +396,7 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
         std::cout<<"Int "<<th1->Integral()<<std::endl;
         pad0top->cd();
 
-            
+
         th1->SetLineColor(files[i]->col);
         th1->SetLineWidth(2);
 
@@ -399,32 +409,39 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
 
         max = std::max(max, th1->GetMaximum());
         th1->SetMaximum(th1->GetMaximum()*1.5);
-               th1->SetTitle(var.unit.c_str());
-    
+        th1->SetTitle(var.unit.c_str());
+
         leg->AddEntry(th1,files[i]->tag.c_str(),"l");
-            pad0bot->cd();       // pad0bot becomes the current pad
+        pad0bot->cd();       // pad0bot becomes the current pad
 
-            if(i==0) rat_CV =  (TH1*)th1->Clone("ratio_CV");
+        if(i==0) rat_CV =  (TH1*)th1->Clone("ratio_CV");
 
 
-            TH1* rat_denom = (TH1*)th1->Clone(("ratio_denom_"+std::to_string(i)).c_str());
-            for(int j=0; j<rat_denom->GetNbinsX(); j++){
-                rat_denom->SetBinError(j,0.0);
-            }	
+        TH1* rat_denom = (TH1*)th1->Clone(("ratio_denom_"+std::to_string(i)).c_str());
+        for(int j=0; j<rat_denom->GetNbinsX(); j++){
+            rat_denom->SetBinError(j,0.0);
+        }	
 
-            rat_denom->Divide(rat_CV);
-            rat_denom->Draw("same hist");
+        rat_denom->Divide(rat_CV);
+        rat_denom->Draw("same hist");
 
-            rat_denom->GetXaxis()->SetTitle(var.unit.c_str());
+        rat_denom->GetXaxis()->SetTitle(var.unit.c_str());
+        rat_denom->SetMinimum(rmin);	
+        rat_denom->SetMaximum(rmax);//ratunit->GetMaximum()*1.1);
+        rat_denom->GetXaxis()->SetTitleOffset(title_offset_ratioX);
+            rat_denom->GetYaxis()->SetTitleOffset(title_offset_ratioY);
             rat_denom->SetMinimum(rmin);	
-            rat_denom->SetMaximum(rmax);//ratunit->GetMaximum()*1.1);
-
-
+            rat_denom->SetMaximum(rmax);//rat_denom->GetMaximum()*1.1);
+            rat_denom->GetYaxis()->SetTitleSize(title_size_ratio);
+            rat_denom->GetXaxis()->SetTitleSize(title_size_ratio);
+            rat_denom->GetYaxis()->SetLabelSize(label_size_ratio);
+            rat_denom->GetXaxis()->SetLabelSize(label_size_ratio);
 
     }
 
     tvec[0]->SetMaximum(max*1.5);
 
+    pattop->cd();
     leg->SetFillStyle(0);
     leg->SetLineColor(kWhite);
     leg->SetLineWidth(0);
