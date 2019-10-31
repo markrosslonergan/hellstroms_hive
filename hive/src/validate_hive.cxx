@@ -346,11 +346,9 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name, bool shape_only){
 
     TCanvas *c = new TCanvas();
-    TPad *p = (TPad*)c->cd(); 
-        if(var.is_logplot){
-            p->SetLogy();
-        }   
  
+    TH1* rat_CV; 
+
 
     std::vector<int> cols = {kRed-7,  kBlue-7, kGreen+1 , kMagenta,kOrange,kGray};
     std::vector<TH1*> tvec;
@@ -358,20 +356,37 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
     double max = -99;
 
     std::string testcut = "1";
-    for(int i=0; i< files.size();i++){
+
 
        
         c->cd();
+        TPad *pad0top = new TPad(("pad0top_"+var.safe_unit).c_str(), ("pad0top_"+var.safe_unit).c_str(), 0, 0.35, 1, 1.0);
+
+        pad0top->SetBottomMargin(0); // Upper and lower plot are joined
+            pad0top->Draw();             // Draw the upper pad: pad2top
+            pad0top->cd();               // pad2top becomes the current pad
+
+
+
+        c->cd();
+        TPad *pad0bot = new TPad(("padbot_"+var.safe_unit).c_str(),("padbot_"+var.safe_unit).c_str(), 0, 0.05, 1, 0.35);
+            pad0bot->SetTopMargin(0);
+            pad0bot->SetBottomMargin(0.351);
+            pad0bot->SetGridx(); // vertical grid
+            pad0bot->Draw();
+
+    double rmin  = 1.1;
+    double rmax = 1.1;
+
+    for(int i=0; i< files.size();i++){
+
+        pad0top->cd();
         TH1* th1 =  (TH1*) files[i]->getTH1(var, testcut+"&&"+cuts[i], "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
         tvec.push_back(th1);
         std::cout<<"Int "<<th1->Integral()<<std::endl;
-        c->cd();
+        pad0top->cd();
 
-        if(var.is_logplot){
-            p->SetLogy();
-        }   
- 
-
+            
         th1->SetLineColor(files[i]->col);
         th1->SetLineWidth(2);
 
@@ -384,10 +399,26 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
 
         max = std::max(max, th1->GetMaximum());
         th1->SetMaximum(th1->GetMaximum()*1.5);
-        th1->GetXaxis()->SetTitle(var.unit.c_str());
-        th1->SetTitle(var.unit.c_str());
+               th1->SetTitle(var.unit.c_str());
     
         leg->AddEntry(th1,files[i]->tag.c_str(),"l");
+            pad0bot->cd();       // pad0bot becomes the current pad
+
+            if(i==0) rat_CV =  (TH1*)th1->Clone("ratio_CV");
+
+
+            TH1* rat_denom = (TH1*)th1->Clone(("ratio_denom_"+std::to_string(i)).c_str());
+            for(int j=0; j<rat_denom->GetNbinsX(); j++){
+                rat_denom->SetBinError(j,0.0);
+            }	
+
+            rat_denom->Divide(rat_CV);
+            rat_denom->Draw("same hist");
+
+            rat_denom->GetXaxis()->SetTitle(var.unit.c_str());
+            rat_denom->SetMinimum(rmin);	
+            rat_denom->SetMaximum(rmax);//ratunit->GetMaximum()*1.1);
+
 
 
     }
