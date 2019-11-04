@@ -55,6 +55,7 @@ class MVALoader {
     std::vector<double> bdt_offbeam_spills;
 
     std::vector<bool> bdt_is_signal;
+    std::vector<bool> bdt_on_top;
     std::vector<bool> bdt_is_training_signal;
 
     std::map<std::string,std::string> aliasMap; 

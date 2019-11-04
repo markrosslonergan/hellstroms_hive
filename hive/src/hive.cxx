@@ -196,8 +196,12 @@ int main (int argc, char *argv[]){
 
     bdt_file * signal;
     bdt_file * training_signal;
+    bdt_file * onbeam_data_file;
 
     std::map<std::string, bdt_file*> tagToFileMap;
+
+    std::map<bdt_file*,bool> plotOnTopMap;
+
 
     std::cout<<"================================================================================"<<std::endl;
     std::cout<<"=============== Loading all BDT files for this analysis ========================"<<std::endl;
@@ -237,6 +241,7 @@ int main (int argc, char *argv[]){
             std::cout<<" -- Setting as ON beam data with "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOnBeamData(XMLconfig.bdt_onbeam_pot[f]); //tor860_wc
             incl_in_stack = false;
+            onbeam_data_file = bdt_files.back();
         }
         if(XMLconfig.bdt_is_offbeam_data[f]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
@@ -253,6 +258,12 @@ int main (int argc, char *argv[]){
                 std::cout<<" -- For the purposes of calculting a significance, this is a BKG file"<<std::endl;
                 bkg_bdt_files.push_back(bdt_files.back());
             }
+        }
+
+        if(XMLconfig.bdt_on_top[f]){
+            plotOnTopMap[bdt_files.back()] = true;
+        }else{
+            plotOnTopMap[bdt_files.back()] = false;
         }
 
         if(XMLconfig.bdt_is_training_signal[f]){
@@ -446,21 +457,14 @@ int main (int argc, char *argv[]){
             histogram_stack->addToStack(signal_bdt_files[s],true);
         }
 
-  std::cout<<"flag3"<<std::endl;
-   
-
-        tagToFileMap["Data5e19"]->col = kWhite;
-        tagToFileMap["Data5e19"]->fillstyle = 0;
-
+       onbeam_data_file->col = kWhite;
+        onbeam_data_file->fillstyle = 0;
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
             if(number != -1){
-                  std::cout<<"flag4"<<std::endl;
-                   
-                       
-                bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_stack");	
-                datamc.setPlotStage(which_stage);                
+               bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
+               datamc.setPlotStage(which_stage);                
                 datamc.setStackMode(4.9e19);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
@@ -471,7 +475,7 @@ int main (int argc, char *argv[]){
                   std::cout<<"flag5"<<std::endl;
                    
 
-                bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_stack");	
+                bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setStackMode(13.2e20);
 
@@ -484,7 +488,7 @@ int main (int argc, char *argv[]){
                 //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
         }else{
-            bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_stack");	
+            bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
 
             real_datamc.setStackMode(13.2e20);
             if(which_bdt ==-1){
@@ -514,41 +518,38 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
 
-        histogram_stack->plot_pot = tagToFileMap["Data5e19"]->pot;
+        histogram_stack->plot_pot = onbeam_data_file->pot;
 
         if (!response_only){
-
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
                 if(stack_bdt_files[f]->is_data) continue;
-                if(stack_bdt_files[f]==signal || stack_bdt_files[f]->tag == "NCDeltaRadOverlaySM" )  continue;
-                if(stack_bdt_files[f]==signal || stack_bdt_files[f]->tag == "NCDeltaRadOverlay" )  continue;
-
-
-                histogram_stack->addToStack(stack_bdt_files[f]);
-                std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
+                if(!plotOnTopMap[stack_bdt_files[f]] ){
+                   histogram_stack->addToStack(stack_bdt_files[f]);
+                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+                }
+            }
+            
+            for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                if(stack_bdt_files[f]->is_data) continue;
+                if(plotOnTopMap[stack_bdt_files[f]] ){
+                    histogram_stack->addToStack(stack_bdt_files[f],true);
+                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+                }
             }
 
-            //signal->fillstyle = 0;
-            histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlaySM"],true);
-            histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlay"],true);
-            // histogram_stack->addToStack(signal,true);
         }else{
-            //first add the signal
-            histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlay"],true);
-            histogram_stack->addToStack(tagToFileMap["NCDeltaRadOverlaySM"],true);
-            //histogram_stack->addToStack(signal,true);
-            // histogram_stack->addToStack(stack_bdt_files[4]);
-
             //then add SM
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if (f==4) continue;
                 if(stack_bdt_files[f]->is_data) continue;
-                //  if(bdt_files[f]==signal)  continue;
-                if(stack_bdt_files[f]==signal || stack_bdt_files[f]->tag == "NCDeltaRadOverlaySM" )  continue;
-                if(stack_bdt_files[f]==signal || stack_bdt_files[f]->tag == "NCDeltaRadOverlay" )  continue;
+                if( plotOnTopMap[stack_bdt_files[f]] ){
+                    histogram_stack->addToStack(stack_bdt_files[f],true);
+                    std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
 
-                histogram_stack->addToStack(stack_bdt_files[f]);
-                std::cout<<"adding to stack "<<stack_bdt_files[f]->tag<<std::endl;
+                }else{
+                    histogram_stack->addToStack(stack_bdt_files[f]);
+                    std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
+
+                }
 
             }
 
@@ -557,7 +558,7 @@ int main (int argc, char *argv[]){
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
             if(number != -1){
-                bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
+                bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);                
 
                 //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
@@ -568,7 +569,7 @@ int main (int argc, char *argv[]){
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
             }else{
 
-                bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
+                bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 real_datamc.setPlotStage(which_stage);                
 
                 //real_datamc.setSubtractionVector(subv);
@@ -580,7 +581,7 @@ int main (int argc, char *argv[]){
                 //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
         }else{
-            bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_datamc");	
+            bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
 
             if(which_bdt ==-1){
                 for(int k=0; k< bdt_infos.size(); k++){
@@ -607,7 +608,7 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_var2D");
 
-        histogram_stack->plot_pot = tagToFileMap["Data5e19"]->pot;
+        histogram_stack->plot_pot = onbeam_data_file->pot;
 
         //add MC files to stack
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
@@ -617,7 +618,7 @@ int main (int argc, char *argv[]){
         }
 
         //make the datamc object 
-        bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_var2D");	
+        bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_var2D");	
         real_datamc.setPlotStage(which_stage);                
 
 

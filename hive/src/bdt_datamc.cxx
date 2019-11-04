@@ -510,7 +510,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 if(mc_stack->signal_on_top[n]) which_signal = n;
                 n++;
             }
-            l0->AddEntry(tmp_tsum,"Flux & XS Systematics Error","f");
+            //l0->AddEntry(tmp_tsum,"Flux & XS Systematics Error","f");
+            l0->AddEntry(tmp_tsum,"MC Stat Error Only","f");
             //			d0->Draw("same E1");
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;

@@ -324,6 +324,20 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             }
         }
 
+        const char* t_ptop = pBDTfile->Attribute("plot_on_top");
+        if(t_ptop==NULL){
+            bdt_on_top.push_back(false);
+        }else{
+            std::string sig = t_ptop;
+            if(sig=="true"){
+                bdt_on_top.push_back(true);
+            }else{
+                bdt_on_top.push_back(false);
+
+            }
+        }
+
+
         const char* t_plotname = pBDTfile->Attribute("plot_name");
         if(t_plotname==NULL){
             bdt_plotnames.push_back(bdt_tags.back());
