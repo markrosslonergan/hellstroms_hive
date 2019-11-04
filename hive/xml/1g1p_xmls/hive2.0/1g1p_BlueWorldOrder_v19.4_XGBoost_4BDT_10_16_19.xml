@@ -40,7 +40,7 @@
         <cut> mctruth_num_exiting_pi0 == 0</cut>
         <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
         <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
-    </definition>
+   </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0] &lt; 0.333 </cut>
         <cut> sim_track_overlay_fraction[0] &lt; 0.333 </cut>
@@ -306,7 +306,7 @@
 <var def = "reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(25,0,16)" unit = "Reco Track Truncated Mean dE/dx Best Plane [MeV/cm]" type = "d" logplot = "false"  training="013"/>
 <var def = "reco_track_mean_trunc_dEdx_plane0[0]" binning =  "(25,0,16)" unit = "Reco Track Truncated Mean dE/dx Plane0 [MeV/cm]" type = "d" logplot = "false"  training="013"/>
 <var def = "reco_track_mean_trunc_dEdx_plane1[0]" binning =  "(25,0,16)" unit = "Reco Track Truncated Mean dE/dx Plane1 [MeV/cm]" type = "d" logplot = "false"  training="013"/>
-<var def = "reco_track_mean_trunc_dEdx_plane2[0]" binning =  "(25,0,16)" unit = "Reco Track Truncated Mean dE/dx Plane2 [MeV/cm]" type = "d" logplot = "false"  training="013"/>
+<var def = "reco_track_mean_trunc_dEdx_plane2[0]" binning =  "(50,0,16)" unit = "Reco Track Truncated Mean dE/dx Plane2 [MeV/cm]" type = "d" logplot = "false"  training="013"/>
 
 <var def = "reco_track_proton_kinetic_energy[0]" binning = "(50,0,1)" unit = "Reconstructed Track Kinetic Energy [GeV]" type = "d" logplot = "false" training = "013"/>
 <var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0]" binning = "(50,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d" logplot = "false" training = "0123"/>

@@ -419,11 +419,15 @@ int main (int argc, char *argv[]){
             sleep(2);
         }
 
+        std::cout<<"flag0"<<std::endl;
+
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-        histogram_stack->plot_pot =13.2e20;
+        histogram_stack->plot_pot =4.9e19;
+
+        std::cout<<"flag1"<<std::endl;
 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
             if(stack_bdt_files[f]->is_data) continue;
@@ -435,10 +439,15 @@ int main (int argc, char *argv[]){
             if(!is_signal) histogram_stack->addToStack(stack_bdt_files[f]);
         }
 
+        std::cout<<"flag2"<<std::endl;
+
         //signal->fillstyle = 0;
         for(int s = signal_bdt_files.size()-1; s>=0; s--){
             histogram_stack->addToStack(signal_bdt_files[s],true);
         }
+
+  std::cout<<"flag3"<<std::endl;
+   
 
         tagToFileMap["Data5e19"]->col = kWhite;
         tagToFileMap["Data5e19"]->fillstyle = 0;
@@ -447,15 +456,20 @@ int main (int argc, char *argv[]){
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
             if(number != -1){
+                  std::cout<<"flag4"<<std::endl;
+                   
+                       
                 bdt_datamc datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_stack");	
                 datamc.setPlotStage(which_stage);                
-                datamc.setStackMode(13.2e20);
+                datamc.setStackMode(4.9e19);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
             }else{
+                  std::cout<<"flag5"<<std::endl;
+                   
 
                 bdt_datamc real_datamc(tagToFileMap["Data5e19"], histogram_stack, analysis_tag+"_stack");	
                 real_datamc.setPlotStage(which_stage);                
@@ -773,6 +787,9 @@ cimpact->SaveAs("Impact.pdf","pdf");
     if(which_stage==-1)which_stage=0;
 
     bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag);
+ 
+    //specifically for protond/photons pre-topological
+    //bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
     //normally stops here
 
     //Ok, this runs now for a full cut
