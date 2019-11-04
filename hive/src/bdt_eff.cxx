@@ -600,6 +600,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<file->GetEntries(denominator)<<" "<<file->GetEntries(topocuts)<<std::endl;
 
     std::string recotruthmatchingcuts = " sim_shower_overlay_fraction[0] <  0.333 &&  sim_track_overlay_fraction[0] <  0.333 && sim_track_pdg[0] == 2212 && sim_shower_pdg[0] == 22 ";
+//    std::string recotruthmatchingcuts = "1";
 
     if(plot_stage==0){
         h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator+"&&"+topocuts + "&&" + recotruthmatchingcuts , "photon_true_numer", 13.2e20);
