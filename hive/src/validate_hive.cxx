@@ -429,19 +429,18 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
         rat_denom->SetMinimum(rmin);	
         rat_denom->SetMaximum(rmax);//ratunit->GetMaximum()*1.1);
         rat_denom->GetXaxis()->SetTitleOffset(title_offset_ratioX);
-            rat_denom->GetYaxis()->SetTitleOffset(title_offset_ratioY);
-            rat_denom->SetMinimum(rmin);	
-            rat_denom->SetMaximum(rmax);//rat_denom->GetMaximum()*1.1);
-            rat_denom->GetYaxis()->SetTitleSize(title_size_ratio);
-            rat_denom->GetXaxis()->SetTitleSize(title_size_ratio);
-            rat_denom->GetYaxis()->SetLabelSize(label_size_ratio);
-            rat_denom->GetXaxis()->SetLabelSize(label_size_ratio);
-
+        rat_denom->GetYaxis()->SetTitleOffset(title_offset_ratioY);
+        rat_denom->SetMinimum(rmin);	
+        rat_denom->SetMaximum(rmax);//rat_denom->GetMaximum()*1.1);
+        rat_denom->GetYaxis()->SetTitleSize(title_size_ratio);
+        rat_denom->GetXaxis()->SetTitleSize(title_size_ratio);
+        rat_denom->GetYaxis()->SetLabelSize(label_size_ratio);
+        rat_denom->GetXaxis()->SetLabelSize(label_size_ratio);
     }
 
     tvec[0]->SetMaximum(max*1.5);
 
-    pattop->cd();
+    pad0top->cd();
     leg->SetFillStyle(0);
     leg->SetLineColor(kWhite);
     leg->SetLineWidth(0);
