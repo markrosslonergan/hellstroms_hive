@@ -778,7 +778,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 */
 }else if(mode_option == "eff"){
 
-    if(which_file == -1)which_file = 0;
+    if(which_file == -1)which_file = 1;
 
     //which_file = 7;//checking ext
     std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
@@ -786,6 +786,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
 
     if(which_stage==-1)which_stage=0;
+
 
     bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag);
  
