@@ -761,11 +761,12 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
     plot_stage = 0;
 
-    file->calcBaseEntryList(tag);
-    std::cout<<"flag1.0"<<std::endl;
-    file->setStageEntryList(plot_stage);
+    //don't want entrylists since it's pre-topo??
+   // file->calcBaseEntryList(tag);
+   // std::cout<<"flag1.0"<<std::endl;
+   // file->setStageEntryList(plot_stage);
 
-    std::cout<<"flag1.1"<<std::endl;
+    //std::cout<<"flag1.1"<<std::endl;
     double stage_entries ;
     stage_entries = file->GetEntries(denominator)*conversion;
     // std::cout<<plot_stage<<" "<<conversion<<" "<<stage_entries<<" topo: "<<topocuts<<std::endl;
@@ -775,7 +776,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::string recotruthmatchingcuts_photon = "reco_vertex_size == 1 && reco_asso_showers >0 &&sim_shower_overlay_fraction[0] <  0.333 && sim_shower_pdg[0] == 22 ";
    
 
-    std::cout<<"flag2"<<std::endl;
+  //  std::cout<<"flag2"<<std::endl;
 
     h_true_photon_numer = (TH1*)file->getTH1(true_photon, recotruthmatchingcuts_photon, "photon_true_numer", 13.2e20);
     h_true_proton_numer = (TH1*)file->getTH1(true_proton, recotruthmatchingcuts_proton, "proton_true_numer", 13.2e20);
@@ -833,7 +834,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     h_true_photon_ratio->GetYaxis()->SetTitle("Efficiency [%]");
     h_true_photon_ratio->GetXaxis()->SetTitle("True Photon Energy [GeV]");
 
-    h_true_photon_ratio->SetMaximum(90.0);
+    h_true_photon_ratio->SetMaximum(50.0);
     h_true_photon_ratio->SetMinimum(0);
     h_true_photon_ratio->GetXaxis()->SetRangeUser(0,1);
     h_true_photon_ratio->SetTitle("");
@@ -883,7 +884,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     h_true_proton_ratio->GetYaxis()->SetTitle("Efficiency [%]");
     h_true_proton_ratio->GetXaxis()->SetTitle("True Proton Energy [GeV]");
 
-    h_true_proton_ratio->SetMaximum(90.0);
+    h_true_proton_ratio->SetMaximum(70.0);
     h_true_proton_ratio->SetMinimum(0);
     h_true_proton_ratio->GetXaxis()->SetRangeUser(0,1);
     h_true_proton_ratio->SetTitle("");

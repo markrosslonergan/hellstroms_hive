@@ -457,14 +457,14 @@ int main (int argc, char *argv[]){
             histogram_stack->addToStack(signal_bdt_files[s],true);
         }
 
-       onbeam_data_file->col = kWhite;
+        onbeam_data_file->col = kWhite;
         onbeam_data_file->fillstyle = 0;
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
             if(number != -1){
-               bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
-               datamc.setPlotStage(which_stage);                
+                bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
+                datamc.setPlotStage(which_stage);                
                 datamc.setStackMode(4.9e19);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
@@ -472,8 +472,8 @@ int main (int argc, char *argv[]){
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
             }else{
-                  std::cout<<"flag5"<<std::endl;
-                   
+                std::cout<<"flag5"<<std::endl;
+
 
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 real_datamc.setPlotStage(which_stage);                
@@ -524,11 +524,11 @@ int main (int argc, char *argv[]){
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
                 if(stack_bdt_files[f]->is_data) continue;
                 if(!plotOnTopMap[stack_bdt_files[f]] ){
-                   histogram_stack->addToStack(stack_bdt_files[f]);
+                    histogram_stack->addToStack(stack_bdt_files[f]);
                     std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
                 }
             }
-            
+
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
                 if(stack_bdt_files[f]->is_data) continue;
                 if(plotOnTopMap[stack_bdt_files[f]] ){
@@ -789,9 +789,9 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
 
     bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag);
- 
+
     //specifically for protond/photons pre-topological
-    bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
+    // bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
     //normally stops here
 
     //Ok, this runs now for a full cut
