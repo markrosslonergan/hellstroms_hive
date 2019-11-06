@@ -58,14 +58,14 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_run3G_v26.root" tag = "BNBOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "BNB Other" >
+<bdtfile filename = "bnb_overlay_run3G_v26.1.root" tag = "BNBOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "BNB Other" >
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
     </definition>
 </bdtfile>
 
-<bdtfile filename = "dirt_overlay_run36_v22.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
+<bdtfile filename = "dirt_overlay_run3G_v26.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
     <definition><cut>1</cut></definition>
 </bdtfile>
 <bdtfile filename = "ncdeltaoverlay_run3G_vertexed_v6.1.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "1x SM NC #Delta Radiative" signal = "true" >
@@ -84,14 +84,15 @@
 </bdtfile>
 
 
-<bdtfile filename = "bnbext_run3G1_vertexed_v6.root " tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "2">
+<bdtfile filename = "bnbext_run3G1_v25.1.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "2">
     <definition>
         <cut>Entry$%2==1</cut>
     </definition>
     <data type="OffBeam">
         <tor860_wcut> 4.501e19 </tor860_wcut>
         <E1DCNT_wcut> 9982680.0</E1DCNT_wcut>
-        <EXT>2852625.0</EXT>  
+        <EXT>23018256.0</EXT>  
+        
     </data>
 </bdtfile>
 
@@ -204,7 +205,7 @@
 
 <precut def = "(reco_vertex_x > 5 &amp;&amp; reco_vertex_x < 256-5 &amp;&amp; reco_vertex_y > -117+5 &amp;&amp; reco_vertex_y < 117-5 &amp;&amp; reco_vertex_z > 5 &amp;&amp; reco_vertex_z < 1036-5) " name = "Fiducial Vertex Cut" />
 
-<precut def = "(CRT_veto_nhits < 0 ||  Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> 
+<!--<precut def = "(CRT_veto_nhits < 0 ||  Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->
 
 
 <!--<precut def = "(TMath::Finite(reco_track_mean_trunc_dEdx_best_plane[0]))" name = "Finite Track dE/dx"/>-->
@@ -336,7 +337,7 @@
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(50,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" logplot = "false" training = "0123" /> 
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(50,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" logplot = "false" training = "0123" /> 
 <var def = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0],2))" binning = "(50,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum [GeV]" type = "d" logplot = "false" training = "0123"/>
-<var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(12,0.9,1.5)" unit = "Implied Invariant Mass of photon-proton pair [GeV]" type  = "d" training = "0123"/>
+<var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(24,0.9,1.5)" unit = "Implied Invariant Mass of photon-proton pair [GeV]" type  = "d" training = "0123"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*#SIDX#+reco_track_diry[0]*#SIDY#+reco_track_dirz[0]*#SIDZ#)))" binning = "(25,0.9,1.6)" unit = "Implied Invariant Mass of photon-proton pair (Track Start) [GeV]" type  = "d" training = ""/>
 
