@@ -570,20 +570,22 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
         n_precut_events = tmp_events;
     }
 
-
+    double max_x_range = 2.5;
     std::cout<<"So the DENOMINATOR + TOPOLOGICAL + PRECUTS is "<<n_precut_events<<std::endl;
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_starting_events*100.0<<"% relative to denom"<<std::endl;
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_topo_events*100.0<<"% relative to topo"<<std::endl;
     std::cout<<"This is "<<filein->tvertex->GetEntries((denominator+"&&"+topocuts+"&&"+precuts).c_str())<<" actuall MC events"<<std::endl;
 
 
-    bdt_variable true_photon("mctruth_exiting_photon_energy","(30, 0 , 0.6)","True Photon Energy [GeV]",false,"d");
-    bdt_variable true_proton("Max$(mctruth_exiting_proton_energy)-0.938272","(30, 0 , 0.6)","True Proton Kinetic Energy [GeV]",false,"d");
+    bdt_variable true_photon("mctruth_exiting_photon_energy","(30, 0 ,"+std::to_string(max_x_range)+")","True Photon Energy [GeV]",false,"d");
+    bdt_variable true_proton("Max$(mctruth_exiting_proton_energy-0.938272)*(Max$(mctruth_exiting_proton_energy-0.938272)>0)","(30, 0 , "+std::to_string(max_x_range)+")","True Proton Kinetic Energy [GeV]",false,"d");
 
    
 
     TH1* h_true_photon_denom = (TH1*)file->getTH1(true_photon, denominator, "photon_true_denom", 13.2e20);
     TH1* h_true_proton_denom = (TH1*)file->getTH1(true_proton, denominator, "proton_true_denom", 13.2e20);
+    
+      
 
     TH1* h_true_photon_numer;
     TH1* h_true_proton_numer;
@@ -610,6 +612,8 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
         h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator+"&&"+topocuts +"&&"+precuts + "&&" + recotruthmatchingcuts    , "proton_true_numer", 13.2e20);
     }
 
+
+
     TH1* h_true_photon_ratio = (TH1*)h_true_photon_numer->Clone("h_true_photon_ratio");
     TH1* h_true_proton_ratio = (TH1*)h_true_proton_numer->Clone("h_true_proton_ratio");
 
@@ -622,6 +626,11 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<"the integrated eff from the photon/proton ratios are: "<<  h_true_photon_ratio->Integral() * 100/h_true_photon_numer->Integral() << "%/" <<  h_true_proton_ratio->Integral() * 100 / h_true_proton_numer->Integral()<< "%"<<std::endl;
     std::cout<<"---- where the integral of the numerator of the photon/protons are: "<<  h_true_photon_numer->Integral() << "/" <<  h_true_proton_numer->Integral()<<std::endl;
     std::cout<<"---- where the integral of denominator of the photon/protons are: "<<  h_true_photon_denom->Integral() << "/" <<  h_true_proton_denom->Integral()<<std::endl;
+
+    std::cout<<"---- and the total eff of photons is: "<<  h_true_photon_numer->Integral()/h_true_photon_denom->Integral()*100.0<<" %"<<std::endl;
+    std::cout<<"---- and the total eff of protons is: "<<  h_true_proton_numer->Integral()/h_true_proton_denom->Integral()*100.0<<" %"<<std::endl;
+    std::cout<<"---- and the total eff by FILE is: "<<  file->GetEntries(denominator+"&&"+topocuts + "&&" + recotruthmatchingcuts)/file->GetEntries(denominator)*100.0<<" % "<<std::endl;
+
 
     //h_true_photon_ratio->Scale(ratiop_g);
     //    h_true_proton_ratio->Scale(100);
@@ -678,7 +687,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
     h_true_photon_ratio->SetMaximum(90.0);
     h_true_photon_ratio->SetMinimum(0);
-    h_true_photon_ratio->GetXaxis()->SetRangeUser(0,1);
+    h_true_photon_ratio->GetXaxis()->SetRangeUser(0,max_x_range);
 
     TLegend *l = new TLegend(0.13,0.79,0.89,0.89);
     l->SetLineColor(kWhite);
@@ -752,6 +761,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     TH1* h_true_photon_denom = (TH1*)file->getTH1(true_photon, denominator, "photon_true_denom", 13.2e20);
     TH1* h_true_proton_denom = (TH1*)file->getTH1(true_proton, denominator, "proton_true_denom", 13.2e20);
 
+
     TH1* h_true_photon_numer;
     TH1* h_true_proton_numer;
 
@@ -791,6 +801,11 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<"the integrated eff from the photon/proton ratios are: "<<  h_true_photon_ratio->GetMaximum() << "/" <<  h_true_proton_ratio->GetMaximum()<< "%"<<std::endl;
     std::cout<<"---- where the integral of the numerator of the photon/protons are: "<<  h_true_photon_numer->Integral() << "/" <<  h_true_proton_numer->Integral()<<std::endl;
     std::cout<<"---- where the integral of denominator of the photon/protons are: "<<  h_true_photon_denom->Integral() << "/" <<  h_true_proton_denom->Integral()<<std::endl;
+
+    std::cout<<"---- and the total eff of photons is: "<<  h_true_photon_numer->Integral()/h_true_photon_denom->Integral()*100.0<<" %"<<std::endl;
+    std::cout<<"---- and the total eff of protons is: "<<  h_true_proton_numer->Integral()/h_true_proton_denom->Integral()*100.0<<" %"<<std::endl;
+
+
 
 
 
