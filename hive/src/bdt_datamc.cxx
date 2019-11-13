@@ -1,6 +1,7 @@
 #include "bdt_datamc.h"
 
 int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
+   
     is_bdt_variable = false;
     bdt_info nullinfo;
     return this->plotStacks(ftest, var, c1,c2,nullinfo);
@@ -410,8 +411,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             cobs->cd();
             TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
 
-            if(is_bdt_variable ) 
-                pad0top->SetLogy();
+            if(is_bdt_variable || var.is_logplot == true )  pad0top->SetLogy();
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
             pad0top->cd();               // pad2top becomes the current pad
@@ -443,7 +443,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
             if(var.is_logplot == true){
-                //if(true){
                 pad0top->SetLogy();
                 max_modifier=100.0;
             }

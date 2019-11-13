@@ -37,6 +37,7 @@ int main (int argc, char *argv[]){
 
     int number = -1;
     bool response_only = false;
+    bool is_combined = false;
     double what_pot = 13.2e20;
     int which_file = -1;
     int which_bdt = -1;
@@ -54,6 +55,7 @@ int main (int argc, char *argv[]){
         {"topo_tag",	required_argument,	0, 't'},
         {"bdt",		    required_argument,	0, 'b'},
         {"stage",		required_argument,	0, 's'},
+        {"combined",    no_argument,        0, 'c'},
         {"help",		required_argument,	0, 'h'},
         {"pot",		    required_argument,	0, 'p'},
         {"number",		required_argument,	0, 'n'},
@@ -66,7 +68,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:i:n:v:rh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:i:n:v:rch?", longopts, &index);
 
         switch(iarg)
         {
@@ -78,6 +80,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'n':
                 number = strtof(optarg,NULL);
+                break;
+            case 'c':
+                is_combined = true;
                 break;
             case 'x':
                 xml = optarg;
@@ -229,6 +234,8 @@ int main (int argc, char *argv[]){
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
 
+
+
         bool incl_in_stack = true;
 
         if(XMLconfig.bdt_scales[f] != 1.0){
@@ -243,6 +250,10 @@ int main (int argc, char *argv[]){
             incl_in_stack = false;
             onbeam_data_file = bdt_files.back();
         }
+
+        if(is_combined) bdt_files.back()->addFriend("output_"+bdt_files.back()->tag ,"output_superMVA.root");
+
+
         if(XMLconfig.bdt_is_offbeam_data[f]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOffBeamData( XMLconfig.bdt_onbeam_pot[f], XMLconfig.bdt_onbeam_spills[f], XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
@@ -278,6 +289,16 @@ int main (int argc, char *argv[]){
 
     //The "signal" is whichever signal BDT you define first.
     signal = signal_bdt_files[0];
+
+    /*
+    if(is_combined){
+        for(auto &f: stack_bdt_files){
+            std::cout<<"Adding Super Friend Tree"<<std::endl;
+            f->addFriend("output_"+f->tag ,"output_superMVA.root");
+        }
+        onbeam_data_file->addFriend("output_"+onbeam_data_file->tag,"output_superMVA.root");
+    }
+    */
 
 
     //===========================================================================================
@@ -436,7 +457,7 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-        histogram_stack->plot_pot =4.9e19;
+        histogram_stack->plot_pot =13.2e20;//4.9e19;
 
         std::cout<<"flag1"<<std::endl;
 
@@ -465,7 +486,7 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 datamc.setPlotStage(which_stage);                
-                datamc.setStackMode(4.9e19);
+                datamc.setStackMode(13.2e20);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
@@ -500,8 +521,7 @@ int main (int argc, char *argv[]){
             }
         }
 
-    }
-    else if(mode_option == "datamc"){
+    }    else if(mode_option == "datamc"){
         std::cout<<"Starting datamc "<<std::endl;
 
         if (access("datamc",F_OK) == -1){
@@ -591,6 +611,47 @@ int main (int argc, char *argv[]){
                 real_datamc.plotBDTStacks(bdt_infos[which_bdt],fbdtcuts);
             }
         }
+    }
+    else if(mode_option == "superdatamc"){
+        std::cout<<"Starting superdatamc "<<std::endl;
+
+        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+        TFile * fsuper = new TFile("output_superMVA.root","recreate");
+
+        std::vector<TTree*> super_trees;
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            std::string stree = "output_"+stack_bdt_files[f]->tag;
+            std::cout<<"Getting supertree : "<<stree<<std::endl;
+            super_trees.push_back((TTree*)fsuper->Get(stree.c_str()));
+        }
+
+        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_superdatamc");
+        histogram_stack->plot_pot = onbeam_data_file->pot;
+
+    /*
+            for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                if(stack_bdt_files[f]->is_data) continue;
+                if(!plotOnTopMap[stack_bdt_files[f]] ){
+                    histogram_stack->addToStack(stack_bdt_files[f]);
+                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+                }
+            }
+
+            for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                if(stack_bdt_files[f]->is_data) continue;
+                if(plotOnTopMap[stack_bdt_files[f]] ){
+                    histogram_stack->addToStack(stack_bdt_files[f],true);
+                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+                }
+            }
+        
+        int ip=0;
+                
+        bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+        datamc.setPlotStage(which_stage);                
+        std::vector<bdt_variable> tmp_var = {vars.at(number)};
+        datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+    */           
     }
     else if(mode_option == "var2D"){
         std::cout<<"Starting var2D "<<std::endl;
@@ -832,37 +893,74 @@ cimpact->SaveAs("Impact.pdf","pdf");
     std::cout<<"Copying Slice tree "<<std::endl;
     TTree * t_sbnfit_slice_tree = (TTree*)file->tslice->CopyTree("1");
 
+    TTree * t_sbnfit_simpletree = new TTree("simple_tree","simple_tree");
+    double simple_var = 0;
+    double simple_wei = 0;
+    double simple_pot_wei = 0;
+    int original_entry = 0;
+    double plot_pot = 13.2e20;
+    
+    std::vector<double> bdt_mvas;
+    for(int i=0; i< bdt_infos.size(); i++){
+        bdt_mvas.push_back(0);
+    }
+
+    
+    TTreeFormula * CUT = new TTreeFormula("CUT", sbnfit_cuts.c_str(),file->tvertex);
+
+    t_sbnfit_simpletree->Branch("simple_variable",&simple_var);
+    t_sbnfit_simpletree->Branch("simple_weight",&simple_wei);
+    t_sbnfit_simpletree->Branch("simple_pot_weight",&simple_pot_wei);
+    t_sbnfit_simpletree->Branch("original_entry",&original_entry);
+
+    for(int i=0; i< bdt_infos.size(); i++){
+        std::string nam = "simple_"+bdt_infos[i].identifier+"_mva";
+        t_sbnfit_simpletree->Branch(nam.c_str(), &(bdt_mvas[i]));
+    }
+
+    TTreeFormula* weight = new TTreeFormula("weight_formula ",file->weight_branch.c_str(),file->tvertex);
+    TTreeFormula* var = new TTreeFormula("var_formula ",input_string.c_str(),file->tvertex);
+   
+    std::vector<TTreeFormula* > form_vec;
+    for(int i=0; i< bdt_infos.size();i++){
+        std::string nam = file->tag+"_"+bdt_infos[i].identifier+".mva";
+        form_vec.push_back(new TTreeFormula((bdt_infos[i].identifier+"_mva_formula").c_str(), nam.c_str(),file->tvertex));
+    }
+
+    if(input_string != ""){
+        std::cout<<"Starting to make a simpletree with variable "<<input_string<<std::endl;
+        for(int i=0; i< file->tvertex->GetEntries(); i++){
+            file->tvertex->GetEntry(i); 
+
+            CUT->GetNdata();
+            bool is_is = CUT->EvalInstance();
+
+            if(!is_is) continue;
+
+            weight->GetNdata();
+            var->GetNdata();
+            simple_wei = weight->EvalInstance();
+            simple_var = var->EvalInstance();
+            simple_pot_wei = simple_wei*file->scale_data*plot_pot/file->pot;
+            original_entry = i;
+
+            for(int j=0; j< bdt_infos.size();j++){
+               form_vec[j]->GetNdata();
+               bdt_mvas[j] = form_vec[j]->EvalInstance();
+            }
+
+            t_sbnfit_simpletree->Fill();
+        }
+
+    }
 
     TList * lf1 = (TList*)t_sbnfit_tree->GetListOfFriends();
     for(const auto&& obj: *lf1) t_sbnfit_tree->GetListOfFriends()->Remove(obj);
 
     TList * lf2 = (TList*)t_sbnfit_eventweight_tree->GetListOfFriends();
     for(const auto&& obj: *lf2) t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(obj);
-
-
-    TTree * t_sbnfit_simpletree = new TTree("simple_tree","simple_tree");
-    double simple_var = 0;
-    double simple_wei = 0;
-    t_sbnfit_simpletree->Branch("simple_variable",&simple_var);
-    t_sbnfit_simpletree->Branch("simple_weight",&simple_wei);
-
-    TTreeFormula* weight = new TTreeFormula("weight_formula ",file->weight_branch.c_str(),t_sbnfit_tree);
-    TTreeFormula* var = new TTreeFormula("var_formula ",input_string.c_str(),t_sbnfit_tree);
-
-    if(input_string != ""){
-        std::cout<<"Starting to make a simpletree with variable "<<input_string<<std::endl;
-        for(int i=0; i< t_sbnfit_tree->GetEntries(); i++){
-            t_sbnfit_tree->GetEntry(i); 
-
-            weight->GetNdata();
-            var->GetNdata();
-            simple_wei = weight->EvalInstance();
-            simple_var = var->EvalInstance();
-
-            t_sbnfit_simpletree->Fill();
-        }
-
-    }
+    
+    
     std::cout<<"Writing to file"<<std::endl;
     cdtof->cd();
     t_sbnfit_tree->Write();
