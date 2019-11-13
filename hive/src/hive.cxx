@@ -465,7 +465,7 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 datamc.setPlotStage(which_stage);                
-                datamc.setStackMode(5e19);
+                datamc.setStackMode(13.2e20);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
