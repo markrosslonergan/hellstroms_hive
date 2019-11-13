@@ -465,7 +465,7 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 datamc.setPlotStage(which_stage);                
-                datamc.setStackMode(4.9e19);
+                datamc.setStackMode(5e19);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
@@ -787,6 +787,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     if(which_stage==-1)which_stage=0;
 
+    what_pot = 5e19;
 
     bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag);
 
