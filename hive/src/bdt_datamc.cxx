@@ -887,7 +887,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 * tsum = (TH1*)mc_stack->getBDTEntrySum(info);
 
             bdt_variable dvar = data_file->getBDTVariable(info);
-            dvar.is_logplot = true;
+            dvar.is_logplot = false;
+            //dvar.is_logplot = true;
             TH1 * d0 = (TH1*)data_file->getTH1(dvar, "1", scuts+"_"+data_file->tag+"_"+dvar.safe_name, plot_pot);
 
             double rmin = 0.5;
@@ -899,12 +900,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
             double max_modifier = stack_mode ? 1.4 : 1.9;
+            double min_val;
+            /*
             double min_val = 0.01;
             if(is_bdt_variable) {
                 max_modifier = 50.0;
                 //min_val = 0.01;
                 min_val = 0.1; // Changed from 0.01 to 0.1 by A. Mogan, 10/22/19, for collab meeting
             }
+            */
             d0->Rebin(data_rebin);
 
             if(false &&do_subtraction){
@@ -927,7 +931,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             cobs->cd();
             TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
 
-            if(is_bdt_variable ) pad0top->SetLogy();
+            //if(is_bdt_variable ) pad0top->SetLogy();
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
             pad0top->cd();               // pad2top becomes the current pad
@@ -1287,7 +1291,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 
 
-            if(var.is_logplot || is_bdt_variable) pad0top->SetLogy();
+            //if(var.is_logplot || is_bdt_variable) pad0top->SetLogy();
+            //if(var.is_logplot) pad0top->SetLogy();
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
             pad0top->cd();               // pad2top becomes the current pad

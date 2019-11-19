@@ -404,7 +404,7 @@ int bdt_file::calcPrecutEntryList(){
 
     //first check if a file exists with a precut entry list in it!
 
-    std::string precut_key;
+    std::string precut_key = this->name;
     for(auto &s: this->flow.vec_pre_cuts){
         precut_key+=s;
     }
@@ -496,7 +496,7 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
     //first check if a file exists with a topological entry list in it!
 
-    std::string precut_key;
+    std::string precut_key = this->name;
     for(auto &s: this->flow.vec_pre_cuts){
         precut_key+=s;
     }
