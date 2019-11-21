@@ -125,6 +125,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t\t\t\t\t -- N=0 (default) Do a simple box scan between XML defined values "<<std::endl;
                 std::cout<<"\t\t\t\t\t -- N=1 Combine BDT's into a likelihood (experimental) "<<std::endl;
                 std::cout<<"\t\t\t\t\t -- N=2 Random points within XML defined regions (experimental) "<<std::endl;
+                std::cout<<"\t\t\t\t\t -- N=3 SuperBDT needs to be ran later (experimental) "<<std::endl;
                 std::cout<<"\t\t\t\t stack: Produce a Stacked PDF for BDT variable -n/--number N, at stage -s/--stage S for POT -p/--pot P"<<std::endl;
                 std::cout<<"\t\t\t\t datamc: Produce a Stacked MV V data PDF for BDT variable -n/--number N, at stage -s/--stage S for POT -p/--pot P"<<std::endl;
                 std::cout<<"\t\t\t\t recomc:"<<std::endl;
@@ -198,9 +199,9 @@ int main (int argc, char *argv[]){
     std::vector<bdt_file*> stack_bdt_files;
     std::vector<bdt_file*> signal_bdt_files;
     std::vector<bdt_file*> bkg_bdt_files;
+    std::vector<bdt_file*> training_bdt_files;
 
     bdt_file * signal;
-    bdt_file * training_signal;
     bdt_file * onbeam_data_file;
 
     std::map<std::string, bdt_file*> tagToFileMap;
@@ -231,10 +232,9 @@ int main (int argc, char *argv[]){
         }
 
         bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , analysis_flow));
+
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
-
-
 
         bool incl_in_stack = true;
 
@@ -277,9 +277,10 @@ int main (int argc, char *argv[]){
             plotOnTopMap[bdt_files.back()] = false;
         }
 
+        //Lets collate the training files, these are only used for BDT purposes
         if(XMLconfig.bdt_is_training_signal[f]){
-            training_signal = bdt_files.back();
             incl_in_stack = false;
+            training_bdt_files.push_back(bdt_files.back());
         }
 
 
@@ -291,14 +292,14 @@ int main (int argc, char *argv[]){
     signal = signal_bdt_files[0];
 
     /*
-    if(is_combined){
-        for(auto &f: stack_bdt_files){
-            std::cout<<"Adding Super Friend Tree"<<std::endl;
-            f->addFriend("output_"+f->tag ,"output_superMVA.root");
-        }
-        onbeam_data_file->addFriend("output_"+onbeam_data_file->tag,"output_superMVA.root");
-    }
-    */
+       if(is_combined){
+       for(auto &f: stack_bdt_files){
+       std::cout<<"Adding Super Friend Tree"<<std::endl;
+       f->addFriend("output_"+f->tag ,"output_superMVA.root");
+       }
+       onbeam_data_file->addFriend("output_"+onbeam_data_file->tag,"output_superMVA.root");
+       }
+       */
 
 
     //===========================================================================================
@@ -309,23 +310,20 @@ int main (int argc, char *argv[]){
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-    if(true){
+    std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+    std::cout<<" Going to add any trained BDT responses  and precal some EntryLists  "<<std::endl;
+    std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
+    std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-        std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-        std::cout<<" Going to add any trained BDT responses  and precal some EntryLists  "<<std::endl;
-        std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
-        std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+    for(auto &f: bdt_files){
 
-        for(auto &f: bdt_files){
-
-            if(mode_option != "app" ){
-                for(int k=0; k<bdt_infos.size(); k++){
-                    f->addBDTResponses(bdt_infos[k]);
-                }
+        if(mode_option != "app" && mode_option !="train" ){
+            for(int k=0; k<bdt_infos.size(); k++){
+                f->addBDTResponses(bdt_infos[k]);
             }
-            if(mode_option != "train"  && mode_option != "sbnfit"){
-                f->calcBaseEntryList(analysis_tag);
-            }
+        }
+        if(mode_option != "train"  && mode_option != "sbnfit"){
+            f->calcBaseEntryList(analysis_tag);
         }
     }
 
@@ -343,72 +341,61 @@ int main (int argc, char *argv[]){
 
     if(mode_option == "train") {
         //First lets create the bdt_file's* and flows for training
-        std::vector<bdt_file*> training_background_files;
-        for(int i=0; i< bdt_infos.size(); i++){
-            std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
-            bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
-            training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
-            training_background_files.back()->setAsOnBeamData(13.2e20);
-            training_background_files.back()->calcPOT();
 
-            if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
-                convertToLibSVM(bdt_infos[i], training_signal, training_background_files[i]);
-            }
-
+        for(auto &f: bdt_files){
+            f->calcBaseEntryList(analysis_tag);
         }
 
-        //Then we train!
-        if(which_bdt == -1){
-            for(int i=0; i< bdt_infos.size(); i++){
+        for(int i=0; i< bdt_infos.size(); i++){
 
-                if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
-                    bdt_XGtrain(bdt_infos[i]);
-                }else{
-                    bdt_train(bdt_infos[i], training_signal, training_background_files[i]);
-                    plot_train(bdt_infos[i], training_signal, training_background_files[i]);
+            if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
+
+                if(tagToFileMap.count(bdt_infos[i].TMVAmethod.sig_train_tag)!=1){
+                    std::cout<<"ERROR! the signal training tag "<<bdt_infos[i].TMVAmethod.sig_train_tag<<" is not in the bdt_files list!"<<std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                if(tagToFileMap.count(bdt_infos[i].TMVAmethod.sig_test_tag)!=1){
+                    std::cout<<"ERROR! the signal testing tag "<<bdt_infos[i].TMVAmethod.sig_test_tag<<" is not in the bdt_files list!"<<std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                if(tagToFileMap.count(bdt_infos[i].TMVAmethod.bkg_train_tag)!=1){
+                    std::cout<<"ERROR! the bkg training tag "<<bdt_infos[i].TMVAmethod.bkg_train_tag<<" is not in the bdt_files list!"<<std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                if(tagToFileMap.count(bdt_infos[i].TMVAmethod.bkg_test_tag)!=1){
+                    std::cout<<"ERROR! the bkg testing tag "<<bdt_infos[i].TMVAmethod.bkg_test_tag<<" is not in the bdt_files list!"<<std::endl;
+                    exit(EXIT_FAILURE);
                 }
 
             }
-        }else{
-
-            if(bdt_infos[which_bdt].TMVAmethod.str=="XGBoost"){
-                bdt_XGtrain(bdt_infos[which_bdt]);
-            }else{
-                bdt_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
-                plot_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
-            }
-        }
-        return 0;
-
-
-
-    }else if (mode_option=="tplot"){
-        std::vector<bdt_file*> training_background_files;
-        for(int i=0; i< bdt_infos.size(); i++){
-            std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
-            bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
-            training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
-            training_background_files.back()->setAsOnBeamData(13.2e20);
-            training_background_files.back()->calcPOT();
         }
 
         for(int i=0; i< bdt_infos.size(); i++){
-        }
 
-        //Then we train!
-        if(which_bdt == -1){
-            for(int i=0; i< bdt_infos.size(); i++){
-                plot_train(bdt_infos[i], training_signal, training_background_files[i]);
+            if(!(which_bdt==i || which_bdt==-1)) continue;
+
+
+            bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 
+            bdt_file * testing_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_test_tag]; 
+            bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
+            bdt_file * testing_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_test_tag]; 
+
+
+
+            if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
+
+                //This is NAF, need to save it and not repeat
+                convertToLibSVM(bdt_infos[i], training_signal, testing_signal, bdt_infos[i].TMVAmethod.sig_test_cut, training_background, testing_background, bdt_infos[i].TMVAmethod.bkg_test_cut);
+                bdt_XGtrain(bdt_infos[i]);
+
+            }else if(bdt_infos[i].TMVAmethod.str=="TMVA"){
+
+                bdt_train(bdt_infos[i], training_signal, testing_signal, training_background, testing_background);
+                plot_train(bdt_infos[i], training_signal, testing_signal, training_background, testing_background);
             }
-        }else{
-            plot_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
+
         }
-
         return 0;
-
-
-
-
 
     }else if(mode_option == "app"){
 
@@ -440,397 +427,381 @@ int main (int argc, char *argv[]){
         return 0;
     }
 
-    else if(mode_option=="stack"){
-        std::cout<<"Starting stack "<<std::endl;
-
-        if (access("stack",F_OK) == -1){
-            mkdir("stack",0777);//Create a folder for pdf.
-        }
-        else{
-            std::cout<<"Overwrite stack/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
-        }
-
-        std::cout<<"flag0"<<std::endl;
-
-        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-
-        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
-
-        histogram_stack->plot_pot =13.2e20;//4.9e19;
-
-        std::cout<<"flag1"<<std::endl;
-
-        for(size_t f =0; f< stack_bdt_files.size(); ++f){
-            if(stack_bdt_files[f]->is_data) continue;
-
-            bool is_signal = false;
-            for(auto &sig: signal_bdt_files){
-                if(stack_bdt_files[f]== sig)  is_signal=true;
-            }
-            if(!is_signal) histogram_stack->addToStack(stack_bdt_files[f]);
-        }
-
-        std::cout<<"flag2"<<std::endl;
-
-        //signal->fillstyle = 0;
-        for(int s = signal_bdt_files.size()-1; s>=0; s--){
-            histogram_stack->addToStack(signal_bdt_files[s],true);
-        }
-
-        onbeam_data_file->col = kWhite;
-        onbeam_data_file->fillstyle = 0;
-        int ip=0;
-        std::vector<bool> subv = {false,false,true};
-        if(!response_only){
-            if(number != -1){
-                bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
-                datamc.setPlotStage(which_stage);                
-                datamc.setStackMode(13.2e20);
-
-                //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
-                //datamc.setSubtractionVector(subv);
-                std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
-            }else{
-                std::cout<<"flag5"<<std::endl;
-
-
-                bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
-                real_datamc.setPlotStage(which_stage);                
-                real_datamc.setStackMode(13.2e20);
-
-                //real_datamc.setSubtractionVector(subv);
-                // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-                //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-
-                real_datamc.plotStacks(ftest, vars, fbdtcuts);
-                //real_datamc.SetSpectator();
-                //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
-            }
-        }else{
-            bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
-
-            real_datamc.setStackMode(13.2e20);
-            if(which_bdt ==-1){
-                for(int k=0; k< bdt_infos.size(); k++){
-                    real_datamc.plotBDTStacks(bdt_infos[k] , fbdtcuts);
-                }
-            }else{
-                real_datamc.plotBDTStacks(bdt_infos[which_bdt],fbdtcuts);
-            }
-        }
-
-    }    else if(mode_option == "datamc"){
-        std::cout<<"Starting datamc "<<std::endl;
-
-        if (access("datamc",F_OK) == -1){
-            mkdir("datamc",0777);//Create a folder for pdf.
-        }
-        else{
-            std::cout<<"Overwrite datamc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
-        }
-
-
-
-        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-
-        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
-
-        histogram_stack->plot_pot = onbeam_data_file->pot;
-
-        if (!response_only){
-            for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if(stack_bdt_files[f]->is_data) continue;
-                if(!plotOnTopMap[stack_bdt_files[f]] ){
-                    histogram_stack->addToStack(stack_bdt_files[f]);
-                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
-                }
-            }
-
-            for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if(stack_bdt_files[f]->is_data) continue;
-                if(plotOnTopMap[stack_bdt_files[f]] ){
-                    histogram_stack->addToStack(stack_bdt_files[f],true);
-                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
-                }
-            }
-
-        }else{
-            //then add SM
-            for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if(stack_bdt_files[f]->is_data) continue;
-                if( plotOnTopMap[stack_bdt_files[f]] ){
-                    histogram_stack->addToStack(stack_bdt_files[f],true);
-                    std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
-
-                }else{
-                    histogram_stack->addToStack(stack_bdt_files[f]);
-                    std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
-
-                }
-
-            }
-
-        }
-        int ip=0;
-        std::vector<bool> subv = {false,false,true};
-        if(!response_only){
-            if(number != -1){
-                bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
-                datamc.setPlotStage(which_stage);                
-
-                //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
-
-                //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
-                //datamc.setSubtractionVector(subv);
-                std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
-            }else{
-
-                bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
-                real_datamc.setPlotStage(which_stage);                
-
-                //real_datamc.setSubtractionVector(subv);
-                // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-                //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-
-                real_datamc.plotStacks(ftest, vars, fbdtcuts);
-                //real_datamc.SetSpectator();
-                //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
-            }
-        }else{
-            bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
-
-            if(which_bdt ==-1){
-                for(int k=0; k< bdt_infos.size(); k++){
-                    real_datamc.plotBDTStacks(bdt_infos[k] , fbdtcuts);
-                }
-            }else{
-                real_datamc.plotBDTStacks(bdt_infos[which_bdt],fbdtcuts);
-            }
-        }
-    }
-    else if(mode_option == "superdatamc"){
-        std::cout<<"Starting superdatamc "<<std::endl;
-
-        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-        TFile * fsuper = new TFile("output_superMVA.root","recreate");
-
-        std::vector<TTree*> super_trees;
-        for(size_t f =0; f< stack_bdt_files.size(); ++f){
-            std::string stree = "output_"+stack_bdt_files[f]->tag;
-            std::cout<<"Getting supertree : "<<stree<<std::endl;
-            super_trees.push_back((TTree*)fsuper->Get(stree.c_str()));
-        }
-
-        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_superdatamc");
-        histogram_stack->plot_pot = onbeam_data_file->pot;
-
-    /*
-            for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if(stack_bdt_files[f]->is_data) continue;
-                if(!plotOnTopMap[stack_bdt_files[f]] ){
-                    histogram_stack->addToStack(stack_bdt_files[f]);
-                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
-                }
-            }
-
-            for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if(stack_bdt_files[f]->is_data) continue;
-                if(plotOnTopMap[stack_bdt_files[f]] ){
-                    histogram_stack->addToStack(stack_bdt_files[f],true);
-                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
-                }
-            }
-        
-        int ip=0;
-                
-        bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
-        datamc.setPlotStage(which_stage);                
-        std::vector<bdt_variable> tmp_var = {vars.at(number)};
-        datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
-    */           
-    }
-    else if(mode_option == "var2D"){
-        std::cout<<"Starting var2D "<<std::endl;
-
-        if (access("var2D",F_OK) == -1){
-            mkdir("var2D",0777);//Create a folder for pdf.
-        }
-        else{
-            std::cout<<"Overwrite var2D/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
-        }
-
-
-        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-
-        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_var2D");
-
-        histogram_stack->plot_pot = onbeam_data_file->pot;
-
-        //add MC files to stack
-        for(size_t f =0; f< stack_bdt_files.size(); ++f){
-            if(bdt_files[f]->is_data) continue;
-            histogram_stack->addToStack(stack_bdt_files[f]);
-            std::cout<<"adding to stack"<<stack_bdt_files[f]->name<<std::endl;
-        }
-
-        //make the datamc object 
-        bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_var2D");	
-        real_datamc.setPlotStage(which_stage);                
-
-
-        if (vector != ""){//if passed specific variables
-            std::vector<bdt_variable> tmp_var =  real_datamc.GetSelectVars(vector, vars);
-            real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
-        }else{    
-            real_datamc.plot2D(ftest, vars, fbdtcuts); //warning this will make a lot of plots
-        }//if passed a vector
-    }
-    else if(mode_option == "test"){
-
-        //First lets create the bdt_file's* and flows for training
-
-        if(true){
-            std::vector<bdt_file*> training_background_files;
-            for(int i=0; i< bdt_infos.size(); i++){
-                std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
-                bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
-                training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
-                training_background_files.back()->calcPOT();
-                convertToLibSVM(bdt_infos[i], training_signal, training_background_files[i]);
-            }
-        }
-
-        for(int i=2; i< bdt_infos.size(); i++){
-            bdt_XGtrain(bdt_infos[i]);
-            bdt_XGapp(bdt_infos[i], bdt_files);
-            break;
-        }
-
-        //plot_bdt_variables(signal, ncpi0, vars, fbdtcuts, 5);
-
-        return 0;
-    }else if(mode_option == "sig"){
-
-        switch(number){
-            case 0:
-                scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot);
-                break;
-            case 1:
-                scan_likelihood(stack_bdt_files, bdt_infos);
-                break;
-            case 2:
-                scan_significance_random(signal_bdt_files, bkg_bdt_files,bdt_infos);
-                break;
-            default:
-                break;
-        }
-        return 0;
-    }else if(mode_option == "scatter"){
-
-        std::cout<<"Starting Scatter "<<std::endl;
-
-        if (access("scatter",F_OK) == -1){
-            mkdir("scatter",0777);//Create a folder for pdf.
-        }
-        else{
-            std::cout<<"Overwrite scatter/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
-        }
-
-        if(which_file==-1){
-            for(auto &f: bdt_files){
-                plot_scatter(f, bdt_infos);
-            }
-        }else{
-            plot_scatter(bdt_files[which_file], bdt_infos);
-        }
-
-
-        return 0;
-
-    }else if(mode_option == "sss"){
-
-        /*
-           std::vector<std::vector<double>> signal_eff;
-           std::vector<std::vector<double>> bkg_eff;
-           std::vector<double> impact;
-
-           for(double im =0; im<40.0; im+=0.20){
-           impact.push_back(im);
+       else if(mode_option=="stack"){
+           std::cout<<"Starting stack "<<std::endl;
+
+           if (access("stack",F_OK) == -1){
+               mkdir("stack",0777);//Create a folder for pdf.
+           }
+           else{
+               std::cout<<"Overwrite stack/ in 2 seconds, 1 seconds, ..."<<std::endl;
+               sleep(2);
            }
 
-           for(int stage = 1; stage<4; stage++){
-           if(stage>1){
-           signal->calcBDTEntryList(stage,fbdtcuts);
-           bnb->calcBDTEntryList(stage,fbdtcuts);
-           }	
+           std::cout<<"flag0"<<std::endl;
 
-           signal->setStageEntryList(stage);
-           bnb->setStageEntryList(stage);
+           TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 
-           double N_s = signal->GetEntries("1");
-           double N_b = bnb->GetEntries("1");
+           bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-           std::vector<double> ts;
-           std::vector<double> tb;
+           histogram_stack->plot_pot =13.2e20;//4.9e19;
 
-           for(double im =0; im<40.0; im+=0.2){
+           std::cout<<"flag1"<<std::endl;
 
-           std::string s_impact = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>"+std::to_string(im)+") ";
-           tb.push_back(bnb->GetEntries(s_impact)/N_b*100.0);
-           ts.push_back(signal->GetEntries(s_impact)/N_s*100.0);
-           }
-           signal_eff.push_back(ts);
-           bkg_eff.push_back(tb);
-           }
-           TCanvas *cimpact = new TCanvas();
-           cimpact->cd();
+           for(size_t f =0; f< stack_bdt_files.size(); ++f){
+               if(stack_bdt_files[f]->is_data) continue;
 
-           std::vector<TGraph*> gb;
-           std::vector<TGraph*> gs;
-
-           for(int i=0; i<signal_eff.size(); i++){
-           gs.push_back( new TGraph(impact.size(),&impact[0],&signal_eff[i][0]));
-           gb.push_back( new TGraph(impact.size(),&impact[0],&bkg_eff[i][0]));
+               bool is_signal = false;
+               for(auto &sig: signal_bdt_files){
+                   if(stack_bdt_files[f]== sig)  is_signal=true;
+               }
+               if(!is_signal) histogram_stack->addToStack(stack_bdt_files[f]);
            }
 
-           gs[0]->Draw("al");
-           gs[0]->GetXaxis()->SetLimits(0.,40.0);                 // along X
-           gs[0]->GetHistogram()->SetMaximum(100.0);   // along          
-           gs[0]->GetHistogram()->SetMinimum(0.0);  //   Y     
-           gs[0]->SetLineColor(signal->col);
+           std::cout<<"flag2"<<std::endl;
 
-           gs[0]->SetTitle("");
-           gs[0]->GetXaxis()->SetTitle("Impact Parameter Cut [cm]");
-           gs[0]->GetYaxis()->SetTitle("Second Shower Veto Efficiency [%]");
+           //signal->fillstyle = 0;
+           for(int s = signal_bdt_files.size()-1; s>=0; s--){
+               histogram_stack->addToStack(signal_bdt_files[s],true);
+           }
 
-           TLegend *l = new TLegend(0.59,0.89,0.59,0.89);
-           l->SetNColumns(2);
-           l->SetLineWidth(0);
-           l->SetLineColor(kWhite);
+           onbeam_data_file->col = kWhite;
+           onbeam_data_file->fillstyle = 0;
+           int ip=0;
+           std::vector<bool> subv = {false,false,true};
+           if(!response_only){
+               if(number != -1){
+                   bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
+                   datamc.setPlotStage(which_stage);                
+                   datamc.setStackMode(13.2e20);
 
-           std::vector<int> ls_i = {1,2,7};
-           std::vector<std::string> s_i {"Precuts","Cosmic","BNB"};
-           for(int i=0; i<signal_eff.size();i++){
-           gs[i]->Draw("l same");
-           gb[i]->Draw("l same");
+                   //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
+                   //datamc.setSubtractionVector(subv);
+                   std::vector<bdt_variable> tmp_var = {vars.at(number)};
+                   datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+               }else{
+                   std::cout<<"flag5"<<std::endl;
 
-           gs[i]->SetLineColor(signal->col);
-           gb[i]->SetLineColor(bnb->col);
 
-           gs[i]->SetLineWidth(3);
-           gb[i]->SetLineWidth(3);
+                   bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
+                   real_datamc.setPlotStage(which_stage);                
+                   real_datamc.setStackMode(13.2e20);
 
-        gs[i]->SetLineStyle(ls_i[i]);
-    gb[i]->SetLineStyle(ls_i[i]);
+                   //real_datamc.setSubtractionVector(subv);
+                   // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+                   //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 
-    l->AddEntry(gs[i],("Signal "+s_i[i]).c_str(),"l");
-    l->AddEntry(gb[i],("BNB "+s_i[i]).c_str(),"l");
+                   real_datamc.plotStacks(ftest, vars, fbdtcuts);
+                   //real_datamc.SetSpectator();
+                   //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
+               }
+           }else{
+               bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
+
+               real_datamc.setStackMode(13.2e20);
+               if(which_bdt ==-1){
+                   for(int k=0; k< bdt_infos.size(); k++){
+                       real_datamc.plotBDTStacks(bdt_infos[k] , fbdtcuts);
+                   }
+               }else{
+                   real_datamc.plotBDTStacks(bdt_infos[which_bdt],fbdtcuts);
+               }
+           }
+
+       }    else if(mode_option == "datamc"){
+           std::cout<<"Starting datamc "<<std::endl;
+
+           if (access("datamc",F_OK) == -1){
+               mkdir("datamc",0777);//Create a folder for pdf.
+           }
+           else{
+               std::cout<<"Overwrite datamc/ in 2 seconds, 1 seconds, ..."<<std::endl;
+               sleep(2);
+           }
+
+
+
+           TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+
+           bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
+
+           histogram_stack->plot_pot = onbeam_data_file->pot;
+
+           if (!response_only){
+               for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                   if(stack_bdt_files[f]->is_data) continue;
+                   if(!plotOnTopMap[stack_bdt_files[f]] ){
+                       histogram_stack->addToStack(stack_bdt_files[f]);
+                       std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+                   }
+               }
+
+               for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                   if(stack_bdt_files[f]->is_data) continue;
+                   if(plotOnTopMap[stack_bdt_files[f]] ){
+                       histogram_stack->addToStack(stack_bdt_files[f],true);
+                       std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+                   }
+               }
+
+           }else{
+               //then add SM
+               for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                   if(stack_bdt_files[f]->is_data) continue;
+                   if( plotOnTopMap[stack_bdt_files[f]] ){
+                       histogram_stack->addToStack(stack_bdt_files[f],true);
+                       std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
+
+                   }else{
+                       histogram_stack->addToStack(stack_bdt_files[f]);
+                       std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
+
+                   }
+
+               }
+
+           }
+           int ip=0;
+           std::vector<bool> subv = {false,false,true};
+           if(!response_only){
+               if(number != -1){
+                   bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+                   datamc.setPlotStage(which_stage);                
+
+                   //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
+
+                   //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
+                   //datamc.setSubtractionVector(subv);
+                   std::vector<bdt_variable> tmp_var = {vars.at(number)};
+                   datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+               }else{
+
+                   bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+                   real_datamc.setPlotStage(which_stage);                
+
+                   //real_datamc.setSubtractionVector(subv);
+                   // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+                   //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
+
+                   real_datamc.plotStacks(ftest, vars, fbdtcuts);
+                   //real_datamc.SetSpectator();
+                   //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
+               }
+           }else{
+               bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+
+               if(which_bdt ==-1){
+                   for(int k=0; k< bdt_infos.size(); k++){
+                       real_datamc.plotBDTStacks(bdt_infos[k] , fbdtcuts);
+                   }
+               }else{
+                   real_datamc.plotBDTStacks(bdt_infos[which_bdt],fbdtcuts);
+               }
+           }
+       }
+       else if(mode_option == "superdatamc"){
+           std::cout<<"Starting superdatamc "<<std::endl;
+
+           TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+           TFile * fsuper = new TFile("output_superMVA.root","recreate");
+
+           std::vector<TTree*> super_trees;
+           for(size_t f =0; f< stack_bdt_files.size(); ++f){
+               std::string stree = "output_"+stack_bdt_files[f]->tag;
+               std::cout<<"Getting supertree : "<<stree<<std::endl;
+               super_trees.push_back((TTree*)fsuper->Get(stree.c_str()));
+           }
+
+           bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_superdatamc");
+           histogram_stack->plot_pot = onbeam_data_file->pot;
+
+           /*
+              for(size_t f =0; f< stack_bdt_files.size(); ++f){
+              if(stack_bdt_files[f]->is_data) continue;
+              if(!plotOnTopMap[stack_bdt_files[f]] ){
+              histogram_stack->addToStack(stack_bdt_files[f]);
+              std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+              }
+              }
+
+              for(size_t f =0; f< stack_bdt_files.size(); ++f){
+              if(stack_bdt_files[f]->is_data) continue;
+              if(plotOnTopMap[stack_bdt_files[f]] ){
+              histogram_stack->addToStack(stack_bdt_files[f],true);
+              std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+              }
+              }
+
+              int ip=0;
+
+              bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+              datamc.setPlotStage(which_stage);                
+              std::vector<bdt_variable> tmp_var = {vars.at(number)};
+              datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+              */           
+       }
+       else if(mode_option == "var2D"){
+           std::cout<<"Starting var2D "<<std::endl;
+
+           if (access("var2D",F_OK) == -1){
+               mkdir("var2D",0777);//Create a folder for pdf.
+           }
+           else{
+               std::cout<<"Overwrite var2D/ in 2 seconds, 1 seconds, ..."<<std::endl;
+               sleep(2);
+           }
+
+
+           TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+
+           bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_var2D");
+
+           histogram_stack->plot_pot = onbeam_data_file->pot;
+
+           //add MC files to stack
+           for(size_t f =0; f< stack_bdt_files.size(); ++f){
+               if(bdt_files[f]->is_data) continue;
+               histogram_stack->addToStack(stack_bdt_files[f]);
+               std::cout<<"adding to stack"<<stack_bdt_files[f]->name<<std::endl;
+           }
+
+           //make the datamc object 
+           bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_var2D");	
+           real_datamc.setPlotStage(which_stage);                
+
+
+           if (vector != ""){//if passed specific variables
+               std::vector<bdt_variable> tmp_var =  real_datamc.GetSelectVars(vector, vars);
+               real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
+           }else{    
+               real_datamc.plot2D(ftest, vars, fbdtcuts); //warning this will make a lot of plots
+           }//if passed a vector
+       }
+       else if(mode_option == "test"){
+
+
+           return 0;
+       }else if(mode_option == "sig"){
+
+           switch(number){
+               case 0:
+                   scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot);
+                   break;
+               case 1:
+                   scan_likelihood(stack_bdt_files, bdt_infos);
+                   break;
+               case 2:
+                   scan_significance_random(signal_bdt_files, bkg_bdt_files,bdt_infos);
+                   break;
+               case 3:
+                   super_significance(signal_bdt_files, bkg_bdt_files);
+                   break;
+
+               default:
+                   break;
+           }
+           return 0;
+       }else if(mode_option == "scatter"){
+
+           std::cout<<"Starting Scatter "<<std::endl;
+
+           if (access("scatter",F_OK) == -1){
+               mkdir("scatter",0777);//Create a folder for pdf.
+           }
+           else{
+               std::cout<<"Overwrite scatter/ in 2 seconds, 1 seconds, ..."<<std::endl;
+               sleep(2);
+           }
+
+           if(which_file==-1){
+               for(auto &f: bdt_files){
+                   plot_scatter(f, bdt_infos);
+               }
+           }else{
+               plot_scatter(bdt_files[which_file], bdt_infos);
+           }
+
+
+           return 0;
+
+       }else if(mode_option == "sss"){
+
+           /*
+              std::vector<std::vector<double>> signal_eff;
+              std::vector<std::vector<double>> bkg_eff;
+              std::vector<double> impact;
+
+              for(double im =0; im<40.0; im+=0.20){
+              impact.push_back(im);
+              }
+
+              for(int stage = 1; stage<4; stage++){
+              if(stage>1){
+              signal->calcBDTEntryList(stage,fbdtcuts);
+              bnb->calcBDTEntryList(stage,fbdtcuts);
+              }	
+
+              signal->setStageEntryList(stage);
+              bnb->setStageEntryList(stage);
+
+              double N_s = signal->GetEntries("1");
+              double N_b = bnb->GetEntries("1");
+
+              std::vector<double> ts;
+              std::vector<double> tb;
+
+              for(double im =0; im<40.0; im+=0.2){
+
+              std::string s_impact = "((sss_num_candidates==0) || Min$(sss_candidate_impact_parameter)>"+std::to_string(im)+") ";
+              tb.push_back(bnb->GetEntries(s_impact)/N_b*100.0);
+              ts.push_back(signal->GetEntries(s_impact)/N_s*100.0);
+              }
+              signal_eff.push_back(ts);
+              bkg_eff.push_back(tb);
+              }
+              TCanvas *cimpact = new TCanvas();
+              cimpact->cd();
+
+              std::vector<TGraph*> gb;
+              std::vector<TGraph*> gs;
+
+              for(int i=0; i<signal_eff.size(); i++){
+              gs.push_back( new TGraph(impact.size(),&impact[0],&signal_eff[i][0]));
+              gb.push_back( new TGraph(impact.size(),&impact[0],&bkg_eff[i][0]));
+              }
+
+              gs[0]->Draw("al");
+              gs[0]->GetXaxis()->SetLimits(0.,40.0);                 // along X
+              gs[0]->GetHistogram()->SetMaximum(100.0);   // along          
+              gs[0]->GetHistogram()->SetMinimum(0.0);  //   Y     
+              gs[0]->SetLineColor(signal->col);
+
+              gs[0]->SetTitle("");
+              gs[0]->GetXaxis()->SetTitle("Impact Parameter Cut [cm]");
+              gs[0]->GetYaxis()->SetTitle("Second Shower Veto Efficiency [%]");
+
+              TLegend *l = new TLegend(0.59,0.89,0.59,0.89);
+              l->SetNColumns(2);
+              l->SetLineWidth(0);
+              l->SetLineColor(kWhite);
+
+              std::vector<int> ls_i = {1,2,7};
+              std::vector<std::string> s_i {"Precuts","Cosmic","BNB"};
+              for(int i=0; i<signal_eff.size();i++){
+              gs[i]->Draw("l same");
+              gb[i]->Draw("l same");
+
+              gs[i]->SetLineColor(signal->col);
+              gb[i]->SetLineColor(bnb->col);
+
+              gs[i]->SetLineWidth(3);
+              gb[i]->SetLineWidth(3);
+
+           gs[i]->SetLineStyle(ls_i[i]);
+       gb[i]->SetLineStyle(ls_i[i]);
+
+       l->AddEntry(gs[i],("Signal "+s_i[i]).c_str(),"l");
+       l->AddEntry(gb[i],("BNB "+s_i[i]).c_str(),"l");
 }
 
 l->Draw();
@@ -899,13 +870,13 @@ cimpact->SaveAs("Impact.pdf","pdf");
     double simple_pot_wei = 0;
     int original_entry = 0;
     double plot_pot = 13.2e20;
-    
+
     std::vector<double> bdt_mvas;
     for(int i=0; i< bdt_infos.size(); i++){
         bdt_mvas.push_back(0);
     }
 
-    
+
     TTreeFormula * CUT = new TTreeFormula("CUT", sbnfit_cuts.c_str(),file->tvertex);
 
     t_sbnfit_simpletree->Branch("simple_variable",&simple_var);
@@ -920,7 +891,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     TTreeFormula* weight = new TTreeFormula("weight_formula ",file->weight_branch.c_str(),file->tvertex);
     TTreeFormula* var = new TTreeFormula("var_formula ",input_string.c_str(),file->tvertex);
-   
+
     std::vector<TTreeFormula* > form_vec;
     for(int i=0; i< bdt_infos.size();i++){
         std::string nam = file->tag+"_"+bdt_infos[i].identifier+".mva";
@@ -945,8 +916,8 @@ cimpact->SaveAs("Impact.pdf","pdf");
             original_entry = i;
 
             for(int j=0; j< bdt_infos.size();j++){
-               form_vec[j]->GetNdata();
-               bdt_mvas[j] = form_vec[j]->EvalInstance();
+                form_vec[j]->GetNdata();
+                bdt_mvas[j] = form_vec[j]->EvalInstance();
             }
 
             t_sbnfit_simpletree->Fill();
@@ -959,8 +930,8 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     TList * lf2 = (TList*)t_sbnfit_eventweight_tree->GetListOfFriends();
     for(const auto&& obj: *lf2) t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(obj);
-    
-    
+
+
     std::cout<<"Writing to file"<<std::endl;
     cdtof->cd();
     t_sbnfit_tree->Write();
@@ -1123,16 +1094,16 @@ return 0;
     if(which_bdt==-1){
         for(int k=0; k< bdt_infos.size(); k++){
             if(number != -1){
-                plot_bdt_variable(training_signal, training_background_files[k], vars.at(number), bdt_infos[k], false,which_stage,fbdtcuts);
+                //plot_bdt_variable(training_signal, training_background_files[k], vars.at(number), bdt_infos[k], false,which_stage,fbdtcuts);
             }else{
-                plot_bdt_variables(training_signal, training_background_files[k], vars, bdt_infos[k], false,which_stage,fbdtcuts);
+                //plot_bdt_variables(training_signal, training_background_files[k], vars, bdt_infos[k], false,which_stage,fbdtcuts);
             }
         }
     }else{
         if(number != -1){
-            plot_bdt_variable(training_signal, training_background_files[which_bdt], vars.at(number), bdt_infos[which_bdt], false,which_stage,fbdtcuts);
+            //plot_bdt_variable(training_signal, training_background_files[which_bdt], vars.at(number), bdt_infos[which_bdt], false,which_stage,fbdtcuts);
         }else{
-            plot_bdt_variables(training_signal, training_background_files[which_bdt], vars, bdt_infos[which_bdt], false,which_stage,fbdtcuts);
+            //plot_bdt_variables(training_signal, training_background_files[which_bdt], vars, bdt_infos[which_bdt], false,which_stage,fbdtcuts);
         }
     }
 

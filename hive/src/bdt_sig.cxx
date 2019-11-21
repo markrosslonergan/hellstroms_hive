@@ -797,3 +797,91 @@ std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_f
 }
 
 
+std::vector<double> super_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files){
+    std::cout<<"Starting to Scan Super Significance "<<std::endl;
+    double best_significance = 0;
+    double best_mva;
+    double plot_pot = 13.2e20;
+
+    std::cout<<"Setting stage entry lists"<<std::endl;
+    for(size_t i = 0; i < sig_files.size(); ++i) {
+        sig_files.at(i)->setStageEntryList(1);
+    }
+    for(size_t i = 0; i < bkg_files.size(); ++i) {
+        bkg_files.at(i)->setStageEntryList(1);
+    }
+
+    // Calculate total signal for efficiency 
+    double total_sig = 0.;
+    std::vector<double>minvals = {0,0,0,0};
+
+    for(size_t i = 0; i < sig_files.size(); ++i) {
+        double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
+        std::cout << "POT scale: " << pot_scale << std::endl;
+
+        std::string bnbcut = sig_files.at(i)->getStageCuts(1,minvals); 
+        total_sig += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
+    }
+
+    std::string s_mod = "";
+    TRandom3 *rangen  = new TRandom3(0);  
+    std::cout<<"Starting"<<std::endl;
+    for(double t=0.64; t < 0.66; t+=0.00001){
+
+        std::string s_impact = "1";
+
+        double signal = 0;
+        double background = 0;
+        std::vector<double> bkg;	
+
+        for(size_t i = 0; i < sig_files.size(); ++i) {
+            double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
+
+            std::string bnbcut = "combined_score > "+std::to_string(t); 
+            signal += sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
+        }
+
+        for(size_t i = 0; i < bkg_files.size(); ++i) {
+            double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
+
+            std::string bnbcut = "combined_score > "+std::to_string(t); 
+            bkg.push_back(bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
+            background += bkg.back();
+        }
+
+        
+        double significance =0;
+        if(signal==0){
+            significance =0;
+        }else if(background !=0){
+            //significance = signal/(signal+background);
+            significance = signal/sqrt(background);
+
+        }else{
+            std::cout<<"method_best_significane_seperate || signal2+background2 == 0 , sig: "<<signal<<" , so significance  = nan. Woopsie."<<std::endl;
+            //break;
+        }
+        if(background<0.0001) break;
+        if(significance > best_significance) {
+            best_significance = significance;
+            best_mva = t;
+            s_mod = "(Current Best)";
+        }
+
+        std::cout<<"("<<t<<")  N_signal: "<<signal<<" N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+
+        s_mod = "";
+
+    
+    }
+
+    std::cout<<"------------_FINAL Best Sig: "<<best_significance<<std::endl;
+
+    std::cout<<"  --ccut: "<<best_mva<<std::endl;
+
+
+    return std::vector<double>{0,0,0};
+
+}
+
+

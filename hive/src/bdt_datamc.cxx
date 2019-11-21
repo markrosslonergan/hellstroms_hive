@@ -347,7 +347,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         for(auto &var: vars){
 
 
-            //var.is_logplot = true;
+        //var.is_logplot = true;
 
 
             std::cout<<"Starting on variable "<<var.name<<std::endl;
@@ -373,6 +373,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     //tsum->SetBinError(c+1, 0.0001);
                 }
                 covar_f->Close();
+            }else{
+                for(int c=0; c< tsum->GetNbinsX()+1;c++){
+                    tsum->SetBinError(c+1, sqrt(pow(tsum->GetBinContent(c+1)*0.27,2)+tsum->GetBinError(c+1)));
+                    //tsum->SetBinError(c+1, 0.0001);
+                }
+
             }
             cobs->cd();
 
@@ -411,7 +417,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             cobs->cd();
             TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
 
-            if(is_bdt_variable || var.is_logplot == true )  pad0top->SetLogy();
+            if(is_bdt_variable || var.is_logplot )  pad0top->SetLogy();
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
             pad0top->cd();               // pad2top becomes the current pad
@@ -442,7 +448,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
 
-            if(var.is_logplot == true){
+            if(var.is_logplot){
                 pad0top->SetLogy();
                 max_modifier=100.0;
             }
