@@ -37,13 +37,13 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
 int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, std::vector<bdt_variable> train_variables, std::vector<bdt_variable> plot_variables, std::vector<method_struct> & methods);
 */
 
-int plot_train(bdt_info info, bdt_file *signal_train_file, bdt_file *signal_test_file,   bdt_file *background_train_file,  bdt_file *background_test_file);
-int bdt_train(bdt_info info, bdt_file *signal_train_file, bdt_file * signal_test_file, bdt_file * background_train_file, bdt_file *background_test_file);
-int bdt_train(bdt_info info, bdt_file *signal_train_file, bdt_file * signal_test_file, bdt_file * background_train_file, bdt_file *background_test_file, std::vector<bdt_variable> variables, std::vector<method_struct> & methods);
+int plot_train(bdt_info & info, bdt_file *signal_train_file, bdt_file *signal_test_file,   bdt_file *background_train_file,  bdt_file *background_test_file);
+int bdt_train(bdt_info & info, bdt_file *signal_train_file, bdt_file * signal_test_file, bdt_file * background_train_file, bdt_file *background_test_file);
+int bdt_train(bdt_info & info, bdt_file *signal_train_file, bdt_file * signal_test_file, bdt_file * background_train_file, bdt_file *background_test_file, std::vector<bdt_variable>& variables, std::vector<method_struct> & methods);
 
-int convertToLibSVM(bdt_info info, bdt_file *file);
-int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_file);
-int convertToLibSVM(bdt_info info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut);
-int bdt_XGtrain(bdt_info info);
+int convertToLibSVM(bdt_info &info, bdt_file *file);
+int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_file);
+int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut);
+int bdt_XGtrain(bdt_info &info);
 
 #endif

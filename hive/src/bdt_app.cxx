@@ -195,34 +195,30 @@ int bdt_app_tree(std::string identifier, TTree * tree, bdt_flow flow, std::strin
 
 }
 
-int bdt_app(bdt_info ininfo, std::vector<bdt_file*> & infiles){
+int bdt_app(bdt_info ininfo, bdt_file * file){
     std::vector<method_struct> t_methods = {ininfo.TMVAmethod};
-    return bdt_app(ininfo, infiles, ininfo.train_vars, t_methods);
+    return bdt_app(ininfo, file, ininfo.train_vars, t_methods);
 }
 
 
-int bdt_app(bdt_info info, std::vector<bdt_file*> & files, std::vector<bdt_variable> vars, std::vector<method_struct> & method){
+int bdt_app(bdt_info info, bdt_file* file, std::vector<bdt_variable> vars, std::vector<method_struct> & method){
 
     std::string identifier = info.identifier;
     std::cout<<"Beginning bTTree *dt application stage for "<<identifier<<std::endl;
 
-    for(size_t i = 0; i < files.size(); i++) {
-        std::cout<<"On file: "<<i<<"/"<<files.size()<<" :  "<<files.at(i)->tag<<std::endl;
+    std::cout<<"On file: "<<file->tag<<std::endl;
 
-        TFile * app_ofile = TFile::Open((identifier+"_"+files[i]->tag+"_app"+".root").c_str(), "recreate");
+    TFile * app_ofile = TFile::Open((identifier+"_"+file->tag+"_app"+".root").c_str(), "recreate");
 
+    std::cout<<"Resetting the branch addresses"<<std::endl;
+    file->tvertex->ResetBranchAddresses();
 
-        std::cout<<"Resetting the branch addresses"<<std::endl;
-        files.at(i)->tvertex->ResetBranchAddresses();
+    std::string bdt_response_friend_tree_name = file->tag+"_"+info.identifier;
+    bdt_app_tree(identifier, file->tvertex, file->flow, bdt_response_friend_tree_name , vars, method);
+    bdt_app_tree(identifier, file->tvertex, file->flow, bdt_response_friend_tree_name , vars, method);
 
-        std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
-        bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
-        bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , vars, method);
-
-        app_ofile->Close();
-        delete app_ofile;
-
-    }
+    app_ofile->Close();
+    delete app_ofile;
 
 
 
@@ -231,104 +227,72 @@ int bdt_app(bdt_info info, std::vector<bdt_file*> & files, std::vector<bdt_varia
 
 
 
-int bdt_app(bdt_info info, std::vector<bdt_file*> files, std::vector<bdt_variable> train_vars, std::vector<bdt_variable> plot_vars, std::vector<method_struct> & method){
-
-    std::string identifier = info.identifier;
-    std::cout<<"Beginning bdt application stage for "<<identifier<<std::endl;
-
-    for(size_t i = 0; i < files.size(); i++) {
-
-        std::cout<<"On file: "<<i<<"/"<<files.size()<<" :  "<<files[i]->tag<<std::endl;
-
-        TFile * app_ofile = TFile::Open((identifier+"_"+files[i]->tag+"_app"+".root").c_str(), "recreate");
-
-        std::cout<<"Resetting the branch addresses"<<std::endl;
-        files.at(i)->tvertex->ResetBranchAddresses();
-
-        std::string bdt_response_friend_tree_name = files.at(i)->tag+"_"+info.identifier;
-        bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , train_vars, plot_vars, method);
-        bdt_app_tree(identifier, files.at(i)->tvertex, files.at(i)->flow, bdt_response_friend_tree_name , train_vars, plot_vars, method);
-
-        app_ofile->Close();
-        delete app_ofile;
-
-    }
-
-
-
-    return 0;
-}
-
-
-int bdt_XGapp(bdt_info info, std::vector<bdt_file*> files){
+int bdt_XGapp(bdt_info info, bdt_file* file){
     method_struct bdt_method = info.TMVAmethod;
     std::vector<bdt_variable> vars = info.train_vars;
 
-    for(auto &f : files){
-        convertToLibSVM(info, f);
-    }
-  
-  // create the booster
+    convertToLibSVM(info, file);
+
+    // create the booster
     BoosterHandle booster;
     XGBoosterCreate(0, 0, &booster);
     safe_xgboost(XGBoosterLoadModel(booster,(info.identifier+".XGBoost.mod").c_str()));
 
-    for(auto &f: files){
-        TFile * app_ofile = TFile::Open((info.identifier+"_"+f->tag+"_app"+".root").c_str(), "recreate");
-        std::string bdt_response_friend_tree_name = f->tag+"_"+info.identifier;
-        app_ofile->cd();
-        TTree * tree = new TTree(bdt_response_friend_tree_name.c_str(), "");
-        double mva;
-        double mva2;
-        tree->Branch("mva", &mva, "mva/D");
-        tree->Branch((info.identifier+"_mva").c_str(), &mva2, (info.identifier+"_mva/D").c_str());
+    auto f = file;
+    TFile * app_ofile = TFile::Open((info.identifier+"_"+f->tag+"_app"+".root").c_str(), "recreate");
+    std::string bdt_response_friend_tree_name = f->tag+"_"+info.identifier;
+    app_ofile->cd();
+    TTree * tree = new TTree(bdt_response_friend_tree_name.c_str(), "");
+    double mva;
+    double mva2;
+    tree->Branch("mva", &mva, "mva/D");
+    tree->Branch((info.identifier+"_mva").c_str(), &mva2, (info.identifier+"_mva/D").c_str());
 
 
-        DMatrixHandle dfile;
-        safe_xgboost(XGDMatrixCreateFromFile((info.identifier+"_"+f->tag+".libSVM.dat").c_str(), 0, &dfile));
+    DMatrixHandle dfile;
+    safe_xgboost(XGDMatrixCreateFromFile((info.identifier+"_"+f->tag+".libSVM.dat").c_str(), 0, &dfile));
 
-        bst_ulong out_len = 0;
-        const float* out_result = NULL;
+    bst_ulong out_len = 0;
+    const float* out_result = NULL;
 
-        XGBoosterPredict(booster, dfile, 0, 0, &out_len, &out_result);
+    XGBoosterPredict(booster, dfile, 0, 0, &out_len, &out_result);
 
-        size_t have_filled = 0;
-        size_t working_index = f->precut_list->GetEntry(0);
-        for (int i = 0; i < out_len; ++i) {
+    size_t have_filled = 0;
+    size_t working_index = f->precut_list->GetEntry(0);
+    for (int i = 0; i < out_len; ++i) {
 
-            while(have_filled < working_index){
-                    mva = -999;
-                    mva2 =mva;
-                    tree->Fill();
-                    have_filled++;  
-            }
-            if(have_filled == working_index){
-
-                std::cout<<have_filled<<" "<<working_index<<" "<<i<<" "<<out_result[i]<<std::endl;      
-                mva = out_result[i];
-                mva2 = mva;
-                tree->Fill();
-                working_index = f->precut_list->Next();
-                have_filled++;
-            }else{
-                std::cerr<<"AGHR, something went wrong in XGBoost_app"<<std::endl;
-            }   
+        while(have_filled < working_index){
+            mva = -999;
+            mva2 =mva;
+            tree->Fill();
+            have_filled++;  
         }
-        while(have_filled < f->tvertex->GetEntries()){
-                     mva = -999;
-                     mva2 = mva;
-                    tree->Fill();
-                    have_filled++;  
-        }
+        if(have_filled == working_index){
 
-
-        safe_xgboost(XGDMatrixFree(dfile));
-
-        tree->Write();
-        std::cout<<" "<<tree->GetEntries()<<std::endl;
-        app_ofile->Close();
-
+            std::cout<<have_filled<<" "<<working_index<<" "<<i<<" "<<out_result[i]<<std::endl;      
+            mva = out_result[i];
+            mva2 = mva;
+            tree->Fill();
+            working_index = f->precut_list->Next();
+            have_filled++;
+        }else{
+            std::cerr<<"AGHR, something went wrong in XGBoost_app"<<std::endl;
+        }   
     }
+    while(have_filled < f->tvertex->GetEntries()){
+        mva = -999;
+        mva2 = mva;
+        tree->Fill();
+        have_filled++;  
+    }
+
+
+    safe_xgboost(XGDMatrixFree(dfile));
+
+    tree->Write();
+    std::cout<<" "<<tree->GetEntries()<<std::endl;
+    app_ofile->Close();
+
 
 
     return 0;

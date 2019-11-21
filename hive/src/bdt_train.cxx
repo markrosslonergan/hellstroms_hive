@@ -1,6 +1,6 @@
 #include "bdt_train.h"
 
-int plot_train(bdt_info info, bdt_file *signal_train_file, bdt_file *signal_test_file,   bdt_file *background_train_file,  bdt_file *background_test_file){
+int plot_train(bdt_info &info, bdt_file *signal_train_file, bdt_file *signal_test_file,   bdt_file *background_train_file,  bdt_file *background_test_file){
     std::vector<method_struct> methods = {info.TMVAmethod};
     std::vector<bdt_variable> variables = info.train_vars;
 
@@ -175,7 +175,7 @@ int plot_train(bdt_info info, bdt_file *signal_train_file, bdt_file *signal_test
 
 }
 
-int bdt_train(bdt_info info, bdt_file *signal_train_file, bdt_file * signal_test_file, bdt_file * background_train_file, bdt_file *background_test_file){
+int bdt_train(bdt_info& info, bdt_file *signal_train_file, bdt_file * signal_test_file, bdt_file * background_train_file, bdt_file *background_test_file){
 
     std::vector<method_struct> methods = {info.TMVAmethod};
     std::vector<bdt_variable> variables = info.train_vars;
@@ -183,7 +183,7 @@ int bdt_train(bdt_info info, bdt_file *signal_train_file, bdt_file * signal_test
     return bdt_train(info, signal_train_file,signal_test_file, background_train_file,background_test_file, variables, methods);
 }
 
-int bdt_train(bdt_info info, bdt_file *signal_train_file, bdt_file * signal_test_file, bdt_file * background_train_file, bdt_file *background_test_file, std::vector<bdt_variable> variables, std::vector<method_struct> & methods){
+int bdt_train(bdt_info &info, bdt_file *signal_train_file, bdt_file * signal_test_file, bdt_file * background_train_file, bdt_file *background_test_file, std::vector<bdt_variable>& variables, std::vector<method_struct> & methods){
 
     std::string const name = info.identifier;
     TFile * outfile = TFile::Open((name+"_training.root").c_str(), "recreate");
@@ -197,8 +197,8 @@ int bdt_train(bdt_info info, bdt_file *signal_train_file, bdt_file * signal_test
     TCut sig_traincut =  TCut(signal_train_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
     TCut back_traincut = TCut(background_train_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 
-    TCut sig_testcut =  TCut(signal_test_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
-    TCut back_testcut = TCut(background_test_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
+    TCut sig_testcut =  TCut(("("+signal_test_file->getStageCuts(bdt_precut_stage,-9,-9)+"&&"+info.TMVAmethod.sig_test_cut+")" ).c_str());
+    TCut back_testcut =  TCut(("("+background_test_file->getStageCuts(bdt_precut_stage,-9,-9)+"&&"+info.TMVAmethod.bkg_test_cut+")" ).c_str());
 
     TTree * background_traintree_prefiltered = (TTree*)background_train_file->tvertex->CopyTree(back_traincut);
     TTree * signal_traintree_prefiltered = (TTree*)signal_train_file->tvertex->CopyTree(sig_traincut);
@@ -243,7 +243,7 @@ int bdt_train(bdt_info info, bdt_file *signal_train_file, bdt_file * signal_test
 }
 
 
-int convertToLibSVM(bdt_info info, bdt_file *file){
+int convertToLibSVM(bdt_info& info, bdt_file *file){
 
     std::vector<bdt_variable> variables = info.train_vars;
     std::string const name = info.identifier;
@@ -297,7 +297,7 @@ int convertToLibSVM(bdt_info info, bdt_file *file){
 }
 
 
-int convertToLibSVM(bdt_info info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut){
+int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut){
     //This is the new one that splits based individual test/training
 
     std::vector<bdt_variable> variables = info.train_vars;
@@ -454,7 +454,7 @@ int convertToLibSVM(bdt_info info, bdt_file *signal_file_train, bdt_file *signal
 }
 
 
-int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
+int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_file){
     //This is the older one that just splits based on training fraction
 
     std::vector<bdt_variable> variables = info.train_vars;
@@ -580,7 +580,7 @@ int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_f
 
 
 
-int bdt_XGtrain(bdt_info info){
+int bdt_XGtrain(bdt_info &info){
 
     std::string const name = info.identifier;
 
