@@ -795,3 +795,85 @@ int bdt_XGtrain(bdt_info &info){
 
 }
 
+
+
+int super_bdt_train(std::string &analysis_tag, const std::vector<bdt_info> & bdt_infos, const std::vector<std::string> & s_tags, const std::vector<std::string> & b_tags, const std::string & additional_sig_cut, const std::string & additional_bkg_cut){
+
+    std::string name_template = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(1)+"_";
+    std::string end_template = ".root";
+
+    std::vector<std::string> bdt_score_vars;
+    for(auto &info: bdt_infos){
+        bdt_score_vars.push_back("simple_"+info.identifier+"_mva");
+    }
+
+    //Form a TChain for signal and background like bdt_files
+    std::cout<<"Starting to build background chain: "<<std::endl;
+    TChain b_chain("singlephoton/simple_tree");  
+
+    for(auto &b: b_tags ){
+        std::cout<<"--on tag "<<b<<std::endl;
+        b_chain.Add((name_template+b+end_template).c_str());
+    }
+
+    TChain b_vertex_chain("singlephoton/vertex_tree");  
+    for(auto &b: b_tags ){
+        b_vertex_chain.Add((name_template+b+end_template).c_str());
+    }
+
+
+    std::cout<<"Starting to build signal _chain"<<std::endl;
+    TChain s_chain("singlephoton/simple_tree");  
+    for(auto &s: s_tags ){
+        std::cout<<"on tag "<<s<<std::endl;
+        s_chain.Add((name_template+s+end_template).c_str());
+    }
+    TChain s_vertex_chain("singlephoton/vertex_tree");  
+    for(auto &s: s_tags ){
+        s_vertex_chain.Add((name_template+s+end_template).c_str());
+    }
+
+    s_chain.AddFriend(&s_vertex_chain,"super");
+    b_chain.AddFriend(&b_vertex_chain,"super");
+
+
+    std::string name = "SUPERBDT_"+analysis_tag;
+    TFile * outfile = TFile::Open((name+"_training.root").c_str(), "recreate");
+
+
+    TMVA::Factory * factory = new TMVA::Factory(name.c_str(), outfile,"!V:!Silent:Color:DrawProgressBar:AnalysisType=Classification");
+    TMVA::DataLoader * dataloader = new TMVA::DataLoader(("BDTxmls_"+name).c_str());
+
+    TCut sig_tcut = TCut(additional_sig_cut.c_str());  
+    dataloader->AddSignalTree(&s_chain);
+    dataloader->AddCut(sig_tcut,"Signal");
+    int signal_entries = s_chain.GetEntries();
+
+
+    TCut bkg_tcut = TCut(additional_bkg_cut.c_str());  
+    dataloader->AddBackgroundTree(&b_chain);
+    dataloader->AddCut(bkg_tcut,"Background");
+    int background_entries = b_chain.GetEntries();
+
+    dataloader->SetSignalWeightExpression("simple_pot_weight");
+    dataloader->SetBackgroundWeightExpression("simple_pot_weight");
+
+    for(auto &var: bdt_score_vars) dataloader->AddVariable(var.c_str());
+    std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
+
+    dataloader->PrepareTrainingAndTestTree("1","1", "nTrain_Signal="+std::to_string(floor(signal_entries*0.5))+":nTrain_Background="+std::to_string(floor(background_entries*0.5))+":SplitMode=Random:NormMode=NumEvents:!V");
+
+    factory->BookMethod(dataloader, "BDT" , "TMVA", "!H:!V:NTrees=800:BoostType=RealAdaBoost:nCuts=-1:MaxDepth=3");
+
+    factory->TrainAllMethods();
+    factory->TestAllMethods();
+    factory->EvaluateAllMethods();
+
+    outfile->Close();
+
+    delete factory;
+    delete dataloader;
+
+}
+
+

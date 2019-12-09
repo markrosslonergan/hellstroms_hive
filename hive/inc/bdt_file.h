@@ -206,6 +206,9 @@ struct bdt_file{
 
         ~bdt_file();
 
+        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu);
+
+
 
         std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
         std::string getStageCuts(int stage, std::vector<double> bdt_cuts);

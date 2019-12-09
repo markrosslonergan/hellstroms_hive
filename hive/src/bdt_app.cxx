@@ -298,3 +298,123 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
     return 0;
 }
 
+void super_bdt_app(std::string &analysis_tag, const std::vector<bdt_info> & bdt_infos, const std::vector<bdt_file*> & files){
+
+    std::string name_template = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(1)+"_";
+    std::string end_template = ".root";
+
+    std::vector<std::string> bdt_vars;
+    for(auto &info: bdt_infos){
+        bdt_vars.push_back("simple_"+info.identifier+"_mva");
+    }
+
+    //a vector for the files
+    std::vector<TFile*> fs;
+    TFile* ofs = new TFile((analysis_tag+ "_superMVA.root").c_str(),"recreate");
+    std::vector<TTree*> ts;
+    std::vector<TTree*> pots;
+    std::vector<TTree*> ots;
+
+    std::vector<std::string> tags;
+    for(auto &g: files) tags.push_back(g->tag);
+
+    for(auto &b: tags ){
+        fs.push_back(new TFile((name_template+b+end_template).c_str(),"read"));
+        ts.push_back((TTree*)fs.back()->Get("singlephoton/simple_tree"));
+        pots.push_back((TTree*)fs.back()->Get("singlephoton/pot_tree"));
+        ofs->cd();
+        ots.push_back(new TTree(("output_"+b).c_str(),("output_"+b).c_str()));
+    }
+
+    std::string identifier = "SUPERBDT_"+analysis_tag;
+    TMVA::Reader * reader = new TMVA::Reader("!Color:!Silent");
+
+    std::vector<float *> reader_var_v;
+    std::vector<double> bdt_var_v;
+    for(std::string &var : bdt_vars) {
+        reader_var_v.push_back(new float(-1));
+        reader->AddVariable(var.c_str(), reader_var_v.back());
+        bdt_var_v.push_back(0);
+    }
+
+    reader->BookMVA("TMVA", ("BDTxmls_"+identifier+"/weights/"+identifier+"_TMVA"+".weights.xml").c_str());
+
+    int t =0;
+    for(auto &tree: ts){
+
+        int total_events = 0;
+        int number_of_events = 0;
+        pots[t]->SetBranchAddress("number_of_events",&number_of_events);
+        for(int k=0; k< pots[t]->GetEntries(); k++){
+            pots[t]->GetEntry(k);
+            total_events+= number_of_events;
+        }
+
+        int original_entry = 0;
+        tree->SetBranchAddress("original_entry",&original_entry);
+
+        for(int j=0; j< bdt_vars.size(); j++){
+            tree->SetBranchAddress(bdt_vars[j].c_str() , &bdt_var_v[j]);
+        }
+
+        double mva = -99;
+        ots[t]->Branch("SUPER_score",&mva);
+        for(int j=0; j< bdt_vars.size(); j++){
+            ots[t]->Branch(bdt_vars[j].c_str() , &bdt_var_v[j]);
+        }
+
+        int N = tree->GetEntries();
+        std::cout << "Beginning loop for " << identifier << std::endl;
+        std::cout << "############################################" << std::endl;
+
+        int cntr = 0;
+        mva = -1;
+        for(int j=0; j< bdt_vars.size(); j++){
+            bdt_var_v[j] = -1;
+        }
+
+        int l = 0;
+        tree->GetEntry(l);
+        cntr = original_entry;
+
+        for(int i=0; i< total_events; i++){
+
+            if(cntr == i){
+                tree->GetEntry(l);
+
+                for(int k=0; k< bdt_vars.size(); k++){
+                    (*reader_var_v[k]) = (float)bdt_var_v[k];
+                }
+
+                mva = reader->EvaluateMVA("TMVA");
+                ots[t]->Fill();       
+                if(l+1>tree->GetEntries())continue;
+                tree->GetEntry(l+1);
+                cntr = original_entry;
+                l++;
+
+            }else{
+                mva = -1;
+                for(int j=0; j< bdt_vars.size(); j++){
+                    bdt_var_v[j] = -1;
+                }
+
+                ots[t]->Fill();       
+            }
+
+        }
+
+        ofs->cd();
+        ots[t]->Write();
+
+        std::cout<<"DONE: has "<<ots[t]->GetEntries()<<" entries and orginial has "<<total_events<<" entries "<<std::endl;
+        t++;
+    }
+
+
+    ofs->Close();
+    delete reader;
+    for(float * f : reader_var_v) delete f;
+
+
+}

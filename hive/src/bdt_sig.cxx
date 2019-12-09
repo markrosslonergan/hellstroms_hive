@@ -837,14 +837,14 @@ std::vector<double> super_significance(std::vector<bdt_file*> sig_files, std::ve
         for(size_t i = 0; i < sig_files.size(); ++i) {
             double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
 
-            std::string bnbcut = "combined_score > "+std::to_string(t); 
+            std::string bnbcut = "SUPER_score > "+std::to_string(t); 
             signal += sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
         }
 
         for(size_t i = 0; i < bkg_files.size(); ++i) {
             double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
 
-            std::string bnbcut = "combined_score > "+std::to_string(t); 
+            std::string bnbcut = "SUPER_score > "+std::to_string(t); 
             bkg.push_back(bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
             background += bkg.back();
         }

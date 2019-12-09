@@ -45,5 +45,6 @@ int bdt_app(bdt_info info, bdt_file* file);
 int bdt_app(bdt_info info, bdt_file* file, std::vector<bdt_variable> vars, std::vector<method_struct> & method);
 int bdt_XGapp(bdt_info info, bdt_file* file);
 
+void super_bdt_app(std::string &analysis_tag, const std::vector<bdt_info> & bdt_infos, const std::vector<bdt_file*> & files);
 
 #endif

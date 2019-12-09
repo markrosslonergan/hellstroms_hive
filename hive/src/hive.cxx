@@ -415,8 +415,25 @@ int main (int argc, char *argv[]){
         }
         return 0;
     }
+    else if(mode_option=="super"){
 
-    else if(mode_option=="stack"){
+        //Define what we want to call signal and background here
+        const std::vector<std::string> s_tags = {"NCDeltaRadOverlay"};
+        const std::vector<std::string> b_tags ={"BNBOverlays","NCPi0","BNBext","Dirt"};
+
+        //OK super preliminarly, need to have run sbnfit with simple_tree option on precut stage before attempting this
+        super_bdt_train(analysis_tag, bdt_infos, s_tags, b_tags, "1", "1");
+
+        for(int i=0; i< 6; i++){
+            bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size");
+        }
+
+        //and apply it
+        super_bdt_app(analysis_tag, bdt_infos, bdt_files);
+
+        return 0;
+
+    }else if(mode_option=="stack"){
         std::cout<<"Starting stack "<<std::endl;
 
         if (access("stack",F_OK) == -1){
@@ -825,122 +842,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
     if(which_stage==-1) which_stage ==1;
 
 
-    bdt_file * file = bdt_files.at(which_file);
-
-    //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
-    file->teventweight->AddFriend(file->tvertex);
-
-    std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+file->tag+".root";
-
-    std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
-    TFile* f_sbnfit = new TFile(output_file_name.c_str(),"recreate");
-
-
-    std::cout<<"Creating directory structure"<<std::endl;
-    TDirectory *cdtof = f_sbnfit->mkdir("singlephoton");
-    cdtof->cd();    
-
-
-    std::string sbnfit_cuts = file->getStageCuts(which_stage,fbdtcuts);
-    //std::string sbnfit_cuts = "mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0 >0"; //file->getStageCuts(which_stage,fcoscut,fbnbcut);
-
-    std::cout<<"Copying vertex tree"<<std::endl;
-    TTree * t_sbnfit_tree = (TTree*)file->tvertex->CopyTree(sbnfit_cuts.c_str());
-    std::cout<<"Copying POT tree"<<std::endl;
-    TTree * t_sbnfit_pot_tree = (TTree*)file->tpot->CopyTree("1");
-    std::cout<<"Copying eventweight tree (via friends)"<<std::endl;
-    TTree * t_sbnfit_eventweight_tree = (TTree*)file->teventweight->CopyTree(sbnfit_cuts.c_str());
-    std::cout<<"Copying Slice tree "<<std::endl;
-    TTree * t_sbnfit_slice_tree = (TTree*)file->tslice->CopyTree("1");
-
-    TTree * t_sbnfit_simpletree = new TTree("simple_tree","simple_tree");
-    double simple_var = 0;
-    double simple_wei = 0;
-    double simple_pot_wei = 0;
-    int original_entry = 0;
-    double plot_pot = 13.2e20;
-
-    std::vector<double> bdt_mvas;
-    for(int i=0; i< bdt_infos.size(); i++){
-        bdt_mvas.push_back(0);
-    }
-
-
-    TTreeFormula * CUT = new TTreeFormula("CUT", sbnfit_cuts.c_str(),file->tvertex);
-
-    t_sbnfit_simpletree->Branch("simple_variable",&simple_var);
-    t_sbnfit_simpletree->Branch("simple_weight",&simple_wei);
-    t_sbnfit_simpletree->Branch("simple_pot_weight",&simple_pot_wei);
-    t_sbnfit_simpletree->Branch("original_entry",&original_entry);
-
-    for(int i=0; i< bdt_infos.size(); i++){
-        std::string nam = "simple_"+bdt_infos[i].identifier+"_mva";
-        t_sbnfit_simpletree->Branch(nam.c_str(), &(bdt_mvas[i]));
-    }
-
-    TTreeFormula* weight = new TTreeFormula("weight_formula ",file->weight_branch.c_str(),file->tvertex);
-    TTreeFormula* var = new TTreeFormula("var_formula ",input_string.c_str(),file->tvertex);
-
-    std::vector<TTreeFormula* > form_vec;
-    for(int i=0; i< bdt_infos.size();i++){
-        std::string nam = file->tag+"_"+bdt_infos[i].identifier+".mva";
-        form_vec.push_back(new TTreeFormula((bdt_infos[i].identifier+"_mva_formula").c_str(), nam.c_str(),file->tvertex));
-    }
-
-    if(input_string != ""){
-        std::cout<<"Starting to make a simpletree with variable "<<input_string<<std::endl;
-        for(int i=0; i< file->tvertex->GetEntries(); i++){
-            file->tvertex->GetEntry(i); 
-
-            CUT->GetNdata();
-            bool is_is = CUT->EvalInstance();
-
-            if(!is_is) continue;
-
-            weight->GetNdata();
-            var->GetNdata();
-            simple_wei = weight->EvalInstance();
-            simple_var = var->EvalInstance();
-            simple_pot_wei = simple_wei*file->scale_data*plot_pot/file->pot;
-            original_entry = i;
-
-            for(int j=0; j< bdt_infos.size();j++){
-                form_vec[j]->GetNdata();
-                bdt_mvas[j] = form_vec[j]->EvalInstance();
-            }
-
-            t_sbnfit_simpletree->Fill();
-        }
-
-    }
-
-    TList * lf1 = (TList*)t_sbnfit_tree->GetListOfFriends();
-    for(const auto&& obj: *lf1) t_sbnfit_tree->GetListOfFriends()->Remove(obj);
-
-    TList * lf2 = (TList*)t_sbnfit_eventweight_tree->GetListOfFriends();
-    for(const auto&& obj: *lf2) t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(obj);
-
-
-    std::cout<<"Writing to file"<<std::endl;
-    cdtof->cd();
-    t_sbnfit_tree->Write();
-    t_sbnfit_pot_tree->Write();
-    t_sbnfit_eventweight_tree->Write(); 
-    t_sbnfit_slice_tree->Write();
-    if(input_string!=""){
-        t_sbnfit_simpletree->Write();
-        weight->Write();
-        var->Write();
-    }
-    TVectorD POT_value(1);
-    POT_value[0] = file->pot;
-    POT_value.Write("POT_value");
-
-    f_sbnfit->Close();
-    std::cout<<"Done!"<<std::endl;
-
-
-    return 0;
+    return bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string);
 
 
 }else if(mode_option == "recomc"){
@@ -1056,46 +958,15 @@ return 0;
 
     std::vector<bdt_file*> training_background_files;
     for(int i=0; i< bdt_infos.size(); i++){
-        std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
-        bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
-        training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
-        training_background_files.back()->setAsOnBeamData(13.2e20);
-        training_background_files.back()->calcPOT();
-        training_background_files.back()->calcBaseEntryList(analysis_tag);
-        /*
-        if(which_stage>1){
 
-            std::vector<bdt_file*> rmp =    {training_background_files.back()};
-            for(int k=0; k< bdt_infos.size(); k++){
-                if(bdt_infos[k].TMVAmethod.str=="XGBoost"){
-                    bdt_XGapp(bdt_infos[k], rmp);
-                }else{
-                    bdt_app(bdt_infos[k], rmp);
-                }
-                training_background_files.back()->addBDTResponses(bdt_infos[k]);
-            }
-        }
-       */
 
+            if(!(which_bdt==i || which_bdt==-1)) continue;
+
+            bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 
+            bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
+            plot_bdt_variables(training_signal, training_background, vars, bdt_infos[i], false, which_stage,fbdtcuts);
     }
 
-
-
-    if(which_bdt==-1){
-        for(int k=0; k< bdt_infos.size(); k++){
-            if(number != -1){
-                //plot_bdt_variable(training_signal, training_background_files[k], vars.at(number), bdt_infos[k], false,which_stage,fbdtcuts);
-            }else{
-                //plot_bdt_variables(training_signal, training_background_files[k], vars, bdt_infos[k], false,which_stage,fbdtcuts);
-            }
-        }
-    }else{
-        if(number != -1){
-            //plot_bdt_variable(training_signal, training_background_files[which_bdt], vars.at(number), bdt_infos[which_bdt], false,which_stage,fbdtcuts);
-        }else{
-            //plot_bdt_variables(training_signal, training_background_files[which_bdt], vars, bdt_infos[which_bdt], false,which_stage,fbdtcuts);
-        }
-    }
 
 }else {
     std::cout << "WARNING: " << mode_option << " is an invalid option\n";
