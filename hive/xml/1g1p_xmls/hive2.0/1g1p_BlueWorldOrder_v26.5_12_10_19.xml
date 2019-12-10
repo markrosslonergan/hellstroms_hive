@@ -94,10 +94,13 @@
         <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 0</cut>
         <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0] &lt; 0.333 </cut>
         <cut> sim_shower_pdg[0] == 22 </cut>
+        <cut> sim_track_overlay_fraction[0] &lt; 0.333 </cut>
+        <cut> sim_track_pdg[0] == 2212 </cut>
     </training>
 </bdtfile>
 
@@ -115,6 +118,7 @@
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0]&ln;0.8</cut>
+        <cut> sim_track_overlay_fraction[0]&ln;0.8</cut>
     </training>
 </bdtfile>
 
@@ -127,6 +131,8 @@
     <training>
         <cut> sim_shower_overlay_fraction[0]&ln;0.8</cut>
         <cut> sim_shower_pdg[0]==22</cut>
+        <cut> sim_track_overlay_fraction[0]&ln;0.8</cut>
+        <cut> sim_track_pdg[0]==2212</cut>
     </training>
 </bdtfile>
 
@@ -134,6 +140,7 @@
     <definition>1</definition>
     <training>
         <cut>sim_shower_overlay_fraction[0]&lt;0.8</cut>
+        <cut>sim_track_overlay_fraction[0]&lt;0.8</cut>
     </training>
 </bdtfile>
 
