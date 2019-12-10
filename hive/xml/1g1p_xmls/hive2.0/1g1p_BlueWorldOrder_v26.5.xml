@@ -162,7 +162,7 @@
         sig_test_tag = "NCDeltaRadOverlay"
         sig_test_cut = "Entry$%10<4"
         />
-    <scan min = "0.9989" max = "0.9991" steps="10"/>
+    <scan min = "0.9" max = "1.0" steps="5"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(40,0.0,1.0)">
@@ -188,7 +188,7 @@
         sig_test_tag = "NCDeltaRadOverlay"
         sig_test_cut = "Entry$%10<4"
         />
-    <scan min = "0.87" max = "0.878" steps="10"/>
+    <scan min = "0.5" max = "1.0" steps="5"/>
 </mva>
 
 
@@ -215,7 +215,7 @@
         sig_test_tag = "NCDeltaRadOverlay"
         sig_test_cut = "Entry$%10<4"
         />
-    <scan min = "0.96" max = "0.964" steps="10"/>
+    <scan min = "0.5" max = "1.0" steps="5"/>
 </mva>
 
 
@@ -242,7 +242,7 @@
         sig_test_tag = "NCDeltaRadOverlay"
         sig_test_cut = "Entry$%10<4"
         />
-    <scan min = "0.888" max = "0.893" steps="10"/>
+    <scan min = "0.5" max = "1.0" steps="5"/>
 </mva>
 
 
@@ -251,6 +251,11 @@
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
 <precut def = "reco_shower_energy_max[0]>35" name = "Michel Cut"/>
 <precut def = "TMath::Min(reco_track_start_dist_to_SCB, reco_track_end_dist_to_SCB)>2" name = "Track Contained"/>
+
+<precut def = "(sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2))<20)" name = "Distance from Track Start to Vertex"/>
+<precut def = "(reco_shower_conversion_distance[0] <150)" name = "Shower Conv Distance"/>
+<precut def = "reco_track_displacement[0]<300" name = "Track Disp"/>
+
 
 <!--
 <precut def = "reco_vertex_dist_to_active_TPC > 5 &amp;&amp; reco_vertex_in_SCB " name = "Fiducial Vertex Cut" />
