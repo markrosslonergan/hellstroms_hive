@@ -882,9 +882,9 @@ int super_bdt_train(std::string &analysis_tag, const std::vector<bdt_info> & bdt
 int bdt_XGBoost_importance(bdt_info &info){
    
     //some vectors to save info on each variable
-    std::vector<int> variable_uses(info.train_vars.size()+1,0); 
-    std::vector<double> total_gain(info.train_vars.size()+1,0.0); 
-    std::vector<double> mean_gain(info.train_vars.size()+1,0.0); 
+    std::vector<int> variable_uses(info.train_vars.size(),0); 
+    std::vector<double> total_gain(info.train_vars.size(),0.0); 
+    std::vector<double> mean_gain(info.train_vars.size(),0.0); 
     
     // create the booster to read in the saved model
     BoosterHandle booster;
@@ -941,28 +941,38 @@ int bdt_XGBoost_importance(bdt_info &info){
 
     //Sort them in different ways
     std::vector<size_t> sorted_by_total_gain = sort_indexes<double>(total_gain);
-    std::vector<size_t> sorted_by_mean_gain = sort_indexes<double>(total_gain);
+    std::vector<size_t> sorted_by_mean_gain = sort_indexes<double>(mean_gain);
     std::vector<size_t> sorted_by_uses = sort_indexes<int>(variable_uses);
 
+   /* 
+    for(int i = 0; i < sorted_by_uses.size(); i++){
+        std::cout<<"sorted_by_uses["<<i<<"] = "<<sorted_by_uses[i]<<std::endl;
+    }
+   
+    for(int i = 0; i < info.train_vars.size(); i++){
+         std::cout<<i<<":  "<<info.train_vars[i].unit<<std::endl;
+    }
+*/
     std::cout<<"----------- Sort By Uses ----------------------"<<std::endl;
+    std::cout<<"sorted_by_uses size = " <<sorted_by_uses.size()<<", variable_uses size = "<<variable_uses.size()<<std::endl;
     for(int i=0; i< variable_uses.size();i++){
-        size_t is = sorted_by_uses[i];
+        size_t is = sorted_by_uses[sorted_by_uses.size()-1-i];
         std::cout<<i<<"  "<<" "<<is<<" Variable: "<<info.train_vars[is].unit<<"\n-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
     }
 
     std::cout<<"----------- Sort By Total Gain ----------------------"<<std::endl;
     for(int i=0; i< variable_uses.size();i++){
-        size_t is = sorted_by_total_gain[i];
+        size_t is = sorted_by_total_gain[sorted_by_total_gain.size()-1-i];
         std::cout<<i<<"  "<<" "<<is<<" Variable: "<<info.train_vars[is].unit<<"\n-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
     }
 
     std::cout<<"----------- Sort By Mean Gain ----------------------"<<std::endl;
     for(int i=0; i< variable_uses.size();i++){
-        size_t is = sorted_by_mean_gain[i];
+        size_t is = sorted_by_mean_gain[sorted_by_mean_gain.size()-1-i];
         std::cout<<i<<"  "<<" "<<is<<" Variable: "<<info.train_vars[is].unit<<"\n-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
     }
 
-
+    std::cout<<"done!"<<std::endl;
     return 0;
 
 }
