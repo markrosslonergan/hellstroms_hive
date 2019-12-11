@@ -39,11 +39,11 @@ int plot_train(bdt_info &info, bdt_file *signal_train_file, bdt_file *signal_tes
     trainTree->SetBranchAddress("classID",&train_classID);
     testTree->SetBranchAddress((info.TMVAmethod.str).c_str(),&test_response);
     trainTree->SetBranchAddress((info.TMVAmethod.str).c_str(),&train_response);
- 
+
     //testTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&test_response);
     //trainTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&train_response);
- //   testTree->SetBranchAddress("BDT",&test_response);
-   // trainTree->SetBranchAddress("BDT",&train_response);
+    //   testTree->SetBranchAddress("BDT",&test_response);
+    // trainTree->SetBranchAddress("BDT",&train_response);
 
     testTree->SetBranchAddress("weight",&test_wei);
     trainTree->SetBranchAddress("weight",&train_wei);
@@ -208,13 +208,13 @@ int bdt_train(bdt_info &info, bdt_file *signal_train_file, bdt_file * signal_tes
 
     dataloader->AddSignalTree(signal_traintree_prefiltered,1.0,TMVA::Types::ETreeType::kTraining);
     dataloader->AddSignalTree(signal_testtree_prefiltered,1.0,TMVA::Types::ETreeType::kTesting);
-    
+
     int signal_train_entries = signal_train_file->tvertex->GetEntries(sig_traincut);
     int signal_test_entries = signal_test_file->tvertex->GetEntries(sig_testcut);
 
     dataloader->AddBackgroundTree(background_traintree_prefiltered,1.0,TMVA::Types::ETreeType::kTraining);
     dataloader->AddBackgroundTree(background_testtree_prefiltered,1.0,TMVA::Types::ETreeType::kTesting);
-    
+
     int background_train_entries = background_train_file->tvertex->GetEntries(back_traincut);
     int background_test_entries  = background_test_file->tvertex->GetEntries(back_testcut);
 
@@ -376,10 +376,10 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             //if nan, lets do something
             if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
 
-                    sslibSVMtrain<<id<<":"<<val<<" ";
+                sslibSVMtrain<<id<<":"<<val<<" ";
             }
         }
-            sslibSVMtrain<<std::endl;
+        sslibSVMtrain<<std::endl;
     } 
 
     for(int i = 0; i < signal_entries_test; ++i) {
@@ -397,10 +397,10 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             //if nan, lets do something
             if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
 
-                    sslibSVMtest<<id<<":"<<val<<" ";
+                sslibSVMtest<<id<<":"<<val<<" ";
             }
         }
-            sslibSVMtest<<std::endl;
+        sslibSVMtest<<std::endl;
     } 
 
 
@@ -419,10 +419,10 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             //if nan, lets do something
             if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
 
-                    sslibSVMtrain<<id<<":"<<val<<" ";
+                sslibSVMtrain<<id<<":"<<val<<" ";
             }
         }
-            sslibSVMtrain<<std::endl;
+        sslibSVMtrain<<std::endl;
     } 
 
     for(int i = 0; i < background_entries_test; ++i) {
@@ -440,10 +440,10 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             //if nan, lets do something
             if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
 
-                    sslibSVMtest<<id<<":"<<val<<" ";
+                sslibSVMtest<<id<<":"<<val<<" ";
             }
         }
-            sslibSVMtest<<std::endl;
+        sslibSVMtest<<std::endl;
     } 
 
 
@@ -735,6 +735,9 @@ int bdt_XGtrain(bdt_info &info){
     }
 
 
+
+
+
     safe_xgboost(XGBoosterSaveModel(booster,(name+".XGBoost.mod").c_str() ));
     safe_xgboost(XGDMatrixFree(dtrain));
     safe_xgboost(XGDMatrixFree(dtest));
@@ -876,4 +879,90 @@ int super_bdt_train(std::string &analysis_tag, const std::vector<bdt_info> & bdt
 
 }
 
+int bdt_XGBoost_importance(bdt_info &info){
+   
+    //some vectors to save info on each variable
+    std::vector<int> variable_uses(info.train_vars.size()+1,0); 
+    std::vector<double> total_gain(info.train_vars.size()+1,0.0); 
+    std::vector<double> mean_gain(info.train_vars.size()+1,0.0); 
+    
+    // create the booster to read in the saved model
+    BoosterHandle booster;
+    safe_xgboost(XGBoosterCreate(0, 0, &booster));
+    safe_xgboost(XGBoosterLoadModel(booster,(info.identifier+".XGBoost.mod").c_str()));
 
+    //Some storage for the info
+    int with_stats = 1;
+    bst_ulong out_len = 0;
+    const char ** out_dump_array = NULL;
+    safe_xgboost(XGBoosterDumpModel(booster, "", with_stats,  &out_len, &out_dump_array));
+
+    std::cout<<"XGBoost importance : "<<out_len<<std::endl;
+
+    for(size_t i=0; i<out_len ; ++i  ){
+
+        if((out_dump_array)[i]!=NULL){
+            std::cout<<i<<" "<<(out_dump_array)[i]<<std::endl;  
+            const std::string cconvert((out_dump_array)[i]);
+
+            //Look for the feature, starts with in form "[f10<1.2" ... sp we want to find the number between the [f and the <
+            std::string stag = "[f";
+            std::string del = "<";
+
+            //when we find the feature, grab the number after the next time gain= appears
+            std::string sgain = "gain=";
+            size_t found = cconvert.find(stag);
+
+            while (found!=std::string::npos){
+                size_t ndel = cconvert.find(del,found);
+                std::string s_int = cconvert.substr(found+stag.size(),ndel-found-stag.size());
+                int which_var = std::stoi(s_int);
+                variable_uses[which_var]++;
+                std::string s_gain   = "";
+                //ok if we found a variable, add the gain, first locate it.
+
+                size_t ngain = cconvert.find(sgain,ndel);
+                if(ngain!=std::string::npos){
+                    size_t ngainend = cconvert.find(",",ngain);
+                    if( ngainend !=std::string::npos)   s_gain = cconvert.substr(ngain+sgain.size(), ngainend-ngain-sgain.size()-1); 
+                    size_t offset = 0;
+                    double d_gain =  std::stod(s_gain,&offset);
+                    total_gain[which_var] = total_gain[which_var]+ d_gain;
+                }        
+                std::cout<<" var "<<s_int<<" gain "<<s_gain<<std::endl;
+                found = cconvert.find(stag,ndel);
+            }
+        }
+    }
+
+    for(int i=0; i<total_gain.size() ; ++i){
+            mean_gain[i] = total_gain[i]/(double)variable_uses[i];
+    }
+
+    //Sort them in different ways
+    std::vector<size_t> sorted_by_total_gain = sort_indexes<double>(total_gain);
+    std::vector<size_t> sorted_by_mean_gain = sort_indexes<double>(total_gain);
+    std::vector<size_t> sorted_by_uses = sort_indexes<int>(variable_uses);
+
+    std::cout<<"----------- Sort By Uses ----------------------"<<std::endl;
+    for(int i=0; i< variable_uses.size();i++){
+        size_t is = sorted_by_uses[i];
+        std::cout<<i<<"  "<<" "<<is<<" Variable: "<<info.train_vars[is].unit<<"\n-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+    }
+
+    std::cout<<"----------- Sort By Total Gain ----------------------"<<std::endl;
+    for(int i=0; i< variable_uses.size();i++){
+        size_t is = sorted_by_total_gain[i];
+        std::cout<<i<<"  "<<" "<<is<<" Variable: "<<info.train_vars[is].unit<<"\n-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+    }
+
+    std::cout<<"----------- Sort By Mean Gain ----------------------"<<std::endl;
+    for(int i=0; i< variable_uses.size();i++){
+        size_t is = sorted_by_mean_gain[i];
+        std::cout<<i<<"  "<<" "<<is<<" Variable: "<<info.train_vars[is].unit<<"\n-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+    }
+
+
+    return 0;
+
+}
