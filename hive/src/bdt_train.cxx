@@ -881,15 +881,17 @@ int super_bdt_train(std::string &analysis_tag, const std::vector<bdt_info> & bdt
 
 int bdt_XGBoost_importance(bdt_info &info){
    
+    //some vectors to save info on each variable
     std::vector<int> variable_uses(info.train_vars.size()+1,0); 
     std::vector<double> total_gain(info.train_vars.size()+1,0.0); 
     std::vector<double> mean_gain(info.train_vars.size()+1,0.0); 
     
-    // create the booster
+    // create the booster to read in the saved model
     BoosterHandle booster;
     safe_xgboost(XGBoosterCreate(0, 0, &booster));
     safe_xgboost(XGBoosterLoadModel(booster,(info.identifier+".XGBoost.mod").c_str()));
 
+    //Some storage for the info
     int with_stats = 1;
     bst_ulong out_len = 0;
     const char ** out_dump_array = NULL;
@@ -903,9 +905,11 @@ int bdt_XGBoost_importance(bdt_info &info){
             std::cout<<i<<" "<<(out_dump_array)[i]<<std::endl;  
             const std::string cconvert((out_dump_array)[i]);
 
+            //Look for the feature, starts with in form "[f10<1.2" ... sp we want to find the number between the [f and the <
             std::string stag = "[f";
             std::string del = "<";
 
+            //when we find the feature, grab the number after the next time gain= appears
             std::string sgain = "gain=";
             size_t found = cconvert.find(stag);
 
@@ -935,6 +939,7 @@ int bdt_XGBoost_importance(bdt_info &info){
             mean_gain[i] = total_gain[i]/(double)variable_uses[i];
     }
 
+    //Sort them in different ways
     std::vector<size_t> sorted_by_total_gain = sort_indexes<double>(total_gain);
     std::vector<size_t> sorted_by_mean_gain = sort_indexes<double>(total_gain);
     std::vector<size_t> sorted_by_uses = sort_indexes<int>(variable_uses);
