@@ -74,7 +74,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "CUT_bnbext_run1_comb_v26.3.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "CUT_bnbext_run1_comb_v26.32.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
     </definition>
     <data type="OffBeam">
@@ -363,8 +363,6 @@
 <var def = "reco_shower_energy_max/(100.0*reco_shower_length*reco_shower_opening_angle)" unit = "ratio of calo energy to geometric size" binning = "(40,0,1.5)" type = "d" training = "0123"/>
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(40,0,0.6)" type = "d" training = "0123"/>
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_dirx[0],2))" unit = "Photon Implied Transverse Momentum [GeV]" binning = "(40,0,0.6)" type = "d" training = "0123"/>
-<var def = "sqrt(pow(#PE#*reco_track_diry[0],2)+pow(#PE#*reco_track_dirx[0],2))" unit = "Proton Transverse Momentum [GeV]" binning = "(40,0,2)" type = "d" training = "0123"/>
-
 
 <!--
 <var def = "stage1_2BDT_XGBOOSTNCPi0_mva" binning = "(40,0,1)"  unit = "NCpi0 BDT" type="d" logplot="false" training="4"/>
