@@ -111,7 +111,7 @@
     <training><cut>1</cut></training>
 </bdtfile>
 
-<bdtfile filename = "CUT_bnb_overlay_run3_G_v26.5.root" tag = "BNBOverlaysR3Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "BNB Other Train R3" >
+<bdtfile filename = "CUT_bnb_overlay_run1_v26.5.root" tag = "BNBOverlaysTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "BNB Other Train" >
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -123,7 +123,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "CUT_bnb_overlay_run3_G_v26.5.root" tag = "NCpi0R3Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "NCpi0 Train R3" >
+<bdtfile filename = "CUT_bnb_overlay_run1_v26.5.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "NCpi0 Train" >
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -188,7 +188,7 @@
         <param> subsample=0.9</param>   
     </method>
     <file
-        bkg_train_tag = "BNBOverlaysR3Train"
+        bkg_train_tag = "BNBOverlaysTrain"
         bkg_test_tag = "BNBOverlays"
         bkg_test_cut = "Entry$%10<4"
         sig_train_tag = "NCDeltaRadOverlayTrain"
@@ -215,7 +215,7 @@
         <param> subsample=0.9</param>   
     </method>
     <file      
-        bkg_train_tag = "NCpi0R3Train"
+        bkg_train_tag = "NCpi0Train"
         bkg_test_tag = "NCPi0"
         bkg_test_cut = "Entry$%10<4"
         sig_train_tag = "NCDeltaRadOverlayTrain"
@@ -257,12 +257,12 @@
 
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
 <precut def = "reco_shower_energy_max[0]>35" name = "Michel Cut"/>
+
 <precut def = "TMath::Min(reco_track_start_dist_to_SCB, reco_track_end_dist_to_SCB)>2" name = "Track Contained"/>
 
 <precut def = "(sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2))<20)" name = "Distance from Track Start to Vertex"/>
 <precut def = "(reco_shower_conversion_distance[0] <150)" name = "Shower Conv Distance"/>
 <precut def = "reco_track_displacement[0]<300" name = "Track Disp"/>
-
 
 <!--
 <precut def = "reco_vertex_dist_to_active_TPC > 5 &amp;&amp; reco_vertex_in_SCB " name = "Fiducial Vertex Cut" />
@@ -327,7 +327,7 @@
 <var def = "reco_vertex_dist_to_SCB" binning="(40,0,75)" unit = "Distance from vertex to SCB" type ="d" training=""/>
 <var def = "reco_vertex_dist_to_active_TPC" binning="(40,0,75)" unit = "Distance from vertex to active TPC" type ="d" training=""/>
 
-<var def = "reco_shower_energy_max[0]/1000.0" binning = "(40,0,0.4)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="0123"/>
+<var def = "reco_shower_energy_max[0]/1000.0" binning = "(18,0,0.5)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="0123"/>
 <var def = "reco_shower_nuscore[0]" binning = "(40, 0, 1)" unit = "Neutrino Slice Score" type = "d" logplot = "false"  training="0123"/>
 
 <var def = "reco_vertex_x" binning = "(40,-20,270)" unit = "Reco Vertex X [cm]" type="d" logplot="false" training=""/>
@@ -375,6 +375,11 @@
 <var def = "reco_shower_startx" binning = "(40,-20,270)" unit = "Reco Shower Start X [cm]" type="d" logplot="false" training=""/>
 <var def = "reco_shower_starty" binning = "(40,-140,140)" unit = "Reco Shower Start Y [cm]" type="d" logplot="false" training=""/>
 <var def = "reco_shower_startz" binning = "(40,-20,1100)" unit = "Reco Shower Start Z [cm]" type="d" logplot="false" training=""/>
+
+<!--adding the shower end point in XYZ-->
+<var def = "reco_shower_startx[0] + (reco_shower_length[0] * reco_shower_dirx[0])" unit = "Shower End X [cm]" binning = "(40,-20,270)" type = "d" training = ""  />
+<var def = "reco_shower_starty[0] + (reco_shower_length[0] * reco_shower_diry[0])" unit = "Shower End Y [cm]" binning = "(40,-140,140)" type = "d" training = ""  />
+<var def = "reco_shower_startz[0] + (reco_shower_length[0] * reco_shower_dirz[0])" unit = "Shower End Z [cm]" binning = "(40,-20,1100" type = "d" training = ""  />
 
 <!--- SSS BDT variable --> 
 <var def = "log10(Min$(isolation_min_dist_trk_shr))" binning = "(40,-1,3)" unit = "Min Dist from track to shower hit log[cm]" type="d" logplot="false" training="2"/>
@@ -446,8 +451,6 @@
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_dirx[0],2))" unit = "Photon Implied Transverse Momentum [GeV]" binning = "(40,0,0.6)" type = "d" training = "0123"/>
 <var def = "sqrt(pow(#PE#*reco_track_diry[0],2)+pow(#PE#*reco_track_dirx[0],2))" unit = "Proton Transverse Momentum [GeV]" binning = "(40,0,2)" type = "d" training = "0123"/>
 <var def = "(#GTM#-#PTM#)/(#GTM#+#PTM#)" unit = "Transverse Momentum Assymetry" binning = "(40,-1,1)" type = "d" training = "0123"/>
-
-
 
 <!--
 <var def = "stage1_2BDT_XGBOOSTNCPi0_mva" binning = "(40,0,1)"  unit = "NCpi0 BDT" type="d" logplot="false" training="4"/>

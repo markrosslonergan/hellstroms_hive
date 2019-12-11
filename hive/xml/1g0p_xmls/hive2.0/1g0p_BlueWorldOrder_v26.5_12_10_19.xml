@@ -109,7 +109,7 @@
     <training><cut>1</cut></training>
 </bdtfile>
 
-<bdtfile filename = "CUT_bnb_overlay_run3_G_v26.5.root" tag = "BNBOverlaysR3Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "BNB Other Train R3" >
+<bdtfile filename = "CUT_bnb_overlay_run1_v26.5.root" tag = "BNBOverlaysTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "BNB Other Train" >
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -120,7 +120,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "CUT_bnb_overlay_run3_G_v26.5.root" tag = "NCpi0R3Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "NCpi0 Train R3" >
+<bdtfile filename = "CUT_bnb_overlay_run1_v26.5.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "NCpi0 Train" >
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -182,7 +182,7 @@
         <param> subsample=0.9</param>   
     </method>
     <file
-        bkg_train_tag = "BNBOverlaysR3Train"
+        bkg_train_tag = "BNBOverlaysTrain"
         bkg_test_tag = "BNBOverlays"
         bkg_test_cut = "Entry$%10<4"
         sig_train_tag = "NCDeltaRadOverlayTrain"
@@ -209,7 +209,7 @@
         <param> subsample=0.9</param>   
     </method>
     <file      
-        bkg_train_tag = "NCpi0R3Train"
+        bkg_train_tag = "NCpi0Train"
         bkg_test_tag = "NCPi0"
         bkg_test_cut = "Entry$%10<4"
         sig_train_tag = "NCDeltaRadOverlayTrain"
@@ -313,7 +313,7 @@
 <var def = "reco_vertex_dist_to_SCB" binning="(40,0,75)" unit = "Distance from vertex to SCB" type ="d" training=""/>
 <var def = "reco_vertex_dist_to_active_TPC" binning="(40,0,75)" unit = "Distance from vertex to active TPC" type ="d" training=""/>
 
-<var def = "reco_shower_energy_max[0]/1000.0" binning = "(40,0,0.4)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="0123"/>
+<var def = "reco_shower_energy_max[0]/1000.0" binning = "(18,0,0.5)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="0123"/>
 <var def = "reco_shower_nuscore[0]" binning = "(40, 0, 1)" unit = "Neutrino Slice Score" type = "d" logplot = "false"  training="0123"/>
 
 <var def = "reco_vertex_x" binning = "(40,-20,270)" unit = "Reco Vertex X [cm]" type="d" logplot="false" training=""/>
