@@ -916,7 +916,7 @@ int bdt_XGBoost_importance(bdt_info &info){
             while (found!=std::string::npos){
                 size_t ndel = cconvert.find(del,found);
                 std::string s_int = cconvert.substr(found+stag.size(),ndel-found-stag.size());
-                int which_var = std::stoi(s_int);
+                int which_var = std::stoi(s_int)-1;
                 variable_uses[which_var]++;
                 std::string s_gain   = "";
                 //ok if we found a variable, add the gain, first locate it.
@@ -927,7 +927,7 @@ int bdt_XGBoost_importance(bdt_info &info){
                     if( ngainend !=std::string::npos)   s_gain = cconvert.substr(ngain+sgain.size(), ngainend-ngain-sgain.size()-1); 
                     size_t offset = 0;
                     double d_gain =  std::stod(s_gain,&offset);
-                    total_gain[which_var] = total_gain[which_var]+ d_gain;
+                    total_gain[which_var] +=  d_gain;
                 }        
                 std::cout<<" var "<<s_int<<" gain "<<s_gain<<std::endl;
                 found = cconvert.find(stag,ndel);
