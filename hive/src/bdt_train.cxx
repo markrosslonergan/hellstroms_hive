@@ -683,6 +683,7 @@ int bdt_XGtrain(bdt_info &info){
         //if(cotr>10) break;
     }
 
+
     // predict
     bst_ulong out_len = 0;
     const float* out_result = NULL;
@@ -794,6 +795,15 @@ int bdt_XGtrain(bdt_info &info){
     stest->Write();
     strain->Write();
     btrain->Write();
+    
+    
+    f->Close(); 
+    
+
+    bdt_XGBoost_importance(info, booster);
+   
+
+    
     return 0;
 
 }
@@ -879,17 +889,34 @@ int super_bdt_train(std::string &analysis_tag, const std::vector<bdt_info> & bdt
 
 }
 
+
 int bdt_XGBoost_importance(bdt_info &info){
-   
-    //some vectors to save info on each variable
-    std::vector<int> variable_uses(info.train_vars.size(),0); 
-    std::vector<double> total_gain(info.train_vars.size(),0.0); 
-    std::vector<double> mean_gain(info.train_vars.size(),0.0); 
-    
-    // create the booster to read in the saved model
     BoosterHandle booster;
     safe_xgboost(XGBoosterCreate(0, 0, &booster));
     safe_xgboost(XGBoosterLoadModel(booster,(info.identifier+".XGBoost.mod").c_str()));
+
+    return bdt_XGBoost_importance(info, booster);
+}
+
+int bdt_XGBoost_importance(bdt_info &info, BoosterHandle &booster){
+   
+    //some vectors to save info on each variable
+    int t_vars = info.train_vars.size()+info.spec_vars.size();
+    
+    std::vector<int> variable_uses(t_vars,0); 
+    std::vector<double> total_gain(t_vars,0.0); 
+    std::vector<double> mean_gain(t_vars,0.0); 
+    std::vector<int> train_var_id(t_vars,0);
+
+    std::cout<<"We have "<<t_vars<<" variables of which "<<info.train_vars.size()<<" are training variables"<<std::endl;
+    
+    std::vector<bool> is_training(t_vars,false);
+
+    for(int k=0; k< info.train_vars.size(); k++){
+        is_training.at(info.train_vars[k].id) = true;  
+        train_var_id[info.train_vars[k].id] = k;
+    }
+
 
     //Some storage for the info
     int with_stats = 1;
@@ -899,8 +926,7 @@ int bdt_XGBoost_importance(bdt_info &info){
 
     std::cout<<"XGBoost importance : "<<out_len<<std::endl;
 
-    for(size_t i=0; i<out_len ; ++i  ){
-
+    for(size_t i=0; i<out_len ; ++i){
         if((out_dump_array)[i]!=NULL){
             std::cout<<i<<" "<<(out_dump_array)[i]<<std::endl;  
             const std::string cconvert((out_dump_array)[i]);
@@ -916,7 +942,7 @@ int bdt_XGBoost_importance(bdt_info &info){
             while (found!=std::string::npos){
                 size_t ndel = cconvert.find(del,found);
                 std::string s_int = cconvert.substr(found+stag.size(),ndel-found-stag.size());
-                int which_var = std::stoi(s_int)-1;
+                int which_var = std::stoi(s_int);
                 variable_uses[which_var]++;
                 std::string s_gain   = "";
                 //ok if we found a variable, add the gain, first locate it.
@@ -929,7 +955,7 @@ int bdt_XGBoost_importance(bdt_info &info){
                     double d_gain =  std::stod(s_gain,&offset);
                     total_gain[which_var] +=  d_gain;
                 }        
-                std::cout<<" var "<<s_int<<" gain "<<s_gain<<std::endl;
+//                std::cout<<" var "<<s_int<<" gain "<<s_gain<<std::endl;
                 found = cconvert.find(stag,ndel);
             }
         }
@@ -948,28 +974,28 @@ int bdt_XGBoost_importance(bdt_info &info){
     for(int i = 0; i < sorted_by_uses.size(); i++){
         std::cout<<"sorted_by_uses["<<i<<"] = "<<sorted_by_uses[i]<<std::endl;
     }
-   
     for(int i = 0; i < info.train_vars.size(); i++){
          std::cout<<i<<":  "<<info.train_vars[i].unit<<std::endl;
     }
-*/
+    */
+
     std::cout<<"----------- Sort By Uses ----------------------"<<std::endl;
     std::cout<<"sorted_by_uses size = " <<sorted_by_uses.size()<<", variable_uses size = "<<variable_uses.size()<<std::endl;
     for(int i=0; i< variable_uses.size();i++){
         size_t is = sorted_by_uses[sorted_by_uses.size()-1-i];
-        std::cout<<i<<"  "<<" "<<is<<" Variable: "<<info.train_vars[is].unit<<"\n-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+        if(is_training[is])   std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
     }
 
     std::cout<<"----------- Sort By Total Gain ----------------------"<<std::endl;
     for(int i=0; i< variable_uses.size();i++){
         size_t is = sorted_by_total_gain[sorted_by_total_gain.size()-1-i];
-        std::cout<<i<<"  "<<" "<<is<<" Variable: "<<info.train_vars[is].unit<<"\n-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+        if(is_training[is])   std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
     }
 
     std::cout<<"----------- Sort By Mean Gain ----------------------"<<std::endl;
     for(int i=0; i< variable_uses.size();i++){
         size_t is = sorted_by_mean_gain[sorted_by_mean_gain.size()-1-i];
-        std::cout<<i<<"  "<<" "<<is<<" Variable: "<<info.train_vars[is].unit<<"\n-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+        if(is_training[is])   std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
     }
 
     std::cout<<"done!"<<std::endl;

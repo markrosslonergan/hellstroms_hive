@@ -521,7 +521,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         bdt_all_vars.push_back(t);
 
         if(is_spec){
-            bdt_spec_vars.push_back(t );            
+            bdt_spec_vars.push_back(t);            
             //std::cout<<" -- adding as pectator Variable "<<var_def<<" with binning: "<<var_binning<<std::endl;
         }else{
             bdt_train_vars.push_back(t);            
@@ -536,15 +536,30 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }
 
         //Loop over vec_methods
-        for(int k=0; k< var_train_int.size(); k++){
-            //Check to see if this variable is for training on this particular method
-            if(var_train_int[k]> vec_methods.size()){
-                std::cout<<"ERROR! BDT variable: "<<var_def <<" has been assigned to train on BDT "<<var_train_int[k]<<" But only "<<vec_methods.size()<<" has been defined!"<<std::endl;
-                exit(EXIT_FAILURE);
+        for(int p=0; p< vec_methods.size(); p++){
+
+             bool is_train = false;
+             for(int k=0; k< var_train_int.size(); k++){
+                    if(var_train_int[k]> vec_methods.size()){
+                            std::cout<<"ERROR! BDT variable: "<<var_def <<" has been assigned to train on BDT "<<var_train_int[k]<<" But only "<<vec_methods.size()<<" has been defined!"<<std::endl;
+                            exit(EXIT_FAILURE);
+                    }
+                    if(p==var_train_int[k]){
+                        is_train = true;
+                        break;
+                    }
+             }
+            if(is_train){
+                vec_methods[p].bdt_train_vars.push_back(t);
+                std::cout<<" -- so adding "<<var_def<<" as training to method "<<vec_methods[p].bdt_name<<std::endl;
+            }else{
+                vec_methods[p].bdt_spec_vars.push_back(t);
+
             }
-            vec_methods[var_train_int[k]].bdt_train_vars.push_back(t);
-            std::cout<<" -- so adding "<<var_def<<" as training to method "<<vec_methods[var_train_int[k]].bdt_name<<std::endl;
+
+
         }
+        
 
         n_var++;
         pVar = pVar->NextSiblingElement("var");
