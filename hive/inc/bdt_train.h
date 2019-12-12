@@ -47,7 +47,8 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_
 int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut);
 int bdt_XGtrain(bdt_info &info);
 int bdt_XGBoost_importance(bdt_info &info);
-
+int bdt_XGBoost_importance(bdt_info &info, BoosterHandle &booster);
+ 
 
 int super_bdt_train(std::string &analysis_tag, const std::vector<bdt_info> & bdt_infos, const std::vector<std::string> & s_tags, const std::vector<std::string> & b_tags, const std::string & additonal_sig_cuts, const std::string & additional_bkg_cuts);
 
