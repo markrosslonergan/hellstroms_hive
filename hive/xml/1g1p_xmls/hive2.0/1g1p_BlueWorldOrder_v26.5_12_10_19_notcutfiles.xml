@@ -9,8 +9,8 @@
 
 <bdtfile filename = "ncdeltarad_overlay_run1_v26.5.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(1.0,0.4,0.4)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
     <definition>
-        <cut> mctruth_is_delta_radiative==1 </cut>  
-        <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
+        <!--<cut> mctruth_is_delta_radiative==1 </cut>  
+         <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -106.5 &amp;&amp; mctruth_nu_vertex_y &lt; 106.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 10.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1026.8 </cut>
         <cut> mctruth_cc_or_nc == 1 </cut>
@@ -21,6 +21,7 @@
         <cut> sim_shower_pdg[0] == 22 </cut>
         <cut> sim_track_overlay_fraction[0] &lt; 0.8 </cut>
         <cut> sim_track_pdg[0] == 2212 </cut>
+        -->
     </definition>
 </bdtfile>
 
@@ -92,9 +93,9 @@
 <bdtfile filename = "ncdeltarad_overlay_run1_v26.5.root" tag = "NCDeltaRadOverlayTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(1.0,0.4,0.4)" plot_name = "NC Delta Train">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>  
-        <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
+            <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -106.5 &amp;&amp; mctruth_nu_vertex_y &lt; 106.5 </cut>
-        <cut> mctruth_nu_vertex_z &gt; 10.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1026.8 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 10.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1026.8 </cut> 
         <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 0</cut>
         <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
@@ -260,13 +261,14 @@
 <!-- ================================================== PRE-CUTS   ==================================================== -->
 
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
-<precut def = "reco_shower_energy_max[0]>35" name = "Michel Cut"/>
+<precut def = "reco_shower_energy_max[0]>30" name = "Michel Cut"/>
 
-<precut def = "TMath::Min(reco_track_start_dist_to_SCB, reco_track_end_dist_to_SCB)>2" name = "Track Contained"/>
+<precut def = "TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2" name = "Track Contained in SCB"/>
 
-<precut def = "(sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2))<20)" name = "Distance from Track Start to Vertex"/>
+<!--<precut def = "(sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2))<20)" name = "Distance from Track Start to Vertex"/>
+
 <precut def = "(reco_shower_conversion_distance[0] <150)" name = "Shower Conv Distance"/>
-<precut def = "reco_track_displacement[0]<300" name = "Track Disp"/>
+<precut def = "reco_track_displacement[0]<300" name = "Track Disp"/>-->
 
 <!--
 <precut def = "reco_vertex_dist_to_active_TPC > 5 &amp;&amp; reco_vertex_in_SCB " name = "Fiducial Vertex Cut" />
@@ -322,10 +324,11 @@
 <var def = "reco_vertex_in_SCB" binning="(4,-1,3)" unit = "Vertex in SCB" type ="d" training=""/>
 <var def = "reco_track_end_in_SCB" binning="(4,-1,3)" unit = "Track end in SCB" type ="d" training=""/>
 
-<var def = "reco_track_end_dist_to_SCB" binning="(40,0,20)" unit = "distance from track end to scb" type ="d" training=""/>
-<var def = "reco_track_end_dist_to_active_TPC" binning="(40,0,20)" unit = "distance from track end to active tpc" type ="d" training=""/>
+<var def = "reco_track_end_dist_to_SCB" binning="(40,0,20)" unit = "distance from track end to SCB" type ="d" training=""/>
+<var def = "reco_track_start_dist_to_SCB" binning="(40,0,20)" unit = "distance from track start to SCB" type ="d" training=""/>
+<var def = "reco_shower_start_dist_to_SCB" binning="(40,0,20)" unit = "distance from shower start to SCB" type ="d" training=""/>
 
-<var def = "TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)" binning="(40,0,20)" unit = "distance from track end/start to scb" type ="d" training=""/>
+<var def = "TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)" binning="(40,0,20)" unit = "distance from track end/start to SCB" type ="d" training=""/>
 <var def = "TMath::Min(reco_track_end_dist_to_active_TPC,reco_track_start_dist_to_active_TPC)" binning="(40,0,20)" unit = "distance from track end/start to active tpc" type ="d" training=""/>
 
 <var def = "reco_vertex_dist_to_SCB" binning="(40,0,75)" unit = "Distance from vertex to SCB" type ="d" training=""/>
