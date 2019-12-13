@@ -202,7 +202,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_run1_v26.5.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "NCpi0 Test" >
+<bdtfile filename = "bnb_overlay_run1_v26.5.root" tag = "NCPi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "NCPi0 Test" >
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -258,10 +258,10 @@
     </method>
     <file
         bkg_train_tag = "BNBextTrain" 
-        bkg_test_tag = "BNBext"
+        bkg_test_tag = "BNBextTest"
         bkg_test_cut = "Entry$%10<4" 
         sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlay"
+        sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "Entry$%10<4"
         />
     <scan min = "0.9" max = "1.0" steps="5"/>
@@ -284,10 +284,10 @@
     </method>
     <file
         bkg_train_tag = "BNBOverlaysTrain"
-        bkg_test_tag = "BNBOverlays"
+        bkg_test_tag = "BNBOverlaysTest"
         bkg_test_cut = "Entry$%10<4"
         sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlay"
+        sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "Entry$%10<4"
         />
     <scan min = "0.5" max = "1.0" steps="5"/>
@@ -311,10 +311,10 @@
     </method>
     <file      
         bkg_train_tag = "NCpi0Train"
-        bkg_test_tag = "NCPi0"
+        bkg_test_tag = "NCPi0Test"
         bkg_test_cut = "Entry$%10<4"
         sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlay"
+        sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "Entry$%10<4"
         />
     <scan min = "0.5" max = "1.0" steps="5"/>
@@ -338,10 +338,10 @@
     </method>
     <file      
         bkg_train_tag = "NueIntrinTrain" 
-        bkg_test_tag  = "NueIntrinTrain"  
+        bkg_test_tag  = "NueIntrinTest"  
         bkg_test_cut  = "Entry$%2==1"
         sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlay"
+        sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "Entry$%10<4"
         />
     <scan min = "0.5" max = "1.0" steps="5"/>
