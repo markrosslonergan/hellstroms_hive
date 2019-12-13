@@ -984,7 +984,7 @@ int bdt_XGBoost_importance(bdt_info &info, BoosterHandle &booster){
     cgain.cd();
 
 
-    std::cout<<"----------- Sort By Uses ----------------------"<<std::endl;
+    std::cout<<"----------- Sort By Uses: "<<info.identifier<<" ----------------------"<<std::endl;
     std::cout<<"sorted_by_uses size = " <<sorted_by_uses.size()<<", variable_uses size = "<<variable_uses.size()<<std::endl;
     for(int i=0; i< variable_uses.size();i++){
         size_t is = sorted_by_uses[sorted_by_uses.size()-1-i];
@@ -995,7 +995,7 @@ int bdt_XGBoost_importance(bdt_info &info, BoosterHandle &booster){
     TH1D htgain("tgain","tgain",info.train_vars.size(),0,info.train_vars.size());
     
 
-    std::cout<<"----------- Sort By Total Gain ----------------------"<<std::endl;
+    std::cout<<"----------- Sort By Total Gain: "<<info.identifier<<" ----------------------"<<std::endl;
     for(int i=0; i< variable_uses.size();i++){
         size_t is = sorted_by_total_gain[sorted_by_total_gain.size()-1-i];
         if(is_training[is]){
@@ -1009,7 +1009,7 @@ int bdt_XGBoost_importance(bdt_info &info, BoosterHandle &booster){
     cgain.SetBottomMargin(0.5);
     cgain.SaveAs(("XGBoost_"+info.identifier+"_var_import_total_gain.pdf").c_str(),"pdf");
 
-    std::cout<<"----------- Sort By Mean Gain ----------------------"<<std::endl;
+    std::cout<<"----------- Sort By Mean Gain: "<<info.identifier<<" ----------------------"<<std::endl;
     for(int i=0; i< variable_uses.size();i++){
         size_t is = sorted_by_mean_gain[sorted_by_mean_gain.size()-1-i];
         if(is_training[is])   std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
