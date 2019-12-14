@@ -385,8 +385,8 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
     pad0bot->SetGridx(); // vertical grid
     pad0bot->Draw();
 
-    double rmin  = 1.1;
-    double rmax = 1.1;
+    double rmin  = 0.75;
+    double rmax = 1.25;
 
     for(int i=0; i< files.size();i++){
 
