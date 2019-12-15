@@ -7,7 +7,7 @@
 
 <filedir>/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v26/</filedir>
 
-<bdtfile filename = "AllRun/Split/ncdeltarad_overlay_test_v26.5.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(1.0,0.4,0.4)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
+<bdtfile filename = "AllRun/Split/ncdeltarad_overlay_test_run1_v26.5.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(1.0,0.4,0.4)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <!--<cut> mctruth_is_delta_radiative==1 </cut>  
@@ -26,7 +26,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "AllRun/Split/ncdeltarad_overlay_test_v26.5.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
+<bdtfile filename = "AllRun/Split/ncdeltarad_overlay_test_run1_v26.5.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <!--    <cut> mctruth_daughters_pdg==22 &amp;&amp; mctruth_daughters_status_code==1 &amp;&amp; mctruth_daughters_endx>2 </cut>
@@ -39,7 +39,7 @@
 
 
 
-<bdtfile filename = "AllRun/Split/ncpi0_overlay_test_v26.5.root" tag = "NCPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB NC 1 #pi^{0}" scale = "1.0">
+<bdtfile filename = "AllRun/Split/ncpi0_overlay_test_run1_v26.5.root" tag = "NCPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB NC 1 #pi^{0}" scale = "1.0">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> mctruth_cc_or_nc==1 </cut>
@@ -48,7 +48,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "AllRun/Split/ccpi0_overlay_test_v26.5.root" tag = "CCPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.8,1.0)" plot_name = "BNB CC 1 #pi^{0}" scale = "1.0">
+<bdtfile filename = "AllRun/Split/ccpi0_overlay_test_run1_v26.5.root" tag = "CCPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.8,1.0)" plot_name = "BNB CC 1 #pi^{0}" scale = "1.0">
     <definition>
         <cut> mctruth_cc_or_nc==0 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
@@ -56,7 +56,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "AllRun/Split/bnb_overlay_test_v26.5.root" tag = "BNBOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "BNB Other" >
+<bdtfile filename = "AllRun/Split/bnb_overlay_test_run1_v26.5.root" tag = "BNBOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "BNB Other" >
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
@@ -65,7 +65,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "AllRun/Split/nue_overlay_test_v26.5.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "#nu_{e} Intrinsic" >
+<bdtfile filename = "AllRun/Split/nue_overlay_test_run1_v26.5.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "#nu_{e} Intrinsic" >
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> fabs(mctruth_nu_pdg)==12  </cut>
@@ -77,22 +77,22 @@
     <definition><cut>1</cut></definition>
 </bdtfile>
 
-<bdtfile filename = "data_5e19_GR_run1_v26.3.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
+<bdtfile filename = "data_5e19_run1_v26.51.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
-        <tor860_wcut> 4.029e19 </tor860_wcut>   
-        <E1DCNT_wcut> 8922516.0</E1DCNT_wcut>   
+        <tor860_wcut> 4.026e+19 </tor860_wcut>   
+        <E1DCNT_wcut> 8915733.0</E1DCNT_wcut>   
     </data>
 </bdtfile>
 
-<bdtfile filename = "AllRun/Split/bnbext_test_v26.51.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "AllRun/Split/bnbext_test_run1_v26.5.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 4.029e19 </tor860_wcut>   
-        <E1DCNT_wcut> 8922516.0</E1DCNT_wcut>   
-        <EXT>133033972.0</EXT>  
+        <tor860_wcut> 4.026e+19 </tor860_wcut>   
+        <E1DCNT_wcut> 8915733.0</E1DCNT_wcut>   
+        <EXT>36566176.0</EXT>  
     </data>
 </bdtfile>
 
@@ -139,14 +139,14 @@
 </bdtfile>
 
 
-<bdtfile filename = "AllRun/Split/bnbext_train_v26.51.root" tag = "BNBextTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Training" fillstyle = "3333" scale = "1">
+<bdtfile filename = "AllRun/Split/bnbext_train_v26.5.root" tag = "BNBextTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Training" fillstyle = "3333" scale = "1">
     <definition>
         <cut>1</cut>
     </definition>
     <training><cut>1</cut></training>
 </bdtfile>
 
-<bdtfile filename = "AllRun/Split/bnbext_test_v26.51.root" tag = "BNBextTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Test" fillstyle = "3333" scale = "1">
+<bdtfile filename = "AllRun/Split/bnbext_test_v26.5.root" tag = "BNBextTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Test" fillstyle = "3333" scale = "1">
     <definition>
         <cut>1</cut>
     </definition>
@@ -227,7 +227,7 @@
 
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
 
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(40,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(36,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees=1000</param>
         <param> tree_method=exact</param>
@@ -239,8 +239,8 @@
         <param> gamma=1.05</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will be.    -->
         <param> max_depth=6</param>    <!-- How many layers deep each tree -->
         <param> eta=0.01</param>        <!-- Learning Rate -->
-        <param> subsample=0.9</param> <!-- % of events passed to each tree -->
-        <param> colsample_bytree= 0.9</param>   <!-- % of features that are passed to each tree  -->
+        <param> subsample=0.8</param> <!-- % of events passed to each tree -->
+        <param> colsample_bytree= 0.8</param>   <!-- % of features that are passed to each tree  -->
         <param> verbosity=1</param>
     </method>
     <file
@@ -268,7 +268,8 @@
         <param> eta=0.01</param>        <!-- Learning Rate -->
         <param> subsample=0.9</param> <!-- % of events passed to each tree -->
         <param> colsample_bytree= 0.9</param>   <!-- % of features that are passed to each tree  -->
-        <param> verbosity=1</param>    </method>
+        <param> verbosity=1</param>   
+    </method>
     <file
         bkg_train_tag = "BNBOverlaysTrain"
         bkg_test_tag = "BNBOverlays"
@@ -295,7 +296,7 @@
         <param> eta=0.01</param>        <!-- Learning Rate -->
         <param> subsample=0.8</param> <!-- % of events passed to each tree -->
         <param> colsample_bytree= 0.8</param>   <!-- % of features that are passed to each tree  -->
-        <param> verbosity=1</param>    </method>
+        <param> verbosity=1</param>   
     </method>
     <file      
         bkg_train_tag = "NCpi0Train"
@@ -323,7 +324,8 @@
         <param> eta=0.01</param>        <!-- Learning Rate -->
         <param> subsample=0.8</param> <!-- % of events passed to each tree -->
         <param> colsample_bytree= 0.8</param>   <!-- % of features that are passed to each tree  -->
-        <param> verbosity=1</param>    </method>    </method>
+        <param> verbosity=1</param>  
+    </method>
     <file      
         bkg_train_tag = "NueIntrinTrain" 
         bkg_test_tag  = "NueIntrinTrain"  
@@ -389,10 +391,10 @@
 <var def = "reco_shower_implied_diry" binning = "(24,-1,1)" unit = "Shower Implied Dir Y" type="d" training=""/>
 <var def = "reco_shower_implied_dirz" binning = "(24,-1,1)" unit = "Shower Implied Dir Z" type="d" training=""/>
 
-<var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness" type="d" training = ""/>
-<var def = "TMath::Min(fabs(acos(reco_track_dirz)),fabs(acos(-reco_track_dirz)))" binning = "(24,0.0,1.571)" unit = "Track Beamyness" type="d" training = ""/>
-<var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness" type="d" training = ""/>
-<var def = "TMath::Min(fabs(acos(reco_track_diry)),fabs(acos(-reco_track_diry)))" binning = "(24,0.0,1.571)" unit = "Track Cosmicyness" type="d" training = ""/>
+<var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness" type="d" training = "0"/>
+<var def = "TMath::Min(fabs(acos(reco_track_dirz)),fabs(acos(-reco_track_dirz)))" binning = "(24,0.0,1.571)" unit = "Track Beamyness" type="d" training = "0"/>
+<var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness" type="d" training = "0"/>
+<var def = "TMath::Min(fabs(acos(reco_track_diry)),fabs(acos(-reco_track_diry)))" binning = "(24,0.0,1.571)" unit = "Track Cosmicyness" type="d" training = "0"/>
 
 <var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(24,0,4000)" unit = "Total PE in beamgate" type ="d" training=""/>
 <var def = "Min$(reco_shower_flash_shortest_distz)" binning ="(24,0,200)" unit = "Dist shower to flash in Z" type ="d" training=""/>
@@ -402,12 +404,12 @@
 
 <var def = "reco_track_end_dist_to_SCB" binning="(24,0,20)" unit = "distance from track end to SCB" type ="d" training=""/>
 <var def = "reco_track_start_dist_to_SCB" binning="(24,0,20)" unit = "distance from track start to SCB" type ="d" training=""/>
-<var def = "reco_shower_start_dist_to_SCB" binning="(24,0,20)" unit = "distance from shower start to SCB" type ="d" training=""/>
+<var def = "reco_shower_start_dist_to_SCB" binning="(24,0,20)" unit = "distance from shower start to SCB" type ="d" training="0"/>
 
-<var def = "TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)" binning="(24,0,20)" unit = "distance from track end/start to SCB" type ="d" training=""/>
+<var def = "TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)" binning="(24,0,20)" unit = "distance from track end/start to SCB" type ="d" training="0"/>
 <var def = "TMath::Min(reco_track_end_dist_to_active_TPC,reco_track_start_dist_to_active_TPC)" binning="(24,0,20)" unit = "distance from track end/start to active tpc" type ="d" training=""/>
 
-<var def = "reco_vertex_dist_to_SCB" binning="(24,0,75)" unit = "Distance from vertex to SCB" type ="d" training=""/>
+<var def = "reco_vertex_dist_to_SCB" binning="(24,0,75)" unit = "Distance from vertex to SCB" type ="d" training="0"/>
 <var def = "reco_vertex_dist_to_active_TPC" binning="(24,0,75)" unit = "Distance from vertex to active TPC" type ="d" training=""/>
 
 <!--<var def = "reco_shower_energy_max[0]/1000.0" binning = "(20,0,0.2)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="0123"/>-->
@@ -429,14 +431,14 @@
 <var def = "reco_shower_kalman_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx plane 0 (Kalman) [MeV/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx all planes (Kalman) [MeV/cm]" type = "d" logplot = "false" training ="013"/>
 
-<var def = "reco_shower3d_dEdx_plane2[0]" binning = "(24,0,10.0)" unit = "Shower3D dedx plane 2 [mev/cm]" type = "d" logplot = "false" training ="013"/>
+<var def = "reco_shower3d_dEdx_plane2[0]" binning = "(24,0,10.0)" unit = "Shower3D dedx plane 2 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower3d_dEdx_plane1[0]" binning = "(24,0,10.0)" unit = "Shower3D dedx plane 1 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower3d_dEdx_plane0[0]" binning = "(24,0,10.0)" unit = "Shower3D dedx plane 0 [mev/cm]" type = "d" logplot = "false" training =""/>
 
 <var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,10.0)" unit = "median dedx plane 2 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,10.0)" unit = "median dedx plane 1 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "median dedx plane 0 [mev/cm]" type = "d" logplot = "false" training =""/>
-<var def = "reco_shower_dEdx_amalgamated[0]" binning="(24,0.0,10.0)" unit = "Amalgamated Shower dE/dx [Mev/cm]" type = "d" logplot = "false"  training = "013"/>
+<var def = "reco_shower_dEdx_amalgamated[0]" binning="(24,0.0,10.0)" unit = "Amalgamated Shower dE/dx [Mev/cm]" type = "d" logplot = "false"  training = ""/>
 
 <!--
 <var def = "((reco_shower_kalman_exists*(reco_shower_kalman_median_dEdx_plane2*(reco_shower_kalman_median_dEdx_plane2>0)+(reco_shower_kalman_median_dEdx_plane2<0)*(reco_shower_kalman_median_dEdx_plane1>0)*reco_shower_kalman_median_dEdx_plane1+(reco_shower_kalman_median_dEdx_plane2<0 &amp;&amp; reco_shower_kalman_median_dEdx_plane1<0 &amp;&amp; reco_shower_kalman_median_dEdx_plane0>0)*reco_shower_kalman_median_dEdx_plane0)+(reco_shower_kalman_exists==0 &amp;&amp; reco_shower3d_dEdx_plane2>0)*reco_shower3d_dEdx_plane2)!=0)*(reco_shower_kalman_exists*(reco_shower_kalman_median_dEdx_plane2*(reco_shower_kalman_median_dEdx_plane2>0)+(reco_shower_kalman_median_dEdx_plane2<0)*(reco_shower_kalman_median_dEdx_plane1>0)*reco_shower_kalman_median_dEdx_plane1+(reco_shower_kalman_median_dEdx_plane2<0 &amp;&amp; reco_shower_kalman_median_dEdx_plane1<0 &amp;&amp; reco_shower_kalman_median_dEdx_plane0>0)*reco_shower_kalman_median_dEdx_plane0)+(reco_shower_kalman_exists==0 &amp;&amp; reco_shower3d_dEdx_plane2>0)*reco_shower3d_dEdx_plane2)+((reco_shower_kalman_exists*(reco_shower_kalman_median_dEdx_plane2*(reco_shower_kalman_median_dEdx_plane2>0)+(reco_shower_kalman_median_dEdx_plane2<0)*(reco_shower_kalman_median_dEdx_plane1>0)*reco_shower_kalman_median_dEdx_plane1+(reco_shower_kalman_median_dEdx_plane2<0 &amp;&amp; reco_shower_kalman_median_dEdx_plane1<0 &amp;&amp; reco_shower_kalman_median_dEdx_plane0>0)*reco_shower_kalman_median_dEdx_plane0)+(reco_shower_kalman_exists==0 &amp;&amp; reco_shower3d_dEdx_plane2>0)*reco_shower3d_dEdx_plane2)==0)*reco_shower_dEdx_amalgamated" binning = "(40,0,10.0)" unit = "Huge dEdx [Mev/cm]" type = "d" logplot = "false" training = ""/>
@@ -445,9 +447,9 @@
 <!-- shower geometry + calorimetry -->
 <var def = "reco_shower_impact_parameter[0]" binning = "(24,0,1000)" unit = "Shower Impact Parameter [cm]" type="d" logplot="false" training="0123"/>
 <var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(24,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d" logplot="false" training="0123"/>
-<var def = "reco_shower_implied_dirx/reco_shower_dirx" binning = "(24,-1,3)" unit = "Shower Implied Dirx/Pandora Dirx" type="d" logplot="false" training="0123"/>
-<var def = "reco_shower_implied_diry/reco_shower_diry" binning = "(24,-1,3)" unit = "Shower Implied Diry/Pandora Diry" type="d" logplot="false" training="0123"/>
-<var def = "reco_shower_implied_dirz/reco_shower_dirz" binning = "(46,-1,3)" unit = "Shower Implied Dirz/Pandora Dirz" type="d" logplot="false" training="0123"/>
+<var def = "reco_shower_implied_dirx/reco_shower_dirx" binning = "(24,-1,3)" unit = "Shower Implied Dirx/Pandora Dirx" type="d" logplot="false" training=""/>
+<var def = "reco_shower_implied_diry/reco_shower_diry" binning = "(24,-1,3)" unit = "Shower Implied Diry/Pandora Diry" type="d" logplot="false" training=""/>
+<var def = "reco_shower_implied_dirz/reco_shower_dirz" binning = "(46,-1,3)" unit = "Shower Implied Dirz/Pandora Dirz" type="d" logplot="false" training=""/>
 <var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d" logplot = "false"  training="0123"/>
 <var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(24,0 ,2000)" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="0123"/>
 <var def = "reco_shower_opening_angle[0]" binning = "(24,0,1)" unit = "Reconstructed Shower OpAng [cm]" type = "d" logplot = "false"  training="0123"/>
@@ -490,8 +492,8 @@
 <var def = "Min$(sss_candidate_impact_parameter/sss_candidate_min_dist)" binning = "(24,0,1.5)" unit = "impact_parameter" type="d" training="2"/>
 
 <!-- shower + track vars -->
-<var def = "reco_shower_conversion_distance[0]" binning = "(24,0,100)" unit = " Reconstructed Shower conversion distance [cm]" type = "d"   logplot="true" training=""/>
-<var def = "log10(reco_shower_conversion_distance[0])" binning = "(24,-2,3)" unit = " Reconstructed Shower conversion distance Log[cm]" type = "d"   logplot="true" training="0123"/>
+<var def = "reco_shower_conversion_distance[0]" binning = "(24,0,100)" unit = " Reconstructed Shower conversion distance [cm]" type = "d"   logplot="true" training="0123"/>
+<var def = "log10(reco_shower_conversion_distance[0])" binning = "(24,-2,3)" unit = " Reconstructed Shower conversion distance Log[cm]" type = "d"   logplot="true" training=""/>
 <var def = "log10(sqrt(pow(reco_track_startx[0]-reco_shower_startx[0],2)+pow(reco_track_starty[0]-reco_shower_starty[0],2)+pow(reco_track_startz[0]-reco_shower_startz[0],2)))" binning = "(24,-2,3)" unit = "Distance from Track Start to Shower Start Log10[cm]" type="d" training=""/>
 <!--<var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(5,200,700)" unit = "Total Visible Energy [MeV]" type = "d" training="01"  />-->
 <var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(5,200,700)" unit = "Total Visible Energy [MeV]" type = "d" training="01" covarfile="/uboone/app/users/markrl/SBNfit_uBooNE/new_davio/quick/whipping_star/build/bin/uBooNE_v19/constraint_test.root" covarname="before" />
@@ -520,9 +522,9 @@
 
 <!-- Track PID -->
 <var def = "log(reco_track_pid_bragg_likelihood_mip_plane2[#LT#]/reco_track_pid_bragg_likelihood_p_plane2[#LT#])" binning = "(24, -5, 7)" unit = "Log Bragg Likelihood MIP/p Plane 2" type = "d" training = "013"/>
-<var def = "reco_track_pid_chi2_mu_plane2[#LT#] - reco_track_pid_chi2_p_plane2[#LT#]" binning = "(24, -400, 75)" unit = "#chi^{2}_{#mu} - #chi^{2}_{p} Plane 2" type = "d" training = "013"/>   
+<var def = "reco_track_pid_chi2_mu_plane2[#LT#] - reco_track_pid_chi2_p_plane2[#LT#]" binning = "(24, -400, 75)" unit = "#chi^{2}_{#mu} - #chi^{2}_{p} Plane 2" type = "d" training = ""/>   
 <var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(24, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" logplot = "false" training = ""/>
-<var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(24,-2,2)"  unit ="Log( Three Plane Track PID )" type = "d" logplot = "false" training="013"/>
+<var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(24,-2,2)"  unit ="Log( Three Plane Track PID )" type = "d" logplot = "false" training=""/>
 
 <!-- Delta variables -->
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" logplot = "false" training = "0123" /> 
