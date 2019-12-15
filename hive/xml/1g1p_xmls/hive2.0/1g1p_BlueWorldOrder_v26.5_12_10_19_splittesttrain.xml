@@ -31,6 +31,15 @@
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> (Entry$%10 &gt; 5) </cut>
+
+        <!--        <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut> 
+       <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 0</cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
+  -->
         <!--    <cut> mctruth_daughters_pdg==22 &amp;&amp; mctruth_daughters_status_code==1 &amp;&amp; mctruth_daughters_endx>2 </cut>
         <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 0</cut>
@@ -193,7 +202,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_run1_v26.5.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "NCpi0 Test" >
+<bdtfile filename = "bnb_overlay_run1_v26.5.root" tag = "NCPi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "NCPi0 Test" >
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -249,12 +258,16 @@
     </method>
     <file
         bkg_train_tag = "BNBextTrain" 
-        bkg_test_tag = "BNBext"
-        bkg_test_cut = "Entry$%10<4" 
+        bkg_test_tag = "BNBextTest"
+        bkg_test_cut = "1"
         sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlay"
-        sig_test_cut = "Entry$%10<4"
+        sig_test_tag = "NCDeltaRadOverlayTest"
+        sig_test_cut = "1"
         />
+    <!-- bkg_test_cut = "Entry$%10<4"
+          sig_test_cut = "Entry$%10<4"
+       -->
+
     <scan min = "0.9" max = "1.0" steps="5"/>
 </mva>
 
@@ -275,11 +288,11 @@
     </method>
     <file
         bkg_train_tag = "BNBOverlaysTrain"
-        bkg_test_tag = "BNBOverlays"
-        bkg_test_cut = "Entry$%10<4"
+        bkg_test_tag = "BNBOverlaysTest"
+        bkg_test_cut = "1"
         sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlay"
-        sig_test_cut = "Entry$%10<4"
+        sig_test_tag = "NCDeltaRadOverlayTest"
+        sig_test_cut = "1"
         />
     <scan min = "0.5" max = "1.0" steps="5"/>
 </mva>
@@ -302,11 +315,11 @@
     </method>
     <file      
         bkg_train_tag = "NCpi0Train"
-        bkg_test_tag = "NCPi0"
-        bkg_test_cut = "Entry$%10<4"
+        bkg_test_tag = "NCPi0Test"
+        bkg_test_cut = "1"
         sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlay"
-        sig_test_cut = "Entry$%10<4"
+        sig_test_tag = "NCDeltaRadOverlayTest"
+        sig_test_cut = "1"
         />
     <scan min = "0.5" max = "1.0" steps="5"/>
 </mva>
@@ -329,11 +342,11 @@
     </method>
     <file      
         bkg_train_tag = "NueIntrinTrain" 
-        bkg_test_tag  = "NueIntrinTrain"  
-        bkg_test_cut  = "Entry$%2==1"
+        bkg_test_tag  = "NueIntrinTest"  
+        bkg_test_cut  = "1"
         sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlay"
-        sig_test_cut = "Entry$%10<4"
+        sig_test_tag = "NCDeltaRadOverlayTest"
+        sig_test_cut = "1"
         />
     <scan min = "0.5" max = "1.0" steps="5"/>
 </mva>
@@ -524,10 +537,10 @@
 <var def = "reco_track_num_daughters" binning = "(3,0,3)" unit = "Num Daughters from Track" type="d" training="0123"/>
 
 <!-- Track PID -->
-<var def = "log(reco_track_pid_bragg_likelihood_mip_plane2[#LT#]/reco_track_pid_bragg_likelihood_p_plane2[#LT#])" binning = "(24, -5, 7)" unit = "Log Bragg Likelihood MIP/p Plane 2" type = "d" training = "013"/>
-<var def = "reco_track_pid_chi2_mu_plane2[#LT#] - reco_track_pid_chi2_p_plane2[#LT#]" binning = "(24, -400, 75)" unit = "#chi^{2}_{#mu} - #chi^{2}_{p} Plane 2" type = "d" training = "013"/>   
+<var def = "log(reco_track_pid_bragg_likelihood_mip_plane2[#LT#]/reco_track_pid_bragg_likelihood_p_plane2[#LT#])" binning = "(24, -5, 7)" unit = "Log Bragg Likelihood MIP/p Plane 2" type = "d" training = ""/>
+<var def = "reco_track_pid_chi2_mu_plane2[#LT#] - reco_track_pid_chi2_p_plane2[#LT#]" binning = "(24, -400, 75)" unit = "#chi^{2}_{#mu} - #chi^{2}_{p} Plane 2" type = "d" training = ""/>   
 <var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(24, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" logplot = "false" training = ""/>
-<var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(24,-2,2)"  unit ="Log( Three Plane Track PID )" type = "d" logplot = "false" training="013"/>
+<var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(24,-2,2)"  unit ="Log( Three Plane Track PID )" type = "d" logplot = "false" training=""/>
 
 <!-- Delta variables -->
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" logplot = "false" training = "0123" /> 
