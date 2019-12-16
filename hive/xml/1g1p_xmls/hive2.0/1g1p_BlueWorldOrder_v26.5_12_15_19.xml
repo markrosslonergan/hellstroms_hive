@@ -343,7 +343,7 @@
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
 <precut def = "reco_shower_energy_max[0]>30" name = "Michel Cut"/>
 <precut def = "TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2" name = "Track Contained in SCB"/>
-<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/>
+<!--<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->
 
 <!--<precut def = "(sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2))<20)" name = "Distance from Track Start to Vertex"/>
 
