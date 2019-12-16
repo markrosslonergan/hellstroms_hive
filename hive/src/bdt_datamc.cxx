@@ -354,7 +354,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             std::cout<<"Starting on variable "<<var.name<<std::endl;
             
-            TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1801,1600); //1801
+            TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1801,1200); //1600
             cobs->cd();
 
             if(false&&do_subtraction){
@@ -371,12 +371,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             if(var.has_covar){
                 TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
                 TMatrixD * covar_m = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
-                TMatrixD * covar_m2 = (TMatrixD*)covar_f->Get("after");
+                //TMatrixD * covar_m2 = (TMatrixD*)covar_f->Get("after");
 
                 for(int c=0; c< tsum->GetNbinsX()+1;c++){
-                    tsum->SetBinError(c+1, sqrt((*covar_m)(c,c)));
-                    tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
-                    //tsum->SetBinError(c+1, 0.0001);
+                    double dv = tsum->GetBinContent(c+1);
+                    tsum->SetBinError(c+1, sqrt((*covar_m)(c,c)*dv*dv));
+                    //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
+//                    tsum->SetBinError(c+1, 0.0001);
                 }
                 covar_f->Close();
             }else{
@@ -576,6 +577,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
 
+
+
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
             if(!stack_mode) l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,2)).c_str(),"lp");	
@@ -633,6 +636,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pad0bot->cd();       // pad0bot becomes the current pad
 
 
+            std::cout<<"BNLAR ";
+            for(int l=0; l<tsum->GetNbinsX(); l++){
+                    std::cout<<tsum->GetBinContent(l+1)<<" , ";
+            }
+            std::cout<<std::endl;
 
 
             //tsum->Rebin(data_rebin);

@@ -425,7 +425,7 @@ int main (int argc, char *argv[]){
         super_bdt_train(analysis_tag, bdt_infos, s_tags, b_tags, "1", "1");
 
         for(int i=0; i< 6; i++){
-            bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size");
+            bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size",vars);
         }
 
         //and apply it
@@ -845,7 +845,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
     if(which_stage==-1) which_stage ==1;
 
 
-    return bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string);
+    return bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars);
 
 
 }else if(mode_option == "recomc"){

@@ -1096,7 +1096,7 @@ unsigned long  bdt_file::jenkins_hash(std::string key) {
 }
 
 
-int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string){
+int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars){
 
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
     this->teventweight->AddFriend(this->tvertex);
@@ -1128,6 +1128,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     int original_entry = 0;
     double plot_pot = 13.2e20;
 
+    std::vector<double> simple_bdt_vars(vars.size(),0.0);
     std::vector<double> bdt_mvas(bdt_infos.size(),0.0);
 
     TTreeFormula * CUT = new TTreeFormula("CUT", sbnfit_cuts.c_str(),this->tvertex);
@@ -1142,14 +1143,26 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
         t_sbnfit_simpletree->Branch(nam.c_str(), &(bdt_mvas[i]));
     }
 
+    for(int i=0; i< vars.size(); i++){
+            std::string tnam = "simple_bdt_var_"+std::to_string(i);
+            t_sbnfit_simpletree->Branch(tnam.c_str(),&(simple_bdt_vars[i]));
+    }
+
     TTreeFormula* weight = new TTreeFormula("weight_formula ",this->weight_branch.c_str(),this->tvertex);
     TTreeFormula* var = new TTreeFormula("var_formula ",input_string.c_str(),this->tvertex);
 
-    std::vector<TTreeFormula* > form_vec;
+    std::vector<TTreeFormula*> form_vec;
+    std::vector<TTreeFormula*> form_vec_vars;
+
     for(int i=0; i< bdt_infos.size();i++){
         std::string nam = this->tag+"_"+bdt_infos[i].identifier+".mva";
         form_vec.push_back(new TTreeFormula((bdt_infos[i].identifier+"_mva_formula").c_str(), nam.c_str(),this->tvertex));
     }
+
+    for(int i=0; i< vars.size();i++){
+        form_vec_vars.push_back(new TTreeFormula((vars[i].safe_unit).c_str(), vars[i].name.c_str(),this->tvertex));
+    }
+
 
     std::string var_string = input_string;
     if(var_string == "") var_string = "reco_vertex_size";
@@ -1172,6 +1185,11 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
             for(int j=0; j< bdt_infos.size();j++){
                 form_vec[j]->GetNdata();
                 bdt_mvas[j] = form_vec[j]->EvalInstance();
+            }
+
+            for(int j=0; j< vars.size();j++){
+                form_vec_vars[j]->GetNdata();
+                simple_bdt_vars[j] = form_vec_vars[j]->EvalInstance();
             }
 
             t_sbnfit_simpletree->Fill();

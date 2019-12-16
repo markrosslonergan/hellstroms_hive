@@ -614,6 +614,8 @@ int bdt_XGtrain(bdt_info &info){
     safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.train.dat").c_str(), silent, &dtrain));
     safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.test.dat").c_str(), silent, &dtest));
 
+
+
     // create the booster
     BoosterHandle booster;
     DMatrixHandle eval_dmats[2] = {dtrain, dtest};
@@ -650,6 +652,8 @@ int bdt_XGtrain(bdt_info &info){
     safe_xgboost(XGBoosterSetParam(booster, "eta", "0.02"));
     safe_xgboost(XGBoosterSetParam(booster, "subsample", "0.9"));
     */
+
+
 
     std::vector<double> iteration;
     std::vector<double> test_error;
