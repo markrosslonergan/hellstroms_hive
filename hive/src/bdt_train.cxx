@@ -1,6 +1,6 @@
 #include "bdt_train.h"
 
-int plot_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
+int plot_train(bdt_info &info, bdt_file *signal_train_file, bdt_file *signal_test_file,   bdt_file *background_train_file,  bdt_file *background_test_file){
     std::vector<method_struct> methods = {info.TMVAmethod};
     std::vector<bdt_variable> variables = info.train_vars;
 
@@ -39,11 +39,11 @@ int plot_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
     trainTree->SetBranchAddress("classID",&train_classID);
     testTree->SetBranchAddress((info.TMVAmethod.str).c_str(),&test_response);
     trainTree->SetBranchAddress((info.TMVAmethod.str).c_str(),&train_response);
- 
+
     //testTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&test_response);
     //trainTree->SetBranchAddress((info.TMVAmethod.bdt_tag).c_str(),&train_response);
- //   testTree->SetBranchAddress("BDT",&test_response);
-   // trainTree->SetBranchAddress("BDT",&train_response);
+    //   testTree->SetBranchAddress("BDT",&test_response);
+    // trainTree->SetBranchAddress("BDT",&train_response);
 
     testTree->SetBranchAddress("weight",&test_wei);
     trainTree->SetBranchAddress("weight",&train_wei);
@@ -90,13 +90,13 @@ int plot_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
     std::cout<<"--- Background Train V Test Samples : "<<bkg_KS<<std::endl;
 
 
-    test_signal->SetLineColor(signal_file->col);
-    train_signal->SetLineColor(signal_file->col);
-    train_signal->SetMarkerColor(signal_file->col);
+    test_signal->SetLineColor(signal_test_file->col);
+    train_signal->SetLineColor(signal_train_file->col);
+    train_signal->SetMarkerColor(signal_train_file->col);
 
-    train_bkg->SetLineColor(background_file->col);
-    train_bkg->SetMarkerColor(background_file->col);
-    test_bkg->SetLineColor(background_file->col);
+    train_bkg->SetLineColor(background_test_file->col);
+    train_bkg->SetMarkerColor(background_train_file->col);
+    test_bkg->SetLineColor(background_train_file->col);
 
     train_signal->SetLineWidth(1);
     train_signal->SetLineWidth(1);
@@ -128,10 +128,10 @@ int plot_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
     l->SetFillStyle(0);
     l->SetNColumns(2);
 
-    l->AddEntry(test_signal, ("Test "+signal_file->plot_name).c_str(),"l");	
-    l->AddEntry(train_signal, ("Train "+signal_file->plot_name).c_str(),"p");	
-    l->AddEntry(test_bkg, ("Test "+background_file->plot_name).c_str(),"l");	
-    l->AddEntry(train_bkg, ("Train "+background_file->plot_name).c_str(),"p");	
+    l->AddEntry(test_signal, ("Test "+signal_train_file->plot_name).c_str(),"l");	
+    l->AddEntry(train_signal, ("Train "+signal_test_file->plot_name).c_str(),"p");	
+    l->AddEntry(test_bkg, ("Test "+background_train_file->plot_name).c_str(),"l");	
+    l->AddEntry(train_bkg, ("Train "+background_test_file->plot_name).c_str(),"p");	
     l->Draw();
 
     TLatex pottex;
@@ -175,19 +175,18 @@ int plot_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
 
 }
 
-int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
+int bdt_train(bdt_info& info, bdt_file *signal_train_file, bdt_file * signal_test_file, bdt_file * background_train_file, bdt_file *background_test_file){
 
     std::vector<method_struct> methods = {info.TMVAmethod};
     std::vector<bdt_variable> variables = info.train_vars;
 
-    return bdt_train(info, signal_file, background_file, variables, methods);
+    return bdt_train(info, signal_train_file,signal_test_file, background_train_file,background_test_file, variables, methods);
 }
 
-int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, std::vector<bdt_variable> variables, std::vector<method_struct> & methods){
+int bdt_train(bdt_info &info, bdt_file *signal_train_file, bdt_file * signal_test_file, bdt_file * background_train_file, bdt_file *background_test_file, std::vector<bdt_variable>& variables, std::vector<method_struct> & methods){
 
     std::string const name = info.identifier;
     TFile * outfile = TFile::Open((name+"_training.root").c_str(), "recreate");
-
 
     TMVA::Factory * factory = new TMVA::Factory(name.c_str(), outfile,
             //"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
@@ -195,35 +194,39 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
     TMVA::DataLoader * dataloader = new TMVA::DataLoader(("BDTxmls_"+name).c_str());
 
     int bdt_precut_stage = 1;
-    TCut sig_tcut =  TCut(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
-    TCut back_tcut = TCut(background_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
+    TCut sig_traincut =  TCut(signal_train_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
+    TCut back_traincut = TCut(background_train_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 
-    TTree * background_ttree_prefiltered = (TTree*)background_file->tvertex->CopyTree(back_tcut);
-    TTree * signal_ttree_prefiltered = (TTree*)signal_file->tvertex->CopyTree(sig_tcut);
+    TCut sig_testcut =  TCut(("("+signal_test_file->getStageCuts(bdt_precut_stage,-9,-9)+"&&"+info.TMVAmethod.sig_test_cut+")" ).c_str());
+    TCut back_testcut =  TCut(("("+background_test_file->getStageCuts(bdt_precut_stage,-9,-9)+"&&"+info.TMVAmethod.bkg_test_cut+")" ).c_str());
 
-    dataloader->AddSignalTree(signal_ttree_prefiltered);
-    int signal_entries = signal_file->tvertex->GetEntries(sig_tcut);
+    TTree * background_traintree_prefiltered = (TTree*)background_train_file->tvertex->CopyTree(back_traincut);
+    TTree * signal_traintree_prefiltered = (TTree*)signal_train_file->tvertex->CopyTree(sig_traincut);
 
-    dataloader->AddBackgroundTree(background_ttree_prefiltered);
-    int background_entries = background_file->tvertex->GetEntries(back_tcut);
+    TTree * background_testtree_prefiltered = (TTree*)background_test_file->tvertex->CopyTree(back_testcut);
+    TTree * signal_testtree_prefiltered = (TTree*)signal_test_file->tvertex->CopyTree(sig_testcut);
 
+    dataloader->AddSignalTree(signal_traintree_prefiltered,1.0,TMVA::Types::ETreeType::kTraining);
+    dataloader->AddSignalTree(signal_testtree_prefiltered,1.0,TMVA::Types::ETreeType::kTesting);
 
-    dataloader->SetSignalWeightExpression(signal_file->weight_branch.c_str());
-    dataloader->SetBackgroundWeightExpression(background_file->weight_branch.c_str());
+    int signal_train_entries = signal_train_file->tvertex->GetEntries(sig_traincut);
+    int signal_test_entries = signal_test_file->tvertex->GetEntries(sig_testcut);
+
+    dataloader->AddBackgroundTree(background_traintree_prefiltered,1.0,TMVA::Types::ETreeType::kTraining);
+    dataloader->AddBackgroundTree(background_testtree_prefiltered,1.0,TMVA::Types::ETreeType::kTesting);
+
+    int background_train_entries = background_train_file->tvertex->GetEntries(back_traincut);
+    int background_test_entries  = background_test_file->tvertex->GetEntries(back_testcut);
+
+    dataloader->SetSignalWeightExpression(signal_train_file->weight_branch.c_str());
+    dataloader->SetBackgroundWeightExpression(background_train_file->weight_branch.c_str());
 
     for(bdt_variable &var: variables) dataloader->AddVariable(var.name.c_str());
 
-    std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
-    std::cout<<"PREFILTERED signal_entries: "<<signal_ttree_prefiltered->GetEntries()<<" background_entries: "<<background_ttree_prefiltered->GetEntries()<<std::endl;
+    std::cout<<"signal_train_entries: "<<signal_train_entries<<" background_train_entries: "<<background_train_entries<<std::endl;
+    std::cout<<"signal_test_entries: "<<signal_test_entries<<" background_test_entries: "<<background_test_entries<<std::endl;
 
-
-    dataloader->PrepareTrainingAndTestTree("1","1",
-            "nTrain_Signal="+std::to_string(floor(signal_entries*info.TMVAmethod.training_fraction))+":nTrain_Background="+std::to_string(floor(background_entries*info.TMVAmethod.training_fraction))+":SplitMode=Random:NormMode=NumEvents:!V");
-    // "nTrain_Signal=66629:nTrain_Background=49472:nTest_Signal=15578:nTest_Background=11885:SplitMode=Random:NormMode=NumEvents:!V"
-    //"SplitMode=Random:NormMode=NumEvents:!V");
-
-    //factory.PrepareTrainingAndTestTree(ROOT.TCut(),"NormMode=EqualNumEvents:SplitMode=Block:nTrain_Signal=%s:nTest_Signal=%s:nTrain_Background=%s:nTest_Background=%s"%(nTrain_Signal,nTest_Signal,nTrain_Background,nTest_Background))
-
+    dataloader->PrepareTrainingAndTestTree("1","1","NormMode=NumEvents:!V");
 
     for(method_struct const & method : methods) factory->BookMethod(dataloader, method.type, method.str, method.option);
 
@@ -239,72 +242,8 @@ int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, s
     return 0;
 }
 
-// Separate training and plotting variables
-int bdt_train(bdt_info info, bdt_file *signal_file, bdt_file *background_file, std::vector<bdt_variable> train_variables, std::vector<bdt_variable> plot_variables, std::vector<method_struct> & methods){
 
-    std::string const name = info.identifier;
-    TFile * outfile = TFile::Open((name+"_training.root").c_str(), "recreate");
-
-
-    TMVA::Factory * factory = new TMVA::Factory(name.c_str(), outfile,
-            //"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
-        "!V:!Silent:Color:DrawProgressBar:AnalysisType=Classification");
-    TMVA::DataLoader * dataloader = new TMVA::DataLoader(("BDTxmls_"+name).c_str());
-
-    int bdt_precut_stage = 1;
-    TCut sig_tcut =  TCut(signal_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
-    TCut back_tcut = TCut(background_file->getStageCuts(bdt_precut_stage,-9,-9).c_str());
-
-    TTree * background_ttree_prefiltered = (TTree*)background_file->tvertex->CopyTree(back_tcut);
-    TTree * signal_ttree_prefiltered = (TTree*)signal_file->tvertex->CopyTree(sig_tcut);
-
-    dataloader->AddSignalTree(signal_ttree_prefiltered);
-    int signal_entries = signal_file->tvertex->GetEntries(sig_tcut);
-
-    dataloader->AddBackgroundTree(background_ttree_prefiltered);
-    int background_entries = background_file->tvertex->GetEntries(back_tcut);
-
-
-    dataloader->SetSignalWeightExpression(signal_file->weight_branch.c_str());
-    dataloader->SetBackgroundWeightExpression(background_file->weight_branch.c_str());
-
-    //  for (bdt_variable &var: plot_variables) dataloader->AddSpectator(var.name.c_str() );
-
-    for(bdt_variable &var: train_variables) dataloader->AddVariable(var.name.c_str());
-
-    std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
-    std::cout<<"PREFILTERED signal_entries: "<<signal_ttree_prefiltered->GetEntries()<<" background_entries: "<<background_ttree_prefiltered->GetEntries()<<std::endl;
-
-
-    dataloader->PrepareTrainingAndTestTree(sig_tcut, back_tcut,
-            "nTrain_Signal="+std::to_string(floor(signal_entries*0.65))+":nTrain_Background="+std::to_string(floor(background_entries*0.65))+":SplitMode=Random:NormMode=NumEvents:!V");
-    // "nTrain_Signal=66629:nTrain_Background=49472:nTest_Signal=15578:nTest_Background=11885:SplitMode=Random:NormMode=NumEvents:!V"
-    //"SplitMode=Random:NormMode=NumEvents:!V");
-
-    //factory.PrepareTrainingAndTestTree(ROOT.TCut(),"NormMode=EqualNumEvents:SplitMode=Block:nTrain_Signal=%s:nTest_Signal=%s:nTrain_Background=%s:nTest_Background=%s"%(nTrain_Signal,nTest_Signal,nTrain_Background,nTest_Background))
-
-
-    for(method_struct const & method : methods) factory->BookMethod(dataloader, method.type, method.str, method.option);
-
-    factory->TrainAllMethods();
-    factory->TestAllMethods();
-    factory->EvaluateAllMethods();
-
-    outfile->Close();
-
-    delete factory;
-    delete dataloader;
-
-
-
-
-
-
-
-    return 0;
-}
-
-int convertToLibSVM(bdt_info info, bdt_file *file){
+int convertToLibSVM(bdt_info& info, bdt_file *file){
 
     std::vector<bdt_variable> variables = info.train_vars;
     std::string const name = info.identifier;
@@ -358,8 +297,165 @@ int convertToLibSVM(bdt_info info, bdt_file *file){
 }
 
 
+int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut){
+    //This is the new one that splits based individual test/training
 
-int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_file){
+    std::vector<bdt_variable> variables = info.train_vars;
+    std::string const name = info.identifier;
+    std::cout<<"Beginninng to convert training/testing files into a libSVM format for XGBoost on BDT: "<<name<<std::endl;
+
+    std::ofstream sslibSVMtrain,sslibSVMtest;
+    sslibSVMtest.open (name+".libSVM.test.dat");
+    sslibSVMtrain.open (name+".libSVM.train.dat");
+
+    TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
+
+    int bdt_precut_stage = 1;
+    //train samples
+    TCut sig_tcut_train =  TCut(signal_file_train->getStageCuts(bdt_precut_stage,-9,-9).c_str());
+    TCut back_tcut_train = TCut(background_file_train->getStageCuts(bdt_precut_stage,-9,-9).c_str());
+
+    //and for test
+    TCut sig_tcut_test =  TCut((signal_file_test->getStageCuts(bdt_precut_stage,-9,-9)+"&&"+signal_test_cut).c_str());
+    TCut back_tcut_test = TCut((background_file_test->getStageCuts(bdt_precut_stage,-9,-9)+"&&"+background_test_cut).c_str());
+
+    std::cout<<"Prefiltering out all events that fail precuts + topocuts"<<std::endl;
+    TTree * background_ttree_prefiltered_train = (TTree*)background_file_train->tvertex->CopyTree(back_tcut_train);
+    TTree * signal_ttree_prefiltered_train = (TTree*)signal_file_train->tvertex->CopyTree(sig_tcut_train);
+
+    TTree * background_ttree_prefiltered_test = (TTree*)background_file_test->tvertex->CopyTree(back_tcut_test);
+    TTree * signal_ttree_prefiltered_test = (TTree*)signal_file_test->tvertex->CopyTree(sig_tcut_test);
+
+
+
+    int signal_entries_train = signal_file_train->tvertex->GetEntries(sig_tcut_train);
+    int background_entries_train = background_file_train->tvertex->GetEntries(back_tcut_train);
+
+    int signal_entries_test = signal_file_test->tvertex->GetEntries(sig_tcut_test);
+    int background_entries_test = background_file_test->tvertex->GetEntries(back_tcut_test);
+
+
+    std::cout<<"Train signal_entries: "<<signal_entries_train<<" background_entries_train: "<<background_entries_train<<std::endl;
+    std::cout<<"TRAIN PREFILTERED signal_entries: "<<signal_ttree_prefiltered_train->GetEntries()<<" background_entries_train: "<<background_ttree_prefiltered_train->GetEntries()<<std::endl;
+    std::cout<<"Test signal_entries: "<<signal_entries_test<<" background_entries_test: "<<background_entries_test<<std::endl;
+    std::cout<<"TEST PREFILTERED signal_entries: "<<signal_ttree_prefiltered_test->GetEntries()<<" background_entries_test: "<<background_ttree_prefiltered_test->GetEntries()<<std::endl;
+
+
+    TTreeFormula* sig_weight_train = new TTreeFormula("sig_w",signal_file_train->weight_branch.c_str(),signal_ttree_prefiltered_train);
+    TTreeFormula* bkg_weight_train = new TTreeFormula("bkg_w",background_file_train->weight_branch.c_str(),background_ttree_prefiltered_train);
+    TTreeFormula* sig_weight_test = new TTreeFormula("sig_w",signal_file_test->weight_branch.c_str(),signal_ttree_prefiltered_test);
+    TTreeFormula* bkg_weight_test = new TTreeFormula("bkg_w",background_file_test->weight_branch.c_str(),background_ttree_prefiltered_test);
+
+
+    std::vector<TTreeFormula*> sig_tree_formulas_v_train;
+    std::vector<TTreeFormula*> bkg_tree_formulas_v_train;
+    std::vector<TTreeFormula*> sig_tree_formulas_v_test;
+    std::vector<TTreeFormula*> bkg_tree_formulas_v_test;
+
+    std::vector<int> id_v;
+    for(bdt_variable &var : variables) {
+        sig_tree_formulas_v_train.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),signal_ttree_prefiltered_train));
+        bkg_tree_formulas_v_train.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),background_ttree_prefiltered_train));
+        sig_tree_formulas_v_test.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),signal_ttree_prefiltered_test));
+        bkg_tree_formulas_v_test.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),background_ttree_prefiltered_test));
+        id_v.push_back(var.id);
+    }
+
+    for(int i = 0; i < signal_entries_train; ++i) {
+        signal_ttree_prefiltered_train->GetEntry(i);
+
+        sig_weight_train->GetNdata();
+        double wei = sig_weight_train->EvalInstance();
+        sslibSVMtrain<<"1:"<<wei<<" ";
+
+        for(int t=0; t< sig_tree_formulas_v_train.size();++t){
+            sig_tree_formulas_v_train[t]->GetNdata();
+            double val = sig_tree_formulas_v_train[t]->EvalInstance();
+            int id = id_v[t];
+
+            //if nan, lets do something
+            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+
+                sslibSVMtrain<<id<<":"<<val<<" ";
+            }
+        }
+        sslibSVMtrain<<std::endl;
+    } 
+
+    for(int i = 0; i < signal_entries_test; ++i) {
+        signal_ttree_prefiltered_test->GetEntry(i);
+
+        sig_weight_test->GetNdata();
+        double wei = sig_weight_test->EvalInstance();
+        sslibSVMtest<<"1:"<<wei<<" ";
+
+        for(int t=0; t< sig_tree_formulas_v_test.size();++t){
+            sig_tree_formulas_v_test[t]->GetNdata();
+            double val = sig_tree_formulas_v_test[t]->EvalInstance();
+            int id = id_v[t];
+
+            //if nan, lets do something
+            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+
+                sslibSVMtest<<id<<":"<<val<<" ";
+            }
+        }
+        sslibSVMtest<<std::endl;
+    } 
+
+
+    for(int i = 0; i < background_entries_train; ++i) {
+        background_ttree_prefiltered_train->GetEntry(i);
+
+        bkg_weight_train->GetNdata();
+        double wei = bkg_weight_train->EvalInstance();
+        sslibSVMtrain<<"0:"<<wei<<" ";
+
+        for(int t=0; t< bkg_tree_formulas_v_train.size();++t){
+            bkg_tree_formulas_v_train[t]->GetNdata();
+            double val = bkg_tree_formulas_v_train[t]->EvalInstance();
+            int id = id_v[t];
+
+            //if nan, lets do something
+            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+
+                sslibSVMtrain<<id<<":"<<val<<" ";
+            }
+        }
+        sslibSVMtrain<<std::endl;
+    } 
+
+    for(int i = 0; i < background_entries_test; ++i) {
+        background_ttree_prefiltered_test->GetEntry(i);
+
+        bkg_weight_test->GetNdata();
+        double wei = bkg_weight_test->EvalInstance();
+        sslibSVMtest<<"0:"<<wei<<" ";
+
+        for(int t=0; t< bkg_tree_formulas_v_test.size();++t){
+            bkg_tree_formulas_v_test[t]->GetNdata();
+            double val = bkg_tree_formulas_v_test[t]->EvalInstance();
+            int id = id_v[t];
+
+            //if nan, lets do something
+            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+
+                sslibSVMtest<<id<<":"<<val<<" ";
+            }
+        }
+        sslibSVMtest<<std::endl;
+    } 
+
+
+    sslibSVMtest.close();
+    sslibSVMtrain.close();
+    outfile->Close();
+    return 0;
+}
+
+
+int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_file){
+    //This is the older one that just splits based on training fraction
 
     std::vector<bdt_variable> variables = info.train_vars;
     std::string const name = info.identifier;
@@ -484,7 +580,7 @@ int convertToLibSVM(bdt_info info, bdt_file *signal_file, bdt_file *background_f
 
 
 
-int bdt_XGtrain(bdt_info info){
+int bdt_XGtrain(bdt_info &info){
 
     std::string const name = info.identifier;
 
@@ -517,6 +613,8 @@ int bdt_XGtrain(bdt_info info){
 
     safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.train.dat").c_str(), silent, &dtrain));
     safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.test.dat").c_str(), silent, &dtest));
+
+
 
     // create the booster
     BoosterHandle booster;
@@ -555,6 +653,8 @@ int bdt_XGtrain(bdt_info info){
     safe_xgboost(XGBoosterSetParam(booster, "subsample", "0.9"));
     */
 
+
+
     std::vector<double> iteration;
     std::vector<double> test_error;
     std::vector<double> train_error;
@@ -586,6 +686,7 @@ int bdt_XGtrain(bdt_info info){
         }
         //if(cotr>10) break;
     }
+
 
     // predict
     bst_ulong out_len = 0;
@@ -637,6 +738,9 @@ int bdt_XGtrain(bdt_info info){
             t_btrain->Fill();
         }
     }
+
+
+
 
 
     safe_xgboost(XGBoosterSaveModel(booster,(name+".XGBoost.mod").c_str() ));
@@ -695,7 +799,232 @@ int bdt_XGtrain(bdt_info info){
     stest->Write();
     strain->Write();
     btrain->Write();
+    
+    
+    f->Close(); 
+    
+
+    bdt_XGBoost_importance(info, booster);
+   
+
+    
     return 0;
 
 }
 
+
+
+int super_bdt_train(std::string &analysis_tag, const std::vector<bdt_info> & bdt_infos, const std::vector<std::string> & s_tags, const std::vector<std::string> & b_tags, const std::string & additional_sig_cut, const std::string & additional_bkg_cut){
+
+    std::string name_template = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(1)+"_";
+    std::string end_template = ".root";
+
+    std::vector<std::string> bdt_score_vars;
+    for(auto &info: bdt_infos){
+        bdt_score_vars.push_back("simple_"+info.identifier+"_mva");
+    }
+
+    //Form a TChain for signal and background like bdt_files
+    std::cout<<"Starting to build background chain: "<<std::endl;
+    TChain b_chain("singlephoton/simple_tree");  
+
+    for(auto &b: b_tags ){
+        std::cout<<"--on tag "<<b<<std::endl;
+        b_chain.Add((name_template+b+end_template).c_str());
+    }
+
+    TChain b_vertex_chain("singlephoton/vertex_tree");  
+    for(auto &b: b_tags ){
+        b_vertex_chain.Add((name_template+b+end_template).c_str());
+    }
+
+
+    std::cout<<"Starting to build signal _chain"<<std::endl;
+    TChain s_chain("singlephoton/simple_tree");  
+    for(auto &s: s_tags ){
+        std::cout<<"on tag "<<s<<std::endl;
+        s_chain.Add((name_template+s+end_template).c_str());
+    }
+    TChain s_vertex_chain("singlephoton/vertex_tree");  
+    for(auto &s: s_tags ){
+        s_vertex_chain.Add((name_template+s+end_template).c_str());
+    }
+
+    s_chain.AddFriend(&s_vertex_chain,"super");
+    b_chain.AddFriend(&b_vertex_chain,"super");
+
+
+    std::string name = "SUPERBDT_"+analysis_tag;
+    TFile * outfile = TFile::Open((name+"_training.root").c_str(), "recreate");
+
+
+    TMVA::Factory * factory = new TMVA::Factory(name.c_str(), outfile,"!V:!Silent:Color:DrawProgressBar:AnalysisType=Classification");
+    TMVA::DataLoader * dataloader = new TMVA::DataLoader(("BDTxmls_"+name).c_str());
+
+    TCut sig_tcut = TCut(additional_sig_cut.c_str());  
+    dataloader->AddSignalTree(&s_chain);
+    dataloader->AddCut(sig_tcut,"Signal");
+    int signal_entries = s_chain.GetEntries();
+
+
+    TCut bkg_tcut = TCut(additional_bkg_cut.c_str());  
+    dataloader->AddBackgroundTree(&b_chain);
+    dataloader->AddCut(bkg_tcut,"Background");
+    int background_entries = b_chain.GetEntries();
+
+    dataloader->SetSignalWeightExpression("simple_pot_weight");
+    dataloader->SetBackgroundWeightExpression("simple_pot_weight");
+
+    for(auto &var: bdt_score_vars) dataloader->AddVariable(var.c_str());
+    std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
+
+    dataloader->PrepareTrainingAndTestTree("1","1", "nTrain_Signal="+std::to_string(floor(signal_entries*0.5))+":nTrain_Background="+std::to_string(floor(background_entries*0.5))+":SplitMode=Random:NormMode=NumEvents:!V");
+
+    factory->BookMethod(dataloader, "BDT" , "TMVA", "!H:!V:NTrees=800:BoostType=RealAdaBoost:nCuts=-1:MaxDepth=3");
+
+    factory->TrainAllMethods();
+    factory->TestAllMethods();
+    factory->EvaluateAllMethods();
+
+    outfile->Close();
+
+    delete factory;
+    delete dataloader;
+
+}
+
+
+int bdt_XGBoost_importance(bdt_info &info){
+    BoosterHandle booster;
+    safe_xgboost(XGBoosterCreate(0, 0, &booster));
+    safe_xgboost(XGBoosterLoadModel(booster,(info.identifier+".XGBoost.mod").c_str()));
+
+    return bdt_XGBoost_importance(info, booster);
+}
+
+int bdt_XGBoost_importance(bdt_info &info, BoosterHandle &booster){
+   
+    //some vectors to save info on each variable
+    int t_vars = info.train_vars.size()+info.spec_vars.size();
+    
+    std::vector<int> variable_uses(t_vars,0); 
+    std::vector<double> total_gain(t_vars,0.0); 
+    std::vector<double> mean_gain(t_vars,0.0); 
+    std::vector<int> train_var_id(t_vars,0);
+
+    std::cout<<"We have "<<t_vars<<" variables of which "<<info.train_vars.size()<<" are training variables"<<std::endl;
+    
+    std::vector<bool> is_training(t_vars,false);
+
+    for(int k=0; k< info.train_vars.size(); k++){
+        is_training.at(info.train_vars[k].id) = true;  
+        train_var_id[info.train_vars[k].id] = k;
+    }
+
+
+    //Some storage for the info
+    int with_stats = 1;
+    bst_ulong out_len = 0;
+    const char ** out_dump_array = NULL;
+    safe_xgboost(XGBoosterDumpModel(booster, "", with_stats,  &out_len, &out_dump_array));
+
+    std::cout<<"XGBoost importance : "<<out_len<<std::endl;
+
+    for(size_t i=0; i<out_len ; ++i){
+        if((out_dump_array)[i]!=NULL){
+            std::cout<<i<<" "<<(out_dump_array)[i]<<std::endl;  
+            const std::string cconvert((out_dump_array)[i]);
+
+            //Look for the feature, starts with in form "[f10<1.2" ... sp we want to find the number between the [f and the <
+            std::string stag = "[f";
+            std::string del = "<";
+
+            //when we find the feature, grab the number after the next time gain= appears
+            std::string sgain = "gain=";
+            size_t found = cconvert.find(stag);
+
+            while (found!=std::string::npos){
+                size_t ndel = cconvert.find(del,found);
+                std::string s_int = cconvert.substr(found+stag.size(),ndel-found-stag.size());
+                int which_var = std::stoi(s_int);
+                variable_uses[which_var]++;
+                std::string s_gain   = "";
+                //ok if we found a variable, add the gain, first locate it.
+
+                size_t ngain = cconvert.find(sgain,ndel);
+                if(ngain!=std::string::npos){
+                    size_t ngainend = cconvert.find(",",ngain);
+                    if( ngainend !=std::string::npos)   s_gain = cconvert.substr(ngain+sgain.size(), ngainend-ngain-sgain.size()-1); 
+                    size_t offset = 0;
+                    double d_gain =  std::stod(s_gain,&offset);
+                    total_gain[which_var] +=  d_gain;
+                }        
+//                std::cout<<" var "<<s_int<<" gain "<<s_gain<<std::endl;
+                found = cconvert.find(stag,ndel);
+            }
+        }
+    }
+
+    for(int i=0; i<total_gain.size() ; ++i){
+            mean_gain[i] = total_gain[i]/(double)variable_uses[i];
+    }
+
+    //Sort them in different ways
+    std::vector<size_t> sorted_by_total_gain = sort_indexes<double>(total_gain);
+    std::vector<size_t> sorted_by_mean_gain = sort_indexes<double>(mean_gain);
+    std::vector<size_t> sorted_by_uses = sort_indexes<int>(variable_uses);
+
+   /* 
+    for(int i = 0; i < sorted_by_uses.size(); i++){
+        std::cout<<"sorted_by_uses["<<i<<"] = "<<sorted_by_uses[i]<<std::endl;
+    }
+    for(int i = 0; i < info.train_vars.size(); i++){
+         std::cout<<i<<":  "<<info.train_vars[i].unit<<std::endl;
+    }
+    */
+
+    TCanvas cgain("","",3000,1200);
+    
+    cgain.cd();
+
+
+    std::cout<<"----------- Sort By Uses: "<<info.identifier<<" ----------------------"<<std::endl;
+    std::cout<<"sorted_by_uses size = " <<sorted_by_uses.size()<<", variable_uses size = "<<variable_uses.size()<<std::endl;
+    for(int i=0; i< variable_uses.size();i++){
+        size_t is = sorted_by_uses[sorted_by_uses.size()-1-i];
+        if(is_training[is])   std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+    }
+
+
+    TH1D htgain("tgain","tgain",info.train_vars.size(),0,info.train_vars.size());
+    
+
+    std::cout<<"----------- Sort By Total Gain: "<<info.identifier<<" ----------------------"<<std::endl;
+    for(int i=0; i< variable_uses.size();i++){
+        size_t is = sorted_by_total_gain[sorted_by_total_gain.size()-1-i];
+        if(is_training[is]){
+            std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+          htgain.SetBinContent(i+1, total_gain[is]);
+          htgain.GetXaxis()->SetBinLabel(i+1,info.train_vars[train_var_id[is]].unit.c_str()); // Find out which bin on the x-axis the point corresponds to and set the
+        }
+    }
+    htgain.Draw("hist");
+//    htgain.GetXaxis()->SetLabelOffset(0.1);
+    cgain.SetBottomMargin(0.5);
+    cgain.SaveAs(("XGBoost_"+info.identifier+"_var_import_total_gain.pdf").c_str(),"pdf");
+
+    std::cout<<"----------- Sort By Mean Gain: "<<info.identifier<<" ----------------------"<<std::endl;
+    for(int i=0; i< variable_uses.size();i++){
+        size_t is = sorted_by_mean_gain[sorted_by_mean_gain.size()-1-i];
+        if(is_training[is])   std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+    }
+
+
+
+
+
+
+    std::cout<<"done!"<<std::endl;
+    return 0;
+
+}

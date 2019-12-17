@@ -38,6 +38,7 @@ int main (int argc, char *argv[]){
 
     int number = -1;
     bool response_only = false;
+    bool is_combined = false;
     //double what_pot = 13.2e20;
     double what_pot = 1.8e20;
     int which_file = -1;
@@ -56,6 +57,7 @@ int main (int argc, char *argv[]){
         {"topo_tag",	required_argument,	0, 't'},
         {"bdt",		    required_argument,	0, 'b'},
         {"stage",		required_argument,	0, 's'},
+        {"combined",    no_argument,        0, 'c'},
         {"help",		required_argument,	0, 'h'},
         {"pot",		    required_argument,	0, 'p'},
         {"number",		required_argument,	0, 'n'},
@@ -68,7 +70,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:i:n:v:rh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:i:n:v:rch?", longopts, &index);
 
         switch(iarg)
         {
@@ -80,6 +82,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'n':
                 number = strtof(optarg,NULL);
+                break;
+            case 'c':
+                is_combined = true;
                 break;
             case 'x':
                 xml = optarg;
@@ -197,9 +202,9 @@ int main (int argc, char *argv[]){
     std::vector<bdt_file*> stack_bdt_files;
     std::vector<bdt_file*> signal_bdt_files;
     std::vector<bdt_file*> bkg_bdt_files;
+    std::vector<bdt_file*> training_bdt_files;
 
     bdt_file * signal;
-    bdt_file * training_signal;
     bdt_file * onbeam_data_file;
 
     std::map<std::string, bdt_file*> tagToFileMap;
@@ -230,6 +235,7 @@ int main (int argc, char *argv[]){
         }
 
         bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , analysis_flow));
+
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
 
@@ -247,6 +253,10 @@ int main (int argc, char *argv[]){
             incl_in_stack = false;
             onbeam_data_file = bdt_files.back();
         }
+
+        if(is_combined) bdt_files.back()->addFriend("output_"+bdt_files.back()->tag ,"output_superMVA.root");
+
+
         if(XMLconfig.bdt_is_offbeam_data[f]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOffBeamData( XMLconfig.bdt_onbeam_pot[f], XMLconfig.bdt_onbeam_spills[f], XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
@@ -270,9 +280,10 @@ int main (int argc, char *argv[]){
             plotOnTopMap[bdt_files.back()] = false;
         }
 
+        //Lets collate the training files, these are only used for BDT purposes
         if(XMLconfig.bdt_is_training_signal[f]){
-            training_signal = bdt_files.back();
             incl_in_stack = false;
+            training_bdt_files.push_back(bdt_files.back());
         }
 
 
@@ -283,6 +294,16 @@ int main (int argc, char *argv[]){
     //The "signal" is whichever signal BDT you define first.
     signal = signal_bdt_files[0];
 
+    /*
+       if(is_combined){
+       for(auto &f: stack_bdt_files){
+       std::cout<<"Adding Super Friend Tree"<<std::endl;
+       f->addFriend("output_"+f->tag ,"output_superMVA.root");
+       }
+       onbeam_data_file->addFriend("output_"+onbeam_data_file->tag,"output_superMVA.root");
+       }
+       */
+
 
     //===========================================================================================
     //===========================================================================================
@@ -292,23 +313,20 @@ int main (int argc, char *argv[]){
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-    if(true){
+    std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+    std::cout<<" Going to add any trained BDT responses  and precal some EntryLists  "<<std::endl;
+    std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
+    std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-        std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-        std::cout<<" Going to add any trained BDT responses  and precal some EntryLists  "<<std::endl;
-        std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
-        std::cout<<"--------------------------------------------------------------------------"<<std::endl;
+    for(auto &f: bdt_files){
 
-        for(auto &f: bdt_files){
-
-            if(mode_option != "app" ){
-                for(int k=0; k<bdt_infos.size(); k++){
-                    f->addBDTResponses(bdt_infos[k]);
-                }
+        if(mode_option != "app" && mode_option !="train" ){
+            for(int k=0; k<bdt_infos.size(); k++){
+                f->addBDTResponses(bdt_infos[k]);
             }
-            if(mode_option != "train"  && mode_option != "sbnfit"){
-                f->calcBaseEntryList(analysis_tag);
-            }
+        }
+        if(mode_option != "train"  && mode_option != "sbnfit"){
+            f->calcBaseEntryList(analysis_tag);
         }
     }
 
@@ -326,104 +344,99 @@ int main (int argc, char *argv[]){
 
     if(mode_option == "train") {
         //First lets create the bdt_file's* and flows for training
-        std::vector<bdt_file*> training_background_files;
-        for(int i=0; i< bdt_infos.size(); i++){
-            std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
-            bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
-            training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
-            training_background_files.back()->setAsOnBeamData(13.2e20);
-            training_background_files.back()->calcPOT();
 
-            if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
-                convertToLibSVM(bdt_infos[i], training_signal, training_background_files[i]);
-            }
-
+        for(auto &f: bdt_files){
+            f->calcBaseEntryList(analysis_tag);
         }
 
-        //Then we train!
-        if(which_bdt == -1){
-            for(int i=0; i< bdt_infos.size(); i++){
+        for(int i=0; i< bdt_infos.size(); i++){
 
-                if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
-                    bdt_XGtrain(bdt_infos[i]);
-                }else{
-                    bdt_train(bdt_infos[i], training_signal, training_background_files[i]);
-                    plot_train(bdt_infos[i], training_signal, training_background_files[i]);
+            if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
+
+                if(tagToFileMap.count(bdt_infos[i].TMVAmethod.sig_train_tag)!=1){
+                    std::cout<<"ERROR! the signal training tag "<<bdt_infos[i].TMVAmethod.sig_train_tag<<" is not in the bdt_files list!"<<std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                if(tagToFileMap.count(bdt_infos[i].TMVAmethod.sig_test_tag)!=1){
+                    std::cout<<"ERROR! the signal testing tag "<<bdt_infos[i].TMVAmethod.sig_test_tag<<" is not in the bdt_files list!"<<std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                if(tagToFileMap.count(bdt_infos[i].TMVAmethod.bkg_train_tag)!=1){
+                    std::cout<<"ERROR! the bkg training tag "<<bdt_infos[i].TMVAmethod.bkg_train_tag<<" is not in the bdt_files list!"<<std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                if(tagToFileMap.count(bdt_infos[i].TMVAmethod.bkg_test_tag)!=1){
+                    std::cout<<"ERROR! the bkg testing tag "<<bdt_infos[i].TMVAmethod.bkg_test_tag<<" is not in the bdt_files list!"<<std::endl;
+                    exit(EXIT_FAILURE);
                 }
 
             }
-        }else{
-
-            if(bdt_infos[which_bdt].TMVAmethod.str=="XGBoost"){
-                bdt_XGtrain(bdt_infos[which_bdt]);
-            }else{
-                bdt_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
-                plot_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
-            }
-        }
-        return 0;
-
-
-
-    }else if (mode_option=="tplot"){
-        std::vector<bdt_file*> training_background_files;
-        for(int i=0; i< bdt_infos.size(); i++){
-            std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
-            bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
-            training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
-            training_background_files.back()->setAsOnBeamData(13.2e20);
-            training_background_files.back()->calcPOT();
         }
 
         for(int i=0; i< bdt_infos.size(); i++){
-        }
 
-        //Then we train!
-        if(which_bdt == -1){
-            for(int i=0; i< bdt_infos.size(); i++){
-                plot_train(bdt_infos[i], training_signal, training_background_files[i]);
+            if(!(which_bdt==i || which_bdt==-1)) continue;
+
+
+            bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 
+            bdt_file * testing_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_test_tag]; 
+            bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
+            bdt_file * testing_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_test_tag]; 
+
+
+
+            if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
+
+                //This is NAF, need to save it and not repeat
+                convertToLibSVM(bdt_infos[i], training_signal, testing_signal, bdt_infos[i].TMVAmethod.sig_test_cut, training_background, testing_background, bdt_infos[i].TMVAmethod.bkg_test_cut);
+                bdt_XGtrain(bdt_infos[i]);
+
+            }else if(bdt_infos[i].TMVAmethod.str=="TMVA"){
+
+                bdt_train(bdt_infos[i], training_signal, testing_signal, training_background, testing_background);
+                plot_train(bdt_infos[i], training_signal, testing_signal, training_background, testing_background);
             }
-        }else{
-            plot_train(bdt_infos[which_bdt], training_signal, training_background_files[which_bdt]);
+
         }
-
         return 0;
-
-
-
-
 
     }else if(mode_option == "app"){
 
-        std::vector<bdt_file*> tf;
-        if(which_file==-1){
-            tf = bdt_files;
-        }else{
-            tf = {bdt_files[which_file]};
-        }
-        if(which_bdt == -1){
-            for(int i=0; i< bdt_infos.size();i++){
+        for(int f=0; f< bdt_files.size();++f){
+            for(int i=0; i< bdt_infos.size();++i){
+
+                //By default loop over all bdt's and files, but if specified do just 1
+                if(!((which_bdt==i || which_bdt==-1 )&&(which_file==f||which_file==-1))) continue;
 
                 if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
-                    bdt_XGapp(bdt_infos[i], tf);
+                    bdt_XGapp(bdt_infos[i], bdt_files[f]);
 
                 }else{
-                    bdt_app(bdt_infos[i], tf);
+                    bdt_app(bdt_infos[i], bdt_files[f]);
                 }
             }
-        }else{
-
-            if(bdt_infos[which_bdt].TMVAmethod.str=="XGBoost"){
-                bdt_XGapp(bdt_infos[which_bdt], tf);
-            }else{
-                bdt_app(bdt_infos[which_bdt], tf);
-            }
-
         }
         return 0;
     }
+    else if(mode_option=="super"){
 
-    else if(mode_option=="stack"){
+        //Define what we want to call signal and background here
+        const std::vector<std::string> s_tags = {"NCDeltaRadOverlay"};
+        const std::vector<std::string> b_tags ={"BNBOverlays","NCPi0","BNBext","Dirt"};
+
+        //OK super preliminarly, need to have run sbnfit with simple_tree option on precut stage before attempting this
+        super_bdt_train(analysis_tag, bdt_infos, s_tags, b_tags, "1", "1");
+
+        for(int i=0; i< 6; i++){
+            bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size",vars);
+        }
+
+        //and apply it
+        super_bdt_app(analysis_tag, bdt_infos, bdt_files);
+
+        return 0;
+
+    }else if(mode_option=="stack"){
         std::cout<<"Starting stack "<<std::endl;
 
         if (access("stack",F_OK) == -1){
@@ -440,7 +453,7 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-        histogram_stack->plot_pot =4.9e19;
+        histogram_stack->plot_pot =13.2e20;//4.9e19;
 
         std::cout<<"flag1"<<std::endl;
 
@@ -499,8 +512,7 @@ int main (int argc, char *argv[]){
             }
         }
 
-    }
-    else if(mode_option == "datamc"){
+    }    else if(mode_option == "datamc"){
         std::cout<<"Starting datamc "<<std::endl;
 
         if (access("datamc",F_OK) == -1){
@@ -592,6 +604,47 @@ int main (int argc, char *argv[]){
             }
         }
     }
+    else if(mode_option == "superdatamc"){
+        std::cout<<"Starting superdatamc "<<std::endl;
+
+        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+        TFile * fsuper = new TFile("output_superMVA.root","recreate");
+
+        std::vector<TTree*> super_trees;
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            std::string stree = "output_"+stack_bdt_files[f]->tag;
+            std::cout<<"Getting supertree : "<<stree<<std::endl;
+            super_trees.push_back((TTree*)fsuper->Get(stree.c_str()));
+        }
+
+        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_superdatamc");
+        histogram_stack->plot_pot = onbeam_data_file->pot;
+
+        /*
+           for(size_t f =0; f< stack_bdt_files.size(); ++f){
+           if(stack_bdt_files[f]->is_data) continue;
+           if(!plotOnTopMap[stack_bdt_files[f]] ){
+           histogram_stack->addToStack(stack_bdt_files[f]);
+           std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+           }
+           }
+
+           for(size_t f =0; f< stack_bdt_files.size(); ++f){
+           if(stack_bdt_files[f]->is_data) continue;
+           if(plotOnTopMap[stack_bdt_files[f]] ){
+           histogram_stack->addToStack(stack_bdt_files[f],true);
+           std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+           }
+           }
+
+           int ip=0;
+
+           bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+           datamc.setPlotStage(which_stage);                
+           std::vector<bdt_variable> tmp_var = {vars.at(number)};
+           datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+           */           
+    }
     else if(mode_option == "var2D"){
         std::cout<<"Starting var2D "<<std::endl;
 
@@ -631,26 +684,8 @@ int main (int argc, char *argv[]){
     }
     else if(mode_option == "test"){
 
-        //First lets create the bdt_file's* and flows for training
-
-        if(true){
-            std::vector<bdt_file*> training_background_files;
-            for(int i=0; i< bdt_infos.size(); i++){
-                std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
-                bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
-                training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
-                training_background_files.back()->calcPOT();
-                convertToLibSVM(bdt_infos[i], training_signal, training_background_files[i]);
-            }
-        }
-
-        for(int i=2; i< bdt_infos.size(); i++){
-            bdt_XGtrain(bdt_infos[i]);
-            bdt_XGapp(bdt_infos[i], bdt_files);
-            break;
-        }
-
-        //plot_bdt_variables(signal, ncpi0, vars, fbdtcuts, 5);
+       if(which_bdt==-1)which_bdt = 0;
+       bdt_XGBoost_importance(bdt_infos[which_bdt]);
 
         return 0;
     }else if(mode_option == "sig"){
@@ -674,6 +709,11 @@ int main (int argc, char *argv[]){
             case 3:
                 scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot, sig_type);
                 break;
+                /* What is this?
+                super_significance(signal_bdt_files, bkg_bdt_files);
+                break;
+
+                */
             default:
                 break;
         }
@@ -933,85 +973,7 @@ else if(mode_option == "eff2"){
     if(which_stage==-1) which_stage ==1;
 
 
-    bdt_file * file = bdt_files.at(which_file);
-
-    //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
-    file->teventweight->AddFriend(file->tvertex);
-
-    std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+file->tag+".root";
-
-    std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
-    TFile* f_sbnfit = new TFile(output_file_name.c_str(),"recreate");
-
-
-    std::cout<<"Creating directory structure"<<std::endl;
-    TDirectory *cdtof = f_sbnfit->mkdir("singlephoton");
-    cdtof->cd();    
-
-
-    std::string sbnfit_cuts = file->getStageCuts(which_stage,fbdtcuts);
-    //std::string sbnfit_cuts = "mctruth_cc_or_nc==1 && mctruth_num_exiting_pi0 >0"; //file->getStageCuts(which_stage,fcoscut,fbnbcut);
-
-    std::cout<<"Copying vertex tree"<<std::endl;
-    TTree * t_sbnfit_tree = (TTree*)file->tvertex->CopyTree(sbnfit_cuts.c_str());
-    std::cout<<"Copying POT tree"<<std::endl;
-    TTree * t_sbnfit_pot_tree = (TTree*)file->tpot->CopyTree("1");
-    std::cout<<"Copying eventweight tree (via friends)"<<std::endl;
-    TTree * t_sbnfit_eventweight_tree = (TTree*)file->teventweight->CopyTree(sbnfit_cuts.c_str());
-    std::cout<<"Copying Slice tree "<<std::endl;
-    TTree * t_sbnfit_slice_tree = (TTree*)file->tslice->CopyTree("1");
-
-
-    TList * lf1 = (TList*)t_sbnfit_tree->GetListOfFriends();
-    for(const auto&& obj: *lf1) t_sbnfit_tree->GetListOfFriends()->Remove(obj);
-
-    TList * lf2 = (TList*)t_sbnfit_eventweight_tree->GetListOfFriends();
-    for(const auto&& obj: *lf2) t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(obj);
-
-
-    TTree * t_sbnfit_simpletree = new TTree("simple_tree","simple_tree");
-    double simple_var = 0;
-    double simple_wei = 0;
-    t_sbnfit_simpletree->Branch("simple_variable",&simple_var);
-    t_sbnfit_simpletree->Branch("simple_weight",&simple_wei);
-
-    TTreeFormula* weight = new TTreeFormula("weight_formula ",file->weight_branch.c_str(),t_sbnfit_tree);
-    TTreeFormula* var = new TTreeFormula("var_formula ",input_string.c_str(),t_sbnfit_tree);
-
-    if(input_string != ""){
-        std::cout<<"Starting to make a simpletree with variable "<<input_string<<std::endl;
-        for(int i=0; i< t_sbnfit_tree->GetEntries(); i++){
-            t_sbnfit_tree->GetEntry(i); 
-
-            weight->GetNdata();
-            var->GetNdata();
-            simple_wei = weight->EvalInstance();
-            simple_var = var->EvalInstance();
-
-            t_sbnfit_simpletree->Fill();
-        }
-
-    }
-    std::cout<<"Writing to file"<<std::endl;
-    cdtof->cd();
-    t_sbnfit_tree->Write();
-    t_sbnfit_pot_tree->Write();
-    t_sbnfit_eventweight_tree->Write(); 
-    t_sbnfit_slice_tree->Write();
-    if(input_string!=""){
-        t_sbnfit_simpletree->Write();
-        weight->Write();
-        var->Write();
-    }
-    TVectorD POT_value(1);
-    POT_value[0] = file->pot;
-    POT_value.Write("POT_value");
-
-    f_sbnfit->Close();
-    std::cout<<"Done!"<<std::endl;
-
-
-    return 0;
+    return bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars);
 
 
 }else if(mode_option == "recomc"){
@@ -1127,45 +1089,15 @@ return 0;
 
     std::vector<bdt_file*> training_background_files;
     for(int i=0; i< bdt_infos.size(); i++){
-        std::cout<<"Starting to make a Training BDT_FILE for BDT number "<<i<<" "<<bdt_infos[i].identifier<<std::endl;
-        bdt_flow tmp_flow(topological_cuts, bdt_infos[i].TMVAmethod.training_cut ,	vec_precuts, postcuts,	bdt_infos);
-        training_background_files.push_back( new bdt_file("/",bdt_infos[i].TMVAmethod.filename, "BDT_background_"+bdt_infos[i].identifier+"_"+std::to_string(i),"hist", bdt_infos[i].TMVAmethod.foldername, kBlack,tmp_flow)); 
-        training_background_files.back()->setAsOnBeamData(13.2e20);
-        training_background_files.back()->calcPOT();
-        training_background_files.back()->calcBaseEntryList(analysis_tag);
 
-        if(which_stage>1){
 
-            std::vector<bdt_file*> rmp =    {training_background_files.back()};
-            for(int k=0; k< bdt_infos.size(); k++){
-                if(bdt_infos[k].TMVAmethod.str=="XGBoost"){
-                    bdt_XGapp(bdt_infos[k], rmp);
-                }else{
-                    bdt_app(bdt_infos[k], rmp);
-                }
-                training_background_files.back()->addBDTResponses(bdt_infos[k]);
-            }
-        }
+            if(!(which_bdt==i || which_bdt==-1)) continue;
 
+            bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 
+            bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
+            plot_bdt_variables(training_signal, training_background, vars, bdt_infos[i], false, which_stage,fbdtcuts);
     }
 
-
-
-    if(which_bdt==-1){
-        for(int k=0; k< bdt_infos.size(); k++){
-            if(number != -1){
-                plot_bdt_variable(training_signal, training_background_files[k], vars.at(number), bdt_infos[k], false,which_stage,fbdtcuts);
-            }else{
-                plot_bdt_variables(training_signal, training_background_files[k], vars, bdt_infos[k], false,which_stage,fbdtcuts);
-            }
-        }
-    }else{
-        if(number != -1){
-            plot_bdt_variable(training_signal, training_background_files[which_bdt], vars.at(number), bdt_infos[which_bdt], false,which_stage,fbdtcuts);
-        }else{
-            plot_bdt_variables(training_signal, training_background_files[which_bdt], vars, bdt_infos[which_bdt], false,which_stage,fbdtcuts);
-        }
-    }
 
 }else {
     std::cout << "WARNING: " << mode_option << " is an invalid option\n";

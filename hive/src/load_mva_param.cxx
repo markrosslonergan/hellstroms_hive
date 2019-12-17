@@ -212,10 +212,19 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             TiXmlElement *pMVAfile = pMVA->FirstChildElement("file");
             while(pMVAfile){
                 //filename, foldername, traning_cut, training_fraction
-                vec_methods.back().filename = pMVAfile->Attribute("filename"); 
-                vec_methods.back().foldername = pMVAfile->Attribute("foldername"); 
-                vec_methods.back().training_cut = this->AliasParse(pMVAfile->Attribute("training_cut")); 
-                vec_methods.back().training_fraction= strtof(pMVAfile->Attribute("training_fraction"),NULL); 
+
+                //Old style
+                //vec_methods.back().filename = pMVAfile->Attribute("filename"); 
+                //vec_methods.back().foldername = pMVAfile->Attribute("foldername"); 
+                //vec_methods.back().training_cut = this->AliasParse(pMVAfile->Attribute("training_cut")); 
+                //vec_methods.back().training_fraction= strtof(pMVAfile->Attribute("training_fraction"),NULL); 
+
+                vec_methods.back().bkg_train_tag = pMVAfile->Attribute("bkg_train_tag");
+                vec_methods.back().bkg_test_tag = pMVAfile->Attribute("bkg_test_tag");
+                vec_methods.back().bkg_test_cut = pMVAfile->Attribute("bkg_test_cut");
+                vec_methods.back().sig_train_tag = pMVAfile->Attribute("sig_train_tag");
+                vec_methods.back().sig_test_tag = pMVAfile->Attribute("sig_test_tag");
+                vec_methods.back().sig_test_cut = pMVAfile->Attribute("sig_test_cut");
 
                 pMVAfile = pMVA->NextSiblingElement("file");
             }//end file
@@ -512,7 +521,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         bdt_all_vars.push_back(t);
 
         if(is_spec){
-            bdt_spec_vars.push_back(t );            
+            bdt_spec_vars.push_back(t);            
             //std::cout<<" -- adding as pectator Variable "<<var_def<<" with binning: "<<var_binning<<std::endl;
         }else{
             bdt_train_vars.push_back(t);            
@@ -527,11 +536,30 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }
 
         //Loop over vec_methods
-        for(int k=0; k< var_train_int.size(); k++){
-            //Check to see if this variable is for training on this particular method
-            vec_methods[var_train_int[k]].bdt_train_vars.push_back(t);
-            std::cout<<" -- so adding "<<var_def<<" as training to method "<<vec_methods[var_train_int[k]].bdt_name<<std::endl;
+        for(int p=0; p< vec_methods.size(); p++){
+
+             bool is_train = false;
+             for(int k=0; k< var_train_int.size(); k++){
+                    if(var_train_int[k]> vec_methods.size()){
+                            std::cout<<"ERROR! BDT variable: "<<var_def <<" has been assigned to train on BDT "<<var_train_int[k]<<" But only "<<vec_methods.size()<<" has been defined!"<<std::endl;
+                            exit(EXIT_FAILURE);
+                    }
+                    if(p==var_train_int[k]){
+                        is_train = true;
+                        break;
+                    }
+             }
+            if(is_train){
+                vec_methods[p].bdt_train_vars.push_back(t);
+                std::cout<<" -- so adding "<<var_def<<" as training to method "<<vec_methods[p].bdt_name<<std::endl;
+            }else{
+                vec_methods[p].bdt_spec_vars.push_back(t);
+
+            }
+
+
         }
+        
 
         n_var++;
         pVar = pVar->NextSiblingElement("var");

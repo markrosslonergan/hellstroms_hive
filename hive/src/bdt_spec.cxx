@@ -177,10 +177,7 @@ TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
     summed->GetXaxis()->SetTitle(var.unit.c_str());
     summed->GetYaxis()->SetTitle("Events");
 
-
-
     return summed;	
-
 }
 
 

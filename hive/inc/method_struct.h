@@ -26,6 +26,14 @@ struct method_struct {
     std::string training_cut;
     double training_fraction;
 
+    //tags for training v2.2
+    std::string bkg_test_tag;
+    std::string bkg_train_tag;
+    std::string bkg_test_cut;
+    std::string sig_train_tag;
+    std::string sig_test_tag;
+    std::string sig_test_cut;
+
     double scan_max;
     double scan_min;
     double scan_steps;

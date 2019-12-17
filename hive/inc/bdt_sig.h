@@ -46,6 +46,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
 
 int scan_likelihood(std::vector<bdt_file*> stack_files, std::vector<bdt_info> bdt_infos);
 
+std::vector<double> super_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files);
 
 
 #endif
