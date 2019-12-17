@@ -227,7 +227,7 @@
 
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
 
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(36,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees=1000</param>
         <param> tree_method=exact</param>
@@ -251,10 +251,10 @@
         sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.9" max = "1.0" steps="5"/>
+    <scan min = "0.9" max = "1.0" steps="10"/>
 </mva>
 
-<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(40,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees= 900</param>
         <param> tree_method=exact</param>
@@ -278,11 +278,11 @@
         sig_test_tag = "NCDeltaRadOverlay"
         sig_test_cut = "1"
         />
-    <scan min = "0.5" max = "1.0" steps="5"/>
+    <scan min = "0.8" max = "1.0" steps="10"/>
 </mva>
 
 
-<mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(40,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees= 400</param>
          <param> tree_method=exact</param>
@@ -306,11 +306,11 @@
         sig_test_tag = "NCDeltaRadOverlay"
         sig_test_cut = "1"
         />
-    <scan min = "0.5" max = "1.0" steps="5"/>
+    <scan min = "0.8" max = "1.0" steps="10"/>
 </mva>
 
 
-<mva type="BDT" use="yes" tag = "Nue" name ="Nue fake BDT" binning = "(40,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "Nue" name ="Nue fake BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees= 400</param>
         <param> tree_method=exact</param>
@@ -334,7 +334,7 @@
         sig_test_tag = "NCDeltaRadOverlay"
         sig_test_cut = "1"
         />
-    <scan min = "0.5" max = "1.0" steps="5"/>
+    <scan min = "0.8" max = "1.0" steps="10"/>
 </mva>
 
 
@@ -343,6 +343,7 @@
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
 <precut def = "reco_shower_energy_max[0]>30" name = "Michel Cut"/>
 <precut def = "TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2" name = "Track Contained in SCB"/>
+<!--<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->
 
 <!--<precut def = "(sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2))<20)" name = "Distance from Track Start to Vertex"/>
 
