@@ -9,10 +9,12 @@ void make_2dHisto() {
     ////////////////////////////////////////////////////////
     
     // Get signal file and TTree
-    TString dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v19/";
+    TString dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v26/";
     //TString dir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/";
-    TFile *fin = new TFile(dir+"ncpi0_overlay_run1_v19.4.root", "READ");
-    TTree *t = (TTree*)fin->Get("singlephoton/vertex_tree");
+    TFile *fin = new TFile(dir+"ncpi0_overlay_run1_v26.5.root", "READ");
+    //TFile *fin = new TFile(dir+"ncpi0_overlay_run3_G_v26.5.root", "READ");
+    TString tag = "run1";
+    TTree *t = (TTree*)fin->Get("singlephotonana/vertex_tree");
 
     // Declare necessary tree variables
     int reco_asso_showers = 0;
@@ -22,6 +24,8 @@ void make_2dHisto() {
     std::vector<double> *reco_shower_diry = 0;
     std::vector<double> *reco_shower_dirz = 0;
     std::vector<double> *sim_shower_energy = 0;
+    std::vector<int> *sim_shower_pdg = 0;
+    std::vector<double> *sim_shower_overlay_fraction = 0;
 
     // Necessary for vectors, for some reason
     TBranch *breco_shower_ordered_energy_index = 0;
@@ -30,6 +34,8 @@ void make_2dHisto() {
     TBranch *breco_shower_dirx = 0;
     TBranch *breco_shower_diry = 0;
     TBranch *breco_shower_dirz = 0;
+    TBranch *bsim_shower_pdg = 0;
+    TBranch *bsim_shower_overlay_fraction = 0;
     
     t->SetBranchAddress("reco_asso_showers", &reco_asso_showers);
     t->SetBranchAddress("reco_shower_ordered_energy_index", &reco_shower_ordered_energy_index, &breco_shower_ordered_energy_index);
@@ -38,20 +44,29 @@ void make_2dHisto() {
     t->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx, &breco_shower_dirx);
     t->SetBranchAddress("reco_shower_diry", &reco_shower_diry, &breco_shower_diry);
     t->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz, &breco_shower_dirz);
+    t->SetBranchAddress("sim_shower_pdg", &sim_shower_pdg, &bsim_shower_pdg);
+    t->SetBranchAddress("sim_shower_overlay_fraction", &sim_shower_overlay_fraction, &bsim_shower_overlay_fraction);
 
     // Define output file, 2D energy histo
-    TFile *fout = new TFile("output_energy_histos.root", "RECREATE");
+    TFile *fout = new TFile("output_energy_histos_"+tag+".root", "RECREATE");
     TH1D *h_num_showers = new TH1D("h_num_showers", "h_num_showers", 4, 0, 4);
-    TH2D *h_max = new TH2D("h_max", "h_max", 50, 0, 500, 50, 0, 500);
-    TH2D *h_max_corr = new TH2D("h_max_corr", "h_max_corr", 50, 0, 500, 50, 0, 500);
+    //TH2D *h_max = new TH2D("h_max", "h_max", 50, 0, 500, 50, 0, 500);
+    //TH2D *h_max_corr = new TH2D("h_max_corr", "h_max_corr", 50, 0, 500, 50, 0, 500);
+    TH2D *h_max = new TH2D("h_max", "h_max", 250, 0, 500, 250, 0, 500);
+    TH2D *h_max_corr = new TH2D("h_max_corr", "h_max_corr", 250, 0, 500, 250, 0, 500);
     TH1D *h_invar_max = new TH1D("h_invar_max", "h_invar_max", 50, 0, 1000);
     TH1D *h_invar_max_corr = new TH1D("h_invar_max_corr", "h_invar_max_corr", 50, 0, 1000);
+    TH1I *h_sim_shower_pdg = new TH1I("h_sim_shower_pdg", "h_sim_shower_pdg", 100, 0, 2500);
 
     /////////////////////////////////////////////////////////
     ////////////// HISTO FILL LOOP /////////////////////////
     ////////////////////////////////////////////////////////
     int pass_shr = 0;
     int pass_energy = 0;
+    int pass_pdg = 0;
+    int pass_overlay = 0;
+    double energy_cut = 20.0;
+    double overlay_fraction_cut = 0.5;
     for (int i = 0; i < t->GetEntries(); i++) {
         t->GetEntry(i);
         h_num_showers->Fill(reco_asso_showers);
@@ -60,11 +75,20 @@ void make_2dHisto() {
         pass_shr++;
 
         for (int i_shr = 0; i_shr < reco_asso_showers; i_shr++) {
-            // 30 MeV cut
+            h_sim_shower_pdg->Fill(sim_shower_pdg->at(reco_shower_ordered_energy_index->at(i_shr)));
+            // Energy cut
             // Factor of 1000 for sim energy because it's in different units. Thanks, Mark.
-            if (reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(i_shr)) < 30 ||
-                1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)) < 30 ) continue;
+            if (reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(i_shr)) < energy_cut ||
+                1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)) < energy_cut ) continue;
             pass_energy++;
+
+            // Make sure shower is matched to photon
+            if ((sim_shower_pdg->at(reco_shower_ordered_energy_index->at(i_shr))) != 22) continue;
+            pass_pdg++;
+
+            // Check overlay fraction
+            if ((sim_shower_overlay_fraction->at(reco_shower_ordered_energy_index->at(i_shr))) > overlay_fraction_cut) continue;
+            pass_overlay++;
 
             // Figure out whether leading shower index is 0 or 1; fill accordingly
             double max_leading_corr, max_subleading_corr;
@@ -88,7 +112,9 @@ void make_2dHisto() {
           }
     }
     cout << "Events with at least one associated shower: " << pass_shr << endl;
-    cout << "At least 20 MeV: " << pass_energy << endl;
+    cout << "At least 30 MeV: " << pass_energy << endl;
+    cout << "Matched to photon: " << pass_pdg << endl;
+    cout << "Overlay < 50%: " << pass_overlay << endl;
     
     /*
     TCanvas *c1 = new TCanvas("c1", "c1", 1000, 700);
@@ -206,9 +232,11 @@ double energyCorr(double energy) {
     //double corr = 1.29888*energy + 1.68323
     // MCC9.0 v17
     //double corr = 1.21207*energy + 6.69335;
-
     // MCC9.0 v17.1
-    double corr = 1.24607*energy + 4.11138; 
+    //double corr = 1.24607*energy + 4.11138; 
+    
+    // MCC9.1 v26.5
+    double corr = 1.23833*energy + 4.78805;
     return corr;
 }
 

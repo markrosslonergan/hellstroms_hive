@@ -434,11 +434,15 @@ int main (int argc, char *argv[]){
             sleep(2);
         }
 
+        std::cout<<"flag0"<<std::endl;
+
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-        histogram_stack->plot_pot =13.2e20;
+        histogram_stack->plot_pot =4.9e19;
+
+        std::cout<<"flag1"<<std::endl;
 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
             if(bdt_files[f]->is_data) continue;
@@ -447,12 +451,13 @@ int main (int argc, char *argv[]){
             //std::cout<<"adding to stack "<<stack_bdt_files[f]->name<<std::endl;
         }
 
+        std::cout<<"flag2"<<std::endl;
+
         //signal->fillstyle = 0;
         //histogram_stack->addToStack(signal,true);
 
         onbeam_data_file->col = kWhite;
         onbeam_data_file->fillstyle = 0;
-
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(!response_only){
@@ -466,6 +471,8 @@ int main (int argc, char *argv[]){
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
             }else{
+                std::cout<<"flag5"<<std::endl;
+
 
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 real_datamc.setPlotStage(which_stage);                
@@ -516,11 +523,11 @@ int main (int argc, char *argv[]){
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
                 if(stack_bdt_files[f]->is_data) continue;
                 if(!plotOnTopMap[stack_bdt_files[f]] ){
-                   histogram_stack->addToStack(stack_bdt_files[f]);
+                    histogram_stack->addToStack(stack_bdt_files[f]);
                     std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
                 }
             }
-            
+
             for(size_t f =0; f< stack_bdt_files.size(); ++f){
                 if(stack_bdt_files[f]->is_data) continue;
                 if(plotOnTopMap[stack_bdt_files[f]] ){
@@ -780,7 +787,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 */
 }else if(mode_option == "eff"){
 
-    if(which_file == -1)which_file = 0;
+    if(which_file == -1)which_file = 1;
 
     //which_file = 7;//checking ext
     std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
@@ -788,7 +795,12 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     if(which_stage==-1)which_stage=0;
 
+    what_pot = 5e19;
+
     bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag);
+
+    //specifically for protond/photons pre-topological
+    // bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
     //normally stops here
 
     //Ok, this runs now for a full cut

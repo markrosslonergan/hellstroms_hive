@@ -3,8 +3,9 @@ using std::cout;
 using std::endl;
     
 void doCalibration() {
-    TFile *fin = new TFile("output_energy_histos.root", "READ");
-    TFile *fout = new TFile("output_energy_correction.root", "RECREATE");
+    TString tag = "run1";
+    TFile *fin = new TFile("output_energy_histos_"+tag+".root", "READ");
+    TFile *fout = new TFile("output_energy_correction_"+tag+".root", "RECREATE");
     if (!fin) {
         cout << "Bad file" << endl;
         return;
@@ -14,7 +15,8 @@ void doCalibration() {
 
     // Get binning for projections, i.e., "slices" of 2D histos; can change
     // this in the header file
-    std::vector< std::pair<int,int> > fitSlices = leadingProjBins();
+    //std::vector< std::pair<int,int> > fitSlices = leadingProjBins();
+    std::vector< std::pair<int, int> > fitSlices = leadingProjBins();
 
     // Get projections from 2D histograms
     std::vector<TH1D*> h_max_projections(fitSlices.size() );
@@ -36,33 +38,38 @@ void doCalibration() {
 
     // Loop over bin ranges, get projections, fill x- and y-vals/errs accordingly
     for(int i = 0; i < fitSlices.size(); i++) {
-        cout << "Slice range: " << fitSlices.at(i).first << " to " << fitSlices.at(i).second << endl;
-        // Projections for leading photon
+        //cout << "Slice range: " << fitSlices.at(i).first << " to " << fitSlices.at(i).second << endl;
+        // Projections for photon energies in slice range
         TString projName = Form("h%i", i+1);
         TString projName_corr = Form("h%i_corr", i+1);
         h_max_projections.at(i) = (TH1D*)h_max->ProjectionY(projName, 
                                                 fitSlices.at(i).first, 
                                                 fitSlices.at(i).second );
+        std::cout << "Getting projection from bin " << fitSlices.at(i).first << 
+          " to " << fitSlices.at(i).second << std::endl;
 
         h_max_projections_corr.at(i) = (TH1D*)h_max_corr->ProjectionY(projName_corr,
                                                           fitSlices.at(i).first, 
                                                           fitSlices.at(i).second );
 
         int maxBin = h_max_projections.at(i)->GetMaximumBin();
+        std::cout << "maxBin = " << maxBin << std::endl;
         int maxBin_corr = h_max_projections_corr.at(i)->GetMaximumBin();
 
         // Fill xvals with center of true energy slices; x-errors are just
         // one-half slice width 
-        double binConv = 10; // To make units work out
-        xvals[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.)*binConv;
-        xvals_corr[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.)*binConv;
-        xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.*binConv;
-        //xvals[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.);
+        double MeVPerBin = 2; // To make units work out
+        //double MeVPerBin = 10; // To make units work out
+        xvals[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.)*MeVPerBin;
+        std::cout << "xval: " << xvals[i] << std::endl;
+        xvals_corr[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.)*MeVPerBin;
+        xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.*MeVPerBin;
         //cout << "xval: " << xvals[i] << endl;
         //xvals_corr[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.);
         //xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.;
         yvals[i] = h_max_projections.at(i)->GetXaxis()->GetBinCenter(maxBin);
         std::cout << "yval: " << yvals[i] << std::endl;
+        //std::cout << "yval: " << yvals[i] << std::endl;
         yvals_corr[i] = h_max_projections_corr.at(i)->GetXaxis()->GetBinCenter(maxBin_corr);
     }
     
@@ -93,6 +100,8 @@ void doCalibration() {
     h_max->SetMinimum(-1e-7);
     h_max->GetXaxis()->SetTitle("True Shower Energy [MeV]");
     h_max->GetYaxis()->SetTitle("Reconstructed Shower Energy [MeV]");
+    h_max->GetXaxis()->SetTitleSize(0.05);
+    h_max->GetYaxis()->SetTitleSize(0.05);
     h_max->SetTitle("");
     h_max->SetContour(1000);
     h_max->Draw("colz");
@@ -103,7 +112,8 @@ void doCalibration() {
     f1->Draw("same");
 
     // Fit line
-    TF1 *fit = new TF1("fit", "pol1", 30, 500 );
+    //TF1 *fit = new TF1("fit", "pol1", 30, 500 );
+    TF1 *fit = new TF1("fit", "pol1", 20, 500 );
     //TF1 *fit = new TF1("fit", "pol1", 400, h_max->GetNbinsX() );
     fit->SetLineColor(kPink+9);
 
@@ -115,11 +125,27 @@ void doCalibration() {
     g->Fit("fit", "R");
     g->Draw("ep same");
 
-    cout << "Correction equation is " << 1/fit->GetParameter(1) << "*E_reco - "
-         << fit->GetParameter(0)/fit->GetParameter(1) << endl;
+    TPaveText *pt = new TPaveText(0.14, 0.72, 0.4, 0.85, "NDC");
+    double textSize = 0.04;
+    pt->SetTextAlign(12);
+    pt->SetFillStyle(0);
+    pt->SetTextSize(textSize);
+    pt->SetBorderSize(0);
+    pt->SetTextColor(kWhite);
+    TString simString = Form("MicroBooNE Simulation");
+    TString chi2_text = Form("#chi^{2}/NDF: %0.2f/%i", fit->GetChisquare(), fit->GetNDF() );
+    pt->AddText(simString);
+    pt->AddText(chi2_text);
+    pt->Draw("same");
+
+    double fit_equn_par1_err = (1/(fit->GetParameter(1)-fit->GetParError(1) ) - 1/(fit->GetParameter(1)+fit->GetParError(1) ) )/2.;
+    double fit_equn_par0_err = ( (fit->GetParameter(0)-fit->GetParError(0))/(fit->GetParameter(1)-fit->GetParError(1)) - (fit->GetParameter(0)+fit->GetParError(0))/(fit->GetParameter(1)+fit->GetParError(1)) )/2.;
+    cout << "Correction equation is (" << 1/fit->GetParameter(1) << " +/- " << fit_equn_par1_err << ")*E_reco - ("
+         << fit->GetParameter(0)/fit->GetParameter(1) << " +/- " << fit_equn_par0_err << ") MeV" << endl;
     cout << "Uncorrected fit chi^2 is " << fit->GetChisquare() << " / " << fit->GetNDF() << " NDF" << endl;
 
-    c1->SaveAs("plot_max.png", "PNG");
+    c1->SaveAs("plot_max_"+tag+".png", "PNG");
+    c1->SaveAs("plot_max_"+tag+".pdf", "PDF");
 
     TCanvas *c2 = new TCanvas("c2", "c2", 1000, 700);
     c2->cd();
@@ -128,8 +154,10 @@ void doCalibration() {
     // Drawing options
     // Set minimum < 0 so that 0 bins aren't white (which looks bad)
     h_max_corr->SetMinimum(-1e-7);
-    h_max_corr->GetXaxis()->SetTitle("True Leading Photon Energy [GeV]");
-    h_max_corr->GetYaxis()->SetTitle("Corrected Reco. Leading Photon Energy [GeV]");
+    h_max_corr->GetXaxis()->SetTitle("True Shower Energy [GeV]");
+    h_max_corr->GetYaxis()->SetTitle("Corrected Shower Energy [GeV]");
+    h_max_corr->GetXaxis()->SetTitleSize(0.05);
+    h_max_corr->GetYaxis()->SetTitleSize(0.05);
     h_max_corr->SetTitle("");
     h_max_corr->SetContour(1000);
     h_max_corr->Draw("colz");
@@ -138,7 +166,8 @@ void doCalibration() {
 
     // Fit line
     //TF1 *fit_corr = new TF1("fit_corr", "pol1", 400, h_max_corr->GetNbinsX() );
-    TF1 *fit_corr = new TF1("fit_corr", "pol1", 20, 500 );
+    //TF1 *fit_corr = new TF1("fit_corr", "pol1", 20, 500 );
+    TF1 *fit_corr = new TF1("fit_corr", "pol1", 20, 200 );
     fit_corr->SetLineColor(kWhite);
     fit_corr->SetLineStyle(8);
 
@@ -150,9 +179,22 @@ void doCalibration() {
     g_corr->Fit("fit_corr", "R");
     g_corr->Draw("ep same");
 
+    TPaveText *pt_corr = new TPaveText(0.14, 0.72, 0.4, 0.85, "NDC");
+    pt_corr->SetTextAlign(12);
+    pt_corr->SetFillStyle(0);
+    pt_corr->SetTextSize(textSize);
+    pt_corr->SetBorderSize(0);
+    pt_corr->SetTextColor(kWhite);
+    TString simString_corr = Form("MicroBooNE Simulation");
+    TString chi2_text_corr = Form("#chi^{2}/NDF: %0.2f/%i", fit_corr->GetChisquare(), fit_corr->GetNDF() );
+    pt_corr->AddText(simString_corr);
+    pt_corr->AddText(chi2_text_corr);
+    pt_corr->Draw("same");
+
     cout << "Corrected fit chi^2 is " << fit_corr->GetChisquare() << " / " << fit_corr->GetNDF() << " NDF" << endl;
 
-    c2->SaveAs("plot_max_corr.png", "PNG");
+    c1->SaveAs("plot_max_corr_"+tag+".png", "PNG");
+    c1->SaveAs("plot_max_corr_"+tag+".pdf", "PDF");
     /*
 
     TCanvas *c3 = new TCanvas("c3", "c3", 1000, 700);

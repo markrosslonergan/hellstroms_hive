@@ -32,20 +32,22 @@
 
 
 class bdt_efficiency{
-	public:
-		bdt_file* file;
-		std::string denominator;
-		TEntryList *event_entry_list;
-	
-		std::vector<double> verticies;
+    public:
+        bdt_file* file;
+        std::string denominator;
+        TEntryList *event_entry_list;
 
-		bdt_efficiency(bdt_file*, std::string denomin,double,double);
-		bdt_efficiency(bdt_file*, std::string denomin,double,double,bool);
+        std::vector<double> verticies;
+
+        bdt_efficiency(bdt_file*, std::string denomin,double,double);
+        bdt_efficiency(bdt_file*, std::string denomin,double,double,bool);
         bdt_efficiency(bdt_file* filein, std::vector<std::string> denomin, std::vector<std::string> topoin, std::vector<std::string> precuts, double c1, double c2, double p);
         bdt_efficiency(bdt_file* filein, std::vector<std::string> denomin, std::vector<std::string> topoin, std::vector<std::string> precuts, std::vector<double>, double p);
 
         bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool,int, std::string tag);
 
+        bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool is_ok,int plot_stage,std::string tag, bool pretopo);
+       
         bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut);
         // For NC pi0 filter stuff
         bdt_efficiency(std::vector<bdt_file*> vec_files, std::vector<bdt_file*> filtered_files);
