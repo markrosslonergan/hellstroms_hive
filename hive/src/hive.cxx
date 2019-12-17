@@ -684,8 +684,10 @@ int main (int argc, char *argv[]){
     }
     else if(mode_option == "test"){
 
-       if(which_bdt==-1)which_bdt = 0;
-       bdt_XGBoost_importance(bdt_infos[which_bdt]);
+        ncpi0_sss_precalc(tagToFileMap["NCpi0Train"]);
+
+       //if(which_bdt==-1)which_bdt = 0;
+       //bdt_XGBoost_importance(bdt_infos[which_bdt]);
 
         return 0;
     }else if(mode_option == "sig"){
