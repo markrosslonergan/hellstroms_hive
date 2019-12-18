@@ -277,7 +277,7 @@ int convertToLibSVM(bdt_info& info, bdt_file *file){
             tree_formulas_v[t]->GetNdata();
             double val = tree_formulas_v[t]->EvalInstance();
 
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
                 int id = id_v[t];
                 sslibSVM<<id<<":"<<val<<" ";
 
@@ -319,12 +319,24 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
     TCut sig_tcut_test =  TCut((signal_file_test->getStageCuts(bdt_precut_stage,-9,-9)+"&&"+signal_test_cut).c_str());
     TCut back_tcut_test = TCut((background_file_test->getStageCuts(bdt_precut_stage,-9,-9)+"&&"+background_test_cut).c_str());
 
-    std::cout<<"Prefiltering out all events that fail precuts + topocuts"<<std::endl;
-    TTree * background_ttree_prefiltered_train = (TTree*)background_file_train->tvertex->CopyTree(back_tcut_train);
-    TTree * signal_ttree_prefiltered_train = (TTree*)signal_file_train->tvertex->CopyTree(sig_tcut_train);
+    signal_file_test->setStageEntryList(bdt_precut_stage);
+    signal_file_train->setStageEntryList(bdt_precut_stage);
+    background_file_test->setStageEntryList(bdt_precut_stage);
+    background_file_train->setStageEntryList(bdt_precut_stage);
 
-    TTree * background_ttree_prefiltered_test = (TTree*)background_file_test->tvertex->CopyTree(back_tcut_test);
-    TTree * signal_ttree_prefiltered_test = (TTree*)signal_file_test->tvertex->CopyTree(sig_tcut_test);
+    std::cout<<"Prefiltering out all events that fail precuts + topocuts"<<std::endl;
+    //TTree * background_ttree_prefiltered_train = (TTree*)background_file_train->tvertex->CopyTree(back_tcut_train);
+    //TTree * signal_ttree_prefiltered_train = (TTree*)signal_file_train->tvertex->CopyTree(sig_tcut_train);
+
+    //TTree * background_ttree_prefiltered_test = (TTree*)background_file_test->tvertex->CopyTree(back_tcut_test);
+    //TTree * signal_ttree_prefiltered_test = (TTree*)signal_file_test->tvertex->CopyTree(sig_tcut_test);
+       
+    //HACK
+    TTree * signal_ttree_train = signal_file_train->tvertex;
+    TTree * signal_ttree_test = signal_file_test->tvertex;
+    TTree * background_ttree_train = background_file_train->tvertex;
+    TTree * background_ttree_test = background_file_test->tvertex;
+
 
 
 
@@ -336,15 +348,15 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
 
 
     std::cout<<"Train signal_entries: "<<signal_entries_train<<" background_entries_train: "<<background_entries_train<<std::endl;
-    std::cout<<"TRAIN PREFILTERED signal_entries: "<<signal_ttree_prefiltered_train->GetEntries()<<" background_entries_train: "<<background_ttree_prefiltered_train->GetEntries()<<std::endl;
+    //std::cout<<"TRAIN PREFILTERED signal_entries: "<<signal_ttree_prefiltered_train->GetEntries()<<" background_entries_train: "<<background_ttree_prefiltered_train->GetEntries()<<std::endl;
     std::cout<<"Test signal_entries: "<<signal_entries_test<<" background_entries_test: "<<background_entries_test<<std::endl;
-    std::cout<<"TEST PREFILTERED signal_entries: "<<signal_ttree_prefiltered_test->GetEntries()<<" background_entries_test: "<<background_ttree_prefiltered_test->GetEntries()<<std::endl;
+    //std::cout<<"TEST PREFILTERED signal_entries: "<<signal_ttree_prefiltered_test->GetEntries()<<" background_entries_test: "<<background_ttree_prefiltered_test->GetEntries()<<std::endl;
 
 
-    TTreeFormula* sig_weight_train = new TTreeFormula("sig_w",signal_file_train->weight_branch.c_str(),signal_ttree_prefiltered_train);
-    TTreeFormula* bkg_weight_train = new TTreeFormula("bkg_w",background_file_train->weight_branch.c_str(),background_ttree_prefiltered_train);
-    TTreeFormula* sig_weight_test = new TTreeFormula("sig_w",signal_file_test->weight_branch.c_str(),signal_ttree_prefiltered_test);
-    TTreeFormula* bkg_weight_test = new TTreeFormula("bkg_w",background_file_test->weight_branch.c_str(),background_ttree_prefiltered_test);
+    TTreeFormula* sig_weight_train = new TTreeFormula("sig_w",signal_file_train->weight_branch.c_str(),signal_ttree_train);
+    TTreeFormula* bkg_weight_train = new TTreeFormula("bkg_w",background_file_train->weight_branch.c_str(),background_ttree_train);
+    TTreeFormula* sig_weight_test = new TTreeFormula("sig_w",signal_file_test->weight_branch.c_str(),signal_ttree_test);
+    TTreeFormula* bkg_weight_test = new TTreeFormula("bkg_w",background_file_test->weight_branch.c_str(),background_ttree_test);
 
 
     std::vector<TTreeFormula*> sig_tree_formulas_v_train;
@@ -354,15 +366,17 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
 
     std::vector<int> id_v;
     for(bdt_variable &var : variables) {
-        sig_tree_formulas_v_train.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),signal_ttree_prefiltered_train));
-        bkg_tree_formulas_v_train.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),background_ttree_prefiltered_train));
-        sig_tree_formulas_v_test.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),signal_ttree_prefiltered_test));
-        bkg_tree_formulas_v_test.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),background_ttree_prefiltered_test));
+        //These are being changed from prefiltered
+        //sig_tree_formulas_v_train.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),signal_ttree_prefiltered_train));
+        sig_tree_formulas_v_train.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),signal_ttree_train));
+        bkg_tree_formulas_v_train.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),background_ttree_train));
+        sig_tree_formulas_v_test.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),signal_ttree_test));
+        bkg_tree_formulas_v_test.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),background_ttree_test));
         id_v.push_back(var.id);
     }
 
     for(int i = 0; i < signal_entries_train; ++i) {
-        signal_ttree_prefiltered_train->GetEntry(i);
+        signal_ttree_train->GetEntry(i);
 
         sig_weight_train->GetNdata();
         double wei = sig_weight_train->EvalInstance();
@@ -373,9 +387,8 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             double val = sig_tree_formulas_v_train[t]->EvalInstance();
             int id = id_v[t];
 
-            //if nan, lets do something
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
-
+            //if nan, or a predefined bad value, skip this feature
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }
         }
@@ -383,7 +396,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
     } 
 
     for(int i = 0; i < signal_entries_test; ++i) {
-        signal_ttree_prefiltered_test->GetEntry(i);
+        signal_ttree_test->GetEntry(i);
 
         sig_weight_test->GetNdata();
         double wei = sig_weight_test->EvalInstance();
@@ -394,8 +407,8 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             double val = sig_tree_formulas_v_test[t]->EvalInstance();
             int id = id_v[t];
 
-            //if nan, lets do something
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+            //if nan, or a predefined bad value, skip this feature
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 sslibSVMtest<<id<<":"<<val<<" ";
             }
@@ -405,7 +418,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
 
 
     for(int i = 0; i < background_entries_train; ++i) {
-        background_ttree_prefiltered_train->GetEntry(i);
+        background_ttree_train->GetEntry(i);
 
         bkg_weight_train->GetNdata();
         double wei = bkg_weight_train->EvalInstance();
@@ -416,9 +429,8 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             double val = bkg_tree_formulas_v_train[t]->EvalInstance();
             int id = id_v[t];
 
-            //if nan, lets do something
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
-
+            //if nan, or a predefined bad value, skip this feature
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }
         }
@@ -426,7 +438,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
     } 
 
     for(int i = 0; i < background_entries_test; ++i) {
-        background_ttree_prefiltered_test->GetEntry(i);
+        background_ttree_test->GetEntry(i);
 
         bkg_weight_test->GetNdata();
         double wei = bkg_weight_test->EvalInstance();
@@ -437,8 +449,8 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             double val = bkg_tree_formulas_v_test[t]->EvalInstance();
             int id = id_v[t];
 
-            //if nan, lets do something
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+            //if nan, or a predefined bad value, skip this feature
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 sslibSVMtest<<id<<":"<<val<<" ";
             }
@@ -514,7 +526,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_
             int id = id_v[t];
 
             //if nan, lets do something
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 if(i < sig_train_num){
                     sslibSVMtrain<<id<<":"<<val<<" ";
@@ -552,7 +564,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_
             int id = id_v[t];
 
             //if its a missing value, lets ignore it, lets do something
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 if(i < bkg_train_num){
                     sslibSVMtrain<<id<<":"<<val<<" ";

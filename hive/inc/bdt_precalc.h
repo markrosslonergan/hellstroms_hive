@@ -67,7 +67,7 @@ class bdt_precalc{
 
 	};
 
-int ncpi0_sss_precalc(const bdt_file * file);
+int ncpi0_sss_precalc(const bdt_file * file, const std::string &tag);
 
 
 
