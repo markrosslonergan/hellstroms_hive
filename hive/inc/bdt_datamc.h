@@ -30,6 +30,7 @@
 #include "TFriendElement.h"
 #include "TStyle.h"
 #include "TGraphAsymmErrors.h"
+#include "TMath.h"
 
 class bdt_datamc{
     public:

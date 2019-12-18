@@ -325,6 +325,8 @@ int main (int argc, char *argv[]){
         if(mode_option != "train"  && mode_option != "sbnfit"){
             f->calcBaseEntryList(analysis_tag);
         }
+    
+        f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
     }
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -589,7 +591,12 @@ int main (int argc, char *argv[]){
                 // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
                 //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 
-                real_datamc.plotStacks(ftest, vars, fbdtcuts);
+                if(which_bdt==-1){
+                    real_datamc.plotStacks(ftest, vars, fbdtcuts);
+                }else{
+                    real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts);
+                }
+
                 //real_datamc.SetSpectator();
                 //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
@@ -685,7 +692,9 @@ int main (int argc, char *argv[]){
     }
     else if(mode_option == "test"){
 
-        ncpi0_sss_precalc(tagToFileMap["NCpi0Train"]);
+        for(int f=0; f< bdt_files.size();++f){
+            if(which_file == f || which_file==-1) ncpi0_sss_precalc(bdt_files[f], analysis_tag);
+        }
 
        //if(which_bdt==-1)which_bdt = 0;
        //bdt_XGBoost_importance(bdt_infos[which_bdt]);
