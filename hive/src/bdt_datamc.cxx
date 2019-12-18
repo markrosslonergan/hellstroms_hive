@@ -544,28 +544,36 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Binned Chi-test: "<<var.name<<" "<<tsum->Chi2Test(d0,"UW CHI2")<<std::endl;
             std::cout<<"Binned Chi-test (rev): "<<var.name<<" "<<d0->Chi2Test(tsum,"UW CHI2")<<std::endl;
 
+
             double mychi =0;
             int ndof = 0;
             for(int p=0; p<d0->GetNbinsX();p++){
+
                 double da = d0->GetBinContent(p+1);
                 double bk = tsum->GetBinContent(p+1);
 
-                if (da == 0 || bk ==0){
+                if ( bk ==0){
                     std::cout<<"ERROR mychi, for bin "<<p<<" n_data= "<<da<<" and n_mc= "<<bk<<std::endl;
 
                 } else{
 
-                    double da_err = sqrt(d0->GetBinContent(p+1));
+                    // Version 1 chi^2
+                    //double da_err = sqrt(d0->GetBinContent(p+1));
+                    //double bk_err = tsum->GetBinError(p+1);
+
+                    double da_err = sqrt(tsum->GetBinContent(p+1));
                     double bk_err = tsum->GetBinError(p+1);
-                    //std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<std::endl;
+
                     double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
+
+                    std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
                     if(tk==tk){
                         mychi+=tk;
                         ndof++;
                     }
                 }
             }
-            std::cout<<"MyChi: "<<var.name<<" "<<mychi<<std::endl;
+            std::cout<<"MyChi: "<<var.name<<" "<<mychi<<" "<<std::endl;
 
 
             //stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
@@ -759,7 +767,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             //std::string mean = "(Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
-            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),4) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")";
+            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (pval: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
 
             std::string combined = mean + "     " +ks;
             //std::string mean = "Ratio: Normalized" ;
