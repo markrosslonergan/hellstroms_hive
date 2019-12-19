@@ -277,7 +277,8 @@ int convertToLibSVM(bdt_info& info, bdt_file *file){
             tree_formulas_v[t]->GetNdata();
             double val = tree_formulas_v[t]->EvalInstance();
 
-            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
+            bool m_always_run = true;
+            if(m_always_run ||   !(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
                 int id = id_v[t];
                 sslibSVM<<id<<":"<<val<<" ";
 
@@ -387,8 +388,9 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             double val = sig_tree_formulas_v_train[t]->EvalInstance();
             int id = id_v[t];
 
+            bool m_always_run = true;
             //if nan, or a predefined bad value, skip this feature
-            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
+            if(m_always_run ||   !(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }
         }
@@ -407,8 +409,9 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             double val = sig_tree_formulas_v_test[t]->EvalInstance();
             int id = id_v[t];
 
+            bool m_always_run = true;
             //if nan, or a predefined bad value, skip this feature
-            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
+            if(m_always_run ||   !(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 sslibSVMtest<<id<<":"<<val<<" ";
             }
@@ -429,8 +432,9 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             double val = bkg_tree_formulas_v_train[t]->EvalInstance();
             int id = id_v[t];
 
+            bool m_always_run = true;
             //if nan, or a predefined bad value, skip this feature
-            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
+            if(m_always_run ||   !(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }
         }
@@ -449,8 +453,9 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             double val = bkg_tree_formulas_v_test[t]->EvalInstance();
             int id = id_v[t];
 
+            bool m_always_run = true;
             //if nan, or a predefined bad value, skip this feature
-            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
+            if(m_always_run ||   !(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 sslibSVMtest<<id<<":"<<val<<" ";
             }
@@ -525,8 +530,9 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_
             double val = sig_tree_formulas_v[t]->EvalInstance();
             int id = id_v[t];
 
+            bool m_always_run = true;
             //if nan, lets do something
-            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
+            if(m_always_run ||   !(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 if(i < sig_train_num){
                     sslibSVMtrain<<id<<":"<<val<<" ";
@@ -563,8 +569,9 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_
             double val = bkg_tree_formulas_v[t]->EvalInstance();
             int id = id_v[t];
 
+            bool m_always_run = true;
             //if its a missing value, lets ignore it, lets do something
-            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
+            if(m_always_run ||   !(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 if(i < bkg_train_num){
                     sslibSVMtrain<<id<<":"<<val<<" ";
