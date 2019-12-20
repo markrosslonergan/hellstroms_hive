@@ -1223,3 +1223,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     return 0;
 }
 
+
+
+//int bdt_file::convertToHashedLibSVM(){
+//
+//}

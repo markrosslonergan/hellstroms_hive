@@ -456,7 +456,7 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-        histogram_stack->plot_pot =13.2e20;//4.9e19;
+        histogram_stack->plot_pot =10.1e20;//4.9e19;
 
         std::cout<<"flag1"<<std::endl;
 
@@ -485,7 +485,7 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 datamc.setPlotStage(which_stage);                
-                datamc.setStackMode(13.2e20);
+                datamc.setStackMode(histogram_stack->plot_pot);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
@@ -497,7 +497,7 @@ int main (int argc, char *argv[]){
 
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 real_datamc.setPlotStage(which_stage);                
-                real_datamc.setStackMode(13.2e20);
+                real_datamc.setStackMode( histogram_stack->plot_pot);
 
                 //real_datamc.setSubtractionVector(subv);
                 // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
@@ -510,7 +510,7 @@ int main (int argc, char *argv[]){
         }else{
             bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
 
-            real_datamc.setStackMode(13.2e20);
+            real_datamc.setStackMode( histogram_stack->plot_pot);
             if(which_bdt ==-1){
                 for(int k=0; k< bdt_infos.size(); k++){
                     real_datamc.plotBDTStacks(bdt_infos[k] , fbdtcuts);

@@ -633,398 +633,454 @@ int bdt_XGtrain(bdt_info &info){
     for(auto &pairs: info.TMVAmethod.xg_config){
         if(pairs.first == "n_trees"){
             n_trees = (int)std::stod(pairs.second);
+        }else if (pairs.first == "eval_metric"){
+            std::cout<<"Nah mate, we dont need to pass "<<pairs.first<<" anymore, automatic. No harm done tho"<<std::endl;
         }else{
             safe_xgboost(XGBoosterSetParam(booster,pairs.first.c_str(),pairs.second.c_str()));
             std::cout<<"--"<<pairs.first<<" with a value of "<<pairs.second<<std::endl;
         }
     }
 
-    /*
-       safe_xgboost(XGBoosterSetParam(booster, "tree_method", "exact"));
-       safe_xgboost(XGBoosterSetParam(booster, "n_gpus", "0"));
-       safe_xgboost(XGBoosterSetParam(booster, "objective", "binary:logistic")); //
-       safe_xgboost(XGBoosterSetParam(booster, "eval_metric", "logloss")); //auc , error, rmsle , ams@0.15i
-    //safe_xgboost(XGBoosterSetParam(booster, "eval_metric", "auc")); //auc , error, rmsle , ams@0.15i
-    safe_xgboost(XGBoosterSetParam(booster, "min_child_weight", "1"));
-    safe_xgboost(XGBoosterSetParam(booster, "gamma", "1.0")); //regular
-    safe_xgboost(XGBoosterSetParam(booster, "max_depth", "5"));
-    safe_xgboost(XGBoosterSetParam(booster, "verbosity", "1"));
-    safe_xgboost(XGBoosterSetParam(booster, "eta", "0.02"));
-    safe_xgboost(XGBoosterSetParam(booster, "subsample", "0.9"));
-    */
+        std::vector<std::string> s_english = {"Negative Log-Liklihood","Area Under the Curve (AUC)","Error (\% of wrong cases)","Root Mean Square Error"};
+        std::vector<std::string> s_metrics  = {"logloss","auc","error","rmsle"};
+        std::vector<std::string> s_types = {"train","test"};
+        for(auto&m:s_metrics){
+            safe_xgboost(XGBoosterSetParam(booster, "eval_metric",m.c_str()));
+        }
 
 
 
-    std::vector<double> iteration;
-    std::vector<double> test_error;
-    std::vector<double> train_error;
+        /*
+           safe_xgboost(XGBoosterSetParam(booster, "tree_method", "exact"));
+           safe_xgboost(XGBoosterSetParam(booster, "n_gpus", "0"));
+           safe_xgboost(XGBoosterSetParam(booster, "objective", "binary:logistic")); //
+           safe_xgboost(XGBoosterSetParam(booster, "eval_metric", "logloss")); //auc , error, rmsle , ams@0.15i
+        //safe_xgboost(XGBoosterSetParam(booster, "eval_metric", "auc")); //auc , error, rmsle , ams@0.15i
+        safe_xgboost(XGBoosterSetParam(booster, "min_child_weight", "1"));
+        safe_xgboost(XGBoosterSetParam(booster, "gamma", "1.0")); //regular
+        safe_xgboost(XGBoosterSetParam(booster, "max_depth", "5"));
+        safe_xgboost(XGBoosterSetParam(booster, "verbosity", "1"));
+        safe_xgboost(XGBoosterSetParam(booster, "eta", "0.02"));
+        safe_xgboost(XGBoosterSetParam(booster, "subsample", "0.9"));
+        */
 
-    const char* eval_names[2] = {"train", "test"};
-    const char* eval_result = NULL;
-    int cotr = 0;
-    for (int i = 0; i < n_trees; ++i){
-        safe_xgboost(XGBoosterUpdateOneIter(booster, i, dtrain));
-        safe_xgboost(XGBoosterEvalOneIter(booster, i, eval_dmats, eval_names, 2, &eval_result));
-        std::string res = eval_result;
-        int i1 = res.find(":",0); 
-        std::string s1 = res.substr(i1+1,8);
-        int i2 = res.find(":",i1+2);
-        std::string s2 = res.substr(i2+1,8);
-        std::cout<<i<<" TrainError "<<s1<<" TestError "<<s2<<std::endl;
-        train_error.push_back(std::stod(s1));
-        test_error.push_back(std::stod(s2));
-        iteration.push_back(i);
+        std::vector<double> iteration;
 
-        printf("%s\n", eval_result);
-        if(i>2){
-            if(test_error[i-1] > test_error[i-2] ){
-                std::cout<<"Yes"<<" "<<cotr<<std::endl;
-                cotr++;
+        std::vector<std::vector<double>> train_metric_res(s_metrics.size(),iteration);
+        std::vector<std::vector<double>> test_metric_res(s_metrics.size(),iteration);
+
+        std::vector<std::pair<double,int>> test_min_vals(s_metrics.size(),std::make_pair(99999,-1));
+
+        const char* eval_names[2] = {"train", "test"};
+        const char* eval_result = NULL;
+        int cotr = 0;
+        for (int i = 0; i < n_trees; ++i){
+            safe_xgboost(XGBoosterUpdateOneIter(booster, i, dtrain));
+            safe_xgboost(XGBoosterEvalOneIter(booster, i, eval_dmats, eval_names, 2, &eval_result));
+            std::string res = eval_result;
+
+            std::cout<<"RES "<<res<<std::endl; 
+
+
+            for(int t =0; t<s_types.size();++t){
+                for(int m = 0; m<s_metrics.size();m++){
+                    std::string nam = s_types[t]+"-"+s_metrics[m]; 
+                    int loc = res.find(nam,0);
+                    std::string val = res.substr(loc+nam.size()+1,8); 
+                    double d_val = std::stod(val);
+                    //std::cout<<"Wripped "<<nam<<" "<<val<<std::endl;           
+                    if(s_types[t]=="train") train_metric_res[m].push_back(d_val);
+                    if(s_types[t]=="test"){
+                        test_metric_res[m].push_back(d_val);
+                        if(d_val < test_min_vals[m].first){
+                            test_min_vals[m].first = d_val;
+                            test_min_vals[m].second = i;
+                        }
+                    }
+                }
+            }
+
+            iteration.push_back(i);
+
+            printf("%s\n", eval_result);
+
+            //not a stopping conditin
+            if(i>2){
+                if(test_metric_res[0][i-1] > test_metric_res[0][i-2] ){
+                    std::cout<<"Yes"<<" "<<cotr<<std::endl;
+                    cotr++;
+                }else{
+                    cotr=0;
+                }
+            }
+            //if(cotr>10) break;
+        }
+
+
+        // predict
+        bst_ulong out_len = 0;
+        const float* out_result = NULL;
+
+        //safe_xgboost(XGBoosterLoadModel(booster,"test.mod"));
+
+
+        /*std::cout<<"TEST"<<std::endl;
+          const float* tester = NULL;
+          safe_xgboost(XGDMatrixGetFloatInfo(dtest, "logloss", &out_len, &tester));
+          for (int i = 0; i < out_len; ++i) {
+          std::cout<<tester[i]<<std::endl;
+          }
+          std::cout<<"TEST"<<std::endl;
+          */
+
+        const float* test_score = NULL;
+        const float* test_label = NULL;
+        safe_xgboost(XGDMatrixGetFloatInfo(dtest, "label", &out_len, &test_label));
+        safe_xgboost(XGBoosterPredict(booster, dtest, 0, 0, &out_len, &test_score));
+        for (int i = 0; i < out_len; ++i) {
+            //i    printf("%1.4f ", out_result[i]);
+            if(test_label[i]){
+                stest->Fill(test_score[i]);  
+                v_stest =  test_score[i];
+                t_stest->Fill();
+
             }else{
-                cotr=0;
+                btest->Fill(test_score[i]);  
+                v_btest =  test_score[i];
+                t_btest->Fill();
+
             }
         }
-        //if(cotr>10) break;
-    }
 
-
-    // predict
-    bst_ulong out_len = 0;
-    const float* out_result = NULL;
-
-    //safe_xgboost(XGBoosterLoadModel(booster,"test.mod"));
-
-
-    /*std::cout<<"TEST"<<std::endl;
-      const float* tester = NULL;
-      safe_xgboost(XGDMatrixGetFloatInfo(dtest, "logloss", &out_len, &tester));
-      for (int i = 0; i < out_len; ++i) {
-      std::cout<<tester[i]<<std::endl;
-      }
-      std::cout<<"TEST"<<std::endl;
-      */
-
-    const float* test_score = NULL;
-    const float* test_label = NULL;
-    safe_xgboost(XGDMatrixGetFloatInfo(dtest, "label", &out_len, &test_label));
-    safe_xgboost(XGBoosterPredict(booster, dtest, 0, 0, &out_len, &test_score));
-    for (int i = 0; i < out_len; ++i) {
-        //i    printf("%1.4f ", out_result[i]);
-        if(test_label[i]){
-            stest->Fill(test_score[i]);  
-            v_stest =  test_score[i];
-            t_stest->Fill();
-
-        }else{
-            btest->Fill(test_score[i]);  
-            v_btest =  test_score[i];
-            t_btest->Fill();
-
-        }
-    }
-
-    const float* train_score = NULL;
-    const float* train_label = NULL;
-    safe_xgboost(XGDMatrixGetFloatInfo(dtrain, "label", &out_len, &train_label));
-    safe_xgboost(XGBoosterPredict(booster, dtrain, 0, 0, &out_len, &train_score));
-    for (int i = 0; i < out_len; ++i) {
-        if(train_label[i]){
-            strain->Fill(train_score[i]);  
-            v_strain =  train_score[i];
-            t_strain->Fill();
-        }else{
-            btrain->Fill(train_score[i]);  
-            v_btrain =  train_score[i];
-            t_btrain->Fill();
-        }
-    }
-
-
-
-
-
-    safe_xgboost(XGBoosterSaveModel(booster,(name+".XGBoost.mod").c_str() ));
-    safe_xgboost(XGDMatrixFree(dtrain));
-    safe_xgboost(XGDMatrixFree(dtest));
-
-    f->cd();
-
-    TCanvas *c_error = new TCanvas();
-    c_error->cd();
-    TGraph *g_test = new TGraph(iteration.size(),&iteration[0],&test_error[0]);
-    TGraph *g_train = new TGraph(iteration.size(),&iteration[0],&train_error[0]);
-    g_test->Draw("AL");
-    g_test->SetLineColor(kRed);
-    g_train->Draw("same CL");
-    g_train->SetLineColor(kBlue);
-    c_error->Write(); 
-
-    std::vector<double> pos;
-    std::vector<double> st,st2;
-    std::vector<double> bt,bt2;
-    for(double p =0; p<=1;p+=0.01){
-        pos.push_back(p);
-        st.push_back((double)t_strain->GetEntries(("sig_train > "+std::to_string(p)).c_str())/(double)t_strain->GetEntries());
-        bt.push_back(1.0-(double)t_btrain->GetEntries(("bkg_train > "+std::to_string(p)).c_str())/(double)t_btrain->GetEntries());
-
-        st2.push_back((double)t_stest->GetEntries(("sig_test > "+std::to_string(p)).c_str())/(double)t_stest->GetEntries());
-        bt2.push_back(1.0-(double)t_btest->GetEntries(("bkg_test > "+std::to_string(p)).c_str())/(double)t_btest->GetEntries());
-    }
-
-    TCanvas *c_eff = new TCanvas();
-    c_eff->cd();
-    TGraph *gc = new TGraph(pos.size(),&bt[0],&st[0]);
-    TGraph *gc2 = new TGraph(pos.size(),&bt2[0],&st2[0]);
-    TGraph *gst = new TGraph(pos.size(),&pos[0],&st[0]);
-    TGraph *gbt = new TGraph(pos.size(),&pos[0],&bt[0]);
-    gst->Draw("AL");
-    gst->SetMaximum(1);
-    gst->SetMinimum(0);
-    gst->SetLineColor(kRed);
-    gbt->Draw("same CL");
-    gbt->SetLineColor(kBlue);
-    c_eff->Write(); 
-
-    TCanvas *c_eff2 = new TCanvas();
-    c_eff2->cd();
-    gc->Draw("AL");
-    gc2->Draw("same L");
-    gc2->SetLineColor(kRed);
-    c_eff2->Write(); 
-
-
-    t_strain->Write();
-    t_btrain->Write();
-    btest->Write();
-    stest->Write();
-    strain->Write();
-    btrain->Write();
-    
-    
-    f->Close(); 
-    
-
-    bdt_XGBoost_importance(info, booster);
-   
-
-    
-    return 0;
-
-}
-
-
-
-int super_bdt_train(std::string &analysis_tag, const std::vector<bdt_info> & bdt_infos, const std::vector<std::string> & s_tags, const std::vector<std::string> & b_tags, const std::string & additional_sig_cut, const std::string & additional_bkg_cut){
-
-    std::string name_template = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(1)+"_";
-    std::string end_template = ".root";
-
-    std::vector<std::string> bdt_score_vars;
-    for(auto &info: bdt_infos){
-        bdt_score_vars.push_back("simple_"+info.identifier+"_mva");
-    }
-
-    //Form a TChain for signal and background like bdt_files
-    std::cout<<"Starting to build background chain: "<<std::endl;
-    TChain b_chain("singlephoton/simple_tree");  
-
-    for(auto &b: b_tags ){
-        std::cout<<"--on tag "<<b<<std::endl;
-        b_chain.Add((name_template+b+end_template).c_str());
-    }
-
-    TChain b_vertex_chain("singlephoton/vertex_tree");  
-    for(auto &b: b_tags ){
-        b_vertex_chain.Add((name_template+b+end_template).c_str());
-    }
-
-
-    std::cout<<"Starting to build signal _chain"<<std::endl;
-    TChain s_chain("singlephoton/simple_tree");  
-    for(auto &s: s_tags ){
-        std::cout<<"on tag "<<s<<std::endl;
-        s_chain.Add((name_template+s+end_template).c_str());
-    }
-    TChain s_vertex_chain("singlephoton/vertex_tree");  
-    for(auto &s: s_tags ){
-        s_vertex_chain.Add((name_template+s+end_template).c_str());
-    }
-
-    s_chain.AddFriend(&s_vertex_chain,"super");
-    b_chain.AddFriend(&b_vertex_chain,"super");
-
-
-    std::string name = "SUPERBDT_"+analysis_tag;
-    TFile * outfile = TFile::Open((name+"_training.root").c_str(), "recreate");
-
-
-    TMVA::Factory * factory = new TMVA::Factory(name.c_str(), outfile,"!V:!Silent:Color:DrawProgressBar:AnalysisType=Classification");
-    TMVA::DataLoader * dataloader = new TMVA::DataLoader(("BDTxmls_"+name).c_str());
-
-    TCut sig_tcut = TCut(additional_sig_cut.c_str());  
-    dataloader->AddSignalTree(&s_chain);
-    dataloader->AddCut(sig_tcut,"Signal");
-    int signal_entries = s_chain.GetEntries();
-
-
-    TCut bkg_tcut = TCut(additional_bkg_cut.c_str());  
-    dataloader->AddBackgroundTree(&b_chain);
-    dataloader->AddCut(bkg_tcut,"Background");
-    int background_entries = b_chain.GetEntries();
-
-    dataloader->SetSignalWeightExpression("simple_pot_weight");
-    dataloader->SetBackgroundWeightExpression("simple_pot_weight");
-
-    for(auto &var: bdt_score_vars) dataloader->AddVariable(var.c_str());
-    std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
-
-    dataloader->PrepareTrainingAndTestTree("1","1", "nTrain_Signal="+std::to_string(floor(signal_entries*0.5))+":nTrain_Background="+std::to_string(floor(background_entries*0.5))+":SplitMode=Random:NormMode=NumEvents:!V");
-
-    factory->BookMethod(dataloader, "BDT" , "TMVA", "!H:!V:NTrees=800:BoostType=RealAdaBoost:nCuts=-1:MaxDepth=3");
-
-    factory->TrainAllMethods();
-    factory->TestAllMethods();
-    factory->EvaluateAllMethods();
-
-    outfile->Close();
-
-    delete factory;
-    delete dataloader;
-
-}
-
-
-int bdt_XGBoost_importance(bdt_info &info){
-    BoosterHandle booster;
-    safe_xgboost(XGBoosterCreate(0, 0, &booster));
-    safe_xgboost(XGBoosterLoadModel(booster,(info.identifier+".XGBoost.mod").c_str()));
-
-    return bdt_XGBoost_importance(info, booster);
-}
-
-int bdt_XGBoost_importance(bdt_info &info, BoosterHandle &booster){
-   
-    //some vectors to save info on each variable
-    int t_vars = info.train_vars.size()+info.spec_vars.size();
-    
-    std::vector<int> variable_uses(t_vars,0); 
-    std::vector<double> total_gain(t_vars,0.0); 
-    std::vector<double> mean_gain(t_vars,0.0); 
-    std::vector<int> train_var_id(t_vars,0);
-
-    std::cout<<"We have "<<t_vars<<" variables of which "<<info.train_vars.size()<<" are training variables"<<std::endl;
-    
-    std::vector<bool> is_training(t_vars,false);
-
-    for(int k=0; k< info.train_vars.size(); k++){
-        is_training.at(info.train_vars[k].id) = true;  
-        train_var_id[info.train_vars[k].id] = k;
-    }
-
-
-    //Some storage for the info
-    int with_stats = 1;
-    bst_ulong out_len = 0;
-    const char ** out_dump_array = NULL;
-    safe_xgboost(XGBoosterDumpModel(booster, "", with_stats,  &out_len, &out_dump_array));
-
-    std::cout<<"XGBoost importance : "<<out_len<<std::endl;
-
-    for(size_t i=0; i<out_len ; ++i){
-        if((out_dump_array)[i]!=NULL){
-            std::cout<<i<<" "<<(out_dump_array)[i]<<std::endl;  
-            const std::string cconvert((out_dump_array)[i]);
-
-            //Look for the feature, starts with in form "[f10<1.2" ... sp we want to find the number between the [f and the <
-            std::string stag = "[f";
-            std::string del = "<";
-
-            //when we find the feature, grab the number after the next time gain= appears
-            std::string sgain = "gain=";
-            size_t found = cconvert.find(stag);
-
-            while (found!=std::string::npos){
-                size_t ndel = cconvert.find(del,found);
-                std::string s_int = cconvert.substr(found+stag.size(),ndel-found-stag.size());
-                int which_var = std::stoi(s_int);
-                variable_uses[which_var]++;
-                std::string s_gain   = "";
-                //ok if we found a variable, add the gain, first locate it.
-
-                size_t ngain = cconvert.find(sgain,ndel);
-                if(ngain!=std::string::npos){
-                    size_t ngainend = cconvert.find(",",ngain);
-                    if( ngainend !=std::string::npos)   s_gain = cconvert.substr(ngain+sgain.size(), ngainend-ngain-sgain.size()-1); 
-                    size_t offset = 0;
-                    double d_gain =  std::stod(s_gain,&offset);
-                    total_gain[which_var] +=  d_gain;
-                }        
-//                std::cout<<" var "<<s_int<<" gain "<<s_gain<<std::endl;
-                found = cconvert.find(stag,ndel);
+        const float* train_score = NULL;
+        const float* train_label = NULL;
+        safe_xgboost(XGDMatrixGetFloatInfo(dtrain, "label", &out_len, &train_label));
+        safe_xgboost(XGBoosterPredict(booster, dtrain, 0, 0, &out_len, &train_score));
+        for (int i = 0; i < out_len; ++i) {
+            if(train_label[i]){
+                strain->Fill(train_score[i]);  
+                v_strain =  train_score[i];
+                t_strain->Fill();
+            }else{
+                btrain->Fill(train_score[i]);  
+                v_btrain =  train_score[i];
+                t_btrain->Fill();
             }
         }
+
+
+
+
+
+        safe_xgboost(XGBoosterSaveModel(booster,(name+".XGBoost.mod").c_str() ));
+        safe_xgboost(XGDMatrixFree(dtrain));
+        safe_xgboost(XGDMatrixFree(dtest));
+
+        f->cd();
+
+        TCanvas *c_error = new TCanvas("","",1800,1800);
+        c_error->Divide(2,2);
+        c_error->cd(1);
+
+        TLegend *lgr = new TLegend(0.59,0.89,0.59,0.89);
+        for(int i=0; i< s_metrics.size(); i++){
+            TPad *p = (TPad*)c_error->cd(i+1);
+            if(i==1)p->SetLogx();
+            TGraph *g_test= new TGraph(iteration.size(),&iteration[0],&(test_metric_res[i])[0]);
+            TGraph *g_train = new TGraph(iteration.size(),&iteration[0],&(train_metric_res[i])[0]);
+            g_train->Draw("AL");
+            g_train->SetTitle(s_english[i].c_str());
+            g_train->SetLineColor(kRed);
+            g_train->SetLineWidth(2);
+            g_test->Draw("same CL");
+            g_test->SetLineColor(kBlue);
+            g_test->SetLineWidth(2);
+
+            TGraph *g_min = new TGraph(1);
+            g_min->SetPoint(0,test_min_vals[i].second,test_min_vals[i].first);
+            g_min->SetLineColor(kBlue);
+            g_min->SetMarkerStyle(29);
+            g_min->Draw("same P");
+
+            if(i==0){
+                lgr->AddEntry(g_train,"Train","f"); 
+                lgr->AddEntry(g_test,"Test","f"); 
+                lgr->SetLineWidth(0);
+                lgr->SetLineColor(kWhite);
+                lgr->Draw();
+            }
+            c_error->Update();
+        }
+        c_error->SaveAs(("XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
+        c_error->Write(); 
+
+
+        std::vector<double> pos;
+        std::vector<double> st,st2;
+        std::vector<double> bt,bt2;
+        for(double p =0; p<=1;p+=0.01){
+            pos.push_back(p);
+            st.push_back((double)t_strain->GetEntries(("sig_train > "+std::to_string(p)).c_str())/(double)t_strain->GetEntries());
+            bt.push_back(1.0-(double)t_btrain->GetEntries(("bkg_train > "+std::to_string(p)).c_str())/(double)t_btrain->GetEntries());
+
+            st2.push_back((double)t_stest->GetEntries(("sig_test > "+std::to_string(p)).c_str())/(double)t_stest->GetEntries());
+            bt2.push_back(1.0-(double)t_btest->GetEntries(("bkg_test > "+std::to_string(p)).c_str())/(double)t_btest->GetEntries());
+        }
+
+        TCanvas *c_eff = new TCanvas();
+        c_eff->cd();
+        TGraph *gc = new TGraph(pos.size(),&bt[0],&st[0]);
+        TGraph *gc2 = new TGraph(pos.size(),&bt2[0],&st2[0]);
+        TGraph *gst = new TGraph(pos.size(),&pos[0],&st[0]);
+        TGraph *gbt = new TGraph(pos.size(),&pos[0],&bt[0]);
+        gst->Draw("AL");
+        gst->SetMaximum(1);
+        gst->SetMinimum(0);
+        gst->SetLineColor(kRed);
+        gbt->Draw("same CL");
+        gbt->SetLineColor(kBlue);
+        c_eff->Write(); 
+
+        TCanvas *c_eff2 = new TCanvas();
+        c_eff2->cd();
+        gc->Draw("AL");
+        gc2->Draw("same L");
+        gc2->SetLineColor(kRed);
+        c_eff2->Write(); 
+
+
+        t_strain->Write();
+        t_btrain->Write();
+        btest->Write();
+        stest->Write();
+        strain->Write();
+        btrain->Write();
+
+
+        f->Close(); 
+
+
+        bdt_XGBoost_importance(info, booster);
+
+
+
+        return 0;
+
     }
 
-    for(int i=0; i<total_gain.size() ; ++i){
+
+
+    int super_bdt_train(std::string &analysis_tag, const std::vector<bdt_info> & bdt_infos, const std::vector<std::string> & s_tags, const std::vector<std::string> & b_tags, const std::string & additional_sig_cut, const std::string & additional_bkg_cut){
+
+        std::string name_template = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(1)+"_";
+        std::string end_template = ".root";
+
+        std::vector<std::string> bdt_score_vars;
+        for(auto &info: bdt_infos){
+            bdt_score_vars.push_back("simple_"+info.identifier+"_mva");
+        }
+
+        //Form a TChain for signal and background like bdt_files
+        std::cout<<"Starting to build background chain: "<<std::endl;
+        TChain b_chain("singlephoton/simple_tree");  
+
+        for(auto &b: b_tags ){
+            std::cout<<"--on tag "<<b<<std::endl;
+            b_chain.Add((name_template+b+end_template).c_str());
+        }
+
+        TChain b_vertex_chain("singlephoton/vertex_tree");  
+        for(auto &b: b_tags ){
+            b_vertex_chain.Add((name_template+b+end_template).c_str());
+        }
+
+
+        std::cout<<"Starting to build signal _chain"<<std::endl;
+        TChain s_chain("singlephoton/simple_tree");  
+        for(auto &s: s_tags ){
+            std::cout<<"on tag "<<s<<std::endl;
+            s_chain.Add((name_template+s+end_template).c_str());
+        }
+        TChain s_vertex_chain("singlephoton/vertex_tree");  
+        for(auto &s: s_tags ){
+            s_vertex_chain.Add((name_template+s+end_template).c_str());
+        }
+
+        s_chain.AddFriend(&s_vertex_chain,"super");
+        b_chain.AddFriend(&b_vertex_chain,"super");
+
+
+        std::string name = "SUPERBDT_"+analysis_tag;
+        TFile * outfile = TFile::Open((name+"_training.root").c_str(), "recreate");
+
+
+        TMVA::Factory * factory = new TMVA::Factory(name.c_str(), outfile,"!V:!Silent:Color:DrawProgressBar:AnalysisType=Classification");
+        TMVA::DataLoader * dataloader = new TMVA::DataLoader(("BDTxmls_"+name).c_str());
+
+        TCut sig_tcut = TCut(additional_sig_cut.c_str());  
+        dataloader->AddSignalTree(&s_chain);
+        dataloader->AddCut(sig_tcut,"Signal");
+        int signal_entries = s_chain.GetEntries();
+
+
+        TCut bkg_tcut = TCut(additional_bkg_cut.c_str());  
+        dataloader->AddBackgroundTree(&b_chain);
+        dataloader->AddCut(bkg_tcut,"Background");
+        int background_entries = b_chain.GetEntries();
+
+        dataloader->SetSignalWeightExpression("simple_pot_weight");
+        dataloader->SetBackgroundWeightExpression("simple_pot_weight");
+
+        for(auto &var: bdt_score_vars) dataloader->AddVariable(var.c_str());
+        std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
+
+        dataloader->PrepareTrainingAndTestTree("1","1", "nTrain_Signal="+std::to_string(floor(signal_entries*0.5))+":nTrain_Background="+std::to_string(floor(background_entries*0.5))+":SplitMode=Random:NormMode=NumEvents:!V");
+
+        factory->BookMethod(dataloader, "BDT" , "TMVA", "!H:!V:NTrees=800:BoostType=RealAdaBoost:nCuts=-1:MaxDepth=3");
+
+        factory->TrainAllMethods();
+        factory->TestAllMethods();
+        factory->EvaluateAllMethods();
+
+        outfile->Close();
+
+        delete factory;
+        delete dataloader;
+
+    }
+
+
+    int bdt_XGBoost_importance(bdt_info &info){
+        BoosterHandle booster;
+        safe_xgboost(XGBoosterCreate(0, 0, &booster));
+        safe_xgboost(XGBoosterLoadModel(booster,(info.identifier+".XGBoost.mod").c_str()));
+
+        return bdt_XGBoost_importance(info, booster);
+    }
+
+    int bdt_XGBoost_importance(bdt_info &info, BoosterHandle &booster){
+
+        //some vectors to save info on each variable
+        int t_vars = info.train_vars.size()+info.spec_vars.size();
+
+        std::vector<int> variable_uses(t_vars,0); 
+        std::vector<double> total_gain(t_vars,0.0); 
+        std::vector<double> mean_gain(t_vars,0.0); 
+        std::vector<int> train_var_id(t_vars,0);
+
+        std::cout<<"We have "<<t_vars<<" variables of which "<<info.train_vars.size()<<" are training variables"<<std::endl;
+
+        std::vector<bool> is_training(t_vars,false);
+
+        for(int k=0; k< info.train_vars.size(); k++){
+            is_training.at(info.train_vars[k].id) = true;  
+            train_var_id[info.train_vars[k].id] = k;
+        }
+
+
+        //Some storage for the info
+        int with_stats = 1;
+        bst_ulong out_len = 0;
+        const char ** out_dump_array = NULL;
+        safe_xgboost(XGBoosterDumpModel(booster, "", with_stats,  &out_len, &out_dump_array));
+
+        std::cout<<"XGBoost importance : "<<out_len<<std::endl;
+
+        for(size_t i=0; i<out_len ; ++i){
+            if((out_dump_array)[i]!=NULL){
+                std::cout<<i<<" "<<(out_dump_array)[i]<<std::endl;  
+                const std::string cconvert((out_dump_array)[i]);
+
+                //Look for the feature, starts with in form "[f10<1.2" ... sp we want to find the number between the [f and the <
+                std::string stag = "[f";
+                std::string del = "<";
+
+                //when we find the feature, grab the number after the next time gain= appears
+                std::string sgain = "gain=";
+                size_t found = cconvert.find(stag);
+
+                while (found!=std::string::npos){
+                    size_t ndel = cconvert.find(del,found);
+                    std::string s_int = cconvert.substr(found+stag.size(),ndel-found-stag.size());
+                    int which_var = std::stoi(s_int);
+                    variable_uses[which_var]++;
+                    std::string s_gain   = "";
+                    //ok if we found a variable, add the gain, first locate it.
+
+                    size_t ngain = cconvert.find(sgain,ndel);
+                    if(ngain!=std::string::npos){
+                        size_t ngainend = cconvert.find(",",ngain);
+                        if( ngainend !=std::string::npos)   s_gain = cconvert.substr(ngain+sgain.size(), ngainend-ngain-sgain.size()-1); 
+                        size_t offset = 0;
+                        double d_gain =  std::stod(s_gain,&offset);
+                        total_gain[which_var] +=  d_gain;
+                    }        
+                    //                std::cout<<" var "<<s_int<<" gain "<<s_gain<<std::endl;
+                    found = cconvert.find(stag,ndel);
+                }
+            }
+        }
+
+        for(int i=0; i<total_gain.size() ; ++i){
             mean_gain[i] = total_gain[i]/(double)variable_uses[i];
-    }
-
-    //Sort them in different ways
-    std::vector<size_t> sorted_by_total_gain = sort_indexes<double>(total_gain);
-    std::vector<size_t> sorted_by_mean_gain = sort_indexes<double>(mean_gain);
-    std::vector<size_t> sorted_by_uses = sort_indexes<int>(variable_uses);
-
-   /* 
-    for(int i = 0; i < sorted_by_uses.size(); i++){
-        std::cout<<"sorted_by_uses["<<i<<"] = "<<sorted_by_uses[i]<<std::endl;
-    }
-    for(int i = 0; i < info.train_vars.size(); i++){
-         std::cout<<i<<":  "<<info.train_vars[i].unit<<std::endl;
-    }
-    */
-
-    TCanvas cgain("","",3000,1200);
-    
-    cgain.cd();
-
-
-    std::cout<<"----------- Sort By Uses: "<<info.identifier<<" ----------------------"<<std::endl;
-    std::cout<<"sorted_by_uses size = " <<sorted_by_uses.size()<<", variable_uses size = "<<variable_uses.size()<<std::endl;
-    for(int i=0; i< variable_uses.size();i++){
-        size_t is = sorted_by_uses[sorted_by_uses.size()-1-i];
-        if(is_training[is])   std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
-    }
-
-
-    TH1D htgain("tgain","tgain",info.train_vars.size(),0,info.train_vars.size());
-    
-
-    std::cout<<"----------- Sort By Total Gain: "<<info.identifier<<" ----------------------"<<std::endl;
-    for(int i=0; i< variable_uses.size();i++){
-        size_t is = sorted_by_total_gain[sorted_by_total_gain.size()-1-i];
-        if(is_training[is]){
-            std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
-          htgain.SetBinContent(i+1, total_gain[is]);
-          htgain.GetXaxis()->SetBinLabel(i+1,info.train_vars[train_var_id[is]].unit.c_str()); // Find out which bin on the x-axis the point corresponds to and set the
         }
+
+        //Sort them in different ways
+        std::vector<size_t> sorted_by_total_gain = sort_indexes<double>(total_gain);
+        std::vector<size_t> sorted_by_mean_gain = sort_indexes<double>(mean_gain);
+        std::vector<size_t> sorted_by_uses = sort_indexes<int>(variable_uses);
+
+        /* 
+           for(int i = 0; i < sorted_by_uses.size(); i++){
+           std::cout<<"sorted_by_uses["<<i<<"] = "<<sorted_by_uses[i]<<std::endl;
+           }
+           for(int i = 0; i < info.train_vars.size(); i++){
+           std::cout<<i<<":  "<<info.train_vars[i].unit<<std::endl;
+           }
+           */
+
+        TCanvas cgain("","",3000,1200);
+
+        cgain.cd();
+
+
+        std::cout<<"----------- Sort By Uses: "<<info.identifier<<" ----------------------"<<std::endl;
+        std::cout<<"sorted_by_uses size = " <<sorted_by_uses.size()<<", variable_uses size = "<<variable_uses.size()<<std::endl;
+        for(int i=0; i< variable_uses.size();i++){
+            size_t is = sorted_by_uses[sorted_by_uses.size()-1-i];
+            if(is_training[is])   std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+        }
+
+
+        TH1D htgain("tgain","tgain",info.train_vars.size(),0,info.train_vars.size());
+
+
+        std::cout<<"----------- Sort By Total Gain: "<<info.identifier<<" ----------------------"<<std::endl;
+        for(int i=0; i< variable_uses.size();i++){
+            size_t is = sorted_by_total_gain[sorted_by_total_gain.size()-1-i];
+            if(is_training[is]){
+                std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+                htgain.SetBinContent(i+1, total_gain[is]);
+                htgain.GetXaxis()->SetBinLabel(i+1,info.train_vars[train_var_id[is]].unit.c_str()); // Find out which bin on the x-axis the point corresponds to and set the
+            }
+        }
+        htgain.Draw("hist");
+        //    htgain.GetXaxis()->SetLabelOffset(0.1);
+        cgain.SetBottomMargin(0.5);
+        cgain.SaveAs(("XGBoost_"+info.identifier+"_var_import_total_gain.pdf").c_str(),"pdf");
+
+        std::cout<<"----------- Sort By Mean Gain: "<<info.identifier<<" ----------------------"<<std::endl;
+        for(int i=0; i< variable_uses.size();i++){
+            size_t is = sorted_by_mean_gain[sorted_by_mean_gain.size()-1-i];
+            if(is_training[is])   std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+        }
+
+
+
+
+
+
+        std::cout<<"done!"<<std::endl;
+        return 0;
+
     }
-    htgain.Draw("hist");
-//    htgain.GetXaxis()->SetLabelOffset(0.1);
-    cgain.SetBottomMargin(0.5);
-    cgain.SaveAs(("XGBoost_"+info.identifier+"_var_import_total_gain.pdf").c_str(),"pdf");
-
-    std::cout<<"----------- Sort By Mean Gain: "<<info.identifier<<" ----------------------"<<std::endl;
-    for(int i=0; i< variable_uses.size();i++){
-        size_t is = sorted_by_mean_gain[sorted_by_mean_gain.size()-1-i];
-        if(is_training[is])   std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
-    }
-
-
-
-
-
-
-    std::cout<<"done!"<<std::endl;
-    return 0;
-
-}

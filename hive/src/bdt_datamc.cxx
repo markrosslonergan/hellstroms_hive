@@ -383,7 +383,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }else{
                 for(int c=0; c< tsum->GetNbinsX()+1;c++){
                     //tsum->SetBinError(c+1, sqrt(pow(tsum->GetBinContent(c+1)*0.27,2)+tsum->GetBinError(c+1)));
-                    //tsum->SetBinError(c+1, 0.0001);
+                    tsum->SetBinError(c+1, 0.0001);
                 }
 
             }
@@ -637,12 +637,27 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
             std::cout<<"BNLAR ";
+            std::vector<double> ptc = {7.7,16.9,11.6,4.3};
+            double ssum = 0;
+            double psum = 5.38+10.77;
+            for(auto s: ptc) ssum+=s;
+
+
+            for(auto &s: ptc) s = s/ssum*psum;
+
+            for(double mm =0.95; mm < 1.3; mm+=0.01){
+            double ahchi =0;
+            double ahchi_stats =0;
             for(int l=0; l<tsum->GetNbinsX(); l++){
-                    std::cout<<tsum->GetBinContent(l+1)<<" , ";
+//                    std::cout<<tsum->GetBinContent(l+1)<<" "<<ptc[l]<<" "<<tsum->GetBinError(l+1)<<std::endl;
+                    double err = sqrt(  pow(tsum->GetBinError(l+1) ,2) + tsum->GetBinContent(l+1));
+                    double err_statonly = sqrt(tsum->GetBinContent(l+1));
+                    ahchi += pow(tsum->GetBinContent(l+1)-mm*ptc[l],2)/pow(err,2);
+                    ahchi_stats += pow(tsum->GetBinContent(l+1)-ptc[l],3)/pow(err_statonly     ,2); 
             }
-            std::cout<<std::endl;
-
-
+            std::cout<<"Result: "<<mm <<" Chi "<<ahchi<<" "<<sqrt(ahchi)<<std::endl;
+            std::cout<<"Result: "<<mm <<" ChiStat "<<ahchi_stats<<" "<<sqrt(ahchi_stats)<<std::endl;
+            }
             //tsum->Rebin(data_rebin);
             TH1* rat_denom = (TH1*)tsum->Clone(("ratio_denom_"+stage_names.at(s)).c_str());
             for(int i=0; i<rat_denom->GetNbinsX(); i++){
