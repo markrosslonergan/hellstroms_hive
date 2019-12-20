@@ -286,6 +286,9 @@ int main (int argc, char *argv[]){
 
         bdt_files.back()->calcPOT();
         if(incl_in_stack) stack_bdt_files.push_back(bdt_files.back());
+
+ 
+
     }
 
     //The "signal" is whichever signal BDT you define first.
@@ -325,6 +328,9 @@ int main (int argc, char *argv[]){
         if(mode_option != "train"  && mode_option != "sbnfit"){
             f->calcBaseEntryList(analysis_tag);
         }
+
+
+        //f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
     }
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -685,6 +691,11 @@ int main (int argc, char *argv[]){
     }
     else if(mode_option == "test"){
 
+        for(int f=0; f< bdt_files.size();++f){
+            if(which_file == f || which_file==-1) ncpi0_sss_precalc(bdt_files[f], analysis_tag);
+        }
+
+        return 0;
        if(which_bdt==-1)which_bdt = 0;
        bdt_XGBoost_importance(bdt_infos[which_bdt]);
 
