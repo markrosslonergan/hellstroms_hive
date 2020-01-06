@@ -641,7 +641,7 @@ int bdt_XGtrain(bdt_info &info){
         }
     }
 
-        std::vector<std::string> s_english = {"Negative Log-Liklihood","Area Under the Curve (AUC)","Error (\% of wrong cases)","Root Mean Square Error"};
+        std::vector<std::string> s_english = {"Negative Log-Liklihood","1 - Area Under the Curve (AUC)","Error (\% of wrong cases)","Root Mean Square Error"};
         std::vector<std::string> s_metrics  = {"logloss","auc","error","rmsle"};
         std::vector<std::string> s_types = {"train","test"};
         for(auto&m:s_metrics){
@@ -688,6 +688,7 @@ int bdt_XGtrain(bdt_info &info){
                     int loc = res.find(nam,0);
                     std::string val = res.substr(loc+nam.size()+1,8); 
                     double d_val = std::stod(val);
+                    if(m==1)d_val = 1.0-d_val;
                     //std::cout<<"Wripped "<<nam<<" "<<val<<std::endl;           
                     if(s_types[t]=="train") train_metric_res[m].push_back(d_val);
                     if(s_types[t]=="test"){
@@ -769,9 +770,6 @@ int bdt_XGtrain(bdt_info &info){
         }
 
 
-
-
-
         safe_xgboost(XGBoosterSaveModel(booster,(name+".XGBoost.mod").c_str() ));
         safe_xgboost(XGDMatrixFree(dtrain));
         safe_xgboost(XGDMatrixFree(dtest));
@@ -785,7 +783,10 @@ int bdt_XGtrain(bdt_info &info){
         TLegend *lgr = new TLegend(0.59,0.89,0.59,0.89);
         for(int i=0; i< s_metrics.size(); i++){
             TPad *p = (TPad*)c_error->cd(i+1);
-            if(i==1)p->SetLogx();
+            if(false&&i==1){
+                p->SetLogy();
+                p->SetLogx();
+            }
             TGraph *g_test= new TGraph(iteration.size(),&iteration[0],&(test_metric_res[i])[0]);
             TGraph *g_train = new TGraph(iteration.size(),&iteration[0],&(train_metric_res[i])[0]);
             g_train->Draw("AL");
@@ -798,9 +799,10 @@ int bdt_XGtrain(bdt_info &info){
 
             TGraph *g_min = new TGraph(1);
             g_min->SetPoint(0,test_min_vals[i].second,test_min_vals[i].first);
-            g_min->SetLineColor(kBlue);
+            g_min->SetLineColor(kCyan);
             g_min->SetMarkerStyle(29);
-            g_min->Draw("same P");
+            g_min->SetMarkerSize(3);
+            g_min->Draw("p");
 
             if(i==0){
                 lgr->AddEntry(g_train,"Train","f"); 
@@ -1039,33 +1041,40 @@ int bdt_XGtrain(bdt_info &info){
            }
            */
 
-        TCanvas cgain("","",3000,1200);
-
-        cgain.cd();
-
-
+        TCanvas cuses("","",3000,1200);
+        cuses.cd();
+        TH1D htuses("tuses","tuses",info.train_vars.size(),0,info.train_vars.size());
         std::cout<<"----------- Sort By Uses: "<<info.identifier<<" ----------------------"<<std::endl;
         std::cout<<"sorted_by_uses size = " <<sorted_by_uses.size()<<", variable_uses size = "<<variable_uses.size()<<std::endl;
         for(int i=0; i< variable_uses.size();i++){
             size_t is = sorted_by_uses[sorted_by_uses.size()-1-i];
-            if(is_training[is])   std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+            if(is_training[is]){
+                std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
+                htuses.SetBinContent(i+1, variable_uses[is]);
+                htuses.GetXaxis()->SetBinLabel(i+1,  (std::to_string(train_var_id[is])+" : "+info.train_vars[train_var_id[is]].unit).c_str()); // Find out which bin on the x-axis the point corresponds to and set the
+                }
         }
+        htuses.Draw("hist");
+        htuses.SetTitle("Variable importance by total uses");
+        cuses.SetBottomMargin(0.5);
+        cuses.SaveAs(("XGBoost_"+info.identifier+"_var_import_total_uses.pdf").c_str(),"pdf");
 
+
+        TCanvas cgain("","",3000,1200);
+        cgain.cd();
 
         TH1D htgain("tgain","tgain",info.train_vars.size(),0,info.train_vars.size());
-
-
         std::cout<<"----------- Sort By Total Gain: "<<info.identifier<<" ----------------------"<<std::endl;
         for(int i=0; i< variable_uses.size();i++){
             size_t is = sorted_by_total_gain[sorted_by_total_gain.size()-1-i];
             if(is_training[is]){
                 std::cout<<i<<"  "<<    " "<<is<<" Variable: "<<info.train_vars[train_var_id[is]].unit<<"-- -- uses: "<<variable_uses[is]<<" gain: "<<total_gain[is]<<"  <gain>: "<<total_gain[is]/(double)variable_uses[is]<<std::endl;
                 htgain.SetBinContent(i+1, total_gain[is]);
-                htgain.GetXaxis()->SetBinLabel(i+1,info.train_vars[train_var_id[is]].unit.c_str()); // Find out which bin on the x-axis the point corresponds to and set the
+                htgain.GetXaxis()->SetBinLabel(i+1,  (std::to_string(train_var_id[is])+" : "+info.train_vars[train_var_id[is]].unit).c_str()); // Find out which bin on the x-axis the point corresponds to and set the
             }
         }
         htgain.Draw("hist");
-        //    htgain.GetXaxis()->SetLabelOffset(0.1);
+        htgain.SetTitle("Variable importance by total gain");
         cgain.SetBottomMargin(0.5);
         cgain.SaveAs(("XGBoost_"+info.identifier+"_var_import_total_gain.pdf").c_str(),"pdf");
 
