@@ -221,6 +221,14 @@ int main (int argc, char *argv[]){
         for(int i=0; i< XMLconfig.bdt_definitions[f].size(); ++i){
             def += "&&" + XMLconfig.bdt_definitions[f][i];
         }
+
+        //If its a training file we are working with, add the training definitions 
+        if(XMLconfig.bdt_is_training_signal[f]){
+             for(int i=0; i< XMLconfig.bdt_training_cuts[f].size(); ++i){
+                def += "&&" + XMLconfig.bdt_training_cuts[f][i];
+             }
+        }
+
         std::cout<<def<<std::endl;
         bdt_flow analysis_flow(topological_cuts, def, 	vec_precuts,	postcuts,	bdt_infos);
 
