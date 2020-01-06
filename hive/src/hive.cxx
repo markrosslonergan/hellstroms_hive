@@ -394,12 +394,10 @@ int main (int argc, char *argv[]){
             bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
             bdt_file * testing_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_test_tag]; 
 
-
-
             if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
 
                 //This is NAF, need to save it and not repeat
-                convertToLibSVM(bdt_infos[i], training_signal, testing_signal, bdt_infos[i].TMVAmethod.sig_test_cut, training_background, testing_background, bdt_infos[i].TMVAmethod.bkg_test_cut);
+                convertToLibSVMTT(bdt_infos[i], training_signal, testing_signal, bdt_infos[i].TMVAmethod.sig_test_cut, training_background, testing_background, bdt_infos[i].TMVAmethod.bkg_test_cut);
                 bdt_XGtrain(bdt_infos[i]);
 
             }else if(bdt_infos[i].TMVAmethod.str=="TMVA"){

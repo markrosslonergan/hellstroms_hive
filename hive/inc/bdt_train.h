@@ -46,7 +46,8 @@ int bdt_train(bdt_info & info, bdt_file *signal_train_file, bdt_file * signal_te
 
 int convertToLibSVM(bdt_info &info, bdt_file *file);
 int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_file);
-int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut);
+int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut);//Depreciaed! 
+int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut);//Modern, use this
 int bdt_XGtrain(bdt_info &info);
 int bdt_XGBoost_importance(bdt_info &info);
 int bdt_XGBoost_importance(bdt_info &info, BoosterHandle &booster);
