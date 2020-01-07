@@ -338,7 +338,7 @@ int main (int argc, char *argv[]){
         }
 
 
-        //f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
+        f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
     }
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;

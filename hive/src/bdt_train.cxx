@@ -277,7 +277,7 @@ int convertToLibSVM(bdt_info& info, bdt_file *file){
             tree_formulas_v[t]->GetNdata();
             double val = tree_formulas_v[t]->EvalInstance();
 
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
                 int id = id_v[t];
                 sslibSVM<<id<<":"<<val<<" ";
             }
@@ -539,7 +539,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             int id = id_v[t];
 
             //if nan, lets do something
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }
@@ -560,7 +560,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             int id = id_v[t];
 
             //if nan, lets do something
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 sslibSVMtest<<id<<":"<<val<<" ";
             }
@@ -582,7 +582,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             int id = id_v[t];
 
             //if nan, lets do something
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }
@@ -603,7 +603,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             int id = id_v[t];
 
             //if nan, lets do something
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 sslibSVMtest<<id<<":"<<val<<" ";
             }
@@ -679,7 +679,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_
             int id = id_v[t];
 
             //if nan, lets do something
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 if(i < sig_train_num){
                     sslibSVMtrain<<id<<":"<<val<<" ";
@@ -717,7 +717,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_
             int id = id_v[t];
 
             //if its a missing value, lets ignore it, lets do something
-            if(val==val || val == -999 || val == -9999 || val == -99999 || val == -99){
+            if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99)){
 
                 if(i < bkg_train_num){
                     sslibSVMtrain<<id<<":"<<val<<" ";
