@@ -403,6 +403,7 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
     //Background Train
     size_t next_entry_bkg_train = background_file_train->precut_list->GetEntry(0);
     size_t num_bkg_train = 0;
+    std::cout<<"Starting on Bkg Train with "<<background_file_train->precut_list->GetN()<<" in precut list "<<std::endl;
     while(num_bkg_train < background_file_train->precut_list->GetN()){
 
         background_file_train->tvertex->GetEntry(next_entry_bkg_train);
@@ -937,6 +938,17 @@ int bdt_XGtrain(bdt_info &info){
         safe_xgboost(XGDMatrixFree(dtrain));
         safe_xgboost(XGDMatrixFree(dtest));
 
+
+
+
+
+        //Some print out of metrics
+        for(int m = 0; m<s_metrics.size();m++){
+                    std::string nam = s_types[1]+" "+s_metrics[m]; 
+                    std::cout<<"FIN: "<<nam<<" minimum at iteration "<<test_min_vals[m].second<<" with val "<<test_min_vals[m].first<<std::endl;
+        }
+
+
         f->cd();
 
         TCanvas *c_error = new TCanvas("","",1800,1800);
@@ -1153,7 +1165,7 @@ int bdt_XGtrain(bdt_info &info){
 
         for(size_t i=0; i<out_len ; ++i){
             if((out_dump_array)[i]!=NULL){
-                std::cout<<i<<" "<<(out_dump_array)[i]<<std::endl;  
+                //std::cout<<i<<" "<<(out_dump_array)[i]<<std::endl;  
                 const std::string cconvert((out_dump_array)[i]);
 
                 //Look for the feature, starts with in form "[f10<1.2" ... sp we want to find the number between the [f and the <
