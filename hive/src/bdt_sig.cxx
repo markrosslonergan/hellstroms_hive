@@ -980,7 +980,7 @@ std::vector<double> super_significance(std::vector<bdt_file*> sig_files, std::ve
     std::string s_mod = "";
     TRandom3 *rangen  = new TRandom3(0);  
     std::cout<<"Starting"<<std::endl;
-    for(double t=0.64; t < 0.66; t+=0.00001){
+    for(double t=0.63; t < 0.66; t+=0.001){
 
         std::string s_impact = "1";
 

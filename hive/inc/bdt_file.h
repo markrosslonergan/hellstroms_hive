@@ -48,6 +48,14 @@ std::string to_string_prec(const T a_value, const int n = 6)
     return out.str();
 }
 
+template<typename T>
+bool compare_vec(std::vector<T>& v1, std::vector<T>& v2)
+{
+        std::sort(v1.begin(), v1.end());
+            std::sort(v2.begin(), v2.end());
+                return v1 == v2;
+}
+
 
 template <typename T>
 std::vector<size_t> sort_indexes(const std::vector<T> &v) {

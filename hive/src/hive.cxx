@@ -254,7 +254,7 @@ int main (int argc, char *argv[]){
             onbeam_data_file = bdt_files.back();
         }
 
-        if(is_combined) bdt_files.back()->addFriend("output_"+bdt_files.back()->tag ,"output_superMVA.root");
+        if(is_combined) bdt_files.back()->addFriend("output_"+bdt_files.back()->tag ,analysis_tag+"_superMVA.root");
 
 
         if(XMLconfig.bdt_is_offbeam_data[f]){
@@ -328,6 +328,8 @@ int main (int argc, char *argv[]){
         if(mode_option != "train"  && mode_option != "sbnfit"){
             f->calcBaseEntryList(analysis_tag);
         }
+    
+        f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
     }
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -422,17 +424,19 @@ int main (int argc, char *argv[]){
 
         //Define what we want to call signal and background here
         const std::vector<std::string> s_tags = {"NCDeltaRadOverlay"};
-        const std::vector<std::string> b_tags ={"BNBOverlays","NCPi0","BNBext","Dirt"};
+        const std::vector<std::string> b_tags ={"BNBOverlays","NCPi0","CCPi0","NueOverlays","BNBext","Dirt"};
+
+//        for(int i=0; i< bdt_files.size(); i++){
+//            bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size",vars);
+//        }
 
         //OK super preliminarly, need to have run sbnfit with simple_tree option on precut stage before attempting this
-        super_bdt_train(analysis_tag, bdt_infos, s_tags, b_tags, "1", "1");
-
-        for(int i=0; i< 6; i++){
-            bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size",vars);
-        }
+//        super_bdt_train(analysis_tag, bdt_infos, s_tags, b_tags, "1", "1");
 
         //and apply it
-        super_bdt_app(analysis_tag, bdt_infos, bdt_files);
+        std::vector<bdt_file*> tempt;
+        for(int i=0; i<9; ++i){tempt.push_back(bdt_files[i]);}
+        super_bdt_app(analysis_tag, bdt_infos, tempt);
 
         return 0;
 
@@ -588,7 +592,12 @@ int main (int argc, char *argv[]){
                 // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
                 //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
 
-                real_datamc.plotStacks(ftest, vars, fbdtcuts);
+                if(which_bdt==-1){
+                    real_datamc.plotStacks(ftest, vars, fbdtcuts);
+                }else{
+                    real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts);
+                }
+
                 //real_datamc.SetSpectator();
                 //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
@@ -608,7 +617,7 @@ int main (int argc, char *argv[]){
         std::cout<<"Starting superdatamc "<<std::endl;
 
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-        TFile * fsuper = new TFile("output_superMVA.root","recreate");
+        TFile * fsuper = new TFile((analysis_tag+"_superMVA.root").c_str(),"read");
 
         std::vector<TTree*> super_trees;
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
@@ -684,7 +693,9 @@ int main (int argc, char *argv[]){
     }
     else if(mode_option == "test"){
 
-        ncpi0_sss_precalc(tagToFileMap["NCpi0Train"]);
+        for(int f=0; f< bdt_files.size();++f){
+            if(which_file == f || which_file==-1) ncpi0_sss_precalc(bdt_files[f], analysis_tag);
+        }
 
        //if(which_bdt==-1)which_bdt = 0;
        //bdt_XGBoost_importance(bdt_infos[which_bdt]);
