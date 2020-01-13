@@ -32,9 +32,16 @@ void doCalibration() {
     double yerrs[fitSlices.size()];
     double yerrs_corr[fitSlices.size()];
 
+    double MeVPerBin = (h_max->GetXaxis()->GetBinUpEdge(h_max->GetNbinsX()) - h_max->GetXaxis()->GetBinLowEdge(1) )/h_max->GetNbinsX(); // To make units work out
+    
     // For now, just fill y-vals with some small, nonzero value; will change later
-    std::fill_n(yerrs, fitSlices.size(), 1e-7); 
-    std::fill_n(yerrs_corr, fitSlices.size(), 1e-7); 
+    //std::fill_n(yerrs, fitSlices.size(), 1e-7); 
+    //std::fill_n(yerrs_corr, fitSlices.size(), 1e-7); 
+    // Fill y-errors with one-half bin width. Assuming same number of bins in
+    // x and y, should just be MeVPerBin/2
+    std::fill_n(yerrs, fitSlices.size(), MeVPerBin/2.); 
+    std::fill_n(yerrs_corr, fitSlices.size(), MeVPerBin/2.); 
+
 
     // Loop over bin ranges, get projections, fill x- and y-vals/errs accordingly
     for(int i = 0; i < fitSlices.size(); i++) {
@@ -52,23 +59,21 @@ void doCalibration() {
                                                           fitSlices.at(i).first, 
                                                           fitSlices.at(i).second );
 
+        std::cout << "Entries in this slice: " << h_max_projections.at(i)->GetEntries() << std::endl;
+
         int maxBin = h_max_projections.at(i)->GetMaximumBin();
-        std::cout << "maxBin = " << maxBin << std::endl;
+        //std::cout << "maxBin = " << maxBin << std::endl;
         int maxBin_corr = h_max_projections_corr.at(i)->GetMaximumBin();
 
         // Fill xvals with center of true energy slices; x-errors are just
         // one-half slice width 
-        double MeVPerBin = 2; // To make units work out
-        //double MeVPerBin = 10; // To make units work out
         xvals[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.)*MeVPerBin;
-        std::cout << "xval: " << xvals[i] << std::endl;
         xvals_corr[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.)*MeVPerBin;
         xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.*MeVPerBin;
         //cout << "xval: " << xvals[i] << endl;
         //xvals_corr[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.);
         //xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.;
         yvals[i] = h_max_projections.at(i)->GetXaxis()->GetBinCenter(maxBin);
-        std::cout << "yval: " << yvals[i] << std::endl;
         //std::cout << "yval: " << yvals[i] << std::endl;
         yvals_corr[i] = h_max_projections_corr.at(i)->GetXaxis()->GetBinCenter(maxBin_corr);
     }
@@ -93,6 +98,8 @@ void doCalibration() {
     ////////////////////////////////////////////////////////
     TCanvas *c1 = new TCanvas("c1", "c1", 1000, 700);
     c1->cd();
+    c1->SetLeftMargin(0.12);
+    c1->SetBottomMargin(0.12);
     gStyle->SetOptStat(0);
 
     // Drawing options
@@ -119,13 +126,13 @@ void doCalibration() {
 
     TGraphErrors *g = new TGraphErrors(fitSlices.size(), xvals, yvals, xerrs, yerrs);
     g->SetMarkerStyle(23);
-    g->SetMarkerSize(1.5);
+    g->SetMarkerSize(1.2);
     g->SetLineColor(kPink+9);
     g->SetMarkerColor(kPink+9);
     g->Fit("fit", "R");
     g->Draw("ep same");
 
-    TPaveText *pt = new TPaveText(0.14, 0.72, 0.4, 0.85, "NDC");
+    TPaveText *pt = new TPaveText(0.14, 0.68, 0.4, 0.85, "NDC");
     double textSize = 0.04;
     pt->SetTextAlign(12);
     pt->SetFillStyle(0);
@@ -135,6 +142,8 @@ void doCalibration() {
     TString simString = Form("MicroBooNE Simulation");
     TString chi2_text = Form("#chi^{2}/NDF: %0.2f/%i", fit->GetChisquare(), fit->GetNDF() );
     pt->AddText(simString);
+    if (tag=="run1") pt->AddText("Run 1");
+    else if (tag=="run3") pt->AddText("Run 3");
     pt->AddText(chi2_text);
     pt->Draw("same");
 
@@ -149,6 +158,8 @@ void doCalibration() {
 
     TCanvas *c2 = new TCanvas("c2", "c2", 1000, 700);
     c2->cd();
+    c2->SetLeftMargin(0.12);
+    c2->SetBottomMargin(0.12);
     gStyle->SetOptStat(0);
 
     // Drawing options
@@ -167,19 +178,19 @@ void doCalibration() {
     // Fit line
     //TF1 *fit_corr = new TF1("fit_corr", "pol1", 400, h_max_corr->GetNbinsX() );
     //TF1 *fit_corr = new TF1("fit_corr", "pol1", 20, 500 );
-    TF1 *fit_corr = new TF1("fit_corr", "pol1", 20, 200 );
+    TF1 *fit_corr = new TF1("fit_corr", "pol1", 20, 500 );
     fit_corr->SetLineColor(kWhite);
     fit_corr->SetLineStyle(8);
 
     TGraphErrors *g_corr = new TGraphErrors(fitSlices.size(), xvals, yvals_corr, xerrs, yerrs_corr);
     g_corr->SetMarkerStyle(22);
-    g_corr->SetMarkerSize(1.5);
+    g_corr->SetMarkerSize(1.2);
     g_corr->SetLineColor(kWhite);
     g_corr->SetMarkerColor(kWhite);
     g_corr->Fit("fit_corr", "R");
     g_corr->Draw("ep same");
 
-    TPaveText *pt_corr = new TPaveText(0.14, 0.72, 0.4, 0.85, "NDC");
+    TPaveText *pt_corr = new TPaveText(0.14, 0.68, 0.4, 0.85, "NDC");
     pt_corr->SetTextAlign(12);
     pt_corr->SetFillStyle(0);
     pt_corr->SetTextSize(textSize);
@@ -188,13 +199,15 @@ void doCalibration() {
     TString simString_corr = Form("MicroBooNE Simulation");
     TString chi2_text_corr = Form("#chi^{2}/NDF: %0.2f/%i", fit_corr->GetChisquare(), fit_corr->GetNDF() );
     pt_corr->AddText(simString_corr);
+    if (tag=="run1") pt_corr->AddText("Run 1");
+    else if (tag=="run3") pt_corr->AddText("Run 3");
     pt_corr->AddText(chi2_text_corr);
     pt_corr->Draw("same");
 
     cout << "Corrected fit chi^2 is " << fit_corr->GetChisquare() << " / " << fit_corr->GetNDF() << " NDF" << endl;
 
-    c1->SaveAs("plot_max_corr_"+tag+".png", "PNG");
-    c1->SaveAs("plot_max_corr_"+tag+".pdf", "PDF");
+    c2->SaveAs("plot_max_corr_"+tag+".png", "PNG");
+    c2->SaveAs("plot_max_corr_"+tag+".pdf", "PDF");
     /*
 
     TCanvas *c3 = new TCanvas("c3", "c3", 1000, 700);

@@ -1127,7 +1127,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     double simple_wei = 0;
     double simple_pot_wei = 0;
     int original_entry = 0;
-    double plot_pot = 13.2e20;
+    double plot_pot = 10.1e20;
+    //double plot_pot = 13.2e20;
 
     std::vector<double> simple_bdt_vars(vars.size(),0.0);
     std::vector<double> bdt_mvas(bdt_infos.size(),0.0);

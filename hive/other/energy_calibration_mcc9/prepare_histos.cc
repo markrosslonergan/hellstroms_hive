@@ -1,7 +1,7 @@
 #include "energy_cal.h"
 using std::cout;
 using std::endl;
-double energyCorr(double);
+double energyCorr(double, TString);
 
 void make_2dHisto() {
     /////////////////////////////////////////////////////////
@@ -52,8 +52,8 @@ void make_2dHisto() {
     TH1D *h_num_showers = new TH1D("h_num_showers", "h_num_showers", 4, 0, 4);
     //TH2D *h_max = new TH2D("h_max", "h_max", 50, 0, 500, 50, 0, 500);
     //TH2D *h_max_corr = new TH2D("h_max_corr", "h_max_corr", 50, 0, 500, 50, 0, 500);
-    TH2D *h_max = new TH2D("h_max", "h_max", 250, 0, 500, 250, 0, 500);
-    TH2D *h_max_corr = new TH2D("h_max_corr", "h_max_corr", 250, 0, 500, 250, 0, 500);
+    TH2D *h_max = new TH2D("h_max", "h_max", 40, 0, 400, 40, 0, 400);
+    TH2D *h_max_corr = new TH2D("h_max_corr", "h_max_corr", 40, 0, 400, 40, 0, 400);
     TH1D *h_invar_max = new TH1D("h_invar_max", "h_invar_max", 50, 0, 1000);
     TH1D *h_invar_max_corr = new TH1D("h_invar_max_corr", "h_invar_max_corr", 50, 0, 1000);
     TH1I *h_sim_shower_pdg = new TH1I("h_sim_shower_pdg", "h_sim_shower_pdg", 100, 0, 2500);
@@ -95,7 +95,7 @@ void make_2dHisto() {
             h_max->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)), 
                         reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(i_shr)) );        
 
-            max_leading_corr = energyCorr(reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(i_shr)));
+            max_leading_corr = energyCorr(reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(i_shr)), tag);
             h_max_corr->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)),
                              max_leading_corr);
             /*
@@ -223,7 +223,7 @@ int main() {
 
 // Energy correction functions
 // Parameters extracted from fit performed in energy_cal.cc
-double energyCorr(double energy) {
+double energyCorr(double energy, TString tag) {
     // MCC8
     //double corr = 1.24476*energy + 0.015528;
     // MCC9ish (v10)
@@ -236,7 +236,14 @@ double energyCorr(double energy) {
     //double corr = 1.24607*energy + 4.11138; 
     
     // MCC9.1 v26.5
-    double corr = 1.23833*energy + 4.78805;
+    //double corr = 1.23833*energy + 4.78805;
+    // Run 1
+    //double corr = 1.21989*energy + 8.50486;
+    // Run 3 
+    //double corr = 1.21061*energy + 8.38835; 
+    double corr;
+    if      (tag=="run1") corr = 1.21183*energy + 9.87837;
+    else if (tag=="run3") corr = 1.20421*energy + 9.51016;
     return corr;
 }
 
