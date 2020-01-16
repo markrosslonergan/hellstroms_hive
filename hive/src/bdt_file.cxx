@@ -10,7 +10,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     plot_ops(inops),
     root_dir(inrootdir),
     col(incol),
-    flow(inflow)
+    flow(inflow),
     is_data(false),
     is_bnbext(false),
     is_mc(true)
