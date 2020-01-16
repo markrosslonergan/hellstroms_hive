@@ -34,8 +34,14 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
 
-    weight_branch = "genie_spline_weight";
-    //weight_branch = "1";
+    if(is_mc){
+        std::cout<<"setting weight branch - mc"<<std::endl;
+        weight_branch = "genie_spline_weight*genie_CV_tune_weight";
+    } 
+    if (is_data ||  is_bnbext) {
+        std::cout<<"setting weight branch - on/off beam data"<<std::endl;
+        weight_branch = "1";
+    }
     fillstyle = infillstyle;
     scale_data = 1.0;
 
@@ -287,7 +293,7 @@ int bdt_file::calcPOT(){
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
         //weight_branch = "1";
-        weight_branch = "genie_spline_weight";
+        weight_branch = "genie_spline_weight*genie_CV_tune_weight";
         numberofevents_raw = numberofevents;
 
     }else if(is_data){
@@ -692,14 +698,14 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
     std::string binx_c = binx;
     std::string biny_c = biny;
 
-   // std::cout<<"binx_c"<< binx_c<<std::endl;
-   // std::cout<<"biny_c"<< biny_c<<std::endl;
+    // std::cout<<"binx_c"<< binx_c<<std::endl;
+    // std::cout<<"biny_c"<< biny_c<<std::endl;
 
     binx_c.erase(binx_c.end()- 1);
     biny_c.erase(biny_c.begin()+ 0); 
 
-   // std::cout<<"binx_c"<< binx_c<<std::endl;
-   // std::cout<<"biny_c"<< biny_c<<std::endl;
+    // std::cout<<"binx_c"<< binx_c<<std::endl;
+    // std::cout<<"biny_c"<< biny_c<<std::endl;
 
     std::string bin = binx_c + std::string(", ") + biny_c ;
 
@@ -720,7 +726,7 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
     th2->SetDirectory(0);	
 
     //delete ctmp;
-     return th2;
+    return th2;
 }
 
 
@@ -1144,8 +1150,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     }
 
     for(int i=0; i< vars.size(); i++){
-            std::string tnam = "simple_bdt_var_"+std::to_string(i);
-            t_sbnfit_simpletree->Branch(tnam.c_str(),&(simple_bdt_vars[i]));
+        std::string tnam = "simple_bdt_var_"+std::to_string(i);
+        t_sbnfit_simpletree->Branch(tnam.c_str(),&(simple_bdt_vars[i]));
     }
 
     TTreeFormula* weight = new TTreeFormula("weight_formula ",this->weight_branch.c_str(),this->tvertex);
@@ -1166,34 +1172,34 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 
     std::string var_string = input_string;
     if(var_string == "") var_string = "reco_vertex_size";
-        std::cout<<"Starting to make a simpletree with variable "<<var_string<<std::endl;
-        for(int i=0; i< this->tvertex->GetEntries(); i++){
-            this->tvertex->GetEntry(i); 
+    std::cout<<"Starting to make a simpletree with variable "<<var_string<<std::endl;
+    for(int i=0; i< this->tvertex->GetEntries(); i++){
+        this->tvertex->GetEntry(i); 
 
-            CUT->GetNdata();
-            bool is_is = CUT->EvalInstance();
+        CUT->GetNdata();
+        bool is_is = CUT->EvalInstance();
 
-            if(!is_is) continue;
+        if(!is_is) continue;
 
-            weight->GetNdata();
-            var->GetNdata();
-            simple_wei = weight->EvalInstance();
-            simple_var = var->EvalInstance();
-            simple_pot_wei = simple_wei*this->scale_data*plot_pot/this->pot;
-            original_entry = i;
+        weight->GetNdata();
+        var->GetNdata();
+        simple_wei = weight->EvalInstance();
+        simple_var = var->EvalInstance();
+        simple_pot_wei = simple_wei*this->scale_data*plot_pot/this->pot;
+        original_entry = i;
 
-            for(int j=0; j< bdt_infos.size();j++){
-                form_vec[j]->GetNdata();
-                bdt_mvas[j] = form_vec[j]->EvalInstance();
-            }
-
-            for(int j=0; j< vars.size();j++){
-                form_vec_vars[j]->GetNdata();
-                simple_bdt_vars[j] = form_vec_vars[j]->EvalInstance();
-            }
-
-            t_sbnfit_simpletree->Fill();
+        for(int j=0; j< bdt_infos.size();j++){
+            form_vec[j]->GetNdata();
+            bdt_mvas[j] = form_vec[j]->EvalInstance();
         }
+
+        for(int j=0; j< vars.size();j++){
+            form_vec_vars[j]->GetNdata();
+            simple_bdt_vars[j] = form_vec_vars[j]->EvalInstance();
+        }
+
+        t_sbnfit_simpletree->Fill();
+    }
 
 
     TList * lf1 = (TList*)t_sbnfit_tree->GetListOfFriends();
