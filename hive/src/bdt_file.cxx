@@ -34,7 +34,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
 
-    weight_branch = "genie_spline_weight";
+    weight_branch = "genie_spline_weight*genie_CV_tune_weight";
     //weight_branch = "1";
     fillstyle = infillstyle;
     scale_data = 1.0;
