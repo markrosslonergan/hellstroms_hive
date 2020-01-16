@@ -10,7 +10,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     plot_ops(inops),
     root_dir(inrootdir),
     col(incol),
-    flow(inflow),
+    flow(inflow)
     is_data(false),
     is_bnbext(false),
     is_mc(true)
@@ -38,7 +38,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
         std::cout<<"setting weight branch - mc"<<std::endl;
         weight_branch = "genie_spline_weight*genie_CV_tune_weight";
     } 
-   if (is_data ||  is_bnbext) {
+    if (is_data ||  is_bnbext) {
         std::cout<<"setting weight branch - on/off beam data"<<std::endl;
         weight_branch = "1";
     }
