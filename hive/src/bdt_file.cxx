@@ -287,7 +287,7 @@ int bdt_file::calcPOT(){
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
         //weight_branch = "1";
-        weight_branch = "genie_spline_weight";
+        weight_branch = "genie_spline_weight*genie_CV_tune_weight";
         numberofevents_raw = numberofevents;
 
     }else if(is_data){
