@@ -93,6 +93,13 @@ class bdt_stack{
         }
 
 		int makeSBNspec(std::string tag, bdt_variable var, double, double, std::vector<std::string> hist_names);
+
+    // Added by A. Mogan 1/14/20 to help with normalization fits
+    int clearStack() {
+        stack.clear();
+        return 0;
+    }
+
 };
 
 

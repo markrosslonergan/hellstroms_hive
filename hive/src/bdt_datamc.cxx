@@ -576,6 +576,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
             std::cout<<"MyChi: "<<var.name<<" "<<mychi<<" "<<std::endl;
 
+            // Added by A. Mogan 1/13/20 for easy reference in the scalenorm mode_option
+            std::cout << "[SCALENORM]: chi^2/NDF: " << mychi << " / " << ndof << " = " << mychi/ndof << std::endl;
+
             //stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
 
             double NdatEvents = data_file->GetEntries()*(plot_pot/data_file->pot )*data_file->scale_data;
@@ -868,9 +871,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
         return 0;
     }
-
-
-
 
     int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
         // NEW ONE (for BDT only) stop measure
@@ -1659,3 +1659,59 @@ int bdt_datamc::printPassingPi0DataEvents(std::string outfilename, int stage, st
 
     return 0;
 }
+
+/*
+int bdt_datamc::calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file) {
+
+    double mychi =0;
+    int ndof = 0;
+    for(int p=0; p<data_file->GetNbinsX();p++){
+
+        double da = data_file->GetBinContent(p+1);
+        double bk;
+
+        for (size_t i = 0; i < stack_files->size(); i++) {
+            bk+=stack_files->at(i)->GetBinContent(p+1);
+        }
+
+        if ( bk ==0){
+            std::cout<<"ERROR mychi, for bin "<<p<<" n_data= "<<da<<" and n_mc= "<<bk<<std::endl;
+
+        } else{
+
+            double da_err = sqrt(tsum->GetBinContent(p+1));
+            double bk_err = tsum->GetBinError(p+1);
+
+            double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
+
+            std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
+            if(tk==tk){
+                mychi+=tk;
+                ndof++;
+            }
+        }
+    }
+
+    // Added by A. Mogan 1/13/20 for easy reference in the scalenorm mode_option
+    std::cout << "[SCALENORM]: chi^2/NDF: " << mychi << " / " << ndof << " = " << mychi/ndof << std::endl;
+}
+
+int bdt_datamc::scaleNorm(std::vector<bdt_file> *stack_files, bdt_file data_file, double scaleLow, double scaleHigh, double scaleStep) {
+    
+    
+
+    return 0;
+}
+
+*/
+
+
+
+
+
+
+
+
+
+
+

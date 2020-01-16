@@ -39,6 +39,8 @@ int main (int argc, char *argv[]){
     int number = -1;
     bool response_only = false;
     bool is_combined = false;
+    // Added by A. Mogan 1/13/20 for doing normalization fits
+    bool scale_mode = true;
     //double what_pot = 13.2e20;
     double what_pot = 1.8e20;
     int which_file = -1;
@@ -582,6 +584,7 @@ int main (int argc, char *argv[]){
                 //datamc.printPassingPi0DataEvents("tmp", 3, fbdtcuts);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
+                //datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
             }else{
 
@@ -653,6 +656,74 @@ int main (int argc, char *argv[]){
            std::vector<bdt_variable> tmp_var = {vars.at(number)};
            datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
            */           
+    }
+    // Added by A. Mogan 1/13/20 for normalization fits
+    // Similar to datamc, but iteratively scales signal histogram and
+    // re-runs plotStacks to re-calculate chi^2 for each scaling
+    else if (mode_option == "scalenorm") {
+        std::cout<<"Starting scalenorm "<<std::endl;
+        if (response_only || number==-1) {
+            std::cout << "[SCALENORM]: ERROR: This mode is meant to be run with response_only set to false and -n set to a number" << std::endl;
+            return 1;
+        }
+
+        if (access("scalenorm",F_OK) == -1){
+            mkdir("scalenorm",0777);//Create a folder for pdf.
+        }
+        else{
+            std::cout<<"Overwrite scalenorm/ in 2 seconds, 1 seconds, ..."<<std::endl;
+            sleep(2);
+        }
+
+
+
+        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+
+        // Set scale factor range and step size
+        double scaleLow = 0.8;
+        double scaleHigh = 1.2;
+        double scaleStep = 0.1;
+
+        std::vector<bdt_variable> tmp_var = {vars.at(number)};
+
+        // Make stack with scale factor on signal; loop over
+        // scale factors, recalculating chi^2 each time in datamc.cxx
+        for (double s = scaleLow; s<scaleHigh; s+=scaleStep) {
+
+            bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_scalenorm"+std::to_string(s));
+            histogram_stack->plot_pot = onbeam_data_file->pot;
+
+            stack_bdt_files[0]->scale(s);
+            std::cout << "[SCALENORM]: Scale factor = " << s << std::endl;
+            for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                if(stack_bdt_files[f]->is_data) continue;
+                // NOTE: Make sure signal is the first element of the stack vector
+                histogram_stack->addToStack(stack_bdt_files[f]);
+                std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
+            }
+
+            //int ip=0;
+            //std::vector<bool> subv = {false,false,true};
+            bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc"+std::to_string(s));	
+            datamc.setPlotStage(which_stage);                
+
+            //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
+
+            //datamc.printPassingDataEvents("tmp", 3, fbdtcuts);
+            //datamc.printPassingPi0DataEvents("tmp", 3, fbdtcuts);
+            //datamc.setSubtractionVector(subv);
+            //datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+            datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+
+            //bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+            //real_datamc.setPlotStage(which_stage);                
+
+            // Reset stack and scaling
+            //histogram_stack->clearStack();
+            //stack_bdt_files[0]->scale(1./s);
+        }
+
+
     }
     else if(mode_option == "var2D"){
         std::cout<<"Starting var2D "<<std::endl;
