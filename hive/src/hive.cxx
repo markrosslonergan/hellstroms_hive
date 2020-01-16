@@ -697,8 +697,14 @@ int main (int argc, char *argv[]){
     }
     else if(mode_option == "test"){
 
+
+        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
+        bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
+        datamc.printPassingDataEvents("tmp", 6, fbdtcuts);
+
+        return 0;
         for(int f=0; f< bdt_files.size();++f){
-            if(which_file == f || which_file==-1) ncpi0_sss_precalc(bdt_files[f], analysis_tag);
+            if(which_file == f || which_file==0) ncpi0_sss_precalc(bdt_files[f], analysis_tag);
         }
 
         return 0;

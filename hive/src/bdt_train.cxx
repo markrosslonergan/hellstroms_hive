@@ -271,6 +271,12 @@ int convertToLibSVM(bdt_info& info, bdt_file *file){
         weight->GetNdata();
         double wei = weight->EvalInstance();
 
+        if(wei<0 || wei!=wei || isinf(wei) ){
+            std::cout<<"WARNING WARNING, the weight here is "<<wei<<std::endl;
+            std::cout<<"Setting to 1 for now, investigate!"<<std::endl;
+            wei = 1.0;
+        }
+
         sslibSVM<<"0:"<<wei<<" ";
 
         for(int t=0; t< tree_formulas_v.size();++t){
@@ -354,6 +360,12 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
         sig_weight_train->GetNdata();
         double wei = sig_weight_train->EvalInstance();
 
+        if(wei<0 || wei!=wei || isinf(wei) ){
+            std::cout<<"WARNING WARNING, the weight here is "<<wei<<std::endl;
+            std::cout<<"Setting to 1 for now, investigate!"<<std::endl;
+            wei = 1.0;
+        }
+
         sslibSVMtrain<<"1:"<<wei<<" ";
 
         for(int t=0; t< sig_tree_formulas_v_train.size();++t){
@@ -381,6 +393,13 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
         signal_file_test->tvertex->GetEntry(next_entry_sig_test);
         sig_weight_test->GetNdata();
         double wei = sig_weight_test->EvalInstance();
+
+        if(wei<0 || wei!=wei || isinf(wei) ){
+             std::cout<<"WARNING WARNING, the weight here is "<<wei<<std::endl;
+            std::cout<<"Setting to 1 for now, investigate!"<<std::endl;
+
+            wei = 1.0;
+        }
 
         sslibSVMtest<<"1:"<<wei<<" ";
 
@@ -410,6 +429,13 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
         bkg_weight_train->GetNdata();
         double wei = bkg_weight_train->EvalInstance();
 
+        if(wei<0 || wei!=wei || isinf(wei) ){
+             std::cout<<"WARNING WARNING, the weight here is "<<wei<<std::endl;
+            std::cout<<"Setting to 1 for now, investigate!"<<std::endl;
+
+            wei = 1.0;
+        }
+
         sslibSVMtrain<<"0:"<<wei<<" ";
 
         for(int t=0; t< bkg_tree_formulas_v_train.size();++t){
@@ -437,6 +463,13 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
         background_file_test->tvertex->GetEntry(next_entry_bkg_test);
         bkg_weight_test->GetNdata();
         double wei = bkg_weight_test->EvalInstance();
+
+        if(wei<0 || wei!=wei || isinf(wei) ){
+                std::cout<<"WARNING WARNING, the weight here is "<<wei<<std::endl;
+            std::cout<<"Setting to 1 for now, investigate!"<<std::endl;
+
+            wei = 1.0;
+        }
 
         sslibSVMtest<<"0:"<<wei<<" ";
 

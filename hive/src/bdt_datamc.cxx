@@ -476,17 +476,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             d0->SetMarkerSize(3);
             d0->SetLineColor(kBlack);
 
-            stk->SetMinimum(0.0001);
             stk->Draw("hist");
             stk->SetTitle("");
             //stk->SetTitle(stage_names.at(s).c_str());
             stk->GetXaxis()->SetTitle(var.unit.c_str());
             stk->GetYaxis()->SetTitle("Events");
             stk->GetYaxis()->SetTitleSize(0.05);
+            stk->SetMinimum(min_val);
             stk->GetYaxis()->SetTitleOffset(0.9);
             std::cout<<"the max modifier is "<<max_modifier<<std::endl;
             stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
-            stk->SetMinimum(min_val);
             tsum->SetLineWidth(3);
             //tsum_after->SetLineWidth(3);
             tsum->DrawCopy("Same E2");
@@ -954,6 +953,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             d0->SetMarkerSize(2);
             d0->SetLineColor(kBlack);
 
+            stk->SetMinimum(0.01);
             stk->Draw("hist");
             stk->SetTitle("");
             //stk->SetTitle(stage_names.at(s).c_str());
@@ -962,8 +962,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->GetYaxis()->SetTitleSize(0.05);
             stk->GetYaxis()->SetTitleOffset(0.9);
             stk->SetMaximum( std::max(tsum->GetMaximum(), (stack_mode ? -1 : d0->GetMaximum()) )*max_modifier);
+            stk->SetMinimum(0.01);
+            stk->GetYaxis()->SetRangeUser(0.01,  std::max(tsum->GetMaximum(), (stack_mode ? -1 : d0->GetMaximum()) )*max_modifier);
+            stk->SetMinimum(0.01);
+            pad0top->Update();
 
-            stk->SetMinimum(min_val);
             tsum->DrawCopy("Same E2");
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
             tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
