@@ -60,7 +60,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     vec_entry_lists.resize(flow.bdt_vector.size());
 
-    this->CheckWeights();//make sure there aren't erroneous weights
+    //this->CheckWeights();//make sure there aren't erroneous weights
 
     /*
     //This is all old school mcc8 stuff for now.
@@ -625,6 +625,7 @@ int bdt_file::CheckWeights(){
 
     TTreeFormula* weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
 
+    int count = 0;
     for(int k=0; k<tvertex->GetEntries(); k++){
         tvertex->GetEntry(k);
         double myweight= weight->EvalInstance();
@@ -632,8 +633,10 @@ int bdt_file::CheckWeights(){
             std::cout<<"WARNING this weight is "<< myweight<<std::endl;
             std::cout<<"setting it to 1.0 for now"<<std::endl;
             myweight = 1.0;
+            count++;
         }
     }
+    std::cout<<"the number of events with odd weights in the file is "<<count<<std::endl;
     return 0;
 
 }
@@ -641,17 +644,17 @@ int bdt_file::CheckWeights(){
 double bdt_file::GetEntries(std::string cuts){
     std::string namr = std::to_string(rangen->Uniform(10000));
 
-  /*  TTreeFormula* weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
+    /*  TTreeFormula* weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
 
-    for(int k=0; k<tvertex->GetEntries(); k++){
+        for(int k=0; k<tvertex->GetEntries(); k++){
         tvertex->GetEntry(k);
         double myweight= weight->EvalInstance();
         if(myweight<0 ||  myweight!=myweight || isinf(myweight) ){
-            std::cout<<"warning this weight is "<< myweight<<std::endl;
+        std::cout<<"warning this weight is "<< myweight<<std::endl;
         }
-    }
-*/
-   // this->CheckWeights(); //catch erroneous values of the weight
+        }
+        */
+    this->CheckWeights(); //catch erroneous values of the weight
     this->tvertex->Draw(("reco_asso_showers>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     TH1* th1 = (TH1*)gDirectory->Get(namr.c_str()) ;
     double ans = th1->GetSumOfWeights();
@@ -673,6 +676,7 @@ int bdt_file::setPOT(double inpot){
 TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
 
     TCanvas *ctmp = new TCanvas();
+    this->CheckWeights();
     this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
@@ -698,6 +702,7 @@ TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, doub
 
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
+    this->CheckWeights();
     this->tvertex->Draw((invar+">>"+nam).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
@@ -737,6 +742,7 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
 
     std::cout<<"Starting to get for "<<(varx.name+vary.name+">>"+bin ).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
+    this->CheckWeights();
     this->tvertex->Draw((vary.name+":"+varx.name+">>"+nam+bin).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH2* th2 = (TH2*)gDirectory->Get(nam.c_str()) ;
@@ -764,6 +770,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
+    this->CheckWeights();
     this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+"&&"+in_bins+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
@@ -806,6 +813,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
     for(int i=0; i< recomc_cuts.size(); i++){
         std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
         TCanvas *ctmp = new TCanvas();
+        this->CheckWeights();
         this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
         std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
         //gDirectory->ls();
