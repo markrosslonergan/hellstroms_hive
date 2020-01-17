@@ -60,6 +60,8 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     vec_entry_lists.resize(flow.bdt_vector.size());
 
+    this->CheckWeights();//make sure there aren't erroneous weights
+
     /*
     //This is all old school mcc8 stuff for now.
     if(tag == "IntimeCosmics"){
@@ -610,11 +612,6 @@ int bdt_file::calcTopologicalEntryList(){
 }
 
 
-
-
-
-
-
 int bdt_file::addPlotName(std::string plotin){
     plot_name = plotin;
     return 0;
@@ -624,12 +621,41 @@ double bdt_file::GetEntries(){
     return this->GetEntries("1");
 }
 
+int bdt_file::CheckWeights(){
+
+    TTreeFormula* weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
+
+    for(int k=0; k<tvertex->GetEntries(); k++){
+        tvertex->GetEntry(k);
+        double myweight= weight->EvalInstance();
+        if(myweight<0 ||  myweight!=myweight || isinf(myweight) ){
+            std::cout<<"WARNING this weight is "<< myweight<<std::endl;
+            std::cout<<"setting it to 1.0 for now"<<std::endl;
+            myweight = 1.0;
+        }
+    }
+    return 0;
+
+}
+
 double bdt_file::GetEntries(std::string cuts){
     std::string namr = std::to_string(rangen->Uniform(10000));
 
+  /*  TTreeFormula* weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
+
+    for(int k=0; k<tvertex->GetEntries(); k++){
+        tvertex->GetEntry(k);
+        double myweight= weight->EvalInstance();
+        if(myweight<0 ||  myweight!=myweight || isinf(myweight) ){
+            std::cout<<"warning this weight is "<< myweight<<std::endl;
+        }
+    }
+*/
+   // this->CheckWeights(); //catch erroneous values of the weight
     this->tvertex->Draw(("reco_asso_showers>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     TH1* th1 = (TH1*)gDirectory->Get(namr.c_str()) ;
     double ans = th1->GetSumOfWeights();
+    //std::cout<<"sum of weights: "<<ans<<std::endl;
     delete th1;
 
     return ans;
@@ -1017,8 +1043,19 @@ int bdt_file::writeStageFriendTree(std::string nam, double bdtvar1, double bdtva
         if(k%10000 ==0 ){ std::cout<<"On event "<<k<<std::endl;}
 
         double bnbc = tf_weight->EvalInstance();
+
+        /*
+           if(bnbc<0 || bnbc!=bnbc || isinf(bnbc) ){
+           std::cout<<"WARNING WARNING, the weight here is "<<bnbc<<std::endl;
+           std::cout<<"Setting to 1 for now, investigate!"<<std::endl;
+           bnbc = 1.0;
+           }
+           */
+
         double pot_scale = this->scale_data;
         weight = bnbc*pot_scale;
+
+
 
 
         for(int i=0; i < 4; i++){
@@ -1184,6 +1221,16 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
         weight->GetNdata();
         var->GetNdata();
         simple_wei = weight->EvalInstance();
+
+        /*
+           if(simple_wei<0 || simple_wei!=simple_wei || isinf(simple_wei) ){
+           std::cout<<"WARNING WARNING, the weight here is "<<simple_wei<<std::endl;
+           std::cout<<"Setting to 1 for now, investigate!"<<std::endl;
+           simple_wei = 1.0;
+           }
+           */
+
+
         simple_var = var->EvalInstance();
         simple_pot_wei = simple_wei*this->scale_data*plot_pot/this->pot;
         original_entry = i;

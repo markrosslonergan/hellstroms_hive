@@ -196,7 +196,8 @@ struct bdt_file{
         int setPOT(double inpot);
 
         TH1* getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
-
+        int CheckWeights();
+     
         double GetEntries(std::string cuts);
         double GetEntries();
         TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);
