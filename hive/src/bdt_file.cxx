@@ -37,7 +37,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     if(is_mc){
         std::cout<<"setting weight branch - mc"<<std::endl;
         //weight_branch = "genie_spline_weight*genie_CV_tune_weight";
-        weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)";
+        weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
     } 
     if (is_data ||  is_bnbext) {
         std::cout<<"setting weight branch - on/off beam data"<<std::endl;
@@ -297,7 +297,7 @@ int bdt_file::calcPOT(){
         std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
         //weight_branch = "1";
       //  weight_branch = "genie_spline_weight*genie_CV_tune_weight";
-         weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)";
+         weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
 
         numberofevents_raw = numberofevents;
 
