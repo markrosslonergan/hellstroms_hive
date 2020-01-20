@@ -31,6 +31,8 @@
 #include "TFriendElement.h"
 #include "TStyle.h"
 #include "TGraphAsymmErrors.h"
+#include "TF1.h"
+#include "TMath.h"
 
 class bdt_datamc{
     public:
@@ -79,10 +81,15 @@ class bdt_datamc{
         int plotBDTStacks(TFile*f, bdt_info,double,double);
         int plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts);
 
+
         int SetSpectator();
 
         int printPassingDataEvents(std::string outfilename, int stage, double c1, double c2);
         int printPassingDataEvents(std::string outfilename, int stage, std::vector<double> cuts);
+        int printPassingPi0DataEvents(std::string outfilename, int stage, std::vector<double> cuts);
+
+        int calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file);
+        int scaleNorm(std::vector<bdt_file> *stack_files, bdt_file data_file, double scaleLow, double scaleHigh, double scaleStep);
 
 
 };

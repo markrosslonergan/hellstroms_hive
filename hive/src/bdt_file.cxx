@@ -43,6 +43,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
         std::cout<<"setting weight branch - on/off beam data"<<std::endl;
         weight_branch = "1";
     }
+    
     fillstyle = infillstyle;
     scale_data = 1.0;
 
@@ -57,6 +58,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     std::cout<<"Getting eventweight tree"<<std::endl;
     teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
+    tvertex->AddFriend(teventweight);
     std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
 
     vec_entry_lists.resize(flow.bdt_vector.size());
@@ -1151,10 +1153,10 @@ unsigned long  bdt_file::jenkins_hash(std::string key) {
 
 
 int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars){
-
+    std::cout<<"Beginning SBNfit file creation for stage "<<which_stage<<" for file "<<this->tag<<std::endl;
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
     this->teventweight->AddFriend(this->tvertex);
-
+    
     std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+this->tag+".root";
 
     std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
@@ -1180,7 +1182,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     double simple_wei = 0;
     double simple_pot_wei = 0;
     int original_entry = 0;
-    double plot_pot = 13.2e20;
+    double plot_pot = 10.1e20;
+    //double plot_pot = 13.2e20;
 
     std::vector<double> simple_bdt_vars(vars.size(),0.0);
     std::vector<double> bdt_mvas(bdt_infos.size(),0.0);

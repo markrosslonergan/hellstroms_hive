@@ -383,7 +383,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }else{
                 for(int c=0; c< tsum->GetNbinsX()+1;c++){
                     //tsum->SetBinError(c+1, sqrt(pow(tsum->GetBinContent(c+1)*0.27,2)+tsum->GetBinError(c+1)));
-                    tsum->SetBinError(c+1, 0.0001);
+                    //tsum->SetBinError(c+1, 0.0001);
                 }
 
             }
@@ -452,7 +452,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // }
 
             if (s==3){
-                max_modifier = (stack_mode ? 1.5 : 3);
+                max_modifier = (stack_mode ? 2.0 : 1.85);
             }
 
             if(s==5){
@@ -486,6 +486,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->GetYaxis()->SetTitleOffset(0.9);
             std::cout<<"the max modifier is "<<max_modifier<<std::endl;
             stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
+            //stk->SetMaximum(500);
+            stk->SetMinimum(min_val);
             tsum->SetLineWidth(3);
             //tsum_after->SetLineWidth(3);
             tsum->DrawCopy("Same E2");
@@ -535,7 +537,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
             //l0->AddEntry(tmp_tsum,"Unconstrained Flux & XS Error","f");
             //l0->AddEntry(tsum_after,"Constrained Flux & XS Error","lp");
-            l0->AddEntry(tmp_tsum,"MC Stat Error Only","f");
+            l0->AddEntry(tmp_tsum,"MC Stats-Only Error","f");
             //			d0->Draw("same E1");
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -543,29 +545,39 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Binned Chi-test: "<<var.name<<" "<<tsum->Chi2Test(d0,"UW CHI2")<<std::endl;
             std::cout<<"Binned Chi-test (rev): "<<var.name<<" "<<d0->Chi2Test(tsum,"UW CHI2")<<std::endl;
 
+
             double mychi =0;
             int ndof = 0;
             for(int p=0; p<d0->GetNbinsX();p++){
+
                 double da = d0->GetBinContent(p+1);
                 double bk = tsum->GetBinContent(p+1);
 
-                if (da == 0 || bk ==0){
+                if ( bk ==0){
                     std::cout<<"ERROR mychi, for bin "<<p<<" n_data= "<<da<<" and n_mc= "<<bk<<std::endl;
 
                 } else{
 
-                    double da_err = sqrt(d0->GetBinContent(p+1));
+                    // Version 1 chi^2
+                    //double da_err = sqrt(d0->GetBinContent(p+1));
+                    //double bk_err = tsum->GetBinError(p+1);
+
+                    double da_err = sqrt(tsum->GetBinContent(p+1));
                     double bk_err = tsum->GetBinError(p+1);
-                    //std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<std::endl;
+
                     double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
+
+                    std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
                     if(tk==tk){
                         mychi+=tk;
                         ndof++;
                     }
                 }
             }
-            std::cout<<"MyChi: "<<var.name<<" "<<mychi<<std::endl;
+            std::cout<<"MyChi: "<<var.name<<" "<<mychi<<" "<<std::endl;
 
+            // Added by A. Mogan 1/13/20 for easy reference in the scalenorm mode_option
+            std::cout << "[SCALENORM]: chi^2/NDF: " << mychi << " / " << ndof << " = " << mychi/ndof << std::endl;
 
             //stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
 
@@ -574,6 +586,47 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             d0->SetBinErrorOption(TH1::kPoisson);
             if(!stack_mode) d0->Draw("same E1 E0");
 
+            /////// Print resolution for diphoton mass ////////
+            // First, find variables containing the string of interest
+            std::string massSearch("Invariant");
+            std::size_t found = var.unit.find(massSearch);
+
+            // Fit Gaussian to that variable
+            /*
+            if (found != std::string::npos) {
+                std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
+                TF1 *gausfit_data = new TF1("gausfit_data", "gaus");
+                TF1 *gausfit_mc = new TF1("gausfit_mc", "gaus");
+                TH1 *tmp_hist = stk->GetHistogram();
+                double lowFit, highFit;
+                double mass_data = 0., mass_err_data = 0;
+                double mass_res_data = 0., mass_res_err_data = 0.;
+                double mass_mc = 0., mass_err_mc = 0;
+                double mass_res_mc = 0., mass_res_err_mc = 0.;
+                // Fit range should be similar for data and MC
+                lowFit = d0->GetXaxis()->GetBinLowEdge(1);
+                highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
+                d0->Fit(gausfit_data, "lv", "", lowFit, highFit);
+                tmp_hist->Fit(gausfit_data, "q", "", lowFit, highFit);
+                std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
+                mass_data = gausfit_data->GetParameter(1);
+                mass_err_data = gausfit_data->GetParError(1);
+                mass_res_data = gausfit_data->GetParameter(2);
+                mass_res_err_data = gausfit_data->GetParError(2);
+                mass_mc = gausfit_mc->GetParameter(1);
+                mass_err_mc = gausfit_mc->GetParError(1);
+                mass_res_mc = gausfit_mc->GetParameter(2);
+                mass_res_err_mc = gausfit_mc->GetParError(2);
+                std::cout << "[BLARG] Data mass: " << mass_data << " +/- " << mass_err_data << std::endl;
+                std::cout << "[BLARG] Data mass resolution: " << mass_res_data << " +/- " << mass_res_err_data << std::endl;
+                std::cout << "[BLARG] MC mass: " << mass_mc << " +/- " << mass_err_mc << std::endl;
+                std::cout << "[BLARG] MC mass resolution: " << mass_res_mc << " +/- " << mass_res_err_mc << std::endl;
+                gausfit_data->SetLineColor(kRed);
+                gausfit_mc->SetLineColor(kAzure+1);
+                gausfit_data->Draw("same");
+                gausfit_mc->Draw("same");
+            }
+            */
 
 
 
@@ -599,13 +652,18 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
 
-            double pot_unit = stack_mode ? 1e20 : 1e19;
-            std::string pot_unit_s = stack_mode ? "e20" : "e19";
+            //double pot_unit = stack_mode ? 1e20 : 1e19;
+            //std::string pot_unit_s = stack_mode ? "e20" : "e19";
+            double pot_unit = 1e20;
+            std::string pot_unit_s = "e20";
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/pot_unit,1)+ pot_unit_s+" POT";
 
             pottex.DrawLatex(.60,.60, pot_draw.c_str());
 
-
+            // Draw stage name. Added by A. Mogan 10/14/19
+            TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
+            stage->SetTextAlign(31); // Right-adjusted 
+            stage->Draw();
 
             TText *pre; 
             if (isSpectator) {
@@ -776,7 +834,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (pval: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
 
-
             std::string combined = mean + "     " +ks;
             //std::string mean = "Ratio: Normalized" ;
             TLatex *t = new TLatex(0.11,0.02,combined.c_str());
@@ -830,9 +887,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
         return 0;
     }
-
-
-
 
     int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
         // NEW ONE (for BDT only) stop measure
@@ -905,7 +959,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 * tsum = (TH1*)mc_stack->getBDTEntrySum(info);
 
             bdt_variable dvar = data_file->getBDTVariable(info);
-            dvar.is_logplot = true;
+            dvar.is_logplot = false;
+            //dvar.is_logplot = true;
             TH1 * d0 = (TH1*)data_file->getTH1(dvar, "1", scuts+"_"+data_file->tag+"_"+dvar.safe_name, plot_pot);
 
             double rmin = 0.5;
@@ -917,11 +972,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
             double max_modifier = stack_mode ? 1.4 : 1.9;
+            double min_val;
+            /*
             double min_val = 0.01;
             if(is_bdt_variable) {
                 max_modifier = 50.0;
-                min_val = 0.01;
+                //min_val = 0.01;
+                min_val = 0.1; // Changed from 0.01 to 0.1 by A. Mogan, 10/22/19, for collab meeting
             }
+            */
             d0->Rebin(data_rebin);
 
             if(false &&do_subtraction){
@@ -944,7 +1003,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             cobs->cd();
             TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
 
-            if(is_bdt_variable ) pad0top->SetLogy();
+            //if(is_bdt_variable ) pad0top->SetLogy();
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
             pad0top->cd();               // pad2top becomes the current pad
@@ -1032,8 +1091,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
 
-            double pot_unit = stack_mode ? 1e20 : 1e19;
-            std::string pot_unit_s = stack_mode ? "e20" : "e19";
+            //double pot_unit = stack_mode ? 1e20 : 1e19;
+            //std::string pot_unit_s = stack_mode ? "e20" : "e19";
+            double pot_unit = 1e20;
+            std::string pot_unit_s = "e20";
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/pot_unit,1)+ pot_unit_s+" POT";
 
             pottex.DrawLatex(.60,.64, pot_draw.c_str());
@@ -1308,7 +1369,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 
 
-            if(var.is_logplot || is_bdt_variable) pad0top->SetLogy();
+            //if(var.is_logplot || is_bdt_variable) pad0top->SetLogy();
+            //if(var.is_logplot) pad0top->SetLogy();
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
             pad0top->cd();               // pad2top becomes the current pad
@@ -1324,8 +1386,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             };//else if(k==2){ data_rebin = 2;}else if(k==3){data_rebin=2;};
 
 
-            double max_modifier = 10;
-           //  double max_modifier = 1.9;
+            double max_modifier = 1.9;
+            //double min_val = 0.01;
             double min_val = 0.01;
             if(is_bdt_variable || var.is_logplot) {
                 //max_modifier = 500.0;
@@ -1523,3 +1585,154 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         this->isSpectator = true;
         return 0;
     }
+
+int bdt_datamc::printPassingPi0DataEvents(std::string outfilename, int stage, std::vector<double> cuts){
+
+    //data_file->calcCosmicBDTEntryList(c1, c2);
+    //data_file->calcBNBBDTEntryList(c1, c2);
+    //data_file->setStageEntryList(3);
+
+    //   std::string fake = "fake_bnbbdt_list_"+std::to_string(c1)+"_"+std::to_string(c2)+"_" +data_file->tag;
+
+    // data_file=  mc_stack->stack[0];
+    std::string fake = "";
+    data_file->tvertex->Draw((">>"+fake).c_str(), data_file->getStageCuts(stage,cuts).c_str() , "entrylist");
+    TEntryList * fake_list = (TEntryList*)gDirectory->Get(fake.c_str());
+
+    int n_run_number = 0;
+    int n_subrun_number = 0;
+    int n_event_number = 0;
+    double n_vertex_x = 0;
+    double n_vertex_y = 0;
+    double n_vertex_z = 0;
+    std::vector<unsigned long> *i_shr = 0;
+    std::vector<unsigned long> *i_trk = 0;
+    std::vector<double> *reco_shower_energy_max = 0;
+    std::vector<double> *reco_shower_dirx = 0;
+    std::vector<double> *reco_shower_diry = 0;
+    std::vector<double> *reco_shower_dirz = 0;
+    std::vector<double> *reco_track_displacement = 0;
+    std::vector<double> *reco_track_proton_kinetic_energy = 0;
+
+    // Necessary for vectors, for some reason
+    TBranch *bi_shr = 0;
+    TBranch *bi_trk = 0;
+    TBranch *breco_shower_energy_max = 0;
+    TBranch *bsim_shower_energy = 0;
+    TBranch *breco_shower_dirx = 0;
+    TBranch *breco_shower_diry = 0;
+    TBranch *breco_shower_dirz = 0;
+    TBranch *breco_track_displacement = 0;
+    TBranch *breco_track_proton_kinetic_energy = 0;
+    
+    data_file->tvertex->SetBranchAddress("run_number",    &n_run_number);
+    data_file->tvertex->SetBranchAddress("subrun_number", &n_subrun_number);
+    data_file->tvertex->SetBranchAddress("event_number",  &n_event_number);
+    data_file->tvertex->SetBranchAddress("reco_vertex_x", &n_vertex_x);
+    data_file->tvertex->SetBranchAddress("reco_vertex_y", &n_vertex_y);
+    data_file->tvertex->SetBranchAddress("reco_vertex_z", &n_vertex_z);
+
+    data_file->tvertex->SetBranchAddress("i_shr", &i_shr, &bi_shr);
+    data_file->tvertex->SetBranchAddress("i_trk", &i_trk, &bi_trk);
+    data_file->tvertex->SetBranchAddress("reco_shower_energy_max", &reco_shower_energy_max, &breco_shower_energy_max);
+    data_file->tvertex->SetBranchAddress("reco_shower_dirx", &reco_shower_dirx, &breco_shower_dirx);
+    data_file->tvertex->SetBranchAddress("reco_shower_diry", &reco_shower_diry, &breco_shower_diry);
+    data_file->tvertex->SetBranchAddress("reco_shower_dirz", &reco_shower_dirz, &breco_shower_dirz);
+    data_file->tvertex->SetBranchAddress("reco_track_displacement", &reco_track_displacement, &breco_track_displacement);
+    data_file->tvertex->SetBranchAddress("reco_track_proton_kinetic_energy", &reco_track_proton_kinetic_energy, &breco_track_proton_kinetic_energy);
+
+    std::cout<<"Starting printPassingPi0DataEvents() for "<<data_file->name<<std::endl;
+
+    for(int i=0;i < fake_list->GetN(); i++ ){
+        data_file->tvertex->GetEntry( fake_list->GetEntry(i));
+
+        // Shower kinematics
+        double E1 = reco_shower_energy_max->at(i_shr->at(0));
+        double E2 = reco_shower_energy_max->at(i_shr->at(1));
+        // Correction factors from output of energy correction script in hive/other/
+        E1 = 1.24607*E1 + 4.11138;
+        E2 = 1.24607*E2 + 4.11138;
+
+        double opAng = TMath::ACos(reco_shower_dirx->at(0)*reco_shower_dirx->at(1)+
+                       reco_shower_diry->at(0)*reco_shower_diry->at(1)+
+                       reco_shower_dirz->at(0)*reco_shower_dirz->at(1)) ;
+        double invMass = sqrt(2*E1*E2*(1 - opAng) );
+
+        // Track kinematics
+
+        // Print kinematics
+        /*
+        std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number <<" "
+                        <<n_subrun_number<<" "
+                        << n_event_number <<" ("
+                        <<n_vertex_x<<", "<<n_vertex_y<<", "<<n_vertex_z<< ")"<<" " 
+                        << E1 << " " 
+                        << E2 << " "
+                        << opAng << " " 
+                        << invMass << " " 
+                        << reco_track_displacement->at(i_trk->at(0)) << " " 
+                        << reco_track_proton_kinetic_energy->at(i_trk->at(0)) << " " << std::endl;
+        */
+        std::cout <<  opAng*57.2958 << std::endl;
+    }
+    std::cout<<"End printPassingDataEvents()  for "<<data_file->name<<std::endl;
+
+
+    return 0;
+}
+
+/*
+int bdt_datamc::calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file) {
+
+    double mychi =0;
+    int ndof = 0;
+    for(int p=0; p<data_file->GetNbinsX();p++){
+
+        double da = data_file->GetBinContent(p+1);
+        double bk;
+
+        for (size_t i = 0; i < stack_files->size(); i++) {
+            bk+=stack_files->at(i)->GetBinContent(p+1);
+        }
+
+        if ( bk ==0){
+            std::cout<<"ERROR mychi, for bin "<<p<<" n_data= "<<da<<" and n_mc= "<<bk<<std::endl;
+
+        } else{
+
+            double da_err = sqrt(tsum->GetBinContent(p+1));
+            double bk_err = tsum->GetBinError(p+1);
+
+            double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
+
+            std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
+            if(tk==tk){
+                mychi+=tk;
+                ndof++;
+            }
+        }
+    }
+
+    // Added by A. Mogan 1/13/20 for easy reference in the scalenorm mode_option
+    std::cout << "[SCALENORM]: chi^2/NDF: " << mychi << " / " << ndof << " = " << mychi/ndof << std::endl;
+}
+
+int bdt_datamc::scaleNorm(std::vector<bdt_file> *stack_files, bdt_file data_file, double scaleLow, double scaleHigh, double scaleStep) {
+    
+    
+
+    return 0;
+}
+
+*/
+
+
+
+
+
+
+
+
+
+
+

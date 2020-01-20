@@ -405,7 +405,7 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
             th1->Scale(1.0/norm);
         }
         std::cout<<files[i]->tag<<" mean: "<<th1->GetMean()<<std::endl;
-        th1->Draw("hist same");
+        th1->Draw("E1hist same");
 
         max = std::max(max, th1->GetMaximum());
         th1->SetMaximum(th1->GetMaximum()*1.5);
@@ -423,7 +423,7 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
         }	
 
         rat_denom->Divide(rat_CV);
-        rat_denom->Draw("same hist");
+        rat_denom->Draw("E1same hist");
 
         rat_denom->GetXaxis()->SetTitle(var.unit.c_str());
         rat_denom->SetMinimum(rmin);	

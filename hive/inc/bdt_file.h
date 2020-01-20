@@ -56,6 +56,7 @@ bool marks_compare_vec_nonsense(std::vector<T>& v1, std::vector<T>& v2)
                 return v1 == v2;
 }
 
+
 template <typename T>
 std::vector<size_t> sort_indexes(const std::vector<T> &v) {
 

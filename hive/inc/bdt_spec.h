@@ -45,10 +45,12 @@ class bdt_stack{
 
 
 		bdt_stack(std::string in) : name(in){
-		//	plot_pot=6.6e20;
-        //	plot_pot=13.2e20;
-            plot_pot = 4.8e19;
-            do_subtraction = false;
+		    //plot_pot=6.6e20;
+        //plot_pot=13.2e20;
+        plot_pot=10.1e20;
+        //plot_pot = 4.8e19;
+        //plot_pot = 0.3756e+19;
+        do_subtraction = false;
 		}
 
 		int addToStack(bdt_file* in,bool signalish){
@@ -91,6 +93,13 @@ class bdt_stack{
         }
 
 		int makeSBNspec(std::string tag, bdt_variable var, double, double, std::vector<std::string> hist_names);
+
+    // Added by A. Mogan 1/14/20 to help with normalization fits
+    int clearStack() {
+        stack.clear();
+        return 0;
+    }
+
 };
 
 

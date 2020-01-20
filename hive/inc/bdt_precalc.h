@@ -65,11 +65,10 @@ class bdt_precalc{
 	int genPi0Info();
 	int genBNBcorrectionInfo();
 
-
-
-
 	};
+
 int ncpi0_sss_precalc(const bdt_file * file, const std::string &tag);
+
 
 
 //line between X1 and X2, point X0
