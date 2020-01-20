@@ -34,8 +34,16 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
 
-    weight_branch = "genie_spline_weight*genie_CV_tune_weight";
-    //weight_branch = "1";
+    if(is_mc){
+        std::cout<<"setting weight branch - mc"<<std::endl;
+        //weight_branch = "genie_spline_weight*genie_CV_tune_weight";
+        weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
+    } 
+    if (is_data ||  is_bnbext) {
+        std::cout<<"setting weight branch - on/off beam data"<<std::endl;
+        weight_branch = "1";
+    }
+    
     fillstyle = infillstyle;
     scale_data = 1.0;
 
@@ -54,6 +62,8 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
 
     vec_entry_lists.resize(flow.bdt_vector.size());
+
+    //this->CheckWeights();//make sure there aren't erroneous weights
 
     /*
     //This is all old school mcc8 stuff for now.
@@ -288,7 +298,9 @@ int bdt_file::calcPOT(){
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
         //weight_branch = "1";
-        weight_branch = "genie_spline_weight*genie_CV_tune_weight";
+      //  weight_branch = "genie_spline_weight*genie_CV_tune_weight";
+         weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
+
         numberofevents_raw = numberofevents;
 
     }else if(is_data){
@@ -605,11 +617,6 @@ int bdt_file::calcTopologicalEntryList(){
 }
 
 
-
-
-
-
-
 int bdt_file::addPlotName(std::string plotin){
     plot_name = plotin;
     return 0;
@@ -619,12 +626,44 @@ double bdt_file::GetEntries(){
     return this->GetEntries("1");
 }
 
+int bdt_file::CheckWeights(){
+
+    TTreeFormula* weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
+
+    int count = 0;
+    for(int k=0; k<tvertex->GetEntries(); k++){
+        tvertex->GetEntry(k);
+        double myweight= weight->EvalInstance();
+        if(myweight<0 ||  myweight!=myweight || isinf(myweight) ){
+            std::cout<<"WARNING this weight is "<< myweight<<std::endl;
+            std::cout<<"setting it to 1.0 for now"<<std::endl;
+            myweight = 1.0;
+            count++;
+        }
+    }
+    std::cout<<"the number of events with odd weights in the file is "<<count<<std::endl;
+    return 0;
+
+}
+
 double bdt_file::GetEntries(std::string cuts){
     std::string namr = std::to_string(rangen->Uniform(10000));
 
+    /*  TTreeFormula* weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
+
+        for(int k=0; k<tvertex->GetEntries(); k++){
+        tvertex->GetEntry(k);
+        double myweight= weight->EvalInstance();
+        if(myweight<0 ||  myweight!=myweight || isinf(myweight) ){
+        std::cout<<"warning this weight is "<< myweight<<std::endl;
+        }
+        }
+        */
+   // this->CheckWeights(); //catch erroneous values of the weight
     this->tvertex->Draw(("reco_asso_showers>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     TH1* th1 = (TH1*)gDirectory->Get(namr.c_str()) ;
     double ans = th1->GetSumOfWeights();
+    //std::cout<<"sum of weights: "<<ans<<std::endl;
     delete th1;
 
     return ans;
@@ -642,6 +681,7 @@ int bdt_file::setPOT(double inpot){
 TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
 
     TCanvas *ctmp = new TCanvas();
+  //  this->CheckWeights();
     this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
@@ -667,6 +707,7 @@ TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, doub
 
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
+    //this->CheckWeights();
     this->tvertex->Draw((invar+">>"+nam).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
@@ -693,19 +734,20 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
     std::string binx_c = binx;
     std::string biny_c = biny;
 
-   // std::cout<<"binx_c"<< binx_c<<std::endl;
-   // std::cout<<"biny_c"<< biny_c<<std::endl;
+    // std::cout<<"binx_c"<< binx_c<<std::endl;
+    // std::cout<<"biny_c"<< biny_c<<std::endl;
 
     binx_c.erase(binx_c.end()- 1);
     biny_c.erase(biny_c.begin()+ 0); 
 
-   // std::cout<<"binx_c"<< binx_c<<std::endl;
-   // std::cout<<"biny_c"<< biny_c<<std::endl;
+    // std::cout<<"binx_c"<< binx_c<<std::endl;
+    // std::cout<<"biny_c"<< biny_c<<std::endl;
 
     std::string bin = binx_c + std::string(", ") + biny_c ;
 
     std::cout<<"Starting to get for "<<(varx.name+vary.name+">>"+bin ).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
+   // this->CheckWeights();
     this->tvertex->Draw((vary.name+":"+varx.name+">>"+nam+bin).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH2* th2 = (TH2*)gDirectory->Get(nam.c_str()) ;
@@ -721,7 +763,7 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
     th2->SetDirectory(0);	
 
     //delete ctmp;
-     return th2;
+    return th2;
 }
 
 
@@ -733,6 +775,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
+   // this->CheckWeights();
     this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+"&&"+in_bins+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
@@ -775,6 +818,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
     for(int i=0; i< recomc_cuts.size(); i++){
         std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
         TCanvas *ctmp = new TCanvas();
+    //    this->CheckWeights();
         this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
         std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
         //gDirectory->ls();
@@ -1012,8 +1056,19 @@ int bdt_file::writeStageFriendTree(std::string nam, double bdtvar1, double bdtva
         if(k%10000 ==0 ){ std::cout<<"On event "<<k<<std::endl;}
 
         double bnbc = tf_weight->EvalInstance();
+
+        /*
+           if(bnbc<0 || bnbc!=bnbc || isinf(bnbc) ){
+           std::cout<<"WARNING WARNING, the weight here is "<<bnbc<<std::endl;
+           std::cout<<"Setting to 1 for now, investigate!"<<std::endl;
+           bnbc = 1.0;
+           }
+           */
+
         double pot_scale = this->scale_data;
         weight = bnbc*pot_scale;
+
+
 
 
         for(int i=0; i < 4; i++){
@@ -1146,8 +1201,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     }
 
     for(int i=0; i< vars.size(); i++){
-            std::string tnam = "simple_bdt_var_"+std::to_string(i);
-            t_sbnfit_simpletree->Branch(tnam.c_str(),&(simple_bdt_vars[i]));
+        std::string tnam = "simple_bdt_var_"+std::to_string(i);
+        t_sbnfit_simpletree->Branch(tnam.c_str(),&(simple_bdt_vars[i]));
     }
 
     TTreeFormula* weight = new TTreeFormula("weight_formula ",this->weight_branch.c_str(),this->tvertex);
@@ -1168,34 +1223,44 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 
     std::string var_string = input_string;
     if(var_string == "") var_string = "reco_vertex_size";
-        std::cout<<"Starting to make a simpletree with variable "<<var_string<<std::endl;
-        for(int i=0; i< this->tvertex->GetEntries(); i++){
-            this->tvertex->GetEntry(i); 
+    std::cout<<"Starting to make a simpletree with variable "<<var_string<<std::endl;
+    for(int i=0; i< this->tvertex->GetEntries(); i++){
+        this->tvertex->GetEntry(i); 
 
-            CUT->GetNdata();
-            bool is_is = CUT->EvalInstance();
+        CUT->GetNdata();
+        bool is_is = CUT->EvalInstance();
 
-            if(!is_is) continue;
+        if(!is_is) continue;
 
-            weight->GetNdata();
-            var->GetNdata();
-            simple_wei = weight->EvalInstance();
-            simple_var = var->EvalInstance();
-            simple_pot_wei = simple_wei*this->scale_data*plot_pot/this->pot;
-            original_entry = i;
+        weight->GetNdata();
+        var->GetNdata();
+        simple_wei = weight->EvalInstance();
 
-            for(int j=0; j< bdt_infos.size();j++){
-                form_vec[j]->GetNdata();
-                bdt_mvas[j] = form_vec[j]->EvalInstance();
-            }
+        /*
+           if(simple_wei<0 || simple_wei!=simple_wei || isinf(simple_wei) ){
+           std::cout<<"WARNING WARNING, the weight here is "<<simple_wei<<std::endl;
+           std::cout<<"Setting to 1 for now, investigate!"<<std::endl;
+           simple_wei = 1.0;
+           }
+           */
 
-            for(int j=0; j< vars.size();j++){
-                form_vec_vars[j]->GetNdata();
-                simple_bdt_vars[j] = form_vec_vars[j]->EvalInstance();
-            }
 
-            t_sbnfit_simpletree->Fill();
+        simple_var = var->EvalInstance();
+        simple_pot_wei = simple_wei*this->scale_data*plot_pot/this->pot;
+        original_entry = i;
+
+        for(int j=0; j< bdt_infos.size();j++){
+            form_vec[j]->GetNdata();
+            bdt_mvas[j] = form_vec[j]->EvalInstance();
         }
+
+        for(int j=0; j< vars.size();j++){
+            form_vec_vars[j]->GetNdata();
+            simple_bdt_vars[j] = form_vec_vars[j]->EvalInstance();
+        }
+
+        t_sbnfit_simpletree->Fill();
+    }
 
 
     TList * lf1 = (TList*)t_sbnfit_tree->GetListOfFriends();
@@ -1225,3 +1290,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     return 0;
 }
 
+
+
+//int bdt_file::convertToHashedLibSVM(){
+//
+//}

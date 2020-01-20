@@ -226,6 +226,14 @@ int main (int argc, char *argv[]){
         for(int i=0; i< XMLconfig.bdt_definitions[f].size(); ++i){
             def += "&&" + XMLconfig.bdt_definitions[f][i];
         }
+
+        //If its a training file we are working with, add the training definitions 
+        if(XMLconfig.bdt_is_training_signal[f]){
+             for(int i=0; i< XMLconfig.bdt_training_cuts[f].size(); ++i){
+                def += "&&" + XMLconfig.bdt_training_cuts[f][i];
+             }
+        }
+
         std::cout<<def<<std::endl;
         bdt_flow analysis_flow(topological_cuts, def, 	vec_precuts,	postcuts,	bdt_infos);
 
@@ -291,6 +299,9 @@ int main (int argc, char *argv[]){
 
         bdt_files.back()->calcPOT();
         if(incl_in_stack) stack_bdt_files.push_back(bdt_files.back());
+
+ 
+
     }
 
     //The "signal" is whichever signal BDT you define first.
@@ -330,7 +341,6 @@ int main (int argc, char *argv[]){
         if(mode_option != "train"  && mode_option != "sbnfit"){
             f->calcBaseEntryList(analysis_tag);
         }
-    
         f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
     }
 
@@ -387,12 +397,10 @@ int main (int argc, char *argv[]){
             bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
             bdt_file * testing_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_test_tag]; 
 
-
-
             if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
 
                 //This is NAF, need to save it and not repeat
-                convertToLibSVM(bdt_infos[i], training_signal, testing_signal, bdt_infos[i].TMVAmethod.sig_test_cut, training_background, testing_background, bdt_infos[i].TMVAmethod.bkg_test_cut);
+                convertToLibSVMTT(bdt_infos[i], training_signal, testing_signal, bdt_infos[i].TMVAmethod.sig_test_cut, training_background, testing_background, bdt_infos[i].TMVAmethod.bkg_test_cut);
                 bdt_XGtrain(bdt_infos[i]);
 
             }else if(bdt_infos[i].TMVAmethod.str=="TMVA"){
@@ -459,7 +467,7 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-        histogram_stack->plot_pot =13.2e20;//4.9e19;
+        histogram_stack->plot_pot =10.1e20;//4.9e19;
 
         std::cout<<"flag1"<<std::endl;
 
@@ -483,7 +491,7 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 datamc.setPlotStage(which_stage);                
-                datamc.setStackMode(13.2e20);
+                datamc.setStackMode(histogram_stack->plot_pot);
 
                 //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
                 //datamc.setSubtractionVector(subv);
@@ -495,7 +503,7 @@ int main (int argc, char *argv[]){
 
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 real_datamc.setPlotStage(which_stage);                
-                real_datamc.setStackMode(13.2e20);
+                real_datamc.setStackMode( histogram_stack->plot_pot);
 
                 //real_datamc.setSubtractionVector(subv);
                 // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
@@ -508,7 +516,7 @@ int main (int argc, char *argv[]){
         }else{
             bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
 
-            real_datamc.setStackMode(13.2e20);
+            real_datamc.setStackMode( histogram_stack->plot_pot);
             if(which_bdt ==-1){
                 for(int k=0; k< bdt_infos.size(); k++){
                     real_datamc.plotBDTStacks(bdt_infos[k] , fbdtcuts);
@@ -764,12 +772,19 @@ int main (int argc, char *argv[]){
     }
     else if(mode_option == "test"){
 
+
+        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
+        bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
+        datamc.printPassingDataEvents("tmp", 6, fbdtcuts);
+
+        return 0;
         for(int f=0; f< bdt_files.size();++f){
-            if(which_file == f || which_file==-1) ncpi0_sss_precalc(bdt_files[f], analysis_tag);
+            if(which_file == f || which_file==0) ncpi0_sss_precalc(bdt_files[f], analysis_tag);
         }
 
-       //if(which_bdt==-1)which_bdt = 0;
-       //bdt_XGBoost_importance(bdt_infos[which_bdt]);
+        return 0;
+       if(which_bdt==-1)which_bdt = 0;
+       bdt_XGBoost_importance(bdt_infos[which_bdt]);
 
         return 0;
     }else if(mode_option == "sig"){
@@ -919,7 +934,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     if(which_stage==-1)which_stage=0;
 
-    what_pot = 1.6e20;
+    what_pot = 10.1e20;
 
     bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag);
 

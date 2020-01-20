@@ -383,7 +383,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }else{
                 for(int c=0; c< tsum->GetNbinsX()+1;c++){
                     //tsum->SetBinError(c+1, sqrt(pow(tsum->GetBinContent(c+1)*0.27,2)+tsum->GetBinError(c+1)));
-                    //tsum->SetBinError(c+1, 0.0001);
+                    tsum->SetBinError(c+1, 0.0001);
                 }
 
             }
@@ -476,13 +476,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             d0->SetMarkerSize(3);
             d0->SetLineColor(kBlack);
 
-            stk->SetMinimum(0.0001);
             stk->Draw("hist");
             stk->SetTitle("");
             //stk->SetTitle(stage_names.at(s).c_str());
             stk->GetXaxis()->SetTitle(var.unit.c_str());
             stk->GetYaxis()->SetTitle("Events");
             stk->GetYaxis()->SetTitleSize(0.05);
+            stk->SetMinimum(min_val);
             stk->GetYaxis()->SetTitleOffset(0.9);
             std::cout<<"the max modifier is "<<max_modifier<<std::endl;
             stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
@@ -694,12 +694,27 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
             std::cout<<"BNLAR ";
+            std::vector<double> ptc = {7.7,16.9,11.6,4.3};
+            double ssum = 0;
+            double psum = 5.38+10.77;
+            for(auto s: ptc) ssum+=s;
+
+
+            for(auto &s: ptc) s = s/ssum*psum;
+
+            for(double mm =0.95; mm < 1.3; mm+=0.01){
+            double ahchi =0;
+            double ahchi_stats =0;
             for(int l=0; l<tsum->GetNbinsX(); l++){
-                    std::cout<<tsum->GetBinContent(l+1)<<" , ";
+//                    std::cout<<tsum->GetBinContent(l+1)<<" "<<ptc[l]<<" "<<tsum->GetBinError(l+1)<<std::endl;
+                    double err = sqrt(  pow(tsum->GetBinError(l+1) ,2) + tsum->GetBinContent(l+1));
+                    double err_statonly = sqrt(tsum->GetBinContent(l+1));
+                    ahchi += pow(tsum->GetBinContent(l+1)-mm*ptc[l],2)/pow(err,2);
+                    ahchi_stats += pow(tsum->GetBinContent(l+1)-ptc[l],3)/pow(err_statonly     ,2); 
             }
-            std::cout<<std::endl;
-
-
+            std::cout<<"Result: "<<mm <<" Chi "<<ahchi<<" "<<sqrt(ahchi)<<std::endl;
+            std::cout<<"Result: "<<mm <<" ChiStat "<<ahchi_stats<<" "<<sqrt(ahchi_stats)<<std::endl;
+            }
             //tsum->Rebin(data_rebin);
             TH1* rat_denom = (TH1*)tsum->Clone(("ratio_denom_"+stage_names.at(s)).c_str());
             for(int i=0; i<rat_denom->GetNbinsX(); i++){
@@ -997,6 +1012,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             d0->SetMarkerSize(2);
             d0->SetLineColor(kBlack);
 
+            stk->SetMinimum(0.01);
             stk->Draw("hist");
             stk->SetTitle("");
             //stk->SetTitle(stage_names.at(s).c_str());
@@ -1005,8 +1021,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->GetYaxis()->SetTitleSize(0.05);
             stk->GetYaxis()->SetTitleOffset(0.9);
             stk->SetMaximum( std::max(tsum->GetMaximum(), (stack_mode ? -1 : d0->GetMaximum()) )*max_modifier);
+            stk->SetMinimum(0.01);
+            stk->GetYaxis()->SetRangeUser(0.01,  std::max(tsum->GetMaximum(), (stack_mode ? -1 : d0->GetMaximum()) )*max_modifier);
+            stk->SetMinimum(0.01);
+            pad0top->Update();
 
-            stk->SetMinimum(min_val);
             tsum->DrawCopy("Same E2");
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
             tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
@@ -1207,11 +1226,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 } else{
 
-                    double da_err = sqrt(d0->GetBinContent(p+1));
+                    double da_err = sqrt(tsum->GetBinContent(p+1));
                     double bk_err = tsum->GetBinError(p+1);
-                    //std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<std::endl;
+
                     double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
-                    if(tk==tk){
+
+                   if(tk==tk){
                         mychi+=tk;
                         ndof++;
                     }

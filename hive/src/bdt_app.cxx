@@ -289,9 +289,8 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
         have_filled++;  
     }
 
-
     safe_xgboost(XGDMatrixFree(dfile));
-
+    
     tree->Write();
     std::cout<<" "<<tree->GetEntries()<<std::endl;
     app_ofile->Close();

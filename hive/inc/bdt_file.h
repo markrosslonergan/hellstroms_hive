@@ -49,7 +49,7 @@ std::string to_string_prec(const T a_value, const int n = 6)
 }
 
 template<typename T>
-bool compare_vec(std::vector<T>& v1, std::vector<T>& v2)
+bool marks_compare_vec_nonsense(std::vector<T>& v1, std::vector<T>& v2)
 {
         std::sort(v1.begin(), v1.end());
             std::sort(v2.begin(), v2.end());
@@ -197,7 +197,8 @@ struct bdt_file{
         int setPOT(double inpot);
 
         TH1* getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
-
+        int CheckWeights();
+     
         double GetEntries(std::string cuts);
         double GetEntries();
         TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);

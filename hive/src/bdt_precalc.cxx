@@ -1455,7 +1455,7 @@ int ncpi0_sss_precalc(const bdt_file * file, const std::string & tag){
 
                 bool perm = false;
                 for(int j = 0; j< uniq_candidates2.size(); j++){
-                    perm = compare_vec<int>(uniq_candidates[i], uniq_candidates2[j]);
+                    perm = marks_compare_vec_nonsense<int>(uniq_candidates[i], uniq_candidates2[j]);
                     if(perm) break;
                 }
                 if(!perm) uniq_candidates2.push_back(uniq_candidates[i]);
