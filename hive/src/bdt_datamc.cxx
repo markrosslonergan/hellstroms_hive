@@ -678,8 +678,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             
-            TH1* ratunit_after = (TH1*)tsum_after->Clone(("ratio_unitafter_"+stage_names.at(s)).c_str());
-            ratunit_after->Divide(rat_denom);		
+          //  TH1* ratunit_after = (TH1*)tsum_after->Clone(("ratio_unitafter_"+stage_names.at(s)).c_str());
+          
+         //   ratunit_after->Divide(rat_denom);		
 
 
             ratunit->SetFillColor(kGray+1);
@@ -815,7 +816,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             delete tmp_tsum2;
             delete l0;
             delete pre;
-            delete ratunit_after;
+          //  delete ratunit_after;
             delete signal_hist;
             delete rat_signal;
             delete gr;
