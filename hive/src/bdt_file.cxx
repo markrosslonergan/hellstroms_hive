@@ -34,7 +34,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
 
-    weight_branch = "genie_spline_weight";
+    weight_branch = "genie_spline_weight*genie_CV_tune_weight";
     //weight_branch = "1";
     fillstyle = infillstyle;
     scale_data = 1.0;
@@ -288,7 +288,7 @@ int bdt_file::calcPOT(){
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
         //weight_branch = "1";
-        weight_branch = "genie_spline_weight";
+        weight_branch = "genie_spline_weight*genie_CV_tune_weight";
         numberofevents_raw = numberofevents;
 
     }else if(is_data){
