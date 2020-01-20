@@ -383,7 +383,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }else{
                 for(int c=0; c< tsum->GetNbinsX()+1;c++){
                     //tsum->SetBinError(c+1, sqrt(pow(tsum->GetBinContent(c+1)*0.27,2)+tsum->GetBinError(c+1)));
-                    tsum->SetBinError(c+1, 0.0001);
+                    //tsum->SetBinError(c+1, 0.0001);
                 }
 
             }
