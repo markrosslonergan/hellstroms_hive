@@ -485,7 +485,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         if (var_logplot ==NULL || var_logplot =="false"){
             var_logplot_bool= false;
         }else{
-            var_logplot_bool= true;
+            var_logplot_bool= false;
         }
 
         std::string covar_file;
