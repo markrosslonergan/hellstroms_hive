@@ -482,10 +482,10 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         //std::string var_spectator = pVar->Attribute("spectator");
         const char* var_logplot = pVar->Attribute("logplot");
         bool var_logplot_bool;
-        if (var_logplot ==NULL || var_logplot =="false"){
+        if (var_logplot == NULL || var_logplot =="false"){
             var_logplot_bool= false;
         }else{
-            var_logplot_bool= true;
+            var_logplot_bool= false;
         }
 
         std::string covar_file;
