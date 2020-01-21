@@ -736,8 +736,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             
-            TH1* ratunit_after = (TH1*)tsum_after->Clone(("ratio_unitafter_"+stage_names.at(s)).c_str());
-            ratunit_after->Divide(rat_denom);		
+          //  TH1* ratunit_after = (TH1*)tsum_after->Clone(("ratio_unitafter_"+stage_names.at(s)).c_str());
+          
+         //   ratunit_after->Divide(rat_denom);		
 
 
             ratunit->SetFillColor(kGray+1);
@@ -872,7 +873,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             delete tmp_tsum2;
             delete l0;
             delete pre;
-            delete ratunit_after;
+          //  delete ratunit_after;
             delete signal_hist;
             delete rat_signal;
             delete gr;
@@ -905,7 +906,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
         is_bdt_variable = true;
 
-        std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NCPI","NUE","tmp"};
+        std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NC #pi^{0} BDT Cut","NUE","Final Selection"};
         for(int i= stage_names.size(); i< bdt_cuts.size(); i++){
             stage_names.push_back("Stage: "+std::to_string(i));
         }
@@ -969,17 +970,19 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 rmin=0.0; rmax = 1.999;
             }//else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
+            double max_modifier = stack_mode ? 1.4 : 50;
+            //double min_val;
 
-            double max_modifier = stack_mode ? 1.4 : 1.9;
-            double min_val;
-            /*
-            double min_val = 0.01;
+
+            std::cout<<"max_modifier: "<<max_modifier<<std::endl;
+           
+           double min_val = 0.01;
             if(is_bdt_variable) {
                 max_modifier = 50.0;
-                //min_val = 0.01;
-                min_val = 0.1; // Changed from 0.01 to 0.1 by A. Mogan, 10/22/19, for collab meeting
+                min_val = 0.01;
+                //min_val = 0.1; // Changed from 0.01 to 0.1 by A. Mogan, 10/22/19, for collab meeting
             }
-            */
+            
             d0->Rebin(data_rebin);
 
             if(false &&do_subtraction){
@@ -1002,7 +1005,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             cobs->cd();
             TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
 
-            //if(is_bdt_variable ) pad0top->SetLogy();
+            if(is_bdt_variable ) pad0top->SetLogy();
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
             pad0top->cd();               // pad2top becomes the current pad
@@ -1239,7 +1242,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
 
-            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0)) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")";
+            //std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0)) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")";
+            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (pval: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
+
             std::string mean = "Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+" / "+to_string_prec(d0->Integral()/tsum->Integral() ,2); ;
             //std::string mean = "Ratio: Normalized" ;
             TLatex *t = new TLatex(0.11,0.41,ks.c_str());
@@ -1394,6 +1399,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 min_val = 0.1;
             }
 
+
+            std::cout<<"max modifier = "<<max_modifier<<std::endl;
             vec_stacks.at(k)->SetMaximum(vec_th1s.at(k)->GetMaximum()*1.4);
             vec_stacks.at(k)->SetMinimum(0.00001);
             vec_stacks.at(k)->Draw("hist");

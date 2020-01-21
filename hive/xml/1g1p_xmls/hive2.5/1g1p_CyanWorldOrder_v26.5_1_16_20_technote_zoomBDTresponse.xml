@@ -261,7 +261,7 @@
 
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
 
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(24,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees=1500</param>
         <param> tree_method=exact</param>
@@ -287,7 +287,7 @@
     <scan min = "0.99" max = "1.0" steps="10"/>
 </mva>
 
-<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees= 600</param>
         <param> tree_method=exact</param>
@@ -312,7 +312,7 @@
 </mva>
 
 
-<mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.8,0.94)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees= 450</param>
         <param> tree_method=exact</param>
@@ -333,10 +333,10 @@
         sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.7" max = "1.0" steps="5"/>
+    <scan min = "0.65" max = "1.0" steps="5"/>
 </mva>
 
-<mva type="BDT" use="yes" tag = "Nue" name ="Nue BDT" binning = "(24,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "Nue" name ="Nue BDT" binning = "(36,0.65,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees= 800</param>
         <param> tree_method=exact</param>
@@ -357,11 +357,11 @@
         sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.7" max = "1.0" steps="5"/>
+    <scan min = "0.85" max = "1.0" steps="5"/>
 </mva>
 
 
-<mva type="BDT" use="yes" tag = "SSV" name ="SSV focused BDT" binning = "(24,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "SSV" name ="SSV focused BDT" binning = "(36,0.7,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees= 1300</param>
          <param> tree_method=exact</param>

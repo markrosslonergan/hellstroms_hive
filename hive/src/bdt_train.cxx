@@ -1058,7 +1058,6 @@ int bdt_XGtrain(bdt_info &info){
         gc2->SetLineColor(kRed);
         c_eff2->Write(); 
 
-
         t_strain->Write();
         t_btrain->Write();
         btest->Write();
@@ -1071,6 +1070,7 @@ int bdt_XGtrain(bdt_info &info){
 
 
         bdt_XGBoost_importance(info, booster);
+      
 
 
 
@@ -1220,8 +1220,10 @@ int bdt_XGtrain(bdt_info &info){
                     size_t ngain = cconvert.find(sgain,ndel);
                     if(ngain!=std::string::npos){
                         size_t ngainend = cconvert.find(",",ngain);
+                        if (sgain.size() <1) continue;
                         if( ngainend !=std::string::npos)   s_gain = cconvert.substr(ngain+sgain.size(), ngainend-ngain-sgain.size()-1); 
                         size_t offset = 0;
+                        //std::cout<<"ngainend,ngain, sgain.size(),sgain.length() , s_gain = " <<ngainend<<", "<<ngain<<", "<<sgain.size()<<", "<<sgain.length()<<", "<<s_gain<<std::endl;
                         double d_gain =  std::stod(s_gain,&offset);
                         total_gain[which_var] +=  d_gain;
                     }        

@@ -311,6 +311,9 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }
         v_col.push_back(std::stod(s_col));
         //for(auto &d:v_col)std::cout<<d<<std::endl;
+           for(int cc=0; cc< v_col.size();cc++) {
+                if(v_col[cc]>1) v_col[cc] = v_col[cc]/255.0;
+            }
         bdt_cols.push_back(new TColor(TColor::GetFreeColorIndex(),v_col[0],v_col[1],v_col[2]) );
 
         const char* t_scales = pBDTfile->Attribute("scale");
@@ -485,7 +488,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         if (var_logplot == NULL || var_logplot =="false"){
             var_logplot_bool= false;
         }else{
-            var_logplot_bool= false;
+            var_logplot_bool= true;
         }
 
         std::string covar_file;
@@ -601,6 +604,9 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
                 s_col.erase(0, pos + delim.length());
             }
             v_col.push_back(std::stod(s_col));
+            for(int cc=0; cc< v_col.size();cc++) {
+                if(v_col[cc]>1) v_col[cc] = v_col[cc]/255.0;
+            }
             recomc_cols.push_back(new TColor(TColor::GetFreeColorIndex(),v_col[0],v_col[1],v_col[2]) );
 
 

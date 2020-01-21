@@ -17,7 +17,8 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 	double label_size_upper=0.05;
 	double title_offset_upper = 1.45;
 
-	std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","","","","",""};
+	//std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NCPi0 BDT Cuts",
+	std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Stage 2","Stage 3","Stage 4","Stage 5","Stage 6","Stage 7"};
 
 	//REWRITE THIS USING file->getStageCuts
 	file->recomc_cols = recomc_cols;
@@ -57,29 +58,39 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 			fout->cd();
 
-			TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(), ("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),1600,1450);
+			TCanvas *c = new TCanvas(("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(), ("recomc_truth_"+var.name+"_"+file->tag+"_stage_"+std::to_string(s)).c_str(),1600,1250);
 			c->cd();
 
 
 			TPad *pad = new TPad("pad", "pad", 0, 0, 0.7, 1.0);
-			if(is_log) pad->SetLogy();
+			if(is_log || var.is_logplot) pad->SetLogy();
 			pad->SetRightMargin(0); // Upper and lower plot are joined
 			pad->Draw();             // Draw the upper pad: pad
 			pad->cd();               // pad becomes the current pad
 
 
-			THStack * s_reco_truth = new THStack(stage_names.at(s).c_str(),(stage_names.at(s)+" Total:"+to_string_prec(Num,2)).c_str());		
+			//THStack * s_reco_truth = new THStack(stage_names.at(s).c_str(),(stage_names.at(s)+" Total:"+to_string_prec(Num,2)).c_str());		
+			THStack * s_reco_truth = new THStack(stage_names.at(s).c_str(),(stage_names.at(s)+" ||  "+file->plot_name).c_str());		
 			TLegend * l_reco_truth = new TLegend(0.11,0.11,0.89,0.89);
 
 
 			int iv=0;
+
+
+            std::vector<double> n_events;
+
+        	for(auto &v: vec_reco_mc){
+                   n_events.push_back( v->Integral());
+            }
+            std::vector<size_t> n_index = sort_indexes<double>(n_events);
+
+            for(auto &in: n_index){
+                vec_reco_mc[in]->Rebin(nrebin);
+				std::cout<<"on hist #: "<<in<<". Add to stack."<<std::endl;
+				s_reco_truth->Add(vec_reco_mc[in]);
+            }
+
 			for(auto &v: vec_reco_mc){
-				v->Rebin(nrebin);
-				std::cout<<"on hist #: "<<iv<<". Add to stack."<<std::endl;
-
-				//if(iv==2) v->SetFillStyle(3344);
-
-				s_reco_truth->Add(v);
 				double n = v->Integral();
 				std::cout<<" and calc percentage."<<std::endl; 
 				double per = n/Num*100.0;
@@ -88,6 +99,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 				iv++;
 			}	
 
+            
 			s_reco_truth->Draw("hist");
 			all_reco_mc->Draw("E2 same");
 			std::cout<<"Drawn."<<std::endl;
@@ -100,16 +112,16 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 			latexsel.SetTextSize(0.05);
 			latexsel.SetTextAlign(13);  //align at top
 			latexsel.SetNDC();
-			latexsel.DrawLatex(.5,.89,file->topo_name.c_str());
+			latexsel.DrawLatex(.8,.89,file->topo_name.c_str());
 			TLatex pottensel;
 			pottensel.SetTextSize(0.05);
 			pottensel.SetTextAlign(13);  //align at top
 			pottensel.SetNDC();
 			std::string pot_draw = to_string_prec(plot_pot/1e20,1)+"e20 POT";
-			pottensel.DrawLatex(.7,.89, pot_draw.c_str());
+			//pottensel.DrawLatex(.7,.89, pot_draw.c_str());
 
 			TText *tsel = drawPrelim(0.1,0.915,0.04,"MicroBooNE Simulation - In Progress");
-			tsel->Draw();
+			//tsel->Draw();
 
 
 			c->cd();          // Go back to the main canvas before defining pad2
