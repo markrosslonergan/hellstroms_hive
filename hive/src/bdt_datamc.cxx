@@ -972,14 +972,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             double max_modifier = stack_mode ? 1.4 : 1.9;
             double min_val;
-            /*
+            
             double min_val = 0.01;
             if(is_bdt_variable) {
                 max_modifier = 50.0;
-                //min_val = 0.01;
-                min_val = 0.1; // Changed from 0.01 to 0.1 by A. Mogan, 10/22/19, for collab meeting
+                min_val = 0.01;
+                //min_val = 0.1; // Changed from 0.01 to 0.1 by A. Mogan, 10/22/19, for collab meeting
             }
-            */
+            
             d0->Rebin(data_rebin);
 
             if(false &&do_subtraction){
