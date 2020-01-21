@@ -958,8 +958,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 * tsum = (TH1*)mc_stack->getBDTEntrySum(info);
 
             bdt_variable dvar = data_file->getBDTVariable(info);
-            dvar.is_logplot = false;
-            //dvar.is_logplot = true;
+            //dvar.is_logplot = false;
+            dvar.is_logplot = true;
             TH1 * d0 = (TH1*)data_file->getTH1(dvar, "1", scuts+"_"+data_file->tag+"_"+dvar.safe_name, plot_pot);
 
             double rmin = 0.5;
@@ -1368,8 +1368,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TPad *pad0top = new TPad(("pad0top_"+stage_name.at(k)).c_str(), ("pad0top_"+stage_name.at(k)).c_str(), 0, 0.35, 1, 1.0);
 
 
-            //if(var.is_logplot || is_bdt_variable) pad0top->SetLogy();
-            //if(var.is_logplot) pad0top->SetLogy();
+            if(var.is_logplot || is_bdt_variable) pad0top->SetLogy();
+            if(var.is_logplot) pad0top->SetLogy();
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
             pad0top->cd();               // pad2top becomes the current pad
@@ -1680,18 +1680,18 @@ int bdt_datamc::printPassingPi0DataEvents(std::string outfilename, int stage, st
     return 0;
 }
 
-/*
-int bdt_datamc::calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file) {
+int bdt_datamc::calcChi2(TH1 *mc_hist, TH1 *data_hist) {
 
+/*
     double mychi =0;
     int ndof = 0;
-    for(int p=0; p<data_file->GetNbinsX();p++){
+    for(int p=0; p<data_hist->GetNbinsX();p++){
 
-        double da = data_file->GetBinContent(p+1);
-        double bk;
+        double da = data_hist->GetBinContent(p+1);
+        double bk = mc_hist->GetBinContent(p+1);
 
-        for (size_t i = 0; i < stack_files->size(); i++) {
-            bk+=stack_files->at(i)->GetBinContent(p+1);
+        for (size_t i = 0; i < stack_files.size(); i++) {
+            bk+=stack_files.at(i)->GetBinContent(p+1);
         }
 
         if ( bk ==0){
@@ -1699,8 +1699,8 @@ int bdt_datamc::calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file
 
         } else{
 
-            double da_err = sqrt(tsum->GetBinContent(p+1));
-            double bk_err = tsum->GetBinError(p+1);
+            double da_err = sqrt(mc_hist->GetBinContent(p+1));
+            double bk_err = mc_hist->GetBinError(p+1);
 
             double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
 
@@ -1714,16 +1714,36 @@ int bdt_datamc::calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file
 
     // Added by A. Mogan 1/13/20 for easy reference in the scalenorm mode_option
     std::cout << "[SCALENORM]: chi^2/NDF: " << mychi << " / " << ndof << " = " << mychi/ndof << std::endl;
+*/
+  return 0;
 }
 
-int bdt_datamc::scaleNorm(std::vector<bdt_file> *stack_files, bdt_file data_file, double scaleLow, double scaleHigh, double scaleStep) {
-    
-    
+void bdt_datamc::scaleNorm(std::vector<bdt_variable> var, std::vector<bdt_file*> stack_files, double scaleLow, double scaleHigh, double scaleStep, int stage, std::vector<double> bdt_cuts, std::string analysis_tag) {
+/*
 
-    return 0;
-}
+    bdt_variable tmp_var = var[0];
+    double plot_pot=data_file->pot;
+    if(stack_mode) plot_pot = stack_pot;
+
+    for (double s = scaleLow; s < scaleHigh; s+=scaleStep) {
+        //TH1 *tsum = (TH1*)mc_stack->getEntrySum(tmp_var,stage);
+        bdt_stack *tmp_stack = new bdt_stack(analysis_tag+"_scalenorm_"+std::to_string(s) );
+        for(size_t f =0; f< stack_files.size(); ++f){
+            if(stack_files[f]->is_data) continue;
+            TH1 *tmp_mc = (TH1*)stack_files[f]->getTH1(tmp_var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[stage])+"_"+stack_files[f]->tag+"_"+tmp_var.safe_name, plot_pot);
+            // NOTE: Make sure signal is the first element of the stack vector
+            if (f==0) tmp_mc->Scale(s);
+            tmp_stack->Add(tmp_mc);
+            std::cout<<"adding to stack: "<<stack_files[f]->tag<<std::endl;
+        }
+        TH1 *d0 = (TH1*)data_file->getTH1(tmp_var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[stage])+"_"+data_file->tag+"_"+tmp_var.safe_name, plot_pot);
+        this->calcChi2(tsum, d0);
+    }
 
 */
+    return;
+}
+
 
 
 

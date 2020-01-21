@@ -683,8 +683,6 @@ int main (int argc, char *argv[]){
             sleep(2);
         }
 
-
-
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 
         // Set scale factor range and step size
@@ -694,8 +692,22 @@ int main (int argc, char *argv[]){
 
         std::vector<bdt_variable> tmp_var = {vars.at(number)};
 
+        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_scalenorm");
+        histogram_stack->plot_pot = onbeam_data_file->pot;
+
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            if(stack_bdt_files[f]->is_data) continue;
+            // NOTE: Make sure signal is the first element of the stack vector
+            histogram_stack->addToStack(stack_bdt_files[f]);
+            std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
+        }
+
+        bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+        datamc.scaleNorm(tmp_var, stack_bdt_files, scaleLow, scaleHigh, scaleStep, which_stage, fbdtcuts, analysis_tag);
+
         // Make stack with scale factor on signal; loop over
         // scale factors, recalculating chi^2 each time in datamc.cxx
+        /*
         for (double s = scaleLow; s<scaleHigh; s+=scaleStep) {
 
             bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_scalenorm"+std::to_string(s));
@@ -730,6 +742,7 @@ int main (int argc, char *argv[]){
             //histogram_stack->clearStack();
             //stack_bdt_files[0]->scale(1./s);
         }
+        */
 
 
     }

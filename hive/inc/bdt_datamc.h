@@ -88,8 +88,8 @@ class bdt_datamc{
         int printPassingDataEvents(std::string outfilename, int stage, std::vector<double> cuts);
         int printPassingPi0DataEvents(std::string outfilename, int stage, std::vector<double> cuts);
 
-        int calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file);
-        int scaleNorm(std::vector<bdt_file> *stack_files, bdt_file data_file, double scaleLow, double scaleHigh, double scaleStep);
+        int calcChi2(TH1 *mc_hist, TH1 *data_hist);
+        void scaleNorm(std::vector<bdt_variable> var, std::vector<bdt_file*> stack_files, double scaleLow, double scaleHigh, double scaleStep, int stage, std::vector<double> bdt_cuts, std::string analysis_tag);
 
 
 };
