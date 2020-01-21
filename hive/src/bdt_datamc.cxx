@@ -969,10 +969,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 rmin=0.0; rmax = 1.999;
             }//else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
+            double max_modifier = stack_mode ? 1.4 : 50;
+            //double min_val;
 
-            double max_modifier = stack_mode ? 1.4 : 1.9;
-            
-            double min_val = 0.01;
+
+            std::cout<<"max_modifier: "<<max_modifier<<std::endl;
+           
+           double min_val = 0.01;
             if(is_bdt_variable) {
                 max_modifier = 50.0;
                 min_val = 0.01;
@@ -1395,6 +1398,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 min_val = 0.1;
             }
 
+
+            std::cout<<"max modifier = "<<max_modifier<<std::endl;
             vec_stacks.at(k)->SetMaximum(vec_th1s.at(k)->GetMaximum()*1.4);
             vec_stacks.at(k)->SetMinimum(0.00001);
             vec_stacks.at(k)->Draw("hist");
