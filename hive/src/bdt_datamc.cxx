@@ -906,7 +906,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
         is_bdt_variable = true;
 
-        std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NCPI","NUE","tmp"};
+        std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NC #pi^{0} BDT Cut","NUE","Final Selection"};
         for(int i= stage_names.size(); i< bdt_cuts.size(); i++){
             stage_names.push_back("Stage: "+std::to_string(i));
         }
