@@ -1002,7 +1002,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             cobs->cd();
             TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
 
-            //if(is_bdt_variable ) pad0top->SetLogy();
+            if(is_bdt_variable ) pad0top->SetLogy();
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
             pad0top->cd();               // pad2top becomes the current pad
