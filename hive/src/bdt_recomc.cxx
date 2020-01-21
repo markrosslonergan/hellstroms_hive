@@ -63,7 +63,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
 
 
 			TPad *pad = new TPad("pad", "pad", 0, 0, 0.7, 1.0);
-			if(is_log) pad->SetLogy();
+			if(is_log || var.is_logplot) pad->SetLogy();
 			pad->SetRightMargin(0); // Upper and lower plot are joined
 			pad->Draw();             // Draw the upper pad: pad
 			pad->cd();               // pad becomes the current pad
