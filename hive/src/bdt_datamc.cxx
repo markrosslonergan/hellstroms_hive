@@ -969,20 +969,19 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 rmin=0.0; rmax = 1.999;
             }//else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
-
             double max_modifier = stack_mode ? 1.4 : 50;
-            double min_val;
+            //double min_val;
 
 
             std::cout<<"max_modifier: "<<max_modifier<<std::endl;
-            /*
-            double min_val = 0.01;
+           
+           double min_val = 0.01;
             if(is_bdt_variable) {
                 max_modifier = 50.0;
-                //min_val = 0.01;
-                min_val = 0.1; // Changed from 0.01 to 0.1 by A. Mogan, 10/22/19, for collab meeting
+                min_val = 0.01;
+                //min_val = 0.1; // Changed from 0.01 to 0.1 by A. Mogan, 10/22/19, for collab meeting
             }
-            */
+            
             d0->Rebin(data_rebin);
 
             if(false &&do_subtraction){
