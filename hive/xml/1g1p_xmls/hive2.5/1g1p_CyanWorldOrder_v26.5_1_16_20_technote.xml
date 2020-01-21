@@ -263,7 +263,7 @@
 
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=5000</param>
+        <param> n_trees=1500</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -289,7 +289,7 @@
 
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees= 1000</param>
+        <param> n_trees= 600</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -338,7 +338,7 @@
 
 <mva type="BDT" use="yes" tag = "Nue" name ="Nue fake BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees= 1500</param>
+        <param> n_trees= 800</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -363,7 +363,7 @@
 
 <mva type="BDT" use="yes" tag = "SSV" name ="SSV focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees= 1500</param>
+        <param> n_trees= 1300</param>
          <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
