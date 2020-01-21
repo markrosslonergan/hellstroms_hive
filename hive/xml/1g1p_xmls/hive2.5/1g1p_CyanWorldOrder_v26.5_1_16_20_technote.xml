@@ -336,7 +336,7 @@
     <scan min = "0.7" max = "1.0" steps="5"/>
 </mva>
 
-<mva type="BDT" use="yes" tag = "Nue" name ="Nue fake BDT" binning = "(24,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "Nue" name ="Nue BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees= 800</param>
         <param> tree_method=exact</param>
