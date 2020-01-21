@@ -229,9 +229,9 @@ int main (int argc, char *argv[]){
 
         //If its a training file we are working with, add the training definitions 
         if(XMLconfig.bdt_is_training_signal[f]){
-             for(int i=0; i< XMLconfig.bdt_training_cuts[f].size(); ++i){
+            for(int i=0; i< XMLconfig.bdt_training_cuts[f].size(); ++i){
                 def += "&&" + XMLconfig.bdt_training_cuts[f][i];
-             }
+            }
         }
 
         std::cout<<def<<std::endl;
@@ -300,7 +300,7 @@ int main (int argc, char *argv[]){
         bdt_files.back()->calcPOT();
         if(incl_in_stack) stack_bdt_files.push_back(bdt_files.back());
 
- 
+
 
     }
 
@@ -436,12 +436,12 @@ int main (int argc, char *argv[]){
         const std::vector<std::string> s_tags = {"NCDeltaRadOverlay"};
         const std::vector<std::string> b_tags ={"BNBOverlays","NCPi0","CCPi0","NueOverlays","BNBext","Dirt"};
 
-//        for(int i=0; i< bdt_files.size(); i++){
-//            bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size",vars);
-//        }
+        //        for(int i=0; i< bdt_files.size(); i++){
+        //            bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size",vars);
+        //        }
 
         //OK super preliminarly, need to have run sbnfit with simple_tree option on precut stage before attempting this
-//        super_bdt_train(analysis_tag, bdt_infos, s_tags, b_tags, "1", "1");
+        //        super_bdt_train(analysis_tag, bdt_infos, s_tags, b_tags, "1", "1");
 
         //and apply it
         std::vector<bdt_file*> tempt;
@@ -783,8 +783,8 @@ int main (int argc, char *argv[]){
         }
 
         return 0;
-       if(which_bdt==-1)which_bdt = 0;
-       bdt_XGBoost_importance(bdt_infos[which_bdt]);
+        if(which_bdt==-1)which_bdt = 0;
+        bdt_XGBoost_importance(bdt_infos[which_bdt]);
 
         return 0;
     }else if(mode_option == "sig"){
@@ -809,10 +809,10 @@ int main (int argc, char *argv[]){
                 scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot, sig_type);
                 break;
                 /* What is this?
-                super_significance(signal_bdt_files, bkg_bdt_files);
-                break;
+                   super_significance(signal_bdt_files, bkg_bdt_files);
+                   break;
 
-                */
+*/
             default:
                 break;
         }
@@ -962,11 +962,11 @@ else if(mode_option == "eff2"){
 
     // Signal NC pi0
     std::vector<std::string> v_denom_signal_ncpi0 = {"mctruth_cc_or_nc == 1",
-                                                     "mctruth_num_exiting_pi0==1", 
-                                                     "mctruth_pi0_leading_photon_energy > 0.02", 
-                                                     "mctruth_pi0_subleading_photon_energy > 0.02", 
-                                                     "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==1",
-                                                     fid_cut
+        "mctruth_num_exiting_pi0==1", 
+        "mctruth_pi0_leading_photon_energy > 0.02", 
+        "mctruth_pi0_subleading_photon_energy > 0.02", 
+        "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==1",
+        fid_cut
     };
     std::string signal_ncpi0_def = v_denom_signal_ncpi0[0];
     for(int i=1; i< v_denom_signal_ncpi0.size();i++){
@@ -975,8 +975,8 @@ else if(mode_option == "eff2"){
 
     // Other NC pi0
     std::vector<std::string> v_denom_other_ncpi0 = {"mctruth_cc_or_nc == 1",
-                                                    "mctruth_num_exiting_pi0==1", 
-                                                    "(mctruth_pi0_leading_photon_energy < 0.02 || mctruth_pi0_subleading_photon_energy < 0.02 || Sum$(mctruth_exiting_proton_energy-0.93827>0.04)!=1 || !("+fid_cut+") )"
+        "mctruth_num_exiting_pi0==1", 
+        "(mctruth_pi0_leading_photon_energy < 0.02 || mctruth_pi0_subleading_photon_energy < 0.02 || Sum$(mctruth_exiting_proton_energy-0.93827>0.04)!=1 || !("+fid_cut+") )"
     };
     std::string other_ncpi0_def = v_denom_other_ncpi0[0];
     for(int i=1; i< v_denom_other_ncpi0.size();i++){
@@ -985,9 +985,9 @@ else if(mode_option == "eff2"){
 
     // Intrinsic nue's
     std::vector<std::string> v_denom_nue_intrinsic = {"mctruth_cc_or_nc == 0",
-                                                      "abs(mctruth_nu_pdg)==12", 
-                                                      "mctruth_nu_E > 0.05",
-                                                      "mctruth_nu_E < 1.5"
+        "abs(mctruth_nu_pdg)==12", 
+        "mctruth_nu_E > 0.05",
+        "mctruth_nu_E < 1.5"
     };
     std::string nue_intrinsic_def = v_denom_nue_intrinsic[0];
     for(int i=1; i< v_denom_nue_intrinsic.size();i++){
@@ -996,12 +996,12 @@ else if(mode_option == "eff2"){
 
     // Deltarad 1g1p
     std::vector<std::string> v_denom_deltarad_1g1p = {"mctruth_cc_or_nc == 1", 
-                                                      "mctruth_is_delta_radiative==1",
-                                                      "mctruth_num_exiting_pi0==0",
-                                                      "mctruth_num_exiting_photons==1",
-                                                      "mctruth_exiting_photon_energy > 0.02", 
-                                                      "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==1",
-                                                      fid_cut
+        "mctruth_is_delta_radiative==1",
+        "mctruth_num_exiting_pi0==0",
+        "mctruth_num_exiting_photons==1",
+        "mctruth_exiting_photon_energy > 0.02", 
+        "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==1",
+        fid_cut
     };
     std::string deltarad_1g1p_def = v_denom_deltarad_1g1p[0];
     for(int i=1; i< v_denom_deltarad_1g1p.size();i++){
@@ -1010,11 +1010,11 @@ else if(mode_option == "eff2"){
 
     // Deltarad 1g0p
     std::vector<std::string> v_denom_deltarad_1g0p = {"mctruth_cc_or_nc == 1", 
-                                                      "mctruth_is_delta_radiative==1",
-                                                      "mctruth_num_exiting_pi0==0",
-                                                      "mctruth_exiting_photon_energy > 0.02", 
-                                                      "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==0",
-                                                      fid_cut
+        "mctruth_is_delta_radiative==1",
+        "mctruth_num_exiting_pi0==0",
+        "mctruth_exiting_photon_energy > 0.02", 
+        "Sum$(mctruth_exiting_proton_energy-0.93827>0.04)==0",
+        fid_cut
     };
     std::string deltarad_1g0p_def = v_denom_deltarad_1g0p[0];
     for(int i=1; i< v_denom_deltarad_1g0p.size();i++){
@@ -1068,13 +1068,17 @@ else if(mode_option == "eff2"){
 
 
 }else if(mode_option == "sbnfit"){
-    if(which_file==-1) which_file ==0;
     if(which_stage==-1) which_stage ==1;
+    if(which_file==-1){
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            std::cout<<"on bdt file "<<f<<std::endl;
+            bdt_files[f]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars);
+        }
+    }else{
+        bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars);
 
-
-    return bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars);
-
-
+    }
+    return 0;
 }else if(mode_option == "recomc"){
     if (access("recomc",F_OK) == -1){
         mkdir("recomc",0777);//Create a folder for pdf.
@@ -1190,11 +1194,11 @@ return 0;
     for(int i=0; i< bdt_infos.size(); i++){
 
 
-            if(!(which_bdt==i || which_bdt==-1)) continue;
+        if(!(which_bdt==i || which_bdt==-1)) continue;
 
-            bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 
-            bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
-            plot_bdt_variables(training_signal, training_background, vars, bdt_infos[i], false, which_stage,fbdtcuts);
+        bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 
+        bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
+        plot_bdt_variables(training_signal, training_background, vars, bdt_infos[i], false, which_stage,fbdtcuts);
     }
 
 
