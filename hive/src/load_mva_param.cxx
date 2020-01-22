@@ -482,13 +482,14 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         std::string var_binning = pVar->Attribute("binning");
         std::string var_unit = pVar->Attribute("unit");
         std::string var_type = pVar->Attribute("type");
-        //std::string var_spectator = pVar->Attribute("spectator");
-        const char* var_logplot = pVar->Attribute("logplot");
-        bool var_logplot_bool;
-        if (var_logplot == NULL || var_logplot =="false"){
-            var_logplot_bool= false;
-        }else{
-            var_logplot_bool= true;
+        const char * var_logplot = pVar->Attribute("logplot");
+        bool var_logplot_bool = false;
+        if (var_logplot!=NULL){
+            std::string tmp = var_logplot;
+            if(tmp.length()<6){
+                var_logplot_bool = true;
+                std::cout<<"is logplot"<<std::endl;
+            }
         }
 
         std::string covar_file;
