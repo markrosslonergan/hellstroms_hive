@@ -826,8 +826,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             ratpre->SetFillStyle(3144);
             if(!stack_mode){
-                ratpre->Draw("same P E0 hist");	
-                gr->Draw("E1 same");
+                ratpre->Draw("same P hist");	
+                gr->Draw("E0 same");
             }
 
             //std::string mean = "(Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
