@@ -30,7 +30,7 @@ int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double 
     std::string  binning = whichbdt.binning;
 
     bdt_variable dvar = data_file->getBDTVariable(whichbdt, binning);
-    dvar.is_logplot = true;
+//    dvar.is_logplot = true;
 
     /*std::vector<bdt_variable> tmp_v = {dvar};
 
@@ -349,8 +349,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         for(auto &var: vars){
 
 
-        //var.is_logplot = true;
-
+        var.is_logplot = false;//is_logplot is not functioning.
+			if(var.is_logplot){std::cout<<"MAKEING A LOG PLOT"<<std::endl;}
+			else{std::cout<<"NOT   MAKEING A LOG PLOT"<<std::endl;}
 
             std::cout<<"Starting on variable "<<var.name<<std::endl;
             
@@ -959,7 +960,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 * tsum = (TH1*)mc_stack->getBDTEntrySum(info);
 
             bdt_variable dvar = data_file->getBDTVariable(info);
-            dvar.is_logplot = true;
+//            dvar.is_logplot = true;
             TH1 * d0 = (TH1*)data_file->getTH1(dvar, "1", scuts+"_"+data_file->tag+"_"+dvar.safe_name, plot_pot);
 
             double rmin = 0.5;
