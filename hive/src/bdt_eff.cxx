@@ -584,8 +584,8 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<"This is "<<filein->tvertex->GetEntries((denominator+"&&"+topocuts+"&&"+precuts).c_str())<<" actuall MC events"<<std::endl;
 
 
-    bdt_variable true_photon("mctruth_exiting_photon_energy","(30, 0 ,"+std::to_string(max_x_range)+")","True Photon Energy [GeV]",false,"d");
-    bdt_variable true_proton("Max$(mctruth_exiting_proton_energy-0.938272)*(Max$(mctruth_exiting_proton_energy-0.938272)>0)","(30, 0 , "+std::to_string(max_x_range)+")","True Proton Kinetic Energy [GeV]",false,"d");
+    bdt_variable true_photon("mctruth_exiting_photon_energy","(20, 0 ,"+std::to_string(max_x_range)+")","True Photon Energy [GeV]",false,"d");
+    bdt_variable true_proton("Max$(mctruth_exiting_proton_energy-0.938272)*(Max$(mctruth_exiting_proton_energy-0.938272)>0)","(20, 0 , "+std::to_string(max_x_range)+")","True Proton Kinetic Energy [GeV]",false,"d");
 
    
 

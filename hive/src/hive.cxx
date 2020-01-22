@@ -772,15 +772,21 @@ int main (int argc, char *argv[]){
     }
     else if(mode_option == "test"){
 
+        return 0;
+        
+        for(int f=0; f< bdt_files.size();++f){
+            if(which_file == f || which_file==0) ncpi0_sss_precalc(bdt_files[f], analysis_tag);
+        }
+         tagToFileMap["NueOverlays"]->scanStage(6, fbdtcuts,"run_number:subrun_number:event_number");
+
+        return 0;
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
         bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
         datamc.printPassingDataEvents("tmp", 6, fbdtcuts);
 
         return 0;
-        for(int f=0; f< bdt_files.size();++f){
-            if(which_file == f || which_file==0) ncpi0_sss_precalc(bdt_files[f], analysis_tag);
-        }
+        
 
         return 0;
         if(which_bdt==-1)which_bdt = 0;
@@ -930,7 +936,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     //which_file = 7;//checking ext
     std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
-    std::vector<std::string> v_topo = {TMVAmethods[0].topological_definition};
+    std::vector<std::string> v_topo = {TMVAmethods[0].topological_definition,"sim_shower_pdg==22","sim_track_pdg==2212","sim_shower_overlay_fraction<0.9","sim_track_overlay_fraction<0.9"};
 
     if(which_stage==-1)which_stage=0;
 

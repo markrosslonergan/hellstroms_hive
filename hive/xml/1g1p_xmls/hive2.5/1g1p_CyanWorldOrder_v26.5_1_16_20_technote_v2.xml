@@ -144,7 +144,6 @@
         <cut> sim_track_overlay_fraction[0] &lt; 0.5 </cut>
         <cut> sim_track_pdg[0] == 2212 </cut>
     </training>
-
 </bdtfile>
 
 
