@@ -269,6 +269,7 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 
         to_sort.push_back(hist);
         integral_sorter.push_back(hist->GetSumOfWeights());
+        integral_sorter.push_back(hist->GetSumOfWeights());
 
         if(do_subtraction){
             if(!subtraction_vec[t]){

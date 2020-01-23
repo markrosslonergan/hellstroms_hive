@@ -21,7 +21,17 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
     std::vector<int> n_steps;
     int max_pts=1;
 
-    for(size_t b=0; b<bdt_infos.size();b++){
+	//CHANGE STEPS HERE, KENG
+	std::cout<<"SCanning parameters are customized, do check!"<<std::endl;
+	std::vector<double> minn = {0.912,0.835,0.79,0.16};
+	std::vector<double> maxx = {0.92,0.85,0.8,0.18};
+	std::vector<double> stepp = {6,6,6,6};
+
+    for(size_t b=0; b<bdt_infos.size();b++){//CHANGE STEPS HERE, KENG
+		bdt_infos[b].TMVAmethod.scan_min = minn[b];
+		bdt_infos[b].TMVAmethod.scan_max = maxx[b];
+		bdt_infos[b].TMVAmethod.scan_steps = stepp[b];
+
         in_min_vals.push_back(bdt_infos[b].TMVAmethod.scan_min);
         in_max_vals.push_back(bdt_infos[b].TMVAmethod.scan_max);
         n_steps.push_back((int)bdt_infos[b].TMVAmethod.scan_steps);
@@ -89,6 +99,12 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
 
     std::cout<<"We are going to scan between these values "<<std::endl;
+
+//this does not work
+//std::cout<<"CHECK"<<std::endl;
+//	minvals = {0.9,0.8,0.8,0.4};
+//	maxvals = {1,1,1,1};
+//	n_steps = {3,3,3,3};
     for(int i=0; i< bdt_infos.size();i++){
         std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<" (n_steps:  "<<n_steps[i]<<")"<<std::endl;
     }
@@ -98,7 +114,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
     for(size_t i = 0; i < sig_files.size(); ++i) {
         double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
-        //    std::cout << "POT scale: " << pot_scale << std::endl;
+        std::cout << "POT scale: " << pot_scale << std::endl;
         std::string bnbcut = sig_files.at(i)->getStageCuts(1,minvals); 
         total_sig += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
     }
@@ -159,11 +175,11 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
             s_mod = "(Current Best)";
         }
 
-        std::cout<<"Point: "<<n_pt<<" (";
+        std::cout<<"Point: "<<std::setw(3)<<n_pt<<" (";
         for(auto &dd:cur_pt){
-            std::cout<<dd<<",";   
+            std::cout<<std::setw(6)<<dd<<",";
         }
-        std::cout<<") N_signal: "<<signal<<" N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+        std::cout<<") N_signal: "<<std::setw(8)<<signal<<" N_bkg: "<<std::setw(8)<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
 
         s_mod = "";
         n_pt++;
@@ -272,6 +288,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
 
     std::cout<<"We are going to scan between these values "<<std::endl;
+
     for(int i=0; i< bdt_infos.size();i++){
         std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<" (n_steps:  "<<n_steps[i]<<")"<<std::endl;
     }

@@ -1259,7 +1259,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Writing pdf."<<std::endl;
             cobs->Write();
             cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+info.identifier+"_"+dvar.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
-            cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+info.identifier+"_"+dvar.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
+//            cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+info.identifier+"_"+dvar.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
             //cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 
