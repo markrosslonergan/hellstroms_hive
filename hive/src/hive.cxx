@@ -498,7 +498,7 @@ int main (int argc, char *argv[]){
         onbeam_data_file->fillstyle = 0;
         int ip=0;
         std::vector<bool> subv = {false,false,true};
-        if(!response_only){
+        if(true){
             if(number != -1){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 datamc.setPlotStage(which_stage);                
@@ -524,19 +524,7 @@ int main (int argc, char *argv[]){
                 //real_datamc.SetSpectator();
                 //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
-        }else{
-            bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
-
-            real_datamc.setStackMode( histogram_stack->plot_pot);
-            if(which_bdt ==-1){
-                for(int k=0; k< bdt_infos.size(); k++){
-                    real_datamc.plotBDTStacks(bdt_infos[k] , fbdtcuts);
-                }
-            }else{
-                real_datamc.plotBDTStacks(bdt_infos[which_bdt],fbdtcuts);
-            }
         }
-
     }    else if(mode_option == "datamc"){
         std::cout<<"Starting datamc "<<std::endl;
 
