@@ -252,7 +252,7 @@
 
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=1500</param>
+        <param> n_trees=900</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -280,7 +280,7 @@
 
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees= 600</param>
+        <param> n_trees= 200</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -304,7 +304,7 @@
 
 <mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees= 450</param>
+        <param> n_trees= 700</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -328,7 +328,7 @@
 
 <mva type="BDT" use="yes" tag = "Nue" name ="Nue fake BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees= 800</param>
+        <param> n_trees= 350</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -381,7 +381,7 @@
 
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
 <precut def = "reco_shower_energy_max[0]>30" name = "Michel Cut"/>
-<precut def = "reco_vertex_dist_to_SCB > 2" name = "Vertex Contained in SCB"/>
+<precut def = "reco_shower_start_dist_to_SC > 2" name = "Shower start Contained in SCB"/>
 <!--<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
