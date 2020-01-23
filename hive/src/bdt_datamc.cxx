@@ -176,7 +176,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
     ftest->cd();
 
-    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NCPi0 BDT Cut","NUE BDT Cut","tmp"};
+    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Final Selection"};
     //Loop over all stages
 
     int s_min = 0;
@@ -317,7 +317,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     ftest->cd();
 
-    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NCPi0 BDT Cut","NUE BDT Cut","tmp"};
+    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Final Selection"};
     //Loop over all stages
 
     int s_min = 0;
@@ -905,7 +905,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
         is_bdt_variable = true;
 
-        std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NC #pi^{0} BDT Cut","NUE","Final Selection"};
+        std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Final Selection"};
         for(int i= stage_names.size(); i< bdt_cuts.size(); i++){
             stage_names.push_back("Stage: "+std::to_string(i));
         }
@@ -975,7 +975,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             std::cout<<"max_modifier: "<<max_modifier<<std::endl;
            
-           double min_val = 0.1;
+           double min_val = 0.01;
             if(is_bdt_variable) {
                 max_modifier = 50.0;
                 min_val = 0.01;
@@ -1360,7 +1360,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         std::vector<TH1*> vec_th1s = {sh0,sh1,sh2,sh3};	
         std::vector<std::string> data_cuts = {dat_cut_0, dat_cut_1, dat_cut_2, dat_cut_3};
         std::vector<TH1*> data_th1s = {d0,d1,d2,d3};
-        std::vector<std::string> stage_name = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT Cut"};
+        std::vector<std::string> stage_name = {"Topological Selection","Pre-Selection Cuts","Final Selection"};
         //std::vector<std::string> stage_name = {"Topological Selection","","Cosmic BDT Cut","BNB BDT Cut"};
 
 
@@ -1391,7 +1391,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             double max_modifier = 1.9;
             //double min_val = 0.01;
-            double min_val = 0.1;
+            double min_val = 0.01;
             if(is_bdt_variable || var.is_logplot) {
                 //max_modifier = 500.0;
                  max_modifier = 50.0;
