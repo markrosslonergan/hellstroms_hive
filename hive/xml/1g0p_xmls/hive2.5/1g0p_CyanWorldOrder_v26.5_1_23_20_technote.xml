@@ -387,6 +387,7 @@
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
 <var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness" type="d" training = "01"/>
+
 <var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness" type="d" training = "01"/>
 
 <var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(24,0,4000)" unit = "Total PE in beamgate" type ="d" training=""/>
@@ -466,7 +467,7 @@
 -->
 
 <var def = "mctruth_nu_E" binning = "(14, 0, 3.2)" unit = "True Neutrino Energy [GeV]" type="d" training=""/>
-<var def = "1g1pJan2020_v1COSMIC_mva" binning = "(25,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" logplot="true"/>
+<!--<var def = "1g1pJan2020_v1COSMIC_mva" binning = "(25,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" logplot="true"/> -->
 
 <!-- ================= RECO-MC Matching ======================== -->
 
