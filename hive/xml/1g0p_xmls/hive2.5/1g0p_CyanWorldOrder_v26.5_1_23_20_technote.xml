@@ -115,8 +115,8 @@
 <!--        <cut> mctruth_daughters_pdg==22 &amp;&amp; mctruth_daughters_status_code==1 &amp;&amp; mctruth_daughters_endx>2 </cut>-->
         <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 0</cut>
-        <cut> mctruth_exiting_photon_energy &lt; 0.02 </cut>
-        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 ) ==0 </cut>
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
@@ -136,8 +136,8 @@
 <!--        <cut> mctruth_daughters_pdg==22 &amp;&amp; mctruth_daughters_status_code==1 &amp;&amp; mctruth_daughters_endx>2 </cut>-->
         <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 0</cut>
-        <cut> mctruth_exiting_photon_energy &lt; 0.02 </cut>
-        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==0 </cut>
     </definition>
 <training>
         <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
