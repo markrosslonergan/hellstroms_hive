@@ -252,7 +252,7 @@
 
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=900</param>
+        <param> n_trees=950</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -280,7 +280,7 @@
 
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees= 200</param>
+        <param> n_trees= 250</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -304,7 +304,7 @@
 
 <mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees= 700</param>
+        <param> n_trees= 400</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
