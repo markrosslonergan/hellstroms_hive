@@ -438,7 +438,7 @@
 <var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx plane 2 (Kalman) [MeV/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_kalman_dEdx_plane1_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx plane 1 (Kalman) [MeV/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_kalman_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx plane 0 (Kalman) [MeV/cm]" type = "d" logplot = "false" training =""/>
-<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx all planes (Kalman) [MeV/cm]" type = "d" logplot = "false" training ="0123"/>
+<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx all planes (Kalman) [MeV/cm]" type = "d"  training ="0123"/>
 
 <var def = "reco_shower3d_dEdx_plane2[0]" binning = "(24,0,10.0)" unit = "Shower3D dedx plane 2 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower3d_dEdx_plane1[0]" binning = "(24,0,10.0)" unit = "Shower3D dedx plane 1 [mev/cm]" type = "d" logplot = "false" training =""/>
