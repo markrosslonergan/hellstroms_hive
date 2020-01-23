@@ -442,7 +442,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //double max_modifier = 1.65;
             double max_modifier = 2;
             if (s==1){
-                max_modifier = 1.85;
+                max_modifier = 1.5;
             }
             if (s==2){
                 max_modifier = 2;
@@ -455,8 +455,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 max_modifier = (stack_mode ? 2.0 : 1.85);
             }
 
-            if(s==5){
-                max_modifier = 2.5;
+            if(s>5){
+                max_modifier = 2.75;
             }
 
 
@@ -485,9 +485,20 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->SetMinimum(min_val);
             stk->GetYaxis()->SetTitleOffset(0.9);
             std::cout<<"the max modifier is "<<max_modifier<<std::endl;
-            stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
-            //stk->SetMaximum(500);
-            stk->SetMinimum(min_val);
+            
+            if(var.plot_max==-999){ 
+                stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
+            }else{
+                stk->SetMaximum(var.plot_max);
+            }
+            
+            if(var.plot_min==-999){ 
+                stk->SetMinimum(min_val);
+            }else{
+                stk->SetMinimum(var.plot_min);
+            }
+            
+            
             tsum->SetLineWidth(3);
             //tsum_after->SetLineWidth(3);
             tsum->DrawCopy("Same E2");
@@ -825,8 +836,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             ratpre->SetFillStyle(3144);
             if(!stack_mode){
-                ratpre->Draw("same P E0 hist");	
-                gr->Draw("E1 same");
+                ratpre->Draw("same P hist");	
+                gr->Draw("E0 same");
             }
 
             //std::string mean = "(Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;

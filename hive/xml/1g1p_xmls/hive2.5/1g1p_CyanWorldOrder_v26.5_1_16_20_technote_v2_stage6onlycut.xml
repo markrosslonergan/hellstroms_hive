@@ -1,8 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g1pJan2020_v1" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.992342,0.98915,0.728899,0.907914,0.746945)" />
-
+<topology tag="1g1pJan2020_v1" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.0,0.0,0.0, 0.0, 0.724711)" /> 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
 <filedir>/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/</filedir>
@@ -261,7 +260,7 @@
 
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
 
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(24,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees=1500</param>
         <param> tree_method=exact</param>
@@ -287,6 +286,8 @@
     <scan min = "0.99" max = "1.0" steps="10"/>
 </mva>
 
+
+
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees= 600</param>
@@ -308,9 +309,8 @@
         sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.8" max = "1.0" steps="5"/>
+    <scan min = "0.98" max = "1.0" steps="5"/>
 </mva>
-
 
 <mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
@@ -333,10 +333,10 @@
         sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.7" max = "1.0" steps="5"/>
+    <scan min = "0.69" max = "0.73" steps="5"/>
 </mva>
 
-<mva type="BDT" use="yes" tag = "Nue" name ="Nue BDT" binning = "(24,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "Nue" name ="Nue fake BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees= 800</param>
         <param> tree_method=exact</param>
@@ -357,7 +357,7 @@
         sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.7" max = "1.0" steps="5"/>
+    <scan min = "0.85" max = "0.95" steps="5"/>
 </mva>
 
 
@@ -382,7 +382,7 @@
         sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.7" max = "1.0" steps="5"/>
+    <scan min = "0.70" max = "0.735" steps="5"/>
 </mva>
 
 
@@ -519,7 +519,7 @@
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" logplot = "false" training = "02" /> 
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" logplot = "false" training = "0123" /> 
 <var def = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum [GeV]" type = "d" logplot = "false" training = "0123"/>
-<var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of photon-proton pair [GeV]" type  = "d" training = "0123"/>
+<var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(12,0.9,1.6)" unit = "Implied Invariant Mass of photon-proton pair [GeV]" type  = "d" training = "0123"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*#SIDX#+reco_track_diry[0]*#SIDY#+reco_track_dirz[0]*#SIDZ#)))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of photon-proton pair (Track Start) [GeV]" type  = "d" training = ""/>
 
@@ -577,8 +577,6 @@
 <var def = "sss3d_invar_ranked_opang" binning = "(16,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="d" training="4"/>
 <var def = "sss3d_invar_ranked_implied_opang" binning = "(16,-1,1)" unit ="sss3d best invariant mass candidate implied angle w.r.t primary shower [cos]" type="d" training="4"/>
 
-<!--<var def = "genie_CV_tune_weight" binning = "(16,-1,500)" unit ="GENIE CV Tune Weight" type="d" training=""/> -->
-
 
 <!--
 <var def = "stage1_2BDT_XGBOOSTNCPi0_mva" binning = "(24,0,1)"  unit = "NCpi0 BDT" type="d" logplot="false" training="4"/>
@@ -587,8 +585,51 @@
 <var def = "stage1_2BDT_XGBOOSTNue_mva" binning = "(40,0,1)"  unit = "Nue BDT" type="d" logplot="false" training="4"/>
 -->
 
+<var def = "mctruth_nu_E" binning = "(14, 0, 3.2)" unit = "True Neutrino Energy [GeV]" type="d" training=""/>
+<var def = "1g1pJan2020_v1COSMIC_mva" binning = "(25,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" logplot="true"/>
+
 <!-- ================= RECO-MC Matching ======================== -->
 
+<recomc>
+    <def name="Cosmic Contaminated" col ="( 126,126,241)"> 
+     (sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4 )        
+    </def> 
+    <def name="No visible p^{+} or #gamma" col ="(239,202,140)"> 
+     !((sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==0 ||  (mctruth_exiting_photon_energy &lt; 0.02))          
+    </def> 
+    <def name="More than 1 p^{+}" col ="(127,231,204)"> 
+        !((sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )>1 )          
+    </def> 
+
+    <def name="Bad Reco" col ="(223,227,142)"> 
+    ((sim_shower_overlay_fraction &lt; 0.4 &amp;&amp;  sim_track_overlay_fraction &lt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 &amp;&amp;  (mctruth_exiting_photon_energy &gt; 0.02))  &amp;&amp; !(sim_shower_pdg==22 &amp;&amp;sim_track_pdg==2212) 
+    </def> 
+    <def name = "Signal Definition" col="(241,126,126)">
+       ((sim_shower_overlay_fraction &lt; 0.4 &amp;&amp;  sim_track_overlay_fraction &lt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 &amp;&amp;  (mctruth_exiting_photon_energy &gt; 0.02))  &amp;&amp; (sim_shower_pdg==22 &amp;&amp;sim_track_pdg==2212) &amp;&amp;  mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 &amp;&amp; mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 &amp;&amp; mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 &amp;&amp; mctruth_num_exiting_pi0==0 
+    </def>
+</recomc>
+
+<!--
+<recomc>
+    <def name="QuasiElastic" col ="(1.0,0.4,0.4)"> 
+        GTruth_Gscatter == 1             
+    </def> 
+    <def name="DeepInelastic" col ="(0.48,0.87,0.3)"> 
+        GTruth_Gscatter == 3             
+    </def> 
+    <def name = "Resonant" col="(0.41,0.38,0.97)">
+        GTruth_Gscatter == 4             
+    </def>
+    <def name = "Coherent" col="(0.8,0.2,0.8)">
+        GTruth_Gscatter == 5
+    </def>
+    <def name = "MEC" col="(1.0,1.0,0.4)">
+        GTruth_Gscatter == 10
+    </def>
+</recomc>
+-->
+
+<!--
 <recomc>
     <def name="NC #Delta Radiative #gamma" col ="(1.0,0.4,0.4)"> 
         sim_shower_pdg[0] == 22 &amp;&amp; sim_shower_parent_pdg[0] != 111 &amp;&amp; mctruth_is_delta_radiative ==1 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )             
@@ -611,10 +652,8 @@
     <def name = "Overlay" col="(0.2,0.8,0.2)">
         (sim_shower_overlay_fraction[0] >=0.8 )
     </def>
-
-
 </recomc>
-
+-->
 
 <alias key="PM" value ="(0.938272)"/>
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>

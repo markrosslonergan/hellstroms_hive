@@ -161,6 +161,9 @@ struct bdt_file{
         int calcBNBBDTEntryList(double,double);
         int calcBDTEntryList(int stage, std::vector<double> bdt_cuts);
 
+        int scanStage(int which_stage, std::vector<double> bdt_cuts , std::string scan_string);
+
+
         int calcBaseEntryList(std::string);
         double data_tor860_wcut;
         double data_spills_E1DCNT_wcut;

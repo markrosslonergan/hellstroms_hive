@@ -144,7 +144,6 @@
         <cut> sim_track_overlay_fraction[0] &lt; 0.5 </cut>
         <cut> sim_track_pdg[0] == 2212 </cut>
     </training>
-
 </bdtfile>
 
 
@@ -439,7 +438,7 @@
 <var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx plane 2 (Kalman) [MeV/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_kalman_dEdx_plane1_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx plane 1 (Kalman) [MeV/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_kalman_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx plane 0 (Kalman) [MeV/cm]" type = "d" logplot = "false" training =""/>
-<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx all planes (Kalman) [MeV/cm]" type = "d" logplot = "false" training ="0123"/>
+<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx all planes (Kalman) [MeV/cm]" type = "d"  training ="0123"/>
 
 <var def = "reco_shower3d_dEdx_plane2[0]" binning = "(24,0,10.0)" unit = "Shower3D dedx plane 2 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower3d_dEdx_plane1[0]" binning = "(24,0,10.0)" unit = "Shower3D dedx plane 1 [mev/cm]" type = "d" logplot = "false" training =""/>
@@ -452,7 +451,7 @@
 
 <!-- shower geometry + calorimetry -->
 <var def = "reco_shower_impact_parameter[0]" binning = "(24,0,1000)" unit = "Shower Impact Parameter [cm]" type="d" logplot="false" training="0123"/>
-<var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(24,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d" logplot="false" training="0123"/>
+<var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(24,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d" logplot = "true" training="0123"/>
 <var def = "reco_shower_implied_dirx/reco_shower_dirx" binning = "(24,-1,3)" unit = "Shower Implied Dirx/Pandora Dirx" type="d" logplot="false" training=""/>
 <var def = "reco_shower_implied_diry/reco_shower_diry" binning = "(24,-1,3)" unit = "Shower Implied Diry/Pandora Diry" type="d" logplot="false" training=""/>
 <var def = "reco_shower_implied_dirz/reco_shower_dirz" binning = "(46,-1,3)" unit = "Shower Implied Dirz/Pandora Dirz" type="d" logplot="false" training=""/>
@@ -481,7 +480,7 @@
 
 <!-- shower + track vars -->
 <var def = "reco_shower_conversion_distance[0]" binning = "(24,0,100)" unit = " Reconstructed Shower conversion distance [cm]" type = "d"   logplot="true" training="01234"/>
-<var def = "log10(reco_shower_conversion_distance[0])" binning = "(24,-2,3)" unit = " Reconstructed Shower conversion distance Log[cm]" type = "d"   logplot="true" training=""/>
+<var def = "log10(reco_shower_conversion_distance[0])" binning = "(24,-1.5,3)" unit = " Reconstructed Shower conversion distance Log[cm]" type = "d"   logplot="true" training=""/>
 <var def = "log10(sqrt(pow(reco_track_startx[0]-reco_shower_startx[0],2)+pow(reco_track_starty[0]-reco_shower_starty[0],2)+pow(reco_track_startz[0]-reco_shower_startz[0],2)))" binning = "(24,-2,3)" unit = "Distance from Track Start to Shower Start Log10[cm]" type="d" training=""/>
 <!--<var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(5,200,700)" unit = "Total Visible Energy [MeV]" type = "d" training="01"  />-->
 <var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(5,200,700)" unit = "Total Visible Energy [MeV]" type = "d" training="01" covarfile="/uboone/app/users/markrl/SBNfit_uBooNE/new_davio/quick/whipping_star/build/bin/uBooNE_v19/constraint_test.root" covarname="before" />

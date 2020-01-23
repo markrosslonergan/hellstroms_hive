@@ -297,6 +297,7 @@ int bdt_file::calcPOT(){
         std::cout<<"bdt_file::bdt_file()\t||\t---> POT is MC/OVERLAY "<<std::endl;
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
+        std::cout<<"--> Events scaled to 10.1e20 "<<numberofevents/pot*10.1e20<<std::endl;
         //weight_branch = "1";
       //  weight_branch = "genie_spline_weight*genie_CV_tune_weight";
          weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
@@ -725,6 +726,14 @@ TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, doub
 
     //delete ctmp;
     return th1;
+}
+
+int bdt_file::scanStage(int which_stage, std::vector<double> bdt_cuts , std::string scan_string){
+
+    std::string cuts = this->getStageCuts(which_stage, bdt_cuts);
+    this->tvertex->Scan(scan_string.c_str(),cuts.c_str());
+
+    return 0;
 }
 
 TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std::string nam, double plot_POT){
