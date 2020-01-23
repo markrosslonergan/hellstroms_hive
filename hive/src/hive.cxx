@@ -341,7 +341,9 @@ int main (int argc, char *argv[]){
         if(mode_option != "train"  && mode_option != "sbnfit"){
             f->calcBaseEntryList(analysis_tag);
         }
+        if(topo_tag != "notrack"){
         f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
+        }
     }
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;

@@ -390,8 +390,8 @@
 
 <var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness" type="d" training = "01"/>
 
-<var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(24,0,4000)" unit = "Total PE in beamgate" type ="d" training=""/>
-<var def = "Min$(reco_shower_flash_shortest_distz)" binning ="(24,0,200)" unit = "Dist shower to flash in Z" type ="d" training=""/>
+<var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(24,0,2000)" unit = "Total PE in beamgate" type ="d" training=""/>
+<var def = "Min$(reco_shower_flash_shortest_distz)" binning ="(24,0,140)" unit = "Dist shower to flash in Z" type ="d" training=""/>
 
 <var def = "reco_vertex_in_SCB" binning="(4,-1,3)" unit = "Vertex in SCB" type ="d" training=""/>
 
@@ -429,7 +429,7 @@
 <var def = "reco_shower_dEdx_amalgamated[0]" binning="(24,0.0,10.0)" unit = "Amalgamated Shower dE/dx [Mev/cm]" type = "d"    training = ""/>
 
 <!-- shower geometry + calorimetry -->
-<var def = "reco_shower_impact_parameter[0]" binning = "(24,0,1000)" unit = "Shower Impact Parameter [cm]" type="d"   training="0123"/>
+<var def = "reco_shower_impact_parameter[0]" binning = "(24,0,400)" unit = "Shower Impact Parameter [cm]" type="d"   training="0123"/>
 <var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(24,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d" logplot = "true" training="0123"/>
 <var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d"    training="0123"/>
 <var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(24,0 ,2000)" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="012"/>
@@ -445,7 +445,7 @@
 <var def = "reco_shower_num_daughters" binning = "(3,0,3)" unit = "Num Dau Shower" type="d" training=""/>
 
 <var def = "reco_shower_startx" binning = "(24,-20,270)" unit = "Reco Shower Start X [cm]" type="d"   training=""/>
-<var def = "reco_shower_starty" binning = "(24,-400,140)" unit = "Reco Shower Start Y [cm]" type="d"   training=""/>
+<var def = "reco_shower_starty" binning = "(24,-200,140)" unit = "Reco Shower Start Y [cm]" type="d"   training=""/>
 <var def = "reco_shower_startz" binning = "(24,-20,1100)" unit = "Reco Shower Start Z [cm]" type="d"   training=""/>
 
 <!--adding the shower end point in XYZ-->
@@ -456,7 +456,7 @@
 <!-- Mark is Bored on flight to Korea variables but he remembered to grab a local copy of all stage 0 vertexed files so is doing 14 hours of "feature development" wooo -->
 
 <var def = "reco_shower_energy_max/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of energy to number of hits" binning = "(24,0,1)" type="d" training="0123"/>
-<var def = "reco_shower_energy_max/(100.0*reco_shower_length*reco_shower_opening_angle)" unit = "ratio of calo energy to geometric size" binning = "(24,0,1.5)" type = "d" training = "12"/>
+<var def = "reco_shower_energy_max/(100.0*reco_shower_length*reco_shower_opening_angle)" unit = "ratio of calo energy to geometric size" binning = "(24,0,1.0)" type = "d" training = "12"/>
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = "0123"/>
 
 <!--
