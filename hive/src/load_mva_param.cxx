@@ -506,11 +506,29 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }
 
 
+        double pmin = -999;
+        double pmax = -999;
+
+        const char* t_pmin = pVar->Attribute("pmin");
+        if(t_pmin!=NULL){
+            pmin = atof(t_pmin);
+        }
+
+        const char* t_pmax = pVar->Attribute("pmax");
+        if(t_pmax!=NULL){
+            pmax = atof(t_pmax);
+        }
+
+        std::cout<<"Plotting Min/Max "<<pmin<<" "<<pmax<<std::endl;
+
+
         bool is_spec = false;
         //if(var_spectator=="true") is_spec = true;
 
         bdt_variable t(var_def,var_binning,var_unit,"false",var_type,n_var);
         t.is_logplot = var_logplot_bool;
+        t.plot_min = pmin;
+        t.plot_max = pmax;
         if(has_covar){
             std::cout<<"Adding a covariance matrix "<<covar_name<<" from file "<<covar_file<<std::endl;
             t.addCovar(covar_name,covar_file);

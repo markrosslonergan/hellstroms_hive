@@ -485,9 +485,20 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->SetMinimum(min_val);
             stk->GetYaxis()->SetTitleOffset(0.9);
             std::cout<<"the max modifier is "<<max_modifier<<std::endl;
-            stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
-            //stk->SetMaximum(500);
-            stk->SetMinimum(min_val);
+            
+            if(var.plot_max==-999){ 
+                stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
+            }else{
+                stk->SetMaximum(var.plot_max);
+            }
+            
+            if(var.plot_min==-999){ 
+                stk->SetMinimum(min_val);
+            }else{
+                stk->SetMinimum(var.plot_min);
+            }
+            
+            
             tsum->SetLineWidth(3);
             //tsum_after->SetLineWidth(3);
             tsum->DrawCopy("Same E2");
