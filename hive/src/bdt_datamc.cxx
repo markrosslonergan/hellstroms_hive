@@ -349,7 +349,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         for(auto &var: vars){
 
 
-        //var.is_logplot = true;
+        var.is_logplot = false;
 
 
             std::cout<<"Starting on variable "<<var.name<<std::endl;
@@ -398,7 +398,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             int data_rebin = 1;
             if(s==0 || s == 1){
                 rmin=0; rmax = 1.99;
-            }//else if(s>2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
+            }//else if(s==2){ data_rebin = 2;};//else if(s==3){data_rebin=2;};
 
 
             //tsum->Rebin(data_rebin);
@@ -425,7 +425,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             cobs->cd();
             TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
 
-            if(is_bdt_variable || var.is_logplot )  pad0top->SetLogy();
+            //if(is_bdt_variable /*|| var.is_logplot*/ )  pad0top->SetLogy();
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
             pad0top->cd();               // pad2top becomes the current pad
@@ -437,7 +437,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //	int data_rebin = 1;
             if(s==0 || s == 1){
                 rmin=0; rmax = 1.99;
-            }//else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
+            }//else if(s==2){ data_rebin = 2;}//else if(s==3){data_rebin=2;};
 
             //double max_modifier = 1.65;
             double max_modifier = 2;
@@ -592,7 +592,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::size_t found = var.unit.find(massSearch);
 
             // Fit Gaussian to that variable
-            /*
             if (found != std::string::npos) {
                 std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
                 TF1 *gausfit_data = new TF1("gausfit_data", "gaus");
@@ -607,8 +606,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 lowFit = d0->GetXaxis()->GetBinLowEdge(1);
                 highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
                 d0->Fit(gausfit_data, "lv", "", lowFit, highFit);
-                tmp_hist->Fit(gausfit_data, "q", "", lowFit, highFit);
-                std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
+                tmp_hist->Fit(gausfit_mc, "q", "", lowFit, highFit);
+                //tsum->Fit(gausfit_mc, "q", "", lowFit, highFit);
+                //std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
                 mass_data = gausfit_data->GetParameter(1);
                 mass_err_data = gausfit_data->GetParError(1);
                 mass_res_data = gausfit_data->GetParameter(2);
@@ -626,7 +626,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 gausfit_data->Draw("same");
                 gausfit_mc->Draw("same");
             }
-            */
 
 
 
@@ -959,8 +958,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 * tsum = (TH1*)mc_stack->getBDTEntrySum(info);
 
             bdt_variable dvar = data_file->getBDTVariable(info);
-            //dvar.is_logplot = false;
-            dvar.is_logplot = true;
+            dvar.is_logplot = false;
+            //dvar.is_logplot = true;
             TH1 * d0 = (TH1*)data_file->getTH1(dvar, "1", scuts+"_"+data_file->tag+"_"+dvar.safe_name, plot_pot);
 
             double rmin = 0.5;
@@ -968,7 +967,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             int data_rebin = 1;
             if(s==0 || s == 1){
                 rmin=0.0; rmax = 1.999;
-            }//else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
+            }//else if(s==2){ data_rebin = 2;}//else if(s==3){data_rebin=2;};
 
             double max_modifier = stack_mode ? 1.4 : 50;
             //double min_val;
@@ -976,7 +975,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             std::cout<<"max_modifier: "<<max_modifier<<std::endl;
            
-           double min_val = 0.01;
+           double min_val = 0.1;
             if(is_bdt_variable) {
                 max_modifier = 50.0;
                 min_val = 0.01;
@@ -1392,7 +1391,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             double max_modifier = 1.9;
             //double min_val = 0.01;
-            double min_val = 0.01;
+            double min_val = 0.1;
             if(is_bdt_variable || var.is_logplot) {
                 //max_modifier = 500.0;
                  max_modifier = 50.0;
