@@ -38,6 +38,8 @@ struct bdt_variable{
         std::string covar_name;
         std::string covar_file;
 
+        double plot_min;
+        double plot_max;
 
         std::vector<double> edges;
 
@@ -59,6 +61,8 @@ struct bdt_variable{
             id(in_id),
             is_logplot(false)
 		{
+            plot_min =-999;
+            plot_max =-999;
 			safe_name = name;
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '('), safe_name.end());
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ')'), safe_name.end());
@@ -118,7 +122,10 @@ struct bdt_variable{
 			binning(inbin),
 			is_track(intrack),
 			unit(inunit)
-	{};
+	{ 
+                plot_min =-999;
+            plot_max =-999;
+};
 
 };
 
