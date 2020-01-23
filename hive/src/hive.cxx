@@ -781,12 +781,12 @@ int main (int argc, char *argv[]){
     }
     else if(mode_option == "test"){
 
-        return 0;
         
         for(int f=0; f< bdt_files.size();++f){
             if(which_file == f || which_file==0) ncpi0_sss_precalc(bdt_files[f], analysis_tag);
         }
-         tagToFileMap["NueOverlays"]->scanStage(6, fbdtcuts,"run_number:subrun_number:event_number");
+        return 0;
+        tagToFileMap["NueOverlays"]->scanStage(6, fbdtcuts,"run_number:subrun_number:event_number");
 
         return 0;
 
