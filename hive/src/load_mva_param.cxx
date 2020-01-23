@@ -311,9 +311,9 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }
         v_col.push_back(std::stod(s_col));
         //for(auto &d:v_col)std::cout<<d<<std::endl;
-           for(int cc=0; cc< v_col.size();cc++) {
-                if(v_col[cc]>1) v_col[cc] = v_col[cc]/255.0;
-            }
+        for(int cc=0; cc< v_col.size();cc++) {
+            if(v_col[cc]>1) v_col[cc] = v_col[cc]/255.0;
+        }
         bdt_cols.push_back(new TColor(TColor::GetFreeColorIndex(),v_col[0],v_col[1],v_col[2]) );
 
         const char* t_scales = pBDTfile->Attribute("scale");
@@ -482,14 +482,15 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         std::string var_binning = pVar->Attribute("binning");
         std::string var_unit = pVar->Attribute("unit");
         std::string var_type = pVar->Attribute("type");
-        //std::string var_spectator = pVar->Attribute("spectator");
-        const char* var_logplot = pVar->Attribute("logplot");
-        bool var_logplot_bool;
-        if (var_logplot == NULL || var_logplot =="false"){
-            var_logplot_bool= false;
-        }else{
-            var_logplot_bool= true;
-        }
+       const char * var_logplot = pVar->Attribute("logplot");
+        bool var_logplot_bool = false;
+        if (var_logplot!=NULL){
+            std::string tmp = var_logplot;
+            if(tmp.length()<6){
+                var_logplot_bool = true;
+                std::cout<<"is logplot"<<std::endl;
+            }
+       }
 
         std::string covar_file;
         std::string covar_name;
@@ -516,7 +517,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }
 
 
-        
+
 
 
         std::cout<<"Variable Number "<<n_var<<" is "<<var_unit<<" with definiton: "<<var_def<<std::endl;
@@ -541,17 +542,17 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         //Loop over vec_methods
         for(int p=0; p< vec_methods.size(); p++){
 
-             bool is_train = false;
-             for(int k=0; k< var_train_int.size(); k++){
-                    if(var_train_int[k]> vec_methods.size()){
-                            std::cout<<"ERROR! BDT variable: "<<var_def <<" has been assigned to train on BDT "<<var_train_int[k]<<" But only "<<vec_methods.size()<<" has been defined!"<<std::endl;
-                            exit(EXIT_FAILURE);
-                    }
-                    if(p==var_train_int[k]){
-                        is_train = true;
-                        break;
-                    }
-             }
+            bool is_train = false;
+            for(int k=0; k< var_train_int.size(); k++){
+                if(var_train_int[k]> vec_methods.size()){
+                    std::cout<<"ERROR! BDT variable: "<<var_def <<" has been assigned to train on BDT "<<var_train_int[k]<<" But only "<<vec_methods.size()<<" has been defined!"<<std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                if(p==var_train_int[k]){
+                    is_train = true;
+                    break;
+                }
+            }
             if(is_train){
                 vec_methods[p].bdt_train_vars.push_back(t);
                 std::cout<<" -- so adding "<<var_def<<" as training to method "<<vec_methods[p].bdt_name<<std::endl;
@@ -562,7 +563,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
 
         }
-        
+
 
         n_var++;
         pVar = pVar->NextSiblingElement("var");
