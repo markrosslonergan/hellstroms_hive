@@ -468,7 +468,11 @@
 -->
 
 <var def = "mctruth_nu_E" binning = "(14, 0, 3.2)" unit = "True Neutrino Energy [GeV]" type="d" training=""/>
-<!--<var def = "1g1pJan2020_v1COSMIC_mva" binning = "(25,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" logplot="true"/> -->
+<var def = "1g0pJan2020_v1Nue_mva" binning = "(15,0.0,1)" unit = "Nue BDT Score" type="d"  training= "" logplot="true"/>
+<var def = "1g0pJan2020_v1COSMIC_mva" binning = "(25,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" logplot="true"/> 
+<var def = "1g0pJan2020_v1NCPi0_mva" binning = "(25,0.0,1)" unit = "NCpi0 BDT Score" type="d" training= "" logplot="true"/> 
+<var def = "1g0pJan2020_v1BNB_mva" binning = "(25,0.0,1)" unit = "BNB BDT Score" type="d" training= "" logplot="true"/> 
+
 
 <!-- ================= RECO-MC Matching ======================== -->
 
