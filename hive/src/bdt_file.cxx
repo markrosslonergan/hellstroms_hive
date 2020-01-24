@@ -11,10 +11,21 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     root_dir(inrootdir),
     col(incol),
     flow(inflow),
+ //   is_data(is_data),
+ //   is_bnbext(is_bnbext),
+ //   is_mc(is_mc)
     is_data(false),
     is_bnbext(false),
     is_mc(true)
 {
+	
+	if(this->tag.compare(0,4,"Data")==0){ 
+		this->is_mc = false;
+		this->is_data = true;
+	}else if(this->tag.compare(0,6,"BNBext")==0){
+		this->is_mc = false;
+		this->is_bnbext = true;
+	}
 
     plot_name = tag;
 
@@ -38,7 +49,8 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
         std::cout<<"setting weight branch - mc"<<std::endl;
         //weight_branch = "genie_spline_weight*genie_CV_tune_weight";
         weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
-    }else {
+    }
+	if(is_data || is_bnbext){
         std::cout<<"setting weight branch - on/off beam data"<<std::endl;
         weight_branch = "1";
     }
@@ -784,7 +796,8 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
    // this->CheckWeights();
-	std::cout<<"CHECK "<<__LINE__<<" branch "<<this->weight_branch<<std::endl;
+	//KENG CHECK
+	std::cout<<"CHECK "<<__LINE__<<"file "<<this->tag<<" branch "<<this->weight_branch<<std::endl;
     this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+"&&"+in_bins+")*"+this->weight_branch).c_str(),"goff");
 	std::cout<<"CHECK "<<__LINE__<<std::endl;
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;

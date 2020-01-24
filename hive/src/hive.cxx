@@ -588,7 +588,7 @@ int main (int argc, char *argv[]){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);                
 
-                datamc.printPassingDataEvents("tmp", 1, fbdtcuts);
+//                datamc.printPassingDataEvents("tmp", 1, fbdtcuts);
 
                 //datamc.printPassingDataEvents("tmp", 3, fbdtcuts);
                 //datamc.printPassingPi0DataEvents("tmp", 3, fbdtcuts);
