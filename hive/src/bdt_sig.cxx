@@ -23,9 +23,9 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
 	//CHANGE STEPS HERE, KENG
 	std::cout<<"SCanning parameters are customized, do check!"<<std::endl;
-	std::vector<double> minn = {0.912,0.835,0.79,0.16};
-	std::vector<double> maxx = {0.92,0.85,0.8,0.18};
-	std::vector<double> stepp = {6,6,6,6};
+	std::vector<double> minn = {0.9,0.82,0.84,0.08};
+	std::vector<double> maxx = {0.92,0.88,0.89,0.58};
+	std::vector<double> stepp = {5,5,5,16};
 
     for(size_t b=0; b<bdt_infos.size();b++){//CHANGE STEPS HERE, KENG
 		bdt_infos[b].TMVAmethod.scan_min = minn[b];
