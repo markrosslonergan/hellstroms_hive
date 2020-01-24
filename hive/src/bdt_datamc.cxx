@@ -349,7 +349,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         for(auto &var: vars){
 
 
-        var.is_logplot = false;
+        var.is_logplot = true;
 
 
             std::cout<<"Starting on variable "<<var.name<<std::endl;
