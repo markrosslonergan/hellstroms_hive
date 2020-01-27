@@ -298,6 +298,11 @@ int main (int argc, char *argv[]){
 
 
         bdt_files.back()->calcPOT();
+
+        //std::string r1 = "run_number>=5121 && run_number <=5946";
+        //bdt_files.back()->scale( bdt_files.back()->tvertex->GetEntries(r1.c_str())/(double)bdt_files.back()->tvertex->GetEntries() );
+
+
         if(incl_in_stack) stack_bdt_files.push_back(bdt_files.back());
 
 
@@ -469,7 +474,7 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-        histogram_stack->plot_pot =10.1e20;//4.9e19;
+        histogram_stack->plot_pot =10.115e20;//4.9e19;
 
         std::cout<<"flag1"<<std::endl;
 

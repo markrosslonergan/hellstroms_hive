@@ -145,6 +145,14 @@ struct bdt_file{
 
         std::vector<TEntryList*> vec_entry_lists;
 
+
+        //Run management stuff, there is 5 Runs R1,R2,R3a , R3b,R4
+        std::vector<double> run_fractions_plot; //fractions to plot
+        std::vector<double> run_fractions_file; //fractions in file
+        std::vector<std::string> run_names;
+        std::vector<std::string> run_fraction_cuts;
+        std::string run_weight_string;
+
         //a function that splits a BDT file based on string and !string
         int splitBDTfile(std::string split_string,std::string trueTAG, bdt_file* truesplit, std::string falseTAG, bdt_file *falsesplit);
 
