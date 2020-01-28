@@ -478,12 +478,17 @@
 <var def = "mctruth_nu_E" binning = "(14, 0, 3.2)" unit = "True Neutrino Energy [GeV]" type="d" training=""/>
 <!--<var def = "1g0pJan2020_v1Nue_mva" binning = "(15,0.0,1)" unit = "Nue BDT Score" type="d"  training= "" logplot="true"/>-->
 <var def = "1g0pJan2020_v1COSMIC_mva" binning = "(25,0.0,1.0)" unit = "Cosmic BDT Score" type="d" training= "" logplot="true"/> 
-<var def = "1g0pJan2020_v1NCPi0_mva" binning = "(25,0.0,1.0)" unit = "NCpi0 BDT Score" type="d" training= "" logplot="true"/> 
+<var def = "1g0pJan2020_v1NCPi0_mva" binning = "(25,0.0,0.87)" unit = "NCpi0 BDT Score" type="d" training= "" logplot="true"/> 
 <var def = "1g0pJan2020_v1BNB_mva" binning = "(25,0.0,1.0)" unit = "BNB BDT Score" type="d" training= "" logplot="true"/> 
+
+<var def = "1g0pJan2020_v1COSMIC_mva" binning = "(30,0.93,1.0)" unit = "High Cosmic BDT Score" type="d" training= "" logplot="true"/> 
+<var def = "1g0pJan2020_v1NCPi0_mva" binning = "(30,0.6,0.86)" unit = "High NCpi0 BDT Score" type="d" training= "" logplot="true"/> 
+<var def = "1g0pJan2020_v1BNB_mva" binning = "(30,0.55,0.98)" unit = "High BNB BDT Score" type="d" training= "" logplot="true"/> 
+
 
 
 <!-- ================= RECO-MC Matching ======================== -->
-
+<!--
 <recomc>
     <def name="Cosmic Contaminated" col ="( 126,126,241)"> 
      (sim_shower_overlay_fraction &gt; 0.4)        
@@ -502,8 +507,9 @@
        ((sim_shower_overlay_fraction &lt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 &amp;&amp;  (mctruth_exiting_photon_energy &gt; 0.02))  &amp;&amp; (sim_shower_pdg==22) &amp;&amp;  mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 &amp;&amp; mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 &amp;&amp; mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 &amp;&amp; mctruth_num_exiting_pi0==0 
     </def>
 </recomc>
+-->
 
-<!--
+
 <recomc>
     <def name="QuasiElastic" col ="(1.0,0.4,0.4)"> 
         GTruth_Gscatter == 1             
@@ -521,7 +527,6 @@
         GTruth_Gscatter == 10
     </def>
 </recomc>
--->
 
 <!--
 <recomc>
