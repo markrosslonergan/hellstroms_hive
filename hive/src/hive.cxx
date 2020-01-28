@@ -821,6 +821,9 @@ int main (int argc, char *argv[]){
                    break;
 
 */
+			case 5://Make contour cut, i.e. high dimension hyperbola
+				scan_significance_contour(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot);
+
             default:
                 break;
         }

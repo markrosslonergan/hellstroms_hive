@@ -1,6 +1,273 @@
 #include "bdt_sig.h"
 
+//try something new here;
+//Option "-o sig -n 5" will nevigate to here.
+//1. S/B CPs: Find signal/bkg condensed points.
+//2. Dhd: Calculate the difference of high-dimensional distances of each point to those condensed points.
+//3. Sig vs. Dhd: Evaluate the significance as a function of the difference of high-dimensional distances.
+std::vector<double> scan_significance_contour(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, double plot_pot){
+	//I didnt finish, (not even start)
+	try{	
+		std::cout<<"Try a contour selection."<<std::endl;
+		//This just goes between some set values of all BDT's
+		double best_significance = 0;
+		double worst_significance = 0;
+		std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
 
+		std::cout<<"Setting stage entry lists"<<std::endl;
+		for(size_t i = 0; i < sig_files.size(); ++i) {
+			sig_files.at(i)->setStageEntryList(1);
+		}
+		for(size_t i = 0; i < bkg_files.size(); ++i) {
+			bkg_files.at(i)->setStageEntryList(1);
+		}
+
+		std::vector<double> in_min_vals;
+		std::vector<double> in_max_vals;
+		std::vector<int> n_steps;
+		int max_pts=1;
+
+		/*	//CHANGE STEPS HERE, KENG
+			std::cout<<"Scanning parameters are customized, do check!"<<std::endl;
+			std::vector<double> minn = {0.8,0.72,0.74,0.02};
+			std::vector<double> maxx = {0.82,0.88,0.89,0.58};
+			std::vector<double> stepp = {5,5,5,5};
+			*/
+		for(size_t b=0; b<bdt_infos.size();b++){//CHANGE STEPS HERE, KENG
+			//		bdt_infos[b].TMVAmethod.scan_min = minn[b];
+			//		bdt_infos[b].TMVAmethod.scan_max = maxx[b];
+			//		bdt_infos[b].TMVAmethod.scan_steps = stepp[b];
+
+			in_min_vals.push_back(bdt_infos[b].TMVAmethod.scan_min);
+			in_max_vals.push_back(bdt_infos[b].TMVAmethod.scan_max);
+			n_steps.push_back((int)bdt_infos[b].TMVAmethod.scan_steps);
+			max_pts = max_pts*n_steps.back();
+			//std::cout<<"AGHR "<<in_min_vals.back()<<" "<<in_max_vals.back()<<" "<<n_steps.back()<<std::endl;
+		}
+
+		//So if min_max val vectors are negative, we calculate it ourselves.
+		double sum_of_elems = std::accumulate(in_max_vals.begin(), in_max_vals.end(), 0.0);
+		std::vector<double>maxvals(bdt_infos.size(),-999);
+		std::vector<double> minvals = maxvals;
+		std::cout<<sum_of_elems<<std::endl;
+		if(sum_of_elems >0){
+			std::cout<<"Taking scanning range from xml "<<std::endl;
+			maxvals = in_max_vals;
+			minvals = in_min_vals;
+			//n_steps = s;
+		}else{
+			std::cout<<"Automatically calculting scanning range"<<std::endl;
+			for(size_t i = 0; i < sig_files.size(); ++i) {
+				for(size_t k=0; k< bdt_infos.size(); k++){
+					double tmax_1 = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
+					double tmax_2 = bkg_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
+					maxvals[k] = std::max(maxvals[k], std::max(tmax_1,tmax_2));
+				}
+			}
+
+			//for(auto &v: minvals) v=v*0.2;
+			for(auto &v: minvals) v=0.0;
+
+		}
+
+		//Create N2tempoary TEntryLists  at minimum for all sig files
+		std::vector<TEntryList*> sig_min_lists;
+		std::vector<TEntryList*> bkg_min_lists;
+
+		std::cout<<"Setting Min entry lists"<<std::endl;
+		for(size_t i = 0; i < sig_files.size(); ++i) {
+			std::string min_list_name  = "micam"+std::to_string(i);
+			sig_files.at(i)->tvertex->Draw((">>"+min_list_name).c_str(), sig_files.at(i)->getStageCuts(1+bdt_infos.size(), minvals ).c_str() , "entrylist");
+			sig_min_lists.push_back(  (TEntryList*)gDirectory->Get(min_list_name.c_str()) );
+			sig_files.at(i)->tvertex->SetEntryList(sig_min_lists.back());
+		}
+		for(size_t i = 0; i < bkg_files.size(); ++i) {
+			std::string min_list_name  = "mibam"+std::to_string(i);
+			bkg_files.at(i)->tvertex->Draw((">>"+min_list_name).c_str(), bkg_files.at(i)->getStageCuts(1+bdt_infos.size(), minvals).c_str() , "entrylist");
+			bkg_min_lists.push_back(  (TEntryList*)gDirectory->Get(min_list_name.c_str()) );
+			bkg_files.at(i)->tvertex->SetEntryList(bkg_min_lists.back());
+		}	
+
+
+		std::vector<double> steps(bdt_infos.size(),0.0);
+		for(int i=0; i< bdt_infos.size(); i++){
+			steps[i] = (maxvals[i]-minvals[i])/((double)n_steps[0]);//Keng,  everyone uses the same n_steps;
+		}
+
+		std::vector<std::vector<double>> bdt_scan_pts;
+		for(int i=0; i< bdt_infos.size(); i++){
+			std::vector<double> tmp;
+			for(int ip=0; ip<n_steps[i]; ip++){
+				tmp.push_back(minvals[i]+(double)ip*steps[i]);
+			}
+			bdt_scan_pts.push_back(tmp);
+		}
+
+
+		std::cout<<"We are going to scan between these values "<<std::endl;
+
+		for(int i=0; i< bdt_infos.size();i++){
+
+			std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<" (n_steps:  "<<n_steps[i]<<")"<<std::endl;
+		}
+
+		//Calculate total signal for efficiency 
+		double total_sig = 0.;
+
+		for(size_t i = 0; i < sig_files.size(); ++i) {
+			double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
+			std::cout << "POT scale: " << pot_scale << std::endl;
+			std::string bnbcut = sig_files.at(i)->getStageCuts(1,minvals); 
+			total_sig += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
+		}
+
+		std::cout<<"Starting"<<std::endl;
+		std::cout<<"----------------------------------------------------"<<std::endl;
+		std::string s_mod = "";
+		int n_pt = 0;
+		int best_pt = -9;
+
+		//Keng, go diagonal! Then trap them in a while loop, breaks only when no progress is made.
+		for(int diag_step = 0; diag_step< n_steps[0]+1; diag_step ++){
+
+			std::vector<double> cur_pt(bdt_infos.size(),0.0);
+
+			//were going to take each number and write each digit in base K where K is that vectors length
+			int divisor=1;
+			int f_num_dimensions = bdt_infos.size();
+			for(int j =f_num_dimensions-1 ;j>=0; j--){
+				int this_index =  (i/divisor)%bdt_scan_pts[j].size();
+
+				cur_pt[j] = bdt_scan_pts[j][this_index];
+				//in order so that each digit is written in the correct base, modify divisor here
+				divisor=divisor*bdt_scan_pts[j].size();
+			}
+
+
+			double signal = 0;
+			double background = 0;
+			std::vector<double> bkg;	
+
+			for(size_t is = 0; is < sig_files.size(); ++is) {
+				double pot_scale = (plot_pot/sig_files.at(is)->pot )*sig_files.at(is)->scale_data;
+				std::string bnbcut = sig_files.at(is)->getStageCuts(1+bdt_infos.size(), cur_pt); 
+				signal += sig_files.at(is)->GetEntries(bnbcut.c_str())*pot_scale;
+			}
+
+			for(size_t ib = 0; ib < bkg_files.size(); ++ib) {
+				double pot_scale = (plot_pot/bkg_files.at(ib)->pot)*bkg_files.at(ib)->scale_data;
+				std::string bnbcut = bkg_files.at(ib)->getStageCuts(1+bdt_infos.size(),cur_pt); 
+				bkg.push_back(bkg_files.at(ib)->GetEntries(bnbcut.c_str())*pot_scale);			
+				background += bkg.back();
+			}
+
+			double significance =0;
+			if(signal==0){
+				significance =0;
+			}else if(background !=0){
+				significance = signal/sqrt(background);
+			}else{
+				std::cout<<" Warning Backgrounds are identically 0 here, signal is "<<signal<<", so significance NAN. Woopsie. setting to Zero."<<std::endl;
+			}
+
+			if(significance > best_significance) {
+				best_significance = significance;
+				best_mva = cur_pt;
+				best_pt = n_pt;
+				s_mod = "(Current Best)";
+			}
+
+			std::cout<<"Point: "<<std::setw(3)<<n_pt<<" (";
+			for(auto &dd:cur_pt){
+				std::cout<<std::setw(6)<<dd<<",";
+			}
+			std::cout<<") N_signal: "<<std::setw(8)<<signal<<" N_bkg: "<<std::setw(8)<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+
+			s_mod = "";
+			n_pt++;
+
+
+
+
+		}
+
+		/*
+		   for(int i=0; i < max_pts; i++){
+
+		   std::vector<double> cur_pt(bdt_infos.size(),0.0);
+
+		//were going to take each number and write each digit in base K where K is that vectors length
+		int divisor=1;
+		int f_num_dimensions = bdt_infos.size();
+		for(int j =f_num_dimensions-1 ;j>=0; j--){
+		int this_index =  (i/divisor)%bdt_scan_pts[j].size();
+
+		cur_pt[j] = bdt_scan_pts[j][this_index];
+		//in order so that each digit is written in the correct base, modify divisor here
+		divisor=divisor*bdt_scan_pts[j].size();
+		}
+
+
+		double signal = 0;
+		double background = 0;
+		std::vector<double> bkg;	
+
+		for(size_t is = 0; is < sig_files.size(); ++is) {
+		double pot_scale = (plot_pot/sig_files.at(is)->pot )*sig_files.at(is)->scale_data;
+		std::string bnbcut = sig_files.at(is)->getStageCuts(1+bdt_infos.size(), cur_pt); 
+		signal += sig_files.at(is)->GetEntries(bnbcut.c_str())*pot_scale;
+		}
+
+		for(size_t ib = 0; ib < bkg_files.size(); ++ib) {
+		double pot_scale = (plot_pot/bkg_files.at(ib)->pot)*bkg_files.at(ib)->scale_data;
+		std::string bnbcut = bkg_files.at(ib)->getStageCuts(1+bdt_infos.size(),cur_pt); 
+		bkg.push_back(bkg_files.at(ib)->GetEntries(bnbcut.c_str())*pot_scale);			
+		background += bkg.back();
+		}
+
+		double significance =0;
+		if(signal==0){
+		significance =0;
+		}else if(background !=0){
+		significance = signal/sqrt(background);
+		}else{
+		std::cout<<" Warning Backgrounds are identically 0 here, signal is "<<signal<<", so significance NAN. Woopsie. setting to Zero."<<std::endl;
+		}
+
+		if(significance > best_significance) {
+		best_significance = significance;
+		best_mva = cur_pt;
+		best_pt = n_pt;
+		s_mod = "(Current Best)";
+		}
+
+		std::cout<<"Point: "<<std::setw(3)<<n_pt<<" (";
+		for(auto &dd:cur_pt){
+		std::cout<<std::setw(6)<<dd<<",";
+		}
+		std::cout<<") N_signal: "<<std::setw(8)<<signal<<" N_bkg: "<<std::setw(8)<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+
+		s_mod = "";
+		n_pt++;
+
+
+
+
+		}
+		*/
+
+		std::cout<<"----------------------------------------------------"<<std::endl;
+		std::cout<<"------------ Finished. Best Significance was  "<<best_significance<<" at point "<<best_pt<<" with Cuts at "<<std::endl;
+		for(auto &dd: best_mva){
+			std::cout<<dd<<" ";   
+		}
+		std::cout<<std::endl;
+		std::cout<<"Done with simple significance scan"<<std::endl;
+
+		return std::vector<double>{0,0,0};
+
+	}
+}
 
 std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, double plot_pot){
     std::cout<<"Starting to Scan Significance [Simple Linear Scan, can take a while!] "<<std::endl;
@@ -23,9 +290,9 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
 	//CHANGE STEPS HERE, KENG
 	std::cout<<"SCanning parameters are customized, do check!"<<std::endl;
-	std::vector<double> minn = {0.9,0.82,0.84,0.08};
-	std::vector<double> maxx = {0.92,0.88,0.89,0.58};
-	std::vector<double> stepp = {5,5,5,16};
+	std::vector<double> minn = {0.8,0.72,0.74,0.02};
+	std::vector<double> maxx = {0.82,0.88,0.89,0.58};
+	std::vector<double> stepp = {5,5,5,5};
 
     for(size_t b=0; b<bdt_infos.size();b++){//CHANGE STEPS HERE, KENG
 		bdt_infos[b].TMVAmethod.scan_min = minn[b];
