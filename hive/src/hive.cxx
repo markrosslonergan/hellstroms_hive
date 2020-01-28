@@ -312,15 +312,9 @@ int main (int argc, char *argv[]){
     //The "signal" is whichever signal BDT you define first.
     signal = signal_bdt_files[0];
 
-    /*
-       if(is_combined){
-       for(auto &f: stack_bdt_files){
-       std::cout<<"Adding Super Friend Tree"<<std::endl;
-       f->addFriend("output_"+f->tag ,"output_superMVA.root");
-       }
-       onbeam_data_file->addFriend("output_"+onbeam_data_file->tag,"output_superMVA.root");
-       }
-       */
+   
+       
+       
 
 
     //===========================================================================================
@@ -440,15 +434,15 @@ int main (int argc, char *argv[]){
     else if(mode_option=="super"){
 
         //Define what we want to call signal and background here
-        const std::vector<std::string> s_tags = {"NCDeltaRadOverlay"};
+        const std::vector<std::string> s_tags = {"NCDeltaRadOverlay","NCDeltaRadOverlaySM"};
         const std::vector<std::string> b_tags ={"BNBOverlays","NCPi0","CCPi0","NueOverlays","BNBext","Dirt"};
 
-        //        for(int i=0; i< bdt_files.size(); i++){
-        //            bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size",vars);
-        //        }
+        for(int i=0; i< bdt_files.size(); i++){
+                 //   bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size",vars);
+        }
 
         //OK super preliminarly, need to have run sbnfit with simple_tree option on precut stage before attempting this
-        //        super_bdt_train(analysis_tag, bdt_infos, s_tags, b_tags, "1", "1");
+        super_bdt_train(analysis_tag, bdt_infos, s_tags, b_tags, "1", "1");
 
         //and apply it
         std::vector<bdt_file*> tempt;
@@ -792,11 +786,10 @@ int main (int argc, char *argv[]){
             case 3:
                 scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot, sig_type);
                 break;
-                /* What is this?
+            case 4:
+                //What is this?
                    super_significance(signal_bdt_files, bkg_bdt_files);
                    break;
-
-*/
             default:
                 break;
         }
