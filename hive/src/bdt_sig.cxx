@@ -1,5 +1,5 @@
 #include "bdt_sig.h"
-
+/*
 //try something new here;
 //Option "-o sig -n 5" will nevigate to here.
 //1. S/B CPs: Find signal/bkg condensed points.
@@ -27,12 +27,11 @@ std::vector<double> scan_significance_contour(std::vector<bdt_file*> sig_files, 
 		std::vector<int> n_steps;
 		int max_pts=1;
 
-		/*	//CHANGE STEPS HERE, KENG
-			std::cout<<"Scanning parameters are customized, do check!"<<std::endl;
-			std::vector<double> minn = {0.8,0.72,0.74,0.02};
-			std::vector<double> maxx = {0.82,0.88,0.89,0.58};
-			std::vector<double> stepp = {5,5,5,5};
-			*/
+		//CHANGE STEPS HERE, KENG
+		//std::cout<<"Scanning parameters are customized, do check!"<<std::endl;
+		//std::vector<double> minn = {0.8,0.72,0.74,0.02};
+		//std::vector<double> maxx = {0.82,0.88,0.89,0.58};
+		//std::vector<double> stepp = {5,5,5,5};
 		for(size_t b=0; b<bdt_infos.size();b++){//CHANGE STEPS HERE, KENG
 			//		bdt_infos[b].TMVAmethod.scan_min = minn[b];
 			//		bdt_infos[b].TMVAmethod.scan_max = maxx[b];
@@ -191,7 +190,6 @@ std::vector<double> scan_significance_contour(std::vector<bdt_file*> sig_files, 
 
 		}
 
-		/*
 		   for(int i=0; i < max_pts; i++){
 
 		   std::vector<double> cur_pt(bdt_infos.size(),0.0);
@@ -254,7 +252,6 @@ std::vector<double> scan_significance_contour(std::vector<bdt_file*> sig_files, 
 
 
 		}
-		*/
 
 		std::cout<<"----------------------------------------------------"<<std::endl;
 		std::cout<<"------------ Finished. Best Significance was  "<<best_significance<<" at point "<<best_pt<<" with Cuts at "<<std::endl;
@@ -268,6 +265,7 @@ std::vector<double> scan_significance_contour(std::vector<bdt_file*> sig_files, 
 
 	}
 }
+*/
 
 std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, double plot_pot){
     std::cout<<"Starting to Scan Significance [Simple Linear Scan, can take a while!] "<<std::endl;

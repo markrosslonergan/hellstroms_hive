@@ -72,6 +72,7 @@ class bdt_datamc{
         }
         std::vector<bdt_variable> GetSelectVars(std::string vector, std::vector<bdt_variable> vars);
         int plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts);
+		int plot2D_DataMinusMc(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts);
         int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
         int plotStacks(TFile*f,std::vector<bdt_variable> vars, std::vector<double> cuts);
 
