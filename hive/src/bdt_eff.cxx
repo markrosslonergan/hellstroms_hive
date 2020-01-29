@@ -611,7 +611,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     if(is0p == false){
         recotruthmatchingcuts = " sim_shower_overlay_fraction[0] <  0.333 &&  sim_track_overlay_fraction[0] <  0.333 && sim_track_pdg[0] == 2212 && sim_shower_pdg[0] == 22 ";
     }else{
-        recotruthmatchingcuts = " sim_shower_overlay_fraction[0] <  0.333 &&  sim_track_overlay_fraction[0] <  0.333";
+        recotruthmatchingcuts = " sim_shower_overlay_fraction[0] <  0.333 && sim_shower_pdg[0] == 22";
 
     }
     //    std::string recotruthmatchingcuts = "1";
@@ -642,15 +642,26 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
     //double ratiop_g =  h_true_proton_ratio->Integral()/h_true_photon_ratio->Integral();
 
-    /*
-       std::cout<<"the integrated eff from the photon/proton ratios are: "<<  h_true_photon_ratio->Integral() * 100/h_true_photon_numer->Integral() << "%/" <<  h_true_proton_ratio->Integral() * 100 / h_true_proton_numer->Integral()<< "%"<<std::endl;
-       std::cout<<"---- where the integral of the numerator of the photon/protons are: "<<  h_true_photon_numer->Integral() << "/" <<  h_true_proton_numer->Integral()<<std::endl;
-       std::cout<<"---- where the integral of denominator of the photon/protons are: "<<  h_true_photon_denom->Integral() << "/" <<  h_true_proton_denom->Integral()<<std::endl;
 
-       std::cout<<"---- and the total eff of photons is: "<<  h_true_photon_numer->Integral()/h_true_photon_denom->Integral()*100.0<<" %"<<std::endl;
-       std::cout<<"---- and the total eff of protons is: "<<  h_true_proton_numer->Integral()/h_true_proton_denom->Integral()*100.0<<" %"<<std::endl;
-       std::cout<<"---- and the total eff by FILE is: "<<  file->GetEntries(denominator+"&&"+topocuts + "&&" + recotruthmatchingcuts)/file->GetEntries(denominator)*100.0<<" % "<<std::endl;
-       */
+    if(is0p==false){    
+        std::cout<<"the integrated eff from the photon/proton ratios are: "<<  h_true_photon_ratio->Integral() * 100/h_true_photon_numer->Integral() << "%/" <<  h_true_proton_ratio->Integral() * 100 / h_true_proton_numer->Integral()<< "%"<<std::endl;
+        std::cout<<"---- where the integral of the numerator of the photon/protons are: "<<  h_true_photon_numer->Integral() << "/" <<  h_true_proton_numer->Integral()<<std::endl;
+        std::cout<<"---- where the integral of denominator of the photon/protons are: "<<  h_true_photon_denom->Integral() << "/" <<  h_true_proton_denom->Integral()<<std::endl;
+
+        std::cout<<"---- and the total eff of photons is: "<<  h_true_photon_numer->Integral()/h_true_photon_denom->Integral()*100.0<<" %"<<std::endl;
+        std::cout<<"---- and the total eff of protons is: "<<  h_true_proton_numer->Integral()/h_true_proton_denom->Integral()*100.0<<" %"<<std::endl;
+        std::cout<<"---- and the total eff by FILE is: "<<  file->GetEntries(denominator+"&&"+topocuts + "&&" + recotruthmatchingcuts)/file->GetEntries(denominator)*100.0<<" % "<<std::endl;
+    }else{
+        std::cout<<"the integrated eff from the photon ratio is: "<<  h_true_photon_ratio->Integral() * 100/h_true_photon_numer->Integral() << "%" <<std::endl;
+
+        std::cout<<"---- where the integral of the numerator of the photon is: "<<  h_true_photon_numer->Integral()<<std::endl;
+        std::cout<<"---- where the integral of denominator of the photon is : "<<  h_true_photon_denom->Integral() <<std::endl;
+        std::cout<<"---- and the total eff of photons is: "<<  h_true_photon_numer->Integral()/h_true_photon_denom->Integral()*100.0<<" %"<<std::endl;
+        std::cout<<"---- and the total eff by FILE is: "<<  file->GetEntries(denominator+"&&"+topocuts + "&&" + recotruthmatchingcuts)/file->GetEntries(denominator)*100.0<<" % "<<std::endl;
+
+    }
+
+
 
     //h_true_photon_ratio->Scale(ratiop_g);
     //    h_true_proton_ratio->Scale(100);
