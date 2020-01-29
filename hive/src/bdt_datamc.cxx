@@ -274,36 +274,39 @@ int bdt_datamc::plot2D_DataMinusMc(TFile *ftest, std::vector<bdt_variable> vars,
                     TCanvas *cobs = new TCanvas(("can_"+var1.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)).c_str(),1800,1600);
                     cobs->cd();
 
-					TPad *main_pad = new TPad(("mainpad_"+stage_names.at(s)).c_str(), ("mainpad_"+stage_names.at(s)).c_str(), 0, 0, 0.54, 0.5);
+					TPad *main_pad = new TPad(("mainpad_"+stage_names.at(s)).c_str(), ("mainpad_"+stage_names.at(s)).c_str(), 0, 0, 0.5, 0.5);
 					main_pad->Draw();
 
 					TPad *top_pad = new TPad(("toppad_"+stage_names.at(s)).c_str(), ("toppad_"+stage_names.at(s)).c_str(), 0, 0.5, 0.5, 1.0);
 					top_pad->Draw();
 
-					TPad *right_pad = new TPad(("rightpad_"+stage_names.at(s)).c_str(), ("rightpad_"+stage_names.at(s)).c_str(), 0.53, 0, 1.0, 0.5);
+					TPad *right_pad = new TPad(("rightpad_"+stage_names.at(s)).c_str(), ("rightpad_"+stage_names.at(s)).c_str(), 0.5, 0, 1.0, 0.5);
 					right_pad->Draw();
 
+					TPad *upperright_pad = new TPad(("rightpad_"+stage_names.at(s)).c_str(), ("rightpad_"+stage_names.at(s)).c_str(), 0.5, 0.5, 1.0, 1.0);
+					upperright_pad->Draw();
 
 				//STEP 4.1, draw the mainpad (bottom left)
 					main_pad->cd();
                     DataMinusMc->Draw("COLZ");
-                    DataMinusMc->SetTitle(("(Data-MC)/sqrt(MC) Stage " + std::to_string(s)).c_str());
-                    DataMinusMc->GetYaxis()->SetTitle((var1.unit).c_str());
-                    DataMinusMc->GetYaxis()->SetTitleSize(0.05);
-                    DataMinusMc->GetYaxis()->SetTitleOffset(0.9);
-                    DataMinusMc->GetXaxis()->SetTitle((var2.unit).c_str());
-                    DataMinusMc->GetXaxis()->SetTitleSize(0.05);
-                    DataMinusMc->GetXaxis()->SetTitleOffset(0.9);
-                    main_pad->SetRightMargin(0.15);
+                    DataMinusMc->SetTitle(("(Data-MC)/sqrt(MC) Stage " + std::to_string(s)+" "+stage_names[s]).c_str());
+                    DataMinusMc->GetXaxis()->SetTitle((var1.unit).c_str());
+                    DataMinusMc->GetXaxis()->SetTitleSize(0.04);
+                    DataMinusMc->GetXaxis()->SetTitleOffset(1.2);
+                    DataMinusMc->GetYaxis()->SetTitle((var2.unit).c_str());
+                    DataMinusMc->GetYaxis()->SetTitleSize(0.04);
+                    DataMinusMc->GetYaxis()->SetTitleOffset(1.3);
+//                    main_pad->SetRightMargin(0.3);
 				
 				//STEP 4.2, draw the toppad (upper left)
 					top_pad->cd();//draw on the top panel
 					projected_MC->SetFillColor(kRed-2);
-					projected_MC->SetTitle("MC Spectrum");
+					projected_MC->SetTitle("1D Spectrum");
                     projected_MC->GetYaxis()->SetTitle("Event Rate");
 					double max1 = 1.2*std::max(projected_MC->GetMaximum(),projected_data->GetMaximum());
 					projected_MC->SetMaximum(max1);
-					projected_MC->Draw("bar");
+					projected_MC->SetStats(false);
+					projected_MC->Draw("hist");
 
 					projected_data->SetMarkerStyle(20);
 					projected_data->SetMarkerSize(2);
@@ -312,19 +315,35 @@ int bdt_datamc::plot2D_DataMinusMc(TFile *ftest, std::vector<bdt_variable> vars,
 				//STEP 4.3, draw the rightpad (bottom right)
 					right_pad->cd();//draw on the right panel
 					projected_MCy->SetFillColor(kRed-2);
-					projected_MCy->SetTitle("MC Spectrum");
+					projected_MCy->SetTitle("1D Spectrum");
                     projected_MCy->GetYaxis()->SetTitle("Event Rate");
                     projected_MCy->GetXaxis()->SetTitleOffset(1.2);
-//					double max2 = 1.2*std::max(projected_MCy->GetBinContent(projected_MCy->GetMaximumBin()),projected_datay->GetBinContent(projected_datay->GetMaximumBin()));
 					double max2 = 1.2*std::max(projected_MCy->GetMaximum(),projected_datay->GetMaximum());
 					projected_MCy->SetMaximum(max2);
-					projected_MCy->Draw("bar");
+					projected_MCy->SetStats(false);
+					projected_MCy->Draw("hist");
 
 					projected_datay->SetMarkerStyle(20);
 					projected_datay->SetMarkerSize(2);
 					projected_datay->SetLineColor(kBlack);
-					projected_datay->SetBinErrorOption(TH1::kPoisson);
-					projected_datay->Draw("same E");//CHECK, dont know how to draw horizontal dot
+//					projected_datay->SetBinErrorOption(TH1::kPoisson);
+					projected_datay->Draw("same");//CHECK, dont know how to draw horizontal dot
+				
+				//STEP 4.4 add POT info.
+					upperright_pad->cd();
+					TLatex pottex;
+					pottex.SetTextSize(0.06);
+					pottex.SetTextAlign(13);  //align at top
+					pottex.SetNDC();
+
+					//double pot_unit = stack_mode ? 1e20 : 1e19;
+					//std::string pot_unit_s = stack_mode ? "e20" : "e19";
+					double pot_unit = 1e20;
+					std::string pot_unit_s = "e20";
+					std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/pot_unit,1)+ pot_unit_s+" POT";
+
+					pottex.DrawLatex(.10,.10, pot_draw.c_str());
+
 
 
                     std::cout<<"Writing pdf."<<std::endl;

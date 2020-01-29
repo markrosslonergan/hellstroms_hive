@@ -287,15 +287,15 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
     int max_pts=1;
 
 	//CHANGE STEPS HERE, KENG
-	std::cout<<"SCanning parameters are customized, do check!"<<std::endl;
-	std::vector<double> minn = {0.8,0.72,0.74,0.02};
-	std::vector<double> maxx = {0.82,0.88,0.89,0.58};
-	std::vector<double> stepp = {5,5,5,5};
+//	std::cout<<"SCanning parameters are customized, do check!"<<std::endl;
+//	std::vector<double> minn = {0.8,0.72,0.74,0.02};
+//	std::vector<double> maxx = {0.82,0.88,0.89,0.58};
+//	std::vector<double> stepp = {5,5,5,5};
 
     for(size_t b=0; b<bdt_infos.size();b++){//CHANGE STEPS HERE, KENG
-		bdt_infos[b].TMVAmethod.scan_min = minn[b];
-		bdt_infos[b].TMVAmethod.scan_max = maxx[b];
-		bdt_infos[b].TMVAmethod.scan_steps = stepp[b];
+//		bdt_infos[b].TMVAmethod.scan_min = minn[b];
+//		bdt_infos[b].TMVAmethod.scan_max = maxx[b];
+//		bdt_infos[b].TMVAmethod.scan_steps = stepp[b];
 
         in_min_vals.push_back(bdt_infos[b].TMVAmethod.scan_min);
         in_max_vals.push_back(bdt_infos[b].TMVAmethod.scan_max);
