@@ -22,8 +22,10 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 	if(this->tag.compare(0,4,"Data")==0){ 
 		this->is_mc = false;
 		this->is_data = true;
+		this->is_bnbext = false;
 	}else if(this->tag.compare(0,6,"BNBext")==0){
 		this->is_mc = false;
+		this->is_data = false;
 		this->is_bnbext = true;
 	}
 

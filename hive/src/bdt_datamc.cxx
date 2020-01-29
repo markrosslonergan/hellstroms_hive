@@ -152,13 +152,12 @@ std::vector<bdt_variable> bdt_datamc::GetSelectVars(std::string vector, std::vec
     return select_vars;
 }
 
-int bdt_datamc::plot2D_DataMinusMc(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
+int bdt_datamc::plot2D_DataMinusMC(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
     if (vars.size() < 2){
-        std::cout<<"Need min 2 vars to make DataMinusMc 2D plots, try again!"<<std::endl;
+        std::cout<<"Need min 2 vars to make DataMinusMC 2D plots, try again!"<<std::endl;
         return 0;
     }
 
-    // NEW ONE
     double plot_pot=data_file->pot;
     if(stack_mode) plot_pot = stack_pot;
 
@@ -197,7 +196,7 @@ int bdt_datamc::plot2D_DataMinusMc(TFile *ftest, std::vector<bdt_variable> vars,
             if(s>1) f->calcBDTEntryList(s,bdt_cuts);//I think the weight branch is taken care here, Keng.
             std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
             f->setStageEntryList(s);
-        }	
+        }
 
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 
@@ -232,17 +231,27 @@ int bdt_datamc::plot2D_DataMinusMc(TFile *ftest, std::vector<bdt_variable> vars,
 						TH2* this_mc= (TH2*) f->getTH2(var1,var2, "1", std::to_string(s)+"_mc_"+std::to_string(bdt_cuts[s])+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
 
 						if(copy_this){
-							non_d0 = this_mc;
+							non_d0 = (TH2*) this_mc->Clone();
 							copy_this = false;
 						}else{
 							non_d0->Add(this_mc,1.);//add this_mc histogram.
 						}
+/*
+						for(Int_t x = 1; x<this_mc->GetNbinsX(); ++x){
+							double count_y = 0;
+
+							for(Int_t y = 1; y<this_mc->GetNbinsY(); ++y){
+								count_y+=this_mc->GetBinContent(x,y);
+							}
+							std::cout<<"Bin "<<x<<" has # events "<<count_y<<std::endl;
+						}
+*/
 						this_mc = 0;
 					}//for each item in the mc stack
 
 				//STEP 2, do substractions;
-					TH2* DataMinusMc(d0);//Copy d0, pure data;
-					DataMinusMc->Add(non_d0,-1.);//do the substraction; not done yet, need to weight the excess according to d0;
+					TH2* DataMinusMC = (TH2*)d0->Clone();//Make a new TH2 and add d0, pure data;
+					DataMinusMC->Add(non_d0,-1.);//do the substraction; not done yet, need to weight the excess according to d0;
 				
 				//STEP 2.5, weight the excess according to # of data, i.e. (#data-#MC)/sqrt(#MC);
 					if(true){//true, do the weight
@@ -252,14 +261,18 @@ int bdt_datamc::plot2D_DataMinusMc(TFile *ftest, std::vector<bdt_variable> vars,
 						Int_t ybin = d0->GetNbinsY();
 
 						for(Int_t xaxis = 1; xaxis<xbin+1; ++xaxis){//fill along x-axis
+						double count_y = 0;
 							for(Int_t yaxis = 1; yaxis<ybin+1; ++yaxis){//fill along y-axis
-								double num_DataMinusMc = DataMinusMc->GetBinContent(xaxis,yaxis);
+								double num_DataMinusMC = DataMinusMC->GetBinContent(xaxis,yaxis);
 								double num_mc = non_d0->GetBinContent(xaxis,yaxis);
-								double slot_value = (num_mc==0)?0:num_DataMinusMc/sqrt(num_mc);
-//								std::cout<<"data: "<< num_DataMinusMc<<" mc: "<<num_mc;
-//								std::cout<<"(DataMinusMc)/sqrt(mc) = "<< slot_value<<" "<<std::endl;
-								DataMinusMc->SetBinContent(xaxis,yaxis,slot_value);
+								double slot_value = (num_mc==0)?0:num_DataMinusMC/sqrt(num_mc);
+//								std::cout<<"data: "<< num_DataMinusMC<<" mc: "<<num_mc;
+//								std::cout<<"(DataMinusMC)/sqrt(mc) = "<< slot_value<<" "<<std::endl;
+								DataMinusMC->SetBinContent(xaxis,yaxis,slot_value);
+//								count_y+= d0->GetBinContent(xaxis,yaxis);
+								count_y+= num_mc;
 							}
+						std::cout<<"Bin "<<xaxis<<" has # events "<<count_y<<std::endl;
 						}
 					}
 
@@ -269,7 +282,7 @@ int bdt_datamc::plot2D_DataMinusMc(TFile *ftest, std::vector<bdt_variable> vars,
 					TH1D* projected_data = d0->ProjectionX();//Projected TH2
 					TH1D* projected_datay = d0->ProjectionY();//Projected TH2
 
-				//STEP 4, put DataMinusMc and projections on top and right together;
+				//STEP 4, put DataMinusMC and projections on top and right together;
                     //Create a TCanvas and prepare a TPad.
                     TCanvas *cobs = new TCanvas(("can_"+var1.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)).c_str(),1800,1600);
                     cobs->cd();
@@ -288,14 +301,14 @@ int bdt_datamc::plot2D_DataMinusMc(TFile *ftest, std::vector<bdt_variable> vars,
 
 				//STEP 4.1, draw the mainpad (bottom left)
 					main_pad->cd();
-                    DataMinusMc->Draw("COLZ");
-                    DataMinusMc->SetTitle(("(Data-MC)/sqrt(MC) Stage " + std::to_string(s)+" "+stage_names[s]).c_str());
-                    DataMinusMc->GetXaxis()->SetTitle((var1.unit).c_str());
-                    DataMinusMc->GetXaxis()->SetTitleSize(0.04);
-                    DataMinusMc->GetXaxis()->SetTitleOffset(1.2);
-                    DataMinusMc->GetYaxis()->SetTitle((var2.unit).c_str());
-                    DataMinusMc->GetYaxis()->SetTitleSize(0.04);
-                    DataMinusMc->GetYaxis()->SetTitleOffset(1.3);
+                    DataMinusMC->Draw("COLZ");
+                    DataMinusMC->SetTitle(("(Data-MC)/sqrt(MC) Stage " + std::to_string(s)+" "+stage_names[s]).c_str());
+                    DataMinusMC->GetXaxis()->SetTitle((var1.unit).c_str());
+                    DataMinusMC->GetXaxis()->SetTitleSize(0.04);
+                    DataMinusMC->GetXaxis()->SetTitleOffset(1.2);
+                    DataMinusMC->GetYaxis()->SetTitle((var2.unit).c_str());
+                    DataMinusMC->GetYaxis()->SetTitleSize(0.04);
+                    DataMinusMC->GetYaxis()->SetTitleOffset(1.3);
 //                    main_pad->SetRightMargin(0.3);
 				
 				//STEP 4.2, draw the toppad (upper left)
@@ -348,11 +361,11 @@ int bdt_datamc::plot2D_DataMinusMc(TFile *ftest, std::vector<bdt_variable> vars,
 
                     std::cout<<"Writing pdf."<<std::endl;
                     cobs->Write();
-                    cobs->SaveAs(("var2D/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_DataMinusMc_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+                    cobs->SaveAs(("var2D/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_DataMinusMC_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
 
-					//delete DataMinusMc;//DataMinusMc
-					DataMinusMc = 0;
+					//delete DataMinusMC;//DataMinusMC
+					DataMinusMC = 0;
                     delete cobs;
                     delete d0;//data
                     delete non_d0;//MC
