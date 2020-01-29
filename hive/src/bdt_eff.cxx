@@ -517,7 +517,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1,
 
 //One being used right now
 
-bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool is_ok,int plot_stage,std::string tag) : file(filein){
+bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool is_ok,int plot_stage,std::string tag,bool pretopo, bool is0p) : file(filein){
 
 
     double conversion = filein->scale_data*plot_POT/filein->pot;
@@ -576,8 +576,8 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
         n_precut_events = tmp_events;
     }
 
-//    double max_x_range = 2.5;
-      double max_x_range = 1.0;
+    //    double max_x_range = 2.5;
+    double max_x_range = 1.0;
     std::cout<<"So the DENOMINATOR + TOPOLOGICAL + PRECUTS is "<<n_precut_events<<std::endl;
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_starting_events*100.0<<"% relative to denom"<<std::endl;
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_topo_events*100.0<<"% relative to topo"<<std::endl;
@@ -585,17 +585,15 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
 
     bdt_variable true_photon("mctruth_exiting_photon_energy","(20, 0 ,"+std::to_string(max_x_range)+")","True Photon Energy [GeV]",false,"d");
-    bdt_variable true_proton("Max$(mctruth_exiting_proton_energy-0.938272)*(Max$(mctruth_exiting_proton_energy-0.938272)>0)","(20, 0 , "+std::to_string(max_x_range)+")","True Proton Kinetic Energy [GeV]",false,"d");
-
-   
-
     TH1* h_true_photon_denom = (TH1*)file->getTH1(true_photon, denominator, "photon_true_denom", 13.2e20);
-    TH1* h_true_proton_denom = (TH1*)file->getTH1(true_proton, denominator, "proton_true_denom", 13.2e20);
-    
-      
-
     TH1* h_true_photon_numer;
     TH1* h_true_proton_numer;
+    bdt_variable true_proton("Max$(mctruth_exiting_proton_energy-0.938272)*(Max$(mctruth_exiting_proton_energy-0.938272)>0)","(20, 0 , "+std::to_string(max_x_range)+")","True Proton Kinetic Energy [GeV]",false,"d");
+    TH1* h_true_proton_denom ;
+
+    if(is0p == false){ 
+        h_true_proton_denom = (TH1*)file->getTH1(true_proton, denominator, "proton_true_denom", 13.2e20);
+    }
 
 
     if(plot_stage>1)file->calcBDTEntryList(plot_stage,bdt_cuts);
@@ -608,36 +606,51 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<plot_stage<<" "<<conversion<<" "<<stage_entries<<" topo: "<<topocuts<<std::endl;
     std::cout<<file->GetEntries(denominator)<<" "<<file->GetEntries(topocuts)<<std::endl;
 
-    std::string recotruthmatchingcuts = " sim_shower_overlay_fraction[0] <  0.333 &&  sim_track_overlay_fraction[0] <  0.333 && sim_track_pdg[0] == 2212 && sim_shower_pdg[0] == 22 ";
-//    std::string recotruthmatchingcuts = "1";
+    std::string recotruthmatchingcuts;
+
+    if(is0p == false){
+        recotruthmatchingcuts = " sim_shower_overlay_fraction[0] <  0.333 &&  sim_track_overlay_fraction[0] <  0.333 && sim_track_pdg[0] == 2212 && sim_shower_pdg[0] == 22 ";
+    }else{
+        recotruthmatchingcuts = " sim_shower_overlay_fraction[0] <  0.333 &&  sim_track_overlay_fraction[0] <  0.333";
+
+    }
+    //    std::string recotruthmatchingcuts = "1";
+
 
     if(plot_stage==0){
-        h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator+"&&"+topocuts + "&&" + recotruthmatchingcuts , "photon_true_numer", 13.2e20);
-        h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator+"&&"+topocuts+ "&&" + recotruthmatchingcuts  , "proton_true_numer", 13.2e20);
+        h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator+"&&"+topocuts + "&&" + recotruthmatchingcuts , "photon_true_numer", 10.1e20);
     }else{
-        h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator+"&&"+topocuts +"&&"+precuts + "&&" + recotruthmatchingcuts   , "photon_true_numer", 13.2e20);
-        h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator+"&&"+topocuts +"&&"+precuts + "&&" + recotruthmatchingcuts    , "proton_true_numer", 13.2e20);
+        h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator+"&&"+topocuts +"&&"+precuts + "&&" + recotruthmatchingcuts   , "photon_true_numer", 10.1e20);
+    }
+    if(is0p == false){
+        if(plot_stage==0){
+            h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator+"&&"+topocuts+ "&&" + recotruthmatchingcuts  , "proton_true_numer", 10.1e20);
+        }else{
+            h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator+"&&"+topocuts +"&&"+precuts + "&&" + recotruthmatchingcuts    , "proton_true_numer",10.1e20);
+        }
     }
 
+    TH1* h_true_proton_ratio;
+    if(is0p == false){
+        h_true_proton_ratio = (TH1*)h_true_proton_numer->Clone("h_true_proton_ratio");
+        h_true_proton_ratio->Divide(h_true_proton_denom);
 
+    }
 
     TH1* h_true_photon_ratio = (TH1*)h_true_photon_numer->Clone("h_true_photon_ratio");
-    TH1* h_true_proton_ratio = (TH1*)h_true_proton_numer->Clone("h_true_proton_ratio");
-
-
     h_true_photon_ratio->Divide(h_true_photon_denom);
-    h_true_proton_ratio->Divide(h_true_proton_denom);
 
     //double ratiop_g =  h_true_proton_ratio->Integral()/h_true_photon_ratio->Integral();
 
-    std::cout<<"the integrated eff from the photon/proton ratios are: "<<  h_true_photon_ratio->Integral() * 100/h_true_photon_numer->Integral() << "%/" <<  h_true_proton_ratio->Integral() * 100 / h_true_proton_numer->Integral()<< "%"<<std::endl;
-    std::cout<<"---- where the integral of the numerator of the photon/protons are: "<<  h_true_photon_numer->Integral() << "/" <<  h_true_proton_numer->Integral()<<std::endl;
-    std::cout<<"---- where the integral of denominator of the photon/protons are: "<<  h_true_photon_denom->Integral() << "/" <<  h_true_proton_denom->Integral()<<std::endl;
+    /*
+       std::cout<<"the integrated eff from the photon/proton ratios are: "<<  h_true_photon_ratio->Integral() * 100/h_true_photon_numer->Integral() << "%/" <<  h_true_proton_ratio->Integral() * 100 / h_true_proton_numer->Integral()<< "%"<<std::endl;
+       std::cout<<"---- where the integral of the numerator of the photon/protons are: "<<  h_true_photon_numer->Integral() << "/" <<  h_true_proton_numer->Integral()<<std::endl;
+       std::cout<<"---- where the integral of denominator of the photon/protons are: "<<  h_true_photon_denom->Integral() << "/" <<  h_true_proton_denom->Integral()<<std::endl;
 
-    std::cout<<"---- and the total eff of photons is: "<<  h_true_photon_numer->Integral()/h_true_photon_denom->Integral()*100.0<<" %"<<std::endl;
-    std::cout<<"---- and the total eff of protons is: "<<  h_true_proton_numer->Integral()/h_true_proton_denom->Integral()*100.0<<" %"<<std::endl;
-    std::cout<<"---- and the total eff by FILE is: "<<  file->GetEntries(denominator+"&&"+topocuts + "&&" + recotruthmatchingcuts)/file->GetEntries(denominator)*100.0<<" % "<<std::endl;
-
+       std::cout<<"---- and the total eff of photons is: "<<  h_true_photon_numer->Integral()/h_true_photon_denom->Integral()*100.0<<" %"<<std::endl;
+       std::cout<<"---- and the total eff of protons is: "<<  h_true_proton_numer->Integral()/h_true_proton_denom->Integral()*100.0<<" %"<<std::endl;
+       std::cout<<"---- and the total eff by FILE is: "<<  file->GetEntries(denominator+"&&"+topocuts + "&&" + recotruthmatchingcuts)/file->GetEntries(denominator)*100.0<<" % "<<std::endl;
+       */
 
     //h_true_photon_ratio->Scale(ratiop_g);
     //    h_true_proton_ratio->Scale(100);
@@ -654,9 +667,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     c->cd();
 
     h_true_photon_ratio->Scale(100);
-    h_true_proton_ratio->Scale(100);
     h_true_photon_ratio->SetLineColor(kRed-6);
-    h_true_proton_ratio->SetLineColor(kBlue-6);
     h_true_photon_ratio->Draw("E1");
 
     h_true_photon_denom->Scale(350/h_true_photon_denom->Integral());
@@ -665,11 +676,15 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     h_true_photon_denom->SetLineColor(kRed-6);
     h_true_photon_denom->Draw("hist same");
 
-    h_true_proton_denom->Scale(350/h_true_proton_denom->Integral());
-    h_true_proton_denom->SetFillStyle(3444);
-    h_true_proton_denom->SetFillColor(kBlue-6);
-    h_true_proton_denom->SetLineColor(kBlue-6);
-    h_true_proton_denom->Draw("hist same");
+    if(is0p == false){
+        h_true_proton_ratio->Scale(100);
+        h_true_proton_ratio->SetLineColor(kBlue-6);
+        h_true_proton_denom->Scale(350/h_true_proton_denom->Integral());
+        h_true_proton_denom->SetFillStyle(3444);
+        h_true_proton_denom->SetFillColor(kBlue-6);
+        h_true_proton_denom->SetLineColor(kBlue-6);
+        h_true_proton_denom->Draw("hist same"); 
+    }
 
 
     //sig_notrack->Scale(200);
@@ -677,17 +692,18 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
     h_true_photon_ratio->DrawCopy("E1 same");
     h_true_photon_ratio->SetTitle("");
-    h_true_proton_ratio->Draw("E1 same");
-
     h_true_photon_ratio->SetLineColor(kRed);
     h_true_photon_ratio->SetLineWidth(2);
     h_true_photon_ratio->SetMarkerStyle(20);
     h_true_photon_ratio->SetMarkerColor(kRed);
 
-    h_true_proton_ratio->SetLineColor(kBlue);
-    h_true_proton_ratio->SetMarkerColor(kBlue);
-    h_true_proton_ratio->SetLineWidth(2);
-    h_true_proton_ratio->SetMarkerStyle(20);
+    if(is0p == false){
+        h_true_proton_ratio->Draw("E1 same");
+        h_true_proton_ratio->SetLineColor(kBlue);
+        h_true_proton_ratio->SetMarkerColor(kBlue);
+        h_true_proton_ratio->SetLineWidth(2);
+        h_true_proton_ratio->SetMarkerStyle(20);
+    }
 
     h_true_photon_ratio->GetYaxis()->SetTitle("Efficiency [%]");
     h_true_photon_ratio->GetXaxis()->SetTitle("True Photon/Proton Energy [GeV]");
@@ -700,10 +716,14 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     l->SetLineColor(kWhite);
     l->SetLineWidth(0);
     l->SetNColumns(2);
-    l->AddEntry(h_true_proton_ratio,"Efficiency: True Proton Energy","lp");
     l->AddEntry(h_true_photon_ratio,"Efficiency: True Photon Energy","lp");
-    l->AddEntry(h_true_proton_denom,"#splitline{}{True Proton Spectum (au)}","fl");
     l->AddEntry(h_true_photon_denom,"#splitline{}{True Photon Spectum (au)}","fl");
+
+    if(is0p == false){
+        l->AddEntry(h_true_proton_ratio,"Efficiency: True Proton Energy","lp");
+        l->AddEntry(h_true_proton_denom,"#splitline{}{True Proton Spectum (au)}","fl");
+
+    }
     l->Draw();
 
 
@@ -718,18 +738,20 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
     c->SaveAs(("eff_"+tag+"_"+file->tag+"_stage_"+std::to_string(plot_stage)+".pdf").c_str(),"pdf");
 
+    if(is0p == false){
 
-    TH2* h2_true_photon_proton_denom = (TH2*)file->getTH2(true_proton, true_photon, denominator,"2d proton photon denom",13.2e20);
-    TCanvas * c2d = new TCanvas();
-    c2d->cd();
 
-    gStyle->SetPalette(kDarkBodyRadiator);	
-    h2_true_photon_proton_denom->Draw("colz");
-    h2_true_photon_proton_denom->GetXaxis()->SetTitle("True Photon Energy [GeV]");
-    h2_true_photon_proton_denom->GetYaxis()->SetTitle("True Proton Kinetic Energy [GeV]");
+        TH2* h2_true_photon_proton_denom = (TH2*)file->getTH2(true_proton, true_photon, denominator,"2d proton photon denom",13.2e20);
+        TCanvas * c2d = new TCanvas();
+        c2d->cd();
 
-    c2d->SaveAs("eff_true_2D.pdf","pdf");
+        gStyle->SetPalette(kDarkBodyRadiator);	
+        h2_true_photon_proton_denom->Draw("colz");
+        h2_true_photon_proton_denom->GetXaxis()->SetTitle("True Photon Energy [GeV]");
+        h2_true_photon_proton_denom->GetYaxis()->SetTitle("True Proton Kinetic Energy [GeV]");
 
+        c2d->SaveAs("eff_true_2D.pdf","pdf");
+    }
 
 
 }
@@ -779,9 +801,9 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     plot_stage = 0;
 
     //don't want entrylists since it's pre-topo??
-   // file->calcBaseEntryList(tag);
-   // std::cout<<"flag1.0"<<std::endl;
-   // file->setStageEntryList(plot_stage);
+    // file->calcBaseEntryList(tag);
+    // std::cout<<"flag1.0"<<std::endl;
+    // file->setStageEntryList(plot_stage);
 
     //std::cout<<"flag1.1"<<std::endl;
     double stage_entries ;
@@ -791,9 +813,9 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
     std::string recotruthmatchingcuts_proton = " reco_vertex_size == 1 && reco_asso_tracks >0 &&sim_track_overlay_fraction[0] <  0.333 && sim_track_pdg[0] == 2212 ";
     std::string recotruthmatchingcuts_photon = "reco_vertex_size == 1 && reco_asso_showers >0 &&sim_shower_overlay_fraction[0] <  0.333 && sim_shower_pdg[0] == 22 ";
-   
 
-  //  std::cout<<"flag2"<<std::endl;
+
+    //  std::cout<<"flag2"<<std::endl;
 
     h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator +"&&" + recotruthmatchingcuts_photon, "photon_true_numer", 13.2e20);
     h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator +"&&"+ recotruthmatchingcuts_proton, "proton_true_numer", 13.2e20);
@@ -828,7 +850,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     //
     */
 
-    
+
     TCanvas * c1 = new TCanvas();
     c1->cd();
 
@@ -845,7 +867,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     //sig_notrack->Scale(200);
     //sig_notrack->Draw("hist same");
 
-  //  h_true_photon_ratio->DrawCopy("E1 same");
+    //  h_true_photon_ratio->DrawCopy("E1 same");
 
 
     h_true_photon_ratio->SetLineColor(kRed);
@@ -882,7 +904,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
 */
 
-   c1->SaveAs(("eff_"+tag+"_"+file->tag+"_pretopo_photon.pdf").c_str(),"pdf");
+    c1->SaveAs(("eff_"+tag+"_"+file->tag+"_pretopo_photon.pdf").c_str(),"pdf");
 
     TCanvas * c2 = new TCanvas();
     c2->cd();
@@ -922,7 +944,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
     c2->SaveAs(("eff_"+tag+"_"+file->tag+"_pretopo_proton.pdf").c_str(),"pdf");
 
-  }
+}
 
 
 bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut){
@@ -991,8 +1013,8 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::vector<bdt
     bdt_variable true_energy("mctruth_nu_E","(20, 0 , 2)","True Neutrino Energy [GeV]",false,"d");
 
     TCanvas * c = new TCanvas();
-	  TPad *p1 = (TPad*)c->cd();
-    
+    TPad *p1 = (TPad*)c->cd();
+
     //might need log y?
     //p1->SetLogy();
 
@@ -1023,9 +1045,9 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::vector<bdt
         //std::cout<<"unfiltered_file "<<unfiltered_file->tag<<" has  "<<n_starting_events<<" events when scaled to "<<13.2e20<<std::endl;
 
         c->cd();
-    	  TH1* h_true_nu_energy_unfiltered = (TH1*)unfiltered_file->getTH1(true_energy, unfiltered_cut , "true_energy_unfilt_"+unfiltered_file->tag, 13.2e20);
+        TH1* h_true_nu_energy_unfiltered = (TH1*)unfiltered_file->getTH1(true_energy, unfiltered_cut , "true_energy_unfilt_"+unfiltered_file->tag, 13.2e20);
         c->cd();
-    	  TH1* h_true_nu_energy_filtered = (TH1*)filtered_file->getTH1(true_energy, filtered_cut, "true_energy_filt_"+filtered_file->tag, 13.2e20);
+        TH1* h_true_nu_energy_filtered = (TH1*)filtered_file->getTH1(true_energy, filtered_cut, "true_energy_filt_"+filtered_file->tag, 13.2e20);
         c->cd();
 
         h_true_nu_energy_filtered->Divide(h_true_nu_energy_unfiltered);
@@ -1036,7 +1058,7 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::vector<bdt
         //if log, minimum cant be 0, make it small
         h_true_nu_energy_filtered->SetMinimum(0);
         h_true_nu_energy_filtered->SetTitle("");
-	      l->AddEntry(h_true_nu_energy_filtered,unfiltered_file->plot_name.c_str() ,"lp");
+        l->AddEntry(h_true_nu_energy_filtered,unfiltered_file->plot_name.c_str() ,"lp");
     }
 
     c->cd();

@@ -915,7 +915,14 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     what_pot = 10.1e20;
 
-    bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag);
+    //added 1g0p case but need to use -t option
+    bool is0p = false;
+    if (topo_tag == "notrack"){
+        is0p = true;
+    }
+
+    bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, false, is0p);
+    
 
     //specifically for protond/photons pre-topological
     // bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
