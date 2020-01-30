@@ -1056,6 +1056,33 @@ else if(mode_option == "eff2"){
 
     }
     return 0;
+
+}else if(mode_option == "export"){
+
+
+
+    for(auto &v :vars){
+            //std::cout<<v.edges[0]<<" "<<v.edges[1]<<" "<<v.edges[2]<<std::endl;
+            bool is_train = false;
+            for(auto &in: bdt_infos){
+                for(auto &tv: in.train_vars){
+                    if(tv.id == v.id){ is_train=true; break;}
+                }
+                if(is_train)break;
+            }
+            if(is_train){
+                std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
+
+                for(double k = 0; k<=v.n_bins; k++){
+                   double b = v.edges[1]+k*fabs(v.edges[1]-v.edges[2])/(double)v.n_bins;
+                   std::cout<<" "<<b;
+                }
+                std::cout<<"\""<<std::endl;
+            }
+    }
+
+
+
 }else if(mode_option == "recomc"){
     if (access("recomc",F_OK) == -1){
         mkdir("recomc",0777);//Create a folder for pdf.

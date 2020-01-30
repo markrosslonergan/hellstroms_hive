@@ -70,6 +70,9 @@ class bdt_stack{
 		THStack* getBDTStack(bdt_info, int level,double c1, double c2);
 		THStack* getBDTStack(bdt_info,std::string bin, int level,double c1, double c2);
 		
+std::vector<double> getEntryFullVector(bdt_variable var);
+
+
 		TH1* getSum(bdt_variable, int level, double c1, double c2);
 		TH1* getEntrySum(bdt_variable);
 		TH1* getEntrySum(bdt_variable,int);
