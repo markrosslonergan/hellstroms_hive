@@ -1056,7 +1056,7 @@ else if(mode_option == "eff2"){
 }else if(mode_option == "sbnfit"){
     if(which_stage==-1) which_stage ==1;
     if(which_file==-1){
-        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+        for(size_t f =0; f< bdt_files.size(); f++){
             std::cout<<"on bdt file "<<f<<std::endl;
             bdt_files[f]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars);
         }
