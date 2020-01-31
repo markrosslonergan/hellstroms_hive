@@ -890,10 +890,13 @@ int bdt_datamc::printPassingPi0DataEvents(std::string outfilename, int stage, st
         E1 = 1.24607*E1 + 4.11138;
         E2 = 1.24607*E2 + 4.11138;
 
+        //double opAng = TMath::ACos(reco_shower_dirx->at(0)*reco_shower_dirx->at(1)+
+        //        reco_shower_diry->at(0)*reco_shower_diry->at(1)+
+        //        reco_shower_dirz->at(0)*reco_shower_dirz->at(1)) ;
         double opAng = TMath::ACos(reco_shower_dirx->at(0)*reco_shower_dirx->at(1)+
                 reco_shower_diry->at(0)*reco_shower_diry->at(1)+
                 reco_shower_dirz->at(0)*reco_shower_dirz->at(1)) ;
-        double invMass = sqrt(2*E1*E2*(1 - opAng) );
+        double invMass = sqrt(2*E1*E2*(1 - TMath::Cos(opAng)) );
 
         // Track kinematics
 
@@ -902,15 +905,18 @@ int bdt_datamc::printPassingPi0DataEvents(std::string outfilename, int stage, st
            std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number <<" "
            <<n_subrun_number<<" "
            << n_event_number <<" ("
-           <<n_vertex_x<<", "<<n_vertex_y<<", "<<n_vertex_z<< ")"<<" " 
+           << n_vertex_x<<", "<<n_vertex_y<<", "<<n_vertex_z<< ")"<<" " 
            << E1 << " " 
            << E2 << " "
-           << opAng << " " 
+           << opAng*57.2958 << " " 
            << invMass << " " 
            << reco_track_displacement->at(i_trk->at(0)) << " " 
            << reco_track_proton_kinetic_energy->at(i_trk->at(0)) << " " << std::endl;
            */
-        std::cout <<  opAng*57.2958 << std::endl;
+        // Or just print run/subrun/event
+           std::cout<< n_run_number <<"\t"
+           <<n_subrun_number<<"\t"
+           << n_event_number << std::endl;
     }
     std::cout<<"End printPassingDataEvents()  for "<<data_file->name<<std::endl;
 
