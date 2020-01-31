@@ -913,7 +913,14 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     what_pot = 10.1e20;
 
-    bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag);
+    //added 1g0p case but need to use -t option
+    bool is0p = false;
+    if (topo_tag == "notrack"){
+        is0p = true;
+    }
+
+    bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, false, is0p);
+    
 
     //specifically for protond/photons pre-topological
     // bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
@@ -1047,7 +1054,7 @@ else if(mode_option == "eff2"){
 }else if(mode_option == "sbnfit"){
     if(which_stage==-1) which_stage ==1;
     if(which_file==-1){
-        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+        for(size_t f =0; f< bdt_files.size(); f++){
             std::cout<<"on bdt file "<<f<<std::endl;
             bdt_files[f]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars);
         }
