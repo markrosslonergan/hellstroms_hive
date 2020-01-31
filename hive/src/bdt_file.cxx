@@ -1195,6 +1195,35 @@ unsigned long  bdt_file::jenkins_hash(std::string key) {
 }
 
 
+int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage, const std::vector<double> & fbdtcuts ){
+    TFile *f = new TFile((analysis_tag+"_"+this->tag+"_SSSprecalc.root").c_str(),"read");
+    TTree *t = (TTree*)f->Get("sss_precalc");
+ 
+    t->AddFriend(this->tvertex);
+    std::string output_file_name = "sbnfit_sss_precalc_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+this->tag+".root";
+    std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
+    TFile* f_sbnfit = new TFile(output_file_name.c_str(),"recreate");
+    std::cout<<"Creating directory structure"<<std::endl;
+    TDirectory *cdtof = f_sbnfit->mkdir("singlephoton");
+    cdtof->cd();    
+
+    std::string sbnfit_cuts = this->getStageCuts(which_stage,fbdtcuts);
+
+    std::cout<<"Copying precalc tree"<<std::endl;
+    TTree * t_sbnfit_tree = (TTree*)t->CopyTree(sbnfit_cuts.c_str());
+    
+    TList * lf1 = (TList*)t_sbnfit_tree->GetListOfFriends();
+    for(const auto&& obj: *lf1) t_sbnfit_tree->GetListOfFriends()->Remove(obj);
+
+    std::cout<<"Writing to file"<<std::endl;
+    cdtof->cd();
+    t_sbnfit_tree->Write();
+    f_sbnfit->Close();
+    f->Close();
+    return 0;
+}
+
+
 int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars){
     std::cout<<"Beginning SBNfit file creation for stage "<<which_stage<<" for file "<<this->tag<<std::endl;
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
@@ -1219,6 +1248,10 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     TTree * t_sbnfit_eventweight_tree = (TTree*)this->teventweight->CopyTree(sbnfit_cuts.c_str());
     std::cout<<"Copying Slice tree "<<std::endl;
     TTree * t_sbnfit_slice_tree = (TTree*)this->tslice->CopyTree("1");
+
+
+
+
 
     TTree * t_sbnfit_simpletree = new TTree("simple_tree","simple_tree");
     double simple_var = 0;
