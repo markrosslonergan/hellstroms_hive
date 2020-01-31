@@ -1057,8 +1057,21 @@ else if(mode_option == "eff2"){
     }
     return 0;
 
-}else if(mode_option == "export"){
+}else if(mode_option == "ssssbnfit"){
+    if(which_stage==-1) which_stage ==1;
+    if(which_file==-1){
+        for(size_t f =0; f< bdt_files.size(); ++f){
+            std::cout<<"on bdt file "<<f<<std::endl;
+            bdt_files[f]->makePrecalcSBNfitFile(analysis_tag, which_stage, fbdtcuts);
+        }
+    }else{
+        bdt_files[which_file]->makePrecalcSBNfitFile(analysis_tag,which_stage, fbdtcuts);
 
+    }
+    return 0;
+
+
+}else if(mode_option == "export"){
 
 
     for(auto &v :vars){
