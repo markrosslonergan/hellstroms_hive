@@ -570,7 +570,7 @@ int main (int argc, char *argv[]){
                 //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
 
                 //datamc.printPassingDataEvents("tmp", 3, fbdtcuts);
-                datamc.printPassingPi0DataEvents("tmp", 2, fbdtcuts);
+                //datamc.printPassingPi0DataEvents("tmp", 2, fbdtcuts);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 //datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
@@ -1067,7 +1067,8 @@ else if(mode_option == "eff2"){
 
     for(auto &v :vars){
             //std::cout<<v.edges[0]<<" "<<v.edges[1]<<" "<<v.edges[2]<<std::endl;
-            bool is_train = false;
+            // Set to false to only run on training vars
+            bool is_train = true;
             for(auto &in: bdt_infos){
                 for(auto &tv: in.train_vars){
                     if(tv.id == v.id){ is_train=true; break;}
