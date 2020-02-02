@@ -494,7 +494,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             leg_hack->SetLineWidth(2);
 
             if(var.has_covar){
-                l0->AddEntry(leg_hack,"Flux, XS and MC stats Error","fl");
+                //l0->AddEntry(leg_hack,"Flux, XS and MC stats Error","fl");
+                l0->AddEntry(leg_hack,var.covar_legend_name.c_str(),"fl");
             }else{
                 l0->AddEntry(leg_hack,"MC Stats-Only Error","le");
             }
@@ -545,6 +546,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                      
  //                       (*covar_collapsed)(ib,ib) += d0->GetBinContent(ib+1);//sqrt(n*n)//This is Data stats error
                         (*covar_collapsed)(ib,ib) += tsum->GetBinContent(ib+1);//sqrt(n*n)//This is MC stats error
+                        
+                        if((*covar_collapsed)(ib,ib)==0){
+                            std::cout<<"WARNING a 0 in the matrix "<<ib<<std::endl;
+                        }
                     }
                     covar_collapsed->Invert(determ_ptr);
     
@@ -992,7 +997,12 @@ int bdt_datamc::calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *full_col
         for(int j=0; j< frac_full->GetNrows();j++){
 
             double pt = (*frac_full)(i,j);
-            if(pt!=pt)pt=0;
+            if(pt!=pt || isinf(pt)){
+                if(full_vec[i] !=0 && full_vec[j]!=0){
+                    //std::cout<<"We have a nan "<<pt<<" at "<<i<<" "<<j<<" "<<full_vec[i]<<" "<<full_vec[j]<<std::endl;
+                }
+                pt=0.0000;
+            }
 
             tmp_full(i,j) = pt*full_vec[i]*full_vec[j];
             //std::cout<<"ARK: "<<i<<" "<<j<<" "<<full_vec[i]<<" "<<pt<<" "<<tmp_full(i,j)<<std::endl;
