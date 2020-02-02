@@ -296,11 +296,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
 
             //some cheating
-            var.has_covar = true;
+            //var.has_covar = true;
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/DetSys/wireX/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/MCrich/VID"+std::to_string(var.id)+".SBNcovar.root";
-            var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
-            var.covar_name = "frac_covariance";
+           //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
+            //var.covar_name = "frac_covariance";
 
             if(var.has_covar){
 
@@ -550,9 +550,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
     
                     for(int ib=0; ib<var.n_bins; ib++){
                         for(int jb=0; jb<var.n_bins; jb++){
-                            mychi +=   (tsum->GetBinContent(ib+1)-d0->GetBinContent(ib+1))*(*covar_collapsed)(ib,jb)*(tsum->GetBinContent(jb+1)-d0->GetBinContent(jb+1));
+                            double curchi   =  (tsum->GetBinContent(ib+1)-d0->GetBinContent(ib+1))*(*covar_collapsed)(ib,jb)*(tsum->GetBinContent(jb+1)-d0->GetBinContent(jb+1));
+                            mychi += curchi;
+                            //std::cout<<"Hi: "<<ib<<" "<<jb<<" "<<tsum->GetBinContent(ib+1)<<" "<<d0->GetBinContent(ib+1)<<" "<<(*covar_collapsed)(ib,ib)<<" "<<tsum->GetBinContent(jb+1)<<" "<<d0->GetBinContent(jb+1)<<" "<<curchi<<" "<<mychi<<std::endl;
+                            
                         } 
-                        
                     }
                     ndof = var.n_bins;
             }
