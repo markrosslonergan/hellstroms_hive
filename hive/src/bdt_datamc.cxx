@@ -58,27 +58,55 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, std::
     int n_run_number = 0;
     int n_subrun_number = 0;
     int n_event_number = 0;
-    double n_vertex_z =0;
-    double n_vertex_y =0;
-    double n_vertex_x =0;
-    double n_reco_shower_energy_max = 0;
+    std::vector<double> *n_reco_shower_startx;
+    std::vector<double> *n_reco_shower_starty;
+    std::vector<double> *n_reco_shower_startz;
+    std::vector<double> *n_reco_shower_energy_max;
+    std::vector<double> *n_reco_shower_theta_yz;
+    std::vector<double> *n_reco_shower_phi_yx;
+    std::vector<double> *n_reco_shower_dirx;
+    std::vector<double> *n_reco_shower_diry;
+    std::vector<double> *n_reco_shower_dirz;
 
+    // Necessary for vectors, for some reason
+	//
+    n_reco_shower_startx = 0;
+    n_reco_shower_starty = 0;
+    n_reco_shower_startz = 0;
+    n_reco_shower_energy_max = 0;
+    n_reco_shower_theta_yz = 0;
+    n_reco_shower_phi_yx = 0;
+    n_reco_shower_dirx = 0;
+    n_reco_shower_diry = 0;
+    n_reco_shower_dirz = 0;
 
     data_file->tvertex->SetBranchAddress("run_number",    &n_run_number);
     data_file->tvertex->SetBranchAddress("subrun_number", &n_subrun_number);
     data_file->tvertex->SetBranchAddress("event_number",  &n_event_number);
-    data_file->tvertex->SetBranchAddress("reco_vertex_z", &n_vertex_z);
-    data_file->tvertex->SetBranchAddress("reco_vertex_y", &n_vertex_y);
-    data_file->tvertex->SetBranchAddress("reco_vertex_x", &n_vertex_x);
+    data_file->tvertex->SetBranchAddress("reco_shower_startx", &n_reco_shower_startx);
+    data_file->tvertex->SetBranchAddress("reco_shower_starty", &n_reco_shower_starty);
+    data_file->tvertex->SetBranchAddress("reco_shower_startz", &n_reco_shower_startz);
     data_file->tvertex->SetBranchAddress("reco_shower_energy_max", &n_reco_shower_energy_max);
-
+    data_file->tvertex->SetBranchAddress("reco_shower_theta_yz", &n_reco_shower_theta_yz);
+    data_file->tvertex->SetBranchAddress("reco_shower_phi_yx", &n_reco_shower_phi_yx);
+    data_file->tvertex->SetBranchAddress("reco_shower_dirx", &n_reco_shower_dirx);
+    data_file->tvertex->SetBranchAddress("reco_shower_diry", &n_reco_shower_diry);
+    data_file->tvertex->SetBranchAddress("reco_shower_dirz", &n_reco_shower_dirz);
 
 
     std::cout<<"Starting printPassingDataEvents() for "<<data_file->name<<std::endl;
+	std::cout<<"Index entry# run_number subrun_number event_number reco_shower_startx ";
+	std::cout<<"reco_shower_starty reco_shower_startz reco_shower_energy_max ";
+	std::cout<<"reco_shower_theta_y reco_shower_phi_yx"<<std::endl;
 
     for(int i=0;i < fake_list->GetN(); i++ ){
         data_file->tvertex->GetEntry( fake_list->GetEntry(i));
-        std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number<<" "<<n_subrun_number<<" "<<n_event_number<<" ("<<n_vertex_x<<", "<<n_vertex_y<<", "<<n_vertex_z<< ")"<<" and shower energy = "<<n_reco_shower_energy_max<<std::endl;
+        std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number<<" "<<n_subrun_number<<" ";
+		std::cout<<n_event_number<<" ";
+		std::cout<<n_reco_shower_startx->at(0)<<" "<<n_reco_shower_starty->at(0)<<" "<<n_reco_shower_startz->at(0)<<" ";
+		std::cout<<n_reco_shower_energy_max->at(0)<<" "<<n_reco_shower_theta_yz->at(0)<<" "<<n_reco_shower_phi_yx->at(0)<<" ";
+		std::cout<<n_reco_shower_dirx->at(0)<<" "<<n_reco_shower_diry->at(0)<<" "<<n_reco_shower_dirz->at(0);
+		std::cout<<std::endl;
     }
     std::cout<<"End printPassingDataEvents()  for "<<data_file->name<<std::endl;
 
@@ -214,7 +242,7 @@ int bdt_datamc::plot2D_DataMinusMC(TFile *ftest, std::vector<bdt_variable> vars,
 
                 //only want to plot different variables, but also not duplicate i.e. 12 and 21
                 if (i!= j && i < j){//Create TH2* for data, then substract mc events from that TH2*.
-				//STEP 1, prepare d0, data; mc's, all mc files;
+				//STEP 1, prepare d0, data; mc's, all non-data files;
                     bdt_variable var2= vars[j];
                     std::cout<<"Starting on variable "<<var1.unit<<" and "<<var2.unit<<std::endl;
 
@@ -269,8 +297,8 @@ int bdt_datamc::plot2D_DataMinusMC(TFile *ftest, std::vector<bdt_variable> vars,
 //								std::cout<<"data: "<< num_DataMinusMC<<" mc: "<<num_mc;
 //								std::cout<<"(DataMinusMC)/sqrt(mc) = "<< slot_value<<" "<<std::endl;
 								DataMinusMC->SetBinContent(xaxis,yaxis,slot_value);
-//								count_y+= d0->GetBinContent(xaxis,yaxis);
-								count_y+= num_mc;
+								count_y+= d0->GetBinContent(xaxis,yaxis);
+//								count_y+= num_mc;
 							}
 						std::cout<<"Bin "<<xaxis<<" has # events "<<count_y<<std::endl;
 						}
@@ -287,37 +315,40 @@ int bdt_datamc::plot2D_DataMinusMC(TFile *ftest, std::vector<bdt_variable> vars,
                     TCanvas *cobs = new TCanvas(("can_"+var1.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)).c_str(),1800,1600);
                     cobs->cd();
 
-					TPad *main_pad = new TPad(("mainpad_"+stage_names.at(s)).c_str(), ("mainpad_"+stage_names.at(s)).c_str(), 0, 0, 0.5, 0.5);
+					TPad *main_pad = new TPad(("mainpad_"+stage_names.at(s)).c_str(), ("mainpad_"+stage_names.at(s)).c_str(), 0, 0, 0.49, 0.49);
 					main_pad->Draw();
 
-					TPad *top_pad = new TPad(("toppad_"+stage_names.at(s)).c_str(), ("toppad_"+stage_names.at(s)).c_str(), 0, 0.5, 0.5, 1.0);
+					TPad *top_pad = new TPad(("toppad_"+stage_names.at(s)).c_str(), ("toppad_"+stage_names.at(s)).c_str(), 0, 0.51, 0.49, 1.0);
 					top_pad->Draw();
 
-					TPad *right_pad = new TPad(("rightpad_"+stage_names.at(s)).c_str(), ("rightpad_"+stage_names.at(s)).c_str(), 0.5, 0, 1.0, 0.5);
+					TPad *right_pad = new TPad(("rightpad_"+stage_names.at(s)).c_str(), ("rightpad_"+stage_names.at(s)).c_str(), 0.51, 0, 1.0, 0.49);
 					right_pad->Draw();
 
-					TPad *upperright_pad = new TPad(("rightpad_"+stage_names.at(s)).c_str(), ("rightpad_"+stage_names.at(s)).c_str(), 0.5, 0.5, 1.0, 1.0);
+					TPad *upperright_pad = new TPad(("rightpad_"+stage_names.at(s)).c_str(), ("rightpad_"+stage_names.at(s)).c_str(), 0.51, 0.51, 1.0, 1.0);
 					upperright_pad->Draw();
 
 				//STEP 4.1, draw the mainpad (bottom left)
 					main_pad->cd();
                     DataMinusMC->Draw("COLZ");
-                    DataMinusMC->SetTitle(("(Data-MC)/sqrt(MC) Stage " + std::to_string(s)+" "+stage_names[s]).c_str());
+                    DataMinusMC->SetTitle("[Data-(MC+BNBExt)]/sqrt(MC+BNBext)");
                     DataMinusMC->GetXaxis()->SetTitle((var1.unit).c_str());
                     DataMinusMC->GetXaxis()->SetTitleSize(0.04);
-                    DataMinusMC->GetXaxis()->SetTitleOffset(1.2);
+//                    DataMinusMC->GetXaxis()->SetTitleOffset(1.2);
                     DataMinusMC->GetYaxis()->SetTitle((var2.unit).c_str());
                     DataMinusMC->GetYaxis()->SetTitleSize(0.04);
-                    DataMinusMC->GetYaxis()->SetTitleOffset(1.3);
+                    DataMinusMC->GetYaxis()->SetTitleOffset(1.2);
 //                    main_pad->SetRightMargin(0.3);
 				
 				//STEP 4.2, draw the toppad (upper left)
 					top_pad->cd();//draw on the top panel
 					projected_MC->SetFillColor(kRed-2);
-					projected_MC->SetTitle("1D Spectrum");
+					projected_MC->SetTitle(("Spectrum of "+var1.unit).c_str());
                     projected_MC->GetYaxis()->SetTitle("Event Rate");
+                    projected_MC->GetXaxis()->SetTitleOffset(1.1);
+                    projected_MC->GetXaxis()->SetTitleSize(0.04);
 					double max1 = 1.2*std::max(projected_MC->GetMaximum(),projected_data->GetMaximum());
 					projected_MC->SetMaximum(max1);
+					projected_MC->SetMinimum(0);
 					projected_MC->SetStats(false);
 					projected_MC->Draw("hist");
 
@@ -328,11 +359,13 @@ int bdt_datamc::plot2D_DataMinusMC(TFile *ftest, std::vector<bdt_variable> vars,
 				//STEP 4.3, draw the rightpad (bottom right)
 					right_pad->cd();//draw on the right panel
 					projected_MCy->SetFillColor(kRed-2);
-					projected_MCy->SetTitle("1D Spectrum");
-                    projected_MCy->GetYaxis()->SetTitle("Event Rate");
-                    projected_MCy->GetXaxis()->SetTitleOffset(1.2);
+					projected_MCy->SetTitle(("Spectrum of "+var2.unit).c_str());
+					projected_MCy->GetYaxis()->SetTitle("Event Rate");
+                    projected_MCy->GetXaxis()->SetTitleOffset(1.1);
+                    projected_MCy->GetXaxis()->SetTitleSize(0.04);
 					double max2 = 1.2*std::max(projected_MCy->GetMaximum(),projected_datay->GetMaximum());
 					projected_MCy->SetMaximum(max2);
+					projected_MCy->SetMinimum(0);
 					projected_MCy->SetStats(false);
 					projected_MCy->Draw("hist");
 
@@ -342,7 +375,7 @@ int bdt_datamc::plot2D_DataMinusMC(TFile *ftest, std::vector<bdt_variable> vars,
 //					projected_datay->SetBinErrorOption(TH1::kPoisson);
 					projected_datay->Draw("same");//CHECK, dont know how to draw horizontal dot
 				
-				//STEP 4.4 add POT info.
+				//STEP 4.4 Add POT info. to the upper right pad.
 					upperright_pad->cd();
 					TLatex pottex;
 					pottex.SetTextSize(0.06);
@@ -354,14 +387,22 @@ int bdt_datamc::plot2D_DataMinusMC(TFile *ftest, std::vector<bdt_variable> vars,
 					double pot_unit = 1e20;
 					std::string pot_unit_s = "e20";
 					std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/pot_unit,1)+ pot_unit_s+" POT";
-
-					pottex.DrawLatex(.10,.10, pot_draw.c_str());
-
-
+					std::string description = "Stage " + std::to_string(s)+" "+stage_names[s];
+					pottex.DrawLatex(.10,.40, description.c_str());
+					pottex.DrawLatex(.20,.30, pot_draw.c_str());
+					//legend
+					TLegend *legend = new TLegend(0, 0.1,0.8,0.2);
+					legend->SetNColumns(2);
+					legend->AddEntry(projected_datay, "Data","P");
+					legend->AddEntry(projected_MCy, "MC+BNBExt","F");
+					legend->Draw();
+					
+					
 
                     std::cout<<"Writing pdf."<<std::endl;
                     cobs->Write();
-                    cobs->SaveAs(("var2D/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_DataMinusMC_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+//                    cobs->SaveAs(("var2D/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_DataMinusMC_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+                    cobs->SaveAs(("var2D/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_DataMinusMC_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 
 					//delete DataMinusMC;//DataMinusMC
