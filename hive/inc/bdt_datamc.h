@@ -91,6 +91,10 @@ class bdt_datamc{
         int calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file);
         int scaleNorm(std::vector<bdt_file> *stack_files, bdt_file data_file, double scaleLow, double scaleHigh, double scaleStep);
 
+        int calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *frac_coll,bdt_variable & var);
+        int simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & var);
+
+
 
 };
 
