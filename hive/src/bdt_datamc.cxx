@@ -787,7 +787,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Writing pdf."<<std::endl;
             cobs->Write();
             if(stack_mode){
-                cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+                //cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+                 cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".root").c_str(),"root");
                 // cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
             }else{
                 cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
@@ -895,7 +896,6 @@ int bdt_datamc::printPassingPi0DataEvents(std::string outfilename, int stage, st
                 reco_shower_diry->at(0)*reco_shower_diry->at(1)+
                 reco_shower_dirz->at(0)*reco_shower_dirz->at(1)) ;
         double invMass = sqrt(2*E1*E2*(1 - opAng) );
-
         // Track kinematics
 
         // Print kinematics
