@@ -578,8 +578,9 @@
 <var def = "sss3d_invar_ranked_implied_opang" binning = "(16,-1,1)" unit ="sss3d best invariant mass candidate implied angle w.r.t primary shower [cos]" type="d" training="4"/>
 
 
+
+<var def = "1g1pJan2020_v1NCPi0_mva" binning = "(25,0.65,0.95)"  unit = "NCpi0 BDT" type="d" logplot="false" training="4"/>
 <!--
-<var def = "stage1_2BDT_XGBOOSTNCPi0_mva" binning = "(24,0,1)"  unit = "NCpi0 BDT" type="d" logplot="false" training="4"/>
 <var def = "stage1_2BDT_XGBOOSTBNB_mva" binning = "(40,0,1)"  unit = "BNB BDT" type="d" logplot="false" training="4"/>
 <var def = "stage1_2BDT_XGBOOSTCOSMIC_mva" binning = "(40,0,1)"  unit = "COSMIC BDT" type="d" logplot="false" training="4"/>
 <var def = "stage1_2BDT_XGBOOSTNue_mva" binning = "(40,0,1)"  unit = "Nue BDT" type="d" logplot="false" training="4"/>
