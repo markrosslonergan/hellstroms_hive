@@ -924,7 +924,9 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     if(which_stage==-1)which_stage=0;
 
-    what_pot = 10.1e20;
+    //what_pot = 10.1e20;
+    // Needs to be 13.2 for filter studies
+    what_pot = 13.2e20;
 
     //added 1g0p case but need to use -t option
     bool is0p = false;
