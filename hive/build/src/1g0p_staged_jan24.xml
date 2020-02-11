@@ -241,7 +241,7 @@
         sig_test_tag = "NCDeltaRadOverlay"
         sig_test_cut = "Entry$%10<4"
         />
-    <scan min = "0.9" max = "1.0" steps="5"/>
+    <scan min = "0.5" max = "1.0" steps="5"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(40,0.0,1.0)">
@@ -334,11 +334,12 @@
 
 
 <precut def = "reco_vertex_dist_to_SCB > 2" name = "Vertex Contained in SCB"/>
+
+<!--
 <precut def = "reco_shower_startx > 5.0 &amp;&amp; reco_shower_startx < 252.35" name = "fiducial x"/>
 <precut def = "reco_shower_starty > -111.5 &amp;&amp; reco_shower_starty < 111.5" name = "fiducial y"/>
 <precut def = "reco_shower_startz > 5.0 &amp;&amp; reco_shower_startz < 1031.8" name = "fiducial z"/>
 
-<!--
 <precut def = "(reco_shower_theta_yz[0]>-1 &amp;&amp;reco_shower_theta_yz[0]<1)" name = "Angle theta_yz"/>
 <precut def = "(reco_shower_startz[0] < 700)" name = "InvesPosz" /> 
 <precut def = "(reco_shower_startx[0] > 75)" name = "InvesPosx" /> 

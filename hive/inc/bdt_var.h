@@ -41,6 +41,7 @@ struct bdt_variable{
         double plot_min;
         double plot_max;
 
+        int n_bins;
         std::vector<double> edges;
 
         int addCovar(std::string name, std::string file){
@@ -77,6 +78,7 @@ struct bdt_variable{
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ' '), safe_name.end());
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ','), safe_name.end());
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '|'), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ':'), safe_name.end());
 	
            	safe_unit = unit;
 			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ' '), safe_unit.end());
@@ -90,6 +92,7 @@ struct bdt_variable{
 			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '-'), safe_unit.end());
 			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '*'), safe_unit.end());
 			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '|'), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ':'), safe_unit.end());
 
             has_covar = false;
 
@@ -103,8 +106,11 @@ struct bdt_variable{
             size_t pos = 0;
             std::string delim = ",";
             std::string token;
+            n_bins = -1;
+
             while ((pos = bins.find(delim)) != std::string::npos) {
                 token = bins.substr(0, pos);
+                if(n_bins<0) n_bins = (int)std::stod(token);
                 edges.push_back(std::stod(token));
                 bins.erase(0, pos + delim.length());
             }

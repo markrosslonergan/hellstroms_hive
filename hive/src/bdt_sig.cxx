@@ -662,7 +662,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
     double best_impact = 0;
     std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
 
-    double plot_pot = 10.1e20;
+    double plot_pot = 10.115e20;
 
     std::cout<<"Setting stage entry lists"<<std::endl;
     for(size_t i = 0; i < sig_files.size(); ++i) {
@@ -822,7 +822,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         for(auto &dd:d){
             std::cout<<dd<<",";   
         }
-        std::cout<<") w/ Impact: "<<impact<<" N_signal: "<<signal<<" N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+        std::cout<<") w/ Impact: "<<impact<<" N_signal: "<<signal<<" (E_signal: "<<(signal/(double)total_sig)<<") N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
 
         s_mod = "";
 
@@ -1237,7 +1237,7 @@ std::vector<double> super_significance(std::vector<bdt_file*> sig_files, std::ve
     std::cout<<"Starting to Scan Super Significance "<<std::endl;
     double best_significance = 0;
     double best_mva;
-    double plot_pot = 13.2e20;
+    double plot_pot = 10.115e20;
 
     std::cout<<"Setting stage entry lists"<<std::endl;
     for(size_t i = 0; i < sig_files.size(); ++i) {
@@ -1262,7 +1262,7 @@ std::vector<double> super_significance(std::vector<bdt_file*> sig_files, std::ve
     std::string s_mod = "";
     TRandom3 *rangen  = new TRandom3(0);  
     std::cout<<"Starting"<<std::endl;
-    for(double t=0.63; t < 0.66; t+=0.001){
+    for(double t=0.99999; t <= 1.0; t+=(1.0-0.99999)/100.0){
 
         std::string s_impact = "1";
 

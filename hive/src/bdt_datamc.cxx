@@ -492,7 +492,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                     std::cout<<"Starting on variable "<<var1.name<<std::endl;
 
                     //make file for data
-                    TCanvas *cobs = new TCanvas(("can_"+var1.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)).c_str(),1800,1600);
+                    TCanvas *cobs = new TCanvas(("can_"+var1.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)).c_str(),1700,1600);
                     cobs->cd();
 
                     TPad *pad = new TPad(("pad_"+stage_names.at(s)).c_str(), ("pad_"+stage_names.at(s)).c_str(), 0, 0, 1, 1.0);
@@ -565,6 +565,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
     return 0;
 }
+
 
 
 
@@ -641,21 +642,36 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
 
             //Check Covar for plotting
-            if(var.has_covar){
-                TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
-                TMatrixD * covar_m = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
-                //TMatrixD * covar_m2 = (TMatrixD*)covar_f->Get("after");
+            TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
 
-                for(int c=0; c< tsum->GetNbinsX()+1;c++){
-                    double dv = tsum->GetBinContent(c+1);
-                    tsum->SetBinError(c+1, sqrt((*covar_m)(c,c)*dv*dv));
+            //some cheating
+            //var.has_covar = true;
+            //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/DetSys/wireX/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
+            //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/MCrich/VID"+std::to_string(var.id)+".SBNcovar.root";
+            //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
+            //var.covar_name = "frac_covariance";
+
+            if(var.has_covar){
+
+                TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
+                TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
+                covar_collapsed->Zero();
+                this->calcCollapsedCovariance(covar_full, covar_collapsed,var);
+
+                for(int c=0; c< tsum->GetNbinsX();c++){
+                    //double dv = tsum->GetBinContent(c+1);
+                    //tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
                     //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
-//                    tsum->SetBinError(c+1, 0.0001);
+                    double mc_stats_error = tsum->GetBinError(c+1);
+                    double mc_sys_error = sqrt((*covar_collapsed)(c,c));
+                    double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
+                    tsum->SetBinError(c+1, tot_error);
+                    //And add on that error
+                    (*covar_collapsed)(c,c) += mc_stats_error*mc_stats_error;
                 }
                 covar_f->Close();
             }else{
                 for(int c=0; c< tsum->GetNbinsX()+1;c++){
-                    //tsum->SetBinError(c+1, sqrt(pow(tsum->GetBinContent(c+1)*0.27,2)+tsum->GetBinError(c+1)));
                     //tsum->SetBinError(c+1, 0.0001);
                 }
 
@@ -669,9 +685,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             double rmin = 0.5;
             double rmax = 1.5;
             int data_rebin = 1;
-            if(s==0 || s == 1){
-                rmin=0; rmax = 1.99;
-            }//else if(s>2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
+            //if(s==0 || s == 1){
+            //    rmin=0; rmax = 1.99;
+            //}//else if(s>2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
 
             //tsum->Rebin(data_rebin);
@@ -708,9 +724,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //	double rmin = 0;
             //	double rmax = 2.99;
             //	int data_rebin = 1;
-            if(s==0 || s == 1){
-                rmin=0; rmax = 1.99;
-            }//else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
+            //if(s==0 || s == 1){
+            //    rmin=0; rmax = 1.99;
+            //}//else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
             //double max_modifier = 1.65;
             double max_modifier = 2;
@@ -774,6 +790,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
             TLegend *l0 = new TLegend(0.11,0.65,0.89,0.89);
+            l0->SetFillStyle(0);
+            l0->SetLineWidth(0);
             l0->SetNColumns(2);
             double NeventsStack = 0;
             int which_signal = 0;
@@ -808,10 +826,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 if(mc_stack->signal_on_top[n]) which_signal = n;
                 n++;
             }
-            //l0->AddEntry(tmp_tsum,"Unconstrained Flux & XS Error","f");
-            //l0->AddEntry(tsum_after,"Constrained Flux & XS Error","lp");
-            l0->AddEntry(tmp_tsum,"MC Stats-Only Error","f");
-            //			d0->Draw("same E1");
+          
+            //This one is just for legend messing
+            TH1 *leg_hack = (TH1*)tmp_tsum->Clone(("leg_tmp_tsum"+std::to_string(s)).c_str());
+            leg_hack->SetLineWidth(2);
+
+            if(var.has_covar){
+                l0->AddEntry(leg_hack,"Flux, XS and MC stats Error","fl");
+            }else{
+                l0->AddEntry(leg_hack,"MC Stats-Only Error","le");
+            }
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
             std::cout<<"Binned Chi-test standard: "<<var.name<<" "<<tsum->Chi2Test(d0,"CHI2")<<std::endl;
@@ -821,10 +845,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             double mychi =0;
             int ndof = 0;
-            for(int p=0; p<d0->GetNbinsX();p++){
+                if(!var.has_covar){
 
-                double da = d0->GetBinContent(p+1);
-                double bk = tsum->GetBinContent(p+1);
+                for(int p=0; p<d0->GetNbinsX();p++){
+
+                    double da = d0->GetBinContent(p+1);
+                    double bk = tsum->GetBinContent(p+1);
 
                 if ( bk ==0){
                     std::cout<<"ERROR mychi, for bin "<<p<<" n_data= "<<da<<" and n_mc= "<<bk<<std::endl;
@@ -834,7 +860,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     // Version 1 chi^2
                     //double da_err = sqrt(d0->GetBinContent(p+1));
                     //double bk_err = tsum->GetBinError(p+1);
-
+    
                     double da_err = sqrt(tsum->GetBinContent(p+1));
                     double bk_err = tsum->GetBinError(p+1);
 
@@ -845,7 +871,28 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                         mychi+=tk;
                         ndof++;
                     }
+               
+                
                 }
+             }
+            }else{
+
+                    Double_t *determ_ptr;
+                    
+                    for(int ib=0; ib<var.n_bins; ib++){
+                     
+ //                       (*covar_collapsed)(ib,ib) += d0->GetBinContent(ib+1);//sqrt(n*n)//This is Data stats error
+                        (*covar_collapsed)(ib,ib) += tsum->GetBinContent(ib+1);//sqrt(n*n)//This is MC stats error
+                    }
+                    covar_collapsed->Invert(determ_ptr);
+    
+                    for(int ib=0; ib<var.n_bins; ib++){
+                        for(int jb=0; jb<var.n_bins; jb++){
+                            mychi +=   (tsum->GetBinContent(ib+1)-d0->GetBinContent(ib+1))*(*covar_collapsed)(ib,jb)*(tsum->GetBinContent(jb+1)-d0->GetBinContent(jb+1));
+                        } 
+                        
+                    }
+                    ndof = var.n_bins;
             }
             std::cout<<"MyChi: "<<var.name<<" "<<mychi<<" "<<std::endl;
 
@@ -966,6 +1013,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pad0bot->cd();       // pad0bot becomes the current pad
 
 
+            /*
             std::cout<<"BNLAR ";
             std::vector<double> ptc = {7.7,16.9,11.6,4.3};
             double ssum = 0;
@@ -988,6 +1036,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Result: "<<mm <<" Chi "<<ahchi<<" "<<sqrt(ahchi)<<std::endl;
             std::cout<<"Result: "<<mm <<" ChiStat "<<ahchi_stats<<" "<<sqrt(ahchi_stats)<<std::endl;
             }
+            */
             //tsum->Rebin(data_rebin);
             TH1* rat_denom = (TH1*)tsum->Clone(("ratio_denom_"+stage_names.at(s)).c_str());
             for(int i=0; i<rat_denom->GetNbinsX(); i++){
@@ -1105,7 +1154,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             //std::string mean = "(Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
-            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (pval: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
+            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
 
             std::string combined = mean + "     " +ks;
             //std::string mean = "Ratio: Normalized" ;
@@ -1126,7 +1175,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             cobs->Write();
             if(stack_mode){
                 cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
-               // cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
+                // cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".root").c_str(),"root");
+                // cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
             }else{
                cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
              }
@@ -1205,12 +1255,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 
 
-
-            //generic calc enrtylist here too
-            if(s>1){
-                data_file->calcBDTEntryList(s,bdt_cuts);
-            }
-            data_file->setStageEntryList(s);
+        double opAng = TMath::ACos(reco_shower_dirx->at(0)*reco_shower_dirx->at(1)+
+                reco_shower_diry->at(0)*reco_shower_diry->at(1)+
+                reco_shower_dirz->at(0)*reco_shower_dirz->at(1)) ;
+        double invMass = sqrt(2*E1*E2*(1 - opAng) );
+        // Track kinematics
 
             std::string scuts="";
             for(auto &s: bdt_cuts) scuts +="_"+std::to_string(s);
@@ -1218,9 +1267,114 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //One variable.
 
 
-            std::cout<<"Starting on variable "<<info.identifier<<std::endl;
-            TCanvas *cobs = new TCanvas(("can_"+info.identifier+"_stage_"+std::to_string(s)).c_str(),("can_"+info.identifier+"_stage_"+std::to_string(s)).c_str(),1801,1600);
-            cobs->cd();
+int bdt_datamc::calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *full_coll, bdt_variable & var){
+    
+    std::vector<double> full_vec = mc_stack->getEntryFullVector(var);
+    TMatrixD tmp_full(frac_full->GetNrows(), frac_full->GetNcols());
+    tmp_full.Zero();
+
+    if(full_vec.size() != frac_full->GetNrows()) {
+        std::cout<<"ERROR calcCollapsedCovariance: "<<full_vec.size()<<" in full_vec but frac_matrix is  "<<frac_full->GetNrows()<<" rows. Priting fullvex "<<std::endl;
+        for(auto &f: full_vec) std::cout<<f<<std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if(var.n_bins != frac_full->GetNrows()/mc_stack->stack.size()){
+        std::cout<<"ERROR calcCollapsedCovariance: "<<var.n_bins<<" bins in bdt_variable but input matrix is "<<frac_full->GetNrows()<<" rows and we have "<<mc_stack->stack.size()<<" bits in ou r data-mc stack"<<std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    for(int i=0; i< frac_full->GetNrows();i++){
+        for(int j=0; j< frac_full->GetNrows();j++){
+
+            double pt = (*frac_full)(i,j);
+            if(pt!=pt)pt=0;
+
+            tmp_full(i,j) = pt*full_vec[i]*full_vec[j];
+            //std::cout<<"ARK: "<<i<<" "<<j<<" "<<full_vec[i]<<" "<<pt<<" "<<tmp_full(i,j)<<std::endl;
+        }
+    }
+    std::cout<<"Done"<<std::endl;
+    //Going to do collapsing here, but for now just do diagonal!
+
+    this->simpleCollapse(&tmp_full, full_coll, var);
+    //fast old way
+    /*
+    int n_stack = mc_stack->stack.size();
+       for(int i=0; i< frac_coll->GetNrows();i++){
+        std::cout<<i<<std::endl; 
+        for(int j = 1; j <n_stack; j++){
+            int mod = var.n_bins*j;
+            std::cout<<j<<" "<<mod<<" "<<i+mod<<"  / "<<tmp_full.GetNrows()<<std::endl;
+            (*frac_coll)(i,i) += tmp_full(i+mod,i+mod); 
+        }
+
+    }
+    */
+    return 0;
+
+}
+
+
+int bdt_datamc::simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & var){
+    //Ripped directly from...
+    //void SBNchi::CollapseSubchannels(TMatrixT <double> & M, TMatrixT <double> & Mc)
+    int num_channels = 1;
+    std::vector<int> num_subchannels = {(int)mc_stack->stack.size()};
+    std::vector<int> num_bins = {var.n_bins};
+
+    std::vector<std::vector<TMatrixT<double>>> Summed(num_channels, std::vector<TMatrixT<double>>(num_channels) );	//Initialise a matrix of matricies, to ZERO.
+    for(int ic = 0; ic < num_channels; ic++){
+        for(int jc =0; jc < num_channels; jc++){
+            Summed[ic][jc].ResizeTo(num_bins[jc],num_bins[ic]) ;// This is CORRECT, do not switch (ie Summed[0][1] = size (num_bins[1], num_bins[0])
+            Summed[ic][jc] = 0.0;
+        }
+    }
+
+    int mrow = 0.0;
+    int mcol = 0.0;
+
+    for(int ic = 0; ic < num_channels; ic++){ 	 //Loop over all rows
+        for(int jc =0; jc < num_channels; jc++){ //Loop over all columns
+
+            for(int m=0; m < num_subchannels[ic]; m++){
+                for(int n=0; n< num_subchannels[jc]; n++){ //For each big block, loop over all subchannels summing toGether
+                    Summed[ic][jc] +=  Min->GetSub(mrow+n*num_bins[jc] ,mrow + n*num_bins[jc]+num_bins[jc]-1, mcol + m*num_bins[ic], mcol+ m*num_bins[ic]+num_bins[ic]-1 );
+                }
+            }
+
+            mrow += num_subchannels[jc]*num_bins[jc];//As we work our way left in columns, add on that many bins
+        }//end of column loop
+
+        mrow = 0; // as we end this row, reSet row count, but jump down 1 column
+        mcol += num_subchannels[ic]*num_bins[ic];
+    }//end of row loop
+
+    ///********************************* And put them back toGether! ************************//
+    Mout->Zero();
+    mrow = 0;
+    mcol = 0;
+
+    //Repeat again for Contracted matrix
+    for(int ic = 0; ic < num_channels; ic++){
+        for(int jc =0; jc < num_channels; jc++){
+
+            Mout->SetSub(mrow,mcol,Summed[ic][jc]);
+            mrow += num_bins[jc];
+        }
+
+        mrow = 0;
+        mcol +=num_bins[ic];
+    }
+
+    return 0 ;
+
+}
+
+
+
+/*
+   int bdt_datamc::calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file) {
 
             if(false&&do_subtraction){
                 std::cout<<"Setting do Subtraction inside bdt_stack "<<std::endl;

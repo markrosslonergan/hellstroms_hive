@@ -1146,7 +1146,8 @@ int bdt_XGtrain(bdt_info &info){
 
         dataloader->PrepareTrainingAndTestTree("1","1", "nTrain_Signal="+std::to_string(floor(signal_entries*0.5))+":nTrain_Background="+std::to_string(floor(background_entries*0.5))+":SplitMode=Random:NormMode=NumEvents:!V");
 
-        factory->BookMethod(dataloader, "BDT" , "TMVA", "!H:!V:NTrees=800:BoostType=RealAdaBoost:nCuts=-1:MaxDepth=3");
+//        factory->BookMethod(dataloader, "BDT" , "TMVA", "!H:!V:NTrees=400:BoostType=RealAdaBoost:nCuts=-1:MaxDepth=2");
+        factory->BookMethod(dataloader, "Likelihood" , "TMVA", "!H:!V");
 
         factory->TrainAllMethods();
         factory->TestAllMethods();

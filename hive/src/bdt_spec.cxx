@@ -220,6 +220,26 @@ THStack* bdt_stack::getEntryStack(bdt_variable var){
     return getEntryStack(var, 0);
 
 }
+
+std::vector<double> bdt_stack::getEntryFullVector(bdt_variable var){
+
+    std::vector<double> ans;
+
+    for(int t=0; t<stack.size(); t++){
+        std::cout<<"Stack "<<stack.at(t)->tag<<std::endl;
+
+        TH1 *hist = (TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, 0);
+            
+        for(int i=0; i< hist->GetNbinsX(); i++){
+            ans.push_back(hist->GetBinContent(i+1)); 
+        }
+    }
+
+    return ans;
+}
+
+
+
 THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
     THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
     int stack_rebin = 1;

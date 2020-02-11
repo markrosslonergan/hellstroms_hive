@@ -29,11 +29,14 @@
         <!--    <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -106.5 &amp;&amp; mctruth_nu_vertex_y &lt; 106.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 10.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1026.8 </cut> -->
-      <!-- <cut> mctruth_cc_or_nc == 1 </cut>
+     <!--  <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 0</cut>
         <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
-        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02)==1</cut> -->
-        <!--<cut> TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 </cut>-->
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02)==1</cut>
+         <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 251.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut> -->
+        <!--<cut> TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 </cut> -->
         
         <!--    <cut> mctruth_daughters_pdg==22 &amp;&amp; mctruth_daughters_status_code==1 &amp;&amp; mctruth_daughters_endx>2 </cut>-->
         <!--        <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
@@ -577,15 +580,14 @@
 <var def = "sss3d_invar_ranked_implied_opang" binning = "(16,-1,1)" unit ="sss3d best invariant mass candidate implied angle w.r.t primary shower [cos]" type="d" training="4"/>
 
 
-<!--
+
 <var def = "stage1_2BDT_XGBOOSTNCPi0_mva" binning = "(24,0,1)"  unit = "NCpi0 BDT" type="d" logplot="false" training="4"/>
 <var def = "stage1_2BDT_XGBOOSTBNB_mva" binning = "(40,0,1)"  unit = "BNB BDT" type="d" logplot="false" training="4"/>
 <var def = "stage1_2BDT_XGBOOSTCOSMIC_mva" binning = "(40,0,1)"  unit = "COSMIC BDT" type="d" logplot="false" training="4"/>
 <var def = "stage1_2BDT_XGBOOSTNue_mva" binning = "(40,0,1)"  unit = "Nue BDT" type="d" logplot="false" training="4"/>
--->
 
 <var def = "mctruth_nu_E" binning = "(14, 0, 3.2)" unit = "True Neutrino Energy [GeV]" type="d" training=""/>
-<var def = "1g1pJan2020_v1COSMIC_mva" binning = "(25,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" logplot="true"/>
+<!--<var def = "1g1pJan2020_v1COSMIC_mva" binning = "(25,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" logplot="true"/> -->
 
 <!-- ================= RECO-MC Matching ======================== -->
 
