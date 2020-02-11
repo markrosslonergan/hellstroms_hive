@@ -340,9 +340,11 @@ int main (int argc, char *argv[]){
         if(mode_option != "train"  && mode_option != "sbnfit"){
             f->calcBaseEntryList(analysis_tag);
         }
+
         if(topo_tag != "notrack"){
-        f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
+            f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
         }
+
     }
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -391,7 +393,6 @@ int main (int argc, char *argv[]){
         for(int i=0; i< bdt_infos.size(); i++){
 
             if(!(which_bdt==i || which_bdt==-1)) continue;
-
 
             bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 
             bdt_file * testing_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_test_tag]; 
@@ -504,25 +505,14 @@ int main (int argc, char *argv[]){
                 datamc.setPlotStage(which_stage);                
                 datamc.setStackMode(histogram_stack->plot_pot);
 
-                //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
-                //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
             }else{
-                std::cout<<"flag5"<<std::endl;
-
-
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setStackMode( histogram_stack->plot_pot);
 
-                //real_datamc.setSubtractionVector(subv);
-                // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-                //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-
                 real_datamc.plotStacks(ftest, vars, fbdtcuts);
-                //real_datamc.SetSpectator();
-                //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
         }
     }    else if(mode_option == "datamc"){
@@ -568,31 +558,18 @@ int main (int argc, char *argv[]){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);                
 
-                //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
-
-                //datamc.printPassingDataEvents("tmp", 3, fbdtcuts);
-                //datamc.printPassingPi0DataEvents("tmp", 3, fbdtcuts);
-                //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                //datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
             }else{
 
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 real_datamc.setPlotStage(which_stage);                
 
-                //real_datamc.setSubtractionVector(subv);
-                // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-                //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-
                 if(which_bdt==-1){
                     real_datamc.plotStacks(ftest, vars, fbdtcuts);
                 }else{
                     real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts);
                 }
-
-                //real_datamc.SetSpectator();
-                //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
         
         }
