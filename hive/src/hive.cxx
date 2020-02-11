@@ -422,6 +422,7 @@ int main (int argc, char *argv[]){
                 if(!((which_bdt==i || which_bdt==-1 )&&(which_file==f||which_file==-1))) continue;
 
                 if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
+
                     bdt_XGapp(bdt_infos[i], bdt_files[f]);
 
                 }else{
@@ -734,7 +735,6 @@ int main (int argc, char *argv[]){
         bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_var2D");	
         real_datamc.setPlotStage(which_stage);                
 
-
         if (vector != ""){//if passed specific variables
             std::vector<bdt_variable> tmp_var =  real_datamc.GetSelectVars(vector, vars);
             real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
@@ -742,13 +742,27 @@ int main (int argc, char *argv[]){
             real_datamc.plot2D(ftest, vars, fbdtcuts); //warning this will make a lot of plots
         }//if passed a vector
     }
+    else if(mode_option == "precalc"){ 
+ 
+        for(int f=0; f< bdt_files.size();++f){
+            bool is_train = false;
+            for(auto & t: training_bdt_files){
+                    if(t==bdt_files[f]) is_train=true;
+            }
+            if(which_file == f || which_file <0 ){
+                if(which_file<0 && is_train) continue; 
+                ncpi0_sss_precalc(bdt_files[f], analysis_tag);
+            }
+        }
+    }
     else if(mode_option == "test"){
 
-        
-        for(int f=0; f< bdt_files.size();++f){
-            if(which_file == f || which_file==0) ncpi0_sss_precalc(bdt_files[f], analysis_tag);
-        }
+        bdt_stack *pphistogram_stack = new bdt_stack(analysis_tag+"_stack");
+        bdt_datamc ppdatamc(onbeam_data_file, pphistogram_stack, analysis_tag+"_stack");	
+        ppdatamc.printPassingDataEvents("tmp", 1, fbdtcuts);
+
         return 0;
+         return 0;
         tagToFileMap["NueOverlays"]->scanStage(6, fbdtcuts,"run_number:subrun_number:event_number");
 
         return 0;

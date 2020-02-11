@@ -307,6 +307,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
                 TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
                 covar_collapsed->Zero();
+                std::cout<<"Reading this from a covariance matrix "<<var.covar_file.c_str()<<std::endl;
                 this->calcCollapsedCovariance(covar_full, covar_collapsed,var);
 
                 for(int c=0; c< tsum->GetNbinsX();c++){
@@ -315,10 +316,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
                     double mc_stats_error = tsum->GetBinError(c+1);
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
+                    std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
                     tsum->SetBinError(c+1, tot_error);
-                    //And add on that error
-                    (*covar_collapsed)(c,c) += mc_stats_error*mc_stats_error;
+                    //And add on the systematic error that is MC stats
+     //               (*covar_collapsed)(c,c) += mc_stats_error*mc_stats_error;
                 }
                 covar_f->Close();
             }else{

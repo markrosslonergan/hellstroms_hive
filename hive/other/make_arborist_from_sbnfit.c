@@ -1,12 +1,10 @@
 void make_arborist_from_sbnfit(){
 
-    std::string s1 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v33/SBNfit/v1_technote/2g1p/sbnfit_pigLEE_Run1_C1_stage_1_Dirt.root";
-    std::string a1 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v33/SBNfit/v1_technote/2g1p/arborist_pigLEE_Dirt_run1_stage1_v33.0.root";
+    std::string s1 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v33/SBNfit/v1_technote/1g1p/sbnfit_1g1pJan2020_v1_stage_1_NueOverlays.root";
+    std::string a1 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v33/SBNfit/v1_technote/1g1p/arborist_1g1pJan2020_v1_NueOverlays_run1_v33.0.root";
 
-    std::string s2 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v33/SBNfit/v1_technote/2g1p/sbnfit_pigLEE_Run1_C1_stage_2_Dirt.root";
+    std::string s2 = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v33/SBNfit/v1_technote/1g1p/sbnfit_1g1pJan2020_v1_stage_6_NueOverlays.root";
     std::string a2 = "test.root";
-
-
 
     // ############ Stage 2 ##############
     TFile *f_sbnfit_stage_1   = new TFile(s1.c_str(),"read");// This is parent
