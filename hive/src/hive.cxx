@@ -435,7 +435,7 @@ int main (int argc, char *argv[]){
 
         //Define what we want to call signal and background here
         const std::vector<std::string> s_tags = {"NCDeltaRadOverlay","NCDeltaRadOverlaySM"};
-        const std::vector<std::string> b_tags ={"BNBOverlays","NCPi0","CCPi0","NueOverlays","BNBext","Dirt"};
+        const std::vector<std::string> b_tags ={"BNBOverlays","Coh. NCPi0","Other NCPi0","CCPi0","NueOverlays","BNBext","Dirt"};
 
         for(int i=0; i< bdt_files.size(); i++){
                  //   bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size",vars);
