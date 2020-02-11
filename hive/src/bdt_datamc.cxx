@@ -459,6 +459,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             int which_signal = 0;
             int n=0;
             std::vector<TH1F*> fake_legend_hists;
+     
             for(auto &f: mc_stack->stack){
 
                 double Nevents = f->GetEntries()*(plot_pot/f->pot)*f->scale_data;
@@ -496,7 +497,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             if(var.has_covar){
                 l0->AddEntry(leg_hack,"Flux, XS and MC stats Error","fl");
             }else{
-                l0->AddEntry(leg_hack,"MC Stats-Only Error","le");
+                l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"le");
             }
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
