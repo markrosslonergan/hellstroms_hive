@@ -291,9 +291,9 @@ int main (int argc, char *argv[]){
                     f->addBDTResponses(bdt_infos[k]);
                 }
             }
-            if(mode_option != "train"  && mode_option != "sbnfit"){
-                f->calcBaseEntryList(analysis_tag);
-            }
+            
+            f->calcBaseEntryList(analysis_tag);
+            
         }
     }
 
@@ -309,7 +309,6 @@ int main (int argc, char *argv[]){
     //===========================================================================================
 
 
-
     for(auto &f: bdt_files){
         std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<which_stage<<"."<<std::endl;
         if(which_stage>1) f->calcBDTEntryList(which_stage,fbdtcuts);
@@ -317,19 +316,36 @@ int main (int argc, char *argv[]){
         f->setStageEntryList(which_stage);
     }	
 
+    if(mode_option == "app"){
 
+        for(int f=0; f< bdt_files.size();++f){
+            for(int i=0; i< bdt_infos.size();++i){
+                //By default loop over all bdt's and files, but if specified do just 1
+                if(!((which_bdt==i || which_bdt==-1 )&&(which_file==f||which_file==-1))) continue;
+                if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
+                    bdt_XGapp(bdt_infos[i], bdt_files[f]);
+                }else{
+                    bdt_app(bdt_infos[i], bdt_files[f]);
+                }
+            }
+        }
+        return 0;
+    }
+ 
     for(auto &var: vars){
-        std::vector<std::string> cuts(bdt_files.size(),"1");
+
+        std::vector<std::string> cuts;
+        for(auto &f: bdt_files){
+            if(which_stage>1){
+                std::string cu = f->getStageCuts(which_stage, fbdtcuts);
+                cuts.push_back(cu); 
+            }else{
+                cuts.push_back("1");
+            }
+        }
+
         compareQuick(var,bdt_files,cuts,"VALID_"+var.safe_unit,true);
     }
-
-
-
-
-
-
-
-
 
     return 0;
 

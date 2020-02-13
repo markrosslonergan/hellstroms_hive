@@ -410,7 +410,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1,
     h_true_photon_denom->Scale(80/h_true_photon_denom->Integral());
     h_true_photon_denom->SetFillStyle(3454);
     h_true_photon_denom->SetFillColor(kRed-6);
-    h_true_photon_denom->SetLineColor(kRed-6);
+            h_true_photon_denom->SetLineColor(kRed-6);
     h_true_photon_denom->Draw("hist same");
 
     h_true_proton_denom->Scale(80/h_true_proton_denom->Integral());
@@ -1079,3 +1079,88 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::vector<bdt
 
 
 }
+
+
+
+int fancyFiciency(bdt_file *file, std::string additional_defin, bdt_variable & var, std::string tag, int denom_stage, int numer_stage,std::vector<double> bdtcuts){
+
+
+
+    TCanvas * ceff = new TCanvas();
+    TPad *p = (TPad*)ceff->cd();
+
+    std::string denom_cuts = "("+file->getStageCuts(denom_stage,bdtcuts)+"&&"+additional_defin+")";
+    TH1* h_spec_denom = (TH1*)file->getTH1(var, denom_cuts, "true_"+var.safe_unit+"_num_"+file->tag, 10.115e20);
+
+    std::string numer_cuts = "("+file->getStageCuts(numer_stage,bdtcuts)+"&&"+additional_defin+")";
+    TH1* h_spec_numer = (TH1*)file->getTH1(var, numer_cuts, "true_"+var.safe_unit+"_num_"+file->tag, 10.115e20);
+
+    p->cd();
+
+
+    //h_spec_denom->SetFillStyle(3445);
+    //h_spec_denom->SetFillColor(kBlue-6);
+    h_spec_denom->SetLineColor(kBlue-6);
+    h_spec_denom->Draw("hist");
+    h_spec_denom->SetMaximum(h_spec_denom->GetMaximum()*1.4);
+
+    h_spec_denom->SetLineColor(kBlue-6);
+    h_spec_denom->SetMarkerColor(kBlue-6);
+    h_spec_denom->SetLineWidth(2);
+    h_spec_denom->SetMarkerStyle(20);
+
+    h_spec_numer->SetFillStyle(3454);
+    h_spec_numer->SetFillColor(kBlue-6);
+    h_spec_numer->SetLineColor(kBlue-6);
+    h_spec_numer->Draw("hist same");
+    
+
+    h_spec_denom->GetYaxis()->SetTitle("Events");
+    h_spec_denom->GetXaxis()->SetTitle(var.unit.c_str());
+
+    h_spec_denom->SetTitle("");
+    p->Draw();
+    p->Update();
+
+
+    p->cd(); 
+    TH1 * h_spec_ratio = (TH1*)h_spec_numer->Clone((var.safe_unit+"_gg_"+file->tag).c_str());
+    h_spec_ratio->Divide(h_spec_denom);
+    h_spec_ratio->SetMaximum( std::min(1.0, h_spec_ratio->GetMaximum()*1.3));
+    h_spec_ratio->SetMinimum(0);
+
+    float rightmax = 1.1*h_spec_ratio->GetMaximum();
+    float scale = p->GetUymax()/rightmax;
+    h_spec_ratio->SetLineColor(kRed-6);
+    h_spec_ratio->Scale(scale);
+           
+    h_spec_ratio->SetMarkerStyle(20);
+    h_spec_ratio->SetMarkerSize(1);
+    h_spec_ratio->SetMarkerColor(kRed-6);
+    
+    h_spec_ratio->Draw("same E0 E1 P");
+             
+    TGaxis *axis = new TGaxis(p->GetUxmax(),p->GetUymin(),p->GetUxmax(), p->GetUymax(),0,rightmax,510,"+L");
+    axis->SetLineColor(kRed-6);
+    axis->SetLabelColor(kRed-6);
+    axis->Draw();
+
+
+
+    TLegend *l2 = new TLegend(0.13,0.79,0.89,0.89);
+    l2->SetLineColor(kWhite);
+    l2->SetLineWidth(0);
+    l2->SetNColumns(2);
+    l2->AddEntry(h_spec_denom,"Denominator","l");
+    l2->AddEntry(h_spec_numer,"Numerator","fl");
+    l2->AddEntry(h_spec_ratio,"Efficiency","pl");
+    l2->Draw();
+
+
+    ceff->SaveAs(("fancyFiciency_"+tag+"_"+file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(numer_stage)+"_over_"+std::to_string(denom_stage)+".pdf").c_str(),"pdf");
+    return 0;
+}
+
+
+
+
