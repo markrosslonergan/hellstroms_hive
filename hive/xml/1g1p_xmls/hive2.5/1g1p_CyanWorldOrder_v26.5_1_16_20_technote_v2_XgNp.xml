@@ -397,6 +397,11 @@
 <precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->
 <precut def = "reco_track_displacement[0]> 100" name = "track length"/>
 
+   <precut def = "(reco_track_dirz[0]> 0.1 ||  reco_track_dirz[0]< -0.1)" name = "track angle wire plane 2"/>
+   <precut def = "(reco_track_dirz[0]> -0.9)" name = "track angle wire plane 2 II"/>
+   <precut def = "(reco_track_dirz[0]< 0.9)" name = "track angle wire plane 2 III"/>
+
+<!--<precut def = "(TMath::Abs(acos(reco_track_dirz[0]))> 0.17 &amp;&amp; TMath::Abs(acos(reco_track_dirz[0]))< 1.39)" name = "track angle wire plane 2"/>-->
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
@@ -601,6 +606,10 @@
 <var def = "sss3d_invar_ranked_opang" binning = "(16,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="d" training="4"/>
 <var def = "sss3d_invar_ranked_implied_opang" binning = "(16,-1,1)" unit ="sss3d best invariant mass candidate implied angle w.r.t primary shower [cos]" type="d" training="4"/>
 -->
+<var def = "reco_track_dirz[0]" binning =  "(40,-1.0,1.0)" unit = "Reco Track Dir Z" type = "d"  training=""/>
+<var def = "reco_track_displacement[0]" binning =  "(40,0,500" unit = "Reco Track Length [cm]" type = "d"  training=""/>
+
+
 <var def = "reco_track_mean_trunc_dEdx_plane0[0]" binning =  "(40,0,5)" unit = "Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
 <var def = "reco_track_mean_trunc_dEdx_plane1[0]" binning =  "(40,0,5)" unit = "Reco Track Truncated Mean dE/dx Plane 1 [MeV/cm]" type = "d" training=""/>
 <var def = "reco_track_mean_trunc_dEdx_plane2[0]" binning =  "(40,0,5)" unit = "Reco Track Truncated Mean dE/dx Plane 2 [MeV/cm]" type = "d"   training=""/>
@@ -609,12 +618,12 @@
 <var def = "reco_track_mean_dEdx_plane1[0]" binning =  "(40,0,5)" unit = "Reco Track Mean dE/dx Plane 1 [MeV/cm]" type = "d" training=""/>
 <var def = "reco_track_mean_dEdx_plane2[0]" binning =  "(40,0,5)" unit = "Reco Track Mean dE/dx Plane 2 [MeV/cm]" type = "d"   training=""/>
 
-<var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(0.03) )" binning =  "(40,0,5)" unit = "Scaled +3 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
-<var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(0.02) )" binning =  "(40,0,5)" unit = "Scaled +2 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
-<var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(0.01) )" binning =  "(40,0,5)" unit = "Scaled +1 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
-<var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(-0.03) )" binning =  "(40,0,5)" unit = "Scaled -3 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
-<var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(-0.02) )" binning =  "(40,0,5)" unit = "Scaled -2 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
-<var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(-0.01) )" binning =  "(40,0,5)" unit = "Scaled -1 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(0.03) )" binning =  "(40,0,5)" unit = "Scaled plus3 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(0.02) )" binning =  "(40,0,5)" unit = "Scaled plus2 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(0.01) )" binning =  "(40,0,5)" unit = "Scaled plus1 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(-0.03) )" binning =  "(40,0,5)" unit = "Scaled minus3 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(-0.02) )" binning =  "(40,0,5)" unit = "Scaled minus2 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(-0.01) )" binning =  "(40,0,5)" unit = "Scaled minus1 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
 
 
 <var def = "reco_track_mean_trunc_dEdx_plane1[0]" binning =  "(40,0,5)" unit = "Scaled Reco Track Truncated Mean dE/dx Plane 1 [MeV/cm]" type = "d" training=""/>
