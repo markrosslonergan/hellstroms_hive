@@ -346,15 +346,9 @@ int bdt_file::calcPOT(){
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
         std::cout<<"--> Events scaled to 10.1e20 "<<numberofevents/pot*10.1e20<<std::endl;
-<<<<<<< HEAD
 //        weight_branch = "1";
       //  weight_branch = "genie_spline_weight*genie_CV_tune_weight";
          weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
-=======
-        //weight_branch = "1";
-//        weight_branch = "genie_spline_weight";
-         weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
->>>>>>> 32203fee0902b55dcab9d1c983a28fa3e406c11c
 
         numberofevents_raw = numberofevents;
 
@@ -838,10 +832,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
    // this->CheckWeights();
-	//KENG CHECK
-	std::cout<<"CHECK "<<__LINE__<<"file "<<this->tag<<" branch "<<this->weight_branch<<std::endl;
     this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+"&&"+in_bins+")*"+this->weight_branch).c_str(),"goff");
-	std::cout<<"CHECK "<<__LINE__<<std::endl;
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
     th1->Sumw2();

@@ -1211,58 +1211,58 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         return 0;
     }
 
-    int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
-        // NEW ONE (for BDT only) stop measure
-        double plot_pot=data_file->pot;
-        std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
-
-
-
-        double title_size_ratio=0.1;
-        double label_size_ratio=0.1;
-        double title_offset_ratioY = 0.3 ;
-        double title_offset_ratioX = 1.1;
-
-        double title_size_upper=0.15;
-        double label_size_upper=0.05;
-        double title_offset_upper = 1.45;
-
-        is_bdt_variable = true;
-
-        std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NC #pi^{0} BDT Cut","NUE","Final Selection"};
-        for(int i= stage_names.size(); i< bdt_cuts.size(); i++){
-            stage_names.push_back("Stage: "+std::to_string(i));
-        }
-
-
-        //Loop over all stages, currently just looking at 1
-        //for(int s = 1; s< bdt_cuts.size()+2; s++){
-
-        {int s=1;
-            std::cout<<"On stage: "<<s<<std::endl;
-            //First set the files at this stage
-            for(auto &f: mc_stack->stack){
-                std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-                //              ********
-                //  will add a generic calc enerty lists here
-                if(s>1){
-                    f->calcBDTEntryList(s,bdt_cuts);
-                }
-                std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-                f->setStageEntryList(s);
-            }	
-
-            std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
-
-
-        double opAng = TMath::ACos(reco_shower_dirx->at(0)*reco_shower_dirx->at(1)+
-                reco_shower_diry->at(0)*reco_shower_diry->at(1)+
-                reco_shower_dirz->at(0)*reco_shower_dirz->at(1)) ;
-        double invMass = sqrt(2*E1*E2*(1 - opAng) );
-        // Track kinematics
-
-            std::string scuts="";
-            for(auto &s: bdt_cuts) scuts +="_"+std::to_string(s);
+//    int bdt_datamc::plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts){
+//        // NEW ONE (for BDT only) stop measure
+//        double plot_pot=data_file->pot;
+//        std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
+//
+//
+//
+//        double title_size_ratio=0.1;
+//        double label_size_ratio=0.1;
+//        double title_offset_ratioY = 0.3 ;
+//        double title_offset_ratioX = 1.1;
+//
+//        double title_size_upper=0.15;
+//        double label_size_upper=0.05;
+//        double title_offset_upper = 1.45;
+//
+//        is_bdt_variable = true;
+//
+//        std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NC #pi^{0} BDT Cut","NUE","Final Selection"};
+//        for(int i= stage_names.size(); i< bdt_cuts.size(); i++){
+//            stage_names.push_back("Stage: "+std::to_string(i));
+//        }
+//
+//
+//        //Loop over all stages, currently just looking at 1
+//        //for(int s = 1; s< bdt_cuts.size()+2; s++){
+//
+//        {int s=1;
+//            std::cout<<"On stage: "<<s<<std::endl;
+//            //First set the files at this stage
+//            for(auto &f: mc_stack->stack){
+//                std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
+//                //              ********
+//                //  will add a generic calc enerty lists here
+//                if(s>1){
+//                    f->calcBDTEntryList(s,bdt_cuts);
+//                }
+//                std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
+//                f->setStageEntryList(s);
+//            }	
+//
+//            std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
+//
+//
+//        double opAng = TMath::ACos(reco_shower_dirx->at(0)*reco_shower_dirx->at(1)+
+//                reco_shower_diry->at(0)*reco_shower_diry->at(1)+
+//                reco_shower_dirz->at(0)*reco_shower_dirz->at(1)) ;
+//        double invMass = sqrt(2*E1*E2*(1 - opAng) );
+//        // Track kinematics
+//
+//            std::string scuts="";
+//            for(auto &s: bdt_cuts) scuts +="_"+std::to_string(s);
 
             //One variable.
 
@@ -1540,12 +1540,11 @@ int bdt_datamc::simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & v
             }
             pre->Draw();
 
-            /* TText *spec;
+             TText *spec;
                if (isSpectator) {
                TText *spec = drawPrelim(0.82, 0.52, "Spectator Variable");
                spec->Draw("same");
                }
-               */
             //cobs->cd(k+1);	
             cobs->cd();
             TPad *pad0bot = new TPad(("padbot_"+stage_names.at(s)).c_str(),("padbot_"+stage_names.at(s)).c_str(), 0, 0.05, 1, 0.35);
@@ -1702,7 +1701,7 @@ int bdt_datamc::simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & v
 
         return 0;
     }
-
+*/
 
 
 
