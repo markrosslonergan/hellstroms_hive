@@ -370,7 +370,6 @@ int main (int argc, char *argv[]){
 }
 
 
-
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name){
     return compareQuick(var,files,cuts,name,true); 
 }
@@ -417,8 +416,8 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
     pad0bot->SetGridx(); // vertical grid
     pad0bot->Draw();
 
-    double rmin  = 0.75;
-    double rmax = 1.25;
+    double rmin  = 0.5;
+    double rmax = 1.5;
 
     for(int i=0; i< files.size();i++){
 
