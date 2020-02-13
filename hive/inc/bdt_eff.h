@@ -30,7 +30,7 @@
 #include "TFriendElement.h"
 #include "TStyle.h"
 #include "TGaxis.h"
-int fancyFiciency(bdt_file *file, std::string additonal_defin, bdt_variable & var, std::string tag, int denom_stage, int numer_stage,std::vector<double> bdtcuts);
+int fancyFiciency(bdt_file *file,std::string, std::string additonal_defin, bdt_variable & var, std::string tag, int denom_stage, int numer_stage,std::vector<double> bdtcuts);
 
 class bdt_efficiency{
     public:

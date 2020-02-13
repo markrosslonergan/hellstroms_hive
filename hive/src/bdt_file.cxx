@@ -990,7 +990,7 @@ std::string bdt_file::getStageCuts(int stage, std::vector<double> bdt_cuts){
     std::string ans;
 
     if(stage==-1){
-        ans = flow.topological_cuts;
+        ans = flow.definition_cuts;//flow.topological_cuts; stage -1 is now "pre topo"
     }else if(stage==0){
         ans = flow.base_cuts;
     }else if(stage ==1){
@@ -1249,7 +1249,6 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     TTree * t_sbnfit_eventweight_tree = (TTree*)this->teventweight->CopyTree(sbnfit_cuts.c_str());
     std::cout<<"Copying Slice tree "<<std::endl;
     TTree * t_sbnfit_slice_tree = (TTree*)this->tslice->CopyTree("1");
-
 
 
     TTree * t_sbnfit_simpletree = new TTree("simple_tree","simple_tree");

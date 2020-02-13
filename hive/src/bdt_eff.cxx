@@ -1082,36 +1082,40 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::vector<bdt
 
 
 
-int fancyFiciency(bdt_file *file, std::string additional_defin, bdt_variable & var, std::string tag, int denom_stage, int numer_stage,std::vector<double> bdtcuts){
+int fancyFiciency(bdt_file *file, std::string additional_denom, std::string additional_numer, bdt_variable & var, std::string tag, int denom_stage, int numer_stage,std::vector<double> bdtcuts){
 
 
 
     TCanvas * ceff = new TCanvas();
     TPad *p = (TPad*)ceff->cd();
 
-    std::string denom_cuts = "("+file->getStageCuts(denom_stage,bdtcuts)+"&&"+additional_defin+")";
+    std::string denom_cuts = "("+file->getStageCuts(denom_stage,bdtcuts)+"&&"+additional_denom+")";
     TH1* h_spec_denom = (TH1*)file->getTH1(var, denom_cuts, "true_"+var.safe_unit+"_num_"+file->tag, 10.115e20);
 
-    std::string numer_cuts = "("+file->getStageCuts(numer_stage,bdtcuts)+"&&"+additional_defin+")";
+    std::string numer_cuts = "("+file->getStageCuts(numer_stage,bdtcuts)+"&&"+additional_numer +"&&"+additional_numer +")";
     TH1* h_spec_numer = (TH1*)file->getTH1(var, numer_cuts, "true_"+var.safe_unit+"_num_"+file->tag, 10.115e20);
 
+    std::cout<<"Gotten stage cuts"<<std::endl;
     p->cd();
+
+    int col1 = kBlue -4;
+    int col2 = kRed - 4;
 
 
     //h_spec_denom->SetFillStyle(3445);
     //h_spec_denom->SetFillColor(kBlue-6);
-    h_spec_denom->SetLineColor(kBlue-6);
+    h_spec_denom->SetLineColor(col1);
     h_spec_denom->Draw("hist");
     h_spec_denom->SetMaximum(h_spec_denom->GetMaximum()*1.4);
 
-    h_spec_denom->SetLineColor(kBlue-6);
-    h_spec_denom->SetMarkerColor(kBlue-6);
+    h_spec_denom->SetLineColor(col1);
+    h_spec_denom->SetMarkerColor(col1);
     h_spec_denom->SetLineWidth(2);
     h_spec_denom->SetMarkerStyle(20);
 
     h_spec_numer->SetFillStyle(3454);
-    h_spec_numer->SetFillColor(kBlue-6);
-    h_spec_numer->SetLineColor(kBlue-6);
+    h_spec_numer->SetFillColor(col1);
+    h_spec_numer->SetLineColor(col1);
     h_spec_numer->Draw("hist same");
     
 
@@ -1123,6 +1127,7 @@ int fancyFiciency(bdt_file *file, std::string additional_defin, bdt_variable & v
     p->Update();
 
 
+    std::cout<<"Ploted bits"<<std::endl;
     p->cd(); 
     TH1 * h_spec_ratio = (TH1*)h_spec_numer->Clone((var.safe_unit+"_gg_"+file->tag).c_str());
     h_spec_ratio->Divide(h_spec_denom);
@@ -1131,31 +1136,31 @@ int fancyFiciency(bdt_file *file, std::string additional_defin, bdt_variable & v
 
     float rightmax = 1.1*h_spec_ratio->GetMaximum();
     float scale = p->GetUymax()/rightmax;
-    h_spec_ratio->SetLineColor(kRed-6);
+    h_spec_ratio->SetLineColor(col2);
     h_spec_ratio->Scale(scale);
            
     h_spec_ratio->SetMarkerStyle(20);
     h_spec_ratio->SetMarkerSize(1);
-    h_spec_ratio->SetMarkerColor(kRed-6);
+    h_spec_ratio->SetMarkerColor(col2);
     
     h_spec_ratio->Draw("same E0 E1 P");
              
+    std::cout<<"Ploted ratio"<<std::endl;
     TGaxis *axis = new TGaxis(p->GetUxmax(),p->GetUymin(),p->GetUxmax(), p->GetUymax(),0,rightmax,510,"+L");
-    axis->SetLineColor(kRed-6);
-    axis->SetLabelColor(kRed-6);
+    axis->SetLineColor(col2);
+    axis->SetLabelColor(col2);
     axis->Draw();
 
-
+    std::cout<<h_spec_numer->Integral()<<" "<<h_spec_denom->Integral()<<std::endl;
 
     TLegend *l2 = new TLegend(0.13,0.79,0.89,0.89);
     l2->SetLineColor(kWhite);
     l2->SetLineWidth(0);
     l2->SetNColumns(2);
-    l2->AddEntry(h_spec_denom,"Denominator","l");
-    l2->AddEntry(h_spec_numer,"Numerator","fl");
-    l2->AddEntry(h_spec_ratio,"Efficiency","pl");
+    l2->AddEntry(h_spec_denom,("Denominator: "+std::to_string(denom_stage)).c_str(),"l");
+    l2->AddEntry(h_spec_numer,("Numerator: "+std::to_string(numer_stage)).c_str(),"fl");
+    l2->AddEntry(h_spec_ratio,("Efficiency : "+to_string_prec(h_spec_numer->Integral()/h_spec_denom->Integral()*100.0  ,2)+"\%").c_str(),"pl");
     l2->Draw();
-
 
     ceff->SaveAs(("fancyFiciency_"+tag+"_"+file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(numer_stage)+"_over_"+std::to_string(denom_stage)+".pdf").c_str(),"pdf");
     return 0;

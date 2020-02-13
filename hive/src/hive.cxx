@@ -558,7 +558,7 @@ int main (int argc, char *argv[]){
 
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
-                datamc.plotEfficiency(tmp_var,fbdtcuts,1,2);
+                //datamc.plotEfficiency(tmp_var,fbdtcuts,1,2);
             }else{
 
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
@@ -566,10 +566,10 @@ int main (int argc, char *argv[]){
 
                 if(which_bdt==-1){
                     real_datamc.plotStacks(ftest, vars, fbdtcuts);
-                    real_datamc.plotEfficiency(vars,fbdtcuts,1,2);
+            //        real_datamc.plotEfficiency(vars,fbdtcuts,1,2);
                 }else{
-                    //real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts);
-                    real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,2);
+                    real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts);
+                //    real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,2);
                 }
             }
         
@@ -737,7 +737,7 @@ int main (int argc, char *argv[]){
 
         bdt_stack *pphistogram_stack = new bdt_stack(analysis_tag+"_stack");
         bdt_datamc ppdatamc(onbeam_data_file, pphistogram_stack, analysis_tag+"_stack");	
-        ppdatamc.printPassingDataEvents("tmp", 1, fbdtcuts);
+        ppdatamc.printPassingDataEvents("tmp", which_stage, fbdtcuts);
 
         return 0;
          return 0;
@@ -896,17 +896,19 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
 }else if(mode_option == "fancy"){
 
-//    bdt_variable t("sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)","(12,0.0,0.7)","True #pi^{0} Momentum","false","d",999);
+      bdt_variable t("sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)","(12,0.0,1.2)","True #pi^{0} Momentum","false","d",999);
 //    bdt_variable t("mctruth_pi0_leading_photon_energy","(12,0.0,0.5)","Leading #pi^{0} photon energy","false","d",999);
 //      bdt_variable t("mctruth_pi0_subleading_photon_energy","(12,0.0,0.5)","Sub-leading #pi^{0} photon energy","false","d",999);
     //bdt_variable t("acos((mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])/sqrt( (mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])*(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])+   (mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1])*(mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1]) +  (mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0])*(mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0]) ))","(12,0,3.14159)", "Leading Photon Theta","false","d",999);
     //bdt_variable t("acos((mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])/sqrt( (mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])*(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])+   (mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1])*(mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1]) +  (mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0])*(mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0]) ))","(12,0,3.14159)", "SubLeading Photon Theta","false","d",999);
     //bdt_variable t("mctruth_pi0_subleading_photon_end[2]","(16,-100,1300)", "SubLeading Photon End Point","false","d",999);
-    bdt_variable t("mctruth_pi0_subleading_photon_end[1]","(8,-150,150)", "SubLeading Photon End Point Y ","false","d",999);
+    //bdt_variable t("mctruth_pi0_subleading_photon_end[1]","(8,-150,150)", "SubLeading Photon End Point Y ","false","d",999);
 
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 && sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 0, 6, fbdtcuts);
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 && sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 4, 6, fbdtcuts);
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 && sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 3, 6, fbdtcuts);
+    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, -1, 0, fbdtcuts);
+    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 2, fbdtcuts);
+    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 3, fbdtcuts);
+    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 4, fbdtcuts);
+    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 5, fbdtcuts);
 
 }else if(mode_option == "eff"){
 
