@@ -262,8 +262,10 @@ int main (int argc, char *argv[]){
             training_signal = bdt_files.back();
             incl_in_stack = false;
             is_training.push_back(true);
+            std::cout<<"PP Training"<<std::endl;
         }else{
             is_training.push_back(false);
+            std::cout<<"PP Not Training"<<std::endl;
         }
 
 
@@ -349,6 +351,7 @@ int main (int argc, char *argv[]){
         int v = 0;
         std::vector<bdt_file*> compare_files;
         for(auto &f: bdt_files){
+            v++;
             if(is_training[v]) continue;
             if(which_stage>1){
                 std::string cu = f->getStageCuts(which_stage, fbdtcuts);
@@ -360,7 +363,6 @@ int main (int argc, char *argv[]){
         }
 
         compareQuick(var,compare_files,cuts,"VALID_"+var.safe_unit,true);
-        v++;
     }
 
     return 0;
