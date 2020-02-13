@@ -195,6 +195,7 @@ int main (int argc, char *argv[]){
     std::vector<bdt_file*> stack_bdt_files;
     std::vector<bdt_file*> signal_bdt_files;
     std::vector<bdt_file*> bkg_bdt_files;
+    std::vector<bool> is_training;
 
     bdt_file * signal;
     bdt_file * training_signal;
@@ -260,6 +261,9 @@ int main (int argc, char *argv[]){
         if(XMLconfig.bdt_is_training_signal[f]){
             training_signal = bdt_files.back();
             incl_in_stack = false;
+            is_training.push_back(true);
+        }else{
+            is_training.push_back(false);
         }
 
 
@@ -291,9 +295,9 @@ int main (int argc, char *argv[]){
                     f->addBDTResponses(bdt_infos[k]);
                 }
             }
-            
+
             f->calcBaseEntryList(analysis_tag);
-            
+
         }
     }
 
@@ -331,20 +335,32 @@ int main (int argc, char *argv[]){
         }
         return 0;
     }
- 
-    for(auto &var: vars){
+
+    std::vector<bdt_variable> quick_vars;
+
+    if(which_bdt == -1){
+        quick_vars = vars;
+    }else{ 
+    }    quick_vars = bdt_infos[which_bdt].train_vars;
+
+    for(auto &var: quick_vars){
 
         std::vector<std::string> cuts;
+        int v = 0;
+        std::vector<bdt_file*> compare_files;
         for(auto &f: bdt_files){
+            if(is_training[v]) continue;
             if(which_stage>1){
                 std::string cu = f->getStageCuts(which_stage, fbdtcuts);
                 cuts.push_back(cu); 
             }else{
                 cuts.push_back("1");
             }
+            compare_files.push_back(f);
         }
 
-        compareQuick(var,bdt_files,cuts,"VALID_"+var.safe_unit,true);
+        compareQuick(var,compare_files,cuts,"VALID_"+var.safe_unit,true);
+        v++;
     }
 
     return 0;
