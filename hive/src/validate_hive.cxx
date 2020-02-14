@@ -195,6 +195,7 @@ int main (int argc, char *argv[]){
     std::vector<bdt_file*> stack_bdt_files;
     std::vector<bdt_file*> signal_bdt_files;
     std::vector<bdt_file*> bkg_bdt_files;
+    std::vector<bool> is_training;
 
     bdt_file * signal;
     bdt_file * training_signal;
@@ -260,6 +261,11 @@ int main (int argc, char *argv[]){
         if(XMLconfig.bdt_is_training_signal[f]){
             training_signal = bdt_files.back();
             incl_in_stack = false;
+            is_training.push_back(true);
+            std::cout<<"PP Training"<<std::endl;
+        }else{
+            is_training.push_back(false);
+            std::cout<<"PP Not Training"<<std::endl;
         }
 
 
@@ -291,9 +297,9 @@ int main (int argc, char *argv[]){
                     f->addBDTResponses(bdt_infos[k]);
                 }
             }
-            if(mode_option != "train"  && mode_option != "sbnfit"){
-                f->calcBaseEntryList(analysis_tag);
-            }
+
+            f->calcBaseEntryList(analysis_tag);
+
         }
     }
 
@@ -309,7 +315,6 @@ int main (int argc, char *argv[]){
     //===========================================================================================
 
 
-
     for(auto &f: bdt_files){
         std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<which_stage<<"."<<std::endl;
         if(which_stage>1) f->calcBDTEntryList(which_stage,fbdtcuts);
@@ -317,26 +322,52 @@ int main (int argc, char *argv[]){
         f->setStageEntryList(which_stage);
     }	
 
+    if(mode_option == "app"){
 
-    for(auto &var: vars){
-        std::vector<std::string> cuts(bdt_files.size(),"1");
-        compareQuick(var,bdt_files,cuts,"VALID_"+var.safe_unit,true);
+        for(int f=0; f< bdt_files.size();++f){
+            for(int i=0; i< bdt_infos.size();++i){
+                //By default loop over all bdt's and files, but if specified do just 1
+                if(!((which_bdt==i || which_bdt==-1 )&&(which_file==f||which_file==-1))) continue;
+                if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
+                    bdt_XGapp(bdt_infos[i], bdt_files[f]);
+                }else{
+                    bdt_app(bdt_infos[i], bdt_files[f]);
+                }
+            }
+        }
+        return 0;
     }
 
+    std::vector<bdt_variable> quick_vars;
 
+    if(which_bdt == -1){
+        quick_vars = vars;
+    }else{ 
+    }    quick_vars = bdt_infos[which_bdt].train_vars;
 
+    for(auto &var: quick_vars){
 
+        std::vector<std::string> cuts;
+        int v = 0;
+        std::vector<bdt_file*> compare_files;
+        for(auto &f: bdt_files){
+            v++;
+            if(is_training[v]) continue;
+            if(which_stage>1){
+                std::string cu = f->getStageCuts(which_stage, fbdtcuts);
+                cuts.push_back(cu); 
+            }else{
+                cuts.push_back("1");
+            }
+            compare_files.push_back(f);
+        }
 
-
-
-
-
-
+        compareQuick(var,compare_files,cuts,"VALID_"+var.safe_unit,true);
+    }
 
     return 0;
 
 }
-
 
 
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name){
@@ -385,8 +416,8 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
     pad0bot->SetGridx(); // vertical grid
     pad0bot->Draw();
 
-    double rmin  = 0.75;
-    double rmax = 1.25;
+    double rmin  = 0.5;
+    double rmax = 1.5;
 
     for(int i=0; i< files.size();i++){
 

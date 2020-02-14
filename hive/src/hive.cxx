@@ -340,15 +340,15 @@ int main (int argc, char *argv[]){
         if(mode_option != "train"  && mode_option != "sbnfit"){
             f->calcBaseEntryList(analysis_tag);
         }
+
         if(topo_tag != "notrack"){
-        f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
+            f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
         }
+
     }
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
-
-
 
     //===========================================================================================
     //===========================================================================================
@@ -392,7 +392,6 @@ int main (int argc, char *argv[]){
 
             if(!(which_bdt==i || which_bdt==-1)) continue;
 
-
             bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 
             bdt_file * testing_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_test_tag]; 
             bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
@@ -422,6 +421,7 @@ int main (int argc, char *argv[]){
                 if(!((which_bdt==i || which_bdt==-1 )&&(which_file==f||which_file==-1))) continue;
 
                 if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
+
                     bdt_XGapp(bdt_infos[i], bdt_files[f]);
 
                 }else{
@@ -503,25 +503,14 @@ int main (int argc, char *argv[]){
                 datamc.setPlotStage(which_stage);                
                 datamc.setStackMode(histogram_stack->plot_pot);
 
-                //datamc.printPassingDataEvents("tmp", 3, fcoscut, fbnbcut);
-                //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
             }else{
-                std::cout<<"flag5"<<std::endl;
-
-
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setStackMode( histogram_stack->plot_pot);
 
-                //real_datamc.setSubtractionVector(subv);
-                // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-                //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-
                 real_datamc.plotStacks(ftest, vars, fbdtcuts);
-                //real_datamc.SetSpectator();
-                //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
         }
     }    else if(mode_option == "datamc"){
@@ -567,31 +556,21 @@ int main (int argc, char *argv[]){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);                
 
-                //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
-
-                //datamc.printPassingDataEvents("tmp", 3, fbdtcuts);
-                //datamc.printPassingPi0DataEvents("tmp", 3, fbdtcuts);
-                //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                //datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+                //datamc.plotEfficiency(tmp_var,fbdtcuts,1,2);
             }else{
 
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 real_datamc.setPlotStage(which_stage);                
 
-                //real_datamc.setSubtractionVector(subv);
-                // real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-                //real_datamc.plotStacks(ftest, vars,fcoscut,fbnbcut);
-
                 if(which_bdt==-1){
                     real_datamc.plotStacks(ftest, vars, fbdtcuts);
+            //        real_datamc.plotEfficiency(vars,fbdtcuts,1,2);
                 }else{
                     real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts);
+                //    real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,2);
                 }
-
-                //real_datamc.SetSpectator();
-                //real_datamc.plotStacks(ftest, plotting_vars,fcoscut,fbnbcut);
             }
         
         }
@@ -734,7 +713,6 @@ int main (int argc, char *argv[]){
         bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_var2D");	
         real_datamc.setPlotStage(which_stage);                
 
-
         if (vector != ""){//if passed specific variables
             std::vector<bdt_variable> tmp_var =  real_datamc.GetSelectVars(vector, vars);
             real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
@@ -742,13 +720,27 @@ int main (int argc, char *argv[]){
             real_datamc.plot2D(ftest, vars, fbdtcuts); //warning this will make a lot of plots
         }//if passed a vector
     }
+    else if(mode_option == "precalc"){ 
+ 
+        for(int f=0; f< bdt_files.size();++f){
+            bool is_train = false;
+            for(auto & t: training_bdt_files){
+                    if(t==bdt_files[f]) is_train=true;
+            }
+            if(which_file == f || which_file <0 ){
+                if(which_file<0 && is_train) continue; 
+                ncpi0_sss_precalc(bdt_files[f], analysis_tag);
+            }
+        }
+    }
     else if(mode_option == "test"){
 
-        
-        for(int f=0; f< bdt_files.size();++f){
-            if(which_file == f || which_file==0) ncpi0_sss_precalc(bdt_files[f], analysis_tag);
-        }
+        bdt_stack *pphistogram_stack = new bdt_stack(analysis_tag+"_stack");
+        bdt_datamc ppdatamc(onbeam_data_file, pphistogram_stack, analysis_tag+"_stack");	
+        ppdatamc.printPassingDataEvents("tmp", which_stage, fbdtcuts);
+
         return 0;
+         return 0;
         tagToFileMap["NueOverlays"]->scanStage(6, fbdtcuts,"run_number:subrun_number:event_number");
 
         return 0;
@@ -901,6 +893,23 @@ l->Draw();
 cimpact->Update();
 cimpact->SaveAs("Impact.pdf","pdf");
 */
+
+}else if(mode_option == "fancy"){
+
+      bdt_variable t("sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)","(12,0.0,1.2)","True #pi^{0} Momentum","false","d",999);
+//    bdt_variable t("mctruth_pi0_leading_photon_energy","(12,0.0,0.5)","Leading #pi^{0} photon energy","false","d",999);
+//      bdt_variable t("mctruth_pi0_subleading_photon_energy","(12,0.0,0.5)","Sub-leading #pi^{0} photon energy","false","d",999);
+    //bdt_variable t("acos((mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])/sqrt( (mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])*(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])+   (mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1])*(mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1]) +  (mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0])*(mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0]) ))","(12,0,3.14159)", "Leading Photon Theta","false","d",999);
+    //bdt_variable t("acos((mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])/sqrt( (mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])*(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])+   (mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1])*(mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1]) +  (mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0])*(mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0]) ))","(12,0,3.14159)", "SubLeading Photon Theta","false","d",999);
+    //bdt_variable t("mctruth_pi0_subleading_photon_end[2]","(16,-100,1300)", "SubLeading Photon End Point","false","d",999);
+    //bdt_variable t("mctruth_pi0_subleading_photon_end[1]","(8,-150,150)", "SubLeading Photon End Point Y ","false","d",999);
+
+    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, -1, 0, fbdtcuts);
+    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 2, fbdtcuts);
+    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 3, fbdtcuts);
+    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 4, fbdtcuts);
+    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 5, fbdtcuts);
+
 }else if(mode_option == "eff"){
 
     if(which_file == -1)which_file = 1;

@@ -467,6 +467,33 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
 
     std::cout<<"####################### Variables ########################################"<<std::endl;
+     //first lets see if there is a covariance general file (GLOBAL)
+    TiXmlElement *pCovar = doc.FirstChildElement("covar");
+
+    bool has_global_covar = false;
+    std::string global_covar_dir;
+    std::string global_covar_name;
+    std::string global_leg_name;
+    while(pCovar){
+        has_global_covar = true;
+
+        const char* var_covar_dir = pCovar->Attribute("dir");
+        const char* var_covar_name = pCovar->Attribute("name");
+        const char* var_leg_name = pCovar->Attribute("plotname");
+        if (var_covar_dir==NULL || var_covar_name==NULL){
+            has_global_covar = false;
+        }else{
+            global_covar_dir = var_covar_dir;
+            global_covar_name = var_covar_name;
+            global_leg_name = var_leg_name;
+            std::cout<<"Loading a GLOBAL covariance matrix direectory"<<std::endl;
+        }
+    
+        pCovar = pCovar->NextSiblingElement("covar");
+
+    }
+
+
 
 
     TiXmlElement *pVar = doc.FirstChildElement("var");
@@ -494,6 +521,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
         std::string covar_file;
         std::string covar_name;
+        std::string covar_leg = "default";
         bool has_covar = false;
         const char* var_covar_file = pVar->Attribute("covarfile");
         const char* var_covar_name = pVar->Attribute("covarname");
@@ -503,6 +531,13 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             has_covar= true;
             covar_file = var_covar_file;
             covar_name = var_covar_name;
+        }
+        
+        if(has_global_covar){
+            has_covar= true;
+            covar_file =  global_covar_dir;
+            covar_name = global_covar_name;
+            covar_leg = global_leg_name;
         }
 
 
@@ -531,7 +566,9 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         t.plot_max = pmax;
         if(has_covar){
             std::cout<<"Adding a covariance matrix "<<covar_name<<" from file "<<covar_file<<std::endl;
+            covar_file = covar_file+"/VID"+std::to_string(n_var)+".SBNcovar.root";
             t.addCovar(covar_name,covar_file);
+            t.covar_legend_name = covar_leg; 
         }
 
 
