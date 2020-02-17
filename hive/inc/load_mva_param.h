@@ -62,6 +62,13 @@ class MVALoader {
     std::string AliasParse(std::string in);
 
 
+    std::vector<int> v_eff_denom_stage;
+    std::vector<int> v_eff_numer_stage;
+    std::vector<std::string> v_eff_denom_cut;
+    std::vector<std::string> v_eff_numer_cut;
+    
+
+
     std::vector<double> bdt_cuts;
 
     std::vector<std::string> recomc_names;

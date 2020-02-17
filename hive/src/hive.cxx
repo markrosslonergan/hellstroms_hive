@@ -904,11 +904,23 @@ cimpact->SaveAs("Impact.pdf","pdf");
     //bdt_variable t("mctruth_pi0_subleading_photon_end[2]","(16,-100,1300)", "SubLeading Photon End Point","false","d",999);
     //bdt_variable t("mctruth_pi0_subleading_photon_end[1]","(8,-150,150)", "SubLeading Photon End Point Y ","false","d",999);
 
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, -1, 0, fbdtcuts);
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 2, fbdtcuts);
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 3, fbdtcuts);
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 4, fbdtcuts);
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 5, fbdtcuts);
+
+    if(which_bdt<0) which_bdt = 0; //default to first file.
+    if(number<0) number = 0; //default to first variable
+    std::string addition_denom = "mctruth_num_exiting_pi0==1";
+    std::string addition_numer = " sim_shower_pdg==22 && sim_shower_parent_pdg==111"; 
+    
+    std::vector<int> vect;
+    std::stringstream ss(vector);
+    //for each character in the string add the ints
+    for (int i; ss >> i;) {
+        vect.push_back(i);    
+        if (ss.peek() == ',')
+            ss.ignore();
+    }
+
+    fancyFiciency(bdt_files[which_bdt], addition_denom , addition_numer, vars[number], analysis_tag, vect[0], vect[1], fbdtcuts);
+
 
 }else if(mode_option == "eff"){
 
