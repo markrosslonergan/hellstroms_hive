@@ -14,8 +14,14 @@ target_link_libraries (hive tinyxmllib hiveLib xgboost ${ROOT_LIBRARIES})
 add_executable (validate_hive validate_hive.cxx)
 target_link_libraries (validate_hive tinyxmllib hiveLib xgboost ${ROOT_LIBRARIES})
 
+add_executable (validate_trk_2 validates/validate_trk_2.cxx)
+target_link_libraries (validate_trk_2 tinyxmllib hiveLib xgboost ${ROOT_LIBRARIES})
+
+
 set_output_directory(hive ${CMAKE_SOURCE_DIR}/build/bin)
 set_output_directory(validate_hive ${CMAKE_SOURCE_DIR}/build/bin)
+set_output_directory(validate_trk_2 ${CMAKE_SOURCE_DIR}/build/bin)
+
 
 #Comment these in to build some lagacy code
 #add_subdirectory(obsol)
