@@ -343,8 +343,8 @@ int main (int argc, char *argv[]){
     if(which_bdt == -1){
         quick_vars = vars;
     }else{ 
-    }    quick_vars = bdt_infos[which_bdt].train_vars;
-
+         quick_vars = bdt_infos[which_bdt].train_vars;
+    }   
     for(auto &var: quick_vars){
 
         std::vector<std::string> cuts;

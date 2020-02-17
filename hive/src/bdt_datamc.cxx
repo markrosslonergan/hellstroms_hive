@@ -101,7 +101,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
     ftest->cd();
 
-    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NCPi0 BDT Cut","NUE BDT Cut","tmp"};
+    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Final Selection","BNB BDT cut","NCPi0 BDT Cut","NUE BDT Cut","tmp"};
     //Loop over all stages
 
     int s_min = 0;
