@@ -907,19 +907,13 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     if(which_bdt<0) which_bdt = 0; //default to first file.
     if(number<0) number = 0; //default to first variable
-    std::string addition_denom = "mctruth_num_exiting_pi0==1";
-    std::string addition_numer = " sim_shower_pdg==22 && sim_shower_parent_pdg==111"; 
-    
-    std::vector<int> vect;
-    std::stringstream ss(vector);
-    //for each character in the string add the ints
-    for (int i; ss >> i;) {
-        vect.push_back(i);    
-        if (ss.peek() == ',')
-            ss.ignore();
-    }
+   
+   if(XMLconfig.v_eff_denom_stage.size()!= 1){
+       std::cout<<"Warning your running Eff Fancy with no XML inputs, breaking."<<std::endl;
+       return 0;
+   }
 
-    fancyFiciency(bdt_files[which_bdt], addition_denom , addition_numer, vars[number], analysis_tag, vect[0], vect[1], fbdtcuts);
+   fancyFiciency(bdt_files[which_bdt], XMLconfig.v_eff_denom_cut[0], XMLconfig.v_eff_numer_cut[0], vars[number], analysis_tag, XMLconfig.v_eff_denom_stage[0], XMLconfig.v_eff_numer_stage[0], fbdtcuts);
 
 
 }else if(mode_option == "eff"){
