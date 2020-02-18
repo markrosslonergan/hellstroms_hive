@@ -48,6 +48,7 @@ int main (int argc, char *argv[]){
     int which_stage = -1;
     std::string vector = "";
     std::string input_string = "";
+    int which_group = -1;
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -62,6 +63,7 @@ int main (int argc, char *argv[]){
         {"combined",    no_argument,        0, 'c'},
         {"help",		required_argument,	0, 'h'},
         {"pot",		    required_argument,	0, 'p'},
+        {"group",       required_argument, 0, 'g'},
         {"number",		required_argument,	0, 'n'},
         {"response",	no_argument,	    0, 'r'},
         {"file",		required_argument,	0, 'f'},
@@ -72,7 +74,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:i:n:v:rch?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:i:n:g:v:rch?", longopts, &index);
 
         switch(iarg)
         {
@@ -93,6 +95,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'b':
                 which_bdt = (int)strtof(optarg,NULL);
+                break;
+            case 'g':
+                which_group = (int)strtof(optarg,NULL);
                 break;
             case 'o':
                 mode_option = optarg;
@@ -142,6 +147,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-b\t--bdt\t\t Run only N BDT training/app, or BDT specific option"<<std::endl;
                 std::cout<<"\t-f\t--file\t\t Which file in bdt_files you want to run over, for file specifc options."<<std::endl;
                 std::cout<<"\t-p\t--pot\t\tSet POT for plots"<<std::endl;
+                std::cout<<"\t-g\t--group\t\tSet a group for variable plotting"<<std::endl;
                 std::cout<<"\t-s\t--stage\t\tSet what stage to do things at."<<std::endl;
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag [Superseeded by XML defined tag]"<<std::endl;
@@ -506,11 +512,20 @@ int main (int argc, char *argv[]){
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
             }else{
+                std::vector<bdt_variable> tmp_vars;
+                for(auto &v: vars){
+                    if(which_group == -1 || which_group == v.cat){
+                        tmp_vars.push_back(v);
+                    }
+                }
+
+
+
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setStackMode( histogram_stack->plot_pot);
 
-                real_datamc.plotStacks(ftest, vars, fbdtcuts);
+                real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts);
             }
         }
     }    else if(mode_option == "datamc"){
@@ -561,11 +576,18 @@ int main (int argc, char *argv[]){
                 //datamc.plotEfficiency(tmp_var,fbdtcuts,1,2);
             }else{
 
+                std::vector<bdt_variable> tmp_vars;
+                for(auto &v: vars){
+                    if(which_group == -1 || which_group == v.cat){
+                        tmp_vars.push_back(v);
+                    }
+                }
+
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 real_datamc.setPlotStage(which_stage);                
 
                 if(which_bdt==-1){
-                    real_datamc.plotStacks(ftest, vars, fbdtcuts);
+                    real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts);
             //        real_datamc.plotEfficiency(vars,fbdtcuts,1,2);
                 }else{
                     real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts);

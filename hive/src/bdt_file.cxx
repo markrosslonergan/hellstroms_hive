@@ -57,12 +57,12 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     //run_fractions_plot = {0.4742,0.5258};
      
     run_names = {"RIsmall"};
-    run_fraction_cuts  = {"( run_number >= 5121 && run_number <= 5946)"};
-    run_fractions_plot = {1.0};
-
-    run_names = {"ALL"};
     run_fraction_cuts  = {"1"};
     run_fractions_plot = {1.0};
+
+  //  run_names = {"RI","R3"};
+  //  run_fraction_cuts  = {"run_number <= 7770 ","run_number>=13697"};
+ //   run_fractions_plot = {0.5,0.5};
 
 
     std::cout<<"Getting vertex tree"<<std::endl;

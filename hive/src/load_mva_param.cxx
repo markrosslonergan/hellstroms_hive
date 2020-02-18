@@ -550,11 +550,16 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }
 
         const char* t_pmax = pVar->Attribute("pmax");
-        if(t_pmax!=NULL){
-            pmax = atof(t_pmax);
-        }
 
         std::cout<<"Plotting Min/Max "<<pmin<<" "<<pmax<<std::endl;
+
+        
+       
+        int in_cat = 0; 
+        const char * t_cat = pVar->Attribute("group");
+         if(t_cat!=NULL){
+            in_cat = atoi(t_cat);
+         }
 
 
         bool is_spec = false;
@@ -564,6 +569,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         t.is_logplot = var_logplot_bool;
         t.plot_min = pmin;
         t.plot_max = pmax;
+        t.cat = in_cat;
         if(has_covar){
             std::cout<<"Adding a covariance matrix "<<covar_name<<" from file "<<covar_file<<std::endl;
             covar_file = covar_file+"/VID"+std::to_string(n_var)+".SBNcovar.root";
