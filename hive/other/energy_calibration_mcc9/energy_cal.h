@@ -61,63 +61,6 @@ std::vector<std::pair<int,int> > leadingProjBins() {
     ranges.push_back(std::make_pair(31, 34) );
     ranges.push_back(std::make_pair(34, 37) );
     ranges.push_back(std::make_pair(37, 40) );
-    /*
-    ranges.push_back(std::make_pair(15, 18) );
-    ranges.push_back(std::make_pair(18, 21) );
-    ranges.push_back(std::make_pair(21, 24) );
-    ranges.push_back(std::make_pair(24, 27) );
-    ranges.push_back(std::make_pair(27, 30) );
-    ranges.push_back(std::make_pair(30, 33) );
-    ranges.push_back(std::make_pair(33, 36) );
-    ranges.push_back(std::make_pair(36, 39) );
-    ranges.push_back(std::make_pair(39, 42) );
-    ranges.push_back(std::make_pair(42, 45) );
-    ranges.push_back(std::make_pair(45, 48) );
-    ranges.push_back(std::make_pair(48, 51) );
-    ranges.push_back(std::make_pair(51, 54) );
-    ranges.push_back(std::make_pair(54, 57) );
-    ranges.push_back(std::make_pair(57, 60) );
-    ranges.push_back(std::make_pair(60, 70) );
-    ranges.push_back(std::make_pair(70, 80) );
-    ranges.push_back(std::make_pair(80, 100) );
-    ranges.push_back(std::make_pair(100, 120) );
-    ranges.push_back(std::make_pair(120, 140) );
-    ranges.push_back(std::make_pair(140, 160) );
-    ranges.push_back(std::make_pair(160, 180) );
-    ranges.push_back(std::make_pair(180, 200) );
-    //ranges.push_back(std::make_pair(200, 250) );
-    ranges.push_back(std::make_pair(200, 220) );
-    ranges.push_back(std::make_pair(220, 250) );
-    */
-    /*
-    ranges.push_back(std::make_pair(6, 7) );
-    ranges.push_back(std::make_pair(7, 8) );
-    ranges.push_back(std::make_pair(8, 9) );
-    ranges.push_back(std::make_pair(9, 10) );
-    ranges.push_back(std::make_pair(10, 11) );
-    ranges.push_back(std::make_pair(11, 12) );
-    ranges.push_back(std::make_pair(12, 13) );
-    ranges.push_back(std::make_pair(13, 14) );
-    ranges.push_back(std::make_pair(14, 15) );
-    ranges.push_back(std::make_pair(15, 17) );
-    ranges.push_back(std::make_pair(17, 19) );
-    ranges.push_back(std::make_pair(19, 21) );
-    ranges.push_back(std::make_pair(21, 23) );
-    ranges.push_back(std::make_pair(23, 25) );
-    ranges.push_back(std::make_pair(25, 28) );
-    ranges.push_back(std::make_pair(28, 31) );
-    ranges.push_back(std::make_pair(31, 35) );
-    ranges.push_back(std::make_pair(35, 39) );
-    ranges.push_back(std::make_pair(39, 43) );
-    ranges.push_back(std::make_pair(43, 47) );
-    ranges.push_back(std::make_pair(47, 52) );
-    ranges.push_back(std::make_pair(52, 57) );
-    ranges.push_back(std::make_pair(57, 62) );
-    ranges.push_back(std::make_pair(62, 67) );
-    ranges.push_back(std::make_pair(67, 72) );
-    ranges.push_back(std::make_pair(72, 80) );
-    ranges.push_back(std::make_pair(80, 100) );
-    */
     return ranges;
 }
 
