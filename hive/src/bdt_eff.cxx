@@ -1107,6 +1107,7 @@ int fancyFiciency(bdt_file *file, std::string additional_denom, std::string addi
     h_spec_denom->SetLineColor(col1);
     h_spec_denom->Draw("hist");
     h_spec_denom->SetMaximum(h_spec_denom->GetMaximum()*1.4);
+    h_spec_denom->SetMinimum(0);
 
     h_spec_denom->SetLineColor(col1);
     h_spec_denom->SetMarkerColor(col1);

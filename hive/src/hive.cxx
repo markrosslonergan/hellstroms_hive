@@ -958,16 +958,8 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
 }else if(mode_option == "fancy"){
 
-    bdt_variable t("sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)","(12,0.0,1.2)","True #pi^{0} Momentum","false","d",999);
-    //    bdt_variable t("mctruth_pi0_leading_photon_energy","(12,0.0,0.5)","Leading #pi^{0} photon energy","false","d",999);
-    //      bdt_variable t("mctruth_pi0_subleading_photon_energy","(12,0.0,0.5)","Sub-leading #pi^{0} photon energy","false","d",999);
-    //bdt_variable t("acos((mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])/sqrt( (mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])*(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])+   (mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1])*(mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1]) +  (mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0])*(mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0]) ))","(12,0,3.14159)", "Leading Photon Theta","false","d",999);
-    //bdt_variable t("acos((mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])/sqrt( (mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])*(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])+   (mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1])*(mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1]) +  (mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0])*(mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0]) ))","(12,0,3.14159)", "SubLeading Photon Theta","false","d",999);
-    //bdt_variable t("mctruth_pi0_subleading_photon_end[2]","(16,-100,1300)", "SubLeading Photon End Point","false","d",999);
-    //bdt_variable t("mctruth_pi0_subleading_photon_end[1]","(8,-150,150)", "SubLeading Photon End Point Y ","false","d",999);
-
-
-    if(which_bdt<0) which_bdt = 0; //default to first file.
+    
+    if(which_file<0) which_file = 0; //default to first file.
     if(number<0) number = 0; //default to first variable
 
     if(XMLconfig.v_eff_denom_stage.size()!= 1){
@@ -975,8 +967,13 @@ cimpact->SaveAs("Impact.pdf","pdf");
         return 0;
     }
 
-    fancyFiciency(bdt_files[which_bdt], XMLconfig.v_eff_denom_cut[0], XMLconfig.v_eff_numer_cut[0], vars[number], analysis_tag, XMLconfig.v_eff_denom_stage[0], XMLconfig.v_eff_numer_stage[0], fbdtcuts);
+    for(auto &var: vars){
+        if(which_group == -1 || which_group == var.cat){
+            fancyFiciency(bdt_files[which_file], XMLconfig.v_eff_denom_cut[0], XMLconfig.v_eff_numer_cut[0], var, analysis_tag, XMLconfig.v_eff_denom_stage[0], XMLconfig.v_eff_numer_stage[0], fbdtcuts);
+        }
+     }
 
+    return 0;
 
 }else if(mode_option == "eff"){
 
