@@ -334,6 +334,7 @@ int main (int argc, char *argv[]){
             for(int i=0; i< bdt_infos.size();++i){
                 //By default loop over all bdt's and files, but if specified do just 1
                 if(!((which_bdt==i || which_bdt==-1 )&&(which_file==f||which_file==-1))) continue;
+                
                 if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
                     bdt_XGapp(bdt_infos[i], bdt_files[f]);
                 }else{

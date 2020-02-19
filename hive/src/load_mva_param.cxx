@@ -349,6 +349,18 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             }
         }
 
+        const char* t_valid = pBDTfile->Attribute("validate");
+        if(t_valid==NULL){
+            bdt_is_validate_file.push_back(false);
+        }else{
+            std::string sig = t_valid;
+            if(sig=="true"){
+                bdt_is_validate_file.push_back(true);
+            }else{
+                bdt_is_validate_file.push_back(false);
+            }
+        }
+
 
         const char* t_plotname = pBDTfile->Attribute("plot_name");
         if(t_plotname==NULL){
@@ -356,6 +368,8 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }else{
             bdt_plotnames.push_back(t_plotname);
         }
+
+
 
 
         TiXmlElement *pDefinition = pBDTfile->FirstChildElement("definition");

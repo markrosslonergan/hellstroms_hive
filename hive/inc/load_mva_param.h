@@ -43,6 +43,8 @@ class MVALoader {
     std::vector<std::string> bdt_hist_styles;
     std::vector<std::string> bdt_dirs;
     std::vector<std::string> bdt_plotnames;
+    std::vector<bool> bdt_is_validate_file;
+
     std::vector<TColor*> bdt_cols;
     std::vector<int> bdt_fillstyles;
     std::vector<double> bdt_scales;
