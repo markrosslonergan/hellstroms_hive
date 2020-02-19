@@ -1137,6 +1137,56 @@ double cos_angle_3pts(std::vector<double> last, std::vector<double> next, std::v
     return cos;
 }
 
+int sim_track_precalc(const bdt_file * file, const std::string & tag){
+
+    //create output trees    
+    std::string nam = tag+"_"+file->tag+"_simtrack.root";
+    TFile*fout = new TFile(nam.c_str(),"recreate");
+    TTree tout("track_tree","track_tree");
+
+    //set tree branches for new variables
+    std::vector<double> * sim_track_endx = 0;
+    tout.Branch("sim_track_endx",&sim_track_endx);
+    
+    //get entries in vertex tree
+    int Nent = file->tvertex->GetEntries();
+
+    std::vector<double> * sim_track_startx = 0;
+    std::vector<double> * sim_track_energy = 0;
+    std::vector<double> * mctruth_daughters_E = 0;
+    std::vector<double> * mctruth_daughters_pdg = 0;
+
+    file->tvertex->SetBranchAddress("sim_track_startx",&sim_track_startx);
+ file->tvertex->SetBranchAddress("sim_track_energy",&sim_track_energy);
+ file->tvertex->SetBranchAddress("mctruth_daughters_E",&mctruth_daughters_E);
+ file->tvertex->SetBranchAddress("mctruth_daughters_pdg",&mctruth_daughters_pdg);
+
+
+
+
+   //loop over events and make match between sim track and mctruth daughters
+    for(int i=0; i< Nent; i++){
+        file->tvertex->GetEntry(i);
+      //  sim_track_endx.clear();
+        
+     //   sim_track_energy
+       // mctruth_daughters
+      //  mctruth_daughters_pdg
+      //  sim_track_endx.resize(, -9999);
+
+       
+
+        
+    }
+    
+    fout->cd();
+    tout.Write();
+    fout->Close();
+
+
+    return 0;
+}
+
 
 // ******************************** NCPI0 NCPI0 NCPI0 ********************************** //
 int ncpi0_sss_precalc(const bdt_file * file, const std::string & tag){

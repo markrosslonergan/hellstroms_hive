@@ -349,6 +349,8 @@ int main (int argc, char *argv[]){
             f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
         }
 
+        f->addFriend("track_tree",analysis_tag+"_"+f->tag+"_simtrack.root");
+
     }
 
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
@@ -748,8 +750,9 @@ int main (int argc, char *argv[]){
                 if(t==bdt_files[f]) is_train=true;
             }
             if(which_file == f || which_file <0 ){
-                if(which_file<0 && is_train) continue; 
-                ncpi0_sss_precalc(bdt_files[f], analysis_tag);
+                if(which_file<0 && is_train) continue;
+                sim_track_precalc(bdt_files[f], analysis_tag);
+                //ncpi0_sss_precalc(bdt_files[f], analysis_tag);
             }
         }
     }
