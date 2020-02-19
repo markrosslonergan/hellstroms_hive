@@ -349,6 +349,18 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             }
         }
 
+        const char* t_valid = pBDTfile->Attribute("validate");
+        if(t_valid==NULL){
+            bdt_is_validate_file.push_back(false);
+        }else{
+            std::string sig = t_valid;
+            if(sig=="true"){
+                bdt_is_validate_file.push_back(true);
+            }else{
+                bdt_is_validate_file.push_back(false);
+            }
+        }
+
 
         const char* t_plotname = pBDTfile->Attribute("plot_name");
         if(t_plotname==NULL){
@@ -356,6 +368,8 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }else{
             bdt_plotnames.push_back(t_plotname);
         }
+
+
 
 
         TiXmlElement *pDefinition = pBDTfile->FirstChildElement("definition");
@@ -467,6 +481,33 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
 
     std::cout<<"####################### Variables ########################################"<<std::endl;
+     //first lets see if there is a covariance general file (GLOBAL)
+    TiXmlElement *pCovar = doc.FirstChildElement("covar");
+
+    bool has_global_covar = false;
+    std::string global_covar_dir;
+    std::string global_covar_name;
+    std::string global_leg_name;
+    while(pCovar){
+        has_global_covar = true;
+
+        const char* var_covar_dir = pCovar->Attribute("dir");
+        const char* var_covar_name = pCovar->Attribute("name");
+        const char* var_leg_name = pCovar->Attribute("plotname");
+        if (var_covar_dir==NULL || var_covar_name==NULL){
+            has_global_covar = false;
+        }else{
+            global_covar_dir = var_covar_dir;
+            global_covar_name = var_covar_name;
+            global_leg_name = var_leg_name;
+            std::cout<<"Loading a GLOBAL covariance matrix direectory"<<std::endl;
+        }
+    
+        pCovar = pCovar->NextSiblingElement("covar");
+
+    }
+
+
 
 
     TiXmlElement *pVar = doc.FirstChildElement("var");
@@ -494,6 +535,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
         std::string covar_file;
         std::string covar_name;
+        std::string covar_leg = "default";
         bool has_covar = false;
         const char* var_covar_file = pVar->Attribute("covarfile");
         const char* var_covar_name = pVar->Attribute("covarname");
@@ -503,6 +545,13 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             has_covar= true;
             covar_file = var_covar_file;
             covar_name = var_covar_name;
+        }
+        
+        if(has_global_covar){
+            has_covar= true;
+            covar_file =  global_covar_dir;
+            covar_name = global_covar_name;
+            covar_leg = global_leg_name;
         }
 
 
@@ -515,11 +564,16 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }
 
         const char* t_pmax = pVar->Attribute("pmax");
-        if(t_pmax!=NULL){
-            pmax = atof(t_pmax);
-        }
 
         std::cout<<"Plotting Min/Max "<<pmin<<" "<<pmax<<std::endl;
+
+        
+       
+        int in_cat = 0; 
+        const char * t_cat = pVar->Attribute("group");
+         if(t_cat!=NULL){
+            in_cat = atoi(t_cat);
+         }
 
 
         bool is_spec = false;
@@ -529,9 +583,12 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         t.is_logplot = var_logplot_bool;
         t.plot_min = pmin;
         t.plot_max = pmax;
+        t.cat = in_cat;
         if(has_covar){
             std::cout<<"Adding a covariance matrix "<<covar_name<<" from file "<<covar_file<<std::endl;
+            covar_file = covar_file+"/VID"+std::to_string(n_var)+".SBNcovar.root";
             t.addCovar(covar_name,covar_file);
+            t.covar_legend_name = covar_leg; 
         }
 
 
@@ -591,6 +648,55 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
     for(auto &v: vec_methods){
         v.bdt_all_vars = bdt_all_vars;
     }
+
+
+    std::cout<<"####################### Efficiency  ########################################"<<std::endl;
+
+    TiXmlElement *pEff = doc.FirstChildElement("efficiency");
+
+    while(pEff){
+ 
+        const char* t_denom_stage = pEff->Attribute("denom_stage");
+            if(t_denom_stage==NULL){
+                std::cout<<"Setting default denominator stage of -1"<<std::endl;
+                v_eff_denom_stage.push_back(-1);
+            }else{
+                v_eff_denom_stage.push_back(std::stoi(t_denom_stage,NULL));
+                std::cout<<"Setting Denom Stage of "<<v_eff_denom_stage.back()<<std::endl;
+            }
+
+        const char* t_denom_cut = pEff->Attribute("denom_cut");
+            if(t_denom_cut==NULL){
+                std::cout<<"Setting default denominator cut of `1` "<<std::endl;
+                v_eff_denom_cut.push_back("1");
+            }else{
+                v_eff_denom_cut.push_back(t_denom_cut);
+                std::cout<<"Setting Denom Cut of "<<t_denom_cut<<std::endl;
+            }
+  
+        const char* t_numer_stage = pEff->Attribute("numer_stage");
+            if(t_numer_stage==NULL){
+                std::cout<<"Setting default numerinator stage of -1"<<std::endl;
+                v_eff_numer_stage.push_back(-1);
+            }else{
+                v_eff_numer_stage.push_back(std::stoi(t_numer_stage,NULL));
+                std::cout<<"Setting Numer Stage of "<<v_eff_numer_stage.back()<<std::endl;
+            }
+
+        const char* t_numer_cut = pEff->Attribute("numer_cut");
+            if(t_numer_cut==NULL){
+                std::cout<<"Setting default numerinator cut of `1` "<<std::endl;
+                v_eff_numer_cut.push_back("1");
+            }else{
+                v_eff_numer_cut.push_back(t_numer_cut);
+                std::cout<<"Setting Numer Cut of "<<t_numer_cut<<std::endl;
+            }
+
+
+        pEff = pEff->NextSiblingElement("efficiency");
+
+    }
+
 
     std::cout<<"####################### RECO-MC Matching ########################################"<<std::endl;
 

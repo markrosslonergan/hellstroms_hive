@@ -27,7 +27,8 @@ struct bdt_variable{
 	public:
 		std::string name;
         int id;
-		std::string safe_name;
+		int cat;
+        std::string safe_name;
 		std::string binning;
 		std::string unit;
 		std::string safe_unit;
@@ -37,6 +38,7 @@ struct bdt_variable{
         bool has_covar;
         std::string covar_name;
         std::string covar_file;
+        std::string covar_legend_name;
 
         double plot_min;
         double plot_max;
@@ -115,7 +117,8 @@ struct bdt_variable{
                 bins.erase(0, pos + delim.length());
             }
             edges.push_back(std::stod(bins));
-            
+           
+            cat = 0;
 
 
 
@@ -131,6 +134,7 @@ struct bdt_variable{
 	{ 
                 plot_min =-999;
             plot_max =-999;
+            cat = 0;
 };
 
 };
