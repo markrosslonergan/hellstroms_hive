@@ -921,6 +921,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
 }else if (mode_option == "valid"){
 
+    std::cout<<"Running validate mode: "<<validate_files.size()<<std::endl;
 
     std::vector<bdt_variable> quick_vars;
 
