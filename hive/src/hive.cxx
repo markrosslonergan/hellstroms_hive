@@ -24,6 +24,9 @@
 #include "load_mva_param.h"
 #include "tinyxml.h"
 
+int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
+int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name,bool shape_only);
+
 
 
 int main (int argc, char *argv[]){
@@ -48,6 +51,7 @@ int main (int argc, char *argv[]){
     int which_stage = -1;
     std::string vector = "";
     std::string input_string = "";
+    int which_group = -1;
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -62,6 +66,7 @@ int main (int argc, char *argv[]){
         {"combined",    no_argument,        0, 'c'},
         {"help",		required_argument,	0, 'h'},
         {"pot",		    required_argument,	0, 'p'},
+        {"group",       required_argument, 0, 'g'},
         {"number",		required_argument,	0, 'n'},
         {"response",	no_argument,	    0, 'r'},
         {"file",		required_argument,	0, 'f'},
@@ -72,7 +77,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:i:n:v:rch?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:i:n:g:v:rch?", longopts, &index);
 
         switch(iarg)
         {
@@ -93,6 +98,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'b':
                 which_bdt = (int)strtof(optarg,NULL);
+                break;
+            case 'g':
+                which_group = (int)strtof(optarg,NULL);
                 break;
             case 'o':
                 mode_option = optarg;
@@ -142,6 +150,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-b\t--bdt\t\t Run only N BDT training/app, or BDT specific option"<<std::endl;
                 std::cout<<"\t-f\t--file\t\t Which file in bdt_files you want to run over, for file specifc options."<<std::endl;
                 std::cout<<"\t-p\t--pot\t\tSet POT for plots"<<std::endl;
+                std::cout<<"\t-g\t--group\t\tSet a group for variable plotting"<<std::endl;
                 std::cout<<"\t-s\t--stage\t\tSet what stage to do things at."<<std::endl;
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag [Superseeded by XML defined tag]"<<std::endl;
@@ -205,12 +214,12 @@ int main (int argc, char *argv[]){
     std::vector<bdt_file*> signal_bdt_files;
     std::vector<bdt_file*> bkg_bdt_files;
     std::vector<bdt_file*> training_bdt_files;
+    std::vector<bdt_file*> validate_files;
 
     bdt_file * signal;
     bdt_file * onbeam_data_file;
 
     std::map<std::string, bdt_file*> tagToFileMap;
-
     std::map<bdt_file*,bool> plotOnTopMap;
 
 
@@ -305,16 +314,16 @@ int main (int argc, char *argv[]){
 
         if(incl_in_stack) stack_bdt_files.push_back(bdt_files.back());
 
-
+        if(XMLconfig.bdt_is_validate_file[f]) validate_files.push_back(bdt_files.back());
 
     }
 
     //The "signal" is whichever signal BDT you define first.
     signal = signal_bdt_files[0];
 
-   
-       
-       
+
+
+
 
 
     //===========================================================================================
@@ -440,7 +449,7 @@ int main (int argc, char *argv[]){
         const std::vector<std::string> b_tags ={"BNBOverlays","NCPi0","CCPi0","NueOverlays","BNBext","Dirt"};
 
         for(int i=0; i< bdt_files.size(); i++){
-                 //   bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size",vars);
+            //   bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size",vars);
         }
 
         //OK super preliminarly, need to have run sbnfit with simple_tree option on precut stage before attempting this
@@ -474,21 +483,21 @@ int main (int argc, char *argv[]){
 
         std::cout<<"flag1"<<std::endl;
 
-            for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if(stack_bdt_files[f]->is_data) continue;
-                if(!plotOnTopMap[stack_bdt_files[f]] ){
-                    histogram_stack->addToStack(stack_bdt_files[f]);
-                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
-                }
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            if(stack_bdt_files[f]->is_data) continue;
+            if(!plotOnTopMap[stack_bdt_files[f]] ){
+                histogram_stack->addToStack(stack_bdt_files[f]);
+                std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
             }
+        }
 
-            for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if(stack_bdt_files[f]->is_data) continue;
-                if(plotOnTopMap[stack_bdt_files[f]] ){
-                    histogram_stack->addToStack(stack_bdt_files[f],true);
-                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
-                }
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            if(stack_bdt_files[f]->is_data) continue;
+            if(plotOnTopMap[stack_bdt_files[f]] ){
+                histogram_stack->addToStack(stack_bdt_files[f],true);
+                std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
             }
+        }
 
         std::cout<<"flag2"<<std::endl;
 
@@ -508,11 +517,20 @@ int main (int argc, char *argv[]){
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
             }else{
+                std::vector<bdt_variable> tmp_vars;
+                for(auto &v: vars){
+                    if(which_group == -1 || which_group == v.cat){
+                        tmp_vars.push_back(v);
+                    }
+                }
+
+
+
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setStackMode( histogram_stack->plot_pot);
 
-                real_datamc.plotStacks(ftest, vars, fbdtcuts);
+                real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts);
             }
         }
     }    else if(mode_option == "datamc"){
@@ -534,23 +552,23 @@ int main (int argc, char *argv[]){
 
         histogram_stack->plot_pot = onbeam_data_file->pot;
 
-            for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if(stack_bdt_files[f]->is_data) continue;
-                if(!plotOnTopMap[stack_bdt_files[f]] ){
-                    histogram_stack->addToStack(stack_bdt_files[f]);
-                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
-                }
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            if(stack_bdt_files[f]->is_data) continue;
+            if(!plotOnTopMap[stack_bdt_files[f]] ){
+                histogram_stack->addToStack(stack_bdt_files[f]);
+                std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
             }
+        }
 
-            for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if(stack_bdt_files[f]->is_data) continue;
-                if(plotOnTopMap[stack_bdt_files[f]] ){
-                    histogram_stack->addToStack(stack_bdt_files[f],true);
-                    std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
-                }
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            if(stack_bdt_files[f]->is_data) continue;
+            if(plotOnTopMap[stack_bdt_files[f]] ){
+                histogram_stack->addToStack(stack_bdt_files[f],true);
+                std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
             }
+        }
 
-        
+
         int ip=0;
         std::vector<bool> subv = {false,false,true};
         if(true){
@@ -563,18 +581,25 @@ int main (int argc, char *argv[]){
                 //datamc.plotEfficiency(tmp_var,fbdtcuts,1,2);
             }else{
 
+                std::vector<bdt_variable> tmp_vars;
+                for(auto &v: vars){
+                    if(which_group == -1 || which_group == v.cat){
+                        tmp_vars.push_back(v);
+                    }
+                }
+
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 real_datamc.setPlotStage(which_stage);                
 
                 if(which_bdt==-1){
-                    real_datamc.plotStacks(ftest, vars, fbdtcuts);
-            //        real_datamc.plotEfficiency(vars,fbdtcuts,1,2);
+                    real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts);
+                    //        real_datamc.plotEfficiency(vars,fbdtcuts,1,2);
                 }else{
                     real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts);
-                //    real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,2);
+                    //    real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,2);
                 }
             }
-        
+
         }
     }
     else if(mode_option == "superdatamc"){
@@ -723,11 +748,11 @@ int main (int argc, char *argv[]){
         }//if passed a vector
     }
     else if(mode_option == "precalc"){ 
- 
+
         for(int f=0; f< bdt_files.size();++f){
             bool is_train = false;
             for(auto & t: training_bdt_files){
-                    if(t==bdt_files[f]) is_train=true;
+                if(t==bdt_files[f]) is_train=true;
             }
             if(which_file == f || which_file <0 ){
                 if(which_file<0 && is_train) continue;
@@ -743,7 +768,7 @@ int main (int argc, char *argv[]){
         ppdatamc.printPassingDataEvents("tmp", which_stage, fbdtcuts);
 
         return 0;
-         return 0;
+        return 0;
         tagToFileMap["NueOverlays"]->scanStage(6, fbdtcuts,"run_number:subrun_number:event_number");
 
         return 0;
@@ -753,7 +778,7 @@ int main (int argc, char *argv[]){
         datamc.printPassingDataEvents("tmp", 6, fbdtcuts);
 
         return 0;
-        
+
 
         return 0;
         if(which_bdt==-1)which_bdt = 0;
@@ -783,8 +808,8 @@ int main (int argc, char *argv[]){
                 break;
             case 4:
                 //What is this?
-                   super_significance(signal_bdt_files, bkg_bdt_files);
-                   break;
+                super_significance(signal_bdt_files, bkg_bdt_files);
+                break;
             default:
                 break;
         }
@@ -897,21 +922,62 @@ cimpact->Update();
 cimpact->SaveAs("Impact.pdf","pdf");
 */
 
+}else if (mode_option == "valid"){
+
+    std::cout<<"Running validate mode: "<<validate_files.size()<<std::endl;
+
+    std::vector<bdt_variable> quick_vars;
+
+    if(which_bdt == -1){
+        quick_vars = vars;
+    }else{ 
+        quick_vars = bdt_infos[which_bdt].train_vars;
+    }   
+    for(auto &var: quick_vars){
+
+        if(which_group == -1 || which_group == var.cat){
+
+            std::vector<std::string> cuts;
+            int v = 0;
+            std::vector<bdt_file*> compare_files;
+
+            for(auto &f: validate_files){
+                v++;
+                if(which_stage>1){
+                    std::string cu = f->getStageCuts(which_stage, fbdtcuts);
+                    cuts.push_back(cu); 
+                }else{
+                    cuts.push_back("1");
+                }
+                compare_files.push_back(f);
+            }
+
+            compareQuick(var,compare_files,cuts,"VALID_"+var.safe_unit,true);
+        }
+    }
+
+
+
+
+
 }else if(mode_option == "fancy"){
 
-      bdt_variable t("sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)","(12,0.0,1.2)","True #pi^{0} Momentum","false","d",999);
-//    bdt_variable t("mctruth_pi0_leading_photon_energy","(12,0.0,0.5)","Leading #pi^{0} photon energy","false","d",999);
-//      bdt_variable t("mctruth_pi0_subleading_photon_energy","(12,0.0,0.5)","Sub-leading #pi^{0} photon energy","false","d",999);
-    //bdt_variable t("acos((mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])/sqrt( (mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])*(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])+   (mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1])*(mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1]) +  (mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0])*(mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0]) ))","(12,0,3.14159)", "Leading Photon Theta","false","d",999);
-    //bdt_variable t("acos((mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])/sqrt( (mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])*(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])+   (mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1])*(mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1]) +  (mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0])*(mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0]) ))","(12,0,3.14159)", "SubLeading Photon Theta","false","d",999);
-    //bdt_variable t("mctruth_pi0_subleading_photon_end[2]","(16,-100,1300)", "SubLeading Photon End Point","false","d",999);
-    //bdt_variable t("mctruth_pi0_subleading_photon_end[1]","(8,-150,150)", "SubLeading Photon End Point Y ","false","d",999);
+    
+    if(which_file<0) which_file = 0; //default to first file.
+    if(number<0) number = 0; //default to first variable
 
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, -1, 0, fbdtcuts);
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 2, fbdtcuts);
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 3, fbdtcuts);
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 4, fbdtcuts);
-    fancyFiciency(tagToFileMap["NCPi0"], "mctruth_num_exiting_pi0==1 "," sim_shower_pdg==22 && sim_shower_parent_pdg==111", t, analysis_tag, 1, 5, fbdtcuts);
+    if(XMLconfig.v_eff_denom_stage.size()!= 1){
+        std::cout<<"Warning your running Eff Fancy with no XML inputs, breaking."<<std::endl;
+        return 0;
+    }
+
+    for(auto &var: vars){
+        if(which_group == -1 || which_group == var.cat){
+            fancyFiciency(bdt_files[which_file], XMLconfig.v_eff_denom_cut[0], XMLconfig.v_eff_numer_cut[0], var, analysis_tag, XMLconfig.v_eff_denom_stage[0], XMLconfig.v_eff_numer_stage[0], fbdtcuts);
+        }
+     }
+
+    return 0;
 
 }else if(mode_option == "eff"){
 
@@ -921,27 +987,27 @@ cimpact->SaveAs("Impact.pdf","pdf");
     std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
     std::vector<std::string> v_topo = {TMVAmethods[0].topological_definition};//,"sim_shower_pdg==22","sim_track_pdg==2212","sim_shower_overlay_fraction<0.9","sim_track_overlay_fraction<0.9"};
 
-    if(which_stage==-1)which_stage=0;
+if(which_stage==-1)which_stage=0;
 
-    what_pot = 10.1e20;
+what_pot = 10.1e20;
 
-    //added 1g0p case but need to use -t option
-    bool is0p = false;
-    if (topo_tag == "notrack"){
-        is0p = true;
-    }
+//added 1g0p case but need to use -t option
+bool is0p = false;
+if (topo_tag == "notrack"){
+    is0p = true;
+}
 
-    bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, false, is0p);
-    
+bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, false, is0p);
 
-    //specifically for protond/photons pre-topological
-    // bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
-    //normally stops here
 
-    //Ok, this runs now for a full cut
-    // Cut for NC pi0 filter
-    //std::string full_cut = "reco_asso_showers==2 && reco_asso_tracks==1 && reco_vertex_size>0 && (reco_vertex_x > 5.0 && reco_vertex_x < 251 && reco_vertex_y > -112 && reco_vertex_y < 112 && reco_vertex_z > 5 && reco_vertex_z < 1031) && reco_shower_conversion_distance[0]>1 && reco_shower_conversion_distance[1]>1";
-    //bdt_efficiency(bdt_files,full_cut);
+//specifically for protond/photons pre-topological
+// bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
+//normally stops here
+
+//Ok, this runs now for a full cut
+// Cut for NC pi0 filter
+//std::string full_cut = "reco_asso_showers==2 && reco_asso_tracks==1 && reco_vertex_size>0 && (reco_vertex_x > 5.0 && reco_vertex_x < 251 && reco_vertex_y > -112 && reco_vertex_y < 112 && reco_vertex_z > 5 && reco_vertex_z < 1031) && reco_shower_conversion_distance[0]>1 && reco_shower_conversion_distance[1]>1";
+//bdt_efficiency(bdt_files,full_cut);
 
 
 }
@@ -1094,23 +1160,23 @@ else if(mode_option == "eff2"){
 
 
     for(auto &v :vars){
-            //std::cout<<v.edges[0]<<" "<<v.edges[1]<<" "<<v.edges[2]<<std::endl;
-            bool is_train = false;
-            for(auto &in: bdt_infos){
-                for(auto &tv: in.train_vars){
-                    if(tv.id == v.id){ is_train=true; break;}
-                }
-                if(is_train)break;
+        //std::cout<<v.edges[0]<<" "<<v.edges[1]<<" "<<v.edges[2]<<std::endl;
+        bool is_train = false;
+        for(auto &in: bdt_infos){
+            for(auto &tv: in.train_vars){
+                if(tv.id == v.id){ is_train=true; break;}
             }
-            if(is_train){
-                std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
+            if(is_train)break;
+        }
+        if(is_train){
+            std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
 
-                for(double k = 0; k<=v.n_bins; k++){
-                   double b = v.edges[1]+k*fabs(v.edges[1]-v.edges[2])/(double)v.n_bins;
-                   std::cout<<" "<<b;
-                }
-                std::cout<<"\""<<std::endl;
+            for(double k = 0; k<=v.n_bins; k++){
+                double b = v.edges[1]+k*fabs(v.edges[1]-v.edges[2])/(double)v.n_bins;
+                std::cout<<" "<<b;
             }
+            std::cout<<"\""<<std::endl;
+        }
     }
 
 
@@ -1245,6 +1311,118 @@ return 0;
 }
 
 
+
+
+int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name){
+    return compareQuick(var,files,cuts,name,true); 
+}
+
+int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name, bool shape_only){
+
+    TCanvas *c = new TCanvas();
+
+    TH1* rat_CV; 
+
+
+    std::vector<int> cols = {kRed-7,  kBlue-7, kGreen+1 , kMagenta,kOrange,kGray};
+    std::vector<TH1*> tvec;
+    TLegend* leg=new TLegend(0.55,0.55,0.9,0.9);
+    double max = -99;
+
+    std::string testcut = "1";
+
+    double title_size_ratio=0.1;
+    double label_size_ratio=0.1;
+    double title_offset_ratioY = 0.3 ;
+    double title_offset_ratioX = 1.1;
+
+    double title_size_upper=0.15;
+    double label_size_upper=0.05;
+    double title_offset_upper = 1.45;
+
+
+
+
+    c->cd();
+    TPad *pad0top = new TPad(("pad0top_"+var.safe_unit).c_str(), ("pad0top_"+var.safe_unit).c_str(), 0, 0.35, 1, 1.0);
+
+    pad0top->SetBottomMargin(0); // Upper and lower plot are joined
+    pad0top->Draw();             // Draw the upper pad: pad2top
+    pad0top->cd();               // pad2top becomes the current pad
+
+
+
+    c->cd();
+    TPad *pad0bot = new TPad(("padbot_"+var.safe_unit).c_str(),("padbot_"+var.safe_unit).c_str(), 0, 0.05, 1, 0.35);
+    pad0bot->SetTopMargin(0);
+    pad0bot->SetBottomMargin(0.351);
+    pad0bot->SetGridx(); // vertical grid
+    pad0bot->Draw();
+
+    double rmin  = 0.5;
+    double rmax = 1.5;
+
+    for(int i=0; i< files.size();i++){
+
+        pad0top->cd();
+        TH1* th1 =  (TH1*) files[i]->getTH1(var, testcut+"&&"+cuts[i], "photon_truth_overlay"+std::to_string(i), 6.6e20, 1);
+        tvec.push_back(th1);
+        std::cout<<"Int "<<th1->Integral()<<std::endl;
+        pad0top->cd();
+
+
+        th1->SetLineColor(files[i]->col);
+        th1->SetLineWidth(2);
+
+        if(shape_only){
+            double norm = th1->Integral();
+            th1->Scale(1.0/norm);
+        }
+        std::cout<<files[i]->tag<<" mean: "<<th1->GetMean()<<std::endl;
+        th1->Draw("E1hist same");
+
+        max = std::max(max, th1->GetMaximum());
+        th1->SetMaximum(th1->GetMaximum()*1.5);
+        th1->SetTitle(var.unit.c_str());
+
+        leg->AddEntry(th1,files[i]->tag.c_str(),"l");
+        pad0bot->cd();       // pad0bot becomes the current pad
+
+        if(i==0) rat_CV =  (TH1*)th1->Clone("ratio_CV");
+
+
+        TH1* rat_denom = (TH1*)th1->Clone(("ratio_denom_"+std::to_string(i)).c_str());
+        for(int j=0; j<rat_denom->GetNbinsX(); j++){
+            rat_denom->SetBinError(j,0.0);
+        }	
+
+        rat_denom->Divide(rat_CV);
+        rat_denom->Draw("E1same hist");
+
+        rat_denom->GetXaxis()->SetTitle(var.unit.c_str());
+        rat_denom->SetMinimum(rmin);	
+        rat_denom->SetMaximum(rmax);//ratunit->GetMaximum()*1.1);
+        rat_denom->GetXaxis()->SetTitleOffset(title_offset_ratioX);
+        rat_denom->GetYaxis()->SetTitleOffset(title_offset_ratioY);
+        rat_denom->SetMinimum(rmin);	
+        rat_denom->SetMaximum(rmax);//rat_denom->GetMaximum()*1.1);
+        rat_denom->GetYaxis()->SetTitleSize(title_size_ratio);
+        rat_denom->GetXaxis()->SetTitleSize(title_size_ratio);
+        rat_denom->GetYaxis()->SetLabelSize(label_size_ratio);
+        rat_denom->GetXaxis()->SetLabelSize(label_size_ratio);
+    }
+
+    tvec[0]->SetMaximum(max*1.5);
+
+    pad0top->cd();
+    leg->SetFillStyle(0);
+    leg->SetLineColor(kWhite);
+    leg->SetLineWidth(0);
+    leg->Draw();
+    c->SaveAs((name+".pdf").c_str(),"pdf");
+
+    return 0;
+};
 
 
 

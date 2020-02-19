@@ -43,6 +43,8 @@ class MVALoader {
     std::vector<std::string> bdt_hist_styles;
     std::vector<std::string> bdt_dirs;
     std::vector<std::string> bdt_plotnames;
+    std::vector<bool> bdt_is_validate_file;
+
     std::vector<TColor*> bdt_cols;
     std::vector<int> bdt_fillstyles;
     std::vector<double> bdt_scales;
@@ -60,6 +62,13 @@ class MVALoader {
 
     std::map<std::string,std::string> aliasMap; 
     std::string AliasParse(std::string in);
+
+
+    std::vector<int> v_eff_denom_stage;
+    std::vector<int> v_eff_numer_stage;
+    std::vector<std::string> v_eff_denom_cut;
+    std::vector<std::string> v_eff_numer_cut;
+    
 
 
     std::vector<double> bdt_cuts;

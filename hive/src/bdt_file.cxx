@@ -57,12 +57,12 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     //run_fractions_plot = {0.4742,0.5258};
      
     run_names = {"RIsmall"};
-    run_fraction_cuts  = {"( run_number >= 5121 && run_number <= 5946)"};
-    run_fractions_plot = {1.0};
-
-    run_names = {"ALL"};
     run_fraction_cuts  = {"1"};
     run_fractions_plot = {1.0};
+
+  //  run_names = {"RI","R3"};
+  //  run_fraction_cuts  = {"run_number <= 7770 ","run_number>=13697"};
+ //   run_fractions_plot = {0.5,0.5};
 
 
     std::cout<<"Getting vertex tree"<<std::endl;
@@ -337,6 +337,12 @@ int bdt_file::calcPOT(){
         //weight_branch = "genie_spline_weight";
 
         weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<100)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
+
+        /*if(this->tag.find("NCPi0")!=std::string::npos){
+            weight_branch = weight_branch +"*"+"(1.0+ (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.3)*0.2 + (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.175)*0.3  +  (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.1)*0.3 )";
+
+        }*/
+
 
         numberofevents_raw = numberofevents;
 
