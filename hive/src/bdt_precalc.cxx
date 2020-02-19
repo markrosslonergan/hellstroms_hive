@@ -1137,6 +1137,34 @@ double cos_angle_3pts(std::vector<double> last, std::vector<double> next, std::v
     return cos;
 }
 
+int sim_track_precalc(const bdt_file * file, const std::string & tag){
+
+    //create output trees    
+    std::string nam = tag+"_"+file->tag+"_simtrack.root";
+    TFile*fout = new TFile(nam.c_str(),"recreate");
+    TTree tout("track_tree","track_tree");
+
+    //set tree branches for new variables
+    std::vector<double> * sim_track_endx = 0;
+    tout.Branch("sim_track_endx",&sim_track_endx);
+    
+    //get entries in vertex tree
+    int Nent = file->tvertex->GetEntries();
+
+    std::vector<double> * sim_track_startx = 0;
+    file->tvertex->SetBranchAddress("sim_track_startx",&sim_track_startx);
+
+   //loop over events and make match between sim track and mctruth daughters 
+
+    
+    fout->cd();
+    tout.Write();
+    fout->Close();
+
+
+    return 0;
+}
+
 
 // ******************************** NCPI0 NCPI0 NCPI0 ********************************** //
 int ncpi0_sss_precalc(const bdt_file * file, const std::string & tag){
