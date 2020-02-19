@@ -1155,13 +1155,14 @@ int sim_track_precalc(const bdt_file * file, const std::string & tag){
     std::vector<double> * sim_track_energy = 0;
     std::vector<double> * mctruth_daughters_E = 0;
     std::vector<double> * mctruth_daughters_pdg = 0;
+     std::vector<double> * mctruth_daughters_status_code = 0;
+
 
     file->tvertex->SetBranchAddress("sim_track_startx",&sim_track_startx);
  file->tvertex->SetBranchAddress("sim_track_energy",&sim_track_energy);
  file->tvertex->SetBranchAddress("mctruth_daughters_E",&mctruth_daughters_E);
  file->tvertex->SetBranchAddress("mctruth_daughters_pdg",&mctruth_daughters_pdg);
-
-
+ file->tvertex->SetBranchAddress("mctruth_daughters_status_code",&mctruth_daughters_status_code);
 
 
    //loop over events and make match between sim track and mctruth daughters
@@ -1169,9 +1170,16 @@ int sim_track_precalc(const bdt_file * file, const std::string & tag){
         file->tvertex->GetEntry(i);
       //  sim_track_endx.clear();
         
-     //   sim_track_energy
-       // mctruth_daughters
-      //  mctruth_daughters_pdg
+     
+        //check for a proton exiting the nucleus
+        for(int i = 0; i< mctruth_daughters_pdg->size(); i++){
+
+            //if there is a proton, match it to a sim track
+            if(mctruth_daughters_pdg->at(i)&&mctruth_daughters_status_code->at(i)==1){
+                std::cout<<"true proton exiting nucleus with energy: "<<mctruth_daughters_E->at(i)<<std::endl;
+            }
+
+        }
       //  sim_track_endx.resize(, -9999);
 
        
