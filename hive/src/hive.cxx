@@ -27,8 +27,6 @@
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name,bool shape_only);
 
-
-
 int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
@@ -283,7 +281,7 @@ int main (int argc, char *argv[]){
             bkg_bdt_files.push_back(bdt_files.back());
         }
 
-        if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f] ){
+        if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f]  && !XMLconfig.bdt_is_validate_file[f]){
             if(XMLconfig.bdt_is_signal[f]){
                 std::cout<<" -- For the purposes of calculting a significance, this is a signal file"<<std::endl;
                 signal_bdt_files.push_back(bdt_files.back());
@@ -323,9 +321,6 @@ int main (int argc, char *argv[]){
 
 
 
-
-
-
     //===========================================================================================
     //===========================================================================================
     //		Main flow of the program , using OPTIONS
@@ -353,6 +348,8 @@ int main (int argc, char *argv[]){
         if(topo_tag != "notrack"){
             f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
         }
+
+        f->addFriend("track_tree",analysis_tag+"_"+f->tag+"_simtrack.root");
 
     }
 
@@ -755,8 +752,9 @@ int main (int argc, char *argv[]){
                 if(t==bdt_files[f]) is_train=true;
             }
             if(which_file == f || which_file <0 ){
-                if(which_file<0 && is_train) continue; 
-                ncpi0_sss_precalc(bdt_files[f], analysis_tag);
+                if(which_file<0 && is_train) continue;
+                sim_track_precalc(bdt_files[f], analysis_tag);
+                //ncpi0_sss_precalc(bdt_files[f], analysis_tag);
             }
         }
     }
@@ -923,6 +921,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
 }else if (mode_option == "valid"){
 
+    std::cout<<"Running validate mode: "<<validate_files.size()<<std::endl;
 
     std::vector<bdt_variable> quick_vars;
 
