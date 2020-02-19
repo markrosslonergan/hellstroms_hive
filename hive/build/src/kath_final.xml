@@ -398,6 +398,9 @@
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
+<var def = "reco_shower_phi_yx[0]" binning = "(8,-3.14,3.14)" unit = "Reconstructed Shower  #phi_{yx} [rad]" type = "d"    training="012"/>
+<var def = "acos(reco_shower_dirz[0])" binning = "(8,0,3.14)" unit = "Reconstructed Shower #theta [rad]" type = "d"    training="012"/>
+
 <var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness" type="d" training = "012"/>
 
 <var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness" type="d" training = "012"/>
