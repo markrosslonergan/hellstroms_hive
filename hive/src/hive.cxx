@@ -27,8 +27,6 @@
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name,bool shape_only);
 
-
-
 int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
@@ -283,7 +281,7 @@ int main (int argc, char *argv[]){
             bkg_bdt_files.push_back(bdt_files.back());
         }
 
-        if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f] ){
+        if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f]  && !XMLconfig.bdt_is_validate_file[f]){
             if(XMLconfig.bdt_is_signal[f]){
                 std::cout<<" -- For the purposes of calculting a significance, this is a signal file"<<std::endl;
                 signal_bdt_files.push_back(bdt_files.back());
@@ -320,9 +318,6 @@ int main (int argc, char *argv[]){
 
     //The "signal" is whichever signal BDT you define first.
     signal = signal_bdt_files[0];
-
-
-
 
 
 
