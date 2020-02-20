@@ -1146,6 +1146,16 @@ int sim_track_precalc(const bdt_file * file, const std::string & tag){
 
     //set tree branches for new variables
     std::vector<double> * sim_track_endx = 0;
+    std::vector<double> * sim_track_endy = 0;
+    std::vector<double> * sim_track_endz = 0;
+
+   std::vector<double> * sim_track_px = 0;
+   std::vector<double> * sim_track_py = 0;
+   std::vector<double> * sim_track_pz = 0;
+
+   std::vector<double> * sim_track_length = 0;
+
+
     tout.Branch("sim_track_endx",&sim_track_endx);
     
     //get entries in vertex tree
@@ -1178,8 +1188,9 @@ int sim_track_precalc(const bdt_file * file, const std::string & tag){
             if(mctruth_daughters_pdg->at(i)&&mctruth_daughters_status_code->at(i)==1){
                // std::cout<<"true proton exiting nucleus with energy: "<<mctruth_daughters_E->at(i)<<std::endl;
                 for (int j = 0; j < sim_track_energy->size(); j++){
-                    if (sim_track_energy->at(j)== mctruth_daughters_E->at(i)){
-                 std::cout<<"true proton exiting nucleus with energy matched to sim track: "<<mctruth_daughters_E->at(i)<<std::endl;
+                    if (TMath::Abs(sim_track_energy->at(j)- mctruth_daughters_E->at(i))<0.001){
+                 std::cout<<"true proton exiting nucleus with energy: "<<mctruth_daughters_E->at(i)<<" matched to sim track with energy: "<<sim_track_energy->at(j)<<std::endl;
+                    
                         
                     }
                 }
