@@ -573,7 +573,7 @@ int main (int argc, char *argv[]){
 
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
-                //datamc.plotEfficiency(tmp_var,fbdtcuts,1,2);
+                datamc.plotEfficiency(tmp_var,fbdtcuts,1,(which_stage>1 ? which_stage : 2));
             }else{
 
                 std::vector<bdt_variable> tmp_vars;
