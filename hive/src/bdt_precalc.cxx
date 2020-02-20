@@ -1176,7 +1176,13 @@ int sim_track_precalc(const bdt_file * file, const std::string & tag){
 
             //if there is a proton, match it to a sim track
             if(mctruth_daughters_pdg->at(i)&&mctruth_daughters_status_code->at(i)==1){
-                std::cout<<"true proton exiting nucleus with energy: "<<mctruth_daughters_E->at(i)<<std::endl;
+               // std::cout<<"true proton exiting nucleus with energy: "<<mctruth_daughters_E->at(i)<<std::endl;
+                for (int j = 0; j < sim_track_energy->size(); j++){
+                    if (sim_track_energy->at(j)== mctruth_daughters_E->at(i)){
+                 std::cout<<"true proton exiting nucleus with energy matched to sim track: "<<mctruth_daughters_E->at(i)<<std::endl;
+                        
+                    }
+                }
             }
 
         }
