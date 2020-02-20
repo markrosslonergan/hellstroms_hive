@@ -1206,6 +1206,22 @@ int sim_track_precalc(const bdt_file * file, const std::string & tag){
         file->tvertex->GetEntry(i);
         sim_track_endx->clear();
         sim_track_endx->resize(sim_track_startx->size());
+        sim_track_endy->clear();
+        sim_track_endy->resize(sim_track_startx->size());
+        sim_track_endz->clear();
+        sim_track_endz->resize(sim_track_startx->size());
+
+        sim_track_px->clear();
+        sim_track_px->resize(sim_track_startx->size());
+        sim_track_py->clear();
+        sim_track_py->resize(sim_track_startx->size());
+        sim_track_pz->clear();
+        sim_track_pz->resize(sim_track_startx->size());
+
+        sim_track_length->clear();
+        sim_track_length->resize(sim_track_startx->size());
+
+
 
         //check for a proton exiting the nucleus
         for(int i = 0; i< mctruth_daughters_pdg->size(); i++){
