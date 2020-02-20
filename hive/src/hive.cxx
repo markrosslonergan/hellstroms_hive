@@ -755,10 +755,10 @@ int main (int argc, char *argv[]){
                 if(t==bdt_files[f]) is_train=true;
             }
             if(which_file == f || which_file <0 ){
-                std::cout<<"looking at file #"<<f<<", is_train = "<< is_train<<std::endl;
+                //std::cout<<"looking at file #"<<f<<", is_train = "<< is_train<<std::endl;
                 //if(which_file<0 && is_train) continue;
                 //if(which_file<0) continue;
-                std::cout<<"calcing precalc files"<<std::endl;
+                //std::cout<<"calcing precalc files"<<std::endl;
                 sim_track_precalc(bdt_files[f], analysis_tag);
                 //ncpi0_sss_precalc(bdt_files[f], analysis_tag);
             }
