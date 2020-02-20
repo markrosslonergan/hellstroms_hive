@@ -520,11 +520,12 @@
 <var def = "reco_track_num_daughters" binning = "(3,0,3)" unit = "Num Daughters from Track" type="d" training=""/>
 -->
 <!-- Track PID -->
-<!--<var def = "log(reco_track_pid_bragg_likelihood_mip_plane2[#LT#]/reco_track_pid_bragg_likelihood_p_plane2[#LT#])" binning = "(24, -5, 7)" unit = "Log Bragg Likelihood MIP/p Plane 2" type = "d" training = ""/>
+<var def = "log(reco_track_pid_bragg_likelihood_mip_plane2[#LT#]/reco_track_pid_bragg_likelihood_p_plane2[#LT#])" binning = "(24, -5, 7)" unit = "Log Bragg Likelihood MIP/p Plane 2" type = "d" training = ""/>
 <var def = "reco_track_pid_chi2_mu_plane2[#LT#] - reco_track_pid_chi2_p_plane2[#LT#]" binning = "(24, -400, 75)" unit = "#chi^{2}_{#mu} - #chi^{2}_{p} Plane 2" type = "d" training = ""/>   
-<var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(24, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" logplot = "false" training = ""/>
+<!--<var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(24, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" logplot = "false" training = ""/>-->
 <var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(24,-2,2)"  unit ="Log( Three Plane Track PID )" type = "d" logplot = "false" training=""/>
--->
+<var def = "reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(24,0,12)" unit = "Reco Track Truncated Mean dE/dx Best Plane [MeV/cm]" type = "d" logplot = "false"  training=""/>
+
 <!-- Delta variables -->
 <!--
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" logplot = "false" training = "12" /> 
@@ -591,7 +592,8 @@
 <var def = "sss3d_invar_ranked_opang" binning = "(16,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="d" training="4"/>
 <var def = "sss3d_invar_ranked_implied_opang" binning = "(16,-1,1)" unit ="sss3d best invariant mass candidate implied angle w.r.t primary shower [cos]" type="d" training="4"/>
 -->
-
+<var def = "sim_track_overlay_fraction[0] " binning =  "(40,0,12)" unit = "Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
+ 
 <var def = "reco_track_mean_trunc_dEdx_plane0[0]" binning =  "(40,0,12)" unit = "Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
 <var def = "reco_track_mean_trunc_dEdx_plane1[0]" binning =  "(40,0,12)" unit = "Reco Track Truncated Mean dE/dx Plane 1 [MeV/cm]" type = "d" training=""/>
 <var def = "reco_track_mean_trunc_dEdx_plane2[0]" binning =  "(40,0,12)" unit = "Reco Track Truncated Mean dE/dx Plane 2 [MeV/cm]" type = "d"   training=""/>
@@ -603,6 +605,14 @@
 <var def = "reco_track_dirx[0]" binning =  "(40,-1,1)" unit = "Reco Track Dir X" type = "d"   training=""/>
 <var def = "reco_track_diry[0]" binning =  "(40,-1,1)" unit = "Reco Track Dir Y" type = "d"   training=""/>
 <var def = "reco_track_dirz[0]" binning =  "(40,-1,1)" unit = "Reco Track Dir Z" type = "d"   training=""/>
+
+<var def = "sim_track_px[0]" binning =  "(40,-1,1)" unit = "Sim Track px" type = "d"   training=""/>
+<var def = "sim_track_py[0]" binning =  "(40,-1,1)" unit = "Sim Track py" type = "d"   training=""/>
+<var def = "sim_track_pz[0]" binning =  "(40,-1,1)" unit = "Sim Track px" type = "d"   training=""/>
+
+<var def = "sim_track_px[0]-reco_track_dirx[0]" binning =  "(40,-100,100)" unit = "Track Dir Resolution X" type = "d" logplot = "true" training=""/>
+<var def = "sim_track_py[0]-reco_track_diry[0]" binning =  "(40,-100,100)" unit = "Track Dir Resolution Y" type = "d" logplot = "true"  training=""/>
+<var def = "sim_track_pz[0]-reco_track_dirz[0]" binning =  "(40,-100,100)" unit = "Track Dir Resolution Z" type = "d" logplot = "true"   training=""/>
 
 <var def = "reco_track_startx[0]" binning =  "(40,-20,270)" unit = "Reco Track Start X" type = "d"   training=""/>
 <var def = "reco_track_starty[0]" binning =  "(40,-140,140)" unit = "Reco Track Start Y" type = "d"   training=""/>
@@ -619,7 +629,7 @@
 <var def = "sim_track_startx[0]-reco_track_startx[0]" binning =  "(40,-100,100)" unit = "Track Start Resolution X" type = "d" logplot = "true" training=""/>
 <var def = "sim_track_starty[0]-reco_track_starty[0]" binning =  "(40,-100,100)" unit = "Track Start Resolution Y" type = "d" logplot = "true"  training=""/>
 <var def = "sim_track_startz[0]-reco_track_startz[0]" binning =  "(40,-100,100)" unit = "Track Start Resolution Z" type = "d" logplot = "true"   training=""/>
-<!--
+
 <var def = "sim_track_endx[0]-reco_track_endx[0]" binning =  "(40,-10,10)" unit = "Track End Resolution X" type = "d"   training=""/>
 <var def = "sim_track_endy[0]-reco_track_endy[0]" binning =  "(40,-10,10)" unit = "Track End Resolution Y" type = "d"   training=""/>
 <var def = "sim_track_endz[0]-reco_track_endz[0]" binning =  "(40,-10,10)" unit = "Track End Resolution Z" type = "d"   training=""/>
@@ -628,6 +638,14 @@
 <var def = "sim_track_endy[0]" binning =  "(40,-1,1)" unit = "sim Track End Y" type = "d"   training=""/>
 <var def = "sim_track_endz[0]" binning =  "(40,-1,1)" unit = "sim Track End Z" type = "d"   training=""/>
 
+<var def = "sim_track_length[0]" binning =  "(40,-10,10)" unit = "Sim Track Length" type = "d"   training=""/>
+<var def = "reco_track_length[0]" binning =  "(40,-10,10)" unit = "Reco Track Length" type = "d"   training=""/>
+
+<var def = "sim_track_length[0]- reco_track_length[0]" binning =  "(40,-10,10)" unit = "Track Length Resolution" type = "d"   training=""/>
+
+
+
+<!--
 <var def = "#TRUELENGTH#" binning =  "(40,-10,10)" unit = "Sim Track Length" type = "d"   training=""/>
 
 
@@ -708,7 +726,7 @@
 </recomc>
 -->
 
-<alias key = "TRUELENGTH" value = "sqrt(pow(sim_track_endz[0]-sim_track_startz[0], 2)+ pow(sim_track_endy[0]-sim_track_starty[0], 2)+ pow(sim_track_endx[0]-sim_track_startx[0], 2))"/>
+<!--<alias key = "TRUELENGTH" value = "sqrt(pow(sim_track_endz[0]-sim_track_startz[0], 2)+ pow(sim_track_endy[0]-sim_track_starty[0], 2)+ pow(sim_track_endx[0]-sim_track_startx[0], 2))"/>-->
 
 <alias key="PM" value ="(0.938272)"/>
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>

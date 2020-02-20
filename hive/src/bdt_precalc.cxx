@@ -1162,7 +1162,7 @@ int sim_track_precalc(const bdt_file * file, const std::string & tag){
     tout.Branch("sim_track_px",&sim_track_px);
     tout.Branch("sim_track_py",&sim_track_py);
     tout.Branch("sim_track_pz",&sim_track_pz);
-    tout.Branch("sim_track_lenth",&sim_track_length);
+    tout.Branch("sim_track_length",&sim_track_length);
 
 
     //get entries in vertex tree
@@ -1244,7 +1244,7 @@ int sim_track_precalc(const bdt_file * file, const std::string & tag){
                         sim_track_py->at(j) = mctruth_daughters_py->at(i);
                         sim_track_pz->at(j) = mctruth_daughters_pz->at(i);
 
-                        sim_track_pz->at(j) = sqrt(pow(sim_track_endx->at(j) - sim_track_startx->at(j),2)+pow(sim_track_endy->at(j) - sim_track_starty->at(j),2) + pow(sim_track_endz->at(j) - sim_track_startz->at(j),2));
+                        sim_track_length->at(j) = sqrt(pow(sim_track_endx->at(j) - sim_track_startx->at(j),2)+pow(sim_track_endy->at(j) - sim_track_starty->at(j),2) + pow(sim_track_endz->at(j) - sim_track_startz->at(j),2));
 
                         //std::cout<<"setting track end x to "<<mctruth_daughters_endx->at(i)<<std::endl; 
 

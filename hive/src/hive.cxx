@@ -748,14 +748,17 @@ int main (int argc, char *argv[]){
         }//if passed a vector
     }
     else if(mode_option == "precalc"){ 
-
+        std::cout<<"looking at "<<bdt_files.size()<<"bdt files"<<std::endl;
         for(int f=0; f< bdt_files.size();++f){
             bool is_train = false;
             for(auto & t: training_bdt_files){
                 if(t==bdt_files[f]) is_train=true;
             }
             if(which_file == f || which_file <0 ){
-                if(which_file<0 && is_train) continue;
+                std::cout<<"looking at file #"<<f<<", is_train = "<< is_train<<std::endl;
+                //if(which_file<0 && is_train) continue;
+                //if(which_file<0) continue;
+                std::cout<<"calcing precalc files"<<std::endl;
                 sim_track_precalc(bdt_files[f], analysis_tag);
                 //ncpi0_sss_precalc(bdt_files[f], analysis_tag);
             }
