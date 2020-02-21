@@ -1236,13 +1236,24 @@ int sim_track_precalc(const bdt_file * file, const std::string & tag){
                         //std::cout<<"true proton exiting nucleus with energy: "<<mctruth_daughters_E->at(i)<<" matched to sim track with energy: "<<sim_track_energy->at(j)<<std::endl;
 
                         //fill info for track tree from corresponing mctruth particle
-                        sim_track_endx->at(j) = mctruth_daughters_endx->at(i);
+                        if(TMath::IsNaN( mctruth_daughters_endx->at(i)) ){
+                                std::cout<<"error, this sim track end at index "<<j <<" is invalid: "<< mctruth_daughters_endx->at(i)<<std::endl;
+                        }
+                        sim_track_endx->at(j) = mctruth_daughters_endx->at(i); 
                         sim_track_endy->at(j) = mctruth_daughters_endy->at(i);
                         sim_track_endz->at(j) = mctruth_daughters_endz->at(i);
+
+                        if (sim_track_endx->at(j) == 0 && sim_track_endy->at(j) == 0 && sim_track_endz->at(j) == 0){
+                            std::cout<<"error, track end xyz = 0"<<std::endl;
+                        }
 
                         sim_track_px->at(j) = mctruth_daughters_px->at(i);
                         sim_track_py->at(j) = mctruth_daughters_py->at(i);
                         sim_track_pz->at(j) = mctruth_daughters_pz->at(i);
+
+                         if (sim_track_px->at(j) == 0 && sim_track_py->at(j) == 0 && sim_track_pz->at(j) == 0){
+                                 std::cout<<"error, track p xyz = 0"<<std::endl;
+                          }
 
                         sim_track_length->at(j) = sqrt(pow(sim_track_endx->at(j) - sim_track_startx->at(j),2)+pow(sim_track_endy->at(j) - sim_track_starty->at(j),2) + pow(sim_track_endz->at(j) - sim_track_startz->at(j),2));
 
