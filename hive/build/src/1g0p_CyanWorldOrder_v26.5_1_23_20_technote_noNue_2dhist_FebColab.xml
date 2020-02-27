@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g0pJan2020_v1" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "( 0.945279,0.679675,0.603296)" /> 
+<topology tag="1g0pJan2020_v1" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "( 0.958.76,0.618)" /> 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
 <filedir>/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/</filedir>
@@ -12,7 +12,6 @@
         <!--    <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -106.5 &amp;&amp; mctruth_nu_vertex_y &lt; 106.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 10.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1026.8 </cut>
->>>>>>> 32203fee0902b55dcab9d1c983a28fa3e406c11c
         <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 0</cut>
         <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
@@ -281,7 +280,7 @@
         sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.9" max = "1.0" steps="10"/>
+    <scan min = "0.95" max = "0.97" steps="5"/>
 </mva>
 
 
@@ -307,7 +306,7 @@
         sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.6" max = "0.8" steps="5"/>
+    <scan min = "0.76" max = "0.78" steps="5"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
@@ -331,7 +330,7 @@
         sig_test_tag = "NCDeltaRadOverlayTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.5" max = "0.7" steps="5"/>
+    <scan min = "0.61" max = "0.63" steps="5"/>
 </mva>
 
 <!--
@@ -391,21 +390,106 @@
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
 <precut def = "reco_shower_energy_max[0]>30" name = "Michel Cut"/>
 <precut def = "reco_shower_start_dist_to_SCB > 2" name = "Shower start Contained in SCB"/>
-<precut def = "reco_shower_energy_max[0]>175 &amp; &amp;reco_shower_energy_max[0]<250" name = "Michel Cut1"/>
+<precut def = "(reco_shower_energy_max[0]<166.67 || reco_shower_energy_max[0]>222.22)" name = "Michel Cut"/>
 
 <!--
-<precut def = "reco_shower_energy_max[0]>175 &amp; &amp;reco_shower_energy_max[0]<250" name = "Michel Cut1"/>
-<precut def = "reco_shower_energy_max[0]>166.67 &amp; &amp;reco_shower_energy_max[0]<222.22" name = "Michel Cut1"/>
-<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->
+<precut def = "reco_shower_energy_max[0]>167" name = "Michel Cut"/>
+<precut def = "reco_shower_energy_max[0]<222" name = "Michel Cut"/>
+<precut def = "(reco_shower_energy_max[0]<166.67 || reco_shower_energy_max[0]>222.22)" name = "Michel Cut"/>
+<precut def = "reco_shower_energy_max[0]>167" name = "Michel Cut"/>
+<precut def = "reco_shower_energy_max[0]<222" name = "Michel Cut"/>
+<precut def = "(reco_shower_energy_max[0]<380)" name = "Michel Cut"/>
+<precut def = "reco_shower_dirx[0]<0.5 &amp;&amp;reco_shower_dirz[0]>0" name = "Directional Cut"/>
 
+<precut def = "(((reco_shower_energy_max[0]>194&amp;&amp;((reco_shower_startx[0]>35&amp;&amp;reco_shower_startx[0]<60)||(reco_shower_startx[0]>130)))||(reco_shower_energy_max[0]<194&amp;&amp;reco_shower_startx[0]>50))&amp;&amp;reco_shower_startx[0]<230)" name = "Position x Cut"/>
+
+<precut def = "((reco_shower_energy_max[0]>194&amp;&amp;reco_shower_starty[0]>-70)||(reco_shower_energy_max[0]<194&amp;&amp;(reco_shower_starty[0]>-10||reco_shower_starty[0]<-30)))" name = "Position y Cut"/>
+
+<precut def = "((reco_shower_energy_max[0]>194&amp;&amp;reco_shower_startz[0]<900)||(reco_shower_energy_max[0]<194))" name = "Position z Cut"/>
+-->
+
+<!--
+<precut def = "((reco_shower_energy_max[0]>0.194&amp;&amp;((reco_shower_startx[0]>30&amp;&amp;reco_shower_startx[0]<60)||(reco_shower_startx[0]>130&amp;&amp;reco_shower_startx[0]<230)))||(reco_shower_energy_max[0]<0.194&amp;&amp;(reco_shower_startx[0]>50&amp;&amp;reco_shower_startx[0]<230)))" name = "Position x Cut"/>
+<precut def = "(((reco_shower_energy_max[0]>0.194&amp;&amp;((reco_shower_startx[0]>30&amp;&amp;reco_shower_startx[0]<60)||(reco_shower_startx[0]>130&amp;&amp;reco_shower_startx[0]<230)))||(reco_shower_energy_max[0]<0.194&amp;&amp;(reco_shower_startx[0]>50&amp;&amp;reco_shower_startx[0]<230)))||((reco_shower_energy_max[0]>0.194&amp;&amp;reco_shower_starty[0]>-70)||(reco_shower_energy_max[0]<0.194&amp;&amp;(reco_shower_starty[0]>-10||reco_shower_starty[0]<-30)))||((reco_shower_energy_max[0]>0.194&amp;&amp;reco_shower_startx[0]<900)||(reco_shower_energy_max[0]<194)))" name = "Position Cut"/>
+-->
+<!--<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->
+
+<!--
+<precut def = "max(max(reco_shower_kalman_dEdx_plane0_median[0],reco_shower_kalman_dEdx_plane1_median[0]),reco_shower_kalman_dEdx_plane2_median[0])<6" name= "maximum kalman dedx all planes "/>
+<precut def = "reco_shower_energy_max[0]>167&amp;&amp;reco_shower_energy_max[0]<220" name = "up bound"/>
+<precut def = "reco_shower_energy_max[0]>167&amp;&amp;reco_shower_energy_max[0]<220" name = "up bound"/>
+<precut def = "(reco_shower_theta_yz[0]>-1.5 &amp;&amp;reco_shower_theta_yz[0]<1.5)" name = "Angle theta_yz"/>
+
+<precut def = "reco_shower_dEdx_plane2_median[0]<5.5" name = "dEdx Plane2"/>
+<precut def = "reco_shower_dEdx_plane1_median[0]<8" name = "dEdx Plane1"/>
+
+<precut def = "(reco_shower_startx[0]>20 &amp;&amp;reco_shower_startx[0]<240)" name = "pos x"/>
+<precut def = "(reco_shower_starty[0]>-75 &amp;&amp;reco_shower_starty[0]<120)" name = "pos y"/>
+
+
+<precut def = "(reco_shower_startz[0]>400 &amp;&amp;reco_shower_startz[0]<825)" name = "Position z"/>
+-->
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
-<var def = "reco_shower_phi_yx[0]" binning = "(8,-3.14,3.14)" unit = "Reconstructed Shower  #phi_{yx} [rad]" type = "d"    training="012"/>
-<var def = "acos(reco_shower_dirz[0])" binning = "(8,0,3.14)" unit = "Reconstructed Shower #theta [rad]" type = "d"    training="012"/>
+<var def = "cos(reco_shower_phi_yx[0])" binning = "(4,-1,1)" unit = "Reconstructed Shower Cos #phi_{yx}" type = "d"    training=""/>
+<var def = "cos(reco_shower_theta_yz[0])" binning = "(4,-1,1)" unit = "Reconstructed Shower Cos #theta_{yz}" type = "d"    training=""/>
 
-<var def = "reco_shower_dirx[0]" unit = "Reconstructed Shower Direction on X" binning = "(8,-1,1)" type = "d" training = ""  />
-<var def = "reco_shower_diry[0]" unit = "Reconstructed Shower Direction on Y" binning = "(8,-1,1)" type = "d" training = ""  />
-<var def = "reco_shower_dirz[0]" unit = "Reconstructed Shower Direction on Z" binning = "(8,-1,1)" type = "d" training = ""  />
+<var def = "reco_shower_phi_yx[0]" binning = "(7,-3.14,3.14)" unit = "Reconstructed Shower  #phi_{yx} [rad]" type = "d"    training="012"/>
+<var def = "reco_shower_theta_yz[0]" binning = "(7,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"    training=""/>
+
+<var def = "reco_shower_energy_max[0]/1000.0" binning = "(18,0,0.5)" unit = "Reconstructed Shower Energy [GeV]" type = "d"    training=""/> 
+<var def = "reco_shower_energy_max[0]/1000.0" binning = "(1,0,0.5)" unit = "Reconstructed Shower Energy [GeV]" type = "d"    training=""/> 
+
+<var def = "reco_shower_dirx[0]" unit = "Reconstructed Shower Direction on X" binning = "(4,-1,1)" type = "d" training = ""  />
+<var def = "reco_shower_diry[0]" unit = "Reconstructed Shower Direction on Y" binning = "(4,-1,1)" type = "d" training = ""  />
+<var def = "reco_shower_dirz[0]" unit = "Reconstructed Shower Direction on Z" binning = "(4,-1,1)" type = "d" training = ""  />
+<!--9-->
+<var def = "reco_shower_startx" binning = "(4,-20,270)" unit = "Reconstructed Shower Start X [cm]" type="d"   training=""/>
+<var def = "reco_shower_starty" binning = "(4,-140,140)" unit = "Reconstructed Shower Start Y [cm]" type="d"   training=""/>
+<var def = "reco_shower_startz" binning = "(4,-20,1100)" unit = "Reconstructed Shower Start Z [cm]" type="d"   training=""/>
+
+
+<!--12-->
+
+<var def="sqrt(2.0*#C0#*#C1#*(1.0-(0.5)))/1000" binning = "(18, 0, 0.3)" unit = "Corrected #pi^{0} Invariant Mass OPANG 60deg[GeV]" type = "d"  training=""/>
+<var def="sqrt(2.0*#C0#*#C1#*(1.0))/1000" binning = "(18, 0, 0.3)" unit = "Corrected #pi^{0} Invariant Mass OPANG 90deg [GeV]" type = "d"  training=""/>
+
+
+<!--
+<alias key="C0" value ="(1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)"/>
+<alias key="C1" value ="(1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)"/>
+<alias key="OPANG1" value="(reco_shower_dirx[i_shr[0]]*reco_shower_dirx[i_shr[1]] + reco_shower_diry[i_shr[0]]*reco_shower_diry[i_shr[1]] + reco_shower_dirz[i_shr[0]]*reco_shower_dirz[i_shr[1]])" /> 
+-->
+<alias key="C0" value ="(1.21989*reco_shower_energy_max[0] + 8.50486)"/>
+<alias key="C1" value ="(1.21989*0.03 + 8.50486)"/>
+<alias key="OPANG1" value="(reco_shower_dirx[i_shr[0]]*reco_shower_dirx[i_shr[1]] + reco_shower_diry[i_shr[0]]*reco_shower_diry[i_shr[1]] + reco_shower_dirz[i_shr[0]]*reco_shower_dirz[i_shr[1]])" /> 
+
+<var def = "sqrt(1-pow(reco_shower_dirx[0],2))*max(max(reco_shower_dEdx_plane0_median[0]*cos(reco_shower_theta_yz[0]-2.0944),reco_shower_dEdx_plane1_median[0]*cos(reco_shower_theta_yz[0]-1.0472)),reco_shower_dEdx_plane2_median[0]*cos(reco_shower_theta_yz[0]))" binning="(5,0.0,10.0)" unit = "Max. Projected Shower median dE/dx on all planes [Mev/cm]" type = "d" logplot = "false"  training = "013"/>
+
+<var def = "sqrt(1-pow(reco_shower_dirx[0],2))*max(max(reco_shower_dEdx_plane0_max[0]*cos(reco_shower_theta_yz[0]-2.0944),reco_shower_dEdx_plane1_max[0]*cos(reco_shower_theta_yz[0]-1.0472)),reco_shower_dEdx_plane2_max[0]*cos(reco_shower_theta_yz[0]))" binning="(5,0.0,10.0)" unit = "Max. Projected Shower max dE/dx on all planes [Mev/cm]" type = "d" logplot = "false"  training = "013"/>
+
+
+<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(5,0,10.0)" unit = "median dedx plane 2 [mev/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_plane1_median[0]" binning = "(5,0,10.0)" unit = "median dedx plane 1 [mev/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_plane0_median[0]" binning = "(5,0,10.0)" unit = "median dedx plane 0 [mev/cm]" type = "d"   training =""/>
+<var def = "max(max(reco_shower_dEdx_plane0_median[0],reco_shower_dEdx_plane1_median[0]),reco_shower_dEdx_plane2_median[0])" binning = "(5,0,10.0)" unit = "maximum median dedx all planes[mev/cm]" type = "d"   training =""/>
+
+<var def = "reco_shower_dEdx_plane2_max[0]" binning = "(5,0,10.0)" unit = "max dedx plane 2 [mev/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_plane1_max[0]" binning = "(5,0,10.0)" unit = "max dedx plane 1 [mev/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_plane0_max[0]" binning = "(5,0,10.0)" unit = "max dedx plane 0 [mev/cm]" type = "d"   training =""/>
+<var def = "max(max(reco_shower_dEdx_plane0_max[0],reco_shower_dEdx_plane1_max[0]),reco_shower_dEdx_plane2_max[0])" binning = "(5,0,10.0)" unit = "maximum max dedx all planes [mev/cm]" type = "d"   training =""/>
+
+<var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(5,0,10.0)" unit = "Shower dEdx plane 2 (Kalman) [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower_kalman_dEdx_plane1_median[0]" binning = "(5,0,10.0)" unit = "Shower dEdx plane 1 (Kalman) [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower_kalman_dEdx_plane0_median[0]" binning = "(5,0,10.0)" unit = "Shower dEdx plane 0 (Kalman) [MeV/cm]" type = "d"   training =""/>
+<var def = "max(max(reco_shower_kalman_dEdx_plane0_median[0],reco_shower_kalman_dEdx_plane1_median[0]),reco_shower_kalman_dEdx_plane2_median[0])" binning = "(5,0,10.0)" unit = "maximum kalman dedx all planes [mev/cm]" type = "d"   training =""/>
+
+<var def = "reco_shower3d_dEdx_plane2[0]" binning = "(5,0,10.0)" unit = "Shower3D dedx plane 2 [mev/cm]" type = "d"   training =""/>
+<var def = "reco_shower3d_dEdx_plane1[0]" binning = "(5,0,10.0)" unit = "Shower3D dedx plane 1 [mev/cm]" type = "d"   training =""/>
+<var def = "reco_shower3d_dEdx_plane0[0]" binning = "(5,0,10.0)" unit = "Shower3D dedx plane 0 [mev/cm]" type = "d"   training ="012"/>
+<var def = "max(max(reco_shower3d_dEdx_plane0[0],reco_shower3d_dEdx_plane1[0]),reco_shower3d_dEdx_plane2[0])" binning = "(5,0,10.0)" unit = "maximum shower3D dedx all planes [mev/cm]" type = "d"   training =""/>
+
+<!--30-->
 
 <var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness" type="d" training = "012"/>
 
@@ -444,9 +528,9 @@
 <var def = "reco_shower3d_dEdx_plane1[0]" binning = "(24,0,10.0)" unit = "Shower3D dedx plane 1 [mev/cm]" type = "d"   training =""/>
 <var def = "reco_shower3d_dEdx_plane0[0]" binning = "(24,0,10.0)" unit = "Shower3D dedx plane 0 [mev/cm]" type = "d"   training ="012"/>
 
-<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,10.0)" unit = "median dedx plane 2 [mev/cm]" type = "d"   training =""/>
-<var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,10.0)" unit = "median dedx plane 1 [mev/cm]" type = "d"   training =""/>
-<var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "median dedx plane 0 [mev/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(9,0,10.0)" unit = "median dedx plane 2 [mev/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_plane1_median[0]" binning = "(9,0,10.0)" unit = "median dedx plane 1 [mev/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_plane0_median[0]" binning = "(9,0,10.0)" unit = "median dedx plane 0 [mev/cm]" type = "d"   training =""/>
 <var def = "reco_shower_dEdx_amalgamated[0]" binning="(24,0.0,10.0)" unit = "Amalgamated Shower dE/dx [Mev/cm]" type = "d"    training = ""/>
 
 <!-- shower geometry + calorimetry -->
@@ -456,8 +540,8 @@
 <var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d"    training="012"/>
 <var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(24,0 ,2000)" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="012"/>
 <var def = "reco_shower_opening_angle[0]" binning = "(24,0,1)" unit = "Reconstructed Shower OpAng [cm]" type = "d"    training="012"/>
-<var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower  #phi_{yx} [rad]" type = "d"    training="012"/>
-<var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"    training="012"/>
+<var def = "reco_shower_phi_yx[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Shower  #phi_{yx} [rad]" type = "d"    training="012"/>
+<var def = "reco_shower_theta_yz[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"    training="012"/>
 
 <var def = "(reco_shower_trackscore[0])" binning = "(20,0,0.5)" unit = "Shower Score" type ="d" training ="012"/>
 <!--<var def = "(reco_shower_trackscore[0])" binning = "(40,0,0.5)" unit = "Shower Score" type ="d" training ="0123"/>-->
@@ -466,9 +550,9 @@
 <var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "(distance from shower start to nearest dead wire)" binning ="(24,0,3)" type="d" training="012"/>
 <var def = "reco_shower_num_daughters" binning = "(3,0,3)" unit = "Num Dau Shower" type="d" training=""/>
 
-<var def = "reco_shower_startx" binning = "(24,-20,270)" unit = "Reco Shower Start X [cm]" type="d"   training=""/>
-<var def = "reco_shower_starty" binning = "(24,-140,140)" unit = "Reco Shower Start Y [cm]" type="d"   training=""/>
-<var def = "reco_shower_startz" binning = "(24,-20,1100)" unit = "Reco Shower Start Z [cm]" type="d"   training=""/>
+<var def = "reco_shower_startx" binning = "(8,-20,270)" unit = "Reco Shower Start X [cm]" type="d"   training=""/>
+<var def = "reco_shower_starty" binning = "(8,-140,140)" unit = "Reco Shower Start Y [cm]" type="d"   training=""/>
+<var def = "reco_shower_startz" binning = "(8,-20,1100)" unit = "Reco Shower Start Z [cm]" type="d"   training=""/>
 
 <!--adding the shower end point in XYZ-->
 <var def = "reco_shower_startx[0] + (reco_shower_length[0] * reco_shower_dirx[0])" unit = "Shower End X [cm]" binning = "(24,-20,270)" type = "d" training = ""  />

@@ -23,6 +23,21 @@
 #include "bdt_scatter.h"
 #include "load_mva_param.h"
 #include "tinyxml.h"
+/*
+ * A gadget to make a directory after
+ * checking if that directory exist.
+ *
+ */
+void gadget_buildfolder( std::string name){
+	std::cout<<"Starting "<<name<<std::endl;
+	if (access(name.c_str(),F_OK) == -1){
+		mkdir(name.c_str(),0777);//Create a folder for pdf.
+	}
+	else{
+		std::cout<<"Overwrite "<<name<<"/ in 2 seconds, 1 seconds, ..."<<std::endl;
+		sleep(2);
+	}
+}
 
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name,bool shape_only);
@@ -441,7 +456,7 @@ int main (int argc, char *argv[]){
 
         //Define what we want to call signal and background here
         const std::vector<std::string> s_tags = {"NCDeltaRadOverlay","NCDeltaRadOverlaySM"};
-        const std::vector<std::string> b_tags ={"BNBOverlays","NCPi0","CCPi0","NueOverlays","BNBext","Dirt"};
+        const std::vector<std::string> b_tags ={"BNBOverlays","Coh. NCPi0","Other NCPi0","CCPi0","NueOverlays","BNBext","Dirt"};
 
         for(int i=0; i< bdt_files.size(); i++){
             //   bdt_files[i]->makeSBNfitFile(analysis_tag, bdt_infos, 1, fbdtcuts,"reco_vertex_size",vars);
@@ -458,15 +473,7 @@ int main (int argc, char *argv[]){
         return 0;
 
     }else if(mode_option=="stack"){
-        std::cout<<"Starting stack "<<std::endl;
-
-        if (access("stack",F_OK) == -1){
-            mkdir("stack",0777);//Create a folder for pdf.
-        }
-        else{
-            std::cout<<"Overwrite stack/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
-        }
+		gadget_buildfolder( mode_option);
 
         std::cout<<"flag0"<<std::endl;
 
@@ -529,17 +536,8 @@ int main (int argc, char *argv[]){
             }
         }
     }    else if(mode_option == "datamc"){
-        std::cout<<"Starting datamc "<<std::endl;
 
-        if (access("datamc",F_OK) == -1){
-            mkdir("datamc",0777);//Create a folder for pdf.
-        }
-        else{
-            std::cout<<"Overwrite datamc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
-        }
-
-
+		gadget_buildfolder( mode_option);
 
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 
@@ -557,8 +555,8 @@ int main (int argc, char *argv[]){
 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
             if(stack_bdt_files[f]->is_data) continue;
-            if(plotOnTopMap[stack_bdt_files[f]] ){
-                histogram_stack->addToStack(stack_bdt_files[f],true);
+			if(plotOnTopMap[stack_bdt_files[f]] ){
+				histogram_stack->addToStack(stack_bdt_files[f],true);
                 std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
             }
         }
@@ -642,20 +640,12 @@ int main (int argc, char *argv[]){
     // Similar to datamc, but iteratively scales signal histogram and
     // re-runs plotStacks to re-calculate chi^2 for each scaling
     else if (mode_option == "scalenorm") {
-        std::cout<<"Starting scalenorm "<<std::endl;
         if (response_only || number==-1) {
             std::cout << "[SCALENORM]: ERROR: This mode is meant to be run with response_only set to false and -n set to a number" << std::endl;
             return 1;
         }
 
-        if (access("scalenorm",F_OK) == -1){
-            mkdir("scalenorm",0777);//Create a folder for pdf.
-        }
-        else{
-            std::cout<<"Overwrite scalenorm/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
-        }
-
+		gadget_buildfolder(mode_option);
 
 
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
@@ -707,16 +697,7 @@ int main (int argc, char *argv[]){
 
     }
     else if(mode_option == "var2D"){
-        std::cout<<"Starting var2D "<<std::endl;
-
-        if (access("var2D",F_OK) == -1){
-            mkdir("var2D",0777);//Create a folder for pdf.
-        }
-        else{
-            std::cout<<"Overwrite var2D/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
-        }
-
+		gadget_buildfolder( mode_option);
 
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
 
@@ -813,15 +794,7 @@ int main (int argc, char *argv[]){
         return 0;
     }else if(mode_option == "scatter"){
 
-        std::cout<<"Starting Scatter "<<std::endl;
-
-        if (access("scatter",F_OK) == -1){
-            mkdir("scatter",0777);//Create a folder for pdf.
-        }
-        else{
-            std::cout<<"Overwrite scatter/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
-        }
+		gadget_buildfolder( mode_option);
 
         if(which_file==-1){
             for(auto &f: bdt_files){
@@ -912,7 +885,7 @@ int main (int argc, char *argv[]){
 
     l->AddEntry(gs[i],("Signal "+s_i[i]).c_str(),"l");
     l->AddEntry(gb[i],("BNB "+s_i[i]).c_str(),"l");
-}
+	}
 
 l->Draw();
 cimpact->Update();
@@ -982,7 +955,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     //which_file = 7;//checking ext
     std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
-    std::vector<std::string> v_topo = {TMVAmethods[0].topological_definition};//,"sim_shower_pdg==22","sim_track_pdg==2212","sim_shower_overlay_fraction<0.9","sim_track_overlay_fraction<0.9"};
+    std::vector<std::string> v_topo = {TMVAmethods[0].topological_definition};//{,"sim_shower_pdg==22","sim_track_pdg==2212","sim_shower_overlay_fraction<0.9","sim_track_overlay_fraction<0.9"};
 
 if(which_stage==-1)which_stage=0;
 
@@ -1179,14 +1152,7 @@ else if(mode_option == "eff2"){
 
 
 }else if(mode_option == "recomc"){
-    if (access("recomc",F_OK) == -1){
-        mkdir("recomc",0777);//Create a folder for pdf.
-    }
-    else{
-        std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-        sleep(2);
-    }
-
+	gadget_buildfolder( mode_option);
 
     std::vector<int> recomc_cols;
     for(auto &c: XMLconfig.recomc_cols){
@@ -1274,15 +1240,8 @@ return 0;
 */
 }else if(mode_option == "vars"){
 
-    if (access("vars",F_OK) == -1){
-        mkdir("vars",0777);//Create a folder for pdf.
-    }
-    else{
-        std::cout<<"Overwrite vars/ in 2 seconds, 1 seconds, ..."<<std::endl;
-        sleep(2);
-    }
-
-
+	gadget_buildfolder( mode_option);
+    
     std::vector<std::string> title = {"Topological Selection","Pre-Selection Cuts"};
 
     if(which_stage == -1) which_stage = 1;
