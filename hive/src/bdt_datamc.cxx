@@ -622,7 +622,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         for(auto &var: vars){
 
 
-//        var.is_logplot = false;//is_logplot is not functioning.
+        var.is_logplot = false;//is_logplot is not functioning.
 			if(var.is_logplot){std::cout<<"MAKEING A LOG PLOT"<<std::endl;}
 			else{std::cout<<"NOT   MAKEING A LOG PLOT"<<std::endl;}
 
