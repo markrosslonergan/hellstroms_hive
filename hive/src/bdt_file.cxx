@@ -50,8 +50,8 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     if(is_mc){
         std::cout<<"setting weight branch - mc"<<std::endl;
        // weight_branch = "genie_spline_weight";
-       weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
-       // weight_branch = "genie_spline_weight";//*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
+       weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<100)*(genie_CV_tune_weight>0)";
+        //weight_branch = "genie_spline_weight";//*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
     } 
     if (is_data ||  is_bnbext) {
         std::cout<<"setting weight branch - on/off beam data"<<std::endl;
@@ -70,12 +70,12 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     //run_fractions_plot = {0.4742,0.5258};
      
     run_names = {"RIsmall"};
-    run_fraction_cuts  = {"( run_number >= 5121 && run_number <= 5946)"};
-    run_fractions_plot = {1.0};
-
-    run_names = {"ALL"};
     run_fraction_cuts  = {"1"};
     run_fractions_plot = {1.0};
+
+  //  run_names = {"RI","R3"};
+  //  run_fraction_cuts  = {"run_number <= 7770 ","run_number>=13697"};
+ //   run_fractions_plot = {0.5,0.5};
 
 
     std::cout<<"Getting vertex tree"<<std::endl;
@@ -346,15 +346,16 @@ int bdt_file::calcPOT(){
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
         std::cout<<"--> Events scaled to 10.1e20 "<<numberofevents/pot*10.1e20<<std::endl;
-<<<<<<< HEAD
-//        weight_branch = "1";
-      //  weight_branch = "genie_spline_weight*genie_CV_tune_weight";
-         weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
-=======
-        //weight_branch = "1";
-//        weight_branch = "genie_spline_weight";
-         weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
->>>>>>> 32203fee0902b55dcab9d1c983a28fa3e406c11c
+
+        //weight_branch = "genie_spline_weight";
+
+        weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<100)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
+
+        /*if(this->tag.find("NCPi0")!=std::string::npos){
+            weight_branch = weight_branch +"*"+"(1.0+ (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.3)*0.2 + (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.175)*0.3  +  (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.1)*0.3 )";
+
+        }*/
+
 
         numberofevents_raw = numberofevents;
 
@@ -1011,7 +1012,7 @@ std::string bdt_file::getStageCuts(int stage, std::vector<double> bdt_cuts){
     std::string ans;
 
     if(stage==-1){
-        ans = flow.topological_cuts;
+        ans = flow.definition_cuts;//flow.topological_cuts; stage -1 is now "pre topo"
     }else if(stage==0){
         ans = flow.base_cuts;
     }else if(stage ==1){
@@ -1270,9 +1271,6 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     TTree * t_sbnfit_eventweight_tree = (TTree*)this->teventweight->CopyTree(sbnfit_cuts.c_str());
     std::cout<<"Copying Slice tree "<<std::endl;
     TTree * t_sbnfit_slice_tree = (TTree*)this->tslice->CopyTree("1");
-
-
-
 
 
     TTree * t_sbnfit_simpletree = new TTree("simple_tree","simple_tree");

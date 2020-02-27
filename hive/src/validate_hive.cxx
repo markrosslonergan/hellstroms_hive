@@ -45,6 +45,7 @@ int main (int argc, char *argv[]){
     int which_stage = -1;
     std::string vector = "";
     std::string input_string = "";
+    int which_group =-1;
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -56,6 +57,7 @@ int main (int argc, char *argv[]){
         {"topo_tag",	required_argument,	0, 't'},
         {"bdt",		    required_argument,	0, 'b'},
         {"stage",		required_argument,	0, 's'},
+        {"group",		required_argument,	0, 'g'},
         {"help",		required_argument,	0, 'h'},
         {"pot",		    required_argument,	0, 'p'},
         {"number",		required_argument,	0, 'n'},
@@ -68,7 +70,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:i:n:v:rh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:f:g:t:p:b:i:n:v:rh?", longopts, &index);
 
         switch(iarg)
         {
@@ -83,6 +85,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'x':
                 xml = optarg;
+                break;
+            case 'g':
+                which_group = (int)strtof(optarg,NULL);
                 break;
             case 'b':
                 which_bdt = (int)strtof(optarg,NULL);
@@ -133,6 +138,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-b\t--bdt\t\t Run only N BDT training/app, or BDT specific option"<<std::endl;
                 std::cout<<"\t-f\t--file\t\t Which file in bdt_files you want to run over, for file specifc options."<<std::endl;
                 std::cout<<"\t-p\t--pot\t\tSet POT for plots"<<std::endl;
+                std::cout<<"\t-g\t--group\t\tSet a group for variable plotting"<<std::endl;
                 std::cout<<"\t-s\t--stage\t\tSet what stage to do things at."<<std::endl;
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag [Superseeded by XML defined tag]"<<std::endl;
@@ -195,6 +201,7 @@ int main (int argc, char *argv[]){
     std::vector<bdt_file*> stack_bdt_files;
     std::vector<bdt_file*> signal_bdt_files;
     std::vector<bdt_file*> bkg_bdt_files;
+    std::vector<bool> is_training;
 
     bdt_file * signal;
     bdt_file * training_signal;
@@ -260,6 +267,11 @@ int main (int argc, char *argv[]){
         if(XMLconfig.bdt_is_training_signal[f]){
             training_signal = bdt_files.back();
             incl_in_stack = false;
+            is_training.push_back(true);
+            std::cout<<"PP Training"<<std::endl;
+        }else{
+            is_training.push_back(false);
+            std::cout<<"PP Not Training"<<std::endl;
         }
 
 
@@ -291,9 +303,9 @@ int main (int argc, char *argv[]){
                     f->addBDTResponses(bdt_infos[k]);
                 }
             }
-            if(mode_option != "train"  && mode_option != "sbnfit"){
-                f->calcBaseEntryList(analysis_tag);
-            }
+
+            f->calcBaseEntryList(analysis_tag);
+
         }
     }
 
@@ -309,7 +321,6 @@ int main (int argc, char *argv[]){
     //===========================================================================================
 
 
-
     for(auto &f: bdt_files){
         std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<which_stage<<"."<<std::endl;
         if(which_stage>1) f->calcBDTEntryList(which_stage,fbdtcuts);
@@ -317,26 +328,56 @@ int main (int argc, char *argv[]){
         f->setStageEntryList(which_stage);
     }	
 
+    if(mode_option == "app"){
 
-    for(auto &var: vars){
-        std::vector<std::string> cuts(bdt_files.size(),"1");
-        compareQuick(var,bdt_files,cuts,"VALID_"+var.safe_unit,true);
+        for(int f=0; f< bdt_files.size();++f){
+            for(int i=0; i< bdt_infos.size();++i){
+                //By default loop over all bdt's and files, but if specified do just 1
+                if(!((which_bdt==i || which_bdt==-1 )&&(which_file==f||which_file==-1))) continue;
+                
+                if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
+                    bdt_XGapp(bdt_infos[i], bdt_files[f]);
+                }else{
+                    bdt_app(bdt_infos[i], bdt_files[f]);
+                }
+            }
+        }
+        return 0;
     }
 
+    std::vector<bdt_variable> quick_vars;
 
+    if(which_bdt == -1){
+        quick_vars = vars;
+    }else{ 
+         quick_vars = bdt_infos[which_bdt].train_vars;
+    }   
+    for(auto &var: quick_vars){
 
+        if(which_group == -1 || which_group == var.cat){
 
+        std::vector<std::string> cuts;
+        int v = 0;
+        std::vector<bdt_file*> compare_files;
+        for(auto &f: bdt_files){
+            v++;
+            if(is_training[v]) continue;
+            if(which_stage>1){
+                std::string cu = f->getStageCuts(which_stage, fbdtcuts);
+                cuts.push_back(cu); 
+            }else{
+                cuts.push_back("1");
+            }
+            compare_files.push_back(f);
+        }
 
-
-
-
-
-
+        compareQuick(var,compare_files,cuts,"VALID_"+var.safe_unit,true);
+    }
+    }
 
     return 0;
 
 }
-
 
 
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name){
@@ -385,8 +426,8 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
     pad0bot->SetGridx(); // vertical grid
     pad0bot->Draw();
 
-    double rmin  = 0.75;
-    double rmax = 1.25;
+    double rmin  = 0.5;
+    double rmax = 1.5;
 
     for(int i=0; i< files.size();i++){
 
