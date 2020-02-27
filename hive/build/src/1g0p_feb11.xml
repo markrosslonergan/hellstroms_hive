@@ -50,12 +50,20 @@
     </definition>
 </bdtfile>
 
-
-
-<bdtfile filename = "vertexed_mcc9_v33/Test/ncpi0_overlay_test_run1_v33.0.root" tag = "NCPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB NC 1 #pi^{0}" scale = "1.0">
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncpi0_overlay_test_run1_v33.0.root" tag = "Coh. NCPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Coherent NC 1 #pi^{0}" scale = "1.0">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> mctruth_cc_or_nc==1 </cut>
+		<cut> mctruth_mode == 3 </cut>
+        <cut> mctruth_num_exiting_pi0==1</cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncpi0_overlay_test_run1_v33.0.root" tag = "Other NCPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other NC 1 #pi^{0}" scale = "1.0">
+    <definition>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> mctruth_cc_or_nc==1 </cut>
+		<cut> mctruth_mode != 3 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
     </definition>
 </bdtfile>
@@ -391,17 +399,21 @@
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
 <precut def = "reco_shower_energy_max[0]>30" name = "Michel Cut"/>
 <precut def = "reco_shower_start_dist_to_SCB > 2" name = "Shower start Contained in SCB"/>
-<precut def = "reco_shower_energy_max[0]>175 &amp; &amp;reco_shower_energy_max[0]<250" name = "Michel Cut1"/>
 
 <!--
+<precut def = "reco_shower_energy_max[0]>175 &amp; &amp;reco_shower_energy_max[0]<250" name = "Michel Cut1"/>
 <precut def = "reco_shower_energy_max[0]>175 &amp; &amp;reco_shower_energy_max[0]<250" name = "Michel Cut1"/>
 <precut def = "reco_shower_energy_max[0]>166.67 &amp; &amp;reco_shower_energy_max[0]<222.22" name = "Michel Cut1"/>
 <precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
-<var def = "reco_shower_phi_yx[0]" binning = "(8,-3.14,3.14)" unit = "Reconstructed Shower  #phi_{yx} [rad]" type = "d"    training="012"/>
-<var def = "acos(reco_shower_dirz[0])" binning = "(8,0,3.14)" unit = "Reconstructed Shower #theta [rad]" type = "d"    training="012"/>
+<var def = "acos(reco_shower_dirz[0])" binning="(10,0.0,3.1415)" unit = "Shower Angles Related to the Beam [Rad]" type = "d" logplot = "false"  training = ""/>
+
+<var def = "reco_shower_dirx[0]" unit = "Reconstructed Shower Direction on X" binning = "(8,-1,1)" type = "d" training = ""  />
+<var def = "reco_shower_diry[0]" unit = "Reconstructed Shower Direction on Y" binning = "(8,-1,1)" type = "d" training = ""  />
+<var def = "reco_shower_dirz[0]" unit = "Reconstructed Shower Direction on Z" binning = "(8,-1,1)" type = "d" training = ""  />
+
 <var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness" type="d" training = "012"/>
 
 <var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness" type="d" training = "012"/>
@@ -418,6 +430,7 @@
 
 <!--<var def = "reco_shower_energy_max[0]/1000.0" binning = "(20,0,0.2)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="0123"/>-->
 
+<!--13-->
 <var def = "reco_shower_energy_max[0]/1000.0" binning = "(18,0,0.5)" unit = "Reconstructed Shower Energy [GeV]" type = "d"    training="012"/> 
 <var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"    training="012"/>
 

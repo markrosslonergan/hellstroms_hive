@@ -346,7 +346,7 @@ int bdt_file::calcPOT(){
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
         std::cout<<"--> Events scaled to 10.1e20 "<<numberofevents/pot*10.1e20<<std::endl;
-        //weight_branch = "1";
+
         //weight_branch = "genie_spline_weight";
 
         weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<100)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
