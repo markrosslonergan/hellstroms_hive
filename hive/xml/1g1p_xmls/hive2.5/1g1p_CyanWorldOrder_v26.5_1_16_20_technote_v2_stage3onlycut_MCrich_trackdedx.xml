@@ -577,11 +577,16 @@
 <var def = "sss3d_invar_ranked_opang" binning = "(16,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="d" training="4"/>
 <var def = "sss3d_invar_ranked_implied_opang" binning = "(16,-1,1)" unit ="sss3d best invariant mass candidate implied angle w.r.t primary shower [cos]" type="d" training="4"/>
 
- <var def = "reco_track_mean_dEdx_plane0[0]" binning =  "(16,0,10)" unit = "Reco Track Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training="" group = "1"/>
- <var def = "reco_track_mean_dEdx_plane1[0]" binning =  "(16,0,10)" unit = "Reco Track Mean dE/dx Plane 1 [MeV/cm]" type = "d" training="" group = "1"/>
- <var def = "reco_track_mean_dEdx_plane2[0]" binning =  "(16,0,10)" unit = "Reco Track Mean dE/dx Plane 2 [MeV/cm]" type = "d"   training="" group = "1"/>
+<var def = "reco_track_mean_dEdx_plane0[0] *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.03))" binning =  "(16,0,10)" unit = "iScaled Plus 3 Reco Track Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training="" group = "1"/>
+<var def = "reco_track_mean_dEdx_plane1[0]  *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.03))" binning =  "(16,0,10)" unit = "Scaled Plus 3 Reco Track Mean dE/dx Plane 1 [MeV/cm]" type = "d" training="" group = "1"/>
+<var def = "reco_track_mean_dEdx_plane2[0] *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.03))" binning =  "(16,0,10)" unit = "Scaled Plus 3 Reco Track Mean dE/dx Plane 2 [MeV/cm]" type = "d"   training="" group = "1"/>
 
- <var def = "reco_track_mean_trunc_dEdx_plane0[0]" binning =  "(6,0,10)" unit = "Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training="" group = "1"/>
+<var def = "reco_track_mean_dEdx_plane0[0] *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.06))" binning =  "(16,0,10)" unit = "iScaled Plus 6 Reco Track Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training="" group = "1"/>
+<var def = "reco_track_mean_dEdx_plane1[0]  *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.06))" binning =  "(16,0,10)" unit = "Scaled Plus 6 Reco Track Mean dE/dx Plane 1 [MeV/cm]" type = "d" training="" group = "1"/>
+<var def = "reco_track_mean_dEdx_plane2[0] *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.06))" binning =  "(16,0,10)" unit = "Scaled Plus 6 Reco Track Mean dE/dx Plane 2 [MeV/cm]" type = "d"   training="" group = "1"/>
+
+
+ <var def = "reco_track_mean_trunc_dEdx_plane0[0]" binning =  "(16,0,10)" unit = "Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training="" group = "1"/>
  <var def = "reco_track_mean_trunc_dEdx_plane1[0]" binning =  "(16,0,10)" unit = "Reco Track Truncated Mean dE/dx Plane 1 [MeV/cm]" type = "d" training=""  group = "1"  />
  <var def = "reco_track_mean_trunc_dEdx_plane2[0]" binning =  "(16,0,10)" unit = "Reco Track Truncated Mean dE/dx Plane 2 [MeV/cm]" type = "d"   training="" group = "1"/>
 
