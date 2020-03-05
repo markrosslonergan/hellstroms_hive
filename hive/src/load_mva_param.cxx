@@ -285,9 +285,11 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }
 
         const char* t_fillstyles = pBDTfile->Attribute("fillstyle");
-        if(t_fillstyles==NULL){ bdt_fillstyles.push_back(1001);}else{
-            bdt_fillstyles.push_back((int)std::stoi(t_fillstyles,nullptr,10));
-        }
+		if(t_fillstyles==NULL){ 
+			bdt_fillstyles.push_back(1001);
+		}else{
+			bdt_fillstyles.push_back((int)std::stoi(t_fillstyles,nullptr,10));
+		}
 
 
         const char* t_dirs = pBDTfile->Attribute("dirs");
@@ -322,6 +324,14 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }else{
             bdt_scales.push_back(atof(t_scales));
         }
+
+        const char* t_weight = pBDTfile->Attribute("weight");
+        if(t_weight==NULL){
+            bdt_weight.push_back("1");
+        }else{
+            bdt_weight.push_back(t_weight);
+        }
+
 
         const char* t_signals = pBDTfile->Attribute("signal");
         if(t_signals==NULL){
@@ -410,6 +420,15 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             bdt_is_training_signal.push_back(false);
         }
 
+		//Add fixpot for sample comparison, CHECK
+		TiXmlElement *pfixPOT = pBDTfile->FirstChildElement("fixPOT");
+		if(pfixPOT){
+			std::string fixpot = std::string(pfixPOT->GetText());
+			bdt_fixpot.push_back(stod(fixpot));
+		}else{
+			bdt_fixpot.push_back(0);
+		}
+
         //So, some book-keeping if its data!
         bool is_data = false;
         TiXmlElement *pData = pBDTfile->FirstChildElement("data");
@@ -421,7 +440,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         bdt_onbeam_spills.push_back(-999);
 
 
-        while(pData){
+        while(pData){//<data > section
 
             const char* t_use = pData->Attribute("use");
             if(t_use=="no"){break;}
@@ -443,7 +462,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             bdt_onbeam_spills.back() = 0;
 
             TiXmlElement *pTor = pData->FirstChildElement("tor860_wcut");
-            while(pTor){
+            while(pTor){//tor860_wcut section
                 std::string tor = std::string(pTor->GetText());
                 bdt_onbeam_pot.back() = stod(tor);    
                 pTor = pTor->NextSiblingElement("tor860_wcut");

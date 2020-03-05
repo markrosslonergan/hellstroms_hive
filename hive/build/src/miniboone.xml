@@ -10,18 +10,21 @@
     <definition>
         <cut> 1 </cut>
     </definition>
+	<fixPOT> 314022*4229E14 </fixPOT>
 </bdtfile>
 
 <bdtfile filename = "timing_MC_dirt_may07_2.root" tag = "dirt" hist_style = "hist" dirs = "" col = "(1.0,0.4,0.4)" plot_name = "dirt" scale = "1.0" signal = "false" plot_on_top = "false">
     <definition>
         <cut> 1 </cut>
     </definition>
+	<fixPOT> 314022*4229E14 </fixPOT>
 </bdtfile>
 
 <bdtfile filename = "timing_MC_nue_may07_2.root" tag = "intrinsicnue" hist_style = "hist" dirs = "" col = "(1.0,0.4,0.4)" plot_name = "Intrinsic#nu_{e}" scale = "1.0" signal = "false" plot_on_top = "false">
     <definition>
         <cut> 1 </cut>
     </definition>
+	<fixPOT> 314022*4229E14 </fixPOT>
 </bdtfile>
 
 
@@ -29,6 +32,7 @@
     <definition>
         <cut> 1 </cut>
     </definition>
+	<fixPOT> 3.354217E20 </fixPOT>
    <!--
    <data type="OffBeam">
        <tor860_wcut> 4.026e+19 </tor860_wcut>   

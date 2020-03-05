@@ -240,9 +240,9 @@ int main (int argc, char *argv[]){
     std::cout<<"=============== Loading all BDT files for this analysis ========================"<<std::endl;
     std::cout<<"================================================================================"<<std::endl;
 
-    for(size_t f = 0; f < XMLconfig.GetNFiles(); ++f){
+    for(size_t f = 0; f < XMLconfig.GetNFiles(); ++f){//load up ROOT files!
 
-        std::cout<<"============= Starting bdt_file number "<<f<<" (0 is the first one) with tag -- "<<XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
+        std::cout<<"======= Starting bdt_file number "<<f<<" (0 is the first one) with tag -- "<<XMLconfig.bdt_tags[f]<<"====="<<std::endl;
         //First build a bdt_flow for this file.
         std::string def = "1";
         for(int i=0; i< XMLconfig.bdt_definitions[f].size(); ++i){
@@ -267,18 +267,18 @@ int main (int argc, char *argv[]){
             std::cout<<" -- ---> "<<XMLconfig.bdt_definitions[f][i]<<std::endl;
         }
 
-		bdt_file load_file(	
-				dir, 
-				XMLconfig.bdt_filenames[f].c_str(),	
-				XMLconfig.bdt_tags[f].c_str(), 
-				XMLconfig.bdt_hist_styles[f].c_str(),
-				XMLconfig.bdt_dirs[f].c_str(), 
-				XMLconfig.bdt_cols[f]->GetNumber() , 
-				XMLconfig.bdt_fillstyles[f] , 
-				analysis_flow);
-
-		bdt_files.push_back(load_file);
-//        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , analysis_flow));
+//		bdt_files.push_back(
+//		new bdt_file(	
+//				dir, 
+//				XMLconfig.bdt_filenames[f].c_str(),	
+//				XMLconfig.bdt_tags[f].c_str(), 
+//				XMLconfig.bdt_hist_styles[f].c_str(),
+//				XMLconfig.bdt_dirs[f].c_str(), 
+//				XMLconfig.bdt_cols[f]->GetNumber() , 
+//				XMLconfig.bdt_fillstyles[f] , 
+//				analysis_flow));
+		bdt_files.push_back( new bdt_file(f, XMLconfig, analysis_flow));
+//		bdt_files.push_back(load_file);
 
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
@@ -287,7 +287,7 @@ int main (int argc, char *argv[]){
 
         if(XMLconfig.bdt_scales[f] != 1.0){
             std::cout<<" -- Scaling "<<XMLconfig.bdt_tags[f]<<" file by a factor of "<<XMLconfig.bdt_scales[f]<<std::endl;
-            bdt_files.back()->scale_data = XMLconfig.bdt_scales[f];
+//            bdt_files.back()->scale_data = XMLconfig.bdt_scales[f];//do this in the bdt_file.cxx
         }
 
 
@@ -331,7 +331,7 @@ int main (int argc, char *argv[]){
         }
 
 
-        bdt_files.back()->calcPOT();
+//        bdt_files.back()->calcPOT();
 
         //std::string r1 = "run_number>=5121 && run_number <=5946";
         //bdt_files.back()->scale( bdt_files.back()->tvertex->GetEntries(r1.c_str())/(double)bdt_files.back()->tvertex->GetEntries() );

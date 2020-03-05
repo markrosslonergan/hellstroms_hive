@@ -19,86 +19,106 @@ bdt_file::bdt_file(
     root_dir(inrootdir),
     col(incol),
     flow(inflow),
- //   is_data(is_data),
- //   is_bnbext(is_bnbext),
- //   is_mc(is_mc)
     is_data(false),
     is_bnbext(false),
-    is_mc(true)
+    is_mc(true){
+		std::cout<<"WARNING, obsolete! Not used anymore."<<__FILE__<<" at Line "<<__LINE__<<std::endl;
+	};
+
+//lazy set-up
+bdt_file::bdt_file(size_t index,
+		MVALoader XMLconfig,
+		bdt_flow inflow)
+		:
+		dir		(XMLconfig.filedir),
+		name	(XMLconfig.bdt_filenames[index]),
+		tag		(XMLconfig.bdt_tags[index]),
+		plot_ops(XMLconfig.bdt_hist_styles[index]),
+		root_dir(XMLconfig.bdt_dirs[index]),
+		col		(XMLconfig.bdt_cols[index]->GetNumber()),
+		fillstyle(XMLconfig.bdt_fillstyles[index]),
+		weight_branch(XMLconfig.bdt_weight[index]),
+		scale_data(XMLconfig.bdt_scales[index]),
+		pot		(XMLconfig.bdt_fixpot[index]),
+		flow	(inflow),
+		is_data(false),
+    	is_bnbext(false),
+    	is_mc(true)
 {//default as MCfile;
-	
+//std::cout<<__LINE__<<std::endl;
+//		dir		 = XMLconfig.filedir;
+//		name	 = XMLconfig.bdt_filenames[index];
+//		tag		 = XMLconfig.bdt_tags[index];
+//std::cout<<__LINE__<<std::endl;
+//		plot_ops = XMLconfig.bdt_hist_styles[index];
+//		root_dir = XMLconfig.bdt_dirs[index];
+//		col		 = XMLconfig.bdt_cols[index]->GetNumber();
+//std::cout<<__LINE__<<std::endl;
+//		fillstyle = XMLconfig.bdt_fillstyles[index];
+//std::cout<<__LINE__<<std::endl;
+//		weight_branch = XMLconfig.bdt_weight[index];
+//std::cout<<__LINE__<<std::endl;
+//		scale_data = XMLconfig.bdt_scales[index];
+//		flow	 = inflow;
+//std::cout<<__LINE__<<std::endl;
+//		is_data = false;
+//    	is_bnbext = false;
+//    	is_mc = true;
+	bool print_message = true;
 	if(this->tag.compare(0,4,"Data")==0){ 
 		this->is_mc = false;
 		this->is_data = true;
 		this->is_bnbext = false;
-//	}else if(this->tag.compare(0,6,"BNBext")==0){//sorry, nobnbext
-//		this->is_mc = false;
-//		this->is_data = false;
-//		this->is_bnbext = true;
 	}
-
     plot_name = tag;
     rangen = new TRandom3();
-    scale_data =1.0;
-	std::cout<<"Loading : "<<dir<<"/"<<name<<std::endl;
+if(print_message)	std::cout<<"Loading : "<<dir<<"/"<<name<<std::endl;
 	file = new TFile((dir+"/"+name).c_str(), "read");//ofc, f for file;
 
     if(!file->IsOpen() || !file){
         std::cerr<<"ERROR: didnt open file right: "<<dir<<"/"<<name<<std::endl;
         exit(EXIT_FAILURE);
     }
-    std::cout<<"bdt_file::bdt_file || "<<name<<" Opened correctly by root."<<std::endl;
+ if(print_message)   std::cout<<"bdt_file::bdt_file || "<<name<<" Opened correctly by root."<<std::endl;
 
     std::string tnam_event = root_dir+"event_tree";
-    std::string tnam = root_dir+"vertex_tree";
+    std::string tnam = root_dir+"TTiming";
     std::string tnam_pot = root_dir+"pot_tree";
 
-    if(is_mc){
-        std::cout<<"setting weight branch - mc"<<std::endl;
-       // weight_branch = "genie_spline_weight";
-       weight_branch = "wgt";
-        //weight_branch = "genie_spline_weight";//*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
-    } 
-    if (is_data ||  is_bnbext) {
-        std::cout<<"setting weight branch - on/off beam data"<<std::endl;
-        weight_branch = "1";
-    }
-    
-    fillstyle = infillstyle;
-    scale_data = 1.0;
-
-
-    run_names = {"RIsmall"};
+//    run_names = {"RIsmall"};
     run_fraction_cuts  = {"1"};
     run_fractions_plot = {1.0};
 
-    std::cout<<"Getting vertex tree"<<std::endl;
     tvertex = (TTree*)file->Get(tnam.c_str());
 
-    //tevent = (TTree*)file->Get(tnam_event.c_str());
-    std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
-    run_fractions_file.resize(run_fractions_plot.size(),0);
-    double combin = 0.0;
-    for(int i=0; i< run_fractions_plot.size(); i++){
-            run_fractions_file[i] = tvertex->GetEntries(run_fraction_cuts[i].c_str())/(double)tvertex->GetEntries();
-            std::cout<<run_fraction_cuts[i]<<std::endl;
-            std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
-            combin+=run_fractions_file[i];
-    }
-    std::cout<<"Total is "<<combin<<std::endl;
+	if(print_message){
+		std::cout<<"It has POT: "<<pot<<std::endl;
+		std::cout<<"Getting TTree:"<<tnam<<std::endl;
+		//tevent = (TTree*)file->Get(tnam_event.c_str());
+		std::cout<<"Got number of TTrees: "<<tvertex->GetEntries()<<std::endl;
+	}
 
-    run_weight_string = "1.0*("+run_fraction_cuts[0]+"*"+std::to_string(run_fractions_plot[0]/run_fractions_file[0]);
-    for(int i=1; i< run_fractions_plot.size(); i++){
-         run_weight_string += "+" +run_fraction_cuts[i]+"*"+std::to_string(run_fractions_plot[i]/run_fractions_file[i]);
-    }
-    run_weight_string +=")";
-    std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
+//    run_fractions_file.resize(run_fractions_plot.size(),0);
+//    double combin = 0.0;
+//    for(int i=0; i< run_fractions_plot.size(); i++){
+//            run_fractions_file[i] = tvertex->GetEntries(run_fraction_cuts[i].c_str())/(double)tvertex->GetEntries();
+//            std::cout<<run_fraction_cuts[i]<<std::endl;
+////          std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
+//            combin+=run_fractions_file[i];
+//    }
+//    std::cout<<"Total is "<<combin<<std::endl;
+//
+//    run_weight_string = "1.0*("+run_fraction_cuts[0]+"*"+std::to_string(run_fractions_plot[0]/run_fractions_file[0]);
+//    for(int i=1; i< run_fractions_plot.size(); i++){
+//         run_weight_string += "+" +run_fraction_cuts[i]+"*"+std::to_string(run_fractions_plot[i]/run_fractions_file[i]);
+//    }
+//    run_weight_string +=")";
+//    std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
 
-
-    std::cout<<"Getting eventweight tree"<<std::endl;
-    teventweight = (TTree*)file->Get((root_dir+"eventweight_tree").c_str());
-    tvertex->AddFriend(teventweight);
-    std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
+//    std::cout<<"Getting eventweight tree"<<std::endl;
+//    teventweight = (TTree*)file->Get((root_dir+"eventweight_tree").c_str());
+//    tvertex->AddFriend(teventweight);
+//    std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
 
     vec_entry_lists.resize(flow.bdt_vector.size());
 
@@ -148,6 +168,9 @@ int bdt_file::setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills
 
 
 int bdt_file::calcPOT(){
+	std::cout<<"No Need to Calculate this, see file ";
+	std::cout<<__FILE__<<" "<<__LINE__<<std::endl;
+	return 0;
 
     std::string tnam_event = root_dir+"event_tree";
     std::string tnam = root_dir+"vertex_tree";
