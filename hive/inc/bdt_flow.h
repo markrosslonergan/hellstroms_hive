@@ -30,7 +30,19 @@ struct bdt_flow{
 
 		bdt_flow(){};
 
-		bdt_flow(std::string intop, std::string indef, std::string inpre, std::string inpost, bdt_info incos, bdt_info inbnb) : topological_cuts(intop),  definition_cuts(indef), pre_cuts(inpre), post_cuts(inpost),bdt_cosmic_cuts(incos), bdt_bnb_cuts(inbnb) {
+		bdt_flow(std::string intop, 
+				std::string indef, 
+				std::string inpre, 
+				std::string inpost, 
+				bdt_info incos, 
+				bdt_info inbnb) 
+				: 
+				topological_cuts(intop),  
+				definition_cuts(indef), 
+				pre_cuts(inpre), 
+				post_cuts(inpost),
+				bdt_cosmic_cuts(incos), 
+				bdt_bnb_cuts(inbnb) {
 
 			base_cuts = topological_cuts+"&&"+definition_cuts;
 
@@ -51,19 +63,42 @@ struct bdt_flow{
 		};	
 
 
-		bdt_flow(std::string intop, std::string indef, std::vector<std::string> invecpre, std::string inpost, bdt_info incos, bdt_info inbnb) : topological_cuts(intop),  definition_cuts(indef), vec_pre_cuts(invecpre), post_cuts(inpost),bdt_cosmic_cuts(incos), bdt_bnb_cuts(inbnb) {
+//		bdt_flow(std::string intop, 
+//				std::string indef, 
+//				std::vector<std::string> invecpre, 
+//				std::string inpost, 
+//				bdt_info incos, 
+//				bdt_info inbnb) 
+//				: 
+//				topological_cuts(intop),  
+//				definition_cuts(indef), 
+//				vec_pre_cuts(invecpre), 
+//				post_cuts(inpost),
+//				bdt_cosmic_cuts(incos), 
+//				bdt_bnb_cuts(inbnb) {
+//
+//			base_cuts = topological_cuts+"&&"+definition_cuts;
+//
+//			pre_cuts = vec_pre_cuts.front();
+//			for(int i=1; i<vec_pre_cuts.size(); i++){
+//				pre_cuts = pre_cuts + "&&"+ vec_pre_cuts.at(i);
+//			}
+//
+//		};
 
-			base_cuts = topological_cuts+"&&"+definition_cuts;
 
-			pre_cuts = vec_pre_cuts.front();
-			for(int i=1; i<vec_pre_cuts.size(); i++){
-				pre_cuts = pre_cuts + "&&"+ vec_pre_cuts.at(i);
-			}
-
-		};	
-
-
-		bdt_flow(std::string intop, std::string indef, std::vector<std::string> invecpre, std::string inpost, std::vector<bdt_info>inbdtinfos) : topological_cuts(intop),  definition_cuts(indef), vec_pre_cuts(invecpre), post_cuts(inpost), bdt_vector(inbdtinfos) {
+		bdt_flow(std::string intop, 
+				std::string indef, 
+				std::vector<std::string> invecpre, 
+				std::string inpost, 
+				std::vector<bdt_info>inbdtinfos) 
+				: 
+				topological_cuts(intop),
+				definition_cuts(indef),
+				vec_pre_cuts(invecpre),
+				post_cuts(inpost), 
+				bdt_vector(inbdtinfos) {//pick up pre-cuts
+				//Didnt run without pre-cuts; CHECK
 
 			base_cuts = topological_cuts+"&&"+definition_cuts;
 
@@ -71,9 +106,9 @@ struct bdt_flow{
             bdt_cosmic_cuts = bdt_vector[0];
             //bdt_bnb_cuts = bdt_vector[1];
 
-			pre_cuts = vec_pre_cuts.front();
-			for(int i=1; i<vec_pre_cuts.size(); i++){
-				pre_cuts = pre_cuts + "&&"+ vec_pre_cuts.at(i);
+			pre_cuts = "1";
+			for(int i=0; i<vec_pre_cuts.size(); i++){
+				pre_cuts += "&&"+ vec_pre_cuts.at(i);
 			}
 
 		};	

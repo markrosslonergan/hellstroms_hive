@@ -1016,7 +1016,7 @@ int bdt_precalc::genBNBcorrectionInfo(){
 
 
 
-    file->f->cd();
+    file->file->cd();
     int nu_pdg = 0;
     double true_nu_E = 0;
     std::cout<<"1"<<std::endl;

@@ -1,65 +1,66 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="Mini" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "( 0.945279,0.679675,0.603296)" /> 
+<topology tag="mini" name ="FullOsc#nu_{e}" def = "1" bdtcut = "( 0.945279)" /> 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
 <filedir>/scratch/condor-tmp/klin/data_timing_root</filedir>
 
-<bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(1.0,0.4,0.4)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
-    <definition>
-        <cut> mctruth_is_delta_radiative==1 </cut>
-        <!--    <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
-        <cut> mctruth_nu_vertex_y &gt; -106.5 &amp;&amp; mctruth_nu_vertex_y &lt; 106.5 </cut>
-        <cut> mctruth_nu_vertex_z &gt; 10.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1026.8 </cut>
->>>>>>> 32203fee0902b55dcab9d1c983a28fa3e406c11c
-        <cut> mctruth_cc_or_nc == 1 </cut>
-        <cut> mctruth_num_exiting_pi0 == 0</cut>
-        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
-        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02)==1</cut> 
-        <cut> sim_shower_overlay_fraction[0] &lt; 0.8 </cut>
-        <cut> sim_shower_pdg[0] == 22 </cut>
-        <cut> sim_track_overlay_fraction[0] &lt; 0.8 </cut>
-        <cut> sim_track_pdg[0] == 2212 </cut> -->
-    </definition>
-</bdtfile>
-
-<bdtfile filename = "vertexed_mcc9_v26/AllRun/Split/bnbext_test_run1_v26.5.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "timing_MC_fullosc_may07_2.root" tag = "fullosc" hist_style = "hist" dirs = "" col = "(1.0,0.4,0.4)" plot_name = "fullosc" scale = "1.0" signal = "true" plot_on_top = "false" weight = "wgt">
     <definition>
         <cut> 1 </cut>
     </definition>
-    <data type="OffBeam">
-        <tor860_wcut> 4.026e+19 </tor860_wcut>   
-        <E1DCNT_wcut> 8915733.0</E1DCNT_wcut>   
-        <EXT>36566176.0</EXT>  
-    </data>
+</bdtfile>
+
+<bdtfile filename = "timing_MC_dirt_may07_2.root" tag = "dirt" hist_style = "hist" dirs = "" col = "(1.0,0.4,0.4)" plot_name = "dirt" scale = "1.0" signal = "false" plot_on_top = "false">
+    <definition>
+        <cut> 1 </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "timing_MC_nue_may07_2.root" tag = "intrinsicnue" hist_style = "hist" dirs = "" col = "(1.0,0.4,0.4)" plot_name = "Intrinsic#nu_{e}" scale = "1.0" signal = "false" plot_on_top = "false">
+    <definition>
+        <cut> 1 </cut>
+    </definition>
+</bdtfile>
+
+
+<bdtfile filename = "timing_data_nue_aug16.root" tag = "data" hist_style = "hist" dirs = "" col = "(0.2,0.8,0.2)" plot_name = "Data" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> 1 </cut>
+    </definition>
+   <!--
+   <data type="OffBeam">
+       <tor860_wcut> 4.026e+19 </tor860_wcut>   
+       <E1DCNT_wcut> 8915733.0</E1DCNT_wcut>   
+       <EXT>36566176.0</EXT>  
+   </data>
+   -->
 </bdtfile>
 
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
-<bdtfile filename = "vertexed_mcc9_v33/Train/ncdeltarad_overlay_train_v33.0.root" tag = "NCDeltaRadOverlayTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(1.0,0.4,0.4)" plot_name = "NC Delta Train">
+<bdtfile filename = "timing_MC_fullosc_may07_2.root" tag = "fulloscTrain" hist_style = "hist" dirs = "" col = "(1.0,0.4,0.4)" plot_name = "FullOsc#nu_{e} Train">
     <definition>
-        <cut> mctruth_is_delta_radiative==1 </cut>  
-        <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 </cut>
-        <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
-        <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut> 
-    <!--    <cut> TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 </cut> -->
-<!--        <cut> mctruth_daughters_pdg==22 &amp;&amp; mctruth_daughters_status_code==1 &amp;&amp; mctruth_daughters_endx>2 </cut>-->
-        <cut> mctruth_cc_or_nc == 1 </cut>
-        <cut> mctruth_num_exiting_pi0 == 0</cut>
-        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
-        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 ) ==0 </cut>
+        <cut> 1 </cut>  
     </definition>
     <training>
-        <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
-        <cut> sim_shower_pdg[0] == 22 </cut>
+        <cut> 1 </cut>
      </training>
 </bdtfile>
 
+<bdtfile filename = "timing_MC_dirt_may07_2.root" tag = "dirtTrain" hist_style = "hist" dirs = "" col = "(1.0,0.4,0.4)" plot_name = "FullOsc#nu_{e} Train">
+    <definition>
+        <cut> 1 </cut>  
+    </definition>
+    <training>
+        <cut> 1 </cut>
+     </training>
+</bdtfile>
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
 
-<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(36,0.9,1.0)">
+<mva type="BDT" use="yes" tag = "dirt" name ="Dirt focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=950</param>
+        <param> n_trees=95</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -73,14 +74,14 @@
         <param> verbosity=1</param>
     </method>
     <file
-        bkg_train_tag = "BNBextTrain" 
-        bkg_test_tag = "BNBextTest"
-        bkg_test_cut = "1" 
-        sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlayTest"
-        sig_test_cut = "1"
+        bkg_train_tag = "dirtTrain" 
+        bkg_test_tag = "dirtTrain"
+        bkg_test_cut = "Entry$%2==1" 
+        sig_train_tag = "fulloscTrain"
+        sig_test_tag = "fulloscTrain"
+        sig_test_cut = "Entry$%10<4"
         />
-    <scan min = "0.9" max = "1.0" steps="10"/>
+    <scan min = "0.5" max = "1.0" steps="10"/>
 </mva>
 
 
@@ -89,13 +90,17 @@
 
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
 
+<!--
+<precut def = "1" name = "track cut"/>
+-->
+
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
-<var def = "acos(reco_shower_dirz[0])" binning="(10,0.0,3.1415)" unit = "Shower Angles Related to the Beam [Rad]" type = "d" logplot = "false"  training = ""/>
+<var def = "el.Z" binning="(20,-400,400)" unit = "Z coordinate of e-hypo [cm?]" type = "d" logplot = "false"  training = ""/>
+<!--
 <var def = "#PM#+1g0pJan2020_v1BNB_mva" binning = "(30,0.55,0.98)" unit = "High BNB BDT Score" type="d" training= "" logplot="true"/> 
-
-
+-->
 
 <!-- ================= RECO-MC Matching ======================== -->
 <!--

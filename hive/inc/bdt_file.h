@@ -122,7 +122,7 @@ struct bdt_file{
         int numberofevents_raw;
         double pot;
 
-        TFile *f;
+        TFile *file;
         TTree *tvertex;
 
         //copy tvertex into topovertex, but with topological cut.
