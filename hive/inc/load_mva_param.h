@@ -47,6 +47,9 @@ class MVALoader {
     std::vector<bool> bdt_is_validate_file;
 
     std::vector<TColor*> bdt_cols;
+    std::vector<int> bdt_linecols;
+    std::vector<int> bdt_linestyles;
+
     std::vector<int> bdt_fillstyles;
     std::vector<double> bdt_scales;
     std::vector<std::vector<std::string>> bdt_definitions;

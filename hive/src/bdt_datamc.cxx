@@ -2,12 +2,18 @@
 
 int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2){
    
+	std::cout<<"Obselete See "<<__FILE__<<__LINE__<<std::endl;
+	return 0;
+
     is_bdt_variable = false;
     bdt_info nullinfo;
     return this->plotStacks(ftest, var, c1,c2,nullinfo);
 }
 
 int bdt_datamc::plotBDTStacks(TFile *ftest, bdt_info whichbdt,double c1, double c2){
+	std::cout<<"Obselete See "<<__FILE__<<__LINE__<<std::endl;
+	return 0;
+
     is_bdt_variable = true;
 
     double tmin =9999;
@@ -150,7 +156,10 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, doubl
 }
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
-    return this->plotStacks(ftest,vars,{c1,c2});
+	std::cout<<"Obselete See "<<__FILE__<<__LINE__<<std::endl;
+	return 0;
+
+//    return this->plotStacks(ftest,vars,{c1,c2});
 }
 
 std::vector<bdt_variable> bdt_datamc::GetSelectVars(std::string vector, std::vector<bdt_variable> vars){
@@ -551,14 +560,14 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
 
 
-int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
+int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::vector<bdt_info> bdt_infos){
 
 
     // NEW ONE
     double plot_pot=data_file->pot;
     if(stack_mode) plot_pot = stack_pot;
 
-    std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
+    std::cout<<"DATAMC PLOT POT "<<plot_pot<<" from "<<data_file->tag<<std::endl;
 
     double title_size_ratio=0.1;
     double label_size_ratio=0.1;
@@ -571,8 +580,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
     ftest->cd();
-
-    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NCPi0 BDT Cut","NUE BDT Cut","SSV"};
+    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts"};
+	for(size_t index = 0; index < bdt_infos.size(); ++index){
+    stage_names.push_back(bdt_infos[index].name);
+	}
     //Loop over all stages
 
     int s_min = 0;
@@ -792,6 +803,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 fake_legend_hists.push_back(h1);
                 h1->SetFillColor(f->col);
                 h1->SetFillStyle(f->fillstyle);
+                h1->SetLineStyle(f->linestyle);
+                h1->SetLineColor(f->linecol);
                 //if(mc_stack->signal_on_top[n]){
                 //    h1->SetLineColor(f->col);
                 //    h1->SetLineWidth(3);
@@ -1723,7 +1736,8 @@ int bdt_datamc::simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & v
 
 
 int bdt_datamc::plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt){
-
+	std::cout<<"Obselete See "<<__FILE__<<__LINE__<<std::endl;
+	return 0;
     //TCanvas *cobs = new TCanvas("","",1800,1600);
     //cobs->Divide(2,2,0.0025,0.0000001);
 

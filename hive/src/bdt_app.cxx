@@ -272,7 +272,9 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
         }
         if(have_filled == working_index){
 
-            std::cout<<have_filled<<" "<<working_index<<" "<<i<<" "<<out_result[i]<<std::endl;      
+            std::cout<<"\r"<<have_filled<<" "<<working_index<<" "<<i<<" "<<out_result[i];
+			std::cout.flush();
+
             mva = out_result[i];
             mva2 = mva;
             tree->Fill();
@@ -282,6 +284,7 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
             std::cerr<<"AGHR, something went wrong in XGBoost_app"<<std::endl;
         }   
     }
+	std::cout<<std::endl;
     while(have_filled < f->tvertex->GetEntries()){
         mva = -999;
         mva2 = mva;

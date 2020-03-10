@@ -37,6 +37,8 @@ bdt_file::bdt_file(size_t index,
 		root_dir(XMLconfig.bdt_dirs[index]),
 		col		(XMLconfig.bdt_cols[index]->GetNumber()),
 		fillstyle(XMLconfig.bdt_fillstyles[index]),
+		linestyle(XMLconfig.bdt_linestyles[index]),
+		linecol(XMLconfig.bdt_linecols[index]),
 		weight_branch(XMLconfig.bdt_weight[index]),
 		scale_data(XMLconfig.bdt_scales[index]),
 		pot		(XMLconfig.bdt_fixpot[index]),
@@ -579,7 +581,7 @@ double bdt_file::GetEntries(std::string cuts){
         }
         */
    // this->CheckWeights(); //catch erroneous values of the weight
-    this->tvertex->Draw(("reco_asso_showers>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+    this->tvertex->Draw(("1>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     TH1* th1 = (TH1*)gDirectory->Get(namr.c_str()) ;
     double ans = th1->GetSumOfWeights();
     //std::cout<<"sum of weights: "<<ans<<std::endl;
@@ -702,10 +704,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
    // this->CheckWeights();
-	//KENG CHECK
-	std::cout<<"CHECK "<<__LINE__<<"file "<<this->tag<<" branch "<<this->weight_branch<<std::endl;
     this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+"&&"+in_bins+")*"+this->weight_branch).c_str(),"goff");
-	std::cout<<"CHECK "<<__LINE__<<std::endl;
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
     th1->Sumw2();

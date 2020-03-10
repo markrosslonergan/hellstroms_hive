@@ -291,6 +291,19 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 			bdt_fillstyles.push_back((int)std::stoi(t_fillstyles,nullptr,10));
 		}
 
+        const char* t_linecol = pBDTfile->Attribute("linecol");
+		if(t_linecol==NULL){ 
+			bdt_linecols.push_back(1);
+		}else{
+			bdt_linecols.push_back((int)std::stoi(t_linecol,nullptr,10));
+		}
+
+        const char* t_linestyles = pBDTfile->Attribute("linestyle");
+		if(t_linestyles==NULL){ 
+			bdt_linestyles.push_back(1);
+		}else{
+			bdt_linestyles.push_back((int)std::stoi(t_linestyles,nullptr,10));
+		}
 
         const char* t_dirs = pBDTfile->Attribute("dirs");
         if(t_dirs==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has no `dirs` attribute! "<<std::endl; exit(EXIT_FAILURE);}
@@ -733,7 +746,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             recomc_names.push_back(t_recomc_name);
 
             const char* t_col = pDef->Attribute("col");
-            if(t_col==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || recomc has no `col` attribute! "<<std::endl; exit(EXIT_FAILURE);}
+            if(t_col==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || recomc has no `col` attribute! Come and set a color! "<<std::endl; exit(EXIT_FAILURE);}
             std::string s_col = t_col;
             s_col.erase(std::remove(s_col.begin(), s_col.end(), '('), s_col.end());
             s_col.erase(std::remove(s_col.begin(), s_col.end(), ')'), s_col.end());

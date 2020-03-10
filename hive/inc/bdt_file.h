@@ -110,6 +110,8 @@ struct bdt_file{
 
         int col;
         int fillstyle;
+        int linestyle;
+        int linecol;
 
         bool is_data;
         bool is_bnbext;
