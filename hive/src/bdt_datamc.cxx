@@ -1095,7 +1095,7 @@ int bdt_datamc::plotEfficiency(std::vector<bdt_variable> vars, std::vector<doubl
         
         tsum_numer->SetLineColor(kRed);
         tsum_numer->SetMinimum(0);
-        tsum_numer->SetMaximum( std::max(tsum_numer->GetMaximum(),data_numer->GetMaximum())*1.4);
+        tsum_numer->SetMaximum( std::max(tsum_numer->GetMaximum(),data_numer->GetMaximum())*1.5);
         tsum_numer->SetFillStyle(0);
         tsum_numer->Draw("hist");
         TH1 * tsum_numer2 = (TH1*)tsum_numer->Clone("varsd");

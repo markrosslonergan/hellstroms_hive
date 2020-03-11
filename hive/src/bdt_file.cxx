@@ -299,6 +299,7 @@ int bdt_file::calcPOT(){
     std::string tnam_event = root_dir+"event_tree";
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
+    std::string tnam_rs = root_dir+"run_subrun_tree";
     std::string tnam_slice = root_dir+"ncdelta_slice_tree";
 
     double potbranch = 0;
@@ -310,21 +311,27 @@ int bdt_file::calcPOT(){
     if(is_mc){
         //If its MC or Overlay, lets just grab the POT from the nice POT tree
         leg = "l";
+
+
+        trs = (TTree*)f->Get(tnam_rs.c_str());    
+        trs->SetBranchAddress("subrun_pot",&potbranch);
+
+
         std::cout<<"bdt_file::bdt_file()\t||\tFile is either MC or OVERLAY for purposes of getting POT."<<std::endl;
         std::cout<<"bdt_file::bdt_file()\t||\tGetting POT tree: "<<tnam_pot<<" "<<std::endl;
         tpot = (TTree*)f->Get(tnam_pot.c_str());
-        tpot->SetBranchAddress("number_of_events", &numbranch);
-        tpot->SetBranchAddress("POT",&potbranch);
+        //tpot->SetBranchAddress("number_of_events", &numbranch);
+        //tpot->SetBranchAddress("POT",&potbranch);
         std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
         int tmpnum = 0;
         double tmppot=0;
-        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
-        for(int i=0; i<tpot->GetEntries(); i++) {
-            tpot->GetEntry(i);
-            tmpnum += (double)numbranch;
+        
+        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<trs->GetEntries()<<" subruns merged to make this root file."<<std::endl;
+        
+        for(int i=0; i<trs->GetEntries(); i++) {
+            trs->GetEntry(i);
             tmppot += potbranch;
         }
-        //        numberofevents = tmpnum;
 
         numberofevents = tvertex->GetEntries();
 
