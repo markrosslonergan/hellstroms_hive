@@ -271,7 +271,9 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
     std::cout<<"Starting to Scan Significance [Simple Linear Scan, can take a while!] "<<std::endl;
     //This just goes between some set values of all BDT's
     double best_significance = 0;
+    double best_ratio = 0;
     std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
+    std::vector<double> best_rmva(bdt_infos.size(), DBL_MAX);
 
     std::cout<<"Setting stage entry lists"<<std::endl;
     for(size_t i = 0; i < sig_files.size(); ++i) {
@@ -365,11 +367,6 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
     std::cout<<"We are going to scan between these values "<<std::endl;
 
-//this does not work
-//std::cout<<"CHECK"<<std::endl;
-//	minvals = {0.9,0.8,0.8,0.4};
-//	maxvals = {1,1,1,1};
-//	n_steps = {3,3,3,3};
     for(int i=0; i< bdt_infos.size();i++){
         std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<" (n_steps:  "<<n_steps[i]<<")"<<std::endl;
     }
@@ -383,12 +380,15 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
         std::string bnbcut = sig_files.at(i)->getStageCuts(1,minvals); 
         total_sig += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
     }
+	std::cout<<"Target POT "<<plot_pot<<std::endl;
 
     std::cout<<"Starting"<<std::endl;
     std::cout<<"----------------------------------------------------"<<std::endl;
     std::string s_mod = "";
+    std::string s_rmod = "";
     int n_pt = 0;
     int best_pt = -9;
+    int best_rpt = -9;
 
 
     for(int i=0; i < max_pts; i++){
@@ -425,10 +425,13 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
         }
 
         double significance =0;
+        double ratio =0;
         if(signal==0){
             significance =0;
+			ratio = 0;
         }else if(background !=0){
             significance = signal/sqrt(background);
+			ratio = signal/background;
         }else{
             std::cout<<" Warning Backgrounds are identically 0 here, signal is "<<signal<<", so significance NAN. Woopsie. setting to Zero."<<std::endl;
         }
@@ -437,28 +440,36 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
             best_significance = significance;
             best_mva = cur_pt;
             best_pt = n_pt;
-            s_mod = "(Current Best)";
+            s_mod = " (Best sig)";
+        }
+
+		if(ratio > best_ratio) {
+            best_ratio = ratio;
+            best_rmva = cur_pt;
+            best_rpt = n_pt;
+            s_mod += " (Best Ratio)";
         }
 
         std::cout<<"Point: "<<std::setw(3)<<n_pt<<" (";
         for(auto &dd:cur_pt){
             std::cout<<std::setw(6)<<dd<<",";
         }
-        std::cout<<") N_signal: "<<std::setw(8)<<signal<<" N_bkg: "<<std::setw(8)<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+        std::cout<<") N_signal: "<<std::setw(8)<<signal<<" N_bkg: "<<std::setw(8)<<background<<" ||  Sigma: " <<significance<<" "<<" Ratio:"<<ratio<<s_mod<<std::endl;
 
         s_mod = "";
         n_pt++;
-
-
-
-
     }
 
     std::cout<<"----------------------------------------------------"<<std::endl;
     std::cout<<"------------ Finished. Best Significance was  "<<best_significance<<" at point "<<best_pt<<" with Cuts at "<<std::endl;
     for(auto &dd: best_mva){
+        std::cout<<dd<<" ";
+    }
+    std::cout<<"\n------------ Finished. Best Ratio was  "<<best_ratio<<" at point "<<best_rpt<<" with Cuts at "<<std::endl;
+	for(auto &dd: best_rmva){
         std::cout<<dd<<" ";   
     }
+
     std::cout<<std::endl;
     std::cout<<"Done with simple significance scan"<<std::endl;
 
@@ -966,75 +977,78 @@ int scan_likelihood(std::vector<bdt_file*> stack_files, std::vector<bdt_info> bd
 
 
 std::vector<double> lin_scan(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_focused_bdt, bdt_info bnb_focused_bdt, double c1, double c2){
-    std::cout<<"Starting to Scan Significance"<<std::endl;
-    double best_significance = 0;
-    double best_mva_cut = DBL_MAX;
-    double best_mva_cut2 = DBL_MAX;
-
-    //	double plot_pot = 6.6e20;
-    double plot_pot = 13.2e20;
-
-
-    std::vector<double> vec_sig;//some vectors to store TGraph info;
-    std::vector<double> vec_cut;	
-
-
-    double d1 = c1;
-    double d2 = c2; 
-
-
-    for(int i=0; i< 100; i++){
-
-        d1 = d1*1.0001;
-        //d1 = d1*0.99999;
-
-        double signal = 0;
-        double background = 0;
-        std::vector<double> bkg;	
-
-        for(size_t i = 0; i < sig_files.size(); ++i) {
-            double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
-
-            std::string bnbcut = sig_files.at(i)->getStageCuts(3,d1,d2); 
-            signal += sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
-
-        }
-
-        for(size_t i = 0; i < bkg_files.size(); ++i) {
-            double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
-
-
-            std::string bnbcut = bkg_files.at(i)->getStageCuts(3,d1,d2); 
-            bkg.push_back(	bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
-
-            background += bkg.back();
-        }
-        double significance =0;
-        if(signal==0){
-            significance =0;
-        }else if(background !=0){
-            significance = signal/sqrt(background);
-        }else{
-            std::cout<<"method_best_significane_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<<d1<<", cut2: "<<d2<<std::endl;
-            break;
-        }
-
-
-        if(significance > best_significance) {
-            best_significance = significance;
-            best_mva_cut = d1;
-            best_mva_cut2 = d2;
-        }
-
-
-        std::cout<<"ccut: "<<d1<<" bcut: "<<d2<<" "<<" #signal: "<<signal<<" #bkg: "<<background<<" || "<<" bnb: "<<bkg.at(0)<<" cos: "<<bkg.at(1)<<" || "<<significance<<std::endl;
-        vec_sig.push_back(significance);
-        vec_cut.push_back(d1);
-        vec_cut.push_back(d2);
-    }
-
-
-    return std::vector<double>{best_mva_cut, best_mva_cut2, best_significance};
+	std::cout<<"Obselete Code See"<<__FILE__<<__LINE__<<std::endl;
+	std::vector<double>{0,0,0};
+//
+//    std::cout<<"Starting to Scan Significance"<<std::endl;
+//    double best_significance = 0;
+//    double best_mva_cut = DBL_MAX;
+//    double best_mva_cut2 = DBL_MAX;
+//
+//    //	double plot_pot = 6.6e20;
+//    double plot_pot = 13.2e20;
+//
+//
+//    std::vector<double> vec_sig;//some vectors to store TGraph info;
+//    std::vector<double> vec_cut;	
+//
+//
+//    double d1 = c1;
+//    double d2 = c2; 
+//
+//
+//    for(int i=0; i< 100; i++){
+//
+//        d1 = d1*1.0001;
+//        //d1 = d1*0.99999;
+//
+//        double signal = 0;
+//        double background = 0;
+//        std::vector<double> bkg;	
+//
+//        for(size_t i = 0; i < sig_files.size(); ++i) {
+//            double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
+//
+//            std::string bnbcut = sig_files.at(i)->getStageCuts(3,d1,d2); 
+//            signal += sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
+//
+//        }
+//
+//        for(size_t i = 0; i < bkg_files.size(); ++i) {
+//            double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
+//
+//
+//            std::string bnbcut = bkg_files.at(i)->getStageCuts(3,d1,d2); 
+//            bkg.push_back(	bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
+//
+//            background += bkg.back();
+//        }
+//        double significance =0;
+//        if(signal==0){
+//            significance =0;
+//        }else if(background !=0){
+//            significance = signal/sqrt(background);
+//        }else{
+//            std::cout<<"method_best_significane_seperate || signal2+background2 == 0, so significance  = nan @ cut1: "<<d1<<", cut2: "<<d2<<std::endl;
+//            break;
+//        }
+//
+//
+//        if(significance > best_significance) {
+//            best_significance = significance;
+//            best_mva_cut = d1;
+//            best_mva_cut2 = d2;
+//        }
+//
+//
+//        std::cout<<"ccut: "<<d1<<" bcut: "<<d2<<" "<<" #signal: "<<signal<<" #bkg: "<<background<<" || "<<" bnb: "<<bkg.at(0)<<" cos: "<<bkg.at(1)<<" || "<<significance<<std::endl;
+//        vec_sig.push_back(significance);
+//        vec_cut.push_back(d1);
+//        vec_cut.push_back(d2);
+//    }
+//
+//
+//    return std::vector<double>{best_mva_cut, best_mva_cut2, best_significance};
 
 }
 

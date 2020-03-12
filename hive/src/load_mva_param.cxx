@@ -557,13 +557,10 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         std::string var_type = pVar->Attribute("type");
         const char * var_logplot = pVar->Attribute("logplot");
         bool var_logplot_bool = false;
-        if (var_logplot!=NULL){
-            std::string tmp = var_logplot;
-            if(tmp.length()<6){
+		if (strcmp(var_logplot,"yes")==0||strcmp(var_logplot,"true")==0){
                 var_logplot_bool = true;
-                std::cout<<"is logplot"<<std::endl;
-            }
-       }
+                std::cout<<"is a logplot!"<<std::endl;
+		}
 
         std::string covar_file;
         std::string covar_name;
