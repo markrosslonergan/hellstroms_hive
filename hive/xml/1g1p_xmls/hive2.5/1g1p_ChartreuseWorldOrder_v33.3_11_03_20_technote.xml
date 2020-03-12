@@ -100,143 +100,146 @@
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
 
 <bdtfile filename = "ncpi0_bdt_training_sample_v33.3.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
-    <cut> !mctruth_is_delta_radiative==1 </cut>
-    <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
-</definition>
-<training>
-    <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
-    <cut> sim_shower_pdg[0]==22</cut>
-    <cut> sim_track_overlay_fraction[0]&lt;0.9</cut>
-    <cut> sim_track_pdg[0]==2212</cut>
-</training>
+    <definition>
+        <cut> !mctruth_is_delta_radiative==1 </cut>
+        <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
+        <cut> sim_shower_pdg[0]==22</cut>
+        <cut> sim_track_overlay_fraction[0]&lt;0.9</cut>
+        <cut> sim_track_pdg[0]==2212</cut>
+    </training>
 </bdtfile>
 
 <bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
-    <cut> !mctruth_is_delta_radiative==1 </cut>
-    <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
-</definition>
-<training>
-    <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
-    <cut> sim_shower_pdg[0]==22</cut>
-    <cut> sim_track_overlay_fraction[0]&lt;0.9</cut>
-    <cut> sim_track_pdg[0]==2212</cut>
-</training>
-       </bdtfile>
+    <definition>
+        <cut> !mctruth_is_delta_radiative==1 </cut>
+        <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
+        <cut> sim_shower_pdg[0]==22</cut>
+        <cut> sim_track_overlay_fraction[0]&lt;0.9</cut>
+        <cut> sim_track_pdg[0]==2212</cut>
+    </training>
+</bdtfile>
 
-       <bdtfile filename = "ssveto_bdt_training_sample_v33.3.root" tag = "SSvetoTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
-               <definition>
-                      <cut> !mctruth_is_delta_radiative==1 </cut>
-                      <cut> mctruth_num_exiting_pi0==1</cut>
-                 </definition>
-            <training>
-                       <cut> sim_shower_pdg[0]==22</cut>
-                  </training>
-      </bdtfile>
+<bdtfile filename = "ssveto_bdt_training_sample_v33.3.root" tag = "SSvetoTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> !mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_num_exiting_pi0==1</cut>
+    </definition>
+    <training>
+        <cut> sim_shower_pdg[0]==22</cut>
+    </training>
+</bdtfile>
 
-       <bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "SSvetoTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "SSveto Test" fillstyle = "3333" scale = "1">
-            <definition>
-                      <cut> !mctruth_is_delta_radiative==1 </cut>
-                      <cut> mctruth_num_exiting_pi0==1</cut>
-                 </definition>
-            <training>
-                       <cut> sim_shower_pdg[0]==22</cut>
-                  </training>
-      </bdtfile>
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "SSvetoTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "SSveto Test" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> !mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_num_exiting_pi0==1</cut>
+    </definition>
+    <training>
+        <cut> sim_shower_pdg[0]==22</cut>
+    </training>
+</bdtfile>
 
-       <bdtfile filename = "bnbext_bdt_training_sample_v33.3.uniq.root" tag = "BNBextTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Train" fillstyle = "3333" scale = "1">
-           <definition>
-               <cut>1</cut>
-           </definition>
-           <training><cut>1</cut></training>
-       </bdtfile>
+<bdtfile filename = "bnbext_bdt_training_sample_v33.3.uniq.root" tag = "BNBextTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Train" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut>1</cut>
+    </definition>
+    <training><cut>1</cut></training>
+</bdtfile>
 
-       <bdtfile filename = "bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBextTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Test" fillstyle = "3333" scale = "1">
-           <definition>
-               <cut>1</cut>
-           </definition>
-           <training><cut>1</cut></training>
-       </bdtfile>
+<bdtfile filename = "bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBextTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Test" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut>1</cut>
+    </definition>
+    <training><cut>1</cut></training>
+</bdtfile>
 
-       <bdtfile filename = "ncdelta_bdt_training_sample_v33.3.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
-           <definition>
-               <cut> mctruth_is_delta_radiative==1 </cut>
-               <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 </cut>
-               <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
-               <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut>       
-               <cut> mctruth_cc_or_nc == 1 </cut>
-               <cut> mctruth_num_exiting_pi0 == 0</cut>
-               <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
-               <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
-           </definition>
-           <training>
-               <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
-               <cut> sim_shower_pdg[0] == 22 </cut>
-               <cut> sim_track_overlay_fraction[0] &lt; 0.5 </cut>
-               <cut> sim_track_pdg[0] == 2212 </cut>
-           </training>
-       </bdtfile>
+<bdtfile filename = "ncdelta_bdt_training_sample_v33.3.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut>       
+        <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 0</cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
+        <cut> sim_shower_pdg[0] == 22 </cut>
+        <cut> sim_track_overlay_fraction[0] &lt; 0.5 </cut>
+        <cut> sim_track_pdg[0] == 2212 </cut>
+    </training>
+</bdtfile>
 
-       <bdtfile filename = "ncdelta_bdt_testing_sample_v33.3.uniq.root" tag = "NCDeltaTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTest" fillstyle = "3333" scale = "1">
-           <definition>
-               <cut> mctruth_is_delta_radiative==1 </cut>
-               <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 </cut>
-               <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
-               <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut>       
-               <cut> mctruth_cc_or_nc == 1 </cut>
-               <cut> mctruth_num_exiting_pi0 == 0</cut>
-               <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
-               <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
-           </definition>
-           <training>
-               <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
-               <cut> sim_shower_pdg[0] == 22 </cut>
-               <cut> sim_track_overlay_fraction[0] &lt; 0.5 </cut>
-               <cut> sim_track_pdg[0] == 2212 </cut>
-           </training>
-       </bdtfile>
+<bdtfile filename = "ncdelta_bdt_testing_sample_v33.3.uniq.root" tag = "NCDeltaTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTest" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut>       
+        <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 0</cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
+        <cut> sim_shower_pdg[0] == 22 </cut>
+        <cut> sim_track_overlay_fraction[0] &lt; 0.5 </cut>
+        <cut> sim_track_pdg[0] == 2212 </cut>
+    </training>
+</bdtfile>
 
-       <bdtfile filename = "nue_bdt_training_sample_v33.3.uniq.root" tag = "NueTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NueTrain" fillstyle = "3333" scale = "1">
-           <definition>
-               <cut>1</cut>
-           </definition>
-   </training>
-           <cut>sim_shower_overlay_fraction[0]&lt;0.5</cut>
-           <cut>sim_track_overlay_fraction[0]&lt;0.5</cut>
-   </training>
-       </bdtfile>
+<bdtfile filename = "nue_bdt_training_sample_v33.3.uniq.root" tag = "NueTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NueTrain" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut>1</cut>
+    </definition>
+    <training>
+        <cut>sim_shower_overlay_fraction[0]&lt;0.5</cut>
+        <cut>sim_track_overlay_fraction[0]&lt;0.5</cut>
+    </training>
+</bdtfile>
 
-       <bdtfile filename = "nue_bdt_testing_sample_v33.3.uniq.root" tag = "NueTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NueTest" fillstyle = "3333" scale = "1">
-           <definition>
-               <cut>1</cut>
-           </definition>
-           <training>
-              <cut>sim_shower_overlay_fraction[0]&lt;0.5</cut>
-              <cut>sim_track_overlay_fraction[0]&lt;0.5</cut></training>
-       </bdtfile>
+<bdtfile filename = "nue_bdt_testing_sample_v33.3.uniq.root" tag = "NueTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NueTest" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut>1</cut>
+    </definition>
+    <training>
+        <cut>sim_shower_overlay_fraction[0]&lt;0.5</cut>
+        <cut>sim_track_overlay_fraction[0]&lt;0.5</cut>
+    </training>
+</bdtfile>
 
-       <bdtfile filename = "bnb_bdt_training_sample_v33.3.uniq.root" tag = "BNBOtherTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BnbTrain" fillstyle = "3333" scale = "1">
-           <definition>
-               <cut> !mctruth_is_delta_radiative==1 </cut>
-               <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
-               <cut> fabs(mctruth_nu_pdg)==14  </cut>
-           </definition>
-           <training>
-               <cut> sim_shower_overlay_fraction[0]&lt;0.5</cut>
-               <cut> sim_track_overlay_fraction[0]&lt;0.5</cut>
-           </training>
-       </bdtfile>
+<bdtfile filename = "bnb_bdt_training_sample_v33.3.uniq.root" tag = "BNBOtherTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BnbTrain" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> !mctruth_is_delta_radiative==1 </cut>
+        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+        <cut> fabs(mctruth_nu_pdg)==14  </cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0]&lt;0.5</cut>
+        <cut> sim_track_overlay_fraction[0]&lt;0.5</cut>
+    </training>
+</bdtfile>
 
-       <bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOtherTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BNBTest" fillstyle = "3333" scale = "1">
-           <definition>
-               <cut> !mctruth_is_delta_radiative==1 </cut>
-               <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
-               <cut> fabs(mctruth_nu_pdg)==14  </cut>
-           </definition>
-           <training>
-               <cut> sim_shower_overlay_fraction[0]&lt;0.5</cut>
-               <cut> sim_track_overlay_fraction[0]&lt;0.5</cut>
-           </training>
-       </bdtfile>
+<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOtherTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BNBTest" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> !mctruth_is_delta_radiative==1 </cut>
+        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+        <cut> fabs(mctruth_nu_pdg)==14  </cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0]&lt;0.5</cut>
+        <cut> sim_track_overlay_fraction[0]&lt;0.5</cut>
+    </training>
+</bdtfile>
 
 
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
