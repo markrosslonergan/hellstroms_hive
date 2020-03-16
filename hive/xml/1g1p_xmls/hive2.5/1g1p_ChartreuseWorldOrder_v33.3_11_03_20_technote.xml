@@ -163,10 +163,10 @@
     </definition>
     <training><cut>1</cut></training>
     <data type="OffBeam">
-    <tor860_wcut> 4.081e+19 </tor860_wcut>   
-    <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>   
-    <EXT>28264427.0</EXT>  
-</data>
+        <tor860_wcut> 4.081e+19 </tor860_wcut>   
+        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>   
+        <EXT>28264427.0</EXT>  
+    </data>
 
 </bdtfile>
 
@@ -407,7 +407,7 @@
 <var def = "reco_vertex_dist_to_SCB" binning="(24,0,75)" unit = "Distance from Vertex to SCB [cm]" type ="d" training=""/>
 <var def = "reco_vertex_dist_to_active_TPC" binning="(24,0,75)" unit = "Distance from Vertex to Active TPC [cm]" type ="d" training=""/>
 
-<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d" gc  training="01"/>
+<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"    training="01"/>
 
 <var def = "reco_vertex_x" binning = "(24,-20,270)" unit = "Reconstructed Vertex X [cm]" type="d"   training=""/>
 <var def = "reco_vertex_y" binning = "(24,-140,140)" unit = "Reconstructed Vertex Y [cm]" type="d"   training=""/>
@@ -416,55 +416,55 @@
 <var def = "reco_vertex_in_SCB" binning="(4,-1,3)" unit = "Vertex in SCB" type ="d" training=""/>
 
 <!--<var def = "combined_score" binning = "(40,0.3,0.70)" unit = "Combined Super Score" type="d" logplot = "true" training=""/>-->
-<var def = "run_number" binning  ="(24,4900,8500)" unit = "Run Number" type="d" gc training=""/>
+<var def = "run_number" binning  ="(24,4900,8500)" unit = "Run Number" type="d"   training=""/>
 
 <!--- all of the assorted shower dE/dx's -->
-<var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx Plane 2 (Kalman) [MeV/cm]" type = "d" gc training ="0123"/>
-<var def = "reco_shower_kalman_dEdx_plane1_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx Plane 1 (Kalman) [MeV/cm]" type = "d" gc training =""/>
-<var def = "reco_shower_kalman_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx Plane 0 (Kalman) [MeV/cm]" type = "d" gc training =""/>
+<var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx Plane 2 (Kalman) [MeV/cm]" type = "d"   training ="0123"/>
+<var def = "reco_shower_kalman_dEdx_plane1_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx Plane 1 (Kalman) [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower_kalman_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx Plane 0 (Kalman) [MeV/cm]" type = "d"   training =""/>
 <var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx All Planes (Kalman) [MeV/cm]" type = "d"  training =""/>
 
 <var def = "reco_shower3d_dEdx_plane2[0]" binning = "(24,0,10.0)" unit = "Shower3D dEdx Plane 2 [MeV/cm]" type = "d"  training =""/>
 <var def = "reco_shower3d_dEdx_plane1[0]" binning = "(24,0,10.0)" unit = "Shower3D dEdx Plane 1 [MeV/cm]" type = "d"  training =""/>
-<var def = "reco_shower3d_dEdx_plane0[0]" binning = "(24,0,10.0)" unit = "Shower3D dEdx Plane 0 [MeV/cm]" type = "d" gc training =""/>
+<var def = "reco_shower3d_dEdx_plane0[0]" binning = "(24,0,10.0)" unit = "Shower3D dEdx Plane 0 [MeV/cm]" type = "d"   training =""/>
 
-<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,10.0)" unit = "Median dEdx Plane 2 [MeV/cm]" type = "d" gc training =""/>
-<var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,10.0)" unit = "Median dEdx Plane 1 [MeV/cm]" type = "d" gc training =""/>
-<var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "Median dEdx Plane 0 [MeV/cm]" type = "d" gc training =""/>
-<var def = "reco_shower_dEdx_amalgamated[0]" binning="(24,0.0,10.0)" unit = "Amalgamated Shower dE/dx [MeV/cm]" type = "d" gc  training = ""/>
+<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,10.0)" unit = "Median dEdx Plane 2 [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,10.0)" unit = "Median dEdx Plane 1 [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "Median dEdx Plane 0 [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_amalgamated[0]" binning="(24,0.0,10.0)" unit = "Amalgamated Shower dE/dx [MeV/cm]" type = "d"    training = ""/>
 
 <!-- shower geometry + calorimetry -->
-<!--<var def = "reco_shower_energy_max[0]/1000.0" binning = "(20,0,0.2)" unit = "Reconstructed Shower Energy [GeV]" type = "d" gc  training="0123"/>-->
+<!--<var def = "reco_shower_energy_max[0]/1000.0" binning = "(20,0,0.2)" unit = "Reconstructed Shower Energy [GeV]" type = "d"    training="0123"/>-->
 
 <var def = "reco_shower_energy_max[0]" binning = "(24,0,400)" unit = "Reconstructed Calorimetric Shower Energy Max [MeV]" type = "d"  training=""group = "4"/>
-<var def = "reco_shower_energy_plane0[0]" binning = "(24,0,400)" unit = "Reconstructed Calorimetric Shower Energy Plane 0 [MeV]" type = "d" gc  training=""/>
-<var def = "reco_shower_energy_plane1[0]" binning = "(24,0,400)" unit = "Reconstructed Calorimetric Shower Energy Plane 1 [MeV]" type = "d" gc  training=""/>
+<var def = "reco_shower_energy_plane0[0]" binning = "(24,0,400)" unit = "Reconstructed Calorimetric Shower Energy Plane 0 [MeV]" type = "d"    training=""/>
+<var def = "reco_shower_energy_plane1[0]" binning = "(24,0,400)" unit = "Reconstructed Calorimetric Shower Energy Plane 1 [MeV]" type = "d"    training=""/>
 <var def = "reco_shower_energy_plane2[0]" binning = "(24,0,400)" unit = "Reconstructed Calorimetric Shower Energy Plane 2 [MeV]" type = "d" training="0123" group = "2"/>
 <var def = "reco_shower_impact_parameter[0]" binning = "(24,0,1000)" unit = "Shower Impact Parameter [cm]" type="d"   training="0123"/>
 <var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(24,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d"   training="0123"/>
 <var def = "reco_shower_implied_dirx/reco_shower_dirx" binning = "(24,-1,3)" unit = "Ratio Shower Implied Dir X/Pandora Dir X" type="d"   training=""/>
 <var def = "reco_shower_implied_diry/reco_shower_diry" binning = "(24,-1,3)" unit = "Ratio Shower Implied Dir Y/Pandora Dir Y" type="d"   training=""/>
 <var def = "reco_shower_implied_dirz/reco_shower_dirz" binning = "(46,-1,3)" unit = "Ratio Shower Implied Dir Z/Pandora Dir Z" type="d"   training=""/>
-<var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d" gc  training="0123"/>
+<var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d"    training="0123"/>
 <var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(24,0 ,1000)" unit = "Ratio Reconstrunted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="012"/>
-<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(24,0,360)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d" gc  training="123"/>
-<var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d" gc  training="123"/>
-<var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d" gc  training="123"/>
+<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(24,0,360)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"    training="123"/>
+<var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"    training="123"/>
+<var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"    training="123"/>
 
-<var def = "atan(reco_shower_dirx[0]/reco_shower_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #omega_{xz} [rad]" type = "d" gc  training=""/>
+<var def = "atan(reco_shower_dirx[0]/reco_shower_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #omega_{xz} [rad]" type = "d"    training=""/>
 
-<var def = "atan(reco_shower_diry[0]/reco_shower_dirx[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{azy} [rad]" type = "d" gc  training=""/>
+<var def = "atan(reco_shower_diry[0]/reco_shower_dirx[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{azy} [rad]" type = "d"    training=""/>
 
-<var def = "atan(sqrt(pow(reco_shower_diry[0], 2)+ pow(reco_shower_dirx[0],2))/reco_shower_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{azy} [rad]" type = "d" gc  training=""/>
+<var def = "atan(sqrt(pow(reco_shower_diry[0], 2)+ pow(reco_shower_dirx[0],2))/reco_shower_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{azy} [rad]" type = "d"    training=""/>
 
-<var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirx[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #phi_{yx} [rad]" type = "d" gc  training=""/>
-<var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #theta_{yz} [rad]" type = "d" gc  training=""/>
+<var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirx[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #phi_{yx} [rad]" type = "d"    training=""/>
+<var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #theta_{yz} [rad]" type = "d"    training=""/>
 
-<var def = "atan(reco_shower_implied_dirx[0]/reco_shower_implied_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #omega_{xz} [rad]" type = "d" gc  training=""/>
+<var def = "atan(reco_shower_implied_dirx[0]/reco_shower_implied_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #omega_{xz} [rad]" type = "d"    training=""/>
 
-<var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirx[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #phi_{azy} [rad]" type = "d" gc  training=""/>
+<var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirx[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #phi_{azy} [rad]" type = "d"    training=""/>
 
-<var def = "atan(sqrt(pow(reco_shower_implied_diry[0], 2)+ pow(reco_shower_implied_dirx[0],2))/reco_shower_implied_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #theta_{azy} [rad]" type = "d" gc  training=""/>
+<var def = "atan(sqrt(pow(reco_shower_implied_diry[0], 2)+ pow(reco_shower_implied_dirx[0],2))/reco_shower_implied_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #theta_{azy} [rad]" type = "d"    training=""/>
 
 <var def = "(reco_shower_trackscore[0])" binning = "(20,0,0.5)" unit = "Shower Score" type ="d" training ="0123"/>
 <var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm]" binning ="(24,0,3)" type="d" training="123"/>
@@ -507,32 +507,32 @@
 
 
 <!-- track calo + geom -->
-<var def = "reco_track_displacement[0]" binning = "(24,0,500)" unit = "Track Displacement [cm]" type = "d" gc  training="01" covar="cov.root"/>
-<var def = "reco_track_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #phi_{yx} [rad]" type = "d" gc  training="2"/>
-<var def = "reco_track_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #theta_{yz} [rad]" type = "d" gc  training="1"/>
+<var def = "reco_track_displacement[0]" binning = "(24,0,500)" unit = "Track Displacement [cm]" type = "d"    training="01" covar="cov.root"/>
+<var def = "reco_track_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #phi_{yx} [rad]" type = "d"    training="2"/>
+<var def = "reco_track_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #theta_{yz} [rad]" type = "d"    training="1"/>
 
-<var def = "atan(reco_track_dirx[0]/reco_track_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #omega_{xz} [rad]" type = "d" gc  training=""/>
+<var def = "atan(reco_track_dirx[0]/reco_track_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #omega_{xz} [rad]" type = "d"    training=""/>
 
-<var def = "atan(reco_track_diry[0]/reco_track_dirx[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #phi_{azy} [rad]" type = "d" gc  training=""/>
+<var def = "atan(reco_track_diry[0]/reco_track_dirx[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #phi_{azy} [rad]" type = "d"    training=""/>
 
-<var def = "atan(sqrt(pow(reco_track_diry[0], 2)+ pow(reco_track_dirx[0],2))/reco_track_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #theta_{azy} [rad]" type = "d" gc  training=""/>
+<var def = "atan(sqrt(pow(reco_track_diry[0], 2)+ pow(reco_track_dirx[0],2))/reco_track_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #theta_{azy} [rad]" type = "d"    training=""/>
 
 <var def = "log10(reco_track_spacepoint_max_dist[0])" binning = "(24,-2,2)" unit = "Reconstructed Track Max Distance Spacepoint from Line [cm]" type = "d" training = "0123"/>
 
-<var def = "(TMath::Min(TMath::Min(TMath::Min(fabs(reco_track_endy[0]+117), fabs(reco_track_endy[0]-117)) ,  TMath::Min(fabs(reco_track_endx[0]-0), fabs(reco_track_endx[0]-256))), TMath::Min(fabs(reco_track_endz[0]-0), fabs(reco_track_endz[0]-1036))))" binning = "(24,0,125)" unit = " Reconstructed Track End Distance to Wall [cm]" type = "d" gc  training="023"/>
+<var def = "(TMath::Min(TMath::Min(TMath::Min(fabs(reco_track_endy[0]+117), fabs(reco_track_endy[0]-117)) ,  TMath::Min(fabs(reco_track_endx[0]-0), fabs(reco_track_endx[0]-256))), TMath::Min(fabs(reco_track_endz[0]-0), fabs(reco_track_endz[0]-1036))))" binning = "(24,0,125)" unit = " Reconstructed Track End Distance to Wall [cm]" type = "d"    training="023"/>
 
-<var def = "(TMath::Min(TMath::Min(TMath::Min(fabs(reco_track_starty[0]+117), fabs(reco_track_starty[0]-117)) ,  TMath::Min(fabs(reco_track_startx[0]-0), fabs(reco_track_startx[0]-256))), TMath::Min(fabs(reco_track_startz[0]-0), fabs(reco_track_startz[0]-1036))))" binning = "(24,0,125)" unit = " Reconstructed Track Start Distance to Wall [cm]" type = "d" gc  training="013"/>
+<var def = "(TMath::Min(TMath::Min(TMath::Min(fabs(reco_track_starty[0]+117), fabs(reco_track_starty[0]-117)) ,  TMath::Min(fabs(reco_track_startx[0]-0), fabs(reco_track_startx[0]-256))), TMath::Min(fabs(reco_track_startz[0]-0), fabs(reco_track_startz[0]-1036))))" binning = "(24,0,125)" unit = " Reconstructed Track Start Distance to Wall [cm]" type = "d"    training="013"/>
 
-<var def = "reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(24,0,12)" unit = "Reconstructed Track Truncated Mean dE/dx Best Plane [MeV/cm]" type = "d" gc  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(24,0,12)" unit = "Reconstructed Track Truncated Mean dE/dx Best Plane [MeV/cm]" type = "d"    training=""/>
 
-<var def = "reco_track_proton_kinetic_energy[0]" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Kinetic Energy (proton) [GeV]" type = "d" gc training = ""/>
-<var def = "reco_track_calo_energy_max[0]* 0.001" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy [GeV]" type = "d" gc training = ""/>
-<var def = "reco_track_calo_energy_plane0[0] * 0.001" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy Plane 0 [GeV]" type = "d" gc training = ""/>
-<var def = "reco_track_calo_energy_plane1[0] * 0.001" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy Plane 1 [GeV]" type = "d" gc training = ""/>
+<var def = "reco_track_proton_kinetic_energy[0]" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Kinetic Energy (proton) [GeV]" type = "d"   training = ""/>
+<var def = "reco_track_calo_energy_max[0]* 0.001" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy [GeV]" type = "d"   training = ""/>
+<var def = "reco_track_calo_energy_plane0[0] * 0.001" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy Plane 0 [GeV]" type = "d"   training = ""/>
+<var def = "reco_track_calo_energy_plane1[0] * 0.001" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy Plane 1 [GeV]" type = "d"   training = ""/>
 <var def = "reco_track_calo_energy_plane2[0] * 0.001 " binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy Plane 2 [GeV]" type = "d"  training = "0123" group = "5"/>
 
-<var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d" gc training = ""/>
-<var def = "reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d" gc training = "0123"/>
+<var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d"   training = ""/>
+<var def = "reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d"   training = "0123"/>
 
 <var def = "(reco_track_spacepoint_principal0[0])" binning = "(24,0,1)" unit = "Track Spacepoint Principal" type ="d" training ="01"/>
 <var def = "(reco_track_trackscore[0])" binning = "(24,0.5,1)" unit = "Track Score" type ="d" training ="0123"/>
@@ -561,111 +561,111 @@
 
 <var def = "reco_track_pid_chi2_mu_plane2[#LT#] - reco_track_pid_chi2_p_plane2[#LT#]" binning = "(24, -400, 75)" unit = "#chi^{2}_{#mu} - #chi^{2}_{p} Plane 2" type = "d" training = ""/>
 
-<var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(24, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" gc training = ""/>
+<var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(24, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d"   training = ""/>
 
-<var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(24,-2,2)"  unit ="Log( Three Plane Track PID )" type = "d" gc training=""/>
+<var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(24,-2,2)"  unit ="Log( Three Plane Track PID )" type = "d"   training=""/>
 
 <!-- Delta variables -->
 <!--all planes-->
-<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" gc training = ""  group = "3"  />
-<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" gc training = ""  group = "3" />
-<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" gc training = ""  group = "3" />
-<var def = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum [GeV]" type = "d" gc training = ""  group = "3"/>
+<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d"   training = ""  group = "3"  />
+<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d"   training = ""  group = "3" />
+<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d"   training = ""  group = "3" />
+<var def = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum [GeV]" type = "d"   training = ""  group = "3"/>
 
-<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_implied_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X (implied) [GeV]" type = "d" gc training = ""  group = "3"/>
-<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_implied_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y (implied) [GeV]" type = "d" gc training = ""  group = "3"/>
-<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_implied_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z (implied) [GeV]" type = "d" gc training = ""  group = "3" />
-<var def = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_implied_dirx[0],2)+pow(    (reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_implied_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum (implied) [GeV]" type = "d" gc training = ""  group = "3"/>
+<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_implied_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X (implied) [GeV]" type = "d"   training = ""  group = "3"/>
+<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_implied_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y (implied) [GeV]" type = "d"   training = ""  group = "3"/>
+<var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_implied_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z (implied) [GeV]" type = "d"   training = ""  group = "3" />
+<var def = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_implied_dirx[0],2)+pow(    (reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_implied_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum (implied) [GeV]" type = "d"   training = ""  group = "3"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d" training = ""  group = "3"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*#SIDX#+reco_track_diry[0]*#SIDY#+reco_track_dirz[0]*#SIDZ#)))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair (Track Start) [GeV]" type  = "d" training = ""  group = "3"/>
 
 <!--Plane 2-->
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 2 [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 2 [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 2 [GeV]" type = "d" gc training = "" group = "1"/>
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 2 [GeV]" type = "d"   training = "" group = "1"/>
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 2 [GeV]" type = "d" gc training = "" group = "1"/>
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 2 [GeV]" type = "d"   training = "" group = "1"/>
 
-<var def = "sqrt(pow((reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 2 [GeV]" type = "d" gc training = "" group = "1"/>
+<var def = "sqrt(pow((reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 2 [GeV]" type = "d"   training = "" group = "1"/>
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 2 (implied) [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 2 (implied) [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 2 (implied) [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 2 (implied) [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 2 (implied) [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 2 (implied) [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "sqrt(pow((reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_dirx[0],2)+pow(    (reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 2 (implied) [GeV]" type = "d" gc training = "" group = "1"/>
+<var def = "sqrt(pow((reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_dirx[0],2)+pow(    (reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 2 (implied) [GeV]" type = "d"   training = "" group = "1"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_plane2[0]*0.001*((reco_track_calo_energy_plane2[0]*0.001+#PM#)-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair Plane 2 [GeV]" type  = "d" training = "" group = "2"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_plane2[0]*0.001*((reco_track_calo_energy_plane2[0]*0.001+#PM#)-#PP#*(reco_track_dirx[0]*#SIDX#+reco_track_diry[0]*#SIDY#+reco_track_dirz[0]*#SIDZ#)))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair Plane 2 (Track Start) [GeV]" type  = "d" training = "" group = "1"/>
 
 <!--Plane 1-->
-<var def = "(reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 1 [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 1 [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "(reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 1 [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 1 [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "(reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 1 [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 1 [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "sqrt(pow((reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 1 [GeV]" type = "d" gc training = "" group = "1"/>
+<var def = "sqrt(pow((reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 1 [GeV]" type = "d"   training = "" group = "1"/>
 
-<var def = "(reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_implied_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 1 (implied) [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_implied_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 1 (implied) [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "(reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_implied_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 1 (implied) [GeV]" type = "d" gc training = "" group = "1"/>
+<var def = "(reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_implied_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 1 (implied) [GeV]" type = "d"   training = "" group = "1"/>
 
-<var def = "(reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_implied_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 1 (implied) [GeV]" type = "d" gc training = "" group = "1"/>
+<var def = "(reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_implied_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 1 (implied) [GeV]" type = "d"   training = "" group = "1"/>
 
-<var def = "sqrt(pow((reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_implied_dirx[0],2)+pow(    (reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_implied_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 1 (implied) [GeV]" type = "d" gc training = "" group = "1"/>
+<var def = "sqrt(pow((reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_implied_dirx[0],2)+pow(    (reco_track_calo_energy_plane1[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane1[0]*0.001)*reco_shower_implied_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 1 (implied) [GeV]" type = "d"   training = "" group = "1"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_plane1[0]*0.001*((reco_track_calo_energy_plane1[0]*0.001+#PM#)-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair Plane 1 [GeV]" type  = "d" training = "" group = "1"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_plane1[0]*0.001*((reco_track_calo_energy_plane1[0]*0.001+#PM#)-#PP#*(reco_track_dirx[0]*#SIDX#+reco_track_diry[0]*#SIDY#+reco_track_dirz[0]*#SIDZ#)))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair Plane 1 (Track Start) [GeV]" type  = "d" training = "" group = "1"/>
 
 <!--Plane 0-->
-<var def = "(reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 0 [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 0 [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "(reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 0 [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 0 [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "(reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 0 [GeV]" type = "d" gc training = "" group = "1"/>
+<var def = "(reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 0 [GeV]" type = "d"   training = "" group = "1"/>
 
-<var def = "sqrt(pow((reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 0 [GeV]" type = "d" gc training = "" group = "1"/>
+<var def = "sqrt(pow((reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 0 [GeV]" type = "d"   training = "" group = "1"/>
 
-<var def = "(reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_implied_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 0 (implied) [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_implied_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 0 (implied) [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "(reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_implied_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 0 (implied) [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_implied_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 0 (implied) [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "(reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_implied_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 0 (implied) [GeV]" type = "d" gc training = "" group = "1" />
+<var def = "(reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_implied_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 0 (implied) [GeV]" type = "d"   training = "" group = "1" />
 
-<var def = "sqrt(pow((reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_implied_dirx[0],2)+pow(    (reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_implied_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 0 (implied) [GeV]" type = "d" gc training = "" group = "1"/>
+<var def = "sqrt(pow((reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_implied_dirx[0],2)+pow(    (reco_track_calo_energy_plane0[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane0[0]*0.001)*reco_shower_implied_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 0 (implied) [GeV]" type = "d"   training = "" group = "1"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_plane0[0]*0.001*((reco_track_calo_energy_plane0[0]*0.001+#PM#)-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair Plane 0 [GeV]" type  = "d" training = "" group = "1"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_plane0[0]*0.001*((reco_track_calo_energy_plane0[0]*0.001+#PM#)-#PP#*(reco_track_dirx[0]*#SIDX#+reco_track_diry[0]*#SIDY#+reco_track_dirz[0]*#SIDZ#)))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair Plane 0 (Track Start) [GeV]" type  = "d" training = "" group = "1"/>
 
 <!-- Shower energy corrected plane 2-->
-<var def = "(reco_track_calo_energy_plane2[0] *0.001+#PM#)*(reco_track_dirx[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Corrected Reconstructed Delta Momentum X Plane 2 [GeV]" type = "d" gc training = "" group = "2" />
+<var def = "(reco_track_calo_energy_plane2[0] *0.001+#PM#)*(reco_track_dirx[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Corrected Reconstructed Delta Momentum X Plane 2 [GeV]" type = "d"   training = "" group = "2" />
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Corrected Reconstructed Delta Momentum Y Plane 2 [GeV]" type = "d" gc training = "" group = "2"/>
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Corrected Reconstructed Delta Momentum Y Plane 2 [GeV]" type = "d"   training = "" group = "2"/>
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirz[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Corrected Reconstructed Delta Momentum Z Plane 2 [GeV]" type = "d" gc training = "" group = "2"/>
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirz[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Corrected Reconstructed Delta Momentum Z Plane 2 [GeV]" type = "d"   training = "" group = "2"/>
 
-<var def = "sqrt(pow((reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Corrected Reconstucted Delta Transverse (YX) Momentum Plane 2 [GeV]" type = "d" gc training = "" group = "2"/>
+<var def = "sqrt(pow((reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Corrected Reconstucted Delta Transverse (YX) Momentum Plane 2 [GeV]" type = "d"   training = "" group = "2"/>
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_implied_dirx[0]" binning = "(24,-2,2)" unit = "Corrected Reconstructed Delta Momentum X Plane 2 (implied) [GeV]" type = "d" gc training = "12" group = "2" />
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_implied_dirx[0]" binning = "(24,-2,2)" unit = "Corrected Reconstructed Delta Momentum X Plane 2 (implied) [GeV]" type = "d"   training = "12" group = "2" />
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_implied_diry[0]" binning = "(24,-2,2)" unit = "Corrected Reconstructed Delta Momentum Y Plane 2 (implied) [GeV]" type = "d" gc training = "02" group = "2" />
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_implied_diry[0]" binning = "(24,-2,2)" unit = "Corrected Reconstructed Delta Momentum Y Plane 2 (implied) [GeV]" type = "d"   training = "02" group = "2" />
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirz[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_implied_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Corrected Reconstructed Delta Momentum Z Plane 2 (implied) [GeV]" type = "d" gc training = "0123" group = "2" />
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirz[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_implied_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Corrected Reconstructed Delta Momentum Z Plane 2 (implied) [GeV]" type = "d"   training = "0123" group = "2" />
 
-<var def = "sqrt(pow((reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_implied_dirx[0],2)+pow(    (reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_implied_diry[0],2))" binning = "(24,0,2)" unit = "Corrected Reconstucted Delta Transverse (YX) Momentum Plane 2 (implied) [GeV]" type = "d" gc training = "0123" group = "2"/>
+<var def = "sqrt(pow((reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_implied_dirx[0],2)+pow(    (reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+((reco_shower_energy_plane2[0]*1.21 + 10)*0.001)*reco_shower_implied_diry[0],2))" binning = "(24,0,2)" unit = "Corrected Reconstucted Delta Transverse (YX) Momentum Plane 2 (implied) [GeV]" type = "d" training = "0123" group = "2"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*(reco_shower_energy_plane2[0]*1.21 + 10)*0.001*((reco_track_calo_energy_plane2[0]*0.001+ #PM#)-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(24,0.9,1.6)" unit = "Corrected Implied Invariant Mass of Photon-Proton Pair Plane 2 [GeV]" type  = "d" training = "0123" group = "2"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*(reco_shower_energy_plane2[0]*1.21 + 10)*0.001*((reco_track_calo_energy_plane2[0]*0.001+#PM#)-#PP#*(reco_track_dirx[0]*#SIDX#+reco_track_diry[0]*#SIDY#+reco_track_dirz[0]*#SIDZ#)))" binning = "(24,0.9,1.6)" unit = "Corrected Implied Invariant Mass of Photon-Proton Pair Plane 2 (Track Start) [GeV]" type  = "d" training = "" group = "2"/>
 
-<var def = "(reco_shower_energy_plane2[0]*1.21 + 10)/1000.0" binning = "(24,0,0.4)" unit = "Corrected Reconstructed Calorimetric Shower Energy Plane 2 [GeV]" type = "d"  training="" group = "2"/>
+<var def = "((reco_shower_energy_plane2[0]>0.0)*((reco_shower_energy_plane2[0]*1.21 + 10)/1000.0))" binning = "(24,0,0.4)" unit = "Corrected Reconstructed Calorimetric Shower Energy Plane 2 [GeV]" type = "d"  training="" group = "2"/>
 
 
 <!-- Mark is Bored on flight to Korea variables but he remembered to grab a local copy of all stage 0 vertexed files so is doing 14 hours of "feature development" wooo -->
