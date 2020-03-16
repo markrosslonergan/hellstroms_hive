@@ -1144,41 +1144,136 @@ int sim_track_precalc(const bdt_file * file, const std::string & tag){
     TFile*fout = new TFile(nam.c_str(),"recreate");
     TTree tout("track_tree","track_tree");
 
-    //set tree branches for new variables
+    //set tree branches for new variables in track tree
     std::vector<double> * sim_track_endx = 0;
+    std::vector<double> * sim_track_endy = 0;
+    std::vector<double> * sim_track_endz = 0;
+
+    std::vector<double> * sim_track_px = 0;
+    std::vector<double> * sim_track_py = 0;
+    std::vector<double> * sim_track_pz = 0;
+
+    std::vector<double> * sim_track_length = 0;
+
+
     tout.Branch("sim_track_endx",&sim_track_endx);
-    
+    tout.Branch("sim_track_endy",&sim_track_endy);
+    tout.Branch("sim_track_endz",&sim_track_endz);
+    tout.Branch("sim_track_px",&sim_track_px);
+    tout.Branch("sim_track_py",&sim_track_py);
+    tout.Branch("sim_track_pz",&sim_track_pz);
+    tout.Branch("sim_track_length",&sim_track_length);
+
+
     //get entries in vertex tree
     int Nent = file->tvertex->GetEntries();
 
     std::vector<double> * sim_track_startx = 0;
+    std::vector<double> * sim_track_starty = 0;
+    std::vector<double> * sim_track_startz = 0;
     std::vector<double> * sim_track_energy = 0;
     std::vector<double> * mctruth_daughters_E = 0;
     std::vector<double> * mctruth_daughters_pdg = 0;
+    std::vector<double> * mctruth_daughters_status_code = 0;
+    std::vector<double> * mctruth_daughters_endx = 0;
+    std::vector<double> * mctruth_daughters_endy = 0;
+    std::vector<double> * mctruth_daughters_endz = 0;
+    std::vector<double> * mctruth_daughters_px = 0;
+    std::vector<double> * mctruth_daughters_py = 0;
+    std::vector<double> * mctruth_daughters_pz = 0;
 
+
+
+    // file->tvertex->SetBranchAddress("sim_track_startx",&sim_track_startx);
     file->tvertex->SetBranchAddress("sim_track_startx",&sim_track_startx);
- file->tvertex->SetBranchAddress("sim_track_energy",&sim_track_energy);
- file->tvertex->SetBranchAddress("mctruth_daughters_E",&mctruth_daughters_E);
- file->tvertex->SetBranchAddress("mctruth_daughters_pdg",&mctruth_daughters_pdg);
+    file->tvertex->SetBranchAddress("sim_track_starty",&sim_track_starty);
+    file->tvertex->SetBranchAddress("sim_track_startz",&sim_track_startz);
+    file->tvertex->SetBranchAddress("sim_track_energy",&sim_track_energy);
+    file->tvertex->SetBranchAddress("mctruth_daughters_E",&mctruth_daughters_E);
+    file->tvertex->SetBranchAddress("mctruth_daughters_pdg",&mctruth_daughters_pdg);
+    file->tvertex->SetBranchAddress("mctruth_daughters_status_code",&mctruth_daughters_status_code);
+    file->tvertex->SetBranchAddress("mctruth_daughters_endx",&mctruth_daughters_endx);
+    file->tvertex->SetBranchAddress("mctruth_daughters_endy",&mctruth_daughters_endy);
+    file->tvertex->SetBranchAddress("mctruth_daughters_endz",&mctruth_daughters_endz);
+    file->tvertex->SetBranchAddress("mctruth_daughters_px",&mctruth_daughters_px);
+    file->tvertex->SetBranchAddress("mctruth_daughters_py",&mctruth_daughters_py);
+    file->tvertex->SetBranchAddress("mctruth_daughters_pz",&mctruth_daughters_pz);
 
 
 
-
-   //loop over events and make match between sim track and mctruth daughters
+    //loop over events in vertex tree and make match between sim track and mctruth daughters
     for(int i=0; i< Nent; i++){
         file->tvertex->GetEntry(i);
-      //  sim_track_endx.clear();
-        
-     //   sim_track_energy
-       // mctruth_daughters
-      //  mctruth_daughters_pdg
-      //  sim_track_endx.resize(, -9999);
+        sim_track_endx->clear();
+        sim_track_endx->resize(sim_track_startx->size());
+        sim_track_endy->clear();
+        sim_track_endy->resize(sim_track_startx->size());
+        sim_track_endz->clear();
+        sim_track_endz->resize(sim_track_startx->size());
 
-       
+        sim_track_px->clear();
+        sim_track_px->resize(sim_track_startx->size());
+        sim_track_py->clear();
+        sim_track_py->resize(sim_track_startx->size());
+        sim_track_pz->clear();
+        sim_track_pz->resize(sim_track_startx->size());
 
-        
+        sim_track_length->clear();
+        sim_track_length->resize(sim_track_startx->size());
+
+
+
+        //check for a proton exiting the nucleus
+        for(int i = 0; i< mctruth_daughters_pdg->size(); i++){
+
+            //if there is a proton, match it to a sim track
+            if(mctruth_daughters_pdg->at(i)&&mctruth_daughters_status_code->at(i)==1){
+                // std::cout<<"true proton exiting nucleus with energy: "<<mctruth_daughters_E->at(i)<<std::endl;
+
+                for (int j = 0; j < sim_track_energy->size(); j++){
+                    if (TMath::Abs(sim_track_energy->at(j)- mctruth_daughters_E->at(i))<0.001){//if there is a sim track that matches
+
+                        //std::cout<<"true proton exiting nucleus with energy: "<<mctruth_daughters_E->at(i)<<" matched to sim track with energy: "<<sim_track_energy->at(j)<<std::endl;
+
+                        //fill info for track tree from corresponing mctruth particle
+                        if(TMath::IsNaN( mctruth_daughters_endx->at(i)) ){
+                                std::cout<<"error, this sim track end at index "<<j <<" is invalid: "<< mctruth_daughters_endx->at(i)<<std::endl;
+                        }
+                        sim_track_endx->at(j) = mctruth_daughters_endx->at(i); 
+                        sim_track_endy->at(j) = mctruth_daughters_endy->at(i);
+                        sim_track_endz->at(j) = mctruth_daughters_endz->at(i);
+
+                        if (sim_track_endx->at(j) == 0 && sim_track_endy->at(j) == 0 && sim_track_endz->at(j) == 0){
+                            std::cout<<"error, track end xyz = 0"<<std::endl;
+                        }
+
+                        sim_track_px->at(j) = mctruth_daughters_px->at(i);
+                        sim_track_py->at(j) = mctruth_daughters_py->at(i);
+                        sim_track_pz->at(j) = mctruth_daughters_pz->at(i);
+
+                         if (sim_track_px->at(j) == 0 && sim_track_py->at(j) == 0 && sim_track_pz->at(j) == 0){
+                                 std::cout<<"error, track p xyz = 0"<<std::endl;
+                          }
+
+                        sim_track_length->at(j) = sqrt(pow(sim_track_endx->at(j) - sim_track_startx->at(j),2)+pow(sim_track_endy->at(j) - sim_track_starty->at(j),2) + pow(sim_track_endz->at(j) - sim_track_startz->at(j),2));
+
+                        //std::cout<<"setting track end x to "<<mctruth_daughters_endx->at(i)<<std::endl; 
+
+                    }
+                }
+            }
+
+        }
+        //  sim_track_endx.resize(, -9999);
+
+
+
+        //write to tree
+        tout.Fill();
+
     }
-    
+
+    //write and close output
     fout->cd();
     tout.Write();
     fout->Close();
@@ -1463,7 +1558,7 @@ int ncpi0_sss_precalc(const bdt_file * file, const std::string & tag){
                     //first check if this possible 3rd match is on a seperate plane
                     bool new_plane = true;
                     for(auto &pp:uniq_candidates[i]){
-                            if(sss_candidate_plane->at(k)==sss_candidate_plane->at(pp) ) new_plane = false;   
+                        if(sss_candidate_plane->at(k)==sss_candidate_plane->at(pp) ) new_plane = false;   
                     }
                     if(new_plane){
 
@@ -1559,7 +1654,7 @@ int ncpi0_sss_precalc(const bdt_file * file, const std::string & tag){
 
                     std::cout<<"----- plane: "<<sss_candidate_plane->at(ic)<<" nhits: "<<sss_candidate_num_hits->at(ic)<<" imp: "<<sss_candidate_impact_parameter->at(ic)<<" en: "<<sss_candidate_energy->at(ic)<<" a2s: "<<sss_candidate_angle_to_shower->at(ic)<<" conv: "<<sss_candidate_min_dist->at(ic)<<" pdg: "<<sss_candidate_parent_pdg->at(ic)<<std::endl;
 
-            
+
                     double eff_invar = sqrt(2.0*sss_candidate_energy->at(ic)*reco_shower_energy_max->at(0)*(1.0-cos(sss_candidate_angle_to_shower->at(ic))));
                     double eff_invar_diff = fabs(eff_invar-139.5);
 

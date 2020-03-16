@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g1pJan2020_v1" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.997304,0.988108,0.716946,0.907243,0.724711)" /> 
+<topology tag="1g1pJan2020_v1" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.0,0.5,0.0, 0.0,0.0)" /> 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
 <filedir>/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/</filedir>
@@ -29,14 +29,11 @@
         <!--    <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -106.5 &amp;&amp; mctruth_nu_vertex_y &lt; 106.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 10.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1026.8 </cut> -->
-     <!--  <cut> mctruth_cc_or_nc == 1 </cut>
+      <!-- <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 0</cut>
         <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
-        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02)==1</cut>
-         <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 251.35 </cut>
-        <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
-        <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut> -->
-        <!--<cut> TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 </cut> -->
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02)==1</cut> -->
+        <!--<cut> TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 </cut>-->
         
         <!--    <cut> mctruth_daughters_pdg==22 &amp;&amp; mctruth_daughters_status_code==1 &amp;&amp; mctruth_daughters_endx>2 </cut>-->
         <!--        <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
@@ -147,6 +144,7 @@
         <cut> sim_track_overlay_fraction[0] &lt; 0.5 </cut>
         <cut> sim_track_pdg[0] == 2212 </cut>
     </training>
+
 </bdtfile>
 
 
@@ -394,12 +392,10 @@
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
 <precut def = "reco_shower_energy_max[0]>30" name = "Michel Cut"/>
 <precut def = "(TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 &amp;&amp; reco_vertex_dist_to_SCB > 2)" name = "Track and Vertex Contained in SCB"/>
-<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/>
-<precut def = "sim_track_pdg==2212" name = "true proton"/>
-<!--<precut def = "TMath::Asb(mctruth_daughters_E, sim_track_energy)< 0.01" name = "proton matched to mcparticle"/>-->
+<!--<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
-<!--
+
 <var def = "reco_shower_implied_dirx" binning = "(24,-1,1)" unit = "Shower Implied Dir X" type="d" training=""/>
 <var def = "reco_shower_implied_diry" binning = "(24,-1,1)" unit = "Shower Implied Dir Y" type="d" training=""/>
 <var def = "reco_shower_implied_dirz" binning = "(24,-1,1)" unit = "Shower Implied Dir Z" type="d" training=""/>
@@ -425,10 +421,9 @@
 
 <var def = "reco_vertex_dist_to_SCB" binning="(24,0,75)" unit = "Distance from vertex to SCB" type ="d" training=""/>
 <var def = "reco_vertex_dist_to_active_TPC" binning="(24,0,75)" unit = "Distance from vertex to active TPC" type ="d" training=""/>
-->
+
 <!--<var def = "reco_shower_energy_max[0]/1000.0" binning = "(20,0,0.2)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="0123"/>-->
 
-<!--
 <var def = "reco_shower_energy_max[0]/1000.0" binning = "(24,0,0.4)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="0123"/> 
 <var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d" logplot = "false"  training="01"/>
 
@@ -436,15 +431,15 @@
 <var def = "reco_vertex_x" binning = "(24,-20,270)" unit = "Reco Vertex X [cm]" type="d" logplot="false" training=""/>
 <var def = "reco_vertex_y" binning = "(24,-140,140)" unit = "Reco Vertex Y [cm]" type="d" logplot="false" training=""/>
 <var def = "reco_vertex_z" binning = "(24,-20,1100)" unit = "Reco Vertex Z [cm]" type="d" logplot="false" training=""/>
--->
+
 <!--<var def = "combined_score" binning = "(40,0.3,0.70)" unit = "Combined Super Score" type="d" logplot = "true" training=""/>-->
-<!--<var def = "run_number" binning  ="(24,4900,8500)" unit = "Run Number" type="d" logplot = "false" training=""/>
--->
+<var def = "run_number" binning  ="(24,4900,8500)" unit = "Run Number" type="d" logplot = "false" training=""/>
+
 <!--- all of the assorted shower dE/dx's -->
-<!--<var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx plane 2 (Kalman) [MeV/cm]" type = "d" logplot = "false" training =""/>
+<var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx plane 2 (Kalman) [MeV/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_kalman_dEdx_plane1_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx plane 1 (Kalman) [MeV/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_kalman_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx plane 0 (Kalman) [MeV/cm]" type = "d" logplot = "false" training =""/>
-<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx all planes (Kalman) [MeV/cm]" type = "d"  training ="0123"/>
+<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx all planes (Kalman) [MeV/cm]" type = "d" logplot = "false" training ="0123"/>
 
 <var def = "reco_shower3d_dEdx_plane2[0]" binning = "(24,0,10.0)" unit = "Shower3D dedx plane 2 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower3d_dEdx_plane1[0]" binning = "(24,0,10.0)" unit = "Shower3D dedx plane 1 [mev/cm]" type = "d" logplot = "false" training =""/>
@@ -454,11 +449,10 @@
 <var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,10.0)" unit = "median dedx plane 1 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "median dedx plane 0 [mev/cm]" type = "d" logplot = "false" training =""/>
 <var def = "reco_shower_dEdx_amalgamated[0]" binning="(24,0.0,10.0)" unit = "Amalgamated Shower dE/dx [Mev/cm]" type = "d" logplot = "false"  training = ""/>
--->
+
 <!-- shower geometry + calorimetry -->
-<!--
 <var def = "reco_shower_impact_parameter[0]" binning = "(24,0,1000)" unit = "Shower Impact Parameter [cm]" type="d" logplot="false" training="0123"/>
-<var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(24,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d" logplot = "true" training="0123"/>
+<var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(24,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d" logplot="false" training="0123"/>
 <var def = "reco_shower_implied_dirx/reco_shower_dirx" binning = "(24,-1,3)" unit = "Shower Implied Dirx/Pandora Dirx" type="d" logplot="false" training=""/>
 <var def = "reco_shower_implied_diry/reco_shower_diry" binning = "(24,-1,3)" unit = "Shower Implied Diry/Pandora Diry" type="d" logplot="false" training=""/>
 <var def = "reco_shower_implied_dirz/reco_shower_dirz" binning = "(46,-1,3)" unit = "Shower Implied Dirz/Pandora Dirz" type="d" logplot="false" training=""/>
@@ -469,40 +463,35 @@
 <var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d" logplot = "false"  training="123"/>
 
 <var def = "(reco_shower_trackscore[0])" binning = "(20,0,0.5)" unit = "Shower Score" type ="d" training ="0123"/>
--->
 <!--<var def = "(reco_shower_trackscore[0])" binning = "(40,0,0.5)" unit = "Shower Score" type ="d" training ="0123"/>-->
 
-<!--
+
 <var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "(distance from shower start to nearest dead wire)" binning ="(24,0,3)" type="d" training="123"/>
 <var def = "reco_shower_num_daughters" binning = "(3,0,3)" unit = "Num Dau Shower" type="d" training=""/>
 
 <var def = "reco_shower_startx" binning = "(24,-20,270)" unit = "Reco Shower Start X [cm]" type="d" logplot="false" training=""/>
 <var def = "reco_shower_starty" binning = "(24,-400,140)" unit = "Reco Shower Start Y [cm]" type="d" logplot="false" training=""/>
 <var def = "reco_shower_startz" binning = "(24,-20,1100)" unit = "Reco Shower Start Z [cm]" type="d" logplot="false" training=""/>
--->
+
 <!--adding the shower end point in XYZ-->
-<!--
 <var def = "reco_shower_startx[0] + (reco_shower_length[0] * reco_shower_dirx[0])" unit = "Shower End X [cm]" binning = "(24,-20,270)" type = "d" training = ""  />
 <var def = "reco_shower_starty[0] + (reco_shower_length[0] * reco_shower_diry[0])" unit = "Shower End Y [cm]" binning = "(24,-140,140)" type = "d" training = ""  />
 <var def = "reco_shower_startz[0] + (reco_shower_length[0] * reco_shower_dirz[0])" unit = "Shower End Z [cm]" binning = "(24,-20,1100" type = "d" training = ""  />
--->
+
 
 <!-- shower + track vars -->
-<!--
 <var def = "reco_shower_conversion_distance[0]" binning = "(24,0,100)" unit = " Reconstructed Shower conversion distance [cm]" type = "d"   logplot="true" training="01234"/>
-<var def = "log10(reco_shower_conversion_distance[0])" binning = "(24,-1.5,3)" unit = " Reconstructed Shower conversion distance Log[cm]" type = "d"   logplot="true" training=""/>
+<var def = "log10(reco_shower_conversion_distance[0])" binning = "(24,-2,3)" unit = " Reconstructed Shower conversion distance Log[cm]" type = "d"   logplot="true" training=""/>
 <var def = "log10(sqrt(pow(reco_track_startx[0]-reco_shower_startx[0],2)+pow(reco_track_starty[0]-reco_shower_starty[0],2)+pow(reco_track_startz[0]-reco_shower_startz[0],2)))" binning = "(24,-2,3)" unit = "Distance from Track Start to Shower Start Log10[cm]" type="d" training=""/>
--->
 <!--<var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(5,200,700)" unit = "Total Visible Energy [MeV]" type = "d" training="01"  />-->
-<!--<var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(5,200,700)" unit = "Total Visible Energy [MeV]" type = "d" training="01" covarfile="/uboone/app/users/markrl/SBNfit_uBooNE/new_davio/quick/whipping_star/build/bin/uBooNE_v19/constraint_test.root" covarname="before" />
+<var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(5,200,700)" unit = "Total Visible Energy [MeV]" type = "d" training="01" covarfile="/uboone/app/users/markrl/SBNfit_uBooNE/new_davio/quick/whipping_star/build/bin/uBooNE_v19/constraint_test.root" covarname="before" />
 
 <var def = "TMath::Min(sqrt(pow(reco_track_endx[0]-reco_shower_startx[0],2)+pow(reco_track_endy[0]-reco_shower_starty[0],2)+pow(reco_track_endz[0]-reco_shower_startz[0],2)), sqrt(pow(reco_track_startx[0]-reco_shower_startx[0],2)+pow(reco_track_starty[0]-reco_shower_starty[0],2)+pow(reco_track_startz[0]-reco_shower_startz[0],2)))" binning = "(24,0,100)" unit = "Min distance from Shower to track start or end  cm" type="d" training="0123"/>
 <var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning = "(24,-1,1)" unit = "Cosine Angle Between Track and Shower" type ="d" training ="0123"/>
 <var def = "acos(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning = "(24,-0.1,3.3)" unit = "Angle Between Track and Shower" type ="d" training =""/>
 <var def = "(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])" binning = "(24,-1,1)" unit = "Cosine Angle Between Track and Shower (implied)" type ="d" training ="0123"/>
--->
+
 <!-- track calo + geom -->
-<!--
 <var def = "reco_track_displacement[0]" binning = "(24,0,500)" unit = "Track Displacement [cm]" type = "d" logplot = "false"  training="01" covar="cov.root"/>    
 <var def = "reco_track_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track Phi yx" type = "d" logplot = "false"  training="2"/>
 <var def = "reco_track_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track Theta yz" type = "d" logplot = "false"  training="1"/>
@@ -518,30 +507,24 @@
 <var def = "reco_asso_tracks" binning = "(4,0,4)" unit = "Reco Track Num " type = "d" training=""/>
 <var def = "TMath::Min(TMath::Min(reco_track_end_to_nearest_dead_wire_plane0,reco_track_end_to_nearest_dead_wire_plane1),reco_track_end_to_nearest_dead_wire_plane2)" unit = "(distance from track end to nearest dead wire)" binning ="(24,0,3)" type="d" training="123"/>
 <var def = "reco_track_num_daughters" binning = "(3,0,3)" unit = "Num Daughters from Track" type="d" training=""/>
--->
 
 <!-- Track PID -->
-<var def = "log(reco_track_pid_bragg_likelihood_mip_plane2[#LT#]/reco_track_pid_bragg_likelihood_p_plane2[#LT#])" binning = "(24, -7, 6)" unit = "Log Bragg Likelihood MIP/p Plane 2" type = "d" training = ""/>
-
-
-<var def = "reco_track_pid_chi2_mu_plane2[#LT#] - reco_track_pid_chi2_p_plane2[#LT#]" binning = "(24, -300, 200)" unit = "#chi^{2}_{#mu} - #chi^{2}_{p} Plane 2" type = "d" training = ""/>   
-<!--<var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(24, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" logplot = "false" training = ""/>-->
-<var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(24,-2,2)"  unit ="Log( Three Plane Track PID )" type = "d"  training=""/>
-<!--<var def = "reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(24,0,12)" unit = "Reco Track Truncated Mean dE/dx Best Plane [MeV/cm]" type = "d" logplot = "false"  training=""/>-->
+<var def = "log(reco_track_pid_bragg_likelihood_mip_plane2[#LT#]/reco_track_pid_bragg_likelihood_p_plane2[#LT#])" binning = "(24, -5, 7)" unit = "Log Bragg Likelihood MIP/p Plane 2" type = "d" training = ""/>
+<var def = "reco_track_pid_chi2_mu_plane2[#LT#] - reco_track_pid_chi2_p_plane2[#LT#]" binning = "(24, -400, 75)" unit = "#chi^{2}_{#mu} - #chi^{2}_{p} Plane 2" type = "d" training = ""/>   
+<var def =  "reco_track_trunc_PIDA_best_plane[0]" binning = "(24, 0, 60)" unit = "Reconstructed Track PIDA Best Plane" type = "d" logplot = "false" training = ""/>
+<var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(24,-2,2)"  unit ="Log( Three Plane Track PID )" type = "d" logplot = "false" training=""/>
 
 <!-- Delta variables -->
-<!--
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X [GeV]" type = "d" logplot = "false" training = "12" /> 
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y [GeV]" type = "d" logplot = "false" training = "02" /> 
 <var def = "(reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirz[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z [GeV]" type = "d" logplot = "false" training = "0123" /> 
 <var def = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_dirx[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_proton_kinetic_energy[0]+0.938272)*(reco_track_diry[0])+(reco_shower_energy_max[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum [GeV]" type = "d" logplot = "false" training = "0123"/>
-<var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of photon-proton pair [GeV]" type  = "d" training = "0123"/>
+<var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(12,0.9,1.6)" unit = "Implied Invariant Mass of photon-proton pair [GeV]" type  = "d" training = "0123"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_max[0]*0.001*(#PE#-#PP#*(reco_track_dirx[0]*#SIDX#+reco_track_diry[0]*#SIDY#+reco_track_dirz[0]*#SIDZ#)))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of photon-proton pair (Track Start) [GeV]" type  = "d" training = ""/>
--->
+
 <!-- Mark is Bored on flight to Korea variables but he remembered to grab a local copy of all stage 0 vertexed files so is doing 14 hours of "feature development" wooo -->
 
-<!--
 <var def = "reco_shower_energy_max/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of energy to number of hits" binning = "(24,0,1)" type="d" training="0123"/>
 <var def = "reco_shower_energy_max/(100.0*reco_shower_length*reco_shower_opening_angle)" unit = "ratio of calo energy to geometric size" binning = "(24,0,1.5)" type = "d" training = "12"/>
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = "0123"/>
@@ -551,11 +534,10 @@
 
 <var def = "(sim_shower_overlay_fraction[0]+sim_track_overlay_fraction[0])/2.0" unit = "Average Overlay Contamination" binning = "(24,0,1)" type = "d" training = "" logplot="true"/>
 
--->
 
 
 <!--- SSS BDT variable --> 
-<!--<var def = "log10(Min$(isolation_min_dist_trk_shr))" binning = "(24,-1,3)" unit = "Min Dist from track to shower hit log[cm]" type="d" logplot="false" training=""/>
+<var def = "log10(Min$(isolation_min_dist_trk_shr))" binning = "(24,-1,3)" unit = "Min Dist from track to shower hit log[cm]" type="d" logplot="false" training=""/>
 <var def = "log10(Min$(isolation_min_dist_trk_unassoc))" binning = "(24,-1,3)" unit = "Min Dist from track to Unnass hit log[cm]" type="d" logplot="false" training=""/>
 <var def = "Sum$(isolation_num_shr_hits_win_2cm_trk)" binning = "(24,0,40)" unit = "Num Shr hits in 2cm" type="d" logplot="false" training="4"/>
 <var def = "Sum$(isolation_num_shr_hits_win_5cm_trk)" binning = "(24,0,40)" unit = "Num Shr hits in 5cm" type="d" logplot="false" training=""/>
@@ -594,79 +576,32 @@
 <var def = "sss3d_invar_ranked_implied_invar" binning = "(16,0,200)" unit ="sss3d best invariant mass candidate implied invariant mass [MeV]" type="d" training="4"/>
 <var def = "sss3d_invar_ranked_opang" binning = "(16,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="d" training="4"/>
 <var def = "sss3d_invar_ranked_implied_opang" binning = "(16,-1,1)" unit ="sss3d best invariant mass candidate implied angle w.r.t primary shower [cos]" type="d" training="4"/>
--->
-<var def = "sim_track_overlay_fraction[0] " binning =  "(40,0,1)" unit = "Sim Track Overlay Fraction" type = "d"  training=""/>
- 
-<var def = "reco_track_mean_trunc_dEdx_plane0[0]" binning =  "(40,0,12)" unit = "Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training=""/>
-<var def = "reco_track_mean_trunc_dEdx_plane1[0]" binning =  "(40,0,12)" unit = "Reco Track Truncated Mean dE/dx Plane 1 [MeV/cm]" type = "d" training=""/>
-<var def = "reco_track_mean_trunc_dEdx_plane2[0]" binning =  "(40,0,12)" unit = "Reco Track Truncated Mean dE/dx Plane 2 [MeV/cm]" type = "d"   training=""/>
 
-<var def = "reco_track_proton_kinetic_energy[0]" binning =  "(40,0,1.0)" unit = "Reco Track Proton KE [GeV]" type = "d"   training=""/>
-<var def = "mctruth_exiting_proton_energy[0]-0.93827" binning =  "(40,0,1.0)" unit = "True Proton KE [GeV]" type = "d"   training=""/>
-<var def = "mctruth_exiting_proton_energy[0]-0.93827-reco_track_proton_kinetic_energy[0]" binning =  "(40,-0.6,0.6)" unit = "Proton KE Resolution (True-Reco)[GeV]" type = "d"  training=""/>
+<var def = "reco_track_mean_dEdx_plane0[0] *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.03))" binning =  "(16,0,10)" unit = "iScaled Plus 3 Reco Track Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training="" group = "1"/>
+<var def = "reco_track_mean_dEdx_plane1[0]  *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.03))" binning =  "(16,0,10)" unit = "Scaled Plus 3 Reco Track Mean dE/dx Plane 1 [MeV/cm]" type = "d" training="" group = "1"/>
+<var def = "reco_track_mean_dEdx_plane2[0] *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.03))" binning =  "(16,0,10)" unit = "Scaled Plus 3 Reco Track Mean dE/dx Plane 2 [MeV/cm]" type = "d"   training="" group = "1"/>
 
-<var def = "reco_track_dirx[0]" binning =  "(40,-1,1)" unit = "Reco Track Dir X" type = "d"   training=""/>
-<var def = "reco_track_diry[0]" binning =  "(40,-1,1)" unit = "Reco Track Dir Y" type = "d"   training=""/>
-<var def = "reco_track_dirz[0]" binning =  "(40,-1,1)" unit = "Reco Track Dir Z" type = "d"   training=""/>
+<var def = "reco_track_mean_dEdx_plane0[0] *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.06))" binning =  "(16,0,10)" unit = "iScaled Plus 6 Reco Track Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training="" group = "1"/>
+<var def = "reco_track_mean_dEdx_plane1[0]  *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.06))" binning =  "(16,0,10)" unit = "Scaled Plus 6 Reco Track Mean dE/dx Plane 1 [MeV/cm]" type = "d" training="" group = "1"/>
+<var def = "reco_track_mean_dEdx_plane2[0] *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.06))" binning =  "(16,0,10)" unit = "Scaled Plus 6 Reco Track Mean dE/dx Plane 2 [MeV/cm]" type = "d"   training="" group = "1"/>
 
-<!--<var def = "mctruth_daughters_px[0]" binning =  "(40,-1,1)" unit = "mctruth daughters px" type = "d"   training=""/>-->
 
-<var def = "sim_track_px[0]" binning =  "(40,-1,1)" unit = "Sim Track px" type = "d"   training=""/>
-<var def = "sim_track_py[0]" binning =  "(40,-1,1)" unit = "Sim Track py" type = "d"   training=""/>
-<var def = "sim_track_pz[0]" binning =  "(40,-1,1)" unit = "Sim Track px" type = "d"   training=""/>
-
-<var def = "sim_track_px[0]-reco_track_dirx[0]" binning =  "(40,-1,1)" unit = "Track Dir Resolution X" type = "d" training=""/>
-<var def = "sim_track_py[0]-reco_track_diry[0]" binning =  "(40,-1,1)" unit = "Track Dir Resolution Y" type = "d"  training=""/>
-<var def = "sim_track_pz[0]-reco_track_dirz[0]" binning =  "(40,-1,1)" unit = "Track Dir Resolution Z" type = "d"  training=""/>
-
-<var def = "reco_track_startx[0]" binning =  "(40,-20,270)" unit = "Reco Track Start X [cm]" type = "d"   training=""/>
-<var def = "reco_track_starty[0]" binning =  "(40,-140,140)" unit = "Reco Track Start Y [cm]" type = "d"   training=""/>
-<var def = "reco_track_startz[0]" binning =  "(40,-20,1100)" unit = "Reco Track Start Z [cm]" type = "d"   training=""/>
-
-<var def = "reco_track_endx[0]" binning =  "(40,-20,270)" unit = "Reco Track End X [cm]" type = "d"   training=""/>
-<var def = "reco_track_endy[0]" binning =  "(40,-140,140)" unit = "Reco Track End Y [cm]" type = "d"   training=""/>
-<var def = "reco_track_endz[0]" binning =  "(40,-20,1100)" unit = "Reco Track End Z [cm]" type = "d"   training=""/>
-
-<var def = "sim_track_startx[0]" binning =  "(40,-20,270)" unit = "Sim Track Start X [cm]" type = "d"   training=""/>
-<var def = "sim_track_starty[0]" binning =  "(40,-140,140)" unit = "Sim Track Start Y [cm]" type = "d"   training=""/>
-<var def = "sim_track_startz[0]" binning =  "(40,-20,1100)" unit = "Sim Track Start Z [cm]" type = "d"   training=""/>
-
-<var def = "sim_track_startx[0]-reco_track_startx[0]" binning =  "(40,-10,10)" unit = "Track Start Resolution X [cm]" type = "d"  training=""/>
-<var def = "sim_track_starty[0]-reco_track_starty[0]" binning =  "(40,-10,10)" unit = "Track Start Resolution Y[cm]" type = "d"  training=""/>
-<var def = "sim_track_startz[0]-reco_track_startz[0]" binning =  "(40,-10,10)" unit = "Track Start Resolution Z[cm]" type = "d"   training=""/>
-
-<var def = "sim_track_endx[0]-reco_track_endx[0]" binning =  "(40,-10,10)" unit = "Track End Resolution X [cm]" type = "d"   training=""/>
-<var def = "sim_track_endy[0]-reco_track_endy[0]" binning =  "(40,-10,10)" unit = "Track End Resolution Y [cm]" type = "d"   training=""/>
-<var def = "sim_track_endz[0]-reco_track_endz[0]" binning =  "(40,-10,10)" unit = "Track End Resolution Z [cm]" type = "d"   training=""/>
-
-<var def = "sim_track_endx[0]" binning =  "(40,-20,270)" unit = "sim Track End X [cm]" type = "d"   training=""/>
-<var def = "sim_track_endy[0]" binning =  "(40,-140,140)" unit = "sim Track End Y [cm]" type = "d"   training=""/>
-<var def = "sim_track_endz[0]" binning =  "(40,-20,1100)" unit = "sim Track End Z [cm]" type = "d"   training=""/>
-
-<!--<var def = "sim_track_length[0]" binning =  "(40,0,40)" unit = "Sim Track Length" type = "d"   training=""/>
-<var def = "reco_track_length[0]" binning =  "(40,-10,10)" unit = "Reco Track Length" type = "d"   training=""/>
-
-<var def = "sim_track_length[0]- reco_track_length[0]" binning =  "(40,-10,10)" unit = "Track Length Resolution" type = "d"   training=""/>
--->
-
+ <var def = "reco_track_mean_trunc_dEdx_plane0[0]" binning =  "(16,0,10)" unit = "Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training="" group = "1"/>
+ <var def = "reco_track_mean_trunc_dEdx_plane1[0]" binning =  "(16,0,10)" unit = "Reco Track Truncated Mean dE/dx Plane 1 [MeV/cm]" type = "d" training=""  group = "1"  />
+ <var def = "reco_track_mean_trunc_dEdx_plane2[0]" binning =  "(16,0,10)" unit = "Reco Track Truncated Mean dE/dx Plane 2 [MeV/cm]" type = "d"   training="" group = "1"/>
 
 <!--
-<var def = "#TRUELENGTH#" binning =  "(40,-10,10)" unit = "Sim Track Length" type = "d"   training=""/>
-
-
 <var def = "stage1_2BDT_XGBOOSTNCPi0_mva" binning = "(24,0,1)"  unit = "NCpi0 BDT" type="d" logplot="false" training="4"/>
 <var def = "stage1_2BDT_XGBOOSTBNB_mva" binning = "(40,0,1)"  unit = "BNB BDT" type="d" logplot="false" training="4"/>
 <var def = "stage1_2BDT_XGBOOSTCOSMIC_mva" binning = "(40,0,1)"  unit = "COSMIC BDT" type="d" logplot="false" training="4"/>
 <var def = "stage1_2BDT_XGBOOSTNue_mva" binning = "(40,0,1)"  unit = "Nue BDT" type="d" logplot="false" training="4"/>
-
-<var def = "mctruth_nu_E" binning = "(24, 0, 3.2)" unit = "True Neutrino Energy [GeV]" type="d" training=""/>
 -->
-<!--<var def = "1g1pJan2020_v1COSMIC_mva" binning = "(25,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" logplot="true"/> -->
+
+<var def = "mctruth_nu_E" binning = "(14, 0, 3.2)" unit = "True Neutrino Energy [GeV]" type="d" training=""/>
+<var def = "1g1pJan2020_v1COSMIC_mva" binning = "(25,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" logplot="true"/>
 
 <!-- ================= RECO-MC Matching ======================== -->
 
-
-<!--
 <recomc>
     <def name="Cosmic Contaminated" col ="( 126,126,241)"> 
      (sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4 )        
@@ -685,8 +620,8 @@
        ((sim_shower_overlay_fraction &lt; 0.4 &amp;&amp;  sim_track_overlay_fraction &lt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 &amp;&amp;  (mctruth_exiting_photon_energy &gt; 0.02))  &amp;&amp; (sim_shower_pdg==22 &amp;&amp;sim_track_pdg==2212) &amp;&amp;  mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 &amp;&amp; mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 &amp;&amp; mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 &amp;&amp; mctruth_num_exiting_pi0==0 
     </def>
 </recomc>
--->
 
+<!--
 <recomc>
     <def name="QuasiElastic" col ="(1.0,0.4,0.4)"> 
         GTruth_Gscatter == 1             
@@ -704,6 +639,7 @@
         GTruth_Gscatter == 10
     </def>
 </recomc>
+-->
 
 <!--
 <recomc>
@@ -730,8 +666,6 @@
     </def>
 </recomc>
 -->
-
-<!--<alias key = "TRUELENGTH" value = "sqrt(pow(sim_track_endz[0]-sim_track_startz[0], 2)+ pow(sim_track_endy[0]-sim_track_starty[0], 2)+ pow(sim_track_endx[0]-sim_track_startx[0], 2))"/>-->
 
 <alias key="PM" value ="(0.938272)"/>
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>

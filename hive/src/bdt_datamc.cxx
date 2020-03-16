@@ -160,9 +160,12 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
                     d0->Draw("COLZ");
                     d0 ->SetTitle((data_file->tag + ", stage " + std::to_string(s)).c_str());
-                    d0->GetYaxis()->SetTitleSize(0.05);
+                //    d0->GetYaxis()->SetTitleSize(0.05);
+                    d0->GetYaxis()->SetTitleSize(0.01);
+            
                     d0->GetYaxis()->SetTitleOffset(0.9);
-                    d0->GetXaxis()->SetTitleSize(0.05);
+                 //   d0->GetXaxis()->SetTitleSize(0.05);
+                      d0->GetXaxis()->SetTitleSize(0.01);
                     d0->GetXaxis()->SetTitleOffset(0.9);
                     pad->SetRightMargin(0.15);
 

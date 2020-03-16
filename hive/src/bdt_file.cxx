@@ -37,7 +37,8 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     if(is_mc){
         std::cout<<"setting weight branch - mc"<<std::endl;
        // weight_branch = "genie_spline_weight";
-       weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<100)*(genie_CV_tune_weight>0)";
+        weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)";
+
         //weight_branch = "genie_spline_weight";//*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
     } 
     if (is_data ||  is_bnbext) {
@@ -52,13 +53,24 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 //    run_fractions_plot = {0.16638655, 0.26435986, 0.043400890, 0.21413742, 0.31171527};
 //    run_fraction_cuts  = {"(run_number >= 4952 && run_number <= 7770)", "( run_number >=8317 && run_number <=  13696)", "(run_number >= 13697 && run_number <= 14116)","(run_number >= 14117 && run_number <= 18960)","(run_number >=18961 && run_number <= 23542)"};
     
-    //run_names = {"RI/II/IIIa","RIIIb/IV"};
-    //run_fraction_cuts  = {"( (run_number >= 4952 && run_number <= 7770) || ( run_number >= 8317 && run_number <=  13696) || (run_number >= 13697 && run_number <= 14116)) ", "( (run_number >= 14117 && run_number <= 18960) || (run_number >=18961 && run_number <=23542) )"};
-    //run_fractions_plot = {0.4742,0.5258};
-     
-    run_names = {"RIsmall"};
-    run_fraction_cuts  = {"1"};
-    run_fractions_plot = {1.0};
+    run_names = {"RI/II/IIIa","RIIIb/IV"};
+    run_fraction_cuts  = {"( (run_number >= 4952 && run_number <= 7770) || ( run_number >= 8317 && run_number <=  13696) || (run_number >= 13697 && run_number <= 14116)) ", "( (run_number >= 14117 && run_number <= 18960) || (run_number >=18961 && run_number <=23542) )"};
+    run_fractions_plot = {0.4742,0.5258};
+   
+    //2g1p
+    run_names  = {"RI/II","RIII"};
+    run_fraction_cuts = {"(run_number <=13696)","(run_number >= 13697)"};
+    run_fractions_plot = {0.6964636727,0.3035363273};
+ 
+    //2g0p
+    //run_names  = {"RI/II","RIII"};
+    //run_fraction_cuts = {"(run_number <=13696)","(run_number >= 13697)"};
+    //run_fractions_plot = {0.677544979,0.322455021};
+
+
+    //run_names = {"RIsmall"};
+    //run_fraction_cuts  = {"1"};
+    //run_fractions_plot = {1.0};
 
   //  run_names = {"RI","R3"};
   //  run_fraction_cuts  = {"run_number <= 7770 ","run_number>=13697"};
@@ -343,7 +355,7 @@ int bdt_file::calcPOT(){
         //weight_branch = "1";
         //weight_branch = "genie_spline_weight";
 
-        weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<100)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
+        weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
 
         /*if(this->tag.find("NCPi0")!=std::string::npos){
             weight_branch = weight_branch +"*"+"(1.0+ (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.3)*0.2 + (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.175)*0.3  +  (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.1)*0.3 )";

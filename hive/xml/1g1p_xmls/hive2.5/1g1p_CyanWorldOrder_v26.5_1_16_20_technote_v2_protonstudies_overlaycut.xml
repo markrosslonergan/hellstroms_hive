@@ -396,6 +396,7 @@
 <precut def = "(TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 &amp;&amp; reco_vertex_dist_to_SCB > 2)" name = "Track and Vertex Contained in SCB"/>
 <precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/>
 <precut def = "sim_track_pdg==2212" name = "true proton"/>
+<precut def = "sim_track_overlay_fraction < 0.1" name = "true proton"/>
 <!--<precut def = "TMath::Asb(mctruth_daughters_E, sim_track_energy)< 0.01" name = "proton matched to mcparticle"/>-->
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->

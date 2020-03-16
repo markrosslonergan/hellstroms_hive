@@ -392,12 +392,12 @@
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
 <precut def = "reco_shower_energy_max[0]>30" name = "Michel Cut"/>
 <precut def = "(TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 &amp;&amp; reco_vertex_dist_to_SCB > 2)" name = "Track and Vertex Contained in SCB"/>
-<precut def = "reco_shower_energy_max[0]>100" name = "shower energy"/>
+<!--<precut def = "reco_shower_energy_max[0]>100" name = "shower energy"/>
 
    <precut def = "(reco_shower_dirz[0]> 0.1 ||  reco_shower_dirz[0]< -0.1)" name = "shower angle wire plane 2"/>
     <precut def = "(reco_shower_dirz[0]> -0.9)" name = "shower angle wire plane 2 II"/>
       <precut def = "(reco_shower_dirz[0]< 0.9)" name = "shower angle wire plane 2 III"/>
-
+-->
 
 
 <!--<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->

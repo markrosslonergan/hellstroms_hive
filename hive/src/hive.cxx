@@ -743,7 +743,7 @@ int main (int argc, char *argv[]){
         }//if passed a vector
     }
     else if(mode_option == "precalc"){ 
-
+        std::cout<<"looking at "<<bdt_files.size()<<"bdt files"<<std::endl;
         for(int f=0; f< bdt_files.size();++f){
             bool is_train = false;
             for(auto & t: training_bdt_files){
@@ -751,8 +751,8 @@ int main (int argc, char *argv[]){
             }
             if(which_file == f || which_file <0 ){
                 if(which_file<0 && is_train) continue;
-                //sim_track_precalc(bdt_files[f], analysis_tag);
                 ncpi0_sss_precalc(bdt_files[f], analysis_tag);
+                sim_track_precalc(bdt_files[f], analysis_tag);
             }
         }
     }
@@ -1001,11 +1001,11 @@ if (topo_tag == "notrack"){
     is0p = true;
 }
 
-bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, false, is0p);
+//bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, false, is0p);
 
 
 //specifically for protond/photons pre-topological
-// bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
+ bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
 //normally stops here
 
 //Ok, this runs now for a full cut
