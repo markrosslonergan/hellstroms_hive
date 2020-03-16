@@ -759,11 +759,11 @@
 <var def = "sim_track_endz[0]" binning =  "(40,-1,1)" unit = "Reconstructed Track End Z" type = "d"   training=""/>
 
 <!--bdt vars -->
-<var def = "1g1pJan2020_v1COSMIC_mva" binning = "(20,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" />
-<var def = "1g1pJan2020_v1NCPi0_mva" binning = "(20,0.04,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" />
-<var def = "1g1pJan2020_v1BNB_mva" binning = "(20,0.0,1)" unit = "BNB Other BDT Score" type="d" training= "" />
-<var def = "1g1pJan2020_v1Nue_mva" binning = "(20,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" />
-<var def = "1g1pJan2020_v1SSV_mva" binning = "(20,0.0,1)" unit = "SSv BDT Score" type="d" training= "" />
+<var def = "1g1pMar2020_v1COSMIC_mva" binning = "(20,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" />
+<var def = "1g1pMar2020_v1NCPi0_mva" binning = "(20,0.04,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" />
+<var def = "1g1pMar2020_v1BNB_mva" binning = "(20,0.0,1)" unit = "BNB Other BDT Score" type="d" training= "" />
+<var def = "1g1pMar2020_v1Nue_mva" binning = "(20,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" />
+<var def = "1g1pMar2020_v1SSV_mva" binning = "(20,0.0,1)" unit = "SSv BDT Score" type="d" training= "" />
 
 <!--pi0 vars -->
 <!--
