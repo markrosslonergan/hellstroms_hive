@@ -451,20 +451,20 @@
 <var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"    training="123"/>
 <var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"    training="123"/>
 
-<var def = "atan(reco_shower_dirx[0]/reco_shower_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #omega_{xz} [rad]" type = "d"    training=""/>
+<var def = "atan(reco_shower_dirx[0]/reco_shower_dirz[0])" binning = "(24,-3.14/2,3.14/2)" unit = "Reconstructed Shower #omega_{xz} [rad]" type = "d"    training=""/>
 
-<var def = "atan(reco_shower_diry[0]/reco_shower_dirx[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{azy} [rad]" type = "d"    training=""/>
+<var def = "atan(reco_shower_diry[0]/reco_shower_dirx[0])" binning = "(24,-3.14/2,3.14/2)" unit = "Reconstructed Shower #phi_{azy} [rad]" type = "d"    training=""/>
 
-<var def = "atan(sqrt(pow(reco_shower_diry[0], 2)+ pow(reco_shower_dirx[0],2))/reco_shower_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{azy} [rad]" type = "d"    training=""/>
+<var def = "atan(sqrt(pow(reco_shower_diry[0], 2)+ pow(reco_shower_dirx[0],2))/reco_shower_dirz[0])" binning = "(24,-3.14/2,3.14/2)" unit = "Reconstructed Shower #theta_{azy} [rad]" type = "d"    training=""/>
 
 <var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirx[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #phi_{yx} [rad]" type = "d"    training=""/>
 <var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #theta_{yz} [rad]" type = "d"    training=""/>
 
-<var def = "atan(reco_shower_implied_dirx[0]/reco_shower_implied_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #omega_{xz} [rad]" type = "d"    training=""/>
+<var def = "atan(reco_shower_implied_dirx[0]/reco_shower_implied_dirz[0])" binning = "(24,-3.14/2,3.14/2)" unit = "Reconstructed Implied Shower #omega_{xz} [rad]" type = "d"    training=""/>
 
-<var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirx[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #phi_{azy} [rad]" type = "d"    training=""/>
+<var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirx[0])" binning = "(24,-3.14/2,3.14/2)" unit = "Reconstructed Implied Shower #phi_{azy} [rad]" type = "d"    training=""/>
 
-<var def = "atan(sqrt(pow(reco_shower_implied_diry[0], 2)+ pow(reco_shower_implied_dirx[0],2))/reco_shower_implied_dirz[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #theta_{azy} [rad]" type = "d"    training=""/>
+<var def = "atan(sqrt(pow(reco_shower_implied_diry[0], 2)+ pow(reco_shower_implied_dirx[0],2))/reco_shower_implied_dirz[0])" binning = "(24,-3.14/2,3.14/2)" unit = "Reconstructed Implied Shower #theta_{azy} [rad]" type = "d"    training=""/>
 
 <var def = "(reco_shower_trackscore[0])" binning = "(20,0,0.5)" unit = "Shower Score" type ="d" training ="0123"/>
 <var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm]" binning ="(24,0,3)" type="d" training="123"/>

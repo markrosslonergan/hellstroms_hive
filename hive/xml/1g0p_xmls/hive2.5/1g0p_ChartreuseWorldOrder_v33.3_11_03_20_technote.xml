@@ -393,9 +393,9 @@
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_dirx[0],2))" unit = "Photon Implied Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = "12"/>
 
 <!--bdt vars -->
-<var def = "1g1pJan2020_v1COSMIC_mva" binning = "(20,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" />
-<var def = "1g1pJan2020_v1NCPi0_mva" binning = "(20,0.04,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" />
-<var def = "1g1pJan2020_v1BNB_mva" binning = "(20,0.0,1)" unit = "BNB Other BDT Score" type="d" training= "" />
+<var def = "1g0pMar2020_v1COSMIC_mva" binning = "(20,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" />
+<var def = "1g0pMar2020_v1NCPi0_mva" binning = "(20,0.04,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" />
+<var def = "1g0pMar2020_v1BNB_mva" binning = "(20,0.0,1)" unit = "BNB Other BDT Score" type="d" training= "" />
 
 <!--pi0 vars -->
 <!--
