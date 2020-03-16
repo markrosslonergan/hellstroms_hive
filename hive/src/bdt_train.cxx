@@ -1198,8 +1198,9 @@ int bdt_XGtrain(bdt_info &info){
         std::cout<<"XGBoost importance : "<<out_len<<std::endl;
 
         for(size_t i=0; i<out_len ; ++i){
+            //std::cout<<i<<std::endl;
             if((out_dump_array)[i]!=NULL){
-                //std::cout<<i<<" "<<(out_dump_array)[i]<<std::endl;  
+               // std::cout<<i<<" "<<(out_dump_array)[i]<<std::endl;  
                 const std::string cconvert((out_dump_array)[i]);
 
                 //Look for the feature, starts with in form "[f10<1.2" ... sp we want to find the number between the [f and the <
@@ -1217,18 +1218,18 @@ int bdt_XGtrain(bdt_info &info){
                     variable_uses[which_var]++;
                     std::string s_gain   = "";
                     //ok if we found a variable, add the gain, first locate it.
-
+                    //std::cout<<"here"<<std::endl; 
                     size_t ngain = cconvert.find(sgain,ndel);
                     if(ngain!=std::string::npos){
                         size_t ngainend = cconvert.find(",",ngain);
                         if (sgain.size() <1) continue;
-                        if( ngainend !=std::string::npos)   s_gain = cconvert.substr(ngain+sgain.size(), ngainend-ngain-sgain.size()-1); 
+                        if( ngainend !=std::string::npos)   s_gain = cconvert.substr(ngain+sgain.size(), ngainend-ngain-sgain.size()); 
                         size_t offset = 0;
-                        //std::cout<<"ngainend,ngain, sgain.size(),sgain.length() , s_gain = " <<ngainend<<", "<<ngain<<", "<<sgain.size()<<", "<<sgain.length()<<", "<<s_gain<<std::endl;
+                        //std::cout<<"ngainend,ngain, sgain.size(),sgain.length() , s_gain = " <<ngainend<<", "<<ngain<<", "<<sgain.size()<<", "<<sgain.length()<<", "<<s_gain<<" "<<s_gain.length()<<" "<<s_gain.size()<<std::endl;
                         double d_gain =  std::stod(s_gain,&offset);
                         total_gain[which_var] +=  d_gain;
                     }        
-                    //                std::cout<<" var "<<s_int<<" gain "<<s_gain<<std::endl;
+                 //                   std::cout<<" var "<<s_int<<" gain "<<s_gain<<std::endl;
                     found = cconvert.find(stag,ndel);
                 }
             }
