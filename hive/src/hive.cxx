@@ -345,11 +345,10 @@ int main (int argc, char *argv[]){
             f->calcBaseEntryList(analysis_tag);
         }
 
-        if(topo_tag != "notrack"){
-            f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
-        }
 
-        f->addFriend("track_tree",analysis_tag+"_"+f->tag+"_simtrack.root");
+        //These are old and redundant.
+        //f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
+        //f->addFriend("track_tree",analysis_tag+"_"+f->tag+"_simtrack.root");
 
     }
 
