@@ -516,7 +516,7 @@
 <var def = "reco_track_calo_energy_max[0]* 0.001" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy [GeV]" type = "d" logplot = "false" training = ""/>
 <var def = "reco_track_calo_energy_plane0[0] * 0.001" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy Plane 0 [GeV]" type = "d" logplot = "false" training = ""/>
 <var def = "reco_track_calo_energy_plane1[0] * 0.001" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy Plane 1 [GeV]" type = "d" logplot = "false" training = ""/>
-<var def = "reco_track_calo_energy_plane2[0] * 0.001" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy Plane 2 [GeV]" type = "d" logplot = "false" training = "0123" group = "5"/>
+<var def = "reco_track_calo_energy_plane2[0] * 0.001 " binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy Plane 2 [GeV]" type = "d"  training = "0123" group = "5"/>
 
 <var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d" logplot = "false" training = ""/>
 <var def = "reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d" logplot = "false" training = "0123"/>
@@ -577,15 +577,15 @@
 
 <var def = "sqrt(pow((reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_dirx[0],2)+pow(    (reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 2 [GeV]" type = "d" logplot = "false" training = "" group = "1"/>
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 2 (implied) [GeV]" type = "d" logplot = "false" training = "12" group = "1" />
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_dirx[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum X Plane 2 (implied) [GeV]" type = "d" logplot = "false" training = "" group = "1" />
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 2 (implied) [GeV]" type = "d" logplot = "false" training = "02" group = "1" />
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_diry[0]" binning = "(24,-2,2)" unit = "Reconstructed Delta Momentum Y Plane 2 (implied) [GeV]" type = "d" logplot = "false" training = "" group = "1" />
 
-<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 2 (implied) [GeV]" type = "d" logplot = "false" training = "0123" group = "1" />
+<var def = "(reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirz[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_dirz[0]" binning = "(24,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z Plane 2 (implied) [GeV]" type = "d" logplot = "false" training = "" group = "1" />
 
-<var def = "sqrt(pow((reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_dirx[0],2)+pow(    (reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 2 (implied) [GeV]" type = "d" logplot = "false" training = "0123" group = "1"/>
+<var def = "sqrt(pow((reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_dirx[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_dirx[0],2)+pow(    (reco_track_calo_energy_plane2[0]*0.001+#PM#)*(reco_track_diry[0])+(reco_shower_energy_plane2[0]*0.001)*reco_shower_implied_diry[0],2))" binning = "(24,0,2)" unit = "Reconstucted Delta Transverse (YX) Momentum Plane 2 (implied) [GeV]" type = "d" logplot = "false" training = "" group = "1"/>
 
-<var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_plane2[0]*0.001*((reco_track_calo_energy_plane2[0]*0.001+#PM#)-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair Plane 2 [GeV]" type  = "d" training = "0123" group = "2"/>
+<var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_plane2[0]*0.001*((reco_track_calo_energy_plane2[0]*0.001+#PM#)-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair Plane 2 [GeV]" type  = "d" training = "" group = "2"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*reco_shower_energy_plane2[0]*0.001*((reco_track_calo_energy_plane2[0]*0.001+#PM#)-#PP#*(reco_track_dirx[0]*#SIDX#+reco_track_diry[0]*#SIDY#+reco_track_dirz[0]*#SIDZ#)))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair Plane 2 (Track Start) [GeV]" type  = "d" training = "" group = "1"/>
 
