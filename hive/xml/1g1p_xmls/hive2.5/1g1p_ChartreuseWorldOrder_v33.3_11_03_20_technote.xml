@@ -286,8 +286,8 @@
         <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
     </method>
     <file
-        bkg_train_tag = "BNBOverlaysTrain"
-        bkg_test_tag = "BNBOverlaysTest"
+        bkg_train_tag = "BNBOtherTrain"
+        bkg_test_tag = "BNBOtherTest"
         bkg_test_cut = "1"
         sig_train_tag = "NCDeltaTrain"
         sig_test_tag = "NCDeltaTest"
