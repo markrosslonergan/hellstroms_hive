@@ -345,11 +345,10 @@ int main (int argc, char *argv[]){
             f->calcBaseEntryList(analysis_tag);
         }
 
-        if(topo_tag != "notrack"){
-            f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
-        }
 
-        f->addFriend("track_tree",analysis_tag+"_"+f->tag+"_simtrack.root");
+        //These are old and redundant.
+        //f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
+        //f->addFriend("track_tree",analysis_tag+"_"+f->tag+"_simtrack.root");
 
     }
 
@@ -573,7 +572,7 @@ int main (int argc, char *argv[]){
 
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
-                //datamc.plotEfficiency(tmp_var,fbdtcuts,1,2);
+                datamc.plotEfficiency(tmp_var,fbdtcuts,1,(which_stage>1 ? which_stage : 2));
             }else{
 
                 std::vector<bdt_variable> tmp_vars;
@@ -588,10 +587,10 @@ int main (int argc, char *argv[]){
 
                 if(which_bdt==-1){
                     real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts);
-                    //        real_datamc.plotEfficiency(vars,fbdtcuts,1,2);
+                    real_datamc.plotEfficiency(tmp_vars,fbdtcuts,1, (which_stage > 1? which_stage : 2 ) );
                 }else{
                     real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts);
-                    //    real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,2);
+                    real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,  (which_stage >1 ? which_stage :2 ));
                 }
             }
 
@@ -750,12 +749,9 @@ int main (int argc, char *argv[]){
                 if(t==bdt_files[f]) is_train=true;
             }
             if(which_file == f || which_file <0 ){
-                //std::cout<<"looking at file #"<<f<<", is_train = "<< is_train<<std::endl;
-                //if(which_file<0 && is_train) continue;
-                //if(which_file<0) continue;
-                //std::cout<<"calcing precalc files"<<std::endl;
+                if(which_file<0 && is_train) continue;
+                ncpi0_sss_precalc(bdt_files[f], analysis_tag);
                 sim_track_precalc(bdt_files[f], analysis_tag);
-                //ncpi0_sss_precalc(bdt_files[f], analysis_tag);
             }
         }
     }
@@ -924,6 +920,15 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     std::cout<<"Running validate mode: "<<validate_files.size()<<std::endl;
 
+        if (access("valid",F_OK) == -1){
+            mkdir("valid",0777);//Create a folder for pdf.
+        }
+        else{
+            std::cout<<"Overwrite valid/ in 2 seconds, 1 seconds, ..."<<std::endl;
+            sleep(2);
+        }
+
+
     std::vector<bdt_variable> quick_vars;
 
     if(which_bdt == -1){
@@ -950,7 +955,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
                 compare_files.push_back(f);
             }
 
-            compareQuick(var,compare_files,cuts,"VALID_"+var.safe_unit,true);
+            compareQuick(var,compare_files,cuts,"VALID_"+var.safe_unit+"_stage_"+std::to_string(which_stage),true);
         }
     }
 
@@ -1417,7 +1422,8 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
     leg->SetLineColor(kWhite);
     leg->SetLineWidth(0);
     leg->Draw();
-    c->SaveAs((name+".pdf").c_str(),"pdf");
+    std::string namer = "valid/"+name;
+    c->SaveAs((namer+".pdf").c_str(),"pdf");
 
     return 0;
 };

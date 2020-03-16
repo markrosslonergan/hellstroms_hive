@@ -131,6 +131,7 @@ struct bdt_file{
 
         TTree *tevent;
         TTree *tpot;
+        TTree *trs;
         TTree *teventweight;
         TTree *tslice;
 
