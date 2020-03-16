@@ -693,17 +693,17 @@
 <var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(24,0,1)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d" training="4"/>
 <var def = "log10(sss_num_unassociated_hits)" binning="(24,0,4)" unit = "Number of unassocaited hits in slice log10" type ="d" training="4"/>
 
-<var def = "sss_ioc_ranked_en" binning = "(16,0,200)" unit ="sss2d min IOC candidate energy [MeV]" type="d" training="4"/>
-<var def = "sss_ioc_ranked_conv" binning = "(16,0,120)" unit ="sss2d min IOC candidate conversion Distance [cm]" type="d" training="4"/>
-<var def = "sss_ioc_ranked_ioc" binning = "(16,0,1.2)" unit ="sss2d min IOC candidate IOC ratio" type="d" training="4"/>
-<var def = "sss_ioc_ranked_invar" binning = "(16,0,200)" unit ="sss2d min IOC candidate invariant mass [MeV]" type="d" training="4"/>
-<var def = "sss_ioc_ranked_angle_to_shower" binning = "(16,0,3.14159)" unit ="sss2d min IOC angle wrt primary shower [deg]" type="d" training="4"/>
+<var def = "sss2d_ioc_ranked_en" binning = "(16,0,200)" unit ="sss2d min IOC candidate energy [MeV]" type="d" training="4"/>
+<var def = "sss2d_ioc_ranked_conv" binning = "(16,0,120)" unit ="sss2d min IOC candidate conversion Distance [cm]" type="d" training="4"/>
+<var def = "sss2d_ioc_ranked_ioc" binning = "(16,0,1.2)" unit ="sss2d min IOC candidate IOC ratio" type="d" training="4"/>
+<var def = "sss2d_ioc_ranked_invar" binning = "(16,0,200)" unit ="sss2d min IOC candidate invariant mass [MeV]" type="d" training="4"/>
+<var def = "sss2d_ioc_ranked_angle_to_shower" binning = "(16,0,3.14159)" unit ="sss2d min IOC angle wrt primary shower [deg]" type="d" training="4"/>
 
-<var def = "sss_conv_ranked_en" binning = "(16,0,200)" unit ="sss2d closest candidate energy energy [MeV" type="d" training="4"/>
-<var def = "sss_conv_ranked_conv" binning = "(16,0,80)" unit ="sss2d closest candidate conversion Distance [cm]" type="d" training="4"/>
-<var def = "sss_conv_ranked_ioc" binning = "(16,0,1.2)" unit ="sss2d closest candidate IOC ratio" type="d" training="4"/>
-<var def = "sss_conv_ranked_invar" binning = "(16,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d" training="4"/>
-<var def = "sss_conv_ranked_angle_to_shower" binning = "(16,0,3.14159)" unit ="sss2d closest candidate angle wrt primary shower [deg]" type="d" training="4"/>
+<var def = "sss2d_conv_ranked_en" binning = "(16,0,200)" unit ="sss2d closest candidate energy energy [MeV" type="d" training="4"/>
+<var def = "sss2d_conv_ranked_conv" binning = "(16,0,80)" unit ="sss2d closest candidate conversion Distance [cm]" type="d" training="4"/>
+<var def = "sss2d_conv_ranked_ioc" binning = "(16,0,1.2)" unit ="sss2d closest candidate IOC ratio" type="d" training="4"/>
+<var def = "sss2d_conv_ranked_invar" binning = "(16,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d" training="4"/>
+<var def = "sss2d_conv_ranked_angle_to_shower" binning = "(16,0,3.14159)" unit ="sss2d closest candidate angle wrt primary shower [deg]" type="d" training="4"/>
 
 <var def = "sss3d_ioc_ranked_en" binning = "(16,0,80)" unit ="sss3d min IOC candidate energy [MeV]" type="d" training="4"/>
 <var def = "sss3d_ioc_ranked_conv" binning = "(16,0,100)" unit ="sss3d min IOC candidate conversion Distance [cm]" type="d" training="4"/>
