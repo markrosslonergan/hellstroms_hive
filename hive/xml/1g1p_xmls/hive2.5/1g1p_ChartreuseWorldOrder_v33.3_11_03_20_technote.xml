@@ -150,6 +150,11 @@
         <cut>1</cut>
     </definition>
     <training><cut>1</cut></training>
+    <data type="OffBeam">
+        <tor860_wcut> 4.081e+19 </tor860_wcut>   
+        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>   
+        <EXT>28264427.0</EXT>  
+    </data>
 </bdtfile>
 
 <bdtfile filename = "bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBextTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Test" fillstyle = "3333" scale = "1">
@@ -157,6 +162,12 @@
         <cut>1</cut>
     </definition>
     <training><cut>1</cut></training>
+    <data type="OffBeam">
+    <tor860_wcut> 4.081e+19 </tor860_wcut>   
+    <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>   
+    <EXT>28264427.0</EXT>  
+</data>
+
 </bdtfile>
 
 <bdtfile filename = "ncdelta_bdt_training_sample_v33.3.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
