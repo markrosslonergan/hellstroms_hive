@@ -7,14 +7,14 @@
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -38,7 +38,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" signal = "true" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" signal = "true" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0>1</cut>
@@ -47,7 +47,7 @@
 
 
 
-<bdtfile filename = "ccpi0_overlay_run1_v33.3.uniq.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC 1 #pi^{0}" signal = "true" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ccpi0_overlay_run1_v33.3.uniq.spluff.test.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC 1 #pi^{0}" signal = "true" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>mctruth_cc_or_nc==0 </cut> 
         <cut>mctruth_num_exiting_pi0==1</cut>
@@ -55,7 +55,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.root" tag = "BNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other" signal = "true" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "BNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other" signal = "true" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> (mctruth_num_exiting_pi0!=1) </cut>
         <cut>!(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1)</cut>
@@ -64,7 +64,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "nue_overlay_run1_v33.3.uniq.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "#nu_{e} Intrinsic" >
+<bdtfile filename = "nue_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "#nu_{e} Intrinsic" >
     <definition>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut>fabs(mctruth_nu_pdg)==12 </cut>
@@ -219,6 +219,7 @@
 
 <bdtfile filename = "bnb_bdt_training_sample_v33.3.uniq.root" tag = "BNBOtherTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BnbTrain" fillstyle = "3333" scale = "1">
     <definition>
+        <cut> (mctruth_num_exiting_pi0!=1) </cut>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
@@ -231,6 +232,7 @@
 
 <bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOtherTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BNBTest" fillstyle = "3333" scale = "1">
     <definition>
+        <cut> (mctruth_num_exiting_pi0!=1) </cut>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
@@ -264,7 +266,7 @@
         bkg_test_tag = "BNBextTest"
         bkg_test_cut = "1" 
         sig_train_tag = "NCDeltaTrain"
-        sig_test_tag = "NCDeltaRadOverlay"
+        sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
     <scan min = "0.99" max = "1.0" steps="10"/>
@@ -287,8 +289,8 @@
         bkg_train_tag = "BNBOverlaysTrain"
         bkg_test_tag = "BNBOverlaysTest"
         bkg_test_cut = "1"
-        sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlayTest"
+        sig_train_tag = "NCDeltaTrain"
+        sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
     <scan min = "0.98" max = "1.0" steps="5"/>
@@ -311,8 +313,8 @@
         bkg_train_tag = "NCpi0Train"
         bkg_test_tag = "NCpi0Test"
         bkg_test_cut = "1"
-        sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlayTest"
+        sig_train_tag = "NCDeltaTrain"
+        sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
     <scan min = "0.69" max = "0.73" steps="5"/>
@@ -336,8 +338,8 @@
         bkg_train_tag = "NueIntrinTrain" 
         bkg_test_tag  = "NueIntrinTest"  
         bkg_test_cut  = "1"
-        sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlayTest"
+        sig_train_tag = "NCDeltaTrain"
+        sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
     <scan min = "0.85" max = "0.95" steps="5"/>
@@ -360,8 +362,8 @@
         bkg_train_tag = "SSVTrain"
         bkg_test_tag = "SSVTest"
         bkg_test_cut = "1"
-        sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlayTest"
+        sig_train_tag = "NCDeltaTrain"
+        sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
     <scan min = "0.70" max = "0.735" steps="5"/>
@@ -745,7 +747,6 @@
 <var def = "sim_track_endy[0]" binning =  "(40,-1,1)" unit = "Reconstructed Track End Y" type = "d"   training=""/>
 <var def = "sim_track_endz[0]" binning =  "(40,-1,1)" unit = "Reconstructed Track End Z" type = "d"   training=""/>
 
-
 <!--bdt vars -->
 <var def = "1g1pJan2020_v1COSMIC_mva" binning = "(20,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" />
 <var def = "1g1pJan2020_v1NCPi0_mva" binning = "(20,0.04,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" />
@@ -780,7 +781,6 @@
 <!-- ================= Efficiency  ======================== -->
 
 <efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "0" numer_cut = "sim_shower_pdg==22 &amp;&amp; sim_shower_parent_pdg==111" /> 
-
 
 <!-- ================= RECO-MC Matching ======================== -->
 <recomc>
