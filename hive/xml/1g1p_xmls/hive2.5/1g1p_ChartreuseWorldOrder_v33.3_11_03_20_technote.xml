@@ -335,8 +335,8 @@
         <param> colsample_bytree= 0.9</param>   <!-- % of features that are passed to each tree  -->
     </method>
     <file      
-        bkg_train_tag = "NueIntrinTrain" 
-        bkg_test_tag  = "NueIntrinTest"  
+        bkg_train_tag = "NueTrain" 
+        bkg_test_tag  = "NueTest"  
         bkg_test_cut  = "1"
         sig_train_tag = "NCDeltaTrain"
         sig_test_tag = "NCDeltaTest"
@@ -359,8 +359,8 @@
         <param> verbosity=1</param>
     </method>
     <file           
-        bkg_train_tag = "SSVTrain"
-        bkg_test_tag = "SSVTest"
+        bkg_train_tag = "SSvetoTrain"
+        bkg_test_tag = "SSvetoTest"
         bkg_test_cut = "1"
         sig_train_tag = "NCDeltaTrain"
         sig_test_tag = "NCDeltaTest"
