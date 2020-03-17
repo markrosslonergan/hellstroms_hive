@@ -125,23 +125,25 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "ssveto_bdt_training_sample_v33.3.root" tag = "SSvetoTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "ssveto_bdt_training_sample_v33.3.root" tag = "SSvetoTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.1,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
     </definition>
     <training>
         <cut> sim_shower_pdg[0]==22</cut>
+        <cut> sim_shower_parent_pdg[0]==111</cut>
     </training>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "SSvetoTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "SSveto Test" fillstyle = "3333" scale = "1">
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "SSvetoTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.1,0.2,0.2)" plot_name = "SSveto Test" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
     </definition>
     <training>
         <cut> sim_shower_pdg[0]==22</cut>
+        <cut> sim_shower_parent_pdg[0]==111</cut>
     </training>
 </bdtfile>
 
