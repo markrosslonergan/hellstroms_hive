@@ -744,10 +744,6 @@
 <var def = "reco_track_endy[0]" binning =  "(24,-140,140)" unit = "Reconstructed Track End Y" type = "d"   training=""/>
 <var def = "reco_track_endz[0]" binning =  "(24,-20,1100)" unit = "Reconstructed Track End Z" type = "d"   training=""/>
 
-<var def = "sim_track_startx[0]" binning =  "(24,-20,270)" unit = "Reconstructed Track Start X" type = "d"   training=""/>
-<var def = "sim_track_starty[0]" binning =  "(24,-140,140)" unit = "Reconstructed Track Start Y" type = "d"   training=""/>
-<var def = "sim_track_startz[0]" binning =  "(24,-20,1100)" unit = "Reconstructed Track Start Z" type = "d"   training=""/>
-
 <var def = "sim_track_startx[0]-reco_track_startx[0]" binning =  "(24,-10,10)" unit = "Track Start Resolution X" type = "d"   training=""/>
 <var def = "sim_track_starty[0]-reco_track_starty[0]" binning =  "(24,-10,10)" unit = "Track Start Resolution Y" type = "d"   training=""/>
 <var def = "sim_track_startz[0]-reco_track_startz[0]" binning =  "(24,-10,10)" unit = "Track Start Resolution Z" type = "d"   training=""/>
