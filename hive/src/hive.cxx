@@ -1294,14 +1294,23 @@ return 0;
     if(which_stage == -1) which_stage = 1;
 
     std::vector<bdt_file*> training_background_files;
+    std::cout<<"Starting to print vars. which_bdt is set to "<<which_bdt<<std::endl;
     for(int i=0; i< bdt_infos.size(); i++){
 
 
-        if(!(which_bdt==i || which_bdt==-1)) continue;
+        std::vector<bdt_variable> t_vars;
+        if(which_bdt>=0){
+            t_vars = bdt_infos[which_bdt].train_vars;
+        }else{
+            t_vars = vars;
+        }
 
-        bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 
-        bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
-        plot_bdt_variables(training_signal, training_background, vars, bdt_infos[i], false, which_stage,fbdtcuts);
+        if((which_bdt==i || which_bdt==-1)){
+            bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 
+            bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
+            plot_bdt_variables(training_signal, training_background, t_vars, bdt_infos[i], false, which_stage,fbdtcuts);
+       }
+        
     }
 
 
