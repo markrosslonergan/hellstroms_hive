@@ -132,6 +132,7 @@
     </definition>
     <training>
         <cut> sim_shower_pdg[0]==22</cut>
+        <cut> sim_shower_parent_pdg[0]==111</cut>
     </training>
 </bdtfile>
 
@@ -142,6 +143,7 @@
     </definition>
     <training>
         <cut> sim_shower_pdg[0]==22</cut>
+        <cut> sim_shower_parent_pdg[0]==111</cut>
     </training>
 </bdtfile>
 
