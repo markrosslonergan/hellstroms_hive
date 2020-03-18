@@ -4,6 +4,15 @@
 <topology tag="mini" name ="#nu_{e}" def = "1" bdtcut = "( 0.79333, 0.94)" /> 
 <filedir>/scratch/condor-tmp/klin/data_timing_root</filedir>
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
+<!--plot_on_top="true" means that the plot will not be considered as part of the ratio, and it will be just plotted on top-->
+<bdtfile filename = "timing_MC_fullosc_may07_2.root" tag = "fullosc" hist_style = "hist" dirs = "" col = "(255,255,255)" linecol = "1" linestyle = "7" plot_name = "best-fit" scale = "1.0" signal = "true" plot_on_top = "false" weight = "wgt*pow(1.267*0.04*nuleng/enugen,2)">
+    <definition>
+        <cut> (backgroundType==1||backgroundType==2||backgroundType==3) </cut>
+        <cut> Entry$%2==0 </cut>
+    </definition>
+	<fixPOT> 6.639e19 </fixPOT>
+</bdtfile>
+
 
 <bdtfile filename = "timing_MC_nue_may07_2.root" tag = "other" hist_style = "hist" dirs = "" col = "(153,153,153)" plot_name = "Other" scale = "1.0" signal = "false" plot_on_top = "false" weight = "wgt">
     <definition>
@@ -60,15 +69,6 @@
         <cut> Entry$%2==0 </cut>
     </definition>
 	<fixPOT> 2.054e21 </fixPOT>
-</bdtfile>
-
-<!--plot_on_top="true" means that the plot will not be considered as part of the ratio, and it will be just plotted on top-->
-<bdtfile filename = "timing_MC_fullosc_may07_2.root" tag = "fullosc" hist_style = "hist" dirs = "" col = "(255,255,255)" linecol = "1" linestyle = "7" plot_name = "best-fit" scale = "1.0" signal = "true" plot_on_top = "false" weight = "wgt*pow(1.267*0.04*nuleng/enugen,2)">
-    <definition>
-        <cut> (backgroundType==1||backgroundType==2||backgroundType==3) </cut>
-        <cut> Entry$%2==0 </cut>
-    </definition>
-	<fixPOT> 6.639e19 </fixPOT>
 </bdtfile>
 
 

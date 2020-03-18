@@ -224,8 +224,8 @@ int main (int argc, char *argv[]){
 
     std::vector<bdt_file*> bdt_files;
     std::vector<bdt_file*> stack_bdt_files;
-    std::vector<bdt_file*> signal_bdt_files;
-    std::vector<bdt_file*> bkg_bdt_files;
+    std::vector<bdt_file*> signal_bdt_files;//for -o sig
+    std::vector<bdt_file*> bkg_bdt_files;//for -o sig
     std::vector<bdt_file*> training_bdt_files;
     std::vector<bdt_file*> validate_files;
 
@@ -344,7 +344,7 @@ int main (int argc, char *argv[]){
     }
 
     //The "signal" is whichever signal BDT you define first.
-    signal = signal_bdt_files[0];
+    signal = signal_bdt_files[0];//only used in "sss".
 
 
 
@@ -552,14 +552,11 @@ int main (int argc, char *argv[]){
     }    else if(mode_option == "datamc"){
 
 		gadget_buildfolder( mode_option);
-
-        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-
+        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");//new root file to store histograms
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
+        histogram_stack->plot_pot = onbeam_data_file->pot;//Pot based on onbeam data;
 
-        histogram_stack->plot_pot = onbeam_data_file->pot;
-
-        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){//stack up plots that is not on top
             if(stack_bdt_files[f]->is_data) continue;
             if(!plotOnTopMap[stack_bdt_files[f]] ){
                 histogram_stack->addToStack(stack_bdt_files[f]);
@@ -567,18 +564,42 @@ int main (int argc, char *argv[]){
             }
         }
 
-        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){//add plot that is on top;
             if(stack_bdt_files[f]->is_data) continue;
 			if(plotOnTopMap[stack_bdt_files[f]] ){
 				histogram_stack->addToStack(stack_bdt_files[f],true);
-                std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+                std::cout<<"adding to stack ON BOTTOM (Check, TOP?): "<<stack_bdt_files[f]->tag<<std::endl;
             }
         }
 
+//        int ip=0;
+//        std::vector<bool> subv = {false,false,true};
+		
+		if(true){
+		//prepare input variables for the plotStacks function;
+			bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+			std::vector<bdt_variable> tmp_vars;
 
-        int ip=0;
-        std::vector<bool> subv = {false,false,true};
-        if(true){
+		if(number>-1){//a variable is specified
+			tmp_vars = {vars.at(number)};
+		}else{
+			for(auto &v: vars){//load variables
+				if(which_group == -1 || which_group == v.cat){
+					tmp_vars.push_back(v);
+				}
+			}
+		}
+
+		if(which_bdt>-1){//a bdt is specified
+			tmp_vars = bdt_infos[which_bdt].train_vars;
+		}
+
+		datamc.setPlotStage(which_stage);//set through -s option;
+		datamc.plotStacks(ftest, tmp_vars, fbdtcuts, bdt_infos);
+		}
+
+
+        if(false){//do the same thing with above if statement
             if(number != -1){//number is defined as a specific variable
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);                
@@ -600,13 +621,13 @@ int main (int argc, char *argv[]){
 
                 if(which_bdt==-1){//the index of bdt's not specific
                     real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts, bdt_infos);
-                    //        real_datamc.plotEfficiency(vars,fbdtcuts,1,2);
+                    //real_datamc.plotEfficiency(vars,fbdtcuts,1,2);
                 }else{
                     real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts, bdt_infos);
-                    //    real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,2);
-                }
-            }
 
+				}
+                    //    real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,2);
+            }
         }
     }
     else if(mode_option == "superdatamc"){

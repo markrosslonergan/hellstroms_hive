@@ -586,10 +586,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 	double title_offset_upper = 1.45;
 
 
-	ftest->cd();
+	ftest->cd();//output root file to storage histograms.
 	std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts"};
 	for(size_t index = 0; index < bdt_infos.size(); ++index){
-		stage_names.push_back(bdt_infos[index].name);
+		stage_names.push_back(bdt_infos[index].name);//bdt_infos gives stage name
 	}
 	//Loop over all stages
 
@@ -1058,22 +1058,23 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(s)).c_str());
 			ratunit->Divide(rat_denom);		
 
-			TH1 * signal_hist = mc_stack->vec_hists[which_signal];
+			TH1 * signal_hist = mc_stack->vec_hists[which_signal];//CHECK, signal is the default first one, which is.. problematic
 			TH1* rat_signal = (TH1*)signal_hist->Clone(("ratio_signal_"+stage_names.at(s)).c_str());
 			//            rat_signal->Add(tsum);
 			//          rat_signal->Divide(tsum);
 
-			std::cout<<"Index, (sig+bkg)/bkg, bkg, sig, data#"<<std::endl;
+			std::cout<<"Index, (bkg+sig), sig, data#"<<std::endl;
+//			std::cout<<"Index, (sig+bkg)/bkg, bkg, sig, data#"<<std::endl;
 			for(int b=0; b< rat_signal->GetNbinsX()+1; b++){
 				double val = (signal_hist->GetBinContent(b)+tsum->GetBinContent(b))/tsum->GetBinContent(b);
 				std::cout<<b<<" ";
-				std::cout<<val<<" ";
+//				std::cout<<val<<" ";
 				std::cout<<tsum->GetBinContent(b);
 				std::cout<<" "<<signal_hist->GetBinContent(b);
 				std::cout<<" "<<d0->GetBinContent(b)<<std::endl;
 				//				 (signal+sum)/sum  , tsum, signal
 				if(val !=val) val = 0;
-				rat_signal->SetBinContent(b,val);
+//				rat_signal->SetBinContent(b,val);//CHECK, where does this go?
 			}
 
 
@@ -1092,9 +1093,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 			ratunit->Draw("E2");	
 
-			rat_signal->SetFillStyle(0);
-			rat_signal->SetLineColor(mc_stack->stack[which_signal]->col);
-			rat_signal->SetLineWidth(2);
+//			rat_signal->SetFillStyle(0);
+//			rat_signal->SetLineColor(mc_stack->stack[which_signal]->col);
+//			rat_signal->SetLineWidth(2);
 			//rat_signal->Draw("hist same");
 			ratunit->DrawCopy("E2 same");	
 			//ratunit_after->DrawCopy("E1 same");
