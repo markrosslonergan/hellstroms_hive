@@ -222,12 +222,14 @@ int main (int argc, char *argv[]){
     std::string topological_cuts = TMVAmethods[0].topological_definition;
     //**** Setting up bdt_files NWO style
 
-    std::vector<bdt_file*> bdt_files;
-    std::vector<bdt_file*> stack_bdt_files;
+    std::vector<bdt_file*> bdt_files;//all files to be fed into bdt;
+
     std::vector<bdt_file*> signal_bdt_files;//for -o sig
     std::vector<bdt_file*> bkg_bdt_files;//for -o sig
+
     std::vector<bdt_file*> training_bdt_files;
-    std::vector<bdt_file*> validate_files;
+
+    std::vector<bdt_file*> validate_files;//"valid" mode
 
     bdt_file * signal;
     bdt_file * onbeam_data_file;
@@ -250,7 +252,7 @@ int main (int argc, char *argv[]){
         }
 
         //If its a training file we are working with, add the training definitions 
-        if(XMLconfig.bdt_is_training_signal[f]){
+        if(XMLconfig.bdt_is_training_signal[f]){//with  <training> sectionin the xml;
             for(int i=0; i< XMLconfig.bdt_training_cuts[f].size(); ++i){
                 def += "&&" + XMLconfig.bdt_training_cuts[f][i];
             }
@@ -267,18 +269,8 @@ int main (int argc, char *argv[]){
             std::cout<<" -- ---> "<<XMLconfig.bdt_definitions[f][i]<<std::endl;
         }
 
-//		bdt_files.push_back(
-//		new bdt_file(	
-//				dir, 
-//				XMLconfig.bdt_filenames[f].c_str(),	
-//				XMLconfig.bdt_tags[f].c_str(), 
-//				XMLconfig.bdt_hist_styles[f].c_str(),
-//				XMLconfig.bdt_dirs[f].c_str(), 
-//				XMLconfig.bdt_cols[f]->GetNumber() , 
-//				XMLconfig.bdt_fillstyles[f] , 
-//				analysis_flow));
+		//load up all bdt files
 		bdt_files.push_back( new bdt_file(f, XMLconfig, analysis_flow));
-//		bdt_files.push_back(load_file);
 
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
@@ -337,14 +329,17 @@ int main (int argc, char *argv[]){
         //bdt_files.back()->scale( bdt_files.back()->tvertex->GetEntries(r1.c_str())/(double)bdt_files.back()->tvertex->GetEntries() );
 
 
-        if(incl_in_stack) stack_bdt_files.push_back(bdt_files.back());
+//        if(incl_in_stack) stack_bdt_files.push_back(bdt_files.back());
 
         if(XMLconfig.bdt_is_validate_file[f]) validate_files.push_back(bdt_files.back());
 
     }
+    std::vector<bdt_file*> stack_bdt_files(signal_bdt_files);
+	stack_bdt_files.insert(stack_bdt_files.end(),bkg_bdt_files.begin(),bkg_bdt_files.end());
+
 
     //The "signal" is whichever signal BDT you define first.
-    signal = signal_bdt_files[0];//only used in "sss".
+    signal = signal_bdt_files[0];//only used in "sss"
 
 
 
@@ -616,7 +611,7 @@ int main (int argc, char *argv[]){
                     }
                 }
 
-                bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+                bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");//histogram_stack becomes mc_stack;
                 real_datamc.setPlotStage(which_stage);                
 
                 if(which_bdt==-1){//the index of bdt's not specific
@@ -843,8 +838,7 @@ int main (int argc, char *argv[]){
         return 0;
 
     }else if(mode_option == "sss"){
-
-        /*
+		/*
            std::vector<std::vector<double>> signal_eff;
            std::vector<std::vector<double>> bkg_eff;
            std::vector<double> impact;
@@ -925,8 +919,8 @@ int main (int argc, char *argv[]){
 l->Draw();
 cimpact->Update();
 cimpact->SaveAs("Impact.pdf","pdf");
-*/
 
+*/
 }else if (mode_option == "valid"){
 
     std::cout<<"Running validate mode: "<<validate_files.size()<<std::endl;

@@ -636,7 +636,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				mc_stack->setSubtractionVector(subtraction_vec);
 			}
 
-			THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
+			THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);//s for stages;
 			TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
 			TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
 			TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
@@ -798,7 +798,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			l0->SetLineWidth(0);
 			l0->SetNColumns(2);
 			double NeventsStack = 0;
-			int which_signal = 0;
+			int which_signal = 0;//default as the first but it is not necessary..
 			int n=0;
 			std::vector<TH1F*> fake_legend_hists;
 
