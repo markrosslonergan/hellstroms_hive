@@ -1,10 +1,11 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="mini" name ="#nu_{e}" def = "1" bdtcut = "( 0.972, 0)" /> 
+<topology tag="mini" name ="#nu_{e}" def = "1" bdtcut = "( 0.79333, 0.94)" /> 
+<filedir>/scratch/condor-tmp/klin/data_timing_root</filedir>
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
-<bdtfile filename = "timing_MC_nue_may07_2.root" tag = "other" hist_style = "hist" dirs = "" col = "(153,153,153)" plot_name = "Other" scale = "1.0" signal = "false" plot_on_top = "false">
+<bdtfile filename = "timing_MC_nue_may07_2.root" tag = "other" hist_style = "hist" dirs = "" col = "(153,153,153)" plot_name = "Other" scale = "1.0" signal = "false" plot_on_top = "false" weight = "wgt">
     <definition>
         <cut> backgroundType==11 </cut>
         <cut> Entry$%2==0 </cut>
@@ -13,7 +14,6 @@
 </bdtfile>
 
 
-<filedir>/scratch/condor-tmp/klin/data_timing_root</filedir>
 <bdtfile filename = "timing_MC_dirt_may07_2.root" tag = "dirt" hist_style = "hist" dirs = "" col = "(137,104,89)" plot_name = "dirt" scale = "1.0" signal = "false" plot_on_top = "false" weight = "wgt">
     <definition>
         <cut> Entry$%2==0 </cut><!--Half POT-->
@@ -62,8 +62,8 @@
 	<fixPOT> 2.054e21 </fixPOT>
 </bdtfile>
 
-
-<bdtfile filename = "timing_MC_fullosc_may07_2.root" tag = "fullosc" hist_style = "hist" dirs = "" col = "(255,255,255)" linecol = "1" linestyle = "7" plot_name = "fullosc" scale = "1.0" signal = "true" plot_on_top = "true" weight = "wgt*pow(1.267*0.04*nuleng/enugen,2)">
+<!--plot_on_top="true" means that the plot will not be considered as part of the ratio, and it will be just plotted on top-->
+<bdtfile filename = "timing_MC_fullosc_may07_2.root" tag = "fullosc" hist_style = "hist" dirs = "" col = "(255,255,255)" linecol = "1" linestyle = "7" plot_name = "best-fit" scale = "1.0" signal = "true" plot_on_top = "false" weight = "wgt*pow(1.267*0.04*nuleng/enugen,2)">
     <definition>
         <cut> (backgroundType==1||backgroundType==2||backgroundType==3) </cut>
         <cut> Entry$%2==0 </cut>
@@ -77,11 +77,9 @@
 <!--data_onlymissing_dec18.root 16.32e20-->
 <bdtfile filename = "data_full1875pot.root" tag = "data" hist_style = "hist" dirs = "" col = "(0.2,0.8,0.2)" plot_name = "Data" fillstyle = "3333" scale = "1">
     <definition>
-<!--        <cut> dtRWMRawTime &gt; 5500 </cut>
-        <cut> dtRWMRawTime &lt; 5750 </cut>-->
 		<cut>1</cut>
     </definition>
-	<fixPOT> 18.75e20 </fixPOT>
+	<fixPOT> 18.737e20 </fixPOT>
    <data type="OnBeam">
 <!--       <tor860_wcut> 4.026e+19 </tor860_wcut>   
        <E1DCNT_wcut> 8915733.0</E1DCNT_wcut>   
@@ -138,14 +136,14 @@
 
 <mva type="BDT" use="yes" tag = "PI0MISID" name ="Pi0misid focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=650</param>
+        <param> n_trees=2650</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
         <param> eval_metric=logloss</param>
         <param> min_child_weight=1</param> 
         <param> gamma=2</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will be.    -->
-        <param> max_depth=2</param>    <!-- How many layers deep each tree -->
+        <param> max_depth=4</param>    <!-- How many layers deep each tree -->
         <param> eta=0.01</param>        <!-- Learning Rate -->
         <param> subsample=0.9</param> <!-- % of events passed to each tree -->
         <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
@@ -159,18 +157,18 @@
         sig_test_tag = "fulloscTrain"
         sig_test_cut = "Entry$%5==4"
         />
-    <scan min = "0.9" max = "0.99" steps="15"/>
+    <scan min = "0.4" max = "0.99" steps="15"/>
 </mva>
 <mva type="BDT" use="yes" tag = "DELTA" name ="Delta focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=650</param>
+        <param> n_trees=1650</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
         <param> eval_metric=logloss</param>
         <param> min_child_weight=1</param> 
         <param> gamma=2</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will be.    -->
-        <param> max_depth=2</param>    <!-- How many layers deep each tree -->
+        <param> max_depth=4</param>    <!-- How many layers deep each tree -->
         <param> eta=0.01</param>        <!-- Learning Rate -->
         <param> subsample=0.9</param> <!-- % of events passed to each tree -->
         <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
@@ -190,14 +188,14 @@
 
 <mva type="BDT" use="no" tag = "DIRT" name ="Dirt focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=650</param>
+        <param> n_trees=1650</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
         <param> eval_metric=logloss</param>
         <param> min_child_weight=1</param> 
         <param> gamma=2</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will be.    -->
-        <param> max_depth=2</param>    <!-- How many layers deep each tree -->
+        <param> max_depth=4</param>    <!-- How many layers deep each tree -->
         <param> eta=0.01</param>        <!-- Learning Rate -->
         <param> subsample=0.9</param> <!-- % of events passed to each tree -->
         <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
@@ -219,11 +217,7 @@
 <!-- ================================================== PRE-CUTS   ==================================================== -->
 
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
-
-<!--
-<precut def = "1" name = "track cut"/>
--->
-
+<precut def = "el.EnuQE<1250&amp;&amp;el.EnuQE>150" name = "EnuQE Cut"/>
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
@@ -231,11 +225,19 @@
 <var def = "el.X" binning="(20,-600,600)" unit = "X [cm]" type = "d" logplot = "false"  training = "01"/>
 <var def = "el.Y" binning="(20,-600,600)" unit = "Y [cm]" type = "d" logplot = "false"  training = "01"/>
 <var def = "el.Z" binning="(20,-600,600)" unit = "Z [cm]" type = "d" logplot = "false"  training = "01"/>
-<var def = "el.EnuQE" binning="(12,100,700)" unit = "E_{#nu}^{QE} [MeV]" type = "d" logplot = "false"  training = "01"/>
+<var def = "el.EnuQE" binning="(24,100,1300)" unit = "E_{#nu}^{QE} [MeV]" type = "d" logplot = "false"  training = ""/>
+<var def = "el.E" binning="(24,100,1300)" unit = "Energy [MeV]" type = "d" logplot = "false"  training = ""/>
 <var def = "el.UZ" binning="(8,-1,1)" unit = "cos#theta" type = "d" logplot = "false"  training = "01"/>
+<var def = "el.UY" binning="(8,-1,1)" unit = "UY" type = "d" logplot = "false"  training = "01"/>
+<var def = "el.UX" binning="(8,-1,1)" unit = "UX" type = "d" logplot = "false"  training = "01"/>
 
-<var def = "miniDELTA_mva" binning = "(30,0,1.1)" unit = "DELTA BDT Score" type="d" training= "" logplot="false"/> 
-<var def = "miniPI0MISID_mva" binning = "(30,0,1.1)" unit = "PI0MISID BDT Score" type="d" training= "" logplot="false"/> 
+<var def = "miniDELTA_mva" binning = "(15,0,1.1)" unit = "DELTA BDT Score" type="d" training= "" logplot="false" group = "1"/> 
+<var def = "miniPI0MISID_mva" binning = "(15,0,1.1)" unit = "PI0MISID BDT Score" type="d" training= "" logplot="false" group = "1"/> 
+
+<alias key="vlen" value ="sqrt(el.X*el.X+el.Y*el.Y+el.Z*el.Z)"/>
+<alias key="cvlen" value ="sqrt(pow(el.UX-el.X,2)+pow(el.UY-el.Y,2)+pow(el.UZ-el.Z,2))"/>
+<var def = "((-el.X*(el.UX-el.X)-el.Y*(el.UY-el.Y)-el.Z*(el.UZ-el.Z)))/(#vlen#*#cvlen#)" binning="(20,-1,1)" unit = "Centerness" type = "d" logplot = "false"  training = ""/>
+
 <!--
 <var def = "#PM#+1g0pJan2020_v1BNB_mva" binning = "(30,0.55,0.98)" unit = "High BNB BDT Score" type="d" training= "" logplot="true"/> 
 -->
