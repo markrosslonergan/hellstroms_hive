@@ -450,8 +450,8 @@
 <var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d"    training="0123"/>
 <var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(24,0 ,1000)" unit = "Ratio Reconstrunted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="012"/>
 <var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(24,0,50)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"    training="123"/>
-<var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"    training="123"/>
-<var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"    training="123"/>
+<var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"    training="0123"/>
+<var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"    training="0123"/>
 
 <var def = "atan(reco_shower_dirx[0]/reco_shower_dirz[0])" binning = "(24,-2.0,2.0)" unit = "Reconstructed Shower #omega_{xz} [rad]" type = "d"    training=""/>
 
@@ -495,7 +495,7 @@
 <var def = "log10(reco_shower_conversion_distance[0])" binning = "(24,-1.5,3)" unit = " Reconstructed Shower Conversion Distance Log[cm]" type = "d"   logplot="true" training=""/>
 <var def = "log10(sqrt(pow(reco_track_startx[0]-reco_shower_startx[0],2)+pow(reco_track_starty[0]-reco_shower_starty[0],2)+pow(reco_track_startz[0]-reco_shower_startz[0],2)))" binning = "(24,-1.5,3)" unit = "Distance from Track Start to Shower Start Log10[cm]" type="d" training=""/>
 <!--<var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(5,200,700)" unit = "Total Visible Energy [MeV]" type = "d" training="01"  />-->
-<var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(24,0,1000)" unit = "Total Visible Energy [MeV]" type = "d" training="01" />
+<var def = "reco_shower_energy_max[0]+reco_track_proton_kinetic_energy[0]*1000" binning = "(24,0,1000)" unit = "Total Visible Energy [MeV]" type = "d" training="" />
 
 <var def = "TMath::Min(sqrt(pow(reco_track_endx[0]-reco_shower_startx[0],2)+pow(reco_track_endy[0]-reco_shower_starty[0],2)+pow(reco_track_endz[0]-reco_shower_startz[0],2)), sqrt(pow(reco_track_startx[0]-reco_shower_startx[0],2)+pow(reco_track_starty[0]-reco_shower_starty[0],2)+pow(reco_track_startz[0]-reco_shower_startz[0],2)))" binning = "(24,0,100)" unit = "Min Distance from Shower to Track Start/End [cm]" type="d" training="0123" logplot = "true"/>
 
@@ -510,8 +510,8 @@
 
 <!-- track calo + geom -->
 <var def = "reco_track_displacement[0]" binning = "(24,0,500)" unit = "Track Displacement [cm]" type = "d"    training="01" covar="cov.root"/>
-<var def = "reco_track_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #phi_{yx} [rad]" type = "d"    training="2"/>
-<var def = "reco_track_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #theta_{yz} [rad]" type = "d"    training="1"/>
+<var def = "reco_track_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #phi_{yx} [rad]" type = "d"    training="0123"/>
+<var def = "reco_track_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Track #theta_{yz} [rad]" type = "d"    training="0123"/>
 
 <var def = "atan(reco_track_dirx[0]/reco_track_dirz[0])" binning = "(24,-2.0,2.0)" unit = "Reconstructed Track #omega_{xz} [rad]" type = "d"    training=""/>
 
