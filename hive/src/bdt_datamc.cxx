@@ -639,7 +639,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);//s for stages;
 			TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
 			TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
-			TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
+//			TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
 
 			//Check Covar for plotting
 			TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
@@ -1105,7 +1105,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			ratunit->SetLineColor(kBlack);
 			ratunit->SetTitle("");
 			//ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
-			ratunit->GetYaxis()->SetTitle(  (stack_mode ? "#splitline{Systematic}{Uncertainty}" : "Data/(MC)"));
+			ratunit->GetYaxis()->SetTitle(  (stack_mode ? "#splitline{Systematic}{Uncertainty}" : "Data/MC"));
 			ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
 			ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY*1.25);
 			ratunit->SetMinimum(rmin);	
@@ -1206,7 +1206,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 			delete stk;
 			delete tsum;
-			delete tsum_after;
+//			delete tsum_after;
 			delete d0;
 			delete ratunit;
 			delete ratpre;

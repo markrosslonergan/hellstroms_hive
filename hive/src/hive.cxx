@@ -275,22 +275,29 @@ int main (int argc, char *argv[]){
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
 
-        bool incl_in_stack = true;
+//        bool incl_in_stack = true;
 
         if(XMLconfig.bdt_scales[f] != 1.0){
             std::cout<<" -- Scaling "<<XMLconfig.bdt_tags[f]<<" file by a factor of "<<XMLconfig.bdt_scales[f]<<std::endl;
 //            bdt_files.back()->scale_data = XMLconfig.bdt_scales[f];//do this in the bdt_file.cxx
         }
 
+        if(XMLconfig.bdt_on_top[f]){//specific marks for general bdtfiles
+            plotOnTopMap[bdt_files.back()] = true;
+			std::cout<<" -- This goes on top of the stack plot"<<std::endl;
+        }else{
+            plotOnTopMap[bdt_files.back()] = false;
+        }
+
 
         if(XMLconfig.bdt_is_onbeam_data[f]){
             std::cout<<" -- Setting as ON beam data with "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOnBeamData(XMLconfig.bdt_onbeam_pot[f]); //tor860_wc
-            incl_in_stack = false;
+//            incl_in_stack = false;
             onbeam_data_file = bdt_files.back();
         }
 
-        if(is_combined) bdt_files.back()->addFriend("output_"+bdt_files.back()->tag ,analysis_tag+"_superMVA.root");
+        if(is_combined) bdt_files.back()->addFriend("output_"+bdt_files.back()->tag ,analysis_tag+"_superMVA.root");//Keng not sure what is this;
 
 
         if(XMLconfig.bdt_is_offbeam_data[f]){
@@ -300,7 +307,7 @@ int main (int argc, char *argv[]){
             bkg_bdt_files.push_back(bdt_files.back());
         }
 
-        if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f]  && !XMLconfig.bdt_is_validate_file[f]){
+        if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f]  && !XMLconfig.bdt_is_validate_file[f]){//mark stack_files, signal or bkg;
             if(XMLconfig.bdt_is_signal[f]){
                 std::cout<<" -- For the purposes of calculting a significance, this is a signal file"<<std::endl;
                 signal_bdt_files.push_back(bdt_files.back());
@@ -309,16 +316,9 @@ int main (int argc, char *argv[]){
                 bkg_bdt_files.push_back(bdt_files.back());
             }
         }
-
-        if(XMLconfig.bdt_on_top[f]){
-            plotOnTopMap[bdt_files.back()] = true;
-        }else{
-            plotOnTopMap[bdt_files.back()] = false;
-        }
-
         //Lets collate the training files, these are only used for BDT purposes
-        if(XMLconfig.bdt_is_training_signal[f]){
-            incl_in_stack = false;
+        if(XMLconfig.bdt_is_training_signal[f]){//Mark training files
+//            incl_in_stack = false;
             training_bdt_files.push_back(bdt_files.back());
         }
 
@@ -331,11 +331,11 @@ int main (int argc, char *argv[]){
 
 //        if(incl_in_stack) stack_bdt_files.push_back(bdt_files.back());
 
-        if(XMLconfig.bdt_is_validate_file[f]) validate_files.push_back(bdt_files.back());
+        if(XMLconfig.bdt_is_validate_file[f]) validate_files.push_back(bdt_files.back());//Mark validate files
 
     }
-    std::vector<bdt_file*> stack_bdt_files(signal_bdt_files);
-	stack_bdt_files.insert(stack_bdt_files.end(),bkg_bdt_files.begin(),bkg_bdt_files.end());
+    std::vector<bdt_file*> stack_bdt_files(bkg_bdt_files);
+	stack_bdt_files.insert(stack_bdt_files.end(),signal_bdt_files.begin(),signal_bdt_files.end());//bkg go first, because we want signal on top; Check, specific for MiniBooNE
 
 
     //The "signal" is whichever signal BDT you define first.
@@ -428,7 +428,9 @@ int main (int argc, char *argv[]){
             if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
 
                 //This is NAF, need to save it and not repeat
-                convertToLibSVMTT(bdt_infos[i], training_signal, testing_signal, bdt_infos[i].TMVAmethod.sig_test_cut, training_background, testing_background, bdt_infos[i].TMVAmethod.bkg_test_cut);
+				std::string sig_test_cut = bdt_infos[i].TMVAmethod.sig_test_cut;
+				std::string bkg_test_cut = bdt_infos[i].TMVAmethod.bkg_test_cut;
+                convertToLibSVMTT(bdt_infos[i], training_signal, testing_signal, sig_test_cut , training_background, testing_background, bkg_test_cut);
                 bdt_XGtrain(bdt_infos[i]);
 
             }else if(bdt_infos[i].TMVAmethod.str=="TMVA"){

@@ -95,20 +95,9 @@
         <cut> Entry$%2==1 </cut>
     </definition>
     <training>
-        <cut> Entry$%5&lt;4 </cut>
+        <cut> 1 </cut>
      </training>
 	<fixPOT> 6.639e19 </fixPOT>
-</bdtfile>
-
-<bdtfile filename = "timing_MC_dirt_may07_2.root" tag = "dirtTrain" hist_style = "hist" dirs = "" col = "(1.0,0.4,0.4)" plot_name = "Dirt Train">
-    <definition>
-        <cut> 1 </cut>
-        <cut> Entry$%2==1 </cut>
-    </definition>
-    <training>
-        <cut> Entry$%5&lt;4 </cut>
-     </training>
-	<fixPOT> 2.054E21 </fixPOT>
 </bdtfile>
 
 <bdtfile filename = "timing_MC_nue_may07_2.root" tag = "pi0Train" hist_style = "hist" dirs = "" col = "(0.81,0.37,0.38)" plot_name = "#pi^{0} Train" >
@@ -117,7 +106,7 @@
         <cut> Entry$%2==1 </cut>
     </definition>
     <training>
-        <cut> Entry$%5&lt;4 </cut>
+        <cut> 1 </cut>
      </training>
 	<fixPOT> 2.054E21 </fixPOT>
 </bdtfile>
@@ -125,18 +114,19 @@
 <bdtfile filename = "timing_MC_nue_may07_2.root" tag = "deltaTrain" hist_style = "hist" dirs = "" col = "(0.81,0.37,0.38)" plot_name = "#Delta Train" >
     <definition>
         <cut> backgroundType==10 </cut>
-        <cut> Entry$%2==1 </cut>
+        <cut> Entry$%2==1 </cut><!--Keng not sure how does training cut works-->
     </definition>
     <training>
-        <cut> Entry$%5&lt;4 </cut>
+        <cut> 1 </cut>
      </training>
 	<fixPOT> 2.054E21 </fixPOT>
 </bdtfile>
+
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
 
 <mva type="BDT" use="yes" tag = "PI0MISID" name ="Pi0misid focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=2650</param>
+        <param> n_trees=1650</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -151,11 +141,11 @@
     </method>
     <file
         bkg_train_tag= "pi0Train" 
-        bkg_test_tag = "pi0Train"
-        bkg_test_cut = "Entry$%5==4" 
+        bkg_test_tag = "pi0misid"
+        bkg_test_cut = "Entry$%5<2" 
         sig_train_tag= "fulloscTrain"
-        sig_test_tag = "fulloscTrain"
-        sig_test_cut = "Entry$%5==4"
+        sig_test_tag = "fullosc"
+        sig_test_cut = "Entry$%5<2"
         />
     <scan min = "0.4" max = "0.99" steps="15"/>
 </mva>
@@ -176,11 +166,11 @@
     </method>
     <file
         bkg_train_tag= "deltaTrain" 
-        bkg_test_tag = "deltaTrain"
-        bkg_test_cut = "Entry$%5==4" 
+        bkg_test_tag = "delta"
+        bkg_test_cut = "Entry$%5<2" 
         sig_train_tag= "fulloscTrain"
-        sig_test_tag = "fulloscTrain"
-        sig_test_cut = "Entry$%5==4"
+        sig_test_tag = "fullosc"
+        sig_test_cut = "Entry$%5<2"
         />
     <scan min = "0.4" max = "1" steps="20"/>
 </mva>
@@ -217,7 +207,9 @@
 <!-- ================================================== PRE-CUTS   ==================================================== -->
 
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
+<!--
 <precut def = "el.EnuQE<1250&amp;&amp;el.EnuQE>150" name = "EnuQE Cut"/>
+-->
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 

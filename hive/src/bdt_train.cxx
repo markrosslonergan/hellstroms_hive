@@ -301,12 +301,20 @@ int convertToLibSVM(bdt_info& info, bdt_file *file){
     return 0;
 }
 
-int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut){
+int convertToLibSVMTT(bdt_info &info, 
+					bdt_file *signal_file_train, 
+					bdt_file *signal_file_test, 
+					std::string signal_test_cut, 
+					bdt_file *background_file_train, 
+					bdt_file *background_file_test, 
+					std::string background_test_cut){
     //This is the new-new one that splits based individual test/training and uses a more standard precut evaluation. 
+	bool print_message = true;
+	bool debug_message = false;
 
     std::vector<bdt_variable> variables = info.train_vars;
     std::string const name = info.identifier;
-    std::cout<<"Beginninng to convert training/testing files into a libSVM format for XGBoost on BDT: "<<name<<std::endl;
+	if(print_message) std::cout<<"Beginninng to convert training/testing files into a libSVM format for XGBoost on BDT: "<<name<<std::endl;
 
     std::ofstream sslibSVMtrain,sslibSVMtest;
     sslibSVMtest.open (name+".libSVM.test.dat");
@@ -320,8 +328,8 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
     TCut back_tcut_train = TCut(background_file_train->getStageCuts(bdt_precut_stage,-9,-9).c_str());
 
     //and for test
-    TCut sig_tcut_test =  TCut((signal_file_test->getStageCuts(bdt_precut_stage,-9,-9)).c_str());
-    TCut back_tcut_test = TCut((background_file_test->getStageCuts(bdt_precut_stage,-9,-9)).c_str());
+    TCut sig_tcut_test =  TCut((signal_file_test->getStageCuts(bdt_precut_stage,-9,-9)+"&&"+signal_test_cut).c_str());
+    TCut back_tcut_test = TCut((background_file_test->getStageCuts(bdt_precut_stage,-9,-9)+"&&"+background_test_cut).c_str());
 
     int signal_entries_train = signal_file_train->tvertex->GetEntries(sig_tcut_train);
     int background_entries_train = background_file_train->tvertex->GetEntries(back_tcut_train);
@@ -329,8 +337,20 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
     int signal_entries_test = signal_file_test->tvertex->GetEntries(sig_tcut_test);
     int background_entries_test = background_file_test->tvertex->GetEntries(back_tcut_test);
 
-    std::cout<<"Train signal_entries: "<<signal_entries_train<<" background_entries_train: "<<background_entries_train<<std::endl;
-    std::cout<<"Test signal_entries: "<<signal_entries_test<<" background_entries_test: "<<background_entries_test<<std::endl;
+	if(print_message){
+	std::cout<<"Train files:"<<std::endl;
+	std::cout<<"-- Signal: "<<signal_file_train->tag;
+	std::cout<<" has entries:"<<signal_entries_train<<std::endl;
+	std::cout<<"-- Background: "<<background_file_train->tag;
+	std::cout<<" has entries:"<<background_entries_train<<std::endl;
+
+	std::cout<<"Test files:"<<std::endl;
+	std::cout<<"-- Signal: "<<signal_file_test->tag;
+	std::cout<<" has entries:"<<signal_entries_test<<std::endl;
+	if(debug_message)std::cout<<"  with cut:"<<sig_tcut_test;
+	std::cout<<"-- Background: "<<background_file_test->tag;
+	std::cout<<" has entries:"<<background_entries_test<<std::endl;
+	}
 
     TTreeFormula* sig_weight_train = new TTreeFormula("sig_w",signal_file_train->weight_branch.c_str(),signal_file_train->tvertex);
     TTreeFormula* bkg_weight_train = new TTreeFormula("bkg_w",background_file_train->weight_branch.c_str(),background_file_train->tvertex);
@@ -780,6 +800,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_
 
 
 int bdt_XGtrain(bdt_info &info){
+	bool print_message = true;
 
     std::string const name = info.identifier;
 
@@ -846,7 +867,6 @@ int bdt_XGtrain(bdt_info &info){
         for(auto&m:s_metrics){
             safe_xgboost(XGBoosterSetParam(booster, "eval_metric",m.c_str()));
         }
-
         /*
            safe_xgboost(XGBoosterSetParam(booster, "tree_method", "exact"));
            safe_xgboost(XGBoosterSetParam(booster, "n_gpus", "0"));
@@ -876,9 +896,6 @@ int bdt_XGtrain(bdt_info &info){
             safe_xgboost(XGBoosterEvalOneIter(booster, i, eval_dmats, eval_names, 2, &eval_result));
             std::string res = eval_result;
 
-            std::cout<<"RES "<<res<<std::endl; 
-
-
             for(int t =0; t<s_types.size();++t){
                 for(int m = 0; m<s_metrics.size();m++){
                     std::string nam = s_types[t]+"-"+s_metrics[m]; 
@@ -900,12 +917,19 @@ int bdt_XGtrain(bdt_info &info){
 
             iteration.push_back(i);
 
-            printf("%s\n", eval_result);
+			if(print_message){ 
+//				std::cout<<"RES "<<res<<std::endl;
+				std::cout<<"\rTraining BDT trees: "<<i+1<<"/"<<n_trees;
+				std::cout.flush();
+			}
+//            printf("%s\n", eval_result);
 
             //not a stopping conditin
+
+
             if(i>2){
                 if(test_metric_res[0][i-1] > test_metric_res[0][i-2] ){
-                    std::cout<<"Yes"<<" "<<cotr<<std::endl;
+            //        std::cout<<"Yes"<<" "<<cotr;
                     cotr++;
                 }else{
                     cotr=0;
@@ -913,6 +937,7 @@ int bdt_XGtrain(bdt_info &info){
             }
             //if(cotr>10) break;
         }
+		if(print_message) std::cout<<std::endl;
 
 
         // predict
