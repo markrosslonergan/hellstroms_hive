@@ -282,7 +282,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.99" max = "1.0" steps="10"/>
+    <scan min = "0.8" max = "1.0" steps="10"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
@@ -306,7 +306,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.98" max = "1.0" steps="5"/>
+    <scan min = "0.5" max = "1.0" steps="5"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
@@ -330,7 +330,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.69" max = "0.73" steps="5"/>
+    <scan min = "0.5" max = "0.9" steps="5"/>
 </mva>
 
 
@@ -355,7 +355,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.85" max = "0.95" steps="5"/>
+    <scan min = "0.5" max = "1.0" steps="5"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "SSV" name ="SSV focused BDT" binning = "(24,0.0,1.0)">
@@ -379,7 +379,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.70" max = "0.735" steps="5"/>
+    <scan min = "0.5" max = "0.9" steps="5"/>
 </mva> 
 
 
@@ -760,10 +760,10 @@
 
 <!--bdt vars -->
 <var def = "1g1pMar2020COSMIC_mva" binning = "(20,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" group = "6" logplot = "true"/>
-<var def = "1g1pMar2020NCPi0_mva" binning = "(20,0.04,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true"/>
+<var def = "1g1pMar2020NCPi0_mva" binning = "(20,0.0,0.85)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true"/>
 <var def = "1g1pMar2020BNB_mva" binning = "(20,0.0,1)" unit = "BNB Other BDT Score" type="d" training= "" group = "6" logplot = "true"/>
 <var def = "1g1pMar2020Nue_mva" binning = "(20,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true"/>
-<var def = "1g1pMar2020SSV_mva" binning = "(20,0.0,1)" unit = "SSv BDT Score" type="d" training= "" group = "6" logplot = "true" />
+<var def = "1g1pMar2020SSV_mva" binning = "(20,0.0,0.98)" unit = "SSv BDT Score" type="d" training= "" group = "6" logplot = "true" />
 
 <!--pi0 vars -->
 <!--
