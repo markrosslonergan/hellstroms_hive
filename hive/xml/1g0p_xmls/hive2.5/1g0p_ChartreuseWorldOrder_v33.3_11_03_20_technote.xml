@@ -286,8 +286,8 @@
      <!-- <covar dir ="/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/Genie_Only/" name = "frac_covariance" plotname = "Genie only"/>-->
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
-<var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(24,0,2000)" unit = "Total PE in Beamgate" type ="d" training=""/>
-<var def = "Min$(reco_shower_flash_shortest_distz)" binning ="(24,0,150)" unit = "Distance Shower to Flash in Z [cm]" type ="d" training=""/>
+<var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(24,0,1200)" unit = "Total PE in Beamgate" type ="d" training=""/>
+<var def = "Min$(reco_shower_flash_shortest_distz)" binning ="(24,0,130)" unit = "Distance Shower to Flash in Z [cm]" type ="d" training=""/>
 
 <!--vertex variables-->
 
@@ -342,7 +342,7 @@
 -->
 
 <var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d"    training="012"/>
-<var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(24,0 ,1200)" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="012"/>
+<var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(24,0 ,1000)" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="012"/>
 <var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(24,0,50)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"    training="012"/>
 <var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"    training="012"/>
 <var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"    training="012"/>
@@ -389,14 +389,17 @@
 
 
 <!-- shower + track vars -->
+
+<!--
 <var def = "reco_shower_conversion_distance[0]" binning = "(24,0,100)" unit = " Reconstructed Shower Conversion Distance [cm]" type = "d"   logplot="true" training=""/>
 <var def = "log10(reco_shower_conversion_distance[0])" binning = "(24,-1.5,3)" unit = " Reconstructed Shower Conversion Distance Log[cm]" type = "d"   logplot="true" training=""/>
+-->
 
 <!-- Mark is Bored on flight to Korea variables but he remembered to grab a local copy of all stage 0 vertexed files so is doing 14 hours of "feature development" wooo -->
 
-<var def = "reco_shower_energy_max/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calormietic Energy to Number of Hits [MeV]" binning = "(24,0,0.4)" type="d" training="012"/>
+<var def = "reco_shower_energy_max/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calormietic Energy to Number of Hits [MeV]" binning = "(24,0.07,0.36)" type="d" training="012"/>
 
-<var def = "reco_shower_energy_max/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad]" binning = "(24,0,0.2)" type = "d" training = "012"/>
+<var def = "reco_shower_energy_max/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad]" binning = "(24,0,0.008)" type = "d" training = "012"/>
 
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = "012"/>
 
