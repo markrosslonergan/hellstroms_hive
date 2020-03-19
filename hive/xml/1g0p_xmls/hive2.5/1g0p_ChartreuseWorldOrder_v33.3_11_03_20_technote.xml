@@ -107,9 +107,7 @@
     <training>
         <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
         <cut> sim_shower_pdg[0]==22</cut>
-        <cut> sim_track_overlay_fraction[0]&lt;0.9</cut>
-        <cut> sim_track_pdg[0]==2212</cut>
-    </training>
+     </training>
 </bdtfile>
 
 <bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
@@ -120,9 +118,7 @@
     <training>
         <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
         <cut> sim_shower_pdg[0]==22</cut>
-        <cut> sim_track_overlay_fraction[0]&lt;0.9</cut>
-        <cut> sim_track_pdg[0]==2212</cut>
-    </training>
+   </training>
 </bdtfile>
 
 <bdtfile filename = "bnbext_bdt_training_sample_v33.3.uniq.root" tag = "BNBextTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Train" fillstyle = "3333" scale = "1">
@@ -216,7 +212,7 @@
         bkg_test_tag = "BNBextTest"
         bkg_test_cut = "1" 
         sig_train_tag = "NCDeltaTrain"
-        sig_test_tag = "NCDeltaRadOverlay"
+        sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
     <scan min = "0.99" max = "1.0" steps="10"/>
@@ -236,11 +232,11 @@
         <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
     </method>
     <file
-        bkg_train_tag = "BNBOverlaysTrain"
-        bkg_test_tag = "BNBOverlaysTest"
+        bkg_train_tag = "BNBOtherTrain"
+        bkg_test_tag = "BNBOtherTest"
         bkg_test_cut = "1"
-        sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlayTest"
+        sig_train_tag = "NCDeltaTrain"
+        sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
     <scan min = "0.98" max = "1.0" steps="5"/>
@@ -263,8 +259,8 @@
         bkg_train_tag = "NCpi0Train"
         bkg_test_tag = "NCpi0Test"
         bkg_test_cut = "1"
-        sig_train_tag = "NCDeltaRadOverlayTrain"
-        sig_test_tag = "NCDeltaRadOverlayTest"
+        sig_train_tag = "NCDeltaTrain"
+        sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
     <scan min = "0.69" max = "0.73" steps="5"/>
@@ -388,9 +384,9 @@
 
 <var def = "reco_shower_energy_max/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad]" binning = "(24,0,1.5)" type = "d" training = "012"/>
 
-<var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = ""/>
+<var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = "012"/>
 
-<var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_dirx[0],2))" unit = "Photon Implied Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = "012"/>
+<var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_dirx[0],2))" unit = "Photon Implied Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = ""/>
 
 <!--bdt vars -->
 <var def = "1g0pMar2020COSMIC_mva" binning = "(20,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" />
