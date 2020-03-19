@@ -533,6 +533,8 @@
 <var def = "reco_track_calo_energy_plane1[0] * 0.001" binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy Plane 1 [GeV]" type = "d"   training = ""/>
 <var def = "reco_track_calo_energy_plane2[0] * 0.001 " binning = "(24,0,1)" unit = "Reconstructed Track Calorimetric Energy Plane 2 [GeV]" type = "d"  training = "0123" group = "5"/>
 
+<var def = "reco_track_calo_energy_max[0]/(1000.0*reco_track_proton_kinetic_energy[0])" binning="(24,0,2)" unit="Track Calo Energy Max Plane / Track Range based KE" type="d" training="" group="6"/> 
+
 <var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d"   training = ""/>
 <var def = "reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d"   training = "0123"/>
 
