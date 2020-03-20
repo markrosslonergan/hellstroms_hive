@@ -1133,14 +1133,21 @@ else if(mode_option == "eff2"){
 
 
 }else if(mode_option == "sbnfit"){
+
+
+    double splot_pot =  = onbeam_data_file->pot;
+    std::cout<<"Starting SBNfit with "<<splot_pot<<" POT"<<std::endl;
+
+
+
     if(which_stage==-1) which_stage ==1;
     if(which_file==-1){
         for(size_t f =0; f< bdt_files.size(); f++){
             std::cout<<"on bdt file "<<f<<std::endl;
-            bdt_files[f]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars);
+            bdt_files[f]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot);
         }
     }else{
-        bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars);
+        bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot);
 
     }
     return 0;
