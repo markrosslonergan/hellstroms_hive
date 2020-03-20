@@ -399,7 +399,7 @@
 
 <var def = "reco_shower_energy_max/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calormietic Energy to Number of Hits [MeV]" binning = "(24,0.07,0.36)" type="d" training="012"/>
 
-<var def = "reco_shower_energy_max/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad]" binning = "(24,0,0.008)" type = "d" training = "012"/>
+<var def = "reco_shower_energy_max/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad]" binning = "(24,0,0.08)" type = "d" training = "012"/>
 
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = "012"/>
 
