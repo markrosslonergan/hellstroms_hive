@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g1pMar2020_v2" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.997304,0.988108,0.716946,0.907243,0.724711)" /> 
+<topology tag="1g1pMar2020_v2" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "( 0.990466,0.981327,0.698949,0.868175,0.722893)" /> 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
@@ -144,6 +144,11 @@
         <cut>1</cut>
     </definition>
     <training><cut>1</cut></training>
+   <data type="OffBeam">
+        <tor860_wcut> 4.081e+19 </tor860_wcut>
+        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>
+        <EXT>28264427.0</EXT>
+    </data>
 </bdtfile>
 
 <bdtfile filename = "bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBextTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Test" fillstyle = "3333" scale = "1">
@@ -151,6 +156,11 @@
         <cut>1</cut>
     </definition>
     <training><cut>1</cut></training>
+   <data type="OffBeam">
+        <tor860_wcut> 4.081e+19 </tor860_wcut>
+        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>
+        <EXT>28264427.0</EXT>
+    </data>
 </bdtfile>
 
 
@@ -586,6 +596,11 @@
 <var def = "reco_track_endy[0]" binning =  "(40,-1,1)" unit = "Reco Track End Y" type = "d"   training=""/>
 <var def = "reco_track_endz[0]" binning =  "(40,-1,1)" unit = "Reco Track End Z" type = "d"   training=""/>
 
+<var def = "1g1pMar2020_v2COSMIC_mva" binning = "(20,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" group = "6" logplot = "true"/>
+<var def = "1g1pMar2020_v2NCPi0_mva" binning = "(20,0.0,0.85)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true"/>
+<var def = "1g1pMar2020_v2BNB_mva" binning = "(20,0.0,1)" unit = "BNB Other BDT Score" type="d" training= "" group = "6" logplot = "true"/>
+<var def = "1g1pMar2020_v2Nue_mva" binning = "(20,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true"/>
+<var def = "1g1pMar2020_v2SSV_mva" binning = "(20,0.0,0.98)" unit = "SSv BDT Score" type="d" training= "" group = "6" logplot = "true" />
 
 <!--
 <var def = "mctruth_exiting_proton_energy[0]-0.93827" binning =  "(40,0,1.2)" unit = "True Proton KE" type = "d"   training=""/>
