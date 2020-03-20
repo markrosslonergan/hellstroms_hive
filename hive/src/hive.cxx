@@ -1135,7 +1135,7 @@ else if(mode_option == "eff2"){
 }else if(mode_option == "sbnfit"){
 
 
-    double splot_pot =  = onbeam_data_file->pot;
+    double splot_pot =  onbeam_data_file->pot;
     std::cout<<"Starting SBNfit with "<<splot_pot<<" POT"<<std::endl;
 
 
