@@ -286,38 +286,42 @@
      <!-- <covar dir ="/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/Genie_Only/" name = "frac_covariance" plotname = "Genie only"/>-->
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
-<var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(24,0,4000)" unit = "Total PE in Beamgate" type ="d" training=""/>
-<var def = "Min$(reco_shower_flash_shortest_distz)" binning ="(24,0,200)" unit = "Distance Shower to Flash in Z [cm]" type ="d" training=""/>
+<var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(24,0,1200)" unit = "Total PE in Beamgate" type ="d" training=""/>
+<var def = "Min$(reco_shower_flash_shortest_distz)" binning ="(24,0,130)" unit = "Distance Shower to Flash in Z [cm]" type ="d" training=""/>
 
 <!--vertex variables-->
+
+<!--
 <var def = "reco_vertex_dist_to_SCB" binning="(24,0,75)" unit = "Distance from Vertex to SCB [cm]" type ="d" training=""/>
 <var def = "reco_vertex_dist_to_active_TPC" binning="(24,0,75)" unit = "Distance from Vertex to Active TPC [cm]" type ="d" training=""/>
+-->
+<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"    training="012" logplot = "true"/>
 
-<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"    training="01"/>
-
+<!--
 <var def = "reco_vertex_x" binning = "(24,-20,270)" unit = "Reconstructed Vertex X [cm]" type="d" logplot="false" training=""/>
 <var def = "reco_vertex_y" binning = "(24,-140,140)" unit = "Reconstructed Vertex Y [cm]" type="d" logplot="false" training=""/>
 <var def = "reco_vertex_z" binning = "(24,-20,1100)" unit = "Reconstructed Vertex Z [cm]" type="d" logplot="false" training=""/>
 
 <var def = "reco_vertex_in_SCB" binning="(4,-1,3)" unit = "Vertex in SCB" type ="d" training=""/>
+-->
 
 <!--<var def = "combined_score" binning = "(40,0.3,0.70)" unit = "Combined Super Score" type="d" logplot = "true" training=""/>-->
 <var def = "run_number" binning  ="(24,4900,8500)" unit = "Run Number" type="d"   training=""/>
 
 <!--- all of the assorted shower dE/dx's -->
-<var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx Plane 2 (Kalman) [MeV/cm]" type = "d"   training ="012"/>
-<var def = "reco_shower_kalman_dEdx_plane1_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx Plane 1 (Kalman) [MeV/cm]" type = "d"   training =""/>
-<var def = "reco_shower_kalman_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx Plane 0 (Kalman) [MeV/cm]" type = "d"   training =""/>
-<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(24,0,10.0)" unit = "Shower dEdx All Planes (Kalman) [MeV/cm]" type = "d"  training =""/>
+<var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(24,0,8.0)" unit = "Shower dEdx Plane 2 (Kalman) [MeV/cm]" type = "d"   training ="012"/>
+<var def = "reco_shower_kalman_dEdx_plane1_median[0]" binning = "(24,0,8.0)" unit = "Shower dEdx Plane 1 (Kalman) [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower_kalman_dEdx_plane0_median[0]" binning = "(24,0,8.0)" unit = "Shower dEdx Plane 0 (Kalman) [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(24,0,8.0)" unit = "Shower dEdx All Planes (Kalman) [MeV/cm]" type = "d"  training =""/>
 
-<var def = "reco_shower3d_dEdx_plane2[0]" binning = "(24,0,10.0)" unit = "Shower3D dEdx Plane 2 [MeV/cm]" type = "d"   training =""/>
-<var def = "reco_shower3d_dEdx_plane1[0]" binning = "(24,0,10.0)" unit = "Shower3D dEdx Plane 1 [MeV/cm]" type = "d"   training =""/>
-<var def = "reco_shower3d_dEdx_plane0[0]" binning = "(24,0,10.0)" unit = "Shower3D dEdx Plane 0 [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower3d_dEdx_plane2[0]" binning = "(24,0,8.0)" unit = "Shower3D dEdx Plane 2 [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower3d_dEdx_plane1[0]" binning = "(24,0,8.0)" unit = "Shower3D dEdx Plane 1 [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower3d_dEdx_plane0[0]" binning = "(24,0,8.0)" unit = "Shower3D dEdx Plane 0 [MeV/cm]" type = "d"   training =""/>
 
-<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,10.0)" unit = "Median dEdx Plane 2 [MeV/cm]" type = "d"   training =""/>
-<var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,10.0)" unit = "Median dEdx Plane 1 [MeV/cm]" type = "d"   training =""/>
-<var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,10.0)" unit = "Median dEdx Plane 0 [MeV/cm]" type = "d"   training =""/>
-<var def = "reco_shower_dEdx_amalgamated[0]" binning="(24,0.0,10.0)" unit = "Amalgamated Shower dE/dx [MeV/cm]" type = "d"    training = ""/>
+<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(24,0,8.0)" unit = "Shower Median dEdx Plane 2 [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_plane1_median[0]" binning = "(24,0,8.0)" unit = "Shower Median dEdx Plane 1 [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_plane0_median[0]" binning = "(24,0,8.0)" unit = "Shower Median dEdx Plane 0 [MeV/cm]" type = "d"   training =""/>
+<var def = "reco_shower_dEdx_amalgamated[0]" binning="(24,0.0,8.0)" unit = "Amalgamated Shower dE/dx [MeV/cm]" type = "d"    training = ""/>
 
 <!-- shower geometry + calorimetry -->
 <!--<var def = "reco_shower_energy_max[0]/1000.0" binning = "(20,0,0.2)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="0123"/>-->
@@ -326,23 +330,30 @@
 <var def = "reco_shower_energy_plane0[0]/1000.0" binning = "(24,0,0.4)" unit = "Reconstructed Calorimetric Shower Energy Plane 0 [GeV]" type = "d"    training=""/>
 <var def = "reco_shower_energy_plane1[0]/1000.0" binning = "(24,0,0.4)" unit = "Reconstructed Calorimetric Shower Energy Plane 1 [GeV]" type = "d"    training=""/>
 <var def = "reco_shower_energy_plane2[0]/1000.0" binning = "(24,0,0.4)" unit = "Reconstructed Calorimetric Shower Energy Plane 2 [GeV]" type = "d"    training="012"/>
+<!--
 <var def = "reco_shower_impact_parameter[0]" binning = "(24,0,1000)" unit = "Shower Impact Parameter [cm]" type="d" logplot="false" training=""/>
 <var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(24,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d" logplot = "true" training=""/>
+-->
+
+<!--
 <var def = "reco_shower_implied_dirx/reco_shower_dirx" binning = "(24,-1,3)" unit = "Ratio Shower Implied Dir X/Pandora Dir X" type="d" logplot="false" training=""/>
 <var def = "reco_shower_implied_diry/reco_shower_diry" binning = "(24,-1,3)" unit = "Ratio Shower Implied Dir Y/Pandora Dir Y" type="d" logplot="false" training=""/>
 <var def = "reco_shower_implied_dirz/reco_shower_dirz" binning = "(46,-1,3)" unit = "Ratio Shower Implied Dir Z/Pandora Dir Z" type="d" logplot="false" training=""/>
+-->
+
 <var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d"    training="012"/>
-<var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(24,0 ,2000)" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="012"/>
-<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(24,0,360)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"    training="012"/>
+<var def = "reco_shower_length[0]/(reco_shower_energy_max[0]/1000.0)" binning = "(24,0 ,1000)" unit = "Ratio Reconstruncted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d" training="012"/>
+<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(24,0,50)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"    training="012"/>
 <var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"    training="012"/>
 <var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"    training="012"/>
 
-<var def = "atan(reco_shower_dirx[0]/reco_shower_dirz[0])" binning = "(24,-3.14/2,3.14/2)" unit = "Reconstructed Shower #omega_{xz} [rad]" type = "d"    training=""/>
+<var def = "atan(reco_shower_dirx[0]/reco_shower_dirz[0])" binning = "(24,-1.57,1.57)" unit = "Reconstructed Shower #omega_{xz} [rad]" type = "d"    training=""/>
 
-<var def = "atan(reco_shower_diry[0]/reco_shower_dirx[0])" binning = "(24,-3.14/2,3.14/2)" unit = "Reconstructed Shower #phi_{azy} [rad]" type = "d"    training=""/>
+<var def = "atan(reco_shower_diry[0]/reco_shower_dirx[0])" binning = "(24,-1.57,1.57)" unit = "Reconstructed Shower #phi_{azy} [rad]" type = "d"    training=""/>
 
-<var def = "atan(sqrt(pow(reco_shower_diry[0], 2)+ pow(reco_shower_dirx[0],2))/reco_shower_dirz[0])" binning = "(24,-3.14/2,3.14/2)" unit = "Reconstructed Shower #theta_{azy} [rad]" type = "d"    training=""/>
+<var def = "atan(sqrt(pow(reco_shower_diry[0], 2)+ pow(reco_shower_dirx[0],2))/reco_shower_dirz[0])" binning = "(24,-1.57,1.57)" unit = "Reconstructed Shower #theta_{azy} [rad]" type = "d"    training=""/>
 
+<!--
 <var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirx[0])" binning = "(24,-3.14/2,3.14/2)" unit = "Reconstructed Implied Shower #phi_{yx} [rad]" type = "d"    training=""/>
 <var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirz[0])" binning = "(24,-3.14/2,3.14/2)" unit = "Reconstructed Implied Shower #theta_{yz} [rad]" type = "d"    training=""/>
 
@@ -351,22 +362,25 @@
 <var def = "atan(reco_shower_implied_diry[0]/reco_shower_implied_dirx[0])" binning = "(24,-3.14,3.14)" unit = "Reconstructed Implied Shower #phi_{azy} [rad]" type = "d"    training=""/>
 
 <var def = "atan(sqrt(pow(reco_shower_implied_diry[0], 2)+ pow(reco_shower_implied_dirx[0],2))/reco_shower_implied_dirz[0])" binning = "(24,-3.14/2,3.14/2)" unit = "Reconstructed Implied Shower #theta_{azy} [rad]" type = "d"    training=""/>
+-->
 
 <var def = "(reco_shower_trackscore[0])" binning = "(20,0,0.5)" unit = "Shower Score" type ="d" training ="012"/>
 <var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm]" binning ="(24,0,3)" type="d" training="012"/>
 <var def = "reco_shower_num_daughters" binning = "(3,0,3)" unit = "Number Daughter Showers" type="d" training=""/>
 
 <var def = "reco_shower_startx" binning = "(24,-20,270)" unit = "Reconstructed Shower Start X [cm]" type="d" logplot="false" training=""/>
-<var def = "reco_shower_starty" binning = "(24,-400,140)" unit = "Reconstructed Shower Start Y [cm]" type="d" logplot="false" training=""/>
+<var def = "reco_shower_starty" binning = "(24,-140,140)" unit = "Reconstructed Shower Start Y [cm]" type="d" logplot="false" training=""/>
 <var def = "reco_shower_startz" binning = "(24,-20,1100)" unit = "Reconstructed Shower Start Z [cm]" type="d" logplot="false" training=""/>
 
 <var def = "reco_shower_startx[0] + (reco_shower_length[0] * reco_shower_dirx[0])" unit = "Shower End X [cm]" binning = "(24,-20,270)" type = "d" training = ""  />
 <var def = "reco_shower_starty[0] + (reco_shower_length[0] * reco_shower_diry[0])" unit = "Shower End Y [cm]" binning = "(24,-140,140)" type = "d" training = ""  />
 <var def = "reco_shower_startz[0] + (reco_shower_length[0] * reco_shower_dirz[0])" unit = "Shower End Z [cm]" binning = "(24,-20,1100" type = "d" training = ""  />
 
+<!--
 <var def = "reco_shower_implied_dirx" binning = "(24,-1,1)" unit = "Shower Implied Dir X" type="d" training=""/>
 <var def = "reco_shower_implied_diry" binning = "(24,-1,1)" unit = "Shower Implied Dir Y" type="d" training=""/>
 <var def = "reco_shower_implied_dirz" binning = "(24,-1,1)" unit = "Shower Implied Dir Z" type="d" training=""/>
+-->
 
 <var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness" type="d" training = "012"/>
 <var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness" type="d" training = "012"/>
@@ -375,23 +389,28 @@
 
 
 <!-- shower + track vars -->
+
+<!--
 <var def = "reco_shower_conversion_distance[0]" binning = "(24,0,100)" unit = " Reconstructed Shower Conversion Distance [cm]" type = "d"   logplot="true" training=""/>
 <var def = "log10(reco_shower_conversion_distance[0])" binning = "(24,-1.5,3)" unit = " Reconstructed Shower Conversion Distance Log[cm]" type = "d"   logplot="true" training=""/>
+-->
 
 <!-- Mark is Bored on flight to Korea variables but he remembered to grab a local copy of all stage 0 vertexed files so is doing 14 hours of "feature development" wooo -->
 
-<var def = "reco_shower_energy_max/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calormietic Energy to Number of Hits [MeV]" binning = "(24,0,1)" type="d" training="012"/>
+<var def = "reco_shower_energy_max/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calormietic Energy to Number of Hits [MeV]" binning = "(24,0.07,0.36)" type="d" training="012"/>
 
-<var def = "reco_shower_energy_max/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad]" binning = "(24,0,1.5)" type = "d" training = "012"/>
+<var def = "reco_shower_energy_max/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad]" binning = "(24,0,0.008)" type = "d" training = "012"/>
 
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = "012"/>
 
+<!--
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_dirx[0],2))" unit = "Photon Implied Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = ""/>
+-->
 
 <!--bdt vars -->
-<var def = "1g0pMar2020COSMIC_mva" binning = "(20,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" />
-<var def = "1g0pMar2020NCPi0_mva" binning = "(20,0.04,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" />
-<var def = "1g0pMar2020BNB_mva" binning = "(20,0.0,1)" unit = "BNB Other BDT Score" type="d" training= "" />
+<var def = "1g0pMar2020COSMIC_mva" binning = "(20,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" group = "6" logplot = "true"/>
+<var def = "1g0pMar2020NCPi0_mva" binning = "(20,0.0,0.75)" unit = "NC#pi^{0} BDT Score" type="d" training= ""  group = "6" logplot = "true"/>
+<var def = "1g0pMar2020BNB_mva" binning = "(20,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""  group = "6" logplot = "true" />
 
 <!--pi0 vars -->
 <!--
