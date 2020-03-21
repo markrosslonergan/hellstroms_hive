@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="mini" name ="#nu_{e}" def = "1" bdtcut = "( 0.79333, 0.94)" /> 
+<topology tag="mini" name ="#nu_{e}" def = "1" bdtcut = "( 0.95, 0)" /> 
 <filedir>/scratch/condor-tmp/klin/data_timing_root</filedir>
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <!--plot_on_top="true" means that the plot will not be considered as part of the ratio, and it will be just plotted on top-->
@@ -147,7 +147,7 @@
         sig_test_tag = "fullosc"
         sig_test_cut = "Entry$%5<2"
         />
-    <scan min = "0.4" max = "0.99" steps="15"/>
+    <scan min = "0.63" max = "0.74" steps="20"/>
 </mva>
 <mva type="BDT" use="yes" tag = "DELTA" name ="Delta focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
@@ -172,7 +172,7 @@
         sig_test_tag = "fullosc"
         sig_test_cut = "Entry$%5<2"
         />
-    <scan min = "0.4" max = "1" steps="20"/>
+    <scan min = "0" max = "0.5" steps="5"/>
 </mva>
 
 
@@ -194,10 +194,10 @@
     <file
         bkg_train_tag= "dirtTrain" 
         bkg_test_tag = "dirtTrain"
-        bkg_test_cut = "Entry$%5=4" 
+        bkg_test_cut = "Entry$%5<4" 
         sig_train_tag= "fulloscTrain"
         sig_test_tag = "fulloscTrain"
-        sig_test_cut = "Entry$%5=4"
+        sig_test_cut = "Entry$%5<4"
         />
     <scan min = "0" max = "0.3" steps="5"/>
 </mva>
@@ -222,6 +222,15 @@
 <var def = "el.UZ" binning="(8,-1,1)" unit = "cos#theta" type = "d" logplot = "false"  training = "01"/>
 <var def = "el.UY" binning="(8,-1,1)" unit = "UY" type = "d" logplot = "false"  training = "01"/>
 <var def = "el.UX" binning="(8,-1,1)" unit = "UX" type = "d" logplot = "false"  training = "01"/>
+<!--
+<var def = "piNoFix.E1" binning="(24,100,1300)" unit = "pi0NoFix Energy1 [MeV]" type = "d" logplot = "false"  training = "0"/>
+<var def = "piFix.E1" binning="(24,100,1300)" unit = "pi0Fix Energy1 [MeV]" type = "d" logplot = "false"  training = "0"/>
+<var def = "piNoFix.E2" binning="(24,100,1300)" unit = "pi0NoFix Energy2 [MeV]" type = "d" logplot = "false"  training = "0"/>
+<var def = "piFix.E2" binning="(24,100,1300)" unit = "pi0Fix Energy2 [MeV]" type = "d" logplot = "false"  training = "0"/>
+<var def = "piNoFix.E1+piNoFix.E2" binning="(24,100,1300)" unit = "pi0NoFix Energy1+2 [MeV]" type = "d" logplot = "false"  training = "0"/>
+<var def = "piFix.E1+piFix.E2" binning="(24,100,1300)" unit = "pi0Fix Energy1+2 [MeV]" type = "d" logplot = "false"  training = "0"/>
+<var def = "el.E/el.EnuQE" binning="(10,0,1.5)" unit = "Energy/E_{#nu}^{QE} [MeV]" type = "d" logplot = "false"  training = "01"/>
+-->
 
 <var def = "miniDELTA_mva" binning = "(15,0,1.1)" unit = "DELTA BDT Score" type="d" training= "" logplot="false" group = "1"/> 
 <var def = "miniPI0MISID_mva" binning = "(15,0,1.1)" unit = "PI0MISID BDT Score" type="d" training= "" logplot="false" group = "1"/> 
