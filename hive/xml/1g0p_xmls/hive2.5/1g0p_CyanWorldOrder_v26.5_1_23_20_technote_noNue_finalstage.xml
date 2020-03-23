@@ -410,7 +410,7 @@
 
 <!--<var def = "reco_shower_energy_max[0]/1000.0" binning = "(20,0,0.2)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="0123"/>-->
 
-<var def = "reco_shower_energy_max[0]/1000.0" binning = "(4,0.1,0.5)" unit = "Reconstructed Shower Energy [GeV]" type = "d"    training="012"/> 
+<var def = "reco_shower_energy_max[0]/1000.0" binning = "(18,0.1,0.5)" unit = "Reconstructed Shower Energy [GeV]" type = "d"    training="012"/> 
 <var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"    training="012"/>
 
 

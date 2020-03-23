@@ -26,14 +26,14 @@
 <bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
-        <!--    <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
+           <cut> mctruth_nu_vertex_x &gt; 10.0 &amp;&amp; mctruth_nu_vertex_x &lt; 246.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -106.5 &amp;&amp; mctruth_nu_vertex_y &lt; 106.5 </cut>
-        <cut> mctruth_nu_vertex_z &gt; 10.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1026.8 </cut> -->
-      <!--  <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 10.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1026.8 </cut> 
+         <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 0</cut>
         <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
-        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02)==0</cut>
-        <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02) &lt;1</cut>
+        <!--        <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut> -->
  
