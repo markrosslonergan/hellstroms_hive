@@ -45,6 +45,7 @@ int main (int argc, char *argv[]){
     int which_stage = -1;
     std::string vector = "";
     std::string input_string = "";
+    int which_group =-1;
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -56,6 +57,7 @@ int main (int argc, char *argv[]){
         {"topo_tag",	required_argument,	0, 't'},
         {"bdt",		    required_argument,	0, 'b'},
         {"stage",		required_argument,	0, 's'},
+        {"group",		required_argument,	0, 'g'},
         {"help",		required_argument,	0, 'h'},
         {"pot",		    required_argument,	0, 'p'},
         {"number",		required_argument,	0, 'n'},
@@ -68,7 +70,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:i:n:v:rh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:f:g:t:p:b:i:n:v:rh?", longopts, &index);
 
         switch(iarg)
         {
@@ -83,6 +85,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'x':
                 xml = optarg;
+                break;
+            case 'g':
+                which_group = (int)strtof(optarg,NULL);
                 break;
             case 'b':
                 which_bdt = (int)strtof(optarg,NULL);
@@ -133,6 +138,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-b\t--bdt\t\t Run only N BDT training/app, or BDT specific option"<<std::endl;
                 std::cout<<"\t-f\t--file\t\t Which file in bdt_files you want to run over, for file specifc options."<<std::endl;
                 std::cout<<"\t-p\t--pot\t\tSet POT for plots"<<std::endl;
+                std::cout<<"\t-g\t--group\t\tSet a group for variable plotting"<<std::endl;
                 std::cout<<"\t-s\t--stage\t\tSet what stage to do things at."<<std::endl;
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag [Superseeded by XML defined tag]"<<std::endl;
@@ -328,6 +334,7 @@ int main (int argc, char *argv[]){
             for(int i=0; i< bdt_infos.size();++i){
                 //By default loop over all bdt's and files, but if specified do just 1
                 if(!((which_bdt==i || which_bdt==-1 )&&(which_file==f||which_file==-1))) continue;
+                
                 if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
                     bdt_XGapp(bdt_infos[i], bdt_files[f]);
                 }else{
@@ -347,6 +354,8 @@ int main (int argc, char *argv[]){
     }   
     for(auto &var: quick_vars){
 
+        if(which_group == -1 || which_group == var.cat){
+
         std::vector<std::string> cuts;
         int v = 0;
         std::vector<bdt_file*> compare_files;
@@ -363,6 +372,7 @@ int main (int argc, char *argv[]){
         }
 
         compareQuick(var,compare_files,cuts,"VALID_"+var.safe_unit,true);
+    }
     }
 
     return 0;

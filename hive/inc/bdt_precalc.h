@@ -67,6 +67,9 @@ class bdt_precalc{
 
 	};
 
+int sim_track_precalc(const bdt_file * file, const std::string &tag);
+
+
 int ncpi0_sss_precalc(const bdt_file * file, const std::string &tag);
 
 

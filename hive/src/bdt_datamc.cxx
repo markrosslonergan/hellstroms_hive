@@ -160,9 +160,12 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
                     d0->Draw("COLZ");
                     d0 ->SetTitle((data_file->tag + ", stage " + std::to_string(s)).c_str());
-                    d0->GetYaxis()->SetTitleSize(0.05);
+                //    d0->GetYaxis()->SetTitleSize(0.05);
+                    d0->GetYaxis()->SetTitleSize(0.01);
+            
                     d0->GetYaxis()->SetTitleOffset(0.9);
-                    d0->GetXaxis()->SetTitleSize(0.05);
+                 //   d0->GetXaxis()->SetTitleSize(0.05);
+                      d0->GetXaxis()->SetTitleSize(0.01);
                     d0->GetXaxis()->SetTitleOffset(0.9);
                     pad->SetRightMargin(0.15);
 
@@ -1101,15 +1104,30 @@ int bdt_datamc::plotEfficiency(std::vector<bdt_variable> vars, std::vector<doubl
                 stacked->Add(numer_stack[i]);
         }*/
 
+        
         tsum_numer->SetLineColor(kRed);
         tsum_numer->SetMinimum(0);
-        tsum_numer->SetMaximum(0);
+        tsum_numer->SetMaximum( std::max(tsum_numer->GetMaximum(),data_numer->GetMaximum())*1.5);
+        tsum_numer->SetFillStyle(0);
         tsum_numer->Draw("hist");
         TH1 * tsum_numer2 = (TH1*)tsum_numer->Clone("varsd");
-
+        tsum_numer2->SetFillStyle(3354);
         tsum_numer2->DrawCopy("E2 same");
+        tsum_numer->GetYaxis()->SetTitle("Efficiency");
+        tsum_numer->SetTitle("");
+
+        data_numer->SetMarkerSize(2);
+        data_numer->SetMarkerStyle(20);
         data_numer->Draw("E1P same");
-//        stacked->Draw("hist same");
+//      stacked->Draw("hist same");
+
+        TLegend *l = new TLegend(0.59,0.89,0.59,0.89);
+        l->AddEntry(tsum_numer2,"MC Efficiency","fl");
+        l->AddEntry(data_numer,"Data Effciency","lp");
+        l->SetHeader(("Stage "+std::to_string(stage_numer)+"/"+std::to_string(stage_denom)).c_str());
+        l->SetLineColor(kWhite);
+        l->SetLineWidth(0);
+        l->Draw();
 
         cobs->SaveAs(("efficiency/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(stage_numer)+"_over_"+std::to_string(stage_denom)+".pdf").c_str(),"pdf");
     }

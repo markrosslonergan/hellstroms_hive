@@ -36,9 +36,10 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     if(is_mc){
         std::cout<<"setting weight branch - mc"<<std::endl;
-        //weight_branch = "genie_spline_weight";
-        weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
-       // weight_branch = "genie_spline_weight";//*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
+       // weight_branch = "genie_spline_weight";
+        weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)";
+
+        //weight_branch = "genie_spline_weight";//*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
     } 
     if (is_data ||  is_bnbext) {
         std::cout<<"setting weight branch - on/off beam data"<<std::endl;
@@ -52,17 +53,28 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 //    run_fractions_plot = {0.16638655, 0.26435986, 0.043400890, 0.21413742, 0.31171527};
 //    run_fraction_cuts  = {"(run_number >= 4952 && run_number <= 7770)", "( run_number >=8317 && run_number <=  13696)", "(run_number >= 13697 && run_number <= 14116)","(run_number >= 14117 && run_number <= 18960)","(run_number >=18961 && run_number <= 23542)"};
     
-    //run_names = {"RI/II/IIIa","RIIIb/IV"};
-    //run_fraction_cuts  = {"( (run_number >= 4952 && run_number <= 7770) || ( run_number >= 8317 && run_number <=  13696) || (run_number >= 13697 && run_number <= 14116)) ", "( (run_number >= 14117 && run_number <= 18960) || (run_number >=18961 && run_number <=23542) )"};
-    //run_fractions_plot = {0.4742,0.5258};
-     
-    run_names = {"RIsmall"};
-    run_fraction_cuts  = {"( run_number >= 5121 && run_number <= 5946)"};
-    run_fractions_plot = {1.0};
+    run_names = {"RI/II/IIIa","RIIIb/IV"};
+    run_fraction_cuts  = {"( (run_number >= 4952 && run_number <= 7770) || ( run_number >= 8317 && run_number <=  13696) || (run_number >= 13697 && run_number <= 14116)) ", "( (run_number >= 14117 && run_number <= 18960) || (run_number >=18961 && run_number <=23542) )"};
+    run_fractions_plot = {0.4742,0.5258};
+   
+    //2g1p
+    run_names  = {"RI/II","RIII"};
+    run_fraction_cuts = {"(run_number <=13696)","(run_number >= 13697)"};
+    run_fractions_plot = {0.6964636727,0.3035363273};
+ 
+    //2g0p
+    //run_names  = {"RI/II","RIII"};
+    //run_fraction_cuts = {"(run_number <=13696)","(run_number >= 13697)"};
+    //run_fractions_plot = {0.677544979,0.322455021};
 
-    run_names = {"ALL"};
+
+    run_names = {"RIsmall"};
     run_fraction_cuts  = {"1"};
     run_fractions_plot = {1.0};
+
+  //  run_names = {"RI","R3"};
+  //  run_fraction_cuts  = {"run_number <= 7770 ","run_number>=13697"};
+ //   run_fractions_plot = {0.5,0.5};
 
 
     std::cout<<"Getting vertex tree"<<std::endl;
@@ -299,6 +311,7 @@ int bdt_file::calcPOT(){
     std::string tnam_event = root_dir+"event_tree";
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
+    std::string tnam_rs = root_dir+"run_subrun_tree";
     std::string tnam_slice = root_dir+"ncdelta_slice_tree";
 
     double potbranch = 0;
@@ -310,21 +323,27 @@ int bdt_file::calcPOT(){
     if(is_mc){
         //If its MC or Overlay, lets just grab the POT from the nice POT tree
         leg = "l";
+
+
+        trs = (TTree*)f->Get(tnam_rs.c_str());    
+        trs->SetBranchAddress("subrun_pot",&potbranch);
+
+
         std::cout<<"bdt_file::bdt_file()\t||\tFile is either MC or OVERLAY for purposes of getting POT."<<std::endl;
         std::cout<<"bdt_file::bdt_file()\t||\tGetting POT tree: "<<tnam_pot<<" "<<std::endl;
         tpot = (TTree*)f->Get(tnam_pot.c_str());
-        tpot->SetBranchAddress("number_of_events", &numbranch);
-        tpot->SetBranchAddress("POT",&potbranch);
+        //tpot->SetBranchAddress("number_of_events", &numbranch);
+        //tpot->SetBranchAddress("POT",&potbranch);
         std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
         int tmpnum = 0;
         double tmppot=0;
-        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
-        for(int i=0; i<tpot->GetEntries(); i++) {
-            tpot->GetEntry(i);
-            tmpnum += (double)numbranch;
+        
+        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<trs->GetEntries()<<" subruns merged to make this root file."<<std::endl;
+        
+        for(int i=0; i<trs->GetEntries(); i++) {
+            trs->GetEntry(i);
             tmppot += potbranch;
         }
-        //        numberofevents = tmpnum;
 
         numberofevents = tvertex->GetEntries();
 
@@ -335,7 +354,8 @@ int bdt_file::calcPOT(){
         std::cout<<"--> Events scaled to 10.1e20 "<<numberofevents/pot*10.1e20<<std::endl;
         //weight_branch = "1";
         //weight_branch = "genie_spline_weight";
-        weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
+        weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
+
         /*if(this->tag.find("NCPi0")!=std::string::npos){
             weight_branch = weight_branch +"*"+"(1.0+ (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.3)*0.2 + (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.175)*0.3  +  (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.1)*0.3 )";
 
@@ -1229,7 +1249,7 @@ int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_s
 }
 
 
-int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars){
+int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, double plot_pot){
     std::cout<<"Beginning SBNfit file creation for stage "<<which_stage<<" for file "<<this->tag<<std::endl;
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
     this->teventweight->AddFriend(this->tvertex);
@@ -1260,7 +1280,6 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     double simple_wei = 0;
     double simple_pot_wei = 0;
     int original_entry = 0;
-    double plot_pot = 10.1e20;
     //double plot_pot = 13.2e20;
 
     std::vector<double> simple_bdt_vars(vars.size(),0.0);

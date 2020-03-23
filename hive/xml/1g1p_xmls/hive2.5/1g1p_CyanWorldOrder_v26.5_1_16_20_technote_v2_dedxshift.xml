@@ -621,6 +621,11 @@
 <var def = "stage1_2BDT_XGBOOSTNue_mva" binning = "(40,0,1)"  unit = "Nue BDT" type="d" logplot="false" training="4"/>
 
 <var def = "mctruth_nu_E" binning = "(24, 0, 3.2)" unit = "True Neutrino Energy [GeV]" type="d" training=""/>
+
+<var def = "reco_track_mean_trunc_dEdx_plane0[0] *( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.03))" binning =  "(40,0,12)" unit = "Scaled Plus 3 Reco Track Truncated Mean dE/dx Plane 0 [MeV/cm]" type = "d"  training="" group = "1"/>
+<var def = "reco_track_mean_trunc_dEdx_plane1[0] *  ( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.03))" binning =  "(40,0,12)" unit = "Scaled Plus 3 Reco Track Truncated Mean dE/dx Plane 1 [MeV/cm]" type = "d" training="" group = "1"/>
+<var def = "reco_track_mean_trunc_dEdx_plane2[0]*  ( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.03))" binning =  "(40,0,12)" unit = "Scaled Plus 3 Reco Track Truncated Mean dE/dx Plane 2 [MeV/cm]" type = "d"   training="" group = "1"/>
+
 <!--<var def = "1g1pJan2020_v1COSMIC_mva" binning = "(25,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" logplot="true"/> -->
 
 <!-- ================= RECO-MC Matching ======================== -->

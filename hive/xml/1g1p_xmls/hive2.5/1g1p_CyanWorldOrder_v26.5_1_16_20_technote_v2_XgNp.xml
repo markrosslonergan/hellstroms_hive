@@ -626,12 +626,12 @@
 <var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(-0.02) )" binning =  "(40,0,5)" unit = "scaled minus2 reco track truncated mean de/dx plane 0 [mev/cm]" type = "d"  training=""/>
 <var def = "reco_track_mean_trunc_dEdx_plane0[0]*( 1.0 + (mctruth_num!=0)*(-0.01) )" binning =  "(40,0,5)" unit = "scaled minus1 reco track truncated mean de/dx plane 0 [mev/cm]" type = "d"  training=""/>
 -->
-<var def = "reco_track_mean_trunc_dEdx_plane2[0]*( 1.0 + (mctruth_num!=0)*(0.03) )" binning =  "(40,0,5)" unit = "scaled plus3 reco track truncated mean de/dx plane 2 [mev/cm]" type = "d"  training=""/>
-<var def = "reco_track_mean_trunc_dEdx_plane2[0]*( 1.0 + (mctruth_num!=0)*(0.02) )" binning =  "(40,0,5)" unit = "scaled plus2 reco track truncated mean de/dx plane 2 [mev/cm]" type = "d"  training=""/>
-<var def = "reco_track_mean_trunc_dEdx_plane2[0]*( 1.0 + (mctruth_num!=0)*(0.01) )" binning =  "(40,0,5)" unit = "scaled plus1 reco track truncated mean de/dx plane 2 [mev/cm]" type = "d"  training=""/>
-<var def = "reco_track_mean_trunc_dEdx_plane2[0]*( 1.0 + (mctruth_num!=0)*(-0.03) )" binning =  "(40,0,5)" unit = "scaled minus3 reco track truncated mean de/dx plane 2 [mev/cm]" type = "d"  training=""/>
-<var def = "reco_track_mean_trunc_dEdx_plane2[0]*( 1.0 + (mctruth_num!=0)*(-0.02) )" binning =  "(40,0,5)" unit = "scaled minus2 reco track truncated mean de/dx plane 2 [mev/cm]" type = "d"  training=""/>
-<var def = "reco_track_mean_trunc_dEdx_plane2[0]*( 1.0 + (mctruth_num!=0)*(-0.01) )" binning =  "(40,0,5)" unit = "scaled minus1 reco track truncated mean de/dx plane 2 [mev/cm]" type = "d"  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_plane2[0]*( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.03) )" binning =  "(40,0,5)" unit = "MC only scaled plus3 reco track truncated mean de/dx plane 2 [mev/cm]" type = "d"  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_plane2[0]*( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.02) )" binning =  "(40,0,5)" unit = "MC only scaled plus2 reco track truncated mean de/dx plane 2 [mev/cm]" type = "d"  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_plane2[0]*( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(0.01) )" binning =  "(40,0,5)" unit = "MC only scaled plus1 reco track truncated mean de/dx plane 2 [mev/cm]" type = "d"  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_plane2[0]*( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(-0.03) )" binning =  "(40,0,5)" unit = "MC only scaled minus3 reco track truncated mean de/dx plane 2 [mev/cm]" type = "d"  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_plane2[0]*( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(-0.02) )" binning =  "(40,0,5)" unit = "MC only scaled minus2 reco track truncated mean de/dx plane 2 [mev/cm]" type = "d"  training=""/>
+<var def = "reco_track_mean_trunc_dEdx_plane2[0]*( 1.0 + (mctruth_num!=0 &amp;&amp; sim_track_overlay_fraction<0.2)*(-0.01) )" binning =  "(40,0,5)" unit = "MC only scaled minus1 reco track truncated mean de/dx plane 2 [mev/cm]" type = "d"  training=""/>
 
 
 
