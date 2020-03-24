@@ -1146,9 +1146,8 @@ else if(mode_option == "eff2"){
 
 
     double splot_pot =   onbeam_data_file->pot;
+    
     std::cout<<"Starting SBNfit with "<<splot_pot<<" POT"<<std::endl;
-
-
 
     if(which_stage==-1) which_stage ==1;
     if(which_file==-1){
