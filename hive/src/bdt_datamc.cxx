@@ -643,9 +643,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				std::cout<<"Setting do Subtraction inside bdt_stack "<<std::endl;
 				mc_stack->setSubtractionVector(subtraction_vec);
 			}
-		//STEP 2.1: Prepare empty histograms and covariance matrix;
+		//STEP 2.1: Prepare histograms and covariance matrix;
 			THStack *stk = (THStack*)mc_stack->getEntryStack(var,stage);//Stack histogram (MC events);
 			TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,stage);//Histogram of the total MC, use this to calculate stat errors;
+			TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(stage)).c_str());
 
 			std::string temp_data_name = std::to_string(stage)+"_d0_"+std::to_string(bdt_cuts[stage])+"_"+data_file->tag+"_"+var.safe_name;
 			TH1 * d0 = (TH1*)data_file->getTH1(var, "1", temp_data_name, plot_pot);//Data points.
@@ -653,7 +654,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			//Check Covar for plotting, for chi2? CHECK
 			TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
 			
-		//STEP 2.2: Fill in histograms and the covaraince matrix;
+		//STEP 2.2: Add some statistical estimators
+			
+			//STEP 2.2.1: Add MC errors, tsum histogram (the shade);
 			if(var.has_covar){//covariance matrix calculation;
 				TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
 				TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
@@ -677,11 +680,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				}
 
 			}
-			cobs->cd();
+//			cobs->cd();
 
 
 			//tsum->Rebin(data_rebin);
-			d0->Rebin(data_rebin);
 
 			if(false &&do_subtraction){
 				std::cout<<"Actually doing the subtracting"<<std::endl;
@@ -694,9 +696,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 					}
 			}
 
-			std::cout<<"2 "<<std::endl;
-			tsum->SetMarkerSize(0);
+		//STEP 2.3: Configure histograms;
 
+			d0->Rebin(data_rebin);
 			d0->SetMarkerSize(2);
 			gStyle->SetEndErrorSize(10);
 
@@ -760,6 +762,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			//stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);//this does not consider POT
 			stk->SetMaximum( std::max(tsum->GetBinContent(tsum->GetMaximumBin()), d0->GetMaximum())*max_modifier);
 			//stk->SetMaximum(500);
+			tsum->SetMarkerSize(0);
 			tsum->SetLineWidth(3);
 			tsum->DrawCopy("Same E2");//the statistic error;
 
@@ -1000,7 +1003,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				rat_denom->SetBinError(i,0.0);
 			}	
 
-			TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(stage)).c_str());
+//			TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(stage)).c_str());
 			ratunit->Divide(rat_denom);		
 
 			TH1 * signal_hist = mc_stack->vec_hists[which_signal];//CHECK, signal is the default first one, which is.. problematic
