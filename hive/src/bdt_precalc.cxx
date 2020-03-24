@@ -1291,7 +1291,7 @@ int ncpi0_sss_precalc(const bdt_file * file, const std::string & tag){
     TTree tout("sss_precalc","sss_precalc");
 
     int save_how_many = 2;
-    std::string base = "sss3d_";
+    std::string base = "sss3dp_";
     std::vector<std::string> mod = {"ioc_ranked","invar_ranked"};
 
     //Ok we want to save information on 3D showers
@@ -1317,7 +1317,7 @@ int ncpi0_sss_precalc(const bdt_file * file, const std::string & tag){
         tout.Branch((base+mod[i]+"_id").c_str(), &(out3d_id[i]));
     }
 
-    std::string base2d = "sss_";
+    std::string base2d = "sss2dp_";
     std::vector<std::string> mod2d = {"ioc_ranked","conv_ranked","invar_ranked"};
     int save_how_many_2d = mod2d.size();
     //Ok we want to save information on 3D showers

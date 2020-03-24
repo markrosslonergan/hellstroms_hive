@@ -385,9 +385,11 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
     std::cout<<"Setting stage entry lists"<<std::endl;
     for(size_t i = 0; i < sig_files.size(); ++i) {
         sig_files.at(i)->setStageEntryList(1);
+        std::cout<<sig_files[i]->tag<<" is a signal file"<<std::endl;
     }
     for(size_t i = 0; i < bkg_files.size(); ++i) {
         bkg_files.at(i)->setStageEntryList(1);
+        std::cout<<bkg_files[i]->tag<<" is a BKG file"<<std::endl;
     }
 
     std::vector<double> in_min_vals;
@@ -502,8 +504,10 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
             double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
 
             std::string bnbcut = sig_files.at(i)->getStageCuts(1+bdt_infos.size(), d)+"&&"+s_impact; 
-            signal += sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
+            double thiss = sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
+            signal += thiss; 
 
+            std::cout<<" "<<sig_files[i]->tag<<" "<<thiss;
         }
 
         for(size_t i = 0; i < bkg_files.size(); ++i) {
@@ -515,8 +519,9 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
             bkg.push_back(bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
 
             background += bkg.back();
+            std::cout<<" "<<bkg_files[i]->tag<<" "<<bkg.back();
         }
-
+        std::cout<<std::endl;
 
         double significance =0;
         if(signal==0){
