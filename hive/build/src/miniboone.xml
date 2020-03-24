@@ -14,14 +14,23 @@
 </bdtfile>
 
 
-<bdtfile filename = "timing_MC_nue_may07_2.root" tag = "other" hist_style = "hist" dirs = "" col = "(153,153,153)" plot_name = "Other" scale = "1.0" signal = "false" plot_on_top = "false" weight = "wgt">
+<bdtfile filename = "timing_MC_nue_may07_2.root" tag = "other_numu" hist_style = "hist" dirs = "" col = "(163,143,163)" plot_name = "#nu_{#mu}/#bar{#nu}_{#mu}" scale = "1.0" signal = "false" plot_on_top = "false" weight = "wgt">
     <definition>
         <cut> backgroundType==11 </cut>
+		<cut> MCBEAM.ntp&gt;2</cut>
         <cut> Entry$%2==0 </cut>
     </definition>
 	<fixPOT> 2.054E21 </fixPOT>
 </bdtfile>
 
+<bdtfile filename = "timing_MC_nue_may07_2.root" tag = "other" hist_style = "hist" dirs = "" col = "(153,153,153)" plot_name = "Other" scale = "1.0" signal = "false" plot_on_top = "false" weight = "wgt">
+    <definition>
+        <cut> backgroundType==11 </cut>
+		<cut> MCBEAM.ntp&lt;3</cut>
+        <cut> Entry$%2==0 </cut>
+    </definition>
+	<fixPOT> 2.054E21 </fixPOT>
+</bdtfile>
 
 <bdtfile filename = "timing_MC_dirt_may07_2.root" tag = "dirt" hist_style = "hist" dirs = "" col = "(137,104,89)" plot_name = "dirt" scale = "1.0" signal = "false" plot_on_top = "false" weight = "wgt">
     <definition>

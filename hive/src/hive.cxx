@@ -310,8 +310,10 @@ int main (int argc, char *argv[]){
         if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f]  && !XMLconfig.bdt_is_validate_file[f]){//mark stack_files, signal or bkg;
             if(XMLconfig.bdt_is_signal[f]){
                 std::cout<<" -- For the purposes of calculting a significance, this is a signal file"<<std::endl;
+				bdt_files[f]->is_signal = true;
                 signal_bdt_files.push_back(bdt_files.back());
             }else{
+				bdt_files[f]->is_signal = false;
                 std::cout<<" -- For the purposes of calculting a significance, this is a BKG file"<<std::endl;
                 bkg_bdt_files.push_back(bdt_files.back());
             }
@@ -574,7 +576,7 @@ int main (int argc, char *argv[]){
 		
 		if(true){
 		//prepare input variables for the plotStacks function;
-			bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+			bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");//last element of histogram_stack is signal
 			std::vector<bdt_variable> tmp_vars;
 
 		if(number>-1){//a variable is specified

@@ -116,6 +116,7 @@ struct bdt_file{
         bool is_data;
         bool is_bnbext;
         bool is_mc;
+		bool is_signal;
 
         std::string leg;
 

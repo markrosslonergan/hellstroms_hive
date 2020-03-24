@@ -40,7 +40,6 @@ class bdt_stack{
 
         bool do_subtraction; 
         std::vector<bool> subtraction_vec;
-    
         std::vector<bool> signal_on_top;
 
 
@@ -52,6 +51,16 @@ class bdt_stack{
         //plot_pot = 0.3756e+19;
         do_subtraction = false;
 		}
+//Copy Constructor
+		bdt_stack(const bdt_stack &origin){
+			name			= origin.name;
+			plot_pot        = origin.plot_pot;
+			stack           = origin.stack;
+			vec_hists       = origin.vec_hists;
+			do_subtraction  = origin.do_subtraction;
+			subtraction_vec = origin.subtraction_vec;
+			signal_on_top   = origin.signal_on_top;
+		}
 
 		int addToStack(bdt_file* in,bool signalish){
 			stack.push_back(in);
@@ -62,6 +71,12 @@ class bdt_stack{
 		int addToStack(bdt_file* in){
 			stack.push_back(in);
             signal_on_top.push_back(false);
+			return 0;
+		}
+
+		int eraseStack(bdt_file* in){
+			//erase-remove idiom, remove re-arrange stack and put the in element at the end as undefined;
+			stack.erase(std::remove(stack.begin(),stack.end(),in),stack.end());
 			return 0;
 		}
 		THStack* getEntryStack(bdt_variable var);

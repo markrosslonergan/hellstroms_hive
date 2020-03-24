@@ -21,7 +21,8 @@ bdt_file::bdt_file(
     flow(inflow),
     is_data(false),
     is_bnbext(false),
-    is_mc(true){
+    is_mc(true),
+	is_signal(false){
 		std::cout<<"WARNING, obsolete! Not used anymore."<<__FILE__<<" at Line "<<__LINE__<<std::endl;
 	};
 

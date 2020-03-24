@@ -569,10 +569,9 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 //main code for plotting the stack histogram;
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::vector<bdt_info> bdt_infos){
 
-
-	// NEW ONE
+	bool print_message = true;
 	double plot_pot=data_file->pot;
-	if(stack_mode) plot_pot = stack_pot;
+//	if(stack_mode) plot_pot = stack_pot;//always false for now;
 
 	std::cout<<"DATAMC PLOT POT "<<plot_pot<<" from "<<data_file->tag<<std::endl;
 
@@ -584,6 +583,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 	double title_size_upper=0.15;
 	double label_size_upper=0.05;
 	double title_offset_upper = 1.45;
+
+	//ratio plot setting 
+	double rmin = 0.5;//minimum ratio
+	double rmax = 1.5;//maximum ratio
+	int data_rebin = 1;//change binning of data, sometimes we want to group them when data are few
+
+	//stack plot sttting
+	double min_val = 0;//minimum events count
+	double max_modifier = 2;//a factor to be applied according to the highest bin, for the maximum y
+
 
 
 	ftest->cd();//output root file to storage histograms.
@@ -600,60 +609,52 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 		s_max = plot_stage+1;
 	}
 
-	for(int s = s_min; s< s_max; s++){//stages
+	for(int stage = s_min; stage< s_max; stage++){//stages
+	//STEP 1: Pick a stage, prepare entrylist;
 
-
-		std::cout<<"On stage: "<<s<<std::endl;
+		std::cout<<"On stage: "<<stage<<std::endl;
 		//First set the files at this stage
-		for(auto &f: mc_stack->stack){
-			std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-			if(s>1) f->calcBDTEntryList(s,bdt_cuts);
-			std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-			f->setStageEntryList(s);
-		}	
+		//bdt_stack mc_stack contains member vector<bdt_file* > stack;
+		for(bdt_file* &f: mc_stack->stack){
+			if(stage>1) f->calcBDTEntryList(stage,bdt_cuts);
+			f->setStageEntryList(stage);
+			if(print_message){
+				if(stage>1) std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<"."<<std::endl;
+				std::cout<<"Setting up EntryLists for "<<f->tag<<"."<<std::endl;
+			}
+		}
 
-		std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
+//		std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
+		if(stage>1) data_file->calcBDTEntryList(stage,bdt_cuts);
+		data_file->setStageEntryList(stage);
 
-		if(s>1) data_file->calcBDTEntryList(s,bdt_cuts);
-
-		data_file->setStageEntryList(s);
-
-		//And all variables in the vector var
 		for(auto &var: vars){//variables
-
-
-			//        var.is_logplot = false;//is_logplot is not functioning.
-			if(var.is_logplot){std::cout<<"MAKEING A LOG PLOT"<<std::endl;}
-			else{std::cout<<"NOT   MAKEING A LOG PLOT"<<std::endl;}
-
+		//STEP 2: work on variables one by one;
 			std::cout<<"Starting on variable "<<var.name<<std::endl;
+			if(print_message){
+				if(var.is_logplot){std::cout<<"MAKEING A LOG PLOT"<<std::endl;}
+				else{std::cout<<"NOT MAKEING A LOG PLOT"<<std::endl;}
+			}
 
-			TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1801,1200); //1600
+			TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(stage)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(stage)).c_str(),1801,1200); //Create a canvas 1801x1200 (width x height)
 			cobs->cd();
 
-			if(false&&do_subtraction){
+			if(false&&do_subtraction){//not doing substraction now
 				std::cout<<"Setting do Subtraction inside bdt_stack "<<std::endl;
 				mc_stack->setSubtractionVector(subtraction_vec);
 			}
+		//STEP 2.1: Prepare empty histograms and covariance matrix;
+			THStack *stk = (THStack*)mc_stack->getEntryStack(var,stage);//Stack histogram (MC events);
+			TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,stage);//Histogram of the total MC, use this to calculate stat errors;
 
-			THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);//s for stages;
-			TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
-			TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
-//			TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
+			std::string temp_data_name = std::to_string(stage)+"_d0_"+std::to_string(bdt_cuts[stage])+"_"+data_file->tag+"_"+var.safe_name;
+			TH1 * d0 = (TH1*)data_file->getTH1(var, "1", temp_data_name, plot_pot);//Data points.
 
-			//Check Covar for plotting
+			//Check Covar for plotting, for chi2? CHECK
 			TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
-
-			//some cheating
-			//var.has_covar = true;
-			//var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/DetSys/wireX/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
-			//var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/MCrich/VID"+std::to_string(var.id)+".SBNcovar.root";
-			//var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
-			//var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
-			//var.covar_name = "frac_covariance";
-
-			if(var.has_covar){
-
+			
+		//STEP 2.2: Fill in histograms and the covaraince matrix;
+			if(var.has_covar){//covariance matrix calculation;
 				TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
 				TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
 				covar_collapsed->Zero();
@@ -661,9 +662,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				this->calcCollapsedCovariance(covar_full, covar_collapsed,var);
 
 				for(int c=0; c< tsum->GetNbinsX();c++){
-					//double dv = tsum->GetBinContent(c+1);
-					//tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
-					//tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
 					double mc_stats_error = tsum->GetBinError(c+1);
 					double mc_sys_error = sqrt((*covar_collapsed)(c,c));
 					std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
@@ -682,17 +680,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			cobs->cd();
 
 
-
-			//            std::vector<double> ks_sum = data_file->getVector(var,s);
-
-			double rmin = 0.5;
-			double rmax = 1.5;
-			int data_rebin = 1;
-			//if(s==0 || s == 1){
-			//    rmin=0; rmax = 1.99;
-			//}//else if(s>2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
-
-
 			//tsum->Rebin(data_rebin);
 			d0->Rebin(data_rebin);
 
@@ -707,7 +694,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 					}
 			}
 
-
 			std::cout<<"2 "<<std::endl;
 			tsum->SetMarkerSize(0);
 
@@ -715,44 +701,37 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			gStyle->SetEndErrorSize(10);
 
 			cobs->cd();
-			TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
+			TPad *pad0top = new TPad(("pad0top_"+stage_names.at(stage)).c_str(), ("pad0top_"+stage_names.at(stage)).c_str(), 0, 0.35, 1, 1.0);
 
 			if(is_bdt_variable || var.is_logplot )  pad0top->SetLogy();
 			pad0top->SetBottomMargin(0); // Upper and lower plot are joined
 			pad0top->Draw();             // Draw the upper pad: pad2top
 			pad0top->cd();               // pad2top becomes the current pad
 
-			//      double rmin = 0.5;
-			//   	double rmax = 1.699;
-			//	double rmin = 0;
-			//	double rmax = 2.99;
-			//	int data_rebin = 1;
-			//if(s==0 || s == 1){
+			//if(s==0 || stage == 1){
 			//    rmin=0; rmax = 1.99;
 			//}//else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
 			//double max_modifier = 1.65;
-			double max_modifier = 2;
-			if (s==1){
-				max_modifier = 1.85;
+			switch (stage){//nothing new, just a switch
+				case 1:
+					max_modifier=1.85;
+					break;
+				case 2:
+					max_modifier=2;
+					break;
+				case 3:
+//					max_modifier=(stack_mode? 2.0:1.85);
+					max_modifier = 1.85;
+					break;
+				case 5:
+					max_modifier=2.5;
+					break;
+				default:
+					break;
 			}
-			if (s==2){
-				max_modifier = 2;
-			}
-			//if(s==3){
-			//    max_modifier=4.3;
-			// }
-
-			if (s==3){
-				max_modifier = (stack_mode ? 2.0 : 1.85);
-			}
-
-			if(s==5){
-				max_modifier = 2.5;
-			}
 
 
-			double min_val = 0;
 			if(var.is_logplot){
 				pad0top->SetLogy();
 				max_modifier=1000.0;
@@ -777,20 +756,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			stk->GetYaxis()->SetTitleSize(0.05);
 			stk->SetMinimum(min_val);
 			stk->GetYaxis()->SetTitleOffset(0.9);
-			std::cout<<"the max modifier is "<<max_modifier<<","<<"# of MC "<<tsum->GetBinContent(tsum->GetMaximumBin())<<std::endl;
+//			std::cout<<"the max modifier is "<<max_modifier<<","<<"# of MC "<<tsum->GetBinContent(tsum->GetMaximumBin())<<std::endl;
 			//stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);//this does not consider POT
 			stk->SetMaximum( std::max(tsum->GetBinContent(tsum->GetMaximumBin()), d0->GetMaximum())*max_modifier);
 			//stk->SetMaximum(500);
 			tsum->SetLineWidth(3);
-			//tsum_after->SetLineWidth(3);
-			tsum->DrawCopy("Same E2");
-			//tsum_after->DrawCopy("Same E1");
+			tsum->DrawCopy("Same E2");//the statistic error;
 
-			TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
-			TH1 *tmp_tsum2 = (TH1*)tsum->Clone(("tmp_tsum2"+std::to_string(s)).c_str());
-
-			tmp_tsum2->SetFillStyle(0);
-			tmp_tsum2->DrawCopy("same hist");
+//			TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());//not drawing this, but use it calculate the MC Stat-Error
+			TH1 *tmp_tsum= (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(stage)).c_str());
+			tmp_tsum->SetFillStyle(0);
+//			tmp_tsum->DrawCopy("same hist");
 
 			tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
 			TLegend *l0 = new TLegend(0.11,0.65,0.89,0.89);
@@ -798,7 +774,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			l0->SetLineWidth(0);
 			l0->SetNColumns(2);
 			double NeventsStack = 0;
-			int which_signal = 0;//default as the first but it is not necessary..
+			int which_signal = 0;//which signal goes top
 			int n=0;
 			std::vector<TH1F*> fake_legend_hists;
 
@@ -807,7 +783,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				double Nevents = f->GetEntries()*(plot_pot/f->pot)*f->scale_data;
 				NeventsStack+=Nevents;
 
-				auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
+				auto h1 = new TH1F(("tmp"+stage_names.at(stage)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
 				fake_legend_hists.push_back(h1);
 				h1->SetFillColor(f->col);
 				h1->SetFillStyle(f->fillstyle);
@@ -823,26 +799,37 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				if(do_subtraction){
 					if(subtraction_vec[n]) string_events+=" Subtracted";
 				}
-				std::string leg_type = "f";   
+				std::string leg_type = "f";
 
 				//if(mc_stack->signal_on_top[n]) leg_type = "l";
 				//l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
 				l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
 				//l0->AddEntry(h1,(f->plot_name).c_str(),"f");
 
-				if(mc_stack->signal_on_top[n]) which_signal = n;
+				if(mc_stack->signal_on_top[n]) which_signal = n;//currently, only 1 signal sample is allowed
+//				if(mc_stack->stack[n]->is_signal) which_signal = n;//currently, only 1 signal sample is allowed
 				n++;
 			}
 
 			//This one is just for legend messing
-			TH1 *leg_hack = (TH1*)tmp_tsum->Clone(("leg_tmp_tsum"+std::to_string(s)).c_str());
+//			TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
+			bdt_stack* pure_bkg = mc_stack;
+			for(auto &f: mc_stack->stack){
+				if(f->is_signal){
+					pure_bkg->eraseStack(f);//take away signal
+				}
+				
+			}
+//			TH1 *bkg_tsum = (TH1*)pure_bkg->getEntrySum(var,s);
+			TH1 *leg_hack = (TH1*)tmp_tsum->Clone(("leg_tmp_tsum"+std::to_string(stage)).c_str());
 			leg_hack->SetLineWidth(2);
+//			leg_hack->DrawCopy("Same E2");
 
 			if(var.has_covar){
 				//l0->AddEntry(leg_hack,"Flux, XS and MC stats Error","fl");
 				l0->AddEntry(leg_hack,var.covar_legend_name.c_str(),"fl");
 			}else{
-				l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"le");
+				l0->AddEntry(leg_hack,("MC Stats-Only Error, All MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"le");
 			}
 
 			std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -924,46 +911,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			std::string massSearch("Invariant");
 			std::size_t found = var.unit.find(massSearch);
 
-			// Fit Gaussian to that variable
-			/*
-			   if (found != std::string::npos) {
-			   std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
-			   TF1 *gausfit_data = new TF1("gausfit_data", "gaus");
-			   TF1 *gausfit_mc = new TF1("gausfit_mc", "gaus");
-			   TH1 *tmp_hist = stk->GetHistogram();
-			   double lowFit, highFit;
-			   double mass_data = 0., mass_err_data = 0;
-			   double mass_res_data = 0., mass_res_err_data = 0.;
-			   double mass_mc = 0., mass_err_mc = 0;
-			   double mass_res_mc = 0., mass_res_err_mc = 0.;
-			// Fit range should be similar for data and MC
-			lowFit = d0->GetXaxis()->GetBinLowEdge(1);
-			highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
-			d0->Fit(gausfit_data, "lv", "", lowFit, highFit);
-			tmp_hist->Fit(gausfit_data, "q", "", lowFit, highFit);
-			std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
-			mass_data = gausfit_data->GetParameter(1);
-			mass_err_data = gausfit_data->GetParError(1);
-			mass_res_data = gausfit_data->GetParameter(2);
-			mass_res_err_data = gausfit_data->GetParError(2);
-			mass_mc = gausfit_mc->GetParameter(1);
-			mass_err_mc = gausfit_mc->GetParError(1);
-			mass_res_mc = gausfit_mc->GetParameter(2);
-			mass_res_err_mc = gausfit_mc->GetParError(2);
-			std::cout << "[BLARG] Data mass: " << mass_data << " +/- " << mass_err_data << std::endl;
-			std::cout << "[BLARG] Data mass resolution: " << mass_res_data << " +/- " << mass_res_err_data << std::endl;
-			std::cout << "[BLARG] MC mass: " << mass_mc << " +/- " << mass_err_mc << std::endl;
-			std::cout << "[BLARG] MC mass resolution: " << mass_res_mc << " +/- " << mass_res_err_mc << std::endl;
-			gausfit_data->SetLineColor(kRed);
-			gausfit_mc->SetLineColor(kAzure+1);
-			gausfit_data->Draw("same");
-			gausfit_mc->Draw("same");
-			}
-			*/
-
-
-
-
 			// l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
 			//l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
 			if(!stack_mode) l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,2)).c_str(),"lp");	
@@ -994,19 +941,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			pottex.DrawLatex(.60,.60, pot_draw.c_str());
 
 			// Draw stage name. Added by A. Mogan 10/14/19
-			TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
-			stage->SetTextAlign(31); // Right-adjusted 
-			stage->Draw();
+			TText *stage_name = drawPrelim(0.88, 0.92, stage_names.at(stage) );
+			stage_name->SetTextAlign(31); // Right-adjusted 
+			stage_name->Draw();
 
 			TText *pre; 
 			if (isSpectator) {
-				pre = drawPrelim(0.12,0.92,"MiniBooNE Simulation");
-				//pre = drawPrelim(0.12,0.92,"MiniBooNE Simulaton - In Progress");
+				pre = drawPrelim(0.12,0.92,"MiniBooNE Simulation [Spectator Variable]");
 				//pre = drawPrelim(0.12,0.92,"MiniBooNE Simulaton - In Progress  [Spectator Variable]");
 			}else {
-				pre = drawPrelim(0.12,0.92,"MiniBooNE Simulation ");
-				//pre = drawPrelim(0.12,0.92,"MiniBooNE Simulaton In Progress [Training Variable]");
-
+				pre = drawPrelim(0.12,0.92,"MiniBooNE Simulation [Trianing Variable]");
 			}
 			pre->Draw();
 
@@ -1017,7 +961,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			}
 			//cobs->cd(k+1);	
 			cobs->cd();
-			TPad *pad0bot = new TPad(("padbot_"+stage_names.at(s)).c_str(),("padbot_"+stage_names.at(s)).c_str(), 0, 0.05, 1, 0.35);
+			TPad *pad0bot = new TPad(("padbot_"+stage_names.at(stage)).c_str(),("padbot_"+stage_names.at(stage)).c_str(), 0, 0.05, 1, 0.35);
 			pad0bot->SetTopMargin(0);
 			pad0bot->SetBottomMargin(0.351);
 			pad0bot->SetGridx(); // vertical grid
@@ -1050,16 +994,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			}
 			*/
 			//tsum->Rebin(data_rebin);
-			TH1* rat_denom = (TH1*)tsum->Clone(("ratio_denom_"+stage_names.at(s)).c_str());
+//			TH1* rat_denom = (TH1*)bkg_tsum->Clone(("ratio_denom_"+stage_names.at(s)).c_str());
+			TH1* rat_denom = (TH1*)tsum->Clone(("ratio_denom_"+stage_names.at(stage)).c_str());
 			for(int i=0; i<rat_denom->GetNbinsX(); i++){
 				rat_denom->SetBinError(i,0.0);
 			}	
 
-			TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(s)).c_str());
+			TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(stage)).c_str());
 			ratunit->Divide(rat_denom);		
 
 			TH1 * signal_hist = mc_stack->vec_hists[which_signal];//CHECK, signal is the default first one, which is.. problematic
-			TH1* rat_signal = (TH1*)signal_hist->Clone(("ratio_signal_"+stage_names.at(s)).c_str());
+			TH1* rat_signal = (TH1*)signal_hist->Clone(("ratio_signal_"+stage_names.at(stage)).c_str());
 			//            rat_signal->Add(tsum);
 			//          rat_signal->Divide(tsum);
 
@@ -1105,7 +1050,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			ratunit->SetLineColor(kBlack);
 			ratunit->SetTitle("");
 			//ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
-			ratunit->GetYaxis()->SetTitle(  (stack_mode ? "#splitline{Systematic}{Uncertainty}" : "Data/MC"));
+			ratunit->GetYaxis()->SetTitle(  (stack_mode ? "#splitline{Systematic}{Uncertainty}" : "Data/(Bkg MC)"));
 			ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
 			ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY*1.25);
 			ratunit->SetMinimum(rmin);	
@@ -1117,7 +1062,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			ratunit->GetXaxis()->SetTitle(var.unit.c_str());
 			ratunit->GetYaxis()->SetNdivisions(505);
 
-			TH1* ratpre = (TH1*)d0->Clone(("ratio_"+stage_names.at(s)).c_str());
+			TH1* ratpre = (TH1*)d0->Clone(("ratio_"+stage_names.at(stage)).c_str());
 			ratpre->Divide(rat_denom);		
 
 
@@ -1139,7 +1084,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 					err_x_right.push_back(d0->GetBinWidth(b)/2.0);
 					err_y_high.push_back((d0->GetBinErrorUp(b))/is_zero);
 					err_y_low.push_back((d0->GetBinErrorLow(b))/is_zero);
-
 				}
 
 			}
@@ -1155,7 +1099,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 			ratpre->SetLineColor(kBlack);
 			ratpre->SetTitle("");
-
 
 			//gr->Divide(d0,tsum,"pois");
 			//gr->Divide(d0,rat_denom,"pois");
@@ -1190,19 +1133,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			//var_precut.front()->GetYaxis()->SetTitle("Events");
 
 
-
-			std::cout<<"Writing pdf."<<std::endl;
 			cobs->Write();
 			if(stack_mode){
-				cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
-				// cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".root").c_str(),"root");
-				// cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
+				cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(stage)+".pdf").c_str(),"pdf");
 			}else{
-				cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+				cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(stage)+".pdf").c_str(),"pdf");
 			}
 			//cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
-
-
 
 			delete stk;
 			delete tsum;
@@ -1210,10 +1147,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			delete d0;
 			delete ratunit;
 			delete ratpre;
-			delete rat_denom;			
+			delete rat_denom;
 			delete pad0top;
-			delete tmp_tsum;
-			delete tmp_tsum2;
+//			delete tmp_tsum;
+//			delete tmp_tsum2;
 			delete l0;
 			delete pre;
 			//  delete ratunit_after;
