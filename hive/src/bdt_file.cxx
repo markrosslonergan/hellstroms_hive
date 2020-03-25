@@ -1041,20 +1041,20 @@ TText * drawPrelim(double x, double y, double s, std::string ins){
 
 
 
-TText * drawPrelim(double x, double y, double s){
-    TText *tres = new TText(x, y,"MicroBooNE - In Progress");
-    tres->SetTextColor(kBlack);
-    tres->SetTextSize(s);
-    tres->SetNDC();
-    return tres;
-}
+//TText * drawPrelim(double x, double y, double s){
+//    TText *tres = new TText(x, y,"MicroBooNE - In Progress");
+//    tres->SetTextColor(kBlack);
+//    tres->SetTextSize(s);
+//    tres->SetNDC();
+//    return tres;
+//}
 
-TText * drawPrelim(double x, double y){
-    TText *tres = new TText(x, y,"MicroBooNE - In Progress");
-    tres->SetTextColor(kBlack);//t90->SetTextSize(0.12);
-    tres->SetNDC();
-    return tres;
-}
+//TText * drawPrelim(double x, double y){
+//    TText *tres = new TText(x, y,"MicroBooNE - In Progress");
+//    tres->SetTextColor(kBlack);//t90->SetTextSize(0.12);
+//    tres->SetNDC();
+//    return tres;
+//}
 
 void get_joy(){
     std::ifstream f("/pnfs/uboone/resilient/users/markross/tars/division.h");
