@@ -58,9 +58,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     run_fractions_plot = {0.4742,0.5258};
    
     //2g1p
-    run_names  = {"RI/II","RIII"};
-    run_fraction_cuts = {"(run_number <=13696)","(run_number >= 13697)"};
-    run_fractions_plot = {0.6964636727,0.3035363273};
+    //run_names  = {"RI/II","RIII"};
+    //run_fraction_cuts = {"(run_number <=13696)","(run_number >= 13697)"};
+    //run_fractions_plot = {0.6964636727,0.3035363273};
  
     //2g0p
     //run_names  = {"RI/II","RIII"};
@@ -68,9 +68,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     //run_fractions_plot = {0.677544979,0.322455021};
 
 
-    run_names = {"RIsmall"};
-    run_fraction_cuts  = {"1"};
-    run_fractions_plot = {1.0};
+    //run_names = {"RIsmall"};
+    //run_fraction_cuts  = {"1"};
+    //run_fractions_plot = {1.0};
 
   //  run_names = {"RI","R3"};
   //  run_fraction_cuts  = {"run_number <= 7770 ","run_number>=13697"};
@@ -1342,7 +1342,6 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
            }
            */
 
-
         simple_var = var->EvalInstance();
         simple_pot_wei = simple_wei*this->scale_data*plot_pot/this->pot;
         original_entry = i;
@@ -1356,7 +1355,6 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
             form_vec_vars[j]->GetNdata();
             simple_bdt_vars[j] = form_vec_vars[j]->EvalInstance();
         }
-
         t_sbnfit_simpletree->Fill();
     }
 

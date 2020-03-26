@@ -34,6 +34,7 @@ include_directories(${ROOT_INCDIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tinyxml/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/xgboost/include/)
 
+add_subdirectory(root_linkdefs)
 add_subdirectory(tinyxml)
 add_subdirectory(src)
 add_subdirectory(xgboost)

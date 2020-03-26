@@ -15,7 +15,6 @@
 #include  "bdt_var.h"
 #include  "bdt_info.h"
 #include  "method_struct.h"
-
 /******** Root includes *****/
 
 #include "TTreeFormula.h"
