@@ -33,8 +33,6 @@ void bdt_app_update(void_vec const & tvv, std::vector<float *> & rvv) {
 
 void bdt_topological_update(std::vector<double*> *topv){
     //OBSOLETE not called anymore
-
-
 }
 
 
@@ -220,13 +218,8 @@ int bdt_app(bdt_info info, bdt_file* file, std::vector<bdt_variable> vars, std::
     app_ofile->Close();
     delete app_ofile;
 
-
-
     return 0;
 }
-
-
-
 
 
 
@@ -250,7 +243,6 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
     double mva2;
     tree->Branch("mva", &mva, "mva/D");
     tree->Branch((info.identifier+"_mva").c_str(), &mva2, (info.identifier+"_mva/D").c_str());
-
 
     DMatrixHandle dfile;
     safe_xgboost(XGDMatrixCreateFromFile((info.identifier+"_"+f->tag+".libSVM.dat").c_str(), 0, &dfile));

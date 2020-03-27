@@ -4,6 +4,10 @@
 #include "TFriendElement.h"
 #include "TList.h"
 
+#include "TROOT.h"
+#include "TSystem.h"
+
+
 #include "variable_list.h"
 #include "bdt_file.h"
 #include "bdt_datamc.h"
@@ -160,6 +164,8 @@ int main (int argc, char *argv[]){
         }
     }
 
+        
+    gSystem->Load("/uboone/app/users/markrl/Hive_v3.0/hellstroms_hive/hive/root_linkdefs/loc/denan_cxx.so");
     //===========================================================================================
     //===========================================================================================
     //			Begininning of main program here!
@@ -279,15 +285,15 @@ int main (int argc, char *argv[]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOffBeamData( XMLconfig.bdt_onbeam_pot[f], XMLconfig.bdt_onbeam_spills[f], XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
 
-            bkg_bdt_files.push_back(bdt_files.back());
+           if(!XMLconfig.bdt_is_training_signal[f])  bkg_bdt_files.push_back(bdt_files.back());
         }
 
-        if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f]  && !XMLconfig.bdt_is_validate_file[f]){
+        if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f]  && !XMLconfig.bdt_is_validate_file[f] && !XMLconfig.bdt_is_offbeam_data[f]){
             if(XMLconfig.bdt_is_signal[f]){
                 std::cout<<" -- For the purposes of calculting a significance, this is a signal file"<<std::endl;
                 signal_bdt_files.push_back(bdt_files.back());
             }else{
-                std::cout<<" -- For the purposes of calculting a significance, this is a BKG file"<<std::endl;
+                std::cout<<" -- For the purposes of calculting a significance, this is a BKG file "<<std::endl;
                 bkg_bdt_files.push_back(bdt_files.back());
             }
         }
@@ -348,7 +354,7 @@ int main (int argc, char *argv[]){
 
 
         //These are old and redundant.
-        //f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
+        f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
         //f->addFriend("track_tree",analysis_tag+"_"+f->tag+"_simtrack.root");
 
     }
@@ -770,11 +776,15 @@ int main (int argc, char *argv[]){
             if(which_file == f || which_file <0 ){
                 if(which_file<0 && is_train) continue;
                 ncpi0_sss_precalc(bdt_files[f], analysis_tag);
-                sim_track_precalc(bdt_files[f], analysis_tag);
+                //sim_track_precalc(bdt_files[f], analysis_tag);
             }
         }
     }
     else if(mode_option == "test"){
+
+        signal_bdt_files[0]->tvertex->Scan("reco_shower_kalman_dEdx_plane2_median[0]:DeNan(reco_shower_kalman_dEdx_plane2_median[0],12.0):reco_shower_dEdx_amalgamated[0]","reco_asso_showers==1");
+
+        return 0;
 
         bdt_stack *pphistogram_stack = new bdt_stack(analysis_tag+"_stack");
         bdt_datamc ppdatamc(onbeam_data_file, pphistogram_stack, analysis_tag+"_stack");	
@@ -1129,10 +1139,9 @@ else if(mode_option == "eff2"){
 }else if(mode_option == "sbnfit"){
 
 
-    double splot_pot =  onbeam_data_file->pot;
+    double splot_pot =   onbeam_data_file->pot;
+    
     std::cout<<"Starting SBNfit with "<<splot_pot<<" POT"<<std::endl;
-
-
 
     if(which_stage==-1) which_stage ==1;
     if(which_file==-1){
