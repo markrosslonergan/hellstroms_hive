@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="mini" name ="#nu_{e}" def = "1" bdtcut = "( 0.95, 0)" /> 
+<topology tag="mini" name ="#nu_{e}" def = "1" bdtcut = "( 0.5)"/> 
 <filedir>/scratch/condor-tmp/klin/data_timing_root</filedir>
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <!--plot_on_top="true" means that the plot will not be considered as part of the ratio, and it will be just plotted on top-->
@@ -88,7 +88,7 @@
     <definition>
 		<cut>1</cut>
     </definition>
-	<fixPOT> 18.737e20 </fixPOT>
+	<fixPOT> 18.7374e20 </fixPOT>
    <data type="OnBeam">
 <!--       <tor860_wcut> 4.026e+19 </tor860_wcut>   
        <E1DCNT_wcut> 8915733.0</E1DCNT_wcut>   
@@ -101,6 +101,7 @@
 <bdtfile filename = "timing_MC_fullosc_may07_2.root" tag = "fulloscTrain" hist_style = "hist" dirs = "" col = "(1.0,1.0,1.0)" plot_name = "FullOsc#nu_{e} Train">
     <definition>
         <cut> (backgroundType==1||backgroundType==2||backgroundType==3) </cut>
+		<cut>  ibkgd ==1</cut> <!--CCQE-->
         <cut> Entry$%2==1 </cut>
     </definition>
     <training>
@@ -112,6 +113,30 @@
 <bdtfile filename = "timing_MC_nue_may07_2.root" tag = "pi0Train" hist_style = "hist" dirs = "" col = "(0.81,0.37,0.38)" plot_name = "#pi^{0} Train" >
     <definition>
         <cut> backgroundType==9 </cut>
+        <cut> Entry$%2==1 </cut>
+    </definition>
+    <training>
+        <cut> 1 </cut>
+     </training>
+	<fixPOT> 2.054E21 </fixPOT>
+</bdtfile>
+
+<bdtfile filename = "timing_MC_nue_may07_2.root" tag = "ncpi0Train" hist_style = "hist" dirs = "" col = "(0.81,0.37,0.38)" plot_name = "#pi^{0} Train" >
+    <definition>
+        <cut> backgroundType==9 </cut>
+		<cut> ibkgd == 2 </cut>
+        <cut> Entry$%2==1 </cut>
+    </definition>
+    <training>
+        <cut> 1 </cut>
+     </training>
+	<fixPOT> 2.054E21 </fixPOT>
+</bdtfile>
+
+<bdtfile filename = "timing_MC_nue_may07_2.root" tag = "cohpi0Train" hist_style = "hist" dirs = "" col = "(0.81,0.37,0.38)" plot_name = "#pi^{0} Train" >
+    <definition>
+        <cut> backgroundType==9 </cut>
+		<cut> ibkgd == 4 </cut>
         <cut> Entry$%2==1 </cut>
     </definition>
     <training>
@@ -132,8 +157,60 @@
 </bdtfile>
 
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
+<mva type="BDT" use="yes" tag = "PI0" name ="Pi0 focused BDT" binning = "(36,0.9,1.0)">
+    <method type = "XGBoost" use = "yes">
+        <param> n_trees=2000</param>
+        <param> tree_method=exact</param>
+        <param> n_gpus=0</param>
+        <param> objective=binary:logistic</param>
+        <param> eval_metric=logloss</param>
+        <param> min_child_weight=1</param> 
+        <param> gamma=1.2</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will be.    -->
+        <param> max_depth=4</param>    <!-- How many layers deep each tree -->
+        <param> eta=0.04</param>        <!-- Learning Rate -->
+        <param> subsample=0.3</param> <!-- % of events passed to each tree -->
+        <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
+        <param> verbosity=1</param>
+    </method>
+    <file
+        bkg_train_tag= "pi0Train" 
+        bkg_test_tag = "pi0misid"
+        bkg_test_cut = "Entry$%5<2" 
+        sig_train_tag= "fulloscTrain"
+        sig_test_tag = "fullosc"
+        sig_test_cut = "Entry$%5<2"
+        />
+    <scan min = "0.4" max = "0.9" steps="100"/>
+</mva>
 
-<mva type="BDT" use="yes" tag = "PI0MISID" name ="Pi0misid focused BDT" binning = "(36,0.9,1.0)">
+
+<mva type="BDT" use="no" tag = "NCPI0" name ="NCPi0 focused BDT" binning = "(36,0.9,1.0)">
+    <method type = "XGBoost" use = "yes">
+        <param> n_trees=2200</param>
+        <param> tree_method=exact</param>
+        <param> n_gpus=0</param>
+        <param> objective=binary:logistic</param>
+        <param> eval_metric=logloss</param>
+        <param> min_child_weight=1</param> 
+        <param> gamma=2</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will be.    -->
+        <param> max_depth=4</param>    <!-- How many layers deep each tree -->
+        <param> eta=0.2</param>        <!-- Learning Rate -->
+        <param> subsample=0.9</param> <!-- % of events passed to each tree -->
+        <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
+        <param> verbosity=1</param>
+    </method>
+    <file
+        bkg_train_tag= "ncpi0Train" 
+        bkg_test_tag = "pi0misid"
+        bkg_test_cut = "Entry$%5<2" 
+        sig_train_tag= "fulloscTrain"
+        sig_test_tag = "fullosc"
+        sig_test_cut = "Entry$%5<2"
+        />
+    <scan min = "0.33" max = "0.74" steps="10"/>
+</mva>
+
+<mva type="BDT" use="no" tag = "COHPI0" name ="COHPi0 focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees=1650</param>
         <param> tree_method=exact</param>
@@ -149,16 +226,18 @@
         <param> verbosity=1</param>
     </method>
     <file
-        bkg_train_tag= "pi0Train" 
+        bkg_train_tag= "cohpi0Train" 
         bkg_test_tag = "pi0misid"
         bkg_test_cut = "Entry$%5<2" 
         sig_train_tag= "fulloscTrain"
         sig_test_tag = "fullosc"
         sig_test_cut = "Entry$%5<2"
         />
-    <scan min = "0.63" max = "0.74" steps="20"/>
+    <scan min = "0.33" max = "0.74" steps="10"/>
 </mva>
-<mva type="BDT" use="yes" tag = "DELTA" name ="Delta focused BDT" binning = "(36,0.9,1.0)">
+
+
+<mva type="BDT" use="no" tag = "DELTA" name ="Delta focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees=1650</param>
         <param> tree_method=exact</param>
@@ -181,34 +260,7 @@
         sig_test_tag = "fullosc"
         sig_test_cut = "Entry$%5<2"
         />
-    <scan min = "0" max = "0.5" steps="5"/>
-</mva>
-
-
-<mva type="BDT" use="no" tag = "DIRT" name ="Dirt focused BDT" binning = "(36,0.9,1.0)">
-    <method type = "XGBoost" use = "yes">
-        <param> n_trees=1650</param>
-        <param> tree_method=exact</param>
-        <param> n_gpus=0</param>
-        <param> objective=binary:logistic</param>
-        <param> eval_metric=logloss</param>
-        <param> min_child_weight=1</param> 
-        <param> gamma=2</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will be.    -->
-        <param> max_depth=4</param>    <!-- How many layers deep each tree -->
-        <param> eta=0.01</param>        <!-- Learning Rate -->
-        <param> subsample=0.9</param> <!-- % of events passed to each tree -->
-        <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
-        <param> verbosity=1</param>
-    </method>
-    <file
-        bkg_train_tag= "dirtTrain" 
-        bkg_test_tag = "dirtTrain"
-        bkg_test_cut = "Entry$%5<4" 
-        sig_train_tag= "fulloscTrain"
-        sig_test_tag = "fulloscTrain"
-        sig_test_cut = "Entry$%5<4"
-        />
-    <scan min = "0" max = "0.3" steps="5"/>
+    <scan min = "0.2" max = "0.7" steps="10"/>
 </mva>
 
 
@@ -222,15 +274,18 @@
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
-<var def = "el.R" binning="(12,0,600)" unit = "R [cm]" type = "d" logplot = "false"  training = "01"/>
-<var def = "el.X" binning="(20,-600,600)" unit = "X [cm]" type = "d" logplot = "false"  training = "01"/>
-<var def = "el.Y" binning="(20,-600,600)" unit = "Y [cm]" type = "d" logplot = "false"  training = "01"/>
-<var def = "el.Z" binning="(20,-600,600)" unit = "Z [cm]" type = "d" logplot = "false"  training = "01"/>
-<var def = "el.EnuQE" binning="(24,100,1300)" unit = "E_{#nu}^{QE} [MeV]" type = "d" logplot = "false"  training = ""/>
-<var def = "el.E" binning="(24,100,1300)" unit = "Energy [MeV]" type = "d" logplot = "false"  training = ""/>
-<var def = "el.UZ" binning="(8,-1,1)" unit = "cos#theta" type = "d" logplot = "false"  training = "01"/>
-<var def = "el.UY" binning="(8,-1,1)" unit = "UY" type = "d" logplot = "false"  training = "01"/>
-<var def = "el.UX" binning="(8,-1,1)" unit = "UX" type = "d" logplot = "false"  training = "01"/>
+<var def = "el.R" binning="(12,0,600)" unit = "R [cm]" type = "d" logplot = "false"  training = "012" group = "1"/>
+<var def = "el.X" binning="(20,-600,600)" unit = "X [cm]" type = "d" logplot = "false"  training = "012"/>
+<var def = "el.Y" binning="(20,-600,600)" unit = "Y [cm]" type = "d" logplot = "false"  training = "012"/>
+<var def = "el.Z" binning="(20,-600,600)" unit = "Z [cm]" type = "d" logplot = "false"  training = "012"/>
+<var def = "el.EnuQE" binning="(24,100,1300)" unit = "E_{#nu}^{QE} [MeV]" type = "d" logplot = "false"  training = "" group = "1"/>
+<var def = "el.E" binning="(24,100,1300)" unit = "Energy [MeV]" type = "d" logplot = "false"  training = "012"/>
+
+<!--6 is below-->
+<var def = "el.UZ" binning="(10,-1,1)" unit = "cos#theta" type = "d" logplot = "false"  training = "012" group = "1"/>
+<var def = "el.UY" binning="(8,-1,1)" unit = "UY" type = "d" logplot = "false"  training = "012"/>
+<var def = "el.UX" binning="(8,-1,1)" unit = "UX" type = "d" logplot = "false"  training = "012"/>
+<var def = "sqrt(pow(el.UY,2)+pow(el.UX,2))" binning="(8,-1,1)" unit = "#sqrt{UY^{2}+UX^{2}}" type = "d" logplot = "false"  training = ""/>
 <!--
 <var def = "piNoFix.E1" binning="(24,100,1300)" unit = "pi0NoFix Energy1 [MeV]" type = "d" logplot = "false"  training = "0"/>
 <var def = "piFix.E1" binning="(24,100,1300)" unit = "pi0Fix Energy1 [MeV]" type = "d" logplot = "false"  training = "0"/>
@@ -241,13 +296,21 @@
 <var def = "el.E/el.EnuQE" binning="(10,0,1.5)" unit = "Energy/E_{#nu}^{QE} [MeV]" type = "d" logplot = "false"  training = "01"/>
 -->
 
+<var def = "miniPI0_mva" binning = "(20,0,1.1)" unit = "PI0 BDT Score" type="d" training= "" logplot="false" group = "1"/> 
+<var def = "miniPI0_mva" binning = "(20,0,1.1)" unit = "PI0 BDT Score (log)" type="d" training= "" logplot="true" group = "1"/> 
+<!--
+<var def = "miniNCPI0_mva" binning = "(20,0,1.1)" unit = "NCPI0 BDT Score" type="d" training= "" logplot="false" group = "1"/> 
+<var def = "miniNCPI0_mva" binning = "(20,0,1.1)" unit =  "NCPI0 BDT Score log" type="d" training= "" logplot="true" group = "1"/> 
 <var def = "miniDELTA_mva" binning = "(15,0,1.1)" unit = "DELTA BDT Score" type="d" training= "" logplot="false" group = "1"/> 
-<var def = "miniPI0MISID_mva" binning = "(15,0,1.1)" unit = "PI0MISID BDT Score" type="d" training= "" logplot="false" group = "1"/> 
-
-<alias key="vlen" value ="sqrt(el.X*el.X+el.Y*el.Y+el.Z*el.Z)"/>
+<var def = "miniCOHPI0_mva" binning = "(15,0,1.1)" unit = "COHPI0 BDT Score" type="d" training= "" logplot="false" group = "1"/> 
+<var def = "miniDELTA_mva" binning = "(15,0,1.1)" unit =  "DELTA BDT Score log" type="d" training= "" logplot="true" group = "1"/> 
+<var def = "miniCOHPI0_mva" binning = "(15,0,1.1)" unit = "COHPI0 BDT Score log" type="d" training= "" logplot="true" group = "1"/> 
+-->
+<alias key="vlen" value ="sqrt(el.X*el.X+el.Y*el.Y+el.Z*el.Z)"/><!--vector length-->
 <alias key="cvlen" value ="sqrt(pow(el.UX-el.X,2)+pow(el.UY-el.Y,2)+pow(el.UZ-el.Z,2))"/>
+<!--
 <var def = "((-el.X*(el.UX-el.X)-el.Y*(el.UY-el.Y)-el.Z*(el.UZ-el.Z)))/(#vlen#*#cvlen#)" binning="(20,-1,1)" unit = "Centerness" type = "d" logplot = "false"  training = ""/>
-
+-->
 <!--
 <var def = "#PM#+1g0pJan2020_v1BNB_mva" binning = "(30,0.55,0.98)" unit = "High BNB BDT Score" type="d" training= "" logplot="true"/> 
 -->

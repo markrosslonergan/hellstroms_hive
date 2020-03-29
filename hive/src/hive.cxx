@@ -753,8 +753,8 @@ int main (int argc, char *argv[]){
 
         if (vector != ""){//if passed specific variables
             std::vector<bdt_variable> tmp_var =  real_datamc.GetSelectVars(vector, vars);
-//            real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
-			real_datamc.plot2D_DataMinusMC(ftest, tmp_var, fbdtcuts);
+            real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
+//			real_datamc.plot2D_DataMinusMC(ftest, tmp_var, fbdtcuts);
         }else{
             real_datamc.plot2D(ftest, vars, fbdtcuts); //warning this will make a lot of plots
         }//if passed a vector

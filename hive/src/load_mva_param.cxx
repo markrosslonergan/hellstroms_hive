@@ -142,7 +142,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             std::string bdt_name = pMVA->Attribute("name");
             std::string bdt_binning = pMVA->Attribute("binning");
 
-            std::cout<<"starting BDT number "<<n_bdt<<" with TAG: "<<bdt_tag<<" name: "<<bdt_name<<"  with binning "<<bdt_binning<<std::endl;
+            std::cout<<"\nstarting BDT number "<<n_bdt<<" with TAG: "<<bdt_tag<<" name: "<<bdt_name<<"  with binning "<<bdt_binning<<std::endl;
 
             //use TMVA instance to get the right EMVA type
             TMVA::Types::EMVA tmva_type = type_instance.GetMethodType(mva_type.c_str());
@@ -240,7 +240,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
                     vec_methods.back().scan_max = strtof(pMVAscan->Attribute("max"),NULL); 
                     vec_methods.back().scan_min = strtof(pMVAscan->Attribute("min"),NULL); 
                     vec_methods.back().scan_steps = strtof(pMVAscan->Attribute("steps"),NULL); 
-                    std::cout<<"Scan params "<<vec_methods.back().scan_steps<<" "<<vec_methods.back().scan_min<<" "<<vec_methods.back().scan_max<<std::endl;   
+                    std::cout<<"Scan params "<<vec_methods.back().scan_steps<<" "<<vec_methods.back().scan_min<<" "<<vec_methods.back().scan_max<<std::endl;
                     pMVAscan = pMVA->NextSiblingElement("scan");
                 }//end scan
             }

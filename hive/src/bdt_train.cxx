@@ -1309,6 +1309,7 @@ int bdt_XGtrain(bdt_info &info){
                 htgain.GetXaxis()->SetBinLabel(i+1,  (std::to_string(train_var_id[is])+" : "+info.train_vars[train_var_id[is]].unit).c_str()); // Find out which bin on the x-axis the point corresponds to and set the
             }
         }
+		htgain.SetMinimum(0);
         htgain.Draw("hist");
         htgain.SetTitle("Variable importance by total gain");
         cgain.SetBottomMargin(0.5);
