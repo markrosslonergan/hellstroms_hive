@@ -476,7 +476,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
     std::string s_mod = "";
     TRandom3 *rangen  = new TRandom3(0);  
     std::cout<<"Starting"<<std::endl;
-    for(int t=0; t < 10000; t++){
+    for(int t=0; t < 100000; t++){
 
         std::vector<double> d (bdt_infos.size(),0);
         for(int i=0; i< bdt_infos.size(); i++){

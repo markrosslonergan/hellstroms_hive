@@ -53,6 +53,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 //    run_fractions_plot = {0.16638655, 0.26435986, 0.043400890, 0.21413742, 0.31171527};
 //    run_fraction_cuts  = {"(run_number >= 4952 && run_number <= 7770)", "( run_number >=8317 && run_number <=  13696)", "(run_number >= 13697 && run_number <= 14116)","(run_number >= 14117 && run_number <= 18960)","(run_number >=18961 && run_number <= 23542)"};
     
+    //What we should have for neutrino based on pawels good runs 
     run_names = {"RI/II/IIIa","RIIIb/IV"};
     run_fraction_cuts  = {"( (run_number >= 4952 && run_number <= 7770) || ( run_number >= 8317 && run_number <=  13696) || (run_number >= 13697 && run_number <= 14116)) ", "( (run_number >= 14117 && run_number <= 18960) || (run_number >=18961 && run_number <=23542) )"};
     run_fractions_plot = {0.4742,0.5258};
