@@ -1,4 +1,4 @@
-#include "bdt_file.h"
+# include "bdt_file.h"
 
 
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) : bdt_file(indir, inname, intag,inops,inrootdir,incol,1001,inflow){}
@@ -53,9 +53,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 //    run_fractions_plot = {0.16638655, 0.26435986, 0.043400890, 0.21413742, 0.31171527};
 //    run_fraction_cuts  = {"(run_number >= 4952 && run_number <= 7770)", "( run_number >=8317 && run_number <=  13696)", "(run_number >= 13697 && run_number <= 14116)","(run_number >= 14117 && run_number <= 18960)","(run_number >=18961 && run_number <= 23542)"};
     
-    run_names = {"RI/II/IIIa","RIIIb/IV"};
-    run_fraction_cuts  = {"( (run_number >= 4952 && run_number <= 7770) || ( run_number >= 8317 && run_number <=  13696) || (run_number >= 13697 && run_number <= 14116)) ", "( (run_number >= 14117 && run_number <= 18960) || (run_number >=18961 && run_number <=23542) )"};
-    run_fractions_plot = {0.4742,0.5258};
+    //run_names = {"RI/II/IIIa","RIIIb/IV"};
+    //run_fraction_cuts  = {"( (run_number >= 4952 && run_number <= 7770) || ( run_number >= 8317 && run_number <=  13696) || (run_number >= 13697 && run_number <= 14116)) ", "( (run_number >= 14117 && run_number <= 18960) || (run_number >=18961 && run_number <=23542) )"};
+    //run_fractions_plot = {0.4742,0.5258};
    
     //2g1p
     //run_names  = {"RI/II","RIII"};
@@ -66,7 +66,16 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     //run_names  = {"RI/II","RIII"};
     //run_fraction_cuts = {"(run_number <=13696)","(run_number >= 13697)"};
     //run_fractions_plot = {0.677544979,0.322455021};
+    
+    // Just run 1 and/or 2
+    //run_names = {"RI/II"};
+    //run_fraction_cuts  = {"run_number<=13696"};
+    //run_fractions_plot = {1.0};
 
+    // Just run 3
+    run_names = {"RIII"};
+    run_fraction_cuts  = {"1"};
+    run_fractions_plot = {1.0};
 
     //run_names = {"RIsmall"};
     //run_fraction_cuts  = {"1"};
@@ -89,12 +98,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     double combin = 0.0;
     for(int i=0; i< run_fractions_plot.size(); i++){
             run_fractions_file[i] = tvertex->GetEntries(run_fraction_cuts[i].c_str())/(double)tvertex->GetEntries();
+            std::cout << "BLARG run_fractions_file[" << i << "] = " << run_fractions_file[i] << std::endl;
             std::cout<<run_fraction_cuts[i]<<std::endl;
             std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
             combin+=run_fractions_file[i];
     }
     std::cout<<"Total is "<<combin<<std::endl;
 
+    std::cout << "run_fractions_plot[0] = " << run_fractions_plot[0] << std::endl;
+    std::cout << "run_fractions_file[0] = " << run_fractions_file[0] << std::endl;
     run_weight_string = "1.0*("+run_fraction_cuts[0]+"*"+std::to_string(run_fractions_plot[0]/run_fractions_file[0]);
     for(int i=1; i< run_fractions_plot.size(); i++){
          run_weight_string += "+" +run_fraction_cuts[i]+"*"+std::to_string(run_fractions_plot[i]/run_fractions_file[i]);
