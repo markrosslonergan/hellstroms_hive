@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g1pMar2020_v3" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.999691,0.944846,0.455226,0.907671,0.50031)" />
+<topology tag="1g1pMar2020_v3" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "( 0.99676,0.954522,0.516416,0.884429,0.608524)" />
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
@@ -446,7 +446,7 @@
 <var def = "TMath::Min(fabs(acos(reco_track_diry)),fabs(acos(-reco_track_diry)))" binning = "(100,0.0,1.571)" unit = "Track Cosmicyness" type="d"  training = "0123"/>
 
 <!--<var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(100,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = "0123"  group = "3"/>-->
-<var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(8,1.01,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = "0123"  group = "3"/>
+<var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(8,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = "0123"  group = "3"/>
 
 <var def = "(#PE#)*(reco_track_dirz[0])+(#GE#*0.001)*reco_shower_implied_dirz[0]" binning = "(100,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z (implied) [GeV]" type = "d"    training = "0123" group = "1" />
 <var def = "(#PE#)*(reco_track_diry[0])+(#GE#*0.001)*reco_shower_implied_diry[0]" binning = "(100,-1.5,1.9)" unit = "Reconstructed Delta Momentum Y (implied) [GeV]" type = "d"    training = "123" group = "1" />
@@ -793,11 +793,11 @@
 -->
 
 <!--bdt vars -->
-<var def = "1g1pMar2020_v3COSMIC_mva" binning = "(100,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v3NCPi0_mva" binning = "(100,0.0,1.0)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v3BNB_mva" binning = "(100,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v3Nue_mva" binning = "(100,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v3SSV_mva" binning = "(100,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v3COSMIC_mva" binning = "(48,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v3NCPi0_mva" binning = "(48,0.0,1.0)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v3BNB_mva" binning = "(48,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v3Nue_mva" binning = "(48,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v3SSV_mva" binning = "(48,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
 <!--pi0 vars -->
 <!--
