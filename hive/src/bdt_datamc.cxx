@@ -487,6 +487,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }
                 std::string leg_type = "f";   
 
+                  for(int p=0; p<h1->GetNbinsX();p++){
+      
+                  std::cout<<"for file "<<f->tag<<" in bin "<<p+1 <<" = "<<h1->GetBinContent(p+1)<<std::endl;
+                
+                  }
+
                 //if(mc_stack->signal_on_top[n]) leg_type = "l";
                 //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
                 l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
@@ -522,7 +528,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     double da = d0->GetBinContent(p+1);
                     double bk = tsum->GetBinContent(p+1);
 
-                    if ( bk ==0){
+                  std::cout<<"total MC+EXT in bin "<<p+1<<" = "<<tsum->GetBinContent(p+1)<<std::endl;
+                  std::cout<<"total data in bin "<<p+1<<" = "<<d0->GetBinContent(p+1)<<std::endl;
+                
+                  if ( bk ==0){
                         std::cout<<"ERROR mychi, for bin "<<p<<" n_data= "<<da<<" and n_mc= "<<bk<<std::endl;
 
                     } else{
@@ -563,7 +572,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 for(int ib=0; ib<var.n_bins; ib++){
                     for(int jb=0; jb<var.n_bins; jb++){
                         double curchi   =  (tsum->GetBinContent(ib+1)-d0->GetBinContent(ib+1))*(*covar_collapsed)(ib,jb)*(tsum->GetBinContent(jb+1)-d0->GetBinContent(jb+1));
-                        mychi += curchi;
+                       mychi += curchi;
                         //std::cout<<"Hi: "<<ib<<" "<<jb<<" "<<tsum->GetBinContent(ib+1)<<" "<<d0->GetBinContent(ib+1)<<" "<<(*covar_collapsed)(ib,ib)<<" "<<tsum->GetBinContent(jb+1)<<" "<<d0->GetBinContent(jb+1)<<" "<<curchi<<" "<<mychi<<std::endl;
 
                     } 
