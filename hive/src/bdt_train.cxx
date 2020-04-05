@@ -780,6 +780,8 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_
 
 
 int bdt_XGtrain(bdt_info &info){
+	
+	bool print_message = true;
 
     std::string const name = info.identifier;
 
@@ -876,7 +878,7 @@ int bdt_XGtrain(bdt_info &info){
             safe_xgboost(XGBoosterEvalOneIter(booster, i, eval_dmats, eval_names, 2, &eval_result));
             std::string res = eval_result;
 
-            std::cout<<"RES "<<res<<std::endl; 
+//            std::cout<<"RES "<<res<<std::endl; 
 
 
             for(int t =0; t<s_types.size();++t){
@@ -900,12 +902,16 @@ int bdt_XGtrain(bdt_info &info){
 
             iteration.push_back(i);
 
-            printf("%s\n", eval_result);
-
-            //not a stopping conditin
+//            printf("%s\n", eval_result);
+			if(print_message){
+				//| |   |   |   std::cout<<"RES "<<res<<std::endl;                                       
+				std::cout<<"\rTraining BDT trees: "<<i+1<<"/"<<n_trees;
+				std::cout.flush();
+			}                     
+			//not a stopping conditin
             if(i>2){
                 if(test_metric_res[0][i-1] > test_metric_res[0][i-2] ){
-                    std::cout<<"Yes"<<" "<<cotr<<std::endl;
+//                    std::cout<<"Yes"<<" "<<cotr<<std::endl;
                     cotr++;
                 }else{
                     cotr=0;
@@ -913,6 +919,7 @@ int bdt_XGtrain(bdt_info &info){
             }
             //if(cotr>10) break;
         }
+		std::cout<<std::endl;
 
 
         // predict
