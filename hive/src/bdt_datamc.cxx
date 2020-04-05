@@ -333,7 +333,7 @@ int bdt_datamc::plot2D_DataMinusMC(TFile *ftest, std::vector<bdt_variable> vars,
 				//STEP 4.1, draw the mainpad (bottom left)
 					main_pad->cd();
                     DataMinusMC->Draw("COLZ");
-                    DataMinusMC->SetTitle("[Data-(MC+BNBExt)]/sqrt(MC+BNBext)");
+                    DataMinusMC->SetTitle("[Data-MC)]/#sqrt{MC}");
                     DataMinusMC->GetXaxis()->SetTitle((var1.unit).c_str());
                     DataMinusMC->GetXaxis()->SetTitleSize(0.04);
 //                    DataMinusMC->GetXaxis()->SetTitleOffset(1.2);
@@ -395,7 +395,7 @@ int bdt_datamc::plot2D_DataMinusMC(TFile *ftest, std::vector<bdt_variable> vars,
 					TLegend *legend = new TLegend(0, 0.1,0.8,0.2);
 					legend->SetNColumns(2);
 					legend->AddEntry(projected_datay, "Data","P");
-					legend->AddEntry(projected_MCy, "MC+BNBExt","F");
+					legend->AddEntry(projected_MCy, "MC = BkgMC + Best Fit","F");
 					legend->Draw();
 
                     std::cout<<"Writing png and pdf."<<std::endl;

@@ -90,10 +90,6 @@
     </definition>
 	<fixPOT> 18.7374e20 </fixPOT>
    <data type="OnBeam">
-<!--       <tor860_wcut> 4.026e+19 </tor860_wcut>   
-       <E1DCNT_wcut> 8915733.0</E1DCNT_wcut>   
-       <EXT>36566176.0</EXT>  
-	   -->
    </data>
 </bdtfile>
 
@@ -269,7 +265,15 @@
 
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
 <!--
-<precut def = "el.EnuQE<1250&amp;&amp;el.EnuQE>150" name = "EnuQE Cut"/>
+<precut def = "el.EnuQE<1250&amp;&amp;el.EnuQE>250" name = "EnuQE Cut"/>
+<precut def = "miniPI0_mva==0.5" name = " BDT cut"/>
+<precut def = "el.EnuQE<1250&amp;&amp;el.EnuQE>200" name = "EnuQE Cut"/>
+-->
+
+
+<!--
+<precut def = "el.EnuQE<250" name = "EnuQE Cut"/>
+<precut def = "el.UZ>0.95" name = "UZ Cut"/>
 -->
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
@@ -282,10 +286,13 @@
 <var def = "el.E" binning="(24,100,1300)" unit = "Energy [MeV]" type = "d" logplot = "false"  training = "012"/>
 
 <!--6 is below-->
-<var def = "el.UZ" binning="(10,-1,1)" unit = "cos#theta" type = "d" logplot = "false"  training = "012" group = "1"/>
+<var def = "el.UZ" binning="(20,0.8,1)" unit = "cos#theta" type = "d" logplot = "false"  training = "012" group = "1"/>
 <var def = "el.UY" binning="(8,-1,1)" unit = "UY" type = "d" logplot = "false"  training = "012"/>
 <var def = "el.UX" binning="(8,-1,1)" unit = "UX" type = "d" logplot = "false"  training = "012"/>
 <var def = "sqrt(pow(el.UY,2)+pow(el.UX,2))" binning="(8,-1,1)" unit = "#sqrt{UY^{2}+UX^{2}}" type = "d" logplot = "false"  training = ""/>
+
+<var def = "mu.F - el.F" binning= "(20,-0.1,1)" unit ="electron/muon log likelihood" type = "d" logplot = "false"  training = "012" group ="2"/>
+<var def = "piFix.F - el.F" binning= "(20,-0.08,0.08)" unit ="electron/pion log likelihood" type = "d" logplot = "false"  training = "012" group ="2"/>
 <!--
 <var def = "piNoFix.E1" binning="(24,100,1300)" unit = "pi0NoFix Energy1 [MeV]" type = "d" logplot = "false"  training = "0"/>
 <var def = "piFix.E1" binning="(24,100,1300)" unit = "pi0Fix Energy1 [MeV]" type = "d" logplot = "false"  training = "0"/>

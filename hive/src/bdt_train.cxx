@@ -243,15 +243,15 @@ int bdt_train(bdt_info &info, bdt_file *signal_train_file, bdt_file * signal_tes
 }
 
 
-int convertToLibSVM(bdt_info& info, bdt_file *file){
+int convertToLibSVM(std::string dir, bdt_info& info, bdt_file *file){
 
     std::vector<bdt_variable> variables = info.train_vars;
     std::string const name = info.identifier;
     std::cout<<"Beginninng to convert files into a libSVM format for XGBoost"<<std::endl;
 
     std::ofstream sslibSVM;
-    sslibSVM.open (name+"_"+file->tag+".libSVM.dat");
-    TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
+    sslibSVM.open (dir+name+"_"+file->tag+".libSVM.dat");
+    TFile * outfile = TFile::Open((dir+name+"libSVM_test.root").c_str(), "recreate");
 
     TTreeFormula* weight = new TTreeFormula("sig_w",file->weight_branch.c_str(),file->tvertex);
 
@@ -301,7 +301,9 @@ int convertToLibSVM(bdt_info& info, bdt_file *file){
     return 0;
 }
 
-int convertToLibSVMTT(bdt_info &info, 
+int convertToLibSVMTT(
+					std::string dir,
+					bdt_info &info, 
 					bdt_file *signal_file_train, 
 					bdt_file *signal_file_test, 
 					std::string signal_test_cut, 
@@ -317,10 +319,10 @@ int convertToLibSVMTT(bdt_info &info,
 	if(print_message) std::cout<<"Beginninng to convert training/testing files into a libSVM format for XGBoost on BDT: "<<name<<std::endl;
 
     std::ofstream sslibSVMtrain,sslibSVMtest;
-    sslibSVMtest.open (name+".libSVM.test.dat");
-    sslibSVMtrain.open (name+".libSVM.train.dat");
+    sslibSVMtest.open (dir+name+".libSVM.test.dat");
+    sslibSVMtrain.open (dir+name+".libSVM.train.dat");
 
-    TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
+    TFile * outfile = TFile::Open((dir+name+"libSVM_test.root").c_str(), "recreate");
 
     int bdt_precut_stage = 1;
     //train samples
@@ -517,8 +519,10 @@ int convertToLibSVMTT(bdt_info &info,
 
 int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut){
     //This is the new one that splits based individual test/training -- WARNING DEPRECIATED
-   std::cout<<"WARNING WARNING DEPRCIATED! use convertToLibSVMTT instead"<<std::endl;
+   std::cout<<"WARNING WARNING DEPRCIATED! use convertToLibSVMTT instead, check "<<__FILE__<<__LINE__<<std::endl;
 
+   exit(0);
+/*
     std::vector<bdt_variable> variables = info.train_vars;
     std::string const name = info.identifier;
     std::cout<<"Beginninng to convert training/testing files into a libSVM format for XGBoost on BDT: "<<name<<std::endl;
@@ -670,12 +674,17 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
     sslibSVMtrain.close();
     outfile->Close();
     return 0;
+*/
 }
 
 
 int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_file){
     //This is the older one that just splits based on training fraction
+	
+   std::cout<<"This function should not be called, check "<<__FILE__<<__LINE__<<std::endl;
 
+   exit(0);
+/*	
     std::vector<bdt_variable> variables = info.train_vars;
     std::string const name = info.identifier;
     std::cout<<"Beginninng to convert training/testing files into a libSVM format for XGBoost"<<std::endl;
@@ -795,16 +804,17 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_
     sslibSVMtrain.close();
     outfile->Close();
     return 0;
+	*/
 }
 
 
 
-int bdt_XGtrain(bdt_info &info){
+int bdt_XGtrain(std::string dir, bdt_info &info){
 	bool print_message = true;
 
     std::string const name = info.identifier;
 
-    TFile *f = new TFile(("XGBoost_train_output_"+name+".root").c_str(),"recreate");
+    TFile *f = new TFile((dir+"XGBoost_train_output_"+name+".root").c_str(),"recreate");
 
     TH1* btest = new TH1D("btest","btest",100,0,1);
     TH1* btrain = new TH1D("btrain","btrain",100,0,1);
@@ -831,8 +841,8 @@ int bdt_XGtrain(bdt_info &info){
     int silent = 0;
     int use_gpu = 0;  // set to 1 to use the GPU for training
 
-    safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.train.dat").c_str(), silent, &dtrain));
-    safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.test.dat").c_str(), silent, &dtest));
+    safe_xgboost(XGDMatrixCreateFromFile((dir+info.identifier+".libSVM.train.dat").c_str(), silent, &dtrain));
+    safe_xgboost(XGDMatrixCreateFromFile((dir+info.identifier+".libSVM.test.dat").c_str(), silent, &dtest));
 
 
 
@@ -992,7 +1002,7 @@ int bdt_XGtrain(bdt_info &info){
         }
 
 
-        safe_xgboost(XGBoosterSaveModel(booster,(name+".XGBoost.mod").c_str() ));
+        safe_xgboost(XGBoosterSaveModel(booster,(dir+name+".XGBoost.mod").c_str() ));
         safe_xgboost(XGDMatrixFree(dtrain));
         safe_xgboost(XGDMatrixFree(dtest));
 
@@ -1094,7 +1104,7 @@ int bdt_XGtrain(bdt_info &info){
         f->Close(); 
 
 
-        bdt_XGBoost_importance(info, booster);
+        bdt_XGBoost_importance(dir, info, booster);
       
 
 
@@ -1186,15 +1196,15 @@ int bdt_XGtrain(bdt_info &info){
     }
 
 
-    int bdt_XGBoost_importance(bdt_info &info){
+    int bdt_XGBoost_importance(std::string dir, bdt_info &info){
         BoosterHandle booster;
         safe_xgboost(XGBoosterCreate(0, 0, &booster));
-        safe_xgboost(XGBoosterLoadModel(booster,(info.identifier+".XGBoost.mod").c_str()));
+        safe_xgboost(XGBoosterLoadModel(booster,(dir+info.identifier+".XGBoost.mod").c_str()));
 
-        return bdt_XGBoost_importance(info, booster);
+        return bdt_XGBoost_importance(dir, info, booster);
     }
 
-    int bdt_XGBoost_importance(bdt_info &info, BoosterHandle &booster){
+    int bdt_XGBoost_importance(std::string dir, bdt_info &info, BoosterHandle &booster){
 
         //some vectors to save info on each variable
         int t_vars = info.train_vars.size()+info.spec_vars.size();
@@ -1293,7 +1303,7 @@ int bdt_XGtrain(bdt_info &info){
         htuses.Draw("hist");
         htuses.SetTitle("Variable importance by total uses");
         cuses.SetBottomMargin(0.5);
-        cuses.SaveAs(("XGBoost_"+info.identifier+"_var_import_total_uses.pdf").c_str(),"pdf");
+        cuses.SaveAs((dir+"XGBoost_"+info.identifier+"_var_import_total_uses.pdf").c_str(),"pdf");
 
 
         TCanvas cgain("","",3000,1200);
@@ -1313,7 +1323,7 @@ int bdt_XGtrain(bdt_info &info){
         htgain.Draw("hist");
         htgain.SetTitle("Variable importance by total gain");
         cgain.SetBottomMargin(0.5);
-        cgain.SaveAs(("XGBoost_"+info.identifier+"_var_import_total_gain.pdf").c_str(),"pdf");
+        cgain.SaveAs((dir+"XGBoost_"+info.identifier+"_var_import_total_gain.pdf").c_str(),"pdf");
 
         std::cout<<"----------- Sort By Mean Gain: "<<info.identifier<<" ----------------------"<<std::endl;
         for(int i=0; i< variable_uses.size();i++){

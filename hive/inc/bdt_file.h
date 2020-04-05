@@ -244,7 +244,7 @@ struct bdt_file{
 
         int addFriend(std::string in_friend_tree_nam, std::string in_friend_file);
         int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
-        int addBDTResponses(bdt_info input_bdt_info);
+        int addBDTResponses(std::string dir, bdt_info input_bdt_info);
 
         ~bdt_file();
 

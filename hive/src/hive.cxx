@@ -362,7 +362,7 @@ int main (int argc, char *argv[]){
 
         if(mode_option != "app" && mode_option !="train" ){
             for(int k=0; k<bdt_infos.size(); k++){
-                f->addBDTResponses(bdt_infos[k]);
+                f->addBDTResponses(analysis_tag+"/", bdt_infos[k]);
             }
         }
         if(mode_option != "train"  && mode_option != "sbnfit"){
@@ -427,13 +427,16 @@ int main (int argc, char *argv[]){
             bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
             bdt_file * testing_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_test_tag]; 
 
+			gadget_buildfolder(analysis_tag);
+
             if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
 
                 //This is NAF, need to save it and not repeat
 				std::string sig_test_cut = bdt_infos[i].TMVAmethod.sig_test_cut;
 				std::string bkg_test_cut = bdt_infos[i].TMVAmethod.bkg_test_cut;
-                convertToLibSVMTT(bdt_infos[i], training_signal, testing_signal, sig_test_cut , training_background, testing_background, bkg_test_cut);
-                bdt_XGtrain(bdt_infos[i]);
+
+                convertToLibSVMTT(analysis_tag+"/", bdt_infos[i], training_signal, testing_signal, sig_test_cut , training_background, testing_background, bkg_test_cut);
+                bdt_XGtrain(analysis_tag+"/", bdt_infos[i]);
 
             }else if(bdt_infos[i].TMVAmethod.str=="TMVA"){
 
@@ -454,7 +457,7 @@ int main (int argc, char *argv[]){
 
                 if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
 
-                    bdt_XGapp(bdt_infos[i], bdt_files[f]);
+                    bdt_XGapp(analysis_tag+"/", bdt_infos[i], bdt_files[f]);
 
                 }else{
                     bdt_app(bdt_infos[i], bdt_files[f]);
@@ -753,8 +756,8 @@ int main (int argc, char *argv[]){
 
         if (vector != ""){//if passed specific variables
             std::vector<bdt_variable> tmp_var =  real_datamc.GetSelectVars(vector, vars);
-            real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
-//			real_datamc.plot2D_DataMinusMC(ftest, tmp_var, fbdtcuts);
+//            real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
+			real_datamc.plot2D_DataMinusMC(ftest, tmp_var, fbdtcuts);
         }else{
             real_datamc.plot2D(ftest, vars, fbdtcuts); //warning this will make a lot of plots
         }//if passed a vector
@@ -794,7 +797,7 @@ int main (int argc, char *argv[]){
 
         return 0;
         if(which_bdt==-1)which_bdt = 0;
-        bdt_XGBoost_importance(bdt_infos[which_bdt]);
+        bdt_XGBoost_importance(analysis_tag, bdt_infos[which_bdt]);
 
         return 0;
     }else if(mode_option == "sig"){

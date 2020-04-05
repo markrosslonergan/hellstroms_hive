@@ -828,16 +828,20 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
     return 0;
 }
 
-int bdt_file::addBDTResponses(bdt_info input_bdt_info){
+int bdt_file::addBDTResponses(std::string dir, bdt_info input_bdt_info){
     topo_name = input_bdt_info.topo_name; 
     auto method = input_bdt_info.TMVAmethod;
 
     std::cout<<"Now adding TreeFriend: "<<input_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
-    this->addFriend(this->tag +"_"+input_bdt_info.identifier,  input_bdt_info.identifier+"_"+this->tag+"_app"+".root");
+    this->addFriend(dir+this->tag +"_"+input_bdt_info.identifier,  input_bdt_info.identifier+"_"+this->tag+"_app"+".root");
 
     return 0;
 }
+
 int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods){
+	std::cout<<"Old! Not use anymore, check "<<__FILE__<<__LINE__<<std::endl;
+	exit(0);
+/*
     topo_name = bnb_bdt_info.topo_name; 
     for(auto &method: TMVAmethods){
 
@@ -849,6 +853,7 @@ int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,  
     }
 
     return 0;
+	*/
 }
 
 int bdt_file::setStageEntryList(int j){
