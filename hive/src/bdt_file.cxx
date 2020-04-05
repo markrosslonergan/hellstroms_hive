@@ -443,7 +443,6 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 	std::cout<<precut_key<<std::endl;
     unsigned long precut_hash = this->jenkins_hash(precut_key); 
     std::cout<<"These particular precuts and definitions have a hash of "<<precut_hash<<std::endl;
-	exit(0);
     std::string s_precut_hash = std::to_string(precut_hash);
 
     std::string filename = analysis_tag+"entrylists/"+this->tag+"_"+analysis_tag+"_entrylists.root";

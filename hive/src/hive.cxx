@@ -358,7 +358,9 @@ int main (int argc, char *argv[]){
     std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
-	gadget_buildfolder(analysis_tag+"entrylists/");//need this in the calcBaseEntryList();
+	if (access((analysis_tag+"entrylists").c_str(),F_OK) == -1){
+		mkdir((analysis_tag+"entrylists").c_str(),0777);//Create a folder for entrylists;
+	}
 
     for(auto &f: bdt_files){
 

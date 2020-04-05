@@ -1056,7 +1056,7 @@ int bdt_XGtrain(std::string dir, bdt_info &info){
             }
             c_error->Update();
         }
-        c_error->SaveAs(("XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
+        c_error->SaveAs((dir+"XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
         c_error->Write(); 
 
 
