@@ -337,7 +337,10 @@ int bdt_file::makeRunSubRunList(){
 }
 
 int bdt_file::calcPrecutEntryList(){
-
+	
+	std::cout<<"old ! not using this, check"<<__FILE__<<__LINE__<<std::endl;
+	exit(0);
+	/*
     //first check if a file exists with a precut entry list in it!
 
     std::string precut_key = this->name;
@@ -394,7 +397,7 @@ int bdt_file::calcPrecutEntryList(){
 
     }
     return 0;
-
+*/
 }
 
 int bdt_file::calcBDTEntryList(int stage, std::vector<double> bdt_cuts){
@@ -437,12 +440,13 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
         precut_key+=s;
     }
     precut_key+=this->flow.base_cuts;
-
+	std::cout<<precut_key<<std::endl;
     unsigned long precut_hash = this->jenkins_hash(precut_key); 
     std::cout<<"These particular precuts and definitions have a hash of "<<precut_hash<<std::endl;
+	exit(0);
     std::string s_precut_hash = std::to_string(precut_hash);
 
-    std::string filename = this->tag+"_"+analysis_tag+"_entrylists.root";
+    std::string filename = analysis_tag+"entrylists/"+this->tag+"_"+analysis_tag+"_entrylists.root";
     topological_list_name = "topological_list_"+analysis_tag+"_"+this->tag;
     precut_list_name = "precut_list_"+analysis_tag+"_"+this->tag;
 
@@ -833,7 +837,7 @@ int bdt_file::addBDTResponses(std::string dir, bdt_info input_bdt_info){
     auto method = input_bdt_info.TMVAmethod;
 
     std::cout<<"Now adding TreeFriend: "<<input_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
-    this->addFriend(dir+this->tag +"_"+input_bdt_info.identifier,  input_bdt_info.identifier+"_"+this->tag+"_app"+".root");
+    this->addFriend(this->tag +"_"+input_bdt_info.identifier,dir+  input_bdt_info.identifier+"_"+this->tag+"_app"+".root");
 
     return 0;
 }

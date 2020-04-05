@@ -358,6 +358,8 @@ int main (int argc, char *argv[]){
     std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
+	gadget_buildfolder(analysis_tag+"entrylists/");//need this in the calcBaseEntryList();
+
     for(auto &f: bdt_files){
 
         if(mode_option != "app" && mode_option !="train" ){
