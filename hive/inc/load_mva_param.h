@@ -43,14 +43,19 @@ class MVALoader {
     std::vector<std::string> bdt_hist_styles;
     std::vector<std::string> bdt_dirs;
     std::vector<std::string> bdt_plotnames;
+    std::vector<std::string> bdt_weight;
     std::vector<bool> bdt_is_validate_file;
 
     std::vector<TColor*> bdt_cols;
+    std::vector<int> bdt_linecols;
+    std::vector<int> bdt_linestyles;
+
     std::vector<int> bdt_fillstyles;
     std::vector<double> bdt_scales;
     std::vector<std::vector<std::string>> bdt_definitions;
     std::vector<std::vector<std::string>> bdt_training_cuts;
     std::vector<bool> bdt_is_onbeam_data;
+    std::vector<double> bdt_fixpot;
     std::vector<double> bdt_onbeam_pot;
     std::vector<double> bdt_onbeam_spills;
     std::vector<bool> bdt_is_offbeam_data;

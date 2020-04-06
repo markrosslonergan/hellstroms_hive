@@ -39,6 +39,7 @@
 #include "TRandom3.h"
 #include "TVectorT.h"
 #include "TEntryList.h"
+#include "load_mva_param.h"
 
     template <typename T>
 std::string to_string_prec(const T a_value, const int n = 6)
@@ -72,8 +73,8 @@ std::vector<size_t> sort_indexes(const std::vector<T> &v) {
 }
 
 
-TText * drawPrelim(double x, double y);
-TText * drawPrelim(double x, double y,double s);
+//TText * drawPrelim(double x, double y);
+//TText * drawPrelim(double x, double y,double s);
 TText * drawPrelim(double x, double y,double s, std::string in);
 TText * drawPrelim(double x, double y, std::string in);
 
@@ -109,10 +110,13 @@ struct bdt_file{
 
         int col;
         int fillstyle;
+        int linestyle;
+        int linecol;
 
         bool is_data;
         bool is_bnbext;
         bool is_mc;
+		bool is_signal;
 
         std::string leg;
 
@@ -122,7 +126,7 @@ struct bdt_file{
         int numberofevents_raw;
         double pot;
 
-        TFile *f;
+        TFile *file;
         TTree *tvertex;
 
         //copy tvertex into topovertex, but with topological cut.
@@ -196,9 +200,27 @@ struct bdt_file{
         bdt_variable getBDTVariable(bdt_info info, std::string bin);
         //legacy code, and damned lazy too
         //bdt_variable getBDTVariable(std::string cut);
+		//new
+		bdt_file(size_t index,
+			MVALoader XMLconfig,
+			bdt_flow inflow);
 
-        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir,  int incol, bdt_flow inflow);	
-        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir,  int incol, int fillstyle,bdt_flow inflow);	
+        bdt_file(std::string indir,
+		std::string inname, 
+		std::string intag, 
+		std::string inops, 
+		std::string inrootdir,  
+		int incol, 
+		bdt_flow inflow);	
+        
+		bdt_file(std::string indir,
+		std::string inname, 
+		std::string intag, 
+		std::string inops, 
+		std::string inrootdir, 
+		int incol, 
+		int fillstyle,
+		bdt_flow inflow);	
 
         //legacy code OBSOLETE
         //bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, std::string infriend, std::string infriendtree, int incol, bool indata);	
@@ -222,7 +244,7 @@ struct bdt_file{
 
         int addFriend(std::string in_friend_tree_nam, std::string in_friend_file);
         int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
-        int addBDTResponses(bdt_info input_bdt_info);
+        int addBDTResponses(std::string dir, bdt_info input_bdt_info);
 
         ~bdt_file();
 

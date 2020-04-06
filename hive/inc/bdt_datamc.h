@@ -56,9 +56,16 @@ class bdt_datamc{
         int plot_stage;
         std::vector<bool> subtraction_vec;
 
-        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;stack_mode=false;};
-        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1;stack_mode=false; };
-        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;stack_mode=false;};
+//        bdt_datamc(bdt_file* datafilein, 
+//		bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;stack_mode=false;};
+        bdt_datamc(
+		bdt_file* datafilein, 
+		bdt_stack* stackin, 
+		std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1;stack_mode=false; };
+//        bdt_datamc(bdt_file* datafilein, 
+//			bdt_stack* stackin, 
+//			std::string tagin, 
+//			bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;stack_mode=false;};
 
         int setPlotStage(int s){
             plot_stage =s;
@@ -73,24 +80,24 @@ class bdt_datamc{
         std::vector<bdt_variable> GetSelectVars(std::string vector, std::vector<bdt_variable> vars);
         int plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts);
 		int plot2D_DataMinusMC(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts);
-        int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
-        int plotStacks(TFile*f,std::vector<bdt_variable> vars, std::vector<double> cuts);
+//        int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
+        int plotStacks(TFile*f,std::vector<bdt_variable> vars, std::vector<double> cuts, std::vector<bdt_info> bdt_infos);
 
-        int plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt);
-        int plotStacks(TFile*f, bdt_variable var,double,double);
+//        int plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt);
+//        int plotStacks(TFile*f, bdt_variable var,double,double);
 
-        int plotBDTStacks(TFile*f, bdt_info,double,double);
-        int plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts);
+//        int plotBDTStacks(TFile*f, bdt_info,double,double);
+//        int plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts);
 
 
-        int SetSpectator();
+        void SetSpectator(){ this->isSpectator = true; };//used?
 
         int printPassingDataEvents(std::string outfilename, int stage, double c1, double c2);
         int printPassingDataEvents(std::string outfilename, int stage, std::vector<double> cuts);
         int printPassingPi0DataEvents(std::string outfilename, int stage, std::vector<double> cuts);
 
-        int calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file);
-        int scaleNorm(std::vector<bdt_file> *stack_files, bdt_file data_file, double scaleLow, double scaleHigh, double scaleStep);
+//        int calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file);
+//        int scaleNorm(std::vector<bdt_file> *stack_files, bdt_file data_file, double scaleLow, double scaleHigh, double scaleStep);
 
         int calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *frac_coll,bdt_variable & var);
         int simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & var);

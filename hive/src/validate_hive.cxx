@@ -300,7 +300,7 @@ int main (int argc, char *argv[]){
 
             if(mode_option != "app" ){
                 for(int k=0; k<bdt_infos.size(); k++){
-                    f->addBDTResponses(bdt_infos[k]);
+//                    f->addBDTResponses(bdt_infos[k]);
                 }
             }
 
@@ -336,7 +336,10 @@ int main (int argc, char *argv[]){
                 if(!((which_bdt==i || which_bdt==-1 )&&(which_file==f||which_file==-1))) continue;
                 
                 if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
-                    bdt_XGapp(bdt_infos[i], bdt_files[f]);
+				std::cerr<<"bdt_XGapp is diabled here, see hive.cxx for how to correct this"<<std::endl;
+				exit(0);
+
+//                    bdt_XGapp(bdt_infos[i], bdt_files[f]);
                 }else{
                     bdt_app(bdt_infos[i], bdt_files[f]);
                 }

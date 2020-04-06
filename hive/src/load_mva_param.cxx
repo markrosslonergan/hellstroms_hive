@@ -142,7 +142,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             std::string bdt_name = pMVA->Attribute("name");
             std::string bdt_binning = pMVA->Attribute("binning");
 
-            std::cout<<"starting BDT number "<<n_bdt<<" with TAG: "<<bdt_tag<<" name: "<<bdt_name<<"  with binning "<<bdt_binning<<std::endl;
+            std::cout<<"\nstarting BDT number "<<n_bdt<<" with TAG: "<<bdt_tag<<" name: "<<bdt_name<<"  with binning "<<bdt_binning<<std::endl;
 
             //use TMVA instance to get the right EMVA type
             TMVA::Types::EMVA tmva_type = type_instance.GetMethodType(mva_type.c_str());
@@ -240,7 +240,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
                     vec_methods.back().scan_max = strtof(pMVAscan->Attribute("max"),NULL); 
                     vec_methods.back().scan_min = strtof(pMVAscan->Attribute("min"),NULL); 
                     vec_methods.back().scan_steps = strtof(pMVAscan->Attribute("steps"),NULL); 
-                    std::cout<<"Scan params "<<vec_methods.back().scan_steps<<" "<<vec_methods.back().scan_min<<" "<<vec_methods.back().scan_max<<std::endl;   
+                    std::cout<<"Scan params "<<vec_methods.back().scan_steps<<" "<<vec_methods.back().scan_min<<" "<<vec_methods.back().scan_max<<std::endl;
                     pMVAscan = pMVA->NextSiblingElement("scan");
                 }//end scan
             }
@@ -285,10 +285,25 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }
 
         const char* t_fillstyles = pBDTfile->Attribute("fillstyle");
-        if(t_fillstyles==NULL){ bdt_fillstyles.push_back(1001);}else{
-            bdt_fillstyles.push_back((int)std::stoi(t_fillstyles,nullptr,10));
-        }
+		if(t_fillstyles==NULL){ 
+			bdt_fillstyles.push_back(1001);
+		}else{
+			bdt_fillstyles.push_back((int)std::stoi(t_fillstyles,nullptr,10));
+		}
 
+        const char* t_linecol = pBDTfile->Attribute("linecol");
+		if(t_linecol==NULL){ 
+			bdt_linecols.push_back(1);
+		}else{
+			bdt_linecols.push_back((int)std::stoi(t_linecol,nullptr,10));
+		}
+
+        const char* t_linestyles = pBDTfile->Attribute("linestyle");
+		if(t_linestyles==NULL){ 
+			bdt_linestyles.push_back(1);
+		}else{
+			bdt_linestyles.push_back((int)std::stoi(t_linestyles,nullptr,10));
+		}
 
         const char* t_dirs = pBDTfile->Attribute("dirs");
         if(t_dirs==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has no `dirs` attribute! "<<std::endl; exit(EXIT_FAILURE);}
@@ -322,6 +337,14 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }else{
             bdt_scales.push_back(atof(t_scales));
         }
+
+        const char* t_weight = pBDTfile->Attribute("weight");
+        if(t_weight==NULL){
+            bdt_weight.push_back("1");
+        }else{
+            bdt_weight.push_back(t_weight);
+        }
+
 
         const char* t_signals = pBDTfile->Attribute("signal");
         if(t_signals==NULL){
@@ -410,6 +433,13 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             bdt_is_training_signal.push_back(false);
         }
 
+		//Add fixpot for sample comparison, CHECK
+		TiXmlElement *pfixPOT = pBDTfile->FirstChildElement("fixPOT");
+		if(pfixPOT){
+			std::string fixpot = std::string(pfixPOT->GetText());
+			bdt_fixpot.push_back(stod(fixpot));
+		}
+
         //So, some book-keeping if its data!
         bool is_data = false;
         TiXmlElement *pData = pBDTfile->FirstChildElement("data");
@@ -421,7 +451,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         bdt_onbeam_spills.push_back(-999);
 
 
-        while(pData){
+        while(pData){//<data > section
 
             const char* t_use = pData->Attribute("use");
             if(t_use=="no"){break;}
@@ -443,7 +473,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             bdt_onbeam_spills.back() = 0;
 
             TiXmlElement *pTor = pData->FirstChildElement("tor860_wcut");
-            while(pTor){
+            while(pTor){//tor860_wcut section
                 std::string tor = std::string(pTor->GetText());
                 bdt_onbeam_pot.back() = stod(tor);    
                 pTor = pTor->NextSiblingElement("tor860_wcut");
@@ -523,9 +553,9 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         std::string var_binning = pVar->Attribute("binning");
         std::string var_unit = pVar->Attribute("unit");
         std::string var_type = pVar->Attribute("type");
-		const char * var_logplot = pVar->Attribute("logplot");
-		bool var_logplot_bool = false;
-		if(var_logplot==NULL){ 
+        const char * var_logplot = pVar->Attribute("logplot");
+        bool var_logplot_bool = false;
+		if(var_logplot==NULL){
 			var_logplot_bool = false;
 		}else if (strcmp(var_logplot,"yes")==0||strcmp(var_logplot,"true")==0){
 			var_logplot_bool = true;
@@ -713,7 +743,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             recomc_names.push_back(t_recomc_name);
 
             const char* t_col = pDef->Attribute("col");
-            if(t_col==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || recomc has no `col` attribute! "<<std::endl; exit(EXIT_FAILURE);}
+            if(t_col==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || recomc has no `col` attribute! Come and set a color! "<<std::endl; exit(EXIT_FAILURE);}
             std::string s_col = t_col;
             s_col.erase(std::remove(s_col.begin(), s_col.end(), '('), s_col.end());
             s_col.erase(std::remove(s_col.begin(), s_col.end(), ')'), s_col.end());
