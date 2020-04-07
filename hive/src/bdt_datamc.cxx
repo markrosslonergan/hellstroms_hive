@@ -361,29 +361,33 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     }
             }
 
-            for(int i = 0 ; i< mc_stack->vec_hists.size(); i++){
-                double total = 0;
-                double total_unscaled = 0;
-                auto &f = mc_stack->stack[i];
-                double scale = (plot_pot/f->pot)*f->scale_data;
+            bool perbin = false;
 
-                std::cout<<"the entries in this file (weighted) = "<<f->GetEntries()<<std::endl;
-                std::cout<<"the scaling to POT= "<<scale<<" which is x"<<1/scale<<" times POT" <<std::endl;
-                std::cout<<"the total number of entries = "<<f->GetEntries()*scale<<std::endl;
+            if (perbin == true){
+                for(int i = 0 ; i< mc_stack->vec_hists.size(); i++){
+                    double total = 0;
+                    double total_unscaled = 0;
+                    auto &f = mc_stack->stack[i];
+                    double scale = (plot_pot/f->pot)*f->scale_data;
+
+                    std::cout<<"the entries in this file (weighted) = "<<f->GetEntries()<<std::endl;
+                    std::cout<<"the scaling to POT= "<<scale<<" which is x"<<1/scale<<" times POT" <<std::endl;
+                    std::cout<<"the total number of entries = "<<f->GetEntries()*scale<<std::endl;
 
 
 
-                for(int p=0; p<mc_stack->vec_hists[i]->GetNbinsX();p++){
-                    double nscaled = mc_stack->vec_hists[i]->GetBinContent(p+1);
-                    double nunscaled = nscaled/scale;
-                    total += nscaled;
-                    total_unscaled += nunscaled;
-                    std::cout<<"for hist "<<f->tag<<" in bin "<<p+1 <<" = "<<nscaled<<" which corresponds to "<<nunscaled <<" events"<<std::endl;
+                    for(int p=0; p<mc_stack->vec_hists[i]->GetNbinsX();p++){
+                        double nscaled = mc_stack->vec_hists[i]->GetBinContent(p+1);
+                        double nunscaled = nscaled/scale;
+                        total += nscaled;
+                        total_unscaled += nunscaled;
+                        std::cout<<"for hist "<<f->tag<<" in bin "<<p+1 <<" = "<<nscaled<<" which corresponds to "<<nunscaled <<" events"<<std::endl;
+
+                    }
+                    std::cout<<"for hist "<<f->tag<<" the total is  "<<total<<"/"<<total_unscaled<<std::endl;
+                    std::cout<<"---------------------------"<<std::endl;
 
                 }
-                std::cout<<"for hist "<<f->tag<<" the total is  "<<total<<"/"<<total_unscaled<<std::endl;
-                std::cout<<"---------------------------"<<std::endl;
-
             }
 
             std::cout<<"2 "<<std::endl;
