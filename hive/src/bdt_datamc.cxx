@@ -843,9 +843,23 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
 
             // Make text file for chi^2
-            // TODO: WARNING hard-coding alert! Make this better
+            // Note that this depends on e.g. "Run 1" existing in your plot_name
+            // for on-beam data file
+            std::string run_name;
+            if      (data_file->plot_name.find("Run 1") != std::string::npos) run_name = "run1";
+            else if (data_file->plot_name.find("Run 2") != std::string::npos) run_name = "run2";
+            else if (data_file->plot_name.find("Run 3") != std::string::npos) run_name = "run3";
+            else    run_name = "combined";
+
+            std::string simple_topo_name;
+            if      (data_file->topo_name.find("2#gamma1p") != std::string::npos) simple_topo_name = "2g1p";
+            else if (data_file->topo_name.find("2#gamma0p") != std::string::npos) simple_topo_name = "2g0p";
+            else if (data_file->topo_name.find("1#gamma1p") != std::string::npos) simple_topo_name = "1g1p";
+            else if (data_file->topo_name.find("1#gamma0p") != std::string::npos) simple_topo_name = "1g0p";
+            else    simple_topo_name = "unknown_topo";
             std::ofstream outfile;
-            outfile.open("chisq_2g1p_combined_stage_2.txt", std::ios_base::app);
+            std::cout << "TESTING run_name = " << run_name << std::endl;
+            outfile.open("chisq_"+simple_topo_name+"_"+run_name+"_stage_"+std::to_string(s)+".txt", std::ios_base::app);
             outfile << to_string_prec(TMath::Prob(mychi, ndof),3) << std::endl;
 
             std::string combined = mean + "     " +ks;
