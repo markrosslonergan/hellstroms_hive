@@ -478,6 +478,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 fake_legend_hists.push_back(h1);
                 h1->SetFillColor(f->col);
                 h1->SetFillStyle(f->fillstyle);
+                /*
+                std::cout << "EVENTS For sample " << f->tag << std::endl;
+                for (int i = 0; i < h1->GetNbinsX(); i++) {
+                  std::cout << "EVENTS Entries in bin " << i << " = " << h1->GetBinContent(i) << std::endl;
+                }
+                */
                 //if(mc_stack->signal_on_top[n]){
                 //    h1->SetLineColor(f->col);
                 //    h1->SetLineWidth(3);
@@ -835,6 +841,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //std::string mean = "(Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
+
+            // Make text file for chi^2
+            // TODO: WARNING hard-coding alert! Make this better
+            std::ofstream outfile;
+            outfile.open("chisq_2g1p_combined_stage_2.txt", std::ios_base::app);
+            outfile << to_string_prec(TMath::Prob(mychi, ndof),3) << std::endl;
 
             std::string combined = mean + "     " +ks;
             //std::string mean = "Ratio: Normalized" ;

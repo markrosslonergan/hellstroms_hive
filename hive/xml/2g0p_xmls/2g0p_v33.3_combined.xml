@@ -79,7 +79,7 @@
 <bdtfile filename = "filter_2g0p_data_combined_run123_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
-        <tor860_wcut> 5.89E+20 </tor860_wcut>   
+        <tor860_wcut> 5.893E+20 </tor860_wcut>   
         <E1DCNT_wcut> 137557244 </E1DCNT_wcut>   
     </data>
 </bdtfile>
@@ -89,7 +89,7 @@
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 5.89E+20 </tor860_wcut>
+        <tor860_wcut> 5.893E+20 </tor860_wcut>
         <E1DCNT_wcut> 137557244</E1DCNT_wcut>
         <EXT>314602374</EXT>
     </data>
