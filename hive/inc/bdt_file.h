@@ -186,6 +186,7 @@ struct bdt_file{
 
         int calcPOT();
 
+        int calcPOT(std::vector<std::string> run_names, std::vector<std::string> run_cuts, std::vector<double> run_fractions);
 
         int makeRunSubRunList();
 
