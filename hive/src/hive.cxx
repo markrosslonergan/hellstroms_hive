@@ -57,8 +57,7 @@ int main (int argc, char *argv[]){
     bool is_combined = false;
     // Added by A. Mogan 1/13/20 for doing normalization fits
     bool scale_mode = true;
-    //double what_pot = 13.2e20;
-    double what_pot = 18.75e20;//CHECK
+    double what_pot = 13.2e20;
     int which_file = -1;
     int which_bdt = -1;
     int which_stage = -1;
@@ -270,8 +269,8 @@ int main (int argc, char *argv[]){
         }
 
 		//load up all bdt files
-		bdt_files.push_back( new bdt_file(f, XMLconfig, analysis_flow));
 
+		bdt_files.push_back( new bdt_file(f, XMLconfig, analysis_flow));
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
 
@@ -304,7 +303,7 @@ int main (int argc, char *argv[]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOffBeamData( XMLconfig.bdt_onbeam_pot[f], XMLconfig.bdt_onbeam_spills[f], XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
 
-            bkg_bdt_files.push_back(bdt_files.back());
+//            bkg_bdt_files.push_back(bdt_files.back());
         }
 
         if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f]  && !XMLconfig.bdt_is_validate_file[f]){//mark stack_files, signal or bkg;
@@ -324,8 +323,7 @@ int main (int argc, char *argv[]){
             training_bdt_files.push_back(bdt_files.back());
         }
 
-
-//        bdt_files.back()->calcPOT();
+        bdt_files.back()->calcPOT();
 
         //std::string r1 = "run_number>=5121 && run_number <=5946";
         //bdt_files.back()->scale( bdt_files.back()->tvertex->GetEntries(r1.c_str())/(double)bdt_files.back()->tvertex->GetEntries() );
@@ -336,8 +334,10 @@ int main (int argc, char *argv[]){
         if(XMLconfig.bdt_is_validate_file[f]) validate_files.push_back(bdt_files.back());//Mark validate files
 
     }
-    std::vector<bdt_file*> stack_bdt_files(bkg_bdt_files);
-	stack_bdt_files.insert(stack_bdt_files.end(),signal_bdt_files.begin(),signal_bdt_files.end());//bkg go first, because we want signal on top; Check, specific for MiniBooNE
+    std::vector<bdt_file*> stack_bdt_files(signal_bdt_files);
+	stack_bdt_files.insert(stack_bdt_files.end(),bkg_bdt_files.begin(),bkg_bdt_files.end());//bkg go first, because we want signal on top; Check, specific for MiniBooNE
+			std::cout<<"# of signal files "<<signal_bdt_files.size()<<std::endl;
+			std::cout<<"# of bkg files "<<bkg_bdt_files.size()<<std::endl;
 
 
     //The "signal" is whichever signal BDT you define first.

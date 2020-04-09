@@ -49,6 +49,7 @@ class MVALoader {
     std::vector<TColor*> bdt_cols;
     std::vector<int> bdt_linecols;
     std::vector<int> bdt_linestyles;
+    std::vector<int> bdt_group;//Keng
 
     std::vector<int> bdt_fillstyles;
     std::vector<double> bdt_scales;

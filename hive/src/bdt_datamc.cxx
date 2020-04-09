@@ -818,9 +818,26 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				}
 				covar_f->Close();
 			}
+			
+			//modify # of events of different bdt_group
+			std::multimap<int, double> grouped_files_index;
 			for(size_t jndex = 0; jndex < mc_stack->stack.size(); ++jndex){//For l0, set legend contents according to bdt_file members
 				bdt_file* f = mc_stack->stack[jndex];
 				double Nevents = f->GetEntries()*(plot_pot/f->pot)*f->scale_data;
+				int current_g = f->group;
+				std::map<int,double>::iterator skip_this = grouped_files_index.find(current_g);
+					if(current_g > -1 && skip_this != grouped_files_index.end()){//found the current_g in grouped_files_index
+						skip_this->second+=Nevents;//add up events number, Nevents;
+					}else{//it is gorup -1 or group number not yet found;
+						grouped_files_index.insert(std::make_pair(current_g,Nevents));
+					}
+			}
+			//End of skip grouped bdr_files;
+
+			for(size_t jndex = 0; jndex < mc_stack->stack.size(); ++jndex){//For l0, set legend contents according to bdt_file members
+
+				bdt_file* f = mc_stack->stack[jndex];
+//				double Nevents = f->GetEntries()*(plot_pot/f->pot)*f->scale_data;
 
 				auto temp_histogram = new TH1F(("tmp"+current_stage+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);//Ghost TH1F
 
@@ -829,10 +846,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				temp_histogram->SetLineStyle(f->linestyle);
 				temp_histogram->SetLineColor(kBlack);
 
-				TString string_events = f->plot_name+" "+to_string_prec(Nevents,2);//legend name
-				if(do_subtraction && subtraction_vec[jndex]) string_events+=" (Subtracted)";
+				std::map<int,double>::iterator skip_this = grouped_files_index.find(f->group);
+					if(skip_this == grouped_files_index.end()) continue;
 
+				TString string_events = f->plot_name+" "+to_string_prec(skip_this->second,2);//legend name
+				if(do_subtraction && subtraction_vec[jndex]) string_events+=" (Subtracted)";
+				
 				l0->AddEntry(temp_histogram,string_events,"f");
+				grouped_files_index.erase(skip_this);
 
 //				if(mc_stack->signal_on_top[n]) which_signal = n;//currently, only 1 signal sample is allowed, delete CHECK, not necessary
 			}

@@ -271,6 +271,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
     while(pBDTfile)
     {
+
         const char* t_tag = pBDTfile->Attribute("tag");
         if(t_tag==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has no `tag` attribute! "<<std::endl; exit(EXIT_FAILURE);}
         bdt_tags.push_back(t_tag);
@@ -392,6 +393,12 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             bdt_plotnames.push_back(t_plotname);
         }
 
+		const char* t_groupname = pBDTfile->Attribute("group");//Keng
+        if(t_groupname==NULL){
+            bdt_group.push_back(-1);
+        }else{
+            bdt_group.push_back(atoi(t_groupname));
+        }
 
 
 
@@ -438,6 +445,8 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 		if(pfixPOT){
 			std::string fixpot = std::string(pfixPOT->GetText());
 			bdt_fixpot.push_back(stod(fixpot));
+		}else{
+			bdt_fixpot.push_back(0);
 		}
 
         //So, some book-keeping if its data!

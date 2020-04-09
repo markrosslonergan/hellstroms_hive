@@ -266,9 +266,9 @@
 <!--<precut def = "reco_track_displacement<85&amp;&amp;reco_track_displacement>65" name = "track cut"/>-->
 <!--
 <precut def = "el.EnuQE<1250&amp;&amp;el.EnuQE>250" name = "EnuQE Cut"/>
-<precut def = "miniPI0_mva==0.5" name = " BDT cut"/>
 <precut def = "el.EnuQE<1250&amp;&amp;el.EnuQE>200" name = "EnuQE Cut"/>
 -->
+<precut def = "miniPI0_mva<0.5" name = " BDT cut"/>
 
 
 <!--

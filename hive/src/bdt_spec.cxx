@@ -241,6 +241,8 @@ std::vector<double> bdt_stack::getEntryFullVector(bdt_variable var){
 
 
 THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
+	bool debug_message = true;
+
     THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
     int stack_rebin = 1;
     //	if(level ==2) stack_rebin=2;
@@ -263,23 +265,22 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
     std::vector<double> integral_sorter;
     vec_hists.clear();
 
+	std::vector< TH1* > histograms(stack.size());
+	std::multimap< int, int > bdt_groups;
+	//mark the grouped bdt_files { {-1, {# of bdt_file}},
+	//							 { 1, {# of bdt_file}}}
+
     for(int t=0; t<stack.size(); t++){
-        std::cout<<"Stack "<<stack.at(t)->tag<<" level "<<t<<std::endl;
+        std::cout<<"Stack "<<stack.at(t)->tag<<" level "<<t<< " group "<< stack.at(t)->group<<std::endl;
 
         vec_hists.push_back((TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin));
         TH1* hist = vec_hists.back();
         hist->SetTitle((this->name+"_"+var.name).c_str());
 
-        //if(signal_on_top[t]){
-        //    hist->SetLineColor(stack[t]->col);
-        //    hist->SetLineWidth(3);
-        //}else{
-            hist->SetLineColor(kBlack);
-            hist->SetLineWidth(1);
-        //}
-        hist->SetStats(0);
-        //hist->SetMarkerStyle(20);
-        hist->SetFillColor(stack.at(t)->col);
+		hist->SetLineColor(kBlack);
+		hist->SetLineWidth(1);
+		hist->SetStats(0);
+		hist->SetFillColor(stack.at(t)->col);
         hist->SetFillStyle(stack.at(t)->fillstyle);
         hist->Scale();		
 
@@ -290,29 +291,57 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
         to_sort.push_back(hist);
         integral_sorter.push_back(hist->GetSumOfWeights());
         integral_sorter.push_back(hist->GetSumOfWeights());
-
-        if(do_subtraction){
-            if(!subtraction_vec[t]){
-                stacked->Add(hist);
-            }
-        }else{
-            stacked->Add(hist);
-        }
-
-        //std::cout<<"HAT: "<<level<<" "<<stack.at(t)->tag<<std::endl;
-        //for(int k=1; k< hist->GetNbinsX(); k++){
-        //	std::cout<<hist->GetBinContent(k)<<" ";
-        //}
-
+		
+		histograms[t] = hist;
+		bdt_groups.insert(std::pair<int,int> ( stack.at(t)->group , t ));
     }
 
-    for (int i: sort_indexes(integral_sorter)) {
-        //stacked->Add(to_sort.at(i));	
-        //legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
-    }
+	if(debug_message) std::cout<<"Stack up histograms" <<std::endl;
+	int group_index = -1;	
+    while(bdt_groups.size()>0){//check each bdt_file, to stack them directly or stack them after adding them;
+		  std::multimap<int,int>::iterator current_it = bdt_groups.find(group_index);//locate bdt_file based on group #;
+
+		  if(debug_message){ 
+			  std::cout<<"\nWorking on "<<group_index<<" the LeftOver:"<<std::endl;
+			  for(auto temp_it = bdt_groups.begin(); temp_it != bdt_groups.end(); temp_it++){
+				  int temp_index1 = temp_it->first;
+				  int temp_index = temp_it->second;
+				  if(debug_message){
+					  std::cout<<"Group: "<<temp_index1<<" bdt_file #: "<<temp_index<<std::endl;
+				  }
+			  }
+		  }
+		  if(current_it == bdt_groups.end() ){//current group # gives no files
+			  group_index ++;
+			  continue;
+		  }
+
+		  int which_file = current_it->second;//the # bdt_file
 
 
-    return stacked;	
+		  if(group_index == -1){//normal stack
+			  if(!do_subtraction || !subtraction_vec[which_file]){//do this outside the loop;
+				  stacked->Add(histograms[which_file]);
+			  }
+			  bdt_groups.erase(current_it);
+			  continue;
+		  } else{
+				if(stack.at(which_file)->plot_name.find("(combined)")==std::string::npos){
+				stack.at(which_file)->plot_name += "(combined)";//if we add-up histograms, change the name
+				}
+			  while(bdt_groups.find(group_index) != bdt_groups.end()){
+				  if(debug_message) std::cout<<"Merge "<<bdt_groups.find(group_index)->second<<" to "<<which_file<<" bdt_file"<<std::endl;
+
+				  histograms.at(which_file)->Add(histograms[bdt_groups.find(group_index)->second]);
+				  bdt_groups.erase(bdt_groups.find(group_index));
+			  }
+			  stacked->Add(histograms[which_file]);
+		  }
+
+
+	}
+
+    return stacked;
 
 }
 

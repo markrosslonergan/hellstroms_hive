@@ -112,6 +112,7 @@ struct bdt_file{
         int fillstyle;
         int linestyle;
         int linecol;
+		int group;//Keng
 
         bool is_data;
         bool is_bnbext;
