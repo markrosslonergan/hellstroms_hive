@@ -36,7 +36,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     if(is_mc){
         std::cout<<"setting weight branch - mc"<<std::endl;
-        // weight_branch = "genie_spline_weight";
+       // weight_branch = "genie_spline_weight";
         weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)";
 
         //weight_branch = "genie_spline_weight";//*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
@@ -45,31 +45,24 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
         std::cout<<"setting weight branch - on/off beam data"<<std::endl;
         weight_branch = "1";
     }
-
+    
     fillstyle = infillstyle;
     scale_data = 1.0;
 
-    /*        run_names = {"RI","RII","RIIIa","RIIIb","RIV"};
-              run_fractions_plot = {0.16638655, 0.26435986, 0.043400890, 0.21413742, 0.31171527};
-              run_fraction_cuts  = {"(run_number >= 4952 && run_number <= 7770)", "( run_number >=8317 && run_number <=  13696)", "(run_number >= 13697 && run_number <= 14116)","(run_number >= 14117 && run_number <= 18960)","(run_number >=18961 && run_number <= 23542)"};
-              */
+//    run_names = {"RI","RII","RIIIa","RIIIb","RIV"};
+//    run_fractions_plot = {0.16638655, 0.26435986, 0.043400890, 0.21413742, 0.31171527};
+//    run_fraction_cuts  = {"(run_number >= 4952 && run_number <= 7770)", "( run_number >=8317 && run_number <=  13696)", "(run_number >= 13697 && run_number <= 14116)","(run_number >= 14117 && run_number <= 18960)","(run_number >=18961 && run_number <= 23542)"};
+    
     //What we should have for neutrino based on pawels good runs 
-/*    run_names = {"RI/II/IIIa","RIIIb/IV"};
-    run_fraction_cuts  = {"( (run_number >= 4952 && run_number <= 7770) || ( run_number >= 8317 && run_number <=  13696) || (run_number >= 13697 && run_number <= 14116)) ", "( (run_number >= 14117 && run_number <= 18960) || (run_number >=18961 && run_number <=23542) )"};
-    run_fractions_plot = {0.4742,0.5258};
-*/
-
-    //run1 only
-    run_names = {"RI"};
-    run_fraction_cuts  = {"1.0"};
-    run_fractions_plot = {1.0};
-
-
+    //run_names = {"RI/II/IIIa","RIIIb/IV"};
+    //run_fraction_cuts  = {"( (run_number >= 4952 && run_number <= 7770) || ( run_number >= 8317 && run_number <=  13696) || (run_number >= 13697 && run_number <= 14116)) ", "( (run_number >= 14117 && run_number <= 18960) || (run_number >=18961 && run_number <=23542) )"};
+    //run_fractions_plot = {0.4742,0.5258};
+   
     //2g1p
     //run_names  = {"RI/II","RIII"};
     //run_fraction_cuts = {"(run_number <=13696)","(run_number >= 13697)"};
     //run_fractions_plot = {0.6964636727,0.3035363273};
-
+ 
     //2g0p
     //run_names  = {"RI/II","RIII"};
     //run_fraction_cuts = {"(run_number <=13696)","(run_number >= 13697)"};
@@ -80,204 +73,12 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     //run_fraction_cuts  = {"1"};
     //run_fractions_plot = {1.0};
 
-    //  run_names = {"RI","R3"};
-    //  run_fraction_cuts  = {"run_number <= 7770 ","run_number>=13697"};
-    //   run_fractions_plot = {0.5,0.5};
+  //  run_names = {"RI","R3"};
+  //  run_fraction_cuts  = {"run_number <= 7770 ","run_number>=13697"};
+ //   run_fractions_plot = {0.5,0.5};
 
 
-    std::cout<<"Getting vertex tree"<<std::endl;
-    tvertex = (TTree*)f->Get(tnam.c_str());
-
-    //tevent = (TTree*)f->Get(tnam_event.c_str());
-    std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
-    //topovertex = (TTree*)tvertex->CopyTree(flow.topological_cuts.c_str());
-    //std::cout<<"Copied to topological tree: "<<topovertex->GetEntries()<<std::endl;
-
-    run_fractions_file.resize(run_fractions_plot.size(),0);
-    double combin = 0.0;
-    for(int i=0; i< run_fractions_plot.size(); i++){
-        run_fractions_file[i] = tvertex->GetEntries(run_fraction_cuts[i].c_str())/(double)tvertex->GetEntries();
-        std::cout<<run_fraction_cuts[i]<<std::endl;
-        std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
-        combin+=run_fractions_file[i];
-    }
-    std::cout<<"Total is "<<combin<<std::endl;
-
-    // if (run_fractions_file[0] ==1 ){
-    //   run_weight_string = "(1.0";
-    // }else{
-    run_weight_string = "1.0*("+run_fraction_cuts[0]+"*"+std::to_string(run_fractions_plot[0]/run_fractions_file[0]);
-    for(int i=1; i< run_fractions_plot.size(); i++){
-        run_weight_string += "+" +run_fraction_cuts[i]+"*";  
-        //  if (run_fractions_file[0]!= 1){
-        run_weight_string += std::to_string(run_fractions_plot[i]/run_fractions_file[i]);
-        //}else{
-        //  run_weight_string += std::to_string(0.0);
-
-        // }
-        //   }
-}
-run_weight_string +=")";
-std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
-
-
-std::cout<<"Getting eventweight tree"<<std::endl;
-teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
-tvertex->AddFriend(teventweight);
-std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
-
-vec_entry_lists.resize(flow.bdt_vector.size());
-
-//this->CheckWeights();//make sure there aren't erroneous weights
-
-/*
-//This is all old school mcc8 stuff for now.
-if(tag == "IntimeCosmics"){
-std::cout<<"Getting POT for CosmicIntime: "<<std::endl;
-//Found in 
-double intime_modifier = 10.279;
-
-//Guarrenteed for fresh_mcc8.9
-double N_gen_bnb = 2146800.0;
-double N_gen_cos = 991914.0;
-
-double pot_bnb_cosmic = 2.16562e+21;
-double pot_plot = 6.6e20;
-
-pot = pot_plot; 
-this->scale_data = intime_modifier*N_gen_bnb/(N_gen_cos)*pot_plot/pot_bnb_cosmic;
-std::cout<<"--> value: "<<pot<<" with scale factor: "<<scale_data<<std::endl;
-}else{
-leg = "l";
-std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
-tpot = (TTree*)f->Get(tnam_pot.c_str());
-std::cout << "tpot name: " << tnam_pot.c_str() << std::endl;
-tpot->SetBranchAddress("number_of_events", &numbranch);
-tpot->SetBranchAddress("POT",&potbranch);
-
-std::cout<<"Set the POT branch"<<std::endl;
-int tmpnum = 0;
-double tmppot=0;
-std::cout << "tpot entries: " << tpot->GetEntries() << std::endl;
-for(int i=0; i<tpot->GetEntries(); i++) {
-tpot->GetEntry(i);
-tmpnum += (double)numbranch;
-tmppot += potbranch;
-}
-numberofevents = tmpnum;
-pot=tmppot;
-std::cout<<"--> POT is MC: ";
-std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
-
-weight_branch = "1";
-numberofevents_raw = numberofevents;
-}
-}
-
-if(tag == "BNBPure" || tag == "BNBCosmics"){
-//MCC9 pot issues
-//OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
-pot = 2.16562e21*(double)numberofevents/2154500.0;
-std::cout<<"REAL MCC9: --> POT is MC: ";
-std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
-}
-
-if(tag == "NCPi0" || tag=="NCPi0Cosmics"){
-//MCC9 pot issues
-//OLD: POT is MC: --> value: 2.16562e+21 NumEvents: 2154500
-// nc_fraction calculated by opening bnb_nu_overlay_combined_whatever and
-// diving the number of NC events with > 0 exiting pi0s by the total no. entries
-double nc_fraction = 0.061877;
-pot = 2.16562e21*(double)numberofevents/2154500.0/nc_fraction;
-std::cout<<"REAL MCC9: --> POT is MC: ";
-std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
-}
-
-if(tag == "NCDeltaRadCosmics" || tag == "NCDeltaRadPure" || tag == "NCDeltaRad"){
-double volCryo = 199668.427885;
-double volTPC = 101510.0;
-double volTPCActive=  86698.6;
-
-//numberofevents = numberofevents*volTPCActive/volTPC;	
-numberofevents = numberofevents;//*volTPCActive/volCryo;
-
-//in MCC9 POT is broken so lets fudge it here: OLD mcc8 1.64282e+24 NumEvents: 350189
-//pot = 1.64282e24*((double)numberofevents/350189.0);
-pot = 1.64282e24*(39954.0/350189.0);
-
-std::cout<<"REAL MCC9: --> POT is MC: ";
-std::cout<<"--> value: "<<pot<<" NumEvents: "<<numberofevents<<std::endl;
-
-tvertex->ResetBranchAddresses();
-}
-
-
-
-if(tag == "Data5e19"){
-    leg = "lp";
-    pot = 4.898e19; //old mcc84.393e19;// tor860_wcut
-    weight_branch = "1";
-    //so MCC9, we have 197772 events in file and 197833 evnts in samweb (lets ignore that) so 
-    std::cout<<"--> value: "<<pot<<std::endl;
-}
-if(tag == "BNBext"){
-    std::cout<<"Getting POT tree: "<<tnam_pot<<std::endl;
-    tpot = (TTree*)f->Get(tnam_pot.c_str());
-    tpot->SetBranchAddress("number_of_events", &numbranch);
-    tpot->SetBranchAddress("POT",&potbranch);
-
-    std::cout<<"Set the POT branch"<<std::endl;
-    int tmpnum = 0;
-    double tmppot=0;
-    for(int i=0; i<tpot->GetEntries(); i++){
-        tpot->GetEntry(i);
-        tmpnum += (double)numbranch;
-    }
-    numberofevents = tmpnum;
-    std::cout<<"BNBEXT number of events: "<<numberofevents<<std::endl;
-
-
-    leg = "lp";
-    double sca = 1.23;//from 1.23
-    //https://microboone-docdb.fnal.gov/cgi-bin/private/ShowDocument?docid=5640
-
-    //MCC9: 
-    //Data samweb is 197833 events. defname: data_bnb_run1_unblind_mcc9.0_nov_reco_2d_reco2_slim
-    //tor860_wcut: 4.898e+19,  E1DCNT_wcut: 11595542.0
-    //
-    //bnbext samweb is  200433 events, defname: data_extbnb_run1_dev_mcc9.0_nov_reco_2d_reco2_slim
-    //EXT spills: 15435961.0
-
-
-    //so that is
-    double ext=15435961.0;//47953078.0; //External spills in each sample (EXT)
-    double spill_on=11595542.0;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
-    double datanorm =4.898e19;// tor860_wcut run-subrunlist;
-
-    double Noff_full = 200433.0; //this is full samweb events
-    double Noff_have = numberofevents;
-
-    //This is old MCC8 one
-    //double ext=33752562+40051674;//47953078.0; //External spills in each sample (EXT)
-    //double spill_on=10312906;//10702983.0;//This number in data zarko  (E1DCNT_wcut)
-    //double datanorm =4.393e19;// tor860_wcut run-subrunlist;
-
-
-    double mod = spill_on/ext*(Noff_full/Noff_have);
-
-
-    std::cout<<"--> POT is data: From Zarkos tool..";
-    //going to scale by how many events I actually have in MCC9
-    pot =datanorm/mod;
-    std::cout<<"--> value: "<<pot<<std::endl;
-
-    weight_branch = "1";
-}
-
-*/
-
-
-
+        //this->CheckWeights();//make sure there aren't erroneous weights
 
 };
 
@@ -325,12 +126,61 @@ int bdt_file::setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills
 
 
 int bdt_file::calcPOT(){
+    return calcPOT({"ALL"},{"1"},{1.0});
+}
 
+int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::string> run_cuts, std::vector<double> run_fractions){
+
+    //First we will run with plot POT stuff
+
+    
     std::string tnam_event = root_dir+"event_tree";
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
     std::string tnam_rs = root_dir+"run_subrun_tree";
     std::string tnam_slice = root_dir+"ncdelta_slice_tree";
+
+
+    std::cout<<"Getting vertex tree"<<std::endl;
+    tvertex = (TTree*)f->Get(tnam.c_str());
+    std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
+
+    run_fractions_file.resize(run_fractions.size(),0);
+    double combin = 0.0;
+    for(int i=0; i< run_fractions.size(); i++){
+            run_fractions_file[i] = tvertex->GetEntries(run_cuts[i].c_str())/(double)tvertex->GetEntries();
+            std::cout<<run_cuts[i]<<std::endl;
+            std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
+            combin+=run_fractions_file[i];
+    }
+    std::cout<<"Total is "<<combin<<std::endl;
+    if(combin!=1){
+        std::cout<<"ERROR! The total that each defined run period adds up to is "<<combin<<" which is not 1."<<std::endl;
+    
+        exit(EXIT_FAILURE);
+    }
+
+
+    run_weight_string = "1.0*("+run_cuts[0]+"*"+std::to_string(run_fractions[0]/run_fractions_file[0]);
+    for(int i=1; i< run_fractions.size(); i++){
+         run_weight_string += "+" +run_cuts[i]+"*"+std::to_string(run_fractions[i]/run_fractions_file[i]);
+    }
+    run_weight_string +=")";
+    std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
+
+    std::cout<<"Getting eventweight tree"<<std::endl;
+    teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
+    tvertex->AddFriend(teventweight);
+    std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
+
+    vec_entry_lists.resize(flow.bdt_vector.size());
+
+
+
+
+
+
+
 
     double potbranch = 0;
     int  numbranch = 0;
@@ -355,9 +205,9 @@ int bdt_file::calcPOT(){
         std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
         int tmpnum = 0;
         double tmppot=0;
-
+        
         std::cout<<"bdt_file::bdt_file()\t||\t There was "<<trs->GetEntries()<<" subruns merged to make this root file."<<std::endl;
-
+        
         for(int i=0; i<trs->GetEntries(); i++) {
             trs->GetEntry(i);
             tmppot += potbranch;
@@ -376,9 +226,9 @@ int bdt_file::calcPOT(){
         weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
 
         /*if(this->tag.find("NCPi0")!=std::string::npos){
-          weight_branch = weight_branch +"*"+"(1.0+ (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.3)*0.2 + (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.175)*0.3  +  (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.1)*0.3 )";
+            weight_branch = weight_branch +"*"+"(1.0+ (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.3)*0.2 + (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.175)*0.3  +  (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.1)*0.3 )";
 
-          }*/
+        }*/
 
 
         numberofevents_raw = numberofevents;
@@ -739,7 +589,7 @@ double bdt_file::GetEntries(std::string cuts){
         }
         }
         */
-    // this->CheckWeights(); //catch erroneous values of the weight
+   // this->CheckWeights(); //catch erroneous values of the weight
     this->tvertex->Draw(("reco_asso_showers>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     TH1* th1 = (TH1*)gDirectory->Get(namr.c_str()) ;
     double ans = th1->GetSumOfWeights();
@@ -761,7 +611,7 @@ int bdt_file::setPOT(double inpot){
 TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
 
     TCanvas *ctmp = new TCanvas();
-    //  this->CheckWeights();
+  //  this->CheckWeights();
     this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
@@ -834,7 +684,7 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
 
     std::cout<<"Starting to get for "<<(varx.name+vary.name+">>"+bin ).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
-    // this->CheckWeights();
+   // this->CheckWeights();
     this->tvertex->Draw((vary.name+":"+varx.name+">>"+nam+bin).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH2* th2 = (TH2*)gDirectory->Get(nam.c_str()) ;
@@ -862,7 +712,7 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
 
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
-    // this->CheckWeights();
+   // this->CheckWeights();
     this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+"&&"+in_bins+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
@@ -905,7 +755,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
     for(int i=0; i< recomc_cuts.size(); i++){
         std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
         TCanvas *ctmp = new TCanvas();
-        //    this->CheckWeights();
+    //    this->CheckWeights();
         this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
         std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
         //gDirectory->ls();
@@ -1242,7 +1092,7 @@ unsigned long  bdt_file::jenkins_hash(std::string key) {
 int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage, const std::vector<double> & fbdtcuts ){
     TFile *f = new TFile((analysis_tag+"_"+this->tag+"_SSSprecalc.root").c_str(),"read");
     TTree *t = (TTree*)f->Get("sss_precalc");
-
+ 
     t->AddFriend(this->tvertex);
     std::string output_file_name = "sbnfit_sss_precalc_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+this->tag+".root";
     std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
@@ -1255,7 +1105,7 @@ int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_s
 
     std::cout<<"Copying precalc tree"<<std::endl;
     TTree * t_sbnfit_tree = (TTree*)t->CopyTree(sbnfit_cuts.c_str());
-
+    
     TList * lf1 = (TList*)t_sbnfit_tree->GetListOfFriends();
     for(const auto&& obj: *lf1) t_sbnfit_tree->GetListOfFriends()->Remove(obj);
 
@@ -1272,7 +1122,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     std::cout<<"Beginning SBNfit file creation for stage "<<which_stage<<" for file "<<this->tag<<std::endl;
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
     this->teventweight->AddFriend(this->tvertex);
-
+    
     std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+this->tag+".root";
 
     std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;

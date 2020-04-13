@@ -79,6 +79,45 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         pTopoCut = pTopoCut->NextSiblingElement("topology");
     }
 
+
+    //**************** Plot POT
+
+    TiXmlElement *pPlotPOT;
+    pPlotPOT = doc.FirstChildElement("plot_pot");
+    num_plot_periods = 0; 
+       while(pPlotPOT )
+    {
+
+               TiXmlElement *pRunPeriod = pPlotPOT->FirstChildElement("run_period");
+        while(pRunPeriod){
+ 
+            std::string run_name = pRunPeriod->Attribute("name");
+            std::string run_cut = pRunPeriod->Attribute("cut");
+            std::string run_fraction = pRunPeriod->Attribute("fraction");
+    
+            std::cout<<"Loading run_period "<<run_name<<" with cut "<<run_cut<<" with a percentage fraction of "<<run_fraction<<std::endl;
+            run_names.push_back(run_name);
+            run_cuts.push_back(run_cut);
+            run_fractions.push_back(std::stod(run_fraction));
+            num_plot_periods++;
+            pRunPeriod = pRunPeriod->NextSiblingElement("run_period");
+        }   
+       
+        pPlotPOT = pPlotPOT->NextSiblingElement("plot_pot");
+    }
+    if(num_plot_periods==0){
+        run_names = {"ALL"};
+        run_cuts = {"1"};
+        run_fractions={1.0};
+    }
+
+
+
+
+
+
+
+
     TiXmlElement *pFileDir;
     pFileDir = doc.FirstChildElement("filedir");
     if(pFileDir)

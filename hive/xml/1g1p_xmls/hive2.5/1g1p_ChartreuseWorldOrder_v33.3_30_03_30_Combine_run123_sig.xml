@@ -2,6 +2,11 @@
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="1g1pMar2020_v3" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(  0.988312,0.998529,0.35682,0.815902,0.525326)" />
 
+<plot_pot>
+    <run_period name ="RunI/II/IIIa" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) || ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <=     14116))" fraction = "0.4742"  />
+    <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.5258" />
+</plot_pot>
+
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
