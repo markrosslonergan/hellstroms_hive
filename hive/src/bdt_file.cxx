@@ -73,9 +73,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     //run_fractions_plot = {1.0};
 
     // Just run 3
-    run_names = {"RIII"};
-    run_fraction_cuts  = {"1"};
-    run_fractions_plot = {1.0};
+    //run_names = {"RIII"};
+    //run_fraction_cuts  = {"1"};
+    //run_fractions_plot = {1.0};
 
     //run_names = {"RIsmall"};
     //run_fraction_cuts  = {"1"};

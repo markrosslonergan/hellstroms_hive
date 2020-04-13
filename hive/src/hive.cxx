@@ -584,7 +584,8 @@ int main (int argc, char *argv[]){
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
-                datamc.plotEfficiency(tmp_var,fbdtcuts,1,(which_stage>1 ? which_stage : 2));
+                // TODO: Commented out for time's sake. Put back in later
+                //datamc.plotEfficiency(tmp_var,fbdtcuts,1,(which_stage>1 ? which_stage : 2));
             }else{
 
                 std::vector<bdt_variable> tmp_vars;
@@ -599,10 +600,12 @@ int main (int argc, char *argv[]){
 
                 if(which_bdt==-1){
                     real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts);
-                    real_datamc.plotEfficiency(tmp_vars,fbdtcuts,1, (which_stage > 1? which_stage : 2 ) );
+                    // TODO: Commented out for time's sake. Put back in later
+                    //real_datamc.plotEfficiency(tmp_vars,fbdtcuts,1, (which_stage > 1? which_stage : 2 ) );
                 }else{
                     real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts);
-                    real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,  (which_stage >1 ? which_stage :2 ));
+                    // TODO: Commented out for time's sake. Put back in later
+                    //real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,  (which_stage >1 ? which_stage :2 ));
                 }
             }
 
@@ -1172,8 +1175,10 @@ else if(mode_option == "eff2"){
 }else if(mode_option == "export"){
 
 
+    std::cout << "EXPORT starting export function" << std::endl;
     for(auto &v :vars){
         //std::cout<<v.edges[0]<<" "<<v.edges[1]<<" "<<v.edges[2]<<std::endl;
+      /*
         bool is_train = false;
         for(auto &in: bdt_infos){
             for(auto &tv: in.train_vars){
@@ -1181,7 +1186,9 @@ else if(mode_option == "eff2"){
             }
             if(is_train)break;
         }
-        if(is_train){
+        */
+        //if(is_train){
+        if(true){
             std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
 
             for(double k = 0; k<=v.n_bins; k++){
