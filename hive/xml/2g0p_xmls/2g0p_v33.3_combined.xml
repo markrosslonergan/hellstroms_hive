@@ -4,6 +4,11 @@
 <topology tag="pigLEE_2g0p_combined" name ="2#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==2 &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.95)" />
 <!-- 0.76516 -->
 
+<plot_pot>
+  <run_period name ="RI/II" cut ="(run_number <= 13696)" fraction = "0.677544979"  />
+  <run_period name ="RIII"  cut ="(run_number >= 13697)" fraction = "0.322455021"  />
+</plot_pot>
+
 <!-- ================================================== BDT FILES ==================================================== -->
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>

@@ -53,6 +53,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 //    run_fractions_plot = {0.16638655, 0.26435986, 0.043400890, 0.21413742, 0.31171527};
 //    run_fraction_cuts  = {"(run_number >= 4952 && run_number <= 7770)", "( run_number >=8317 && run_number <=  13696)", "(run_number >= 13697 && run_number <= 14116)","(run_number >= 14117 && run_number <= 18960)","(run_number >=18961 && run_number <= 23542)"};
     
+    //What we should have for neutrino based on pawels good runs 
     //run_names = {"RI/II/IIIa","RIIIb/IV"};
     //run_fraction_cuts  = {"( (run_number >= 4952 && run_number <= 7770) || ( run_number >= 8317 && run_number <=  13696) || (run_number >= 13697 && run_number <= 14116)) ", "( (run_number >= 14117 && run_number <= 18960) || (run_number >=18961 && run_number <=23542) )"};
     //run_fractions_plot = {0.4742,0.5258};
@@ -86,6 +87,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
  //   run_fractions_plot = {0.5,0.5};
 
 
+  /*
     std::cout<<"Getting vertex tree"<<std::endl;
     tvertex = (TTree*)f->Get(tnam.c_str());
 
@@ -121,6 +123,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
 
     vec_entry_lists.resize(flow.bdt_vector.size());
+    /*
 
     //this->CheckWeights();//make sure there aren't erroneous weights
 
@@ -272,6 +275,7 @@ if(tag == "BNBext"){
 
 
 
+        //this->CheckWeights();//make sure there aren't erroneous weights
 
 };
 
@@ -319,12 +323,61 @@ int bdt_file::setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills
 
 
 int bdt_file::calcPOT(){
+    return calcPOT({"ALL"},{"1"},{1.0});
+}
 
+int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::string> run_cuts, std::vector<double> run_fractions){
+
+    //First we will run with plot POT stuff
+
+    
     std::string tnam_event = root_dir+"event_tree";
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
     std::string tnam_rs = root_dir+"run_subrun_tree";
     std::string tnam_slice = root_dir+"ncdelta_slice_tree";
+
+
+    std::cout<<"Getting vertex tree"<<std::endl;
+    tvertex = (TTree*)f->Get(tnam.c_str());
+    std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
+
+    run_fractions_file.resize(run_fractions.size(),0);
+    double combin = 0.0;
+    for(int i=0; i< run_fractions.size(); i++){
+            run_fractions_file[i] = tvertex->GetEntries(run_cuts[i].c_str())/(double)tvertex->GetEntries();
+            std::cout<<run_cuts[i]<<std::endl;
+            std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
+            combin+=run_fractions_file[i];
+    }
+    std::cout<<"Total is "<<combin<<std::endl;
+    if(combin!=1){
+        std::cout<<"ERROR! The total that each defined run period adds up to is "<<combin<<" which is not 1."<<std::endl;
+    
+        exit(EXIT_FAILURE);
+    }
+
+
+    run_weight_string = "1.0*("+run_cuts[0]+"*"+std::to_string(run_fractions[0]/run_fractions_file[0]);
+    for(int i=1; i< run_fractions.size(); i++){
+         run_weight_string += "+" +run_cuts[i]+"*"+std::to_string(run_fractions[i]/run_fractions_file[i]);
+    }
+    run_weight_string +=")";
+    std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
+
+    std::cout<<"Getting eventweight tree"<<std::endl;
+    teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
+    tvertex->AddFriend(teventweight);
+    std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
+
+    vec_entry_lists.resize(flow.bdt_vector.size());
+
+
+
+
+
+
+
 
     double potbranch = 0;
     int  numbranch = 0;
@@ -367,6 +420,7 @@ int bdt_file::calcPOT(){
         //weight_branch = "1";
         //weight_branch = "genie_spline_weight";
         weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
+        std::cout << "WEIGHT weight branch = " << weight_branch << std::endl;
 
         //weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
 

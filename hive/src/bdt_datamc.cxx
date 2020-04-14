@@ -160,12 +160,12 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
                     d0->Draw("COLZ");
                     d0 ->SetTitle((data_file->tag + ", stage " + std::to_string(s)).c_str());
-                //    d0->GetYaxis()->SetTitleSize(0.05);
+                    //    d0->GetYaxis()->SetTitleSize(0.05);
                     d0->GetYaxis()->SetTitleSize(0.01);
-            
+
                     d0->GetYaxis()->SetTitleOffset(0.9);
-                 //   d0->GetXaxis()->SetTitleSize(0.05);
-                      d0->GetXaxis()->SetTitleSize(0.01);
+                    //   d0->GetXaxis()->SetTitleSize(0.05);
+                    d0->GetXaxis()->SetTitleSize(0.01);
                     d0->GetXaxis()->SetTitleOffset(0.9);
                     pad->SetRightMargin(0.15);
 
@@ -364,6 +364,34 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     }
             }
 
+            bool perbin = false;
+
+            if (perbin == true){
+                for(int i = 0 ; i< mc_stack->vec_hists.size(); i++){
+                    double total = 0;
+                    double total_unscaled = 0;
+                    auto &f = mc_stack->stack[i];
+                    double scale = (plot_pot/f->pot)*f->scale_data;
+
+                    std::cout<<"the entries in this file (weighted) = "<<f->GetEntries()<<std::endl;
+                    std::cout<<"the scaling to POT= "<<scale<<" which is x"<<1/scale<<" times POT" <<std::endl;
+                    std::cout<<"the total number of entries = "<<f->GetEntries()*scale<<std::endl;
+
+
+
+                    for(int p=0; p<mc_stack->vec_hists[i]->GetNbinsX();p++){
+                        double nscaled = mc_stack->vec_hists[i]->GetBinContent(p+1);
+                        double nunscaled = nscaled/scale;
+                        total += nscaled;
+                        total_unscaled += nunscaled;
+                        std::cout<<"for hist "<<f->tag<<" in bin "<<p+1 <<" = "<<nscaled<<" which corresponds to "<<nunscaled <<" events"<<std::endl;
+
+                    }
+                    std::cout<<"for hist "<<f->tag<<" the total is  "<<total<<"/"<<total_unscaled<<std::endl;
+                    std::cout<<"---------------------------"<<std::endl;
+
+                }
+            }
 
             std::cout<<"2 "<<std::endl;
             tsum->SetMarkerSize(0);
@@ -472,6 +500,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             for(auto &f: mc_stack->stack){
 
                 double Nevents = f->GetEntries()*(plot_pot/f->pot)*f->scale_data;
+                /*  stack->vec_hists[i];
+                    for(int p=0; p<h1->GetNbinsX();p++){
+
+                    std::cout<<"for file "<<f->tag<<" in bin "<<p+1 <<" = "<<h1->GetBinContent(p+1)<<std::endl;
+
+                    }
+                    */
+
+
                 NeventsStack+=Nevents;
 
                 auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
@@ -530,6 +567,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                     double da = d0->GetBinContent(p+1);
                     double bk = tsum->GetBinContent(p+1);
+
+                    std::cout<<"total MC+EXT in bin "<<p+1<<" = "<<tsum->GetBinContent(p+1)<<std::endl;
+                    std::cout<<"total data in bin "<<p+1<<" = "<<d0->GetBinContent(p+1)<<std::endl;
 
                     if ( bk ==0){
                         std::cout<<"ERROR mychi, for bin "<<p<<" n_data= "<<da<<" and n_mc= "<<bk<<std::endl;
@@ -1125,12 +1165,12 @@ int bdt_datamc::plotEfficiency(std::vector<bdt_variable> vars, std::vector<doubl
         //make THStack of divisions
         THStack *stacked = new THStack((var.safe_name+"_stack").c_str(), (var.safe_name+"_stack").c_str());
         for(int i=0; i<denom_stack.size(); i++){
-                numer_stack[i]->Divide(denom_stack[i]);
-                numer_stack[i]->Scale(tsum_numer->Integral()/numer_stack[i]->Integral());
-                stacked->Add(numer_stack[i]);
+        numer_stack[i]->Divide(denom_stack[i]);
+        numer_stack[i]->Scale(tsum_numer->Integral()/numer_stack[i]->Integral());
+        stacked->Add(numer_stack[i]);
         }*/
 
-        
+
         tsum_numer->SetLineColor(kRed);
         tsum_numer->SetMinimum(0);
         tsum_numer->SetMaximum( std::max(tsum_numer->GetMaximum(),data_numer->GetMaximum())*1.5);
@@ -1145,7 +1185,7 @@ int bdt_datamc::plotEfficiency(std::vector<bdt_variable> vars, std::vector<doubl
         data_numer->SetMarkerSize(2);
         data_numer->SetMarkerStyle(20);
         data_numer->Draw("E1P same");
-//      stacked->Draw("hist same");
+        //      stacked->Draw("hist same");
 
         TLegend *l = new TLegend(0.59,0.89,0.59,0.89);
         l->AddEntry(tsum_numer2,"MC Efficiency","fl");
