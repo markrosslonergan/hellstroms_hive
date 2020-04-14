@@ -814,6 +814,9 @@ int main (int argc, char *argv[]){
                 //What is this?
                 super_significance(signal_bdt_files, bkg_bdt_files);
                 break;
+            case 5:
+                scan_significance_linlin(signal_bdt_files, bkg_bdt_files, bdt_infos,fbdtcuts, which_bdt);
+                break;
             default:
                 break;
         }

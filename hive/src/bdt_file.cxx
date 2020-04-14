@@ -1138,6 +1138,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     TTree * t_sbnfit_tree = (TTree*)this->tvertex->CopyTree(sbnfit_cuts.c_str());
     std::cout<<"Copying POT tree"<<std::endl;
     TTree * t_sbnfit_pot_tree = (TTree*)this->tpot->CopyTree("1");
+    std::cout<<"Copying RunSubrunTree"<<std::endl;
+    TTree * t_sbnfit_rs_tree = (TTree*)this->trs->CopyTree("1");
     std::cout<<"Copying eventweight tree (via friends)"<<std::endl;
     TTree * t_sbnfit_eventweight_tree = (TTree*)this->teventweight->CopyTree(sbnfit_cuts.c_str());
     std::cout<<"Copying Slice tree "<<std::endl;
@@ -1238,6 +1240,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     cdtof->cd();
     t_sbnfit_tree->Write();
     t_sbnfit_pot_tree->Write();
+    t_sbnfit_rs_tree->Write();
     t_sbnfit_eventweight_tree->Write(); 
     t_sbnfit_slice_tree->Write();
     t_sbnfit_simpletree->Write();
