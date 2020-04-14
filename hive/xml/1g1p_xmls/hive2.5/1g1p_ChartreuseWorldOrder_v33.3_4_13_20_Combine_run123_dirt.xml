@@ -35,7 +35,7 @@
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp; mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
- 
+
     </definition>
 </bdtfile>
 
@@ -68,10 +68,10 @@
     <definition>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0==1</cut>
-      <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp; mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
- 
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp; mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
 
-  
+
+
     </definition>
 </bdtfile>
 
@@ -94,10 +94,10 @@
     <definition>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0>1</cut>
-      <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp; mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
- 
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp; mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
 
-   
+
+
     </definition>
 </bdtfile>
 
@@ -113,12 +113,12 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ccpi0_overlay_combined_run13_v33.3.uniq.root" tag = "OTPC CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "OTPC CC 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ccpi0_overlay_combined_run13_v33.3.uniq.root" tag = "OTPCCC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "OTPC CC 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>mctruth_cc_or_nc==0 </cut> 
         <cut>mctruth_num_exiting_pi0==1</cut>
-       <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp; mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
- 
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp; mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+
 
     </definition>
 </bdtfile>
@@ -143,8 +143,8 @@
         <cut>!(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1)</cut>
         <cut> !mctruth_is_delta_radiative </cut>
         <cut> fabs(mctruth_nu_pdg)!=12 </cut>
-       <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp; mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
- 
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp; mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+
 
     </definition>
 </bdtfile>
@@ -163,6 +163,7 @@
     </definition>
 </bdtfile>
 
+
 <bdtfile filename = "nue_bdt_testing_sample_v33.3.uniq.root" tag = "OTPCNueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "OTPC #nu_{e} Intrinsic" >
     <definition>
         <cut> mctruth_is_delta_radiative!=1 </cut>
@@ -170,9 +171,6 @@
         <cut> mctruth_num_exiting_pi0!=1 </cut> 
         <cut>!(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1) </cut>
       <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp; mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
- 
-
-  
     </definition>
 </bdtfile>
 
