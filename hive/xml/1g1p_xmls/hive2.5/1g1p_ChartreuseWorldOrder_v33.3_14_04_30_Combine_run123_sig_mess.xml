@@ -812,11 +812,11 @@
 -->
 
 <!--bdt vars -->
-<var def = "1g1pMar2020_v3COSMIC_mva" binning = "(48,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v3NCPi0_mva" binning = "(48,0.0,1.0)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v3BNB_mva" binning = "(48,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v3Nue_mva" binning = "(48,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v3SSV_mva" binning = "(48,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(48,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(48,0.0,1.0)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(48,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(48,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4SSV_mva" binning = "(48,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
 <!--pi0 vars -->
 <!--
