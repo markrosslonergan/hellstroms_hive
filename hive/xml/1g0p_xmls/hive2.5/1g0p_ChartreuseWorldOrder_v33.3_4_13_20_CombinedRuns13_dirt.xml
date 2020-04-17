@@ -16,21 +16,39 @@
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc == 1</cut> 
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut> 
     </definition>
 </bdtfile>
 
 <bdtfile filename = "ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "true">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
-        <cut> mctruth_cc_or_nc==1</cut> 
+        <cut> mctruth_cc_or_nc==1</cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>         
     </definition>
 </bdtfile>
+
+<bdtfile filename = "ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "OTPCNCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "OPTC 3xSM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "true">
+    <definition>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_cc_or_nc==1</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp;mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>         
+    </definition>
+</bdtfile>
+
 
 <bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter==5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut> 
     </definition>
 </bdtfile>
 
@@ -39,14 +57,38 @@
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut> 
     </definition>
 </bdtfile>
+
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "OTPCNCPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "OTPC NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
+    <definition>
+        <cut> mctruth_cc_or_nc==1</cut> 
+        <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp;mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>          
+    </definition>
+</bdtfile>
+
 
 <bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}"  scale = "1.0" plot_on_top = "false" >
 
     <definition>
         <cut> mctruth_cc_or_nc==1</cut>
         <cut> mctruth_num_exiting_pi0>1</cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut> 
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "OTPCNCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "OTPC NC 2+ #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+
+    <definition>
+        <cut> mctruth_cc_or_nc==1</cut>
+        <cut> mctruth_num_exiting_pi0>1</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp;mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>         
     </definition>
 </bdtfile>
 
@@ -55,8 +97,20 @@
     <definition>
         <cut>mctruth_cc_or_nc==0 </cut>
         <cut>mctruth_num_exiting_pi0==1</cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut> 
     </definition>
 </bdtfile>
+
+<bdtfile filename = "ccpi0_overlay_combined_run13_v33.3.uniq.root" tag = "OTPCCC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "OTPC CC 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+    <definition>
+        <cut>mctruth_cc_or_nc==0 </cut>
+        <cut>mctruth_num_exiting_pi0==1</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp;mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>          
+    </definition>
+</bdtfile>
+
 
 <bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
     <definition>
@@ -64,6 +118,19 @@
         <cut>!(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1)</cut>
         <cut> !mctruth_is_delta_radiative </cut>
         <cut> fabs(mctruth_nu_pdg)!=12 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut> 
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "OTPCBNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "OTPC BNB Other"  scale = "1.0" plot_on_top = "false" >
+    <definition>
+        <cut> (mctruth_num_exiting_pi0!=1) </cut>
+        <cut>!(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1)</cut>
+        <cut> !mctruth_is_delta_radiative </cut>
+        <cut> fabs(mctruth_nu_pdg)!=12 </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp;mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>         
     </definition>
 </bdtfile>
 
@@ -74,6 +141,19 @@
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
         <cut> mctruth_num_exiting_pi0!=1 </cut>
         <cut>!(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1) </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>  
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "nue_bdt_testing_sample_v33.3.uniq.root" tag = "OTPCNueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "OTPC #nu_{e} Intrinsic" >
+    <definition>
+        <cut> mctruth_is_delta_radiative!=1 </cut>
+        <cut> fabs(mctruth_nu_pdg)==12 </cut>
+        <cut> mctruth_num_exiting_pi0!=1 </cut>
+        <cut>!(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1) </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33  &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5  &amp;&amp;mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>          
     </definition>
 </bdtfile>
 
@@ -229,7 +309,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.6" max = "1.0" steps="10"/>
+    <scan min = "0.9" max = "1.0" steps="10"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
@@ -253,7 +333,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.5" max = "1.0" steps="5"/>
+    <scan min = "0.8" max = "1.0" steps="5"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
@@ -277,7 +357,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.0" max = "1.0" steps="5"/>
+    <scan min = "0.2" max = "0.5" steps="5"/>
 </mva>
 
 
