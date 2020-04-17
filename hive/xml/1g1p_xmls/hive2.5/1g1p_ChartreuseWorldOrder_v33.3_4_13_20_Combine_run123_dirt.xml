@@ -550,9 +550,9 @@
 <var def = "TMath::Min(fabs(acos(reco_track_diry)),fabs(acos(-reco_track_diry)))" binning = "(100,0.0,1.571)" unit = "Track Cosmicyness" type="d"  training = "0123"/>
 
 <!--<var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(100,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = "0123"  group = "3"/>-->
-<!--<var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(8,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = "0123"  group = "3"/>-->
+<var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(8,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = "0123"  group = "3"/>
 
-<var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = "0123"  group = "3"/>
+<!--<var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(24,0.9,1.6)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = "0123"  group = "3"/>-->
 
 
 <var def = "(#PE#)*(reco_track_dirz[0])+(#GE#*0.001)*reco_shower_implied_dirz[0]" binning = "(100,-1.5,1.9)" unit = "Reconstructed Delta Momentum Z (implied) [GeV]" type = "d"    training = "0123" group = "1" />
