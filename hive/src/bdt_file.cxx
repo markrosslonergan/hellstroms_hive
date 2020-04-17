@@ -184,14 +184,13 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     int  numbranch = 0;
 
     tslice = (TTree*)f->Get(tnam_slice.c_str());
-
+    trs = (TTree*)f->Get(tnam_rs.c_str());    
 
     if(is_mc){
         //If its MC or Overlay, lets just grab the POT from the nice POT tree
         leg = "l";
 
 
-        trs = (TTree*)f->Get(tnam_rs.c_str());    
         trs->SetBranchAddress("subrun_pot",&potbranch);
 
 
