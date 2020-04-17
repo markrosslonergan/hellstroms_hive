@@ -1051,6 +1051,7 @@ if (topo_tag == "notrack"){
 //specifically for protond/photons pre-topological
  bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
 //normally stops here
+ bdt_efficiency(bdt_files[which_file], v_denom,v_topo,vec_precuts , fbdtcuts,what_pot     );
 
 //Ok, this runs now for a full cut
 // Cut for NC pi0 filter
@@ -1332,6 +1333,9 @@ return 0;
         }else{
             t_vars = vars;
         }
+
+   
+        if(number>0){t_vars = {vars[number]};}
 
         if((which_bdt==i || which_bdt==-1)){
             bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 

@@ -2,7 +2,7 @@
 
 int  plot_bdt_variables(bdt_file * signal_pure, bdt_file * background_pure, std::vector<bdt_variable> vars, bdt_info input_bdt_info, bool isSpectator, int stage, std::vector<double> bdtcuts){
 
-    std::vector<std::string> title = {"Topological Selection","Pre-Selection Cuts","Cosmic","BNB","Pi0","Other"};
+    std::vector<std::string> title = {"Topological Selection","Pre-Selection Cuts","Cosmic","BNB","NCPi0","Nue","SSveto"};
 
     {
         int j = stage;
