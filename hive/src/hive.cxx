@@ -783,6 +783,14 @@ int main (int argc, char *argv[]){
             }
         }
     }
+    else if(mode_option == "passing"){
+
+        bdt_stack *pphistogram_stack = new bdt_stack(analysis_tag+"_stack");
+        bdt_datamc ppdatamc(onbeam_data_file, pphistogram_stack, analysis_tag+"_stack");	
+        ppdatamc.printPassingDataEvents("tmp", which_stage, fbdtcuts);
+
+
+    } 
     else if(mode_option == "test"){
 
         signal_bdt_files[0]->tvertex->Scan("reco_shower_kalman_dEdx_plane2_median[0]:DeNan(reco_shower_kalman_dEdx_plane2_median[0],12.0):reco_shower_dEdx_amalgamated[0]","reco_asso_showers==1");
@@ -835,6 +843,9 @@ int main (int argc, char *argv[]){
             case 4:
                 //What is this?
                 super_significance(signal_bdt_files, bkg_bdt_files);
+                break;
+            case 5:
+                scan_significance_linlin(signal_bdt_files, bkg_bdt_files, bdt_infos,fbdtcuts, which_bdt);
                 break;
             default:
                 break;
