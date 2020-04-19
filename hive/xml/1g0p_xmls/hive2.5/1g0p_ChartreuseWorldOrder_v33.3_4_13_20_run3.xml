@@ -4,9 +4,9 @@
 <topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.968138,0.922407,0.289781)" />
 
 <plot_pot>
-    <run_period name ="RunI" cut ="1.0" fraction = "1.0"  />
+  <!--     <run_period name ="RunI/II/IIIa" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) || ( run_number >= 8317 &amp;&amp; run_number <= 13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116))" fraction = "0.4742"  /> -->
+    <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <= 23542))" fraction = "1.0" />
 </plot_pot>
-
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
@@ -17,7 +17,7 @@
         <cut> mctruth_cc_or_nc==1</cut>
     </definition>                                                           
 </bdtfile>                                                                              
-                                                                                                
+
 <bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
     <definition>                                       
         <cut> mctruth_is_delta_radiative==1 </cut>                                              
