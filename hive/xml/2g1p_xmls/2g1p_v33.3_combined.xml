@@ -9,6 +9,10 @@
   <run_period name ="RIII"  cut ="(run_number >= 13697)" fraction = "0.3035363273"  />
 </plot_pot>
 
+<!-- Directory for all covariance matrices -->
+<!-- VID_sbnfit.covar.root -->
+<covar dir="/uboone/app/users/gyarbrou/single_photon/SBNFit_04_20/whipping_star/build/bin/technote/auto_xml_2g1p_redo" name="full_covariance" plotname="Flux+XS+MC-Stats Error" />
+
 <!-- ================================================== BDT FILES ==================================================== -->
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
@@ -82,7 +86,7 @@
     <definition><cut>1</cut></definition>
 </bdtfile>
 
-<bdtfile filename = "filter_2g1p_data_combined_run123_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
+<bdtfile filename = "filter_2g1p_data_combined_run123_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1+2+3 On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
         <tor860_wcut> 5.845E+20 </tor860_wcut>   
@@ -90,7 +94,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1+2+3 Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
@@ -109,11 +113,11 @@
         <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 251.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut>
-        <cut> Sum$(mctruth_exiting_proton_energy-0.93827&gt;0.02)==1</cut> <!-- Was 0.04 -->
         <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 1</cut>
         <cut> mctruth_pi0_leading_photon_energy &gt; 0.02 </cut>
         <cut> mctruth_pi0_subleading_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827&gt;0.02)==1</cut> <!-- Was 0.04 -->
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[i_shr[0]] &lt; 0.3 </cut>
@@ -133,11 +137,11 @@
         <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 251.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut>
-        <cut> Sum$(mctruth_exiting_proton_energy-0.93827&gt;0.02)==1</cut> <!-- Was 0.04 -->
         <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 1</cut>
         <cut> mctruth_pi0_leading_photon_energy &gt; 0.02 </cut>
         <cut> mctruth_pi0_subleading_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827&gt;0.02)==1</cut> <!-- Was 0.04 -->
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[i_shr[0]] &lt; 0.3 </cut>

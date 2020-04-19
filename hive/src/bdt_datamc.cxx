@@ -299,13 +299,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
 
             //some cheating
-            var.has_covar = false;
+            //var.has_covar = false;
             //var.has_covar = true;
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/DetSys/wireX/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
-            var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_2g1p/autoxml/Stage2/VID"+std::to_string(var.id)+".SBNcovar.root";
+            //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_2g1p/autoxml/Stage2/VID"+std::to_string(var.id)+".SBNcovar.root";
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/MCrich/VID"+std::to_string(var.id)+".SBNcovar.root";
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
-            var.covar_name = "frac_covariance";
+            //var.covar_name = "frac_covariance";
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
             //var.covar_name = "frac_covariance";
 
@@ -673,7 +673,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 gausfit_mc->Draw("same");
             }
             */
-
 
 
 
@@ -1086,7 +1085,9 @@ int bdt_datamc::calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *full_col
                 pt=0.0000;
             }
 
-            tmp_full(i,j) = pt*full_vec[i]*full_vec[j];
+            //tmp_full(i,j) = pt*full_vec[i]*full_vec[j];
+            // More cheating!!! Yay!!! Mark says not cheating, but we all know
+            tmp_full(i,j) = pt;
             //std::cout<<"ARK: "<<i<<" "<<j<<" "<<full_vec[i]<<" "<<pt<<" "<<tmp_full(i,j)<<std::endl;
         }
     }

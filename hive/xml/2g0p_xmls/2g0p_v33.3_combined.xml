@@ -9,6 +9,10 @@
   <run_period name ="RIII"  cut ="(run_number >= 13697)" fraction = "0.322455021"  />
 </plot_pot>
 
+<!--
+<covar dir="/uboone/app/users/gyarbrou/single_photon/SBNFit_04_20/whipping_star/build/bin/technote/auto_xml_2g0p_redo" name="full_covariance" plotname="Flux+XS+MC-Stats Error" />
+-->
+
 <!-- ================================================== BDT FILES ==================================================== -->
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
@@ -81,7 +85,7 @@
     <definition><cut>1</cut></definition>
 </bdtfile>
 
-<bdtfile filename = "filter_2g0p_data_combined_run123_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
+<bdtfile filename = "filter_2g0p_data_combined_run123_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1+2+3 On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
         <tor860_wcut> 5.893E+20 </tor860_wcut>   
@@ -89,7 +93,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1+2+3 Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
@@ -107,11 +111,11 @@
         <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 251.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut>
-        <cut> Sum$(mctruth_exiting_proton_energy-0.93827&gt;0.02)==0</cut> <!-- Was 0.04 -->
         <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 1</cut>
         <cut> mctruth_pi0_leading_photon_energy &gt; 0.02 </cut>
         <cut> mctruth_pi0_subleading_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827&gt;0.02)==0</cut> <!-- Was 0.04 -->
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[i_shr[0]] &lt; 0.3 </cut>
@@ -128,11 +132,11 @@
         <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 251.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut>
-        <cut> Sum$(mctruth_exiting_proton_energy-0.93827&gt;0.02)==0</cut> <!-- Was 0.04 -->
         <cut> mctruth_cc_or_nc == 1 </cut>
         <cut> mctruth_num_exiting_pi0 == 1</cut>
         <cut> mctruth_pi0_leading_photon_energy &gt; 0.02 </cut>
         <cut> mctruth_pi0_subleading_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827&gt;0.02)==0</cut> <!-- Was 0.04 -->
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[i_shr[0]] &lt; 0.3 </cut>
@@ -321,43 +325,42 @@
 
 <var def="sqrt(135*135 + (#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])])*(#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])]) + (#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])])*(#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])]) + (#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])])*(#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])]) ) * (1 - (((#C0#*reco_shower_dirz[(i_shr[0])]+#C1#*reco_shower_dirz[(i_shr[1])])/(sqrt((#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])])*(#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])]) + (#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])])*(#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])]) + (#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])])*(#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])]))) )) ) " binning = "(10, 0, 700)" unit = "E_{#pi^{0}}(1-cos#theta_{#pi^{0}}) [MeV]" type = "d"  training=""/>
 
-<var def = "pigLEE_2g0p_combinedBNB_mva" binning = "(15,0.0,1.0)" unit = "BDT Response" type="d" training= "" logplot="true" pmin=10.0 pmax= 10000/>
+<var def = "pigLEE_2g0p_combinedBNB_mva" binning = "(30,0.0,1.0)" unit = "BDT Response" type="d" training= "" logplot="true" pmin=10.0 pmax= 10000/>
 
 
 
 <!-- ================= RECO-MC Matching ======================== -->
 
-<!--
 <recomc>
   <def name="#pi^{0} Charge Exchange" col ="(0.2,0.2,0.4)"> 
-      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_pipm>0 &amp;&amp; sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0  
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_pipm>0 &amp;&amp; sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0  
     </def> 
     <def name="CC Other" col ="(0.2,0.2,0.6)"> 
-      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_photons==0 &amp;&amp; !(sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111) &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0            
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_photons==0 &amp;&amp; !(sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111) &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8  ) &amp;&amp; mctruth_num_exiting_photons==0            
     </def> 
     <def name="CC Multi-#pi^{0}" col ="(0.4,0.2,0.4)"> 
-      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0>1 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; mctruth_num_exiting_pipm==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8) &amp;&amp; mctruth_num_exiting_photons==0 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0>1 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; mctruth_num_exiting_pipm==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0 
     </def> 
     <def name="NC Multi-#pi^{0}" col ="(0.4,0.2,0.4)"> 
-      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0>1 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pipm==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8) &amp;&amp; mctruth_num_exiting_photons==0 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0>1 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pipm==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0 
     </def> 
     <def name="NC Other" col ="(0.2,0.2,0.6)"> 
-      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_photons==0 &amp;&amp; !(sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111) &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 )             
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_photons==0 &amp;&amp; !(sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111) &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8  )    
     </def> 
     <def name="#eta" col ="(0.2,0.6,0.4)"> 
-      mctruth_num_exiting_photons==2 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8)             
+      mctruth_num_exiting_photons==2 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8)             
     </def> 
     <def name="Intrinsic #nu_{e}" col ="(0.2,0.8,0.8)"> 
-        abs(mctruth_nu_pdg)==12 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8)             
+        abs(mctruth_nu_pdg)==12 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8)
     </def> 
     <def name = "Overlay" col="(0.2,0.8,0.2)">
-      (sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[0]>=0.8)
+      (sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 )
     </def>
 
 </recomc>
--->
 
 <!-- For CC Pi0 Backgrounds-->
+<!--
 <recomc>
     <def name="Proton Track" col ="(0.6,0.2,0.2)"> 
       abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111 &amp;&amp; abs(sim_track_pdg[i_trk[0]])==2212 &amp;&amp;!(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 )             
@@ -371,8 +374,8 @@
     <def name = "Overlay" col="(0.2,0.8,0.2)">
       (sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[0]>=0.8)
     </def>
-
 </recomc>
+-->
 
 
 <alias key="PM" value ="(0.938272)"/>
