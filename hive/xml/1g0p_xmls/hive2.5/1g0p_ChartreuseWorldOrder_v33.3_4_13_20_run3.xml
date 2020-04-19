@@ -5,7 +5,8 @@
 
 <plot_pot>
   <!--     <run_period name ="RunI/II/IIIa" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) || ( run_number >= 8317 &amp;&amp; run_number <= 13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116))" fraction = "0.4742"  /> -->
-    <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <= 23542))" fraction = "1.0" />
+  <!--    <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <= 23542))" fraction = "1.0" />-->
+  <run_period name ="RunIIIb/IV" cut ="1.0" fraction = "1.0" />
 </plot_pot>
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
@@ -93,8 +94,8 @@
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 47.348e+18 </tor860_wcut>
-        <E1DCNT_wcut> 1767808.0</E1DCNT_wcut>
+         <tor860_wcut> 7.348e+18 </tor860_wcut>
+        <E1DCNT_wcut> 1767808.0</E1DCNT_wcut> 
         <EXT>73196017.0</EXT>
     </data>
 </bdtfile>
