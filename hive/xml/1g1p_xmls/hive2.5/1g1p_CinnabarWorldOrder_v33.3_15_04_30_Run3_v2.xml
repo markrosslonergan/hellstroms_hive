@@ -87,7 +87,7 @@
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 47.348e+18 </tor860_wcut>
+        <tor860_wcut> 7.348e+18 </tor860_wcut>
         <E1DCNT_wcut> 1767808.0</E1DCNT_wcut>
         <EXT>73196017.0</EXT>
     </data>
