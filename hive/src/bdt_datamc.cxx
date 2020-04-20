@@ -414,8 +414,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //}//else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
 
             //double max_modifier = 1.65;
-            double max_modifier = 2;
-            if (s==1){
+            double max_modifier = 2.5;
+         /*   if (s==1){
                 max_modifier = 1.5;
             }
             if (s==2){
@@ -428,7 +428,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             if (s==3){
                 max_modifier = (stack_mode ? 2.0 : 1.85);
             }
-
+*/
             if(s>5){
                 max_modifier = 2.75;
             }
@@ -485,7 +485,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             tmp_tsum2->DrawCopy("same hist");
 
             tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
-            TLegend *l0 = new TLegend(0.11,0.65,0.89,0.89);
+            TLegend *l0 = new TLegend(0.11,0.5,0.89,0.89);
+            //TLegend *l0 = new TLegend(0.11,0.65,0.89,0.89);
             l0->SetFillStyle(0);
             l0->SetLineWidth(0);
             l0->SetNColumns(2);
@@ -694,7 +695,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::string pot_unit_s = "e20";
             std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/pot_unit,1)+ pot_unit_s+" POT";
 
-            pottex.DrawLatex(.60,.60, pot_draw.c_str());
+            pottex.DrawLatex(.60,.40, pot_draw.c_str());
+          //  pottex.DrawLatex(.60,.60, pot_draw.c_str());
+
 
             // Draw stage name. Added by A. Mogan 10/14/19
             TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
