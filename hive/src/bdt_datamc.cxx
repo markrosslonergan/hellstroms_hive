@@ -675,7 +675,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             */
 
 
-
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
             if(!stack_mode) l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,2)).c_str(),"lp");	

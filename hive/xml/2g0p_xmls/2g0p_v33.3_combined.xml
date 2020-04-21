@@ -9,9 +9,7 @@
   <run_period name ="RIII"  cut ="(run_number >= 13697)" fraction = "0.322455021"  />
 </plot_pot>
 
-<!--
 <covar dir="/uboone/app/users/gyarbrou/single_photon/SBNFit_04_20/whipping_star/build/bin/technote/auto_xml_2g0p_redo" name="full_covariance" plotname="Flux+XS+MC-Stats Error" />
--->
 
 <!-- ================================================== BDT FILES ==================================================== -->
 

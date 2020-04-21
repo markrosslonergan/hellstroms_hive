@@ -9,6 +9,8 @@
   <run_period name ="RIII"  cut ="(run_number >= 13697)" fraction = "0.3035363273"  />
 </plot_pot>
 
+<covar dir="/uboone/app/users/gyarbrou/single_photon/SBNFit_04_20/whipping_star/build/bin/technote/auto_xml_2g1p_redo" name="full_covariance" plotname="Flux+XS+MC-Stats Error" />
+
 <!-- ================================================== BDT FILES ==================================================== -->
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
@@ -28,7 +30,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "true" scale = "1.8" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "true" scale = "1.9" plot_on_top = "false" >
     <definition>
         <cut> GTruth_Gscatter==5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -36,7 +38,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "true" scale = "0.73" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "true" scale = "0.71" plot_on_top = "false" >
     <definition>
         <cut> GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
