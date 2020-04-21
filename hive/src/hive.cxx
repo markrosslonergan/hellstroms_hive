@@ -1027,7 +1027,15 @@ if (topo_tag == "notrack"){
 //specifically for protond/photons pre-topological
 if(number>0) bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
 //normally stops here
- bdt_efficiency(bdt_files[which_file], v_denom,v_topo,vec_precuts , fbdtcuts,what_pot     );
+ 
+if(number==3){
+
+bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot, true, which_stage, analysis_tag, true, false);
+
+}
+bdt_efficiency(bdt_files[which_file], v_denom,v_topo,vec_precuts , fbdtcuts,what_pot     );
+
+
 
 //Ok, this runs now for a full cut
 // Cut for NC pi0 filter
