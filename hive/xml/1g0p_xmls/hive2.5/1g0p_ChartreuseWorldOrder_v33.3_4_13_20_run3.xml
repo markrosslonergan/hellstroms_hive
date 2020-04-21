@@ -327,7 +327,7 @@
 <var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(24,0,8.0)" unit = "Shower dEdx Plane 2 (Kalman) [MeV/cm]" type = "d"   training ="012"/>
 <var def = "reco_shower_kalman_dEdx_plane1_median[0]" binning = "(24,0,8.0)" unit = "Shower dEdx Plane 1 (Kalman) [MeV/cm]" type = "d"   training =""/>
 <var def = "reco_shower_kalman_dEdx_plane0_median[0]" binning = "(24,0,8.0)" unit = "Shower dEdx Plane 0 (Kalman) [MeV/cm]" type = "d"   training =""/>
-<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(24,0,8.0)" unit = "Shower dEdx All Planes (Kalman) [MeV/cm]" type = "d"  training =""/>
+<var def = "reco_shower_kalman_dEdx_allplane_median[0]" binning = "(24,0,8.0)" unit = "Shower dEdx All Planes (Kalman) [MeV/cm]" type = "d"  training ="" group = "9"/>
 
 <var def = "reco_shower3d_dEdx_plane2[0]" binning = "(24,0,8.0)" unit = "Shower3D dEdx Plane 2 [MeV/cm]" type = "d"   training =""/>
 <var def = "reco_shower3d_dEdx_plane1[0]" binning = "(24,0,8.0)" unit = "Shower3D dEdx Plane 1 [MeV/cm]" type = "d"   training =""/>
