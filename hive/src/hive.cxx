@@ -232,7 +232,7 @@ int main (int argc, char *argv[]){
     std::cout<<"================================================================================"<<std::endl;
 
     for(size_t f = 0; f < XMLconfig.GetNFiles(); ++f){
-
+        if(f>11) break;
         std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
         //First build a bdt_flow for this file.
         std::string def = "1";  

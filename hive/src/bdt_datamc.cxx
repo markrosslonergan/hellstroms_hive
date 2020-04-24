@@ -505,7 +505,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             for(auto &f: mc_stack->stack){
 
-                double Nevents = f->GetEntries()*(plot_pot/f->pot)*f->scale_data;
+                double Nevents = f->GetEntries(var.additional_cut)*(plot_pot/f->pot)*f->scale_data;
                 /*  stack->vec_hists[i];
                     for(int p=0; p<h1->GetNbinsX();p++){
 
@@ -637,7 +637,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::size_t found = var.unit.find(massSearch);
 
             // Fit Gaussian to that variable
-            /*
+            
                if (found != std::string::npos) {
                std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
                TF1 *gausfit_data = new TF1("gausfit_data", "gaus");
@@ -651,9 +651,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // Fit range should be similar for data and MC
             lowFit = d0->GetXaxis()->GetBinLowEdge(1);
             highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
-            d0->Fit(gausfit_data, "lv", "", lowFit, highFit);
-            tmp_hist->Fit(gausfit_data, "q", "", lowFit, highFit);
-            std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
+            //gausfit_data->SetParameter(1,0.13);
+            //gausfit_data->SetParameter(2,0.05);
+            d0->Fit(gausfit_data, "MWLv", "", 0.06,0.210);
+            //tmp_hist->Fit(gausfit_data, "q", "", lowFit, highFit);
+            //std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
             mass_data = gausfit_data->GetParameter(1);
             mass_err_data = gausfit_data->GetParError(1);
             mass_res_data = gausfit_data->GetParameter(2);
@@ -671,7 +673,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             gausfit_data->Draw("same");
             gausfit_mc->Draw("same");
             }
-            */
+            
 
 
 
