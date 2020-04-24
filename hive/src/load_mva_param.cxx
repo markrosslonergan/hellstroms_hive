@@ -579,6 +579,8 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }else{
             var_cut = c_var_cut;
         }
+        var_cut = this->AliasParse(var_cut);
+
 
         std::string covar_file;
         std::string covar_name;

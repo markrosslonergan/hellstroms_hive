@@ -626,7 +626,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             //stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
 
-            double NdatEvents = data_file->GetEntries()*(plot_pot/data_file->pot )*data_file->scale_data;
+            double NdatEvents = data_file->GetEntries(var.additional_cut)*(plot_pot/data_file->pot )*data_file->scale_data;
 
             d0->SetBinErrorOption(TH1::kPoisson);
             if(!stack_mode) d0->Draw("same E1 E0");
