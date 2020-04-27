@@ -461,7 +461,7 @@
 <var def="TMath::ATan2(sqrt(mctruth_exiting_pi0_py*mctruth_exiting_pi0_py+ mctruth_exiting_pi0_px*mctruth_exiting_pi0_px),mctruth_exiting_pi0_pz)*180.0/3.14159" binning="(16,0,180)" unit = "True #pi^{0} #theta" training="" type="d" group="4"/>
 -->
 
-<var def = "((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)*0.001" binning = "(9,0.1,1.0)" unit = "Reconstructed Shower Energy [GeV]" type = "d"  training="" group="77"/>
+<!--<var def = "((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)*0.001" binning = "(9,0.1,1.0)" unit = "Reconstructed Shower Energy [GeV]" type = "d"  training="" group="77"/>-->
 
 <!-- ================= Efficiency  ======================== -->
 
