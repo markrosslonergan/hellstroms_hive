@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.968138,0.922407,0.289781)" />
+<topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.964688,0.666029,0.182952)" />
 
 <plot_pot>
   <!--     <run_period name ="RunI/II/IIIa" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) || ( run_number >= 8317 &amp;&amp; run_number <= 13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116))" fraction = "0.4742"  /> -->
@@ -12,14 +12,14 @@
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
+<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "true" >
     <definition>                                                    
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut>
     </definition>                                                           
 </bdtfile>                                                                              
 
-<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
+<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "true">
     <definition>                                       
         <cut> mctruth_is_delta_radiative==1 </cut>                                              
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -431,7 +431,9 @@
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
 <var def = "#GE#" binning = "(4,100,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
-<var def = "#GE#" binning = "(18,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "9"/>
+<var def = "#GE#" binning = "(18,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "10"/>
+<var def = "#GE#" binning = "(18,100,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "9"/>
+
 
 <!--pi0 vars -->
 <!--
