@@ -1,9 +1,10 @@
 #include "energy_cal.h"
+#include "LandauGaussian.h"
 using std::cout;
 using std::endl;
     
 void doCalibration() {
-    TString tag = "run1";
+    TString tag = "all";
     TFile *fin = new TFile("output_energy_histos_"+tag+".root", "READ");
     TFile *fout = new TFile("output_energy_correction_"+tag+".root", "RECREATE");
     if (!fin) {

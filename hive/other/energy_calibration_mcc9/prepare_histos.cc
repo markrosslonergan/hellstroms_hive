@@ -9,12 +9,8 @@ void make_2dHisto() {
     ////////////////////////////////////////////////////////
     
     // Get signal file and TTree
-    //TString dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v26/";
-    TString dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v33/";
-    //TString dir = "/pnfs/uboone/persistent/users/amogan/singlePhoton/samples/";
-    //TFile *fin = new TFile(dir+"ncpi0_overlay_run1_v26.5.root", "READ");
-    TFile *fin = new TFile(dir+"ncpi0_overlay_v33.0.root", "READ");
-    //TFile *fin = new TFile(dir+"ncpi0_overlay_run3_G_v26.5.root", "READ");
+    TString dir = "/uboone/data/users/markross/Mar2020/";
+    TFile *fin = new TFile(dir+"ncpi0_overlay_combined_run13_v33.3.uniq.root", "READ");
     TString tag = "all";
     TTree *t = (TTree*)fin->Get("singlephotonana/vertex_tree");
 
@@ -29,7 +25,7 @@ void make_2dHisto() {
     std::vector<double> *reco_shower_diry = 0;
     std::vector<double> *reco_shower_dirz = 0;
     std::vector<double> *sim_shower_energy = 0;
-    std::vector<int> *sim_shower_pdg = 0;
+    std::vector<int>    *sim_shower_pdg = 0;
     std::vector<double> *sim_shower_overlay_fraction = 0;
 
     // Necessary for vectors, for some reason
@@ -71,8 +67,14 @@ void make_2dHisto() {
     TH2D *h_plane0_corr = new TH2D("h_plane0_corr", "h_plane0_corr", 40, 0, 400, 40, 0, 400);
     TH2D *h_plane1_corr = new TH2D("h_plane1_corr", "h_plane1_corr", 40, 0, 400, 40, 0, 400);
     TH2D *h_plane2_corr = new TH2D("h_plane2_corr", "h_plane2_corr", 40, 0, 400, 40, 0, 400);
-    TH1D *h_invar_max = new TH1D("h_invar_max", "h_invar_max", 50, 0, 1000);
-    TH1D *h_invar_max_corr = new TH1D("h_invar_max_corr", "h_invar_max_corr", 50, 0, 1000);
+    TH1D *h_invar_plane0 = new TH1D("h_invar_plane0", "h_invar_plane0", 50, 0, 500);
+    TH1D *h_invar_plane0_corr = new TH1D("h_invar_plane0_corr", "h_invar_plane0_corr", 50, 0, 500);
+    TH1D *h_invar_plane1 = new TH1D("h_invar_plane1", "h_invar_plane1", 50, 0, 500);
+    TH1D *h_invar_plane1_corr = new TH1D("h_invar_plane1_corr", "h_invar_plane1_corr", 50, 0, 500);
+    TH1D *h_invar_plane2 = new TH1D("h_invar_plane2", "h_invar_plane2", 50, 0, 500);
+    TH1D *h_invar_plane2_corr = new TH1D("h_invar_plane2_corr", "h_invar_plane2_corr", 50, 0, 500);
+    TH1D *h_invar_max = new TH1D("h_invar_max", "h_invar_max", 50, 0, 500);
+    TH1D *h_invar_max_corr = new TH1D("h_invar_max_corr", "h_invar_max_corr", 50, 0, 500);
     TH1I *h_sim_shower_pdg = new TH1I("h_sim_shower_pdg", "h_sim_shower_pdg", 100, 0, 2500);
 
     /////////////////////////////////////////////////////////
@@ -83,7 +85,8 @@ void make_2dHisto() {
     int pass_pdg = 0;
     int pass_overlay = 0;
     double energy_cut = 20.0;
-    double overlay_fraction_cut = 0.3;
+    double overlay_fraction_cut = 0.8;
+    cout << "Starting loop" << endl;
     for (int i = 0; i < t->GetEntries(); i++) {
         t->GetEntry(i);
         h_num_showers->Fill(reco_asso_showers);
@@ -93,6 +96,7 @@ void make_2dHisto() {
 
         for (int i_shr = 0; i_shr < reco_asso_showers; i_shr++) {
             h_sim_shower_pdg->Fill(sim_shower_pdg->at(reco_shower_ordered_energy_index->at(i_shr)));
+
             // Energy cut
             // Factor of 1000 for sim energy because it's in different units. Thanks, Mark.
             if (reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(i_shr)) < energy_cut ||
@@ -108,58 +112,97 @@ void make_2dHisto() {
             pass_overlay++;
 
             // Fill max energy
-            double max_leading_corr;
+            double max_energy_corr;
             h_max->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)), 
                         reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(i_shr)) );        
 
-            max_leading_corr = energyCorr(reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(i_shr)), tag);
+            max_energy_corr = energyCorr(reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(i_shr)), tag);
             h_max_corr->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)),
-                             max_leading_corr);
+                             max_energy_corr);
 
             // Fill plane 0
-            double plane0_leading_corr;
-            h_plane0->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)), 
-                        reco_shower_energy_plane0->at(reco_shower_ordered_energy_index->at(i_shr)) );        
+            double plane0_energy_corr = -999;
+            if (reco_shower_energy_plane0->at(reco_shower_ordered_energy_index->at(i_shr)) > 0. ) {
+              cout << "Shower " << i_shr << " plane0 energy " << reco_shower_energy_plane0->at(reco_shower_ordered_energy_index->at(i_shr)) << endl;
+              h_plane0->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)), 
+                          reco_shower_energy_plane0->at(reco_shower_ordered_energy_index->at(i_shr)) );        
 
-            plane0_leading_corr = energyCorr(reco_shower_energy_plane0->at(reco_shower_ordered_energy_index->at(i_shr)), tag);
-            h_plane0_corr->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)),
-                             plane0_leading_corr);
+              plane0_energy_corr = energyCorr(reco_shower_energy_plane0->at(reco_shower_ordered_energy_index->at(i_shr)), tag);
+              h_plane0_corr->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)),
+                               plane0_energy_corr);
+            }
 
             // Fill plane 1
-            double plane1_leading_corr;
-            h_plane1->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)), 
-                        reco_shower_energy_plane1->at(reco_shower_ordered_energy_index->at(i_shr)) );        
+            double plane1_energy_corr = -999;
+            if (reco_shower_energy_plane1->at(reco_shower_ordered_energy_index->at(i_shr)) > 0. ) {
+              cout << "Shower " << i_shr << " plane1 energy " << reco_shower_energy_plane1->at(reco_shower_ordered_energy_index->at(i_shr)) << endl;
+              h_plane1->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)), 
+                          reco_shower_energy_plane1->at(reco_shower_ordered_energy_index->at(i_shr)) );        
 
-            plane1_leading_corr = energyCorr(reco_shower_energy_plane1->at(reco_shower_ordered_energy_index->at(i_shr)), tag);
-            h_plane1_corr->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)),
-                             plane1_leading_corr);
+              plane1_energy_corr = energyCorr(reco_shower_energy_plane1->at(reco_shower_ordered_energy_index->at(i_shr)), tag);
+              h_plane1_corr->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)),
+                               plane1_energy_corr);
+            }
 
             // Fill plane 2
-            double plane2_leading_corr;
-            h_plane2->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)), 
-                        reco_shower_energy_plane2->at(reco_shower_ordered_energy_index->at(i_shr)) );        
+            double plane2_energy_corr = -999;
+            if (reco_shower_energy_plane2->at(reco_shower_ordered_energy_index->at(i_shr)) > 0. ) {
+              cout << "Shower " << i_shr << " plane2 energy " << reco_shower_energy_plane2->at(reco_shower_ordered_energy_index->at(i_shr)) << endl;
+              h_plane2->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)), 
+                          reco_shower_energy_plane2->at(reco_shower_ordered_energy_index->at(i_shr)) );        
 
-            plane2_leading_corr = energyCorr(reco_shower_energy_plane2->at(reco_shower_ordered_energy_index->at(i_shr)), tag);
-            h_plane2_corr->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)),
-                             plane2_leading_corr);
-
-            /*
+              plane2_energy_corr = energyCorr(reco_shower_energy_plane2->at(reco_shower_ordered_energy_index->at(i_shr)), tag);
+              h_plane2_corr->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)),
+                               plane2_energy_corr);
+            }
 
             // Invariant mass using individual corrections
-            double opAng = reco_shower_dirx->at(0)*reco_shower_dirx->at(1)+
-                           reco_shower_diry->at(0)*reco_shower_diry->at(1)+
-                           reco_shower_dirz->at(0)*reco_shower_dirz->at(1);
-            double invMass_max = sqrt(2*reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(0))*reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(1))*(1 - opAng) );
-            double invMass_max_corr = sqrt(2*max_leading_corr*max_subleading_corr*(1 - opAng) );
+            double opAng = -999;
+            double invMass_plane0 = -999, invMass_plane0_corr = -999;
+            double invMass_plane1 = -999, invMass_plane1_corr = -999;
+            double invMass_plane2 = -999, invMass_plane2_corr = -999;
+            double invMass_max    = -999, invMass_max_corr    = -999;
+            if (reco_asso_showers == 2) {
+              opAng = reco_shower_dirx->at(0)*reco_shower_dirx->at(1)+
+                      reco_shower_diry->at(0)*reco_shower_diry->at(1)+
+                      reco_shower_dirz->at(0)*reco_shower_dirz->at(1);
+
+              if (reco_shower_energy_plane0->size() == 2) {
+                invMass_plane0 = sqrt(2*reco_shower_energy_plane0->at(reco_shower_ordered_energy_index->at(0))*reco_shower_energy_plane0->at(reco_shower_ordered_energy_index->at(1))*(1 - opAng) );
+                invMass_plane0_corr = sqrt(2*plane0_energy_corr*plane0_energy_corr*(1 - opAng) );
+              }
+
+              if (reco_shower_energy_plane1->size() == 2) {
+                invMass_plane1 = sqrt(2*reco_shower_energy_plane1->at(reco_shower_ordered_energy_index->at(0))*reco_shower_energy_plane1->at(reco_shower_ordered_energy_index->at(1))*(1 - opAng) );
+                invMass_plane1_corr = sqrt(2*plane1_energy_corr*plane1_energy_corr*(1 - opAng) );
+              }
+
+              if (reco_shower_energy_plane2->size() == 2) {
+                invMass_plane2 = sqrt(2*reco_shower_energy_plane2->at(reco_shower_ordered_energy_index->at(0))*reco_shower_energy_plane2->at(reco_shower_ordered_energy_index->at(1))*(1 - opAng) );
+                invMass_plane2_corr = sqrt(2*plane2_energy_corr*plane2_energy_corr*(1 - opAng) );
+              }
+
+              if (reco_shower_energy_max->size() == 2) {
+                invMass_max = sqrt(2*reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(0))*reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(1))*(1 - opAng) );
+                invMass_max_corr = sqrt(2*max_energy_corr*max_energy_corr*(1 - opAng) );
+              }
+            }
+
+            // Invariant mass histograms
+            h_invar_plane0->Fill(invMass_plane0);
+            h_invar_plane0_corr->Fill(invMass_plane0_corr);
+            h_invar_plane1->Fill(invMass_plane1);
+            h_invar_plane1_corr->Fill(invMass_plane1_corr);
+            h_invar_plane2->Fill(invMass_plane2);
+            h_invar_plane2_corr->Fill(invMass_plane2_corr);
             h_invar_max->Fill(invMass_max);
             h_invar_max_corr->Fill(invMass_max_corr);
-            */
           }
     }
     cout << "Events with at least one associated shower: " << pass_shr << endl;
-    cout << "At least 30 MeV: " << pass_energy << endl;
-    cout << "Matched to photon: " << pass_pdg << endl;
-    cout << "Overlay < 50%: " << pass_overlay << endl;
+    cout << "Showers with at least 20 MeV: " << pass_energy << endl;
+    cout << "Showers matched to photon: " << pass_pdg << endl;
+    cout << "Showers with overlay < 80%: " << pass_overlay << endl;
     
     /*
     TCanvas *c1 = new TCanvas("c1", "c1", 1000, 700);
