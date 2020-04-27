@@ -224,10 +224,14 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
 
 
-
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
+    return  plotStacks(ftest,vars,bdt_cuts,"");
+}
+
+int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::string tago){
     // NEW (and soon to be only) ONE
 
+    bool entry_mode = false;
     double plot_pot=data_file->pot;
     if(stack_mode) plot_pot = stack_pot;
 
@@ -255,6 +259,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         s_max = plot_stage+1;
     }
 
+
+
     for(int s = s_min; s< s_max; s++){
 
 
@@ -270,8 +276,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 
         if(s>1) data_file->calcBDTEntryList(s,bdt_cuts);
-
         data_file->setStageEntryList(s);
+
+
 
         //And all variables in the vector var
         for(auto &var: vars){
@@ -290,11 +297,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 mc_stack->setSubtractionVector(subtraction_vec);
             }
 
-            THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
-            TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
-            TH1 * d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
-            TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
+            THStack *stk;
+            TH1 * tsum;
+            TH1 * d0;
+            TH1 * tsum_after;
 
+            stk = (THStack*)mc_stack->getEntryStack(var,s);
+            tsum = (TH1*)mc_stack->getEntrySum(var,s);
+            d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
+            tsum_after = (TH1*)tsum->Clone("tsumafter");
             //Check Covar for plotting
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
 
@@ -637,7 +648,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::size_t found = var.unit.find(massSearch);
 
             // Fit Gaussian to that variable
-            
+            /* 
                if (found != std::string::npos) {
                std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
                TF1 *gausfit_data = new TF1("gausfit_data", "gaus");
@@ -673,10 +684,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             gausfit_data->Draw("same");
             gausfit_mc->Draw("same");
             }
-            
 
 
 
+*/
 
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
@@ -906,11 +917,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Writing pdf."<<std::endl;
             cobs->Write();
             if(stack_mode){
-                cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+                cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".pdf").c_str(),"pdf");
                 // cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".root").c_str(),"root");
                 // cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
             }else{
-                cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+                cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".pdf").c_str(),"pdf");
             }
             //cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
