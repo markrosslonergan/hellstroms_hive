@@ -36,6 +36,9 @@ struct bdt_variable{
 		std::string type;
         bool is_logplot;
         bool has_covar;
+
+        std::string additional_cut;
+        
         std::string covar_name;
         std::string covar_file;
         std::string covar_legend_name;

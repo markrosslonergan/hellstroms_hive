@@ -163,7 +163,7 @@ int main (int argc, char *argv[]){
         }
     }
 
-        
+
     gSystem->Load("/uboone/app/users/markrl/Hive_v3.0/hellstroms_hive/hive/root_linkdefs/loc/denan_cxx.so");
     //===========================================================================================
     //===========================================================================================
@@ -232,7 +232,7 @@ int main (int argc, char *argv[]){
     std::cout<<"================================================================================"<<std::endl;
 
     for(size_t f = 0; f < XMLconfig.GetNFiles(); ++f){
-
+        if(f>11) break;
         std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
         //First build a bdt_flow for this file.
         std::string def = "1";  
@@ -284,7 +284,7 @@ int main (int argc, char *argv[]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOffBeamData( XMLconfig.bdt_onbeam_pot[f], XMLconfig.bdt_onbeam_spills[f], XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
 
-           if(!XMLconfig.bdt_is_training_signal[f])  bkg_bdt_files.push_back(bdt_files.back());
+            if(!XMLconfig.bdt_is_training_signal[f])  bkg_bdt_files.push_back(bdt_files.back());
         }
 
         if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f]  && !XMLconfig.bdt_is_validate_file[f] && !XMLconfig.bdt_is_offbeam_data[f]){
@@ -941,13 +941,13 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     std::cout<<"Running validate mode: "<<validate_files.size()<<std::endl;
 
-        if (access("valid",F_OK) == -1){
-            mkdir("valid",0777);//Create a folder for pdf.
-        }
-        else{
-            std::cout<<"Overwrite valid/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
-        }
+    if (access("valid",F_OK) == -1){
+        mkdir("valid",0777);//Create a folder for pdf.
+    }
+    else{
+        std::cout<<"Overwrite valid/ in 2 seconds, 1 seconds, ..."<<std::endl;
+        sleep(2);
+    }
 
 
     std::vector<bdt_variable> quick_vars;
@@ -986,7 +986,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
 }else if(mode_option == "fancy"){
 
-    
+
     if(which_file<0) which_file = 0; //default to first file.
     if(number<0) number = 0; //default to first variable
 
@@ -999,7 +999,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
         if(which_group == -1 || which_group == var.cat){
             fancyFiciency(bdt_files[which_file], XMLconfig.v_eff_denom_cut[0], XMLconfig.v_eff_numer_cut[0], var, analysis_tag, XMLconfig.v_eff_denom_stage[0], XMLconfig.v_eff_numer_stage[0], fbdtcuts);
         }
-     }
+    }
 
     return 0;
 
@@ -1027,10 +1027,10 @@ if (topo_tag == "notrack"){
 //specifically for protond/photons pre-topological
 if(number>0) bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, true);
 //normally stops here
- 
+
 if(number==3){
 
-bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot, true, which_stage, analysis_tag, true, false);
+    bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot, true, which_stage, analysis_tag, true, false);
 
 }
 bdt_efficiency(bdt_files[which_file], v_denom,v_topo,vec_precuts , fbdtcuts,what_pot     );
@@ -1044,7 +1044,42 @@ bdt_efficiency(bdt_files[which_file], v_denom,v_topo,vec_precuts , fbdtcuts,what
 
 
 }
+else if(mode_option == "gif"){
 
+        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+    bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
+    histogram_stack->plot_pot = onbeam_data_file->pot;
+    for(size_t f =0; f< stack_bdt_files.size(); ++f){
+        if(stack_bdt_files[f]->is_data) continue;
+        if(!plotOnTopMap[stack_bdt_files[f]] ){
+            histogram_stack->addToStack(stack_bdt_files[f]);
+            std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+        }
+    }
+    for(size_t f =0; f< stack_bdt_files.size(); ++f){
+        if(stack_bdt_files[f]->is_data) continue;
+        if(plotOnTopMap[stack_bdt_files[f]] ){
+            histogram_stack->addToStack(stack_bdt_files[f],true);
+            std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+        }
+    }
+
+    bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+    datamc.setPlotStage(which_stage);                
+    std::vector<bdt_variable> tmp_var = {vars.at(number)};
+    int i= 100; 
+    std::vector<bdt_variable> gif_vars;
+    for(double min_C = 0.0; min_C < 1.0; min_C+=0.025){
+        i++;
+        gif_vars.push_back(vars.at(number));
+        gif_vars.back().additional_cut = "("+bdt_infos[which_bdt].identifier+"_mva >="+std::to_string(min_C)+")";
+        gif_vars.back().safe_unit += "_GIF_"+std::to_string(i)+"_"+std::to_string(min_C); 
+    }
+
+    datamc.plotStacks(ftest,  gif_vars , fbdtcuts);
+    return 0;
+
+}
 // Last-minute garbage function I added for NC pi0 filter studies. Ignore
 else if(mode_option == "eff2"){
 
@@ -1100,7 +1135,7 @@ else if(mode_option == "eff2"){
     };
     std::string deltarad_1g1p_def = v_denom_deltarad_1g1p[0];
     for(int i=1; i< v_denom_deltarad_1g1p.size();i++){
-        deltarad_1g1p_def += "&&" + v_denom_deltarad_1g1p[i];
+        deltarad_1g1p_def += "&&" + v_denom_deltarad_1g1p[i]+analysis_tag+" ";
     }
 
     // Deltarad 1g0p
@@ -1166,7 +1201,7 @@ else if(mode_option == "eff2"){
 
 
     double splot_pot =   onbeam_data_file->pot;
-    
+
     std::cout<<"Starting SBNfit with "<<splot_pot<<" POT"<<std::endl;
 
     if(which_stage==-1) which_stage ==1;
@@ -1341,15 +1376,15 @@ return 0;
             t_vars = vars;
         }
 
-   
+
         if(number>0){t_vars = {vars[number]};}
 
         if((which_bdt==i || which_bdt==-1)){
             bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 
             bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
             plot_bdt_variables(training_signal, training_background, t_vars, bdt_infos[i], false, which_stage,fbdtcuts);
-       }
-        
+        }
+
     }
 
 

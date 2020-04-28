@@ -74,6 +74,7 @@ class bdt_datamc{
         int plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts);
         int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
         int plotStacks(TFile*f,std::vector<bdt_variable> vars, std::vector<double> cuts);
+        int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::string tago);
 
         int plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt);
         int plotStacks(TFile*f, bdt_variable var,double,double);
