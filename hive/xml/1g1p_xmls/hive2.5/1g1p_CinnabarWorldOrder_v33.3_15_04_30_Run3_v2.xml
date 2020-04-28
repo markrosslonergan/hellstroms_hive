@@ -456,12 +456,11 @@
 
 <var def = "(sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2)) -sqrt(pow((#PP#)*reco_track_diry[0],2)+pow((#PP#)*reco_track_dirx[0],2)))/(sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))+sqrt(pow((#PP#)*reco_track_diry[0],2)+pow((#PP#)*reco_track_dirx[0],2)))" unit = "Transverse Momentum Asymetry" binning = "(18,-1,1)" type = "d"  training = "123"/>
 <var def = "(sqrt(pow(0.001*#GE#*reco_shower_implied_diry[0],2)+pow(0.001*#GE#*reco_shower_implied_dirx[0],2)) -sqrt(pow((#PP#)*reco_track_diry[0],2)+pow((#PP#)*reco_track_dirx[0],2)))/(sqrt(pow(0.001*#GE#*reco_shower_implied_diry[0],2)+pow(0.001*#GE#*reco_shower_implied_dirx[0],2))+sqrt(pow((#PP#)*reco_track_diry[0],2)+pow((#PP#)*reco_track_dirx[0],2)))" unit = "Transverse Momentum Asymetry implied" binning = "(18,-1,1)" type = "d"  training = "123"/>
-
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(18,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "33"/>
-
 <!--
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(8,1.01,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "33"/>
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(18,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "33"/>
 -->
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(8,1.01,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "33"/>
 
 <var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(18,0,4000)" unit = "Total PE in Beamgate" type ="d"  training=""/>
 <var def = "Min$(reco_shower_flash_shortest_distz)" binning ="(18,0,200)" unit = "Distance Shower to Flash in Z [cm]" type ="d"  training=""/>
