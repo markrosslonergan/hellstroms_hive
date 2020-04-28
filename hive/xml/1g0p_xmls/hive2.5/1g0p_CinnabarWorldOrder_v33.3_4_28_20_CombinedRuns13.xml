@@ -322,11 +322,12 @@
 <var def = "reco_shower_start_dist_to_SCB" binning="(24,0,150)" unit = "Distance from Shower Start to SCB" type ="d"  training="012" />
 <var def = "#GE#/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV]" binning = "(24,0,1)" type="d"  training="012" />
 <var def = "#GE#/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad]" binning = "(24,0,0.4)" type = "d"   training = "012"/>
-<var def = "sqrt(pow(#GE#*reco_shower_diry[0],2)+pow(#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(24,0,0.3)" type = "d"  training = "012"/>
+<var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(24,0,0.3)" type = "d"  training = "012"/>
 <var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(24,0,1)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="2"/>
 <var def = "Min$(sss_candidate_impact_parameter)" binning="(50,0,80)" unit = "Min impact parm basic" type="d" training="2"/>
 <var def = "Min$(sss_candidate_min_dist)" binning="(50,0,80)" unit = "Min conv parm basic" type="d" training="2"/>
 <var def = "sss3d_ioc_ranked_implied_opang" binning = "(50,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="2"/>
+<var def = "sss3d_ioc_ranked_implied_conv" binning = "(50,0,100)" unit ="sss3d min IOC Conversion Dist [cm]" type="d"  training="2"/>
 <var def = "sss2d_conv_ranked_invar" binning = "(50,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="2"/>
 
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
