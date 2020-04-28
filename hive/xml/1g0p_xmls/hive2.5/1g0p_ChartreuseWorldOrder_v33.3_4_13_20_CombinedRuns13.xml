@@ -343,7 +343,7 @@
 <!-- shower geometry + calorimetry -->
 <var def = "reco_shower_energy_max[0]/1000.0" binning = "(18,0.1,0.5)" unit = "Reconstructed Shower Energy [GeV]" type = "d"  training="0123"/>
 
-<!--<var def = "reco_shower_energy_max[0]/1000.0" binning = "(6,0.1,0.5)" unit = "Reconstructed Calorimetric Shower Energy Max [GeV]" type = "d"    training=""/>-->
+<!--<var def = "reco_shower_energy_max[0]/1000.0" binning = "(6,0.1,0.5)" unit = "Reconstructed Calorimetric Shower Energy Max [GeV]" type = "d"    training="0123"/>-->
 
 <var def = "reco_shower_energy_plane0[0]/1000.0" binning = "(24,0,0.4)" unit = "Reconstructed Calorimetric Shower Energy Plane 0 [GeV]" type = "d"    training=""/>
 <var def = "reco_shower_energy_plane1[0]/1000.0" binning = "(24,0,0.4)" unit = "Reconstructed Calorimetric Shower Energy Plane 1 [GeV]" type = "d"    training=""/>
