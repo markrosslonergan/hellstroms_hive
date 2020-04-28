@@ -327,7 +327,7 @@
 <var def = "Min$(sss_candidate_impact_parameter)" binning="(50,0,80)" unit = "Min impact parm basic" type="d" training="2"/>
 <var def = "Min$(sss_candidate_min_dist)" binning="(50,0,80)" unit = "Min conv parm basic" type="d" training="2"/>
 <var def = "sss3d_ioc_ranked_implied_opang" binning = "(50,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="2"/>
-<var def = "sss3d_ioc_ranked_implied_conv" binning = "(50,0,100)" unit ="sss3d min IOC Conversion Dist [cm]" type="d"  training="2"/>
+<var def = "sss3d_ioc_ranked_conv" binning = "(50,0,100)" unit ="sss3d min IOC Conversion Dist [cm]" type="d"  training="2"/>
 <var def = "sss2d_conv_ranked_invar" binning = "(50,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="2"/>
 
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
