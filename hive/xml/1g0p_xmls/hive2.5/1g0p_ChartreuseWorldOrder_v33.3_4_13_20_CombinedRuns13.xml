@@ -3,7 +3,9 @@
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <!--<topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.974611,0.878925,0.345965)" />-->
 <!-- marks quick re-opt-->
-<topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.964688,0.666029,0.182952)"/>
+<!--<topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.964688,0.666029,0.182952)"/>-->
+<topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.974611,0.878925,0.345965)"/>
+
 
 
 <plot_pot>
@@ -232,7 +234,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.90" max = "1.0" steps="10"/>
+    <scan min = "0.9" max = "1.0" steps="10"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
@@ -255,8 +257,8 @@
         sig_train_tag = "NCDeltaTrain"
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
-        />
-    <scan min = "0.65" max = "0.75" steps="5"/>
+        /> 
+    <scan min = "0.4" max = "0.9" steps="5"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
@@ -280,7 +282,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.18" max = "0.25" steps="5"/>
+    <scan min = "0.2" max = "0.6" steps="5"/>
 </mva>
 
 
