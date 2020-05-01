@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.988209,0.892728,0.428825)"/>
+<topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.0,0.892728,0.0)"/>
 
 <plot_pot>
     <run_period name ="RunI/II/IIIa" cut ="1.0" fraction = "1.0"  />
@@ -11,21 +11,22 @@
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
-    <definition>    
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "true" >
+    <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut>
-    </definition>    
-</bdtfile>    
-
-<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
-    <definition>    
-        <cut> mctruth_is_delta_radiative==1 </cut>    
-        <cut> mctruth_cc_or_nc==1</cut> 
     </definition>
-</bdtfile>    
+</bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run3.uniq.root" tag = "NCPi0CohRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "true">
+    <definition>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_cc_or_nc==1</cut>
+    </definition>
+</bdtfile>
+
+
+<bdtfile filename = "ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0CohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter==5 </cut>
         <cut> mctruth_cc_or_nc==1</cut>
@@ -33,7 +34,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run3.uniq.root" tag = "NCPi0NotCohRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0NotCohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut>
@@ -41,14 +42,16 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_combined_run3_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0Run3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> mctruth_cc_or_nc==1</cut>
         <cut> mctruth_num_exiting_pi0>1</cut>
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ccpi0_overlay_run3_v33.3.uniq.spluff.test.root" tag = "CC1Pi0Run3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC 1 #pi^{0}" signal = "false" scale = "1.0" plot_on_top = "false" >
+
+
+<bdtfile filename = "ccpi0_overlay_run1_v33.3.uniq.spluff.test.root" tag = "CC1Pi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC 1 #pi^{0}" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>mctruth_cc_or_nc==0 </cut>
         <cut>mctruth_num_exiting_pi0==1</cut>
@@ -56,7 +59,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "bnb_overlay_combined_run3_v33.3.uniq.spluff.test.root" tag = "BNBOtherRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "BNBOtherRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> (mctruth_num_exiting_pi0!=1) </cut>
         <cut>!(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1)</cut>
@@ -65,8 +68,7 @@
     </definition>
 </bdtfile>
 
-
-<bdtfile filename = "nue_overlay_run3_v33.3.uniq.spluff.test.root" tag = "NueOverlaysRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "#nu_{e} Intrinsic" >
+<bdtfile filename = "nue_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NueOverlaysRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "#nu_{e} Intrinsic" >
     <definition>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut>fabs(mctruth_nu_pdg)==12 </cut>
@@ -76,29 +78,30 @@
 </bdtfile>
 
 
-<bdtfile filename = "dirt_overlay_run3_v33.3.uniq.root" tag = "DirtRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" >
+
+
+<bdtfile filename = "dirt_overlay_run1_v33.3.uniq.root" tag = "DirtRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" >
     <definition><cut>1</cut></definition>
 </bdtfile>
 
-<bdtfile filename = "data_1e19_run3_v33.3.uniq.root" tag = "Data1e19Run3" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
+<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
-        <tor860_wcut>   7.348e+18 </tor860_wcut>
-        <E1DCNT_wcut>   1767808.0</E1DCNT_wcut>
+        <tor860_wcut>   4.081e+19 </tor860_wcut>
+        <E1DCNT_wcut>   9037544.0</E1DCNT_wcut>
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_run3_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 7.348e+18 </tor860_wcut>
-        <E1DCNT_wcut> 1767808.0</E1DCNT_wcut>
-        <EXT>73196017.0</EXT>
+        <tor860_wcut> 4.081e+19 </tor860_wcut>
+        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>
+        <EXT>28264427.0</EXT>
     </data>
 </bdtfile>
-
 
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
 
@@ -300,7 +303,7 @@
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
 
-<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="012" group = "12"/>
+<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"  training="012" group = "12"/>
 <var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="012" group = "12"/>
 <var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="012" group="77"/>
 <var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d"     training="012"/>
