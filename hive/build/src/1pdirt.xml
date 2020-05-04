@@ -483,6 +483,7 @@
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
+<var def = "reco_shower_energy_max[0]/1000.0" binning = "(18,0,0.5)" unit = "Reconstructed Shower Energy [GeV]" type = "d"    training="0" group = "2"/> 
 
 <var def = "reco_vertex_x" binning = "(24,-20,270)" unit = "Reco Vertex X [cm]" type="d" logplot="false" training="" group = "1"/>
 <var def = "reco_vertex_y" binning = "(24,-140,140)" unit = "Reco Vertex Y [cm]" type="d" logplot="false" training="" group = "1"/>

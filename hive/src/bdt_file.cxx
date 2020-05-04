@@ -601,7 +601,7 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
     std::cout<<"These particular precuts and definitions have a hash of "<<precut_hash<<std::endl;
     std::string s_precut_hash = std::to_string(precut_hash);
 
-    std::string filename = this->tag+"_"+analysis_tag+"_entrylists.root";
+    std::string filename = analysis_tag+"entrylists/"+this->tag+"_"+analysis_tag+"_entrylists.root";
     topological_list_name = "topological_list_"+analysis_tag+"_"+this->tag;
     precut_list_name = "precut_list_"+analysis_tag+"_"+this->tag;
 

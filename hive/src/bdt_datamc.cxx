@@ -521,6 +521,11 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
 
                     //now repeat for all of the MC files
+					
+				TH2* grouped_2dhist;
+				bool first_time = true;
+				TString tem_output_name;
+				std::string tem_title;
 
                for(auto &f: mc_stack->stack){
 
@@ -535,7 +540,21 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                                 
                     TH2 * mc = (TH2*)f->getTH2(var1,var2, "1", std::to_string(s)+"_mc_"+std::to_string(bdt_cuts[s])+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
                     padmc->cd();
-
+					
+					//to group or not to group
+					if( f->group != -1 ){//any group number != -1 will be considered as the same group;
+						if(first_time){
+							grouped_2dhist = (TH2*) mc->Clone();
+							tem_output_name =  "var2D/"+tag+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf";
+							first_time = false;
+							tem_title = f->plot_name;
+						} else{
+							grouped_2dhist->Add(mc);
+						}
+					}
+					
+					//End of grouping
+					
                     mc->Draw("COLZ");
                     mc ->SetTitle((f->tag + ", stage " + std::to_string(s)).c_str());
                     mc->GetYaxis()->SetTitleSize(0.05);
@@ -549,11 +568,34 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
 //                    cobsmc->SaveAs(("var2D/"+tag+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
-
-                    delete cobsmc;
+					delete cobsmc;
                     delete mc;
 
                     }//for each item in the mc stack
+					{//make up the grouped 2dhist;
+                    TCanvas *cobsmc = new TCanvas(("can_"+var1.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)).c_str(),1800,1600);
+                    cobsmc->cd();
+
+                    TPad *padmc = new TPad(("pad_"+stage_names.at(s)).c_str(), ("pad_"+stage_names.at(s)).c_str(), 0, 0, 1, 1.0);
+                    padmc->Draw();
+                    padmc->cd();
+
+					
+                    grouped_2dhist->Draw("COLZ");
+                    grouped_2dhist ->SetTitle((tem_title + ", stage " + std::to_string(s)).c_str());
+                    grouped_2dhist->GetYaxis()->SetTitleSize(0.05);
+                    grouped_2dhist->GetYaxis()->SetTitleOffset(0.9);
+                    grouped_2dhist->GetXaxis()->SetTitleSize(0.05);
+                    grouped_2dhist->GetXaxis()->SetTitleOffset(0.9);
+                    padmc->SetRightMargin(0.15);
+                    std::cout<<"Writing pdf."<<std::endl;
+                    cobsmc->Write();
+                    cobsmc->SaveAs(tem_output_name,"pdf");
+
+					delete cobsmc;
+					delete grouped_2dhist;
+					}
+
 
                 }//if different variables and haven't already used the combo
 
@@ -714,7 +756,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				double Nevents = f->GetEntries()*(plot_pot/f->pot)*f->scale_data;
 				Events_num.push_back(Nevents);
 				if(!f->is_signal) total_MCbkg_events += Nevents;
-			if(debug_message) std::cout<<"Event "<<std::setw(12)<<f->tag<<" has events "<<Nevents<<std::endl;
+			if(debug_message) std::cout<<"Sample "<<std::setw(16)<<f->tag<<" has events "<<Nevents<<std::endl;
 			}
 			total_MC_events =  std::accumulate(Events_num.begin(),Events_num.end(),0.0);//sum up all events, note that  we need double 0.0!
 			NdatEvents = data_file->GetEntries()*(plot_pot/data_file->pot )*data_file->scale_data;
@@ -726,7 +768,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				tsum_name = "All MC with Stats-Only Error "+ to_string_prec(total_MC_events,2);
 				legend_style = "le";
 			}
-			if(debug_message) std::cout<<"Total MC:"<<total_MC_events<<", total MCbkg:"<<total_MCbkg_events<<", data:"<<NdatEvents<<std::endl;
+			if(debug_message) std::cout<<"\nTotal MC:"<<total_MC_events<<", total MCbkg:"<<total_MCbkg_events<<", data:"<<NdatEvents<<std::endl;
 
 			//Calculate  mychi, ndof
 			if(!var.has_covar){//this info. goes to the red text box
@@ -818,7 +860,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				}
 				covar_f->Close();
 			}
-			
 			//modify # of events of different bdt_group
 			std::multimap<int, double> grouped_files_index;
 			for(size_t jndex = 0; jndex < mc_stack->stack.size(); ++jndex){//For l0, set legend contents according to bdt_file members
@@ -826,13 +867,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				double Nevents = f->GetEntries()*(plot_pot/f->pot)*f->scale_data;
 				int current_g = f->group;
 				std::map<int,double>::iterator skip_this = grouped_files_index.find(current_g);
-					if(current_g > -1 && skip_this != grouped_files_index.end()){//found the current_g in grouped_files_index
-						skip_this->second+=Nevents;//add up events number, Nevents;
-					}else{//it is gorup -1 or group number not yet found;
-						grouped_files_index.insert(std::make_pair(current_g,Nevents));
-					}
+				if(current_g > -1 && skip_this != grouped_files_index.end()){//found the current_g in grouped_files_index
+					skip_this->second+=Nevents;//add up events number, Nevents;
+				std::cout<<"CHECK Group "<<current_g<<" has accumulated Events "<<skip_this->second<<std::endl;
+				}else{//it is gorup -1 or group number is not previously found;
+					grouped_files_index.insert(std::make_pair(current_g,Nevents));
+				std::cout<<"CHECK Group "<<current_g<<" Events "<<Nevents<<std::endl;
+				}
 			}
-			//End of skip grouped bdr_files;
+			//End of skip grouped bdt_files;
 
 			for(size_t jndex = 0; jndex < mc_stack->stack.size(); ++jndex){//For l0, set legend contents according to bdt_file members
 
@@ -917,10 +960,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			estimators = new TLatex(0.11,0.02,combined.c_str());
 
 			if(print_message){
-			std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
-			std::cout<<"Binned Chi-test standard: "<<var.name<<" "<<tsum->Chi2Test(d0,"CHI2")<<std::endl;
-			std::cout<<"Binned Chi-test: "<<var.name<<" "<<tsum->Chi2Test(d0,"UW CHI2")<<std::endl;
-			std::cout<<"Binned Chi-test (rev): "<<var.name<<" "<<d0->Chi2Test(tsum,"UW CHI2")<<std::endl;
+				std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
+				std::cout<<"Binned Chi-test standard: "<<var.name<<" "<<tsum->Chi2Test(d0,"CHI2")<<std::endl;
+				std::cout<<"Binned Chi-test: "<<var.name<<" "<<tsum->Chi2Test(d0,"UW CHI2")<<std::endl;
+				std::cout<<"Binned Chi-test (rev): "<<var.name<<" "<<d0->Chi2Test(tsum,"UW CHI2")<<std::endl;
 			}
 
 
@@ -1026,6 +1069,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			if(print_message){
 				int gap=11;
 				std::vector<TH1*> somehists((mc_stack->stack).size());
+				std::cout<<"\n----- Summary -----"<<std::endl;
 				std::cout<<std::left<<std::setw(gap)<<"Bin#";
 				for(size_t lndex = 0; lndex < somehists.size(); ++lndex){
 					std::cout<<std::left<<std::setw(gap)<<mc_stack->stack[lndex]->tag;
