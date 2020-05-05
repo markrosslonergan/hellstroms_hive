@@ -572,6 +572,16 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             }
        }
 
+
+        std::string var_cut = "1";
+        const char* c_var_cut = pVar->Attribute("cut");
+        if (c_var_cut==NULL ){
+        }else{
+            var_cut = c_var_cut;
+        }
+        var_cut = this->AliasParse(var_cut);
+
+
         std::string covar_file;
         std::string covar_name;
         std::string covar_leg = "default";
@@ -603,6 +613,10 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         }
 
         const char* t_pmax = pVar->Attribute("pmax");
+        if(t_pmax!=NULL){
+            pmax = atof(t_pmax);
+        }
+
 
         std::cout<<"Plotting Min/Max "<<pmin<<" "<<pmax<<std::endl;
 
@@ -623,6 +637,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         t.plot_min = pmin;
         t.plot_max = pmax;
         t.cat = in_cat;
+        t.additional_cut = var_cut;
         if(has_covar){
             std::cout<<"Adding a covariance matrix "<<covar_name<<" from file "<<covar_file<<std::endl;
             covar_file = covar_file+"/VID"+std::to_string(n_var)+".SBNcovar.root";

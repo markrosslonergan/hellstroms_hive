@@ -1,10 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.974611,0.878925,0.345965)" />
-<!-- Marks quick redo -->
-<!--<topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.964688,0.666029,0.182952)"/>-->
-
+<topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.0,0.8,0.0)" />
 
 <plot_pot>
     <run_period name ="RunI" cut ="1.0" fraction = "1.0"  />
@@ -14,14 +11,14 @@
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "true" >
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut>
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "true">
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut>
@@ -44,6 +41,23 @@
         <cut> mctruth_num_exiting_pi0==1</cut>
     </definition>
 </bdtfile>
+
+<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" signal = "false" scale = "1.0" plot_on_top = "false" >
+    <definition>
+        <cut> mctruth_cc_or_nc==1</cut>
+        <cut> mctruth_num_exiting_pi0>1</cut>
+    </definition>
+</bdtfile>
+
+
+
+<bdtfile filename = "ccpi0_overlay_run1_v33.3.uniq.spluff.test.root" tag = "CC1Pi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC 1 #pi^{0}" signal = "false" scale = "1.0" plot_on_top = "false" >
+    <definition>
+        <cut>mctruth_cc_or_nc==0 </cut>
+        <cut>mctruth_num_exiting_pi0==1</cut>
+    </definition>
+</bdtfile>
+
 
 <bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
@@ -345,7 +359,7 @@
 <!-- shower geometry + calorimetry -->
 <!--<var def = "reco_shower_energy_max[0]/1000.0" binning = "(20,0,0.2)" unit = "Reconstructed Shower Energy [GeV]" type = "d" logplot = "false"  training="0123"/>-->
 
-<var def = "reco_shower_energy_max[0]/1000.0" binning = "(6,0.1,0.5)" unit = "Reconstructed Calorimetric Shower Energy Max [GeV]" type = "d"    training="0123"/>
+<var def = "reco_shower_energy_max[0]/1000.0" binning = "(6,0.1,0.5)" unit = "Reconstructed Calorimetric Shower Energy Max [GeV]" type = "d"    training=""/>
 
 <var def = "reco_shower_energy_plane0[0]/1000.0" binning = "(24,0,0.4)" unit = "Reconstructed Calorimetric Shower Energy Plane 0 [GeV]" type = "d"    training=""/>
 <var def = "reco_shower_energy_plane1[0]/1000.0" binning = "(24,0,0.4)" unit = "Reconstructed Calorimetric Shower Energy Plane 1 [GeV]" type = "d"    training=""/>
@@ -427,20 +441,14 @@
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_dirx[0],2))" unit = "Photon Implied Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = ""/>
 -->
 
-<var def = "((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)*0.001" binning = "(9,0.1,1.0)" unit = "Reconstructed Shower Energy [GeV]" type = "d"  training="" group="77"/>
-<var def = "(((reco_shower_energy_max[0]))*1.21 +10.0)*0.001" binning = "(9,0.1,1.0)" unit = "Reconstructed Shower Energy Max [GeV]" type = "d"  training="" group="77"/>
-
-
 <!--bdt vars -->
-<var def = "1g0pMar2020COSMIC_mva" binning = "(36,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" group = "6" logplot = "true" />
-<var def = "1g0pMar2020NCPi0_mva" binning = "(36,0.0,0.64)" unit = "NC#pi^{0} BDT Score" type="d" training= ""  group = "6" logplot = "true" />
+<var def = "1g0pMar2020COSMIC_mva" binning = "(36,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" group = "6" logplot = "true"/>
+<var def = "1g0pMar2020NCPi0_mva" binning = "(36,0.0,0.64)" unit = "NC#pi^{0} BDT Score" type="d" training= ""  group = "6" logplot = "true"/>
 <var def = "1g0pMar2020BNB_mva" binning = "(36,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""  group = "6" logplot = "true" />
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
-<var def = "#GE#" binning = "(18,100,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
-<var def = "#GE#" binning = "(4,100,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "9"/>
-
+<var def = "#GE#" binning = "(4,50,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
 
 <!--pi0 vars -->
 <!--
