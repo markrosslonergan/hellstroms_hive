@@ -61,24 +61,16 @@
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1)</cut> <!-- Not NC multip0 -->
         <!-- <cut> !(mctruth_is_delta_radiative &amp;&amp; mctruth_cc_or_nc==1)</cut> -->
-        <cut> !(mctruth_is_delta_radiative)</cut>  <!--not cc or nc delta -->
-        <cut> (!(mctruth_cc_or_nc==0 &amp;&amp; fabs(mctruth_nu_pdg)==12) &amp;&amp; !(fabs(mctruth_nu_pdg)==12 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0 >0 ) ) </cut>  <!--not CC nue with 0 or 1 NCpi0 -->
+        <cut> !(mctruth_is_delta_radiative &amp;&amp; mctruth_cc_or_nc==1)</cut>  <!--not nc delta -->
+        <cut> (!(mctruth_cc_or_nc==0 &amp;&amp; fabs(mctruth_nu_pdg)==12)) </cut> <!-- not cc nue -->
+        <cut> !(fabs(mctruth_nu_pdg)==12 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0 >0 ) </cut>  <!-- NC nue with 0 NCpi0 -->
     </definition>
 </bdtfile>
-
-<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "CCDeltaRad" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "CC #Delta Rad"  scale = "1.0" plot_on_top = "false" >
-    <definition>
-       <cut> (mctruth_cc_or_nc ==0 &amp;&amp; mctruth_is_delta_radiative==1) </cut>
-    </definition>
-</bdtfile>
-
 
 <bdtfile filename = "nue_bdt_testing_sample_v33.3.uniq.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e} Intrinsic" >
     <definition>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
-        <cut> mctruth_num_exiting_pi0 &lt; 2 </cut> 
-        <cut>!(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1) </cut>
     </definition>
 </bdtfile>
 
