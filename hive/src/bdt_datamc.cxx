@@ -633,25 +633,24 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             /////// Print resolution for diphoton mass ////////
             // First, find variables containing the string of interest
-            /*
             std::string massSearch("Invariant");
             std::size_t found = var.unit.find(massSearch);
 
             // Fit Gaussian to that variable
             if (found != std::string::npos) {
                 std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
-                TF1 *gausfit_data = new TF1("gausfit_data", "gaus");
+                TF1 *gausfit_data = new TF1("gausfit_data", "gaus", 0.05, 0.25);
                 TF1 *gausfit_mc = new TF1("gausfit_mc", "gaus");
                 TH1 *tmp_hist = stk->GetHistogram();
-                double lowFit, highFit;
+                double lowFit = 0.05, highFit = 0.25;
                 double mass_data = 0., mass_err_data = 0;
                 double mass_res_data = 0., mass_res_err_data = 0.;
                 double mass_mc = 0., mass_err_mc = 0;
                 double mass_res_mc = 0., mass_res_err_mc = 0.;
                 // Fit range should be similar for data and MC
-                lowFit = d0->GetXaxis()->GetBinLowEdge(1);
-                highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
-                d0->Fit(gausfit_data, "lv", "", lowFit, highFit);
+                //lowFit = d0->GetXaxis()->GetBinLowEdge(1);
+                //highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
+                d0->Fit(gausfit_data, "lvr", "", lowFit, highFit);
                 tmp_hist->Fit(gausfit_mc, "q", "", lowFit, highFit);
                 //tsum->Fit(gausfit_mc, "q", "", lowFit, highFit);
                 //std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
@@ -672,7 +671,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 gausfit_data->Draw("same");
                 gausfit_mc->Draw("same");
             }
-            */
 
 
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
@@ -884,9 +882,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // Note that this depends on e.g. "Run 1" existing in your plot_name
             // for on-beam data file
             std::string run_name;
-            if      (data_file->plot_name.find("Run 1") != std::string::npos) run_name = "run1";
-            else if (data_file->plot_name.find("Run 2") != std::string::npos) run_name = "run2";
-            else if (data_file->plot_name.find("Run 3") != std::string::npos) run_name = "run3";
+            if      (data_file->plot_name.find("Run 1 ") != std::string::npos) run_name = "run1";
+            else if (data_file->plot_name.find("Run 2 ") != std::string::npos) run_name = "run2";
+            else if (data_file->plot_name.find("Run 3 ") != std::string::npos) run_name = "run3";
             else    run_name = "combined";
 
             std::string simple_topo_name;

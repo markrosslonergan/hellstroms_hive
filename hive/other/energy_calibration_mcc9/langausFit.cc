@@ -16,7 +16,7 @@ void langausFit() {
     langaus->SetParNames("Landau width","Peak value","Normalization","Gaussian width");
 
     std::vector< std::pair<int,int> > bins = leadingProjBins();
-    TCanvas *c = new TCanvas("c", "c", 1920, 1080);
+    TCanvas *c = new TCanvas("c", "c", 1900, 1000);
     // TODO WARNING Hard-coding alert
     c->Divide(4, 5 );
     gStyle->SetOptStat(0);
@@ -65,7 +65,7 @@ void langausFit() {
         }
         */
         //langaus->SetParameters(0.004, peakVal, nentries, 0.005);
-        langaus->SetParameters(0.004, peakVal, h->Integral(fitRange.first, fitRange.second, ""), 0.005);
+        langaus->SetParameters(0.001, peakVal, h->Integral(fitRange.first, fitRange.second, ""), 0.001);
         h->Fit(langaus,"q", "", fitRange.first, fitRange.second);
         h->GetXaxis()->SetTitleOffset(1.2);
         h->SetTitle("");

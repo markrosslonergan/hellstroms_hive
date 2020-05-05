@@ -51,8 +51,8 @@ void doCalibration() {
         TString projName = Form("h%i", i+1);
         TString projName_corr = Form("h%i_corr", i+1);
         h_max_projections.at(i) = (TH1D*)h_max->ProjectionY(projName, 
-                                                fitSlices.at(i).first, 
-                                                fitSlices.at(i).second );
+                                                fitSlices.at(i).first/ MeVPerBin, 
+                                                fitSlices.at(i).second/MeVPerBin );
         std::cout << "Getting projection from bin " << fitSlices.at(i).first << 
           " to " << fitSlices.at(i).second << std::endl;
 
@@ -63,19 +63,20 @@ void doCalibration() {
         std::cout << "Entries in this slice: " << h_max_projections.at(i)->GetEntries() << std::endl;
 
         int maxBin = h_max_projections.at(i)->GetMaximumBin();
-        //std::cout << "maxBin = " << maxBin << std::endl;
+        std::cout << "maxBin = " << maxBin << std::endl;
         int maxBin_corr = h_max_projections_corr.at(i)->GetMaximumBin();
 
         // Fill xvals with center of true energy slices; x-errors are just
         // one-half slice width 
-        xvals[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.)*MeVPerBin;
+        xvals[i] = (fitSlices.at(i).first/MeVPerBin + (fitSlices.at(i).second - fitSlices.at(i).first)/(MeVPerBin*2.) )*MeVPerBin;
         xvals_corr[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.)*MeVPerBin;
-        xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.*MeVPerBin;
-        //cout << "xval: " << xvals[i] << endl;
+        //xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.*MeVPerBin;
+        xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.;
+        cout << "xval: " << xvals[i] << endl;
         //xvals_corr[i] = (fitSlices.at(i).first + (fitSlices.at(i).second - fitSlices.at(i).first)/2.);
         //xerrs[i] = (fitSlices.at(i).second - fitSlices.at(i).first)/2.;
         yvals[i] = h_max_projections.at(i)->GetXaxis()->GetBinCenter(maxBin);
-        //std::cout << "yval: " << yvals[i] << std::endl;
+        std::cout << "yval: " << yvals[i] << std::endl;
         yvals_corr[i] = h_max_projections_corr.at(i)->GetXaxis()->GetBinCenter(maxBin_corr);
     }
     
@@ -143,8 +144,10 @@ void doCalibration() {
     TString simString = Form("MicroBooNE Simulation");
     TString chi2_text = Form("#chi^{2}/NDF: %0.2f/%i", fit->GetChisquare(), fit->GetNDF() );
     pt->AddText(simString);
-    if (tag=="run1") pt->AddText("Run 1");
-    else if (tag=="run3") pt->AddText("Run 3");
+    if (tag=="run1")          pt->AddText("Run 1");
+    else if (tag=="run3")     pt->AddText("Run 3");
+    else if (tag=="all")      pt->AddText("Runs 1+3");
+    else if (tag=="finalSel") pt->AddText("NC #pi^{0} Final Selection");
     pt->AddText(chi2_text);
     pt->Draw("same");
 

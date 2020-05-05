@@ -10,9 +10,18 @@ void make_2dHisto() {
     
     // Get signal file and TTree
     TString dir = "/uboone/data/users/markross/Mar2020/";
+    // TODO try using final selection sbnfit file for comparison
+    //TFile *fin = new TFile("/uboone/app/users/amogan/hive_v2.5_xgboost/hellstroms_hive/hive/build/bin/sbnfit_pigLEE_combined_stage_2_NCPi0Combined_1p_and_0p_v5.root", "READ");
+    //TFile *fin = new TFile(dir+"ncpi0_overlay_run3g_v33.3.uniq.root", "READ");
+    //TFile *fin = new TFile(dir+"ncpi0_overlay_run1_v33.3.uniq.root", "READ");
     TFile *fin = new TFile(dir+"ncpi0_overlay_combined_run13_v33.3.uniq.root", "READ");
     TString tag = "all";
+    //TTree *t = (TTree*)fin->Get("singlephotonana/vertex_tree");
     TTree *t = (TTree*)fin->Get("singlephotonana/vertex_tree");
+    if (!t || !fin) {
+      cout << "ERROR Input file doesn't exist or TTree name is incorrect" << endl;
+      return;
+    }
 
     // Declare necessary tree variables
     int reco_asso_showers = 0;
@@ -85,8 +94,7 @@ void make_2dHisto() {
     int pass_pdg = 0;
     int pass_overlay = 0;
     double energy_cut = 20.0;
-    double overlay_fraction_cut = 0.8;
-    cout << "Starting loop" << endl;
+    double overlay_fraction_cut = 0.3;
     for (int i = 0; i < t->GetEntries(); i++) {
         t->GetEntry(i);
         h_num_showers->Fill(reco_asso_showers);
@@ -99,8 +107,8 @@ void make_2dHisto() {
 
             // Energy cut
             // Factor of 1000 for sim energy because it's in different units. Thanks, Mark.
-            if (reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(i_shr)) < energy_cut ||
-                1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)) < energy_cut ) continue;
+            if (reco_shower_energy_max->at(reco_shower_ordered_energy_index->at(i_shr)) < energy_cut) continue;
+                //&& 1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)) < energy_cut ) continue;
             pass_energy++;
 
             // Make sure shower is matched to photon
@@ -123,7 +131,7 @@ void make_2dHisto() {
             // Fill plane 0
             double plane0_energy_corr = -999;
             if (reco_shower_energy_plane0->at(reco_shower_ordered_energy_index->at(i_shr)) > 0. ) {
-              cout << "Shower " << i_shr << " plane0 energy " << reco_shower_energy_plane0->at(reco_shower_ordered_energy_index->at(i_shr)) << endl;
+              //cout << "Shower " << i_shr << " plane0 energy " << reco_shower_energy_plane0->at(reco_shower_ordered_energy_index->at(i_shr)) << endl;
               h_plane0->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)), 
                           reco_shower_energy_plane0->at(reco_shower_ordered_energy_index->at(i_shr)) );        
 
@@ -135,7 +143,7 @@ void make_2dHisto() {
             // Fill plane 1
             double plane1_energy_corr = -999;
             if (reco_shower_energy_plane1->at(reco_shower_ordered_energy_index->at(i_shr)) > 0. ) {
-              cout << "Shower " << i_shr << " plane1 energy " << reco_shower_energy_plane1->at(reco_shower_ordered_energy_index->at(i_shr)) << endl;
+              //cout << "Shower " << i_shr << " plane1 energy " << reco_shower_energy_plane1->at(reco_shower_ordered_energy_index->at(i_shr)) << endl;
               h_plane1->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)), 
                           reco_shower_energy_plane1->at(reco_shower_ordered_energy_index->at(i_shr)) );        
 
@@ -147,7 +155,7 @@ void make_2dHisto() {
             // Fill plane 2
             double plane2_energy_corr = -999;
             if (reco_shower_energy_plane2->at(reco_shower_ordered_energy_index->at(i_shr)) > 0. ) {
-              cout << "Shower " << i_shr << " plane2 energy " << reco_shower_energy_plane2->at(reco_shower_ordered_energy_index->at(i_shr)) << endl;
+              //cout << "Shower " << i_shr << " plane2 energy " << reco_shower_energy_plane2->at(reco_shower_ordered_energy_index->at(i_shr)) << endl;
               h_plane2->Fill(1000*sim_shower_energy->at(reco_shower_ordered_energy_index->at(i_shr)), 
                           reco_shower_energy_plane2->at(reco_shower_ordered_energy_index->at(i_shr)) );        
 
@@ -202,7 +210,7 @@ void make_2dHisto() {
     cout << "Events with at least one associated shower: " << pass_shr << endl;
     cout << "Showers with at least 20 MeV: " << pass_energy << endl;
     cout << "Showers matched to photon: " << pass_pdg << endl;
-    cout << "Showers with overlay < 80%: " << pass_overlay << endl;
+    cout << "Showers with overlay < 30%: " << pass_overlay << endl;
     
     /*
     TCanvas *c1 = new TCanvas("c1", "c1", 1000, 700);
