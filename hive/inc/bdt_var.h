@@ -42,6 +42,7 @@ struct bdt_variable{
         std::string covar_name;
         std::string covar_file;
         std::string covar_legend_name;
+        std::string covar_type;
 
         double plot_min;
         double plot_max;

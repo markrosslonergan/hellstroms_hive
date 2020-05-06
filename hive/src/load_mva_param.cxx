@@ -527,17 +527,24 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
     std::string global_covar_dir;
     std::string global_covar_name;
     std::string global_leg_name;
+    std::string global_covar_type;
     while(pCovar){
         has_global_covar = true;
 
         const char* var_covar_dir = pCovar->Attribute("dir");
         const char* var_covar_name = pCovar->Attribute("name");
         const char* var_leg_name = pCovar->Attribute("plotname");
+        const char* var_covar_type = pCovar->Attribute("type");
         if (var_covar_dir==NULL || var_covar_name==NULL){
             has_global_covar = false;
         }else{
             global_covar_dir = var_covar_dir;
             global_covar_name = var_covar_name;
+
+            if(var_covar_type==NULL){ global_covar_type="full";}
+            else{
+                global_covar_type = var_covar_type;
+            }
             global_leg_name = var_leg_name;
             std::cout<<"Loading a GLOBAL covariance matrix direectory"<<std::endl;
         }
@@ -584,10 +591,16 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
 
         std::string covar_file;
         std::string covar_name;
+        std::string covar_plotname;
+        std::string covar_type;
         std::string covar_leg = "default";
+
         bool has_covar = false;
         const char* var_covar_file = pVar->Attribute("covarfile");
         const char* var_covar_name = pVar->Attribute("covarname");
+        const char* var_covar_plotname = pVar->Attribute("plotname");
+        const char* var_covar_type = pVar->Attribute("covartype");
+        
         if (var_covar_file==NULL || var_covar_name==NULL){
             has_covar= false;
         }else{
@@ -595,12 +608,28 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             covar_file = var_covar_file;
             covar_name = var_covar_name;
         }
+
+        if (var_covar_plotname==NULL){
+            var_covar_plotname = "Not Set";
+        }else{
+            covar_plotname = var_covar_plotname;
+        }
+        covar_leg = covar_plotname; 
+        
+        
+        if (var_covar_type==NULL){
+            covar_type = "frac";
+        }else{
+            covar_type = var_covar_type;
+        }
+
         
         if(has_global_covar){
             has_covar= true;
             covar_file =  global_covar_dir;
             covar_name = global_covar_name;
             covar_leg = global_leg_name;
+            covar_type = global_covar_type;
         }
 
 
@@ -646,6 +675,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
             
             t.addCovar(covar_name,covar_file);
             t.covar_legend_name = covar_leg; 
+            t.covar_type = covar_type;
         }
 
 
