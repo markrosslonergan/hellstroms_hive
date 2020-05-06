@@ -640,7 +640,10 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         t.additional_cut = var_cut;
         if(has_covar){
             std::cout<<"Adding a covariance matrix "<<covar_name<<" from file "<<covar_file<<std::endl;
-            covar_file = covar_file+"/VID"+std::to_string(n_var)+".SBNcovar.root";
+            if(has_global_covar){
+                   covar_file = covar_file+"/VID"+std::to_string(n_var)+".SBNcovar.root";
+            }
+            
             t.addCovar(covar_name,covar_file);
             t.covar_legend_name = covar_leg; 
         }
