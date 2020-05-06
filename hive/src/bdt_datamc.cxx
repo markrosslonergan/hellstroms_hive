@@ -569,10 +569,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             leg_hack->SetLineWidth(2);
 
             if(var.has_covar){
-                //l0->AddEntry(leg_hack,"Flux, XS and MC stats Error","fl");
                 l0->AddEntry(leg_hack,var.covar_legend_name.c_str(),"fl");
             }else{
-                l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"le");
+                l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"fl");
             }
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
