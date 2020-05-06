@@ -1037,6 +1037,8 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::vector<bdt
 
     if (vec_files.size() != filt_files.size() ) {
         std::cout << "[EFF] WARNING: Uneven number of filtered and unfiltered files" << std::endl;
+        std::cout << "[EFF] WARNING: " << vec_files.size() << " BDT files and " << 
+          filt_files.size() << " filtered files" << std::endl;
     }
 
     for(size_t f=0; f< vec_files.size(); f++){

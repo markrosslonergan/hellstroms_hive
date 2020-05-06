@@ -101,7 +101,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
     ftest->cd();
 
-    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Final Selection","BNB BDT cut","NCPi0 BDT Cut","NUE BDT Cut","tmp"};
+    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Final Selection"};
     //Loop over all stages
 
     int s_min = 0;
@@ -249,7 +249,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     ftest->cd();
 
-    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Cosmic BDT Cut","BNB BDT cut","NCPi0 BDT Cut","NUE BDT Cut","SSV"};
+    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Final Selection"};
     //Loop over all stages
 
     int s_min = 0;
@@ -318,10 +318,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
 
             //some cheating
+            //var.has_covar = false;
             //var.has_covar = true;
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/DetSys/wireX/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
+            //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_2g1p/autoxml/Stage2/VID"+std::to_string(var.id)+".SBNcovar.root";
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/MCrich/VID"+std::to_string(var.id)+".SBNcovar.root";
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
+            //var.covar_name = "frac_covariance";
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
             //var.covar_name = "frac_covariance";
 
@@ -364,9 +367,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             double rmin = 0.5;
             double rmax = 1.5;
             int data_rebin = 1;
-            //if(s==0 || s == 1){
-            //    rmin=0; rmax = 1.99;
-            //}//else if(s>2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
+            if(s==0 || s == 1){
+                rmin=0; rmax = 1.99;
+            }//else if(s==2){ data_rebin = 2;};//else if(s==3){data_rebin=2;};
 
 
             //tsum->Rebin(data_rebin);
@@ -421,7 +424,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             cobs->cd();
             TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
 
-            if(is_bdt_variable || var.is_logplot )  pad0top->SetLogy();
+            //if(is_bdt_variable /*|| var.is_logplot*/ )  pad0top->SetLogy();
             pad0top->SetBottomMargin(0); // Upper and lower plot are joined
             pad0top->Draw();             // Draw the upper pad: pad2top
             pad0top->cd();               // pad2top becomes the current pad
@@ -431,9 +434,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //	double rmin = 0;
             //	double rmax = 2.99;
             //	int data_rebin = 1;
-            //if(s==0 || s == 1){
-            //    rmin=0; rmax = 1.99;
-            //}//else if(s==2){ data_rebin = 2;}else if(s==3){data_rebin=2;};
+            if(s==0 || s == 1){
+                rmin=0; rmax = 1.99;
+            }//else if(s==2){ data_rebin = 2;}//else if(s==3){data_rebin=2;};
 
             bool OTPC = false;
 
@@ -543,6 +546,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 fake_legend_hists.push_back(h1);
                 h1->SetFillColor(f->col);
                 h1->SetFillStyle(f->fillstyle);
+                /*
+                std::cout << "EVENTS For sample " << f->tag << std::endl;
+                for (int i = 0; i < h1->GetNbinsX(); i++) {
+                  std::cout << "EVENTS Entries in bin " << i << " = " << h1->GetBinContent(i) << std::endl;
+                }
+                */
                 //if(mc_stack->signal_on_top[n]){
                 //    h1->SetLineColor(f->col);
                 //    h1->SetLineWidth(3);
@@ -571,7 +580,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             if(var.has_covar){
                 l0->AddEntry(leg_hack,var.covar_legend_name.c_str(),"fl");
             }else{
-                l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"fl");
+                l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"fl"); // Was le
             }
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -658,46 +667,40 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::size_t found = var.unit.find(massSearch);
 
             // Fit Gaussian to that variable
-            /* 
-               if (found != std::string::npos) {
-               std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
-               TF1 *gausfit_data = new TF1("gausfit_data", "gaus");
-               TF1 *gausfit_mc = new TF1("gausfit_mc", "gaus");
-               TH1 *tmp_hist = stk->GetHistogram();
-               double lowFit, highFit;
-               double mass_data = 0., mass_err_data = 0;
-               double mass_res_data = 0., mass_res_err_data = 0.;
-               double mass_mc = 0., mass_err_mc = 0;
-               double mass_res_mc = 0., mass_res_err_mc = 0.;
-            // Fit range should be similar for data and MC
-            lowFit = d0->GetXaxis()->GetBinLowEdge(1);
-            highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
-            //gausfit_data->SetParameter(1,0.13);
-            //gausfit_data->SetParameter(2,0.05);
-            d0->Fit(gausfit_data, "MWLv", "", 0.06,0.210);
-            //tmp_hist->Fit(gausfit_data, "q", "", lowFit, highFit);
-            //std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
-            mass_data = gausfit_data->GetParameter(1);
-            mass_err_data = gausfit_data->GetParError(1);
-            mass_res_data = gausfit_data->GetParameter(2);
-            mass_res_err_data = gausfit_data->GetParError(2);
-            mass_mc = gausfit_mc->GetParameter(1);
-            mass_err_mc = gausfit_mc->GetParError(1);
-            mass_res_mc = gausfit_mc->GetParameter(2);
-            mass_res_err_mc = gausfit_mc->GetParError(2);
-            std::cout << "[BLARG] Data mass: " << mass_data << " +/- " << mass_err_data << std::endl;
-            std::cout << "[BLARG] Data mass resolution: " << mass_res_data << " +/- " << mass_res_err_data << std::endl;
-            std::cout << "[BLARG] MC mass: " << mass_mc << " +/- " << mass_err_mc << std::endl;
-            std::cout << "[BLARG] MC mass resolution: " << mass_res_mc << " +/- " << mass_res_err_mc << std::endl;
-            gausfit_data->SetLineColor(kRed);
-            gausfit_mc->SetLineColor(kAzure+1);
-            gausfit_data->Draw("same");
-            gausfit_mc->Draw("same");
+            if (found != std::string::npos) {
+                std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
+                TF1 *gausfit_data = new TF1("gausfit_data", "gaus", 0.05, 0.25);
+                TF1 *gausfit_mc = new TF1("gausfit_mc", "gaus");
+                TH1 *tmp_hist = stk->GetHistogram();
+                double lowFit = 0.05, highFit = 0.25;
+                double mass_data = 0., mass_err_data = 0;
+                double mass_res_data = 0., mass_res_err_data = 0.;
+                double mass_mc = 0., mass_err_mc = 0;
+                double mass_res_mc = 0., mass_res_err_mc = 0.;
+                // Fit range should be similar for data and MC
+                //lowFit = d0->GetXaxis()->GetBinLowEdge(1);
+                //highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
+                d0->Fit(gausfit_data, "lvr", "", lowFit, highFit);
+                tmp_hist->Fit(gausfit_mc, "q", "", lowFit, highFit);
+                //tsum->Fit(gausfit_mc, "q", "", lowFit, highFit);
+                //std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
+                mass_data = gausfit_data->GetParameter(1);
+                mass_err_data = gausfit_data->GetParError(1);
+                mass_res_data = gausfit_data->GetParameter(2);
+                mass_res_err_data = gausfit_data->GetParError(2);
+                mass_mc = gausfit_mc->GetParameter(1);
+                mass_err_mc = gausfit_mc->GetParError(1);
+                mass_res_mc = gausfit_mc->GetParameter(2);
+                mass_res_err_mc = gausfit_mc->GetParError(2);
+                std::cout << "[BLARG] Data mass: " << mass_data << " +/- " << mass_err_data << std::endl;
+                std::cout << "[BLARG] Data mass resolution: " << mass_res_data << " +/- " << mass_res_err_data << std::endl;
+                std::cout << "[BLARG] MC mass: " << mass_mc << " +/- " << mass_err_mc << std::endl;
+                std::cout << "[BLARG] MC mass resolution: " << mass_res_mc << " +/- " << mass_res_err_mc << std::endl;
+                gausfit_data->SetLineColor(kRed);
+                gausfit_mc->SetLineColor(kAzure+1);
+                gausfit_data->Draw("same");
+                gausfit_mc->Draw("same");
             }
-
-
-
-*/
 
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
@@ -913,6 +916,26 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
 
+            // Make text file for chi^2
+            // Note that this depends on e.g. "Run 1" existing in your plot_name
+            // for on-beam data file
+            std::string run_name;
+            if      (data_file->plot_name.find("Run 1 ") != std::string::npos) run_name = "run1";
+            else if (data_file->plot_name.find("Run 2 ") != std::string::npos) run_name = "run2";
+            else if (data_file->plot_name.find("Run 3 ") != std::string::npos) run_name = "run3";
+            else    run_name = "combined";
+
+            std::string simple_topo_name;
+            if      (data_file->topo_name.find("2#gamma1p") != std::string::npos) simple_topo_name = "2g1p";
+            else if (data_file->topo_name.find("2#gamma0p") != std::string::npos) simple_topo_name = "2g0p";
+            else if (data_file->topo_name.find("1#gamma1p") != std::string::npos) simple_topo_name = "1g1p";
+            else if (data_file->topo_name.find("1#gamma0p") != std::string::npos) simple_topo_name = "1g0p";
+            else    simple_topo_name = "unknown_topo";
+            std::ofstream outfile;
+            std::cout << "TESTING run_name = " << run_name << std::endl;
+            outfile.open("chisq_"+simple_topo_name+"_"+run_name+"_stage_"+std::to_string(s)+".txt", std::ios_base::app);
+            outfile << to_string_prec(TMath::Prob(mychi, ndof),3) << std::endl;
+
             std::string combined = mean + "     " +ks;
             //std::string mean = "Ratio: Normalized" ;
             TLatex *t = new TLatex(0.11,0.02,combined.c_str());
@@ -1036,6 +1059,9 @@ int bdt_datamc::printPassingPi0DataEvents(std::string outfilename, int stage, st
         E1 = 1.24607*E1 + 4.11138;
         E2 = 1.24607*E2 + 4.11138;
 
+        //double opAng = TMath::ACos(reco_shower_dirx->at(0)*reco_shower_dirx->at(1)+
+        //        reco_shower_diry->at(0)*reco_shower_diry->at(1)+
+        //        reco_shower_dirz->at(0)*reco_shower_dirz->at(1)) ;
         double opAng = TMath::ACos(reco_shower_dirx->at(0)*reco_shower_dirx->at(1)+
                 reco_shower_diry->at(0)*reco_shower_diry->at(1)+
                 reco_shower_dirz->at(0)*reco_shower_dirz->at(1)) ;
@@ -1047,22 +1073,24 @@ int bdt_datamc::printPassingPi0DataEvents(std::string outfilename, int stage, st
            std::cout<<i<<" "<<fake_list->GetEntry(i)<<" "<<n_run_number <<" "
            <<n_subrun_number<<" "
            << n_event_number <<" ("
-           <<n_vertex_x<<", "<<n_vertex_y<<", "<<n_vertex_z<< ")"<<" " 
+           << n_vertex_x<<", "<<n_vertex_y<<", "<<n_vertex_z<< ")"<<" " 
            << E1 << " " 
            << E2 << " "
-           << opAng << " " 
+           << opAng*57.2958 << " " 
            << invMass << " " 
            << reco_track_displacement->at(i_trk->at(0)) << " " 
            << reco_track_proton_kinetic_energy->at(i_trk->at(0)) << " " << std::endl;
            */
-        std::cout <<  opAng*57.2958 << std::endl;
+        // Or just print run/subrun/event
+           std::cout<< n_run_number <<"\t"
+           <<n_subrun_number<<"\t"
+           << n_event_number << std::endl;
     }
     std::cout<<"End printPassingDataEvents()  for "<<data_file->name<<std::endl;
 
 
     return 0;
 }
-
 
 int bdt_datamc::calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *full_coll, bdt_variable & var){
 
@@ -1276,50 +1304,74 @@ int bdt_datamc::simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & v
 
 
 
+int bdt_datamc::calcChi2(TH1 *mc_hist, TH1 *data_hist) {
+
+//int bdt_datamc::calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file) {
 /*
-   int bdt_datamc::calcChi2(std::vector<bdt_file> *stack_files, bdt_file *data_file) {
 
-   double mychi =0;
-   int ndof = 0;
-   for(int p=0; p<data_file->GetNbinsX();p++){
+    double mychi =0;
+    int ndof = 0;
+    for(int p=0; p<data_hist->GetNbinsX();p++){
 
-   double da = data_file->GetBinContent(p+1);
-   double bk;
+        double da = data_hist->GetBinContent(p+1);
+        double bk = mc_hist->GetBinContent(p+1);
 
-   for (size_t i = 0; i < stack_files->size(); i++) {
-   bk+=stack_files->at(i)->GetBinContent(p+1);
-   }
+        for (size_t i = 0; i < stack_files.size(); i++) {
+            bk+=stack_files.at(i)->GetBinContent(p+1);
+        }
 
-   if ( bk ==0){
-   std::cout<<"ERROR mychi, for bin "<<p<<" n_data= "<<da<<" and n_mc= "<<bk<<std::endl;
+        if ( bk ==0){
+            std::cout<<"ERROR mychi, for bin "<<p<<" n_data= "<<da<<" and n_mc= "<<bk<<std::endl;
 
-   } else{
+        } else{
 
-   double da_err = sqrt(tsum->GetBinContent(p+1));
-   double bk_err = tsum->GetBinError(p+1);
+            double da_err = sqrt(mc_hist->GetBinContent(p+1));
+            double bk_err = mc_hist->GetBinError(p+1);
 
-   double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
+            double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
 
-   std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
-   if(tk==tk){
-   mychi+=tk;
-   ndof++;
-   }
-   }
-   }
+            std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
+            if(tk==tk){
+                mychi+=tk;
+                ndof++;
+            }
+        }
+    }
 
-// Added by A. Mogan 1/13/20 for easy reference in the scalenorm mode_option
-std::cout << "[SCALENORM]: chi^2/NDF: " << mychi << " / " << ndof << " = " << mychi/ndof << std::endl;
+    // Added by A. Mogan 1/13/20 for easy reference in the scalenorm mode_option
+    std::cout << "[SCALENORM]: chi^2/NDF: " << mychi << " / " << ndof << " = " << mychi/ndof << std::endl;
+*/
+  return 0;
 }
 
-int bdt_datamc::scaleNorm(std::vector<bdt_file> *stack_files, bdt_file data_file, double scaleLow, double scaleHigh, double scaleStep) {
+void bdt_datamc::scaleNorm(std::vector<bdt_variable> var, std::vector<bdt_file*> stack_files, double scaleLow, double scaleHigh, double scaleStep, int stage, std::vector<double> bdt_cuts, std::string analysis_tag) {
+/*
 
+    bdt_variable tmp_var = var[0];
+    double plot_pot=data_file->pot;
+    if(stack_mode) plot_pot = stack_pot;
 
-
+    for (double s = scaleLow; s < scaleHigh; s+=scaleStep) {
+        //TH1 *tsum = (TH1*)mc_stack->getEntrySum(tmp_var,stage);
+        bdt_stack *tmp_stack = new bdt_stack(analysis_tag+"_scalenorm_"+std::to_string(s) );
+        for(size_t f =0; f< stack_files.size(); ++f){
+            if(stack_files[f]->is_data) continue;
+            TH1 *tmp_mc = (TH1*)stack_files[f]->getTH1(tmp_var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[stage])+"_"+stack_files[f]->tag+"_"+tmp_var.safe_name, plot_pot);
+            // NOTE: Make sure signal is the first element of the stack vector
+            if (f==0) tmp_mc->Scale(s);
+            tmp_stack->Add(tmp_mc);
+            std::cout<<"adding to stack: "<<stack_files[f]->tag<<std::endl;
+        }
+        TH1 *d0 = (TH1*)data_file->getTH1(tmp_var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[stage])+"_"+data_file->tag+"_"+tmp_var.safe_name, plot_pot);
+        this->calcChi2(tsum, d0);
+    }
 return 0;
 }
 
 */
+    return;
+}
+
 
 
 
