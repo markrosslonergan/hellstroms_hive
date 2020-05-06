@@ -515,7 +515,7 @@ int main (int argc, char *argv[]){
                 datamc.setStackMode(histogram_stack->plot_pot);
 
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+                datamc.plotStacks(ftest,  tmp_var , fbdtcuts,bdt_infos);
             }else{
                 std::vector<bdt_variable> tmp_vars;
                 for(auto &v: vars){
@@ -530,7 +530,7 @@ int main (int argc, char *argv[]){
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setStackMode( histogram_stack->plot_pot);
 
-                real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts);
+                real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,bdt_infos);
             }
         }
     }    else if(mode_option == "datamc"){
@@ -582,7 +582,7 @@ int main (int argc, char *argv[]){
                 //datamc.printPassingPi0DataEvents("tmp", 2, fbdtcuts);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+                datamc.plotStacks(ftest,  tmp_var , fbdtcuts, bdt_infos);
                 // TODO: Commented out for time's sake. Put back in later
                 //datamc.plotEfficiency(tmp_var,fbdtcuts,1,(which_stage>1 ? which_stage : 2));
             }else{
@@ -598,11 +598,11 @@ int main (int argc, char *argv[]){
                 real_datamc.setPlotStage(which_stage);                
 
                 if(which_bdt==-1){
-                    real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts);
+                    real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts, bdt_infos);
                     // TODO: Commented out for time's sake. Put back in later
                     //real_datamc.plotEfficiency(tmp_vars,fbdtcuts,1, (which_stage > 1? which_stage : 2 ) );
                 }else{
-                    real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts);
+                    real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts, bdt_infos);
                     // TODO: Commented out for time's sake. Put back in later
                     //real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,  (which_stage >1 ? which_stage :2 ));
                 }
@@ -719,7 +719,7 @@ int main (int argc, char *argv[]){
             //datamc.printPassingPi0DataEvents("tmp", 3, fbdtcuts);
             //datamc.setSubtractionVector(subv);
             //datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
-            datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+            datamc.plotStacks(ftest,  tmp_var , fbdtcuts,bdt_infos);
 
             //bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
             //real_datamc.setPlotStage(which_stage);                
@@ -1092,14 +1092,14 @@ else if(mode_option == "gif"){
     std::vector<bdt_variable> tmp_var = {vars.at(number)};
     int i= 100; 
     std::vector<bdt_variable> gif_vars;
-    for(double min_C = 0.0; min_C < 1.0; min_C+=0.025){
+    for(double min_C = 0.0; min_C < 1.0; min_C+=0.01){
         i++;
         gif_vars.push_back(vars.at(number));
         gif_vars.back().additional_cut = "("+bdt_infos[which_bdt].identifier+"_mva >="+std::to_string(min_C)+")";
-        gif_vars.back().safe_unit += "_GIF_"+std::to_string(i)+"_"+std::to_string(min_C); 
+        gif_vars.back().safe_unit += "_GIF_"+std::to_string(i)+"_"+std::to_string(min_C)+"_"+std::to_string(which_bdt); 
     }
 
-    datamc.plotStacks(ftest,  gif_vars , fbdtcuts);
+    datamc.plotStacks(ftest,  gif_vars , fbdtcuts,bdt_infos);
     return 0;
 
 }
@@ -1234,6 +1234,7 @@ else if(mode_option == "eff2"){
         //std::cout<<v.edges[0]<<" "<<v.edges[1]<<" "<<v.edges[2]<<std::endl;
       /*
         bool is_train = false;
+        bool is_train = true;
         for(auto &in: bdt_infos){
             for(auto &tv: in.train_vars){
                 if(tv.id == v.id){ is_train=true; break;}

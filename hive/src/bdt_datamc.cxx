@@ -47,7 +47,7 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, std::
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
     //for redudancy, calls new function
-    return this->plotStacks(ftest,vars,{c1,c2});
+    return this->plotStacks(ftest,vars,{c1,c2},{});
 }
 
 std::vector<bdt_variable> bdt_datamc::GetSelectVars(std::string vector, std::vector<bdt_variable> vars){
@@ -224,11 +224,11 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
 
 
-int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
-    return  plotStacks(ftest,vars,bdt_cuts,"");
+int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::vector<bdt_info> bdt_infos){
+    return  plotStacks(ftest,vars,bdt_cuts,"",bdt_infos);
 }
 
-int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::string tago){
+int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::string tago, std::vector<bdt_info> bdt_infos){
     // NEW (and soon to be only) ONE
 
     bool entry_mode = false;
@@ -268,15 +268,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         //First set the files at this stage
         for(auto &f: mc_stack->stack){
             std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-            if(s>1) f->calcBDTEntryList(s,bdt_cuts);
+            if(s>1 && false) f->calcBDTEntryList(s,bdt_cuts); //Turn off, use below
             std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-            f->setStageEntryList(s);
+            f->setStageEntryList( (s ? s <2 : 1 ));
         }	
 
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 
-        if(s>1) data_file->calcBDTEntryList(s,bdt_cuts);
-        data_file->setStageEntryList(s);
+        if(s>1 && false) data_file->calcBDTEntryList(s,bdt_cuts);
+        data_file->setStageEntryList( (s ? s <2 : 1 ));
 
 
 
@@ -284,8 +284,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         for(auto &var: vars){
 
 
-        //var.is_logplot = true;
+            if(s>1){
+                std::string faster_cut ="(";
+                for(int ss=0; ss<s-1; ss++){
+                    faster_cut += bdt_infos[ss].identifier+"_mva >="+std::to_string(bdt_cuts[ss]) +"&&";
+                }
+                faster_cut+="1)";
+                var.additional_cut = faster_cut;
+            }
 
+            //var.is_logplot = true;
 
             std::cout<<"Starting on variable "<<var.name<<std::endl;
 
@@ -326,6 +334,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
                 covar_collapsed->Zero();
                 std::cout<<"Reading this from a covariance matrix "<<var.covar_file.c_str()<<std::endl;
+                std::cout<<"Is it frac or full? "<<var.covar_type.c_str()<<std::endl;
                 this->calcCollapsedCovariance(covar_full, covar_collapsed,var);
 
                 for(int c=0; c< tsum->GetNbinsX();c++){
@@ -336,7 +345,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
                     std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
+                    //double tot_error = mc_sys_error; 
                     tsum->SetBinError(c+1, tot_error);
+                    std::cout<<"DETOL: "<<c<<" N: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" Frac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
                     //And add on the systematic error that is MC stats
                     //               (*covar_collapsed)(c,c) += mc_stats_error*mc_stats_error;
                 }
@@ -570,7 +581,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //l0->AddEntry(leg_hack,"Flux, XS and MC stats Error","fl");
                 l0->AddEntry(leg_hack,var.covar_legend_name.c_str(),"fl");
             }else{
-                l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"le");
+                l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"fl"); // Was le
             }
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -789,7 +800,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }	
 
             TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(s)).c_str());
-            ratunit->Divide(rat_denom);		
+            ratunit->Divide(rat_denom);	
+            for(int i=0; i< ratunit->GetNbinsX(); i++){
+                    ratunit->SetBinError(i+1, tsum->GetBinError(i+1)/tsum->GetBinContent(i+1));
+            }
+
 
             TH1 * signal_hist = mc_stack->vec_hists[which_signal];
             TH1* rat_signal = (TH1*)signal_hist->Clone(("ratio_signal_"+stage_names.at(s)).c_str());
@@ -1080,6 +1095,13 @@ int bdt_datamc::printPassingPi0DataEvents(std::string outfilename, int stage, st
 
 int bdt_datamc::calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *full_coll, bdt_variable & var){
 
+    int ctype = (var.covar_type.c_str()=="full" ? 0 : 1);
+    if(ctype==0){
+        std::cout<<" Running in Full-Covariance Mode "<<var.covar_type<<std::endl;
+    }else{
+        std::cout<<" Running in Frac-Covariance Mode "<<var.covar_type<<std::endl;
+    }
+
     std::vector<double> full_vec = mc_stack->getEntryFullVector(var);
     TMatrixD tmp_full(frac_full->GetNrows(), frac_full->GetNcols());
     tmp_full.Zero();
@@ -1103,14 +1125,16 @@ int bdt_datamc::calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *full_col
                 if(full_vec[i] !=0 && full_vec[j]!=0){
                     //std::cout<<"We have a nan "<<pt<<" at "<<i<<" "<<j<<" "<<full_vec[i]<<" "<<full_vec[j]<<std::endl;
                 }
-                pt=0.0000;
+                 if(ctype==1)  pt=0.0000;
             }
-
-            //tmp_full(i,j) = pt*full_vec[i]*full_vec[j];
-            // More cheating!!! Yay!!! Mark says not cheating, but we all know
-            tmp_full(i,j) = pt;
-            //std::cout<<"ARK: "<<i<<" "<<j<<" "<<full_vec[i]<<" "<<pt<<" "<<tmp_full(i,j)<<std::endl;
+            if(ctype==0){
+                tmp_full(i,j) = pt;
+            }else         if(ctype==1)
+            {tmp_full(i,j) = pt*full_vec[i]*full_vec[j];
+            }
+    
         }
+            std::cout<<"StackCheck2 "<<i<<" "<<full_vec[i]<<" Err: "<<sqrt(tmp_full(i,i))<<" "<<(full_vec[i]>0 ? sqrt(tmp_full(i,i))/full_vec[i]*100.0 : -9 )<<std::endl;
     }
     std::cout<<"Done"<<std::endl;
     //Going to do collapsing here, but for now just do diagonal!

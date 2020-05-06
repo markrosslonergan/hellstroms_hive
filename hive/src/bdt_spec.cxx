@@ -225,13 +225,14 @@ std::vector<double> bdt_stack::getEntryFullVector(bdt_variable var){
 
     std::vector<double> ans;
 
+    int ib = 0;
     for(int t=0; t<stack.size(); t++){
-        std::cout<<"Stack "<<stack.at(t)->tag<<std::endl;
 
         TH1 *hist = (TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, 0);
-            
         for(int i=0; i< hist->GetNbinsX(); i++){
+            std::cout<<"StackCheck "<<ib<<" "<<stack.at(t)->tag<<" "<<hist->GetBinContent(i+1)<<std::endl;
             ans.push_back(hist->GetBinContent(i+1)); 
+            ib++;
         }
     }
 

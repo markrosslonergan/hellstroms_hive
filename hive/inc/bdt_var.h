@@ -42,6 +42,7 @@ struct bdt_variable{
         std::string covar_name;
         std::string covar_file;
         std::string covar_legend_name;
+        std::string covar_type;
 
         double plot_min;
         double plot_max;
@@ -84,6 +85,10 @@ struct bdt_variable{
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ','), safe_name.end());
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '|'), safe_name.end());
 			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ':'), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '#'), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '{'), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '}'), safe_name.end());
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '^'), safe_name.end());
 	
            	safe_unit = unit;
 			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ' '), safe_unit.end());
@@ -98,6 +103,10 @@ struct bdt_variable{
 			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '*'), safe_unit.end());
 			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '|'), safe_unit.end());
 			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ':'), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '#'), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '{'), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '}'), safe_unit.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '^'), safe_unit.end());
 
             has_covar = false;
 
