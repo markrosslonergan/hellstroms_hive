@@ -249,7 +249,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     ftest->cd();
 
-    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Final Selection"};
+    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Post-NC#pi#{0} BDT","Post-#nu_{e} BDT","Final Selection"};
     //Loop over all stages
 
     int s_min = 0;
@@ -415,7 +415,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }
             }
 
-            std::cout<<"2 "<<std::endl;
             tsum->SetMarkerSize(0);
 
             d0->SetMarkerSize(2);
@@ -667,7 +666,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::size_t found = var.unit.find(massSearch);
 
             // Fit Gaussian to that variable
-            if (found != std::string::npos) {
+            if (found != std::string::npos && false) {
                 std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
                 TF1 *gausfit_data = new TF1("gausfit_data", "gaus", 0.05, 0.25);
                 TF1 *gausfit_mc = new TF1("gausfit_mc", "gaus");
