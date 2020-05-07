@@ -75,7 +75,7 @@
     <definition><cut>1</cut></definition>
 </bdtfile>
 
-<bdtfile filename = "data_1e19_run3_v33.3.uniq.root" tag = "Data1e19Run3" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
+<bdtfile filename = "data_1e19_run3_v33.3.uniq.root" tag = "Data1e19Run3" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 3 On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
         <tor860_wcut>   7.348e+18 </tor860_wcut>
@@ -83,7 +83,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_run3_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "bnbext_run3_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 3 Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
