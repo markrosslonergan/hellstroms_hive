@@ -80,7 +80,7 @@
     <definition><cut>1</cut></definition>
 </bdtfile>
 
-<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
+<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
         <tor860_wcut>   4.081e+19 </tor860_wcut>
@@ -88,7 +88,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1 Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
@@ -325,7 +325,7 @@
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
-<var def = "reco_shower_energy_max[0]" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy Max [MeV]" type = "d"   training="" group="77"/>
+<var def = "reco_shower_energy_max[0]" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy Max [MeV]" type = "d"   training="" />
 
 <var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(24,0,1200)" unit = "Total PE in Beamgate" type ="d" training=""/>
 <var def = "Min$(reco_shower_flash_shortest_distz)" binning ="(24,0,130)" unit = "Distance Shower to Flash in Z [cm]" type ="d" training=""/>
