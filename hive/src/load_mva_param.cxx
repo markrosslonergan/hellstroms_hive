@@ -583,10 +583,14 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         std::string var_cut = "1";
         const char* c_var_cut = pVar->Attribute("cut");
         if (c_var_cut==NULL ){
+          //  std::cout<<"c_var_cut==NULL"<<std::endl;
         }else{
             var_cut = c_var_cut;
+           // std::cout<<"c_var_cut="<< c_var_cut<<std::endl;
         }
         var_cut = this->AliasParse(var_cut);
+
+       // std::cout<<"var_cut = "<<var_cut<<std::endl;
 
 
         std::string covar_file;
@@ -667,6 +671,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         t.plot_max = pmax;
         t.cat = in_cat;
         t.additional_cut = var_cut;
+        std::cout<<"t.additional_cut = "<<t.additional_cut <<std::endl;
         if(has_covar){
             std::cout<<"Adding a covariance matrix "<<covar_name<<" from file "<<covar_file<<std::endl;
             if(has_global_covar){
