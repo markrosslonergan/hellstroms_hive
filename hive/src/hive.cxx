@@ -1096,6 +1096,7 @@ else if(mode_option == "gif"){
         i++;
         gif_vars.push_back(vars.at(number));
         gif_vars.back().additional_cut = "("+bdt_infos[which_bdt].identifier+"_mva >="+std::to_string(min_C)+")";
+      //  std::cout<<" gif_vars.back().additional_cut=" <<  gif_vars.back().additional_cut<<std::endl;
         gif_vars.back().safe_unit += "_GIF_"+std::to_string(i)+"_"+std::to_string(min_C)+"_"+std::to_string(which_bdt); 
     }
 
