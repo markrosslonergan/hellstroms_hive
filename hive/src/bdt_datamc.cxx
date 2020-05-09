@@ -296,7 +296,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     faster_cut += bdt_infos[ss].identifier+"_mva >="+std::to_string(bdt_cuts[ss]) +"&&";
                 }
                 faster_cut+="1)";
-                var.additional_cut  =var.additional_cut+"&& ("+ faster_cut +")";
+                var.additional_cut  = "("+var.additional_cut+" ) && ("+ faster_cut +")";
             }
 
             //var.is_logplot = true;
