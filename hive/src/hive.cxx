@@ -1278,7 +1278,7 @@ else if(mode_option == "eff2"){
         std::cout<<"Ok, now lets use a preprepared sbnfit_make_covariance to generate this "<<std::endl;
         std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration "<<std::endl;
 
-        std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration  -x "+ covar_template_xml+"."+sVID+".xml" + " -t "+sVID; 
+        std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration  -x "+ covar_template_xml+"."+sVID+".xml" + "-m -t "+sVID; 
         system(run_str.c_str());
     }
 
