@@ -599,6 +599,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             double mychi =0;
             int ndof = 0;
+            bool use_cnp = 1;
             if(!var.has_covar){
 
                 for(int p=0; p<d0->GetNbinsX();p++){
@@ -632,7 +633,30 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                     }
                 }
-            }else{
+            } else if (var.has_covar && use_cnp) {
+
+                std::cout << "[TEST] Starting chi^2 CNP calculation" << std::endl;
+                TMatrixT<double> Mout = *covar_collapsed;
+
+                // Calculate middle term, sys + stat covar matrices
+                // CNP + intrinsic MC error^2
+                for(int i =0; i<covar_collapsed->GetNcols(); i++) {
+                    Mout(i,i) += ( d0->GetBinContent(i+1) >0.001 ? 3.0/(1.0/d0->GetBinContent(i+1) +  2.0/tsum->GetBinContent(i+1))  : tsum->GetBinContent(i+1)/2.0 ) + tsum->GetBinError(i+1)*tsum->GetBinError(i+1);
+                }
+
+                // Invert matrix, because the formula says so
+                Double_t *determ_ptr;
+                Mout.Invert(determ_ptr);
+
+                // Do the thing
+                for (int ib = 0; ib<var.n_bins; ib++) {
+                    for (int jb=0; jb<var.n_bins; jb++) {
+                        mychi += (tsum->GetBinContent(ib+1)-d0->GetBinContent(ib+1))*(Mout)(ib,jb)*(tsum->GetBinContent(jb+1)-d0->GetBinContent(jb+1));
+                    }
+                }
+                ndof = var.n_bins;
+
+            } else{
 
                 Double_t *determ_ptr;
 
@@ -657,10 +681,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }
                 ndof = var.n_bins;
             }
-            std::cout<<"MyChi: "<<var.name<<" "<<mychi<<" "<<std::endl;
-
-            // Added by A. Mogan 1/13/20 for easy reference in the scalenorm mode_option
-            std::cout << "[SCALENORM]: chi^2/NDF: " << mychi << " / " << ndof << " = " << mychi/ndof << std::endl;
+            std::cout<<"[TEST] MyChi: "<<var.name<<" "<<mychi<<" "<<std::endl;
 
             //stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
 
@@ -682,9 +703,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 TH1 *tmp_hist = stk->GetHistogram();
                 double lowFit = 0.05, highFit = 0.25;
                 double mass_data = 0., mass_err_data = 0;
-                double mass_res_data = 0., mass_res_err_data = 0.;
+                double mass_width_data = 0., mass_width_err_data = 0.;
+                double mass_res_data = 0., mass_res_data_err = 0.;
                 double mass_mc = 0., mass_err_mc = 0;
-                double mass_res_mc = 0., mass_res_err_mc = 0.;
+                double mass_width_mc = 0., mass_width_err_mc = 0.;
                 // Fit range should be similar for data and MC
                 //lowFit = d0->GetXaxis()->GetBinLowEdge(1);
                 //highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
@@ -694,16 +716,21 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
                 mass_data = gausfit_data->GetParameter(1);
                 mass_err_data = gausfit_data->GetParError(1);
-                mass_res_data = gausfit_data->GetParameter(2);
-                mass_res_err_data = gausfit_data->GetParError(2);
+                mass_width_data = gausfit_data->GetParameter(2);
+                mass_width_err_data = gausfit_data->GetParError(2);
                 mass_mc = gausfit_mc->GetParameter(1);
                 mass_err_mc = gausfit_mc->GetParError(1);
-                mass_res_mc = gausfit_mc->GetParameter(2);
-                mass_res_err_mc = gausfit_mc->GetParError(2);
+                mass_width_mc = gausfit_mc->GetParameter(2);
+                mass_width_err_mc = gausfit_mc->GetParError(2);
+                // Calculate resolution: StdDev/width (w/ uncertainty)
+                mass_res_data = gausfit_data->GetParameter(2)/gausfit_data->GetParameter(1);
+                mass_res_data_err = sqrt(std::pow(gausfit_data->GetParError(1)/gausfit_data->GetParameter(1) ,2) +
+                                         std::pow(gausfit_data->GetParError(2)/gausfit_data->GetParameter(2), 2) );
                 std::cout << "[BLARG] Data mass: " << mass_data << " +/- " << mass_err_data << std::endl;
-                std::cout << "[BLARG] Data mass resolution: " << mass_res_data << " +/- " << mass_res_err_data << std::endl;
+                std::cout << "[BLARG] Data mass StdDev: " << mass_width_data << " +/- " << mass_width_err_data << std::endl;
+                std::cout << "[BLARG] Data mass Res: " << mass_res_data*100. << "% +/- " << mass_res_data_err*100. << "%" << std::endl;
                 std::cout << "[BLARG] MC mass: " << mass_mc << " +/- " << mass_err_mc << std::endl;
-                std::cout << "[BLARG] MC mass resolution: " << mass_res_mc << " +/- " << mass_res_err_mc << std::endl;
+                std::cout << "[BLARG] MC mass StdDev: " << mass_width_mc << " +/- " << mass_width_err_mc << std::endl;
                 gausfit_data->SetLineColor(kRed);
                 gausfit_mc->SetLineColor(kAzure+1);
                 gausfit_data->Draw("same");
@@ -1379,6 +1406,28 @@ void bdt_datamc::scaleNorm(std::vector<bdt_variable> var, std::vector<bdt_file*>
 */
 return;
 }
+
+// Added 5/12/20 by A. Mogan
+/*
+TMatrixD CalcCovarianceMatrixCNP(TMatrixD *M, std::vector<double> spec, const std::vector<double> datavec ) {
+
+    TMatrixT<double> Mout(M->GetNcols(), M->GetNcols() );
+
+    for(int i =0; i<M->GetNcols(); i++)
+    {
+        for(int j =0; j<M->GetNrows(); j++)
+        {
+            if(std::isnan( (*M)(i,j) )){
+                Mout(i,j) = 0.0;
+            }else{
+                Mout(i,j) = (*M)(i,j)*spec[i]*spec[j];
+            }
+            if(i==j) Mout(i,i) +=   ( datavec[i] >0.001 ? 3.0/(1.0/datavec[i] +  2.0/spec[i])  : spec[i]/2.0 );
+        }
+    }
+    return Mout;
+}
+*/
 
 
 

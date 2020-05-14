@@ -98,6 +98,9 @@ class bdt_datamc{
         int simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & var);
 
         int plotEfficiency(std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, int stage_denom, int stage_numer);
+        
+        // Added 5/12/20 by A. Mogan
+        //TMatrixD CalcCovarianceMatrixCNP(TMatrixD *M, std::vector<double> spec, const std::vector<double> datavec );
 
 
 
