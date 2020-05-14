@@ -56,6 +56,8 @@ int main (int argc, char *argv[]){
     std::string input_string = "";
     int which_group = -1;
 
+    std::string covar_template_xml = "null.xml";
+
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
     {
@@ -68,6 +70,7 @@ int main (int argc, char *argv[]){
         {"stage",		required_argument,	0, 's'},
         {"combined",    no_argument,        0, 'c'},
         {"help",		required_argument,	0, 'h'},
+        {"makecovar",   required_argument, 0 , 'm'},
         {"pot",		    required_argument,	0, 'p'},
         {"group",       required_argument, 0, 'g'},
         {"number",		required_argument,	0, 'n'},
@@ -80,7 +83,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:s:f:t:p:b:i:n:g:v:rch?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:f:m:t:p:b:i:n:g:v:rch?", longopts, &index);
 
         switch(iarg)
         {
@@ -98,6 +101,10 @@ int main (int argc, char *argv[]){
                 break;
             case 'x':
                 xml = optarg;
+                break;
+            case 'm':
+                covar_template_xml = optarg;
+                mode_option = "makecovar";
                 break;
             case 'b':
                 which_bdt = (int)strtof(optarg,NULL);
@@ -353,7 +360,7 @@ int main (int argc, char *argv[]){
 
 
         //These are old and redundant.
-        f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
+        //f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
         //f->addFriend("track_tree",analysis_tag+"_"+f->tag+"_simtrack.root");
 
     }
@@ -694,39 +701,39 @@ int main (int argc, char *argv[]){
         // Make stack with scale factor on signal; loop over
         // scale factors, recalculating chi^2 each time in datamc.cxx
         /*
-        for (double s = scaleLow; s<scaleHigh; s+=scaleStep) {
+           for (double s = scaleLow; s<scaleHigh; s+=scaleStep) {
 
-            bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_scalenorm"+std::to_string(s));
-            histogram_stack->plot_pot = onbeam_data_file->pot;
+           bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_scalenorm"+std::to_string(s));
+           histogram_stack->plot_pot = onbeam_data_file->pot;
 
-            stack_bdt_files[0]->scale(s);
-            std::cout << "[SCALENORM]: Scale factor = " << s << std::endl;
-            for(size_t f =0; f< stack_bdt_files.size(); ++f){
-                if(stack_bdt_files[f]->is_data) continue;
-                // NOTE: Make sure signal is the first element of the stack vector
-                histogram_stack->addToStack(stack_bdt_files[f]);
-                std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
-            }
+           stack_bdt_files[0]->scale(s);
+           std::cout << "[SCALENORM]: Scale factor = " << s << std::endl;
+           for(size_t f =0; f< stack_bdt_files.size(); ++f){
+           if(stack_bdt_files[f]->is_data) continue;
+        // NOTE: Make sure signal is the first element of the stack vector
+        histogram_stack->addToStack(stack_bdt_files[f]);
+        std::cout<<"adding to stack: "<<stack_bdt_files[f]->tag<<std::endl;
+        }
 
-            //int ip=0;
-            //std::vector<bool> subv = {false,false,true};
-            bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc"+std::to_string(s));	
-            datamc.setPlotStage(which_stage);                
+        //int ip=0;
+        //std::vector<bool> subv = {false,false,true};
+        bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc"+std::to_string(s));	
+        datamc.setPlotStage(which_stage);                
 
-            //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
+        //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
 
-            //datamc.printPassingDataEvents("tmp", 3, fbdtcuts);
-            //datamc.printPassingPi0DataEvents("tmp", 3, fbdtcuts);
-            //datamc.setSubtractionVector(subv);
-            //datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
-            datamc.plotStacks(ftest,  tmp_var , fbdtcuts,bdt_infos);
+        //datamc.printPassingDataEvents("tmp", 3, fbdtcuts);
+        //datamc.printPassingPi0DataEvents("tmp", 3, fbdtcuts);
+        //datamc.setSubtractionVector(subv);
+        //datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
+        datamc.plotStacks(ftest,  tmp_var , fbdtcuts,bdt_infos);
 
-            //bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
-            //real_datamc.setPlotStage(which_stage);                
+        //bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
+        //real_datamc.setPlotStage(which_stage);                
 
-            // Reset stack and scaling
-            //histogram_stack->clearStack();
-            //stack_bdt_files[0]->scale(1./s);
+        // Reset stack and scaling
+        //histogram_stack->clearStack();
+        //stack_bdt_files[0]->scale(1./s);
         }
         */
 
@@ -1034,9 +1041,9 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
 if(which_stage==-1)which_stage=0;
 
-    //what_pot = 10.1e20;
-    // Needs to be 13.2 for filter studies
-    what_pot = 13.2e20;
+//what_pot = 10.1e20;
+// Needs to be 13.2 for filter studies
+what_pot = 13.2e20;
 
 //added 1g0p case but need to use -t option
 bool is0p = false;
@@ -1069,7 +1076,7 @@ bdt_efficiency(bdt_files[which_file], v_denom,v_topo,vec_precuts , fbdtcuts,what
 }
 else if(mode_option == "gif"){
 
-        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+    TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
     bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_datamc");
     histogram_stack->plot_pot = onbeam_data_file->pot;
     for(size_t f =0; f< stack_bdt_files.size(); ++f){
@@ -1096,6 +1103,7 @@ else if(mode_option == "gif"){
         i++;
         gif_vars.push_back(vars.at(number));
         gif_vars.back().additional_cut = "("+bdt_infos[which_bdt].identifier+"_mva >="+std::to_string(min_C)+")";
+        //  std::cout<<" gif_vars.back().additional_cut=" <<  gif_vars.back().additional_cut<<std::endl;
         gif_vars.back().safe_unit += "_GIF_"+std::to_string(i)+"_"+std::to_string(min_C)+"_"+std::to_string(which_bdt); 
     }
 
@@ -1226,22 +1234,70 @@ else if(mode_option == "eff2"){
     return 0;
 
 
+}else if(mode_option == "makecovar"){
+
+    std::cout<<"Starting to make an SBNfit integration covar with template: "<<covar_template_xml<<std::endl;
+
+
+    int vc=0;
+    for(auto &v: vars){
+        vc++;   
+        //lets skip anything that isnt the specific or group we want
+        if(number > 0 && number !=vc-1) continue;
+        if(which_group > 0 && which_group != v.cat) continue;
+
+        std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
+        for(double k = 0; k<=v.n_bins; k++){
+            double b = v.edges[1]+k*fabs(v.edges[1]-v.edges[2])/(double)v.n_bins;
+            std::cout<<" "<<b;
+        }
+        std::cout<<"\""<<std::endl;
+
+
+        std::string sVID = "VID"+std::to_string(v.id);
+        std::cout<<"Variable ID is "<<sVID<<std::endl;
+
+        std::cout<<"First lets add the variable string "<<v.name<<std::endl;
+        std::string sedder_VAR = "sed  's@VARVARVAR@" + v.name + "@' "+covar_template_xml +" > "+ covar_template_xml+"."+sVID+".xml";
+        std::cout<<sedder_VAR<<std::endl;
+        system(sedder_VAR.c_str());
+
+
+        std::string sBinning = "\"";
+        for(double k = 0; k<=v.n_bins; k++){
+            double b = v.edges[1]+k*fabs(v.edges[1]-v.edges[2])/(double)v.n_bins;
+            sBinning +=" " + std::to_string(b);
+        }
+        sBinning += "\"";
+
+        std::cout<<"Now lets add the variable Binning "<<sBinning<<std::endl;
+        std::string sedder_BIN = "sed  -i 's@BINBINBIN@" + sBinning + "@' " + covar_template_xml+"."+sVID+".xml";
+        std::cout<<sedder_BIN<<std::endl;
+        system(sedder_BIN.c_str());
+
+        std::cout<<"Ok, now lets use a preprepared sbnfit_make_covariance to generate this "<<std::endl;
+        std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration "<<std::endl;
+
+        std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration  -x "+ covar_template_xml+"."+sVID+".xml" + "-m -t "+sVID; 
+        system(run_str.c_str());
+    }
+
 }else if(mode_option == "export"){
 
 
     std::cout << "EXPORT starting export function" << std::endl;
     for(auto &v :vars){
         //std::cout<<v.edges[0]<<" "<<v.edges[1]<<" "<<v.edges[2]<<std::endl;
-      /*
-        bool is_train = false;
-        bool is_train = true;
-        for(auto &in: bdt_infos){
-            for(auto &tv: in.train_vars){
-                if(tv.id == v.id){ is_train=true; break;}
-            }
-            if(is_train)break;
-        }
-        */
+        /*
+           bool is_train = false;
+           bool is_train = true;
+           for(auto &in: bdt_infos){
+           for(auto &tv: in.train_vars){
+           if(tv.id == v.id){ is_train=true; break;}
+           }
+           if(is_train)break;
+           }
+           */
         //if(is_train){
         if(true){
             std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
@@ -1256,100 +1312,100 @@ else if(mode_option == "eff2"){
 
 
 
-}else if(mode_option == "recomc"){
-    if (access("recomc",F_OK) == -1){
-        mkdir("recomc",0777);//Create a folder for pdf.
-    }
-    else{
-        std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-        sleep(2);
-    }
+    }else if(mode_option == "recomc"){
+        if (access("recomc",F_OK) == -1){
+            mkdir("recomc",0777);//Create a folder for pdf.
+        }
+        else{
+            std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
+            sleep(2);
+        }
 
 
-    std::vector<int> recomc_cols;
-    for(auto &c: XMLconfig.recomc_cols){
-        recomc_cols.push_back(c->GetNumber());
-    }
-    recomc_cols.push_back(kGray);
+        std::vector<int> recomc_cols;
+        for(auto &c: XMLconfig.recomc_cols){
+            recomc_cols.push_back(c->GetNumber());
+        }
+        recomc_cols.push_back(kGray);
 
-    std::vector<std::string> recomc_names = XMLconfig.recomc_names; 
-    recomc_names.push_back("Other");
+        std::vector<std::string> recomc_names = XMLconfig.recomc_names; 
+        recomc_names.push_back("Other");
 
 
-    std::vector<std::string> recomc_cuts = XMLconfig.recomc_defs;
+        std::vector<std::string> recomc_cuts = XMLconfig.recomc_defs;
 
-    std::string other = "1";
-    for(auto &c: XMLconfig.recomc_defs){
-        other += "&& !("+c+")";
-    }
-    recomc_cuts.push_back(other);
+        std::string other = "1";
+        for(auto &c: XMLconfig.recomc_defs){
+            other += "&& !("+c+")";
+        }
+        recomc_cuts.push_back(other);
 
-    bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
-    recomc.setPlotStage(which_stage);                
+        bdt_recomc recomc(recomc_names, recomc_cuts, recomc_cols,analysis_tag);
+        recomc.setPlotStage(which_stage);                
 
-    TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-    int h=0;
-    if(which_file == -1) which_file =0;
+        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+        int h=0;
+        if(which_file == -1) which_file =0;
 
-    if(number != -1){
-        std::vector<bdt_variable> tmp = {vars.at(number)};
-        recomc.plot_recomc(ftest, bdt_files[which_file], tmp, fbdtcuts,what_pot);
+        if(number != -1){
+            std::vector<bdt_variable> tmp = {vars.at(number)};
+            recomc.plot_recomc(ftest, bdt_files[which_file], tmp, fbdtcuts,what_pot);
+            return 0;
+        }else{
+            recomc.plot_recomc(ftest, bdt_files[which_file], vars, fbdtcuts,what_pot);
+        }	
+
+
+
+        /*
+           else if(mode_option == "response"){
+
+           TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+        //Ok print out Cosmic BDT
+        if(run_cosmic){
+        bdt_response cosmic_response(cosmic_bdt_info, training_signal, OffBeamData);
+        cosmic_response.plot_bdt_response(ftest);
+        }
+
+        if(run_bnb){
+        bdt_response bnb_response(bnb_bdt_info, training_signal, training_ncpi0);
+        bnb_response.plot_bdt_response(ftest);
+        }
+        }	
+
+        else if(mode_option == "stack"){
+        bdt_stack histogram_stack(analysis_tag+"_stack");
+        histogram_stack.plot_pot = what_pot;
+        histogram_stack.addToStack(signal);
+        histogram_stack.addToStack(signal_other);
+        histogram_stack.addToStack(bnb);
+        //histogram_stack.addToStack(nueintrinsic);
+        histogram_stack.addToStack(ncpi0);
+        //Add OffBeamData but change the color and style first
+        OffBeamData->col;	
+        OffBeamData->fillstyle = 3333;
+        histogram_stack.addToStack(dirt);
+
+        histogram_stack.addToStack(OffBeamData);
+        //histogram_stack.addToStack(dirt);
+
+        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+        int ip=0;
+
+
+        if(!response_only){
+        if(number == -1){
+        histogram_stack.plotStacks(ftest,vars,fcoscut,fbnbcut);
+        }else{
+        std::cout<<"Starting to make a stack of : "<<vars.at(number).name<<std::endl;
+
+        std::vector<bdt_variable> v_tmp = {vars.at(number)};
+        histogram_stack.plotStacks(ftest,v_tmp,fcoscut,fbnbcut);
+        }
+        }else{
         return 0;
-    }else{
-        recomc.plot_recomc(ftest, bdt_files[which_file], vars, fbdtcuts,what_pot);
-    }	
-
-
-
-    /*
-       else if(mode_option == "response"){
-
-       TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-//Ok print out Cosmic BDT
-if(run_cosmic){
-bdt_response cosmic_response(cosmic_bdt_info, training_signal, OffBeamData);
-cosmic_response.plot_bdt_response(ftest);
-}
-
-if(run_bnb){
-bdt_response bnb_response(bnb_bdt_info, training_signal, training_ncpi0);
-bnb_response.plot_bdt_response(ftest);
-}
-}	
-
-else if(mode_option == "stack"){
-bdt_stack histogram_stack(analysis_tag+"_stack");
-histogram_stack.plot_pot = what_pot;
-histogram_stack.addToStack(signal);
-histogram_stack.addToStack(signal_other);
-histogram_stack.addToStack(bnb);
-//histogram_stack.addToStack(nueintrinsic);
-histogram_stack.addToStack(ncpi0);
-//Add OffBeamData but change the color and style first
-OffBeamData->col;	
-OffBeamData->fillstyle = 3333;
-histogram_stack.addToStack(dirt);
-
-histogram_stack.addToStack(OffBeamData);
-//histogram_stack.addToStack(dirt);
-
-TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-int ip=0;
-
-
-if(!response_only){
-if(number == -1){
-histogram_stack.plotStacks(ftest,vars,fcoscut,fbnbcut);
-}else{
-std::cout<<"Starting to make a stack of : "<<vars.at(number).name<<std::endl;
-
-std::vector<bdt_variable> v_tmp = {vars.at(number)};
-histogram_stack.plotStacks(ftest,v_tmp,fcoscut,fbnbcut);
-}
-}else{
-return 0;
-}
-*/
+        }
+        */
 }else if(mode_option == "vars"){
 
     if (access("vars",F_OK) == -1){

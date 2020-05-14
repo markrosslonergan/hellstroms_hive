@@ -1,18 +1,20 @@
 <?xml version="1.0" ?>
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
+<!--<topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.0,0.0,0.467404,0.0,0.521623)" />-->
 <topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.974952,0.96273,0.467404,0.570654,0.521623)" />
+
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "true" >
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "true">
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -20,7 +22,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "ncpi0_overlay_combined_run3.uniq.root" tag = "NCPi0CohRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0CohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter==5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -28,7 +30,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run3.uniq.root" tag = "NCPi0NotCohRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0NotCohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -36,21 +38,21 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_combined_run3_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0Run3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0>1</cut>
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ccpi0_overlay_run3_v33.3.uniq.spluff.test.root" tag = "CC1Pi0Run3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ccpi0_overlay_run1_v33.3.uniq.spluff.test.root" tag = "CC1Pi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>mctruth_cc_or_nc==0 </cut> 
         <cut>mctruth_num_exiting_pi0==1</cut>
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_combined_run3_v33.3.uniq.spluff.test.root" tag = "BNBOtherRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "BNBOtherRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
@@ -62,7 +64,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "nue_overlay_run3_v33.3.uniq.spluff.test.root" tag = "NueOverlaysRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
+<bdtfile filename = "nue_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NueOverlaysRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
     <definition>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
@@ -71,26 +73,26 @@
 
 
 
-<bdtfile filename = "dirt_overlay_run3_v33.3.uniq.root" tag = "DirtRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" >
+<bdtfile filename = "dirt_overlay_run1_v33.3.uniq.root" tag = "DirtRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
     <definition><cut>1</cut></definition>
 </bdtfile>
 
-<bdtfile filename = "data_1e19_run3_v33.3.uniq.root" tag = "Data1e19Run3" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 3 On-Beam Data">
+<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
-        <tor860_wcut>   7.348e+18 </tor860_wcut>
-        <E1DCNT_wcut>   1767808.0</E1DCNT_wcut>
+        <tor860_wcut>   4.081e+19 </tor860_wcut>   
+        <E1DCNT_wcut>   9037544.0</E1DCNT_wcut>   
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_run3_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 3 Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1 Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 7.348e+18 </tor860_wcut>
-        <E1DCNT_wcut> 1767808.0</E1DCNT_wcut>
-        <EXT>73196017.0</EXT>
+        <tor860_wcut> 4.081e+19 </tor860_wcut>   
+        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>   
+        <EXT>28264427.0</EXT>  
     </data>
 </bdtfile>
 
@@ -393,6 +395,13 @@
 <precut def = "reco_shower_start_dist_to_SCB > 7.0" name = "shr"/>
 <precut def = "reco_track_proton_kinetic_energy[0]<0.5" name = "En"/>
 <precut def = "DeNan(reco_track_calo_energy_plane2[0]*0.001, reco_track_calo_energy_max[0]*0.001) < 0.4" name = "Traxk_max"/>
+
+<!--<precut def = "1g1pMar2020_v4COSMIC_mva <  0.974952" name = "cosmic BDT inverse cut"/>
+<precut def = "1g1pMar2020_v4BNBOther_mva < 0.96273" name = "BNB BDT inverse cut"/> -->
+<!--<precut def = "1g1pMar2020_v4NCpi0_mva < 0.467404" name = "NCpi0 BDT inverse cut"/>-->
+<!--<precut def = "1g1pMar2020_v4Nue_mva < 0.570654" name = "Nue BDT inverse cut"/>-->
+<!--<precut def = "1g1pMar2020_v4SSV_mva < 0.521623" name = "Nue BDT inverse cut"/>-->
+
 <!--<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/>-->
 
 
@@ -409,7 +418,7 @@
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
 
-<var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="0123" group = "33"/>
+<var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="0123" group = "7"/>
 <var def = "reco_shower_nuscore[0]" binning = "(18, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="0123"/>
 <var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(18,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="0123"/>
 <var def = "reco_shower_impact_parameter[0]" binning = "(18,0,200)" unit = "Shower Impact Parameter [cm]" type="d"    training="0123"/>
@@ -457,11 +466,13 @@
 
 <var def = "(sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2)) -sqrt(pow((#PP#)*reco_track_diry[0],2)+pow((#PP#)*reco_track_dirx[0],2)))/(sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))+sqrt(pow((#PP#)*reco_track_diry[0],2)+pow((#PP#)*reco_track_dirx[0],2)))" unit = "Transverse Momentum Asymetry" binning = "(18,-1,1)" type = "d"  training = "123"/>
 <var def = "(sqrt(pow(0.001*#GE#*reco_shower_implied_diry[0],2)+pow(0.001*#GE#*reco_shower_implied_dirx[0],2)) -sqrt(pow((#PP#)*reco_track_diry[0],2)+pow((#PP#)*reco_track_dirx[0],2)))/(sqrt(pow(0.001*#GE#*reco_shower_implied_diry[0],2)+pow(0.001*#GE#*reco_shower_implied_dirx[0],2))+sqrt(pow((#PP#)*reco_track_diry[0],2)+pow((#PP#)*reco_track_dirx[0],2)))" unit = "Transverse Momentum Asymetry implied" binning = "(18,-1,1)" type = "d"  training = "123"/>
-<!--
+
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(18,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "33"/>
+
+<!--
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(8,1.01,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "33"/>
 -->
 
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(8,1.01,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "33"/>
 
 <var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(18,0,4000)" unit = "Total PE in Beamgate" type ="d"  training=""/>
 <var def = "Min$(reco_shower_flash_shortest_distz)" binning ="(18,0,200)" unit = "Distance Shower to Flash in Z [cm]" type ="d"  training=""/>
@@ -822,6 +833,26 @@
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSV BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4SSV_mva+ 1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,2.0)" unit = "NC#pi^{0}+SSV BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "8"/>
+<!--
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "9" cut="(1g1pMar2020_v4COSMIC_mva &gt; 0.974952 &amp;&amp; 1g1pMar2020_v4BNB_mva &gt; 0.96273 &amp;&amp; 1g1pMar2020_v4Nue_mva &gt; 0.570654)"/>
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "9" cut="(1g1pMar2020_v4COSMIC_mva &gt; 0.974952)"/>
+-->
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "9" cut="(1g1pMar2020_v4COSMIC_mva &gt;= #COS0# &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB0# &amp;&amp;1g1pMar2020_v4NCPi0_mva &gt;= #NCP0# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE0# &amp;&amp;1g1pMar2020_v4SSV_mva &gt;=#SSV0#)"/> <!-- final selection -->
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) A" type  = "d"  training = ""  group = "10" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB#)"/> <!-- pink box-->
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) A^{0}" type  = "d"  training = ""  group = "10" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar2020_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))"/> <!-- near sideband-->
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) C" type  = "d"  training = ""  group = "10" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB#)"/> <!-- bottom left-->
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) D" type  = "d"  training = ""  group = "10" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB#)"/> <!-- top left-->
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) B" type  = "d"  training = ""  group = "10" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB#)"/> <!-- bottom right-->
+
 
 <!--pi0 vars -->
 <!--
@@ -920,6 +951,16 @@
     </def>
 </recomc>
 -->
+
+<alias key="BNB0" value ="0.96273"/>
+<alias key="BNB" value ="0.96273"/>
+<alias key="COS0" value ="0.974952"/>
+<alias key="NCP" value ="0.467404"/>
+<alias key="NCP0" value ="0.467404"/>
+<alias key="NUE0" value ="0.570654"/>
+<alias key="SSV" value ="0.1"/>
+<alias key="SSV0" value ="0.521623"/>
+
 
 <alias key="PM" value ="(0.938272)"/>
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>
