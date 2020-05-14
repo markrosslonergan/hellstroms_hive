@@ -1258,7 +1258,7 @@ else if(mode_option == "eff2"){
         std::cout<<"Variable ID is "<<sVID<<std::endl;
 
         std::cout<<"First lets add the variable string "<<v.name<<std::endl;
-        std::string sedder_VAR = "sed  's@VARVARVAR@" + v.name + "@' "+covar_template_xml +" > "+ covar_template_xml+"."+sVID+".xml";
+        std::string sedder_VAR = "sed  's@VARVARVAR@\"" + v.name + "\"@' "+covar_template_xml +" > "+ covar_template_xml+"."+sVID+".xml";
         std::cout<<sedder_VAR<<std::endl;
         system(sedder_VAR.c_str());
 
