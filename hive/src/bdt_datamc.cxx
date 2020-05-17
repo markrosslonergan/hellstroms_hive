@@ -162,6 +162,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
     //                std::cout<<"flag4"<<std::endl;
                     pad->cd();
 
+
       //              std::cout<<"flag5"<<std::endl;
                     d0->Draw("COLZ");
                     d0 ->SetTitle((data_file->tag + ", stage " + std::to_string(s)).c_str());
@@ -195,6 +196,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                         padmc->Draw();
                         padmc->cd();
 
+                        padmc->SetLogz();
 
                         TH2 * mc = (TH2*)f->getTH2(var1,var2, "1", std::to_string(s)+"_mc_"+std::to_string(bdt_cuts[s])+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
                         padmc->cd();
