@@ -599,7 +599,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             double mychi =0;
             int ndof = 0;
-            bool use_cnp = 1;
+            bool use_cnp = true;
             if(!var.has_covar){
 
                 for(int p=0; p<d0->GetNbinsX();p++){
