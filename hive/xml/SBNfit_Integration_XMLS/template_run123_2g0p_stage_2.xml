@@ -128,8 +128,8 @@ type="double"
          />
  </MultisimFile>
 <MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g0p_April_collab/Comb123/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NCPi0NotCoh_v5.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
- <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_1_NCPi0NotCoh_v5+_combined.root"/>
- <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g0p_April_collab/Comb123/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_1_NCPi0NotCoh_v5.root"/> 
+ <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NCPi0NotCoh_v5+_combined.root"/>
+ <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g0p_April_collab/Comb123/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NCPi0NotCoh_v5.root"/> 
   <branch 
 name=VARVARVAR
 type="double"
@@ -139,9 +139,9 @@ type="double"
         
          />
  </MultisimFile>
-<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g0p_April_collab/Comb123/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_1_NueOverlays_v5.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
- <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_1_NueOverlays_v5+_combined.root"/>
- <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g0p_April_collab/Comb123/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_1_NueOverlays_v5.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g0p_April_collab/Comb123/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NueOverlays_v5.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+ <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NueOverlays_v5+_combined.root"/>
+ <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g0p_April_collab/Comb123/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NueOverlays_v5.root"/> 
   <branch 
 name=VARVARVAR
 type="double"
