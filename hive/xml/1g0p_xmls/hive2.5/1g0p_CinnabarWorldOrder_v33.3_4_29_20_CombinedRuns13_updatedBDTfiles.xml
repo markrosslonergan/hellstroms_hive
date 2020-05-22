@@ -8,6 +8,8 @@
     <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.5258" />
 </plot_pot>
 
+<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>
+
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
