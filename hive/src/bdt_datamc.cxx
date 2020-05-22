@@ -278,14 +278,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
             if(s>1 && false) f->calcBDTEntryList(s,bdt_cuts); //Turn off, use below
             std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-            f->setStageEntryList( (s ? s <2 : 1 ));
+         //   f->setStageEntryList( (s ? s <2 : 1 ));
+             f->setStageEntryList( (s ? s < 2 : s ));
         }	
 
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 
         if(s>1 && false) data_file->calcBDTEntryList(s,bdt_cuts);
-        data_file->setStageEntryList( (s ? s <2 : 1 ));
-
+        //data_file->setStageEntryList( (s ? s <2 : 1 ));
+        data_file->setStageEntryList( (s ? s < 2 : s ));
 
 
         //And all variables in the vector var
