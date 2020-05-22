@@ -278,15 +278,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
             if(s>1 && false) f->calcBDTEntryList(s,bdt_cuts); //Turn off, use below
             std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-         //   f->setStageEntryList( (s ? s <2 : 1 ));
-             f->setStageEntryList( (s ? s < 2 : s ));
+            f->setStageEntryList( (s ? s < 2 : s ));
         }	
 
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 
         if(s>1 && false) data_file->calcBDTEntryList(s,bdt_cuts);
-        //data_file->setStageEntryList( (s ? s <2 : 1 ));
-        data_file->setStageEntryList( (s ? s < 2 : s ));
+        data_file->setStageEntryList( (s ? s <2 :s ));
 
 
         //And all variables in the vector var
@@ -349,12 +347,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 std::cout<<"Is it frac or full? "<<var.covar_type.c_str()<<std::endl;
                 this->calcCollapsedCovariance(covar_full, covar_collapsed,var);
 
+                //std::vector<double> fkr = {0.144464,0.0794493,0.204987};
+                std::vector<double> fkr = {0.145171,0.0859779,0.11318,0.0891966,0.151207,0.189539};
+
                 for(int c=0; c< tsum->GetNbinsX();c++){
                     //double dv = tsum->GetBinContent(c+1);
                     //tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
                     //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
                     double mc_stats_error = tsum->GetBinError(c+1);
-                    double mc_sys_error = sqrt((*covar_collapsed)(c,c));
+                    double mc_sys_error = fkr[c];//sqrt((*covar_collapsed)(c,c));
                     std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
                     //double tot_error = mc_sys_error; 
@@ -363,6 +364,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     //And add on the systematic error that is MC stats
                     //               (*covar_collapsed)(c,c) += mc_stats_error*mc_stats_error;
                 }
+
                 covar_f->Close();
             }else{
                 for(int c=0; c< tsum->GetNbinsX()+1;c++){
