@@ -7,6 +7,8 @@
     <run_period name ="RunI/II/IIIa" cut ="1.0" fraction = "1.0"  />
 </plot_pot>
 
+<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>
+
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
@@ -440,6 +442,13 @@
 <var def = "#GE#" binning = "(4,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "10"/>
 <var def = "#GE#" binning = "(8,0,800)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "11"/>
 
+<var def = "#GE#" binning = "(4,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV] Cosmic Only Cut" type = "d"   training=""  cut = "(1g0pMar2020COSMIC_mva &gt;= #COS0#)" group = "13"/>
+
+<var def = "#GE#" binning = "(6,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV] BNB Other Only Cut" type = "d"   training=""  cut = "(1g0pMar2020BNB_mva &gt;= #BNB0#)" group = "13"/>
+
+<var def = "#GE#" binning = "(6,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV] NC #pi^{0} Only Cut" type = "d"   training=""  cut = "(1g0pMar2020NCPi0_mva &gt;= #NCP0#)" group = "13"/>
+
+
 <!--pi0 vars -->
 <!--
 <var def = "sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)" binning = "(10,0.0,1.4)" unit ="True #pi^{0} Momentum" type = "d" training = "" group = "2"/>
@@ -536,6 +545,11 @@
     </def>
 </recomc>
 -->
+
+<alias key="BNB0" value ="0.892728"/>
+<alias key="COS0" value ="0.988209"/>
+<alias key="NCP0" value ="0.428825"/>
+
 
 <alias key="GE" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0)))" />
 <alias key="GEO" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)" /><alias key="PM" value ="(0.938272)"/>
