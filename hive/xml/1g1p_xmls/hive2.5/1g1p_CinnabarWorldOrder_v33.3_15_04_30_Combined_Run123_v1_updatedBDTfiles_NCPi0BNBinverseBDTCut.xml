@@ -854,6 +854,30 @@
 
 <var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV] B" type  = "d"  training = ""  group = "11" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom right-->
 
+
+<var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "True Neutrino Energy [GeV] A" type  = "d"  training = ""  group = "12" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- pink box-->
+
+<var  def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "True Neutrino Energy [GeV] A^{0}" type  = "d"  training = ""  group = "12" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp;1g1pMar2020_v4Nue_mva &gt;=#NUE# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar2020_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))"/> <!-- near sideband-->
+
+<var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "True Neutrino Energy [GeV] C" type  = "d"  training = ""  group = "12" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom left-->
+
+<var  def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "True Neutrino Energy [GeV] D" type  = "d"  training = ""  group = "12" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- top left-->
+
+
+<var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "True Neutrino Energy [GeV] B" type  = "d"  training = ""  group = "12" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom right-->
+
+
+<var def = "mctruth_pi0_leading_photon_energy" binning = "(8,0,0.8)" unit = "True #pi^{0} Leading Photon Energy [GeV] A" type  = "d"  training = ""  group = "13" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- pink box-->
+
+<var def = "mctruth_pi0_leading_photon_energy" binning = "(8,0,0.8)" unit = "True #pi^{0} Leading Photon Energy [GeV] A^{0}" type  = "d"  training = ""  group = "13" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp;1g1pMar2020_v4Nue_mva &gt;=#NUE# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar2020_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))"/> <!-- near sideband-->
+
+<var def = "mctruth_pi0_leading_photon_energy" binning = "(8,0,0.8)" unit = "True #pi^{0} Leading Photon Energy [GeV] C" type  = "d"  training = ""  group = "13" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom left-->
+
+<var  def = "mctruth_pi0_leading_photon_energy" binning = "(8,0,0.8)" unit = "True #pi^{0} Leading Photon Energy [GeV] D" type  = "d"  training = ""  group = "13" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- top left-->
+
+
+<var def = "mctruth_pi0_leading_photon_energy" binning = "(8,0,0.8)" unit = "True #pi^{0} Leading Photon Energy [GeV] B" type  = "d"  training = ""  group = "13" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom right-->
+
 <!--<var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV] B" type  = "d"  training = ""  group = "11" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB#)"/>--> <!-- bottom right-->
 
 

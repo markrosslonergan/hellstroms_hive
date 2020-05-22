@@ -1,13 +1,11 @@
 <?xml version="1.0" ?>
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.974952,0.96273,0.467404,0.570654,0.521623)" />
+<topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.974952,0.8,0.467404,0.570654,0.521623)" />
 
 <plot_pot>
     <run_period name ="RunI/II/IIIa" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) || ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116))" fraction = "0.4742"  />
     <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.5258" />
 </plot_pot>
-
-<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/> 
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
@@ -829,6 +827,61 @@
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "9" cut="(1g1pMar2020_v4COSMIC_mva &gt;= #COS0# &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB0# &amp;&amp;1g1pMar2020_v4NCPi0_mva &gt;= #NCP0# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE0# &amp;&amp;1g1pMar2020_v4SSV_mva &gt;=#SSV0#)"/> <!-- final selection -->
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) A" type  = "d"  training = ""  group = "10" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- pink box-->
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) A^{0}" type  = "d"  training = ""  group = "10" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#  &amp;&amp; 1g1pMar2020_v4SSV_mva &lt;#SSV# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar2020_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))"/> <!-- near sideband-->
+
+<!--
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) A^{0}" type  = "d"  training = ""  group = "10" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#  &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar2020_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))"/>--> <!-- near sideband-->
+
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) C" type  = "d"  training = ""  group = "10" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- bottom left-->
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) D" type  = "d"  training = ""  group = "10" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- top left-->
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) B" type  = "d"  training = ""  group = "10" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- bottom right-->
+
+
+<var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV] A" type  = "d"  training = ""  group = "11" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- pink box-->
+
+<var  def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV] A^{0}" type  = "d"  training = ""  group = "11" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp;1g1pMar2020_v4Nue_mva &gt;=#NUE# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar2020_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))"/> <!-- near sideband-->
+
+<var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV] C" type  = "d"  training = ""  group = "11" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom left-->
+
+<var  def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV] D" type  = "d"  training = ""  group = "11" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- top left-->
+
+<var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV] B" type  = "d"  training = ""  group = "11" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom right-->
+
+
+<var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "True Neutrino Energy [GeV] A" type  = "d"  training = ""  group = "12" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- pink box-->
+
+<var  def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "True Neutrino Energy [GeV] A^{0}" type  = "d"  training = ""  group = "12" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp;1g1pMar2020_v4Nue_mva &gt;=#NUE# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar2020_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))"/> <!-- near sideband-->
+
+<var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "True Neutrino Energy [GeV] C" type  = "d"  training = ""  group = "12" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom left-->
+
+<var  def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "True Neutrino Energy [GeV] D" type  = "d"  training = ""  group = "12" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- top left-->
+
+
+<var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "True Neutrino Energy [GeV] B" type  = "d"  training = ""  group = "12" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom right-->
+
+
+<var def = "mctruth_pi0_leading_photon_energy" binning = "(8,0,0.8)" unit = "True #pi^{0} Leading Photon Energy [GeV] A" type  = "d"  training = ""  group = "13" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- pink box-->
+
+<var def = "mctruth_pi0_leading_photon_energy" binning = "(8,0,0.8)" unit = "True #pi^{0} Leading Photon Energy [GeV] A^{0}" type  = "d"  training = ""  group = "13" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp;1g1pMar2020_v4Nue_mva &gt;=#NUE# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar2020_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))"/> <!-- near sideband-->
+
+<var def = "mctruth_pi0_leading_photon_energy" binning = "(8,0,0.8)" unit = "True #pi^{0} Leading Photon Energy [GeV] C" type  = "d"  training = ""  group = "13" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom left-->
+
+<var  def = "mctruth_pi0_leading_photon_energy" binning = "(8,0,0.8)" unit = "True #pi^{0} Leading Photon Energy [GeV] D" type  = "d"  training = ""  group = "13" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- top left-->
+
+
+<var def = "mctruth_pi0_leading_photon_energy" binning = "(8,0,0.8)" unit = "True #pi^{0} Leading Photon Energy [GeV] B" type  = "d"  training = ""  group = "13" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom right-->
+
+<!--<var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV] B" type  = "d"  training = ""  group = "11" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB#)"/>--> <!-- bottom right-->
+
+
+
 <!--pi0 vars -->
 <!--
 <var def = "sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)" binning = "(10,0.0,1.4)" unit ="True #pi^{0} Momentum" type = "d"  training = "" group = "2"/>
@@ -926,6 +979,17 @@
     </def>
 </recomc>
 -->
+<alias key="BNB0" value ="0.96273"/>
+<alias key="BNB" value ="0.96273"/>
+<alias key="COS0" value ="0.974952"/>
+<alias key="NCP" value ="0.4"/>
+<alias key="NCP0" value ="0.467404"/>
+<alias key="NUE0" value ="0.570654"/>
+<alias key="NUE" value ="0.3"/>
+
+<alias key="SSV" value ="0.3"/>
+<alias key="SSV0" value ="0.521623"/>
+
 
 <alias key="PM" value ="(0.938272)"/>
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>

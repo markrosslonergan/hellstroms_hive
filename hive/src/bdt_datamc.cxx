@@ -287,7 +287,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         data_file->setStageEntryList( (s ? s <2 :s ));
 
 
-
         //And all variables in the vector var
         for(auto &var: vars){
 
@@ -459,7 +458,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 max_modifier = 2.5;
             } else{
                 if (s==1){
-                    max_modifier = 1.5;
+                    max_modifier = 1.7;
                 }
                 if (s==2){
                     max_modifier = 2;
@@ -515,6 +514,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 stk->SetMinimum(var.plot_min);
             }
 
+            /*
+            if(var.is_logplot){
+                stk->SetMaximum(10e3);
+                stk->SetMinimum(10e-2);
+             }
+            */
 
             tsum->SetLineWidth(3);
             //tsum_after->SetLineWidth(3);
@@ -605,7 +610,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             double mychi =0;
             int ndof = 0;
-            bool use_cnp = 1;
+            bool use_cnp = true;
             if(!var.has_covar){
 
                 for(int p=0; p<d0->GetNbinsX();p++){
