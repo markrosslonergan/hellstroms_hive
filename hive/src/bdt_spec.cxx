@@ -311,7 +311,7 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 				int temp_index1 = temp_it->first;
 				int temp_index = temp_it->second;
 				if(debug_message){
-					std::cout<<temp_index1<<"("<<temp_index<<") ";
+					std::cout<<temp_index1<<"["<<temp_index<<"] ";
 				}
 			}
 				if(debug_message)std::cout<<std::endl;

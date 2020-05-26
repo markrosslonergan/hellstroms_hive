@@ -395,7 +395,7 @@ int bdt_datamc::plot2D_DataMinusMC(TFile *ftest, std::vector<bdt_variable> vars,
 					TLegend *legend = new TLegend(0, 0.1,0.8,0.2);
 					legend->SetNColumns(2);
 					legend->AddEntry(projected_datay, "Data","P");
-					legend->AddEntry(projected_MCy, "MC = BkgMC + Best Fit","F");
+					legend->AddEntry(projected_MCy, "All MC","F");
 					legend->Draw();
 
                     std::cout<<"Writing png and pdf."<<std::endl;

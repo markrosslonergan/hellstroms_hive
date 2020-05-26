@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="InvDirt1g0p" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.5)" />
+<topology tag="BdInvDirt1g0p" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.5)" />
 <!--(Cosmic, BNB,NCPi0,Nue)-->
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
@@ -10,6 +10,7 @@
 
 
 <!--activeTPC events-->
+<!--
 <bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(1.0,0.4,0.4)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" plot_on_top = "false" signal = "true">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
@@ -18,7 +19,6 @@
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
 </bdtfile>
-
 <bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
@@ -72,6 +72,7 @@
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
 </bdtfile>
+-->
 
 <!--
 <bdtfile filename = "vertexed_mcc9_v33/dirt_overlay_run1_v33.0.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
@@ -87,8 +88,9 @@
 
 
 <!--outside activeTPC events-->
-<bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "otpcNCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.8,0.4,0.3)" plot_name = "Dirt" scale = "3.0" plot_on_top = "false" group = "1">
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "otpcNCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.8,0.4,0.3)" plot_name = "Dirt MEC" scale = "3.0" plot_on_top = "false" group = "1" signal = "true">
     <definition>
+		<cut> mctruth_interaction_type == 1000</cut>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
 		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
@@ -99,6 +101,7 @@
 
 <bdtfile filename = "vertexed_mcc9_v33/Test/ncpi0_overlay_test_run1_v33.0.root" tag = "otpcNCPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.6,0.6)" plot_name = "OTPC BNB NC 1 #pi^{0}" scale = "1.0" group = "1">
     <definition>
+		<cut> mctruth_interaction_type == 1000</cut>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> mctruth_cc_or_nc==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
@@ -110,6 +113,7 @@
 
 <bdtfile filename = "vertexed_mcc9_v33/Test/bnb_overlay_test_run1_v33.0.root" tag = "otpcBNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.5,0.4,0.6)" plot_name = "OTPC BNB Other" group = "1" >
     <definition>
+		<cut> mctruth_interaction_type == 1000</cut>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -121,6 +125,7 @@
 
 <bdtfile filename = "vertexed_mcc9_v33/Test/nue_overlay_test_run1_v33.0.root" tag = "otpcNueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.75,0.45,0.55)" plot_name = "OTPC #nu_{e} Intrinsic" group = "1" >
     <definition>
+		<cut> mctruth_interaction_type == 1000</cut>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> fabs(mctruth_nu_pdg)==12  </cut>
         <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
@@ -131,15 +136,364 @@
 
 
 <bdtfile filename = "vertexed_mcc9_v33/dirt_overlay_run1_v33.0.root" tag = "otpcDirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "OTPC Dirt" group = "1"> 
-    <definition><cut>1</cut>
+    <definition>
+		<cut> mctruth_interaction_type == 1000</cut>
         <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
 		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
 		</definition>
 </bdtfile>
 
+
+<!--CCQE-->
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "otpcNCDeltaRadOverlay2" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.3)" plot_name = "Dirt CCQE" scale = "3.0" plot_on_top = "false" group = "2" >
+    <definition>
+		<cut> mctruth_interaction_type == 1001</cut>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncpi0_overlay_test_run1_v33.0.root" tag = "otpcNCPi02" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.6,0.6)" plot_name = "OTPC BNB NC 1 #pi^{0}" scale = "1.0" group = "2">
+    <definition>
+		<cut> mctruth_interaction_type == 1001</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> mctruth_cc_or_nc==1 </cut>
+        <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/bnb_overlay_test_run1_v33.0.root" tag = "otpcBNBOther2" hist_style = "hist" dirs = "singlephotonana/" col = "(0.5,0.4,0.6)" plot_name = "OTPC BNB Other" group = "2" >
+    <definition>
+		<cut> mctruth_interaction_type == 1001</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> fabs(mctruth_nu_pdg)==14  </cut>
+        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/nue_overlay_test_run1_v33.0.root" tag = "otpcNueOverlays2" hist_style = "hist" dirs = "singlephotonana/" col = "(0.75,0.45,0.55)" plot_name = "OTPC #nu_{e} Intrinsic" group = "2" >
+    <definition>
+		<cut> mctruth_interaction_type == 1001</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> fabs(mctruth_nu_pdg)==12  </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/dirt_overlay_run1_v33.0.root" tag = "otpcDirt2" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "OTPC Dirt" group = "2"> 
+    <definition>
+		<cut> mctruth_interaction_type == 1001</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+		</definition>
+</bdtfile>
+
+<!--NCQE-->
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "otpcNCDeltaRadOverlay3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,0.3)" plot_name = "Dirt NCQE" scale = "3.0" plot_on_top = "false" group = "3" >
+    <definition>
+		<cut> mctruth_interaction_type == 1002</cut>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncpi0_overlay_test_run1_v33.0.root" tag = "otpcNCPi03" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.6,0.6)" plot_name = "OTPC BNB NC 1 #pi^{0}" scale = "1.0" group = "3">
+    <definition>
+		<cut> mctruth_interaction_type == 1002</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> mctruth_cc_or_nc==1 </cut>
+        <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/bnb_overlay_test_run1_v33.0.root" tag = "otpcBNBOther3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.5,0.4,0.6)" plot_name = "OTPC BNB Other" group = "3" >
+    <definition>
+		<cut> mctruth_interaction_type == 1002</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> fabs(mctruth_nu_pdg)==14  </cut>
+        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/nue_overlay_test_run1_v33.0.root" tag = "otpcNueOverlays3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.75,0.45,0.55)" plot_name = "OTPC #nu_{e} Intrinsic" group = "3" >
+    <definition>
+		<cut> mctruth_interaction_type == 1002</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> fabs(mctruth_nu_pdg)==12  </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/dirt_overlay_run1_v33.0.root" tag = "otpcDirt3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.3)" plot_name = "OTPC Dirt" group = "3"> 
+    <definition>
+		<cut> mctruth_interaction_type == 1002</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+		</definition>
+</bdtfile>
+
+<!--Res CCPion-->
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "otpcNCDeltaRadOverlay4" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.4,0.3)" plot_name = "Dirt ResCCPion" scale = "3.0" plot_on_top = "false" group = "4" >
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1002 &amp;&amp; mctruth_interaction_type &lt; 1006</cut>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncpi0_overlay_test_run1_v33.0.root" tag = "otpcNCPi04" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.6,0.6)" plot_name = "OTPC BNB NC 1 #pi^{0}" scale = "1.0" group = "4">
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1002 &amp;&amp; mctruth_interaction_type &lt; 1006</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> mctruth_cc_or_nc==1 </cut>
+        <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/bnb_overlay_test_run1_v33.0.root" tag = "otpcBNBOther4" hist_style = "hist" dirs = "singlephotonana/" col = "(0.5,0.4,0.6)" plot_name = "OTPC BNB Other" group = "4" >
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1002 &amp;&amp; mctruth_interaction_type &lt; 1006</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> fabs(mctruth_nu_pdg)==14  </cut>
+        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/nue_overlay_test_run1_v33.0.root" tag = "otpcNueOverlays4" hist_style = "hist" dirs = "singlephotonana/" col = "(0.75,0.45,0.55)" plot_name = "OTPC #nu_{e} Intrinsic" group = "4" >
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1002 &amp;&amp; mctruth_interaction_type &lt; 1006</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> fabs(mctruth_nu_pdg)==12  </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/dirt_overlay_run1_v33.0.root" tag = "otpcDirt4" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.4)" plot_name = "OTPC Dirt" group = "4"> 
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1002 &amp;&amp; mctruth_interaction_type &lt; 1006</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+		</definition>
+</bdtfile>
+
+<!--Res NCPion-->
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "otpcNCDeltaRadOverlay5" hist_style = "hist" dirs = "singlephotonana/" col = "(0.8,0.6,0.3)" plot_name = "Dirt ResNCPion" scale = "3.0" plot_on_top = "false" group = "5" >
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1005 &amp;&amp; mctruth_interaction_type &lt; 1009</cut>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncpi0_overlay_test_run1_v33.0.root" tag = "otpcNCPi05" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.6,0.6)" plot_name = "OTPC BNB NC 1 #pi^{0}" scale = "1.0" group = "5">
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1005 &amp;&amp; mctruth_interaction_type &lt; 1009</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> mctruth_cc_or_nc==1 </cut>
+        <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/bnb_overlay_test_run1_v33.0.root" tag = "otpcBNBOther5" hist_style = "hist" dirs = "singlephotonana/" col = "(0.5,0.4,0.6)" plot_name = "OTPC BNB Other" group = "5" >
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1005 &amp;&amp; mctruth_interaction_type &lt; 1009</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> fabs(mctruth_nu_pdg)==14  </cut>
+        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/nue_overlay_test_run1_v33.0.root" tag = "otpcNueOverlays5" hist_style = "hist" dirs = "singlephotonana/" col = "(0.75,0.45,0.55)" plot_name = "OTPC #nu_{e} Intrinsic" group = "5" >
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1005 &amp;&amp; mctruth_interaction_type &lt; 1009</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> fabs(mctruth_nu_pdg)==12  </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/dirt_overlay_run1_v33.0.root" tag = "otpcDirt5" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.5,0.5)" plot_name = "OTPC Dirt" group = "5"> 
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1005 &amp;&amp; mctruth_interaction_type &lt; 1009</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+		</definition>
+</bdtfile>
+
+
+<!--DIS-->
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "otpcNCDeltaRadOverlay6" hist_style = "hist" dirs = "singlephotonana/" col = "(0.8,0.6,0.6)" plot_name = "Dirt DIS" scale = "3.0" plot_on_top = "false" group = "6" >
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1090 &amp;&amp; mctruth_interaction_type &lt; 1093</cut>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncpi0_overlay_test_run1_v33.0.root" tag = "otpcNCPi06" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.6,0.6)" plot_name = "OTPC BNB NC 1 #pi^{0}" scale = "1.0" group = "6">
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1090 &amp;&amp; mctruth_interaction_type &lt; 1093</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> mctruth_cc_or_nc==1 </cut>
+        <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/bnb_overlay_test_run1_v33.0.root" tag = "otpcBNBOther6" hist_style = "hist" dirs = "singlephotonana/" col = "(0.5,0.4,0.6)" plot_name = "OTPC BNB Other" group = "6" >
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1090 &amp;&amp; mctruth_interaction_type &lt; 1093</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> fabs(mctruth_nu_pdg)==14  </cut>
+        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/nue_overlay_test_run1_v33.0.root" tag = "otpcNueOverlays6" hist_style = "hist" dirs = "singlephotonana/" col = "(0.75,0.45,0.55)" plot_name = "OTPC #nu_{e} Intrinsic" group = "6" >
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1090 &amp;&amp; mctruth_interaction_type &lt; 1093</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> fabs(mctruth_nu_pdg)==12  </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/dirt_overlay_run1_v33.0.root" tag = "otpcDirt6" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.6,0.6)" plot_name = "OTPC Dirt" group = "6"> 
+    <definition>
+		<cut> mctruth_interaction_type &gt; 1090 &amp;&amp; mctruth_interaction_type &lt; 1093</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+		</definition>
+</bdtfile>
+
+
+<!--Other-->
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "otpcNCDeltaRadOverlay7" hist_style = "hist" dirs = "singlephotonana/" col = "(0.8,0.2,0.8)" plot_name = "Dirt Other" scale = "3.0" plot_on_top = "false" group = "7" >
+    <definition>
+		<cut> !(mctruth_interaction_type &gt; 1090 &amp;&amp; mctruth_interaction_type &lt; 1093)</cut>
+		<cut> !(mctruth_interaction_type &gt; 999 &amp;&amp; mctruth_interaction_type &lt; 1009)</cut>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncpi0_overlay_test_run1_v33.0.root" tag = "otpcNCPi07" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.6,0.6)" plot_name = "OTPC BNB NC 1 #pi^{0}" scale = "1.0" group = "7">
+    <definition>
+		<cut> !(mctruth_interaction_type &gt; 1090 &amp;&amp; mctruth_interaction_type &lt; 1093)</cut>
+		<cut> !(mctruth_interaction_type &gt; 999 &amp;&amp; mctruth_interaction_type &lt; 1009)</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> mctruth_cc_or_nc==1 </cut>
+        <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/bnb_overlay_test_run1_v33.0.root" tag = "otpcBNBOther7" hist_style = "hist" dirs = "singlephotonana/" col = "(0.5,0.4,0.6)" plot_name = "OTPC BNB Other" group = "7" >
+    <definition>
+		<cut> !(mctruth_interaction_type &gt; 1090 &amp;&amp; mctruth_interaction_type &lt; 1093)</cut>
+		<cut> !(mctruth_interaction_type &gt; 999 &amp;&amp; mctruth_interaction_type &lt; 1009)</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> fabs(mctruth_nu_pdg)==14  </cut>
+        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/Test/nue_overlay_test_run1_v33.0.root" tag = "otpcNueOverlays7" hist_style = "hist" dirs = "singlephotonana/" col = "(0.75,0.45,0.55)" plot_name = "OTPC #nu_{e} Intrinsic" group = "7" >
+    <definition>
+		<cut> !(mctruth_interaction_type &gt; 1090 &amp;&amp; mctruth_interaction_type &lt; 1093)</cut>
+		<cut> !(mctruth_interaction_type &gt; 999 &amp;&amp; mctruth_interaction_type &lt; 1009)</cut>
+        <cut> !mctruth_is_delta_radiative==1 </cut>  
+        <cut> fabs(mctruth_nu_pdg)==12  </cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "vertexed_mcc9_v33/dirt_overlay_run1_v33.0.root" tag = "otpcDirt7" hist_style = "hist" dirs = "singlephotonana/" col = "(0.7,0.7,0.7)" plot_name = "OTPC Dirt" group = "7"> 
+    <definition>
+		<cut> !(mctruth_interaction_type &gt; 1090 &amp;&amp; mctruth_interaction_type &lt; 1093)</cut>
+		<cut> !(mctruth_interaction_type &gt; 999 &amp;&amp; mctruth_interaction_type &lt; 1009)</cut>
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
+        mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
+		</definition>
+</bdtfile>
+
+
+
+<!--data samples-->
 <bdtfile filename = "vertexed_mcc9_v26/data_5e19_run1_v26.51.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
-    <definition><cut>1</cut>
+    <definition>
+        <cut> reco_shower_dirx&lt;-100</cut>
 	</definition>
     <data type="OnBeam">
         <tor860_wcut> 4.026e+19 </tor860_wcut>   
@@ -148,7 +502,7 @@
 </bdtfile>
 <bdtfile filename = "vertexed_mcc9_v26/AllRun/Split/bnbext_test_run1_v26.5.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1" >
     <definition>
-        <cut> 1</cut>
+        <cut> reco_shower_dirx&lt;-100</cut>
     </definition>
     <data type="OffBeam">
         <tor860_wcut> 4.026e+19 </tor860_wcut>   
@@ -156,7 +510,6 @@
         <EXT>36566176.0</EXT>  
     </data>
 </bdtfile>
-
 
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
 <bdtfile filename = "vertexed_mcc9_v33/Train/ncdeltarad_overlay_train_v33.0.root" tag = "NCDeltaRadOverlayTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(1.0,0.4,0.4)" plot_name = "NC Delta Train">
@@ -322,10 +675,10 @@
 -->
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
-<var def = "reco_shower_startx[0]" unit = "Reconstructed Shower Start X [cm]" binning = "(24,-20,270)" type = "d" training = ""  group = "8"/>
+<var def = "reco_shower_startx[0]" unit = "Reconstructed Shower Start X [cm]" binning = "(12,-20,270)" type = "d" training = ""  group = "8"/>
 <var def = "reco_shower_startx[0]" unit = "Reconstructed Shower Start X (log)  [cm]" binning = "(60,-20,270)" type = "d" logplot = "true"  training = "" group = "8" />
-<var def = "reco_shower_starty[0]" unit = "Reconstructed Shower Start Y [cm]" binning = "(24,-140,140)" type = "d" training = ""  group = "8"/>
-<var def = "reco_shower_startz[0]" unit = "Reconstructed Shower Start Z [cm]" binning = "(24,-20,1100)" type = "d" training = ""  group = "8"/>
+<var def = "reco_shower_starty[0]" unit = "Reconstructed Shower Start Y [cm]" binning = "(12,-140,140)" type = "d" training = ""  group = "8"/>
+<var def = "reco_shower_startz[0]" unit = "Reconstructed Shower Start Z [cm]" binning = "(12,-20,1100)" type = "d" training = ""  group = "8"/>
 <!--MC-Reco.-->
 <var def = "sqrt((reco_shower_startx-sim_shower_start_x)^2+(reco_shower_starty-sim_shower_start_y)^2+(reco_shower_startz-sim_shower_start_z)^2)" binning="(24,0,100)" unit = "Distance between MCTruth to Reco. Shower Start" type ="d" training = "" logplot="true" group = "0"/>
 
