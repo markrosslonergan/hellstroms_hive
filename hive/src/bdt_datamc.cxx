@@ -516,12 +516,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 stk->SetMinimum(var.plot_min);
             }
 
-            /*
+          /*  
             if(var.is_logplot){
                 stk->SetMaximum(10e3);
                 stk->SetMinimum(10e-2);
              }
-            */
+           */
 
             tsum->SetLineWidth(3);
             //tsum_after->SetLineWidth(3);
