@@ -333,9 +333,10 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 					first_hist = false;
 				}else{//only merge when two or more samples in the group;
 
-					if(stack.at(which_file)->plot_name.find("(combined)")==std::string::npos){
-						stack.at(which_file)->plot_name += "(combined)";//if we add-up histograms, change the name
-					}
+//CHECK, not labeling combined files
+//					if(stack.at(which_file)->plot_name.find("(combined)")==std::string::npos){
+//						stack.at(which_file)->plot_name += "(combined)";//if we add-up histograms, change the name
+//					}
 					if(debug_message) std::cout<<" Merge "<<bdt_groups.find(group_index)->second<<" to "<<which_file<<" bdt_file"<<std::endl;
 					histograms.at(which_file)->Add(histograms[bdt_groups.find(group_index)->second]);
 				}

@@ -611,8 +611,8 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 //main code for plotting the stack histogram;
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::vector<bdt_info> bdt_infos){
 
-	bool print_message = true;
-	bool debug_message = true;
+	bool print_message = false;
+	bool debug_message = false;
 	double plot_pot=data_file->pot;
 //	if(stack_mode) plot_pot = stack_pot;//always false for now;
 
@@ -938,7 +938,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				//Plot title, stage label, spectator [not currently in use?], POT info, Estimators, new label for ratio plot [CHECK];
 
 //        // TText *pre = drawPrelim(0.12,0.92,"MiniBooNE Simulation - In Progress") is a function in bdt_file.h, depreciate it!
-			TString title_content = "MiniBooNE Simulation";//For title
+			TString title_content = "MicroBooNE Simulation";//For title
 			if (isSpectator) {//CHECK, to be fixed, isSpectator is not working now;
 				title_content += "";//"[Spectator Variable]";
 			}else {
@@ -972,7 +972,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			pad0top->Draw();// Draw TPads now; draw histogram later after switch to corresponding pad cd()
 			pad0bot->Draw();
 
-			pottex.DrawLatex(.66,.72, pot_content);
+			pottex.DrawLatex(.52,.65, pot_content);
 
 			pad0top->cd();//CHECK, still working on the top Tpad for the code below;
 			stk->Draw("hist");
