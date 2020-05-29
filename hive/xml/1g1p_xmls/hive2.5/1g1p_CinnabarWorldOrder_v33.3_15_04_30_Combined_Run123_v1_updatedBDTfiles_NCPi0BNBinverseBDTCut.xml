@@ -867,6 +867,35 @@
 <var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "True Neutrino Energy [GeV] B" type  = "d"  training = ""  group = "12" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom right-->
 
 
+<var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "True Neutrino Energy [GeV] A" type  = "d"  training = ""  group = "12" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- pink box-->
+
+
+
+<var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "#nu_{e} True Neutrino Energy [GeV] A" type  = "d"  training = ""  group = "14" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- pink box-->
+
+<var  def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "#nu_{e} True Neutrino Energy [GeV] A^{0}" type  = "d"  training = ""  group = "14" cut="(fabs(mctruth_nu_pdg)==12 &amp;&amp; 1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp;1g1pMar2020_v4Nue_mva &gt;=#NUE# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar2020_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))"/> <!-- near sideband-->
+
+<var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "#nu_{e} True Neutrino Energy [GeV] C" type  = "d"  training = ""  group = "14" cut="(fabs(mctruth_n     u_pdg)==12 &amp;&amp;  1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom left-->
+
+<var  def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "#nu_{e} True Neutrino Energy [GeV] D" type  = "d"  training = ""  group = "14" cut="(fabs(mctruth_n     u_pdg)==12 &amp;&amp;  1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- top left-->
+
+
+<var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "#nu_{e} True Neutrino Energy [GeV] B" type  = "d"  training = ""  group = "14" cut="(fabs(mctruth_n     u_pdg)==12 &amp;&amp; 1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom right-->
+
+<!--<var def = "#MOMZ1#" binning = "(10,0.0,1.0)" unit = "momentum Z1 A" type  = "d"  training = ""  group = "15" cut="(mctruth_num_exiting_pi0 &gt; 0  &amp;&amp; 1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> -->
+
+<var def = "#Pi0P#" binning = "(10,0.0,1.0)" unit = "True #pi^{0} Momentum [GeV] A" type  = "d"  training = ""  group = "15" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- pink box-->
+
+<var  def = "#Pi0P#" binning = "(10,0,1)" unit = "True #pi^{0} Momentum [GeV] A^{0}" type  = "d"  training = ""  group = "15" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp;1g1pMar2020_v4Nue_mva &gt;=#NUE# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar2020_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))"/> <!-- near sideband-->
+
+<var def = "#Pi0P#" binning = "(10,0,1)" unit = "True #pi^{0} Momentum [GeV] C" type  = "d"  training = ""  group = "15" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom left-->
+
+<var  def = "#Pi0P#" binning = "(10,0,1)" unit = "True #pi^{0} Momentum [GeV] D" type  = "d"  training = ""  group = "15" cut="(1g1pMar2020_v4NCPi0_mva &lt; #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- top left-->
+
+<var def = "#Pi0P#" binning = "(10,0,1)" unit = "True #pi^{0} Momentum [GeV] B" type  = "d"  training = ""  group = "15" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&lt; #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE#)"/> <!-- bottom right-->
+
+
+
 <var def = "mctruth_pi0_leading_photon_energy" binning = "(8,0,0.8)" unit = "True #pi^{0} Leading Photon Energy [GeV] A" type  = "d"  training = ""  group = "13" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- pink box-->
 
 <var def = "mctruth_pi0_leading_photon_energy" binning = "(8,0,0.8)" unit = "True #pi^{0} Leading Photon Energy [GeV] A^{0}" type  = "d"  training = ""  group = "13" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp;1g1pMar2020_v4Nue_mva &gt;=#NUE# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar2020_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))"/> <!-- near sideband-->
@@ -1002,8 +1031,17 @@
 <alias key="GEO" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)" />
 <alias key="GDEDXKAL" value ="(reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0)))"/>
 
+<!--
+<alias key="Pi0P" value = "sqrt((sim_shower_energy[i_shr[0]]*#MOMX0# + sim_shower_energy[i_shr[1]]*#MOMX1#)*(sim_shower_energy[i_shr[0]]*#MOMX0# + sim_shower_energy[i_shr[1]]*#MOMX1#) + (sim_shower_energy[i_shr[0]]*#MOMY0# + sim_shower_energy[i_shr[1]]*#MOMY1#)*(sim_shower_energy[i_shr[0]]*#MOMY0# + sim_shower_energy[i_shr[1]]*#MOMY1#) + (sim_shower_energy[i_shr[0]]*#MOMZ0# + sim_shower_energy[i_shr[1]]*#MOMZ1#)*(sim_shower_energy[i_shr[0]]*#MOMZ0# + sim_shower_energy[i_shr[1]]*#MOMZ1#))"/>
+-->
+<alias key="Pi0P" value = "sqrt( pow(mctruth_exiting_pi0_px, 2)+ pow(mctruth_exiting_pi0_py, 2) + pow(mctruth_exiting_pi0_pz, 2))" />
 
-
+<alias key="MOMX0" value="(sim_shower_px[i_shr[0]])/sqrt((sim_shower_px[i_shr[0]])*(sim_shower_px[i_shr[0]]) + (sim_shower_py[i_shr[0]])*(sim_shower_py[i_shr[0]]) + (sim_shower_pz[i_shr[0]])*(sim_shower_pz[i_shr[0]]) )" />
+<alias key="MOMY0" value="(sim_shower_py[i_shr[0]])/sqrt((sim_shower_px[i_shr[0]])*(sim_shower_px[i_shr[0]]) + (sim_shower_py[i_shr[0]])*(sim_shower_py[i_shr[0]]) + (sim_shower_pz[i_shr[0]])*(sim_shower_pz[i_shr[0]]) )" />
+<alias key="MOMZ0" value="(sim_shower_pz[i_shr[0]])/sqrt((sim_shower_px[i_shr[0]])*(sim_shower_px[i_shr[0]]) + (sim_shower_py[i_shr[0]])*(sim_shower_py[i_shr[0]]) + (sim_shower_pz[i_shr[0]])*(sim_shower_pz[i_shr[0]]) )" />
+<alias key="MOMX1" value="(sim_shower_px[i_shr[1]])/sqrt((sim_shower_px[i_shr[1]])*(sim_shower_px[i_shr[1]]) + (sim_shower_py[i_shr[1]])*(sim_shower_py[i_shr[1]]) + (sim_shower_pz[i_shr[1]])*(sim_shower_pz[i_shr[1]]) )" />
+<alias key="MOMY1" value="(sim_shower_py[i_shr[1]])/sqrt((sim_shower_px[i_shr[1]])*(sim_shower_px[i_shr[1]]) + (sim_shower_py[i_shr[1]])*(sim_shower_py[i_shr[1]]) + (sim_shower_pz[i_shr[1]])*(sim_shower_pz[i_shr[1]]) )" />
+<alias key="MOMZ1" value="(sim_shower_pz[i_shr[1]])/sqrt((sim_shower_px[i_shr[1]])*(sim_shower_px[i_shr[1]]) + (sim_shower_py[i_shr[1]])*(sim_shower_py[i_shr[1]]) + (sim_shower_pz[i_shr[1]])*(sim_shower_pz[i_shr[1]]) )" />
 
 
 <alias key = "GTM" value = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))"/>
