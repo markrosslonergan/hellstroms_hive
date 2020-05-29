@@ -260,7 +260,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
     std::vector<std::string> stage_names = {"","","","","","","","",""};
     //Loop over all stages
 
-    int s_min = 0;
+    int s_min = -1;
     int s_max = bdt_cuts.size()+2;
     if(plot_stage >=0){
         s_min = plot_stage;
@@ -269,8 +269,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
 
-    for(int s = s_min; s< s_max; s++){
-
+    //for(int s = s_min; s< s_max; s++){
+    {
+        int s = plot_stage;
 
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
@@ -347,15 +348,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 std::cout<<"Is it frac or full? "<<var.covar_type.c_str()<<std::endl;
                 this->calcCollapsedCovariance(covar_full, covar_collapsed,var);
 
-                //std::vector<double> fkr = {0.144464,0.0794493,0.204987};
-                std::vector<double> fkr = {0.145171,0.0859779,0.11318,0.0891966,0.151207,0.189539};
+                std::vector<double> fkr = {0.144464,0.0794493,0.204987};
+                //std::vector<double> fkr = {0.145171,0.0859779,0.11318,0.0891966,0.151207,0.189539};
 
                 for(int c=0; c< tsum->GetNbinsX();c++){
                     //double dv = tsum->GetBinContent(c+1);
                     //tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
                     //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
                     double mc_stats_error = tsum->GetBinError(c+1);
-                    double mc_sys_error = fkr[c];//sqrt((*covar_collapsed)(c,c));
+                 //   double mc_sys_error = fkr[c];//sqrt((*covar_collapsed)(c,c));
+                    double mc_sys_error = sqrt((*covar_collapsed)(c,c));
                     std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
                     //double tot_error = mc_sys_error; 
