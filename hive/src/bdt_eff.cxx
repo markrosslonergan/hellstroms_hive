@@ -410,7 +410,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1,
     h_true_photon_denom->Scale(80/h_true_photon_denom->Integral());
     h_true_photon_denom->SetFillStyle(3454);
     h_true_photon_denom->SetFillColor(kRed-6);
-            h_true_photon_denom->SetLineColor(kRed-6);
+    h_true_photon_denom->SetLineColor(kRed-6);
     h_true_photon_denom->Draw("hist same");
 
     h_true_proton_denom->Scale(80/h_true_proton_denom->Integral());
@@ -778,8 +778,8 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
 
     std::cout<<"File has  "<<filein->GetEntries("1")*conversion<<" events when scaled to "<<plot_POT<<std::endl;
 
-//apply topo, and nue def cuts to get denominator
-  std::vector<std::string> v_denomin =   {"!mctruth_is_delta_radiative", "fabs(mctruth_nu_pdg)==12"};
+    //apply topo, and nue def cuts to get denominator
+    std::vector<std::string> v_denomin =   {"!mctruth_is_delta_radiative", "fabs(mctruth_nu_pdg)==12"};
     for(int i=0; i<v_denomin.size();i++){
         std::cout<<" On Cut "<<v_denomin[i]<<std::endl;
         if(i==0){
@@ -793,7 +793,7 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
     }
     std::cout<<"So the number of nue/nuebar events is "<<n_starting_events<<std::endl;
 
-  
+
     std::string topocuts = "";
     double n_topo_events = 0;
     for(int i=0; i<v_topo.size();i++){
@@ -811,12 +811,12 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
     std::cout<<"-----------------------------------------"<<std::endl;
 
     std::cout<<"So the DENOMINATOR + TOPOLOGICAL is "<<n_topo_events<<std::endl;
-     std::cout<<"So the percent that pass topological stage  is "<<n_topo_events/n_starting_events*100.0<<"%"<<std::endl;
+    std::cout<<"So the percent that pass topological stage  is "<<n_topo_events/n_starting_events*100.0<<"%"<<std::endl;
 
 
-//then apply precuts, and BDT cuts get passing events
+    //then apply precuts, and BDT cuts get passing events
 
-     std::string precuts = "";
+    std::string precuts = "";
     double n_precut_events = 0;
     for(int i=0; i<v_precuts.size();i++){
         std::cout<<" On precut: "<<v_precuts[i]<<std::endl;
@@ -832,11 +832,11 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
     }
 
     //    double max_x_range = 2.5;
- //   double max_x_range = 1.0;
+    //   double max_x_range = 1.0;
     std::cout<<"So the DENOMINATOR + TOPOLOGICAL + PRECUTS is "<<n_precut_events<<std::endl;
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_starting_events*100.0<<"% relative to denom"<<std::endl;
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_topo_events*100.0<<"% relative to topo"<<std::endl;
- 
+
 
     std::string bdt_cut =  "";
     std::vector<std::string> v_bdt_cut = {"1g1pMar2020_v4Nue_mva >= 0.3"};
@@ -844,7 +844,7 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
     for(int i=0; i<v_bdt_cut.size();i++){
         std::cout<<" On bdt cut: "<<v_bdt_cut[i]<<std::endl;
         if(i==0){
-             bdt_cut = v_bdt_cut[i];
+            bdt_cut = v_bdt_cut[i];
         }else{
             bdt_cut += "&&"+v_bdt_cut[i];
         }
@@ -855,13 +855,25 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
     }
     std::cout<<"So total BDT Cut Efficiency is "<<n_bdtcut_events/n_precut_events*100.0<<"% relative to precuts"<<std::endl;
 
-     bdt_variable nue_energy("mctruth_nu_E","(12,0.0,2.4)","True Neutrino Energy [GeV]",false,"d");
-       
-     TH1* h_true_nue_denom_topo = (TH1*)filein->getTH1( nue_energy, denominator+"&&"+topocuts , "true_nue_denom", plot_POT);
-     TH1*  h_true_nue_numer_bdt  = (TH1*)filein->getTH1( nue_energy, denominator+"&&"+topocuts +"&&"+ precuts+ "&&"+bdt_cut , "true_nue_numer", plot_POT);
-     
-    
-     return 0;
+    bdt_variable nue_energy("mctruth_nu_E","(12,0.0,2.4)","True Neutrino Energy [GeV]",false,"d");
+
+    TH1* h_true_nue_denom_topo = (TH1*)filein->getTH1( nue_energy, denominator , "true_nue_denom", plot_POT);
+    TH1*  h_true_nue_numer_bdt  = (TH1*)filein->getTH1( nue_energy, denominator+"&&"+topocuts +"&&"+ precuts+ "&&"+bdt_cut , "true_nue_numer", plot_POT);
+
+    TH1* h_true_nue_ratio = (TH1*)h_true_nue_numer_bdt->Clone("h_true_nue_ratio");
+    h_true_nue_ratio->Divide(h_true_nue_denom_topo); 
+
+    TCanvas * c = new TCanvas();
+    c->cd();   
+    h_true_nue_ratio->Scale(100);
+    h_true_nue_ratio->SetTitle("");
+    h_true_nue_ratio->GetXaxis()->SetTitle("True #nu_{e}/#bar{#nu_{e}} Neutrino Energy [GeV]");
+    h_true_nue_ratio->GetYaxis()->SetTitle("Selection Efficiency");
+    h_true_nue_ratio->SetMaximum(10.0);
+    h_true_nue_ratio->Draw("E1");
+
+    c->SaveAs(("nue_eff_"+tag+"_"+filein->tag+".pdf").c_str(),"pdf");
+    return 0;
 }
 
 
@@ -1136,7 +1148,7 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::vector<bdt
     if (vec_files.size() != filt_files.size() ) {
         std::cout << "[EFF] WARNING: Uneven number of filtered and unfiltered files" << std::endl;
         std::cout << "[EFF] WARNING: " << vec_files.size() << " BDT files and " << 
-          filt_files.size() << " filtered files" << std::endl;
+            filt_files.size() << " filtered files" << std::endl;
     }
 
     for(size_t f=0; f< vec_files.size(); f++){
@@ -1218,7 +1230,7 @@ int fancyFiciency(bdt_file *file, std::string additional_denom, std::string addi
     h_spec_numer->SetFillColor(col1);
     h_spec_numer->SetLineColor(col1);
     h_spec_numer->Draw("hist same");
-    
+
 
     h_spec_denom->GetYaxis()->SetTitle("Events");
     h_spec_denom->GetXaxis()->SetTitle(var.unit.c_str());
@@ -1239,13 +1251,13 @@ int fancyFiciency(bdt_file *file, std::string additional_denom, std::string addi
     float scale = p->GetUymax()/rightmax;
     h_spec_ratio->SetLineColor(col2);
     h_spec_ratio->Scale(scale);
-           
+
     h_spec_ratio->SetMarkerStyle(20);
     h_spec_ratio->SetMarkerSize(1);
     h_spec_ratio->SetMarkerColor(col2);
-    
+
     h_spec_ratio->Draw("same E0 E1 P");
-             
+
     std::cout<<"Ploted ratio"<<std::endl;
     TGaxis *axis = new TGaxis(p->GetUxmax(),p->GetUymin(),p->GetUxmax(), p->GetUymax(),0,rightmax,510,"+L");
     axis->SetLineColor(col2);
