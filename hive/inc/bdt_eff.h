@@ -32,6 +32,9 @@
 #include "TGaxis.h"
 int fancyFiciency(bdt_file *file,std::string, std::string additonal_defin, bdt_variable & var, std::string tag, int denom_stage, int numer_stage,std::vector<double> bdtcuts);
 
+int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,std::string tag);
+
+
 class bdt_efficiency{
     public:
         bdt_file* file;
@@ -47,8 +50,9 @@ class bdt_efficiency{
 
         bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool,int, std::string tag, bool pretopo, bool is0p);
 
+
         bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool is_ok,int plot_stage,std::string tag, bool pretopo);
-       
+
         bdt_efficiency(std::vector<bdt_file*> vec_files, std::string cut);
         // For NC pi0 filter stuff
         bdt_efficiency(std::vector<bdt_file*> vec_files, std::vector<bdt_file*> filtered_files);
