@@ -915,6 +915,10 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
     TCanvas *ctmp = new TCanvas();
    // this->CheckWeights();
    //std::cout<<" var.additional_cut = "<< var.additional_cut<<std::endl;
+   if (var.additional_cut == "")  {
+        var.additional_cut = "1.0";
+      //std::cout<<"setting addditional cut to 1"<<std::endl;      
+   }
     //std::cout<<"cuts = " << cuts<<std::endl;
     // std::cout<<"in_bins = " << in_bins<<std::endl;
     this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+"&&"+in_bins+"&&" + var.additional_cut+ ")*"+this->weight_branch).c_str(),"goff");

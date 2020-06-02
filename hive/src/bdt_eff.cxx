@@ -774,12 +774,12 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
     double n_starting_events = 0;
     std::string  denominator = "";
 
-    std::cout << "------------ [EFF] On file " << filein->tag << " -----------------" << std::endl;
+    std::cout << "------------ [NUE EFF] On file " << filein->tag << " -----------------" << std::endl;
 
     std::cout<<"File has  "<<filein->GetEntries("1")*conversion<<" events when scaled to "<<plot_POT<<std::endl;
 
 //apply topo, and nue def cuts to get denominator
-  std::vector<std::string> v_denomin =   {"!mctruth_is_delta_radiative", "mctruth_cc_or_nc == 0", "fabs(mctruth_nu_pdg)==12"};
+  std::vector<std::string> v_denomin =   {"!mctruth_is_delta_radiative", "fabs(mctruth_nu_pdg)==12"};
     for(int i=0; i<v_denomin.size();i++){
         std::cout<<" On Cut "<<v_denomin[i]<<std::endl;
         if(i==0){
@@ -791,7 +791,7 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
         std::cout<<"--- this file has: "<<tmp_events<<std::endl;
         n_starting_events = tmp_events;
     }
-    std::cout<<"So the number of CC nue/nuebar events is "<<n_starting_events<<std::endl;
+    std::cout<<"So the number of nue/nuebar events is "<<n_starting_events<<std::endl;
 
   
     std::string topocuts = "";
@@ -813,29 +813,10 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
     std::cout<<"So the DENOMINATOR + TOPOLOGICAL is "<<n_topo_events<<std::endl;
      std::cout<<"So the percent that pass topological stage  is "<<n_topo_events/n_starting_events*100.0<<"%"<<std::endl;
 
- 
-
 
 //then apply precuts, and BDT cuts get passing events
-    /*
-    for(int i=0; i<v_denomin.size();i++){
-        std::cout<<" On Cut "<<v_denomin[i]<<std::endl;
-        if(i==0){
-            denominator = v_denomin[i];
-        }else{
-            denominator += "&&"+v_denomin[i];
-        }
-        double tmp_events =  filein->GetEntries(denominator)*conversion;
-        std::cout<<"--- this file has: "<<tmp_events<<std::endl;
-        n_starting_events = tmp_events;
-    }
-    std::cout<<"So the DENOMINATOR is "<<n_starting_events<<std::endl;
 
-    std::cout<<"-----------------------------------------"<<std::endl;
-
-    std::cout<<"So total Pandora Reco Efficiency is "<<n_topo_events/n_starting_events*100.0<<"%"<<std::endl;
-
-    std::string precuts = "";
+     std::string precuts = "";
     double n_precut_events = 0;
     for(int i=0; i<v_precuts.size();i++){
         std::cout<<" On precut: "<<v_precuts[i]<<std::endl;
@@ -851,13 +832,36 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
     }
 
     //    double max_x_range = 2.5;
-    double max_x_range = 1.0;
+ //   double max_x_range = 1.0;
     std::cout<<"So the DENOMINATOR + TOPOLOGICAL + PRECUTS is "<<n_precut_events<<std::endl;
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_starting_events*100.0<<"% relative to denom"<<std::endl;
     std::cout<<"So total Precut Efficiency is "<<n_precut_events/n_topo_events*100.0<<"% relative to topo"<<std::endl;
-    std::cout<<"This is "<<filein->tvertex->GetEntries((denominator+"&&"+topocuts+"&&"+precuts).c_str())<<" actuall MC events"<<std::endl;
-*/
-    return 0;
+ 
+
+    std::string bdt_cut =  "";
+    std::vector<std::string> v_bdt_cut = {"1g1pMar2020_v4Nue_mva >= 0.3"};
+    double n_bdtcut_events = 0;
+    for(int i=0; i<v_bdt_cut.size();i++){
+        std::cout<<" On bdt cut: "<<v_bdt_cut[i]<<std::endl;
+        if(i==0){
+             bdt_cut = v_bdt_cut[i];
+        }else{
+            bdt_cut += "&&"+v_bdt_cut[i];
+        }
+        double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+ precuts+ "&&"+bdt_cut)*conversion;
+        double tmp_events_just_this =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+precuts+ "&&"+v_bdt_cut[i])*conversion;
+        std::cout<<"--- this file has: "<<tmp_events<<" which on its own is a ("<<tmp_events_just_this/n_precut_events*100.0<<"%) effect relative to precuts"<<std::endl;
+        n_bdtcut_events = tmp_events;
+    }
+    std::cout<<"So total BDT Cut Efficiency is "<<n_bdtcut_events/n_precut_events*100.0<<"% relative to precuts"<<std::endl;
+
+     bdt_variable nue_energy("mctruth_nu_E","(12,0.0,2.4)","True Neutrino Energy [GeV]",false,"d");
+       
+     TH1* h_true_nue_denom_topo = (TH1*)filein->getTH1( nue_energy, denominator+"&&"+topocuts , "true_nue_denom", plot_POT);
+     TH1*  h_true_nue_numer_bdt  = (TH1*)filein->getTH1( nue_energy, denominator+"&&"+topocuts +"&&"+ precuts+ "&&"+bdt_cut , "true_nue_numer", plot_POT);
+     
+    
+     return 0;
 }
 
 
