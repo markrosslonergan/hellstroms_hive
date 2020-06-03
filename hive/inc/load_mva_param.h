@@ -24,8 +24,9 @@ class MVALoader {
 	bool isVerbose;
 	std::string whichxml;	
 
+    std::string m_error_string;
 	
-	MVALoader(std::string,bool);
+	MVALoader(std::string,bool,std::string);
 	MVALoader(std::string);
 
 	std::vector<method_struct> GetMethods();

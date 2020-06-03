@@ -43,7 +43,7 @@ type="double"
         
          />
  </MultisimFile>
-<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/app/users/amogan/hive_v2.5_xgboost/hellstroms_hive/hive/build/bin/2g1p_v33.3_combined/sbnfit_files/sbnfit_pigLEE_combined_stage_1_BNBext_v5.root" scale = "24.785592" maxevents="5000000" 
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/app/users/amogan/hive_v2.5_xgboost/hellstroms_hive/hive/build/bin/2g1p_v33.3_combined/sbnfit_files/sbnfit_pigLEE_combined_stage_1_BNBext_v5.root" scale = "24.785592" maxevents="5000000" fake="true"
 pot="1.0">
  <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/fake/fake_run123_2g1p_stage_1_BNBext_v5.root"/>
  <friend treename="singlephoton/vertex_tree"  filename="/uboone/app/users/amogan/hive_v2.5_xgboost/hellstroms_hive/hive/build/bin/2g1p_v33.3_combined/sbnfit_files/sbnfit_pigLEE_combined_stage_1_BNBext_v5.root"/>

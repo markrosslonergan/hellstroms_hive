@@ -56,7 +56,9 @@ int main (int argc, char *argv[]){
     std::string input_string = "";
     int which_group = -1;
 
-    std::string covar_template_xml = "null.xml";
+    std::string systematics_error_string = "stats";
+    std::string covar_flux_template_xml = "null.xml";
+    std::string covar_det_template_xml = "null.xml";
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -70,12 +72,14 @@ int main (int argc, char *argv[]){
         {"stage",		required_argument,	0, 's'},
         {"combined",    no_argument,        0, 'c'},
         {"help",		required_argument,	0, 'h'},
-        {"makecovar",   required_argument, 0 , 'm'},
+        {"makefluxcovar",   required_argument, 0 , 'm'},
+        {"makedetcovar",   required_argument, 0 , 'q'},
         {"pot",		    required_argument,	0, 'p'},
         {"group",       required_argument, 0, 'g'},
         {"number",		required_argument,	0, 'n'},
         {"response",	no_argument,	    0, 'r'},
         {"file",		required_argument,	0, 'f'},
+        {"systematics",	required_argument,	0, 'y'},
         {"vector",      required_argument,  0, 'v'},
         {0,			    no_argument, 		0,  0},
     };
@@ -83,7 +87,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:s:f:m:t:p:b:i:n:g:v:rch?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:f:q:y:m:t:p:b:i:n:g:v:rch?", longopts, &index);
 
         switch(iarg)
         {
@@ -103,8 +107,15 @@ int main (int argc, char *argv[]){
                 xml = optarg;
                 break;
             case 'm':
-                covar_template_xml = optarg;
-                mode_option = "makecovar";
+                covar_flux_template_xml = optarg;
+                mode_option = "makefluxcovar";
+                break;
+            case 'q':
+                covar_det_template_xml = optarg;
+                mode_option = "makedetcovar";
+                break;
+            case 'y':
+                systematics_error_string = optarg;
                 break;
             case 'b':
                 which_bdt = (int)strtof(optarg,NULL);
@@ -161,6 +172,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-f\t--file\t\t Which file in bdt_files you want to run over, for file specifc options."<<std::endl;
                 std::cout<<"\t-p\t--pot\t\tSet POT for plots"<<std::endl;
                 std::cout<<"\t-g\t--group\t\tSet a group for variable plotting"<<std::endl;
+                std::cout<<"\t-y\t--systematics\t\tWhat is the systematics error band string?"<<std::endl;
                 std::cout<<"\t-s\t--stage\t\tSet what stage to do things at."<<std::endl;
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag [Superseeded by XML defined tag]"<<std::endl;
@@ -185,7 +197,7 @@ int main (int argc, char *argv[]){
     std::cout<<"Welcome."<<std::endl;get_joy();
     //Most TMVA arguments are loaded in here via XML
     std::cout<<"Getting xml variables"<<std::endl;
-    MVALoader XMLconfig(xml);
+    MVALoader XMLconfig(xml,true,systematics_error_string);
     std::vector<method_struct> TMVAmethods  = XMLconfig.GetMethods(); 
     std::string analysis_tag = XMLconfig.analysis_tag;
 
@@ -541,7 +553,7 @@ int main (int argc, char *argv[]){
             }
         }
     }    else if(mode_option == "datamc"){
-        std::cout<<"Starting datamc "<<std::endl;
+        std::cout<<"Starting datamc with systeamatic error string: "<<systematics_error_string<<std::endl;
 
         if (access("datamc",F_OK) == -1){
             mkdir("datamc",0777);//Create a folder for pdf.
@@ -581,7 +593,8 @@ int main (int argc, char *argv[]){
         if(true){
             if(number != -1){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
-                datamc.setPlotStage(which_stage);                
+                datamc.setPlotStage(which_stage);               
+                datamc.setErrorString(systematics_error_string);
 
                 //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
 
@@ -603,6 +616,7 @@ int main (int argc, char *argv[]){
 
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 real_datamc.setPlotStage(which_stage);                
+                real_datamc.setErrorString(systematics_error_string);
 
                 if(which_bdt==-1){
                     real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts, bdt_infos);
@@ -1234,9 +1248,10 @@ else if(mode_option == "eff2"){
     return 0;
 
 
-}else if(mode_option == "makecovar"){
+}
+if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flux_template_xml!="null.xml") ){
 
-    std::cout<<"Starting to make an SBNfit integration covar with template: "<<covar_template_xml<<std::endl;
+    std::cout<<"Starting to make an SBNfit integration covar with template: "<<covar_flux_template_xml<<std::endl;
 
 
     int vc=0;
@@ -1258,7 +1273,7 @@ else if(mode_option == "eff2"){
         std::cout<<"Variable ID is "<<sVID<<std::endl;
 
         std::cout<<"First lets add the variable string "<<v.name<<std::endl;
-        std::string sedder_VAR = "sed  's@VARVARVAR@\"" + v.name + "\"@' "+covar_template_xml +" > "+ covar_template_xml+"."+sVID+".xml";
+        std::string sedder_VAR = "sed  's@VARVARVAR@\"" + v.name + "\"@' "+covar_flux_template_xml +" > "+ covar_flux_template_xml+"."+sVID+".xml";
         std::cout<<sedder_VAR<<std::endl;
         system(sedder_VAR.c_str());
 
@@ -1271,16 +1286,121 @@ else if(mode_option == "eff2"){
         sBinning += "\"";
 
         std::cout<<"Now lets add the variable Binning "<<sBinning<<std::endl;
-        std::string sedder_BIN = "sed  -i 's@BINBINBIN@" + sBinning + "@' " + covar_template_xml+"."+sVID+".xml";
+        std::string sedder_BIN = "sed  -i 's@BINBINBIN@" + sBinning + "@' " + covar_flux_template_xml+"."+sVID+".xml";
         std::cout<<sedder_BIN<<std::endl;
         system(sedder_BIN.c_str());
 
         std::cout<<"Ok, now lets use a preprepared sbnfit_make_covariance to generate this "<<std::endl;
         std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration "<<std::endl;
 
-        std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration  -x "+ covar_template_xml+"."+sVID+".xml" + " -m -t "+sVID; 
+        std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -m -t "+sVID+"_flux"; 
         system(run_str.c_str());
+
+        std::string run_fix_str = "/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_fix_fractional_hive_integration  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -t "+sVID+"_flux" + " -c " + sVID+"_flux.SBNcovar.root"; 
+        system(run_fix_str.c_str());
+
     }
+    std::cout<<"Finished the makefluxcovar mode: "<<std::endl;
+
+}
+    if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det_template_xml!="null.xml") ){
+
+    std::cout<<"Starting to make an SBNfit DETECTOR systeatics integration covar with template: "<<covar_det_template_xml<<std::endl;
+
+    std::vector<std::string> det_names ={"recom2","AngleXZ","AngleYZ","WireYZ","WireX","SCE","LY","LYAtt","LYRay"};
+
+    int vc=0;
+    for(auto &v: vars){
+        vc++;   
+        //lets skip anything that isnt the specific or group we want
+        if(number > 0 && number !=vc-1) continue;
+        if(which_group > 0 && which_group != v.cat) continue;
+
+        std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
+        for(double k = 0; k<=v.n_bins; k++){
+            double b = v.edges[1]+k*fabs(v.edges[1]-v.edges[2])/(double)v.n_bins;
+            std::cout<<" "<<b;
+        }
+        std::cout<<"\""<<std::endl;
+
+
+        std::string sVID = "VID"+std::to_string(v.id);
+        std::cout<<"Variable ID is "<<sVID<<std::endl;
+
+        std::cout<<"First lets add the variable string "<<v.name<<std::endl;
+        std::string sedder_VAR = "sed  's@VARVARVAR@\"" + v.name + "\"@' "+covar_det_template_xml +" > "+ covar_det_template_xml+"."+sVID+".xml";
+        std::cout<<sedder_VAR<<std::endl;
+        system(sedder_VAR.c_str());
+
+
+        std::string sBinning = "\"";
+        for(double k = 0; k<=v.n_bins; k++){
+            double b = v.edges[1]+k*fabs(v.edges[1]-v.edges[2])/(double)v.n_bins;
+            sBinning +=" " + std::to_string(b);
+        }
+        sBinning += "\"";
+
+        std::cout<<"Now lets add the variable Binning "<<sBinning<<std::endl;
+        std::string sedder_BIN = "sed  -i 's@BINBINBIN@" + sBinning + "@' " + covar_det_template_xml+"."+sVID+".xml";
+        std::cout<<sedder_BIN<<std::endl;
+        system(sedder_BIN.c_str());
+
+
+        //set stages
+        std::cout<<"Now lets add the Stages: "<<which_stage<<std::endl;
+        std::string s_stagea ="stage_1";
+        std::string s_stageb ="stage_1";
+        std::string sedder_STAGEA = "sed  -i 's@STAGESTAGESTAGE@" + s_stagea + "@' " + covar_det_template_xml+"."+sVID+".xml";
+        std::string sedder_STAGEB = "sed  -i 's@STAGEZOOMZOOM@" + s_stageb + "@' " + covar_det_template_xml+"."+sVID+".xml";
+
+        std::cout<<sedder_STAGEA<<std::endl;
+        std::cout<<sedder_STAGEB<<std::endl;
+        system(sedder_STAGEA.c_str());
+        system(sedder_STAGEB.c_str());
+        std::cout<<"Ok, now lets use a preprepared sbnfit_make_covariance to generate this "<<std::endl;
+        std::cout<<"Looping over the following DetSYs: "<<std::endl;
+        for(auto &ss: det_names)std::cout<<" "<<ss;
+        std::cout<<std::endl;
+
+        for(auto &det: det_names){
+
+            std::string m_tag = sVID+"_"+det;
+            std::cout<<"On Det "<<m_tag<<std::endl;
+            std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration "<<std::endl;
+
+            std::string sedder_DET = "sed  's@SYSVAR@" + det + "@' " + covar_det_template_xml+"."+sVID+".xml > " + covar_det_template_xml+"."+sVID+"_"+det+".xml" ;
+            std::cout<<sedder_DET<<std::endl;
+            system(sedder_DET.c_str());
+
+            std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration  -x "+ covar_det_template_xml+"."+sVID+"_"+det+".xml" + " -d -m -t "+m_tag; 
+            system(run_str.c_str());
+            //Then run FixFractional
+            std::string run_fix_str = "/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_fix_fractional_hive_integration  -x "+ covar_det_template_xml+"."+sVID+"_"+det+".xml" + " -t "+m_tag + " -c " + m_tag+".SBNcovar.root"; 
+            system(run_fix_str.c_str());
+        }
+
+        //Then run a SBNfit Merge Fractional
+    
+        std::cout<<"Going to merge it all"<<std::endl;
+        std::string merger_s = "/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_merged_det -c "+sVID+"*_fracfixed.SBNcovar.root";
+        system(merger_s.c_str());
+
+
+       
+        //*****  If we also ran flux, merge   ***
+        if(covar_flux_template_xml !="null.xml"){
+            
+            std::cout<<"Going to merge Flux and Det together"<<std::endl;
+            std::string merger_a = "/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_fluxdet -c "+sVID+"_merged_det.SBNcovar.root "+ sVID+"_flux_fracfixed.SBNcovar.root";
+            std::cout<<"Merge String "<<std::endl;
+            std::cout<<merger_a<<std::endl;
+            system(merger_a.c_str());
+        }
+        
+
+
+
+    }//end vars
 
 }else if(mode_option == "export"){
 
@@ -1448,7 +1568,7 @@ else if(mode_option == "eff2"){
 
 
 }else {
-    std::cout << "WARNING: " << mode_option << " is an invalid option\n";
+//    std::cout << "WARNING:i " << mode_option << " is an invalid option\n";
 }
 
 return 0;

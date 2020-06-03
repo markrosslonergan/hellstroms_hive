@@ -2,14 +2,14 @@
 #include "method_struct.h"
 
 
-MVALoader::MVALoader(std::string xmlname): MVALoader(xmlname,true) {
+MVALoader::MVALoader(std::string xmlname): MVALoader(xmlname,true,"stat") {
 
 }
 
-MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) {
+MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin) :whichxml(xmlname) {
 
     isVerbose = isVerbose_in;
-
+    m_error_string = erorin;
 
     //Setup TiXml documents
     TiXmlDocument doc( xmlname.c_str() );
@@ -675,7 +675,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         if(has_covar){
             std::cout<<"Adding a covariance matrix "<<covar_name<<" from file "<<covar_file<<std::endl;
             if(has_global_covar){
-                   covar_file = covar_file+"/VID"+std::to_string(n_var)+".SBNcovar.root";
+                   covar_file = covar_file+"/VID"+std::to_string(n_var)+"_"+m_error_string+".SBNcovar.root";
             }
             
             t.addCovar(covar_name,covar_file);
