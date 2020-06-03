@@ -821,16 +821,29 @@
 <!-- ################################################################################################################ -->
 
 <!--bdt vars -->
+
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.95)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSV BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
+<!--
+<var def = "simple_1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "simple_1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.95)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "simple_1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "simple_1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "simple_1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSV BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+-->
+<!--
+<var def = "simple_1g1pMar2020_v4BNB_mva" binning = "(16,0.9,1)" unit = "BNB Other BDT Score (Zoomed)" type="d"  training= "" group = "12" logplot = "true" pmin=0.1/>
+
+<var def = "simple_1g1pMar2020_v4COSMIC_mva" binning = "(16,0.9,1)" unit = "Cosmic BDT Score (Zoomed)" type="d"  training= "" group = "12" logplot = "true" pmin=0.1/>
+-->
+
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(16,0.9,1)" unit = "BNB Other BDT Score (Zoomed)" type="d"  training= "" group = "12" logplot = "true" pmin=0.1/>
 
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(16,0.9,1)" unit = "Cosmic BDT Score (Zoomed)" type="d"  training= "" group = "12" logplot = "true" pmin=0.1/>
-
 
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "8" />
 

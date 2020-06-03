@@ -498,9 +498,8 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-        histogram_stack->plot_pot =12.25e20;//10.115e20;//4.9e19;
-
-        std::cout<<"flag1"<<std::endl;
+        histogram_stack->plot_pot = 10.115e20; //12.25e20;//10.115e20;//4.9e19;
+       std::cout<<"flag1"<<std::endl;
 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
             if(stack_bdt_files[f]->is_data) continue;
