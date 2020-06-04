@@ -839,7 +839,9 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
 
 
     std::string bdt_cut =  "";
-    std::vector<std::string> v_bdt_cut = {"1g1pMar2020_v4Nue_mva >= 0.3"};
+  //  std::vector<std::string> v_bdt_cut = {"1g1pMar2020_v4Nue_mva >= 0.3"};
+     std::vector<std::string> v_bdt_cut = {"1.0"};
+   
     double n_bdtcut_events = 0;
     for(int i=0; i<v_bdt_cut.size();i++){
         std::cout<<" On bdt cut: "<<v_bdt_cut[i]<<std::endl;
@@ -868,8 +870,8 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
     h_true_nue_ratio->Scale(100);
     h_true_nue_ratio->SetTitle("");
     h_true_nue_ratio->GetXaxis()->SetTitle("True #nu_{e}/#bar{#nu_{e}} Neutrino Energy [GeV]");
-    h_true_nue_ratio->GetYaxis()->SetTitle("Selection Efficiency");
-    h_true_nue_ratio->SetMaximum(10.0);
+    h_true_nue_ratio->GetYaxis()->SetTitle("Selection Efficiency [%]");
+    h_true_nue_ratio->SetMaximum(15.0);
     h_true_nue_ratio->Draw("E1");
 
     c->SaveAs(("nue_eff_"+tag+"_"+filein->tag+".pdf").c_str(),"pdf");
