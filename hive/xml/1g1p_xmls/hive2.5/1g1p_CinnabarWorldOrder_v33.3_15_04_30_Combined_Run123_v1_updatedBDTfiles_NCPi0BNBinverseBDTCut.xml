@@ -871,7 +871,7 @@
 
 
 
-<var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "#nu_{e} True Neutrino Energy [GeV] A" type  = "d"  training = ""  group = "14" cut="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- pink box-->
+<var def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "#nu_{e} True Neutrino Energy [GeV] A" type  = "d"  training = ""  group = "14" cut="(fab     s(mctruth_nu_pdg)==12 &amp;&amp; 1g1pMar2020_v4NCPi0_mva &gt;= #NCP# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE# )"/> <!-- pink box-->
 
 <var  def = "mctruth_nu_E" binning = "(12,0,2.4)" unit = "#nu_{e} True Neutrino Energy [GeV] A^{0}" type  = "d"  training = ""  group = "14" cut="(fabs(mctruth_nu_pdg)==12 &amp;&amp; 1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp;1g1pMar2020_v4Nue_mva &gt;=#NUE# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar2020_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))"/> <!-- near sideband-->
 
