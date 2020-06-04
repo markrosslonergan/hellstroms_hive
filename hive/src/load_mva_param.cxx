@@ -2,14 +2,277 @@
 #include "method_struct.h"
 
 
-MVALoader::MVALoader(std::string xmlname): MVALoader(xmlname,true) {
+MVALoader::MVALoader(std::string external_xml, int template_torsion){
+//This is the external loader, for BDT files only!
+    isVerbose = false;
+    
+    //Setup TiXml documents
+    TiXmlDocument doc( external_xml.c_str() );
+    bool loadOkay = doc.LoadFile();
+
+    if(loadOkay){
+        if(isVerbose) std::cout<<"MVALoader::MVALoader || Loaded "<<whichxml<<std::endl;
+    }else{
+        std::cerr<<"ERROR: MVALoader::MVALoader || Failed to load "<<external_xml<<std::endl;
+        std::cerr<<"ERROR: MVALoader::MVALoader || You probably just forgot to add a --xml my_analysis.xml , or maybe you missed a </>"<<std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    TiXmlHandle hDoc(&doc);
+
+    //I'll keep aliass just in case.
+    std::cout<<"########################### alias ###########################"<<std::endl;
+    TiXmlElement *pAlias;
+    pAlias = doc.FirstChildElement("alias");
+    int n_alias = 0;
+    while(pAlias)
+    {
+        std::string key = pAlias->Attribute("key");
+        std::string val = pAlias->Attribute("value");
+        aliasMap[key] = val; 
+        std::cout<<"Setting up an XML-Alias between "<<key<<" and "<<val<<std::endl;
+        n_alias++;
+        pAlias = pAlias->NextSiblingElement("alias");
+    }
+
+
+
+    std::cout<<"#######################  BDT_Files  ########################################"<<std::endl;
+    std::cout<<"(Print out will be below when constructing bdt_file class)"<<std::endl;
+
+    TiXmlElement *pBDTfile; 
+
+
+    //Grab the first element. Note very little error checking here! make sure they exist.
+    pBDTfile = doc.FirstChildElement("bdtfile");
+    if(!pBDTfile) {
+        std::cerr<<"ERROR: MVALoader::MVALoader || XMl contains no BDT_files! "<<whichxml<<std::endl;
+        exit(EXIT_FAILURE);
+    }
+    n_bdt_files = 0;
+
+    while(pBDTfile)
+    {
+        const char* t_tag = pBDTfile->Attribute("tag");
+        if(t_tag==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has no `tag` attribute! "<<std::endl; exit(EXIT_FAILURE);}
+        bdt_tags.push_back(t_tag);
+
+        const char* t_filename = pBDTfile->Attribute("filename");
+        if(t_filename==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has no `filename` attribute! "<<std::endl; exit(EXIT_FAILURE);}
+        bdt_filenames.push_back(t_filename);
+
+        const char* t_hist_styles = pBDTfile->Attribute("hist_style");
+        if(t_hist_styles==NULL){ bdt_hist_styles.push_back("hist");}else{
+            bdt_hist_styles.push_back(t_hist_styles);
+        }
+
+        const char* t_fillstyles = pBDTfile->Attribute("fillstyle");
+        if(t_fillstyles==NULL){ bdt_fillstyles.push_back(1001);}else{
+            bdt_fillstyles.push_back((int)std::stoi(t_fillstyles,nullptr,10));
+        }
+
+
+        const char* t_dirs = pBDTfile->Attribute("dirs");
+        if(t_dirs==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has no `dirs` attribute! "<<std::endl; exit(EXIT_FAILURE);}
+        bdt_dirs.push_back(t_dirs);
+
+        const char* t_col = pBDTfile->Attribute("col");
+        if(t_col==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has no `col` attribute! "<<std::endl; exit(EXIT_FAILURE);}
+        std::string s_col = t_col;
+        s_col.erase(std::remove(s_col.begin(), s_col.end(), '('), s_col.end());
+        s_col.erase(std::remove(s_col.begin(), s_col.end(), ')'), s_col.end());
+        std::vector<double> v_col; 
+
+        size_t pos = 0;
+        std::string delim = ",";
+        std::string token;
+        while ((pos = s_col.find(delim)) != std::string::npos) {
+            token = s_col.substr(0, pos);
+            v_col.push_back(std::stod(token));
+            s_col.erase(0, pos + delim.length());
+        }
+        v_col.push_back(std::stod(s_col));
+        //for(auto &d:v_col)std::cout<<d<<std::endl;
+        for(int cc=0; cc< v_col.size();cc++) {
+            if(v_col[cc]>1) v_col[cc] = v_col[cc]/255.0;
+        }
+        bdt_cols.push_back(new TColor(TColor::GetFreeColorIndex(),v_col[0],v_col[1],v_col[2]) );
+
+        const char* t_scales = pBDTfile->Attribute("scale");
+        if(t_scales==NULL){
+            bdt_scales.push_back(1.0);
+        }else{
+            bdt_scales.push_back(atof(t_scales));
+        }
+
+        const char* t_signals = pBDTfile->Attribute("signal");
+        if(t_signals==NULL){
+            bdt_is_signal.push_back(false);
+        }else{
+            std::string sig = t_signals;
+            if(sig=="true"){
+                bdt_is_signal.push_back(true);
+            }else{
+                bdt_is_signal.push_back(false);
+
+            }
+        }
+
+        const char* t_ptop = pBDTfile->Attribute("plot_on_top");
+        if(t_ptop==NULL){
+            bdt_on_top.push_back(false);
+        }else{
+            std::string sig = t_ptop;
+            if(sig=="true"){
+                bdt_on_top.push_back(true);
+            }else{
+                bdt_on_top.push_back(false);
+
+            }
+        }
+
+        const char* t_valid = pBDTfile->Attribute("validate");
+        if(t_valid==NULL){
+            bdt_is_validate_file.push_back(false);
+        }else{
+            std::string sig = t_valid;
+            if(sig=="true"){
+                bdt_is_validate_file.push_back(true);
+            }else{
+                bdt_is_validate_file.push_back(false);
+            }
+        }
+
+
+        const char* t_plotname = pBDTfile->Attribute("plot_name");
+        if(t_plotname==NULL){
+            bdt_plotnames.push_back(bdt_tags.back());
+        }else{
+            bdt_plotnames.push_back(t_plotname);
+        }
+
+
+
+
+        TiXmlElement *pDefinition = pBDTfile->FirstChildElement("definition");
+        std::vector<std::string> this_denom; 
+        while(pDefinition){
+            TiXmlElement *pCut = pDefinition->FirstChildElement("cut");
+            while(pCut){
+                std::string unpar =  pCut->GetText();
+                std::string parsed = this->AliasParse(unpar);
+                this_denom.push_back(parsed);
+                pCut = pCut->NextSiblingElement("cut");
+            }
+            pDefinition = pDefinition->NextSiblingElement("definition");
+        }//-->end definition
+        bdt_definitions.push_back(this_denom);
+
+        //next lets check if its the Signal Training
+        TiXmlElement *pTrain = pBDTfile->FirstChildElement("training");
+        std::vector<std::string> this_tcut; 
+        bool is_train = false;
+        while(pTrain){
+            is_train = true;
+            TiXmlElement *pTCut = pTrain->FirstChildElement("cut");
+            while(pTCut){
+                std::string unpar =  pTCut->GetText();
+                std::string parsed = this->AliasParse(unpar);
+
+                this_tcut.push_back(parsed);
+                pTCut = pTCut->NextSiblingElement("cut");
+            }
+
+            pTrain = pTrain->NextSiblingElement("training");
+        }//-->end training cuts           
+        bdt_training_cuts.push_back(this_tcut);
+        if(is_train){
+            bdt_is_training_signal.push_back(true);
+        }else{
+            bdt_is_training_signal.push_back(false);
+        }
+
+        //So, some book-keeping if its data!
+        bool is_data = false;
+        TiXmlElement *pData = pBDTfile->FirstChildElement("data");
+
+        bdt_is_onbeam_data.push_back(false);
+        bdt_is_offbeam_data.push_back(false);
+        bdt_onbeam_pot.push_back(-999);
+        bdt_offbeam_spills.push_back(-999);
+        bdt_onbeam_spills.push_back(-999);
+
+
+        while(pData){
+
+            const char* t_use = pData->Attribute("use");
+            if(t_use=="no"){break;}
+
+            const char* t_type = pData->Attribute("type");
+            if(t_type==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated data, but not given a `type` attribute! wither OnBeam or OffBeam!! "<<std::endl; exit(EXIT_FAILURE);}
+            std::string s_type = t_type;
+            if(s_type == "OnBeam"){
+                bdt_is_onbeam_data.back() = true;
+                is_data = true;
+            }else if(s_type == "OffBeam"){
+                bdt_is_offbeam_data.back() = true;
+                is_data = true;
+            }else{
+                std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated data, but its `type` attribute is neither OnBeam or OffBeam!! "<<t_type<<" "<<std::endl; exit(EXIT_FAILURE);
+            }
+            bdt_onbeam_pot.back() = 0;
+            bdt_offbeam_spills.back() = 0;
+            bdt_onbeam_spills.back() = 0;
+
+            TiXmlElement *pTor = pData->FirstChildElement("tor860_wcut");
+            while(pTor){
+                std::string tor = std::string(pTor->GetText());
+                bdt_onbeam_pot.back() = stod(tor);    
+                pTor = pTor->NextSiblingElement("tor860_wcut");
+            }
+
+            TiXmlElement *pSpills = pData->FirstChildElement("E1DCNT_wcut");
+            while(pSpills){
+                std::string tor = std::string(pSpills->GetText());
+                bdt_onbeam_spills.back() = stod(tor);    
+                pSpills = pSpills->NextSiblingElement("E1DCNT_wcut");
+            }
+            if(bdt_onbeam_spills.back()==0 && bdt_is_offbeam_data.back()==true){
+                std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated "<<t_type<<" data, but no ON beam Spills has been given for normalization! Use Zarko's tool "<<std::endl; exit(EXIT_FAILURE);
+            }
+
+
+            TiXmlElement *pExt = pData->FirstChildElement("EXT");
+            while(pExt){
+                std::string tor = std::string(pExt->GetText());
+                bdt_offbeam_spills.back() = stod(tor);    
+                pExt = pExt->NextSiblingElement("EXT");
+            }
+            if(bdt_offbeam_spills.back()==0 && bdt_is_offbeam_data.back()==true){
+                std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated "<<t_type<<" data, but no OFF beam Spills has been given for normalization! Use Zarko's tool "<<std::endl; exit(EXIT_FAILURE);
+            }
+
+            pData = pData->NextSiblingElement("data");
+        }//-->end data
+
+
+        pBDTfile = pBDTfile->NextSiblingElement("bdtfile");
+        n_bdt_files++;
+
+    }//--> end bdt_file
+
+
 
 }
 
-MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) {
+MVALoader::MVALoader(std::string xmlname): MVALoader(xmlname,true,"stat") {
+
+}
+
+MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin) :whichxml(xmlname) {
 
     isVerbose = isVerbose_in;
-
+    m_error_string = erorin;
 
     //Setup TiXml documents
     TiXmlDocument doc( xmlname.c_str() );
@@ -675,7 +938,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in) :whichxml(xmlname) 
         if(has_covar){
             std::cout<<"Adding a covariance matrix "<<covar_name<<" from file "<<covar_file<<std::endl;
             if(has_global_covar){
-                   covar_file = covar_file+"/VID"+std::to_string(n_var)+".SBNcovar.root";
+                   covar_file = covar_file+"/VID"+std::to_string(n_var)+"_"+m_error_string+".SBNcovar.root";
             }
             
             t.addCovar(covar_name,covar_file);

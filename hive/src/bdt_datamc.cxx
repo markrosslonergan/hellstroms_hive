@@ -339,7 +339,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
             //var.covar_name = "frac_covariance";
 
-            if(var.has_covar){
+            if(var.has_covar && m_error_string !="stat"){
 
                 TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
                 TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
@@ -598,7 +598,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 *leg_hack = (TH1*)tmp_tsum->Clone(("leg_tmp_tsum"+std::to_string(s)).c_str());
             leg_hack->SetLineWidth(2);
 
-            if(var.has_covar){
+            if(var.has_covar&& m_error_string!="stat"){
                 l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,2) ).c_str(),"fl");
             }else{
                 l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"fl"); // Was le
@@ -613,7 +613,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             double mychi =0;
             int ndof = 0;
             bool use_cnp = true;
-            if(!var.has_covar){
+            if(!var.has_covar || m_error_string=="stat"){
 
                 for(int p=0; p<d0->GetNbinsX();p++){
 
@@ -646,7 +646,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                     }
                 }
-            } else if (var.has_covar && use_cnp) {
+            } else if (var.has_covar && use_cnp && m_error_string!="stat") {
 
                 std::cout << "[TEST] Starting chi^2 CNP calculation" << std::endl;
                 TMatrixT<double> Mout = *covar_collapsed;

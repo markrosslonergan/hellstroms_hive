@@ -14,7 +14,7 @@
     <subchannel name="BNBOther" osc = "0" />
     <subchannel name="NueOverlays" osc = "0" />
     <subchannel name="Dirt" osc = "0" />
-    <subchannel name="BNBext" osc = "0" />
+    <subchannel name="BNBext" osc = "0" data="true"/>
     <subchannel name="NCDeltaRadOverlaySM" osc = "0" />
     <subchannel name="NCDeltaRadOverlayLEE" osc = "0" />  
 </channel>
