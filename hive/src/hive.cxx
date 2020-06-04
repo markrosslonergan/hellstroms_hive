@@ -883,6 +883,9 @@ int main (int argc, char *argv[]){
                 }else{
                     std::cout<<"ERROR! External App is not backward comparabale with TMVA. XGBoost only"<<std::endl;
                 }
+
+                //and add the responses as a friend
+                file->addBDTResponses(bdt_infos[i]);
             }
 
                     
@@ -890,7 +893,7 @@ int main (int argc, char *argv[]){
             //Now make the SBNfit files
             std::cout<<"Making an SBNfit file with the additional cuts of : "<<external_cuts<<std::endl;
             std::vector<double> fcuts(bdt_infos.size(),-999);
-            file->makeSBNfitFile(analysis_tag, bdt_infos, 1,fcuts,"", vars, file->pot,external_cuts);
+            file->makeSBNfitFile(analysis_tag, bdt_infos, 1,fcuts,"1", vars, file->pot,external_cuts);
             std::cout<<"Done with this file"<<std::endl;
         }
 
