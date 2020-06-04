@@ -28,6 +28,7 @@ class MVALoader {
 	
 	MVALoader(std::string,bool,std::string);
 	MVALoader(std::string);
+	MVALoader(std::string,int);//This is exteral constructor
 
 	std::vector<method_struct> GetMethods();
     size_t GetNFiles(){return n_bdt_files;}
