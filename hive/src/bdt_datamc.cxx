@@ -89,14 +89,14 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
     std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
 
-    double title_size_ratio=0.1;
+    double title_size_ratio=0.15;
     double label_size_ratio=0.1;
     double title_offset_ratioY = 0.3 ;
     double title_offset_ratioX = 1.1;
 
     double title_size_upper=0.15;
-    double label_size_upper=0.05;
-    double title_offset_upper = 1.45;
+    double label_size_upper=0.10;
+    double title_offset_upper = 1.5;//1.5
 
 
     ftest->cd();
@@ -186,6 +186,8 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
                     //now repeat for all of the MC files
 
+         
+
                     for(auto &f: mc_stack->stack){
 
                         std::cout<<"Stack "<<f->tag<<" level "<<s<<std::endl;
@@ -244,14 +246,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
 
-    double title_size_ratio=0.1;
-    double label_size_ratio=0.1;
+    double title_size_ratio=0.10;
+    double label_size_ratio=0.085;
     double title_offset_ratioY = 0.3 ;
     double title_offset_ratioX = 1.1;
 
-    double title_size_upper=0.15;
+    double title_size_upper=0.06;
     double label_size_upper=0.05;
-    double title_offset_upper = 1.45;
+    double title_offset_upper = 0.6;
 
 
     ftest->cd();
@@ -308,7 +310,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             std::cout<<"Starting on variable "<<var.name<<std::endl;
 
-            TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),1801,1200); //1600
+            TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(), (stack_mode? 2200 : 1801),1400); //1600
             cobs->cd();
 
             if(false&&do_subtraction){
@@ -377,19 +379,18 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             cobs->cd();
 
 
-
             //            std::vector<double> ks_sum = data_file->getVector(var,s);
 
-            double rmin = 0.5;
-            double rmax = 1.5;
+            double rmin = 0.0;
+            double rmax = 2.0;
             int data_rebin = 1;
-            if(s==0 || s == 1){
-                rmin=0; rmax = 1.99;
-            }//else if(s==2){ data_rebin = 2;};//else if(s==3){data_rebin=2;};
+            //if(s==0 || s == 1){
+            //    rmin=0; rmax = 1.99;
+            //}//else if(s==2){ data_rebin = 2;};//else if(s==3){data_rebin=2;};
 
 
             //tsum->Rebin(data_rebin);
-            d0->Rebin(data_rebin);
+            //d0->Rebin(data_rebin);
 
             if(false &&do_subtraction){
                 std::cout<<"Actually doing the subtracting"<<std::endl;
@@ -437,13 +438,20 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             gStyle->SetEndErrorSize(10);
 
             cobs->cd();
-            TPad *pad0top = new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.35, 1, 1.0);
+            TPad *pad0top;
+            if(!stack_mode) {
+                pad0top= new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.4, 1, 1.0);//0.4 was 0.35
+                //if(is_bdt_variable /*|| var.is_logplot*/ )  pad0top->SetLogy();
+                pad0top->SetBottomMargin(0); // Upper and lower plot are joined
+                pad0top->Draw();             // Draw the upper pad: pad2top
+                pad0top->cd();               // pad2top becomes the current pad
 
-            //if(is_bdt_variable /*|| var.is_logplot*/ )  pad0top->SetLogy();
-            pad0top->SetBottomMargin(0); // Upper and lower plot are joined
-            pad0top->Draw();             // Draw the upper pad: pad2top
-            pad0top->cd();               // pad2top becomes the current pad
-
+            }else{
+                pad0top= new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.0, 1.0, 1.0);//0.4 was 0.35
+                pad0top->Draw();
+                pad0top->cd();
+            }
+            
             //      double rmin = 0.5;
             //   	double rmax = 1.699;
             //	double rmin = 0;
@@ -500,9 +508,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //stk->SetTitle(stage_names.at(s).c_str());
             stk->GetXaxis()->SetTitle(var.unit.c_str());
             stk->GetYaxis()->SetTitle("Events");
-            stk->GetYaxis()->SetTitleSize(0.05);
+            if(!stack_mode){
+                stk->GetYaxis()->SetTitleSize(title_size_upper);
+                stk->GetYaxis()->SetLabelSize(label_size_upper);
+                stk->GetYaxis()->SetTitleOffset(title_offset_upper);
+            }
             stk->SetMinimum(min_val);
-            stk->GetYaxis()->SetTitleOffset(0.9);
             std::cout<<"the max modifier is "<<max_modifier<<std::endl;
 
             if(var.plot_max==-999){ 
@@ -760,7 +771,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             l0->SetLineWidth(0);
             l0->SetLineColor(0);
             //l0->SetFillStyle(0); //comment in for transparent
-            l0->SetTextSize(0.04);
+            l0->SetTextSize(stack_mode ? 0.03 : 0.04);
 
             //  TLatex latex;
             // latex.SetTextSize(0.06);
@@ -768,7 +779,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //  latex.SetNDC();
             //  latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
             TLatex pottex;
-            pottex.SetTextSize(0.06);
+            pottex.SetTextSize(stack_mode ? 0.04 : 0.06);
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
 
@@ -776,7 +787,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //std::string pot_unit_s = stack_mode ? "e20" : "e19";
             double pot_unit = 1e20;
             std::string pot_unit_s = "e20";
-            std::string pot_draw = data_file->topo_name+" "+to_string_prec(plot_pot/pot_unit,1)+ pot_unit_s+" POT";
+            std::string pot_draw = data_file->topo_name+"   "+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
 
             if (OTPC == true){
                 pottex.DrawLatex(.60,.40, pot_draw.c_str());
@@ -789,16 +800,21 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stage->SetTextAlign(31); // Right-adjusted 
             stage->Draw();
 
+            std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
+
             TText *pre; 
             if (isSpectator) {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
+                pre = drawPrelim(0.6,stack_mode? 0.525: 0.5,prestring.c_str());
+                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
-                pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
+                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
+                pre = drawPrelim(0.6,stack_mode? 0.525 :0.5,prestring.c_str());
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
+            pre->SetTextSize(stack_mode ? 0.04 : 0.06);;
             pre->Draw();
 
             /* TText *spec;
@@ -809,13 +825,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                */
             //cobs->cd(k+1);	
             cobs->cd();
-            TPad *pad0bot = new TPad(("padbot_"+stage_names.at(s)).c_str(),("padbot_"+stage_names.at(s)).c_str(), 0, 0.05, 1, 0.35);
-            pad0bot->SetTopMargin(0);
-            pad0bot->SetBottomMargin(0.351);
-            pad0bot->SetGridx(); // vertical grid
-            pad0bot->Draw();
-            pad0bot->cd();       // pad0bot becomes the current pad
 
+            TPad *pad0bot;
+            if(!stack_mode){
+                pad0bot = new TPad(("padbot_"+stage_names.at(s)).c_str(),("padbot_"+stage_names.at(s)).c_str(), 0, 0.05, 1, 0.4);//0.4 was 0.35
+                pad0bot->SetTopMargin(0);
+                pad0bot->SetBottomMargin(0.401);//0.351
+                pad0bot->SetGridx(); // vertical grid
+                pad0bot->Draw();
+                pad0bot->cd();       // pad0bot becomes the current pad
+            }
 
             /*
                std::cout<<"BNLAR ";
@@ -879,22 +898,21 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //gStyle->SetHatchesLineWidth(1);
             //gStyle->SetHatchesSpacing(1);
 
-            ratunit->Draw("E2");	
+            if(!stack_mode)          ratunit->Draw("E2");	
 
             rat_signal->SetFillStyle(0);
             rat_signal->SetLineColor(mc_stack->stack[which_signal]->col);
             rat_signal->SetLineWidth(2);
-            //rat_signal->Draw("hist same");
-            ratunit->DrawCopy("E2 same");	
-            //ratunit_after->DrawCopy("E1 same");
+            if(!stack_mode) ratunit->DrawCopy("E2 same");	
 
             TLine *line = new TLine(ratunit->GetXaxis()->GetXmin(),1.0,ratunit->GetXaxis()->GetXmax(),1.0 );
-            line->Draw("same");
+            if(!stack_mode)line->Draw("same");
             ratunit->SetLineColor(kBlack);
             ratunit->SetTitle("");
             //ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
             //   ratunit->GetYaxis()->SetTitle(  (stack_mode ? "#splitline{Systematic}{Uncertainty}" : "Data/(MC+Cosmic)"));
-            ratunit->GetYaxis()->SetTitle("Data/(MC+Cosmic)");
+            if(!stack_mode){
+            ratunit->GetYaxis()->SetTitle("Data/Prediction");
             ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
             ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY*1.25);
             ratunit->SetMinimum(rmin);	
@@ -905,7 +923,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             ratunit->GetXaxis()->SetLabelSize(label_size_ratio);
             ratunit->GetXaxis()->SetTitle(var.unit.c_str());
             ratunit->GetYaxis()->SetNdivisions(505);
-
+            }
             TH1* ratpre = (TH1*)d0->Clone(("ratio_"+stage_names.at(s)).c_str());
             ratpre->Divide(rat_denom);		
 
@@ -1020,7 +1038,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             delete ratunit;
             delete ratpre;
             delete rat_denom;			
-            delete pad0top;
+            if(!stack_mode)delete pad0top;
             delete tmp_tsum;
             delete tmp_tsum2;
             delete l0;
