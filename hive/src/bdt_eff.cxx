@@ -779,7 +779,7 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
     std::cout<<"File has  "<<filein->GetEntries("1")*conversion<<" events when scaled to "<<plot_POT<<std::endl;
 
     //apply topo, and nue def cuts to get denominator
-    std::vector<std::string> v_denomin =   {"!mctruth_is_delta_radiative", "fabs(mctruth_nu_pdg)==12"};
+    std::vector<std::string> v_denomin =   {"!mctruth_is_delta_radiative","mctruth_cc_or_nc==0", "fabs(mctruth_nu_pdg)==12", "mctruth_num_exiting_pi0 != 1"};
     for(int i=0; i<v_denomin.size();i++){
         std::cout<<" On Cut "<<v_denomin[i]<<std::endl;
         if(i==0){
@@ -839,9 +839,9 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
 
 
     std::string bdt_cut =  "";
-  //  std::vector<std::string> v_bdt_cut = {"1g1pMar2020_v4Nue_mva >= 0.3"};
-     std::vector<std::string> v_bdt_cut = {"1.0"};
-   
+    std::vector<std::string> v_bdt_cut = {"1g1pMar2020_v4Nue_mva >= 0.3"};
+    //std::vector<std::string> v_bdt_cut = {"1.0"};
+
     double n_bdtcut_events = 0;
     for(int i=0; i<v_bdt_cut.size();i++){
         std::cout<<" On bdt cut: "<<v_bdt_cut[i]<<std::endl;
@@ -869,11 +869,15 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
     c->cd();   
     h_true_nue_ratio->Scale(100);
     h_true_nue_ratio->SetTitle("");
-    h_true_nue_ratio->GetXaxis()->SetTitle("True #nu_{e}/#bar{#nu_{e}} Neutrino Energy [GeV]");
+    h_true_nue_ratio->GetXaxis()->SetTitle("True CC #nu_{e}/#bar{#nu_{e}} Energy [GeV]");
     h_true_nue_ratio->GetYaxis()->SetTitle("Selection Efficiency [%]");
-    h_true_nue_ratio->SetMaximum(15.0);
+    h_true_nue_ratio->SetMaximum(5.0);
+    // h_true_nue_ratio->SetMaximum(16.0);
+
+    h_true_nue_ratio->SetLineWidth(3);
     h_true_nue_ratio->Draw("E1");
 
+    //c->SaveAs(("nue_eff_"+tag+"_"+filein->tag+"noNueCut.pdf").c_str(),"pdf");
     c->SaveAs(("nue_eff_"+tag+"_"+filein->tag+".pdf").c_str(),"pdf");
     return 0;
 }
