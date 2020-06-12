@@ -482,8 +482,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     max_modifier = (stack_mode ? 2.0 : 1.85);
                 }
             }
-            if(s>5){
-                max_modifier = 2.75;
+            if(s>4){
+                max_modifier = 3.0;
             }
 
 
@@ -789,7 +789,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::string pot_unit_s = "e20";
             std::string pot_draw = data_file->topo_name+"   "+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
 
-            if (OTPC == true){
+           if (OTPC == true){
                 pottex.DrawLatex(.60,.40, pot_draw.c_str());
             } else{
                 pottex.DrawLatex(.60,.60, pot_draw.c_str());

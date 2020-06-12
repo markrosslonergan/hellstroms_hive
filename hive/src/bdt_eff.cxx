@@ -839,7 +839,8 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
 
 
     std::string bdt_cut =  "";
-    std::vector<std::string> v_bdt_cut = {"1g1pMar2020_v4Nue_mva >= 0.3"};
+    std::vector<std::string> v_bdt_cut = {"1g0pMar2020NCPi0_mva >= 0.2","1g0pMar2020BNB_mva >= 0.3", "DeNan((reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0))),reco_shower_dEdx_amalgamated[0]) >= 2.5"};
+    //std::vector<std::string> v_bdt_cut = {"1g1pMar2020_v4Nue_mva >= 0.3"};
     //std::vector<std::string> v_bdt_cut = {"1.0"};
 
     double n_bdtcut_events = 0;
