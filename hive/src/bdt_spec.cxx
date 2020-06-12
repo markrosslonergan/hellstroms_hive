@@ -269,7 +269,6 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 	std::multimap< int, int > bdt_groups;
 	//mark the grouped bdt_files { {-1, {# of bdt_file}},
 	//							 { 1, {# of bdt_file}}}
-
     for(int t=0; t<stack.size(); t++){
 
         vec_hists.push_back((TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin));

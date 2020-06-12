@@ -526,9 +526,32 @@ int main (int argc, char *argv[]){
 
         onbeam_data_file->col = kWhite;
         onbeam_data_file->fillstyle = 0;
-        int ip=0;
-        std::vector<bool> subv = {false,false,true};
-        if(true){
+
+		if(true){
+		//prepare input variables for the plotStacks function;
+			bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");//last element of histogram_stack is signal
+			std::vector<bdt_variable> tmp_vars;
+
+		if(number>-1){//a variable is specified
+			tmp_vars = {vars.at(number)};
+		}else{
+			for(auto &v: vars){//load variables
+				if(which_group == -1 || which_group == v.cat){
+					tmp_vars.push_back(v);
+				}
+			}
+		}
+
+		if(which_bdt>-1){//a bdt is specified
+			tmp_vars = bdt_infos[which_bdt].train_vars;
+		}
+
+		datamc.setStackMode(histogram_stack->plot_pot);
+		datamc.setPlotStage(which_stage);//set through -s option;
+		datamc.plotStacks(ftest, tmp_vars, fbdtcuts, bdt_infos);
+		}
+
+        if(false){
             if(number != -1){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 datamc.setPlotStage(which_stage);                
@@ -543,8 +566,6 @@ int main (int argc, char *argv[]){
                         tmp_vars.push_back(v);
                     }
                 }
-
-
 
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 real_datamc.setPlotStage(which_stage);                
@@ -1140,18 +1161,22 @@ else if(mode_option == "eff2"){
 //
 
 }else if(mode_option == "sbnfit"){
+
+    double splot_pot =   onbeam_data_file->pot;
+
+    std::cout<<"Starting SBNfit with "<<splot_pot<<" POT"<<std::endl;
+
     if(which_stage==-1) which_stage ==1;
     if(which_file==-1){
         for(size_t f =0; f< bdt_files.size(); f++){
             std::cout<<"on bdt file "<<f<<std::endl;
-            bdt_files[f]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars);
+            bdt_files[f]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot);
         }
     }else{
-        bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars);
+        bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot);
 
     }
     return 0;
-
 }else if(mode_option == "ssssbnfit"){
     if(which_stage==-1) which_stage ==1;
     if(which_file==-1){

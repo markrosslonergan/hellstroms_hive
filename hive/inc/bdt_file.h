@@ -15,7 +15,6 @@
 #include  "bdt_var.h"
 #include  "bdt_info.h"
 #include  "method_struct.h"
-
 /******** Root includes *****/
 
 #include "TTreeFormula.h"
@@ -136,6 +135,7 @@ struct bdt_file{
 
         TTree *tevent;
         TTree *tpot;
+        TTree *trs;
         TTree *teventweight;
         TTree *tslice;
 
@@ -191,6 +191,7 @@ struct bdt_file{
 
         int calcPOT();
 
+        int calcPOT(std::vector<std::string> run_names, std::vector<std::string> run_cuts, std::vector<double> run_fractions);
 
         int makeRunSubRunList();
 
@@ -250,7 +251,8 @@ struct bdt_file{
         ~bdt_file();
 
         int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu);
-        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars );
+        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,double plot_pot);
+        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,double plot_pot,std::string external_cuts);
 
 
     int makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage, const std::vector<double> & fbdtcuts );
