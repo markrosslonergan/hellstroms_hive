@@ -542,6 +542,7 @@ int main (int argc, char *argv[]){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 datamc.setPlotStage(which_stage);                
                 datamc.setStackMode(histogram_stack->plot_pot);
+                datamc.setErrorString(systematics_error_string);
 
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts,bdt_infos);
@@ -558,7 +559,7 @@ int main (int argc, char *argv[]){
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setStackMode( histogram_stack->plot_pot);
-
+                real_datamc.setErrorString(systematics_error_string);
                 real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,bdt_infos);
             }
         }
