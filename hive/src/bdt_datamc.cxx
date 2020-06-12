@@ -792,7 +792,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
            if (OTPC == true){
                 pottex.DrawLatex(.60,.40, pot_draw.c_str());
             } else{
-                pottex.DrawLatex(.60,.60, pot_draw.c_str());
+                pottex.DrawLatex(.55,.60, pot_draw.c_str());
             }
 
             // Draw stage name. Added by A. Mogan 10/14/19
@@ -810,7 +810,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
-                pre = drawPrelim(0.6,stack_mode? 0.525 :0.5,prestring.c_str());
+                pre = drawPrelim(0.55,stack_mode? 0.525 :0.5,prestring.c_str());
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
