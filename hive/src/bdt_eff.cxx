@@ -872,7 +872,7 @@ int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vecto
     h_true_nue_ratio->SetTitle("");
     h_true_nue_ratio->GetXaxis()->SetTitle("True CC #nu_{e}/#bar{#nu_{e}} Energy [GeV]");
     h_true_nue_ratio->GetYaxis()->SetTitle("Selection Efficiency [%]");
-    h_true_nue_ratio->SetMaximum(5.0);
+  //  h_true_nue_ratio->SetMaximum(5.0);
     // h_true_nue_ratio->SetMaximum(16.0);
 
     h_true_nue_ratio->SetLineWidth(3);
