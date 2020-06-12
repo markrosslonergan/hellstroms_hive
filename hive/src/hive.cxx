@@ -492,69 +492,69 @@ int main (int argc, char *argv[]){
 //        return 0;
 //
     }else if(mode_option=="stack"){
-	std::cout<<"Option disabled"<<std::endl;
-//		gadget_buildfolder( mode_option);
-//
-//        std::cout<<"flag0"<<std::endl;
-//
-//        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
-//
-//        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
-//
-//        histogram_stack->plot_pot =10.115e20;//4.9e19;
-//
-//        std::cout<<"flag1"<<std::endl;
-//
-//        for(size_t f =0; f< stack_bdt_files.size(); ++f){
-//            if(stack_bdt_files[f]->is_data) continue;
-//            if(!plotOnTopMap[stack_bdt_files[f]] ){
-//                histogram_stack->addToStack(stack_bdt_files[f]);
-//                std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
-//            }
-//        }
-//
-//        for(size_t f =0; f< stack_bdt_files.size(); ++f){
-//            if(stack_bdt_files[f]->is_data) continue;
-//            if(plotOnTopMap[stack_bdt_files[f]] ){
-//                histogram_stack->addToStack(stack_bdt_files[f],true);
-//                std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
-//            }
-//        }
-//
-//        std::cout<<"flag2"<<std::endl;
-//
-//        //signal->fillstyle = 0;
-//        //histogram_stack->addToStack(signal,true);
-//
-//        onbeam_data_file->col = kWhite;
-//        onbeam_data_file->fillstyle = 0;
-//        int ip=0;
-//        std::vector<bool> subv = {false,false,true};
-//        if(true){
-//            if(number != -1){
-//                bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
-//                datamc.setPlotStage(which_stage);                
-//                datamc.setStackMode(histogram_stack->plot_pot);
-//
-//                std::vector<bdt_variable> tmp_var = {vars.at(number)};
-//                datamc.plotStacks(ftest,  tmp_var , fbdtcuts);
-//            }else{
-//                std::vector<bdt_variable> tmp_vars;
-//                for(auto &v: vars){
-//                    if(which_group == -1 || which_group == v.cat){
-//                        tmp_vars.push_back(v);
-//                    }
-//                }
-//
-//
-//
-//                bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
-//                real_datamc.setPlotStage(which_stage);                
-//                real_datamc.setStackMode( histogram_stack->plot_pot);
-//
-//                real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts);
-//            }
-//        }
+		gadget_buildfolder( mode_option);
+
+        std::cout<<"flag0"<<std::endl;
+
+        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+
+        bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
+
+        histogram_stack->plot_pot = 10.115e20; //12.25e20;//10.115e20;//4.9e19;
+        std::cout<<"flag1"<<std::endl;
+
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            if(stack_bdt_files[f]->is_data) continue;
+            if(!plotOnTopMap[stack_bdt_files[f]] ){
+                histogram_stack->addToStack(stack_bdt_files[f]);
+                std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+            }
+        }
+
+        for(size_t f =0; f< stack_bdt_files.size(); ++f){
+            if(stack_bdt_files[f]->is_data) continue;
+            if(plotOnTopMap[stack_bdt_files[f]] ){
+                histogram_stack->addToStack(stack_bdt_files[f],true);
+                std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+            }
+        }
+
+        std::cout<<"flag2"<<std::endl;
+
+        //signal->fillstyle = 0;
+        //histogram_stack->addToStack(signal,true);
+
+        onbeam_data_file->col = kWhite;
+        onbeam_data_file->fillstyle = 0;
+        int ip=0;
+        std::vector<bool> subv = {false,false,true};
+        if(true){
+            if(number != -1){
+                bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
+                datamc.setPlotStage(which_stage);                
+                datamc.setStackMode(histogram_stack->plot_pot);
+
+                std::vector<bdt_variable> tmp_var = {vars.at(number)};
+                datamc.plotStacks(ftest,  tmp_var , fbdtcuts,bdt_infos);
+            }else{
+                std::vector<bdt_variable> tmp_vars;
+                for(auto &v: vars){
+                    if(which_group == -1 || which_group == v.cat){
+                        tmp_vars.push_back(v);
+                    }
+                }
+
+
+
+                bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
+                real_datamc.setPlotStage(which_stage);                
+                real_datamc.setStackMode( histogram_stack->plot_pot);
+
+                real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,bdt_infos);
+            }
+        }
+
+
     }    else if(mode_option == "datamc"){
 
 		gadget_buildfolder( mode_option);
