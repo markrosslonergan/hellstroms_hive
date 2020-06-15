@@ -258,8 +258,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     ftest->cd();
 
+    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Final Selection"};
+    
     //std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Post-NC#pi#{0} BDT","Post-#nu_{e} BDT","Final Selection"};
-    std::vector<std::string> stage_names = {"","","","","","","","",""};
+    //std::vector<std::string> stage_names = {"","","","","","","","",""};
     //Loop over all stages
 
     int s_min = -1;
@@ -447,7 +449,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 pad0top->cd();               // pad2top becomes the current pad
 
             }else{
-                pad0top= new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.0, 1.0, 1.0);//0.4 was 0.35
+                pad0top= new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0, 1.0, 1.0);//0.4 was 0.35
                 pad0top->Draw();
                 pad0top->cd();
             }
@@ -485,7 +487,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             if (s==4){
                 max_modifier =2;
             }
-            if(s>4){
+            if(s>=4){
                 max_modifier = 2.75;
             }
 
@@ -801,6 +803,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // Draw stage name. Added by A. Mogan 10/14/19
             TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
             stage->SetTextAlign(31); // Right-adjusted 
+            stage->SetTextSize(0.04);
             stage->Draw();
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
@@ -811,6 +814,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
+            }if(OTPC){
+               pre = drawPrelim(0.55,0.42,prestring.c_str());
             }else {
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
                 pre = drawPrelim(0.55,stack_mode? 0.525 :0.5,prestring.c_str());

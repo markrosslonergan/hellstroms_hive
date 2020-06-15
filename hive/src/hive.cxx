@@ -554,15 +554,26 @@ int main (int argc, char *argv[]){
                     }
                 }
 
+                if(which_stage == -1){
+                    for (int stage =0; stage < fbdtcuts.size() + 2; stage ++ ){
+                        bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
+                        real_datamc.setPlotStage(stage);                
+                        real_datamc.setStackMode( histogram_stack->plot_pot);
+                        real_datamc.setErrorString(systematics_error_string);
+                        real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,bdt_infos);
+                    }
 
+                } else {
+                    bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
+                    real_datamc.setPlotStage(which_stage);                
+                    real_datamc.setStackMode( histogram_stack->plot_pot);
+                    real_datamc.setErrorString(systematics_error_string);
+                    real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,bdt_infos);
 
-                bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
-                real_datamc.setPlotStage(which_stage);                
-                real_datamc.setStackMode( histogram_stack->plot_pot);
-                real_datamc.setErrorString(systematics_error_string);
-                real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,bdt_infos);
+                }
             }
         }
+
     }    else if(mode_option == "datamc"){
         std::cout<<"Starting datamc with systeamatic error string: "<<systematics_error_string<<std::endl;
 
@@ -889,8 +900,8 @@ int main (int argc, char *argv[]){
                 file->addBDTResponses(bdt_infos[i]);
             }
 
-                    
-            
+
+
             //Now make the SBNfit files
             std::cout<<"Making an SBNfit file with the additional cuts of : "<<external_cuts<<std::endl;
             std::vector<double> fcuts(bdt_infos.size(),-999);
@@ -898,11 +909,11 @@ int main (int argc, char *argv[]){
             std::cout<<"Done with this file"<<std::endl;
         }
 
-        
- 
-        
-        
-        
+
+
+
+
+
         return 0;
     }else if(mode_option == "test"){
 

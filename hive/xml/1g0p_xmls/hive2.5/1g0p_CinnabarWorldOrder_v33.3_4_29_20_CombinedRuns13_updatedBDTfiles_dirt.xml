@@ -34,7 +34,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "OTPCNCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "OTPC x3 SM NC #Delta Radiative (LEE)" scale = "3.0" signal = "true" plot_on_top = "true">
+<bdtfile filename = "ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "OTPCNCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "OTPC x3 SM NC #Delta Radiative" scale = "3.0" signal = "true" plot_on_top = "true">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
