@@ -8,7 +8,7 @@
     <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.5258" />
 </plot_pot>
 
-<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>
+<!--<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>-->
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
@@ -66,7 +66,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "OTPC NCPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "OTPC NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "OTPC NCPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "OTPC NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0==1</cut>
