@@ -329,6 +329,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             tsum_after = (TH1*)tsum->Clone("tsumafter");
             //Check Covar for plotting
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
+ 
+            /*
+            TH1 *trev = (TH1*)mc_stack->stack.at(1)->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+"arse+"+var.safe_name, plot_pot); 
+            trev->Scale(125.0);
+            trev->SetLineColor(mc_stack->stack.at(1)->col);
+            trev->SetLineWidth(3); 
+            */
 
             //some cheating
             //var.has_covar = false;
@@ -350,8 +357,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 std::cout<<"Is it frac or full? "<<var.covar_type.c_str()<<std::endl;
                 this->calcCollapsedCovariance(covar_full, covar_collapsed,var);
 
-                std::vector<double> fkr = {0.144464,0.0794493,0.204987};
+                //std::vector<double> fkr = {0.144464,0.0794493,0.204987};
+                std::vector<double> fkr = {0.0941,0.0823,0.2135};
                 //std::vector<double> fkr = {0.145171,0.0859779,0.11318,0.0891966,0.151207,0.189539};
+                //std::vector<double> fkr = {0.26,0.123,0.116,0.094,0.137,0.145};
 
                 for(int c=0; c< tsum->GetNbinsX();c++){
                     //double dv = tsum->GetBinContent(c+1);
@@ -527,6 +536,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }else{
                 stk->SetMinimum(var.plot_min);
             }
+
+
+
+
+
+           
 
          /*   
             if(var.is_logplot){
@@ -712,9 +727,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             double NdatEvents = data_file->GetEntries(var.additional_cut)*(plot_pot/data_file->pot )*data_file->scale_data;
 
+            //trev->DrawCopy("same hist");
+
             d0->SetBinErrorOption(TH1::kPoisson);
             if(!stack_mode) d0->Draw("same E1 E0");
 
+           
+           
             /////// Print resolution for diphoton mass ////////
             // First, find variables containing the string of interest
             std::string massSearch("Invariant");
@@ -786,7 +805,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //double pot_unit = stack_mode ? 1e20 : 1e19;
             //std::string pot_unit_s = stack_mode ? "e20" : "e19";
             double pot_unit = 1e20;
-            std::string pot_unit_s = "e20";
+            std::string pot_unit_s = "E20";
             std::string pot_draw = data_file->topo_name+"   "+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
 
             if (OTPC == true){
@@ -803,20 +822,24 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
 
             TText *pre; 
+            TText *pre2; 
             if (isSpectator) {
                 pre = drawPrelim(0.6,stack_mode? 0.525: 0.5,prestring.c_str());
+                if(stack_mode )pre2 = drawPrelim(0.6,0.48,"Preliminary");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
                 pre = drawPrelim(0.6,stack_mode? 0.525 :0.5,prestring.c_str());
+                if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
             pre->SetTextSize(stack_mode ? 0.04 : 0.06);;
+            pre2->SetTextSize(stack_mode ? 0.04 : 0.06);;
             pre->Draw();
-
+            if(stack_mode)pre2->Draw();
             /* TText *spec;
                if (isSpectator) {
                TText *spec = drawPrelim(0.82, 0.52, "Spectator Variable");
