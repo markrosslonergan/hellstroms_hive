@@ -939,13 +939,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 				//Plot title, stage label, spectator [not currently in use?], POT info, Estimators, new label for ratio plot [CHECK];
 
 //        // TText *pre = drawPrelim(0.12,0.92,"MiniBooNE Simulation - In Progress") is a function in bdt_file.h, depreciate it!
-			TString title_content = (stack_mode)? "MicroBooNE Simulation" : "MicroBooNE Preliminary";//For title
+			TString title_content = (stack_mode)? "MicroBooNE Simulation Preliminary" : "MicroBooNE Preliminary";//For title
 			if (isSpectator) {//CHECK, to be fixed, isSpectator is not working now;
 				title_content += "";//"[Spectator Variable]";
 			}else {
 				title_content += "";//"[Training Variable]";
 			}
-			title = new TText(0.6, stack_mode? 0.525: 0.5 , title_content);
+			title = new TText(stack_mode?0.5:0.6, stack_mode? 0.525: 0.5 , title_content);
 			title->SetTextSize( (stack_mode ? 0.04 : 0.06 ));
 
 			stage_label = new TText(0.88, 0.92, current_stage.c_str() );//For stage label
@@ -1043,7 +1043,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 			ratunit->SetTitle("");
 			ratunit->SetMinimum(rmin);	
 			ratunit->SetMaximum(rmax);//ratunit->GetMaximum()*1.1);
-			ratunit->GetYaxis()->SetTitle(  (stack_mode ? "#splitline{Systematic}{Uncertainty}" : "Data/(Prediction)"));
+			ratunit->GetYaxis()->SetTitle(  (stack_mode ? "#splitline{Systematic}{Uncertainty}" : "Data/Prediction"));
 			ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY*1.25);
 			ratunit->GetYaxis()->SetTitleSize(title_size_ratio);
 			ratunit->GetYaxis()->SetLabelSize(label_size_ratio);

@@ -5,16 +5,13 @@
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
-<filedir>/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/</filedir>
-<!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
-
 <filedir>/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/ </filedir>
 
 <!--activeTPC events-->
 <bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(1.0,0.4,0.4)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -23,7 +20,7 @@
 <bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -34,7 +31,7 @@
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> mctruth_cc_or_nc==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -45,7 +42,7 @@
     <definition>
         <cut> mctruth_cc_or_nc==0 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -58,7 +55,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -68,7 +65,7 @@
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> fabs(mctruth_nu_pdg)==12  </cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -77,8 +74,8 @@
 <!--
 <bdtfile filename = "vertexed_mcc9_v33/dirt_overlay_run1_v33.0.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
     <definition><cut>1</cut>
-		<cut> pow((mctruth_nu_vertex_x-128.165),2)+pow(mctruth_nu_vertex_y,2)&lt;36714.3921</cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+		<cut> pow((mctruth_nu_vertex_x-128.175),2)+pow(mctruth_nu_vertex_y,2)&lt;36714.3921</cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
 		</definition>
@@ -88,10 +85,10 @@
 
 
 <!--outside activeTPC events-->
-<bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "otpcNCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.8,0.4,0.3)" plot_name = "Dirt" scale = "3.0" signal = "true" plot_on_top = "false" group = "1">
+<bdtfile filename = "vertexed_mcc9_v33/Test/ncdeltarad_overlay_test_run1_v33.0.root" tag = "otpcNCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.8,0.4,0.3)" plot_name = "Dirt" scale = "3.0"  plot_on_top = "false" group = "1">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
-        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
     </definition>
@@ -99,7 +96,7 @@
 
 <bdtfile filename = "vertexed_mcc9_v33/dirt_overlay_run1_v33.0.root" tag = "otpcDirt0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "OTPC Dirt" scale = "3.0" group = "1"> 
     <definition><cut>mctruth_is_delta_radiative==1</cut>
-        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
 		</definition>
@@ -108,7 +105,7 @@
 <bdtfile filename = "vertexed_mcc9_v33/Test/bnb_overlay_test_run1_v33.0.root" tag = "otpcBNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.5,0.4,0.6)" plot_name = "OTPC BNB Other" group = "1" >
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
-        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
     </definition>
@@ -116,7 +113,7 @@
 
 <bdtfile filename = "vertexed_mcc9_v33/dirt_overlay_run1_v33.0.root" tag = "otpcDirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "OTPC Dirt" group = "1"> 
     <definition><cut>mctruth_is_delta_radiative==0</cut>
-        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8) </cut>
 		</definition>
@@ -325,15 +322,15 @@
 
 
 <!-- ================================================== PRE-CUTS   ==================================================== -->
-<alias key="d_scx" value ="reco_shower_dirx[0]*(128.165-reco_shower_startx[0])"/>
+<alias key="d_scx" value ="reco_shower_dirx[0]*(128.175-reco_shower_startx[0])"/>
 <alias key="d_scy" value ="reco_shower_diry[0]*(0-reco_shower_starty[0])"/>
 <alias key="d_scz" value ="reco_shower_dirz[0]*(518.4-reco_shower_startz[0])"/>
-<alias key="d_sc" value = "sqrt(pow(reco_shower_startx[0]-128.165,2)+pow(reco_shower_starty[0],2)+pow(reco_shower_startz[0]-518.4,2))"/>
+<alias key="d_sc" value = "sqrt(pow(reco_shower_startx[0]-128.175,2)+pow(reco_shower_starty[0],2)+pow(reco_shower_startz[0]-518.4,2))"/>
 
-<alias key="d_tcx" value ="reco_track_dirx[0]*(128.165-reco_vertex_x[0])"/>
+<alias key="d_tcx" value ="reco_track_dirx[0]*(128.175-reco_vertex_x[0])"/>
 <alias key="d_tcy" value ="reco_track_diry[0]*(0-reco_vertex_y[0])"/>
 <alias key="d_tcz" value ="reco_track_dirz[0]*(518.4-reco_vertex_z[0])"/>
-<alias key="d_tc" value = "sqrt(pow(reco_vertex_x[0]-128.165,2)+pow(reco_vertex_y[0],2)+pow(reco_vertex_z[0]-518.4,2))"/>
+<alias key="d_tc" value = "sqrt(pow(reco_vertex_x[0]-128.175,2)+pow(reco_vertex_y[0],2)+pow(reco_vertex_z[0]-518.4,2))"/>
 
 
 <alias key = "UR" value = "(#d_scx#+#d_scy#+#d_scz#)/(#d_sc#)"/>
@@ -365,16 +362,17 @@
 <alias key = "energy" value = "reco_shower_energy_max[0]<50"/>
 <alias key = "track_start" value = "sqrt((reco_vertex_x[0]-reco_track_startx[0])^2+(reco_vertex_y[0]-reco_track_starty[0])^2+(reco_vertex_z[0]-reco_track_startz[0])^2)"/>
 
-<!--
-	 <precut def = "(#sprecut#)&amp;&amp;(#tprecut#)&amp;&amp;(#energy#)&amp;&amp;#tetv#<6" name = "Dirt selected Cut"/>
--->
+<precut def = "(#sprecut#)&amp;&amp;(#tprecut#)&amp;&amp;(#energy#)&amp;&amp;#tetv#<6" name = "Dirt selected Cut"/>
 
+<!--
 <precut def = "(TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 &amp;&amp; reco_vertex_dist_to_SCB > 2)" name = "Track and Vertex Contained in SCB"/>
 
 <precut def = "reco_track_mean_trunc_dEdx_best_plane[0]<7" name ="track dEdx"/>
 <precut def = "reco_shower_kalman_dEdx_plane0_median[0]<7" name ="shower0 dEdx"/>
 <precut def = "reco_shower_kalman_dEdx_plane1_median[0]<7" name ="shower1 dEdx"/>
 <precut def = "reco_shower_kalman_dEdx_plane2_median[0]<7" name ="shower2 dEdx"/>
+-->
+
 <!--
 <precut def = "!(reco_track_mean_trunc_dEdx_best_plane[0]<7&amp;&amp;reco_shower_kalman_dEdx_plane0_median[0]<7&amp;&amp;reco_shower_kalman_dEdx_plane1_median[0]<7&amp;&amp;reco_shower_kalman_dEdx_plane2_median[0]<7)" name ="shower2 dEdx"/>
 
@@ -404,18 +402,19 @@
 <!--<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
+<!--group 1 stage 1 are for dirt-enhanced in the inernal note-->
+<!--group 1,8 stage 0 are for dirt-enhanced in the inernal note-->
 
 <!--Observables-->
-<var def = "reco_shower_startx[0]" unit = "Reconstructed Shower Start X [cm]" binning = "(12,-20,270)" type = "d" training = "" group = "80" />
-<var def = "reco_shower_start_dist_to_SCB[0]" binning="(12,0,120)" unit = "distance from shower start to SCB" type ="d" training="" logplot="false" />
+<var def = "reco_shower_start_dist_to_SCB[0]" binning="(8,0,120)" unit = "Distance from Shower Start to SCB" type ="d" training="" logplot="false" group = "1"/>
 <var def = "reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(24,0,22)" unit = "Reco Track Truncated Mean dE/dx Best Plane [MeV/cm]" type = "d" logplot = "false"  training="013" group = "12"/>
 <var def = "reco_track_displacement[0]" binning = "(24,0,500)" unit = "Track Displacement [cm]" type = "d" logplot = "false"  training="01" covar="cov.root"/>    
 <var def = "reco_vertex_x[0]" binning = "(24,-20,270)" unit = "Reco Vertex X [cm]" type="d" logplot="false" training=""/>
 <var def = "reco_vertex_y[0]" binning = "(24,-140,140)" unit = "Reco Vertex Y [cm]" type="d" logplot="false" training=""/>
 <var def = "reco_vertex_z[0]" binning = "(24,-20,1100)" unit = "Reco Vertex Z [cm]" type="d" logplot="false" training=""/>
-<var def = "reco_shower_startx[0]" unit = "Reconstructed Shower Start X (log)  [cm]" binning = "(60,-20,270)" type = "d" logplot = "true"  training = "" group = "8" />
-<var def = "reco_shower_starty[0]" unit = "Reconstructed Shower Start Y [cm]" binning = "(12,-140,140)" type = "d" training = "" group = "80" />
-<var def = "reco_shower_startz[0]" unit = "Reconstructed Shower Start Z [cm]" binning = "(12,-20,1100)" type = "d" training = "" group = "80" />
+<var def = "reco_shower_startx[0]" unit = "Reconstructed Shower Start X [cm]" binning = "(12,-20,270)" type = "d" training = "" group = "1" />
+<var def = "reco_shower_starty[0]" unit = "Reconstructed Shower Start Y [cm]" binning = "(12,-140,140)" type = "d" training = "" group = "1" />
+<var def = "reco_shower_startz[0]" unit = "Reconstructed Shower Start Z [cm]" binning = "(12,-20,1100)" type = "d" training = "" group = "1" />
 
 <!--addditional 10-->
 <var def = "reco_track_mean_trunc_dEdx_best_plane[0]" binning =  "(24,0,12)" unit = "Reco Track Truncated Mean dE/dx Best Plane [MeV/cm]" type = "d" logplot = "false"  training="013"/>
@@ -426,18 +425,18 @@
 <var def = "min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)" binning="(24,0,120)" unit = "Min distance from track start/end to SCB" type ="d" training="" logplot="true" group="1"/>
 <!--end of additional-->
 
-<var def = "reco_shower_phi_yx[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d" logplot = "false"  training="123" group = "8"/>
-<var def = "reco_shower_theta_yz[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d" logplot = "false"  training="123" group = "8"/>
+<var def = "reco_shower_phi_yx[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d" logplot = "false"  training="123" group = "1"/>
+<var def = "reco_shower_theta_yz[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d" logplot = "false"  training="123" group = "1"/>
 
 <!--18-->
-<var def = "reco_track_startx[0]" unit = "Reconstructed Track Start X [cm]" binning = "(12,-20,270)" type = "d" training = ""  group = "8"/>
-<var def = "reco_track_starty[0]" unit = "Reconstructed Track Start Y [cm]" binning = "(12,-140,140)" type = "d" training = ""  group = "8"/>
-<var def = "reco_track_startz[0]" unit = "Reconstructed Track Start Z [cm]" binning = "(12,-20,1100)" type = "d" training = ""  group = "8"/>
+<var def = "reco_track_startx[0]" unit = "Reconstructed Track Start X [cm]" binning = "(12,-20,270)" type = "d" training = ""  group = "1"/>
+<var def = "reco_track_starty[0]" unit = "Reconstructed Track Start Y [cm]" binning = "(12,-140,140)" type = "d" training = ""  group = "1"/>
+<var def = "reco_track_startz[0]" unit = "Reconstructed Track Start Z [cm]" binning = "(12,-20,1100)" type = "d" training = ""  group = "1"/>
 <var def = "reco_track_endx[0]" unit = "Reconstructed Track End X [cm]" binning = "(12,-20,270)" type = "d" training = ""  group = "8"/>
 <var def = "reco_track_endy[0]" unit = "Reconstructed Track End Y [cm]" binning = "(12,-140,140)" type = "d" training = ""  group = "8"/>
 <var def = "reco_track_endz[0]" unit = "Reconstructed Track End Z [cm]" binning = "(12,-20,1100)" type = "d" training = ""  group = "8"/>
-<var def = "reco_track_phi_yx[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Track  #phi_{yx} [rad]" type = "d" logplot = "false"  training="123" group = "8"/>
-<var def = "reco_track_theta_yz[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Track #theta_{yz} [rad]" type = "d" logplot = "false"  training="123" group = "8"/>
+<var def = "reco_track_phi_yx[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Track  #phi_{yx} [rad]" type = "d" logplot = "false"  training="123" group = "1"/>
+<var def = "reco_track_theta_yz[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Track #theta_{yz} [rad]" type = "d" logplot = "false"  training="123" group = "1"/>
 
 <!--26,MCTruth-->
 <var def = "sqrt((reco_shower_startx-sim_shower_start_x)^2+(reco_shower_starty-sim_shower_start_y)^2+(reco_shower_startz-sim_shower_start_z)^2)" binning="(24,0,100)" unit = "Distance between MCTruth to Reco. Shower Start" type ="d" training = "" logplot="true" group = "0"/>
@@ -479,10 +478,10 @@
 <var def = "(#d_tcx#+#d_tcy#+#d_tcz#)/pow(#d_tc#,2)" binning = "(17,-0.01,0.01)" unit = "Track Projection on the Radial Axis (UR)/R" type="d" logplot="true" training="" group=""/>
 
 <var def = "reco_shower_start_dist_to_active_TPC" binning="(24,0,120)" unit = "distance from shower start to active TPC" type ="d" logplot="true" training="" />
-<!--Center coordinate (128.165,0,518.4)-->
+<!--Center coordinate (128.175,0,518.4)-->
 <var def = "(#d_scx#+#d_scy#+#d_scz#)/(#d_sc#)" binning = "(17,-1.2,1.2)" unit = "Shower Projection on the Radial Axis (UR)" type="d" logplot="false" training="" group=""/>
-<var def = "min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)" binning="(24,0,120)" unit = "Min distance from track start/end to SCB" type ="d" training="" logplot="true" group="1"/>
-<var def = "min(reco_track_start_dist_to_active_TPC,reco_track_end_dist_to_active_TPC)" binning="(24,0,120)" unit = "Min distance from track start/end to active TPC" type ="d" logplot="true" training="" group="1"/>
+<var def = "min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)" binning="(24,0,120)" unit = "Min distance from track start/end to SCB" type ="d" training="" logplot="true" group=""/>
+<var def = "min(reco_track_start_dist_to_active_TPC,reco_track_end_dist_to_active_TPC)" binning="(24,0,120)" unit = "Min distance from track start/end to active TPC" type ="d" logplot="true" training="" group=""/>
 
 
 <!---Others -->
@@ -595,7 +594,7 @@
 <var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0]" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d" logplot = "false" training = "0123"/>
 <var def = "(reco_track_spacepoint_principal0[0])" binning = "(24,0,1)" unit = "Track Spacepoint Principal" type ="d" training ="01"/>
 <var def = "(reco_track_trackscore[0])" binning = "(24,0.5,1)" unit = "Track Score" type ="d" training ="0123"/>
-<var def = "sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2))" binning = "(24,0,4)" unit = "Distance from Track Start to Vertex" type="d" training="0123" group = "1"/>
+<var def = "sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2))" binning = "(24,0,4)" unit = "Distance from Track Start to Vertex" type="d" training="0123" group = ""/>
 <var def = "reco_asso_tracks" binning = "(4,0,4)" unit = "Reco Track Num " type = "d" training=""/>
 <var def = "TMath::Min(TMath::Min(reco_track_end_to_nearest_dead_wire_plane0,reco_track_end_to_nearest_dead_wire_plane1),reco_track_end_to_nearest_dead_wire_plane2)" unit = "(distance from track end to nearest dead wire)" binning ="(24,0,3)" type="d" training="123"/>
 <var def = "reco_track_num_daughters" binning = "(3,0,3)" unit = "Num Daughters from Track" type="d" training=""/>

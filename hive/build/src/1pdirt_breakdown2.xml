@@ -22,7 +22,7 @@
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 22 </cut>
 		<cut> abs(sim_track_pdg[0]) == 2212 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
     </definition>
@@ -34,7 +34,7 @@
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 22 </cut>
 		<cut> abs(sim_track_pdg[0]) == 2212 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
 		</definition>
@@ -48,7 +48,7 @@
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 22 </cut>
 		<cut> abs(sim_track_pdg[0]) != 2212 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
     </definition>
@@ -60,7 +60,7 @@
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 22 </cut>
 		<cut> abs(sim_track_pdg[0]) != 2212 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
 		</definition>
@@ -74,7 +74,7 @@
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 11 </cut>
 		<cut> abs(sim_track_pdg[0]) == 13 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
     </definition>
@@ -86,7 +86,7 @@
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 11 </cut>
 		<cut> abs(sim_track_pdg[0]) == 13 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
 		</definition>
@@ -100,7 +100,7 @@
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 11 </cut>
 		<cut> abs(sim_track_pdg[0]) != 13 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
     </definition>
@@ -112,7 +112,7 @@
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 11 </cut>
 		<cut> abs(sim_track_pdg[0]) != 13 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
 		</definition>
@@ -125,7 +125,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 13 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
     </definition>
@@ -136,7 +136,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 13 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
 		</definition>
@@ -150,7 +150,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 2212 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
     </definition>
@@ -161,7 +161,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 2212 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
 		</definition>
@@ -175,7 +175,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 211 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
     </definition>
@@ -186,7 +186,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 211 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
 		</definition>
@@ -199,7 +199,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 2112 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
     </definition>
@@ -210,7 +210,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 2112 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
 		</definition>
@@ -224,7 +224,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) > 1000000000 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
     </definition>
@@ -235,7 +235,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) > 1000000000 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
 		</definition>
@@ -248,7 +248,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 999 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
     </definition>
@@ -259,7 +259,7 @@
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
 		<cut> abs(sim_shower_pdg[0]) == 999 </cut>
-        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.33&amp;&amp;
+        <cut> !(mctruth_nu_vertex_x[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_x[0] &lt; 256.35&amp;&amp;
 		mctruth_nu_vertex_y[0] &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y[0] &lt; 116.5 &amp;&amp; 
         mctruth_nu_vertex_z[0] &gt; 0 &amp;&amp; mctruth_nu_vertex_z[0] &lt; 1036.8) </cut>
 		</definition>
@@ -304,7 +304,7 @@
         <cut> mctruth_num_exiting_pi0 == 0</cut>
         <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
         <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -324,7 +324,7 @@
         <cut> mctruth_num_exiting_pi0 == 0</cut>
         <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
         <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -359,7 +359,7 @@
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -375,7 +375,7 @@
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
         <cut> fabs(mctruth_nu_pdg)==14  </cut>
         <cut> mctruth_num_exiting_pi0==0</cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -390,7 +390,7 @@
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -406,7 +406,7 @@
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -422,7 +422,7 @@
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -435,7 +435,7 @@
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>  
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -449,7 +449,7 @@
 
 <bdtfile filename = "vertexed_mcc9_v33/Train/nue_overlay_train_v33.0.root" tag = "NueIntrinTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.2,1.0)" plot_name = "Nue Intrin Train">
     <definition>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -461,7 +461,7 @@
 
 <bdtfile filename = "vertexed_mcc9_v33/Test/nue_overlay_test_v33.0.root" tag = "NueIntrinTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.2,1.0)" plot_name = "Nue Intrin Test">
     <definition>
-        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.33 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 </cut>
         <cut> mctruth_nu_vertex_z &gt; 0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
@@ -606,14 +606,14 @@
 <precut def = "reco_track_displacement>65" name = "track cut"/>
 <precut def = "reco_shower_energy_max[0]>30" name = "Michel Cut"/>
 <!--
-		<cut> pow((mctruth_nu_vertex_x-128.165),2)+pow(mctruth_nu_vertex_y,2)&lt;36714.3921</cut>
+		<cut> pow((mctruth_nu_vertex_x-128.175),2)+pow(mctruth_nu_vertex_y,2)&lt;36714.3921</cut>
 		<cut> mctruth_nu_vertex_z>-24.84 &amp;&amp;mctruth_nu_vertex_z&lt;1061.65</cut>
 
 
-<precut def ="(mctruth_nu_vertex_x<0 || mctruth_nu_vertex_x>256.33||mctruth_nu_vertex_y<-116.5 || mctruth_nu_vertex_y>116.5||mctruth_nu_vertex_z<0 || mctruth_nu_vertex_z>1036.8)" name = "MCTruth outside TPC Boundary"/>
+<precut def ="(mctruth_nu_vertex_x<0 || mctruth_nu_vertex_x>256.35||mctruth_nu_vertex_y<-116.5 || mctruth_nu_vertex_y>116.5||mctruth_nu_vertex_z<0 || mctruth_nu_vertex_z>1036.8)" name = "MCTruth outside TPC Boundary"/>
 
-<precut def="pow((mctruth_nu_vertex_x-128.165),2)+pow(mctruth_nu_vertex_y,2)&lt;36714.3921&amp;&amp;mctruth_nu_vertex_z&gt;-24.84 &amp;&amp;mctruth_nu_vertex_z < 1061.65" name = "Inside the Cryostat"/>
-<precut def="(pow((mctruth_nu_vertex_x-128.165),2)+pow(mctruth_nu_vertex_y,2)&gt;36714.3921||mctruth_nu_vertex_z&lt;-24.84 ||mctruth_nu_vertex_z &gt; 1061.65)" name = "Outside the Cryostat"/>
+<precut def="pow((mctruth_nu_vertex_x-128.175),2)+pow(mctruth_nu_vertex_y,2)&lt;36714.3921&amp;&amp;mctruth_nu_vertex_z&gt;-24.84 &amp;&amp;mctruth_nu_vertex_z < 1061.65" name = "Inside the Cryostat"/>
+<precut def="(pow((mctruth_nu_vertex_x-128.175),2)+pow(mctruth_nu_vertex_y,2)&gt;36714.3921||mctruth_nu_vertex_z&lt;-24.84 ||mctruth_nu_vertex_z &gt; 1061.65)" name = "Outside the Cryostat"/>
 -->
 <!--<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->
 
@@ -654,10 +654,10 @@
 <var def = "reco_track_theta_yz[0]" binning = "(8,-3.14,3.14)" unit = "Reconstructed Track #theta_{yz} [rad]" type = "d" logplot = "false"  training="0123" group = "1"/>
 
 
-<alias key="xc" value ="TMath::Min(abs(mctruth_nu_vertex_x-0),abs(256.33-mctruth_nu_vertex_x))"/>
+<alias key="xc" value ="TMath::Min(abs(mctruth_nu_vertex_x-0),abs(256.35-mctruth_nu_vertex_x))"/>
 <alias key="yc" value ="TMath::Min(abs(mctruth_nu_vertex_y-(-116.5)),abs(116.5-mctruth_nu_vertex_y))"/>
 <alias key="zc" value ="TMath::Min(abs(mctruth_nu_vertex_z-0),abs(1036.8-mctruth_nu_vertex_z))"/> 
-<alias key="sgn1" value ="(mctruth_nu_vertex_x-256.33)/abs(mctruth_nu_vertex_x-256.33)*(mctruth_nu_vertex_x-0)/abs(mctruth_nu_vertex_x-0)"/> <!--Negative: inside-->
+<alias key="sgn1" value ="(mctruth_nu_vertex_x-256.35)/abs(mctruth_nu_vertex_x-256.35)*(mctruth_nu_vertex_x-0)/abs(mctruth_nu_vertex_x-0)"/> <!--Negative: inside-->
 <alias key="sgn2" value ="(mctruth_nu_vertex_y-116.5)/abs(mctruth_nu_vertex_y-116.5)*(mctruth_nu_vertex_y+116.5)/abs(mctruth_nu_vertex_y+116.5)"/> <!--Negative: inside-->
 <alias key="sgn3" value ="(mctruth_nu_vertex_z-1036.8)/abs(mctruth_nu_vertex_z-1036.8)*(mctruth_nu_vertex_z-0)/abs(mctruth_nu_vertex_z-0)"/> <!--Negative: inside-->
 <alias key="sgn" value ="max(max(#sgn1#,#sgn2#),#sgn3#)*-1"/> <!--Positive: inside-->
