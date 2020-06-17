@@ -261,12 +261,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
     ftest->cd();
-    if (OTPC){
+  //  if (OTPC){
         // std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Final Selection"};
         stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Post-NC#pi#{0} BDT","Post-#nu_{e} BDT","Final Selection"};
-    } else{
-        stage_names = {"","","","","","","","",""};
-    }
+   // } else{
+     //   stage_names = {"","","","","","","","",""};
+   // }
     //Loop over all stages
 
     int s_min = -1;
@@ -811,9 +811,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             // Draw stage name. Added by A. Mogan 10/14/19
-            TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
+         /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
             stage->SetTextAlign(31); // Right-adjusted 
             stage->SetTextSize(0.04);
+            stage->Draw();
+*/
+            TLatex *stage = new TLatex(0.88, 0.92, stage_names.at(s).c_str());
+            //   TLatex *t = new TLatex(0.11,0.41,ks.c_str());
+            stage->SetNDC();
+           // t->SetTextColor(kRed-7);
+            stage->SetTextFont(43);
+            stage->SetTextSize(0.10);
             stage->Draw();
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
