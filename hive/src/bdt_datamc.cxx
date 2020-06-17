@@ -102,7 +102,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
     ftest->cd();
 
     std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","", "", "", "", "Final Selection"};
-   //  std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Final Selection"};
+    //  std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Final Selection"};
     //Loop over all stages
 
     int s_min = 0;
@@ -146,24 +146,24 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                     std::cout<<"Starting on variable "<<var1.name<<std::endl;
 
                     //make file for data
-//                    std::cout<<"flag1"<<std::endl;
+                    //                    std::cout<<"flag1"<<std::endl;
                     TCanvas *cobs = new TCanvas(("can_"+var1.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)).c_str(),1700,1600);
                     cobs->cd();
 
-//                    std::cout<<"flag2"<<std::endl;
+                    //                    std::cout<<"flag2"<<std::endl;
                     TPad *pad = new TPad(("pad_"+stage_names.at(s)).c_str(), ("pad_"+stage_names.at(s)).c_str(), 0, 0, 1, 1.0);
                     pad->Draw();
                     pad->cd();
-  //                  std::cout<<"flag3"<<std::endl;
+                    //                  std::cout<<"flag3"<<std::endl;
                     //THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
                     //TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
                     TH2 * d0 = (TH2*)data_file->getTH2(var1,var2, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
                     //TH2 * d0;
-    //                std::cout<<"flag4"<<std::endl;
+                    //                std::cout<<"flag4"<<std::endl;
                     pad->cd();
 
 
-      //              std::cout<<"flag5"<<std::endl;
+                    //              std::cout<<"flag5"<<std::endl;
                     d0->Draw("COLZ");
                     d0 ->SetTitle((data_file->tag + ", stage " + std::to_string(s)).c_str());
                     //    d0->GetYaxis()->SetTitleSize(0.05);
@@ -186,7 +186,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
                     //now repeat for all of the MC files
 
-         
+
 
                     for(auto &f: mc_stack->stack){
 
@@ -255,11 +255,18 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
     double label_size_upper=0.05;
     double title_offset_upper = 0.6;
 
+    std::vector<std::string> stage_names;
+
+    bool OTPC = false;
+
 
     ftest->cd();
-
-    //std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Post-NC#pi#{0} BDT","Post-#nu_{e} BDT","Final Selection"};
-    std::vector<std::string> stage_names = {"","","","","","","","",""};
+    if (OTPC){
+        // std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Final Selection"};
+        stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Post-NC#pi#{0} BDT","Post-#nu_{e} BDT","Final Selection"};
+    } else{
+        stage_names = {"","","","","","","","",""};
+    }
     //Loop over all stages
 
     int s_min = -1;
@@ -298,12 +305,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 std::string faster_cut ="(";
                 for(int ss=0; ss<s-1; ss++){
                     //faster_cut += bdt_infos[ss].identifier+"_mva >"+std::to_string(bdt_cuts[ss]) +"&&";
-                 faster_cut += bdt_infos[ss].identifier+"_mva >="+std::to_string(bdt_cuts[ss]) +"&&";
-               }
+                    faster_cut += bdt_infos[ss].identifier+"_mva >="+std::to_string(bdt_cuts[ss]) +"&&";
+                }
                 faster_cut+="1)";
                 var.additional_cut  = "("+var.additional_cut+" ) && ("+ faster_cut +")";
-            //var.additional_cut  = faster_cut;
-            std::cout<<" var.additional_cut = "<< var.additional_cut <<std::endl;
+                //var.additional_cut  = faster_cut;
+                std::cout<<" var.additional_cut = "<< var.additional_cut <<std::endl;
             }
 
             //var.is_logplot = true;
@@ -367,7 +374,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     //tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
                     //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
                     double mc_stats_error = tsum->GetBinError(c+1);
-                 //   double mc_sys_error = fkr[c];//sqrt((*covar_collapsed)(c,c));
+                    //   double mc_sys_error = fkr[c];//sqrt((*covar_collapsed)(c,c));
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
                     std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
@@ -456,11 +463,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 pad0top->cd();               // pad2top becomes the current pad
 
             }else{
-                pad0top= new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0.0, 1.0, 1.0);//0.4 was 0.35
+                pad0top= new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0, 1.0, 1.0);//0.4 was 0.35
                 pad0top->Draw();
                 pad0top->cd();
             }
-            
+
             //      double rmin = 0.5;
             //   	double rmax = 1.699;
             //	double rmin = 0;
@@ -470,15 +477,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 rmin=0; rmax = 1.99;
             }//else if(s==2){ data_rebin = 2;}//else if(s==3){data_rebin=2;};
 
-            bool OTPC = false;
-
             double max_modifier = 1.65;
             if (OTPC == true){
-                max_modifier = 2.5;
+                max_modifier = 3.25;
             } else{
                 if (s==1){
-                   // max_modifier = 1.7;
-                  max_modifier = 2.0;
+                    // max_modifier = 1.7;
+                    max_modifier = 2.0;
                 }
                 if (s==2){
                     max_modifier = 2;
@@ -490,9 +495,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 if (s==3){
                     max_modifier = (stack_mode ? 2.0 : 1.85);
                 }
-            }
-            if(s>5){
-                max_modifier = 2.75;
+
+                if (s==4){
+                    max_modifier =2;
+                }
+                if(s>4){
+                    max_modifier = 2.75;
+                }
             }
 
 
@@ -536,19 +545,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }else{
                 stk->SetMinimum(var.plot_min);
             }
-
-
-
-
-
-           
-
-         /*   
-            if(var.is_logplot){
-                stk->SetMaximum(10e3);
-                stk->SetMinimum(10e-2);
-             }
-          */
 
             tsum->SetLineWidth(3);
             //tsum_after->SetLineWidth(3);
@@ -769,7 +765,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 // Calculate resolution: StdDev/width (w/ uncertainty)
                 mass_res_data = gausfit_data->GetParameter(2)/gausfit_data->GetParameter(1);
                 mass_res_data_err = sqrt(std::pow(gausfit_data->GetParError(1)/gausfit_data->GetParameter(1) ,2) +
-                                         std::pow(gausfit_data->GetParError(2)/gausfit_data->GetParameter(2), 2) );
+                        std::pow(gausfit_data->GetParError(2)/gausfit_data->GetParameter(2), 2) );
                 std::cout << "[BLARG] Data mass: " << mass_data << " +/- " << mass_err_data << std::endl;
                 std::cout << "[BLARG] Data mass StdDev: " << mass_width_data << " +/- " << mass_width_err_data << std::endl;
                 std::cout << "[BLARG] Data mass Res: " << mass_res_data*100. << "% +/- " << mass_res_data_err*100. << "%" << std::endl;
@@ -811,12 +807,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             if (OTPC == true){
                 pottex.DrawLatex(.60,.40, pot_draw.c_str());
             } else{
-                pottex.DrawLatex(.60,.60, pot_draw.c_str());
+                pottex.DrawLatex(.55,.60, pot_draw.c_str());
             }
 
             // Draw stage name. Added by A. Mogan 10/14/19
             TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
             stage->SetTextAlign(31); // Right-adjusted 
+            stage->SetTextSize(0.04);
             stage->Draw();
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
@@ -829,6 +826,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
+            }if(OTPC){
+                pre = drawPrelim(0.55,0.42,prestring.c_str());
             }else {
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
                 pre = drawPrelim(0.6,stack_mode? 0.525 :0.5,prestring.c_str());
@@ -935,17 +934,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
             //   ratunit->GetYaxis()->SetTitle(  (stack_mode ? "#splitline{Systematic}{Uncertainty}" : "Data/(MC+Cosmic)"));
             if(!stack_mode){
-            ratunit->GetYaxis()->SetTitle("Data/Prediction");
-            ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
-            ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY*1.25);
-            ratunit->SetMinimum(rmin);	
-            ratunit->SetMaximum(rmax);//ratunit->GetMaximum()*1.1);
-            ratunit->GetYaxis()->SetTitleSize(title_size_ratio);
-            ratunit->GetXaxis()->SetTitleSize(title_size_ratio);
-            ratunit->GetYaxis()->SetLabelSize(label_size_ratio);
-            ratunit->GetXaxis()->SetLabelSize(label_size_ratio);
-            ratunit->GetXaxis()->SetTitle(var.unit.c_str());
-            ratunit->GetYaxis()->SetNdivisions(505);
+                ratunit->GetYaxis()->SetTitle("Data/Prediction");
+                ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
+                ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY*1.25);
+                ratunit->SetMinimum(rmin);	
+                ratunit->SetMaximum(rmax);//ratunit->GetMaximum()*1.1);
+                ratunit->GetYaxis()->SetTitleSize(title_size_ratio);
+                ratunit->GetXaxis()->SetTitleSize(title_size_ratio);
+                ratunit->GetYaxis()->SetLabelSize(label_size_ratio);
+                ratunit->GetXaxis()->SetLabelSize(label_size_ratio);
+                ratunit->GetXaxis()->SetTitle(var.unit.c_str());
+                ratunit->GetYaxis()->SetNdivisions(505);
             }
             TH1* ratpre = (TH1*)d0->Clone(("ratio_"+stage_names.at(s)).c_str());
             ratpre->Divide(rat_denom);		
@@ -1464,25 +1463,25 @@ return;
 
 // Added 5/12/20 by A. Mogan
 /*
-TMatrixD CalcCovarianceMatrixCNP(TMatrixD *M, std::vector<double> spec, const std::vector<double> datavec ) {
+   TMatrixD CalcCovarianceMatrixCNP(TMatrixD *M, std::vector<double> spec, const std::vector<double> datavec ) {
 
-    TMatrixT<double> Mout(M->GetNcols(), M->GetNcols() );
+   TMatrixT<double> Mout(M->GetNcols(), M->GetNcols() );
 
-    for(int i =0; i<M->GetNcols(); i++)
-    {
-        for(int j =0; j<M->GetNrows(); j++)
-        {
-            if(std::isnan( (*M)(i,j) )){
-                Mout(i,j) = 0.0;
-            }else{
-                Mout(i,j) = (*M)(i,j)*spec[i]*spec[j];
-            }
-            if(i==j) Mout(i,i) +=   ( datavec[i] >0.001 ? 3.0/(1.0/datavec[i] +  2.0/spec[i])  : spec[i]/2.0 );
-        }
-    }
-    return Mout;
-}
-*/
+   for(int i =0; i<M->GetNcols(); i++)
+   {
+   for(int j =0; j<M->GetNrows(); j++)
+   {
+   if(std::isnan( (*M)(i,j) )){
+   Mout(i,j) = 0.0;
+   }else{
+   Mout(i,j) = (*M)(i,j)*spec[i]*spec[j];
+   }
+   if(i==j) Mout(i,i) +=   ( datavec[i] >0.001 ? 3.0/(1.0/datavec[i] +  2.0/spec[i])  : spec[i]/2.0 );
+   }
+   }
+   return Mout;
+   }
+   */
 
 
 

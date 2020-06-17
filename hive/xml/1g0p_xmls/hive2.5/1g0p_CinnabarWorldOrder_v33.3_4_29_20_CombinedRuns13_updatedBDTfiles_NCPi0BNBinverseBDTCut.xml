@@ -301,7 +301,7 @@
 
 
 <var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="012"/>
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="012"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="012" group= "1"/>
 <var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="012" group="77"/>
 <var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d"     training="012"/>
 <var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(24,0 ,1000)" unit = "Ratio Reconstrunted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d"  training="012"/>
@@ -316,12 +316,12 @@
 <var def = "#GE#/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV]" binning = "(24,0,1)" type="d"  training="012" />
 <var def = "#GE#/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad]" binning = "(24,0,0.1)" type = "d"   training = "012"/>
 <var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(24,0,0.3)" type = "d"  training = "012"/>
-<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(24,0,1)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="012" group="77"/>
-<var def = "Min$(sss_candidate_impact_parameter)" binning="(50,0,80)" unit = "Min impact parm basic" type="d" training="012" group="77"/>
-<var def = "Min$(sss_candidate_min_dist)" binning="(50,0,80)" unit = "Min conv parm basic" type="d" training="012" group="77"/>
-<var def = "sss3d_ioc_ranked_implied_opang" binning = "(50,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="012" group="77"/>
-<var def = "sss3d_ioc_ranked_conv" binning = "(50,0,100)" unit ="sss3d min IOC Conversion Dist [cm]" type="d"  training="012" group="77"/>
-<var def = "sss2d_conv_ranked_invar" binning = "(50,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="012" group="77"/>
+<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(12,0,1)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="012" group="77"/>
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(12,0,80)" unit = "Min impact parm basic" type="d" training="012" group="77"/>
+<var def = "Min$(sss_candidate_min_dist)" binning="(12,0,80)" unit = "Min conv parm basic" type="d" training="012" group="77"/>
+<var def = "sss3d_ioc_ranked_implied_opang" binning = "(12,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="012" group="77"/>
+<var def = "sss3d_ioc_ranked_conv" binning = "(12,0,100)" unit ="sss3d min IOC Conversion Dist [cm]" type="d"  training="012" group="77"/>
+<var def = "sss2d_conv_ranked_invar" binning = "(12,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="012" group="77"/>
 
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
@@ -464,22 +464,60 @@
 
 <var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] No Ncpi0 Cut" type = "d"   training="" group = "16" />
 
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] A" type = "d"   training="" group = "" cut= "(1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB# &amp;&amp;1g0pMar2020COSMIC_mva&gt;= #COS# &amp;&amp;DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)" /> <!-- pink box -->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] A^{0}" type = "d"   training="" group = ""/> <!-- near sideband -->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] C" type = "d"   training="" group = "" cut= "(1g0pMar2020NCPi0_m    va &lt; #NCP# &amp;&amp;1g0pMar2020BNB_mva&lt; #BNB# &amp;&amp;1g0pMar2020COSMIC_mva&gt;= #COS#  &amp;&amp;DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;=#DEDX#)" /> <!-- bottom left-->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] D" type = "d"   training="" group = "" cut= "(1g0pMar2020NCPi0_m        va &lt; #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB# &amp;&amp;1g0pMar2020COSMIC_mva&gt;= #COS#  &amp;&amp;DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;=#DEDX# )"/> <!-- top left-->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] B" type = "d"   training="" group = "" cut= "(1g0pMar2020NCPi0_m        va &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&lt; #BNB# &amp;&amp;1g0pMar2020COSMIC_mva&gt;= #COS#  &amp;&amp;DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;=#DEDX#)"/> <!-- bottom right -->
 
 
 <var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] Passes BDT and dE/dx Cut" type = "d"   training="" group = "17" cut= "(1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)" />
 
-<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] Fails BDT o dE/dx Cut" type = "d"   training="" group = "17" cut= "(1g0pMa    r2020NCPi0_mva &lt; #NCP# || 1g0pMar2020BNB_mva&lt; #BNB# || DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &lt; #DEDX#)" />
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] Fails BDT or dE/dx Cut" type = "d"   training="" group = "17" cut= "(1g0pMar2020NCPi0_mva &lt; #NCP# || 1g0pMar2020BNB_mva&lt; #BNB# || DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &lt; #DEDX#)" />
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] A" type = "d"   training="" group = "19" cut= "(1g0pMar2020NCPi0_mva &gt;= #NCP0# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB0#) &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)" /> <!-- pink box -->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] A^{0}" type = "d"   training="" group ="19" cut = "(1g0pMar2020NCPi0_mva &gt;= #NCP0# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB0# &amp;&amp;  1g0pMar2020COSMIC_mva &lt; #COS0#) &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)"/> <!-- near sideband -->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] C" type = "d"   training="" group = "19" cut= "1g0pMar2020NCPi0_mva &lt; #NCP0# &amp;&amp;1g0pMar2020BNB_mva&lt; #BNB0# &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar20    20BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)" /> <!-- bottom left-->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] D" type = "d"   training="" group = "19" cut= "1g0pMar2020NCPi0_mva &lt; #NCP0# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB0# &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar20    20BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#) "/> <!-- top left-->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] B" type = "d"   training="" group = "19" cut= "1g0pMar2020NCPi0_mva &gt; #NCP0# &amp;&amp;1g0pMar2020BNB_mva&lt;= #BNB0# &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar20    20BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)"/> <!-- bottom right -->
 
 
-<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] A" type = "d"   training="" group = "13" cut= "(1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB# &amp;&amp;1g0pMar2020COSMIC_mva&gt;= #COS# &amp;&amp;DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)" /> <!-- pink box -->
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] A" type = "d"   training="" group = "20" cut= "(1g0pMar2020NCPi0_mva &gt;= #NCP0# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB0#) &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#  &amp;&amp; 1g0pMar2020COSMIC_mva&gt;= #COS#)" /> <!-- pink box -->
 
-<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] A^{0}" type = "d"   training="" group = "13"/> <!-- near sideband -->
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] A^{0}" type = "d"   training="" group ="20" cut = "(1g0pMar2020NCPi0_mva &gt;= #NCP0# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB0# &amp;&amp;  1g0pMar2020COSMIC_mva &lt; #COS0#) &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX# &amp;&amp; 1g0pMar2020COSMIC_mva&gt;= #COS#)"/> <!-- near sideband -->
 
-<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] C" type = "d"   training="" group = "13" cut= "(1g0pMar2020NCPi0_m    va &lt; #NCP# &amp;&amp;1g0pMar2020BNB_mva&lt; #BNB# &amp;&amp;1g0pMar2020COSMIC_mva&gt;= #COS#  &amp;&amp;DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;=#DEDX#)" /> <!-- bottom left-->
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] C" type = "d"   training="" group = "20" cut= "1g0pMar2020NCPi0_mva &lt; #NCP0# &amp;&amp;1g0pMar2020BNB_mva&lt; #BNB0# &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar20    20BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX# &amp;&amp; 1g0pMar2020COSMIC_mva&gt;= #COS#)" /> <!-- bottom left-->
 
-<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] D" type = "d"   training="" group = "13" cut= "(1g0pMar2020NCPi0_m        va &lt; #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB# &amp;&amp;1g0pMar2020COSMIC_mva&gt;= #COS#  &amp;&amp;DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;=#DEDX# )"/> <!-- top left-->
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] D" type = "d"   training="" group = "20" cut= "1g0pMar2020NCPi0_mva &lt; #NCP0# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB0# &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar20    20BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX# &amp;&amp; 1g0pMar2020COSMIC_mva&gt;= #COS#) "/> <!-- top left-->
 
-<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] B" type = "d"   training="" group = "13" cut= "(1g0pMar2020NCPi0_m        va &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&lt; #BNB# &amp;&amp;1g0pMar2020COSMIC_mva&gt;= #COS#  &amp;&amp;DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;=#DEDX#)"/> <!-- bottom right -->
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] B" type = "d"   training="" group = "20" cut= "1g0pMar2020NCPi0_mva &gt; #NCP0# &amp;&amp;1g0pMar2020BNB_mva&lt;= #BNB0# &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar20    20BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX# &amp;&amp; 1g0pMar2020COSMIC_mva&gt;= #COS#)"/> <!-- bottom right -->
+
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] Passes BDT, dE/dx, and Cosmic Cut" type = "d"   training="" group = "21" cut= "(1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX# &amp;&amp; 1g0pMar2020COSMIC_mva&gt;= #COS#)" />
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] Fails BDT, dE/dx, or Cosmic Cut" type = "d"   training="" group = "21" cut= "(1g0pMar2020NCPi0_mva &lt; #NCP# || 1g0pMar2020BNB_mva&lt; #BNB# || DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &lt; #DEDX# ||  1g0pMar2020COSMIC_mva&gt;= #COS#)" />
+
+<var def = "#GE#" binning = "(5,400,650)" unit = "Corrected Calorimetric Shower Energy [MeV] High" type = "d"   training="" group = "22" cut = "#GE# &gt;=400 &amp;&amp;DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt; #DEDX# "/>
+
+<var def = "#GE#" binning = "(4,0,200)" unit = "Corrected Calorimetric Shower Energy [MeV] Low" type = "d"   training="" group = "22" cut = "#GE# &lt;=200 &amp;&amp;DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt; #DEDX#" />
+
+<var def = "#GE#" binning = "(5,400,650)" unit = "Corrected Calorimetric Shower Energy [MeV] High" type = "d"   training="" group = "23" cut = "#GE# &gt;=400 "/>
+
+<var def = "#GE#" binning = "(4,0,200)" unit = "Corrected Calorimetric Shower Energy [MeV] Low" type = "d"   training="" group = "23" cut = "#GE# &lt;=200" />
+
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(7,30,100)" unit = "Min impact parm basic [cm]" type="d" training="012" group="24" cut = "Min$(sss_candidate_impact_parameter)>30"/>
+
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] Combined A^{0}-D" type = "d"   training="" group ="25" cut = "(1g0pMar2020NCPi0_mva &lt; #NCP0# || 1g0pMar2020BNB_mva&lt; #BNB0# ||1g0pMar2020COSMIC_mva &lt; #COS0#) &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)"/> <!-- A0-D combined -->
+
 
 
 <!--pi0 vars -->
@@ -581,7 +619,7 @@
 <alias key="BNB0" value ="0.892728"/>
 <alias key="BNB" value ="0.3"/>
 <alias key="COS0" value ="0.988209"/>
-<alias key="COS" value ="0.8"/>
+<alias key="COS" value ="0.9"/>
 <alias key="NCP" value ="0.2"/>
 <alias key="NCP0" value ="0.428825"/>
 <alias key="DEDX" value ="2.5"/>
