@@ -816,13 +816,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stage->SetTextSize(0.04);
             stage->Draw();
 */
-            TLatex *stage = new TLatex(0.88, 0.92, stage_names.at(s).c_str());
+         //   TLatex *stage = new TLatex(0.88, 0.92, stage_names.at(s).c_str());
             //   TLatex *t = new TLatex(0.11,0.41,ks.c_str());
-            stage->SetNDC();
+           TLatex *stage;
+          //     stage->SetNDC();
            // t->SetTextColor(kRed-7);
-            stage->SetTextFont(43);
-            stage->SetTextSize(0.10);
-            stage->Draw();
+           // stage->SetTextFont(43);
+           // stage->SetTextSize(0.10);
+            stage->DrawLatex(0.88, 0.92, stage_names.at(s).c_str());
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
 
