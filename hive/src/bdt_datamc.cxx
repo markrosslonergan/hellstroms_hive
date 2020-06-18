@@ -811,7 +811,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             if (OTPC == true){
                 //      std::cout<<"flag 5"<<std::endl;
 
-                pottex.DrawLatex(.60,.40, pot_draw.c_str());
+                pottex.DrawLatex(.60,.48, pot_draw.c_str());
             } else{
                 pottex.DrawLatex(.55,.60, pot_draw.c_str());
             }
@@ -829,7 +829,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // t->SetTextColor(kRed-7);
             // stage->SetTextFont(43);
             // stage->SetTextSize(0.10);
-            stage.DrawLatex(0.7, 0.92, stage_names.at(s).c_str());
+            stage.DrawLatex(0.6, 0.92, stage_names.at(s).c_str());
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
 
@@ -845,8 +845,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }else {
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
                 if(OTPC){   
-                    pre = drawPrelim(0.55,0.42,prestring.c_str());
-                    if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
+                    pre = drawPrelim(0.55,0.41,prestring.c_str());
+                    if(stack_mode)pre2 = drawPrelim(0.625,.37,"Preliminary");
                    
                    
                     //std::cout<<"flag 6"<<std::endl;
