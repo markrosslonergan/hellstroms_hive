@@ -852,7 +852,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //cobs->cd(k+1);	
             cobs->cd();
 
-            std::cout<<"6"<<std::endl;
             TPad *pad0bot;
             if(!stack_mode){
                 pad0bot = new TPad(("padbot_"+stage_names.at(s)).c_str(),("padbot_"+stage_names.at(s)).c_str(), 0, 0.05, 1, 0.4);//0.4 was 0.35
@@ -894,7 +893,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }	
 
             TH1* ratunit = (TH1*)tsum->Clone(("ratio_unit_"+stage_names.at(s)).c_str());
-            std::cout<<"7"<<std::endl;
             ratunit->Divide(rat_denom);	
             for(int i=0; i< ratunit->GetNbinsX(); i++){
                 ratunit->SetBinError(i+1, tsum->GetBinError(i+1)/tsum->GetBinContent(i+1));
@@ -926,7 +924,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //gStyle->SetHatchesLineWidth(1);
             //gStyle->SetHatchesSpacing(1);
 
-            std::cout<<"8"<<std::endl;
             if(!stack_mode)          ratunit->Draw("E2");	
 
             rat_signal->SetFillStyle(0);
@@ -957,7 +954,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             ratpre->Divide(rat_denom);		
 
 
-            std::cout<<"9"<<std::endl;
             std::vector<double> x;
             std::vector<double> y;
 
@@ -981,7 +977,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             }
 
-            std::cout<<"10"<<std::endl;
             //TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_high[0],&err_y_low[0]);
             TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_low[0],&err_y_high[0]);
 
@@ -1010,7 +1005,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 gr->Draw("E0 same");
             }
 
-            std::cout<<"11"<<std::endl;
             //std::string mean = "(Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
