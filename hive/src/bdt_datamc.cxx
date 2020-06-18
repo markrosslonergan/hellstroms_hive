@@ -729,7 +729,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             if(!stack_mode) d0->Draw("same E1 E0");
 
            
-           
             /////// Print resolution for diphoton mass ////////
             // First, find variables containing the string of interest
             std::string massSearch("Invariant");
@@ -827,27 +826,32 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
 
+            std::cout<<"5"<<std::endl;
             TText *pre; 
             TText *pre2; 
             if (isSpectator) {
                 pre = drawPrelim(0.6,stack_mode? 0.525: 0.5,prestring.c_str());
-                if(stack_mode )pre2 = drawPrelim(0.6,0.48,"Preliminary");
+                if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
-            }if(OTPC){
-                pre = drawPrelim(0.55,0.42,prestring.c_str());
             }else {
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
-                pre = drawPrelim(0.6,stack_mode? 0.525 :0.5,prestring.c_str());
-                if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
+                if(OTPC){                pre = drawPrelim(0.55,0.42,prestring.c_str());}else{
+
+                    pre = drawPrelim(0.6,stack_mode? 0.525 :0.5,prestring.c_str());
+                    if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
+                }
+
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
             pre->SetTextSize(stack_mode ? 0.04 : 0.06);;
-            pre2->SetTextSize(stack_mode ? 0.04 : 0.06);;
             pre->Draw();
-            if(stack_mode)pre2->Draw();
+            if(stack_mode){
+                pre2->SetTextSize(stack_mode ? 0.04 : 0.06);;
+                pre2->Draw();
+            }
             /* TText *spec;
                if (isSpectator) {
                TText *spec = drawPrelim(0.82, 0.52, "Spectator Variable");
