@@ -7,6 +7,7 @@
     <run_period name ="RunI/II/IIIa" cut ="1.0" fraction = "1.0"  />
 </plot_pot>
 
+<var dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
