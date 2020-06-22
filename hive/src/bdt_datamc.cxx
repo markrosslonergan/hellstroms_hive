@@ -365,16 +365,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 this->calcCollapsedCovariance(covar_full, covar_collapsed,var);
 
                 //std::vector<double> fkr = {0.144464,0.0794493,0.204987};
-                std::vector<double> fkr = {0.0941,0.0823,0.2135};
+                //std::vector<double> fkr = {0.0941,0.0823,0.2135};
                 //std::vector<double> fkr = {0.145171,0.0859779,0.11318,0.0891966,0.151207,0.189539};
-                //std::vector<double> fkr = {0.26,0.123,0.116,0.094,0.137,0.145};
+                std::vector<double> fkr = {0.26,0.123,0.116,0.094,0.137,0.145};
 
                 for(int c=0; c< tsum->GetNbinsX();c++){
                     //double dv = tsum->GetBinContent(c+1);
                     //tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
                     //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
                     double mc_stats_error = tsum->GetBinError(c+1);
-                    //   double mc_sys_error = fkr[c];//sqrt((*covar_collapsed)(c,c));
+                //       double mc_sys_error = fkr[c];//sqrt((*covar_collapsed)(c,c));
+
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
                     std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
@@ -802,11 +803,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             double pot_unit = 1e20;
             std::string pot_unit_s = "E20";
             std::string pot_draw = data_file->topo_name+"   "+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
-
+            pottex.SetNDC();
             if (OTPC == true){
-                pottex.DrawLatex(.60,.40, pot_draw.c_str());
+                pottex.DrawLatex(.635,.40, pot_draw.c_str());
             } else{
-                pottex.DrawLatex(.55,.60, pot_draw.c_str());
+                pottex.DrawLatex(.635,.60, pot_draw.c_str());
             }
 
             // Draw stage name. Added by A. Mogan 10/14/19
@@ -838,8 +839,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
                 if(OTPC){                pre = drawPrelim(0.55,0.42,prestring.c_str());}else{
 
-                    pre = drawPrelim(0.6,stack_mode? 0.525 :0.5,prestring.c_str());
-                    if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
+                    pre = drawPrelim(0.635,stack_mode? 0.525 :0.5,prestring.c_str());
+                    if(stack_mode)pre2 = drawPrelim(0.635,0.48,"Preliminary");
                 }
 
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
