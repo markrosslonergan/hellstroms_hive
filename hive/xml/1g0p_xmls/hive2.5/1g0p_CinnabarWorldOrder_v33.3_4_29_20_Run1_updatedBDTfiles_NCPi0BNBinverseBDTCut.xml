@@ -7,6 +7,7 @@
     <run_period name ="RunI/II/IIIa" cut ="1.0" fraction = "1.0"  />
 </plot_pot>
 
+<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
@@ -450,6 +451,19 @@
 
 <var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] B" type = "d"   training="" group = "13" cut= "(1g0pMar2020NCPi0_m        va &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&lt; #BNB# &amp;&amp;1g0pMar2020COSMIC_mva&gt;= #COS#)"/> <!-- bottom right -->
 
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] A" type = "d"   training="" group = "19" cut= "(1g0pMar2020NCPi0_mva &gt;= #NCP0# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB0#) &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)" /> <!-- pink box -->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] A^{0}" type = "d"   training="" group ="19" cut = "(1g0pMar2020NCPi0_mva &gt;= #NCP0# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB0# &amp;&amp;  1g0pMar2020COSMIC_mva &lt; #COS0#) &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)"/> <!-- near sideband -->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] C" type = "d"   training="" group = "19" cut= "1g0pMar2020NCPi0_mva &lt; #NCP0# &amp;&amp;1g0pMar2020BNB_mva&lt; #BNB0# &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar20    20BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)" /> <!-- bottom left-->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] D" type = "d"   training="" group = "19" cut= "1g0pMar2020NCPi0_mva &lt; #NCP0# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB0# &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar20    20BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#) "/> <!-- top left-->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] B" type = "d"   training="" group = "19" cut= "1g0pMar2020NCPi0_mva &gt; #NCP0# &amp;&amp;1g0pMar2020BNB_mva&lt;= #BNB0# &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar20    20BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)"/> <!-- bottom right -->
+
+<var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] Combined A^{0}-D" type = "d"   training="" group ="19" cut = "(1g0pMar2020NCPi0_mva &lt; #NCP0# || 1g0pMar2020BNB_mva&lt; #BNB0# ||1g0pMar2020COSMIC_mva &lt; #COS0#) &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)"/> <!-- A0-D combined -->
+
+
 <!--pi0 vars -->
 <!--
 <var def = "sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)" binning = "(10,0.0,1.4)" unit ="True #pi^{0} Momentum" type = "d" training = "" group = "2"/>
@@ -547,13 +561,12 @@
 </recomc>
 -->
 <alias key="BNB0" value ="0.892728"/>
-<alias key="BNB" value ="0.892728"/>
+<alias key="BNB" value ="0.3"/>
 <alias key="COS0" value ="0.988209"/>
-<alias key="COS" value ="0.8"/>
-<alias key="NCP" value ="0.428825"/>
+<alias key="COS" value ="0.9"/>
+<alias key="NCP" value ="0.2"/>
 <alias key="NCP0" value ="0.428825"/>
-
-
+<alias key="DEDX" value ="2.5"/>
 
 <alias key="GE" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0)))" />
 <alias key="GEO" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)" /><alias key="PM" value ="(0.938272)"/>

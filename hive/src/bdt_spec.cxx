@@ -244,39 +244,24 @@ std::vector<double> bdt_stack::getEntryFullVector(bdt_variable var){
 THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
     THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
     int stack_rebin = 1;
-    //	if(level ==2) stack_rebin=2;
-    //	if(level ==3) stack_rebin=2;
 
-    /*
-
-       to_sort.push_back(&h);
-       l_to_sort.push_back(tmp);
-       integral_sorter.push_back(total_events);	
-
-       for (int i: sort_indexes(integral_sorter)) {
-       hs->Add(to_sort.at(i));	
-       legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
-       }
-
-*/
-
-    std::vector<TH1*> to_sort;
-    std::vector<double> integral_sorter;
+    //std::vector<TH1*> to_sort;
+    //std::vector<double> integral_sorter;
     vec_hists.clear();
 
     for(int t=0; t<stack.size(); t++){
         std::cout<<"Stack "<<stack.at(t)->tag<<" level "<<t<<std::endl;
 
         vec_hists.push_back((TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin));
+        
         TH1* hist = vec_hists.back();
         hist->SetTitle((this->name+"_"+var.name).c_str());
-
         //if(signal_on_top[t]){
         //    hist->SetLineColor(stack[t]->col);
         //    hist->SetLineWidth(3);
         //}else{
-            hist->SetLineColor(kBlack);
-            hist->SetLineWidth(1);
+        hist->SetLineColor(kBlack);
+        hist->SetLineWidth(1);
         //}
         hist->SetStats(0);
         //hist->SetMarkerStyle(20);
@@ -287,9 +272,8 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
         hist->GetXaxis()->SetTitle(var.unit.c_str());
         hist->GetYaxis()->SetTitle("Events");
 
-
-        to_sort.push_back(hist);
-        integral_sorter.push_back(hist->GetSumOfWeights());
+      // to_sort.push_back(hist);
+      // integral_sorter.push_back(hist->GetSumOfWeights());
 
         if(do_subtraction){
             if(!subtraction_vec[t]){
@@ -306,10 +290,10 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 
     }
 
-    for (int i: sort_indexes(integral_sorter)) {
+    //for (int i: sort_indexes(integral_sorter)) {
         //stacked->Add(to_sort.at(i));	
         //legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
-    }
+    //}
 
 
     return stacked;	

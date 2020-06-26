@@ -373,14 +373,17 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
 
 
+std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_info){
+    return scan_significance_random(sig_files,bkg_files,bdt_info,0);
+}
 
-std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos){
+std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos,int sig_type){
     std::cout<<"Starting to Scan Significance (randomly)"<<std::endl;
     double best_significance = 0;
     double best_impact = 0;
     std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
 
-    double plot_pot = 10.115e20;
+    double plot_pot = 5e19;// 10.115e20;
 
     std::cout<<"Setting stage entry lists"<<std::endl;
     for(size_t i = 0; i < sig_files.size(); ++i) {
@@ -1050,7 +1053,7 @@ std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, s
     double best_impact = 0;
     std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
 
-    double plot_pot = 10.115e20;
+    double plot_pot = 5e19;//10.115e20;
 
     std::cout<<"Setting stage entry lists"<<std::endl;
     for(size_t i = 0; i < sig_files.size(); ++i) {

@@ -377,7 +377,7 @@ int main (int argc, char *argv[]){
                 f->addBDTResponses(bdt_infos[k]);
             }
         }
-        if(mode_option != "train"  && mode_option != "sbnfit"){
+        if(mode_option != "train"  && mode_option != "sbnfit" && mode_option !="extapp" ){
             f->calcBaseEntryList(analysis_tag);
         }
 
@@ -499,8 +499,7 @@ int main (int argc, char *argv[]){
             mkdir("stack",0777);//Create a folder for pdf.
         }
         else{
-            std::cout<<"Overwrite stack/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
+            std::cout<<"Overwrite stack/ NOW ..."<<std::endl;
         }
 
         std::cout<<"flag0"<<std::endl;
@@ -509,7 +508,7 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-        histogram_stack->plot_pot = 12.25e20; //12.25e20;//10.115e20;//4.9e19;
+        histogram_stack->plot_pot = 10.115e20; //12.25e20;//10.115e20;//4.9e19;
         std::cout<<"flag1"<<std::endl;
 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
@@ -581,8 +580,7 @@ int main (int argc, char *argv[]){
             mkdir("datamc",0777);//Create a folder for pdf.
         }
         else{
-            std::cout<<"Overwrite datamc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
+            std::cout<<"Overwrite datamc/ NOW ..."<<std::endl;
         }
 
 
@@ -708,8 +706,7 @@ int main (int argc, char *argv[]){
             mkdir("scalenorm",0777);//Create a folder for pdf.
         }
         else{
-            std::cout<<"Overwrite scalenorm/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
+            std::cout<<"Overwrite scalenorm/ NOW ..."<<std::endl;
         }
 
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
@@ -782,8 +779,8 @@ int main (int argc, char *argv[]){
             mkdir("var2D",0777);//Create a folder for pdf.
         }
         else{
-            std::cout<<"Overwrite var2D/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
+            std::cout<<"Overwrite var2D/ now , ..."<<std::endl;
+            //sleep(0);
         }
 
 
@@ -859,7 +856,7 @@ int main (int argc, char *argv[]){
                 std::cout<<" -- ---> "<<External_XMLconfig.bdt_definitions[f][i]<<std::endl;
             }
 
-            external_files.push_back(new bdt_file(dir, External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , external_analysis_flow));
+            external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , external_analysis_flow));
 
             external_files.back()->addPlotName(External_XMLconfig.bdt_plotnames[f]);
 
@@ -959,10 +956,10 @@ int main (int argc, char *argv[]){
                 scan_likelihood(stack_bdt_files, bdt_infos);
                 break;
             case 2:
-                scan_significance_random(signal_bdt_files, bkg_bdt_files,bdt_infos);
+                scan_significance_random(signal_bdt_files, bkg_bdt_files, bdt_infos,sig_type);
                 break;
             case 3:
-                scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot, sig_type);
+                scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos, what_pot, sig_type);
                 break;
             case 4:
                 //What is this?
@@ -983,8 +980,8 @@ int main (int argc, char *argv[]){
             mkdir("scatter",0777);//Create a folder for pdf.
         }
         else{
-            std::cout<<"Overwrite scatter/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
+            std::cout<<"Overwrite scatter/ NOW ..."<<std::endl;
+            //sleep(2);
         }
 
         if(which_file==-1){
@@ -1091,8 +1088,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
         mkdir("valid",0777);//Create a folder for pdf.
     }
     else{
-        std::cout<<"Overwrite valid/ in 2 seconds, 1 seconds, ..."<<std::endl;
-        sleep(2);
+        std::cout<<"Overwrite valid/ NOW  ..."<<std::endl;
     }
 
 
@@ -1541,8 +1537,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
             mkdir("recomc",0777);//Create a folder for pdf.
         }
         else{
-            std::cout<<"Overwrite recomc/ in 2 seconds, 1 seconds, ..."<<std::endl;
-            sleep(2);
+            std::cout<<"Overwrite recomc/ NOW ..."<<std::endl;
         }
 
 
@@ -1638,8 +1633,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         mkdir("vars",0777);//Create a folder for pdf.
     }
     else{
-        std::cout<<"Overwrite vars/ in 2 seconds, 1 seconds, ..."<<std::endl;
-        sleep(2);
+        std::cout<<"Overwrite vars/ NOW ..."<<std::endl;
     }
 
 

@@ -829,7 +829,7 @@ TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, 
 }
 
 
-TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
+TH1* bdt_file::getTH1(bdt_variable & var, std::string  cuts, std::string nam, double  plot_POT){
     return getTH1(var, cuts,nam,plot_POT,1);
 
 }
@@ -906,21 +906,15 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
 
 
 
-TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin){
-
+TH1* bdt_file::getTH1(bdt_variable & var, std::string  cuts, std::string  nam, double  plot_POT, int  rebin){
 
     std::string in_bins = "("+var.name+"<"+std::to_string(var.edges[2]) +"&&"+var.name+">"+std::to_string(var.edges[1])+")";
-
-    //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
-    TCanvas *ctmp = new TCanvas();
-   // this->CheckWeights();
-   //std::cout<<" var.additional_cut = "<< var.additional_cut<<std::endl;
-   if (var.additional_cut == "")  {
+    //TCanvas *ctmp = new TCanvas();
+   
+    if (var.additional_cut == "")  {
         var.additional_cut = "1.0";
-      //std::cout<<"setting addditional cut to 1"<<std::endl;      
    }
-    //std::cout<<"cuts = " << cuts<<std::endl;
-    // std::cout<<"in_bins = " << in_bins<<std::endl;
+    
     this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+"&&"+in_bins+"&&" + var.additional_cut+ ")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
@@ -931,7 +925,6 @@ TH1* bdt_file::getTH1(bdt_variable var, std::string cuts, std::string nam, doubl
     }else{
         th1->Scale(this->scale_data*plot_POT/this->pot);
     }
-    //std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
     if(rebin>1) th1->Rebin(rebin);
     th1->SetLineColor(col);
     th1->SetLineWidth(1);

@@ -261,12 +261,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
     ftest->cd();
-  //  if (OTPC){
-        // std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Final Selection"};
-        stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Post-NC#pi#{0} BDT","Post-#nu_{e} BDT","Final Selection"};
-   // } else{
-     //   stage_names = {"","","","","","","","",""};
-   // }
+    if (OTPC){
+        stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Final Selection"};
+        //stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Post-NC#pi^{0} BDT","Post-#nu_{e} BDT","Final Selection"};
+        // std::cout<<"flag 2"<<std::endl;
+
+    } else{
+        stage_names = {"","","","","","","","",""};
+    }
     //Loop over all stages
 
     int s_min = -1;
@@ -276,31 +278,29 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         s_max = plot_stage+1;
     }
 
-
-
     //for(int s = s_min; s< s_max; s++){
     {
         int s = plot_stage;
 
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
+
         for(auto &f: mc_stack->stack){
-            std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-            if(s>1 && false) f->calcBDTEntryList(s,bdt_cuts); //Turn off, use below
+            //std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
+            //if(s>1 && false) f->calcBDTEntryList(s,bdt_cuts); //Turn off, use below
             std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-            f->setStageEntryList( (s ? s < 2 : s ));
-        }	
+            f->setStageEntryList((s ? s < 2 : s ));
+        }
 
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
-
-        if(s>1 && false) data_file->calcBDTEntryList(s,bdt_cuts);
-        data_file->setStageEntryList( (s ? s <2 :s ));
+        //if(s>1 && false) data_file->calcBDTEntryList(s,bdt_cuts);
+        data_file->setStageEntryList((s ? s <2 :s ));
 
 
         //And all variables in the vector var
         for(auto &var: vars){
 
-
+            //If we are at a later stage that 1, lets find the variable.
             if(s>1){
                 std::string faster_cut ="(";
                 for(int ss=0; ss<s-1; ss++){
@@ -314,9 +314,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             //var.is_logplot = true;
-
             std::cout<<"Starting on variable "<<var.name<<std::endl;
-
+            
             TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(), (stack_mode? 2200 : 1801),1400); //1600
             cobs->cd();
 
@@ -336,13 +335,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             tsum_after = (TH1*)tsum->Clone("tsumafter");
             //Check Covar for plotting
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
- 
+
             /*
-            TH1 *trev = (TH1*)mc_stack->stack.at(1)->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+"arse+"+var.safe_name, plot_pot); 
-            trev->Scale(125.0);
-            trev->SetLineColor(mc_stack->stack.at(1)->col);
-            trev->SetLineWidth(3); 
-            */
+               TH1 *trev = (TH1*)mc_stack->stack.at(1)->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+"arse+"+var.safe_name, plot_pot); 
+               trev->Scale(125.0);
+               trev->SetLineColor(mc_stack->stack.at(1)->col);
+               trev->SetLineWidth(3); 
+               */
 
             //some cheating
             //var.has_covar = false;
@@ -380,8 +379,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
                     //double tot_error = mc_sys_error; 
+                    std::cout<<"DETOL: "<<c<<" N: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" Frac: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" Frac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
                     tsum->SetBinError(c+1, tot_error);
-                    std::cout<<"DETOL: "<<c<<" N: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" Frac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
                     //And add on the systematic error that is MC stats
                     //               (*covar_collapsed)(c,c) += mc_stats_error*mc_stats_error;
                 }
@@ -481,6 +480,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             double max_modifier = 1.65;
             if (OTPC == true){
                 max_modifier = 3.25;
+                //std::cout<<"flag 3"<<std::endl;
             } else{
                 if (s==1){
                     // max_modifier = 1.7;
@@ -561,6 +561,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
             TLegend *l0;
             if(OTPC==true){
+                // std::cout<<"flag 4"<<std::endl;
+
                 l0 = new TLegend(0.11,0.5,0.89,0.89);}
             else{
                 l0 = new TLegend(0.11,0.65,0.89,0.89);
@@ -729,7 +731,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             d0->SetBinErrorOption(TH1::kPoisson);
             if(!stack_mode) d0->Draw("same E1 E0");
 
-           
+
             /////// Print resolution for diphoton mass ////////
             // First, find variables containing the string of interest
             std::string massSearch("Invariant");
@@ -805,24 +807,28 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::string pot_draw = data_file->topo_name+"   "+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
             pottex.SetNDC();
             if (OTPC == true){
-                pottex.DrawLatex(.635,.40, pot_draw.c_str());
+                pottex.DrawLatex(.60,.48, pot_draw.c_str());
+                //      std::cout<<"flag 5"<<std::endl;
+
+                //pottex.DrawLatex(.635,.48, pot_draw.c_str());
             } else{
-                pottex.DrawLatex(.635,.60, pot_draw.c_str());
+                pottex.DrawLatex(.60,.60, pot_draw.c_str());
             }
 
             // Draw stage name. Added by A. Mogan 10/14/19
-         /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
-            stage->SetTextAlign(31); // Right-adjusted 
-            stage->SetTextSize(0.04);
-            stage->Draw();
-*/
-            TLatex *stage = new TLatex(0.88, 0.92, stage_names.at(s).c_str());
+            /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
+                 stage->SetTextAlign(31); // Right-adjusted 
+                 stage->SetTextSize(0.04);
+                 stage->Draw();
+                 */
+            //   TLatex *stage = new TLatex(0.88, 0.92, stage_names.at(s).c_str());
             //   TLatex *t = new TLatex(0.11,0.41,ks.c_str());
-            stage->SetNDC();
-           // t->SetTextColor(kRed-7);
-            stage->SetTextFont(43);
-            stage->SetTextSize(0.10);
-            stage->Draw();
+            TLatex stage;
+            stage.SetNDC();
+            // t->SetTextColor(kRed-7);
+            // stage->SetTextFont(43);
+            // stage->SetTextSize(0.10);
+            stage.DrawLatex(0.6, 0.92, stage_names.at(s).c_str());
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
 
@@ -837,10 +843,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
-                if(OTPC){                pre = drawPrelim(0.55,0.42,prestring.c_str());}else{
+                if(OTPC){   
+                    pre = drawPrelim(0.55,0.41,prestring.c_str());
+                    if(stack_mode)pre2 = drawPrelim(0.625,.37,"Preliminary");
+                   
+                   
+                    //std::cout<<"flag 6"<<std::endl;
 
-                    pre = drawPrelim(0.635,stack_mode? 0.525 :0.5,prestring.c_str());
-                    if(stack_mode)pre2 = drawPrelim(0.635,0.48,"Preliminary");
+                }else{
+
+                    pre = drawPrelim(0.6,stack_mode? 0.525 :0.5,prestring.c_str());
+                    if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
                 }
 
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
@@ -1220,7 +1233,6 @@ int bdt_datamc::calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *full_col
 
     for(int i=0; i< frac_full->GetNrows();i++){
         for(int j=0; j< frac_full->GetNrows();j++){
-
             double pt = (*frac_full)(i,j);
             if(pt!=pt || isinf(pt)){
                 if(full_vec[i] !=0 && full_vec[j]!=0){
