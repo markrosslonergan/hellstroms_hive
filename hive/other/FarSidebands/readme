@@ -1,0 +1,15 @@
+
+USAGE:
+./run_gLEE_1g1p_FarSideBand_autoHIVE_v1.sh FULL_PATH_TO_FILE
+
+e.g 
+
+./run_gLEE_1g1p_FarSideBand_autoHIVE_v1.sh  /uboone/data/users/markross/Mar2020/data_5e19_run1_v33.3.files.root
+
+
+Things to note:
+(1) Make sure the path is the full path
+(2) Best to run on /uboone/app although the output is produced in the same directory at the moment sorry!
+(3) Vast majority of testing and checks done on SL6 machines so I would advise to continue that for the purposes of the sideband processing if possible, to keep everything constant.
+(4) The script loads up the correct enviroment to ensure things work. This is pretty important, so make sure no auto-scripts are loading an enviroment as this might cause some issues. 
+(5) Running on the above test file (/uboone/data/users/markross/Mar2020/data_5e19_run1_v33.3.files.root) is a good idea and I can confirm the output is as expected. 
