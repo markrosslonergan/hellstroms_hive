@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 
-<bdtfile filename = "/uboone/data/users/markross/Mar2020/data_5e19_run1_v33.3.files.root" tag = "gLEE_farsideband_v1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
+<bdtfile filename = "FULLPATH" tag = "gLEE_farsideband_v2_TAGTAG" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data">
     <definition>
         <cut>1</cut>
     </definition>

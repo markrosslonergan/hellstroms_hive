@@ -366,16 +366,25 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //std::vector<double> fkr = {0.144464,0.0794493,0.204987};
                 //std::vector<double> fkr = {0.0941,0.0823,0.2135};
                 //std::vector<double> fkr = {0.145171,0.0859779,0.11318,0.0891966,0.151207,0.189539};
-                std::vector<double> fkr = {0.26,0.123,0.116,0.094,0.137,0.145};
+                //std::vector<double> fkr = {0.26,0.123,0.116,0.094,0.137,0.145};
+
+                //with coh not coh
+                std::vector<double> fkr = {0.235736,0.23907,0.304031};//1g1p before
+                //fkr = {0.0954412,0.0903098,0.146111};//1g1p after
+
+                //fkr = {0.285885,0.201206, 0.209106,0.193913,0.229783,0.226371};//1g0p before
+                //fkr = {0.259299, 0.120909, 0.108522, 0.0874204, 0.12301, 0.140846};//1g0p after
+
+
 
                 for(int c=0; c< tsum->GetNbinsX();c++){
                     //double dv = tsum->GetBinContent(c+1);
                     //tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
                     //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
                     double mc_stats_error = tsum->GetBinError(c+1);
-                //       double mc_sys_error = fkr[c];//sqrt((*covar_collapsed)(c,c));
+                    double mc_sys_error = fkr[c]*tsum->GetBinContent(c+1);  //sqrt((*covar_collapsed)(c,c));
 
-                    double mc_sys_error = sqrt((*covar_collapsed)(c,c));
+                //    double mc_sys_error = sqrt((*covar_collapsed)(c,c));
                     std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
                     //double tot_error = mc_sys_error; 

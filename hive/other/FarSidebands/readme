@@ -13,3 +13,15 @@ Things to note:
 (3) Vast majority of testing and checks done on SL6 machines so I would advise to continue that for the purposes of the sideband processing if possible, to keep everything constant.
 (4) The script loads up the correct enviroment to ensure things work. This is pretty important, so make sure no auto-scripts are loading an enviroment as this might cause some issues. 
 (5) Running on the above test file (/uboone/data/users/markross/Mar2020/data_5e19_run1_v33.3.files.root) is a good idea and I can confirm the output is as expected. 
+
+
+The output will be:
+(a) several *.mod files (the BDT models copied over from my /uboone/app directory)
+(b) Several *.libSVM.dat files (exact same data as the root files in libSVM format for XGBoost BDT to use)
+(c) Several *.app.root files and libSVM_test.root files (the results of applying the above BDT's to the input file)
+(d) a XML for configuration (1g1p_farsideband_external_SED_v1.xml)
+(e) a log file gLEE_farsideband.log 
+(f) an output filtered file: sbnfit_1g1pMar2020_v4_stage_1_gLEE_farsideband_v1.root
+
+(a-d) would contain some information that would NOT be blind and we do not need these
+(e) and (f) is the output we need for the sidebands.
