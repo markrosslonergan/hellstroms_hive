@@ -382,9 +382,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     //tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
                     //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
                     double mc_stats_error = tsum->GetBinError(c+1);
-                    double mc_sys_error = fkr[c]*tsum->GetBinContent(c+1);  //sqrt((*covar_collapsed)(c,c));
+                  //  double mc_sys_error = fkr[c]*tsum->GetBinContent(c+1);  //sqrt((*covar_collapsed)(c,c));
 
-                //    double mc_sys_error = sqrt((*covar_collapsed)(c,c));
+                    double mc_sys_error = sqrt((*covar_collapsed)(c,c));
                     std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
                     //double tot_error = mc_sys_error; 
