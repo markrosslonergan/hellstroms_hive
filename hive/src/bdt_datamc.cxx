@@ -437,6 +437,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     auto &f = mc_stack->stack[i];
                     double scale = (plot_pot/f->pot)*f->scale_data;
 
+                    std::cout<<"plot_pot = "<<plot_pot<<std::endl;
+                    std::cout<<"f->pot = "<<f->pot<<std::endl;
+                    std::cout<<"f->scale_data = "<<f->scale_data<<std::endl;
+
                     std::cout<<"the entries in this file (weighted) = "<<f->GetEntries()<<std::endl;
                     std::cout<<"the scaling to POT= "<<scale<<" which is x"<<1/scale<<" times POT" <<std::endl;
                     std::cout<<"the total number of entries = "<<f->GetEntries()*scale<<std::endl;
