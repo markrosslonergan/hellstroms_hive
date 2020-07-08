@@ -481,6 +481,47 @@
 <var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm] FS Cos Cut 0.9 " type="d"  training=""  cut = "#FSCUTS#&amp;&amp; #COSCUT#" group = "336"/>
 <var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(24,0,1)" unit = "Fraction of unassocaited hits in slice FS Cos Cut 0.9 " type ="d"  training="" group="336"  cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
 
+<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score FS Cos Cut 0.9" type = "d"     training="" group = "339" cut = "#FSCUTS#"/>
+<var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm] FS" type = "d"     training=""  group = "339" cut = "#FSCUTS#"/>
+<var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(24,0 ,1000)" unit = "Ratio Reconstructed Shower Length/Reconstructed Shower Energy [cm/GeV] FS" type = "d"  training=""  group = "339" cut = "#FSCUTS#"/>
+<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(24,0,50)" unit = "Reconstructed Shower Opening Angle [deg] FS" type = "d"     training=""  group = "339" cut = "#FSCUTS#"/>
+<var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad] FS" type = "d"     training=""  group = "339" cut = "#FSCUTS#"/>
+<var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad] FS" type = "d"     training=""  group = "339" cut = "#FSCUTS#"/>
+<var def = "(reco_shower_trackscore[0])" binning = "(24,0,0.5)" unit = "Shower Score FS" type ="d"  training =""  group = "339" cut = "#FSCUTS#"/>
+<var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm] FS" binning ="(24,0,3)" type="d"  training=""  group = "339" cut = "#FSCUTS#"  logplot = "true"/>
+<var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness FS" type="d"  training = ""  group = "339" cut = "#FSCUTS#"/>
+<var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness FS" type="d"  training = ""  group = "339" cut = "#FSCUTS#"/>
+<var def = "reco_shower_start_dist_to_SCB" binning="(24,0,150)" unit = "Distance from Shower Start to SCB FS" type ="d"  training=""  group = "339" cut = "#FSCUTS#"/>
+<var def = "#GE#/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV] FS" binning = "(24,0,0.35)" type="d"  training=""  group = "339" cut = "#FSCUTS#" />
+<var def = "#GE#/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad] FS" binning = "(24,0,0.05)" type = "d"   training = ""  group = "339" cut = "#FSCUTS#"/>
+<var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV] FS" binning = "(24,0,0.3)" type = "d"  training = ""  group = "339" cut = "#FSCUTS#"/>
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(24,0,80)" unit = "Min impact parm basic FS" type="d" training="" group = "339" cut = "#FSCUTS#"  logplot = "true"/>
+<var def = "Min$(sss_candidate_min_dist)" binning="(24,0,80)" unit = "Min conv parm basic FS" type="d" training="" group = "339" cut = "#FSCUTS#"/>
+<var def = "sss3d_ioc_ranked_implied_opang" binning = "(24,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos] FS" type="d"  training=""  group = "339" cut = "#FSCUTS#"  logplot = "true"/>
+<var def = "sss3d_ioc_ranked_conv" binning = "(24,0,100)" unit ="sss3d min IOC Conversion Dist [cm] FS" type="d"  training=""  group = "339" cut = "#FSCUTS#"/>
+<var def = "sss2d_conv_ranked_invar" binning = "(24,0,200)" unit ="sss2d closest candidate invariant mass [MeV] FS" type="d"  training=""  group = "339" cut = "#FSCUTS#"/>
+
+<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score FS Cos Cut 0.9" type = "d"     training="" group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm] FS Cos Cut 0.9" type = "d"     training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(24,0 ,1000)" unit = "Ratio Reconstructed Shower Length/Reconstructed Shower Energy [cm/GeV] FS Cos Cut 0.9" type = "d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(24,0,50)" unit = "Reconstructed Shower Opening Angle [deg] FS Cos Cut 0.9" type = "d"     training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad] FS Cos Cut 0.9" type = "d"     training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad] FS Cos Cut 0.9" type = "d"     training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "(reco_shower_trackscore[0])" binning = "(24,0,0.5)" unit = "Shower Score FS Cos Cut 0.9" type ="d"  training =""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm] FS Cos Cut 0.9" binning ="(24,0,3)" type="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"  logplot = "true"/>
+<var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness FS Cos Cut 0.9" type="d"  training = ""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness FS Cos Cut 0.9" type="d"  training = ""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "reco_shower_start_dist_to_SCB" binning="(24,0,150)" unit = "Distance from Shower Start to SCB FS Cos Cut 0.9" type ="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "#GE#/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV] FS Cos Cut 0.9" binning = "(24,0,0.35)" type="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#" />
+<var def = "#GE#/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad] FS Cos Cut 0.9" binning = "(24,0,0.05)" type = "d"   training = ""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV] FS Cos Cut 0.9" binning = "(24,0,0.3)" type = "d"  training = ""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(24,0,80)" unit = "Min impact parm basic FS Cos Cut 0.9" type="d" training="" group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"  logplot = "true"/>
+<var def = "Min$(sss_candidate_min_dist)" binning="(24,0,80)" unit = "Min conv parm basic FS Cos Cut 0.9" type="d" training="" group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+
+<var def = "sss3d_ioc_ranked_implied_opang" binning = "(24,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos] FS Cos Cut 0.9" type="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"  logplot = "true"/>
+<var def = "sss3d_ioc_ranked_conv" binning = "(24,0,100)" unit ="sss3d min IOC Conversion Dist [cm] FS Cos Cut 0.9" type="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "sss2d_conv_ranked_invar" binning = "(24,0,200)" unit ="sss2d closest candidate invariant mass [MeV] FS Cos Cut 0.9" type="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+
 
 <!--pi0 vars -->
 <!--
