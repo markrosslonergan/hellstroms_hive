@@ -35,7 +35,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.4" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter==5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -43,7 +43,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "0.8" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -460,19 +460,18 @@
 <var def = "reco_shower_energy_plane1[0]/1000.0" binning = "(18,0,0.6)" unit = "Reconstructed Calorimetric Shower Energy Plane 1 FS [GeV]" type = "d"    training="" group="334" cut = "#FSCUTS# &amp;&amp; 1g0pMar2020COSMIC_mva &gt;=0.9"/>
 <var def = "reco_shower_energy_plane2[0]/1000.0" binning = "(18,0,0.6)" unit = "Reconstructed Calorimetric Shower Energy Plane 2 FS [GeV]" type = "d"    training="" group="334" cut = "#FSCUTS# &amp;&amp; 1g0pMar2020COSMIC_mva &gt;=0.9"/>
 
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy FS [MeV]" type = "d"   training="" group="337" cut = "#FSCUTS#"/>
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy A^{0} [MeV]" type = "d"   training="" group="337" cut = "#BOXA0#"/>
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy B [MeV]" type = "d"   training="" group="337" cut = "#BOXB#"/>
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy C [MeV]" type = "d"   training="" group="337" cut = "#BOXC#"/>
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy D [MeV]" type = "d"   training="" group="337" cut = "#BOXD#"/>
+<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy FS with NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="337" cut = "#FSCUTS#"/>
+<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy A^{0} NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="337" cut = "#BOXA0#"/>
+<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy B NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="337" cut = "#BOXB#"/>
+<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy C NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="337" cut = "#BOXC#"/>
+<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy D NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="337" cut = "#BOXD#"/>
 
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy FS Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy A^{0} Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#BOXA0# &amp;&amp; #COSCUT#"/>
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy B Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#BOXB# &amp;&amp; #COSCUT#"/>
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy C Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#BOXC# &amp;&amp; #COSCUT#"/>
-<!--<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy D Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#BOXD# &amp;&amp; #COSCUT#"/>-->
-
-<var def = "#GE#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy D Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#BOXD# &amp;&amp; #COSCUT#"/>
+<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy FS Cos Cut 0.9 NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="338" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy A^{0} Cos Cut 0.9 NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="338" cut = "#BOXA0# &amp;&amp; #COSCUT#"/>
+<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy B Cos Cut 0.9 NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="338" cut = "#BOXB# &amp;&amp; #COSCUT#"/>
+<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy C Cos Cut 0.9 NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="338" cut = "#BOXC# &amp;&amp; #COSCUT#"/>
+<var def = "#GE#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy D Cos Cut 0.9 NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="338" cut = "#BOXD# &amp;&amp; #COSCUT#"/>
+<!--<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy D Cos Cut 0.9 NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="338" cut = "#BOXD# &amp;&amp; #COSCUT#"/>-->
 
 
 <var def = "1g0pMar2020COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score FS" type="d" training= "" group = "335" logplot = "true" cut = "#FSCUTS#" />
