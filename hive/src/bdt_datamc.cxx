@@ -313,9 +313,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 std::cout<<" var.additional_cut = "<< var.additional_cut <<std::endl;
             }
 
-            //var.is_logplot = true;
+            var.is_logplot = true;
             std::cout<<"Starting on variable "<<var.name<<std::endl;
-            
+
             TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(), (stack_mode? 2200 : 1801),1400); //1600
             cobs->cd();
 
@@ -382,7 +382,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     //tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
                     //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
                     double mc_stats_error = tsum->GetBinError(c+1);
-                  //  double mc_sys_error = fkr[c]*tsum->GetBinContent(c+1);  //sqrt((*covar_collapsed)(c,c));
+                    //  double mc_sys_error = fkr[c]*tsum->GetBinContent(c+1);  //sqrt((*covar_collapsed)(c,c));
 
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
                     std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
@@ -521,7 +521,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             if(var.is_logplot){
                 pad0top->SetLogy();
-                max_modifier=100.0;
+                max_modifier = 500.0;
+                //max_modifier=3500.0;
             }
             //     double max_modifier = 1.7;
             double min_val = 0.01;
@@ -859,8 +860,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 if(OTPC){   
                     pre = drawPrelim(0.55,0.41,prestring.c_str());
                     if(stack_mode)pre2 = drawPrelim(0.625,.37,"Preliminary");
-                   
-                   
+
+
                     //std::cout<<"flag 6"<<std::endl;
 
                 }else{
