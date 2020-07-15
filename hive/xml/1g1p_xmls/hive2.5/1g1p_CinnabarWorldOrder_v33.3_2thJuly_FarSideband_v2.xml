@@ -1042,6 +1042,7 @@
 <alias key="SSV" value ="0.3"/>
 <alias key="SSV0" value ="0.521623"/>
 
+<alias key ="FSCUT" value = "(1g1pMar2020_v4Nue_mva >= 0.3 &amp;&amp; (1g1pMar2020_v4BNB_mva < 0.96273 || 1g1pMar2020_v4NCPi0_mva < 0.467404))">
 
 <alias key="PM" value ="(0.938272)"/>
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>
