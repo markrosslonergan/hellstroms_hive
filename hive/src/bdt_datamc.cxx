@@ -175,6 +175,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                     d0->GetXaxis()->SetTitleOffset(0.9);
                     pad->SetRightMargin(0.15);
 
+
                     std::cout<<"Writing pdf."<<std::endl;
                     cobs->Write();
                     cobs->SaveAs(("var2D/"+tag+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
@@ -213,6 +214,9 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                         std::cout<<"Writing pdf."<<std::endl;
                         cobsmc->Write();
                         cobsmc->SaveAs(("var2D/"+tag+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
+
+        
+                        std::cout<<"VAR2D::Corrr "<<f->tag<<" "<<var1.safe_unit<<" "<<var2.safe_unit<<" "<<mc->GetCorrelationFactor()<<std::endl;
 
                         //cobsmc->SaveAs(("var2D/"+tag+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 

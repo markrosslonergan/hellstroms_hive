@@ -215,6 +215,9 @@ struct bdt_file{
         double GetEntries();
         TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);
         
+        int getRunEfficiency();
+
+
         TH1* getTH1(bdt_variable & var, std::string cuts, std::string nam, double  plot_POT, int  rebin);
         TH1* getTH1(bdt_variable & var, std::string cuts, std::string nam, double  plot_POT);
         
