@@ -353,16 +353,22 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             combin+=run_fractions_file[i];
     }
     std::cout<<"Total is "<<combin<<std::endl;
-    if(combin!=1){
+    if(fabs(combin-1.0)>0.00001){
         std::cout<<"ERROR! The total that each defined run period adds up to is "<<combin<<" which is not 1."<<std::endl;
     
         exit(EXIT_FAILURE);
     }
-
+    
+    for(int i=0; i< run_fractions.size(); i++){
+        std::cout<<"Run_Frac: "<<run_fractions[i]<<" in this file "<<run_fractions_file[i]<<std::endl;
+    }
 
     run_weight_string = "1.0*("+run_cuts[0]+"*"+std::to_string(run_fractions[0]/run_fractions_file[0]);
     for(int i=1; i< run_fractions.size(); i++){
-         run_weight_string += "+" +run_cuts[i]+"*"+std::to_string(run_fractions[i]/run_fractions_file[i]);
+
+       double mval = mval = run_fractions[i]/run_fractions_file[i]; 
+
+         run_weight_string += "+" +run_cuts[i]+"*"+std::to_string(mval);
     }
     run_weight_string +=")";
     std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
@@ -1459,6 +1465,26 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 
     f_sbnfit->Close();
     std::cout<<"Done!"<<std::endl;
+
+    return 0;
+}
+
+
+int bdt_file::getRunEfficiency(){
+
+    int min_run = tvertex->GetMinimum("run_number");
+    int max_run = tvertex->GetMaximum("run_number");
+
+    int steps = 25;
+    int gap = (max_run-min_run)/steps;
+    
+    for(int i=0; i< steps-1; i++){
+        std::string cut = "(run_number >= "+std::to_string(min_run+gap*i) +" && run_number < " +std::to_string(min_run+gap*i+gap)+")";
+        double eve = this->GetEntries(cut);
+        std::cout<<cut<<" "<<eve<<std::endl;
+
+    }
+
 
     return 0;
 }

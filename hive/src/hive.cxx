@@ -215,7 +215,7 @@ int main (int argc, char *argv[]){
     std::vector<double> fbdtcuts = XMLconfig.bdt_cuts;
     if(fbdtcuts.size()==0){
         std::cout<<"No BDT cuts set, so setting all to 0 for now"<<std::endl;
-        fbdtcuts.resize(TMVAmethods.size(),0);
+        fbdtcuts.resize(TMVAmethods.size(),1);
     }else{
         std::cout<<"BDT cuts have been loaded and set as: "<<std::endl;
         for(auto &c: fbdtcuts)std::cout<<c<<" ";
@@ -239,6 +239,13 @@ int main (int argc, char *argv[]){
     //Get all the variables you want to use	
     std::vector<bdt_variable> vars = TMVAmethods[0].bdt_all_vars;
     std::string postcuts = "1";  //We dont currently use postcuts
+
+    if(external_cuts!="1"){
+        std::cout<<"Adding an additonal cut of "<<external_cuts<<std::endl;
+            for(auto &v: vars){
+                v.additional_cut +="&& ("+external_cuts+")";
+            }
+    }
 
 
     std::string topological_cuts = TMVAmethods[0].topological_definition;
@@ -914,6 +921,10 @@ int main (int argc, char *argv[]){
         return 0;
     }else if(mode_option == "test"){
 
+
+        onbeam_data_file->getRunEfficiency();
+
+        return 0;
         signal_bdt_files[0]->tvertex->Scan("reco_shower_kalman_dEdx_plane2_median[0]:DeNan(reco_shower_kalman_dEdx_plane2_median[0],12.0):reco_shower_dEdx_amalgamated[0]","reco_asso_showers==1");
 
         return 0;
