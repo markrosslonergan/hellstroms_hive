@@ -437,6 +437,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         }*/
 
+        if(this->tag=="NCPi0NotCoh"){
+            //weight_branch = "("+weight_branch+")*(1.0-mctruth_exiting_pi0_E)";
+            
+        }
 
         numberofevents_raw = numberofevents;
 

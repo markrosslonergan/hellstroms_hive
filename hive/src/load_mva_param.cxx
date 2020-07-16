@@ -153,6 +153,15 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
 
 
 
+        TiXmlElement *pAddWeight = pBDTfile->FirstChildElement("additional_weight");
+        std::string add_wei = "1.0";
+        while(pAddWeight){
+                std::string unpar =  pAddWeight->GetText();
+                std::string parsed = this->AliasParse(unpar);
+                add_wei = parsed;
+            pAddWeight = pAddWeight->NextSiblingElement("additional_weight");
+            }
+        bdt_additional_weights.push_back(add_wei);
 
         TiXmlElement *pDefinition = pBDTfile->FirstChildElement("definition");
         std::vector<std::string> this_denom; 
@@ -671,6 +680,17 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             bdt_plotnames.push_back(t_plotname);
         }
 
+
+
+        TiXmlElement *pAddWeight = pBDTfile->FirstChildElement("additional_weight");
+        std::string add_wei = "1.0";
+        while(pAddWeight){
+                std::string unpar =  pAddWeight->GetText();
+                std::string parsed = this->AliasParse(unpar);
+                add_wei = parsed;
+            pAddWeight = pAddWeight->NextSiblingElement("additional_weight");
+            }
+        bdt_additional_weights.push_back(add_wei);
 
 
 
