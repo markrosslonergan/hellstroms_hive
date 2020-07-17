@@ -475,9 +475,15 @@
 <var def = "#GE#" binning = "(4,0,600)" unit = "Corrected Calorimetric Shower Energy D Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#BOXD# &amp;&amp; #COSCUT#"/>
 
 
+<!--<var def = "simple_1g0pMar2020COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score FS" type="d" training= "" group = "335" logplot = "true" cut = "#FSCUTS#" />
+<var def = "simple_1g0pMar2020BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score FS" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#" />
+<var def = "simple_1g0pMar2020NCPi0_mva" binning = "(24,0.0,0.93)" unit = "NC#pi^{0} BDT Score FS" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#"/>
+-->
+
 <var def = "1g0pMar2020COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score FS" type="d" training= "" group = "335" logplot = "true" cut = "#FSCUTS#" />
 <var def = "1g0pMar2020BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score FS" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#" />
 <var def = "1g0pMar2020NCPi0_mva" binning = "(24,0.0,0.93)" unit = "NC#pi^{0} BDT Score FS" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#"/>
+
 
 <var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm] FS" type="d"  training=""  cut = "#FSCUTS#" group = "336"/>
 <var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(24,0,1)" unit = "Fraction of unassocaited hits in slice F" type ="d"  training="" group="336"  cut = "#FSCUTS#"/>
