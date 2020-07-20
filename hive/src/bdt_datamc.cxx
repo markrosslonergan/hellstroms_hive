@@ -317,7 +317,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 std::cout<<" var.additional_cut = "<< var.additional_cut <<std::endl;
             }
 
-            var.is_logplot = true;
+            var.is_logplot = false;
             std::cout<<"Starting on variable "<<var.name<<std::endl;
 
             TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(), (stack_mode? 2200 : 1801),1400); //1600

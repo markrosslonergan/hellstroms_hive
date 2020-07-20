@@ -447,6 +447,7 @@
 <var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "9"/>
 <var def = "#GE#" binning = "(4,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "10"/>
 <var def = "#GE#" binning = "(8,0,800)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "11"/>
+<var def = "#GE#" binning = "(3,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "34"/>
 
 <!--pi0 vars -->
 <!--
