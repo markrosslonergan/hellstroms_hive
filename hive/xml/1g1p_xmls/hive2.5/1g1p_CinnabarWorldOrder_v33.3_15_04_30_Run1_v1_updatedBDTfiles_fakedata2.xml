@@ -71,10 +71,10 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "FakeData/fakedata_set1_run1_v33.3.root" tag = "FakeData1Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Fake Data Run 1 Set 1">
+<bdtfile filename = "FakeData/fakedata_set2_run1_v33.3.root" tag = "FakeData2Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Fake Data Run 1 Set 2">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam">
-        <tor860_wcut> 2.06988e+20 </tor860_wcut>   
+     <data type="OnBeam">
+        <tor860_wcut>4.06258e+20 </tor860_wcut>   
     </data>
 </bdtfile>
 
