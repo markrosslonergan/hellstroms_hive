@@ -31,6 +31,17 @@
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name,bool shape_only);
 
+std::string ReplaceString(std::string subject, const std::string& search,
+                                  const std::string& replace) {
+        size_t pos = 0;
+            while ((pos = subject.find(search, pos)) != std::string::npos) {
+                         subject.replace(pos, search.length(), replace);
+                                  pos += replace.length();
+                                      }
+                return subject;
+}
+
+
 int main (int argc, char *argv[]){
 
     //This is a standardized location on /pnfs/ that everyone can use. 
@@ -515,7 +526,7 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-        histogram_stack->plot_pot = 12.25e20;//.115e20; //12.25e20;//10.115e20;//4.9e19;
+        histogram_stack->plot_pot =  2.06988e20  ;//12.25e20;//.115e20; //12.25e20;//10.115e20;//4.9e19;
         std::cout<<"flag1"<<std::endl;
 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
@@ -1337,10 +1348,10 @@ else if(mode_option == "eff2"){
     if(which_file==-1){
         for(size_t f =0; f< bdt_files.size(); f++){
             std::cout<<"on bdt file "<<f<<std::endl;
-            bdt_files[f]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot);
+            bdt_files[f]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot,external_cuts);
         }
     }else{
-        bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot);
+        bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot,external_cuts);
 
     }
     return 0;
@@ -1401,9 +1412,11 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
         std::cout<<sedder_BIN<<std::endl;
         system(sedder_BIN.c_str());
 
-
-        std::cout<<"Now lets add the variable additional cuts "<<v.additional_cut<<std::endl;
-        std::string sedder_WEI = "sed  -i 's@WEIWEIWEI@(" + v.additional_cut + ")@' " + covar_flux_template_xml+"."+sVID+".xml";
+        
+        std::string addc = v.additional_cut;
+        addc = ReplaceString(addc,"&&","\\&amp;\\&amp;");
+        std::cout<<"Now lets add the variable additional cuts "<<addc<<std::endl;
+        std::string sedder_WEI = "sed  -i 's@WEIWEIWEI@(" + addc + ")@' " + covar_flux_template_xml+"."+sVID+".xml";
         std::cout<<sedder_WEI<<std::endl;
         system(sedder_WEI.c_str());
 
@@ -1475,6 +1488,16 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         std::cout<<sedder_STAGEB<<std::endl;
         system(sedder_STAGEA.c_str());
         system(sedder_STAGEB.c_str());
+        
+        std::string addc = v.additional_cut;
+        addc = ReplaceString(addc,"&&","\\&amp;\\&amp;");
+        std::cout<<"Now lets add the variable additional cuts "<<addc<<std::endl;
+        std::string sedder_WEI = "sed  -i 's@WEIWEIWEI@(" + addc + ")@' " + covar_det_template_xml+"."+sVID+".xml";
+        std::cout<<sedder_WEI<<std::endl;
+        system(sedder_WEI.c_str());
+
+        
+        
         std::cout<<"Ok, now lets use a preprepared sbnfit_make_covariance to generate this "<<std::endl;
         std::cout<<"Looping over the following DetSYs: "<<std::endl;
         for(auto &ss: det_names)std::cout<<" "<<ss;
