@@ -918,7 +918,8 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
 
 TH1* bdt_file::getTH1(bdt_variable & var, std::string  cuts, std::string  nam, double  plot_POT, int  rebin){
 
-    std::string in_bins = "("+var.name+"<"+std::to_string(var.edges[2]) +"&&"+var.name+">"+std::to_string(var.edges[1])+")";
+    double tol = 0.000001;
+    std::string in_bins = "("+var.name+"<="+std::to_string(var.edges[2]+tol) +"&&"+var.name+">="+std::to_string(var.edges[1]-tol)+")";
     //TCanvas *ctmp = new TCanvas();
    
     if (var.additional_cut == "")  {
@@ -962,12 +963,16 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 
     std::vector<TH1*> to_sort;
     std::vector<double> integral_sorter;
-
+ 
+    if (var.additional_cut == "")  {
+        var.additional_cut = "1.0";
+   }
+    
     for(int i=0; i< recomc_cuts.size(); i++){
         std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
         TCanvas *ctmp = new TCanvas();
     //    this->CheckWeights();
-        this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
+        this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+var.additional_cut+"&&"+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
         std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
         //gDirectory->ls();
 
