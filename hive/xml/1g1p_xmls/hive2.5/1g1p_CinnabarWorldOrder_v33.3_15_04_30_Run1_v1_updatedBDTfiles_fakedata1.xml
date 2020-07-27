@@ -7,14 +7,14 @@
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "true" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "true">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -834,6 +834,68 @@
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSV BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<!--
+<var def = "#GE#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "35" cut = "#NOSSVBDT#"/>
+
+<var def = "log10(Min$(isolation_min_dist_trk_unassoc))" binning = "(18,-1,2)" unit = "Min Dist from track to Unnass hit log[cm]" type="d"    training="" group = "34" cut = "#NOSSV#"/>
+<var def = "Sum$(isolation_num_shr_hits_win_1cm_trk)" binning = "(51,0,40)" unit = "Num Shr hits in 1cm" type="d"    training="" group = "34" cut = "#NOSSV#"/>
+<var def = "Sum$(isolation_num_shr_hits_win_2cm_trk)" binning = "(51,0,40)" unit = "Num Shr hits in 2cm" type="d"    training="" group = "34" cut = "#NOSSV#"/>
+<var def = "Sum$(isolation_num_shr_hits_win_5cm_trk)" binning = "(18,0,40)" unit = "Num Shr hits in 5cm" type="d"    training="" group = "34" cut = "#NOSSV#"/>
+<var def = "Sum$(isolation_num_shr_hits_win_10cm_trk)" binning = "(18,0,40)" unit = "Num Shr hits in 10cm" type="d"    training="" group = "34" cut = "#NOSSV#"/>
+<var def = "Sum$(isolation_num_unassoc_hits_win_1cm_trk)" binning = "(18,0,40)" unit = "Num Unnass hits in 1cm" type="d"    training="" group = "34" cut = "#NOSSV#"/>
+<var def = "Sum$(isolation_num_unassoc_hits_win_2cm_trk)" binning = "(18,0,40)" unit = "Num Unnass hits in 2cm" type="d"    training="" group = "34" cut = "#NOSSV#"/>
+<var def = "Sum$(isolation_num_unassoc_hits_win_5cm_trk)" binning = "(18,0,40)" unit = "Num Unnass hits in 5cm" type="d"    training="" group = "34" cut = "#NOSSV#"/>
+<var def = "Sum$(isolation_num_unassoc_hits_win_10cm_trk)" binning = "(18,0,200)" unit = "Num Unnass hits in 10cm" type="d"    training="" group = "34" cut = "#NOSSV#"/>
+<var def = "DeNan(sss_num_candidates,0)" binning="(18,0,15)" unit = "Second Shower Number of  candidate" type ="d"  training="" group = "34" cut = "#NOSSV#" />
+<var def = "DeNan(sss3d_num_showers,0)" binning="(18,0,50)" unit = "Second Shower 3D Number of  candidate" type ="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(18,0,1)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "log10(sss_num_unassociated_hits)" binning="(18,0,4)" unit = "Number of unassocaited hits in slice log10" type ="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "log10(sss_num_unassociated_hits_below_threshold)" binning="(18,0,4)" unit = "Number of unassocaited hits below thresh in slice log10" type ="d"  training="" group = "34" cut = "#NOSSV#"/>
+
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(18,0,80)" unit = "Min impact parm basic" type="d" training="" group = "34" cut = "#NOSSV#"/>
+<var def = "Min$(sss_candidate_min_dist)" binning="(18,0,80)" unit = "Min conv parm basic" type="d" training="" group = "34" cut = "#NOSSV#"/>
+
+<var def = "(sss2d_conv_ranked_conv==sss2d_ioc_ranked_conv)" binning = "(2,0,1)" unit = "Is SSS2d same" type = "d" training = "" group = "34" cut = "#NOSSV#"/>
+
+<var def = "sss2d_conv_ranked_en" binning = "(18,0,200)" unit ="sss2d closest candidate energy energy [MeV" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss2d_conv_ranked_conv" binning = "(18,0,80)" unit ="sss2d closest candidate conversion Distance [cm]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss2d_conv_ranked_ioc" binning = "(18,0,1.2)" unit ="sss2d closest candidate IOC ratio" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss2d_conv_ranked_invar" binning = "(18,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss2d_conv_ranked_angle_to_shower" binning = "(18,0,3.14159)" unit ="sss2d closest candidate angle wrt primary shower [deg]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss2d_conv_ranked_pca" binning = "(18,0.7,1)" unit = "sss2d closest candidate PCA" type="d" training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss2d_conv_ranked_num_planes" binning = "(3,1,3)" unit = "sss2d closest candidate num planes" type="d" training="" group = "34" cut = "#NOSSV#"/>
+
+<var def = "sss2d_invar_ranked_en" binning = "(18,0,200)" unit ="sss2d invar ranked energy energy [MeV" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss2d_invar_ranked_conv" binning = "(18,0,80)" unit ="sss2d invar ranked conversion Distance [cm]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss2d_invar_ranked_ioc" binning = "(18,0,1.2)" unit ="sss2d invar ranked IOC ratio" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss2d_invar_ranked_invar" binning = "(18,0,200)" unit ="sss2d invar ranked invariant mass [MeV]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss2d_invar_ranked_angle_to_shower" binning = "(18,0,3.14159)" unit ="sss2d invar ranked angle wrt primary shower [deg]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss2d_invar_ranked_pca" binning = "(18,0.7,1)" unit = "sss2d invar ranked PCA" type="d" training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss2d_invar_ranked_num_planes" binning = "(3,1,3)" unit = "sss2d invar ranked num planes" type="d" training="" group = "34" cut = "#NOSSV#"/>
+
+<var def = "sss3d_ioc_ranked_en" binning = "(18,0,80)" unit ="sss3d min IOC candidate energy [MeV]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss3d_ioc_ranked_conv" binning = "(18,0,100)" unit ="sss3d min IOC candidate conversion Distance [cm]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss3d_ioc_ranked_ioc" binning = "(18,0,1.2)" unit ="sss3d min IOC candidate IOC ratio" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss3d_ioc_ranked_invar" binning = "(18,0,200)" unit ="sss3d min IOC candidate invariant mass [MeV]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss3d_ioc_ranked_implied_invar" binning = "(18,0,200)" unit ="sss3d min IOC implied invariant mass [MeV]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss3d_ioc_ranked_opang" binning = "(18,-1,1)" unit ="sss3d min IOC angle wrt primary shower [cos]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss3d_ioc_ranked_implied_opang" binning = "(18,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss3d_invar_ranked_en" binning = "(18,0,200)" unit ="sss3d best invariant mass candidate energy [MeV]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss3d_invar_ranked_conv" binning = "(18,0,100)" unit ="sss3d best invariant mass candidate conversion Distance [cm]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss3d_invar_ranked_ioc" binning = "(18,0,1.2)" unit ="sss3d best invariant mass candidate IOC ratio" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+
+<var def = "sss3d_invar_ranked_invar" binning = "(18,0,200)" unit ="sss3d best invariant mass candidate invariant mass [MeV]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss3d_invar_ranked_implied_invar" binning = "(18,0,200)" unit ="sss3d best invariant mass candidate implied invariant mass [MeV]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+<var def = "sss3d_invar_ranked_opang" binning = "(18,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="d"  training="" group = "34" cut = "#NOSSV#"/>
+
+<var def = "reco_shower_plane2_meanRMS" binning = "(18,0,100)" unit = "Reco Shower plane 2 RMS" type="d" training ="" group = "34" cut = "#NOSSV#"/>
+<var def = "reco_shower_reclustered_energy_max" binning = "(18,0,250)" unit = "Reclustred Energy Max" type = "d" training="" group = "34" cut = "#NOSSV#" />
+<var def = "(reco_shower_reclustered_energy_plane0+reco_shower_reclustered_energy_plane2+reco_shower_reclustered_energy_plane1)/3.0" binning = "(18,0,125)" unit = "Reclustred Energy Mean" type = "d" training="" group = "34" cut = "#NOSSV#"/>
+-->
+
+
+
+
 
 <!--
 <var def = "simple_1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
@@ -848,11 +910,11 @@
 
 <var def = "simple_1g1pMar2020_v4COSMIC_mva" binning = "(16,0.9,1)" unit = "Cosmic BDT Score (Zoomed)" type="d"  training= "" group = "12" logplot = "true" pmin=0.1/>
 -->
-
+<!--
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(16,0.9,1)" unit = "BNB Other BDT Score (Zoomed)" type="d"  training= "" group = "12" logplot = "true" pmin=0.1/>
 
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(16,0.9,1)" unit = "Cosmic BDT Score (Zoomed)" type="d"  training= "" group = "12" logplot = "true" pmin=0.1/>
-
+-->
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "8" />
 
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) Cosmic Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4COSMIC_mva &gt;= #COS0#)" group = "10" />
@@ -968,6 +1030,9 @@
 <alias key="NCP0" value ="0.467404"/>
 <alias key="NUE0" value ="0.570654"/>
 <alias key="SSV0" value ="0.521623"/>
+
+<alias key = "NOSSVBDT" value = "(1g1pMar2020_v4COSMIC_mva >=0.974952 &amp;&amp; 1g1pMar2020_v4BNB_mva >=0.962730 &amp;&amp; 1g1pMar2020_v4NCPi0_mva >=0.467404 &amp;&amp; 1g1pMar2020_v4Nue_mva >=0.570654)"/>
+<alias key = "NOSSV" value = "1.0"/>
 
 <alias key="PM" value ="(0.938272)"/>
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>

@@ -851,6 +851,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
 
         std::string var_binning = pVar->Attribute("binning");
         std::string var_unit = pVar->Attribute("unit");
+        //std::cout<<" var_unit = "<< var_unit<<std::endl;
         std::string var_type = pVar->Attribute("type");
         const char * var_logplot = pVar->Attribute("logplot");
         bool var_logplot_bool = false;

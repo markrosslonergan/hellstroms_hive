@@ -1065,8 +1065,18 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             else    simple_topo_name = "unknown_topo";
             std::ofstream outfile;
             std::cout << "TESTING run_name = " << run_name << std::endl;
-            outfile.open("chisq_"+simple_topo_name+"_"+run_name+"_stage_"+std::to_string(s)+".txt", std::ios_base::app);
+            outfile.open("chisq_"+ simple_topo_name+ "_"+data_file->tag+"_values_stage_"+std::to_string(s)+".txt", std::ios_base::app);
             outfile << to_string_prec(TMath::Prob(mychi, ndof),3) << std::endl;
+            outfile.close();
+
+            outfile.open("chisq_"+ simple_topo_name+ "_"+data_file->tag+"_names_stage_"+std::to_string(s)+".txt", std::ios_base::app);
+            outfile << var.safe_unit << std::endl;
+            outfile.close();
+
+
+           // outfile.open("chisq_"+simple_topo_name+"_"+ run_name +"_stage_"+std::to_string(s)+".txt", std::ios_base::app);
+         //   outfile << to_string_prec(TMath::Prob(mychi, ndof),3) << std::endl;
+
 
             std::string combined = mean + "     " +ks;
             //std::string mean = "Ratio: Normalized" ;

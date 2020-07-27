@@ -344,6 +344,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     tvertex = (TTree*)f->Get(tnam.c_str());
     std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
 
+   
     run_fractions_file.resize(run_fractions.size(),0);
     double combin = 0.0;
     for(int i=0; i< run_fractions.size(); i++){
@@ -352,9 +353,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
             combin+=run_fractions_file[i];
     }
+   
     std::cout<<"Total is "<<combin<<std::endl;
-    if(fabs(combin-1.0)>0.00001){
-        std::cout<<"ERROR! The total that each defined run period adds up to is "<<combin<<" which is not 1."<<std::endl;
+    if(fabs(combin-1.0)>0.00001  && !is_data){
+        std::cout<<"ERROR! The total that each defined run period adds up to is "<<combin<<" which is not 1."<<" "<<this->tag<<" "<<is_data<<std::endl;
     
         exit(EXIT_FAILURE);
     }

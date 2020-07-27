@@ -71,10 +71,10 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "FakeData/fakedata_set1_run3_v33.3.root" tag = "FakeData1Run3" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Fake Data Run 3b Set 1">
+<bdtfile filename = "FakeData/fakedata_set3_run3_v33.3.root" tag = "FakeData3Run3" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Fake Data Run 3b Set 3">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam">
-        <tor860_wcut> 3.16197e+20 </tor860_wcut>   
+     <data type="OnBeam">
+        <tor860_wcut> 4.03256e+20 </tor860_wcut>   
     </data>
 </bdtfile>
 <!--
@@ -831,18 +831,7 @@
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSV BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "8" />
 
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) Cosmic Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4COSMIC_mva &gt;= #COS0#)" group = "10" />
-
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) NC#pi^{0} Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4NCPi0_mva &gt;= #NCP0#)" group = "10" />
-
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) BNB Other Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4BNB_mva &gt;= #BNB0#)" group = "10"/>
-
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) #nu_{e} Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4Nue_mva &gt;= #NUE0#)" group = "10"/>
-
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) SSV Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4SSV_mva &gt;= #SSV0#)" group = "10"/>
-<!--
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,1.01,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "8"/>
 
 <var def = "#GE#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "35" cut = "#NOSSVBDT#"/>
@@ -911,7 +900,7 @@
 <var def = "reco_shower_reclustered_energy_max" binning = "(18,0,250)" unit = "Reclustred Energy Max" type = "d" training="" group = "34" cut = "#NOSSV#" />
 <var def = "(reco_shower_reclustered_energy_plane0+reco_shower_reclustered_energy_plane2+reco_shower_reclustered_energy_plane1)/3.0" binning = "(18,0,125)" unit = "Reclustred Energy Mean" type = "d" training="" group = "34" cut = "#NOSSV#"/>
 
--->
+
 
 <!--pi0 vars -->
 <!--
@@ -1010,11 +999,6 @@
     </def>
 </recomc>
 -->
-<alias key="BNB0" value ="0.96273"/>
-<alias key="COS0" value ="0.974952"/>
-<alias key="NCP0" value ="0.467404"/>
-<alias key="NUE0" value ="0.570654"/>
-<alias key="SSV0" value ="0.521623"/>
 
 <alias key = "NOSSVBDT" value = "(1g1pMar2020_v4COSMIC_mva >=0.974952 &amp;&amp; 1g1pMar2020_v4BNB_mva >=0.962730 &amp;&amp; 1g1pMar2020_v4NCPi0_mva >=0.467404 &amp;&amp; 1g1pMar2020_v4Nue_mva >=0.570654)"/>
 <alias key = "NOSSV" value = "1.0"/>
