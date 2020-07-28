@@ -356,7 +356,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
    
     std::cout<<"Total is "<<combin<<std::endl;
     if(fabs(combin-1.0)>0.00001  && !is_data){
-        std::cout<<"ERROR! The total that each defined run period adds up to is "<<combin<<" which is not 1."<<std::endl;
+        std::cout<<"ERROR! The total that each defined run period adds up to is "<<combin<<" which is not 1."<<" "<<this->tag<<" "<<is_data<<std::endl;
     
         exit(EXIT_FAILURE);
     }
@@ -440,14 +440,14 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }*/
 
         if(this->tag=="NCPi0NotCoh"){
-            //weight_branch = "("+weight_branch+")*(1.0-mctruth_exiting_pi0_E)";
+         //   weight_branch = "("+weight_branch+")*(1.0 - 0.85*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
             
         }
 
         numberofevents_raw = numberofevents;
 
     }else if(is_data){
-        //This is for Pure On beam Data. Taken as input by calling 
+        //Ths is for Pure On beam Data. Taken as input by calling 
 
         std::cout<<"bdt_file::bdt_file()\t||\tFile is ON-BEAM DATA for purposes of getting POT."<<std::endl;
         tpot = (TTree*)f->Get(tnam_pot.c_str());

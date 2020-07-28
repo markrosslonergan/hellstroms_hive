@@ -59,7 +59,7 @@ int main (int argc, char *argv[]){
     // Added by A. Mogan 1/13/20 for doing normalization fits
     bool scale_mode = true;
     //double what_pot = 13.2e20;
-    double what_pot = 1.8e20;
+    double what_pot = 12.25e20;
     int which_file = -1;
     int which_bdt = -1;
     int which_stage = -1;
@@ -526,7 +526,7 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-        histogram_stack->plot_pot =  2.06988e20  ;//12.25e20;//.115e20; //12.25e20;//10.115e20;//4.9e19;
+        histogram_stack->plot_pot =  what_pot;;//2.06988e20  ;//12.25e20;//.115e20; //12.25e20;//10.115e20;//4.9e19;
         std::cout<<"flag1"<<std::endl;
 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
