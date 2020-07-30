@@ -466,7 +466,7 @@
 <var def = "#GE#" binning = "(4,0,450)" unit = "Corrected Calorimetric Shower Energy C NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="337" cut = "#BOXC#"/>
 <var def = "#GE#" binning = "(4,0,600)" unit = "Corrected Calorimetric Shower Energy D NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="337" cut = "#BOXD#"/>
 
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy FS Cos Cut 0.9 NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="338" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "#GE#" binning = "(18,33,600)" unit = "Corrected Calorimetric Shower Energy FS Cos Cut 0.9 NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="338" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
 <var def = "#GE#" binning = "(4,0,400)" unit = "Corrected Calorimetric Shower Energy A^{0} Cos Cut 0.9 NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="338" cut = "#BOXA0# &amp;&amp; #COSCUT#"/>
 <var def = "#GE#" binning = "(4,0,450)" unit = "Corrected Calorimetric Shower Energy B Cos Cut 0.9 NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="338" cut = "#BOXB# &amp;&amp; #COSCUT#"/>
 <var def = "#GE#" binning = "(4,0,450)" unit = "Corrected Calorimetric Shower Energy C Cos Cut 0.9 NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="338" cut = "#BOXC# &amp;&amp; #COSCUT#"/>
@@ -474,9 +474,20 @@
 <!--<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy D Cos Cut 0.9 NC #pi^{0} Scaling [MeV]" type = "d"   training="" group="338" cut = "#BOXD# &amp;&amp; #COSCUT#"/>-->
 
 
-<var def = "1g0pMar2020COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score FS NC #pi^{0} Scaling" type="d" training= "" group = "335" logplot = "true" cut = "#FSCUTS#" />
+<!--<var def = "1g0pMar2020COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score FS NC #pi^{0} Scaling" type="d" training= "" group = "335" logplot = "true" cut = "#FSCUTS#" />
 <var def = "1g0pMar2020BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score FS NC #pi^{0} Scaling" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#" />
 <var def = "1g0pMar2020NCPi0_mva" binning = "(24,0.0,0.93)" unit = "NC#pi^{0} BDT Score FS NC #pi^{0} Scaling" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#"/>
+-->
+<!--
+<var def = "simple_1g0pMar2020COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score FS NC #pi^{0} Scaling" type="d" training= "" group = "335" logplot = "true" cut = "#FSCUTS#" />
+<var def = "simple_1g0pMar2020BNB_mva" binning = "(24,0.3,1)" unit = "BNB Other BDT Score FS NC #pi^{0} Scaling" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#" />
+<var def = "simple_1g0pMar2020NCPi0_mva" binning = "(24,0.2,0.9)" unit = "NC#pi^{0} BDT Score FS NC #pi^{0} Scaling" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#"/>
+-->
+
+<var def = "1g0pMar2020COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score FS NC #pi^{0} Scaling" type="d" training= "" group = "335" logplot = "true" cut = "#FSCUTS#" />
+<var def = "1g0pMar2020BNB_mva" binning = "(24,0.3,1)" unit = "BNB Other BDT Score FS NC #pi^{0} Scaling" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#" />
+<var def = "1g0pMar2020NCPi0_mva" binning = "(24,0.2,0.9)" unit = "NC#pi^{0} BDT Score FS NC #pi^{0} Scaling" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#"/>
+
 
 <var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm] FS" type="d"  training=""  cut = "#FSCUTS#" group = "336"/>
 <var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(24,0,1)" unit = "Fraction of unassocaited hits in slice F" type ="d"  training="" group="336"  cut = "#FSCUTS#"/>
@@ -524,6 +535,13 @@
 <var def = "sss3d_ioc_ranked_conv" binning = "(24,0,85)" unit ="sss3d min IOC Conversion Dist [cm] FS Cos Cut 0.9" type="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
 <var def = "sss2d_conv_ranked_invar" binning = "(24,0,200)" unit ="sss2d closest candidate invariant mass [MeV] FS Cos Cut 0.9" type="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
 
+<var def = "sss3d_ioc_ranked_conv" binning = "(12,0,80)" unit ="sss3d min IOC Conversion Dist [cm] FS Cos Cut 0.9 NC #pi^{0} Scaling" type="d"  training=""  group = "342" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "reco_shower_phi_yx[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad] FS Cos Cut 0.9 NC #pi^{0} Scaling" type = "d"     training=""  group = "342" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "reco_shower_theta_yz[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad] FS Cos Cut 0.9 NC #pi^{0} Scaling" type = "d"     training=""  group = "342" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "(reco_shower_trackscore[0])" binning = "(12,0,0.5)" unit = "Shower Score FS Cos Cut 0.9 NC #pi^{0} Scaling" type ="d"  training =""  group = "342" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+<var def = "reco_shower_nuscore[0]" binning = "(12, 0, 1)" unit = "Neutrino Slice Score FS Cos Cut 0.9 NC #pi^{0} Scaling" type = "d"     training="" group = "342" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
+
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(12,2.5,10.0)" unit = "Shower dEdx [MeV/cm] FS Cos Cut 0.9 NC #pi^{0} Scaling" type="d"  training=""  cut = "#FSCUTS#&amp;&amp; #COSCUT#" group = "343"/>
 
 <!--pi0 vars -->
 <!--
