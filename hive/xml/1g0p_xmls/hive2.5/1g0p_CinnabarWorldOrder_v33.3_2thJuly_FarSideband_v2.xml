@@ -23,7 +23,7 @@
 -->
 
 
-<!--<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>-->
+<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
@@ -548,7 +548,13 @@
 <var def = "(reco_shower_trackscore[0])" binning = "(12,0,0.5)" unit = "Shower Score FS Cos Cut 0.9" type ="d"  training =""  group = "342" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
 <var def = "reco_shower_nuscore[0]" binning = "(12, 0, 1)" unit = "Neutrino Slice Score FS Cos Cut 0.9" type = "d"     training="" group = "342" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
 
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(12,2.5,10.0)" unit = "Shower dEdx [MeV/cm] D Cos Cut 0.9" type="d"  training=""  cut = "#BOXD#&amp;&amp; #COSCUT#" group = "343"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(12,2.5,8.0)" unit = "Shower dEdx [MeV/cm] D Cos Cut 0.9" type="d"  training=""  cut = "#BOXD#&amp;&amp; #COSCUT#" group = "343"/>
+<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(12,0,0.8)" unit = "Fraction of unassocaited hits in slice D Cos Cut 0.9 " type ="d"  training="" group="343"  cut = "#BOXD# &amp;&amp; #COSCUT#"/>
+
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(12,2.5,8.0)" unit = "Shower dEdx [MeV/cm] B Cos Cut 0.9" type="d"  training=""  cut = "#BOXB#&amp;&amp; #COSCUT#" group = "344"/>
+<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(12,0,0.8)" unit = "Fraction of unassocaited hits in slice B Cos Cut 0.9 " type ="d"  training="" group="344"  cut = "#BOXB# &amp;&amp; #COSCUT#"/>
+
+
 
 <!--pi0 vars -->
 <!--
