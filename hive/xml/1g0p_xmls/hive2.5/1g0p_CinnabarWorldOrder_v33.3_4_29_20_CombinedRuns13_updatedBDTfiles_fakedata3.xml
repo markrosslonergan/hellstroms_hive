@@ -2,48 +2,36 @@
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.988209,0.892728,0.428825)"/>
-<!--
-<plot_pot>
-    <run_period name ="RunI/II/IIIa" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) || ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116))" fraction = "0.4742"  />
-    <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.5258" />
-</plot_pot>
--->
+
 
 <plot_pot>
-    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) )" fraction = "0.231"  />
-    <run_period name ="RunII/III" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.769" />
+    <run_period name ="RunI/II/IIIa" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) || ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116))" fraction = "0.4957"  />
+    <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.5043" />
 </plot_pot>
 
 
-<!--<plot_pot>
-    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) )" fraction = "0.242"  />
-    <run_period name ="RunII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116))" fraction = "0.384" />
-   <run_period name ="RunIII" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.374" />
-</plot_pot>
--->
-
-
-<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>
+<!--<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>-->
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
-<filedir>/uboone/data/users/markross/Mar2020/</filedir>
+<!--<filedir>/uboone/data/users/markross/Mar2020/</filedir>-->
+<filedir>/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "true" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc == 1</cut> 
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "0.0" signal = "true" plot_on_top = "true">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter==5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -51,7 +39,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -59,7 +47,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnb_bdt_testing_sample_v33.3.uniq.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}"  scale = "1.0" plot_on_top = "false" >
 
     <definition>
         <cut> mctruth_cc_or_nc==1</cut>
@@ -67,14 +55,14 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ccpi0_overlay_combined_run13_v33.3.uniq.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ccpi0_overlay_combined_run13_v33.3.uniq.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>mctruth_cc_or_nc==0 </cut> 
         <cut>mctruth_num_exiting_pi0==1</cut>
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
@@ -86,23 +74,32 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "nue_bdt_testing_sample_v33.3.uniq.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/nue_bdt_testing_sample_v33.3.uniq.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
     <definition>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
     </definition>
 </bdtfile>
 
+<bdtfile filename = "/uboone/data/users/ksutton/fakedata_7_27_20/fakedata_set3_combined_v33.3.root" tag = "FakeData3" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Fake Data Run 1+3b Set 3">
+    <definition><cut>1</cut></definition>
+    <data type="OnBeam">
+        <tor860_wcut> 7.99645e+20 </tor860_wcut>   
+    </data>
+</bdtfile>
 
+
+
+<!--
 <bdtfile filename = "dirt_overlay_combined_run123_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" >
     <definition><cut>1</cut></definition>
 </bdtfile>
 
-<bdtfile filename = "sbnfit_1g0pMar2020_stage_1_gLEE_farsideband_1g0p_v1_total.root" tag = "Farsideband1g0p" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "FS Run 1-3 Data">
+<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
-        <tor860_wcut>  6.803e20 </tor860_wcut>
-        <E1DCNT_wcut>  159380327.0 </E1DCNT_wcut>
+        <tor860_wcut>   4.081e+19 </tor860_wcut>
+        <E1DCNT_wcut>   9037544.0</E1DCNT_wcut>
     </data>
 </bdtfile>
 
@@ -111,15 +108,15 @@
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut>  6.803e20 </tor860_wcut>
-        <E1DCNT_wcut> 159380327.0 </E1DCNT_wcut>
-        <EXT> 166300493.0 </EXT>
+        <tor860_wcut> 4.081e+19 </tor860_wcut>
+        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>
+        <EXT>166300493.0</EXT>
     </data>
 </bdtfile>
-
+-->
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
 
-<bdtfile filename = "ncpi0_bdt_training_sample_v33.3.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncpi0_bdt_training_sample_v33.3.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -130,7 +127,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -141,7 +138,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "bnbext_bdt_training_sample_v33.3.uniq.root" tag = "BNBextTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnbext_bdt_training_sample_v33.3.uniq.root" tag = "BNBextTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut>1</cut>
     </definition>
@@ -153,7 +150,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBextTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Test" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBextTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Test" fillstyle = "3333" scale = "1">
     <definition>
         <cut>1</cut>
     </definition>
@@ -165,7 +162,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_bdt_training_sample_v33.3.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncdelta_bdt_training_sample_v33.3.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
@@ -182,7 +179,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_bdt_testing_sample_v33.3.uniq.root" tag = "NCDeltaTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTest" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncdelta_bdt_testing_sample_v33.3.uniq.root" tag = "NCDeltaTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTest" fillstyle = "3333" scale = "1">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
@@ -199,7 +196,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "bnb_bdt_training_sample_v33.3.uniq.root" tag = "BNBOtherTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BnbTrain" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnb_bdt_training_sample_v33.3.uniq.root" tag = "BNBOtherTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BnbTrain" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -209,7 +206,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOtherTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BNBTest" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOtherTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BNBTest" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -457,103 +454,7 @@
 <var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "9"/>
 <var def = "#GE#" binning = "(4,100,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "10"/>
 <var def = "#GE#" binning = "(8,0,800)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "11"/>
-
-<var def = "reco_shower_startx" binning = "(24,-20,270)" unit = "Reconstructed Shower Start X FS [cm]" type="d"  training="" cut = "#FSCUTS#" group = "333"/>
-<var def = "reco_shower_starty" binning = "(24,-140,140)" unit = "Reconstructed Shower Start Y FS [cm]" type="d" training="" cut = "#FSCUTS#" group = "333"/>
-<var def = "reco_shower_startz" binning = "(24,-20,1100)" unit = "Reconstructed Shower Start Z FS [cm]" type="d" training="" cut = "#FSCUTS#" group = "333" />
-
-
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy FS Cos Cut 0.9 [MeV]" type = "d"   training="" group="334" cut = "#FSCUTS# &amp;&amp; 1g0pMar2020COSMIC_mva &gt;=0.9"/>
-<var def = "reco_shower_energy_plane0[0]/1000.0" binning = "(18,0,0.6)" unit = "Reconstructed Calorimetric Shower Energy Plane 0 FS [GeV]" type = "d"    training="" group="334" cut = "#FSCUTS# &amp;&amp; 1g0pMar2020COSMIC_mva &gt;=0.9"/>
-<var def = "reco_shower_energy_plane1[0]/1000.0" binning = "(18,0,0.6)" unit = "Reconstructed Calorimetric Shower Energy Plane 1 FS [GeV]" type = "d"    training="" group="334" cut = "#FSCUTS# &amp;&amp; 1g0pMar2020COSMIC_mva &gt;=0.9"/>
-<var def = "reco_shower_energy_plane2[0]/1000.0" binning = "(18,0,0.6)" unit = "Reconstructed Calorimetric Shower Energy Plane 2 FS [GeV]" type = "d"    training="" group="334" cut = "#FSCUTS# &amp;&amp; 1g0pMar2020COSMIC_mva &gt;=0.9"/>
-
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy FS [MeV]" type = "d"   training="" group="340" cut = "#FSCUTS#"/>
-<var def = "#GE#" binning = "(4,0,400)" unit = "Corrected Calorimetric Shower Energy A^{0} [MeV]" type = "d"   training="" group="337" cut = "#BOXA0#"/>
-<var def = "#GE#" binning = "(4,0,450)" unit = "Corrected Calorimetric Shower Energy B [MeV]" type = "d"   training="" group="337" cut = "#BOXB#"/>
-<var def = "#GE#" binning = "(4,0,450)" unit = "Corrected Calorimetric Shower Energy C [MeV]" type = "d"   training="" group="337" cut = "#BOXC#"/>
-<var def = "#GE#" binning = "(4,0,600)" unit = "Corrected Calorimetric Shower Energy D [MeV]" type = "d"   training="" group="337" cut = "#BOXD#"/>
-
-<var def = "sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)" binning = "(10,0.0,1.0)" unit ="True #pi^{0} Momentum B" type = "d" training = "" group = "2" cut = "#BOXB# &amp;&amp; 1g0pMar2020COSMIC_mva &gt;=0.9"/>
-<var def = "sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)" binning = "(10,0.0,1.0)" unit ="True #pi^{0} Momentum D" type = "d" training = "" group = "2" cut = "#BOXD# &amp;&amp; 1g0pMar2020COSMIC_mva &gt;=0.9"/>
-
-
-<var def = "#GE#" binning = "(18,33,600)" unit = "Corrected Calorimetric Shower Energy FS Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "#GE#" binning = "(4,0,400)" unit = "Corrected Calorimetric Shower Energy A^{0} Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#BOXA0# &amp;&amp; #COSCUT#"/>
-<var def = "#GE#" binning = "(4,0,450)" unit = "Corrected Calorimetric Shower Energy B Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#BOXB# &amp;&amp; #COSCUT#"/>
-<var def = "#GE#" binning = "(4,0,450)" unit = "Corrected Calorimetric Shower Energy C Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#BOXC# &amp;&amp; #COSCUT#"/>
-<!--<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy D Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#BOXD# &amp;&amp; #COSCUT#"/>-->
-
-<var def = "#GE#" binning = "(4,0,600)" unit = "Corrected Calorimetric Shower Energy D Cos Cut 0.9 [MeV]" type = "d"   training="" group="338" cut = "#BOXD# &amp;&amp; #COSCUT#"/>
-
-
-<!--<var def = "simple_1g0pMar2020COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score FS" type="d" training= "" group = "335" logplot = "true" cut = "#FSCUTS#" />
-<var def = "simple_1g0pMar2020BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score FS" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#" />
-<var def = "simple_1g0pMar2020NCPi0_mva" binning = "(24,0.0,0.93)" unit = "NC#pi^{0} BDT Score FS" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#"/>
--->
-
-<var def = "1g0pMar2020COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score FS" type="d" training= "" group = "335" logplot = "true" cut = "#FSCUTS#" />
-<var def = "1g0pMar2020BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score FS" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#" />
-<var def = "1g0pMar2020NCPi0_mva" binning = "(24,0.0,0.93)" unit = "NC#pi^{0} BDT Score FS" type="d" training= ""  group = "335" logplot = "true" cut = "#FSCUTS#"/>
-
-
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm] FS" type="d"  training=""  cut = "#FSCUTS#" group = "336"/>
-<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(24,0,1)" unit = "Fraction of unassocaited hits in slice F" type ="d"  training="" group="336"  cut = "#FSCUTS#"/>
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm] FS Cos Cut 0.9 " type="d"  training=""  cut = "#FSCUTS#&amp;&amp; #COSCUT#" group = "336"/>
-<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(24,0,1)" unit = "Fraction of unassocaited hits in slice FS Cos Cut 0.9 " type ="d"  training="" group="336"  cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-
-<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score FS Cos Cut 0.9" type = "d"     training="" group = "339" cut = "#FSCUTS#"/>
-<var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm] FS" type = "d"     training=""  group = "339" cut = "#FSCUTS#"/>
-<var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(24,0 ,1000)" unit = "Ratio Reconstructed Shower Length/Reconstructed Shower Energy [cm/GeV] FS" type = "d"  training=""  group = "339" cut = "#FSCUTS#"/>
-<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(24,0,50)" unit = "Reconstructed Shower Opening Angle [deg] FS" type = "d"     training=""  group = "339" cut = "#FSCUTS#"/>
-<var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad] FS" type = "d"     training=""  group = "339" cut = "#FSCUTS#"/>
-<var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad] FS" type = "d"     training=""  group = "339" cut = "#FSCUTS#"/>
-<var def = "(reco_shower_trackscore[0])" binning = "(24,0,0.5)" unit = "Shower Score FS" type ="d"  logplot = "true" training =""  group = "339" cut = "#FSCUTS#"/>
-<var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm] FS" binning ="(24,0,3)" type="d"  training=""  group = "339" cut = "#FSCUTS#"  logplot = "true"/>
-<var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness FS" type="d"  training = ""  group = "339" cut = "#FSCUTS#"/>
-<var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness FS" type="d"  training = ""  group = "339" cut = "#FSCUTS#"/>
-<var def = "reco_shower_start_dist_to_SCB" binning="(24,0,150)" unit = "Distance from Shower Start to SCB FS" type ="d"  training=""  group = "339" cut = "#FSCUTS#"/>
-<var def = "#GE#/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV] FS" binning = "(24,0,0.35)" type="d"  training=""  group = "339" cut = "#FSCUTS#" />
-<var def = "#GE#/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad] FS" binning = "(24,0,0.05)" type = "d"   training = ""  group = "339" cut = "#FSCUTS#"/>
-<var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV] FS" binning = "(24,0,0.3)" type = "d"  training = ""  group = "339" cut = "#FSCUTS#"/>
-<var def = "Min$(sss_candidate_impact_parameter)" binning="(24,0,80)" unit = "Min impact parm basic FS" type="d" training="" group = "339" cut = "#FSCUTS#"  logplot = "true"/>
-<var def = "Min$(sss_candidate_min_dist)" binning="(24,0,80)" unit = "Min conv parm basic FS" type="d" training="" group = "339" cut = "#FSCUTS#"/>
-<var def = "sss3d_ioc_ranked_implied_opang" binning = "(24,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos] FS" type="d"  training=""  group = "339" cut = "#FSCUTS#"  logplot = "true"/>
-<var def = "sss3d_ioc_ranked_conv" binning = "(24,0,100)" unit ="sss3d min IOC Conversion Dist [cm] FS" type="d"  training=""  group = "339" cut = "#FSCUTS#"/>
-<var def = "sss2d_conv_ranked_invar" binning = "(24,0,200)" unit ="sss2d closest candidate invariant mass [MeV] FS" type="d"  training=""  group = "339" cut = "#FSCUTS#"/>
-
-<var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm] FS Cos Cut 0.9" type = "d"     training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(24,0 ,1000)" unit = "Ratio Reconstructed Shower Length/Reconstructed Shower Energy [cm/GeV] FS Cos Cut 0.9" type = "d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(24,0,35)" unit = "Reconstructed Shower Opening Angle [deg] FS Cos Cut 0.9" type = "d"     training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm] FS Cos Cut 0.9" binning ="(24,0,3)" type="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"  logplot = "true"/>
-<var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness FS Cos Cut 0.9" type="d"  training = ""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness FS Cos Cut 0.9" type="d"  training = ""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "reco_shower_start_dist_to_SCB" binning="(24,0,115)" unit = "Distance from Shower Start to SCB FS Cos Cut 0.9" type ="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "#GE#/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV] FS Cos Cut 0.9" binning = "(34, 0.05,0.3)" type="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#" />
-<var def = "#GE#/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad] FS Cos Cut 0.9" binning = "(24,0,0.05)" type = "d"   training = ""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV] FS Cos Cut 0.9" binning = "(24,0,0.3)" type = "d"  training = ""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "Min$(sss_candidate_impact_parameter)" binning="(24,0,80)" unit = "Min impact parm basic FS Cos Cut 0.9" type="d" training="" group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"  logplot = "true"/>
-<var def = "Min$(sss_candidate_min_dist)" binning="(24,0,80)" unit = "Min conv parm basic FS Cos Cut 0.9" type="d" training="" group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-
-<var def = "sss3d_ioc_ranked_implied_opang" binning = "(24,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos] FS Cos Cut 0.9" type="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"  logplot = "true"/>
-<var def = "sss2d_conv_ranked_invar" binning = "(24,0,200)" unit ="sss2d closest candidate invariant mass [MeV] FS Cos Cut 0.9" type="d"  training=""  group = "339" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy Run 1 FS [MeV]" type = "d"   training="" group="341" cut = "#FSCUTS# &amp;&amp; #RUN1# "/>
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy Run 2 FS [MeV]" type = "d"   training="" group="341" cut = "#FSCUTS# &amp;&amp; #RUN2# "/> 
-<var def = "#GE#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy Run 3 FS [MeV]" type = "d"   training="" group="341" cut = "#FSCUTS# &amp;&amp; #RUN3# "/>
-
-<var def = "sss3d_ioc_ranked_conv" binning = "(12,0,80)" unit ="sss3d min IOC Conversion Dist [cm] FS Cos Cut 0.9" type="d"  training=""  group = "342" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "reco_shower_phi_yx[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad] FS Cos Cut 0.9" type = "d"     training=""  group = "342" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "reco_shower_theta_yz[0]" binning = "(12,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad] FS Cos Cut 0.9" type = "d"     training=""  group = "342" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "(reco_shower_trackscore[0])" binning = "(12,0,0.5)" unit = "Shower Score FS Cos Cut 0.9" type ="d"  training =""  group = "342" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-<var def = "reco_shower_nuscore[0]" binning = "(12, 0, 1)" unit = "Neutrino Slice Score FS Cos Cut 0.9" type = "d"     training="" group = "342" cut = "#FSCUTS# &amp;&amp; #COSCUT#"/>
-
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(12,2.5,8.0)" unit = "Shower dEdx [MeV/cm] D Cos Cut 0.9" type="d"  training=""  cut = "#BOXD#&amp;&amp; #COSCUT#" group = "343"/>
-<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(12,0,0.8)" unit = "Fraction of unassocaited hits in slice D Cos Cut 0.9 " type ="d"  training="" group="343"  cut = "#BOXD# &amp;&amp; #COSCUT#"/>
-
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(12,2.5,8.0)" unit = "Shower dEdx [MeV/cm] B Cos Cut 0.9" type="d"  training=""  cut = "#BOXB#&amp;&amp; #COSCUT#" group = "344"/>
-<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(12,0,0.8)" unit = "Fraction of unassocaited hits in slice B Cos Cut 0.9 " type ="d"  training="" group="344"  cut = "#BOXB# &amp;&amp; #COSCUT#"/>
-
+<var def = "#GE#" binning = "(6,100,700)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "34"/>
 
 
 <!--pi0 vars -->
@@ -588,9 +489,6 @@
 
 
 <!-- ================= RECO-MC Matching ======================== -->
-
-
-<!--
 <recomc>
     <def name="Cosmic Contaminated" col ="( 126,126,241)"> 
         (sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4 )        
@@ -607,25 +505,6 @@
     </def> 
     <def name = "Signal Definition" col="(241,126,126)">
         ((sim_shower_overlay_fraction &lt; 0.4 &amp;&amp;  sim_track_overlay_fraction &lt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 &amp;&amp;  (mctruth_exiting_photon_energy &gt; 0.02))  &amp;&amp; (sim_shower_pdg==22 &amp;&amp;sim_track_pdg==2212) &amp;&amp;  mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 &amp;&amp; mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 &amp;&amp; mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 &amp;&amp; mctruth_num_exiting_pi0==0 
-    </def>
-</recomc>
--->
-
-<recomc>
-    <def name="Muon" col ="(252, 123, 3)"> 
-        fabs(sim_shower_pdg) == 13             
-    </def> 
-    <def name="Proton" col ="(252, 231, 3)"> 
-        fabs(sim_shower_pdg) == 2212            
-    </def> 
-    <def name = "Pion" col="(3, 252, 140)">
-        fabs(sim_shower_pdg) == 211       
-    </def>
-    <def name = "Electron" col="(3, 186, 252)">
-        fabs(sim_shower_pdg) == 11       
-    </def>
-    <def name = "Photon" col="(69, 3, 252)">
-        fabs(sim_shower_pdg) == 22 
     </def>
 </recomc>
 
@@ -674,31 +553,6 @@
     </def>
 </recomc>
 -->
-
-<alias key = "FSCUTS" value = "((1g0pMar2020NCPi0_mva < 0.428825 || 1g0pMar2020BNB_mva < 0.892728 || 1g0pMar2020COSMIC_mva < 0.988209) &amp;&amp; (1g0pMar2020NCPi0_mva >=0.2 &amp;&amp; 1g0pMar2020BNB_mva >= 0.3  &amp;&amp; DeNan((reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0))),reco_shower_dEdx_amalgamated[0]) >= 2.5))" />
-
-<alias key = "BOXA0" value = "(1g0pMar2020NCPi0_mva &gt;= #NCP0# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB0# &amp;&amp;  1g0pMar2020COSMIC_mva &lt; #COS0#) &amp;&amp; ((1g0pMar2020NCPi0_mva >=0.2 &amp;&amp; 1g0pMar2020BNB_mva >= 0.3  &amp;&amp; DeNan((reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0    ))),reco_shower_dEdx_amalgamated[0]) >= 2.5))"/>
-
-<alias key = "BOXB" value = "(1g0pMar2020NCPi0_mva &gt; #NCP0# &amp;&amp;1g0pMar2020BNB_mva&lt;= #BNB0#) &amp;&amp; ((1g0pMar2020NCPi0_mva >=0.2 &amp;&amp; 1g0pMar2020BNB_mva >= 0.3  &amp;&amp; DeNan((reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0    ))),reco_shower_dEdx_amalgamated[0]) >= 2.5))"/>
-
-<alias key = "BOXC" value = "(1g0pMar2020NCPi0_mva &lt; #NCP0# &amp;&amp;1g0pMar2020BNB_mva&lt; #BNB0#) &amp;&amp; ((1g0pMar2020NCPi0_mva >=0.2 &amp;&amp; 1g0pMar2020BNB_mva >= 0.3  &amp;&amp; DeNan((reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0    ))),reco_shower_dEdx_amalgamated[0]) >= 2.5))"/>
-
-<alias key = "BOXD" value = "(1g0pMar2020NCPi0_mva &lt; #NCP0# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB0#) &amp;&amp; ((1g0pMar2020NCPi0_mva >=0.2 &amp;&amp; 1g0pMar2020BNB_mva >= 0.3  &amp;&amp; DeNan((reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0    ))),reco_shower_dEdx_amalgamated[0]) >= 2.5))"/>
-
-<alias key = "COSCUT" value = "1g0pMar2020COSMIC_mva &gt;=0.9"/>
-
-<alias key = "RUN1" value = "( (run_number >= 4952 &amp;&amp; run_number <= 7770) )"/>
-<alias key = "RUN2" value = "( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116))"/>
-<alias key = "RUN3" value = "( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))"  />
-
-
-<alias key="BNB0" value ="0.892728"/>
-<alias key="BNB" value ="0.3"/>
-<alias key="COS0" value ="0.988209"/>
-<alias key="COS" value ="0.9"/>
-<alias key="NCP" value ="0.2"/>
-<alias key="NCP0" value ="0.428825"/>
-<alias key="DEDX" value ="2.5"/>
 
 <alias key="GE" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0)))" />
 <alias key="GEO" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)" /><alias key="PM" value ="(0.938272)"/>

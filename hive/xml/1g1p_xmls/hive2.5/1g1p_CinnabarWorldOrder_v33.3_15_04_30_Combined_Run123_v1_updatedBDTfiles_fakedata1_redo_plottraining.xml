@@ -3,8 +3,8 @@
 <topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.974952,0.96273,0.467404,0.570654,0.521623)" />
 
 <plot_pot>
-    <run_period name ="RunI/II/IIIa" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) || ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116))" fraction = "0.4742"  />
-    <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.5258" />
+    <run_period name ="RunI/II/IIIa" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) || ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116))" fraction = "0.3956"  />
+    <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.6044" />
 </plot_pot>
 
 <!--<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/> -->
@@ -12,21 +12,21 @@
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "true">
+<bdtfile filename = "ncdelta_bdt_training_sample_v33.3.root" tag = "TRAINNCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "TRAIN 1x SM NC #Delta Radiative" signal = "true" plot_on_top = "true">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc == 1</cut> 
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "true" >
+<bdtfile filename = "ncdelta_bdt_training_sample_v33.3.root" tag = "TRAINNCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "TRAIN x3.5 SM NC #Delta Radiative (LEE)" scale = "3.5" signal = "true" plot_on_top = "true" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_bdt_training_sample_v33.3.root" tag = "TRAINNCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "TRAIN NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter==5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -34,7 +34,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_bdt_training_sample_v33.3.root" tag = "TRAINNCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "TRAIN NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -42,7 +42,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_bdt_training_sample_v33.3.uniq.root" tag = "TRAINNCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "TRAIN NC 2+ #pi^{0}"  scale = "1.0" plot_on_top = "false" >
 
     <definition>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -57,7 +57,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_bdt_training_sample_v33.3.uniq.root" tag = "TRAINBNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "TRAIN BNB Other"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
@@ -69,14 +69,21 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "nue_bdt_testing_sample_v33.3.uniq.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
+<bdtfile filename = "nue_bdt_training_sample_v33.3.uniq.root" tag = "TRAINNueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "TRAIN CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
     <definition>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
     </definition>
 </bdtfile>
 
+<bdtfile filename = "FakeData/fakedata_set1_combined_v43.3_optical_redo.root" tag = "FakeData1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Fake Data Run 1+3b Set 1">
+    <definition><cut>1</cut></definition>
+    <data type="OnBeam">
+        <tor860_wcut> 5.23185e20 </tor860_wcut>   
+    </data>
+</bdtfile>
 
+<!--
 <bdtfile filename = "dirt_overlay_combined_run123_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
     <definition><cut>1</cut></definition>
 </bdtfile>
@@ -99,6 +106,8 @@
         <EXT>166300493.0</EXT>  
     </data>
 </bdtfile>
+
+-->
 
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
 
@@ -128,7 +137,7 @@
     </training>
 </bdtfile>
 
-    <bdtfile filename = "ssveto_bdt_training_sample_v33.3.root" tag = "SSvetoTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "ssveto_bdt_training_sample_v33.3.root" tag = "SSvetoTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
@@ -338,9 +347,9 @@
         sig_test_cut = "1"
         />
     <scan min = "0.467" max = "0.468" steps="50"/>
-    </mva>
-    
-    <mva type="BDT" use="yes" tag = "Nue" name ="Nue fake BDT" binning = "(24,0.0,1.0)">    
+</mva>
+
+<mva type="BDT" use="yes" tag = "Nue" name ="Nue fake BDT" binning = "(24,0.0,1.0)">    
     <method type = "XGBoost" use = "yes">
         <param> n_trees=900</param>
         <param> tree_method=exact</param>
@@ -823,12 +832,17 @@
 <!--bdt vars -->
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<!--<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1 cut = "1g1pMar2020_v4BNB_mva &gt;= 0.95"/-->
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "8" logplot = "true" pmin=0.1 cut = "1g1pMar2020_v4BNB_mva &gt;= 0.95"/>
+
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
+<var def = "#GE#" binning = "(3,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "34"/>
+<var def = "#GE#" binning = "(24,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "35"/>
 <!--pi0 vars -->
 <!--
 <var def = "sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)" binning = "(10,0.0,1.4)" unit ="True #pi^{0} Momentum" type = "d"  training = "" group = "2"/>

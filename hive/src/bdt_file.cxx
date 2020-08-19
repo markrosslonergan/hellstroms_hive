@@ -344,6 +344,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     tvertex = (TTree*)f->Get(tnam.c_str());
     std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
 
+   
     run_fractions_file.resize(run_fractions.size(),0);
     double combin = 0.0;
     for(int i=0; i< run_fractions.size(); i++){
@@ -352,9 +353,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
             combin+=run_fractions_file[i];
     }
+   
     std::cout<<"Total is "<<combin<<std::endl;
-    if(fabs(combin-1.0)>0.00001){
-        std::cout<<"ERROR! The total that each defined run period adds up to is "<<combin<<" which is not 1."<<std::endl;
+    if(fabs(combin-1.0)>0.00001  && !is_data){
+        std::cout<<"ERROR! The total that each defined run period adds up to is "<<combin<<" which is not 1."<<" "<<this->tag<<" "<<is_data<<std::endl;
     
         exit(EXIT_FAILURE);
     }
@@ -438,14 +440,14 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }*/
 
         if(this->tag=="NCPi0NotCoh"){
-            //weight_branch = "("+weight_branch+")*(1.0-mctruth_exiting_pi0_E)";
+         //   weight_branch = "("+weight_branch+")*(1.0 - 0.85*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
             
         }
 
         numberofevents_raw = numberofevents;
 
     }else if(is_data){
-        //This is for Pure On beam Data. Taken as input by calling 
+        //Ths is for Pure On beam Data. Taken as input by calling 
 
         std::cout<<"bdt_file::bdt_file()\t||\tFile is ON-BEAM DATA for purposes of getting POT."<<std::endl;
         tpot = (TTree*)f->Get(tnam_pot.c_str());
@@ -918,7 +920,8 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
 
 TH1* bdt_file::getTH1(bdt_variable & var, std::string  cuts, std::string  nam, double  plot_POT, int  rebin){
 
-    std::string in_bins = "("+var.name+"<"+std::to_string(var.edges[2]) +"&&"+var.name+">"+std::to_string(var.edges[1])+")";
+    double tol = 0.000001;
+    std::string in_bins = "("+var.name+"<="+std::to_string(var.edges[2]+tol) +"&&"+var.name+">="+std::to_string(var.edges[1]-tol)+")";
     //TCanvas *ctmp = new TCanvas();
    
     if (var.additional_cut == "")  {
@@ -962,12 +965,16 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 
     std::vector<TH1*> to_sort;
     std::vector<double> integral_sorter;
-
+ 
+    if (var.additional_cut == "")  {
+        var.additional_cut = "1.0";
+   }
+    
     for(int i=0; i< recomc_cuts.size(); i++){
         std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
         TCanvas *ctmp = new TCanvas();
     //    this->CheckWeights();
-        this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
+        this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+var.additional_cut+"&&"+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
         std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
         //gDirectory->ls();
 
