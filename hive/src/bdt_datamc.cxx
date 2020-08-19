@@ -317,7 +317,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 std::cout<<" var.additional_cut = "<< var.additional_cut <<std::endl;
             }
 
-            var.is_logplot = false;
+            //var.is_logplot = false;
             std::cout<<"Starting on variable "<<var.name<<std::endl;
 
             TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(), (stack_mode? 2200 : 1801),1400); //1600
@@ -771,17 +771,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //lowFit = d0->GetXaxis()->GetBinLowEdge(1);
                 //highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
                 d0->Fit(gausfit_data, "lvr", "", lowFit, highFit);
-                tmp_hist->Fit(gausfit_mc, "q", "", lowFit, highFit);
+                //tmp_hist->Fit(gausfit_mc, "q", "", lowFit, highFit);
                 //tsum->Fit(gausfit_mc, "q", "", lowFit, highFit);
                 //std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
                 mass_data = gausfit_data->GetParameter(1);
                 mass_err_data = gausfit_data->GetParError(1);
                 mass_width_data = gausfit_data->GetParameter(2);
                 mass_width_err_data = gausfit_data->GetParError(2);
-                mass_mc = gausfit_mc->GetParameter(1);
-                mass_err_mc = gausfit_mc->GetParError(1);
-                mass_width_mc = gausfit_mc->GetParameter(2);
-                mass_width_err_mc = gausfit_mc->GetParError(2);
+                //mass_mc = gausfit_mc->GetParameter(1);
+                //mass_err_mc = gausfit_mc->GetParError(1);
+                //mass_width_mc = gausfit_mc->GetParameter(2);
+                //mass_width_err_mc = gausfit_mc->GetParError(2);
                 // Calculate resolution: StdDev/width (w/ uncertainty)
                 mass_res_data = gausfit_data->GetParameter(2)/gausfit_data->GetParameter(1);
                 mass_res_data_err = sqrt(std::pow(gausfit_data->GetParError(1)/gausfit_data->GetParameter(1) ,2) +
@@ -792,9 +792,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 std::cout << "[BLARG] MC mass: " << mass_mc << " +/- " << mass_err_mc << std::endl;
                 std::cout << "[BLARG] MC mass StdDev: " << mass_width_mc << " +/- " << mass_width_err_mc << std::endl;
                 gausfit_data->SetLineColor(kRed);
-                gausfit_mc->SetLineColor(kAzure+1);
+                //gausfit_mc->SetLineColor(kAzure+1);
                 gausfit_data->Draw("same");
-                gausfit_mc->Draw("same");
+                //gausfit_mc->Draw("same");
             }
 
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
