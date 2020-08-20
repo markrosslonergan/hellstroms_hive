@@ -76,7 +76,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "FakeData/fakedata_set1_combined_v33.3.root" tag = "FakeData1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Fake Data Run 1+3b Set 1">
+<bdtfile filename = "FakeData/fakedata_set1_combined_v43.3_optical_redo.root" tag = "FakeData1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Fake Data Run 1+3b Set 1">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
         <tor860_wcut> 5.23185e20 </tor860_wcut>   
@@ -832,6 +832,7 @@
 <!--bdt vars -->
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<!--<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1 cut = "1g1pMar2020_v4BNB_mva &gt;= 0.95"/>-->
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
