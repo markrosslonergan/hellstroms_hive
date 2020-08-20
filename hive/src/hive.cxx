@@ -1380,7 +1380,7 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
     for(auto &v: vars){
         vc++;   
         //lets skip anything that isnt the specific or group we want
-        if(number > 0 && number !=vc-1) continue;
+        if(number >= 0 && number !=vc-1) continue;
         if(which_group > 0 && which_group != v.cat) continue;
 
         std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
