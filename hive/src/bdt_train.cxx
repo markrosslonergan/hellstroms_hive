@@ -1032,15 +1032,32 @@ int bdt_XGtrain(bdt_info &info){
                 p->SetLogy();
                 p->SetLogx();
             }
+        
+            
             TGraph *g_test= new TGraph(iteration.size(),&iteration[0],&(test_metric_res[i])[0]);
             TGraph *g_train = new TGraph(iteration.size(),&iteration[0],&(train_metric_res[i])[0]);
-            g_train->Draw("AL");
+
+
+            double mmax1 = std::max(test_metric_res[i].front(),test_metric_res[i].back());
+            double mmax2 = std::max(train_metric_res[i].front(),train_metric_res[i].back());
+            double mmax = std::max(mmax1,mmax2)*1.2;
+
+            g_test->Draw("AL");
+            g_test->SetTitle(s_english[i].c_str());
+
+            g_train->Draw("same AL");
             g_train->SetTitle(s_english[i].c_str());
             g_train->SetLineColor(kRed);
             g_train->SetLineWidth(2);
             g_test->Draw("same CL");
             g_test->SetLineColor(kBlue);
             g_test->SetLineWidth(2);
+
+            g_test->SetMinimum(0);
+            g_test->SetMaximum(mmax);
+            g_train->SetMaximum(mmax);
+            g_test->GetHistogram()->SetMaximum(mmax);
+
 
             TGraph *g_min = new TGraph(1);
             g_min->SetPoint(0,test_min_vals[i].second,test_min_vals[i].first);
@@ -1054,6 +1071,7 @@ int bdt_XGtrain(bdt_info &info){
                 lgr->AddEntry(g_test,"Test","f"); 
                 lgr->SetLineWidth(0);
                 lgr->SetLineColor(kWhite);
+                lgr->SetFillStyle(0);
                 lgr->Draw();
             }
             c_error->Update();
