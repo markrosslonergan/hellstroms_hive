@@ -1670,6 +1670,15 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         return 0;
         }
         */
+}else if(mode_option=="splitplot"){
+
+
+        bdt_files[which_file]->splitAndPlot(which_group, vars[number], onbeam_data_file->pot,which_stage, fbdtcuts);
+
+        return 0;
+
+
+
 }else if(mode_option == "vars"){
 
     if (access("vars",F_OK) == -1){

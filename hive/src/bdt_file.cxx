@@ -1500,6 +1500,30 @@ int bdt_file::getRunEfficiency(){
     return 0;
 }
 
+int bdt_file::splitAndPlot(int nsplit, bdt_variable var,double pot,int stage,std::vector<double> bdt_cuts){
+    std::vector<int> cols = {kRed-7,  kBlue-7, kGreen+1 , kMagenta,kOrange,kGray};
+    TCanvas *c = new TCanvas();
+    c->cd();
+    for(int i=0; i<nsplit; i++){
+        TH1* th1 = getTH1(var, "("+this->getStageCuts(stage, bdt_cuts)+") && Entry$%"+std::to_string(nsplit)+"=="+std::to_string(i), var.safe_unit+"_"+std::to_string(i), pot, 1);
+            th1->SetLineColor(cols[i]);
+            th1->SetMarkerColor(cols[i]);
+            if(i==0){
+                th1->Draw("E1P");
+            }else{
+                th1->Draw("Same E1P");
+            }
+            for(int j=1;j<th1->GetNbinsX()+1;j++){
+                std::cout<<th1->GetBinContent(j)<<" ";
+            }
+            std::cout<<std::endl;
+        }
+
+    c->SaveAs(("SplitAndPlot_"+var.safe_unit+".pdf").c_str(),"pdf");
+
+
+    return 0;
+}
 
 
 //int bdt_file::convertToHashedLibSVM(){

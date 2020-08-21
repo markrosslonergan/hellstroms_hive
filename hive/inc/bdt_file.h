@@ -241,6 +241,9 @@ struct bdt_file{
 
 
 
+    int splitAndPlot(int nsplit, bdt_variable var, double pot,int stage,std::vector<double> bdt_cuts);
+
+
         std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
         std::string getStageCuts(int stage, std::vector<double> bdt_cuts);
 
