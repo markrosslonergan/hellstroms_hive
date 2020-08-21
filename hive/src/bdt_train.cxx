@@ -1036,7 +1036,11 @@ int bdt_XGtrain(bdt_info &info){
             
             TGraph *g_test= new TGraph(iteration.size(),&iteration[0],&(test_metric_res[i])[0]);
             TGraph *g_train = new TGraph(iteration.size(),&iteration[0],&(train_metric_res[i])[0]);
-
+         /*   TGraph *g_test2;
+               if (split_test){
+                g_test2 = new TGraph(iteration.size(),&iteration[0],&(train_metric_res[i])[0]);
+         
+            }*/
 
             double mmax1 = std::max(test_metric_res[i].front(),test_metric_res[i].back());
             double mmax2 = std::max(train_metric_res[i].front(),train_metric_res[i].back());
@@ -1053,6 +1057,11 @@ int bdt_XGtrain(bdt_info &info){
             g_test->SetLineColor(kBlue);
             g_test->SetLineWidth(2);
 
+            /*
+            g_test2->Draw("same CL");
+            g_test2->SetLineColor(kBlue);
+            g_test2->SetLineWidth(2);
+*/
             g_test->SetMinimum(0);
             g_test->SetMaximum(mmax);
             g_train->SetMaximum(mmax);
