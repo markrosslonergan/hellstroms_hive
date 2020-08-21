@@ -59,8 +59,8 @@ int main (int argc, char *argv[]){
     // Added by A. Mogan 1/13/20 for doing normalization fits
     bool scale_mode = true;
     //double what_pot = 13.2e20;
-  //  double what_pot = 12.25e20;
-    double what_pot = 6.8e20;
+    double what_pot = 12.25e20;
+//    double what_pot = 6.8e20;
 
     int which_file = -1;
     int which_bdt = -1;
