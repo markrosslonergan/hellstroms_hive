@@ -195,6 +195,7 @@
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+  
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0]&lt;0.5</cut>
@@ -205,9 +206,10 @@
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+        <!--    <cut> sim_shower_overlay_fraction[0]&lt;0.5</cut>-->
     </definition>
     <training>
-        <cut> sim_shower_overlay_fraction[0]&lt;0.5</cut>
+              <cut> sim_shower_overlay_fraction[0]&lt;0.5</cut>
     </training>
 </bdtfile>
 

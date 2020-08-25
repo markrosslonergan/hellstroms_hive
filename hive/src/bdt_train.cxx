@@ -1021,7 +1021,8 @@ int bdt_XGtrain(bdt_info &info){
 
         f->cd();
 
-        TCanvas *c_error = new TCanvas("","",1800,1800);
+        TCanvas *c_error = new TCanvas("c_error","",1800,1800);
+        TFile *hfile = new TFile(("XGBoost_Validation_"+name+".root").c_str(),"RECREATE");
         c_error->Divide(2,2);
         c_error->cd(1);
 
@@ -1085,8 +1086,10 @@ int bdt_XGtrain(bdt_info &info){
             }
             c_error->Update();
         }
-        c_error->SaveAs(("XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
+     //   c_error->SaveAs(("XGBoost_Validation_"+name+".root").c_str(),"root");
+      //   c_error->SaveAs(("XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
         c_error->Write(); 
+        hfile ->Close();
 
 
         std::vector<double> pos;
