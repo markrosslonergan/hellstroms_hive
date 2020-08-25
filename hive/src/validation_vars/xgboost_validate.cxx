@@ -80,7 +80,7 @@ int main (int argc, char *argv[]){
 
     c_error->cd();
 
-    TLegend *lgr = new TLegend(0.59,0.89,0.59,0.89);
+    TLegend *lgr = new TLegend(0.8,0.8,0.6,0.6);
 
     even_test->Draw("AL");
     even_test->SetTitle("even_test");
@@ -93,15 +93,39 @@ int main (int argc, char *argv[]){
     even_test->SetLineColor(kBlue);
     even_test->SetLineWidth(2);
 
+    odd_test->Draw("same CL");
+    odd_test->SetLineColor(kGreen);
+    odd_test->SetLineWidth(2);
+
+    odd_train->Draw("same CL");
+    odd_train->SetLineColor(kOrange);
+    odd_train->SetLineWidth(2);
+
     even_min->SetLineColor(kCyan);
     even_min->SetMarkerStyle(29);
     even_min->SetMarkerSize(3);
     even_min->Draw("p");
 
+    odd_min->SetLineColor(kCyan);
+    odd_min->SetMarkerStyle(29);
+    odd_min->SetMarkerSize(3);
+    odd_min->Draw("p");
+
+    lgr->AddEntry(even_train,"Even Train","f");
+    lgr->AddEntry(even_test,"Even Test","f");
+    lgr->AddEntry(odd_train,"Odd Train","f");
+    lgr->AddEntry(odd_test,"Odd Test","f");
+    lgr->SetLineWidth(0);
+    //   lgr->SetLineColor(kWhite);
+    lgr->SetFillStyle(0);
+    lgr->Draw();
+
+
     c_error->Update();
     c_error->Write();
 
 
+    std::cout<<"writing to file NCpi0_Validation_split_train.root"<<std::endl;
     outfile->Close();
     return 0;
 
