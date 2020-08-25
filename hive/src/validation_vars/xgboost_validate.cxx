@@ -34,33 +34,75 @@
 
 int main (int argc, char *argv[]){
 
-	// Just some simple argument things
-	//===========================================================================================
+    // Just some simple argument things
+    //===========================================================================================
 
-	//input files
+    //input files
     std::string odd_file_name = "/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/build/src/training_tests_8_17_20_odd/XGBoost_Validation_1g1pMar2020_v4NCPi0.root";
- 
+
     std::string even_file_name = "/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/build/src/training_tests_8_17_20_even/XGBoost_Validation_1g1pMar2020_v4NCPi0.root";
-    
+
 
     TFile *odd_file =new TFile(odd_file_name.c_str());
     TFile *even_file =new TFile(even_file_name.c_str());
 
 
     //output files
-	TFile * outfile = new TFile("NCpi0_Validation_split_train.root","recreate");
-	//===========================================================================================
-	//===========================================================================================
-	//===========================================================================================
-	//===========================================================================================
+    TFile * outfile = new TFile("NCpi0_Validation_split_train.root","recreate");
+    //===========================================================================================
+    //===========================================================================================
+    //===========================================================================================
+    //===========================================================================================
 
     std::cout<<"starting xgboost validaton comparison"<<std::endl;
 
-	//close files
+    //get output canvases
+    //TCanvas *c_err_odd = (TCanvas*)odd_file->Get("c_error");
+    //TCanvas *c_err_even = (TCanvas*)even_file->Get("c_error");
+
+    //get log loss plots
+    TGraph * even_test = (TGraph*)even_file->Get("g_test");
+    TGraph * even_train = (TGraph*)even_file->Get("g_train");
+    TGraph * even_min = (TGraph*)even_file->Get("g_min");
+    TGraph * odd_test = (TGraph*)odd_file->Get("g_test");
+    TGraph * odd_train = (TGraph*)odd_file->Get("g_train");
+    TGraph * odd_min = (TGraph*)odd_file->Get("g_min");
+
+    //close files  
     odd_file->Close();
-	even_file->Close();
-	
-	outfile->Close();
-	return 0;
+    even_file->Close();
+
+    outfile->cd();
+
+
+    //start plotting
+    TCanvas *c_error = new TCanvas("c_error","",900,900);
+
+    c_error->cd();
+
+    TLegend *lgr = new TLegend(0.59,0.89,0.59,0.89);
+
+    even_test->Draw("AL");
+    even_test->SetTitle("even_test");
+
+    even_train->Draw("same AL");
+    even_train->SetTitle("even_train");
+    even_train->SetLineColor(kRed);
+    even_train->SetLineWidth(2);
+    even_test->Draw("same CL");
+    even_test->SetLineColor(kBlue);
+    even_test->SetLineWidth(2);
+
+    even_min->SetLineColor(kCyan);
+    even_min->SetMarkerStyle(29);
+    even_min->SetMarkerSize(3);
+    even_min->Draw("p");
+
+    c_error->Update();
+    c_error->Write();
+
+
+    outfile->Close();
+    return 0;
 
 }

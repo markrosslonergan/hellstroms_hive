@@ -1083,7 +1083,12 @@ int bdt_XGtrain(bdt_info &info){
                 lgr->SetLineColor(kWhite);
                 lgr->SetFillStyle(0);
                 lgr->Draw();
+                g_test->Write("g_test");
+                g_train->Write("g_train");
+                g_min->Write("g_min");
             }
+            
+
             c_error->Update();
         }
      //   c_error->SaveAs(("XGBoost_Validation_"+name+".root").c_str(),"root");
