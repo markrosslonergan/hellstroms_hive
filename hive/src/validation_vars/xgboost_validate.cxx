@@ -83,10 +83,10 @@ int main (int argc, char *argv[]){
     TLegend *lgr = new TLegend(0.8,0.8,0.6,0.6);
 
     even_test->Draw("AL");
-    even_test->SetTitle("even_test");
+   // even_test->SetTitle("Negative Log-Likelihood");
 
     even_train->Draw("same AL");
-    even_train->SetTitle("even_train");
+    even_train->SetTitle("Negative Log-Likelihood");
     even_train->SetLineColor(kRed);
     even_train->SetLineWidth(2);
     even_test->Draw("same CL");
