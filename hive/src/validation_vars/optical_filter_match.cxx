@@ -118,20 +118,49 @@ int main (int argc, char *argv[]){
     new_vertex_tree-> SetBranchStatus("subrun_number",1);
     new_vertex_tree-> SetBranchStatus("event_number",1);
 
+    int new_run_number;
+    int new_subrun_number;
+    int new_event_number;
+    new_vertex_tree->SetBranchAddress("run_number",    &new_run_number);
+    new_vertex_tree->SetBranchAddress("subrun_number", &new_subrun_number);
+    new_vertex_tree->SetBranchAddress("event_number",  &new_event_number);
+
+    //also keeping track of duplicates
+
+
+
     //blank ttree for corresponding optical filter info
 
     //loop over old file
     //for each entry in vertex tree
-    for (int i=0;i < old_vertex_tree->GetEntries(); i++){
+    bool matched = false;
+//    for (int i=0;i < old_vertex_tree->GetEntries(); i++){
+      for (int i=0;i < 20; i++){
         old_vertex_tree->GetEntry(i);
-        if (i<5){ 
-            std::cout<<"run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<std::endl;
+        matched = false;
+     //   if (i<5){ 
+       //     std::cout<<"run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<std::endl;
+       // }
+
+        //check for corresponding run/subrun/event in the new file   
+        for (int j=0;j <new_vertex_tree->GetEntries(); j++){
+            new_vertex_tree->GetEntry(j);
+            //if there's match get the corresponding optical info
+            if (old_run_number == new_run_number && old_subrun_number == new_subrun_number && old_event_number == new_event_number){
+                if (i<5){ 
+                    std::cout<<"found match for run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<" at entry "<< i<<" in the old file and entry "<<j<<" in the new file"<<std::endl;
+                }
+                matched = true;
+                break;
+
+            }
+
         }
+        if (matched == false)  std::cout<<"no match for run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<" at entry "<<i<<std::endl; 
 
     }
 
 
-    //check for corresponding run/subrun/event
     //if there's a match, add branch to tree
     //if no match, fill rando values
     //write ttree to outfile
