@@ -118,12 +118,19 @@ int main (int argc, char *argv[]){
     new_vertex_tree-> SetBranchStatus("subrun_number",1);
     new_vertex_tree-> SetBranchStatus("event_number",1);
 
+    new_vertex_tree-> SetBranchStatus("flash_optfltr_pe_beam",1);
+
+
     int new_run_number;
     int new_subrun_number;
     int new_event_number;
+    double new_flash_optfltr_pe_beam;
     new_vertex_tree->SetBranchAddress("run_number",    &new_run_number);
     new_vertex_tree->SetBranchAddress("subrun_number", &new_subrun_number);
     new_vertex_tree->SetBranchAddress("event_number",  &new_event_number);
+
+    new_vertex_tree->SetBranchAddress("flash_optfltr_pe_beam",  &new_flash_optfltr_pe_beam);
+
 
     //also keeping track of duplicates
 
@@ -134,13 +141,13 @@ int main (int argc, char *argv[]){
     //loop over old file
     //for each entry in vertex tree
     bool matched = false;
-//    for (int i=0;i < old_vertex_tree->GetEntries(); i++){
-      for (int i=0;i < 20; i++){
+    //    for (int i=0;i < old_vertex_tree->GetEntries(); i++){
+    for (int i=0;i <5; i++){
         old_vertex_tree->GetEntry(i);
         matched = false;
-     //   if (i<5){ 
-       //     std::cout<<"run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<std::endl;
-       // }
+        //   if (i<5){ 
+        //     std::cout<<"run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<std::endl;
+        // }
 
         //check for corresponding run/subrun/event in the new file   
         for (int j=0;j <new_vertex_tree->GetEntries(); j++){
@@ -149,10 +156,15 @@ int main (int argc, char *argv[]){
             if (old_run_number == new_run_number && old_subrun_number == new_subrun_number && old_event_number == new_event_number){
                 if (i<5){ 
                     std::cout<<"found match for run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<" at entry "<< i<<" in the old file and entry "<<j<<" in the new file"<<std::endl;
+                    std::cout<<"------ new_flash_optfltr_pe_beam = "<<new_flash_optfltr_pe_beam<<std::endl;
                 }
-                matched = true;
-                break;
+                if (matched== false){
+                    matched = true;
+                }else{
+                    std::cout<<"error, duplicated match"<<std::endl;
 
+
+                }
             }
 
         }
