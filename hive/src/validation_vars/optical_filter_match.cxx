@@ -37,7 +37,7 @@ int main (int argc, char *argv[]){
     // Just some simple argument things
     //===========================================================================================
 
-    //expecting input --out <output file name with friend tree> --old <oldfile without optical info> --new <newfile with optical info>
+    //expecting input --out <output file name with friend tree> --old <oldfile without optical info> --new <newfile with optical info> [--out <name for new file with friend tree>]
 
     std::string old_file = "";
     std::string new_file = "";
@@ -163,8 +163,8 @@ int main (int argc, char *argv[]){
 
     //loop over old file
     bool matched = false;
-    //  int size = old_vertex_tree->GetEntries();
-    int size = 10;
+     int size = old_vertex_tree->GetEntries();
+   // int size = 10;
 
     //for each entry in vertex tree
     for (int i=0;i <size; i++){
@@ -187,15 +187,15 @@ int main (int argc, char *argv[]){
             new_vertex_tree->GetEntry(j);
 
             //if there's match get the corresponding optical info
-            if (old_run_number == new_run_number && old_subrun_number == new_subrun_number && old_event_number == new_event_number){
+            if (old_run_number == new_run_number && old_subrun_number == new_subrun_number && old_event_number == new_event_number && new_true_nu_e == old_true_nu_e){
 
                 //print out info               
-                if (new_flash_optfltr_pe_beam != 0){ 
+/*                if (new_flash_optfltr_pe_beam != 0){ 
                     std::cout<<"found match for run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<" at entry "<< i<<" in the old file and entry "<<j<<" in the new file with run/subrun/event = "<< new_run_number<<"/"<<new_subrun_number<<"/"<<new_event_number<<std::endl;
                     std::cout<<"------ new_flash_optfltr_pe_beam = "<<new_flash_optfltr_pe_beam<<std::endl;
                     std::cout<<"------ old true nu energy = "<< old_true_nu_e <<", new true nu energy = "<< new_true_nu_e<<std::endl;
                 }
-
+*/
                 //match found, if there's already a match it's a duplicate
                 if (matched== false){
                     matched = true;
