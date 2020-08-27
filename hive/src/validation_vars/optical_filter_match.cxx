@@ -163,12 +163,23 @@ int main (int argc, char *argv[]){
 
     //loop over old file
     bool matched = false;
-     int size = old_vertex_tree->GetEntries();
-   // int size = 10;
+    int total_matched = 0;
+    // int size = old_vertex_tree->GetEntries();
+   int size = 100;
+
+   int check = 1;
+   int increment = size/20;
+   int current = 5;
 
     //for each entry in vertex tree
     for (int i=0;i <size; i++){
         old_vertex_tree->GetEntry(i);
+        
+        if (check * increment == i){
+            std::cout<<"------------- ["<<current<<"% complete] -------------"<<std::endl;
+            current += 5;
+            check++;
+        }
 
         //for each entry reset match
         matched = false;
@@ -205,7 +216,7 @@ int main (int argc, char *argv[]){
                     m_flash_optfltr_pe_veto = new_flash_optfltr_pe_veto;
                     m_flash_optfltr_pe_veto_tot = new_flash_optfltr_pe_veto_tot;
                     m_flash_optfltr_pe_beam_tot = new_flash_optfltr_pe_beam_tot;
-
+                    total_matched++;
 
                 }else{
                     //it's a duplicate, tree already filled
@@ -224,6 +235,7 @@ int main (int argc, char *argv[]){
 
     }
 
+     std::cout<<"Created friend tree with "<<friend_tree->GetEntries()<<" entries. "<< total_matched<<" were matched to an event in the new file."<<std::endl;
 
     //write ttree to outfile
 
