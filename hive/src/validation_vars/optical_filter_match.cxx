@@ -118,7 +118,7 @@ int main (int argc, char *argv[]){
     new_vertex_tree-> SetBranchStatus("subrun_number",1);
     new_vertex_tree-> SetBranchStatus("event_number",1);
 
-    new_vertex_tree-> SetBranchStatus("flash_optfltr_pe_beam",1);
+    new_vertex_tree-> SetBranchStatus("m_flash_optfltr_pe_beam",1);
 
 
     int new_run_number;
@@ -129,22 +129,27 @@ int main (int argc, char *argv[]){
     new_vertex_tree->SetBranchAddress("subrun_number", &new_subrun_number);
     new_vertex_tree->SetBranchAddress("event_number",  &new_event_number);
 
-    new_vertex_tree->SetBranchAddress("flash_optfltr_pe_beam",  &new_flash_optfltr_pe_beam);
-
-
-    //also keeping track of duplicates
-
-
+    new_vertex_tree->SetBranchAddress("m_flash_optfltr_pe_beam",  &new_flash_optfltr_pe_beam);
 
     //blank ttree for corresponding optical filter info
+    TTree* friend_tree = new TTree("opt_tree", "opt_tree");
+    
+    double m_flash_optfltr_pe_beam;
+    friend_tree->Branch("m_flash_optfltr_pe_beam",&m_flash_optfltr_pe_beam,"flash_optfltr_pe_beam/D");
+
 
     //loop over old file
-    //for each entry in vertex tree
     bool matched = false;
-    //    for (int i=0;i < old_vertex_tree->GetEntries(); i++){
-    for (int i=0;i <5; i++){
+    //  int size = old_vertex_tree->GetEntries();
+    int size = 10;
+
+    //for each entry in vertex tree
+    for (int i=0;i <size; i++){
         old_vertex_tree->GetEntry(i);
+
+        //for each entry reset match
         matched = false;
+        m_flash_optfltr_pe_beam = -999;
         //   if (i<5){ 
         //     std::cout<<"run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<std::endl;
         // }
@@ -152,35 +157,48 @@ int main (int argc, char *argv[]){
         //check for corresponding run/subrun/event in the new file   
         for (int j=0;j <new_vertex_tree->GetEntries(); j++){
             new_vertex_tree->GetEntry(j);
+
             //if there's match get the corresponding optical info
             if (old_run_number == new_run_number && old_subrun_number == new_subrun_number && old_event_number == new_event_number){
-                if (i<5){ 
-                    std::cout<<"found match for run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<" at entry "<< i<<" in the old file and entry "<<j<<" in the new file"<<std::endl;
+
+                //print out info               
+                if (new_flash_optfltr_pe_beam != 0){ 
+                    std::cout<<"found match for run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<" at entry "<< i<<" in the old file and entry "<<j<<" in the new file with run/subrun/event = "<< new_run_number<<"/"<<new_subrun_number<<"/"<<new_event_number<<std::endl;
                     std::cout<<"------ new_flash_optfltr_pe_beam = "<<new_flash_optfltr_pe_beam<<std::endl;
                 }
+
+                //match found, if there's already a match it's a duplicate
                 if (matched== false){
                     matched = true;
-                }else{
-                    std::cout<<"error, duplicated match"<<std::endl;
 
+                    //if no existing match, add branch to tree
+                    m_flash_optfltr_pe_beam = new_flash_optfltr_pe_beam;
+
+                }else{
+                    //it's a duplicate, tree already filled
+                    //do the values agree?
+                    std::cout<<"error, duplicated match"<<std::endl;
+                    
 
                 }
             }
 
         }
+        //if no match to old file event found
         if (matched == false)  std::cout<<"no match for run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<" at entry "<<i<<std::endl; 
+        //if no match, fill -999 for now. will update.
+        friend_tree->Fill();
 
     }
 
 
-    //if there's a match, add branch to tree
-    //if no match, fill rando values
     //write ttree to outfile
 
     f_old->Close();
     f_new->Close();
 
     std::cout<<"Writing output to "<<out_name<<std::endl;
+    friend_tree->Write();
     outfile->Close();
     return 0;
 

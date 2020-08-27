@@ -142,7 +142,7 @@ int main (int argc, char *argv[]){
     }
 
     line->SetLineWidth(3);
-    line->Draw();
+   // line->Draw();
 
     lgr->AddEntry(even_train,"Even Train","f");
     lgr->AddEntry(odd_train,"Odd Train","f");
