@@ -165,7 +165,7 @@ int main (int argc, char *argv[]){
     bool matched = false;
     int total_matched = 0;
     // int size = old_vertex_tree->GetEntries();
-   int size = 100;
+   int size = 2000;
 
    int check = 1;
    int increment = size/20;
@@ -198,7 +198,7 @@ int main (int argc, char *argv[]){
             new_vertex_tree->GetEntry(j);
 
             //if there's match get the corresponding optical info
-            if (old_run_number == new_run_number && old_subrun_number == new_subrun_number && old_event_number == new_event_number && new_true_nu_e == old_true_nu_e){
+            if (old_run_number == new_run_number && old_subrun_number == new_subrun_number && old_event_number == new_event_number && fabs(new_true_nu_e -old_true_nu_e)< 0.001){
 
                 //print out info               
 /*                if (new_flash_optfltr_pe_beam != 0){ 
