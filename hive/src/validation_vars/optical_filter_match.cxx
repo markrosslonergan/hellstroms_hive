@@ -177,8 +177,8 @@ int main (int argc, char *argv[]){
  
     bool matched = false;
     int total_matched = 0;
-    // int size = old_vertex_tree->GetEntries();
-     int size = 2000;
+    int size = old_vertex_tree->GetEntries();
+     //int size = 2000;
    
    //for printing out 
    int check = 1;
