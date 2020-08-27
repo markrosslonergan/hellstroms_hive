@@ -104,19 +104,26 @@ int main (int argc, char *argv[]){
     old_vertex_tree-> SetBranchStatus("run_number",1);
     old_vertex_tree-> SetBranchStatus("subrun_number",1);
     old_vertex_tree-> SetBranchStatus("event_number",1);
+    old_vertex_tree-> SetBranchStatus("mctruth_nu_E",1);
+
 
     int old_run_number;
     int old_subrun_number;
     int old_event_number;
+    double old_true_nu_e;
     old_vertex_tree->SetBranchAddress("run_number",    &old_run_number);
     old_vertex_tree->SetBranchAddress("subrun_number", &old_subrun_number);
     old_vertex_tree->SetBranchAddress("event_number",  &old_event_number);
+    old_vertex_tree->SetBranchAddress("mctruth_nu_E",  &old_true_nu_e);
+
 
 
     new_vertex_tree-> SetBranchStatus("*",0);
     new_vertex_tree-> SetBranchStatus("run_number",1);
     new_vertex_tree-> SetBranchStatus("subrun_number",1);
     new_vertex_tree-> SetBranchStatus("event_number",1);
+    new_vertex_tree-> SetBranchStatus("mctruth_nu_E",1);
+
 
     new_vertex_tree-> SetBranchStatus("m_flash_optfltr_pe_beam",1);
 
@@ -125,15 +132,18 @@ int main (int argc, char *argv[]){
     int new_subrun_number;
     int new_event_number;
     double new_flash_optfltr_pe_beam;
+    double new_true_nu_e;
     new_vertex_tree->SetBranchAddress("run_number",    &new_run_number);
     new_vertex_tree->SetBranchAddress("subrun_number", &new_subrun_number);
     new_vertex_tree->SetBranchAddress("event_number",  &new_event_number);
+    new_vertex_tree->SetBranchAddress("mctruth_nu_E",  &new_true_nu_e);
+
 
     new_vertex_tree->SetBranchAddress("m_flash_optfltr_pe_beam",  &new_flash_optfltr_pe_beam);
 
     //blank ttree for corresponding optical filter info
     TTree* friend_tree = new TTree("opt_tree", "opt_tree");
-    
+
     double m_flash_optfltr_pe_beam;
     friend_tree->Branch("m_flash_optfltr_pe_beam",&m_flash_optfltr_pe_beam,"flash_optfltr_pe_beam/D");
 
@@ -165,6 +175,7 @@ int main (int argc, char *argv[]){
                 if (new_flash_optfltr_pe_beam != 0){ 
                     std::cout<<"found match for run/subrun/event = "<<old_run_number<<"/"<<old_subrun_number<<"/"<<old_event_number<<" at entry "<< i<<" in the old file and entry "<<j<<" in the new file with run/subrun/event = "<< new_run_number<<"/"<<new_subrun_number<<"/"<<new_event_number<<std::endl;
                     std::cout<<"------ new_flash_optfltr_pe_beam = "<<new_flash_optfltr_pe_beam<<std::endl;
+                    std::cout<<"------ old true nu energy = "<< old_true_nu_e <<", new true nu energy = "<< new_true_nu_e<<std::endl;
                 }
 
                 //match found, if there's already a match it's a duplicate
@@ -178,7 +189,7 @@ int main (int argc, char *argv[]){
                     //it's a duplicate, tree already filled
                     //do the values agree?
                     std::cout<<"error, duplicated match"<<std::endl;
-                    
+
 
                 }
             }
