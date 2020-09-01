@@ -37,17 +37,19 @@ int main (int argc, char *argv[]){
     // Just some simple argument things
     //===========================================================================================
 
-    //expecting input --out <output file name with friend tree> --old <oldfile without optical info> --new <newfile with optical info> [--out <name for new file with friend tree>]
+    //expecting input --out <output file name with friend tree> --old <oldfile without optical info> --new <newfile with optical info> --out <name for new file with friend tree>
 
     std::string old_file = "";
     std::string new_file = "";
-    std::string out_name = "optical_match.root";
+  //  std::string out_name = "optical_match.root";
+  std::string out_name = "";
+
 
     const struct option longopts[] =
     {   
         {"old",         required_argument,  0, 'o'},
         {"new",         required_argument,  0, 'n'},
-        {"out",        no_argument,  0, 'w'},
+        {"out",        required_argument,  0, 'w'},
         {0,             no_argument,        0,  0},
     };
 
@@ -56,7 +58,8 @@ int main (int argc, char *argv[]){
     while(iarg != -1)
     {
         iarg = getopt_long(argc,argv, "o:n:w?", longopts, &index);
-
+        
+       // std::cout<<"optarg = "<<optarg<< ", iarg = "<< iarg<<std::endl;
         switch(iarg)
         {
             case 'o':
@@ -65,7 +68,7 @@ int main (int argc, char *argv[]){
             case 'n':
                 new_file = optarg;
                 break;
-            case '2':
+            case 'w':
                 out_name = optarg;
                 break;
                 return 0;
@@ -78,6 +81,10 @@ int main (int argc, char *argv[]){
     }else{
         std::cout<<"matching old file "<<old_file<<" with new file "<<new_file<<" to get optical filter info"<<std::endl;
     }
+
+    if (out_name =="")  out_name = "optical_match.root";
+
+    std::cout <<"out_name = "<<out_name<<std::endl;
 
     //open input files
     std::cout<<"opening input files "<<std::endl;
