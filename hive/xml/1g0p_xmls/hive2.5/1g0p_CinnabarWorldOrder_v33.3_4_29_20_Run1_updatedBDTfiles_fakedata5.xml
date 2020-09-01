@@ -20,7 +20,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "0.0" signal = "true" plot_on_top = "false">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut>
@@ -449,6 +449,7 @@
 <var def = "simple_1g0pMar2020BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""  group = "6" logplot = "true" />
 <var def = "simple_1g0pMar2020NCPi0_mva" binning = "(24,0.0,0.95)" unit = "NC#pi^{0} BDT Score" type="d" training= ""  group = "6" logplot = "true"/>
 -->
+<var def = "#GE#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 <!--

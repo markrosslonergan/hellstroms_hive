@@ -838,6 +838,9 @@
 
 <var def = "#GE#" binning = "(3,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "14"/>
 
+<var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(10,1.0,2)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = ""  group = "34"/>
+
+
 <!--
 <var def = "#GE#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "35" cut = "#NOSSVBDT#"/>
 
