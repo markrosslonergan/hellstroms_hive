@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.974952,0.96273,0.467404,0.570654,0.521623)" />
+<topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers<3" bdtcut = "(0.974952,0.96273,0.467404,0.570654,0.521623)" />
 
 <!--<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>-->
 
@@ -442,11 +442,11 @@
 
 <var def = "log10(reco_track_spacepoint_max_dist[0])" binning = "(18,-2,1.5)" unit = "Reconstructed Track Max Distance Spacepoint from Line [cm]" type = "d"  training = "0123" group = "7"/>
 <var def = "#PCE#/(180.0*reco_track_proton_kinetic_energy[0])" binning="(18,0,2)" unit="Track Calo Energy / Track Range based KE" type="d"  training="0123" group="16"/> 
-<var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(18,0,2)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "0123" group = "78"/>
-<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(18,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="0123" group = "78"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(18,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "0123" group = "9"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(18,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="0123" group = "9"/>
 <!--<var def = "reco_track_mean_trunc_dEdx_plane2[0]" binning =  "(18,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="0123" group = "78"/>-->
 <var def = "(reco_track_spacepoint_principal0[0])" binning = "(18,0,1)" unit = "Track Spacepoint Principal" type ="d"  training ="0123"/>
-<var def = "(reco_track_trackscore[0])" binning = "(18,0.5,1)" unit = "Track Score" type ="d"  training ="0123" group = "7"/>
+<var def = "(reco_track_trackscore[0])" binning = "(18,0.5,1)" unit = "Track Score" type ="d"  training ="0123" group = "8"/>
 <var def = "TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)" binning="(18,0,100)" unit = "Distance from Track Start/End to SCB [cm]" type ="d"  training="123"/>
 <var def = "TMath::Min(fabs(acos(reco_track_dirz)),fabs(acos(-reco_track_dirz)))" binning = "(18,0.0,1.571)" unit = "Track Beamyness" type="d"  training = "123"/>
 <var def = "TMath::Min(fabs(acos(reco_track_diry)),fabs(acos(-reco_track_diry)))" binning = "(18,0.0,1.571)" unit = "Track Cosmicyness" type="d"  training = "0123"/>
@@ -585,7 +585,7 @@
 
 <var def = "sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2))" binning = "(18,0,4)" unit = "Distance from Track Start to Vertex [cm]" type="d"  training=""/>
 
-<var def = "reco_asso_tracks" binning = "(4,0,4)" unit = "Number of Tracks Associated to Vertex" type = "d"  training=""/>
+<var def = "reco_asso_tracks" binning = "(10,0,10)" unit = "Number of Tracks Associated to Vertex" type = "d"  training="" group = "8"/>
 
 <var def = "TMath::Min(TMath::Min(reco_track_end_to_nearest_dead_wire_plane0,reco_track_end_to_nearest_dead_wire_plane1),reco_track_end_to_nearest_dead_wire_plane2)" unit = "Distance from Track End to Nearest Dead Wire [cm]" binning ="(18,0,3)" type="d"  training=""/>
 
@@ -715,7 +715,7 @@
 <var def = "reco_shower_energy_max/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV]" binning = "(18,0,1)" type="d"  training="2" />
 <var def = "reco_shower_energy_max/(180.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad]" binning = "(18,0,0.4)" type = "d"   training = "2"/>
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(18,0,0.3)" type = "d"  training = "2" group = "7"/>
-<var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_dirx[0],2))" unit = "Photon Implied Transverse Momentum [GeV]" binning = "(18,0,0.3)" type = "d"  training = "" group = "9"/>
+<var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_dirx[0],2))" unit = "Photon Implied Transverse Momentum [GeV]" binning = "(18,0,0.3)" type = "d"  training = "" group = "7"/>
 
 <var def = "(sim_shower_overlay_fraction[0]+sim_track_overlay_fraction[0])/2.0" unit = "Average Overlay Contamination of Track-Shower Pair" binning = "(18,0,1)" type = "d"  training = "" />
 
@@ -840,10 +840,6 @@
 
 <var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(10,1.0,2)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = ""  group = "34"/>
 
-<var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(18,0,2)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Inverse BNB Cut" type = "d"    training = "" group = "79" cut = "1g1pMar2020_v4BNB_mva &lt; #BNB0#"/>
-<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(18,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm] Inverse BNB Cut" type = "d"    training="" group = "79" cut = "1g1pMar2020_v4BNB_mva &lt; #BNB0#"/>
-
-<var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(20,0,400)" unit = "Total PE in Beamgate" type ="d"  training="" group = "80"/>
 
 <!--
 <var def = "#GE#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "35" cut = "#NOSSVBDT#"/>
@@ -926,7 +922,7 @@
 
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(16,0.9,1)" unit = "Cosmic BDT Score (Zoomed)" type="d"  training= "" group = "12" logplot = "true" pmin=0.1/>
 -->
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "8" />
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "" />
 
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) Cosmic Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4COSMIC_mva &gt;= #COS0#)" group = "10" />
 
