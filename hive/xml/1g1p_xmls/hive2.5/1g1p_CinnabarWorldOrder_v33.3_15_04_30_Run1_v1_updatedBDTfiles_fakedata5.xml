@@ -443,7 +443,7 @@
 <var def = "log10(reco_track_spacepoint_max_dist[0])" binning = "(18,-2,1.5)" unit = "Reconstructed Track Max Distance Spacepoint from Line [cm]" type = "d"  training = "0123" group = "7"/>
 <var def = "#PCE#/(180.0*reco_track_proton_kinetic_energy[0])" binning="(18,0,2)" unit="Track Calo Energy / Track Range based KE" type="d"  training="0123" group="16"/> 
 <var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(18,0,2)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "0123" group = "78"/>
-<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(18,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="0123" group = "78"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(20,2,20)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="0123" group = "78"/>
 <!--<var def = "reco_track_mean_trunc_dEdx_plane2[0]" binning =  "(18,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="0123" group = "78"/>-->
 <var def = "(reco_track_spacepoint_principal0[0])" binning = "(18,0,1)" unit = "Track Spacepoint Principal" type ="d"  training ="0123"/>
 <var def = "(reco_track_trackscore[0])" binning = "(18,0.5,1)" unit = "Track Score" type ="d"  training ="0123" group = "7"/>
@@ -836,7 +836,11 @@
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSV BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
-<var def = "#GE#" binning = "(3,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "14"/>
+<var def = "#GEO#" binning = "(3,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "14"/>
+<var def = "reco_shower_energy_plane2[0]" binning = "(3,0,600)" unit = "Shower Energy Plane 2 [MeV]" type = "d"   training="" group = "14"/>
+<var def = "reco_shower_energy_max[0]" binning = "(3,0,600)" unit = "Shower Energy Max [MeV]" type = "d"   training="" group = "14"/>
+
+
 
 <var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(10,1.0,2)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = ""  group = "34"/>
 
