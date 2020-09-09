@@ -36,6 +36,7 @@
 #include "TFriendElement.h"
 #include "TText.h"
 #include "TRandom3.h"
+#include "TMath.h"
 #include "TVectorT.h"
 #include "TEntryList.h"
 
@@ -242,6 +243,9 @@ struct bdt_file{
 
 
     int splitAndPlot(int nsplit, bdt_variable var, double pot,int stage,std::vector<double> bdt_cuts);
+
+    std::vector<double> getVector(bdt_variable & var, std::string  cuts);
+
 
 
         std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);

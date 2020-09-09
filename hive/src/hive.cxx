@@ -1190,6 +1190,7 @@ if (topo_tag == "notrack"){
 }
 
 //bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, false, is0p);
+if(number==2)bdt_efficiency(bdt_files[which_file], v_denom, v_topo,vec_precuts,fbdtcuts, what_pot, false, which_stage, analysis_tag, false, false);
 
 
 //specifically for protond/photons pre-topological
@@ -1673,7 +1674,10 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 }else if(mode_option=="splitplot"){
 
 
-        bdt_files[which_file]->splitAndPlot(which_group, vars[number], onbeam_data_file->pot,which_stage, fbdtcuts);
+//        bdt_files[which_file]->splitAndPlot(which_group, vars[number], onbeam_data_file->pot,which_stage, fbdtcuts);
+          auto hh = {bdt_files[11],bdt_files[12]};
+          std::vector<std::string> hj = {bdt_files[11]->getStageCuts(which_stage,fbdtcuts), bdt_files[12]->getStageCuts(which_stage, fbdtcuts)};
+          compareQuick(vars[number],hh,hj,"COMP_"+vars[number].safe_unit+"_stage_"+std::to_string(which_stage),true);
 
         return 0;
 
@@ -1784,7 +1788,6 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
         tvec.push_back(th1);
         std::cout<<"Int "<<th1->Integral()<<std::endl;
         pad0top->cd();
-
 
         th1->SetLineColor(files[i]->col);
         th1->SetLineWidth(2);

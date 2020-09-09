@@ -1045,9 +1045,19 @@ int bdt_XGtrain(bdt_info &info){
             double mmax1 = std::max(test_metric_res[i].front(),test_metric_res[i].back());
             double mmax2 = std::max(train_metric_res[i].front(),train_metric_res[i].back());
             double mmax = std::max(mmax1,mmax2)*1.2;
+		if(i==0)mmax= std::max(mmax,1.0);
 
             g_test->Draw("AL");
-            g_test->SetTitle(s_english[i].c_str());
+ 
+	   g_test->SetMinimum(0);
+            g_test->SetMaximum(mmax);
+            g_test->GetHistogram()->SetMaximum(mmax);
+            g_test->GetHistogram()->SetMinimum(0.0);
+           
+            g_test->Draw("AL");
+
+
+	   g_test->SetTitle(s_english[i].c_str());
 
             g_train->Draw("same AL");
             g_train->SetTitle(s_english[i].c_str());
@@ -1065,7 +1075,9 @@ int bdt_XGtrain(bdt_info &info){
             g_test->SetMinimum(0);
             g_test->SetMaximum(mmax);
             g_train->SetMaximum(mmax);
+            g_train->SetMinimum(0.0);
             g_test->GetHistogram()->SetMaximum(mmax);
+            g_test->GetHistogram()->SetMinimum(0.0);
 
 
             TGraph *g_min = new TGraph(1);
