@@ -837,6 +837,8 @@
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSV BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
 <var def = "#GEO#" binning = "(3,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "14"/>
+
+<var def = "#GEO#" binning = "(10,0,700)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "15"/>
 <var def = "reco_shower_energy_plane2[0]" binning = "(3,0,600)" unit = "Shower Energy Plane 2 [MeV]" type = "d"   training="" group = "14"/>
 <var def = "reco_shower_energy_max[0]" binning = "(3,0,600)" unit = "Shower Energy Max [MeV]" type = "d"   training="" group = "14"/>
 
