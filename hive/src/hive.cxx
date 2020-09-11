@@ -314,6 +314,7 @@ int main (int argc, char *argv[]){
 
         bool incl_in_stack = true;
 
+
         if(XMLconfig.bdt_scales[f] != 1.0){
             std::cout<<" -- Scaling "<<XMLconfig.bdt_tags[f]<<" file by a factor of "<<XMLconfig.bdt_scales[f]<<std::endl;
             bdt_files.back()->scale_data = XMLconfig.bdt_scales[f];
@@ -362,6 +363,12 @@ int main (int argc, char *argv[]){
 
         bdt_files.back()->calcPOT(XMLconfig.run_names, XMLconfig.run_cuts, XMLconfig.run_fractions);
 
+        if(f<9){
+            std::string opt_dir = "/uboone/data/users/markross/Mar2020/COFredo/OpticalMatch_";
+            std::cout<<"Adding Optical friend "<<opt_dir+bdt_files.back()->name<<std::endl;
+            bdt_files.back()->addFriend("opt_tree",opt_dir+bdt_files.back()->name);
+        }
+
         //std::string r1 = "run_number>=5121 && run_number <=5946";
         //bdt_files.back()->scale( bdt_files.back()->tvertex->GetEntries(r1.c_str())/(double)bdt_files.back()->tvertex->GetEntries() );
 
@@ -401,7 +408,7 @@ int main (int argc, char *argv[]){
             f->calcBaseEntryList(analysis_tag);
         }
 
-
+        
         //These are old and redundant.
         //f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
         //f->addFriend("track_tree",analysis_tag+"_"+f->tag+"_simtrack.root");

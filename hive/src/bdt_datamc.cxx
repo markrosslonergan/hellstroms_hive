@@ -339,6 +339,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //Check Covar for plotting
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
 
+            std::vector<double> vec_mc_stats_error;
+            for(int c=0; c< tsum->GetNbinsX();c++){
+                    double mc_stats_error = tsum->GetBinError(c+1);
+                    vec_mc_stats_error.push_back(mc_stats_error);
+            }
             /*
                TH1 *trev = (TH1*)mc_stack->stack.at(1)->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+"arse+"+var.safe_name, plot_pot); 
                trev->Scale(125.0);
@@ -384,12 +389,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     //double dv = tsum->GetBinContent(c+1);
                     //tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
                     //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
-                    double mc_stats_error = tsum->GetBinError(c+1);
                     //  double mc_sys_error = fkr[c]*tsum->GetBinContent(c+1);  //sqrt((*covar_collapsed)(c,c));
-
+                    
+                    double mc_stats_error = tsum->GetBinError(c+1);
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
-                    std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
+                    
                     //double tot_error = mc_sys_error; 
                     std::cout<<"DETOL: "<<c<<" N: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" Frac: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" Frac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
                     tsum->SetBinError(c+1, tot_error);
@@ -447,7 +452,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     std::cout<<"the entries in this file (weighted) = "<<f->GetEntries()<<std::endl;
                     std::cout<<"the scaling to POT= "<<scale<<" which is x"<<1/scale<<" times POT" <<std::endl;
                     std::cout<<"the total number of entries = "<<f->GetEntries()*scale<<std::endl;
-
 
 
                     for(int p=0; p<mc_stack->vec_hists[i]->GetNbinsX();p++){
@@ -686,18 +690,18 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                             ndof++;
                         }
 
-
                     }
                 }
             } else if (var.has_covar && use_cnp && m_error_string!="stat") {
 
-                std::cout << "[TEST] Starting chi^2 CNP calculation" << std::endl;
-                TMatrixT<double> Mout = *covar_collapsed;
 
+                std::cout << "[TEST] Starting chi^2 CNP calculation" << std::endl;
+                
+                TMatrixT<double> Mout = *covar_collapsed;
                 // Calculate middle term, sys + stat covar matrices
                 // CNP + intrinsic MC error^2
                 for(int i =0; i<covar_collapsed->GetNcols(); i++) {
-                    Mout(i,i) += ( d0->GetBinContent(i+1) >0.001 ? 3.0/(1.0/d0->GetBinContent(i+1) +  2.0/tsum->GetBinContent(i+1))  : tsum->GetBinContent(i+1)/2.0 ) + tsum->GetBinError(i+1)*tsum->GetBinError(i+1);
+                    Mout(i,i) += ( d0->GetBinContent(i+1) >0.001 ? 3.0/(1.0/d0->GetBinContent(i+1) +  2.0/tsum->GetBinContent(i+1))  : tsum->GetBinContent(i+1)/2.0 ) + pow(vec_mc_stats_error[i],2);
                 }
 
                 // Invert matrix, because the formula says so
