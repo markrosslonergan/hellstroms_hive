@@ -2,12 +2,14 @@
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.974952,0.96273,0.467404,0.570654,0.521623)" />
 
-<!--<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>-->
+<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/> 
+<!--<covar dir="." name="frac_covariance" type="frac" plotname="Flux, XS, &amp; Det Systematics"/>-->
+
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "true" >
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "1x SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -79,11 +81,11 @@
 
 </bdtfile>
 
-<!--
-<bdtfile filename = "dirt_overlay_run1_v33.3.uniq.root" tag = "DirtRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
+
+<bdtfile filename = "dirt_overlay_run1_v33.3.uniq.root" tag = "DirtRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" scale = "0.0" > 
     <definition><cut>1</cut></definition>
 </bdtfile>
-
+<!--
 <bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
@@ -91,8 +93,8 @@
         <E1DCNT_wcut>   9037544.0</E1DCNT_wcut>   
     </data>
 </bdtfile>
-
-<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1 Cosmic Data" fillstyle = "3333" scale = "1">
+-->
+<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1 Cosmic Data" fillstyle = "3333" scale = "0.0">
     <definition>
         <cut> 1 </cut>
     </definition>
@@ -102,7 +104,7 @@
         <EXT>28264427.0</EXT>  
     </data>
 </bdtfile>
--->
+
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
 
 <bdtfile filename = "ncpi0_bdt_training_sample_v33.3.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
@@ -831,18 +833,51 @@
 <!--bdt vars -->
 
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.95)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.91)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "66" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSV BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
-<var def = "#GEO#" binning = "(3,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "14"/>
+<!--
+<var def = "simple_1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "simple_1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.91)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "simple_1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "simple_1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "simple_1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSV BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+-->
+
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(12,0.0,0.91)" unit = "NC#pi^{0} BDT Score Fewer Bins" type="d" training= "" group = "67" logplot = "true" pmin=0.1/>
+<!--<var def = "simple_1g1pMar2020_v4NCPi0_mva" binning = "(12,0.0,0.91)" unit = "NC#pi^{0} BDT Score Fewer Bins" type="d" training= "" group = "67" logplot = "true" pmin=0.1/>-->
+
+
+<!--plots for osc meeting-->
+<var def = "#GEO#" binning = "(3,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "15"/>
+<var def = "#GEO#" binning = "(10,50,650)" unit = "Corrected Calorimetric Shower Energy [MeV] Finer" type = "d"   training="" group = "16"/>
+
+<var def = "#GEO#" binning = "(18,40,700)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "17"/>
+
 <var def = "reco_shower_energy_plane2[0]" binning = "(3,0,600)" unit = "Shower Energy Plane 2 [MeV]" type = "d"   training="" group = "14"/>
 <var def = "reco_shower_energy_max[0]" binning = "(3,0,600)" unit = "Shower Energy Max [MeV]" type = "d"   training="" group = "14"/>
 
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "35" />
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(18,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "36" />
+
+<var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(18,0,2)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "" group = "81"/>
+
+<var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(18,0.2,1.6)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "" group = "82"/>
+
+<var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(4,0.2,1.0)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "" group = "85"/>
 
 
-<var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(10,1.0,2)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = ""  group = "34"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(20,2,20)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="" group = "83"/>
+
+<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(10,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm] Final" type = "d"    training="" group = "84"/>
+
+
+<!--other plots -->
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(20,1.0,2)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = ""  group = "34"/>
 
 <var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(18,0,2)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Inverse BNB Cut" type = "d"    training = "" group = "79" cut = "1g1pMar2020_v4BNB_mva &lt; #BNB0#"/>
 <var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(18,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm] Inverse BNB Cut" type = "d"    training="" group = "79" cut = "1g1pMar2020_v4BNB_mva &lt; #BNB0#"/>
