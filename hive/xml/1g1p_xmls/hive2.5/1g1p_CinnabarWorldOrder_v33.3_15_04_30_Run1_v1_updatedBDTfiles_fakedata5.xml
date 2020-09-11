@@ -846,8 +846,8 @@
 <var def = "simple_1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSV BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 -->
 
-<!--<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(12,0.0,0.91)" unit = "NC#pi^{0} BDT Score Fewer Bins" type="d" training= "" group = "67" logplot = "true" pmin=0.1/>-->
-<var def = "simple_1g1pMar2020_v4NCPi0_mva" binning = "(12,0.0,0.91)" unit = "NC#pi^{0} BDT Score Fewer Bins" type="d" training= "" group = "67" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(12,0.0,0.91)" unit = "NC#pi^{0} BDT Score Fewer Bins" type="d" training= "" group = "67" logplot = "true" pmin=0.1/>
+<!--<var def = "simple_1g1pMar2020_v4NCPi0_mva" binning = "(12,0.0,0.91)" unit = "NC#pi^{0} BDT Score Fewer Bins" type="d" training= "" group = "67" logplot = "true" pmin=0.1/>-->
 
 
 <!--plots for osc meeting-->
