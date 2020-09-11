@@ -700,6 +700,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 TMatrixT<double> Mout = *covar_collapsed;
                 // Calculate middle term, sys + stat covar matrices
                 // CNP + intrinsic MC error^2
+                // this was the block
                 for(int i =0; i<covar_collapsed->GetNcols(); i++) {
                     Mout(i,i) += ( d0->GetBinContent(i+1) >0.001 ? 3.0/(1.0/d0->GetBinContent(i+1) +  2.0/tsum->GetBinContent(i+1))  : tsum->GetBinContent(i+1)/2.0 ) + pow(vec_mc_stats_error[i],2);
                 }
