@@ -177,6 +177,28 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
         }//-->end definition
         bdt_definitions.push_back(this_denom);
 
+
+        TiXmlElement *pFriend = pBDTfile->FirstChildElement("friend");
+        while(pFriend){
+            TiXmlElement *pFName = pFriend->FirstChildElement("filename");
+            while(pFName){
+                std::string unpar =  pFName->GetText();
+                bdt_friend_filenames.push_back(unpar);
+                pFName = pFName->NextSiblingElement("filename");
+            }
+            
+            TiXmlElement *pTName = pFriend->FirstChildElement("treename");
+            while(pTName){
+                std::string unpar =  pTName->GetText();
+                bdt_friend_treenames.push_back(unpar);
+                pTName = pTName->NextSiblingElement("treename");
+            }
+
+            pFriend = pFriend->NextSiblingElement("friend");
+        }//-->end friend
+
+
+
         //next lets check if its the Signal Training
         TiXmlElement *pTrain = pBDTfile->FirstChildElement("training");
         std::vector<std::string> this_tcut; 

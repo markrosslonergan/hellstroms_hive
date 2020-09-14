@@ -363,10 +363,14 @@ int main (int argc, char *argv[]){
 
         bdt_files.back()->calcPOT(XMLconfig.run_names, XMLconfig.run_cuts, XMLconfig.run_fractions);
 
-        if(f<9){
-            std::string opt_dir = "/uboone/data/users/markross/Mar2020/COFredo/OpticalMatch_";
-            std::cout<<"Adding Optical friend "<<opt_dir+bdt_files.back()->name<<std::endl;
-            bdt_files.back()->addFriend("opt_tree",opt_dir+bdt_files.back()->name);
+
+
+        if(XMLconfig.bdt_friend_filenames.size()>0){
+            
+            for(int fr =0; fr < XMLconfig.bdt_friend_filenames.size(); fr++){
+                std::cout<<"Adding a Friend Tree : "<<XMLconfig.bdt_friend_treenames[fr]<<" from file "<<dir+"/"+XMLconfig.bdt_friend_filenames[fr]<<std::endl;
+                bdt_files.back()->addFriend(XMLconfig.bdt_friend_treenames[fr],dir+"/"+XMLconfig.bdt_friend_filenames[fr]);
+            }
         }
 
         //std::string r1 = "run_number>=5121 && run_number <=5946";
