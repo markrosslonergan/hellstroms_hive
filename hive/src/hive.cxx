@@ -364,7 +364,7 @@ int main (int argc, char *argv[]){
         bdt_files.back()->calcPOT(XMLconfig.run_names, XMLconfig.run_cuts, XMLconfig.run_fractions);
 
 
-
+        std::cout<<"Checking for friend trees: "<<XMLconfig.bdt_friend_filenames.size()<<" "<<XMLconfig.bdt_friend_treenames.size()<<std::endl;
         if(XMLconfig.bdt_friend_filenames.size()>0){
             
             for(int fr =0; fr < XMLconfig.bdt_friend_filenames.size(); fr++){
