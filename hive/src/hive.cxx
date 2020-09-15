@@ -364,12 +364,12 @@ int main (int argc, char *argv[]){
         bdt_files.back()->calcPOT(XMLconfig.run_names, XMLconfig.run_cuts, XMLconfig.run_fractions);
 
 
-        std::cout<<"Checking for friend trees: "<<XMLconfig.bdt_friend_filenames.size()<<" "<<XMLconfig.bdt_friend_treenames.size()<<std::endl;
-        if(XMLconfig.bdt_friend_filenames.size()>0){
+        std::cout<<"Checking for friend trees: "<<XMLconfig.bdt_friend_filenames[f].size()<<" "<<XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
+        if(XMLconfig.bdt_friend_filenames[f].size()>0){
             
-            for(int fr =0; fr < XMLconfig.bdt_friend_filenames.size(); fr++){
-                std::cout<<"Adding a Friend Tree : "<<XMLconfig.bdt_friend_treenames[fr]<<" from file "<<dir+"/"+XMLconfig.bdt_friend_filenames[fr]<<std::endl;
-                bdt_files.back()->addFriend(XMLconfig.bdt_friend_treenames[fr],dir+"/"+XMLconfig.bdt_friend_filenames[fr]);
+            for(int fr =0; fr < XMLconfig.bdt_friend_filenames[f].size(); fr++){
+                std::cout<<"Adding a Friend Tree : "<<XMLconfig.bdt_friend_treenames[f][fr]<<" from file "<<dir+"/"+XMLconfig.bdt_friend_filenames[f][fr]<<std::endl;
+                bdt_files.back()->addFriend(XMLconfig.bdt_friend_treenames[f][fr],dir+"/"+XMLconfig.bdt_friend_filenames[f][fr]);
             }
         }
 
