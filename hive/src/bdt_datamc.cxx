@@ -663,6 +663,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             bool use_cnp = true;
             if(!var.has_covar || m_error_string=="stat"){
 
+                
                 for(int p=0; p<d0->GetNbinsX();p++){
 
                     double da = d0->GetBinContent(p+1);
@@ -685,6 +686,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                         double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
 
+
+                        tot_norm_error += pow(tsum->GetBinError(p+1),2);
                         std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
                         if(tk==tk){
                             mychi+=tk;
@@ -693,6 +696,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                     }
                 }
+                tot_norm_error = sqrt(tot_norm_error);
             } else if (var.has_covar && use_cnp && m_error_string!="stat") {
 
 
