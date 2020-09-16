@@ -402,6 +402,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     //               (*covar_collapsed)(c,c) += mc_stats_error*mc_stats_error;
                 }
 
+
                 covar_f->Close();
             }else{
                 for(int c=0; c< tsum->GetNbinsX()+1;c++){
@@ -656,7 +657,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Binned Chi-test: "<<var.name<<" "<<tsum->Chi2Test(d0,"UW CHI2")<<std::endl;
             std::cout<<"Binned Chi-test (rev): "<<var.name<<" "<<d0->Chi2Test(tsum,"UW CHI2")<<std::endl;
 
-
+            double tot_norm_error= 0;
             double mychi =0;
             int ndof = 0;
             bool use_cnp = true;
@@ -704,6 +705,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 for(int i =0; i<covar_collapsed->GetNcols(); i++) {
                     Mout(i,i) += ( d0->GetBinContent(i+1) >0.001 ? 3.0/(1.0/d0->GetBinContent(i+1) +  2.0/tsum->GetBinContent(i+1))  : tsum->GetBinContent(i+1)/2.0 ) + pow(vec_mc_stats_error[i],2);
                 }
+
+                
+                tot_norm_error = sqrt(calcTotalNormError(&Mout,var));
 
                 // Invert matrix, because the formula says so
                 Double_t *determ_ptr;
@@ -1050,7 +1054,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             //std::string mean = "(Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
-            std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
+            std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+" #pm "+to_string_prec(tot_norm_error/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
 
             // Make text file for chi^2
@@ -1090,7 +1094,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             t->SetNDC();
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
-            t->SetTextSize(0.10);
+            t->SetTextSize(0.09);
             if(!stack_mode)t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
@@ -1279,9 +1283,9 @@ int bdt_datamc::calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *full_col
             }
 
         }
-        std::cout<<"StackCheck2 "<<i<<" "<<full_vec[i]<<" Err: "<<sqrt(tmp_full(i,i))<<" "<<(full_vec[i]>0 ? sqrt(tmp_full(i,i))/full_vec[i]*100.0 : -9 )<<std::endl;
+       // std::cout<<"StackCheck2 "<<i<<" "<<full_vec[i]<<" Err: "<<sqrt(tmp_full(i,i))<<" "<<(full_vec[i]>0 ? sqrt(tmp_full(i,i))/full_vec[i]*100.0 : -9 )<<std::endl;
     }
-    std::cout<<"Done"<<std::endl;
+    //std::cout<<"Done"<<std::endl;
     //Going to do collapsing here, but for now just do diagonal!
 
     this->simpleCollapse(&tmp_full, full_coll, var);
@@ -1445,6 +1449,63 @@ int bdt_datamc::simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & v
     }
 
     return 0 ;
+
+}
+
+
+double bdt_datamc::calcTotalNormError(TMatrixD * Min, bdt_variable & var){
+    //Ripped directly from...
+    //void SBNchi::CollapseSubchannels(TMatrixT <double> & M, TMatrixT <double> & Mc)
+    int num_channels = 1;
+    std::vector<int> num_subchannels = {var.n_bins};
+    std::vector<int> num_bins = {1};
+    TMatrixD * Mout = new TMatrixD(1,1);
+
+    std::vector<std::vector<TMatrixT<double>>> Summed(num_channels, std::vector<TMatrixT<double>>(num_channels) );	//Initialise a matrix of matricies, to ZERO.
+    for(int ic = 0; ic < num_channels; ic++){
+        for(int jc =0; jc < num_channels; jc++){
+            Summed[ic][jc].ResizeTo(num_bins[jc],num_bins[ic]) ;// This is CORRECT, do not switch (ie Summed[0][1] = size (num_bins[1], num_bins[0])
+            Summed[ic][jc] = 0.0;
+        }
+    }
+
+    int mrow = 0.0;
+    int mcol = 0.0;
+
+    for(int ic = 0; ic < num_channels; ic++){ 	 //Loop over all rows
+        for(int jc =0; jc < num_channels; jc++){ //Loop over all columns
+
+            for(int m=0; m < num_subchannels[ic]; m++){
+                for(int n=0; n< num_subchannels[jc]; n++){ //For each big block, loop over all subchannels summing toGether
+                    Summed[ic][jc] +=  Min->GetSub(mrow+n*num_bins[jc] ,mrow + n*num_bins[jc]+num_bins[jc]-1, mcol + m*num_bins[ic], mcol+ m*num_bins[ic]+num_bins[ic]-1 );
+                }
+            }
+
+            mrow += num_subchannels[jc]*num_bins[jc];//As we work our way left in columns, add on that many bins
+        }//end of column loop
+
+        mrow = 0; // as we end this row, reSet row count, but jump down 1 column
+        mcol += num_subchannels[ic]*num_bins[ic];
+    }//end of row loop
+
+    ///********************************* And put them back toGether! ************************//
+    Mout->Zero();
+    mrow = 0;
+    mcol = 0;
+
+    //Repeat again for Contracted matrix
+    for(int ic = 0; ic < num_channels; ic++){
+        for(int jc =0; jc < num_channels; jc++){
+
+            Mout->SetSub(mrow,mcol,Summed[ic][jc]);
+            mrow += num_bins[jc];
+        }
+
+        mrow = 0;
+        mcol +=num_bins[ic];
+    }
+
+    return (*Mout)(0,0) ;
 
 }
 
