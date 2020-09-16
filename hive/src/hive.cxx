@@ -59,8 +59,8 @@ int main (int argc, char *argv[]){
     // Added by A. Mogan 1/13/20 for doing normalization fits
     bool scale_mode = true;
     //double what_pot = 13.2e20;
-  //  double what_pot = 12.25e20;
-    double what_pot = 6.8e20;
+    double what_pot = 12.25e20;
+//    double what_pot = 6.8e20;
 
     int which_file = -1;
     int which_bdt = -1;
@@ -314,6 +314,7 @@ int main (int argc, char *argv[]){
 
         bool incl_in_stack = true;
 
+
         if(XMLconfig.bdt_scales[f] != 1.0){
             std::cout<<" -- Scaling "<<XMLconfig.bdt_tags[f]<<" file by a factor of "<<XMLconfig.bdt_scales[f]<<std::endl;
             bdt_files.back()->scale_data = XMLconfig.bdt_scales[f];
@@ -362,6 +363,16 @@ int main (int argc, char *argv[]){
 
         bdt_files.back()->calcPOT(XMLconfig.run_names, XMLconfig.run_cuts, XMLconfig.run_fractions);
 
+
+        std::cout<<"Checking for friend trees: "<<XMLconfig.bdt_friend_filenames[f].size()<<" "<<XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
+        if(XMLconfig.bdt_friend_filenames[f].size()>0){
+            
+            for(int fr =0; fr < XMLconfig.bdt_friend_filenames[f].size(); fr++){
+                std::cout<<"Adding a Friend Tree : "<<XMLconfig.bdt_friend_treenames[f][fr]<<" from file "<<dir+"/"+XMLconfig.bdt_friend_filenames[f][fr]<<std::endl;
+                bdt_files.back()->addFriend(XMLconfig.bdt_friend_treenames[f][fr],dir+"/"+XMLconfig.bdt_friend_filenames[f][fr]);
+            }
+        }
+
         //std::string r1 = "run_number>=5121 && run_number <=5946";
         //bdt_files.back()->scale( bdt_files.back()->tvertex->GetEntries(r1.c_str())/(double)bdt_files.back()->tvertex->GetEntries() );
 
@@ -401,7 +412,7 @@ int main (int argc, char *argv[]){
             f->calcBaseEntryList(analysis_tag);
         }
 
-
+        
         //These are old and redundant.
         //f->addFriend("sss_precalc",analysis_tag+"_"+f->tag+"_SSSprecalc.root");
         //f->addFriend("track_tree",analysis_tag+"_"+f->tag+"_simtrack.root");
@@ -1190,6 +1201,7 @@ if (topo_tag == "notrack"){
 }
 
 //bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, false, is0p);
+if(number==2)bdt_efficiency(bdt_files[which_file], v_denom, v_topo,vec_precuts,fbdtcuts, what_pot, false, which_stage, analysis_tag, false, false);
 
 
 //specifically for protond/photons pre-topological
@@ -1382,7 +1394,7 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
     for(auto &v: vars){
         vc++;   
         //lets skip anything that isnt the specific or group we want
-        if(number > 0 && number !=vc-1) continue;
+        if(number >= 0 && number !=vc-1) continue;
         if(which_group > 0 && which_group != v.cat) continue;
 
         std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
@@ -1670,6 +1682,18 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         return 0;
         }
         */
+}else if(mode_option=="splitplot"){
+
+
+//        bdt_files[which_file]->splitAndPlot(which_group, vars[number], onbeam_data_file->pot,which_stage, fbdtcuts);
+          auto hh = {bdt_files[11],bdt_files[12]};
+          std::vector<std::string> hj = {bdt_files[11]->getStageCuts(which_stage,fbdtcuts), bdt_files[12]->getStageCuts(which_stage, fbdtcuts)};
+          compareQuick(vars[number],hh,hj,"COMP_"+vars[number].safe_unit+"_stage_"+std::to_string(which_stage),true);
+
+        return 0;
+
+
+
 }else if(mode_option == "vars"){
 
     if (access("vars",F_OK) == -1){
@@ -1775,7 +1799,6 @@ int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std
         tvec.push_back(th1);
         std::cout<<"Int "<<th1->Integral()<<std::endl;
         pad0top->cd();
-
 
         th1->SetLineColor(files[i]->col);
         th1->SetLineWidth(2);

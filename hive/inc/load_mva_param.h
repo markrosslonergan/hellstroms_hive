@@ -77,6 +77,8 @@ class MVALoader {
      std::vector<std::string> run_cuts;
      std::vector<double> run_fractions;
 
+     std::vector<std::vector<std::string>> bdt_friend_filenames;
+     std::vector<std::vector<std::string>> bdt_friend_treenames;
 
     std::vector<double> bdt_cuts;
 

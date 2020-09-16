@@ -1021,7 +1021,8 @@ int bdt_XGtrain(bdt_info &info){
 
         f->cd();
 
-        TCanvas *c_error = new TCanvas("","",1800,1800);
+        TCanvas *c_error = new TCanvas("c_error","",1800,1800);
+        TFile *hfile = new TFile(("XGBoost_Validation_"+name+".root").c_str(),"RECREATE");
         c_error->Divide(2,2);
         c_error->cd(1);
 
@@ -1032,15 +1033,53 @@ int bdt_XGtrain(bdt_info &info){
                 p->SetLogy();
                 p->SetLogx();
             }
+        
+            
             TGraph *g_test= new TGraph(iteration.size(),&iteration[0],&(test_metric_res[i])[0]);
             TGraph *g_train = new TGraph(iteration.size(),&iteration[0],&(train_metric_res[i])[0]);
-            g_train->Draw("AL");
+         /*   TGraph *g_test2;
+               if (split_test){
+                g_test2 = new TGraph(iteration.size(),&iteration[0],&(train_metric_res[i])[0]);
+         
+            }*/
+
+            double mmax1 = std::max(test_metric_res[i].front(),test_metric_res[i].back());
+            double mmax2 = std::max(train_metric_res[i].front(),train_metric_res[i].back());
+            double mmax = std::max(mmax1,mmax2)*1.2;
+		if(i==0)mmax= std::max(mmax,1.0);
+
+            g_test->Draw("AL");
+ 
+	   g_test->SetMinimum(0);
+            g_test->SetMaximum(mmax);
+            g_test->GetHistogram()->SetMaximum(mmax);
+            g_test->GetHistogram()->SetMinimum(0.0);
+           
+            g_test->Draw("AL");
+
+
+	   g_test->SetTitle(s_english[i].c_str());
+
+            g_train->Draw("same AL");
             g_train->SetTitle(s_english[i].c_str());
             g_train->SetLineColor(kRed);
             g_train->SetLineWidth(2);
             g_test->Draw("same CL");
             g_test->SetLineColor(kBlue);
             g_test->SetLineWidth(2);
+
+            /*
+            g_test2->Draw("same CL");
+            g_test2->SetLineColor(kBlue);
+            g_test2->SetLineWidth(2);
+*/
+            g_test->SetMinimum(0);
+            g_test->SetMaximum(mmax);
+            g_train->SetMaximum(mmax);
+            g_train->SetMinimum(0.0);
+            g_test->GetHistogram()->SetMaximum(mmax);
+            g_test->GetHistogram()->SetMinimum(0.0);
+
 
             TGraph *g_min = new TGraph(1);
             g_min->SetPoint(0,test_min_vals[i].second,test_min_vals[i].first);
@@ -1054,12 +1093,20 @@ int bdt_XGtrain(bdt_info &info){
                 lgr->AddEntry(g_test,"Test","f"); 
                 lgr->SetLineWidth(0);
                 lgr->SetLineColor(kWhite);
+                lgr->SetFillStyle(0);
                 lgr->Draw();
+                g_test->Write("g_test");
+                g_train->Write("g_train");
+                g_min->Write("g_min");
             }
+            
+
             c_error->Update();
         }
-        c_error->SaveAs(("XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
+     //   c_error->SaveAs(("XGBoost_Validation_"+name+".root").c_str(),"root");
+      //   c_error->SaveAs(("XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
         c_error->Write(); 
+        hfile ->Close();
 
 
         std::vector<double> pos;

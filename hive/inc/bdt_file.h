@@ -36,6 +36,7 @@
 #include "TFriendElement.h"
 #include "TText.h"
 #include "TRandom3.h"
+#include "TMath.h"
 #include "TVectorT.h"
 #include "TEntryList.h"
 
@@ -238,6 +239,12 @@ struct bdt_file{
 
 
     int makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage, const std::vector<double> & fbdtcuts );
+
+
+
+    int splitAndPlot(int nsplit, bdt_variable var, double pot,int stage,std::vector<double> bdt_cuts);
+
+    std::vector<double> getVector(bdt_variable & var, std::string  cuts);
 
 
 

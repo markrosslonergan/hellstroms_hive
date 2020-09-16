@@ -468,6 +468,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         std::cout<<"bdt_file::bdt_file()\t||\t---> POT is DATA. Setting from internal ZARKOS's tool numbers."<<std::endl;
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
 
+        if(this->tag=="PseudoFakeDataRedo1"){
+            this->tvertex->AddFriend((root_dir+"/simple_tree").c_str(),"/uboone/data/users/markross/Mar2020/SBNfit_files/1g1p_April_collab/Comb13/sbnfit_1g1pMar2020_v4_stage_1_PseudoFakeDataSet1.root"); 
+            weight_branch = "(simple_pot_weight/simple_weight)*genie_spline_weight*(genie_spline_weight>0)";
+        }
 
 
     }else if(is_bnbext){
@@ -925,6 +929,7 @@ TH1* bdt_file::getTH1(bdt_variable & var, std::string  cuts, std::string  nam, d
     //TCanvas *ctmp = new TCanvas();
    
     if (var.additional_cut == "")  {
+    
         var.additional_cut = "1.0";
    }
     
@@ -1340,8 +1345,11 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 }
 
 int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, double plot_pot, std::string external_cuts){
+
     std::cout<<"Beginning SBNfit file creation for stage "<<which_stage<<" for file "<<this->tag<<std::endl;
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
+  
+    std::cout<<"With external cuts "<<external_cuts<<std::endl;
     this->teventweight->AddFriend(this->tvertex);
     this->tslice->AddFriend(this->tvertex);
     
@@ -1498,6 +1506,90 @@ int bdt_file::getRunEfficiency(){
 
 
     return 0;
+}
+
+
+
+
+int bdt_file::splitAndPlot(int nsplit, bdt_variable var,double pot,int stage,std::vector<double> bdt_cuts){
+    std::vector<int> cols = {kRed-7,  kBlue-7, kGreen+1 , kMagenta,kOrange,kGray};
+    TCanvas *c = new TCanvas();
+    c->cd();
+    std::vector<TH1*> vecths;
+    std::vector<std::vector<double>> unbinned;
+
+    for(int i=0; i<nsplit; i++){
+        TH1* th1 = getTH1(var, "("+this->getStageCuts(stage, bdt_cuts)+") && Entry$%"+std::to_string(nsplit)+"=="+std::to_string(i), var.safe_unit+"_"+std::to_string(i), pot, 1);
+            th1->Scale(1.0/th1->Integral());
+            th1->SetLineColor(cols[i]);
+            th1->SetMarkerColor(cols[i]);
+            if(i==0){
+                th1->Draw("E1P");
+                th1->SetMaximum(th1->GetMaximum()*1.2);
+            }else{
+                th1->Draw("Same E1P");
+            }
+            for(int j=1;j<th1->GetNbinsX()+1;j++){
+                std::cout<<th1->GetBinContent(j)<<" ";
+            }
+            std::cout<<std::endl;
+            vecths.push_back(th1);
+            std::vector<double> vtemp = this->getVector(var, "("+this->getStageCuts(stage, bdt_cuts)+") && Entry$%"+std::to_string(nsplit)+"=="+std::to_string(i)); 
+            //Need to sort them, blarg
+            std::sort(vtemp.begin(), vtemp.end());
+            unbinned.push_back(vtemp);
+        }
+    std::cout<<"Naive KS"<<std::endl;
+    for(int a=0; a<nsplit; a++){
+        for(int b=0; b<nsplit; b++){
+            if(a==b)continue;
+            std::cout<<a<<" "<<b<<" KS: "<<vecths[a]->KolmogorovTest(vecths[b])<<std::endl;
+        }
+    }
+
+    std::cout<<"Better KS"<<std::endl;
+    for(int a=0; a<nsplit; a++){
+        for(int b=0; b<nsplit; b++){
+            if(a==b)continue;
+            std::cout<<unbinned[a].size()<<" "<<unbinned[b].size()<<std::endl;
+            std::cout<<a<<" "<<b<<" KS: "<<TMath::KolmogorovTest(unbinned[a].size(),&(unbinned[a])[0],unbinned[b].size(),&(unbinned[b])[0],"")<<std::endl;
+        }
+    }
+
+
+
+    c->SaveAs(("SplitAndPlot_"+var.safe_unit+"_"+this->tag+".pdf").c_str(),"pdf");
+
+
+    return 0;
+}
+
+
+std::vector<double> bdt_file::getVector(bdt_variable & var, std::string  cuts){
+
+    std::vector<double> ans;
+   
+    if (var.additional_cut == "")  {
+        var.additional_cut = "1.0";
+   }
+   
+    TTreeFormula* value = new TTreeFormula("value",(var.name).c_str(),tvertex);
+    TTreeFormula* fcuts = new TTreeFormula("cuts",(cuts).c_str(),tvertex);
+    
+    for(int i=0; i< tvertex->GetEntries();i++){
+        tvertex->GetEntry(i);
+
+        value->GetNdata();
+        fcuts->GetNdata();
+        double dval= value->EvalInstance();
+        if(fcuts->EvalInstance()){
+            if(i%1000 ==0 || dval!=dval)std::cout<<fcuts->EvalInstance()<<" "<<dval<<std::endl;
+            ans.push_back(dval);
+        }
+
+    }
+  
+    return ans;
 }
 
 

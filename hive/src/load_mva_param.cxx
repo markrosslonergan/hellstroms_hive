@@ -177,6 +177,32 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
         }//-->end definition
         bdt_definitions.push_back(this_denom);
 
+
+        std::vector<std::string> tmp_fr_filenames;
+        std::vector<std::string> tmp_fr_treenames;
+        TiXmlElement *pFriend = pBDTfile->FirstChildElement("friend");
+        while(pFriend){
+            TiXmlElement *pFName = pFriend->FirstChildElement("filename");
+            while(pFName){
+                std::string unpar =  pFName->GetText();
+                tmp_fr_filenames.push_back(unpar);
+                pFName = pFName->NextSiblingElement("filename");
+            }
+            
+            TiXmlElement *pTName = pFriend->FirstChildElement("treename");
+            while(pTName){
+                std::string unpar =  pTName->GetText();
+                tmp_fr_treenames.push_back(unpar);
+                pTName = pTName->NextSiblingElement("treename");
+            }
+
+            pFriend = pFriend->NextSiblingElement("friend");
+        }//-->end friend
+        bdt_friend_filenames.push_back(tmp_fr_filenames);
+        bdt_friend_treenames.push_back(tmp_fr_treenames);
+
+
+
         //next lets check if its the Signal Training
         TiXmlElement *pTrain = pBDTfile->FirstChildElement("training");
         std::vector<std::string> this_tcut; 
@@ -707,6 +733,32 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             pDefinition = pDefinition->NextSiblingElement("definition");
         }//-->end definition
         bdt_definitions.push_back(this_denom);
+
+
+        std::vector<std::string> tmp_fr_filenames;
+        std::vector<std::string> tmp_fr_treenames;
+        TiXmlElement *pFriend = pBDTfile->FirstChildElement("friend");
+        while(pFriend){
+            TiXmlElement *pFName = pFriend->FirstChildElement("filename");
+            while(pFName){
+                std::string unpar =  pFName->GetText();
+                tmp_fr_filenames.push_back(unpar);
+                pFName = pFName->NextSiblingElement("filename");
+            }
+            
+            TiXmlElement *pTName = pFriend->FirstChildElement("treename");
+            while(pTName){
+                std::string unpar =  pTName->GetText();
+                tmp_fr_treenames.push_back(unpar);
+                pTName = pTName->NextSiblingElement("treename");
+            }
+
+            pFriend = pFriend->NextSiblingElement("friend");
+        }//-->end friend
+        bdt_friend_filenames.push_back(tmp_fr_filenames);
+        bdt_friend_treenames.push_back(tmp_fr_treenames);
+
+
 
         //next lets check if its the Signal Training
         TiXmlElement *pTrain = pBDTfile->FirstChildElement("training");

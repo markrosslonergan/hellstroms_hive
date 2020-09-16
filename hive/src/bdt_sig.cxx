@@ -327,12 +327,16 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
         }
 
         double significance =0;
+        double purity = 0;
+        double efficiency = 0;
         if(signal==0){
             significance =0;
         }else if(background !=0 && sig_type!=3){
             significance = signal/sqrt(background);
         }else if(background !=0 && sig_type==3){
             significance = signal/(signal+background)*signal/total_sig*100;
+            purity = signal/(signal+background);
+            efficiency = signal/total_sig;
         }else{
             std::cout<<" Warning Backgrounds are identically 0 here, signal is "<<signal<<", so significance NAN. Woopsie. setting to Zero."<<std::endl;
         }
@@ -348,7 +352,12 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
         for(auto &dd:cur_pt){
             std::cout<<dd<<",";   
         }
-        std::cout<<") N_signal: "<<signal<<" N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+        if(sig_type==3){
+            std::cout<<") N_signal: "<<signal<<" N_bkg: "<<background<<" ||  P*E: " <<significance<<" Eff: "<<efficiency<<" Purity: "<<purity<<"   @ "<<s_mod<<std::endl;
+        }else{
+            std::cout<<") N_signal: "<<signal<<" N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+        }
+
 
         s_mod = "";
         n_pt++;

@@ -30,4 +30,6 @@ set_output_directory(validate_hive ${CMAKE_SOURCE_DIR}/build/bin)
 #this is where quite validation scripts can live
 #add_subdirectory(validates)
 
+add_subdirectory(validation_vars)
+
 
