@@ -687,8 +687,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                         double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
 
 
-                        tot_norm_error += pow(tsum->GetBinError(p+1),2);
-                        std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
+                        tot_norm_error += pow(tsum->GetBinError(p+1),2)+d0->GetBinContent(p+1);
+                        //std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
                         if(tk==tk){
                             mychi+=tk;
                             ndof++;
