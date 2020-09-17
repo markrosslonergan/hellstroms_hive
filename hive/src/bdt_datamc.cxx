@@ -398,8 +398,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     //double tot_error = mc_sys_error; 
                     std::cout<<"DETOL: "<<c<<" N: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" Frac: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" Frac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
                     tsum->SetBinError(c+1, tot_error);
-                    //And add on the systematic error that is MC stats
-                    //               (*covar_collapsed)(c,c) += mc_stats_error*mc_stats_error;
                 }
 
 
@@ -710,7 +708,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     Mout(i,i) += ( d0->GetBinContent(i+1) >0.001 ? 3.0/(1.0/d0->GetBinContent(i+1) +  2.0/tsum->GetBinContent(i+1))  : tsum->GetBinContent(i+1)/2.0 ) + pow(vec_mc_stats_error[i],2);
                 }
 
-                
                 tot_norm_error = sqrt(calcTotalNormError(&Mout,var));
 
                 // Invert matrix, because the formula says so

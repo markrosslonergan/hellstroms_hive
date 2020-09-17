@@ -80,6 +80,7 @@ class MVALoader {
      std::vector<std::vector<std::string>> bdt_friend_filenames;
      std::vector<std::vector<std::string>> bdt_friend_treenames;
 
+    std::vector<std::string> bdt_weight_values;
     std::vector<double> bdt_cuts;
 
     std::vector<std::string> recomc_names;
