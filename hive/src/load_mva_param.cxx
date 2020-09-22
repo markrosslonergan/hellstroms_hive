@@ -982,8 +982,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             covar_type = var_covar_type;
         }
 
-        
-        if(has_global_covar){
+        if(has_global_covar && m_error_string!="stat"){
             has_covar= true;
             covar_file =  global_covar_dir;
             covar_name = global_covar_name;

@@ -708,8 +708,20 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     Mout(i,i) += ( d0->GetBinContent(i+1) >0.001 ? 3.0/(1.0/d0->GetBinContent(i+1) +  2.0/tsum->GetBinContent(i+1))  : tsum->GetBinContent(i+1)/2.0 ) + pow(vec_mc_stats_error[i],2);
                 }
 
-                tot_norm_error = sqrt(calcTotalNormError(&Mout,var));
+                if(false){//just for zeroing
 
+                for(int i =0; i<covar_collapsed->GetNcols(); i++) {
+                    for(int k =0; k<covar_collapsed->GetNcols(); k++) {
+                        if(i!=k)Mout(i,k)=0;
+                    }
+                }
+                }
+
+
+
+                tot_norm_error = sqrt(calcTotalNormError(&Mout,var));
+        
+                
                 // Invert matrix, because the formula says so
                 Double_t *determ_ptr;
                 Mout.Invert(determ_ptr);
