@@ -399,8 +399,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     //double tot_error = mc_sys_error; 
                     std::cout<<"DETOL: "<<c<<" N: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" Frac: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" Frac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
                     tsum->SetBinError(c+1, tot_error);
-                    //And add on the systematic error that is MC stats
-                    //               (*covar_collapsed)(c,c) += mc_stats_error*mc_stats_error;
                 }
 
 
@@ -664,6 +662,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             bool use_cnp = true;
             if(!var.has_covar || m_error_string=="stat"){
 
+                
                 for(int p=0; p<d0->GetNbinsX();p++){
 
                     double da = d0->GetBinContent(p+1);
@@ -686,7 +685,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                         double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
 
-                        std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
+
+                        tot_norm_error += pow(tsum->GetBinError(p+1),2)+d0->GetBinContent(p+1);
+                        //std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
                         if(tk==tk){
                             mychi+=tk;
                             ndof++;
@@ -694,6 +695,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                     }
                 }
+                tot_norm_error = sqrt(tot_norm_error);
             } else if (var.has_covar && use_cnp && m_error_string!="stat") {
 
 
@@ -707,9 +709,20 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     Mout(i,i) += ( d0->GetBinContent(i+1) >0.001 ? 3.0/(1.0/d0->GetBinContent(i+1) +  2.0/tsum->GetBinContent(i+1))  : tsum->GetBinContent(i+1)/2.0 ) + pow(vec_mc_stats_error[i],2);
                 }
 
-                
-                tot_norm_error = sqrt(calcTotalNormError(&Mout,var));
+                if(false){//just for zeroing
 
+                for(int i =0; i<covar_collapsed->GetNcols(); i++) {
+                    for(int k =0; k<covar_collapsed->GetNcols(); k++) {
+                        if(i!=k)Mout(i,k)=0;
+                    }
+                }
+                }
+
+
+
+                tot_norm_error = sqrt(calcTotalNormError(&Mout,var));
+        
+                
                 // Invert matrix, because the formula says so
                 Double_t *determ_ptr;
                 Mout.Invert(determ_ptr);

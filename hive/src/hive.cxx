@@ -360,6 +360,10 @@ int main (int argc, char *argv[]){
             training_bdt_files.push_back(bdt_files.back());
         }
 
+        if( XMLconfig.bdt_weight_values[f]!="1.0"){ 
+            std::cout<<"Setting a global weight value of "<<XMLconfig.bdt_weight_values[f]<<std::endl;
+            bdt_files.back()->global_weight_string = "("+ XMLconfig.bdt_weight_values[f] + ")";
+        }
 
         bdt_files.back()->calcPOT(XMLconfig.run_names, XMLconfig.run_cuts, XMLconfig.run_fractions);
 

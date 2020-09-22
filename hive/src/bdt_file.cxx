@@ -33,6 +33,8 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::string tnam_event = root_dir+"event_tree";
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
+    
+    global_weight_string = "1";
 
     if(is_mc){
         std::cout<<"setting weight branch - mc"<<std::endl;
@@ -534,6 +536,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     }
 
 
+    weight_branch = weight_branch +"*"+global_weight_string;
 
     return 0;
 }

@@ -88,6 +88,7 @@ struct bdt_file{
         std::string root_dir;
 
         std::string weight_branch;
+        std::string global_weight_string;
 
 
         TRandom3* rangen;

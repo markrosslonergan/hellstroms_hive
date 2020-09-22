@@ -202,7 +202,16 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
         bdt_friend_treenames.push_back(tmp_fr_treenames);
 
 
-
+        TiXmlElement *pWeight = pBDTfile->FirstChildElement("weight");
+        std::string wei_val = "1.0";
+        while(pWeight){
+                std::string unpar =  pWeight->GetText();
+                std::string parsed = this->AliasParse(unpar);
+                wei_val = parsed;
+                pWeight = pWeight->NextSiblingElement("weight");
+        }
+        bdt_weight_values.push_back(wei_val);
+           
         //next lets check if its the Signal Training
         TiXmlElement *pTrain = pBDTfile->FirstChildElement("training");
         std::vector<std::string> this_tcut; 
@@ -758,6 +767,16 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         bdt_friend_filenames.push_back(tmp_fr_filenames);
         bdt_friend_treenames.push_back(tmp_fr_treenames);
 
+        TiXmlElement *pWeight = pBDTfile->FirstChildElement("weight");
+        std::string wei_val = "1.0";
+        while(pWeight){
+                std::string unpar =  pWeight->GetText();
+                std::string parsed = this->AliasParse(unpar);
+                wei_val = parsed;
+                pWeight = pWeight->NextSiblingElement("weight");
+        }
+        bdt_weight_values.push_back(wei_val);
+         
 
 
         //next lets check if its the Signal Training
@@ -963,8 +982,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             covar_type = var_covar_type;
         }
 
-        
-        if(has_global_covar){
+        if(has_global_covar && m_error_string!="stat"){
             has_covar= true;
             covar_file =  global_covar_dir;
             covar_name = global_covar_name;
