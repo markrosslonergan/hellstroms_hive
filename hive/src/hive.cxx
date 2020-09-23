@@ -1497,8 +1497,8 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
         //set stages
         std::cout<<"Now lets add the Stages: "<<which_stage<<std::endl;
-        std::string s_stagea ="stage_1";
-        std::string s_stageb ="stage_1";
+        std::string s_stagea ="stage_"+std::to_string((int)which_stage);
+        std::string s_stageb ="stage_"+std::to_string((int)which_stage); ;
         std::string sedder_STAGEA = "sed  -i 's@STAGESTAGESTAGE@" + s_stagea + "@' " + covar_det_template_xml+"."+sVID+".xml";
         std::string sedder_STAGEB = "sed  -i 's@STAGEZOOMZOOM@" + s_stageb + "@' " + covar_det_template_xml+"."+sVID+".xml";
 
