@@ -257,9 +257,9 @@ int main (int argc, char *argv[]){
         std::cout<<"Adding an additonal cut of "<<external_cuts<<std::endl;
             for(auto &v: vars){
                 v.additional_cut +="&& ("+external_cuts+")";
+                if(systematics_error_string=="stats")v.has_covar = false;
             }
     }
-
 
     std::string topological_cuts = TMVAmethods[0].topological_definition;
     //**** Setting up bdt_files NWO style
@@ -1454,7 +1454,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
     std::cout<<"Starting to make an SBNfit DETECTOR systeatics integration covar with template: "<<covar_det_template_xml<<std::endl;
 
-    std::vector<std::string> det_names ={"recom2","AngleXZ","AngleYZ","WireYZ","WireX","SCE","LY","LYAtt","LYRay"};
+    std::vector<std::string> det_names ={"recom2","AngleXZ","AngleYZ","WireYZ","WireX","SCE","LY","LYAtt_bugfix","LYRay"};
 
     int vc=0;
     for(auto &v: vars){

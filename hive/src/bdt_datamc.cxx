@@ -362,7 +362,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
             //var.covar_name = "frac_covariance";
 
-            if(var.has_covar && m_error_string !="stat"){
+            if(var.has_covar && m_error_string !="stats"){
 
                 TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
                 if(covar_f->IsZombie()){
@@ -402,7 +402,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
                     
                     //double tot_error = mc_sys_error; 
-                    std::cout<<"DETOL: "<<c<<" N: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" Frac: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" Frac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
+                    std::cout<<"Error Summary || Bin "<<c<<" Nmc: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" FracErr: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" SysFrac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" MCStatFrac: "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
                     tsum->SetBinError(c+1, tot_error);
                 }
 
@@ -650,7 +650,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 *leg_hack = (TH1*)tmp_tsum->Clone(("leg_tmp_tsum"+std::to_string(s)).c_str());
             leg_hack->SetLineWidth(2);
 
-            if(var.has_covar&& m_error_string!="stat"){
+            if(var.has_covar&& m_error_string!="stats"){
                 l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,2) ).c_str(),"fl");
             }else{
                 l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"fl"); // Was le
@@ -665,7 +665,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             double mychi =0;
             int ndof = 0;
             bool use_cnp = true;
-            if(!var.has_covar || m_error_string=="stat"){
+            if(!var.has_covar || m_error_string=="stats"){
 
                 
                 for(int p=0; p<d0->GetNbinsX();p++){
@@ -701,10 +701,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     }
                 }
                 tot_norm_error = sqrt(tot_norm_error);
-            } else if (var.has_covar && use_cnp && m_error_string!="stat") {
+            } else if (var.has_covar && use_cnp && m_error_string!="stats") {
 
 
-                std::cout << "[TEST] Starting chi^2 CNP calculation" << std::endl;
+                std::cout << "[CHI_CNP] Starting chi^2 CNP calculation" << std::endl;
                 
                 TMatrixT<double> Mout = *covar_collapsed;
                 // Calculate middle term, sys + stat covar matrices
@@ -765,7 +765,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }
                 ndof = var.n_bins;
             }
-            std::cout<<"[TEST] MyChi: "<<var.name<<" "<<mychi<<" "<<std::endl;
 
             //stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
 
@@ -877,7 +876,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
 
-            std::cout<<"5"<<std::endl;
             TText *pre; 
             TText *pre2; 
             if (isSpectator) {
@@ -972,7 +970,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //          rat_signal->Divide(tsum);
             for(int b=0; b< rat_signal->GetNbinsX()+1; b++){
                 double val = (signal_hist->GetBinContent(b)+tsum->GetBinContent(b))/tsum->GetBinContent(b);
-                std::cout<<b<<" "<<val<<" "<<tsum->GetBinContent(b)<<" "<<signal_hist->GetBinContent(b)<<std::endl;
+                //std::cout<<b<<" "<<val<<" "<<tsum->GetBinContent(b)<<" "<<signal_hist->GetBinContent(b)<<std::endl;
                 if(val !=val) val = 0;
                 rat_signal->SetBinContent(b,val);
             }
