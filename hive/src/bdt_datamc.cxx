@@ -365,6 +365,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             if(var.has_covar && m_error_string !="stat"){
 
                 TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
+                if(covar_f->IsZombie()){
+                       std::cout<<"Error!! The covariance file failed to open: Does not exist?  "<<var.covar_file.c_str()<<std::endl;
+                       exit(EXIT_FAILURE);
+                }
+
+
                 TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
                 covar_collapsed->Zero();
                 std::cout<<"Reading this from a covariance matrix "<<var.covar_file.c_str()<<std::endl;

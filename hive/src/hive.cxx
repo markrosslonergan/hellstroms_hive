@@ -314,12 +314,10 @@ int main (int argc, char *argv[]){
 
         bool incl_in_stack = true;
 
-
         if(XMLconfig.bdt_scales[f] != 1.0){
             std::cout<<" -- Scaling "<<XMLconfig.bdt_tags[f]<<" file by a factor of "<<XMLconfig.bdt_scales[f]<<std::endl;
             bdt_files.back()->scale_data = XMLconfig.bdt_scales[f];
         }
-
 
         if(XMLconfig.bdt_is_onbeam_data[f]){
             std::cout<<" -- Setting as ON beam data with "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
