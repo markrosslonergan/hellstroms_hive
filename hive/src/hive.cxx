@@ -1513,7 +1513,6 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         std::string sedder_WEI = "sed  -i 's@WEIWEIWEI@(" + addc + ")@' " + covar_det_template_xml+"."+sVID+".xml";
         std::cout<<sedder_WEI<<std::endl;
         system(sedder_WEI.c_str());
-
         
         
         std::cout<<"Ok, now lets use a preprepared sbnfit_make_covariance to generate this "<<std::endl;
@@ -1523,7 +1522,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
         for(auto &det: det_names){
 
-            std::string m_tag = sVID+"_"+det;
+            std::string m_tag = sVID+"_DET_"+det;
             std::cout<<"On Det "<<m_tag<<std::endl;
             std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration "<<std::endl;
 
@@ -1541,10 +1540,8 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         //Then run a SBNfit Merge Fractional
 
         std::cout<<"Going to merge it all"<<std::endl;
-        std::string merger_s = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_merged_det -c "+sVID+"*_fracfixed.SBNcovar.root";
+        std::string merger_s = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_merged_det -c "+sVID+"_DET_*_fracfixed.SBNcovar.root";
         system(merger_s.c_str());
-
-
 
         //*****  If we also ran flux, merge   ***
         if(covar_flux_template_xml !="null.xml"){

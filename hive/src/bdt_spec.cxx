@@ -230,7 +230,7 @@ std::vector<double> bdt_stack::getEntryFullVector(bdt_variable var){
 
         TH1 *hist = (TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, 0);
         for(int i=0; i< hist->GetNbinsX(); i++){
-            std::cout<<"StackCheck "<<ib<<" "<<stack.at(t)->tag<<" "<<hist->GetBinContent(i+1)<<std::endl;
+            //std::cout<<"StackCheck "<<ib<<" "<<stack.at(t)->tag<<" "<<hist->GetBinContent(i+1)<<std::endl;
             ans.push_back(hist->GetBinContent(i+1)); 
             ib++;
         }

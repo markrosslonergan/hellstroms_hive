@@ -30,7 +30,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_BNBOther"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="true"
         />
@@ -41,7 +41,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_BNBOther"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="false"
         />
@@ -54,7 +54,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_CC1Pi0"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="true"
         />
@@ -65,7 +65,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_CC1Pi0"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="false"
         />
@@ -78,7 +78,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_NCDeltaRadOverlayLEE"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="true"
         />
@@ -89,7 +89,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_NCDeltaRadOverlayLEE"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="false"
         />
@@ -104,7 +104,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_NCDeltaRadOverlaySM"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="true"
         />
@@ -115,7 +115,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_NCDeltaRadOverlaySM"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="false"
         />
@@ -130,7 +130,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_NCMultiPi0"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="true"
         />
@@ -141,7 +141,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_NCMultiPi0"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="false"
         />
@@ -154,7 +154,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_NCPi0Coh"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="true"
         />
@@ -165,7 +165,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_NCPi0Coh"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="false"
         />
@@ -180,7 +180,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_NCPi0NotCoh"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="true"
         />
@@ -191,7 +191,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_NCPi0NotCoh"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="false"
         />
@@ -204,7 +204,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_NueOverlays"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="true"
         />
@@ -215,7 +215,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_2g1p_NueOverlays"
-        additional_weight="simple_weight"
+        additional_weight="simple_weight*WEIWEIWEI"
         associated_systematic="SYSVAR"
         central_value="false"
         />
