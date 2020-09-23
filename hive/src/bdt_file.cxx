@@ -861,7 +861,8 @@ TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, doub
     this->tvertex->Draw((invar+">>"+nam).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
-    th1->Sumw2();
+
+    //th1->Sumw2();
     th1->Scale(this->scale_data*plot_POT/this->pot);
     //std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
     if(rebin>1) th1->Rebin(rebin);

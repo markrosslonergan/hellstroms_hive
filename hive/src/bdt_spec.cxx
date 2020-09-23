@@ -153,13 +153,12 @@ TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
 
     TH1* summed = (TH1*)stack.at(0)->getTH1(var, "1", "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
 
-    std::cout<<"Summed: "<<summed->GetSumOfWeights()<<std::endl;
-
+    //std::cout<<"Summed: "<<summed->GetSumOfWeights()<<std::endl;
     for(int t=1; t<stack.size(); t++){
         if(!signal_on_top[t]){
             TH1* hist = (TH1*)stack.at(t)->getTH1(var, "1", "summed_"+std::to_string(t)+"_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, stack_rebin);
             summed->Add(hist);
-            std::cout<<"Summed: "<<summed->Integral()<<std::endl;
+            //std::cout<<"Summed: "<<summed->Integral()<<std::endl;
         }
     }
 
@@ -192,12 +191,12 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 
     TH1* summed = (TH1*)stack.at(0)->getTH1(var, stack.at(0)->getStageCuts(level,cut1, cut2), "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
 
-    std::cout<<"Summed: "<<summed->GetSumOfWeights()<<std::endl;
+    //std::cout<<"Summed: "<<summed->GetSumOfWeights()<<std::endl;
 
     for(int t=1; t<stack.size(); t++){
         TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "summed_"+std::to_string(t)+"_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, stack_rebin);
         summed->Add(hist);
-        std::cout<<"Summed: "<<summed->Integral()<<std::endl;
+        //std::cout<<"Summed: "<<summed->Integral()<<std::endl;
     }
 
     summed->SetTitle((this->name+"_"+var.name).c_str());
