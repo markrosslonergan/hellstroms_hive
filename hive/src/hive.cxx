@@ -257,9 +257,9 @@ int main (int argc, char *argv[]){
         std::cout<<"Adding an additonal cut of "<<external_cuts<<std::endl;
             for(auto &v: vars){
                 v.additional_cut +="&& ("+external_cuts+")";
+                if(systematics_error_string=="stats")v.has_covar = false;
             }
     }
-
 
     std::string topological_cuts = TMVAmethods[0].topological_definition;
     //**** Setting up bdt_files NWO style
@@ -314,12 +314,10 @@ int main (int argc, char *argv[]){
 
         bool incl_in_stack = true;
 
-
         if(XMLconfig.bdt_scales[f] != 1.0){
             std::cout<<" -- Scaling "<<XMLconfig.bdt_tags[f]<<" file by a factor of "<<XMLconfig.bdt_scales[f]<<std::endl;
             bdt_files.back()->scale_data = XMLconfig.bdt_scales[f];
         }
-
 
         if(XMLconfig.bdt_is_onbeam_data[f]){
             std::cout<<" -- Setting as ON beam data with "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
@@ -1456,7 +1454,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
     std::cout<<"Starting to make an SBNfit DETECTOR systeatics integration covar with template: "<<covar_det_template_xml<<std::endl;
 
-    std::vector<std::string> det_names ={"recom2","AngleXZ","AngleYZ","WireYZ","WireX","SCE","LY","LYAtt","LYRay"};
+    std::vector<std::string> det_names ={"recom2","AngleXZ","AngleYZ","WireYZ","WireX","SCE","LY","LYAtt_bugfix","LYRay"};
 
     int vc=0;
     for(auto &v: vars){
@@ -1497,8 +1495,8 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
         //set stages
         std::cout<<"Now lets add the Stages: "<<which_stage<<std::endl;
-        std::string s_stagea ="stage_1";
-        std::string s_stageb ="stage_1";
+        std::string s_stagea ="stage_"+std::to_string((int)which_stage);
+        std::string s_stageb ="stage_"+std::to_string((int)which_stage); ;
         std::string sedder_STAGEA = "sed  -i 's@STAGESTAGESTAGE@" + s_stagea + "@' " + covar_det_template_xml+"."+sVID+".xml";
         std::string sedder_STAGEB = "sed  -i 's@STAGEZOOMZOOM@" + s_stageb + "@' " + covar_det_template_xml+"."+sVID+".xml";
 
@@ -1513,7 +1511,6 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         std::string sedder_WEI = "sed  -i 's@WEIWEIWEI@(" + addc + ")@' " + covar_det_template_xml+"."+sVID+".xml";
         std::cout<<sedder_WEI<<std::endl;
         system(sedder_WEI.c_str());
-
         
         
         std::cout<<"Ok, now lets use a preprepared sbnfit_make_covariance to generate this "<<std::endl;
@@ -1523,7 +1520,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
         for(auto &det: det_names){
 
-            std::string m_tag = sVID+"_"+det;
+            std::string m_tag = sVID+"_DET_"+det;
             std::cout<<"On Det "<<m_tag<<std::endl;
             std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration "<<std::endl;
 
@@ -1541,10 +1538,8 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         //Then run a SBNfit Merge Fractional
 
         std::cout<<"Going to merge it all"<<std::endl;
-        std::string merger_s = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_merged_det -c "+sVID+"*_fracfixed.SBNcovar.root";
+        std::string merger_s = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_merged_det -c "+sVID+"_DET_*_fracfixed.SBNcovar.root";
         system(merger_s.c_str());
-
-
 
         //*****  If we also ran flux, merge   ***
         if(covar_flux_template_xml !="null.xml"){
