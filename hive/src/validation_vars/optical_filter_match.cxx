@@ -272,7 +272,7 @@ int main (int argc, char *argv[]){
                     }else{
                         //it's a duplicate, tree already filled
                         //do the values agree?
-                        std::cout<<"error, duplicated match"<<std::endl;
+                    //    std::cout<<"error, duplicated match"<<std::endl;
 
 
                     }
