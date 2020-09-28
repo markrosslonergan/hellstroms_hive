@@ -51,7 +51,7 @@
 
 <bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" scale = "1.0"  >
      <friend>
-        <filename>/COFredo/OpticalMatch_bnb_bdt_testing_sample_v33.3.uniq.root</filename>
+        <filename>/COFredo/OpticalMatch_bnb_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
