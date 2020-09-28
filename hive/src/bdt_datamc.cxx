@@ -421,7 +421,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //            std::vector<double> ks_sum = data_file->getVector(var,s);
 
             double rmin = 0.0;
-            double rmax = 2.0;
+            double rmax = 1.999;
             int data_rebin = 1;
             //if(s==0 || s == 1){
             //    rmin=0; rmax = 1.99;
