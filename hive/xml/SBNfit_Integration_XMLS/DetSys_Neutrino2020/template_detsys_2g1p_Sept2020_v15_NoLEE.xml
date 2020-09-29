@@ -1,0 +1,197 @@
+<?xml version="1.0" ?>
+
+<mode name="nu" />
+
+<detector name="uBooNE" />
+<plotpot value="1.0"/>
+
+
+<channel name="2g1p" unit="Pi0 Momentum [GeV]">
+    <bins
+        edges=BINBINBIN
+        />
+    <subchannel name="NCDeltaRadOverlaySM" osc = "0" />
+    <subchannel name="NCPi0Coh" osc = "0" />
+    <subchannel name="NCPi0NotCoh" osc = "0" />
+    <subchannel name="NCMultiPi0" osc = "0" />
+    <subchannel name="CC1Pi0" osc = "0" />
+    <subchannel name="BNBOther" osc = "0" />
+    <subchannel name="NueOverlays" osc = "0" />
+    <subchannel name="Dirt" osc = "0" data="true"/>
+    <subchannel name="BNBext" osc = "0" data="true"/>
+</channel>
+
+<!-- ############################################# 2g1p #################################### -->
+
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_BNBOther_CV.root_SYSVAR.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_BNBOther_CV.root_SYSVAR.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_BNBOther"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="true"
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_BNBOther_SYSVAR.root.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_BNBOther_SYSVAR.root.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_BNBOther"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="false"
+        />
+</MultisimFile>
+
+
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_CC1Pi0_CV.root_SYSVAR.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_CC1Pi0_CV.root_SYSVAR.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_CC1Pi0"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="true"
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_CC1Pi0_SYSVAR.root.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_CC1Pi0_SYSVAR.root.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_CC1Pi0"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="false"
+        />
+</MultisimFile>
+
+
+
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGEZOOMZOOM_NCDeltaRadOverlaySM_CV.root_SYSVAR.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGEZOOMZOOM_NCDeltaRadOverlaySM_CV.root_SYSVAR.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_NCDeltaRadOverlaySM"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="true"
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGEZOOMZOOM_NCDeltaRadOverlaySM_SYSVAR.root.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGEZOOMZOOM_NCDeltaRadOverlaySM_SYSVAR.root.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_NCDeltaRadOverlaySM"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="false"
+        />
+</MultisimFile>
+
+
+
+
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_NCMultiPi0_CV.root_SYSVAR.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_NCMultiPi0_CV.root_SYSVAR.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_NCMultiPi0"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="true"
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_NCMultiPi0_SYSVAR.root.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_NCMultiPi0_SYSVAR.root.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_NCMultiPi0"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="false"
+        />
+</MultisimFile>
+
+
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_NCPi0Coh_CV.root_SYSVAR.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_NCPi0Coh_CV.root_SYSVAR.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_NCPi0Coh"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="true"
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_NCPi0Coh_SYSVAR.root.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_NCPi0Coh_SYSVAR.root.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_NCPi0Coh"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="false"
+        />
+</MultisimFile>
+
+
+
+
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGEZOOMZOOM_NCPi0NotCoh_CV.root_SYSVAR.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGEZOOMZOOM_NCPi0NotCoh_CV.root_SYSVAR.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_NCPi0NotCoh"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="true"
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGEZOOMZOOM_NCPi0NotCoh_SYSVAR.root.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGEZOOMZOOM_NCPi0NotCoh_SYSVAR.root.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_NCPi0NotCoh"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="false"
+        />
+</MultisimFile>
+
+
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_NueOverlays_CV.root_SYSVAR.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_NueOverlays_CV.root_SYSVAR.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_NueOverlays"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="true"
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_NueOverlays_SYSVAR.root.cvlapped.root" scale = "2.1385654" maxevents="5000000" pot="1"> 
+    <friend treename="singlephoton/vertex_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g1p_April_collab/DetSys/Run3//sbnfit_pigLEE_combined_STAGESTAGESTAGE_NueOverlays_SYSVAR.root.cvlapped.root" /> 
+    <branch
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_2g1p_NueOverlays"
+        additional_weight="(simple_weight*(simple_weight&gt;0.0001)+1.0*(simple_weight&lt;0.001))*WEIWEIWEI"
+        associated_systematic="SYSVAR"
+        central_value="false"
+        />
+</MultisimFile>
+
