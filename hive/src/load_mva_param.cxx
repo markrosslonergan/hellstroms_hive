@@ -1013,6 +1013,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         const char * t_cat = pVar->Attribute("group");
          if(t_cat!=NULL){
             in_cat = atoi(t_cat);
+            std::cout << "[GROUP] " << var_unit << std::endl;
          }
 
 
