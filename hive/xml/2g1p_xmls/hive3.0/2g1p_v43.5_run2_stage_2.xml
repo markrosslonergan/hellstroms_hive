@@ -5,15 +5,15 @@
 <!-- 0.85416 -->
 
 <!-- Directory for all covariance matrices -->
-<covar dir="/pnfs/uboone/persistent/users/amogan/v08_00_00_35/sbnfit_covar/2g1p_stage_1_run3/" name="frac_covariance" plotname="Flux &amp; XS Systematics" />
+<covar dir="/pnfs/uboone/persistent/users/amogan/v08_00_00_35/sbnfit_covar/2g1p_stage_2_run2/" name="frac_covariance" plotname="Flux &amp; XS Systematics" />
 
 <!-- ================================================== BDT FILES ==================================================== -->
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "NC #Delta Radiative"  >
+<bdtfile filename = "bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "NC #Delta Radiative"  >
     <friend>
-        <filename>/COFredo/OpticalMatch_ncdelta_overlay_combined_run3.uniq.spluff.test.root</filename>
+        <filename>/COFredo/OpticalMatch_bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -23,9 +23,9 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "true" scale = "1.0"  >
+<bdtfile filename = "bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "true" scale = "1.0"  >
     <friend>
-        <filename>/COFredo/OpticalMatch_ncpi0_overlay_combined_run3.uniq.root</filename>
+        <filename>/COFredo/OpticalMatch_bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -36,9 +36,9 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run3.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "true" scale = "1.0"  >
-    <friend>
-        <filename>/COFredo/OpticalMatch_ncpi0_overlay_combined_run3.uniq.root</filename>
+<bdtfile filename = "bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "true" scale = "1.0"  >
+     <friend>
+        <filename>/COFredo/OpticalMatch_bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -49,9 +49,9 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_combined_run3_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" scale = "1.0"  >
+<bdtfile filename = "bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" scale = "1.0"  >
      <friend>
-        <filename>/COFredo/OpticalMatch_bnb_overlay_combined_run3_v33.3.uniq.spluff.test.root</filename>
+        <filename>/COFredo/OpticalMatch_bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -61,21 +61,22 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ccpi0_overlay_run3_v33.3.uniq.spluff.test.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}" scale = "1.0"  >
+<bdtfile filename = "bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}" scale = "1.0"  >
     <friend>
-        <filename>/COFredo/OpticalMatch_ccpi0_overlay_run3_v33.3.uniq.spluff.test.root</filename>
+        <filename>/COFredo/OpticalMatch_bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
         <cut>mctruth_cc_or_nc==0 </cut> 
         <cut>mctruth_num_exiting_pi0==1</cut>
+        <cut> mctruth_nu_pdg==14 </cut> <!-- Added here for consistency with Runs 1 and 3 -->
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_combined_run3_v33.3.uniq.spluff.test.root" tag = "BNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0"  >
+<bdtfile filename = "bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root" tag = "BNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0"  >
      <friend>
-        <filename>/COFredo/OpticalMatch_bnb_overlay_combined_run3_v33.3.uniq.spluff.test.root</filename>
+        <filename>/COFredo/OpticalMatch_bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -83,28 +84,28 @@
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1)</cut> <!-- Not NC multip0 -->
-        <!-- <cut> !(mctruth_is_delta_radiative &amp;&amp; mctruth_cc_or_nc==1)</cut> -->
         <cut> !(mctruth_is_delta_radiative &amp;&amp; mctruth_cc_or_nc==1)</cut>  <!--not nc delta -->
         <cut> (!(mctruth_cc_or_nc==0 &amp;&amp; fabs(mctruth_nu_pdg)==12)) </cut> <!-- not cc nue -->
         <cut> !(fabs(mctruth_nu_pdg)==12 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0 >0 ) </cut>  <!-- NC nue with 0 NCpi0 -->
     </definition>
 </bdtfile>
 
-<bdtfile filename = "nue_overlay_run3_v33.3.uniq.spluff.test.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
-    <friend>
-        <filename>/COFredo/OpticalMatch_nue_overlay_run3_v33.3.uniq.spluff.test.root</filename>
+<bdtfile filename = "bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
+ <friend>
+        <filename>/COFredo/OpticalMatch_bnb_overlay_combined_run2_v33.3.uniq.spluf.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
+        <cut> mctruth_cc_or_nc==0 </cut> <!-- Added for consistency with Runs 1 and 3 -->
     </definition>
 </bdtfile>
 
-<bdtfile filename = "dirt_overlay_run3_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
+<bdtfile filename = "dirt_overlay_combined_run2_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
     <friend>
-        <filename>/COFredo/OpticalMatch_dirt_overlay_run3_v33.3.uniq.root</filename>
+        <filename>/COFredo/OpticalMatch_dirt_overlay_combined_run2_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -113,26 +114,22 @@
     </definition>
 </bdtfile>
 
-<!-- TODO Is this Run 3G1? Looks like it, but unsure 
-     What does that mean for other MC files? Use run 3 
-     combined? Or just Run 3 G? -->
-<bdtfile filename = "filter_2g1p_data_run3_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data Run 3 G2">
+<bdtfile filename = "filter_2g1p_data_run2_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data Run 2">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
-        <tor860_wcut> 1.731e+20 </tor860_wcut>   
-        <E1DCNT_wcut> 41342671.0</E1DCNT_wcut>   
+        <tor860_wcut> 2.557e+20 </tor860_wcut>   
+        <E1DCNT_wcut> 60285765.0</E1DCNT_wcut>   
     </data>
 </bdtfile>
 
-<!-- TODO Right file? -->
-<bdtfile filename = "bnbext_run3_combined_v33.3.uniq.spluff.test.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "bnbext_combined_run2_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data Run 2" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 1.731e+20 </tor860_wcut>   
-        <E1DCNT_wcut> 41342671.0</E1DCNT_wcut>   
-        <EXT>73196017.0</EXT>  
+        <tor860_wcut> 2.557e+20 </tor860_wcut>   
+        <E1DCNT_wcut> 60285765.0</E1DCNT_wcut>   
+        <EXT>122900182.0</EXT>  
     </data>
 </bdtfile>
 
@@ -250,7 +247,7 @@
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
 
-<var def = "run_number" binning = "(20,15000,20000)" unit="Run Number" type="i"  training="" group="1"/>
+<var def = "run_number" binning = "(20,8000,15000)" unit="Run Number" type="i"  training="" group="1"/>
 
 <var def = "(reco_shower_impact_parameter[i_shr[0]])" binning = "(20,0,20)" unit = "Leading Shower Impact Parameter [cm]" type="d"  training="0" group="1"/>
 <var def = "(reco_shower_impact_parameter[i_shr[1]])" binning = "(20,0,20)" unit = "Subleading Shower Impact Parameter [cm]" type="d"  training="0" group="1" />
