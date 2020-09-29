@@ -331,18 +331,23 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 * tsum;
             TH1 * d0;
             TH1 * tsum_after;
+            std::vector<double> m_fullvec;
 
             stk = (THStack*)mc_stack->getEntryStack(var,s);
-            tsum = (TH1*)mc_stack->getEntrySum(var,s);
+            tsum = (TH1*)mc_stack->getEntrySum(var,s, m_fullvec);
             d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
             tsum_after = (TH1*)tsum->Clone("tsumafter");
             //Check Covar for plotting
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
 
+
+    
             std::vector<double> vec_mc_stats_error;
+            std::vector<double> vec_mc;
             for(int c=0; c< tsum->GetNbinsX();c++){
                     double mc_stats_error = tsum->GetBinError(c+1);
                     vec_mc_stats_error.push_back(mc_stats_error);
+                    vec_mc.push_back(tsum->GetBinContent(c+1));
             }
             /*
                TH1 *trev = (TH1*)mc_stack->stack.at(1)->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+"arse+"+var.safe_name, plot_pot); 
@@ -373,9 +378,19 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
                 covar_collapsed->Zero();
-                std::cout<<"Reading this from a covariance matrix "<<var.covar_file.c_str()<<std::endl;
+
+                 std::cout<<"Reading this from a covariance matrix "<<var.covar_file.c_str()<<std::endl;
                 std::cout<<"Is it frac or full? "<<var.covar_type.c_str()<<std::endl;
                 this->calcCollapsedCovariance(covar_full, covar_collapsed,var);
+
+                //Some shape/norm
+/*                std::vector<TMatrixT<double>> Mshapenorm = splitNormShape(*covar_collapsed, vec_mc);
+               for(int p=0; p<Mshapenorm[2].GetNcols();p++){
+                        std::cout<<"NORM "<<Mshapenorm[2](p,p)<<" "<<"SHAPE "<<Mshapenorm[0](p,p)<<" "<<"MIXED "<<Mshapenorm[1](p,p)<<" ALL "<<(*covar_collapsed)(p,p)<<" || Result : "<<(*covar_collapsed)(p,p) - Mshapenorm[2](p,p) <<std::endl;
+                }
+                (*covar_collapsed) = (*covar_collapsed) - Mshapenorm[2];
+*/
+                
 
                 //std::vector<double> fkr = {0.144464,0.0794493,0.204987};
                 //std::vector<double> fkr = {0.0941,0.0823,0.2135};
