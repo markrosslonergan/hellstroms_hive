@@ -112,22 +112,22 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "filter_2g0p_data_combined_run123_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1+2+3 On-Beam Data">
+<bdtfile filename = "filter_2g0p_data_run1_v33.3.uniq.root" tag = "Data2g0p" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data Run 1 C1">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
-        <tor860_wcut> 5.893E+20 </tor860_wcut>   
-        <E1DCNT_wcut> 137557244 </E1DCNT_wcut>   
+        <tor860_wcut> 1.452e+20 </tor860_wcut>   
+        <E1DCNT_wcut> 32225959.0</E1DCNT_wcut>   
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1+2+3 Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "bnbext_combined_run1_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 5.893E+20 </tor860_wcut>
-        <E1DCNT_wcut> 137557244</E1DCNT_wcut>
-        <EXT>314602374</EXT>
+        <tor860_wcut> 1.452e+20 </tor860_wcut>   
+        <E1DCNT_wcut> 32225959.0</E1DCNT_wcut>   
+        <EXT>53430380</EXT>  
     </data>
 </bdtfile>
 

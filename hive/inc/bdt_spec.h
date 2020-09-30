@@ -76,6 +76,7 @@ std::vector<double> getEntryFullVector(bdt_variable var);
 		TH1* getSum(bdt_variable, int level, double c1, double c2);
 		TH1* getEntrySum(bdt_variable);
 		TH1* getEntrySum(bdt_variable,int);
+		TH1* getEntrySum(bdt_variable,int,std::vector<double>&full);
 		TH1* getBDTSum(bdt_info which, int level, double c1, double c2);
 		TH1* getBDTSum(bdt_info which,std::string bin, int level, double c1, double c2);
 

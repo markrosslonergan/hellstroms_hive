@@ -141,20 +141,30 @@ int bdt_stack::makeSBNspec(std::string tagin, bdt_variable var, double c1, doubl
 }
 
 TH1* bdt_stack::getEntrySum(bdt_variable var){
-    return getEntrySum(var, 0);
+    std::vector<double> tmp;
+    return getEntrySum(var, 0,tmp);
+}
+TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
+    std::vector<double> tmp;
+    return getEntrySum(var, level,tmp);
 }
 
 
-TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
+
+TH1* bdt_stack::getEntrySum(bdt_variable var,int level,std::vector<double> &full){
     int stack_rebin = 1;
 
     TH1* summed = (TH1*)stack.at(0)->getTH1(var, "1", "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
+    full.clear();
 
     //std::cout<<"Summed: "<<summed->GetSumOfWeights()<<std::endl;
     for(int t=1; t<stack.size(); t++){
         if(!signal_on_top[t]){
             TH1* hist = (TH1*)stack.at(t)->getTH1(var, "1", "summed_"+std::to_string(t)+"_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, stack_rebin);
             summed->Add(hist);
+            for(int i=0; i<hist->GetNbinsX(); i++){
+                    full.push_back(hist->GetBinContent(i+1));
+            }
             //std::cout<<"Summed: "<<summed->Integral()<<std::endl;
         }
     }

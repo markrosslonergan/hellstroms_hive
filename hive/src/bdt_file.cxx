@@ -1,5 +1,44 @@
 # include "bdt_file.h"
 
+std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<double> & fullvec){
+
+    int ncol = Min.GetNrows();
+    std::vector<TMatrixT<double>> ans;
+    for(int i=0; i<3;i++){
+        ans.push_back(TMatrixT<double>(ncol,ncol));
+        ans.back().Zero();
+    }
+
+    // ans[0] is shape, ans[1] is mixed, ans[2] is norm
+
+    double Nt = std::accumulate(fullvec.begin(), fullvec.end(),0.0);
+
+    for(int i=0; i<ncol; i++){
+        for(int j=0; j<ncol; j++){
+
+            ans[0](i,j)  = Min(i,j);
+            ans[1](i,j)  = 0.0;
+            ans[2](i,j)  = 0.0;
+
+            for(int k=0; k<ncol;k++){
+                ans[0](i,j) += -fullvec[j]/Nt*Min(i,k) - fullvec[i]/Nt*Min(k,j);
+                ans[1](i,j) += fullvec[j]/Nt*Min(i,k) + fullvec[i]/Nt*Min(k,j);
+
+                for(int l=0; l<ncol; l++){
+                    ans[0](i,j) += fullvec[i]*fullvec[j]/(Nt*Nt)*Min(k,l);
+                    ans[1](i,j) += -2*fullvec[i]*fullvec[j]/(Nt*Nt)*Min(k,l);
+                    ans[2](i,j) += fullvec[i]*fullvec[j]/(Nt*Nt)*Min(k,l);
+                }
+
+            };
+        }
+    }
+
+    return ans;
+}
+
+
+
 
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) : bdt_file(indir, inname, intag,inops,inrootdir,incol,1001,inflow){}
 

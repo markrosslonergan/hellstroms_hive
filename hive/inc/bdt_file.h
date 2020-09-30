@@ -71,6 +71,8 @@ std::vector<size_t> sort_indexes(const std::vector<T> &v) {
     return idx;
 }
 
+std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<double>&vin);
+
 
 TText * drawPrelim(double x, double y);
 TText * drawPrelim(double x, double y,double s);
