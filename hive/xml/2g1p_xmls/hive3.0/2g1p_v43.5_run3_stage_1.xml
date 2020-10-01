@@ -11,7 +11,7 @@
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "NC #Delta Radiative"  >
+<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative"  >
     <friend>
         <filename>/COFredo/OpticalMatch_ncdelta_overlay_combined_run3.uniq.spluff.test.root</filename>
         <treename>opt_tree</treename>
