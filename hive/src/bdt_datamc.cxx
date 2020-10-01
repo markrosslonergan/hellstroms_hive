@@ -261,6 +261,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     std::vector<std::string> stage_names;
 
+    int leg_num_digits = 1;
+
     bool OTPC = false;
 
 
@@ -670,7 +672,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //}else{
                 h1->SetLineColor(kBlack);
                 //}
-                std::string string_events = to_string_prec(Nevents,2);
+                std::string string_events = to_string_prec(Nevents,leg_num_digits);
                 if(do_subtraction){
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
@@ -678,6 +680,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 //if(mc_stack->signal_on_top[n]) leg_type = "l";
                 //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
+                
+                //int f->plot_name.size(); 
+                
                 l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
                 //l0->AddEntry(h1,(f->plot_name).c_str(),"f");
 
@@ -690,9 +695,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             leg_hack->SetLineWidth(2);
 
             if(var.has_covar&& m_error_string!="stats"){
-                l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,2) ).c_str(),"fl");
+                l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,leg_num_digits) ).c_str(),"fl");
             }else{
-                l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"fl"); // Was le
+                l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
             }
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -864,7 +869,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
-            if(!stack_mode) l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,2)).c_str(),"lp");	
+            if(!stack_mode) l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,0)).c_str(),"lp");	
 
 
             l0->Draw();
