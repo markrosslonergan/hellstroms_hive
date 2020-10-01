@@ -11,9 +11,9 @@
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "NC #Delta Radiative"  >
+<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative"  >
     <friend>
-        <filename>/COFredo/ncdelta_overlay_run3g_COFredo_v43.5.root</filename>
+        <filename>/COFredo/OpticalMatch_ncdelta_overlay_combined_run3.uniq.spluff.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -25,7 +25,7 @@
 
 <bdtfile filename = "ncpi0_overlay_combined_run3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "true" scale = "1.0"  >
     <friend>
-        <filename>/COFredo/ncpi0_overlay_run3g_COFredo_v43.5.root</filename>
+        <filename>/COFredo/OpticalMatch_ncpi0_overlay_combined_run3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -38,7 +38,7 @@
 
 <bdtfile filename = "ncpi0_overlay_combined_run3.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "true" scale = "1.0"  >
     <friend>
-        <filename>/COFredo/ncpi0_overlay_run3g_COFredo_v43.5.root</filename>
+        <filename>/COFredo/OpticalMatch_ncpi0_overlay_combined_run3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -51,7 +51,7 @@
 
 <bdtfile filename = "bnb_overlay_combined_run3_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" scale = "1.0"  >
      <friend>
-        <filename>/COFredo/bnb_overlay_run3g_COFredo_v43.5.root</filename>
+        <filename>/COFredo/OpticalMatch_bnb_overlay_combined_run3_v33.3.uniq.spluff.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -63,7 +63,7 @@
 
 <bdtfile filename = "ccpi0_overlay_run3_v33.3.uniq.spluff.test.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}" scale = "1.0"  >
     <friend>
-        <filename>/COFredo/ccpi0_overlay_run3_COFredo_v43.5.root</filename>
+        <filename>/COFredo/OpticalMatch_ccpi0_overlay_run3_v33.3.uniq.spluff.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -75,7 +75,7 @@
 
 <bdtfile filename = "bnb_overlay_combined_run3_v33.3.uniq.spluff.test.root" tag = "BNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0"  >
      <friend>
-        <filename>/COFredo/bnb_overlay_run3g_COFredo_v43.5.root</filename>
+        <filename>/COFredo/OpticalMatch_bnb_overlay_combined_run3_v33.3.uniq.spluff.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -92,7 +92,7 @@
 
 <bdtfile filename = "nue_overlay_run3_v33.3.uniq.spluff.test.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
     <friend>
-        <filename>/COFredo/nue_overlay_run3_v43.5.root</filename>
+        <filename>/COFredo/OpticalMatch_nue_overlay_run3_v33.3.uniq.spluff.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
@@ -104,7 +104,7 @@
 
 <bdtfile filename = "dirt_overlay_run3_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
     <friend>
-        <filename>/COFredo/dirt_overlay_run3_v43.5.root</filename>
+        <filename>/COFredo/OpticalMatch_dirt_overlay_run3_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>

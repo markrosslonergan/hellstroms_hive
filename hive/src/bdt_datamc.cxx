@@ -873,6 +873,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //l0->SetFillStyle(0); //comment in for transparent
             l0->SetTextSize(stack_mode ? 0.03 : 0.04);
 
+            // Added by A. Mogan 9/30/20
+            std::string topo_draw = data_file->topo_name;
+            TLatex topotex;
+            topotex.SetTextSize(stack_mode ? 0.04 : 0.06);
+            topotex.SetTextAlign(13);  //align at top
+            topotex.SetNDC();
+            topotex.DrawLatex(.55,.70, topo_draw.c_str());
+
             //  TLatex latex;
             // latex.SetTextSize(0.06);
             //  latex.SetTextAlign(13);  //align at top
@@ -891,12 +899,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pottex.SetNDC();
 
             if (OTPC == true){
-                pottex.DrawLatex(.60,.48, pot_draw.c_str());
+                pottex.DrawLatex(.55,.48, pot_draw.c_str());
                 //      std::cout<<"flag 5"<<std::endl;
 
                 //pottex.DrawLatex(.635,.48, pot_draw.c_str());
             } else{
-                pottex.DrawLatex(.60,.60, pot_draw.c_str());
+                pottex.DrawLatex(.55,.60, pot_draw.c_str());
             }
 
             TLatex descriptor_tex;
@@ -925,7 +933,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TText *pre; 
             TText *pre2; 
             if (isSpectator) {
-                pre = drawPrelim(0.6,stack_mode? 0.525: 0.5,prestring.c_str());
+                pre = drawPrelim(0.55,stack_mode? 0.525: 0.5,prestring.c_str());
                 if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
@@ -941,7 +949,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 }else{
 
-                    pre = drawPrelim(0.6,stack_mode? 0.525 :0.5,prestring.c_str());
+                    pre = drawPrelim(0.55,stack_mode? 0.525 :0.5,prestring.c_str());
                     if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
                 }
 

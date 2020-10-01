@@ -5,13 +5,13 @@
 <!-- 0.85416 -->
 
 <!-- Directory for all covariance matrices -->
-<covar dir="/pnfs/uboone/persistent/users/amogan/v08_00_00_35/sbnfit_covar/2g1p_stage_1_run1/" name="frac_covariance" plotname="Flux &amp; XS Systematics" />
+<covar dir="/pnfs/uboone/persistent/users/amogan/v08_00_00_35/sbnfit_covar/2g1p_stage_1_run1/" name="frac_covariance" plotname="Flux &amp; XSec Sys" />
 
 <!-- ================================================== BDT FILES ==================================================== -->
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "NC #Delta Radiative"  >
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative"  >
     <friend>
         <filename>/COFredo/OpticalMatch_ncdelta_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
@@ -115,7 +115,7 @@
 
 <bdtfile filename = "filter_2g1p_data_run1_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data Run 1 C1">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam">
+    <data type="OnBeam" plot_name="Filtered Run1">
         <tor860_wcut> 1.557e+20 </tor860_wcut>   
         <E1DCNT_wcut> 34574935.0</E1DCNT_wcut>   
     </data>
