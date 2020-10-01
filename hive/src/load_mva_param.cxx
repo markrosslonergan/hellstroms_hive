@@ -245,13 +245,15 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
         bdt_onbeam_pot.push_back(-999);
         bdt_offbeam_spills.push_back(-999);
         bdt_onbeam_spills.push_back(-999);
-
+        bdt_data_descriptor.push_back("NOTDATA");
 
         while(pData){
 
             const char* t_use = pData->Attribute("use");
             if(t_use=="no"){break;}
 
+
+           
             const char* t_type = pData->Attribute("type");
             if(t_type==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated data, but not given a `type` attribute! wither OnBeam or OffBeam!! "<<std::endl; exit(EXIT_FAILURE);}
             std::string s_type = t_type;
@@ -264,9 +266,20 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
             }else{
                 std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated data, but its `type` attribute is neither OnBeam or OffBeam!! "<<t_type<<" "<<std::endl; exit(EXIT_FAILURE);
             }
+             
+            std::string data_plot_name;
+             const char* t_plotname = pData->Attribute("plot_name");
+            if(t_plotname==NULL){
+                //fill the plotname as the Type.
+                data_plot_name = s_type;
+            }else{
+                data_plot_name = t_plotname;   
+            }
+            
             bdt_onbeam_pot.back() = 0;
             bdt_offbeam_spills.back() = 0;
             bdt_onbeam_spills.back() = 0;
+            bdt_data_descriptor.back() = data_plot_name;
 
             TiXmlElement *pTor = pData->FirstChildElement("tor860_wcut");
             while(pTor){
@@ -812,7 +825,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         bdt_onbeam_pot.push_back(-999);
         bdt_offbeam_spills.push_back(-999);
         bdt_onbeam_spills.push_back(-999);
-
+        bdt_data_descriptor.push_back("NOTDATA");
 
         while(pData){
 
@@ -834,6 +847,19 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             bdt_onbeam_pot.back() = 0;
             bdt_offbeam_spills.back() = 0;
             bdt_onbeam_spills.back() = 0;
+
+            std::string data_plot_name;
+             const char* t_plotname = pData->Attribute("plot_name");
+            if(t_plotname==NULL){
+                //fill the plotname as the Type.
+                data_plot_name = s_type;
+            }else{
+                data_plot_name = t_plotname;   
+            }
+            
+            bdt_data_descriptor.back() = data_plot_name;
+
+
 
             TiXmlElement *pTor = pData->FirstChildElement("tor860_wcut");
             while(pTor){

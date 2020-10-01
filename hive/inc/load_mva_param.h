@@ -59,6 +59,9 @@ class MVALoader {
     std::vector<bool> bdt_is_offbeam_data;
     std::vector<double> bdt_offbeam_spills;
 
+    std::vector<std::string> bdt_data_descriptor;
+
+
     std::vector<bool> bdt_is_signal;
     std::vector<bool> bdt_on_top;
     std::vector<bool> bdt_is_training_signal;

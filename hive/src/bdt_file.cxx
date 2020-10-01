@@ -13,6 +13,13 @@ std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<
 
     double Nt = std::accumulate(fullvec.begin(), fullvec.end(),0.0);
 
+    if(true){//isfrac
+    for(int i=0; i<ncol; i++){
+		fullvec[i] = fullvec[i]/Nt;
+	}
+    Nt = std::accumulate(fullvec.begin(), fullvec.end(),0.0);
+	}
+
     for(int i=0; i<ncol; i++){
         for(int j=0; j<ncol; j++){
 

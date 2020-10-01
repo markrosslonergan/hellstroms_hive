@@ -88,6 +88,8 @@ struct bdt_file{
         std::string plot_name;
         std::string plot_ops;
         std::string root_dir;
+    
+        std::string data_descriptor;
 
         std::string weight_branch;
         std::string global_weight_string;
@@ -257,6 +259,7 @@ struct bdt_file{
 
         int writeStageFriendTree(std::string nam,double,double);
         int addPlotName(std::string plotin);
+        int addDataDescriptor(std::string pin){ data_descriptor = pin;}
         int setTColor(TColor &);
         TColor f_TColor;
 };

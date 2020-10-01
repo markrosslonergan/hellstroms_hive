@@ -215,7 +215,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                         cobsmc->Write();
                         cobsmc->SaveAs(("var2D/"+tag+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
-        
+
                         std::cout<<"VAR2D::Corrr "<<f->tag<<" "<<var1.safe_unit<<" "<<var2.safe_unit<<" "<<mc->GetCorrelationFactor()<<std::endl;
 
                         //cobsmc->SaveAs(("var2D/"+tag+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
@@ -342,13 +342,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
 
 
-    
+
             std::vector<double> vec_mc_stats_error;
             std::vector<double> vec_mc;
             for(int c=0; c< tsum->GetNbinsX();c++){
-                    double mc_stats_error = tsum->GetBinError(c+1);
-                    vec_mc_stats_error.push_back(mc_stats_error);
-                    vec_mc.push_back(tsum->GetBinContent(c+1));
+                double mc_stats_error = tsum->GetBinError(c+1);
+                vec_mc_stats_error.push_back(mc_stats_error);
+                vec_mc.push_back(tsum->GetBinContent(c+1));
             }
             /*
                TH1 *trev = (TH1*)mc_stack->stack.at(1)->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+"arse+"+var.safe_name, plot_pot); 
@@ -372,26 +372,48 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
                 if(covar_f->IsZombie()){
-                       std::cout<<"Error!! The covariance file failed to open: Does not exist?  "<<var.covar_file.c_str()<<std::endl;
-                       exit(EXIT_FAILURE);
+                    std::cout<<"Error!! The covariance file failed to open: Does not exist?  "<<var.covar_file.c_str()<<std::endl;
+                    exit(EXIT_FAILURE);
                 }
 
 
                 TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
                 covar_collapsed->Zero();
 
-                 std::cout<<"Reading this from a covariance matrix "<<var.covar_file.c_str()<<std::endl;
+                std::cout<<"Reading this from a covariance matrix "<<var.covar_file.c_str()<<std::endl;
                 std::cout<<"Is it frac or full? "<<var.covar_type.c_str()<<std::endl;
+
+                m_fullvec = mc_stack->getEntryFullVector(var);
+
+                if(covar_full->GetNcols() != m_fullvec.size()){
+                    std::cout<<"Aghr "<<covar_full->GetNcols()<<" "<<m_fullvec.size()<<std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                
+                
+                
+                //std::vector<TMatrixT<double>> Mshapenorm = splitNormShape(*covar_full, m_fullvec);
+                //(*covar_full) = (*covar_full) = Mshapenorm[2];
+
                 this->calcCollapsedCovariance(covar_full, covar_collapsed,var);
 
                 //Some shape/norm
-/*                std::vector<TMatrixT<double>> Mshapenorm = splitNormShape(*covar_collapsed, vec_mc);
-               for(int p=0; p<Mshapenorm[2].GetNcols();p++){
+                //std::vector<TMatrixT<double>> Mshapenorm = splitNormShape(*covar_collapsed, vec_mc);
+
+                /*
+                if(true){
+                    for(int p=0; p<Mshapenorm[2].GetNcols();p++){
+                        std::cout<<"NORM "<<Mshapenorm[2](p,p)<<" "<<"SHAPE "<<Mshapenorm[0](p,p)<<" "<<"MIXED "<<Mshapenorm[1](p,p)<<" ALL "<<(*covar_full)(p,p)<<" || Result : "<<(*covar_full)(p,p) - Mshapenorm[2](p,p) <<std::endl;
+                    }
+                    (*covar_full) =  (*covar_full) - Mshapenorm[2];
+
+                }else{
+                    for(int p=0; p<Mshapenorm[2].GetNcols();p++){
                         std::cout<<"NORM "<<Mshapenorm[2](p,p)<<" "<<"SHAPE "<<Mshapenorm[0](p,p)<<" "<<"MIXED "<<Mshapenorm[1](p,p)<<" ALL "<<(*covar_collapsed)(p,p)<<" || Result : "<<(*covar_collapsed)(p,p) - Mshapenorm[2](p,p) <<std::endl;
+                    }
+                    (*covar_collapsed) =  (*covar_collapsed) - Mshapenorm[2];
                 }
-                (*covar_collapsed) = (*covar_collapsed) - Mshapenorm[2];
-*/
-                
+                */
 
                 //std::vector<double> fkr = {0.144464,0.0794493,0.204987};
                 //std::vector<double> fkr = {0.0941,0.0823,0.2135};
@@ -412,11 +434,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     //tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
                     //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
                     //  double mc_sys_error = fkr[c]*tsum->GetBinContent(c+1);  //sqrt((*covar_collapsed)(c,c));
-                    
+
                     double mc_stats_error = tsum->GetBinError(c+1);
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
+                    // double mc_sys_error = sqrt(fabs((*covar_collapsed)(c,c)));
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
-                    
+
                     //double tot_error = mc_sys_error; 
                     std::cout<<"Error Summary || Bin "<<c<<" Nmc: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" FracErr: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" SysFrac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" MCStatFrac: "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
                     tsum->SetBinError(c+1, tot_error);
@@ -683,7 +706,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             bool use_cnp = true;
             if(!var.has_covar || m_error_string=="stats"){
 
-                
+
                 for(int p=0; p<d0->GetNbinsX();p++){
 
                     double da = d0->GetBinContent(p+1);
@@ -721,7 +744,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
                 std::cout << "[CHI_CNP] Starting chi^2 CNP calculation" << std::endl;
-                
+
                 TMatrixT<double> Mout = *covar_collapsed;
                 // Calculate middle term, sys + stat covar matrices
                 // CNP + intrinsic MC error^2
@@ -732,18 +755,18 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 if(false){//just for zeroing
 
-                for(int i =0; i<covar_collapsed->GetNcols(); i++) {
-                    for(int k =0; k<covar_collapsed->GetNcols(); k++) {
-                        if(i!=k)Mout(i,k)=0;
+                    for(int i =0; i<covar_collapsed->GetNcols(); i++) {
+                        for(int k =0; k<covar_collapsed->GetNcols(); k++) {
+                            if(i!=k)Mout(i,k)=0;
+                        }
                     }
-                }
                 }
 
 
 
                 tot_norm_error = sqrt(calcTotalNormError(&Mout,var));
-        
-                
+
+
                 // Invert matrix, because the formula says so
                 Double_t *determ_ptr;
                 Mout.Invert(determ_ptr);
@@ -856,7 +879,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //  latex.SetNDC();
             //  latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
             TLatex pottex;
-            pottex.SetTextSize(stack_mode ? 0.04 : 0.06);
+            pottex.SetTextSize(stack_mode ? 0.04 : 0.05);
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
 
@@ -864,8 +887,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //std::string pot_unit_s = stack_mode ? "e20" : "e19";
             double pot_unit = 1e20;
             std::string pot_unit_s = "E20";
-            std::string pot_draw = data_file->topo_name+"   "+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
+            std::string pot_draw = data_file->data_descriptor+" "+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
             pottex.SetNDC();
+
             if (OTPC == true){
                 pottex.DrawLatex(.60,.48, pot_draw.c_str());
                 //      std::cout<<"flag 5"<<std::endl;
@@ -874,6 +898,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             } else{
                 pottex.DrawLatex(.60,.60, pot_draw.c_str());
             }
+
+            TLatex descriptor_tex;
+            descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.05);
+            descriptor_tex.SetTextAlign(13);  //align at top
+            descriptor_tex.SetNDC();
+            descriptor_tex.DrawLatex(0.6,0.66,("Selection "+ data_file->topo_name).c_str());
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
@@ -918,10 +948,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
-            pre->SetTextSize(stack_mode ? 0.04 : 0.06);;
+            pre->SetTextSize(stack_mode ? 0.04 : 0.05);
             pre->Draw();
             if(stack_mode){
-                pre2->SetTextSize(stack_mode ? 0.04 : 0.06);;
+                pre2->SetTextSize(stack_mode ? 0.04 : 0.05);;
                 pre2->Draw();
             }
             /* TText *spec;
@@ -1116,8 +1146,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             outfile.close();
 
 
-           // outfile.open("chisq_"+simple_topo_name+"_"+ run_name +"_stage_"+std::to_string(s)+".txt", std::ios_base::app);
-         //   outfile << to_string_prec(TMath::Prob(mychi, ndof),3) << std::endl;
+            // outfile.open("chisq_"+simple_topo_name+"_"+ run_name +"_stage_"+std::to_string(s)+".txt", std::ios_base::app);
+            //   outfile << to_string_prec(TMath::Prob(mychi, ndof),3) << std::endl;
 
 
             std::string combined = mean + "     " +ks;
@@ -1316,7 +1346,7 @@ int bdt_datamc::calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *full_col
             }
 
         }
-       // std::cout<<"StackCheck2 "<<i<<" "<<full_vec[i]<<" Err: "<<sqrt(tmp_full(i,i))<<" "<<(full_vec[i]>0 ? sqrt(tmp_full(i,i))/full_vec[i]*100.0 : -9 )<<std::endl;
+        // std::cout<<"StackCheck2 "<<i<<" "<<full_vec[i]<<" Err: "<<sqrt(tmp_full(i,i))<<" "<<(full_vec[i]>0 ? sqrt(tmp_full(i,i))/full_vec[i]*100.0 : -9 )<<std::endl;
     }
     //std::cout<<"Done"<<std::endl;
     //Going to do collapsing here, but for now just do diagonal!
