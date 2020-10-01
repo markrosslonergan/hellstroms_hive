@@ -41,7 +41,7 @@
         <cut> mctruth_num_exiting_pi0==1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
-      <friend>
+    <friend>
         <filename>COFredo/OpticalMatch_ncpi0_overlay_combined_run13_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
@@ -55,8 +55,8 @@
         <cut> mctruth_num_exiting_pi0==1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
-      <friend>
-          <filename>COFredo/OpticalMatch_ncpi0_overlay_combined_run13_v33.3.uniq.root</filename>
+    <friend>
+        <filename>COFredo/OpticalMatch_ncpi0_overlay_combined_run13_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
@@ -69,7 +69,7 @@
         <cut> mctruth_num_exiting_pi0>1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
-          <friend>
+    <friend>
         <filename>COFredo/OpticalMatch_bnb_bdt_testing_sample_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
@@ -83,7 +83,7 @@
         <cut>mctruth_num_exiting_pi0==1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
-      <friend>
+    <friend>
         <filename>COFredo/OpticalMatch_ccpi0_overlay_combined_run13_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
@@ -102,7 +102,7 @@
         <cut> !(fabs(mctruth_nu_pdg)==12 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0 >0 ) </cut>  <!-- NC nue with 0 NCpi0 -->
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
-      <friend>
+    <friend>
         <filename>COFredo/OpticalMatch_bnb_bdt_testing_sample_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
@@ -116,7 +116,7 @@
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
-      <friend>
+    <friend>
         <filename>COFredo/OpticalMatch_nue_bdt_testing_sample_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
@@ -130,7 +130,7 @@
         <cut>1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
-      <friend>
+    <friend>
         <filename>COFredo/OpticalMatch_dirt_overlay_combined_run123_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
