@@ -5,7 +5,7 @@
 <!-- 0.85416 -->
 
 <!-- Directory for all covariance matrices -->
-<covar dir="/pnfs/uboone/persistent/users/amogan/v08_00_00_35/sbnfit_covar/2g1p_stage_1_run3/" name="frac_covariance" plotname="Flux &amp; XS Systematics" />
+<covar dir="/pnfs/uboone/persistent/users/amogan/v08_00_00_35/sbnfit_covar/2g1p_stage_1_run3/" name="frac_covariance" plotname="Flux &amp; XSec Sys" />
 
 <!-- ================================================== BDT FILES ==================================================== -->
 
@@ -113,18 +113,14 @@
     </definition>
 </bdtfile>
 
-<!-- TODO Is this Run 3G1? Looks like it, but unsure 
-     What does that mean for other MC files? Use run 3 
-     combined? Or just Run 3 G? -->
 <bdtfile filename = "filter_2g1p_data_run3_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data Run 3 G2">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam">
+    <data type="OnBeam" plot_name="Filtered Run3" >
         <tor860_wcut> 1.731e+20 </tor860_wcut>   
         <E1DCNT_wcut> 41342671.0</E1DCNT_wcut>   
     </data>
 </bdtfile>
 
-<!-- TODO Right file? -->
 <bdtfile filename = "bnbext_run3_combined_v33.3.uniq.spluff.test.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
