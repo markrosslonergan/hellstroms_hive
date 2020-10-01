@@ -879,7 +879,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //  latex.SetNDC();
             //  latex.DrawLatex(.7,.71,data_file->topo_name.c_str());
             TLatex pottex;
-            pottex.SetTextSize(stack_mode ? 0.04 : 0.05);
+            pottex.SetTextSize(stack_mode ? 0.04 : 0.06);
             pottex.SetTextAlign(13);  //align at top
             pottex.SetNDC();
 
@@ -900,7 +900,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             TLatex descriptor_tex;
-            descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.05);
+            descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
             descriptor_tex.SetTextAlign(13);  //align at top
             descriptor_tex.SetNDC();
             descriptor_tex.DrawLatex(0.6,0.66,("Selection "+ data_file->topo_name).c_str());
@@ -948,10 +948,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
-            pre->SetTextSize(stack_mode ? 0.04 : 0.05);
+            pre->SetTextSize(stack_mode ? 0.04 : 0.06);
             pre->Draw();
             if(stack_mode){
-                pre2->SetTextSize(stack_mode ? 0.04 : 0.05);;
+                pre2->SetTextSize(stack_mode ? 0.04 : 0.06);;
                 pre2->Draw();
             }
             /* TText *spec;
