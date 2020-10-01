@@ -879,7 +879,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             topotex.SetTextSize(stack_mode ? 0.04 : 0.06);
             topotex.SetTextAlign(13);  //align at top
             topotex.SetNDC();
-            topotex.DrawLatex(.55,.70, topo_draw.c_str());
+            //topotex.DrawLatex(.55,.70, topo_draw.c_str());
 
             //  TLatex latex;
             // latex.SetTextSize(0.06);
@@ -911,7 +911,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
             descriptor_tex.SetTextAlign(13);  //align at top
             descriptor_tex.SetNDC();
-            descriptor_tex.DrawLatex(0.6,0.66,("Selection "+ data_file->topo_name).c_str());
+            descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
