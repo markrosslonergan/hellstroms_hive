@@ -135,7 +135,7 @@
 
 </bdtfile>
 
-<bdtfile filename = "data_1e19_run3_v33.3.uniq.root" tag = "Data1e19Run3" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 3 Unbiased 1e19">
+<bdtfile filename = "data_1e19_run3_v33.3.uniq.root" tag = "Data1e19Run3" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 3 On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam">
         <tor860_wcut>   7.348e+18 </tor860_wcut>
