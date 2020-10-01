@@ -114,7 +114,7 @@
 
 <bdtfile filename = "filter_2g0p_data_run3_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "On-Beam Data Run 3 G2">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam" plot_name="Filtered Run3" >
+    <data type="OnBeam" plot_name="Filtered" >
         <tor860_wcut> 1.731e+20 </tor860_wcut>   
         <E1DCNT_wcut> 41342671.0</E1DCNT_wcut>   
     </data>
