@@ -10,11 +10,10 @@ void make_2dHisto() {
     
     // Get signal file and TTree
     TString dir = "/uboone/data/users/markross/Mar2020/";
-    // TODO try using final selection sbnfit file for comparison
     //TFile *fin = new TFile("/uboone/app/users/amogan/hive_v2.5_xgboost/hellstroms_hive/hive/build/bin/sbnfit_pigLEE_combined_stage_2_NCPi0Combined_1p_and_0p_v5.root", "READ");
     //TFile *fin = new TFile(dir+"ncpi0_overlay_run3g_v33.3.uniq.root", "READ");
-    //TFile *fin = new TFile(dir+"ncpi0_overlay_run1_v33.3.uniq.root", "READ");
-    TFile *fin = new TFile(dir+"ncpi0_overlay_combined_run13_v33.3.uniq.root", "READ");
+    TFile *fin = new TFile(dir+"ncpi0_overlay_run1_v33.3.uniq.root", "READ");
+    //TFile *fin = new TFile(dir+"ncpi0_overlay_combined_run13_v33.3.uniq.root", "READ");
     TString tag = "all";
     //TTree *t = (TTree*)fin->Get("singlephotonana/vertex_tree");
     TTree *t = (TTree*)fin->Get("singlephotonana/vertex_tree");
