@@ -389,9 +389,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     std::cout<<"Aghr "<<covar_full->GetNcols()<<" "<<m_fullvec.size()<<std::endl;
                     exit(EXIT_FAILURE);
                 }
-                
-                
-                
+
+
+
                 //std::vector<TMatrixT<double>> Mshapenorm = splitNormShape(*covar_full, m_fullvec);
                 //(*covar_full) = (*covar_full) = Mshapenorm[2];
 
@@ -401,19 +401,19 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //std::vector<TMatrixT<double>> Mshapenorm = splitNormShape(*covar_collapsed, vec_mc);
 
                 /*
-                if(true){
-                    for(int p=0; p<Mshapenorm[2].GetNcols();p++){
-                        std::cout<<"NORM "<<Mshapenorm[2](p,p)<<" "<<"SHAPE "<<Mshapenorm[0](p,p)<<" "<<"MIXED "<<Mshapenorm[1](p,p)<<" ALL "<<(*covar_full)(p,p)<<" || Result : "<<(*covar_full)(p,p) - Mshapenorm[2](p,p) <<std::endl;
-                    }
-                    (*covar_full) =  (*covar_full) - Mshapenorm[2];
+                   if(true){
+                   for(int p=0; p<Mshapenorm[2].GetNcols();p++){
+                   std::cout<<"NORM "<<Mshapenorm[2](p,p)<<" "<<"SHAPE "<<Mshapenorm[0](p,p)<<" "<<"MIXED "<<Mshapenorm[1](p,p)<<" ALL "<<(*covar_full)(p,p)<<" || Result : "<<(*covar_full)(p,p) - Mshapenorm[2](p,p) <<std::endl;
+                   }
+                   (*covar_full) =  (*covar_full) - Mshapenorm[2];
 
-                }else{
-                    for(int p=0; p<Mshapenorm[2].GetNcols();p++){
-                        std::cout<<"NORM "<<Mshapenorm[2](p,p)<<" "<<"SHAPE "<<Mshapenorm[0](p,p)<<" "<<"MIXED "<<Mshapenorm[1](p,p)<<" ALL "<<(*covar_collapsed)(p,p)<<" || Result : "<<(*covar_collapsed)(p,p) - Mshapenorm[2](p,p) <<std::endl;
-                    }
-                    (*covar_collapsed) =  (*covar_collapsed) - Mshapenorm[2];
-                }
-                */
+                   }else{
+                   for(int p=0; p<Mshapenorm[2].GetNcols();p++){
+                   std::cout<<"NORM "<<Mshapenorm[2](p,p)<<" "<<"SHAPE "<<Mshapenorm[0](p,p)<<" "<<"MIXED "<<Mshapenorm[1](p,p)<<" ALL "<<(*covar_collapsed)(p,p)<<" || Result : "<<(*covar_collapsed)(p,p) - Mshapenorm[2](p,p) <<std::endl;
+                   }
+                   (*covar_collapsed) =  (*covar_collapsed) - Mshapenorm[2];
+                   }
+                   */
 
                 //std::vector<double> fkr = {0.144464,0.0794493,0.204987};
                 //std::vector<double> fkr = {0.0941,0.0823,0.2135};
@@ -570,17 +570,27 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
 
-            if(var.is_logplot){
-                pad0top->SetLogy();
-                max_modifier = 500.0;
-                //max_modifier=3500.0;
-            }
             //     double max_modifier = 1.7;
             double min_val = 0.01;
             if(is_bdt_variable) {
                 max_modifier = 15.0;
                 //  max_modifier = 25.0;
                 min_val = 0.1;
+            }
+
+            if(var.is_logplot){
+                pad0top->SetLogy();
+                max_modifier = 500.0;
+                // min_val = 0.0001;
+                //max_modifier=3500.0;
+            }
+
+            bool isBDT = true;
+            int max_val;
+            if(isBDT){
+                min_val = 1e-2;
+                max_val = 1e5;
+
             }
 
             d0->SetMarkerStyle(20);
@@ -598,7 +608,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 stk->GetYaxis()->SetTitleOffset(title_offset_upper);
             }
             stk->SetMinimum(min_val);
-            std::cout<<"the max modifier is "<<max_modifier<<std::endl;
+            std::cout<<"the max modifier is "<<max_modifier<<" and the min val is "<< min_val<<std::endl;
 
             if(var.plot_max==-999){ 
                 stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
@@ -611,6 +621,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }else{
                 stk->SetMinimum(var.plot_min);
             }
+
+            if (isBDT){
+                stk->SetMaximum(max_val);
+                stk->SetMinimum(min_val);
+            }
+
+
 
             tsum->SetLineWidth(3);
             //tsum_after->SetLineWidth(3);
