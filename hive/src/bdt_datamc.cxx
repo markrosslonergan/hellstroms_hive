@@ -585,7 +585,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //max_modifier=3500.0;
             }
 
-            bool isBDT = true;
+            bool isBDT = false;
             int max_val;
             if(isBDT){
                 min_val = 1e-2;
