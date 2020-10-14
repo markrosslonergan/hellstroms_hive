@@ -491,6 +491,9 @@
 <var def = "#GE#" binning = "(4,100,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "10"/>
 <var def = "#GE#" binning = "(6,100,700)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "11"/>
 
+<var def = "#GE#" binning = "(4,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "12"/>
+
+
 <!--pi0 vars -->
 <!--
 <var def = "sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)" binning = "(10,0.0,1.4)" unit ="True #pi^{0} Momentum" type = "d" training = "" group = "2"/>
