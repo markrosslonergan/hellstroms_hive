@@ -132,7 +132,7 @@
 
 </bdtfile>
 
-
+<!--
 <bdtfile filename = "dirt_overlay_combined_run123_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" > 
     <definition>
         <cut>1</cut>
@@ -145,7 +145,7 @@
 
 
 </bdtfile>
-
+-->
 <!--
 <bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
     <definition><cut>1</cut></definition>
@@ -166,6 +166,7 @@
     </data>
 </bdtfile>
 
+<!--
 <bdtfile filename = "bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1+3 Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
@@ -176,7 +177,7 @@
         <EXT>166300493.0</EXT>  
     </data>
 </bdtfile>
-
+-->
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
 
 <bdtfile filename = "ncpi0_bdt_training_sample_v33.3.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
