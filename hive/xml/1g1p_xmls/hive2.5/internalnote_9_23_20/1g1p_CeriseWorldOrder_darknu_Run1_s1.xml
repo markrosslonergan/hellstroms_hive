@@ -20,9 +20,9 @@
 </bdtfile>
 
 
-<bdtfile filename = "/uboone/app/users/markrl/SinglePhotonMCC9_Aug2020/working_dir/EpEm2020/vertexed_dark_neutrino_Overlays_v43.5.root" tag = "DarkNue+e-" hist_style = "hist" dirs = "singlephotonana/" col = "(59, 97, 69)" plot_name = "Dark #nu e^{+}e^{-}" signal = "true" plot_on_top = "false" >
+<bdtfile filename = "/uboone/app/users/markrl/SinglePhotonMCC9_Aug2020/working_dir/EpEm2020/vertexed_dark_neutrino_Overlays_v43.5.root" tag = "DarkNue" hist_style = "hist" dirs = "singlephotonana/" col = "(59, 97, 69)" plot_name = "Dark #nu e^{+}e^{-}" signal = "true" plot_on_top = "false" >
     <definition>
-        <!--   <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut> -->
+        <!--   <cut>((vertex_tree.flash_optfltr_pe_beam>20 &amp;&amp; vertex_tree.flash_optfltr_pe_veto&lt; 20)||(vertex_tree.flash_optfltr_pe_beam==-999))</cut>-->
         <cut>1 </cut>
     </definition>
 </bdtfile>

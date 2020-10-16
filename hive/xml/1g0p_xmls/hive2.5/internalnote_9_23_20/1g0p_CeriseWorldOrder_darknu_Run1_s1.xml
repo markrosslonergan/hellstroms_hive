@@ -25,9 +25,10 @@
     </friend> 
 </bdtfile>
 
-<bdtfile filename = "/uboone/app/users/markrl/SinglePhotonMCC9_Aug2020/working_dir/EpEm2020/vertexed_dark_neutrino_Overlays_v43.5.root" tag = "DarkNue+e-" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "Dark #nu e^{+}e^{-}" signal = "true" plot_on_top = "false" >
+<bdtfile filename = "/uboone/app/users/markrl/SinglePhotonMCC9_Aug2020/working_dir/EpEm2020/vertexed_dark_neutrino_Overlays_v43.5.root" tag = "DarkNue" hist_style = "hist" dirs = "singlephotonana/" col = "(59, 97, 69)" plot_name = "Dark #nu e^{+}e^{-}" signal = "true" plot_on_top = "false" >
 <definition>
-   <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+    <!--   <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>-->
+    <cut>1 </cut>
 </definition>
 </bdtfile>
 
@@ -134,7 +135,7 @@
     </friend>
 </bdtfile>
 
-<bdtfile filename = "/uboone/data/users/markross/Mar2020/data_5e19_run1_v33.3.uniq.root" tag = "DarkNuData5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/data_5e19_run1_v33.3.uniq.root" tag = "Data5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam" plot_name="Unbiased">
         <tor860_wcut>   4.081e+19 </tor860_wcut>
