@@ -142,7 +142,7 @@
 
 </bdtfile>
 
-<bdtfile filename = "/uboone/data/users/markross/Mar2020/data_5e19_run1_v33.3.uniq.root" tag = "DarkNuData5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/data_5e19_run1_v33.3.uniq.root" tag = "5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam" plot_name="Unbiased">
         <tor860_wcut>   4.081e+19 </tor860_wcut>

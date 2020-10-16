@@ -467,6 +467,12 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             tmppot += potbranch;
         }
 
+        if (this->tag == "DarkNue+e-"){
+            tmppot = 2e20;
+            std::cout<<"for the dark nue setting to arbitrary POT: "<<tmppot<<std::endl;
+
+        }
+
         numberofevents = tvertex->GetEntries();
 
         pot=tmppot;
@@ -582,7 +588,9 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     }
 
 
-    weight_branch = weight_branch +"*"+global_weight_string;
+   weight_branch = weight_branch +"*"+global_weight_string;
+    std::cout<<"global_weight_string = "<<global_weight_string<<std::endl;
+    std::cout<<"weight_branch = "<< weight_branch<<std::endl;
 
     return 0;
 }
