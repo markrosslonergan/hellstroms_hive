@@ -445,7 +445,8 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         filedir =std::string(pFileDir->GetText());
         pFileDir = pFileDir->NextSiblingElement("filedir");
     }else{
-        filedir = "./";
+       // filedir = "./";
+       filedir = "/";
     }
 
 
