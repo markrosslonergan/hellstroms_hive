@@ -5,19 +5,29 @@
 <covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
-<filedir>/uboone/data/users/markross/Mar2020/</filedir>
+<!--<filedir>/uboone/data/users/markross/Mar2020/</filedir>-->
 
-<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut> 
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_ncdelta_overlay_run1_v33.3.uniq.root</filename>
+        <filename>/uboone/data/users/markross/Mar2020/COFredo/OpticalMatch_ncdelta_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 </bdtfile>
+
+
+<bdtfile filename = "/uboone/app/users/markrl/SinglePhotonMCC9_Aug2020/working_dir/EpEm2020/vertexed_dark_neutrino_Overlays_v43.5.root" tag = "DarkNue" hist_style = "hist" dirs = "singlephotonana/" col = "(59, 97, 69)" plot_name = "Dark #nu e^{+}e^{-}" signal = "true" plot_on_top = "false" >
+    <definition>
+        <!--   <cut>((vertex_tree.flash_optfltr_pe_beam>20 &amp;&amp; vertex_tree.flash_optfltr_pe_veto&lt; 20)||(vertex_tree.flash_optfltr_pe_beam==-999))</cut>-->
+        <cut>1 </cut>
+    </definition>
+</bdtfile>
+
+
 <!--
 <bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
     <definition>
@@ -33,7 +43,7 @@
 </bdtfile>
 -->
 
-<bdtfile filename = "ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0CohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0CohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter==5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -41,13 +51,13 @@
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_ncpi0_overlay_run1_v33.3.uniq.root</filename>
+        <filename>/uboone/data/users/markross/Mar2020/COFredo/OpticalMatch_ncpi0_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0NotCohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0NotCohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -55,38 +65,38 @@
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_ncpi0_overlay_run1_v33.3.uniq.root</filename>
+        <filename>/uboone/data/users/markross/Mar2020/COFredo/OpticalMatch_ncpi0_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> mctruth_cc_or_nc==1</cut>
         <cut> mctruth_num_exiting_pi0>1</cut> 
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_bnb_overlay_run1_v33.3.uniq.root</filename>
+        <filename>/uboone/data/users/markross/Mar2020/COFredo/OpticalMatch_bnb_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 </bdtfile>
 
-<bdtfile filename = "ccpi0_overlay_run1_v33.3.uniq.spluff.test.root" tag = "CC1Pi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ccpi0_overlay_run1_v33.3.uniq.spluff.test.root" tag = "CC1Pi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>mctruth_cc_or_nc==0 </cut>
         <cut>mctruth_num_exiting_pi0==1</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_ccpi0_overlay_run1_v33.3.uniq.root</filename>
+        <filename>/uboone/data/users/markross/Mar2020/COFredo/OpticalMatch_ccpi0_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "BNBOtherRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "BNBOtherRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
@@ -98,41 +108,41 @@
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_bnb_overlay_run1_v33.3.uniq.root</filename>
+        <filename>/uboone/data/users/markross/Mar2020/COFredo/OpticalMatch_bnb_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 
 </bdtfile>
 
-<bdtfile filename = "nue_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NueOverlaysRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/nue_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NueOverlaysRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
     <definition>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_nue_overlay_run1_v33.3.uniq.root</filename>
+        <filename>/uboone/data/users/markross/Mar2020/COFredo/OpticalMatch_nue_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 
 </bdtfile>
 
-<bdtfile filename = "dirt_overlay_run1_v33.3.uniq.root" tag = "DirtRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" >
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/dirt_overlay_run1_v33.3.uniq.root" tag = "DirtRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" >
     <definition>
         <cut>1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_dirt_overlay_run1_v33.3.uniq.root</filename>
+        <filename>/uboone/data/users/markross/Mar2020/COFredo/OpticalMatch_dirt_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 
 </bdtfile>
 
-<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/data_5e19_run1_v33.3.uniq.root" tag = "Data5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam" plot_name="Unbiased">
         <tor860_wcut>   4.081e+19 </tor860_wcut>
@@ -140,7 +150,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1 Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1 Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
@@ -154,7 +164,7 @@
 
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
 
-<bdtfile filename = "ncpi0_bdt_training_sample_v33.3.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncpi0_bdt_training_sample_v33.3.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -167,7 +177,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -180,7 +190,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "ssveto_bdt_training_sample_v33.3.root" tag = "SSvetoTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ssveto_bdt_training_sample_v33.3.root" tag = "SSvetoTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
@@ -191,7 +201,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "SSvetoTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.1,0.2,0.2)" plot_name = "SSveto Test" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "SSvetoTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.1,0.2,0.2)" plot_name = "SSveto Test" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
@@ -202,7 +212,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "bnbext_bdt_training_sample_v33.3.uniq.root" tag = "BNBextTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnbext_bdt_training_sample_v33.3.uniq.root" tag = "BNBextTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut>1</cut>
     </definition>
@@ -214,7 +224,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBextTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Test" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBextTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Test" fillstyle = "3333" scale = "1">
     <definition>
         <cut>1</cut>
     </definition>
@@ -226,7 +236,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_bdt_training_sample_v33.3.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncdelta_bdt_training_sample_v33.3.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
     <definition>
         <cut> TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 </cut> 
         <cut> mctruth_is_delta_radiative==1 </cut>
@@ -246,7 +256,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_bdt_testing_sample_v33.3.uniq.root" tag = "NCDeltaTest" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NCDeltaTest" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/ncdelta_bdt_testing_sample_v33.3.uniq.root" tag = "NCDeltaTest" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NCDeltaTest" fillstyle = "3333" scale = "1">
     <definition>
         <cut> TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 </cut> 
         <cut> mctruth_is_delta_radiative==1 </cut>
@@ -266,7 +276,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "nue_bdt_training_sample_v33.3.uniq.root" tag = "NueTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "NueTrain" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/nue_bdt_training_sample_v33.3.uniq.root" tag = "NueTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "NueTrain" fillstyle = "3333" scale = "1">
     <definition>
         <cut>1</cut>
     </definition>
@@ -277,7 +287,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "nue_bdt_testing_sample_v33.3.uniq.root" tag = "NueTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NueTest" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/nue_bdt_testing_sample_v33.3.uniq.root" tag = "NueTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NueTest" fillstyle = "3333" scale = "1">
     <definition>
         <cut>1</cut>
     </definition>
@@ -288,7 +298,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "bnb_bdt_training_sample_v33.3.uniq.root" tag = "BNBOtherTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BnbTrain" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnb_bdt_training_sample_v33.3.uniq.root" tag = "BNBOtherTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BnbTrain" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -300,7 +310,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOtherTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BNBTest" fillstyle = "3333" scale = "1">
+<bdtfile filename = "/uboone/data/users/markross/Mar2020/bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOtherTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BNBTest" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>

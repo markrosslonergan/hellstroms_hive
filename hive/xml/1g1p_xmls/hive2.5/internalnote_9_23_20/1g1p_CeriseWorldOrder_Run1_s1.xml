@@ -2,7 +2,7 @@
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.974952,0.96273,0.467404,0.570654,0.521623)" />
 
-<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>
+<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XSec Systematics"/>
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
@@ -874,13 +874,60 @@
 <!-- ################################################################################################################ -->
 
 <!--bdt vars -->
+
+<!--<var def = "simple_1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "simple_1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "simple_1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "simple_1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "simple_1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+-->
+
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
+
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
+
+<!--internal note plotting -->
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_di     ry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(18,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "34"/>
+
+<var def = "#GEO#" binning = "(18,40,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "34"/>
+
+
+<var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(18,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d"    training="" group = "35"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(18,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group = "35"/>
+
+<var def = "reco_shower_conversion_distance[0]" binning = "(18,0,100)" unit = " Reconstructed Shower Conversion Distance Log[cm]" type = "d"     training="" group = "35" logplot = "true"/>
+
+<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(18,2,12)" unit = "Reconstructed      Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="" group = "35"/>
+
+<var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit =      "Photon Transverse Momentum [GeV]" binning = "(18,0,0.3)" type = "d"  training = "" group= "35"/>
+
+<var def = "log10(reco_track_spacepoint_max_dist[0])" binning = "(18,-2,1.5)" unit = "Reconstructed Track Max Distance Spacepoint from Line log[cm]"      type = "d"  training = "" group = "35"/>
+<var def = "(reco_shower_trackscore[0])" binning = "(18,0,0.5)" unit = "Shower Score" type ="d"  training ="" group = "35"/>
+
+<var def = "sss2d_conv_ranked_conv" binning = "(18,0,80)" unit ="sss2d closest candidate conversion Distance [cm]" type="d"  training="" group = "35"/>
+
+<var def = "sss3d_invar_ranked_opang" binning = "(18,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="     d"  training="" group = "35"/>
+
+<!--final selection-->
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_di     ry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(5,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "36"/>
+
+<var def = "#GEO#" binning = "(3,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "36"/>
+
+<!--one cut only plots-->
+<var def = "#GEO#" binning = "(5,40,600)" unit = "Corrected Calorimetric Shower Energy [MeV] Cosmic Cut Only" type = "d" cut = "1g1pMar2020_v4COSMIC_mva &gt;= #COS0#"  training="" group = "37"/>
+
+<var def = "#GEO#" binning = "(5,40,600)" unit = "Corrected Calorimetric Shower Energy [MeV] BNB Other Cut Only" type = "d"  cut = "1g1pMar2020_v4BNB_mva &gt;= #BNB0#" training="" group = "37"/>
+
+<var def = "#GEO#" binning = "(5,40,600)" unit = "Corrected Calorimetric Shower Energy [MeV] SSV Cut Only" type = "d"  cut = "1g1pMar2020_v4SSV_mva &gt;= #SSV0#" training="" group = "37"/>
+
+<var def = "#GEO#" binning = "(5,40,600)" unit = "Corrected Calorimetric Shower Energy [MeV] NC#pi^0 Cut Only" type = "d"  cut = "1g1pMar2020_v4NCPi0_mva &gt;= #NCP0#" training="" group = "37"/>
+
+<var def = "#GEO#" binning = "(5,40,600)" unit = "Corrected Calorimetric Shower Energy [MeV] #nu_e Cut Only" type = "d"  cut = "1g1pMar2020_v4Nue_mva &gt;= #NUE0#" training="" group = "37"/>
 
 <!--pi0 vars -->
 <!--
@@ -992,7 +1039,11 @@
 <alias key="GDEDXKAL" value ="(reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0)))"/>
 
 
-
+<alias key="BNB0" value ="0.96273"/>
+<alias key="COS0" value ="0.974952"/>
+<alias key="NCP0" value ="0.467404"/>
+<alias key="NUE0" value ="0.570654"/>
+<alias key="SSV0" value ="0.521623"/>
 
 
 <alias key = "GTM" value = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))"/>

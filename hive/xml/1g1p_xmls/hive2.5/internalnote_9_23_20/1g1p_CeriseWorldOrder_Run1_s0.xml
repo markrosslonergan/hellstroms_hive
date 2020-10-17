@@ -2,7 +2,7 @@
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.974952,0.96273,0.467404,0.570654,0.521623)" />
 
-<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>
+<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XSec Systematics"/>
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
@@ -881,6 +881,11 @@
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
+
+<!--internal note plotting -->
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_di     ry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(12,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "34"/>
+
+<var def = "#GEO#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "34"/>
 
 <!--pi0 vars -->
 <!--
