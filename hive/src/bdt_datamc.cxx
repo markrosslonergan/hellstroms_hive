@@ -303,12 +303,19 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
         //And all variables in the vector var
         for(auto &var: vars){
-            /*if (var.is_train){
-                std::cout<<var.name<<" is a training variable"<<std::endl;
+           std::string isSpec;
+           if (!var.is_spectator){
+                isSpec = var.unit+ " is a training variable";
             }else{
-                std::cout<<var.name<<" is a spectator variable"<<std::endl;
-            }
-*/
+                isSpec = var.unit + " is a spectator variable";
+                if (isSpectator==true){
+                    std::cout<<isSpec<<std::endl;
+                    std::cout<<"set to plot train only, skipping!"<<std::endl;
+                    continue;
+                }
+             }
+           std::cout<<isSpec<<std::endl;
+            
 
 
             //If we are at a later stage that 1, lets find the variable.

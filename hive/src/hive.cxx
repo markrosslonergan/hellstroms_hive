@@ -75,6 +75,8 @@ int main (int argc, char *argv[]){
     std::string external_xml = "null.xml";
     std::string external_cuts = "1";
 
+    bool plot_train_only = false;
+
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
     {
@@ -98,13 +100,14 @@ int main (int argc, char *argv[]){
         {"extapp",      required_argument,  0,  'w'},
         {"systematics",	required_argument,	0, 'y'},
         {"vector",      required_argument,  0, 'v'},
+        {"plottrainonly",      no_argument,  0, 'a'},
         {0,			    no_argument, 		0,  0},
     };
 
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:o:d:s:f:q:y:m:t:p:b:i:n:g:v:c:rjh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:o:d:s:f:q:y:m:t:p:b:i:n:g:v:a:c:rjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -165,6 +168,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'v':
                 vector = optarg;
+                break;
+            case 'a':
+                plot_train_only = true;
                 break;
             case 'i':
                 input_string = optarg;
@@ -649,6 +655,7 @@ int main (int argc, char *argv[]){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);               
                 datamc.setErrorString(systematics_error_string);
+                if(plot_train_only) datamc.SetSpectator();
 
                 //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
 
@@ -671,6 +678,7 @@ int main (int argc, char *argv[]){
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setErrorString(systematics_error_string);
+                if(plot_train_only) real_datamc.SetSpectator();
 
                 if(which_bdt==-1){
                     real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts, bdt_infos);

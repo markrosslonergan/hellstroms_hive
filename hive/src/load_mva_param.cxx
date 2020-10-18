@@ -1086,11 +1086,19 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
        // var_train_string = pVar->Attribute("training");
         std::string var_train_string = pVar->Attribute("training");
         std::vector<int> var_train_int;
+        bool var_is_spec = true;
         std::cout<<" -- Variable training string is "<<var_train_string<<std::endl;
-        for (auto && c : var_train_string) {
+       for (auto && c : var_train_string) {
             var_train_int.push_back((int)c - '0');
         }
 
+       if (var_train_int.size() >0){
+        var_is_spec = false;
+          }
+
+       t.is_spectator = var_is_spec;
+       std::cout<<" t.is_spectator =  "<< t.is_spectator<<std::endl;
+      
         //Loop over vec_methods
         for(int p=0; p< vec_methods.size(); p++){
 
