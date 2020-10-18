@@ -7,6 +7,15 @@
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <!--<filedir>/uboone/data/users/markross/Mar2020/</filedir>-->
 
+
+<bdtfile filename = "/uboone/app/users/markrl/SinglePhotonMCC9_Aug2020/working_dir/EpEm2020/vertexed_dark_neutrino_Overlays_v43.5.root" tag = "DarkNue" hist_style = "hist" dirs = "singlephotonana/" col = "(59, 97, 69)" plot_name = "Dark #nu e^{+}e^{-}" signal = "true" plot_on_top = "false" >
+    <definition>
+        <!--   <cut>((vertex_tree.flash_optfltr_pe_beam>20 &amp;&amp; vertex_tree.flash_optfltr_pe_veto&lt; 20)||(vertex_tree.flash_optfltr_pe_beam==-999))</cut>-->
+        <cut>1 </cut>
+    </definition>
+</bdtfile>
+
+
 <bdtfile filename = "/uboone/data/users/markross/Mar2020/ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
@@ -30,15 +39,6 @@
         <treename>opt_tree</treename>
     </friend>
 </bdtfile>
-
-
-<bdtfile filename = "/uboone/app/users/markrl/SinglePhotonMCC9_Aug2020/working_dir/EpEm2020/vertexed_dark_neutrino_Overlays_v43.5.root" tag = "DarkNue" hist_style = "hist" dirs = "singlephotonana/" col = "(59, 97, 69)" plot_name = "Dark #nu e^{+}e^{-}" signal = "true" plot_on_top = "false" >
-    <definition>
-        <!--   <cut>((vertex_tree.flash_optfltr_pe_beam>20 &amp;&amp; vertex_tree.flash_optfltr_pe_veto&lt; 20)||(vertex_tree.flash_optfltr_pe_beam==-999))</cut>-->
-        <cut>1 </cut>
-    </definition>
-</bdtfile>
-
 
 <!--
 <bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
@@ -903,6 +903,10 @@
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_di     ry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(8,1.0,1.8)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "8"/>
+
+<var def = "#GEO#" binning = "(8,0,1000)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/> 
 
 <!--pi0 vars -->
 <!--

@@ -980,6 +980,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         std::string covar_plotname;
         std::string covar_type;
         std::string covar_leg = "default";
+      
 
         bool has_covar = false;
         const char* var_covar_file = pVar->Attribute("covarfile");
@@ -1081,6 +1082,8 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             //std::cout<<" -- adding Training Variable  "<<var_def<<" with binning: "<<var_binning<<std::endl;
         }
 
+       // std::string  var_train_string = "";
+       // var_train_string = pVar->Attribute("training");
         std::string var_train_string = pVar->Attribute("training");
         std::vector<int> var_train_int;
         std::cout<<" -- Variable training string is "<<var_train_string<<std::endl;
