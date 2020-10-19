@@ -8,7 +8,7 @@
         edges=BINBINBIN
         />
     <subchannel name="NCDeltaRadOverlaySM" osc = "0" />
-    <subchannel name="NCDeltaRadOverlayLEE" osc = "0" />  
+    <!-- <subchannel name="NCDeltaRadOverlayLEE" osc = "0" /> --> 
     <subchannel name="NCPi0Coh" osc = "0" />
     <subchannel name="NCPi0NotCoh" osc = "0" />
     <subchannel name="NCMultiPi0" osc = "0" />
@@ -91,6 +91,7 @@
 
         />
 </MultisimFile>
+<!--
 <MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCDeltaRadOverlaySMRun1.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
     <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_4_NCDeltaRadOverlayRun1+_combined.root"/>
     <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCDeltaRadOverlaySMRun1.root"/> 
@@ -103,6 +104,7 @@
 
         />
 </MultisimFile>
+-->
 <MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCMultiPi0Run1.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
     <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_4_NCMultiPi0Run1+_combined.root"/>
     <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCMultiPi0Run1.root"/> 
