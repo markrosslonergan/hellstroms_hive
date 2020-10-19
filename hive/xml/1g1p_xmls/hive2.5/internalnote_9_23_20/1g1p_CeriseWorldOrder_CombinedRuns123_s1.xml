@@ -8,6 +8,7 @@
 </plot_pot>
 
 <!--<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/> -->
+<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XSec Systematics"/>
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
