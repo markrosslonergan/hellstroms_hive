@@ -999,10 +999,11 @@ TH1* bdt_file::getTH1(bdt_variable & var, std::string  cuts, std::string  nam, d
         var.additional_cut = "1.0";
     }
 
-    this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+"&&"+in_bins+"&&" + var.additional_cut+ ")*"+this->weight_branch).c_str(),"goff");
+   
+    TH1D* th1 = new TH1D(nam.c_str(),nam.c_str(),var.n_bins,&(var.low_edges)[0]);
+    this->tvertex->Draw((var.name+">>+"+nam).c_str() , ("("+cuts+"&&"+in_bins+"&&" + var.additional_cut+ ")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
-    TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
-    //th1->Sumw2();
+    //TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
 
     if(plot_POT==0){
         th1->Scale(1.0/th1->Integral());

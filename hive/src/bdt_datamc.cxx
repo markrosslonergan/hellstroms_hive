@@ -429,6 +429,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //fkr = {0.285885,0.201206, 0.209106,0.193913,0.229783,0.226371};//1g0p before
                 //fkr = {0.259299, 0.120909, 0.108522, 0.0874204, 0.12301, 0.140846};//1g0p after
 
+                //October2020
+                //fkr={1.26481, 2.44423,  4.22811,  1.28523,    1.54774,      2.10316};
+                fkr = { 5.45969,         18.0884,      19.234,     53.0878,    23.4021,    10.0496,     6.35323,    3.72808,    2.22644,    1.36843};
 
 
                 for(int c=0; c< tsum->GetNbinsX();c++){
@@ -439,6 +442,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                     double mc_stats_error = tsum->GetBinError(c+1);
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
+                    mc_sys_error = sqrt(fkr[c]);
                     // double mc_sys_error = sqrt(fabs((*covar_collapsed)(c,c)));
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
 
@@ -771,6 +775,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 // Calculate middle term, sys + stat covar matrices
                 // CNP + intrinsic MC error^2
                 // this was the block
+                
                 for(int i =0; i<covar_collapsed->GetNcols(); i++) {
                     Mout(i,i) += ( d0->GetBinContent(i+1) >0.001 ? 3.0/(1.0/d0->GetBinContent(i+1) +  2.0/tsum->GetBinContent(i+1))  : tsum->GetBinContent(i+1)/2.0 ) + pow(vec_mc_stats_error[i],2);
                 }
@@ -933,7 +938,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
             descriptor_tex.SetTextAlign(13);  //align at top
             descriptor_tex.SetNDC();
-            descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
+            descriptor_tex.DrawLatex(0.55,stack_mode ? 0.65: 0.66,("Selection "+ data_file->topo_name).c_str());
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
@@ -964,7 +969,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
                 if(OTPC){   
                     pre = drawPrelim(0.55,0.41,prestring.c_str());
-                    if(stack_mode)pre2 = drawPrelim(0.625,.37,"Preliminary");
+                    if(stack_mode) pre2 = drawPrelim(0.625,.37,"Preliminary");
 
 
                     //std::cout<<"flag 6"<<std::endl;
@@ -972,7 +977,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }else{
 
                     pre = drawPrelim(0.55,stack_mode? 0.525 :0.5,prestring.c_str());
-                    if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
+                    if(stack_mode)pre2 = drawPrelim(0.55,0.48,"Preliminary");
                 }
 
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
