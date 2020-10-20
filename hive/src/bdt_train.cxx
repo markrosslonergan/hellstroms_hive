@@ -1319,7 +1319,9 @@ int bdt_XGtrain(bdt_info &info){
             }
         }
 
+        double total_gain_allvars = 0;
         for(int i=0; i<total_gain.size() ; ++i){
+            total_gain_allvars+=  total_gain[i];
             mean_gain[i] = total_gain[i]/(double)variable_uses[i];
         }
 
@@ -1336,6 +1338,17 @@ int bdt_XGtrain(bdt_info &info){
            std::cout<<i<<":  "<<info.train_vars[i].unit<<std::endl;
            }
            */
+         std::cout<<"----------- Sort By Input Order: "<<info.identifier<<" ----------------------"<<std::endl;
+       for(int i=0; i< is_training.size();i++){
+               if( is_training[i]){ 
+               std::cout<<i<<" Variable: "<<info.train_vars[train_var_id[i]].unit<<"-- -- uses: "<<variable_uses[i]<<" gain: "<<total_gain[i]<<"  <gain>: "<<total_gain[i]/(double)variable_uses[i]<<"   relative gain: "<<total_gain[i]/total_gain_allvars<<std::endl;      
+     
+               } else{
+                std::cout<<i<<" Variable: "<<info.train_vars[train_var_id[i]].unit<<"  -"<<std::endl;
+               }
+       }
+               
+       
 
         TCanvas cuses("","",3000,1200);
         cuses.cd();
