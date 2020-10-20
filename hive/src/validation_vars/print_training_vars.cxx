@@ -184,7 +184,7 @@ int main (int argc, char *argv[]){
         //std::cout<<"\n";
         if(train== true){
         myfile<<var_name[i];
-        myfile<<full_gain<<"\n";
+        myfile<<full_gain<<"\\\\ \n";
         }
 
     }  
