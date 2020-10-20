@@ -38,12 +38,12 @@ int main (int argc, char *argv[]){
     // Just some simple argument things
     //===========================================================================================
 
-    std::ifstream file("train_log_1g1p_v0.txt");
+    std::ifstream file("train_log_1g0p_v0.txt");
     std::string str;
     std::string file_contents;
 
     std::ofstream myfile;
-    std::string outfile = "table_training_vars.txt";
+    std::string outfile = "table_training_vars_1g0p.txt";
     myfile.open (outfile);
     // myfile << "Writing this to a file.\n";
 
@@ -125,27 +125,27 @@ int main (int argc, char *argv[]){
                 start_gain = str.find("relative gain:");
                 end_line = str.find("\n");
 
-               if (end_var>start_var){
+                if (end_var>start_var){
                     temp_name  = str.substr(start_var +variable.length(),end_var-start_var- variable.length());
                 } else{
                     temp_name = "";
                 }
-                
-               if (gain!="-"){
-                var_name[i] = temp_name;
-                }
-              
-               /*std::cout<<"var_name[i] = "<<var_name[i]<<", var_name[0] "<<var_name[0]<<", temp_name "<<temp_name<<std::endl; 
-               if (var_name[i]== var_name[0] && temp_name != var_name[0] ){
-                  // if (temp_name!= "Corrected Calorimetric Shower Energy [MeV]"){
+
+                if (gain!="-"){
                     var_name[i] = temp_name;
-                    //}
                 }
 
-             //   if (bdt_tag.size() == 3){
-               // std::cout<<i<<bdt_tag.size() <<"var name = "<<temp_name<<std::endl;
-               // }
-     */
+                /*std::cout<<"var_name[i] = "<<var_name[i]<<", var_name[0] "<<var_name[0]<<", temp_name "<<temp_name<<std::endl; 
+                  if (var_name[i]== var_name[0] && temp_name != var_name[0] ){
+                // if (temp_name!= "Corrected Calorimetric Shower Energy [MeV]"){
+                var_name[i] = temp_name;
+                //}
+                }
+
+                //   if (bdt_tag.size() == 3){
+                // std::cout<<i<<bdt_tag.size() <<"var name = "<<temp_name<<std::endl;
+                // }
+                */
                 var_scores_vec[i].push_back(gain);
                 i++;
 
@@ -173,19 +173,34 @@ int main (int argc, char *argv[]){
     }
     myfile<<"\n";
 
+    double percent ;
     for (int i = 0; i< var_scores_vec.size(); i++){
         std::vector<std::string> v =  var_scores_vec[i];
         std::string full_gain = "";
         bool train = false;
         for (std::string s: v){
-            if (s != "-") train = true;
-            full_gain+=" & "+s;
+            if (s != "-"){
+                train = true;
+                size_t ix;    
+                percent= std::stod (s, &ix); 
+                //percent = std::stod(s) * 100;
+
+                full_gain+=" & "+ to_string_prec(percent*100, 1);
+
+                // std::cout<<to_string_prec(s, 2)<<std::endl;
+            } else{
+                full_gain+=" & "+ s;
+            }
+
+            //std::cout<<"s "<<s<<std::endl;
         }
         //std::cout<<"\n";
         if(train== true){
-        myfile<<var_name[i];
-        myfile<<full_gain<<"\\\\ \n";
+            myfile<<var_name[i];
+            myfile<<full_gain<<"\\\\ \\hline \n";
+           // myfile<<"\\hline \n";
         }
+
 
     }  
 
