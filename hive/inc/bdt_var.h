@@ -36,6 +36,7 @@ struct bdt_variable{
 		std::string type;
         bool is_logplot;
         bool has_covar;
+        bool is_spectator;
 
         std::string additional_cut;
         

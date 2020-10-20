@@ -243,7 +243,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::string tago, std::vector<bdt_info> bdt_infos){
     // NEW (and soon to be only) ONE
-
+    //
     bool entry_mode = false;
     double plot_pot=data_file->pot;
     if(stack_mode) plot_pot = stack_pot;
@@ -305,6 +305,20 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
         //And all variables in the vector var
         for(auto &var: vars){
+           std::string isSpec;
+           if (!var.is_spectator){
+                isSpec = var.unit+ " is a training variable";
+            }else{
+                isSpec = var.unit + " is a spectator variable";
+                if (isSpectator==true){
+                    std::cout<<isSpec<<std::endl;
+                    std::cout<<"set to plot train only, skipping!"<<std::endl;
+                    continue;
+                }
+             }
+           std::cout<<isSpec<<std::endl;
+            
+
 
             //If we are at a later stage that 1, lets find the variable.
             if(s>1){

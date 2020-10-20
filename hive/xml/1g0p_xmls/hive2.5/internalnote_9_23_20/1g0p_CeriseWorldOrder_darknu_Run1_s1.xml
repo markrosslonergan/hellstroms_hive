@@ -12,12 +12,30 @@
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 
 <!--<filedir>/uboone/data/users/markross/Mar2020/</filedir>-->
+<bdtfile filename = "/uboone/app/users/markrl/SinglePhotonMCC9_Aug2020/working_dir/EpEm2020/vertexed_dark_neutrino_Overlays_v43.5.root" tag = "DarkNue" hist_style = "hist" dirs = "singlephotonana/" col = "(59, 97, 69)" plot_name = "Dark #nu e^{+}e^{-}" signal = "true" plot_on_top = "false" >
+<definition>
+    <!--   <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>-->
+    <cut>1 </cut>
+</definition>
+</bdtfile>
 
 <bdtfile filename = "/uboone/data/users/markross/Mar2020/ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+       
+        <!-- this section is for signal eff-->
+        <!--
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -113.5 &amp;&amp; mctruth_nu_vertex_y &lt; 113.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 2.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1033.8 </cut>       
+        <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 0</cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==0 </cut>
+   -->
     </definition>
     <friend>
         <filename>/uboone/data/users/markross/Mar2020/COFredo/OpticalMatch_ncdelta_overlay_run1_v33.3.uniq.root</filename>
@@ -25,12 +43,6 @@
     </friend> 
 </bdtfile>
 
-<bdtfile filename = "/uboone/app/users/markrl/SinglePhotonMCC9_Aug2020/working_dir/EpEm2020/vertexed_dark_neutrino_Overlays_v43.5.root" tag = "DarkNue" hist_style = "hist" dirs = "singlephotonana/" col = "(59, 97, 69)" plot_name = "Dark #nu e^{+}e^{-}" signal = "true" plot_on_top = "false" >
-<definition>
-    <!--   <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>-->
-    <cut>1 </cut>
-</definition>
-</bdtfile>
 
 
 <!--
@@ -500,7 +512,7 @@
 <var def = "#GE#" binning = "(18,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
 <var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "9"/>
 <var def = "#GE#" binning = "(4,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "10"/>
-<var def = "#GE#" binning = "(8,0,800)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "11"/>
+<var def = "#GE#" binning = "(8,0,1000)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "11"/>
 
 <var def = "#GE#" binning = "(4,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV] Cosmic Only Cut" type = "d"   training=""  cut = "(1g0pMar2020COSMIC_mva &gt;= #COS0#)" group = "13"/>
 
@@ -508,6 +520,7 @@
 
 <var def = "#GE#" binning = "(6,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV] NC #pi^{0} Only Cut" type = "d"   training=""  cut = "(1g0pMar2020NCPi0_mva &gt;= #NCP0#)" group = "13"/>
 
+<var def = "mctruth_nu_E" binning = "(8, 0, 4.0)" unit = "True Neutrino Energy [GeV]" type="d" training="" group = "14"/>
 
 <!--pi0 vars -->
 <!--

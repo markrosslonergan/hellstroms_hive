@@ -59,8 +59,11 @@ int main (int argc, char *argv[]){
     // Added by A. Mogan 1/13/20 for doing normalization fits
     bool scale_mode = true;
     //double what_pot = 13.2e20;
-    double what_pot = 12.25e20;
+ //   double what_pot = 12.25e20;
 //    double what_pot = 6.8e20;
+
+    double what_pot = 6.91e20;
+
 
     int which_file = -1;
     int which_bdt = -1;
@@ -74,6 +77,8 @@ int main (int argc, char *argv[]){
     std::string covar_det_template_xml = "null.xml";
     std::string external_xml = "null.xml";
     std::string external_cuts = "1";
+
+    bool plot_train_only = false;
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -98,13 +103,14 @@ int main (int argc, char *argv[]){
         {"extapp",      required_argument,  0,  'w'},
         {"systematics",	required_argument,	0, 'y'},
         {"vector",      required_argument,  0, 'v'},
+        {"plottrainonly",      no_argument,  0, 'a'},
         {0,			    no_argument, 		0,  0},
     };
 
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:o:d:s:f:q:y:m:t:p:b:i:n:g:v:c:rjh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:o:d:s:f:q:y:m:t:p:b:i:n:g:v:a:c:rjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -165,6 +171,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'v':
                 vector = optarg;
+                break;
+            case 'a':
+                plot_train_only = true;
                 break;
             case 'i':
                 input_string = optarg;
@@ -649,6 +658,7 @@ int main (int argc, char *argv[]){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);               
                 datamc.setErrorString(systematics_error_string);
+                if(plot_train_only) datamc.SetSpectator();
 
                 //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
 
@@ -671,6 +681,7 @@ int main (int argc, char *argv[]){
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setErrorString(systematics_error_string);
+                if(plot_train_only) real_datamc.SetSpectator();
 
                 if(which_bdt==-1){
                     real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts, bdt_infos);
@@ -1216,9 +1227,9 @@ if(number==3){
     bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot, true, which_stage, analysis_tag, true, false);
 
 }
-//bdt_efficiency(bdt_files[which_file], v_denom,v_topo,vec_precuts , fbdtcuts,what_pot     );
+bdt_efficiency(bdt_files[which_file], v_denom,v_topo,vec_precuts , fbdtcuts,what_pot     );
 
-nue_efficiency(bdt_files[which_file], v_topo, vec_precuts , fbdtcuts, what_pot, analysis_tag);
+//nue_efficiency(bdt_files[which_file], v_topo, vec_precuts , fbdtcuts, what_pot, analysis_tag);
 
 //Ok, this runs now for a full cut
 // Cut for NC pi0 filter
@@ -1399,6 +1410,10 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
         //lets skip anything that isnt the specific or group we want
         if(number >= 0 && number !=vc-1) continue;
         if(which_group > 0 && which_group != v.cat) continue;
+        if (v.is_spectator && plot_train_only) {
+            std::cout<<"skipping covar for spectator var"<<std::endl;
+            continue;
+        }
 
         std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
         for(double k = 0; k<=v.n_bins; k++){
