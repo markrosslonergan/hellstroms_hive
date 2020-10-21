@@ -892,6 +892,19 @@
 
 <var def = "#GEO#" binning = "(16,40,500)" unit = "Corrected Calorimetric Shower Energy [MeV] FS" type  = "d"  training = ""  group = "333" cut="#FSCUT#"/>
 
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,1.01,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected) NS" type  = "d"  training = ""  group = "335" cut = "#NSCUT#"/>
+
+<var def = "(reco_shower_trackscore[0])" binning = "(16,0,0.5)" unit = "Shower Score FS Cos Cut" type ="d"  training ="" group = "336" cut = "#FSCUT# &amp;&amp; #COSCUT#"/>
+
+<var def = "reco_shower_theta_yz[0]" binning = "(16,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad] FS Cos Cut" type = "d"     training="" group = "336" cut = "#FSCUT# &amp;&amp; #COSCUT#"/>
+
+<var def = "reco_shower_energy_max/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV] FS Cos Cut" binning = "(16,0.1,0.4)" type="d"  training=""  group = "336" cut = "#FSCUT# &amp;&amp; #COSCUT#"/>
+
+
+<var def = "#GEO#" binning = "(16,40,500)" unit = "Corrected Calorimetric Shower Energy [MeV] D Cos Cut" type  = "d"  training = ""  group = "334" cut="#BOXD# &amp;&amp;      #COSCUT#"/>
+
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm] D Cos Cut" type="d"  training="" cut=     "#BOXD# &amp;&amp;      #COSCUT#"/>
+
 <!--pi0 vars -->
 <!--
 <var def = "sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)" binning = "(10,0.0,1.4)" unit ="True #pi^{0} Momentum" type = "d"  training = "" group = "2"/>
@@ -1001,7 +1014,15 @@
 <alias key="SSV0" value ="0.521623"/>
 
 <alias key ="FSCUT" value = "(1g1pMar2020_v4Nue_mva >= 0.3 &amp;&amp; (1g1pMar2020_v4BNB_mva < 0.96273 || 1g1pMar2020_v4NCPi0_mva < 0.467404))"/>
-  
+
+<alias key = "NSCUT" value ="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp;1g1pMar2020_v4Nue_mva &gt;=#NUE# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar202     0_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))" />
+
+<alias key = "BOXD" value = "(1g1pMar2020_v4NCPi0_mva &lt; #NCP0# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB0#) &amp;&amp; (1g1pMar2020_v4Nue_mva&gt;= #NUE#)" />
+
+<alias key = "BOXA0" value = "(1g1pMar2020_v4NCPi0_mva &gt;=  #NCP0# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB0#) &amp;&amp; (1g1pMar2020_v4Nue_mva&gt;= #NUE#)  &amp;&amp;1g1pMar2020_v4SSV_mva &lt; #SSV#" />
+
+<alias key = "COSCUT" value = "1g1pMar2020_v4COSMIC_mva &gt;=0.9"/>
+
 
 <alias key="PM" value ="(0.938272)"/>
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>
