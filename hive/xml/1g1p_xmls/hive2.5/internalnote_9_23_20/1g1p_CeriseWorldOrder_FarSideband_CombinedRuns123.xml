@@ -901,9 +901,11 @@
 <var def = "reco_shower_energy_max/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV] FS Cos Cut" binning = "(16,0.1,0.4)" type="d"  training=""  group = "336" cut = "#FSCUT# &amp;&amp; #COSCUT#"/>
 
 
-<var def = "#GEO#" binning = "(16,40,500)" unit = "Corrected Calorimetric Shower Energy [MeV] D Cos Cut" type  = "d"  training = ""  group = "334" cut="#BOXD# &amp;&amp;      #COSCUT#"/>
+<var def = "#GEO#" binning = "(5,30,600)" unit = "Corrected Calorimetric Shower Energy [MeV] D Cos Cut" type  = "d"  training = ""  group = "334" cut="#BOXD# &amp;&amp;      #COSCUT#"/>
 
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm] D Cos Cut" type="d"  training="" cut=     "#BOXD# &amp;&amp;      #COSCUT#"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(16,0,8)" unit = "Shower dEdx [MeV/cm] D Cos Cut" type="d"  training="" cut=     "#BOXD# &amp;&amp;      #COSCUT#" group = "334"/>
+
+<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(13,0.05,0.7)" unit = "Fraction of unassocaited hits in slice D Cos Cut" type ="d"  training=""  cut=     "#BOXD# &amp;&amp;      #COSCUT#" group = "334"/>
 
 <!--pi0 vars -->
 <!--
@@ -1015,11 +1017,12 @@
 
 <alias key ="FSCUT" value = "(1g1pMar2020_v4Nue_mva >= 0.3 &amp;&amp; (1g1pMar2020_v4BNB_mva < 0.96273 || 1g1pMar2020_v4NCPi0_mva < 0.467404))"/>
 
-<alias key = "NSCUT" value ="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp;1g1pMar2020_v4Nue_mva &gt;=#NUE# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar202     0_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#))" />
+<alias key = "NSCUT" value ="(1g1pMar2020_v4NCPi0_mva &gt;= #NCP#  &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB# &amp;&amp;1g1pMar2020_v4Nue_mva &gt;=#NUE# &amp;&amp; (1g1pMar2020_v4SSV_mva &lt;#SSV0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0# || 1g1pMar2020_v4Nue_mva &lt;#NUE0# || 1g1pMar202     0_v4COSMIC_mva &lt; #COS0# || 1g1pMar2020_v4BNB_mva&lt; #BNB0#) &amp;&amp;1g1pMar2020_v4SSV_mva &lt;#SSV# )" />
 
 <alias key = "BOXD" value = "(1g1pMar2020_v4NCPi0_mva &lt; #NCP0# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB0#) &amp;&amp; (1g1pMar2020_v4Nue_mva&gt;= #NUE#)" />
 
-<alias key = "BOXA0" value = "(1g1pMar2020_v4NCPi0_mva &gt;=  #NCP0# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB0#) &amp;&amp; (1g1pMar2020_v4Nue_mva&gt;= #NUE#)  &amp;&amp;1g1pMar2020_v4SSV_mva &lt; #SSV#" />
+<!--<alias key = "BOXA0" value = "(1g1pMar2020_v4NCPi0_mva &gt;=  #NCP0# &amp;&amp;1g1pMar2020_v4BNB_mva&gt;= #BNB0#) &amp;&amp; (1g1pMar2020_v4Nue_mva&gt;= #NUE#)  &amp;&amp;1g1pMar2020_v4SSV_mva &lt; #SSV#" />
+-->
 
 <alias key = "COSCUT" value = "1g1pMar2020_v4COSMIC_mva &gt;=0.9"/>
 
