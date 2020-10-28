@@ -21,7 +21,7 @@
 
 
 <WeightMaps>
-    <variation pattern="NORNCCOH_UBGenie" mode="minmax"/>
+    <variation pattern="NormNCCOH_UBGenie" mode="minmax"/>
     <variation pattern="NormCCCOH_UBGenie" mode="minmax"/>
     <variation pattern="Theta_Delta2Npi_UBGenie" mode="minmax" />
     <variation pattern="RPA_CCQE_UBGenie" mode="minmax" />

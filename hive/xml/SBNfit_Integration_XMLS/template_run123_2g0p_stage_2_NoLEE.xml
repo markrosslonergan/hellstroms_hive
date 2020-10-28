@@ -8,7 +8,6 @@
         edges=BINBINBIN
         />
     <subchannel name="NCDeltaRadOverlaySM" osc = "0" />
-    <subchannel name="NCDeltaRadOverlayLEE" osc = "0" />  
     <subchannel name="NCPi0Coh" osc = "0" />
     <subchannel name="NCPi0NotCoh" osc = "0" />
     <subchannel name="NCMultiPi0" osc = "0" />
@@ -91,19 +90,8 @@ type="double"
         
          />
  </MultisimFile>
-<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g0p_April_collab/Comb123/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NCDeltaRadOverlay_v5.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
- <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NCDeltaRadOverlay_v5+_combined.root"/>
- <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g0p_April_collab/Comb123/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NCDeltaRadOverlay_v5.root"/> 
-  <branch 
-name=VARVARVAR
-type="double"
- associated_subchannel="nu_uBooNE_2g0p_NCDeltaRadOverlayLEE"
-         additional_weight="simple_pot_weight" 
-       eventweight_branch_name = "mcweight"
-        
-         />
- </MultisimFile>
-<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g0p_April_collab/Comb123/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NCMultiPi0_v5.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+ 
+ <MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g0p_April_collab/Comb123/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NCMultiPi0_v5.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
  <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NCMultiPi0_v5+_combined.root"/>
  <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/2g0p_April_collab/Comb123/sbnfit_combined_run123_sbnfit_pigLEE_2g0p_combined_stage_2_NCMultiPi0_v5.root"/> 
   <branch 

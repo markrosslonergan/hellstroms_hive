@@ -8,7 +8,7 @@
         edges=BINBINBIN
         />
     <subchannel name="NCDeltaRadOverlaySM" osc = "0" />
-    <!-- <subchannel name="NCDeltaRadOverlayLEE" osc = "0" />  -->
+    <subchannel name="NCDeltaRadOverlayLEE" osc = "0" />  
     <subchannel name="NCPi0Coh" osc = "0" />
     <subchannel name="NCPi0NotCoh" osc = "0" />
     <subchannel name="NCMultiPi0" osc = "0" />
@@ -38,7 +38,7 @@
 name=VARVARVAR
 type="double"
  associated_subchannel="nu_uBooNE_1g0p_BNBOther"
-         additional_weight="simple_pot_weight" 
+         additional_weight="simple_pot_weight*WEIWEIWEI" 
        eventweight_branch_name = "mcweight"
         
          />
@@ -50,7 +50,7 @@ type="double"
 name=VARVARVAR
 type="double"
  associated_subchannel="nu_uBooNE_1g0p_BNBext"
-         additional_weight="simple_pot_weight" 
+         additional_weight="simple_pot_weight*WEIWEIWEI" 
        eventweight_branch_name = "mcweight"
         
          />
@@ -62,7 +62,7 @@ type="double"
 name=VARVARVAR
 type="double"
  associated_subchannel="nu_uBooNE_1g0p_CC1Pi0"
-         additional_weight="simple_pot_weight" 
+         additional_weight="simple_pot_weight*WEIWEIWEI" 
        eventweight_branch_name = "mcweight"
         
          />
@@ -74,7 +74,7 @@ type="double"
 name=VARVARVAR
 type="double"
  associated_subchannel="nu_uBooNE_1g0p_Dirt"
-         additional_weight="simple_pot_weight" 
+         additional_weight="simple_pot_weight*WEIWEIWEI" 
        eventweight_branch_name = "mcweight"
         
          />
@@ -86,25 +86,23 @@ type="double"
 name=VARVARVAR
 type="double"
  associated_subchannel="nu_uBooNE_1g0p_NCDeltaRadOverlaySM"
-         additional_weight="simple_pot_weight" 
+         additional_weight="simple_pot_weight*WEIWEIWEI" 
        eventweight_branch_name = "mcweight"
         
          />
  </MultisimFile>
- <!--
- <MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Comb13/sbnfit_1g0pMar2020_stage_1_NCDeltaRadOverlaySM.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Comb13/sbnfit_1g0pMar2020_stage_1_NCDeltaRadOverlaySM.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
  <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_1_NCDeltaRadOverlay_+_combined.root"/>
  <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Comb13/sbnfit_1g0pMar2020_stage_1_NCDeltaRadOverlaySM.root"/> 
   <branch 
 name=VARVARVAR
 type="double"
  associated_subchannel="nu_uBooNE_1g0p_NCDeltaRadOverlayLEE"
-         additional_weight="simple_pot_weight" 
+         additional_weight="simple_pot_weight*WEIWEIWEI" 
        eventweight_branch_name = "mcweight"
         
          />
  </MultisimFile>
--->
 <MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Comb13/sbnfit_1g0pMar2020_stage_1_NCMultiPi0.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
  <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_1_NCMultiPi0_+_combined.root"/>
  <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Comb13/sbnfit_1g0pMar2020_stage_1_NCMultiPi0.root"/> 
@@ -112,7 +110,7 @@ type="double"
 name=VARVARVAR
 type="double"
  associated_subchannel="nu_uBooNE_1g0p_NCMultiPi0"
-         additional_weight="simple_pot_weight" 
+         additional_weight="simple_pot_weight*WEIWEIWEI" 
        eventweight_branch_name = "mcweight"
         
          />
@@ -124,7 +122,7 @@ type="double"
 name=VARVARVAR
 type="double"
  associated_subchannel="nu_uBooNE_1g0p_NCPi0Coh"
-         additional_weight="simple_pot_weight" 
+         additional_weight="simple_pot_weight*WEIWEIWEI" 
        eventweight_branch_name = "mcweight"
         
          />
@@ -136,7 +134,7 @@ type="double"
 name=VARVARVAR
 type="double"
  associated_subchannel="nu_uBooNE_1g0p_NCPi0NotCoh"
-         additional_weight="simple_pot_weight" 
+         additional_weight="simple_pot_weight*WEIWEIWEI" 
        eventweight_branch_name = "mcweight"
         
          />
@@ -148,7 +146,7 @@ type="double"
 name=VARVARVAR
 type="double"
  associated_subchannel="nu_uBooNE_1g0p_NueOverlays"
-         additional_weight="simple_pot_weight" 
+         additional_weight="simple_pot_weight*WEIWEIWEI" 
        eventweight_branch_name = "mcweight"
         
          />
