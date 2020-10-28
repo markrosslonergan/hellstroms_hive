@@ -1477,7 +1477,9 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     std::vector<TTreeFormula*> form_vec;
     std::vector<TTreeFormula*> form_vec_vars;
 
+    std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
     for(int i=0; i< bdt_infos.size();i++){
+        std::cout<<i<<" "<<this->tag+"_"+bdt_infos[i].identifier<<std::endl;
         std::string nam = this->tag+"_"+bdt_infos[i].identifier+".mva";
         form_vec.push_back(new TTreeFormula((bdt_infos[i].identifier+"_mva_formula").c_str(), nam.c_str(),this->tvertex));
     }

@@ -72,6 +72,8 @@ int main (int argc, char *argv[]){
     std::string input_string = "";
     int which_group = -1;
 
+    std::string additional_tag = "";
+
     std::string systematics_error_string = "stats";
     std::string covar_flux_template_xml = "null.xml";
     std::string covar_det_template_xml = "null.xml";
@@ -90,6 +92,7 @@ int main (int argc, char *argv[]){
         {"topo_tag",	required_argument,	0, 't'},
         {"bdt",		    required_argument,	0, 'b'},
         {"stage",		required_argument,	0, 's'},
+        {"additional_tag",		required_argument,	0, 'u'},
         {"combined",    no_argument,        0, 'j'},
         {"cuts",        required_argument,  0, 'c'},
         {"help",		required_argument,	0, 'h'},
@@ -110,7 +113,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:o:d:s:f:q:y:m:t:p:b:i:n:g:v:a:c:rjh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:o:u:d:s:f:q:y:m:t:p:b:i:n:g:v:a:c:rjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -171,6 +174,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'v':
                 vector = optarg;
+                break;
+            case 'u':
+                additional_tag = optarg;
                 break;
             case 'a':
                 plot_train_only = true;
@@ -666,7 +672,7 @@ int main (int argc, char *argv[]){
                 //datamc.printPassingPi0DataEvents("tmp", 2, fbdtcuts);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                datamc.plotStacks(ftest,  tmp_var , fbdtcuts, bdt_infos);
+                datamc.plotStacks(ftest,  tmp_var , fbdtcuts, additional_tag , bdt_infos);
                 // TODO: Commented out for time's sake. Put back in later
                 //datamc.plotEfficiency(tmp_var,fbdtcuts,1,(which_stage>1 ? which_stage : 2));
             }else{
@@ -684,11 +690,11 @@ int main (int argc, char *argv[]){
                 if(plot_train_only) real_datamc.SetSpectator();
 
                 if(which_bdt==-1){
-                    real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts, bdt_infos);
+                    real_datamc.plotStacks(ftest, tmp_vars,  fbdtcuts, additional_tag, bdt_infos);
                     // TODO: Commented out for time's sake. Put back in later
                     //real_datamc.plotEfficiency(tmp_vars,fbdtcuts,1, (which_stage > 1? which_stage : 2 ) );
                 }else{
-                    real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts, bdt_infos);
+                    real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts, additional_tag, bdt_infos);
                     // TODO: Commented out for time's sake. Put back in later
                     //real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,  (which_stage >1 ? which_stage :2 ));
                 }

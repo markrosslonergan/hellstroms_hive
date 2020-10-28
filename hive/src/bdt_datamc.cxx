@@ -456,7 +456,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                     double mc_stats_error = tsum->GetBinError(c+1);
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
-                    mc_sys_error = sqrt(fkr[c]);
+                    //mc_sys_error = sqrt(fkr[c]);
                     // double mc_sys_error = sqrt(fabs((*covar_collapsed)(c,c)));
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
 
