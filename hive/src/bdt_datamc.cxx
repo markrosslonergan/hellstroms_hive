@@ -904,14 +904,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 //pottex.DrawLatex(.635,.48, pot_draw.c_str());
             } else{
-                pottex.DrawLatex(.55,.60, pot_draw.c_str());
+                //pottex.DrawLatex(.55,.60, pot_draw.c_str());
+                pottex.DrawLatex(.50,.60, pot_draw.c_str());
             }
 
             TLatex descriptor_tex;
             descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
             descriptor_tex.SetTextAlign(13);  //align at top
             descriptor_tex.SetNDC();
-            descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
+            //descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
+            descriptor_tex.DrawLatex(0.50,0.66,("Selection "+ data_file->topo_name).c_str());
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
@@ -926,7 +928,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // t->SetTextColor(kRed-7);
             // stage->SetTextFont(43);
             // stage->SetTextSize(0.10);
-            stage.DrawLatex(0.6, 0.92, stage_names.at(s).c_str());
+            //stage.DrawLatex(0.6, 0.92, stage_names.at(s).c_str());
+            stage.DrawLatex(0.5, 0.92, stage_names.at(s).c_str());
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
 
@@ -949,7 +952,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 }else{
 
-                    pre = drawPrelim(0.55,stack_mode? 0.525 :0.5,prestring.c_str());
+                    //pre = drawPrelim(0.55,stack_mode? 0.525 :0.5,prestring.c_str());
+                    pre = drawPrelim(0.50,stack_mode? 0.525 :0.5,prestring.c_str());
                     if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
                 }
 
