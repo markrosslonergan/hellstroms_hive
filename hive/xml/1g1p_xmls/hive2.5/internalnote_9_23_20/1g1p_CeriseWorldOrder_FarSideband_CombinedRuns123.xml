@@ -8,6 +8,7 @@
     <run_period name ="RunII/III" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.769" />
 </plot_pot>
 
+
 <covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XSec Systematics"/>
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
@@ -140,9 +141,9 @@
 </bdtfile>
 
 
-<bdtfile filename = "sbnfit_1g1pMar2020_v4_stage_1_gLEE_farsideband_v2_tagTotal.root" tag = "FarSideband1g1p" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "FarSidebandOn-Beam Data">
+<bdtfile filename = "sbnfit_1g1pMar2020_v4_stage_1_gLEE_farsideband_v2_tagTotal.root" tag = "FarSideband1g1p" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "FarSidebandOn-Beam Data Run123">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam">
+    <data type="OnBeam"  plot_name="(Run 1,2 &amp; 3)">
         <tor860_wcut>6.803e+20 </tor860_wcut>   
         <E1DCNT_wcut>159380327.0</E1DCNT_wcut>   
     </data>
@@ -881,12 +882,13 @@
 <!-- ################################################################################################################ -->
 <!-- ################################################################################################################ -->
 
+
 <!--bdt vars -->
-<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(16,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(16,0.0,0.86)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(16,0.0,1.0)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(16,0.3,1.0)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4SSV_mva" binning = "(16,0.0,0.96)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
@@ -906,6 +908,22 @@
 <var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(16,0,8)" unit = "Shower dEdx [MeV/cm] D Cos Cut" type="d"  training="" cut=     "#BOXD# &amp;&amp;      #COSCUT#" group = "334"/>
 
 <var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(13,0.05,0.7)" unit = "Fraction of unassocaited hits in slice D Cos Cut" type ="d"  training=""  cut=     "#BOXD# &amp;&amp;      #COSCUT#" group = "334"/>
+
+
+<var def = "reco_shower_startz" binning = "(16,0,1040)" unit = "Reconstructed Shower Start Z [cm]" type="d"    training="" group="2202"/>
+<var def = "log10(sss_num_unassociated_hits)" binning="(16,1.25,3.5)" unit = "Number of unassocaited hits in slice log10" type ="d"  training="" group="2203"/>
+<var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(16,0,4000)" unit = "Total PE in Beamgate" type ="d"  training="" group="2204"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(16,2,18)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="" group="2205"/>
+<var def = "atan(reco_track_diry[0]/reco_track_dirx[0])" binning = "(16,-1.571,1.571)" unit = "Reconstructed Track #phi_{azy} [rad]" type = "d"     training="" group="2206"/>
+<var def = "reco_shower_nuscore[0]" binning = "(16, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="" group="2207"/>
+<var def="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(16,0.05,0.8)" unit="Reco Shower Energy [GeV]" training="" type="d" group="2208" />
+<var def="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0)+reco_shower_reclustered_energy_max[0])*1.21989 +8.50486)*0.001" binning="(16,0.05,0.8)" unit="Reco Shower Energy Reclustered [GeV]" training="" type="d" group="2209" />
+
+<var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(16,-2,1.8)"  unit ="Log( Three Plane Track PID )" type = "d"    training="" group="2210"/>
+<var def = "reco_track_displacement[0]" binning = "(16,0,100)" unit = "Track Displacement [cm]" type = "d"     training="" group="2211"/>
+<var def = "(reco_shower_trackscore[0])" binning = "(16,0,0.5)" unit = "Shower Score" type ="d"  training ="" group="2212"/>
+<var def = "(reco_track_trackscore[0])" binning = "(16,0.5,1.0)" unit = "Track Score" type ="d"  training ="" group="2212"/>
+
 
 <!--pi0 vars -->
 <!--

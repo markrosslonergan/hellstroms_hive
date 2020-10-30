@@ -392,7 +392,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
     double best_impact = 0;
     std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
 
-    double plot_pot = 5e19;// 10.115e20;
+    double plot_pot = 6.91e20;//5e19;// 10.115e20;
 
     std::cout<<"Setting stage entry lists"<<std::endl;
     for(size_t i = 0; i < sig_files.size(); ++i) {
