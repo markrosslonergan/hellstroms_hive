@@ -284,10 +284,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         s_max = plot_stage+1;
     }
 
-    //for(int s = s_min; s< s_max; s++){
     {
         int s = plot_stage;
 
+
+            
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
 
@@ -305,6 +306,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
         //And all variables in the vector var
         for(auto &var: vars){
+
+            TFile *fout = new TFile(("datamc/Ratio_"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".root").c_str(),"recreate");
+            fout->cd();
+
+
+
            std::string isSpec;
            if (!var.is_spectator){
                 isSpec = var.unit+ " is a training variable";
@@ -457,8 +464,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     double mc_stats_error = tsum->GetBinError(c+1);
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
                     //mc_sys_error = sqrt(fkr[c]);
-                    // double mc_sys_error = sqrt(fabs((*covar_collapsed)(c,c)));
-                    double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
+                    //double mc_sys_error = sqrt(fabs((*covar_collapsed)(c,c)));
+                    //double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
+
+                    double tot_error = sqrt(mc_sys_error*mc_sys_error);
 
                     //double tot_error = mc_sys_error; 
                     std::cout<<"Error Summary || Bin "<<c<<" Nmc: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" FracErr: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" SysFrac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" MCStatFrac: "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
@@ -1165,6 +1174,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 gr->Draw("E0 same");
             }
 
+            fout->cd();
+            ratpre->Write(("ratpre_"+tago).c_str());
+            ratunit->Write(("ratunit_"+tago).c_str());
+            gr->Write(("graph_"+tago).c_str());
+
             //std::string mean = "(Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+" #pm "+to_string_prec(tot_norm_error/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
@@ -1248,7 +1262,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             delete cobs;
             for(auto &h: fake_legend_hists) delete h;
 
+            fout->Close();
         }
+    
+    
     }
 
     return 0;
