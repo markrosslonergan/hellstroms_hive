@@ -35,14 +35,14 @@ NUM=2212
 rm *Far*entry*root
 
 #NCPi0Box 
-#./../bin/hive -o datamc --makefluxcovar $FXXML -x $XML2 -s 1 --plottrainonly --cuts "$sNCPIFS"
-#rm *Far*entry*root
-#./../../bin/hive -o datamc  -x $XML2 -s 1 --plottrainonly   --cuts "$NCPIFS" --additional_tag="NCpi0FS_CosCut" --systematics "flux_fracfixed"
-#rm  *Far*entry*root
+./../bin/hive -o datamc --makefluxcovar $FXXML -x $XML2 -s 1 --plottrainonly --cuts "$sNCPIFS"
+rm *Far*entry*root
+./../../bin/hive -o datamc  -x $XML2 -s 1 --plottrainonly   --cuts "$NCPIFS" --additional_tag="NCpi0FS_CosCut" --systematics "flux_fracfixed"
+rm  *Far*entry*root
 
 #BNB Box
-./../../bin/hive -o datamc --makefluxcovar $FXXML -x $XML2 -s 1 -g78 --plottrainonly --cuts "$sBNBFS"
-rm *Far*entry*root
-./../../bin/hive -o datamc  -x $XML2 -s 1 -g78 --plottrainonly  --cuts "$BNBFS" --additional_tag="BNBFS_CosCut" --systematics "flux_fracfixed"
-rm *Far*entry*root
+#./../../bin/hive -o datamc --makefluxcovar $FXXML -x $XML2 -s 1 -g78 --plottrainonly --cuts "$sBNBFS"
+#rm *Far*entry*root
+#./../../bin/hive -o datamc  -x $XML2 -s 1 -g78 --plottrainonly  --cuts "$BNBFS" --additional_tag="BNBFS_CosCut" --systematics "flux_fracfixed"
+#rm *Far*entry*root
 
