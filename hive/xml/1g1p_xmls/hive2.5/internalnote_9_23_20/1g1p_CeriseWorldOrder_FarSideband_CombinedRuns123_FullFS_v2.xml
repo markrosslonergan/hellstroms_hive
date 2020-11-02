@@ -478,7 +478,7 @@
 <var def = "#GE#" binning = "(18,40,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="0123" group = "77"/>
 <var def = "reco_shower_nuscore[0]" binning = "(18, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="0123"/>
 <var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(18,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="0123"/>
-<var def = "reco_shower_impact_parameter[0]" binning = "(18,0,200)" unit = "Shower Impact Parameter [cm]" type="d"    training="0123" logplot = "true"/>
+<var def = "reco_shower_impact_parameter[0]" binning = "(12,0,180)" unit = "Shower Impact Parameter [cm]" type="d"    training="0123" logplot = "true"/>
 <var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(18,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d"    training="0123"/>
 <var def = "reco_shower_length[0]" binning = "(18,5,100)" unit = "Reconstructed Shower Length [cm]" type = "d"     training="0123"/>
 <var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(18,0 ,1000)" unit = "Ratio Reconstrunted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d"  training="0123"/>
@@ -498,7 +498,7 @@
 <var def = "atan(sqrt(pow(reco_track_diry[0], 2)+ pow(reco_track_dirx[0],2))/reco_track_dirz[0])" binning = "(18,-1.57,1.57)" unit = "Reconstructed Track #theta_{azy} [rad]" type = "d"     training="123"/>
 
 <var def = "log10(reco_track_spacepoint_max_dist[0])" binning = "(18,-2,1.2)" unit = "Reconstructed Track Max Distance Spacepoint from Line [cm]" type = "d"  training = "0123"/>
-<var def = "#PCE#/(1000.0*reco_track_proton_kinetic_energy[0])" binning="(18,0,1)" unit="Track Calo Energy / Track Range based KE" type="d"  training="0123" group="16"/> 
+<var def = "#PCE#/(1000.0*reco_track_proton_kinetic_energy[0])" binning="(18,0.1,1)" unit="Track Calo Energy / Track Range based KE" type="d"  training="0123" group="16"/> 
 <var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(18,0,2.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "0123"/>
 <var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(18,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="0123"/>
 <var def = "(reco_track_spacepoint_principal0[0])" binning = "(18,0.5,1)" unit = "Track Spacepoint Principal" type ="d"  training ="0123" logplot = "true"/>
@@ -511,12 +511,12 @@
 <var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(18,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = "0123"  group = "3"/>
 
 <var def = "(#PE#)*(reco_track_dirz[0])+(#GE#*0.001)*reco_shower_implied_dirz[0]" binning = "(18,-1.5,1.6)" unit = "Reconstructed Delta Momentum Z (implied) [GeV]" type = "d"    training = "0123" group = "1" />
-<var def = "(#PE#)*(reco_track_diry[0])+(#GE#*0.001)*reco_shower_implied_diry[0]" binning = "(18,-1.5,1.5)" unit = "Reconstructed Delta Momentum Y (implied) [GeV]" type = "d"    training = "123" group = "1" />
-<var def = "sqrt(pow(#PE#*reco_track_diry[0],2)+pow(#PE#*reco_track_dirx[0],2))" unit = "Proton Transverse Momentum [GeV]" binning = "(18,0,1.4)" type = "d"  training = "0123"/>
+<var def = "(#PE#)*(reco_track_diry[0])+(#GE#*0.001)*reco_shower_implied_diry[0]" binning = "(18,-1.25,1.25)" unit = "Reconstructed Delta Momentum Y (implied) [GeV]" type = "d"    training = "123" group = "1" />
+<var def = "sqrt(pow(#PE#*reco_track_diry[0],2)+pow(#PE#*reco_track_dirx[0],2))" unit = "Proton Transverse Momentum [GeV]" binning = "(18,0,1.2)" type = "d"  training = "0123"/>
 <var def = "reco_track_displacement[0]" binning = "(18,0,120)" unit = "Track Displacement [cm]" type = "d"     training="0123" group="77"/>
 
 <var def = "sqrt(pow(reco_track_startx[0]-reco_vertex_x,2)+pow(reco_track_starty[0]-reco_vertex_y,2)+pow(reco_track_startz[0]-reco_vertex_z,2))" binning = "(18,0,4)" unit = "Distance from Track Start to Vertex [cm]" type="d"  training="123" logplot = "true"/>
-<var def = "log10(Min$(isolation_min_dist_trk_shr))" binning = "(18,-0.4,2.5)" unit = "Min Dist from Track to Any Hit in Shower log[cm]" type="d" logplot = "true"   training="123"/>
+<var def = "log10(Min$(isolation_min_dist_trk_shr))" binning = "(18,-0.4,2)" unit = "Min Dist from Track to Any Hit in Shower log[cm]" type="d" logplot = "true"   training="123"/>
 <var def = "TMath::Min(sqrt(pow(reco_track_endx[0]-reco_shower_startx[0],2)+pow(reco_track_endy[0]-reco_shower_starty[0],2)+pow(reco_track_endz[0]-reco_shower_startz[0],2)), sqrt(pow(reco_track_startx[0]-reco_shower_startx[0],2)+pow(reco_track_starty[0]-reco_shower_starty[0],2)+pow(reco_track_startz[0]-reco_shower_startz[0],2)))" binning = "(18,0,100)" unit = "Min Distance from Shower to Track Start/End [cm]" type="d"  training="123" logplot = "true"/>
 
 
@@ -834,7 +834,7 @@
 <var def = "sss3d_invar_ranked_opang" binning = "(18,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="d"  training="4" logplot = "true"/>
 <var def = "sss3d_invar_ranked_implied_opang" binning = "(18,-1,1)" unit ="sss3d best invariant mass candidate implied angle w.r.t primary shower [cos]" type="d"  training="4"/>
 
-<var def = "reco_shower_plane2_meanRMS" binning = "(18,2.5,8)" unit = "Reco Shower Plane 2 RMS" type="d" training ="" group=""/>
+<var def = "reco_shower_plane2_meanRMS" binning = "(18,3,8)" unit = "Reco Shower Plane 2 RMS" type="d" training ="" group=""/>
 <var def = "reco_shower_reclustered_energy_max" binning = "(18,0,250)" unit = "Reclustred Energy Max" type = "d" training="1234" group =""/>
 <var def = "(reco_shower_reclustered_energy_plane0+reco_shower_reclustered_energy_plane2+reco_shower_reclustered_energy_plane1)/3.0" binning = "(18,0,60)" unit = "Reclustered Energy Mean [MeV]" type = "d" training="1234" group ="12" logplot = "true"/>
 

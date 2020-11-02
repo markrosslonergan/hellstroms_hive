@@ -45,7 +45,7 @@ rm  *Far*entry*root
 #NCPi0Box 
 #./hive -o datamc --makefluxcovar $FXXML -x $XML -s 1 -g $NUM --cuts "$sBNBFS"
 #rm *Far*entry*root
-#./hive -o datamc  -x $XML -s 1 -g $NUM  --cuts "$BNBFS" --additional_tag="BNBOtherFS_Comb" --systematics "flux_fracfixed"
+#./hive -o datamc  -x $XML -s 1 -g $NUM  --cuts "$BNBFS" --additional_tag="BNBFS_Coscut" --systematics "flux_fracfixed"
 #rm  *Far*entry*root
 #./hive -o datamc  -x $XML1 -s 1 -g $NUM  --cuts "$BNBFS" --additional_tag="BNBOtherFS_Run1" --systematics "flux_fracfixed"
 #rm  *Far*entry*root

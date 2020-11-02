@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FXXML="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/SBNfit_Integration_XMLS/template_1g0p_stage_1_Run13combined_NoLEE.xml"
+FXXML0p="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/SBNfit_Integration_XMLS/template_1g0p_stage_1_Run13combined_NoLEE.xml"
 XML="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g0p_xmls/hive2.5/internalnote_9_23_20/1g0p_CeriseWorldOrder_FarSideband_CombinedRuns13_FullFS_v2.xml"
 XML2="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g0p_xmls/hive2.5/internalnote_9_23_20/1g0p_CeriseWorldOrder_FarSideband_CombinedRuns13_BNBFS_v2.xml"
 #XML2="1g1p_CeriseWorldOrder_FarSideband_Run2.xml"
@@ -35,9 +35,9 @@ NUM=2212
 rm *Far*entry*root
 
 #NCPi0Box 
-./../bin/hive -o datamc --makefluxcovar $FXXML -x $XML2 -s 1 --plottrainonly --cuts "$sNCPIFS"
+./../../bin/hive -o datamc --makefluxcovar $FXXML -x $XML2 -s 1 --plottrainonly --cuts "$sNCPIFS"
 rm *Far*entry*root
-./../../bin/hive -o datamc  -x $XML2 -s 1 --plottrainonly   --cuts "$NCPIFS" --additional_tag="NCpi0FS_CosCut" --systematics "flux_fracfixed"
+./../../../bin/hive -o datamc  -x $XML2 -s 1 --plottrainonly   --cuts "$NCPIFS" --additional_tag="NCpi0FS_CosCut" --systematics "flux_fracfixed"
 rm  *Far*entry*root
 
 #BNB Box
