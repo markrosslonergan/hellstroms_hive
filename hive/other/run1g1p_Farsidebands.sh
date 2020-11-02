@@ -32,10 +32,10 @@ rm  *Far*entry*root
 #./hive -o datamc  -x $XML3 -s 1 -g $NUM  --cuts "$FULLFS" --additional_tag="FullFS_Run3" --systematics "flux_fracfixed"
 
 #NCPi0Box 
-./../../bin/hive -o datamc --makefluxcovar $FXXML -x $XML -s 1 --plottrainonly --cuts "$sNCPIFS"
-rm *Far*entry*root
-./../../bin/hive -o datamc  -x $XML -s 1 --plottrainonly  --cuts "$NCPIFS" --additional_tag="NCpi0FS_CosCut" --systematics "flux_fracfixed"
-rm  *Far*entry*root
+#./../../bin/hive -o datamc --makefluxcovar $FXXML -x $XML -s 1 --plottrainonly --cuts "$sNCPIFS"
+#rm *Far*entry*root
+#./../../bin/hive -o datamc  -x $XML -s 1 --plottrainonly  --cuts "$NCPIFS" --additional_tag="NCpi0FS_CosCut" --systematics "flux_fracfixed"
+#rm  *Far*entry*root
 #./hive -o datamc  -x $XML1 -s 1 -g $NUM  --cuts "$NCPIFS" --additional_tag="NCpi0FS_Run1" --systematics "flux_fracfixed"
 #rm  *Far*entry*root
 #./hive -o datamc  -x $XML2 -s 1 -g $NUM  --cuts "$NCPIFS" --additional_tag="NCpi0FS_Run2" --systematics "flux_fracfixed"
