@@ -1,7 +1,9 @@
 #!/bin/bash
 
 FXXML="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/SBNfit_Integration_XMLS/template_1g1p_stage_1_Run13combined_NoLEE.xml"
-XML="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive2.5/internalnote_9_23_20/1g1p_CeriseWorldOrder_FarSideband_CombinedRuns123_v2.xml"
+XML="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive2.5/internalnote_9_23_20/1g1p_CeriseWorldOrder_FarSideband_CombinedRuns123_FullFS_v2.xml"
+XML2="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive2.5/internalnote_9_23_20/1g1p_CeriseWorldOrder_FarSideband_CombinedRuns123_BNBFS_v2.xml"
+XML3="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive2.5/internalnote_9_23_20/1g1p_CeriseWorldOrder_FarSideband_CombinedRuns123_NCPi0FS_v2.xml"
 #XML1="1g1p_CeriseWorldOrder_FarSideband_Run1.xml"
 #XML2="1g1p_CeriseWorldOrder_FarSideband_Run2.xml"
 #XML3="1g1p_CeriseWorldOrder_FarSideband_Run3.xml"
@@ -32,10 +34,10 @@ rm  *Far*entry*root
 #./hive -o datamc  -x $XML3 -s 1 -g $NUM  --cuts "$FULLFS" --additional_tag="FullFS_Run3" --systematics "flux_fracfixed"
 
 #NCPi0Box 
-#./../../bin/hive -o datamc --makefluxcovar $FXXML -x $XML -s 1 --plottrainonly --cuts "$sNCPIFS"
-#rm *Far*entry*root
-#./../../bin/hive -o datamc  -x $XML -s 1 --plottrainonly  --cuts "$NCPIFS" --additional_tag="NCpi0FS_CosCut" --systematics "flux_fracfixed"
-#rm  *Far*entry*root
+./../../bin/hive -o datamc --makefluxcovar $FXXML -x $XML3 -s 1 --plottrainonly --cuts "$sNCPIFS"
+rm *Far*entry*root
+./../../bin/hive -o datamc  -x $XML3 -s 1 --plottrainonly  --cuts "$NCPIFS" --additional_tag="NCpi0FS_CosCut" --systematics "flux_fracfixed"
+rm  *Far*entry*root
 #./hive -o datamc  -x $XML1 -s 1 -g $NUM  --cuts "$NCPIFS" --additional_tag="NCpi0FS_Run1" --systematics "flux_fracfixed"
 #rm  *Far*entry*root
 #./hive -o datamc  -x $XML2 -s 1 -g $NUM  --cuts "$NCPIFS" --additional_tag="NCpi0FS_Run2" --systematics "flux_fracfixed"
@@ -61,9 +63,9 @@ rm  *Far*entry*root
 #./hive -o datamc  -x $XML -s 1 -g 2202  --cuts "$NCPIFS" --additional_tag="NCpi0FS"
 
 #BNB Box
-./../../bin/hive -o datamc --makefluxcovar $FXXML -x $XML -s 1 --plottrainonly --cuts "$sBNBFS"
+./../../bin/hive -o datamc --makefluxcovar $FXXML -x $XML2 -s 1 --plottrainonly --cuts "$sBNBFS"
 rm  *Far*entry*root
-./../../bin/hive -o datamc  -x $XML -s 1 --plottrainonly  --cuts "$BNBFS" --additional_tag="BNBFS_CosCut" --systematics "flux_fracfixed"
+./../../bin/hive -o datamc  -x $XML2 -s 1 --plottrainonly  --cuts "$BNBFS" --additional_tag="BNBFS_CosCut" --systematics "flux_fracfixed"
  rm  *Far*entry*root
 #./hive -o datamc -x 1g1p_CeriseWorldOrder_FarSideband_Run1.xml -s 1 -g 2202 --cuts "$NCPIFS" 
 
