@@ -340,6 +340,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 std::cout<<" var.additional_cut = "<< var.additional_cut <<std::endl;
             }
 
+            std::cout<<" var.additional_cut = "<< var.additional_cut <<std::endl;
+           
             //var.is_logplot = false;
             std::cout<<"Starting on variable "<<var.name<<std::endl;
 
