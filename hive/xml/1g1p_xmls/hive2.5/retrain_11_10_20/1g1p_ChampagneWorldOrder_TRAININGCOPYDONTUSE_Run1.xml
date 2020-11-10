@@ -1108,7 +1108,7 @@
 
 <!-- Take plane 2 by default, unless no calo info -->
 <alias key="GE" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0)))" />
-<alias key="GEO" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)" />
+<alias key="GEO" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)" />
 <alias key="GDEDXKAL" value ="(reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0)))"/>
 
 <!--
