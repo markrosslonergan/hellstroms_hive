@@ -1104,7 +1104,7 @@ int bdt_XGtrain(bdt_info &info){
             c_error->Update();
         }
      //   c_error->SaveAs(("XGBoost_Validation_"+name+".root").c_str(),"root");
-      //   c_error->SaveAs(("XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
+        c_error->SaveAs(("XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
         c_error->Write(); 
         hfile ->Close();
 
