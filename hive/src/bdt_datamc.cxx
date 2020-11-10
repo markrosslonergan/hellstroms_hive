@@ -465,9 +465,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
                     //mc_sys_error = sqrt(fkr[c]);
                     //double mc_sys_error = sqrt(fabs((*covar_collapsed)(c,c)));
-                    //double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
+                    double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
 
-                    double tot_error = sqrt(mc_sys_error*mc_sys_error);
+                    //double tot_error = sqrt(mc_sys_error*mc_sys_error);
 
                     //double tot_error = mc_sys_error; 
                     std::cout<<"Error Summary || Bin "<<c<<" Nmc: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" FracErr: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" SysFrac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" MCStatFrac: "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
@@ -1175,6 +1175,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             fout->cd();
+            d0->Write(("d0_"+tago).c_str());
+            tsum->Write(("tsum_"+tago).c_str());
             ratpre->Write(("ratpre_"+tago).c_str());
             ratunit->Write(("ratunit_"+tago).c_str());
             gr->Write(("graph_"+tago).c_str());
