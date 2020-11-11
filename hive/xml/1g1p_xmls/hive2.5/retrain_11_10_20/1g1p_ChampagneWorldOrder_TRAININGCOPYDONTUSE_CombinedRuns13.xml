@@ -15,33 +15,29 @@
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
+<bdtfile filename = "ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
-        <cut> mctruth_cc_or_nc==1</cut>
-        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
-    </definition>
-    <friend>
-        <filename>COFredo/OpticalMatch_ncdelta_overlay_run1_v33.3.uniq.root</filename>
-        <treename>opt_tree</treename>
-    </friend>
-</bdtfile>
-<!--
-<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlayRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "false">
-    <definition>
-        <cut> mctruth_is_delta_radiative==1 </cut>
-        <cut> mctruth_cc_or_nc==1</cut> 
+        <cut> mctruth_cc_or_nc == 1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut> 
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_ncdelta_overlay_run1_v33.3.uniq.root</filename>
+        <filename>COFredo/OpticalMatch_ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
+</bdtfile>
 
+<!--
+<bdtfile filename = "ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "true" >
+    <definition>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_cc_or_nc==1</cut> 
+          <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+    </definition>
 </bdtfile>
 -->
 
-<bdtfile filename = "ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0CohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter==5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -49,13 +45,13 @@
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_ncpi0_overlay_run1_v33.3.uniq.root</filename>
+        <filename>COFredo/OpticalMatch_ncpi0_overlay_combined_run13_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0NotCohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut>
@@ -63,38 +59,43 @@
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_ncpi0_overlay_run1_v33.3.uniq.root</filename>
+        <filename>COFredo/OpticalMatch_ncpi0_overlay_combined_run13_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCMultiPi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+
     <definition>
         <cut> mctruth_cc_or_nc==1</cut>
         <cut> mctruth_num_exiting_pi0>1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_bnb_overlay_run1_v33.3.uniq.root</filename>
+        <filename>COFredo/OpticalMatch_bnb_bdt_testing_sample_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
+
+
 </bdtfile>
 
-<bdtfile filename = "ccpi0_overlay_run1_v33.3.uniq.spluff.test.root" tag = "CC1Pi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ccpi0_overlay_combined_run13_v33.3.uniq.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>mctruth_cc_or_nc==0 </cut>
         <cut>mctruth_num_exiting_pi0==1</cut>
+        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_ccpi0_overlay_run1_v33.3.uniq.root</filename>
+        <filename>COFredo/OpticalMatch_ccpi0_overlay_combined_run13_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_run1_v33.3.uniq.spluff.test.root" tag = "BNBOtherRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
+
+<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
@@ -106,34 +107,35 @@
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_bnb_overlay_run1_v33.3.uniq.root</filename>
+        <filename>COFredo/OpticalMatch_bnb_bdt_testing_sample_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 
 </bdtfile>
 
-<bdtfile filename = "nue_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NueOverlaysRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
+<bdtfile filename = "nue_bdt_testing_sample_v33.3.uniq.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
     <definition>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_nue_overlay_run1_v33.3.uniq.root</filename>
+        <filename>COFredo/OpticalMatch_nue_bdt_testing_sample_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 
 </bdtfile>
 
-<bdtfile filename = "dirt_overlay_run1_v33.3.uniq.root" tag = "DirtRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" >
+
+<bdtfile filename = "dirt_overlay_combined_run123_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" >
     <definition>
         <cut>1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_dirt_overlay_run1_v33.3.uniq.root</filename>
+        <filename>COFredo/OpticalMatch_dirt_overlay_combined_run123_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
@@ -141,7 +143,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
+<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
     <definition><cut>1</cut></definition>
     <data type="OnBeam" plot_name="Unbiased">
         <tor860_wcut>   4.081e+19 </tor860_wcut>
@@ -149,16 +151,22 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1 Cosmic Data" fillstyle = "3333" scale = "1">
+<bdtfile filename = "bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1+3 Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
         <tor860_wcut> 4.081e+19 </tor860_wcut>
         <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>
-        <EXT>28264427.0</EXT>
+        <EXT>166300493.0</EXT>
     </data>
 </bdtfile>
+
+
+
+
+
+
 
 
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
@@ -347,7 +355,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.6" max = "0.95" steps="100"/>
+    <scan min = "0.75" max = "0.95" steps="100"/>
 </mva>
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
@@ -372,7 +380,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.8" max = "1.0" steps="200"/>
+    <scan min = "0.85" max = "1.0" steps="200"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
@@ -398,7 +406,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.2" max = "0.5" steps="50"/>
+    <scan min = "0.25" max = "0.5" steps="50"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "Nue" name ="Nue fake BDT" binning = "(24,0.0,1.0)">    
@@ -424,7 +432,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.3" max = "0.7" steps="50"/>
+    <scan min = "0.35" max = "0.55" steps="50"/>
 </mva>
 <mva type="BDT" use="yes" tag = "SSV" name ="SSV focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
@@ -449,7 +457,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.4" max = "0.9" steps="50"/>
+    <scan min = "0.45" max = "0.7" steps="50"/>
 </mva>
 <!-- ================================================== PRE-CUTS   ==================================================== -->
 
