@@ -38,12 +38,12 @@ int main (int argc, char *argv[]){
     // Just some simple argument things
     //===========================================================================================
 
-    std::ifstream file("train_log_1g0p_v0.txt");
+    std::ifstream file("train_log_v0.txt");
     std::string str;
     std::string file_contents;
 
     std::ofstream myfile;
-    std::string outfile = "table_training_vars_1g0p.txt";
+    std::string outfile = "table_training_vars_1g1p.txt";
     myfile.open (outfile);
     // myfile << "Writing this to a file.\n";
 
