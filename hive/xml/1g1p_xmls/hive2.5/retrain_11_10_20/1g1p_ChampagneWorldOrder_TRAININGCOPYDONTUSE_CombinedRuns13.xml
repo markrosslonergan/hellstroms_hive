@@ -1,6 +1,8 @@
 <?xml version="1.0" ?>
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g1pNov2020" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "( 0.95,0.97,0.48,0.38,0.51)" />
+<topology tag="1g1pNov2020" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.89,0.97,0.43,0.61,0.50)" />
+<!--<topology tag="1g1pNov2020" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "( 0.95,0.97,0.48,0.38,0.51)" />-->
+
 
 <!--
 <plot_pot>
