@@ -36,6 +36,7 @@ struct bdt_variable{
 		std::string type;
         bool is_logplot;
         bool has_covar;
+        bool is_spectator;
 
         std::string additional_cut;
         
@@ -49,6 +50,7 @@ struct bdt_variable{
 
         int n_bins;
         std::vector<double> edges;
+        std::vector<double> low_edges;
 
         int addCovar(std::string name, std::string file){
             has_covar=true;
@@ -132,8 +134,17 @@ struct bdt_variable{
            
             cat = 0;
 
-
-
+            double elow = edges[1];
+            double ehigh = edges[2];
+            double ediff = ehigh-elow;
+            double estep = ediff/(double)n_bins;
+            for(int i=0; i<=n_bins;i++){
+                low_edges.push_back(elow+i*estep);
+            }
+           
+           //low_edges = {0,0.15,0.225,0.3,0.375,0.45,0.6}; 
+           //low_edges = {0.1,  0.2, 0.25, 0.3, 0.35, 0.4 ,0.45, 0.5, 0.55, 0.6, 0.7};
+           // low_edges = {0, 0.075, 0.15, 0.225, 0.3, 0.375, 0.45, 0.525, 0.6, 0.675,  0.9};           
 		};
 
 		bdt_variable(){};
@@ -147,6 +158,7 @@ struct bdt_variable{
                 plot_min =-999;
             plot_max =-999;
             cat = 0;
+
 };
 
 };

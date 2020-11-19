@@ -49,6 +49,7 @@ class bdt_datamc{
         bdt_file* data_file;
         bdt_stack *mc_stack;
         std::string tag;
+        std::string additional_pdf_tag;
 
         std::string m_error_string;
         bool isSpectator = false;
@@ -57,9 +58,9 @@ class bdt_datamc{
         int plot_stage;
         std::vector<bool> subtraction_vec;
 
-        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string="stat";};
-        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1;stack_mode=false; m_error_string="stat";};
-        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string="stat";};
+        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string="stat";additional_pdf_tag="";};
+        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1;stack_mode=false; m_error_string="stat"; additional_pdf_tag="";};
+        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string="stat"; additional_pdf_tag = "";};
 
         int setErrorString(std::string in){m_error_string = in; return 0;}
 
@@ -88,7 +89,9 @@ class bdt_datamc{
         int plotBDTStacks(bdt_info info, std::vector<double> bdt_cuts);
 
 
-        int SetSpectator();
+        int SetSpectator(){
+            isSpectator=true;
+        }
 
         int printPassingDataEvents(std::string outfilename, int stage, double c1, double c2);
         int printPassingDataEvents(std::string outfilename, int stage, std::vector<double> cuts);

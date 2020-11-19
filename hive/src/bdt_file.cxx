@@ -14,11 +14,11 @@ std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<
     double Nt = std::accumulate(fullvec.begin(), fullvec.end(),0.0);
 
     if(true){//isfrac
-    for(int i=0; i<ncol; i++){
-		fullvec[i] = fullvec[i]/Nt;
-	}
-    Nt = std::accumulate(fullvec.begin(), fullvec.end(),0.0);
-	}
+        for(int i=0; i<ncol; i++){
+            fullvec[i] = fullvec[i]/Nt;
+        }
+        Nt = std::accumulate(fullvec.begin(), fullvec.end(),0.0);
+    }
 
     for(int i=0; i<ncol; i++){
         for(int j=0; j<ncol; j++){
@@ -79,7 +79,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::string tnam_event = root_dir+"event_tree";
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
-    
+
     global_weight_string = "1";
 
     if(is_mc){
@@ -87,37 +87,44 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
         //weight_branch = "genie_spline_weight";
         //weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
         //weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)";
-       // weight_branch = "genie_spline_weight";//*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
-       // weight_branch = "genie_spline_weight";
+        // weight_branch = "genie_spline_weight";//*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
+        // weight_branch = "genie_spline_weight";
+
+
         weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))";
+
+        /*std::cout<<"tag = "<<tag<<std::endl;
+          if(tag == "DarkNue"){
+          weight_branch = "1";
+          }*/
     } 
-    if (is_data ||  is_bnbext) {
+    if (is_data ||  is_bnbext ) {
         std::cout<<"setting weight branch - on/off beam data"<<std::endl;
         weight_branch = "1";
     }
-    
+
     fillstyle = infillstyle;
     scale_data = 1.0;
 
-//    run_names = {"RI","RII","RIIIa","RIIIb","RIV"};
-//    run_fractions_plot = {0.16638655, 0.26435986, 0.043400890, 0.21413742, 0.31171527};
-//    run_fraction_cuts  = {"(run_number >= 4952 && run_number <= 7770)", "( run_number >=8317 && run_number <=  13696)", "(run_number >= 13697 && run_number <= 14116)","(run_number >= 14117 && run_number <= 18960)","(run_number >=18961 && run_number <= 23542)"};
-    
+    //    run_names = {"RI","RII","RIIIa","RIIIb","RIV"};
+    //    run_fractions_plot = {0.16638655, 0.26435986, 0.043400890, 0.21413742, 0.31171527};
+    //    run_fraction_cuts  = {"(run_number >= 4952 && run_number <= 7770)", "( run_number >=8317 && run_number <=  13696)", "(run_number >= 13697 && run_number <= 14116)","(run_number >= 14117 && run_number <= 18960)","(run_number >=18961 && run_number <= 23542)"};
+
     //What we should have for neutrino based on pawels good runs 
     //run_names = {"RI/II/IIIa","RIIIb/IV"};
     //run_fraction_cuts  = {"( (run_number >= 4952 && run_number <= 7770) || ( run_number >= 8317 && run_number <=  13696) || (run_number >= 13697 && run_number <= 14116)) ", "( (run_number >= 14117 && run_number <= 18960) || (run_number >=18961 && run_number <=23542) )"};
     //run_fractions_plot = {0.4742,0.5258};
-   
+
     //2g1p
     //run_names  = {"RI/II","RIII"};
     //run_fraction_cuts = {"(run_number <=13696)","(run_number >= 13697)"};
     //run_fractions_plot = {0.6964636727,0.3035363273};
- 
+
     //2g0p
     //run_names  = {"RI/II","RIII"};
     //run_fraction_cuts = {"(run_number <=13696)","(run_number >= 13697)"};
     //run_fractions_plot = {0.677544979,0.322455021};
-    
+
     // Just run 1 and/or 2
     //run_names = {"RI/II"};
     //run_fraction_cuts  = {"run_number<=13696"};
@@ -132,14 +139,14 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     //run_fraction_cuts  = {"1"};
     //run_fractions_plot = {1.0};
 
-  //  run_names = {"RI","R3"};
-  //  run_fraction_cuts  = {"run_number <= 7770 ","run_number>=13697"};
- //   run_fractions_plot = {0.5,0.5};
+    //  run_names = {"RI","R3"};
+    //  run_fraction_cuts  = {"run_number <= 7770 ","run_number>=13697"};
+    //   run_fractions_plot = {0.5,0.5};
 
 
-  /*
-    std::cout<<"Getting vertex tree"<<std::endl;
-    tvertex = (TTree*)f->Get(tnam.c_str());
+    /*
+       std::cout<<"Getting vertex tree"<<std::endl;
+       tvertex = (TTree*)f->Get(tnam.c_str());
 
     //tevent = (TTree*)f->Get(tnam_event.c_str());
     std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
@@ -149,11 +156,11 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     run_fractions_file.resize(run_fractions_plot.size(),0);
     double combin = 0.0;
     for(int i=0; i< run_fractions_plot.size(); i++){
-            run_fractions_file[i] = tvertex->GetEntries(run_fraction_cuts[i].c_str())/(double)tvertex->GetEntries();
-            std::cout << "BLARG run_fractions_file[" << i << "] = " << run_fractions_file[i] << std::endl;
-            std::cout<<run_fraction_cuts[i]<<std::endl;
-            std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
-            combin+=run_fractions_file[i];
+    run_fractions_file[i] = tvertex->GetEntries(run_fraction_cuts[i].c_str())/(double)tvertex->GetEntries();
+    std::cout << "BLARG run_fractions_file[" << i << "] = " << run_fractions_file[i] << std::endl;
+    std::cout<<run_fraction_cuts[i]<<std::endl;
+    std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
+    combin+=run_fractions_file[i];
     }
     std::cout<<"Total is "<<combin<<std::endl;
 
@@ -161,7 +168,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     std::cout << "run_fractions_file[0] = " << run_fractions_file[0] << std::endl;
     run_weight_string = "1.0*("+run_fraction_cuts[0]+"*"+std::to_string(run_fractions_plot[0]/run_fractions_file[0]);
     for(int i=1; i< run_fractions_plot.size(); i++){
-         run_weight_string += "+" +run_fraction_cuts[i]+"*"+std::to_string(run_fractions_plot[i]/run_fractions_file[i]);
+    run_weight_string += "+" +run_fraction_cuts[i]+"*"+std::to_string(run_fractions_plot[i]/run_fractions_file[i]);
     }
     run_weight_string +=")";
     std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
@@ -325,7 +332,7 @@ if(tag == "BNBext"){
 
 
 
-        //this->CheckWeights();//make sure there aren't erroneous weights
+//this->CheckWeights();//make sure there aren't erroneous weights
 
 };
 
@@ -380,7 +387,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
     //First we will run with plot POT stuff
 
-    
+
     std::string tnam_event = root_dir+"event_tree";
     std::string tnam = root_dir+"vertex_tree";
     std::string tnam_pot = root_dir+"pot_tree";
@@ -392,23 +399,23 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     tvertex = (TTree*)f->Get(tnam.c_str());
     std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
 
-   
+
     run_fractions_file.resize(run_fractions.size(),0);
     double combin = 0.0;
     for(int i=0; i< run_fractions.size(); i++){
-            run_fractions_file[i] = tvertex->GetEntries(run_cuts[i].c_str())/(double)tvertex->GetEntries();
-            std::cout<<run_cuts[i]<<std::endl;
-            std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
-            combin+=run_fractions_file[i];
+        run_fractions_file[i] = tvertex->GetEntries(run_cuts[i].c_str())/(double)tvertex->GetEntries();
+        std::cout<<run_cuts[i]<<std::endl;
+        std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
+        combin+=run_fractions_file[i];
     }
-   
+
     std::cout<<"Total is "<<combin<<std::endl;
     if(fabs(combin-1.0)>0.00001  && !is_data){
         std::cout<<"ERROR! The total that each defined run period adds up to is "<<combin<<" which is not 1."<<" "<<this->tag<<" "<<is_data<<std::endl;
-    
+
         exit(EXIT_FAILURE);
     }
-    
+
     for(int i=0; i< run_fractions.size(); i++){
         std::cout<<"Run_Frac: "<<run_fractions[i]<<" in this file "<<run_fractions_file[i]<<std::endl;
     }
@@ -416,9 +423,9 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     run_weight_string = "1.0*("+run_cuts[0]+"*"+std::to_string(run_fractions[0]/run_fractions_file[0]);
     for(int i=1; i< run_fractions.size(); i++){
 
-       double mval = mval = run_fractions[i]/run_fractions_file[i]; 
+        double mval = mval = run_fractions[i]/run_fractions_file[i]; 
 
-         run_weight_string += "+" +run_cuts[i]+"*"+std::to_string(mval);
+        run_weight_string += "+" +run_cuts[i]+"*"+std::to_string(mval);
     }
     run_weight_string +=")";
     std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
@@ -429,11 +436,6 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
 
     vec_entry_lists.resize(flow.bdt_vector.size());
-
-
-
-
-
 
 
 
@@ -459,12 +461,18 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
         int tmpnum = 0;
         double tmppot=0;
-        
+
         std::cout<<"bdt_file::bdt_file()\t||\t There was "<<trs->GetEntries()<<" subruns merged to make this root file."<<std::endl;
-        
+
         for(int i=0; i<trs->GetEntries(); i++) {
             trs->GetEntry(i);
             tmppot += potbranch;
+        }
+
+        if (this->tag == "DarkNue"){
+            tmppot = 2e21;
+            std::cout<<"for the dark nue setting to arbitrary POT: "<<tmppot<<std::endl;
+
         }
 
         numberofevents = tvertex->GetEntries();
@@ -482,14 +490,20 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*("+run_weight_string+")";
 
-        /*if(this->tag.find("NCPi0")!=std::string::npos){
-            weight_branch = weight_branch +"*"+"(1.0+ (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.3)*0.2 + (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.175)*0.3  +  (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.1)*0.3 )";
+        if(this->tag=="DarkNue"){
+            weight_branch = "1";
+        }
 
-        }*/
+
+
+        /*if(this->tag.find("NCPi0")!=std::string::npos){
+          weight_branch = weight_branch +"*"+"(1.0+ (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.3)*0.2 + (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.175)*0.3  +  (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.1)*0.3 )";
+
+          }*/
 
         if(this->tag=="NCPi0NotCoh"){
-         //   weight_branch = "("+weight_branch+")*(1.0 - 0.85*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
-            
+            //   weight_branch = "("+weight_branch+")*(1.0 - 0.85*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
+
         }
 
         numberofevents_raw = numberofevents;
@@ -583,6 +597,8 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
 
     weight_branch = weight_branch +"*"+global_weight_string;
+    std::cout<<"global_weight_string = "<<global_weight_string<<std::endl;
+    std::cout<<"weight_branch = "<< weight_branch<<std::endl;
 
     return 0;
 }
@@ -855,7 +871,7 @@ double bdt_file::GetEntries(std::string cuts){
         }
         }
         */
-   // this->CheckWeights(); //catch erroneous values of the weight
+    // this->CheckWeights(); //catch erroneous values of the weight
     this->tvertex->Draw(("reco_asso_showers>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     TH1* th1 = (TH1*)gDirectory->Get(namr.c_str()) ;
     double ans = th1->GetSumOfWeights();
@@ -877,7 +893,7 @@ int bdt_file::setPOT(double inpot){
 TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT){
 
     TCanvas *ctmp = new TCanvas();
-  //  this->CheckWeights();
+    //  this->CheckWeights();
     this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
@@ -951,7 +967,7 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
 
     std::cout<<"Starting to get for "<<(varx.name+vary.name+">>"+bin ).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
-   // this->CheckWeights();
+    // this->CheckWeights();
     this->tvertex->Draw((vary.name+":"+varx.name+">>"+nam+bin).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH2* th2 = (TH2*)gDirectory->Get(nam.c_str()) ;
@@ -977,16 +993,17 @@ TH1* bdt_file::getTH1(bdt_variable & var, std::string  cuts, std::string  nam, d
     double tol = 0.000001;
     std::string in_bins = "("+var.name+"<="+std::to_string(var.edges[2]+tol) +"&&"+var.name+">="+std::to_string(var.edges[1]-tol)+")";
     //TCanvas *ctmp = new TCanvas();
-   
+
     if (var.additional_cut == "")  {
-    
+
         var.additional_cut = "1.0";
-   }
-    
-    this->tvertex->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+"&&"+in_bins+"&&" + var.additional_cut+ ")*"+this->weight_branch).c_str(),"goff");
+    }
+
+   
+    TH1D* th1 = new TH1D(nam.c_str(),nam.c_str(),var.n_bins,&(var.low_edges)[0]);
+    this->tvertex->Draw((var.name+">>+"+nam).c_str() , ("("+cuts+"&&"+in_bins+"&&" + var.additional_cut+ ")*"+this->weight_branch).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
-    TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
-    //th1->Sumw2();
+    //TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
 
     if(plot_POT==0){
         th1->Scale(1.0/th1->Integral());
@@ -1020,15 +1037,15 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 
     std::vector<TH1*> to_sort;
     std::vector<double> integral_sorter;
- 
+
     if (var.additional_cut == "")  {
         var.additional_cut = "1.0";
-   }
-    
+    }
+
     for(int i=0; i< recomc_cuts.size(); i++){
         std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
         TCanvas *ctmp = new TCanvas();
-    //    this->CheckWeights();
+        //    this->CheckWeights();
         this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+var.additional_cut+"&&"+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
         std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
         //gDirectory->ls();
@@ -1365,7 +1382,7 @@ unsigned long  bdt_file::jenkins_hash(std::string key) {
 int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage, const std::vector<double> & fbdtcuts ){
     TFile *f = new TFile((analysis_tag+"_"+this->tag+"_SSSprecalc.root").c_str(),"read");
     TTree *t = (TTree*)f->Get("sss_precalc");
- 
+
     t->AddFriend(this->tvertex);
     std::string output_file_name = "sbnfit_sss_precalc_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+this->tag+".root";
     std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
@@ -1378,7 +1395,7 @@ int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_s
 
     std::cout<<"Copying precalc tree"<<std::endl;
     TTree * t_sbnfit_tree = (TTree*)t->CopyTree(sbnfit_cuts.c_str());
-    
+
     TList * lf1 = (TList*)t_sbnfit_tree->GetListOfFriends();
     for(const auto&& obj: *lf1) t_sbnfit_tree->GetListOfFriends()->Remove(obj);
 
@@ -1391,18 +1408,18 @@ int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_s
 }
 
 int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, double plot_pot){
-        return makeSBNfitFile( analysis_tag, bdt_infos, which_stage,fbdtcuts,input_string,vars,plot_pot,"1");
+    return makeSBNfitFile( analysis_tag, bdt_infos, which_stage,fbdtcuts,input_string,vars,plot_pot,"1");
 }
 
 int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, double plot_pot, std::string external_cuts){
 
     std::cout<<"Beginning SBNfit file creation for stage "<<which_stage<<" for file "<<this->tag<<std::endl;
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
-  
+
     std::cout<<"With external cuts "<<external_cuts<<std::endl;
     this->teventweight->AddFriend(this->tvertex);
     this->tslice->AddFriend(this->tvertex);
-    
+
     std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+this->tag+".root";
 
     std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
@@ -1460,7 +1477,9 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     std::vector<TTreeFormula*> form_vec;
     std::vector<TTreeFormula*> form_vec_vars;
 
+    std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
     for(int i=0; i< bdt_infos.size();i++){
+        std::cout<<i<<" "<<this->tag+"_"+bdt_infos[i].identifier<<std::endl;
         std::string nam = this->tag+"_"+bdt_infos[i].identifier+".mva";
         form_vec.push_back(new TTreeFormula((bdt_infos[i].identifier+"_mva_formula").c_str(), nam.c_str(),this->tvertex));
     }
@@ -1546,7 +1565,7 @@ int bdt_file::getRunEfficiency(){
 
     int steps = 25;
     int gap = (max_run-min_run)/steps;
-    
+
     for(int i=0; i< steps-1; i++){
         std::string cut = "(run_number >= "+std::to_string(min_run+gap*i) +" && run_number < " +std::to_string(min_run+gap*i+gap)+")";
         double eve = this->GetEntries(cut);
@@ -1570,25 +1589,25 @@ int bdt_file::splitAndPlot(int nsplit, bdt_variable var,double pot,int stage,std
 
     for(int i=0; i<nsplit; i++){
         TH1* th1 = getTH1(var, "("+this->getStageCuts(stage, bdt_cuts)+") && Entry$%"+std::to_string(nsplit)+"=="+std::to_string(i), var.safe_unit+"_"+std::to_string(i), pot, 1);
-            th1->Scale(1.0/th1->Integral());
-            th1->SetLineColor(cols[i]);
-            th1->SetMarkerColor(cols[i]);
-            if(i==0){
-                th1->Draw("E1P");
-                th1->SetMaximum(th1->GetMaximum()*1.2);
-            }else{
-                th1->Draw("Same E1P");
-            }
-            for(int j=1;j<th1->GetNbinsX()+1;j++){
-                std::cout<<th1->GetBinContent(j)<<" ";
-            }
-            std::cout<<std::endl;
-            vecths.push_back(th1);
-            std::vector<double> vtemp = this->getVector(var, "("+this->getStageCuts(stage, bdt_cuts)+") && Entry$%"+std::to_string(nsplit)+"=="+std::to_string(i)); 
-            //Need to sort them, blarg
-            std::sort(vtemp.begin(), vtemp.end());
-            unbinned.push_back(vtemp);
+        th1->Scale(1.0/th1->Integral());
+        th1->SetLineColor(cols[i]);
+        th1->SetMarkerColor(cols[i]);
+        if(i==0){
+            th1->Draw("E1P");
+            th1->SetMaximum(th1->GetMaximum()*1.2);
+        }else{
+            th1->Draw("Same E1P");
         }
+        for(int j=1;j<th1->GetNbinsX()+1;j++){
+            std::cout<<th1->GetBinContent(j)<<" ";
+        }
+        std::cout<<std::endl;
+        vecths.push_back(th1);
+        std::vector<double> vtemp = this->getVector(var, "("+this->getStageCuts(stage, bdt_cuts)+") && Entry$%"+std::to_string(nsplit)+"=="+std::to_string(i)); 
+        //Need to sort them, blarg
+        std::sort(vtemp.begin(), vtemp.end());
+        unbinned.push_back(vtemp);
+    }
     std::cout<<"Naive KS"<<std::endl;
     for(int a=0; a<nsplit; a++){
         for(int b=0; b<nsplit; b++){
@@ -1618,14 +1637,14 @@ int bdt_file::splitAndPlot(int nsplit, bdt_variable var,double pot,int stage,std
 std::vector<double> bdt_file::getVector(bdt_variable & var, std::string  cuts){
 
     std::vector<double> ans;
-   
+
     if (var.additional_cut == "")  {
         var.additional_cut = "1.0";
-   }
-   
+    }
+
     TTreeFormula* value = new TTreeFormula("value",(var.name).c_str(),tvertex);
     TTreeFormula* fcuts = new TTreeFormula("cuts",(cuts).c_str(),tvertex);
-    
+
     for(int i=0; i< tvertex->GetEntries();i++){
         tvertex->GetEntry(i);
 
@@ -1638,7 +1657,7 @@ std::vector<double> bdt_file::getVector(bdt_variable & var, std::string  cuts){
         }
 
     }
-  
+
     return ans;
 }
 

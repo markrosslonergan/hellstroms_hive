@@ -8,7 +8,7 @@
         edges=BINBINBIN
         />
     <subchannel name="NCDeltaRadOverlaySM" osc = "0" />
-    <subchannel name="NCDeltaRadOverlayLEE" osc = "0" />  
+    <!--    <subchannel name="NCDeltaRadOverlayLEE" osc = "0" />  -->
     <subchannel name="NCPi0Coh" osc = "0" />
     <subchannel name="NCPi0NotCoh" osc = "0" />
     <subchannel name="NCMultiPi0" osc = "0" />
@@ -21,7 +21,7 @@
 
 
 <WeightMaps>
-    <variation pattern="NORNCCOH_UBGenie" mode="minmax"/>
+    <variation pattern="NormNCCOH_UBGenie" mode="minmax"/>
     <variation pattern="NormCCCOH_UBGenie" mode="minmax"/>
     <variation pattern="Theta_Delta2Npi_UBGenie" mode="minmax" />
     <variation pattern="RPA_CCQE_UBGenie" mode="minmax" />
@@ -91,7 +91,9 @@ type="double"
         
          />
  </MultisimFile>
-<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g1p_April_collab/Comb13/sbnfit_1g1pMar2020_v4_stage_1_NCDeltaRadOverlaySM.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+
+ <!--
+ <MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g1p_April_collab/Comb13/sbnfit_1g1pMar2020_v4_stage_1_NCDeltaRadOverlaySM.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
  <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g1pMar2020_v4_stage_1_NCDeltaRadOverlay_+_combined.root"/>
  <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g1p_April_collab/Comb13/sbnfit_1g1pMar2020_v4_stage_1_NCDeltaRadOverlaySM.root"/> 
   <branch 
@@ -103,6 +105,8 @@ type="double"
         
          />
  </MultisimFile>
+-->
+
 <MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g1p_April_collab/Comb13/sbnfit_1g1pMar2020_v4_stage_1_NCMultiPi0.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
  <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g1pMar2020_v4_stage_1_NCMultiPi0_+_combined.root"/>
  <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g1p_April_collab/Comb13/sbnfit_1g1pMar2020_v4_stage_1_NCMultiPi0.root"/> 
