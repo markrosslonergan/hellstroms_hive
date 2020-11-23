@@ -1003,6 +1003,7 @@ int main (int argc, char *argv[]){
         //    sig_type == 5: purity 
         int sig_type = number; 
 
+        std::cout<<"the input number is "<<number<<std::endl;
         switch(number){
             case 0:
                 scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot);
@@ -1416,11 +1417,11 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
         //lets skip anything that isnt the specific or group we want
         if(number >= 0 && number !=vc-1) continue;
         if(which_group > 0 && which_group != v.cat) continue;
-      /*  if (v.is_spectator && plot_train_only) {
+        if (v.is_spectator && plot_train_only) {
             std::cout<<"skipping covar for spectator var"<<std::endl;
             continue;
         }
-*/
+
         std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
         for(double k = 0; k<=v.n_bins; k++){
             double b = v.edges[1]+k*fabs(v.edges[1]-v.edges[2])/(double)v.n_bins;

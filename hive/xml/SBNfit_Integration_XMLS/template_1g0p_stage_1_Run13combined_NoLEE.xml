@@ -30,6 +30,31 @@
     <variation pattern="DecayAngMEC_UBGenie" mode="minmax" />
     <variation pattern="_UBGenie" weight_formula="1.0/genie_CV_tune_weight"/> 
 </WeightMaps>
+
+<variation_list>
+    <whitelist>All_UBGenie</whitelist>
+    <whitelist>NormNCCOH_UBGenie</whitelist>
+    <whitelist>NormCCCOH_UBGenie</whitelist>
+    <whitelist>Theta_Delta2Npi_UBGenie</whitelist>
+    <whitelist>RPA_CCQE_UBGenie</whitelist>
+    <whitelist>XSecShape_CCMEC_UBGenie</whitelist>
+    <whitelist>VecFFCCQEshape_UBGenie</whitelist>
+    <whitelist>AxFFCCQEshape_UBGenie</whitelist>
+    <whitelist>DecayAngMEC_UBGenie</whitelist>
+    <whitelist>expskin_FluxUnisim</whitelist>
+    <whitelist>horncurrent_FluxUnisim</whitelist>
+    <whitelist>kminus_PrimaryHadronNormalization</whitelist>
+    <whitelist>kplus_PrimaryHadronFeynmanScaling</whitelist>
+    <whitelist>kzero_PrimaryHadronSanfordWang</whitelist>
+    <whitelist>nucleoninexsec_FluxUnisim</whitelist>
+    <whitelist>nucleonqexsec_FluxUnisim</whitelist>
+    <whitelist>nucleontotxsec_FluxUnisim</whitelist>
+    <whitelist>piminus_PrimaryHadronSWCentralSplineVariation</whitelist>
+    <whitelist>pioninexsec_FluxUnisim</whitelist>
+    <whitelist>pionqexsec_FluxUnisim</whitelist>
+    <whitelist>piontotxsec_FluxUnisim</whitelist>
+    <whitelist>piplus_PrimaryHadronSWCentralSplineVariation</whitelist>
+</variation_list>
 <MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Comb13/sbnfit_1g0pMar2020_stage_1_BNBOther.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
  <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_1_BNBOther_+_combined.root"/>
  <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Comb13/sbnfit_1g0pMar2020_stage_1_BNBOther.root"/> 
@@ -139,27 +164,4 @@ type="double"
          />
  </MultisimFile>
 
-<variation_list>
-    <whitelist>All_UBGenie</whitelist>
-    <whitelist>NormNCCOH_UBGenie</whitelist>
-    <whitelist>NormCCCOH_UBGenie</whitelist>
-    <whitelist>Theta_Delta2Npi_UBGenie</whitelist>
-    <whitelist>RPA_CCQE_UBGenie</whitelist>
-    <whitelist>XSecShape_CCMEC_UBGenie</whitelist>
-    <whitelist>VecFFCCQEshape_UBGenie</whitelist>
-    <whitelist>AxFFCCQEshape_UBGenie</whitelist>
-    <whitelist>DecayAngMEC_UBGenie</whitelist>
-    <whitelist>expskin_FluxUnisim</whitelist>
-    <whitelist>horncurrent_FluxUnisim</whitelist>
-    <whitelist>kminus_PrimaryHadronNormalization</whitelist>
-    <whitelist>kplus_PrimaryHadronFeynmanScaling</whitelist>
-    <whitelist>kzero_PrimaryHadronSanfordWang</whitelist>
-    <whitelist>nucleoninexsec_FluxUnisim</whitelist>
-    <whitelist>nucleonqexsec_FluxUnisim</whitelist>
-    <whitelist>nucleontotxsec_FluxUnisim</whitelist>
-    <whitelist>piminus_PrimaryHadronSWCentralSplineVariation</whitelist>
-    <whitelist>pioninexsec_FluxUnisim</whitelist>
-    <whitelist>pionqexsec_FluxUnisim</whitelist>
-    <whitelist>piontotxsec_FluxUnisim</whitelist>
-    <whitelist>piplus_PrimaryHadronSWCentralSplineVariation</whitelist>
-</variation_list>
+

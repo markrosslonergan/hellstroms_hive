@@ -821,7 +821,7 @@ int bdt_XGtrain(bdt_info &info){
     std::string const name = info.identifier;
 
     TFile *f = new TFile(("XGBoost_train_output_"+name+".root").c_str(),"recreate");
-
+    f->cd();
     TH1* btest = new TH1D("btest","btest",100,0,1);
     TH1* btrain = new TH1D("btrain","btrain",100,0,1);
     TH1* stest = new TH1D("stest","stest",100,0,1);
@@ -1104,10 +1104,11 @@ int bdt_XGtrain(bdt_info &info){
             c_error->Update();
         }
      //   c_error->SaveAs(("XGBoost_Validation_"+name+".root").c_str(),"root");
-      //   c_error->SaveAs(("XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
+        c_error->SaveAs(("XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
         c_error->Write(); 
         hfile ->Close();
 
+        f->cd();
 
         std::vector<double> pos;
         std::vector<double> st,st2;
