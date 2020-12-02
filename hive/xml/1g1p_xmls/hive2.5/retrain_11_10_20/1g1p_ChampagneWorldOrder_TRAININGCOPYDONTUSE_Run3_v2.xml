@@ -890,7 +890,9 @@
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
-<var def = "#GEO#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "79"/>
+
+<var def = "#GEO#" binning = "(16,40,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "79" cut = "#FSCUT#"/>
+<!--<var def = "#GEO#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "79"/>-->
 
 
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "9" cut="(1g1pMar2020_v4COSMIC_mva &gt;= #COS0# &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB0# &amp;&amp;1g1pMar2020_v4NCPi0_mva &gt;= #NCP0# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE0# &amp;&amp;1g1pMar2020_v4SSV_mva &gt;=#SSV0#)"/> <!-- final selection -->
@@ -1088,18 +1090,20 @@
     </def>
 </recomc>
 -->
-<alias key="BNB0" value ="0.96273"/>
+<alias key="BNB0" value ="0.96776"/>
 <alias key="BNB" value ="0.96273"/>
-<alias key="COS0" value ="0.974952"/>
+<alias key="COS0" value ="0.923404"/>
 <alias key="NCP" value ="0.4"/>
-<alias key="NCP0" value ="0.467404"/>
-<alias key="NUE0" value ="0.570654"/>
+<alias key="NCP0" value ="0.427167"/>
+<alias key="NUE0" value ="0.647375"/>
 <alias key="NUE" value ="0.3"/>
 
 <alias key="SSV" value ="0.3"/>
-<alias key="SSV0" value ="0.521623"/>
+<alias key="SSV0" value ="0.538556"/>
 
-<alias key ="FSCUT" value = "(1g1pMar2020_v4Nue_mva >= 0.3 &amp;&amp; (1g1pMar2020_v4BNB_mva < 0.96273 || 1g1pMar2020_v4NCPi0_mva < 0.467404))"/>
+
+
+<alias key ="FSCUT" value = "(1g1pNov2020Nue_mva &gt;= 0.3 &amp;&amp; (1g1pNov2020BNB_mva &lt; #BNB0# || 1g1pNov2020NCPi0_mva &lt; #NCP0#))"/>
 
 <alias key="GDED0" value ="(reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower3d_dEdx_plane2[0]*(reco_shower_kalman_dEdx_plane2_median[0]<0.01)))"/>
 <alias key="GDED1" value ="(reco_shower_kalman_dEdx_allplane_median[0]+((reco_shower3d_dEdx_plane1[0]+reco_shower3d_dEdx_plane0[0])/2.0*(reco_shower_kalman_dEdx_allplane_median[0]<0.01)))"/>

@@ -1118,7 +1118,7 @@
 
 
 
-<alias key ="FSCUT" value = "(1g1pNov2020Nue_mva >= 0.3 &amp;&amp; (1g1pNov2020BNB_mva < #BNB0# || 1g1pNov2020NCPi0_mva < #NCP0#))"/>
+<alias key ="FSCUT" value = "(1g1pNov2020Nue_mva &gt;= 0.3 &amp;&amp; (1g1pNov2020BNB_mva &lt; #BNB0# || 1g1pNov2020NCPi0_mva &lt; #NCP0#))"/>
 
 <alias key="GDED0" value ="(reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower3d_dEdx_plane2[0]*(reco_shower_kalman_dEdx_plane2_median[0]<0.01)))"/>
 <alias key="GDED1" value ="(reco_shower_kalman_dEdx_allplane_median[0]+((reco_shower3d_dEdx_plane1[0]+reco_shower3d_dEdx_plane0[0])/2.0*(reco_shower_kalman_dEdx_allplane_median[0]<0.01)))"/>
