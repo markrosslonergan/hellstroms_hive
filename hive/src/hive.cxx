@@ -1003,6 +1003,7 @@ int main (int argc, char *argv[]){
         //    sig_type == 5: purity 
         int sig_type = number; 
 
+        std::cout<<"the input number is "<<number<<std::endl;
         switch(number){
             case 0:
                 scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot);
