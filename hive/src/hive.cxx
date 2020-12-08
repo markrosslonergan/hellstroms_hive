@@ -1659,7 +1659,16 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
             recomc.plot_recomc(ftest, bdt_files[which_file], tmp, fbdtcuts,what_pot);
             return 0;
         }else{
-            recomc.plot_recomc(ftest, bdt_files[which_file], vars, fbdtcuts,what_pot);
+        
+            std::vector<bdt_variable> tmp_vars;
+                for(auto &v: vars){
+                    if(which_group == -1 || which_group == v.cat){
+                        tmp_vars.push_back(v);
+                    }
+                }
+
+
+            recomc.plot_recomc(ftest, bdt_files[which_file], tmp_vars, fbdtcuts,what_pot);
         }	
 
 
