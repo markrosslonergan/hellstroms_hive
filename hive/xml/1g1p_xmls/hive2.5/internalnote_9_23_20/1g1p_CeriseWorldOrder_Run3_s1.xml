@@ -883,6 +883,12 @@
 
 <var def = "#GEO#" binning = "(16,40,500)" unit = "Corrected Calorimetric Shower Energy [MeV] FS Run3" type = "d"   training="" group = "79" cut = "#FSCUT#"/>
 
+<var def = "#GEO#" binning = "(16,40,500)" unit = "Corrected Calorimetric Shower Energy [MeV] BNB FS Run3" type = "d"   training="" group = "79" cut = "#FSCUT# &amp;&amp; #BNBCUT#"/>
+
+<var def = "#GEO#" binning = "(16,40,500)" unit = "Corrected Calorimetric Shower Energy [MeV] NCpi0 FS Run3" type = "d"   training="" group = "79" cut = "#FSCUT# &amp;&amp; #NCPi0CUT#"/>
+
+
+
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
 <var def = "#GEO#" binning = "(3,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
@@ -995,7 +1001,10 @@
 <alias key="SSV" value ="0.3"/>
 <alias key="SSV0" value ="0.521623"/>
 
-<alias key ="FSCUT" value = "(1g1pMar2020_v4Nue_mva &gt;= 0.3 &amp;&amp; (1g1pMar2020_v4BNB_mva &lt; 0.96273 || 1g1pMar2020_v4NCPi0_mva &lt; 0.467404))"/>
+<alias key ="FSCUT" value = "(1g1pMar2020_v4Nue_mva &gt;= 0.3 &amp;&amp; (1g1pMar2020_v4BNB_mva &lt; #BNB0# || 1g1pMar2020_v4NCPi0_mva &lt; #NCP0#))"/>
+
+<alias key ="NCPi0CUT" value = "(1g1pMar2020_v4BNB_mva &gt;= #BNB0# &amp;&amp; 1g1pMar2020_v4NCPi0_mva &lt; #NCP0#)"/>
+<alias key ="BNBCUT" value = "(1g1pMar2020_v4BNB_mva &lt; #BNB0# &amp;&amp; 1g1pMar2020_v4NCPi0_mva &gt;= #NCP0#)"/>
 
 <alias key="PM" value ="(0.938272)"/>
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>

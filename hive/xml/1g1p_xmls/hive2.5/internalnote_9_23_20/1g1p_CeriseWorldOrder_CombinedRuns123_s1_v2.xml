@@ -466,7 +466,7 @@
 
 <var def = "#GE#" binning = "(18,40,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="0123" group = "77"/>
 <var def = "reco_shower_nuscore[0]" binning = "(18, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="0123"/>
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(18,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="0123"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(18,0.1,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="0123"/>
 <var def = "reco_shower_impact_parameter[0]" binning = "(18,0,200)" unit = "Shower Impact Parameter [cm]" type="d"    training="0123" logplot = "true"/>
 <var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(18,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d"    training="0123"/>
 <var def = "reco_shower_length[0]" binning = "(18,5,100)" unit = "Reconstructed Shower Length [cm]" type = "d"     training="0123"/>
@@ -874,6 +874,8 @@
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(16,0.1,8.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" cut = "1g1pMar2020_v4COSMIC_mva &gt;= 0.3" group = "80"/>
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
