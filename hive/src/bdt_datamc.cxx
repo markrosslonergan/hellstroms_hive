@@ -684,13 +684,18 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             l0->SetLineWidth(0);
             l0->SetNColumns(2);
             double NeventsStack = 0;
+            double NErrStack = 0;
             int which_signal = 0;
             int n=0;
             std::vector<TH1F*> fake_legend_hists;
 
+
             for(auto &f: mc_stack->stack){
 
-                double Nevents = f->GetEntries(var.additional_cut)*(plot_pot/f->pot)*f->scale_data;
+		double Nentries = f->GetEntries(var.additional_cut);
+                double Nevents = Nentries*(plot_pot/f->pot)*f->scale_data;
+		double N_MCerr = sqrt(Nentries)*(plot_pot/f->pot)*f->scale_data;
+ ;
                 /*  stack->vec_hists[i];
                     for(int p=0; p<h1->GetNbinsX();p++){
 
@@ -701,6 +706,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
                 NeventsStack+=Nevents;
+                NErrStack +=N_MCerr*N_MCerr; 
 
                 auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
                 fake_legend_hists.push_back(h1);
@@ -724,6 +730,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }
                 std::string leg_type = "f";   
 
+	        	std::cout<<"Run2Run: "<<f->plot_name<<" events/1e20 POT "<<to_string_prec(Nevents/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(N_MCerr/(double)data_file->pot*1e20,3)<<std::endl;
+
                 //if(mc_stack->signal_on_top[n]) leg_type = "l";
                 //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
                 
@@ -735,6 +743,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 if(mc_stack->signal_on_top[n]) which_signal = n;
                 n++;
             }
+            NErrStack = sqrt(NErrStack);
+	        std::cout<<"Run2Run: StackAll  events/1e20 POT "<<to_string_prec(NeventsStack/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(NErrStack/(double)data_file->pot*1e20,2)<<std::endl;
+
 
             //This one is just for legend messing
             TH1 *leg_hack = (TH1*)tmp_tsum->Clone(("leg_tmp_tsum"+std::to_string(s)).c_str());
@@ -860,7 +871,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
 
             double NdatEvents = data_file->GetEntries(var.additional_cut)*(plot_pot/data_file->pot )*data_file->scale_data;
-
+	        std::cout<<"Run2Run: Data   events/1e20 POT "<<to_string_prec(NdatEvents/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(sqrt(NdatEvents)/(double)data_file->pot*1e20,3)<<std::endl;
             //trev->DrawCopy("same hist");
 
             d0->SetBinErrorOption(TH1::kPoisson);
@@ -950,7 +961,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
-            if(!stack_mode) l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,0)).c_str(),"lp");	
+            if(!stack_mode) l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,0)).c_str(),"lp");		
 
 
             l0->Draw();
