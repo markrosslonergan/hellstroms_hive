@@ -1440,8 +1440,8 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
 
 
         std::string sBinning = "\"";
-        for(double k = 0; k<=v.n_bins; k++){
-            double b = v.edges[1]+k*fabs(v.edges[1]-v.edges[2])/(double)v.n_bins;
+        for(double k = 0; k<v.low_edges.size(); k++){
+            double b = v.low_edges[k];
             sBinning +=" " + std::to_string(b);
         }
         sBinning += "\"";
@@ -1461,12 +1461,12 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
 
         std::cout<<"Ok, now lets use a preprepared sbnfit_make_covariance to generate this "<<std::endl;
         //std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration "<<std::endl;
-        std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration "<<std::endl;
+        std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance "<<std::endl;
         
-        std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -m -t "+sVID+"_flux"; 
+        std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -m -t "+sVID+"_flux"; 
         system(run_str.c_str());
 
-        std::string run_fix_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_fix_fractional_hive_integration  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -t "+sVID+"_flux" + " -c " + sVID+"_flux.SBNcovar.root"; 
+        std::string run_fix_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_fix_fractional  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -t "+sVID+"_flux" + " -c " + sVID+"_flux.SBNcovar.root"; 
         system(run_fix_str.c_str());
 
     }
@@ -1504,8 +1504,8 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
 
         std::string sBinning = "\"";
-        for(double k = 0; k<=v.n_bins; k++){
-            double b = v.edges[1]+k*fabs(v.edges[1]-v.edges[2])/(double)v.n_bins;
+        for(double k = 0; k<v.low_edges.size(); k++){
+            double b = v.low_edges[k];
             sBinning +=" " + std::to_string(b);
         }
         sBinning += "\"";
@@ -1545,17 +1545,17 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
             std::string m_tag = sVID+"_DET_"+det;
             std::cout<<"On Det "<<m_tag<<std::endl;
-            std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration "<<std::endl;
+            std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance "<<std::endl;
 
             std::string sedder_DET = "sed  's@SYSVAR@" + det + "@' " + covar_det_template_xml+"."+sVID+".xml > " + covar_det_template_xml+"."+sVID+"_"+det+".xml" ;
             std::cout<<sedder_DET<<std::endl;
             system(sedder_DET.c_str());
 
-            std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration  -x "+ covar_det_template_xml+"."+sVID+"_"+det+".xml" + " -d -m -t "+m_tag; 
+            std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance  -x "+ covar_det_template_xml+"."+sVID+"_"+det+".xml" + " -d -m -t "+m_tag; 
             system(run_str.c_str());
             
             //Then run FixFractional No LONGER NEEDED
-            //std::string run_fix_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_fix_fractional_hive_integration  -x "+ covar_det_template_xml+"."+sVID+"_"+det+".xml" + " -t "+m_tag + " -c " + m_tag+".SBNcovar.root"; 
+            //std::string run_fix_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_fix_fractional  -x "+ covar_det_template_xml+"."+sVID+"_"+det+".xml" + " -t "+m_tag + " -c " + m_tag+".SBNcovar.root"; 
             //system(run_fix_str.c_str());
         }
         //Then run a SBNfit Merge Fractional
@@ -1567,18 +1567,21 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         //Then run a FlatFractional for BNBOther and NCMultiPi0
         std::string flatter_s1 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s BNBOther -t "+sVID+"_FlatDetSys1 -c " +sVID+"_merged_det.SBNcovar.root";
         std::string flatter_s2 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s NCMultiPi0 -t "+sVID+"_FlatDetSys2 -c " +sVID+"_FlatDetSys1.SBNcovar.root";
+        std::string flatter_s3 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s OTPCinC -t "+sVID+"_FlatDetSys3 -c " +sVID+"_FlatDetSys2.SBNcovar.root";
 
         std::cout<<"Adding Flat components with command || "<<flatter_s1<<std::endl;
         std::cout<<"Adding Flat components with command || "<<flatter_s2<<std::endl;
+        std::cout<<"Adding Flat components with command || "<<flatter_s3<<std::endl;
 
         system(flatter_s1.c_str());
         system(flatter_s2.c_str());
+        system(flatter_s3.c_str());
 
         //*****  If we also ran flux, merge   ***
         if(covar_flux_template_xml !="null.xml"){
 
             std::cout<<"Going to merge Flux and Det together"<<std::endl;
-            std::string merger_a = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_fluxdet -c "+sVID+"_FlatDetSys2.SBNcovar.root "+ sVID+"_flux_fracfixed.SBNcovar.root";
+            std::string merger_a = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_fluxdet -c "+sVID+"_FlatDetSys3.SBNcovar.root "+ sVID+"_flux_fracfixed.SBNcovar.root";
             std::cout<<"Merge String "<<std::endl;
             std::cout<<merger_a<<std::endl;
             system(merger_a.c_str());
