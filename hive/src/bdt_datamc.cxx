@@ -874,7 +874,40 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             // Fit Gaussian to that variable
             if (found != std::string::npos && false) {
-                std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
+                std::cout << "[BLARG] Fitting " << var.unit << " stage " << std::to_string(s) << std::endl;
+                TF1 *gausfit_data  = new TF1("gausfit_data" , "gaus", 0.05 , 0.25);
+                //TF1 *gausfit_data2 = new TF1("gausfit_data2", "gaus", 0.135, 0.245);
+                TF1 *gausfit_data2 = new TF1("gausfit_data2", "pol1", 0.00, 0.4);
+                //TF1 *doub_gaus = new TF1("doub_gaus", "gaus(0)+gaus(3)", 0.015, 0.25);
+                TF1 *doub_gaus = new TF1("doub_gaus", "gaus(0)+pol1(3)", 0.00, 0.4);
+                gausfit_data ->SetLineColor(kRed);
+                gausfit_data2->SetLineColor(kAzure);
+                doub_gaus    ->SetLineColor(kCyan);
+
+                d0->Fit(gausfit_data, "lvr");
+                d0->Fit(gausfit_data2, "lvr");
+                Double_t par[5]; // 3 Gaus + 2 linear parameters
+                gausfit_data ->GetParameters(&par[0]);
+                gausfit_data2->GetParameters(&par[3]);
+                doub_gaus->SetParameters(par);
+                d0->Fit(doub_gaus, "lvr");
+                //std::cout << "BLARG Doub 0 = " << doub_gaus->GetParameter(0) << std::endl;
+                //std::cout << "BLARG Doub mean = " << doub_gaus->GetParameter(1) << std::endl;
+                //std::cout << "BLARG Doub width = " << doub_gaus->GetParameter(2) << std::endl;
+                double mass_data           = doub_gaus->GetParameter(1);
+                double mass_err_data       = doub_gaus->GetParError(1);
+                double mass_width_data     = doub_gaus->GetParameter(2);
+                double mass_width_err_data = doub_gaus->GetParError(2);
+                double mass_res_data = doub_gaus->GetParameter(2)/doub_gaus->GetParameter(1);
+                double mass_res_data_err = sqrt(std::pow(doub_gaus->GetParError(1)/doub_gaus->GetParameter(1) ,2) +
+                        std::pow(doub_gaus->GetParError(2)/doub_gaus->GetParameter(2), 2) );
+                std::cout << "BLARG Linear A = " << doub_gaus->GetParameter(3) << " +/- " << doub_gaus->GetParError(3) << std::endl;
+                std::cout << "BLARG Linear B = " << doub_gaus->GetParameter(4) << " +/- " << doub_gaus->GetParError(4) << std::endl;
+                std::cout << "[BLARG] Data mass: " << mass_data << " +/- " << mass_err_data << std::endl;
+                std::cout << "[BLARG] Data mass StdDev: " << mass_width_data << " +/- " << mass_width_err_data << std::endl;
+                std::cout << "[BLARG] Data mass Res: " << mass_res_data*100. << "% +/- " << mass_res_data_err*100. << "%" << std::endl;
+                //std::cout << "BLARG Doub other width? = " << doub_gaus->GetParameter(5) << std::endl;
+                /*
                 TF1 *gausfit_data = new TF1("gausfit_data", "gaus", 0.05, 0.25);
                 TF1 *gausfit_mc = new TF1("gausfit_mc", "gaus");
                 TH1 *tmp_hist = stk->GetHistogram();
@@ -912,6 +945,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //gausfit_mc->SetLineColor(kAzure+1);
                 gausfit_data->Draw("same");
                 //gausfit_mc->Draw("same");
+                */
             }
 
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
@@ -956,14 +990,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 //pottex.DrawLatex(.635,.48, pot_draw.c_str());
             } else{
-                pottex.DrawLatex(.55,.60, pot_draw.c_str());
+                //pottex.DrawLatex(.55,.60, pot_draw.c_str());
+                pottex.DrawLatex(.50,.60, pot_draw.c_str());
             }
 
             TLatex descriptor_tex;
             descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
             descriptor_tex.SetTextAlign(13);  //align at top
             descriptor_tex.SetNDC();
-            descriptor_tex.DrawLatex(0.55,stack_mode ? 0.65: 0.66,("Selection "+ data_file->topo_name).c_str());
+            //descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
+            descriptor_tex.DrawLatex(0.50,0.66,("Selection "+ data_file->topo_name).c_str());
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
@@ -978,7 +1014,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // t->SetTextColor(kRed-7);
             // stage->SetTextFont(43);
             // stage->SetTextSize(0.10);
-            stage.DrawLatex(0.6, 0.92, stage_names.at(s).c_str());
+            //stage.DrawLatex(0.6, 0.92, stage_names.at(s).c_str());
+            stage.DrawLatex(0.5, 0.92, stage_names.at(s).c_str());
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
 
@@ -1001,8 +1038,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 }else{
 
-                    pre = drawPrelim(0.55,stack_mode? 0.525 :0.5,prestring.c_str());
-                    if(stack_mode)pre2 = drawPrelim(0.55,0.48,"Preliminary");
+                    //pre = drawPrelim(0.55,stack_mode? 0.525 :0.5,prestring.c_str());
+                    pre = drawPrelim(0.50,stack_mode? 0.525 :0.5,prestring.c_str());
+                    if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
                 }
 
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
