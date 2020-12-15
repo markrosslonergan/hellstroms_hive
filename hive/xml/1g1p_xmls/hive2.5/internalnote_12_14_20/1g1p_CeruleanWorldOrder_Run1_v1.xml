@@ -921,6 +921,8 @@
 <efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "0" numer_cut = "sim_shower_pdg==22 &amp;&amp; sim_shower_parent_pdg==111" /> 
 
 <!-- ================= RECO-MC Matching ======================== -->
+
+<!--
 <recomc>
     <def name="Cosmic Contaminated" col ="( 126,126,241)"> 
         (sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4 )        
@@ -939,7 +941,7 @@
         ((sim_shower_overlay_fraction &lt; 0.4 &amp;&amp;  sim_track_overlay_fraction &lt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 &amp;&amp;  (mctruth_exiting_photon_energy &gt; 0.02))  &amp;&amp; (sim_shower_pdg==22 &amp;&amp;sim_track_pdg==2212) &amp;&amp;  mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 &amp;&amp; mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 &amp;&amp; mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 &amp;&amp; mctruth_num_exiting_pi0==0 
     </def>
 </recomc>
-
+-->
 <!--
 <recomc>
     <def name="QuasiElastic" col ="(1.0,0.4,0.4)"> 
@@ -960,7 +962,7 @@
 </recomc>
 -->
 
-<!--
+
 <recomc>
     <def name="NC #Delta Radiative #gamma" col ="(1.0,0.4,0.4)"> 
         sim_shower_pdg[0] == 22 &amp;&amp; sim_shower_parent_pdg[0] != 111 &amp;&amp; mctruth_is_delta_radiative ==1 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )             
@@ -984,7 +986,6 @@
         (sim_shower_overlay_fraction[0] >=0.8 )
     </def>
 </recomc>
--->
 
 <alias key="PM" value ="(0.938272)"/>
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>
