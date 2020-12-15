@@ -100,7 +100,7 @@
     <definition>
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
-        <!--        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1)</cut>--> <!-- Not NC multip0 -->
+        <!--  <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1)</cut>--> <!-- Not NC multip0 -->
         <!-- <cut> !(mctruth_is_delta_radiative &amp;&amp; mctruth_cc_or_nc==1)</cut> -->
         <cut> !(mctruth_is_delta_radiative &amp;&amp; mctruth_cc_or_nc==1)</cut>  <!--not nc delta -->
         <cut> (!(mctruth_cc_or_nc==0 &amp;&amp; fabs(mctruth_nu_pdg)==12)) </cut> <!-- not cc nue -->
@@ -142,7 +142,7 @@
     </friend>
 </bdtfile>
 
-<bdtfile filename = "bnb_bdt_testing_sample_extra_v43.5.root" tag = "OTPCExtra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "OTPCinC"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_bdt_testing_sample_extra_v43.5.root" tag = "OTPCExtra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "Out of TPC"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
         <cut>!(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
