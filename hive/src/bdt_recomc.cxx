@@ -45,7 +45,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, std::vector<bdt_variabl
             double Num = all_reco_mc->GetSumOfWeights();				
 
             all_reco_mc->SetLineColor(kBlack);
-            all_reco_mc->SetFillStyle(3002);
+            all_reco_mc->SetFillStyle(3345);
             all_reco_mc->SetFillColor(kGray+3);
             all_reco_mc->SetLineWidth(1);
 

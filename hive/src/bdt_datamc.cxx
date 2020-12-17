@@ -155,7 +155,6 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                     pad->Draw();
                     pad->cd();
                     //                  std::cout<<"flag3"<<std::endl;
-                    //THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
                     //TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
                     TH2 * d0 = (TH2*)data_file->getTH2(var1,var2, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
                     //TH2 * d0;
@@ -288,7 +287,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         int s = plot_stage;
 
 
-            
+
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
 
@@ -312,8 +311,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
 
-           std::string isSpec;
-           if (!var.is_spectator){
+            std::string isSpec;
+            if (!var.is_spectator){
                 isSpec = var.unit+ " is a training variable";
             }else{
                 isSpec = var.unit + " is a spectator variable";
@@ -322,9 +321,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     std::cout<<"set to plot train only, skipping!"<<std::endl;
                     continue;
                 }
-             }
-           std::cout<<isSpec<<std::endl;
-            
+            }
+            std::cout<<isSpec<<std::endl;
+
 
 
             //If we are at a later stage that 1, lets find the variable.
@@ -341,7 +340,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             std::cout<<" var.additional_cut = "<< var.additional_cut <<std::endl;
-           
+
             //var.is_logplot = false;
             std::cout<<"Starting on variable "<<var.name<<std::endl;
 
@@ -353,16 +352,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 mc_stack->setSubtractionVector(subtraction_vec);
             }
 
-            THStack *stk;
-            TH1 * tsum;
-            TH1 * d0;
-            TH1 * tsum_after;
             std::vector<double> m_fullvec;
 
-            stk = (THStack*)mc_stack->getEntryStack(var,s);
-            tsum = (TH1*)mc_stack->getEntrySum(var,s, m_fullvec);
-            d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
-            tsum_after = (TH1*)tsum->Clone("tsumafter");
+            THStack *stk = (THStack*)mc_stack->getEntryStack(var,s); //so at this point its all in "stack"
+            TH1 * tsum  = (TH1*)mc_stack->getEntrySum(var,s, m_fullvec);
+            TH1* d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
+            TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
+
             //Check Covar for plotting
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
 
@@ -497,7 +493,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //}//else if(s==2){ data_rebin = 2;};//else if(s==3){data_rebin=2;};
 
 
-            //tsum->Rebin(data_rebin);
             //d0->Rebin(data_rebin);
 
             if(false &&do_subtraction){
@@ -628,6 +623,39 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             d0->SetMarkerSize(3);
             d0->SetLineColor(kBlack);
 
+            std::vector<bool> remove_to_merge = {false, false, false, false, false,false,false,false,false}; 
+
+            TList *stlists = (TList*)stk->GetHists();
+
+            int lor = 0;
+            TH1* saved;
+            bool mergetarget = false;
+            for(const auto&& obj: *stlists){
+                if(remove_to_merge[lor]){
+                    saved = (TH1*)obj->Clone(("saved_clone_"+std::to_string(lor)).c_str());
+                    mergetarget = true;
+                    obj->Print();
+                    lor++;
+                    continue;
+                }
+                if(mergetarget){
+                    ((TH1*)obj)->Add(saved);
+                    mergetarget = false;
+                }
+                obj->Print();
+                lor++;
+            }
+            lor=0;//and Zero
+             for(const auto&& obj: *stlists){
+                if(remove_to_merge[lor]){
+                    ((TH1*)obj)->Scale(0);
+                }
+                obj->Print();
+                lor++;
+            }
+                
+
+
             stk->Draw("hist");
             stk->SetTitle("");
             //stk->SetTitle(stage_names.at(s).c_str());
@@ -659,11 +687,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
 
-
             tsum->SetLineWidth(3);
-            //tsum_after->SetLineWidth(3);
             tsum->DrawCopy("Same E2");
-            //tsum_after->DrawCopy("Same E1");
 
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
             TH1 *tmp_tsum2 = (TH1*)tsum->Clone(("tmp_tsum2"+std::to_string(s)).c_str());
@@ -684,13 +709,19 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             l0->SetLineWidth(0);
             l0->SetNColumns(2);
             double NeventsStack = 0;
+            double NErrStack = 0;
             int which_signal = 0;
             int n=0;
             std::vector<TH1F*> fake_legend_hists;
 
+            double Nevents_save_for_later = 0.0;
+
             for(auto &f: mc_stack->stack){
 
-                double Nevents = f->GetEntries(var.additional_cut)*(plot_pot/f->pot)*f->scale_data;
+                double Nentries = f->GetEntries(var.additional_cut);
+                double Nevents = Nentries*(plot_pot/f->pot)*f->scale_data;
+                double N_MCerr = sqrt(Nentries)*(plot_pot/f->pot)*f->scale_data;
+                ;
                 /*  stack->vec_hists[i];
                     for(int p=0; p<h1->GetNbinsX();p++){
 
@@ -701,6 +732,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
                 NeventsStack+=Nevents;
+                NErrStack +=N_MCerr*N_MCerr; 
 
                 auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
                 fake_legend_hists.push_back(h1);
@@ -724,17 +756,29 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }
                 std::string leg_type = "f";   
 
+                std::cout<<"Run2Run: "<<f->plot_name<<" events/1e20 POT "<<to_string_prec(Nevents/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(N_MCerr/(double)data_file->pot*1e20,3)<<std::endl;
+
                 //if(mc_stack->signal_on_top[n]) leg_type = "l";
                 //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
-                
+
                 //int f->plot_name.size(); 
-                
-                l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
+
+                if(!remove_to_merge[n]){
+                    string_events = to_string_prec(Nevents+Nevents_save_for_later,leg_num_digits);
+                    l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
+                    Nevents_save_for_later =0;
+                }else{
+                    Nevents_save_for_later += Nevents;
+
+                }
                 //l0->AddEntry(h1,(f->plot_name).c_str(),"f");
 
                 if(mc_stack->signal_on_top[n]) which_signal = n;
                 n++;
             }
+            NErrStack = sqrt(NErrStack);
+            std::cout<<"Run2Run: StackAll  events/1e20 POT "<<to_string_prec(NeventsStack/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(NErrStack/(double)data_file->pot*1e20,2)<<std::endl;
+
 
             //This one is just for legend messing
             TH1 *leg_hack = (TH1*)tmp_tsum->Clone(("leg_tmp_tsum"+std::to_string(s)).c_str());
@@ -800,7 +844,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 // Calculate middle term, sys + stat covar matrices
                 // CNP + intrinsic MC error^2
                 // this was the block
-                
+
                 for(int i =0; i<covar_collapsed->GetNcols(); i++) {
                     Mout(i,i) += ( d0->GetBinContent(i+1) >0.001 ? 3.0/(1.0/d0->GetBinContent(i+1) +  2.0/tsum->GetBinContent(i+1))  : tsum->GetBinContent(i+1)/2.0 ) + pow(vec_mc_stats_error[i],2);
                 }
@@ -857,10 +901,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 ndof = var.n_bins;
             }
 
-            //stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
 
             double NdatEvents = data_file->GetEntries(var.additional_cut)*(plot_pot/data_file->pot )*data_file->scale_data;
-
+            std::cout<<"Run2Run: Data   events/1e20 POT "<<to_string_prec(NdatEvents/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(sqrt(NdatEvents)/(double)data_file->pot*1e20,3)<<std::endl;
             //trev->DrawCopy("same hist");
 
             d0->SetBinErrorOption(TH1::kPoisson);
@@ -908,15 +951,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 std::cout << "[BLARG] Data mass Res: " << mass_res_data*100. << "% +/- " << mass_res_data_err*100. << "%" << std::endl;
                 //std::cout << "BLARG Doub other width? = " << doub_gaus->GetParameter(5) << std::endl;
                 /*
-                TF1 *gausfit_data = new TF1("gausfit_data", "gaus", 0.05, 0.25);
-                TF1 *gausfit_mc = new TF1("gausfit_mc", "gaus");
-                TH1 *tmp_hist = stk->GetHistogram();
-                double lowFit = 0.05, highFit = 0.25;
-                double mass_data = 0., mass_err_data = 0;
-                double mass_width_data = 0., mass_width_err_data = 0.;
-                double mass_res_data = 0., mass_res_data_err = 0.;
-                double mass_mc = 0., mass_err_mc = 0;
-                double mass_width_mc = 0., mass_width_err_mc = 0.;
+                   TF1 *gausfit_data = new TF1("gausfit_data", "gaus", 0.05, 0.25);
+                   TF1 *gausfit_mc = new TF1("gausfit_mc", "gaus");
+                   TH1 *tmp_hist = stk->GetHistogram();
+                   double lowFit = 0.05, highFit = 0.25;
+                   double mass_data = 0., mass_err_data = 0;
+                   double mass_width_data = 0., mass_width_err_data = 0.;
+                   double mass_res_data = 0., mass_res_data_err = 0.;
+                   double mass_mc = 0., mass_err_mc = 0;
+                   double mass_width_mc = 0., mass_width_err_mc = 0.;
                 // Fit range should be similar for data and MC
                 //lowFit = d0->GetXaxis()->GetBinLowEdge(1);
                 //highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
@@ -935,7 +978,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 // Calculate resolution: StdDev/width (w/ uncertainty)
                 mass_res_data = gausfit_data->GetParameter(2)/gausfit_data->GetParameter(1);
                 mass_res_data_err = sqrt(std::pow(gausfit_data->GetParError(1)/gausfit_data->GetParameter(1) ,2) +
-                        std::pow(gausfit_data->GetParError(2)/gausfit_data->GetParameter(2), 2) );
+                std::pow(gausfit_data->GetParError(2)/gausfit_data->GetParameter(2), 2) );
                 std::cout << "[BLARG] Data mass: " << mass_data << " +/- " << mass_err_data << std::endl;
                 std::cout << "[BLARG] Data mass StdDev: " << mass_width_data << " +/- " << mass_width_err_data << std::endl;
                 std::cout << "[BLARG] Data mass Res: " << mass_res_data*100. << "% +/- " << mass_res_data_err*100. << "%" << std::endl;
@@ -950,7 +993,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
-            if(!stack_mode) l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,0)).c_str(),"lp");	
+            if(!stack_mode) l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,0)).c_str(),"lp");		
 
 
             l0->Draw();
@@ -1306,8 +1349,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             fout->Close();
         }
-    
-    
+
+
     }
 
     return 0;
