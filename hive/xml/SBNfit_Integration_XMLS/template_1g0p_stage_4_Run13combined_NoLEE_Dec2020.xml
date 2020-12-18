@@ -5,7 +5,7 @@
 <detector name="uBooNE" />
 <channel name="1g0p" unit="Shower Energy [GeV]">
     <bins
-        edges=VARVARVAR
+        edges=BINBINBIN
         />
     <subchannel name="NCDeltaRadOverlaySM" osc = "0" />
     <subchannel name="NCPi0Coh" osc = "0" />
