@@ -131,6 +131,17 @@
 
 </bdtfile>
 
+<bdtfile filename = "bnb_bdt_testing_sample_extra_v43.5.root" tag = "OTPCExtra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "Out of TPC"  scale = "1.0" plot_on_top = "false" mergedown = "true">
+    <definition>
+        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+        <cut>!(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+    </definition>
+    <friend>
+        <filename>COFredo/OpticalMatch_bnb_bdt_testing_sample_extra_v43.5.root</filename>
+        <treename>opt_tree</treename>
+    </friend>
+</bdtfile>
+
 <bdtfile filename = "dirt_overlay_combined_run123_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" scale="1.0"> 
     <definition>
         <cut>1</cut>
@@ -138,17 +149,6 @@
     </definition>
     <friend>
         <filename>COFredo/OpticalMatch_dirt_overlay_combined_run123_v33.3.uniq.root</filename>
-        <treename>opt_tree</treename>
-    </friend>
-</bdtfile>
-
-<bdtfile filename = "bnb_bdt_testing_sample_extra_v43.5.root" tag = "OTPCExtra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "Out of TPC"  scale = "1.0" plot_on_top = "false" >
-    <definition>
-        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
-        <cut>!(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
-    </definition>
-    <friend>
-        <filename>COFredo/OpticalMatch_bnb_bdt_testing_sample_extra_v43.5.root</filename>
         <treename>opt_tree</treename>
     </friend>
 </bdtfile>

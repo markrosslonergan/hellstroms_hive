@@ -99,7 +99,19 @@
 
 </bdtfile>
 
-<bdtfile filename = "dirt_overlay_run1_v33.3.uniq.root" tag = "DirtRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" scale = 1.0>
+<bdtfile filename = "bnb_overlay_run1_v43.5_extra.uniq.spluff.test.root" tag = "OTPCRun1Extra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "OTPCinC"  scale = "1.0" plot_on_top = "false"  mergedown = "true">
+    <definition>
+    <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+        <cut>!(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+    </definition>
+    <friend>
+        <filename>COFredo/OpticalMatch_bnb_overlay_run1_v43.5_extra.uniq.spluff.test.root</filename>
+        <treename>opt_tree</treename>
+    </friend>
+</bdtfile>
+
+
+<bdtfile filename = "dirt_overlay_run1_v33.3.uniq.root" tag = "DirtRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" scale = "1.0">
     <definition>
         <cut>1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
@@ -110,17 +122,6 @@
     </friend>
 
 
-</bdtfile>
-
-<bdtfile filename = "bnb_overlay_run1_v43.5_extra.uniq.spluff.test.root" tag = "OTPCRun1Extra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "OTPCinC"  scale = "1.0" plot_on_top = "false" >
-    <definition>
-    <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
-        <cut>!(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
-    </definition>
-    <friend>
-        <filename>COFredo/OpticalMatch_bnb_overlay_run1_v43.5_extra.uniq.spluff.test.root</filename>
-        <treename>opt_tree</treename>
-    </friend>
 </bdtfile>
 
 <bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Run 1 On-Beam Data">
