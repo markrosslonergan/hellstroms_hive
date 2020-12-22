@@ -122,7 +122,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "sbnfit_1g1pMar2020_v4_stage_1_gLEE_farsideband_v2_tagTotal.root" tag = "FarSideband1g1p" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "FarSidebandOn-Beam Data Run2">
+<bdtfile filename = "sbnfit_1g1pMar2020_v4_stage_1_gLEE_farsideband_v2_tagTotal.root" tag = "FarSideband1g1pRun2" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "FarSidebandOn-Beam Data Run2">
     <definition>
         <cut>( run_number &gt;= 8317 &amp;&amp; run_number &lt;=  13696 )</cut>
     </definition>

@@ -12,7 +12,7 @@
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
+<bdtfile filename = "ncdelta_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySMRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut>
@@ -20,26 +20,27 @@
         <cut>  mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_ncdelta_overlay_combined_run3.uniq.spluff.test.root</filename>
+        <filename>COFredo/OpticalMatch/OpticalMatch_ncdelta_overlay_run1_v33.3.uniq.spluff.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run3.uniq.root" tag = "NCPi0CohRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0CohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter==5 </cut>
-        <cut> mctruth_cc_or_nc==1</cut> 
+        <cut> mctruth_cc_or_nc==1</cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
         <cut>  mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_ncpi0_overlay_combined_run3.uniq.root</filename>
+        <filename>COFredo/OpticalMatch_ncpi0_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
+
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run3.uniq.root" tag = "NCPi0NotCohRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0NotCohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut>
@@ -48,13 +49,13 @@
         <cut>  mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_ncpi0_overlay_combined_run3.uniq.root</filename>
+        <filename>COFredo/OpticalMatch_ncpi0_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 </bdtfile>
 
-<bdtfile filename = "ccpi0_overlay_run3_v33.3.uniq.spluff.test.root" tag = "CC1Pi0Run3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ccpi0_overlay_run1_v33.3.uniq.spluff.test.root" tag = "CC1Pi0Run1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>mctruth_cc_or_nc==0 </cut>
         <cut>mctruth_num_exiting_pi0==1</cut>
@@ -63,13 +64,13 @@
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_ccpi0_overlay_run3_v33.3.uniq.spluff.test.root</filename>
+        <filename>COFredo/OpticalMatch_ccpi0_overlay_run1_v33.3.uniq.spluff.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
 </bdtfile>
 
 
-<bdtfile filename = "bnb_overlay_run3_v43.5_extra.uniq.spluff.test.root" tag = "BNBOtherRun3Extra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_overlay_run1_v43.5_extra.uniq.spluff.test.root" tag = "BNBOtherRun1Extra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
@@ -81,13 +82,14 @@
         <cut>  mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_bnb_overlay_run3_v43.5_extra.uniq.spluff.test.root</filename>
+        <filename>COFredo/OpticalMatch_bnb_overlay_run1_v43.5_extra.uniq.spluff.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 
 </bdtfile>
-<bdtfile filename = "nue_overlay_run3_v33.3.uniq.spluff.test.root" tag = "NueOverlaysRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
+
+<bdtfile filename = "nue_overlay_run1_v33.3.uniq.spluff.test.root" tag = "NueOverlaysRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
     <definition>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
@@ -95,54 +97,56 @@
         <cut>  mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_nue_overlay_run3_v33.3.uniq.spluff.test.root</filename>
+        <filename>COFredo/OpticalMatch/OpticalMatch_nue_overlay_run1_v33.3.uniq.spluff.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
 
 
 </bdtfile>
 
-<bdtfile filename = "dirt_overlay_run3_v33.3.uniq.root" tag = "DirtRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" >
+<bdtfile filename = "dirt_overlay_run1_v33.3.uniq.root" tag = "DirtRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" scale = 1.0>
     <definition>
         <cut>1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_dirt_overlay_run3_v33.3.uniq.root</filename>
+        <filename>COFredo/OpticalMatch_dirt_overlay_run1_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
+
+
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_run3_v43.5_extra.uniq.spluff.test.root" tag = "OTPCRun3Extra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "OTPCinC"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_overlay_run1_v43.5_extra.uniq.spluff.test.root" tag = "OTPCRun1Extra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "OTPCinC"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
         <cut>!(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
     </definition>
     <friend>
-        <filename>COFredo/OpticalMatch_bnb_overlay_run3_v43.5_extra.uniq.spluff.test.root</filename>
+        <filename>COFredo/OpticalMatch_bnb_overlay_run1_v43.5_extra.uniq.spluff.test.root</filename>
         <treename>opt_tree</treename>
     </friend>
 </bdtfile>
 
-
-<bdtfile filename = "sbnfit_1g1pMar2020_v4_stage_1_gLEE_farsideband_v2_tagTotal.root" tag = "FarSideband1g1pRun3" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "FarSidebandOn-Beam Data Run3">
+<bdtfile filename = "sbnfit_1g1pMar2020_v4_stage_1_gLEE_farsideband_v2_tagTotal.root" tag = "FarSideband1g1pRun2" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "FarSidebandOn-Beam Data Run2">
     <definition>
-        <cut>(run_number &gt;= 13697  &amp;&amp; run_number &lt;=23542) </cut>
+        <cut>( run_number &gt;= 8317 &amp;&amp; run_number &lt;=  13696 )</cut>
     </definition>
-    <data type="OnBeam" plot_name="(Run 3)">
-        <tor860_wcut>2.551e+20 </tor860_wcut>   
-        <E1DCNT_wcut>61120342.0</E1DCNT_wcut>   
+    <data type="OnBeam" plot_name="(Run 2)" >
+        <tor860_wcut>2.626e+20</tor860_wcut>   
+        <E1DCNT_wcut>62208093.0</E1DCNT_wcut>   
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_run3_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 3 Cosmic Data" fillstyle = "3333" scale = "1">
+
+<bdtfile filename = "bnbext_run2_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun2" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 2 Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
-        <cut> 1 </cut>
+        <cut>1</cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut>2.551e+20 </tor860_wcut>   
-        <E1DCNT_wcut>61120342.0</E1DCNT_wcut>   
-        <EXT>73196017.0</EXT>
+        <tor860_wcut>2.626e+20</tor860_wcut>   
+        <E1DCNT_wcut>62208093.0</E1DCNT_wcut>   
+        <EXT>64840049.0</EXT>
     </data>
 </bdtfile>
 
@@ -868,7 +872,6 @@
 <!-- ################################################################################################################ -->
 <!-- ################################################################################################################ -->
 
-
 <!--bdt vars -->
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(16,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(16,0.0,0.86)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
@@ -904,10 +907,12 @@
 <var def = "reco_shower_nuscore[0]" binning = "(16, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="" group="2207"/>
 <var def="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(16,0.05,0.8)" unit="Reco Shower Energy [GeV]" training="" type="d" group="2208" />
 <var def="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0)+reco_shower_reclustered_energy_max[0])*1.21989 +8.50486)*0.001" binning="(16,0.05,0.8)" unit="Reco Shower Energy Reclustered [GeV]" training="" type="d" group="2209" />
+
 <var def =  "log10(reco_track_pid_three_plane_proton_pid[0])" binning = "(16,-2,1.8)"  unit ="Log( Three Plane Track PID )" type = "d"    training="" group="2210"/>
 <var def = "reco_track_displacement[0]" binning = "(16,0,100)" unit = "Track Displacement [cm]" type = "d"     training="" group="2211"/>
 <var def = "(reco_shower_trackscore[0])" binning = "(16,0,0.5)" unit = "Shower Score" type ="d"  training ="" group="2212"/>
 <var def = "(reco_track_trackscore[0])" binning = "(16,0.5,1.0)" unit = "Track Score" type ="d"  training ="" group="2212"/>
+
 
 
 <!--pi0 vars -->
