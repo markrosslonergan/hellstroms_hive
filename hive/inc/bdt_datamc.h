@@ -57,12 +57,18 @@ class bdt_datamc{
         bool do_subtraction; 
         int plot_stage;
         std::vector<bool> subtraction_vec;
+        std::vector<bool> merge_down_vec;
 
         bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string="stat";additional_pdf_tag="";};
         bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1;stack_mode=false; m_error_string="stat"; additional_pdf_tag="";};
         bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string="stat"; additional_pdf_tag = "";};
 
         int setErrorString(std::string in){m_error_string = in; return 0;}
+
+        int setMergeDown(std::vector<bool> merin){
+            merge_down_vec =merin;
+            return 0;
+        }
 
         int setPlotStage(int s){
             plot_stage =s;

@@ -131,6 +131,19 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
             }
         }
 
+        const char* t_mergedown = pBDTfile->Attribute("mergedown");
+        if(t_mergedown==NULL){
+            bdt_mergedown.push_back(false);
+        }else{
+            std::string sig = t_mergedown;
+            if(sig=="true"){
+                bdt_mergedown.push_back(true);
+            }else{
+                bdt_mergedown.push_back(false);
+
+            }
+        }
+
         const char* t_valid = pBDTfile->Attribute("validate");
         if(t_valid==NULL){
             bdt_is_validate_file.push_back(false);
@@ -708,6 +721,20 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
 
             }
         }
+
+        const char* t_mergedown = pBDTfile->Attribute("mergedown");
+        if(t_mergedown==NULL){
+            bdt_mergedown.push_back(false);
+        }else{
+            std::string sig = t_mergedown;
+            if(sig=="true"){
+                bdt_mergedown.push_back(true);
+            }else{
+                bdt_mergedown.push_back(false);
+
+            }
+        }
+
 
         const char* t_valid = pBDTfile->Attribute("validate");
         if(t_valid==NULL){
