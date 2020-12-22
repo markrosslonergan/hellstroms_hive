@@ -1145,6 +1145,8 @@ int bdt_XGtrain(bdt_info &info){
 
         t_strain->Write();
         t_btrain->Write();
+        t_stest->Write();
+        t_btest->Write();
         btest->Write();
         stest->Write();
         strain->Write();

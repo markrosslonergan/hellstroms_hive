@@ -1119,9 +1119,20 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
     friend_files.push_back(in_friend_file);
     friend_names.push_back(in_friend_tree_nam);
 
-    std::cout<<"Now adding TreeFriend: "<<in_friend_tree_nam<<" from file: "<<in_friend_file<<std::endl;
+    TFile *ftmp = new TFile(friend_files.back().c_str(),"read");
+    if(ftmp->IsOpen()){
+        TTree * tmp = (TTree*)ftmp->Get(friend_names.back().c_str());
+
+
+    if(tmp->GetEntries()!= tvertex->GetEntries()){
+        std::cout<<"Now adding TreeFriend: "<<in_friend_tree_nam<<" from file: "<<in_friend_file<<std::endl;
+        std::cout<<"ERROR!! they have different numbers of events!"<<std::endl;
+        exit(EXIT_FAILURE);
+    }
+    }
     tvertex->AddFriend(friend_names.back().c_str(), friend_files.back().c_str());
 
+    if(ftmp)    ftmp->Close();
 
     return 0;
 }
