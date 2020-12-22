@@ -291,7 +291,7 @@ int main (int argc, char *argv[]){
 
     std::map<std::string, bdt_file*> tagToFileMap;
     std::map<bdt_file*,bool> plotOnTopMap;
-
+    std::vector<bool> mergeDownVector;
 
     std::cout<<"================================================================================"<<std::endl;
     std::cout<<"=============== Loading all BDT files for this analysis ========================"<<std::endl;
@@ -362,6 +362,7 @@ int main (int argc, char *argv[]){
             }
         }
 
+        mergeDownVector.push_back(XMLconfig.bdt_mergedown[f]);
         if(XMLconfig.bdt_on_top[f]){
             plotOnTopMap[bdt_files.back()] = true;
         }else{
@@ -589,6 +590,7 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                 datamc.setPlotStage(which_stage);                
+                datamc.setMergeDown(mergeDownVector);
                 datamc.setStackMode(histogram_stack->plot_pot);
                 datamc.setErrorString(systematics_error_string);
 
@@ -606,6 +608,7 @@ int main (int argc, char *argv[]){
                     for (int stage =0; stage < fbdtcuts.size() + 2; stage ++ ){
                         bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                         real_datamc.setPlotStage(stage);                
+                        real_datamc.setMergeDown(mergeDownVector);
                         real_datamc.setStackMode( histogram_stack->plot_pot);
                         real_datamc.setErrorString(systematics_error_string);
                         real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,bdt_infos);
@@ -614,6 +617,7 @@ int main (int argc, char *argv[]){
                 } else {
                     bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_stack");	
                     real_datamc.setPlotStage(which_stage);                
+                    real_datamc.setMergeDown(mergeDownVector);
                     real_datamc.setStackMode( histogram_stack->plot_pot);
                     real_datamc.setErrorString(systematics_error_string);
                     real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,bdt_infos);
@@ -663,6 +667,7 @@ int main (int argc, char *argv[]){
             if(number != -1){
                 bdt_datamc datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 datamc.setPlotStage(which_stage);               
+                datamc.setMergeDown(mergeDownVector);
                 datamc.setErrorString(systematics_error_string);
                 if(plot_train_only) datamc.SetSpectator();
 
@@ -686,6 +691,7 @@ int main (int argc, char *argv[]){
 
                 bdt_datamc real_datamc(onbeam_data_file, histogram_stack, analysis_tag+"_datamc");	
                 real_datamc.setPlotStage(which_stage);                
+                real_datamc.setMergeDown(mergeDownVector);
                 real_datamc.setErrorString(systematics_error_string);
                 if(plot_train_only) real_datamc.SetSpectator();
 

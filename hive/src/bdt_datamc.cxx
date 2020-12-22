@@ -623,7 +623,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             d0->SetMarkerSize(3);
             d0->SetLineColor(kBlack);
 
-            std::vector<bool> remove_to_merge = {false, false, false, false, false,false,true,false,false}; 
+            std::vector<bool> remove_to_merge = merge_down_vec; 
 
             TList *stlists = (TList*)stk->GetHists();
 
