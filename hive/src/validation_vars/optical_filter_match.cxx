@@ -44,12 +44,14 @@ int main (int argc, char *argv[]){
   //  std::string out_name = "optical_match.root";
   std::string out_name = "";
 
+  bool simple_mode = false;
 
     const struct option longopts[] =
     {   
         {"old",         required_argument,  0, 'o'},
         {"new",         required_argument,  0, 'n'},
         {"out",        required_argument,  0, 'w'},
+        {"simple",      no_argument,  0, 's'},
         {0,             no_argument,        0,  0},
     };
 
@@ -57,7 +59,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "o:n:w?", longopts, &index);
+        iarg = getopt_long(argc,argv, "o:n:w:s?", longopts, &index);
         
        // std::cout<<"optarg = "<<optarg<< ", iarg = "<< iarg<<std::endl;
         switch(iarg)
@@ -67,6 +69,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'n':
                 new_file = optarg;
+                break;
+            case 's':
+                simple_mode = true;
                 break;
             case 'w':
                 out_name = optarg;

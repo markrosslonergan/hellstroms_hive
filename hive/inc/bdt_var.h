@@ -114,7 +114,14 @@ struct bdt_variable{
 
             std::string bins = binning;
             edges.clear();
+            
+            bool alt_mode = bins.find("alt")!=std::string::npos;
+            if(alt_mode){
+                int pl = bins.find("alt");
+                bins.erase(pl,pl+3);
+            }
 
+            std::cout<<bins<<std::endl;
 
             bins.erase(std::remove(bins.begin(), bins.end(), '('), bins.end());
             bins.erase(std::remove(bins.begin(), bins.end(), ')'), bins.end());
@@ -126,22 +133,33 @@ struct bdt_variable{
 
             while ((pos = bins.find(delim)) != std::string::npos) {
                 token = bins.substr(0, pos);
-                if(n_bins<0) n_bins = (int)std::stod(token);
+                if(n_bins<0 &&!alt_mode) n_bins = (int)std::stod(token);
                 edges.push_back(std::stod(token));
                 bins.erase(0, pos + delim.length());
             }
             edges.push_back(std::stod(bins));
-           
-            cat = 0;
 
-            double elow = edges[1];
-            double ehigh = edges[2];
-            double ediff = ehigh-elow;
-            double estep = ediff/(double)n_bins;
-            for(int i=0; i<=n_bins;i++){
-                low_edges.push_back(elow+i*estep);
+            if(alt_mode){
+                n_bins = edges.size()-1;
+                low_edges = edges;
+                edges = {(double)n_bins, low_edges.front(), low_edges.back()};
+            }else{
+                double elow = edges[1];
+                double ehigh = edges[2];
+                double ediff = ehigh-elow;
+                double estep = ediff/(double)n_bins;
+                for(int i=0; i<=n_bins;i++){
+                    low_edges.push_back(elow+i*estep);
+                }
             }
-           
+
+            /*std::cout<<"Nbin "<<n_bins<<std::endl;
+            std::cout<<"edges "<<std::endl;
+            for(auto &v: edges) std::cout<<v<<std::endl;
+
+            std::cout<<"Low edges "<<std::endl;
+            for(auto &v: low_edges) std::cout<<v<<std::endl;
+            */
            //low_edges = {0,0.15,0.225,0.3,0.375,0.45,0.6}; 
            //low_edges = {0.1,  0.2, 0.25, 0.3, 0.35, 0.4 ,0.45, 0.5, 0.55, 0.6, 0.7};
            // low_edges = {0, 0.075, 0.15, 0.225, 0.3, 0.375, 0.45, 0.525, 0.6, 0.675,  0.9};           

@@ -63,6 +63,7 @@ class MVALoader {
 
 
     std::vector<bool> bdt_is_signal;
+    std::vector<bool> bdt_mergedown;
     std::vector<bool> bdt_on_top;
     std::vector<bool> bdt_is_training_signal;
 
