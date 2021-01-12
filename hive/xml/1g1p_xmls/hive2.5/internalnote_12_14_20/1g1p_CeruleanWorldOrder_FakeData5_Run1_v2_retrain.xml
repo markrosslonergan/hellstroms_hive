@@ -1,6 +1,10 @@
 <?xml version="1.0" ?>
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g1pNov2020_overtrain" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.974952,0.96273,0.467404,0.570654,0.521623)" />
+<topology tag="1g1pNov2020" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.960297,0.949148,0.428091,0.483279,0.49145)" />
+
+<!--<topology tag="1g1pNov2020" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.923404,0.96776,0.     427167,0.647375,0.538556)" />-->
+
+<!--<topology tag="1g1pNov2020" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "( 0.95,0.97,0.48,0.38,0.51)" />-->
 
 <!--
 <plot_pot>
@@ -31,7 +35,7 @@
 <bdtfile filename = "ncpi0_overlay_run1_v33.3.uniq.root" tag = "NCPi0CohRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "false" scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter==5 </cut>
-        <cut> mctruth_cc_or_nc==1</cut> 
+        <cut> mctruth_cc_or_nc==1</cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
         <cut>  mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8 </cut>
@@ -71,7 +75,6 @@
         <treename>opt_tree</treename>
     </friend>
 </bdtfile>
-
 <bdtfile filename = "bnb_overlay_run1_v43.5_extra.uniq.spluff.test.root" tag = "BNBOtherRun1Extra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
@@ -108,7 +111,7 @@
 
 <bdtfile filename = "bnb_overlay_run1_v43.5_extra.uniq.spluff.test.root" tag = "OTPCRun1Extra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "OTPCinC"  scale = "1.0" plot_on_top = "false"  mergedown = "true">
     <definition>
-    <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
         <cut>!(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
     </definition>
     <friend>
@@ -317,7 +320,7 @@
 
 <mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(36,0.9,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=2000</param>
+        <param> n_trees=500</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -338,11 +341,11 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.973" max = "0.975" steps="100"/>
+    <scan min = "0.960" max = "0.961" steps="100"/>
 </mva>
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=2000</param>
+        <param> n_trees=400</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -363,12 +366,12 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.962" max = "0.964" steps="200"/>
+    <scan min = "0.949" max = "0.950" steps="200"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=2000</param>
+        <param> n_trees=800</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -389,12 +392,12 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.467" max = "0.468" steps="50"/>
+    <scan min = "0.428" max = "0.429" steps="50"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "Nue" name ="Nue fake BDT" binning = "(24,0.0,1.0)">    
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=5000</param>
+        <param> n_trees=1000</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -415,11 +418,11 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.5697" max = "0.574" steps="50"/>
+    <scan min = "0.4828" max = "0.4838" steps="50"/>
 </mva>
 <mva type="BDT" use="yes" tag = "SSV" name ="SSV focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=5000</param>
+        <param> n_trees=1000</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
@@ -440,7 +443,7 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.521" max = "0.522" steps="50"/>
+    <scan min = "0.491" max = "0.492" steps="50"/>
 </mva>
 <!-- ================================================== PRE-CUTS   ==================================================== -->
 
@@ -872,13 +875,21 @@
 <!-- ################################################################################################################ -->
 
 <!--bdt vars -->
-<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pNov2020COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pNov2020NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pNov2020BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pNov2020Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pNov2020SSV_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="alt(0.0,0.15,0.225,0.3,0.375,0.450,0.6)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3333" />
+
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
+
+<var def = "#GEO#" binning = "(16,40,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "79" cut = "#FSCUT#"/>
+
+<!--<var def = "#GEO#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "79"/>-->
+
 
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected)" type  = "d"  training = ""  group = "9" cut="(1g1pMar2020_v4COSMIC_mva &gt;= #COS0# &amp;&amp; 1g1pMar2020_v4BNB_mva&gt;= #BNB0# &amp;&amp;1g1pMar2020_v4NCPi0_mva &gt;= #NCP0# &amp;&amp; 1g1pMar2020_v4Nue_mva &gt;=#NUE0# &amp;&amp;1g1pMar2020_v4SSV_mva &gt;=#SSV0#)"/> <!-- final selection -->
 
@@ -1075,18 +1086,21 @@
     </def>
 </recomc>
 -->
-<alias key="BNB0" value ="0.96273"/>
+<alias key="BNB0" value ="0.96776"/>
 <alias key="BNB" value ="0.96273"/>
-<alias key="COS0" value ="0.974952"/>
+<alias key="COS0" value ="0.923404"/>
 <alias key="NCP" value ="0.4"/>
-<alias key="NCP0" value ="0.467404"/>
-<alias key="NUE0" value ="0.570654"/>
+<alias key="NCP0" value ="0.427167"/>
+<alias key="NUE0" value ="0.647375"/>
 <alias key="NUE" value ="0.3"/>
 
 <alias key="SSV" value ="0.3"/>
-<alias key="SSV0" value ="0.521623"/>
+<alias key="SSV0" value ="0.538556"/>
 
-<alias key ="FSCUT" value = "(1g1pMar2020_v4Nue_mva >= 0.3 &amp;&amp; (1g1pMar2020_v4BNB_mva < 0.96273 || 1g1pMar2020_v4NCPi0_mva < 0.467404))"/>
+
+
+<alias key ="FSCUT" value = "(1g1pNov2020Nue_mva &gt;= 0.3 &amp;&amp; (1g1pNov2020BNB_mva &lt; #BNB0# || 1g1pNov2020NCPi0_mva &lt; #NCP0#))"/>
+
 
 <alias key="GDED0" value ="(reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower3d_dEdx_plane2[0]*(reco_shower_kalman_dEdx_plane2_median[0]<0.01)))"/>
 <alias key="GDED1" value ="(reco_shower_kalman_dEdx_allplane_median[0]+((reco_shower3d_dEdx_plane1[0]+reco_shower3d_dEdx_plane0[0])/2.0*(reco_shower_kalman_dEdx_allplane_median[0]<0.01)))"/>
