@@ -91,7 +91,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
         // weight_branch = "genie_spline_weight";
 
 
-        weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))";
+        weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*(GTruth_ResNum!=9)";
 
         /*std::cout<<"tag = "<<tag<<std::endl;
           if(tag == "DarkNue"){
@@ -488,7 +488,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         //weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
 
-        weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*("+run_weight_string+")";
+        weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*("+run_weight_string+")*(GTruth_ResNum!=9)";
 
         if(this->tag=="DarkNue"){
             weight_branch = "1";
@@ -501,8 +501,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
           }*/
 
-        if(this->tag=="NCPi0NotCoh"){
+        if(this->tag=="NCPi0NotCohRun1RedoCof0"){
             //   weight_branch = "("+weight_branch+")*(1.0 - 0.85*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
+            weight_branch = "genie_spline_weight*(genie_spline_weight>0)*("+run_weight_string+")";
+
 
         }
 
@@ -1461,7 +1463,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     double simple_pot_wei = 0;
     int original_entry = 0;
     //double plot_pot = 13.2e20;
-
+    bool add_vars=false;
     std::vector<double> simple_bdt_vars(vars.size(),0.0);
     std::vector<double> bdt_mvas(bdt_infos.size(),0.0);
 
@@ -1472,14 +1474,18 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     t_sbnfit_simpletree->Branch("simple_pot_weight",&simple_pot_wei);
     t_sbnfit_simpletree->Branch("original_entry",&original_entry);
 
+    std::cout<<__LINE__<<" Setting up Branchs for BDT responses  "<<std::endl;
     for(int i=0; i< bdt_infos.size(); i++){
         std::string nam = "simple_"+bdt_infos[i].identifier+"_mva";
         t_sbnfit_simpletree->Branch(nam.c_str(), &(bdt_mvas[i]));
+        std::cout<<i<<" Setting up a new Branch called "<<nam<<std::endl;
     }
 
-    for(int i=0; i< vars.size(); i++){
-        std::string tnam = "simple_bdt_var_"+std::to_string(i);
-        t_sbnfit_simpletree->Branch(tnam.c_str(),&(simple_bdt_vars[i]));
+    if(add_vars){
+        for(int i=0; i< vars.size(); i++){
+            std::string tnam = "simple_bdt_var_"+std::to_string(i);
+            t_sbnfit_simpletree->Branch(tnam.c_str(),&(simple_bdt_vars[i]));
+        }
     }
 
     TTreeFormula* weight = new TTreeFormula("weight_formula ",this->weight_branch.c_str(),this->tvertex);
@@ -1495,17 +1501,23 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
         form_vec.push_back(new TTreeFormula((bdt_infos[i].identifier+"_mva_formula").c_str(), nam.c_str(),this->tvertex));
     }
 
-    for(int i=0; i< vars.size();i++){
-        form_vec_vars.push_back(new TTreeFormula((vars[i].safe_unit).c_str(), vars[i].name.c_str(),this->tvertex));
+    std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
+    if(add_vars){
+        for(int i=0; i< vars.size();i++){
+            form_vec_vars.push_back(new TTreeFormula((vars[i].safe_unit).c_str(), vars[i].name.c_str(),this->tvertex));
+        }
     }
 
+    //std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
 
     std::string var_string = input_string;
+    
     if(var_string == "") var_string = "reco_vertex_size";
     std::cout<<"Starting to make a simpletree with variable "<<var_string<<std::endl;
     for(int i=0; i< this->tvertex->GetEntries(); i++){
         this->tvertex->GetEntry(i); 
 
+        //std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
         CUT->GetNdata();
         bool is_is = CUT->EvalInstance();
 
@@ -1532,13 +1544,16 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
             bdt_mvas[j] = form_vec[j]->EvalInstance();
         }
 
-        for(int j=0; j< vars.size();j++){
-            form_vec_vars[j]->GetNdata();
-            simple_bdt_vars[j] = form_vec_vars[j]->EvalInstance();
+        if(add_vars){
+            for(int j=0; j< vars.size();j++){
+                form_vec_vars[j]->GetNdata();
+                simple_bdt_vars[j] = form_vec_vars[j]->EvalInstance();
+            }
         }
         t_sbnfit_simpletree->Fill();
     }
 
+    //std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
 
     TList * lf1 = (TList*)t_sbnfit_tree->GetListOfFriends();
     for(const auto&& obj: *lf1) t_sbnfit_tree->GetListOfFriends()->Remove(obj);
@@ -1547,6 +1562,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     for(const auto&& obj: *lf2) t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(obj);
 
 
+    //std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
     std::cout<<"Writing to file"<<std::endl;
     cdtof->cd();
     t_sbnfit_tree->Write();
