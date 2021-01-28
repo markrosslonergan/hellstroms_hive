@@ -1,0 +1,587 @@
+<?xml version="1.0" ?>
+
+<!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
+<topology tag="pigLEE_combined" name ="2#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==2 &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.85416)" />
+<!-- 0.85416 -->
+
+<!-- Directory for all covariance matrices -->
+<!--
+<covar dir="/pnfs/uboone/persistent/users/amogan/v08_00_00_35/sbnfit_covar/2g1p_stage_1_combined_technotePlots/" name="frac_covariance" plotname="Flux &amp; XSec Sys" />
+-->
+<plot_pot>
+    <run_period name ="RunI/II/IIIa" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) || ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <=     14116))" fraction = " 0.4634"  />
+    <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.5366" />
+</plot_pot>
+
+<!-- ================================================== BDT FILES ==================================================== -->
+
+<filedir>/uboone/data/users/markross/Mar2020/</filedir>
+
+<bdtfile filename = "ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" >
+    <friend>
+        <filename>/COFredo/OpticalMatch_ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root</filename>
+        <treename>opt_tree</treename>
+    </friend>
+    <definition>
+        <cut> ((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999)) </cut>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_cc_or_nc==1</cut> 
+        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent" signal = "true" scale = "1.0"  >
+        <friend>
+            <filename>/COFredo/OpticalMatch_ncpi0_overlay_combined_run13_v33.3.uniq.root</filename>
+        <treename>opt_tree</treename>
+    </friend>
+    <definition>
+        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+        <cut> GTruth_Gscatter==5 </cut>
+        <cut> mctruth_cc_or_nc==1</cut> 
+        <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent" signal = "true" scale = "1.0"  >
+     <friend>
+        <filename>/COFredo/OpticalMatch_ncpi0_overlay_combined_run13_v33.3.uniq.root</filename>
+        <treename>opt_tree</treename>
+    </friend>
+    <definition>
+        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+        <cut> GTruth_Gscatter!=5 </cut>
+        <cut> mctruth_cc_or_nc==1</cut> 
+        <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+    </definition>
+</bdtfile>
+
+<!-- No longer used as of early 2021
+<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" scale = "1.0"  >
+     <friend>
+        <filename>/COFredo/OpticalMatch_bnb_bdt_testing_sample_v33.3.uniq.root</filename>
+        <treename>opt_tree</treename>
+    </friend>
+    <definition>
+        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+        <cut> mctruth_cc_or_nc==1</cut> 
+        <cut> mctruth_num_exiting_pi0>1</cut>
+        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+    </definition>
+</bdtfile>
+-->
+
+<bdtfile filename = "ccpi0_overlay_combined_run13_v33.3.uniq.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}" scale = "1.0"  >
+ <friend>
+        <filename>/COFredo/OpticalMatch_ccpi0_overlay_combined_run13_v33.3.uniq.root</filename>
+        <treename>opt_tree</treename>
+    </friend>
+    <definition>
+        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+        <cut>mctruth_cc_or_nc==0 </cut> 
+        <cut>mctruth_num_exiting_pi0==1</cut>
+        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "bnb_overlay_combined_run13_Extra_v43.5.root" tag = "BNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0"  >
+     <friend>
+        <filename>/COFredo/OpticalMatch_bnb_bdt_testing_sample_extra_v43.5.root</filename>
+        <treename>opt_tree</treename>
+    </friend>
+    <definition>
+        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+        <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
+        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
+        <!-- <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1)</cut> --> <!-- Not NC multip0 -->
+        <!-- <cut> !(mctruth_is_delta_radiative &amp;&amp; mctruth_cc_or_nc==1)</cut> -->
+        <cut> !(mctruth_is_delta_radiative &amp;&amp; mctruth_cc_or_nc==1)</cut>  <!--not nc delta -->
+        <cut> (!(mctruth_cc_or_nc==0 &amp;&amp; fabs(mctruth_nu_pdg)==12)) </cut> <!-- not cc nue -->
+        <cut> !(fabs(mctruth_nu_pdg)==12 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0 >0 ) </cut>  <!-- NC nue with 0 NCpi0 -->
+        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "nue_bdt_testing_sample_v33.3.uniq.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
+ <friend>
+        <filename>/COFredo/OpticalMatch_nue_bdt_testing_sample_v33.3.uniq.root</filename>
+        <treename>opt_tree</treename>
+    </friend>
+    <definition>
+        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+        <cut> mctruth_is_delta_radiative!=1 </cut>
+        <cut> fabs(mctruth_nu_pdg)==12 </cut>
+        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "dirt_overlay_combined_run123_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" scale = "0" > 
+    <friend>
+        <filename>/COFredo/OpticalMatch_dirt_overlay_combined_run123_v33.3.uniq.root</filename>
+        <treename>opt_tree</treename>
+    </friend>
+    <definition>
+        <cut>
+          ((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))
+        </cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "bnb_overlay_combined_run13_Extra_v43.5.root" tag = "OTPC" hist_style = "hist" dirs = "singlephotonana/" col = "(0.5,0.3,0.1)" plot_name = "OTPC"  scale = "1.0" plot_on_top = "false" >
+    <definition>
+        <cut>((m_flash_optfltr_pe_beam>20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)||(m_flash_optfltr_pe_beam==-999))</cut>
+        <cut>!(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "FakeData/fakedata_set7_run13_combined_v43.5.root" tag = "FakeDataSet7" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Fake Data Set7 Run 1+3">
+    <definition>
+      <cut> 
+        ((vertex_tree.m_flash_optfltr_pe_beam>20 &amp;&amp; vertex_tree.m_flash_optfltr_pe_veto&lt; 20)||(vertex_tree.m_flash_optfltr_pe_beam==-999))  
+      </cut>
+    </definition>
+    <data type="OnBeam" plot_name="Fake Data Set 7" >
+        <tor860_wcut> 3.8208182e+20 </tor860_wcut>
+    </data>
+</bdtfile>
+
+<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Run 1+2+3 Cosmic Data" fillstyle = "3333" scale = "0">
+    <definition>
+        <cut> 1 </cut>
+    </definition>
+    <data type="OffBeam">
+        <tor860_wcut> 3.8208182e+20 </tor860_wcut>
+        <E1DCNT_wcut> 136203371</E1DCNT_wcut>   
+        <EXT>314602374</EXT>  
+    </data>
+</bdtfile>
+
+
+<!-- ============================================ BDT FILES [Now the training files]============================================= -->
+
+<bdtfile filename = "ncpi0_bdt_training_sample_v33.3.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 251.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut>
+        <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 1</cut>
+        <cut> mctruth_pi0_leading_photon_energy &gt; 0.02 </cut>
+        <cut> mctruth_pi0_subleading_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827&gt;0.02)==1</cut> <!-- Was 0.04 -->
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[i_shr[0]] &lt; 0.3 </cut>
+        <cut> sim_shower_overlay_fraction[i_shr[1]] &lt; 0.3 </cut>
+        <cut> sim_track_overlay_fraction[i_trk[0]] &lt; 0.3 </cut>
+        <cut> sim_track_pdg[i_trk[0]] == 2212</cut>
+        <cut> sim_shower_pdg[i_shr[0]] == 22 </cut>
+        <cut> sim_shower_pdg[i_shr[1]] == 22 </cut>
+        <cut> sim_shower_parent_pdg[i_shr[0]] == 111 </cut>
+        <cut> sim_shower_parent_pdg[i_shr[1]] == 111 </cut>
+        <cut> sim_shower_trackID[0]!=sim_shower_trackID[1] </cut> <!-- No split showers -->
+     </training>
+</bdtfile>
+
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 251.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 </cut>
+        <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 1</cut>
+        <cut> mctruth_pi0_leading_photon_energy &gt; 0.02 </cut>
+        <cut> mctruth_pi0_subleading_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827&gt;0.02)==1</cut> <!-- Was 0.04 -->
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[i_shr[0]] &lt; 0.3 </cut>
+        <cut> sim_shower_overlay_fraction[i_shr[1]] &lt; 0.3 </cut>
+        <cut> sim_track_overlay_fraction[i_trk[0]] &lt; 0.3 </cut>
+        <cut> sim_track_pdg[i_trk[0]] == 2212</cut>
+        <cut> sim_shower_pdg[i_shr[0]] == 22 </cut>
+        <cut> sim_shower_pdg[i_shr[1]] == 22 </cut>
+        <cut> sim_shower_parent_pdg[i_shr[0]] == 111 </cut>
+        <cut> sim_shower_parent_pdg[i_shr[1]] == 111 </cut>
+        <cut> sim_shower_trackID[0]!=sim_shower_trackID[1] </cut> <!-- No split showers -->
+     </training>
+</bdtfile>
+
+<bdtfile filename = "bnb_bdt_training_sample_v33.3.uniq.root" tag = "BNBOtherTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BnbTrain" fillstyle = "3333" scale = "1">
+      <definition>
+          <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+      </definition>
+      <training>
+          <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
+          <cut> sim_shower_overlay_fraction[1]&lt;0.9</cut>
+          <cut> sim_track_overlay_fraction[0]&lt;0.9</cut>
+      </training>
+</bdtfile>
+
+<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOtherTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BNBTest" fillstyle = "3333" scale = "1">
+      <definition>
+          <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+      </definition>
+      <training>
+          <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
+          <cut> sim_shower_overlay_fraction[1]&lt;0.9</cut>
+          <cut> sim_track_overlay_fraction[0]&lt;0.9</cut>
+      </training>
+</bdtfile>
+
+<!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
+
+<mva type="BDT" use="yes" tag = "BNB" name ="BNB-Focused BDT" binning = "(20,0.0,1.0)">
+    <method type = "XGBoost" use = "yes">
+        <param> n_trees=250</param>
+        <param> tree_method=exact</param>
+        <param> n_gpus=0</param>
+        <param> objective=binary:logistic</param>
+        <param> eval_metric=logloss</param>
+        <param> min_child_weight=1</param> 
+        <param> gamma=2</param> <!-- Minimum reduction required to split . Larger gamma -> more conservative algorithm -->
+        <param> max_depth=6</param>    <!-- How many layers deep each tree -->
+        <param> eta=0.01</param>        <!-- Learning Rate -->
+        <param> subsample=0.9</param> <!-- % of events passed to each tree -->
+        <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
+        <param> verbosity=1</param>
+    </method>
+    <file
+        bkg_train_tag = "BNBOtherTrain"
+        bkg_test_tag = "BNBOtherTest"
+        bkg_test_cut = "1"
+        sig_train_tag = "NCpi0Train"
+        sig_test_tag = "NCpi0Test"
+        sig_test_cut = "1"
+        />
+    <scan min = "0.853" max = "0.855" steps="50"/>
+</mva>
+
+<!-- ================================================== PRE-CUTS   ==================================================== -->
+
+<precut def = "reco_vertex_dist_to_active_TPC > 5" name = "Fiducial Vertex Cut" /> 
+<precut def = "(reco_shower_energy_max[i_shr[0]]>30 &amp;&amp; reco_shower_energy_max[0]<3000)" name = "Shower1 Energy"/>
+<precut def = "(reco_shower_energy_max[i_shr[1]]>20 &amp;&amp; reco_shower_energy_max[1]<3000)" name = "Shower2 Energy"/>
+<precut def = "reco_shower_conversion_distance[i_shr[0]]>1" name ="shr1 conversion dist"/>
+<precut def = "reco_shower_conversion_distance[i_shr[1]]>1" name ="shr2 conversion dist"/>
+<!--
+<precut def = "reco_vertex_dist_to_active_TPC > 5 &amp;&amp; reco_vertex_in_SCB " name = "Fiducial Vertex Cut" /> 
+<precut def = "(sqrt(pow(reco_track_startx[i_trk[0]]-reco_vertex_x,2)+pow(reco_track_starty[i_trk[0]]-reco_vertex_y,2)+pow(reco_track_startz[i_trk[0]]-reco_vertex_z,2)))< 10" name = "Distance from Track Start to Vertex"/>
+-->
+<!-- Filter cuts
+<precut def = "reco_vertex_dist_to_active_TPC > 5" name = "Fiducial Vertex Cut" /> 
+-->
+
+
+<!-- ============================================== Variables, BDT training and otherwise ====================================== -->
+
+
+<var def = "run_number" binning = "(20,4000,20000)" unit="Run Number" type="i"  training=""  />
+
+<var def = "(reco_shower_impact_parameter[i_shr[0]])" binning = "(20,0,20)" unit = "Leading Shower Impact Parameter [cm]" type="d"  training="0"  group="1"/>
+<var def = "(reco_shower_impact_parameter[i_shr[1]])" binning = "(20,0,20)" unit = "Subleading Shower Impact Parameter [cm]" type="d"  training="0"   group="1"/>
+<var def = "(reco_shower_impact_parameter[i_shr[0]]/reco_shower_conversion_distance[i_shr[0]])" binning = "(20,0,1)" unit = "Leading Shower Impact Parameter/Shower Conversion Distance" type="d"  training=""  />
+<var def = "(reco_shower_impact_parameter[i_shr[1]]/reco_shower_conversion_distance[i_shr[1]])" binning = "(20,0,1)" unit = "Subleading Shower Impact Parameter/Shower Conversion Distance" type="d"  training=""  />
+
+<var def = "reco_shower_implied_dirx[i_shr[0]]" binning = "(20,-1,1)" unit = "Leading Shower Implied dirx" type="d"  training=""  />
+<var def = "reco_shower_implied_diry[i_shr[0]]" binning = "(20,-1,1)" unit = "Leading Shower Implied diry" type="d"  training=""  />
+<var def = "reco_shower_implied_dirz[i_shr[0]]" binning = "(20,-1,1)" unit = "Leading Shower Implied dirz" type="d"  training=""  />
+<var def = "reco_shower_implied_dirx[i_shr[1]]" binning = "(20,-1,1)" unit = "Subleading Shower Implied dirx" type="d"  training=""  />
+<var def = "reco_shower_implied_diry[i_shr[1]]" binning = "(20,-1,1)" unit = "Subleading Shower Implied diry" type="d"  training=""  />
+<var def = "reco_shower_implied_dirz[i_shr[1]]" binning = "(20,-1,1)" unit = "Subleading Shower Implied dirz" type="d"  training=""  />
+
+<var def = "reco_shower_dirx[i_shr[0]]" binning = "(20,-1,1)" unit = "Leading Shower dirx" type="d"  training=""/>
+<var def = "reco_shower_diry[i_shr[0]]" binning = "(20,-1,1)" unit = "Leading Shower diry" type="d"  training=""/>
+<var def = "reco_shower_dirz[i_shr[0]]" binning = "(20,-1,1)" unit = "Leading Shower dirz" type="d"  training=""/>
+<var def = "reco_shower_dirx[i_shr[1]]" binning = "(20,-1,1)" unit = "Subleading Shower dirx" type="d"  training=""/>
+<var def = "reco_shower_diry[i_shr[1]]" binning = "(20,-1,1)" unit = "Subleading Shower diry" type="d"  training=""/>
+<var def = "reco_shower_dirz[i_shr[1]]" binning = "(20,-1,1)" unit = "Subleading Shower dirz" type="d"  training=""/>
+
+<var def = "reco_shower_implied_dirx[i_shr[0]]/reco_shower_dirx[i_shr[0]]" binning = "(20,-1,3)" unit = "Leading Shower Implied dirx/Pandora dirx" type="d"  training=""/>
+<var def = "reco_shower_implied_diry[i_shr[0]]/reco_shower_diry[i_shr[0]]" binning = "(20,-1,3)" unit = "Leading Shower Implied diry/Pandora diry" type="d"  training=""/>
+<var def = "reco_shower_implied_dirz[i_shr[0]]/reco_shower_dirz[i_shr[0]]" binning = "(20,-1,3)" unit = "Leading Shower Implied dirz/Pandora dirz" type="d"  training=""/>
+<var def = "reco_shower_implied_dirx[i_shr[1]]/reco_shower_dirx[i_shr[1]]" binning = "(20,-1,3)" unit = "Subleading Shower Implied dirx/Pandora dirx" type="d"  training=""/>
+<var def = "reco_shower_implied_diry[i_shr[1]]/reco_shower_diry[i_shr[1]]" binning = "(20,-1,3)" unit = "Subleading Shower Implied diry/Pandora diry" type="d"  training=""/>
+<var def = "reco_shower_implied_dirz[i_shr[1]]/reco_shower_dirz[i_shr[1]]" binning = "(20,-1,3)" unit = "Subleading Shower Implied dirz/Pandora dirz" type="d"  training=""/>
+
+<var def = "reco_shower_energy_plane2[i_shr[0]]/1000.0" binning = "(20,0,0.6)" unit = "Plane 2 Leading Shower Energy [GeV]" type = "d"   training=""/>
+<var def = "reco_shower_energy_plane2[i_shr[1]]/1000.0" binning = "(20,0,0.4)" unit = "Plane 2 Subleading Shower Energy [GeV]" type = "d"   training=""/>
+<var def = "reco_shower_energy_max[i_shr[0]]/1000.0" binning = "(20,0.03,0.6)" unit = "Reconstructed Leading Shower Energy [GeV]" type = "d"   training="0"  group="1" />
+<var def = "reco_shower_energy_max[i_shr[1]]/1000.0" binning = "(20,0.02,0.4)" unit = "Reconstructed Subleading Shower Energy [GeV]" type = "d"   training=""  />
+
+<var def = "(reco_shower_energy_max[i_shr[0]]+reco_shower_energy_max[i_shr[1]])/1000.0" binning = "(20,0,1.0)" unit = "Reconstructed Summed Shower Energy [GeV]" type = "d"   training="" />
+<var def = "(reco_shower_energy_plane2[i_shr[0]]+reco_shower_energy_plane2[i_shr[1]])/1000.0" binning = "(20,0,1.0)" unit = "Reconstructed Summed Plane 2 Shower Energy [GeV]" type = "d"   training=""/>
+
+<var def = "#C0#/1000.0" binning = "(20,0.05,0.6)" unit = "Corrected Leading Shower Energy [GeV]" type = "d"   training=""  />
+<var def = "#C1#/1000.0" binning = "(20,0.03,0.4)" unit = "Corrected Subleading Shower Energy [GeV]" type = "d"   training=""  />
+
+<var def = "(reco_shower_energy_max[i_shr[0]]-reco_shower_energy_max[i_shr[1]])/(reco_shower_energy_max[i_shr[0]]+reco_shower_energy_max[i_shr[1]])" binning = "(20,0.0,1.0)" unit = "Reconstructed Shower Energy Asymmetry" type = "d"   training=""  /> 
+
+<var def = "reco_shower_length[i_shr[0]]" binning = "(20,0,100)" unit = "Reconstructed Leading Shower Length [cm]" type = "d"   training=""  />
+<var def = "reco_shower_length[i_shr[1]]" binning = "(20,0,100)" unit = "Reconstructed Subleading Shower Length [cm]" type = "d"   training=""  />
+<var def = "reco_shower_length[i_shr[0]]/(reco_shower_energy_max[i_shr[0]]/1000.0)" binning = "(20,0 ,1000)" unit = "Ratio Reconstructed Leading Shower Length/Energy [cm/GeV]" type = "d" training=""  />
+<var def = "reco_shower_length[i_shr[1]]/(reco_shower_energy_max[i_shr[1]]/1000.0)" binning = "(20,0 ,1000)" unit = "Ratio Reconstructed Subleading Shower Length/Energy [cm/GeV]" type = "d" training=""  />
+
+<var def = "reco_shower_opening_angle[i_shr[0]]" binning = "(20,0,0.8)" unit = "Reconstructed Leading Shower OpAng [cm]" type = "d"   training=""/>
+<var def = "reco_shower_opening_angle[i_shr[1]]" binning = "(20,0,0.8)" unit = "Reconstructed Subleading Shower OpAng [cm]" type = "d"   training=""/>
+
+<!-- Shower dEdx -->
+<var def = "reco_shower_kalman_dEdx_allplane_median[i_shr[0]]" binning="(20,0.0,7.2)" unit = "Leading Shower Kalman All-Plane Median dE/dx [Mev/cm]" type = "d"   training =""  />
+<var def = "reco_shower_kalman_dEdx_allplane_median[i_shr[1]]" binning="(20,0.0,7.2)" unit = "Subleading Shower Kalman All-Plane Median dE/dx [Mev/cm]" type = "d"   training =""  />
+<var def = "reco_shower_kalman_dEdx_plane2_median[i_shr[0]]" binning="(20,0.0,6.5)" unit = "Leading Shower Kalman Plane 2 Median dE/dx [Mev/cm]" type = "d"   training =""/>
+<var def = "reco_shower_kalman_dEdx_plane2_median[i_shr[1]]" binning="(20,0.0,6.5)" unit = "Subleading Shower Kalman Plane 2 Median dE/dx [Mev/cm]" type = "d"   training =""/>
+
+<var def = "reco_shower_conversion_distance[i_shr[0]]" binning = "(20,0,100)" unit = "Reconstructed Leading Shower Conversion Distance [cm]" type = "d" training="0"  group="1"/>
+<var def = "reco_shower_conversion_distance[i_shr[1]]" binning = "(20,0,100)" unit = "Reconstructed Subleading Shower Conversion Distance [cm]" type = "d" training="0"  group="1"/>
+
+<var def = "reco_shower_phi_yx[i_shr[0]]" binning = "(20,-3.2,3.2)" unit = "Reconstructed Leading Shower #phi_{yx} [rad]" type = "d"   training=""  />
+<var def = "reco_shower_phi_yx[i_shr[1]]" binning = "(20,-3.2,3.2)" unit = "Reconstructed Subleading Shower #phi_{yx} [rad]" type = "d"   training=""  />
+<var def = "reco_shower_theta_yz[i_shr[0]]" binning = "(20,-3.2,3.2)" unit = "Reconstructed Leading Shower #theta_{yz} [rad]" type = "d"   training=""  />
+<var def = "reco_shower_theta_yz[i_shr[1]]" binning = "(20,-3.2,3.2)" unit = "Reconstructed Subleading Shower #theta_{yz} [rad]" type = "d"   training=""  />
+
+<var def = "reco_shower_nuscore[i_shr[0]]" binning = "(20, 0, 1)" unit = "Reconstructed Leading Shower Associated Slice Neutrino Score" type = "d"   training=""  />
+<var def = "reco_shower_nuscore[i_shr[1]]" binning = "(20, 0, 1)" unit = "Reconstructed Subleading Shower Associated Slice Neutrino Score" type = "d"   training=""/>
+
+<var def = "reco_track_displacement[i_trk[0]]" binning = "(20,0,100)" unit = "Track Displacement [cm]" type = "d"   training="0" group="1" />
+<var def = "reco_track_phi_yx[i_trk[0]]" binning = "(20,-3.2,3.2)" unit = "Reconstructed Track #phi_{yx}" type = "d"   training=""  />
+<var def = "reco_track_theta_yz[i_trk[0]]" binning = "(20,-3.2,3.2)" unit = "Reconstructed Track #theta_{yz}" type = "d"   training="0" group="1" />
+
+<var def = "(TMath::Min(TMath::Min(TMath::Min(fabs(reco_track_endy[i_trk[0]]+117), fabs(reco_track_endy[i_trk[0]]-117)) ,  TMath::Min(fabs(reco_track_endx[i_trk[0]]-0), fabs(reco_track_endx[i_trk[0]]-256))), TMath::Min(fabs(reco_track_endz[i_trk[0]]-0), fabs(reco_track_endz[i_trk[0]]-1036))))" binning = "(20,0,116)" unit = " Reconstructed Track End distance to wall [cm]" type = "d"   training="0" group="1" />
+<var def = "(TMath::Min(TMath::Min(TMath::Min(fabs(reco_track_starty[i_trk[0]]+117), fabs(reco_track_starty[i_trk[0]]-117)) ,  TMath::Min(fabs(reco_track_startx[i_trk[0]]-0), fabs(reco_track_startx[i_trk[0]]-256))), TMath::Min(fabs(reco_track_startz[i_trk[0]]-0), fabs(reco_track_startz[i_trk[0]]-1036))))" binning = "(20,0,125)" unit = "Reconstructed Track Start distance to wall [cm]" type = "d"   training=""/>
+
+<var def = "reco_shower_energy_max[i_shr[0]]+reco_track_proton_kinetic_energy[reco_track_ordered_energy_index[0]]*1000" binning = "(20, 100, 1200)" unit = "Reconstructed Track + Leading Shower Energy [MeV]" type = "d" training=""  /> <!-- Binning was (12, 0, 1600) -->
+<var def = "reco_shower_energy_max[i_shr[0]]+reco_shower_energy_max[i_shr[1]]+reco_track_proton_kinetic_energy[reco_track_ordered_energy_index[0]]*1000" binning = "(20,100, 1100)" unit = "Total Visible Energy [MeV]" type = "d" training=""  />
+
+<var def = "TMath::Min(sqrt(pow(reco_track_endx[i_trk[0]]-reco_shower_startx[i_shr[0]],2)+pow(reco_track_endy[i_trk[0]]-reco_shower_starty[i_shr[0]],2)+pow(reco_track_endz[i_trk[0]]-reco_shower_startz[i_shr[0]],2)), sqrt(pow(reco_track_startx[i_trk[0]]-reco_shower_startx[i_shr[0]],2)+pow(reco_track_starty[i_trk[0]]-reco_shower_starty[i_shr[0]],2)+pow(reco_track_startz[i_trk[0]]-reco_shower_startz[i_shr[0]],2)))" binning = "(20,0,100)" unit = "Min distance from Leading Shower to track start or end  cm" type="d" training=""/>
+<var def = "TMath::Min(sqrt(pow(reco_track_endx[i_trk[0]]-reco_shower_startx[i_shr[1]],2)+pow(reco_track_endy[i_trk[0]]-reco_shower_starty[i_shr[1]],2)+pow(reco_track_endz[i_trk[0]]-reco_shower_startz[i_shr[1]],2)), sqrt(pow(reco_track_startx[i_trk[0]]-reco_shower_startx[i_shr[1]],2)+pow(reco_track_starty[i_trk[0]]-reco_shower_starty[i_shr[1]],2)+pow(reco_track_startz[i_trk[0]]-reco_shower_startz[i_shr[1]],2)))" binning = "(20,0,100)" unit = "Min distance from Subleading Shower to track start or end  cm" type="d" training=""/>
+
+<var def = "reco_vertex_x" binning = "(20,0,256)"  unit = "Reco Vertex X [cm]" type="d"  training=""  />
+<var def = "reco_vertex_y" binning = "(20,-116,116)" unit = "Reco Vertex Y [cm]" type="d"  training=""  />
+<var def = "reco_vertex_z" binning = "(20,0,1036)" unit = "Reco Vertex Z [cm]" type="d"  training=""  />
+
+<var def = "reco_track_mean_trunc_dEdx_best_plane[reco_track_ordered_energy_index[0]]" binning =  "(20,0,12)" unit = "Reco Track Truncated Mean dE/dx Best Plane [MeV/cm]" type = "d"   training="0"  group="1" />
+<var def = "reco_track_proton_kinetic_energy[i_trk[0]]" binning = "(20,0,0.8)" unit = "Reconstructed Track Kinetic Energy [GeV]" type = "d"  training =""  />
+<var def = "reco_track_calo_energy_max[0]/(1000.0*reco_track_proton_kinetic_energy[0])" binning="(20,0,1.5)" unit="Track Calo/Kinetic Energy" type="d" training="" />
+<var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[i_trk[0]]/reco_track_mean_trunc_dEdx_end_half_best_plane[i_trk[0]]" binning = "(20,0,1.6)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d"  training="0" group="1" />
+
+<!--PID-->
+<var def = "log10(reco_track_pid_three_plane_proton_pid[i_trk[0]])" binning = "(20,-2,1.5)"  unit ="Log( Three Plane Track PID )" type = "d"  training=""/>
+
+<var def = "log(reco_track_pid_bragg_likelihood_mip_plane0[reco_track_ordered_energy_index[0]]/reco_track_pid_bragg_likelihood_p_plane0[reco_track_ordered_energy_index[0]])" binning = "(20, -6, 6)" unit = "PID ln(L_{MIP}/L_{p}) Plane 0" type = "d" training="" /> 
+<var def = "log(reco_track_pid_bragg_likelihood_mip_plane1[i_trk[0]]/reco_track_pid_bragg_likelihood_p_plane1[i_trk[0]])" binning = "(20, -6, 6)" unit = "PID ln(L_{MIP}/L_{p}) Plane 1" type = "d" training ="" />
+<var def = "log(reco_track_pid_bragg_likelihood_mip_plane2[reco_track_ordered_energy_index[0]]/reco_track_pid_bragg_likelihood_p_plane2[reco_track_ordered_energy_index[0]])" binning = "(20, -6, 6)" unit = "PID ln(L_{MIP}/L_{p}) Plane 2" type = "d" training="" />
+
+<var def = "reco_track_pid_chi2_mu_plane0[i_trk[0]]" binning = "(20, 0, 75)" unit = "PID #chi^{2}_{#mu} Plane 0" type = "d" training ="" />
+<var def = "reco_track_pid_chi2_mu_plane1[i_trk[0]]" binning = "(20, 0, 75)" unit = "PID #chi^{2}_{#mu} Plane 1" type = "d" training ="" />
+<var def = "reco_track_pid_chi2_mu_plane2[i_trk[0]]" binning = "(20, 0, 75)" unit = "PID #chi^{2}_{#mu} Plane 2" type = "d" training ="" />
+
+<var def = "reco_track_pid_chi2_p_plane0[i_trk[0]]" binning = "(20, 0, 450)" unit = "PID #chi^{2}_{p} Plane 0" type = "d" training ="" />
+<var def = "reco_track_pid_chi2_p_plane1[i_trk[0]]" binning = "(20, 0, 450)" unit = "PID #chi^{2}_{p} Plane 1" type = "d" training ="" />
+<var def = "reco_track_pid_chi2_p_plane2[i_trk[0]]" binning = "(20, 0, 450)" unit = "PID #chi^{2}_{p} Plane 2" type = "d" training ="" />
+
+<var def = "reco_track_pid_chi2_mu_plane0[i_trk[0]] - reco_track_pid_chi2_p_plane0[i_trk[0]]" binning = "(20, -400, 100)" unit = "PID #chi^{2}_{#mu} - #chi^{2}_{p} Plane 0" type = "d" training="" />
+<var def = "reco_track_pid_chi2_mu_plane1[i_trk[0]] - reco_track_pid_chi2_p_plane1[i_trk[0]]" binning = "(20, -400, 100)" unit = "PID #chi^{2}_{#mu} - #chi^{2}_{p} Plane 1" type = "d" training="" />
+<var def = "reco_track_pid_chi2_mu_plane2[i_trk[0]] - reco_track_pid_chi2_p_plane2[i_trk[0]]" binning = "(20, -400, 100)" unit = "PID #chi^{2}_{#mu} - #chi^{2}_{p} Plane 2" type = "d" training="" />
+
+<!-- Pi0 variables -->
+<var def = "(acos(reco_shower_dirx[i_shr[0]]*reco_shower_dirx[i_shr[1]] + reco_shower_diry[i_shr[0]]*reco_shower_diry[i_shr[1]] + reco_shower_dirz[i_shr[0]]*reco_shower_dirz[i_shr[1]]))" binning = "(20,0,3.20)" unit = "Angle Between Showers [rad]" type = "d" training=""  />
+
+<var def = "(reco_shower_energy_max[(i_shr[0])]*reco_shower_dirx[(i_shr[0])]+reco_shower_energy_max[(i_shr[1])]*reco_shower_dirx[(i_shr[1])])/1000" binning = "(20, -0.35, 0.35)" unit = "Reconstructed #pi^{0} x-Momentum [GeV]" type = "d"  training=""/>
+<var def = "(reco_shower_energy_max[(i_shr[0])]*reco_shower_diry[(i_shr[0])]+reco_shower_energy_max[(i_shr[1])]*reco_shower_diry[(i_shr[1])])/1000" binning = "(20, -0.35, 0.35)" unit = "Reconstructed #pi^{0} y-Momentum [GeV]" type = "d"  training=""/>
+<var def = "(reco_shower_energy_max[(i_shr[0])]*reco_shower_dirz[(i_shr[0])]+reco_shower_energy_max[(i_shr[1])]*reco_shower_dirz[(i_shr[1])])/1000" binning = "(20, -0.2, 0.5)" unit = "Reconstructed #pi^{0} z-Momentum [GeV]" type = "d"  training="" />
+
+<var def="sqrt((reco_shower_energy_max[i_shr[0]]*reco_shower_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_diry[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_diry[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirz[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirz[(i_shr[1])]))/1000" binning = "(20, 0, 0.5)" unit = "Reconstructed #pi^{0} Transverse Momentum [GeV]" type = "d"  training=""/>
+
+<var def="sqrt((reco_shower_energy_max[i_shr[0]]*reco_shower_dirx[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirx[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_dirx[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirx[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_diry[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_diry[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirz[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirz[(i_shr[1])]))/1000" binning = "(20, 0, 0.85)" unit = "Reconstructed #pi^{0} Momentum [GeV]" type = "d"  training=""/>
+
+<!-- Invariant mass -->
+<var def="sqrt(2.0*reco_shower_energy_max[i_shr[0]]*reco_shower_energy_max[(i_shr[1])]*(1.0-(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])))/1000" binning = "(20, 0, 0.4)" unit = "Reconstructed #pi^{0} Invariant Mass [GeV]" type = "d"  training=""/>
+<var def="sqrt(2.0*#C0#*#C1#*(1.0-(#OPANG1#)))/1000" binning = "(20, 0, 0.4)" unit = "Corrected #pi^{0} Invariant Mass [GeV]" type = "d"  training=""/>
+
+<!-- Center-of-mass decay angle -->
+<var def="((reco_shower_energy_max[i_shr[0]] - reco_shower_energy_max[(i_shr[1])])/(sqrt((reco_shower_energy_max[i_shr[0]]*reco_shower_dirx[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirx[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_dirx[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirx[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_diry[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_diry[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirz[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirz[(i_shr[1])]))))" binning = "(20, 0, 1)" unit = "Reconstructed cos(#theta_{CM})" type = "d"  training=""/>
+
+<var def = "(acos(reco_shower_implied_dirx[i_shr[0]]*reco_shower_implied_dirx[i_shr[1]] + reco_shower_implied_diry[i_shr[0]]*reco_shower_implied_diry[i_shr[1]] + reco_shower_implied_dirz[i_shr[0]]*reco_shower_implied_dirz[i_shr[1]]))" binning = "(20,0,3.20)" unit = "Implied Angle Between Showers [rad]" type = "d" training=""  />
+
+<var def = "(reco_shower_energy_max[(i_shr[0])]*reco_shower_implied_dirx[(i_shr[0])]+reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirx[(i_shr[1])])/1000" binning = "(20, -0.40, 0.40)" unit = "Implied #pi^{0} x-Momentum [GeV]" type = "d"  training=""  />
+<var def = "(reco_shower_energy_max[(i_shr[0])]*reco_shower_implied_diry[(i_shr[0])]+reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_diry[(i_shr[1])])/1000" binning = "(20, -0.40, 0.40)" unit = "Implied #pi^{0} y-Momentum [GeV]" type = "d"  training=""  />
+<var def = "(reco_shower_energy_max[(i_shr[0])]*reco_shower_implied_dirz[(i_shr[0])]+reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirz[(i_shr[1])])/1000" binning = "(20, -0.2, 0.6)" unit = "Implied #pi^{0} z-Momentum [GeV]" type = "d"  training=""   />
+
+<var def="sqrt((reco_shower_energy_max[i_shr[0]]*reco_shower_implied_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_diry[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_implied_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_diry[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirz[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirz[(i_shr[1])]))/1000" binning = "(20, 0, 0.8)" unit = "Implied #pi^{0} Transverse Momentum [GeV]" type = "d"  training=""  />
+
+<var def="sqrt((reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirx[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirx[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirx[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirx[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_implied_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_diry[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_implied_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_diry[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirz[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirz[(i_shr[1])]))/1000" binning = "(20, 0, 0.8)" unit = "Implied #pi^{0} Momentum [GeV]" type = "d"  training=""  />
+
+<!-- Invariant mass -->
+<var def="sqrt(2.0*reco_shower_energy_max[i_shr[0]]*reco_shower_energy_max[(i_shr[1])]*(1.0-(reco_shower_implied_dirx[0]*reco_shower_implied_dirx[1] + reco_shower_implied_diry[0]*reco_shower_implied_diry[1] + reco_shower_implied_dirz[0]*reco_shower_implied_dirz[1])))/1000" binning = "(20, 0, 0.4)" unit = "Implied #pi^{0} Invariant Mass [GeV]" type = "d"  training=""  />
+<var def="sqrt(2.0*#C0#*#C1#*(1.0-(#OPANG2#)))/1000" binning = "(20, 0, 0.4)" unit = "Corrected Implied #pi^{0} Invariant Mass [GeV]" type = "d"  training="" group="1" />
+
+<!-- Center-of-mass decay angle -->
+<var def="((reco_shower_energy_max[i_shr[0]] - reco_shower_energy_max[(i_shr[1])])/(sqrt((reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirx[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirx[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirx[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirx[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_implied_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_diry[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_implied_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_diry[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirz[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirz[(i_shr[1])]))))" binning = "(20, 0, 1)" unit = "Implied cos(#theta_{CM})" type = "d"  training=""  />
+
+<var def = "(reco_track_trackscore[i_trk[0]])" binning = "(20,0,1)" unit = "Track Score" type ="d" training =""/>
+<var def = "(reco_shower_trackscore[i_shr[0]])" binning = "(20,0,1)" unit = "Leading Shower Score" type ="d" training =""/>
+<var def = "(reco_shower_trackscore[i_shr[1]])" binning = "(20,0,1)" unit = "Subleading Shower Score" type ="d" training =""/>
+
+<var def = "sqrt(pow(reco_track_startx[i_trk[0]]-reco_vertex_x,2)+pow(reco_track_starty[i_trk[0]]-reco_vertex_y,2)+pow(reco_track_startz[i_trk[0]]-reco_vertex_z,2))" binning = "(20,0,5)" unit = "Distance from Track Start to Vertex [cm]" type="d" training=""  />
+<var def = "sqrt(pow(reco_track_endx[i_trk[0]]-reco_vertex_x,2)+pow(reco_track_endy[i_trk[0]]-reco_vertex_y,2)+pow(reco_track_endz[i_trk[0]]-reco_vertex_z,2))" binning = "(20,0,50)" unit = "Distance from Track End to Vertex [cm]" type="d" training=""/>
+
+<var def = "reco_shower_num_hits_plane0[i_shr[0]]" binning="(20,0,500)" unit="Leading Shower Num. Hits Plane 0" type="d" training= ""/>
+<var def = "reco_shower_num_hits_plane1[i_shr[0]]" binning="(20,0,500)" unit="Leading Shower Num. Hits Plane 1" type="d" training= ""/>
+<var def = "reco_shower_num_hits_plane2[i_shr[0]]" binning="(20,0,500)" unit="Leading Shower Num. Hits Plane 2" type="d" training= ""/>
+<var def = "reco_shower_num_hits_plane0[i_shr[1]]" binning="(20,0,200)" unit="Subleading Shower Num. Hits Plane 0" type="d" training= ""/>
+<var def = "reco_shower_num_hits_plane1[i_shr[1]]" binning="(20,0,200)" unit="Subleading Shower Num. Hits Plane 1" type="d" training= ""/>
+<var def = "reco_shower_num_hits_plane2[i_shr[1]]" binning="(20,0,200)" unit="Subleading Shower Num. Hits Plane 2" type="d" training= ""/>
+<var def = "reco_shower_plane0_meanRMS[i_shr[0]]" binning="(20,2.5,8)" unit="Leading Shower Mean RMS Plane 0" type="d" training= ""/>
+<var def = "reco_shower_plane1_meanRMS[i_shr[0]]" binning="(20,2.5,8)" unit="Leading Shower Mean RMS Plane 1" type="d" training= ""/>
+<var def = "reco_shower_plane2_meanRMS[i_shr[0]]" binning="(20,3,7)" unit="Leading Shower Mean RMS Plane 2" type="d" training= ""/>
+<var def = "reco_shower_plane0_meanRMS[i_shr[1]]" binning="(20,2.5,8)" unit="Subleading Shower Mean RMS Plane 0" type="d" training= ""/>
+<var def = "reco_shower_plane1_meanRMS[i_shr[1]]" binning="(20,2.5,8)" unit="Subleading Shower Mean RMS Plane 1" type="d" training= ""/>
+<var def = "reco_shower_plane2_meanRMS[i_shr[1]]" binning="(20,2.5,8)" unit="Subleading Shower Mean RMS Plane 2" type="d" training= ""/>
+
+<var def = "reco_vertex_to_nearest_dead_wire_plane0" binning="(20,0,100)" unit="Vertex Dist. to Dead Wire Plane 0" type="d" training= ""/>
+<var def = "reco_vertex_to_nearest_dead_wire_plane1" binning="(20,0,100)" unit="Vertex Dist. to Dead Wire Plane 1" type="d" training= ""/>
+<var def = "reco_vertex_to_nearest_dead_wire_plane2" binning="(20,0,100)" unit="Vertex Dist. to Dead Wire Plane 2" type="d" training= ""/>
+
+<var def = "reco_track_dirx[i_trk[0]]" binning="(20,-1,1)" unit="Track dirx" type="d" training= ""  />
+<var def = "reco_track_diry[i_trk[0]]" binning="(20,-1,1)" unit="Track diry" type="d" training= ""  />
+<var def = "reco_track_dirz[i_trk[0]]" binning="(20,-1,1)" unit="Track dirz" type="d" training= ""  />
+<var def = "reco_track_best_calo_plane[i_trk[0]]" binning="(3,0,3)" unit="Track Calo Best Plane" type="d" training= ""  />
+<var def = "reco_track_num_calo_hits_plane0[i_trk[0]]" binning="(20,0,300)" unit="Track Num. Calo Hits Plane 0" type="d" training= ""/>
+<var def = "reco_track_num_calo_hits_plane1[i_trk[0]]" binning="(20,0,300)" unit="Track Num. Calo Hits Plane 1" type="d" training= ""/>
+<var def = "reco_track_num_calo_hits_plane2[i_trk[0]]" binning="(20,0,300)" unit="Track Num. Calo Hits Plane 2" type="d" training= ""/>
+
+<var def = "(#C0#*reco_shower_dirx[(i_shr[0])]+#C1#*reco_shower_dirx[(i_shr[1])])/1000" binning = "(20, -0.35, 0.35)" unit = "Corrected #pi^{0} x-Momentum [GeV]" type = "d"  training=""/>
+<var def = "(#C0#*reco_shower_diry[(i_shr[0])]+#C1#*reco_shower_diry[(i_shr[1])])/1000" binning = "(20, -0.35, 0.35)" unit = "Corrected #pi^{0} y-Momentum [GeV]" type = "d"  training=""/>
+<var def = "(#C0#*reco_shower_dirz[(i_shr[0])]+#C1#*reco_shower_dirz[(i_shr[1])])/1000" binning = "(20, -0.2, 0.5)" unit = "Corrected #pi^{0} z-Momentum [GeV]" type = "d"  training="" />
+
+<var def="sqrt((#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])])*(#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])]) + (#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])])*(#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])]))/1000" binning = "(20, 0, 0.5)" unit = "Corrected #pi^{0} Transverse Momentum [GeV]" type = "d"  training=""/>
+
+<var def="sqrt((#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])])*(#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])]) + (#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])])*(#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])]) + (#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])])*(#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])]))/1000" binning = "(20, 0, 0.85)" unit = "Corrected #pi^{0} Momentum [GeV]" type = "d"  training=""/>
+
+<var def="sqrt(135*135 + (#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])])*(#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])]) + (#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])])*(#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])]) + (#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])])*(#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])]) ) " binning = "(20, 100, 1000)" unit = "E_{#pi^{0}} [MeV]" type = "d"  training=""/>
+
+<var def="((#C0#*reco_shower_dirz[(i_shr[0])]+#C1#*reco_shower_dirz[(i_shr[1])])/(sqrt((#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])])*(#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])]) + (#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])])*(#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])]) + (#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])])*(#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])]))) ) " binning = "(20, -1, 1)" unit = "cos(#theta_{#pi^{0}}) [MeV]" type = "d"  training=""/>
+
+<var def="sqrt(135*135 + (#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])])*(#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])]) + (#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])])*(#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])]) + (#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])])*(#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])]) ) * (1 - (((#C0#*reco_shower_dirz[(i_shr[0])]+#C1#*reco_shower_dirz[(i_shr[1])])/(sqrt((#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])])*(#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])]) + (#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])])*(#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])]) + (#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])])*(#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])]))) )) ) " binning = "(20, 0, 700)" unit = "E_{#pi^{0}}(1-cos#theta_{#pi^{0}}) [MeV]" type = "d"  training=""/>
+
+<var def = "(#C0#*reco_shower_implied_dirx[(i_shr[0])]+#C1#*reco_shower_implied_dirx[(i_shr[1])])/1000" binning = "(20, -0.40, 0.40)" unit = "Corrected Implied #pi^{0} x-Momentum [GeV]" type = "d"  training=""  />
+<var def = "(#C0#*reco_shower_implied_diry[(i_shr[0])]+#C1#*reco_shower_implied_diry[(i_shr[1])])/1000" binning = "(20, -0.40, 0.40)" unit = "Corrected Implied #pi^{0} y-Momentum [GeV]" type = "d"  training=""  />
+<var def = "(#C0#*reco_shower_implied_dirz[(i_shr[0])]+#C1#*reco_shower_implied_dirz[(i_shr[1])])/1000" binning = "(20, -0.2, 0.6)" unit = "Corrected Implied #pi^{0} z-Momentum [GeV]" type = "d"  training=""   />
+
+<var def="sqrt((#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))/1000" binning = "(20, 0, 0.8)" unit = "Corrected Implied #pi^{0} Transverse Momentum [GeV]" type = "d"  training=""  />
+
+<var def="sqrt((#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))/1000" binning = "(20, 0, 0.8)" unit = "Corrected Implied #pi^{0} Momentum [GeV]" type = "d"  training=""  />
+
+<var def="sqrt(135*135 + (#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]) ) " binning = "(20, 120, 900)" unit = "Implied E_{#pi^{0}} [MeV]" type = "d"  training=""  />
+
+<var def="((#C0#*reco_shower_implied_dirz[(i_shr[0])]+#C1#*reco_shower_implied_dirz[(i_shr[1])])/(sqrt((#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))) ) " binning = "(20, -1, 1)" unit = "Implied cos(#theta_{#pi^{0}}) [MeV]" type = "d"  training=""  />
+
+<var def="sqrt(135*135 + (#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]) ) * (1 - (((#C0#*reco_shower_implied_dirz[(i_shr[0])]+#C1#*reco_shower_implied_dirz[(i_shr[1])])/(sqrt((#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))) )) ) " binning = "(20, 0, 600)" unit = "Implied E_{#pi^{0}}(1-cos#theta_{#pi^{0}}) [MeV]" type = "d"  training=""  />
+
+<!-- Use "simple" response for generating covariance matrix;
+     comment out and use regular response for making plots
+     DO NOT have these both uncommented at the same time -->
+<!--
+<var def = "simple_pigLEE_combinedBNB_mva" binning = "(20,0.05,0.95)" unit = "BDT Response" type="d" training= "" logplot="true" pmin=10.0 pmax=1000 group="1" />
+-->
+<var def = "pigLEE_combinedBNB_mva" binning = "(20,0.05,0.95)" unit = "BDT Response" type="d" training= "" logplot="true" pmin=10.0 pmax=10000 group="1" />
+
+<var def = "reco_shower_startz[i_shr[0]]" binning = "(20,0,1036)" unit = "Reco Leading Shower Start Z [cm]" type="d"  training=""  />
+
+<!-- ================= Efficiency  ======================== -->
+
+<!--<efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "1" numer_cut = "pigLEE_combinedBNB_mva < 0.5 &amp;&amp; reco_shower_nuscore[0]>0.75 " /> -->
+<efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "1" numer_cut = "pigLEE_combinedBNB_mva < 0.85416 &amp;&amp; pigLEE_combinedBNB_mva > 0.5 &amp;&amp; reco_shower_nuscore[0]>0.333 " /> 
+<!--<efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "2" numer_cut = "1" /> -->
+
+
+<!-- ================= RECO-MC Matching ======================== -->
+
+<!--
+<recomc>
+  <def name="#pi^{0} Charge Exchange" col ="(0.2,0.2,0.4)"> 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_pipm>0 &amp;&amp; sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0  
+    </def> 
+    <def name="CC Other" col ="(0.2,0.2,0.6)"> 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_photons==0 &amp;&amp; !(sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111) &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0            
+    </def> 
+    <def name="CC Multi-#pi^{0}" col ="(0.4,0.2,0.4)"> 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0>1 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; mctruth_num_exiting_pipm==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8) &amp;&amp; mctruth_num_exiting_photons==0 
+    </def> 
+    <def name="NC Multi-#pi^{0}" col ="(0.4,0.2,0.4)"> 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0>1 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pipm==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8) &amp;&amp; mctruth_num_exiting_photons==0 
+    </def> 
+    <def name="NC Other" col ="(0.2,0.2,0.6)"> 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_photons==0 &amp;&amp; !(sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111) &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 )             
+    </def> 
+    <def name="#eta" col ="(0.2,0.6,0.4)"> 
+      mctruth_num_exiting_photons==2 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8)             
+    </def> 
+    <def name="Intrinsic #nu_{e}" col ="(0.2,0.8,0.8)"> 
+        abs(mctruth_nu_pdg)==12 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8)             
+    </def> 
+    <def name = "Overlay" col="(0.2,0.8,0.2)">
+      (sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[0]>=0.8)
+    </def>
+
+</recomc>
+-->
+
+
+<!-- For CC Pi0 Backgrounds-->
+<recomc>
+    <def name="Proton Track" col ="(0.6,0.2,0.2)"> 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111 &amp;&amp; abs(sim_track_pdg[i_trk[0]])==2212 &amp;&amp;!(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 )             
+    </def> 
+    <def name="Muon Track" col ="(0.2,0.4,0.6)"> 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111 &amp;&amp; abs(sim_track_pdg[i_trk[0]])==13 &amp;&amp;!(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 )             
+    </def> 
+    <def name="Shower Mis-ID" col ="(0.2,0.8,0.7)"> 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; (sim_shower_is_true_shower[i_shr[0]] != 1 || sim_shower_is_true_shower[i_shr[1]]!=1) &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 )             
+    </def> 
+    <def name = "Overlay" col="(0.2,0.8,0.2)">
+      (sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[0]>=0.8)
+    </def>
+
+</recomc>
+
+
+<alias key="PM" value ="(0.938272)"/>
+<alias key="PE" value ="(reco_track_proton_kinetic_energy[i_trk[0]]+0.938272)"/>
+<alias key="LT" value ="reco_track_ordered_energy_index[0]"/>
+<alias key="S0" value ="i_shr[0]"/>
+<alias key="S1" value ="i_shr[1]"/>
+
+<!-- Shower energy corrections -->
+<!-- TECHNOTE v2.0 -->
+<alias key="C0" value ="(1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)"/>
+<alias key="C1" value ="(1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)"/>
+
+<!-- Alternate shower direction definition -->
+<alias key="S0X"   value="(reco_shower_startx[i_shr[0]]-reco_track_startx[i_trk[0]])"/>
+<alias key="S0Y"   value="(reco_shower_starty[i_shr[0]]-reco_track_starty[i_trk[0]])"/>
+<alias key="S0Z"   value="(reco_shower_startz[i_shr[0]]-reco_track_startz[i_trk[0]])"/>
+<alias key="S1X"   value="(reco_shower_startx[i_shr[1]]-reco_track_startx[i_trk[0]])"/>
+<alias key="S1Y"   value="(reco_shower_starty[i_shr[1]]-reco_track_starty[i_trk[0]])"/>
+<alias key="S1Z"   value="(reco_shower_startz[i_shr[1]]-reco_track_startz[i_trk[0]])"/>
+<alias key="NORM0" value="sqrt(#S0X#*#S0X# + #S0Y#*#S0Y# + #S0Z#*#S0Z#)" />
+<alias key="NORM1" value="sqrt(#S1X#*#S1X# + #S1Y#*#S1Y# + #S1Z#*#S1Z#)" />
+<alias key="S0XNORM" value="(#S0X#/#NORM0#)" />
+<alias key="S0YNORM" value="(#S0Y#/#NORM0#)" />
+<alias key="S0ZNORM" value="(#S0Z#/#NORM0#)" />
+<alias key="S1XNORM" value="(#S1X#/#NORM1#)" />
+<alias key="S1YNORM" value="(#S1Y#/#NORM1#)" />
+<alias key="S1ZNORM" value="(#S1Z#/#NORM1#)" />
+<alias key="DIRX0" value="((reco_shower_startx[i_shr[0]] - reco_track_startx[i_trk[0]]) / sqrt(pow(reco_shower_startx[i_shr[0]]-reco_track_startx[i_trk[0]], 2) + pow(reco_shower_starty[i_shr[0]]-reco_track_starty[i_trk[0]], 2) + pow(reco_shower_startz[i_shr[0]]-reco_track_startz[i_trk[0]], 2)))" />
+<alias key="DIRY0" value="((reco_shower_starty[i_shr[0]] - reco_track_starty[i_trk[0]]) / sqrt(pow(reco_shower_startx[i_shr[0]]-reco_track_startx[i_trk[0]], 2) + pow(reco_shower_starty[i_shr[0]]-reco_track_starty[i_trk[0]], 2) + pow(reco_shower_startz[i_shr[0]]-reco_track_startz[i_trk[0]], 2)))" />
+<alias key="DIRZ0" value="((reco_shower_startz[i_shr[0]] - reco_track_startz[i_trk[0]]) / sqrt(pow(reco_shower_startx[i_shr[0]]-reco_track_startx[i_trk[0]], 2) + pow(reco_shower_starty[i_shr[0]]-reco_track_starty[i_trk[0]], 2) + pow(reco_shower_startz[i_shr[0]]-reco_track_startz[i_trk[0]], 2)))" />
+<alias key="DIRX1" value="((reco_shower_startx[i_shr[1]] - reco_track_startx[i_trk[0]]) / sqrt(pow(reco_shower_startx[i_shr[1]]-reco_track_startx[i_trk[0]], 2) + pow(reco_shower_starty[i_shr[1]]-reco_track_starty[i_trk[0]], 2) + pow(reco_shower_startz[i_shr[1]]-reco_track_startz[i_trk[0]], 2)))" />
+<alias key="DIRY1" value="((reco_shower_starty[i_shr[1]] - reco_track_starty[i_trk[0]]) / sqrt(pow(reco_shower_startx[i_shr[1]]-reco_track_startx[i_trk[0]], 2) + pow(reco_shower_starty[i_shr[1]]-reco_track_starty[i_trk[0]], 2) + pow(reco_shower_startz[i_shr[1]]-reco_track_startz[i_trk[0]], 2)))" />
+<alias key="DIRZ1" value="((reco_shower_startz[i_shr[1]] - reco_track_startz[i_trk[0]]) / sqrt(pow(reco_shower_startx[i_shr[1]]-reco_track_startx[i_trk[0]], 2) + pow(reco_shower_starty[i_shr[1]]-reco_track_starty[i_trk[0]], 2) + pow(reco_shower_startz[i_shr[1]]-reco_track_startz[i_trk[0]], 2)))" />
+<alias key="OPANG1" value="(reco_shower_dirx[i_shr[0]]*reco_shower_dirx[i_shr[1]] + reco_shower_diry[i_shr[0]]*reco_shower_diry[i_shr[1]] + reco_shower_dirz[i_shr[0]]*reco_shower_dirz[i_shr[1]])" /> 
+<alias key="OPANG2" value="(reco_shower_implied_dirx[i_shr[0]]*reco_shower_implied_dirx[i_shr[1]] + reco_shower_implied_diry[i_shr[0]]*reco_shower_implied_diry[i_shr[1]] + reco_shower_implied_dirz[i_shr[0]]*reco_shower_implied_dirz[i_shr[1]])" />
+<alias key="CONV0" value="sqrt(pow( (reco_shower_startx[i_shr[0]]-reco_track_startx[i_trk[0]]), 2) + pow( (reco_shower_starty[i_shr[0]]-reco_track_starty[i_trk[0]]), 2) + pow( (reco_shower_startz[i_shr[0]]-reco_track_startz[i_trk[0]]), 2) )" />
+<alias key="CONV1" value="sqrt(pow( (reco_shower_startx[i_shr[1]]-reco_track_startx[i_trk[0]]), 2) + pow( (reco_shower_starty[i_shr[1]]-reco_track_starty[i_trk[0]]), 2) + pow( (reco_shower_startz[i_shr[1]]-reco_track_startz[i_trk[0]]), 2) )" />
+
