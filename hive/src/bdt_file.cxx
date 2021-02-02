@@ -509,7 +509,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }
     
         if(this->tag.find("LYAtt")!=std::string::npos){
-                weight_branch = "geie_spline_weight*("+run_weight_string+")";
+                weight_branch = "genie_spline_weight*("+run_weight_string+")";
         }
 
         numberofevents_raw = numberofevents;
