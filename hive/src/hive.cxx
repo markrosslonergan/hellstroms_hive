@@ -1171,16 +1171,17 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
             for(auto &f: validate_files){
                 v++;
-                if(which_stage>1){
+                if(which_stage>0){
                     std::string cu = f->getStageCuts(which_stage, fbdtcuts);
-                    cuts.push_back(cu); 
+                    cuts.push_back("("+cu+"&&"+external_cuts+")"
                 }else{
-                    cuts.push_back("1");
+                    cuts.push_back(external_cuts);
                 }
                 compare_files.push_back(f);
             }
 
-            compareQuick(var,compare_files,cuts,"VALID_"+var.safe_unit+"_stage_"+std::to_string(which_stage),true);
+
+            compareQuick(var,compare_files,cuts,"VALID_"+var.safe_unit+"_stage_"+std::to_string(which_stage),false);
         }
     }
 
