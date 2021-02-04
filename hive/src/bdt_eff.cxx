@@ -519,6 +519,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::string denomin, double c1,
 
 bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_denomin, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,bool is_ok,int plot_stage,std::string tag,bool pretopo, bool is0p) : file(filein){
 
+    std::cout<<"starting n = 2"<<std::endl;
 
     double conversion = filein->scale_data*plot_POT/filein->pot;
     double n_starting_events = 0;
@@ -747,6 +748,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
 
 
 
+    std::cout<<"writing eff_"+tag+"_"+file->tag+"_stage_"+std::to_string(plot_stage)+".pdf"<<std::endl;
     c->SaveAs(("eff_"+tag+"_"+file->tag+"_stage_"+std::to_string(plot_stage)+".pdf").c_str(),"pdf");
 
     if(is0p == false){
