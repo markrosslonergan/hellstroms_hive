@@ -67,7 +67,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_NCDeltaRadOverlaySM"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -79,7 +79,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_NCPi0Coh"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -92,7 +92,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_NCPi0NotCoh"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -105,7 +105,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_CC1Pi0"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -118,7 +118,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_BNBOther"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -131,7 +131,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_NueOverlays"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -144,7 +144,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_Dirt"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -157,7 +157,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_OTPCinC"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -170,7 +170,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_BNBext"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
