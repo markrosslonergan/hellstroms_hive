@@ -1173,7 +1173,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
                 v++;
                 if(which_stage>0){
                     std::string cu = f->getStageCuts(which_stage, fbdtcuts);
-                    cuts.push_back("("+cu+"&&"+external_cuts+")"
+                    cuts.push_back("("+cu+"&&"+external_cuts+")");
                 }else{
                     cuts.push_back(external_cuts);
                 }
