@@ -959,7 +959,7 @@ int main (int argc, char *argv[]){
             //Now make the SBNfit files
             std::cout<<"Making an SBNfit file with the additional cuts of : "<<external_cuts<<std::endl;
             std::vector<double> fcuts(bdt_infos.size(),-999);
-            file->makeSBNfitFile(analysis_tag, bdt_infos, 1,fcuts,"1", vars, file->pot,external_cuts);
+            file->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fcuts, "1", vars, file->pot,external_cuts);
             std::cout<<"Done with this file"<<std::endl;
         }
 
@@ -1171,16 +1171,17 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
             for(auto &f: validate_files){
                 v++;
-                if(which_stage>1){
+                if(which_stage>0){
                     std::string cu = f->getStageCuts(which_stage, fbdtcuts);
-                    cuts.push_back(cu); 
+                    cuts.push_back("("+cu+"&&"+external_cuts+")"
                 }else{
-                    cuts.push_back("1");
+                    cuts.push_back(external_cuts);
                 }
                 compare_files.push_back(f);
             }
 
-            compareQuick(var,compare_files,cuts,"VALID_"+var.safe_unit+"_stage_"+std::to_string(which_stage),true);
+
+            compareQuick(var,compare_files,cuts,"VALID_"+var.safe_unit+"_stage_"+std::to_string(which_stage),false);
         }
     }
 
@@ -1381,7 +1382,7 @@ else if(mode_option == "eff2"){
 }else if(mode_option == "sbnfit"){
 
 
-    double splot_pot =   onbeam_data_file->pot;
+    double splot_pot =  onbeam_data_file->pot;
 
     std::cout<<"Starting SBNfit with "<<splot_pot<<" POT"<<std::endl;
 
@@ -1392,7 +1393,7 @@ else if(mode_option == "eff2"){
             bdt_files[f]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot,external_cuts);
         }
     }else{
-        bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot,external_cuts);
+        bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,(double)splot_pot,external_cuts);
 
     }
     return 0;

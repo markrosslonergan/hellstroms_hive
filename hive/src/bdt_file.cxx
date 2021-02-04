@@ -91,7 +91,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
         // weight_branch = "genie_spline_weight";
 
 
-        weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))";
+        weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*(GTruth_ResNum!=9)";
 
         /*std::cout<<"tag = "<<tag<<std::endl;
           if(tag == "DarkNue"){
@@ -488,7 +488,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         //weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
 
-        weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*("+run_weight_string+")";
+        weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*("+run_weight_string+")*(GTruth_ResNum!=9)";
 
         if(this->tag=="DarkNue"){
             weight_branch = "1";
@@ -501,9 +501,15 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
           }*/
 
-        if(this->tag=="NCPi0NotCoh"){
+        if(this->tag=="NCPi0NotCohRun1RedoCof0"){
             //   weight_branch = "("+weight_branch+")*(1.0 - 0.85*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
+            weight_branch = "genie_spline_weight*(genie_spline_weight>0)*("+run_weight_string+")";
 
+
+        }
+    
+        if(this->tag.find("LYAtt")!=std::string::npos){
+                weight_branch = "genie_spline_weight*("+run_weight_string+")";
         }
 
         numberofevents_raw = numberofevents;
@@ -1183,6 +1189,7 @@ std::string bdt_file::getStageCuts(int stage, std::vector<double> bdt_cuts){
 
     std::string ans;
 
+
     if(stage==-1){
         ans = flow.definition_cuts;//flow.topological_cuts; stage -1 is now "pre topo"
     }else if(stage==0){
@@ -1418,94 +1425,115 @@ int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_s
     return 0;
 }
 
-int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, double plot_pot){
-    return makeSBNfitFile( analysis_tag, bdt_infos, which_stage,fbdtcuts,input_string,vars,plot_pot,"1");
+int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars,const double splot_pot){
+    return makeSBNfitFile( analysis_tag, bdt_infos, which_stage,fbdtcuts,input_string,vars,splot_pot,"1");
 }
 
-int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, double plot_pot, std::string external_cuts){
+int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, const double internal_pot, std::string external_cuts){
+    double tsplot_pot = internal_pot;
 
-    std::cout<<"Beginning SBNfit file creation for stage "<<which_stage<<" for file "<<this->tag<<std::endl;
+    std::cout<<"Beginning SBNfit file creation for stage "<<which_stage<<" for file "<<this->tag<<" at "<<tsplot_pot<<std::endl;
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
 
     std::cout<<"With external cuts "<<external_cuts<<std::endl;
     this->teventweight->AddFriend(this->tvertex);
     this->tslice->AddFriend(this->tvertex);
 
+    std::cout<<__LINE__<<" Yarko "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
     std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+this->tag+".root";
 
     std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
     TFile* f_sbnfit = new TFile(output_file_name.c_str(),"recreate");
+    if(!f_sbnfit->IsOpen()){
+            std::cout<<__LINE__<<" Error! SBNfit file not created correctly perhaps?"<<std::endl;
+    }
+    f_sbnfit->cd();
 
     std::cout<<"Creating directory structure"<<std::endl;
+    std::cout<<__LINE__<<" Yarko "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
+
     TDirectory *cdtof = f_sbnfit->mkdir("singlephoton");
     cdtof->cd();    
+    std::cout<<__LINE__<<" Yarko "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
 
-    std::string sbnfit_cuts = this->getStageCuts(which_stage,fbdtcuts);
-    sbnfit_cuts = "(("+sbnfit_cuts+") && ( " +external_cuts+"))"; 
-
+    std::string sbnfit_cuts = this->getStageCuts(which_stage, fbdtcuts);
+    sbnfit_cuts="("+sbnfit_cuts+")&&("+external_cuts+")"; 
+   
+    std::cout<<"CUTS "<<sbnfit_cuts<<std::endl;
     std::cout<<"Copying vertex tree"<<std::endl;
     TTree * t_sbnfit_tree = (TTree*)this->tvertex->CopyTree(sbnfit_cuts.c_str());
     std::cout<<"Copying POT tree"<<std::endl;
     TTree * t_sbnfit_pot_tree = (TTree*)this->tpot->CopyTree("1");
     std::cout<<"Copying RunSubrunTree"<<std::endl;
+    std::cout<<__LINE__<<" Yarko "<<bdt_infos.size()<<" "<<tsplot_pot<<" "<<&tsplot_pot<<" "<<internal_pot<<std::endl;
     TTree * t_sbnfit_rs_tree = (TTree*)this->trs->CopyTree("1");
     std::cout<<"Copying eventweight tree (via friends)"<<std::endl;
     TTree * t_sbnfit_eventweight_tree = (TTree*)this->teventweight->CopyTree(sbnfit_cuts.c_str());
     std::cout<<"Copying Slice tree "<<std::endl;
     TTree * t_sbnfit_slice_tree = (TTree*)this->tslice->CopyTree(sbnfit_cuts.c_str());
-
-
     TTree * t_sbnfit_simpletree = new TTree("simple_tree","simple_tree");
     double simple_var = 0;
     double simple_wei = 0;
     double simple_pot_wei = 0;
     int original_entry = 0;
-    //double plot_pot = 13.2e20;
+    bool add_vars=false;
 
     std::vector<double> simple_bdt_vars(vars.size(),0.0);
     std::vector<double> bdt_mvas(bdt_infos.size(),0.0);
 
-    TTreeFormula * CUT = new TTreeFormula("CUT", sbnfit_cuts.c_str(),this->tvertex);
+    std::cout<<"SCUT : "<< sbnfit_cuts.c_str()<<" "<<sbnfit_cuts.length()<<std::endl;
+    TTreeFormula * CUT = new TTreeFormula("CUT", sbnfit_cuts.c_str(), this->tvertex);
 
     t_sbnfit_simpletree->Branch("simple_variable",&simple_var);
     t_sbnfit_simpletree->Branch("simple_weight",&simple_wei);
     t_sbnfit_simpletree->Branch("simple_pot_weight",&simple_pot_wei);
     t_sbnfit_simpletree->Branch("original_entry",&original_entry);
 
+    //std::cout<<__LINE__<<" Setting up Branchs for BDT responses  "<<std::endl;
     for(int i=0; i< bdt_infos.size(); i++){
         std::string nam = "simple_"+bdt_infos[i].identifier+"_mva";
         t_sbnfit_simpletree->Branch(nam.c_str(), &(bdt_mvas[i]));
+        std::cout<<i<<" Setting up a new Branch called "<<nam<<std::endl;
     }
 
-    for(int i=0; i< vars.size(); i++){
-        std::string tnam = "simple_bdt_var_"+std::to_string(i);
-        t_sbnfit_simpletree->Branch(tnam.c_str(),&(simple_bdt_vars[i]));
+    if(add_vars){
+        for(int i=0; i< vars.size(); i++){
+            std::string tnam = "simple_bdt_var_"+std::to_string(i);
+            t_sbnfit_simpletree->Branch(tnam.c_str(),&(simple_bdt_vars[i]));
+        }
     }
 
-    TTreeFormula* weight = new TTreeFormula("weight_formula ",this->weight_branch.c_str(),this->tvertex);
+    std::cout<<" WeiCut "<<this->weight_branch<<std::endl; 
+    TTreeFormula* weight = new TTreeFormula("weight_formula ", this->weight_branch.c_str(),this->tvertex);
+    std::cout<<" Var "<<input_string<<std::endl; 
     TTreeFormula* var = new TTreeFormula("var_formula ",input_string.c_str(),this->tvertex);
 
     std::vector<TTreeFormula*> form_vec;
     std::vector<TTreeFormula*> form_vec_vars;
 
-    std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
+    //std::cout<<__LINE__<<" "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
     for(int i=0; i< bdt_infos.size();i++){
-        std::cout<<i<<" "<<this->tag+"_"+bdt_infos[i].identifier<<std::endl;
+        std::cout<<"BDT form "<<i<<" "<<this->tag+"_"+bdt_infos[i].identifier<<std::endl;
         std::string nam = this->tag+"_"+bdt_infos[i].identifier+".mva";
         form_vec.push_back(new TTreeFormula((bdt_infos[i].identifier+"_mva_formula").c_str(), nam.c_str(),this->tvertex));
     }
 
-    for(int i=0; i< vars.size();i++){
-        form_vec_vars.push_back(new TTreeFormula((vars[i].safe_unit).c_str(), vars[i].name.c_str(),this->tvertex));
+    //std::cout<<__LINE__<<" "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
+    if(add_vars){
+        for(int i=1; i< vars.size();i++){
+            form_vec_vars.push_back(new TTreeFormula((vars[i].safe_unit).c_str(), vars[i].name.c_str(),this->tvertex));
+        }
     }
 
 
     std::string var_string = input_string;
+    
     if(var_string == "") var_string = "reco_vertex_size";
     std::cout<<"Starting to make a simpletree with variable "<<var_string<<std::endl;
     for(int i=0; i< this->tvertex->GetEntries(); i++){
         this->tvertex->GetEntry(i); 
 
+        //std::cout<<__LINE__<<" "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
         CUT->GetNdata();
         bool is_is = CUT->EvalInstance();
 
@@ -1524,7 +1552,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
            */
 
         simple_var = var->EvalInstance();
-        simple_pot_wei = simple_wei*this->scale_data*plot_pot/this->pot;
+        simple_pot_wei = simple_wei*this->scale_data*tsplot_pot/this->pot;
+        //std::cout<<"YANK: Wei: "<<simple_wei<<" Scale: "<<this->scale_data<<" POT: "<<tsplot_pot<<" This File: "<<this->pot<<std::endl;
         original_entry = i;
 
         for(int j=0; j< bdt_infos.size();j++){
@@ -1532,13 +1561,16 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
             bdt_mvas[j] = form_vec[j]->EvalInstance();
         }
 
-        for(int j=0; j< vars.size();j++){
-            form_vec_vars[j]->GetNdata();
-            simple_bdt_vars[j] = form_vec_vars[j]->EvalInstance();
+        if(add_vars){
+            for(int j=0; j< vars.size();j++){
+                form_vec_vars[j]->GetNdata();
+                simple_bdt_vars[j] = form_vec_vars[j]->EvalInstance();
+            }
         }
         t_sbnfit_simpletree->Fill();
     }
 
+    //std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
 
     TList * lf1 = (TList*)t_sbnfit_tree->GetListOfFriends();
     for(const auto&& obj: *lf1) t_sbnfit_tree->GetListOfFriends()->Remove(obj);
@@ -1547,6 +1579,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     for(const auto&& obj: *lf2) t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(obj);
 
 
+    //std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
     std::cout<<"Writing to file"<<std::endl;
     cdtof->cd();
     t_sbnfit_tree->Write();
