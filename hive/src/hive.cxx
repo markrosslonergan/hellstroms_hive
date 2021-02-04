@@ -1209,7 +1209,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
 }else if(mode_option == "eff"){
 
-    if(which_file == -1)which_file = 1;
+    if(which_file == -1)which_file = 0;
 
     //which_file = 7;//checking ext
     std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
