@@ -1173,7 +1173,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
                 v++;
                 if(which_stage>0){
                     std::string cu = f->getStageCuts(which_stage, fbdtcuts);
-                    cuts.push_back("("+cu+"&&"+external_cuts+")"
+                    cuts.push_back("("+cu+"&&"+external_cuts+")");
                 }else{
                     cuts.push_back(external_cuts);
                 }
@@ -1210,7 +1210,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
 }else if(mode_option == "eff"){
 
-    if(which_file == -1)which_file = 1;
+    if(which_file == -1)which_file = 0;
 
     //which_file = 7;//checking ext
     std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
