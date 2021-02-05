@@ -956,12 +956,13 @@
 <var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(18,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d"    training="" group = "331"/>
 <var def = "(reco_shower_trackscore[0])" binning = "(18,0,0.5)" unit = "Shower Score" type ="d"  training ="" group = "331"/>
 <var def = "log(reco_shower_conversion_distance[0])" binning = "(18,-3,7)" unit = " Reconstructed Shower Conversion Distance Log[cm]" type = "d"     training="" group = "331"/>
-<var def = "log10(reco_track_spacepoint_max_dist[0])" binning = "(18,-2,1.5)" unit = "Reconstructed Track Max Distance Spacepoint from Line [cm]" type = "d"  training = "" group = "331"/>
+<var def = "log10(reco_track_spacepoint_max_dist[0])" binning = "(18,-2,1.5)" unit = "Reconstructed Track Max Distance Spacepoint from Line Log[cm]" type = "d"  training = "" group = "331"/>
 <var def = "(reco_track_trackscore[0])" binning = "(18,0.5,1)" unit = "Track Score" type ="d"  training ="" group = "331"/>
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(18,0,0.3)" type = "d"  training = "" group = "331"/>
 <var def = "sss2d_conv_ranked_conv" binning = "(18,0,80)" unit ="sss2d closest candidate conversion Distance [cm]" type="d"  training="" group = "331"/>
 <var def = "sss3d_ioc_ranked_implied_opang" binning = "(18,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="" group = "331"/>
 <var def = "#GEO#" binning = "(18,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "331"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(24,0,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="" group = "331"/>
 
 <!--single BDT cut plots -->
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(5,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) Cosmic Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4COSMIC_mva &gt;= #COS0#)" group = "335" />
