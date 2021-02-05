@@ -1211,9 +1211,22 @@ cimpact->SaveAs("Impact.pdf","pdf");
 }else if(mode_option == "eff"){
 
     if(which_file == -1)which_file = 0;
+    if (number ==-1 && which_group == -1) number = 0;
 
     //which_file = 7;//checking ext
-    std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
+    
+    //get a group of vars
+ 
+    std::vector<bdt_variable> tmp_vars;
+    
+    for(auto &v: vars){
+                    if(which_group == -1 || which_group == v.cat){
+                        tmp_vars.push_back(v);
+                    }
+                }
+
+
+   std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
     std::vector<std::string> v_topo = {TMVAmethods[0].topological_definition};//,"sim_shower_pdg==22","sim_track_pdg==2212","sim_shower_overlay_fraction<0.9","sim_track_overlay_fraction<0.9"};
 
 if(which_stage==-1)which_stage=0;
@@ -1229,7 +1242,7 @@ if (topo_tag == "notrack"){
 }
 
 //bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot,false,which_stage,analysis_tag, false, is0p);
-if(number==2)bdt_efficiency(bdt_files[which_file], v_denom, v_topo,vec_precuts,fbdtcuts, what_pot, false, which_stage, analysis_tag, false, false);
+if(number==2)bdt_efficiency(bdt_files[which_file], v_denom, v_topo,vec_precuts,fbdtcuts, what_pot, false, which_stage, analysis_tag, false, false, tmp_vars);
 
 
 //specifically for protond/photons pre-topological
@@ -1238,7 +1251,7 @@ if(number>0) bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts,
 
 if(number==3){
 
-    bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot, true, which_stage, analysis_tag, true, false);
+    bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot, true, which_stage, analysis_tag, true, false, tmp_vars);
 
 }
 bdt_efficiency(bdt_files[which_file], v_denom,v_topo,vec_precuts , fbdtcuts,what_pot     );
