@@ -24,13 +24,14 @@
     <variation pattern="NormNCCOH_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))" mode="minmax"/>
     <variation pattern="NormCCCOH_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))" mode="minmax"/>
     <variation pattern="Theta_Delta2Npi_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))" mode="minmax" />
-    <variation pattern="RPA_CCQE_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))" mode="minmax" />
-    <variation pattern="VecFFCCQEshape_UBGenie"  weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))"mode="minmax" />
+        <variation pattern="VecFFCCQEshape_UBGenie"  weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))"mode="minmax" />
     <variation pattern="AxFFCCQEshape_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))"  mode="minmax" />
     <variation pattern="DecayAngMEC_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))"  mode="minmax" />
     <!--    <variation pattern="XSecShape_CCMEC_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))" mode="minmax" />-->
 </WeightMaps>
-
+<!-- This is a N=1
+<variation pattern="RPA_CCQE_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))" mode="minmax" />
+-->
 
 <variation_list>
     <whitelist>All_UBGenie</whitelist>
@@ -66,7 +67,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_NCDeltaRadOverlaySM"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -78,7 +79,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_NCPi0Coh"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -91,7 +92,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_NCPi0NotCoh"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -104,7 +105,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_CC1Pi0"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -117,7 +118,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_BNBOther"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -130,7 +131,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_NueOverlays"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -143,7 +144,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_Dirt"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -156,7 +157,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_OTPCinC"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
@@ -169,7 +170,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g1p_BNBext"
-        additional_weight="simple_pot_weight" 
+        additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
