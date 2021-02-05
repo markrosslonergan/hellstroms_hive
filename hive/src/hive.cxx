@@ -1454,7 +1454,19 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
         std::cout<<"Variable ID is "<<sVID<<std::endl;
 
         std::cout<<"First lets add the variable string "<<v.name<<std::endl;
-        std::string sedder_VAR = "sed  's@VARVARVAR@\"" + v.name + "\"@' "+covar_flux_template_xml +" > "+ covar_flux_template_xml+"."+sVID+".xml";
+
+        //check if it's a BDT score variable
+        std::string mva = "mva";
+        std::string name;
+        if(v.name.size() >= mva.size() && v.name.compare(v.name.size() - mva.size(), mva.size(), mva) == 0){
+            std::cout<<"ERROR this is a BDT score, updating variable name"<<std::endl;
+            name = "simple_"+v.name;
+        }else{
+            name = v.name;
+        }
+
+        
+        std::string sedder_VAR = "sed  's@VARVARVAR@\"" + name + "\"@' "+covar_flux_template_xml +" > "+ covar_flux_template_xml+"."+sVID+".xml";
         std::cout<<sedder_VAR<<std::endl;
         system(sedder_VAR.c_str());
 
