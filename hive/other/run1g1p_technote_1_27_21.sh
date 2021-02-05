@@ -22,27 +22,26 @@ BNBFS="(1g1pMar2020_v4COSMIC_mva >=0.9 && 1g1pMar2020_v4Nue_mva>= 0.3 && (1g1pMa
 NUM=2212
 
 #stage0 + 1
-#./../../bin/hive -o datamc --makefluxcovar $FXXML1 -x $XML -s 1 -g330
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g330
 #./../../bin/hive -o datamc  -x $XML -s 0 -g330 --systematics "flux_fracfixed"
 #./../../bin/hive -o datamc  -x $XML -s 1 -g330 --systematics "flux_fracfixed"
 
 #stage 1
-#./../../bin/hive -o datamc --makefluxcovar $FXXML1 -x $XML -s 1 -g331
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g331
 #./../../bin/hive -o datamc  -x $XML -s 1 -g331 --systematics "flux_fracfixed"
 
 #Single BDT Cuts
-#./../../bin/hive -o datamc --makefluxcovar $FXXML1 -x $XML -s 1 -g335
-#./../../bin/hive -o datamc  -x $XML -s 1 -g335 "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g335
 #./../../bin/hive -o datamc  -x $XML -s 1 -g335 --systematics "flux_fracfixed"
-./../../bin/hive -o eff -n2 -x $XML -s 1 -g335
+#./../../bin/hive -o eff -n2 -x $XML -s 1 -g335
 
 #BDT Scores
-#./../../bin/hive -o datamc --makefluxcovar $FXXML1 -x $XML -s 1 -g6
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g6
 #./../../bin/hive -o datamc  -x $XML -s 1 -g6 --systematics "flux_fracfixed"
 
 #stage 6
-#./../../bin/hive -o datamc --makefluxcovar $FXXML6 -x $XML -s 6 -g332
-#./../../bin/hive -o datamc  -x $XML -s 6 -g332 --systematics "flux_fracfixed"
-#./../../bin/hive -o datamc --makefluxcovar $FXXML6 -x $XML13 -s 6 -g332
+#./../../bin/hive  --makefluxcovar $FXXML6 -x $XML -s 6 -g332
+./../../bin/hive -o datamc  -x $XML -s 6 -g332 #--systematics "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML6 -x $XML13 -s 6 -g332
 #./../../bin/hive -o stack -x $XML13 -s 6 -g332 --systematics "flux_fracfixed"
 
