@@ -36,12 +36,12 @@ NUM=2212
 #./../../bin/hive -o eff -n2 -x $XML -s 1 -g335
 
 #BDT Scores
-#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g6
-#./../../bin/hive -o datamc  -x $XML -s 1 -g6 --systematics "flux_fracfixed"
+./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g6
+./../../bin/hive -o datamc  -x $XML -s 1 -g6 --systematics "flux_fracfixed"
 
 #stage 6
 #./../../bin/hive  --makefluxcovar $FXXML6 -x $XML -s 6 -g332
-./../../bin/hive -o datamc  -x $XML -s 6 -g332 #--systematics "flux_fracfixed"
+#./../../bin/hive -o datamc  -x $XML -s 6 -g332 #--systematics "flux_fracfixed"
 #./../../bin/hive  --makefluxcovar $FXXML6 -x $XML13 -s 6 -g332
 #./../../bin/hive -o stack -x $XML13 -s 6 -g332 --systematics "flux_fracfixed"
 
