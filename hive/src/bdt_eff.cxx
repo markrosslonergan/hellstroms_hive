@@ -586,7 +586,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
         }else{
             precuts += "&&"+v_precuts[i];
         }
-        double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
+        double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+precuts+"&&" + var.additional_cut)*conversion;
         double tmp_events_just_this =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+v_precuts[i])*conversion;
         std::cout<<"--- this file has: "<<tmp_events<<" which on its own is a ("<<tmp_events_just_this/n_topo_events*100.0<<"%) effect relative to topo"<<std::endl;
         n_precut_events = tmp_events;
@@ -617,10 +617,12 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     file->calcBaseEntryList(tag);
     file->setStageEntryList(plot_stage);
     double stage_entries ;
-    if(plot_stage>0) stage_entries = file->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
+    if(plot_stage>0) stage_entries = file->GetEntries(denominator+"&&"+topocuts+"&&"+precuts + "&&" + var.additional_cut )*conversion;
     if(plot_stage==0) stage_entries = file->GetEntries(denominator+"&&"+topocuts)*conversion;
     std::cout<<plot_stage<<" "<<conversion<<" "<<stage_entries<<" topo: "<<topocuts<<std::endl;
     std::cout<<file->GetEntries(denominator)<<" "<<file->GetEntries(topocuts)<<std::endl;
+
+    std::cout<<"checking stage "<<plot_stage<<" with cuts: "<<denominator+"&&"+topocuts+"&&"+precuts + "&&" + var.additional_cut<<std::endl;
 
     std::string recotruthmatchingcuts;
 
@@ -636,15 +638,16 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     if(plot_stage==0){
         h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator+"&&"+topocuts + "&&" + recotruthmatchingcuts , "photon_true_numer", 10.1e20);
     }else{
-        h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator+"&&"+topocuts +"&&"+precuts + "&&" + recotruthmatchingcuts   , "photon_true_numer", 10.1e20);
+        h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator+"&&"+topocuts +"&&"+precuts + "&&" + recotruthmatchingcuts +"&&" + var.additional_cut  , "photon_true_numer", 10.1e20);
     }
     if(is0p == false){
         if(plot_stage==0){
             h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator+"&&"+topocuts+ "&&" + recotruthmatchingcuts  , "proton_true_numer", 10.1e20);
         }else{
-            h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator+"&&"+topocuts +"&&"+precuts + "&&" + recotruthmatchingcuts    , "proton_true_numer",10.1e20);
+            h_true_proton_numer = (TH1*)file->getTH1(true_proton, denominator+"&&"+topocuts +"&&"+precuts + "&&" + recotruthmatchingcuts +"&&" + var.additional_cut   , "proton_true_numer",10.1e20);
         }
     }
+
 
     TH1* h_true_proton_ratio;
     if(is0p == false){
@@ -685,8 +688,14 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<plot_stage<<" "<<conversion<<" "<<stage_entries<<std::endl;
 
     double finaleff = n_topo_events/n_starting_events*100.0;
-    if(plot_stage==1)   finaleff = n_precut_events/n_starting_events*100.0;
-    if(plot_stage>1)    finaleff = stage_entries/n_starting_events*100.0;
+    if(plot_stage==1) {
+        finaleff = n_precut_events/n_starting_events*100.0;
+       std::cout<<"final efficiency = "<<n_precut_events<<"/"<<n_starting_events<<"*100.0 = "<< finaleff<<"%"<<std::endl;
+    }
+    if(plot_stage>1){
+        finaleff = stage_entries/n_starting_events*100.0;
+        std::cout<<"final efficiency = "<<stage_entries<<"/"<<n_starting_events<<"*100.0 = "<< finaleff<<"%"<<std::endl;
+    }
     std::cout<<"Relative to topo: "<<stage_entries/n_topo_events*100.0<<std::endl;
     //Std::plotting
     //
