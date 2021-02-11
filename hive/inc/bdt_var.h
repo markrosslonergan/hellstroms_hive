@@ -121,7 +121,6 @@ struct bdt_variable{
                 bins.erase(pl,pl+3);
             }
 
-            std::cout<<bins<<std::endl;
 
             bins.erase(std::remove(bins.begin(), bins.end(), '('), bins.end());
             bins.erase(std::remove(bins.begin(), bins.end(), ')'), bins.end());

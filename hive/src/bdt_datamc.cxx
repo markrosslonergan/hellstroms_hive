@@ -306,10 +306,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         //And all variables in the vector var
         for(auto &var: vars){
 
-            TFile *fout = new TFile(("datamc/Ratio_"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".root").c_str(),"recreate");
+            std::string urk = (stack_mode? "stack" : "datamc" );
+            TFile *fout = new TFile((urk+"/Ratio_"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".root").c_str(),"recreate");
             fout->cd();
-
-
 
             std::string isSpec;
             if (!var.is_spectator){
@@ -1258,12 +1257,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             fout->cd();
-            d0->Write(("d0_"+tago).c_str());
+            if(!stack_mode){
+                d0->Write(("d0_"+tago).c_str());
+                ratpre->Write(("ratpre_"+tago).c_str());
+                ratunit->Write(("ratunit_"+tago).c_str());
+                gr->Write(("graph_"+tago).c_str());
+            }
             tsum->Write(("tsum_"+tago).c_str());
-            ratpre->Write(("ratpre_"+tago).c_str());
-            ratunit->Write(("ratunit_"+tago).c_str());
-            gr->Write(("graph_"+tago).c_str());
-
+            stk->Write(("tstk_"+tago).c_str());
             //std::string mean = "(Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+" #pm "+to_string_prec(tot_norm_error/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";

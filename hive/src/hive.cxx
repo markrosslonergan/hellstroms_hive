@@ -1484,7 +1484,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
     std::cout<<"Starting to make an SBNfit DETECTOR systeatics integration covar with template: "<<covar_det_template_xml<<std::endl;
 
-    std::vector<std::string> det_names ={"recom2","AngleXZ","AngleYZ","WireYZ","WireX","SCE","LY","LYAtt_bugfix","LYRay"};
+    std::vector<std::string> det_names ={"Recom2","AngleXZ","AngleYZ","WireYZ","WireX","SCE","LY","LYAtt","LYRay"};
 
     int vc=0;
     for(auto &v: vars){
@@ -1572,7 +1572,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         system(merger_s.c_str());
 
         //Then run a FlatFractional for BNBOther and NCMultiPi0
-        std::string flatter_s1 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s BNBOther -t "+sVID+"_FlatDetSys1 -c " +sVID+"_merged_det.SBNcovar.root";
+        /*std::string flatter_s1 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s BNBOther -t "+sVID+"_FlatDetSys1 -c " +sVID+"_merged_det.SBNcovar.root";
         std::string flatter_s2 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s NCMultiPi0 -t "+sVID+"_FlatDetSys2 -c " +sVID+"_FlatDetSys1.SBNcovar.root";
         std::string flatter_s3 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s OTPCinC -t "+sVID+"_FlatDetSys3 -c " +sVID+"_FlatDetSys2.SBNcovar.root";
 
@@ -1583,12 +1583,13 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         system(flatter_s1.c_str());
         system(flatter_s2.c_str());
         system(flatter_s3.c_str());
-
+        */
         //*****  If we also ran flux, merge   ***
         if(covar_flux_template_xml !="null.xml"){
 
             std::cout<<"Going to merge Flux and Det together"<<std::endl;
-            std::string merger_a = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_fluxdet -c "+sVID+"_FlatDetSys3.SBNcovar.root "+ sVID+"_flux_fracfixed.SBNcovar.root";
+            //std::string merger_a = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_fluxdet -c "+sVID+"_FlatDetSys3.SBNcovar.root "+ sVID+"_flux_fracfixed.SBNcovar.root";
+            std::string merger_a = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_fluxdet -c "+sVID+"_merged_det.SBNcovar.root  " + sVID+"_flux_fracfixed.SBNcovar.root";
             std::cout<<"Merge String "<<std::endl;
             std::cout<<merger_a<<std::endl;
             system(merger_a.c_str());
