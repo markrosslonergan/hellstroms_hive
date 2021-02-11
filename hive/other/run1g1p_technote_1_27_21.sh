@@ -53,23 +53,23 @@ NUM=2212
 #./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g335
 #./../../bin/hive -o datamc  -x $XML -s 1 -g335 --systematics "flux_fracfixed"
 #./../../bin/hive -o eff -n2 -f18 -s1 -x $XML -s 1 -g335 #generate eff plots for ncdelta signal def file
-./../../bin/hive -o eff -n2 -s1 -x $XML -s 1 -g335 
+#./../../bin/hive -o eff -n2 -s1 -x $XML -s 1 -g335 
 
 #./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g336
 #./../../bin/hive -o datamc  -x $XML -s 1 -g336 --systematics "flux_fracfixed"
-./../../bin/hive -o eff -n2 -s1 -x $XML -s 1 -g336
+#./../../bin/hive -o eff -n2 -s1 -x $XML -s 1 -g336
 
 #./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g337
 #./../../bin/hive -o datamc  -x $XML -s 1 -g337 --systematics "flux_fracfixed"
-./../../bin/hive -o eff -n2 -s1  -x $XML -s 1 -g337
+#./../../bin/hive -o eff -n2 -s1  -x $XML -s 1 -g337
 
 #./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g338
 #./../../bin/hive -o datamc  -x $XML -s 1 -g338 --systematics "flux_fracfixed"
-./../../bin/hive -o eff -n2 -s1  -x $XML -s 1 -g338
+#./../../bin/hive -o eff -n2 -s1  -x $XML -s 1 -g338
 
 #./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g339
 #./../../bin/hive -o datamc  -x $XML -s 1 -g339 --systematics "flux_fracfixed"
-./../../bin/hive -o eff -n2 -s1  -x $XML -s 1 -g339
+#./../../bin/hive -o eff -n2 -s1  -x $XML -s 1 -g339
 
 
 #BDT Scores
@@ -78,7 +78,7 @@ NUM=2212
 
 #stage 6
 #./../../bin/hive  --makefluxcovar $FXXML6 -x $XML -s 6 -g332
-#./../../bin/hive -o datamc  -x $XML -s 6 -g332 --systematics "flux_fracfixed"
+./../../bin/hive -o datamc  -x $XML -s 6 -g332 --systematics "flux_fracfixed"
 #./../../bin/hive  --makefluxcovar $FXXML6 -x $XML13 -s 6 -g332
 #./../../bin/hive -o stack -x $XML13 -s 6 -g332 --systematics "flux_fracfixed"
 
