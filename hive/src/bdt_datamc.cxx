@@ -612,6 +612,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             bool isBDT = false;
             int max_val;
+            std::string mva = "mva";
+            if(var.name.size() >= mva.size() && var.name.compare(var.name.size() - mva.size(), mva.size(), mva) == 0 && var.is_logplot){
+               isBDT = true;
+            }
             if(isBDT){
                 min_val = 1e-2;
                 max_val = 1e5;

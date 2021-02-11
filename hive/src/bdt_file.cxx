@@ -879,11 +879,17 @@ double bdt_file::GetEntries(std::string cuts){
         */
     // this->CheckWeights(); //catch erroneous values of the weight
     this->tvertex->Draw(("reco_asso_showers>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+    
+    //std::cout<<"("+cuts+")*"+this->weight_branch<<std::endl;
+    //std::cout<<"namr = "<<namr<<std::endl;
+
     TH1* th1 = (TH1*)gDirectory->Get(namr.c_str()) ;
+    
     double ans = th1->GetSumOfWeights();
     //std::cout<<"sum of weights: "<<ans<<std::endl;
+    
     delete th1;
-
+   
     return ans;
 
 }

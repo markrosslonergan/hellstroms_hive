@@ -10,10 +10,6 @@
 </plot_pot>
 
 <!-- Directory for all covariance matrices -->
-<covar dir="/pnfs/uboone/persistent/users/amogan/v08_00_00_35/sbnfit_covar/2g1p_stage_1_combined_technotePlots/" name="frac_covariance" plotname="Flux &amp; XSec Sys" />
-<!--
-<covar dir="/" name="frac_covariance" plotname="Flux &amp; XSec Sys" />
--->
 
 
 <!-- ================================================== BDT FILES ==================================================== -->
@@ -26,7 +22,9 @@
         <treename>opt_tree</treename>
     </friend>
     <definition>
-        <cut> ((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999)) </cut>
+        <cut> 
+          ((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999)) 
+        </cut>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
@@ -61,6 +59,7 @@
     </definition>
 </bdtfile>
 
+<!--
 <bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" scale = "1.0"  >
      <friend>
         <filename>/COFredo/OpticalMatch_bnb_bdt_testing_sample_v33.3.uniq.root</filename>
@@ -73,6 +72,7 @@
         <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
     </definition>
 </bdtfile>
+-->
 
 <bdtfile filename = "ccpi0_overlay_combined_run13_v33.3.uniq.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}" scale = "1.0"  >
  <friend>
@@ -87,17 +87,16 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOther" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0"  >
+<bdtfile filename = "bnb_bdt_testing_sample_extra_v43.5.root" tag = "BNBOtherExtra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0"  >
      <friend>
-        <filename>/COFredo/OpticalMatch_bnb_bdt_testing_sample_v33.3.uniq.root</filename>
+        <filename>/COFredo/OpticalMatch_bnb_bdt_testing_sample_extra_v43.5.root</filename>
         <treename>opt_tree</treename>
     </friend>
     <definition>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
-        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1)</cut> <!-- Not NC multip0 -->
-        <!-- <cut> !(mctruth_is_delta_radiative &amp;&amp; mctruth_cc_or_nc==1)</cut> -->
+        <!--<cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0>1)</cut> --> <!-- Not NC multip0 -->
         <cut> !(mctruth_is_delta_radiative &amp;&amp; mctruth_cc_or_nc==1)</cut>  <!--not nc delta -->
         <cut> (!(mctruth_cc_or_nc==0 &amp;&amp; fabs(mctruth_nu_pdg)==12)) </cut> <!-- not cc nue -->
         <cut> !(fabs(mctruth_nu_pdg)==12 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0 >0 ) </cut>  <!-- NC nue with 0 NCpi0 -->
@@ -130,9 +129,15 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "bnb_overlay_combined_run13_Extra_v43.5.root" tag = "OTPC" hist_style = "hist" dirs = "singlephotonana/" col = "(0.65,0.34,0.02)" plot_name = "OTPC"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_bdt_testing_sample_extra_v43.5.root" tag = "OTPCExtra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.65,0.34,0.02)" plot_name = "Out of TPC"  scale = "1.0" plot_on_top = "false" >
+     <friend>
+        <filename>/COFredo/OpticalMatch_bnb_bdt_testing_sample_extra_v43.5.root</filename>
+        <treename>opt_tree</treename>
+    </friend>
     <definition>
-        <cut>((m_flash_optfltr_pe_beam>20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)||(m_flash_optfltr_pe_beam==-999))</cut>
+        <cut>
+          ((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))
+        </cut>
         <cut>!(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
     </definition>
 </bdtfile>
