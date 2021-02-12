@@ -519,7 +519,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
             double thiss = sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
             signal += thiss; 
 
-            std::cout<<" "<<sig_files[i]->tag<<" "<<thiss;
+            //std::cout<<" "<<sig_files[i]->tag<<" "<<thiss;
         }
 
         for(size_t i = 0; i < bkg_files.size(); ++i) {
@@ -531,9 +531,10 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
             bkg.push_back(bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
 
             background += bkg.back();
-            std::cout<<" "<<bkg_files[i]->tag<<" "<<bkg.back();
+
+            //std::cout<<" "<<bkg_files[i]->tag<<" "<<bkg.back();
         }
-        std::cout<<std::endl;
+        //std::cout<<std::endl;
 
         double significance =0;
         if(signal==0){
@@ -556,6 +557,10 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
 
         for(auto &dd:d){
             std::cout<<dd<<",";   
+        }
+        std::cout<<") N_BKG (";
+        for(auto &dd:bkg){
+            std::cout<<dd<<" ";   
         }
         std::cout<<") w/ Impact: "<<impact<<" N_signal: "<<signal<<" (E_signal: "<<(signal/(double)total_sig)<<") N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
 

@@ -820,6 +820,20 @@ int bdt_XGtrain(bdt_info &info){
 
     std::string const name = info.identifier;
 
+    DMatrixHandle dtrain, dtest;
+    int silent = 0;
+    int use_gpu = 0;  // set to 1 to use the GPU for training
+
+    safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.train.dat").c_str(), silent, &dtrain));
+    safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.test.dat").c_str(), silent, &dtest));
+
+    // create the booster
+    BoosterHandle booster;
+    DMatrixHandle eval_dmats[2] = {dtrain, dtest};
+    safe_xgboost(XGBoosterCreate(eval_dmats, 2, &booster));
+
+
+
     TFile *f = new TFile(("XGBoost_train_output_"+name+".root").c_str(),"recreate");
     f->cd();
     TH1* btest = new TH1D("btest","btest",100,0,1);
@@ -843,22 +857,7 @@ int bdt_XGtrain(bdt_info &info){
     double v_btest = 0;
     t_btest->Branch("bkg_test",&v_btest);
 
-    DMatrixHandle dtrain, dtest;
-    int silent = 0;
-    int use_gpu = 0;  // set to 1 to use the GPU for training
-
-    safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.train.dat").c_str(), silent, &dtrain));
-    safe_xgboost(XGDMatrixCreateFromFile((info.identifier+".libSVM.test.dat").c_str(), silent, &dtest));
-
-
-
-    // create the booster
-    BoosterHandle booster;
-    DMatrixHandle eval_dmats[2] = {dtrain, dtest};
-    safe_xgboost(XGBoosterCreate(eval_dmats, 2, &booster));
-
-
-    // configure the training
+        // configure the training
     // available parameters are described here:
     // https://xgboost.readthedocs.io/en/latest/parameter.html
 

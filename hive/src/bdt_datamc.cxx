@@ -306,10 +306,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         //And all variables in the vector var
         for(auto &var: vars){
 
-            TFile *fout = new TFile(("datamc/Ratio_"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".root").c_str(),"recreate");
+            std::string urk = (stack_mode? "stack" : "datamc" );
+            TFile *fout = new TFile((urk+"/Ratio_"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".root").c_str(),"recreate");
             fout->cd();
-
-
 
             std::string isSpec;
             if (!var.is_spectator){
@@ -613,6 +612,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             bool isBDT = false;
             int max_val;
+            std::string mva = "mva";
+            if(var.name.size() >= mva.size() && var.name.compare(var.name.size() - mva.size(), mva.size(), mva) == 0 && var.is_logplot){
+               isBDT = true;
+            }
             if(isBDT){
                 min_val = 1e-2;
                 max_val = 1e5;
@@ -703,7 +706,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 l0 = new TLegend(0.11,0.5,0.89,0.89);}
             else{
-                l0 = new TLegend(0.11,0.65,0.89,0.89);
+                l0 = new TLegend(0.11,0.55,0.89,0.89);
             }
             l0->SetFillStyle(0);
             l0->SetLineWidth(0);
@@ -784,10 +787,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 *leg_hack = (TH1*)tmp_tsum->Clone(("leg_tmp_tsum"+std::to_string(s)).c_str());
             leg_hack->SetLineWidth(2);
 
+
             if(var.has_covar&& m_error_string!="stats"){
-                l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,leg_num_digits) ).c_str(),"fl");
+//                l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,leg_num_digits) ).c_str(),"fl");
+                l0->AddEntry(leg_hack,("#splitline{Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)+ "}{ "+var.covar_legend_name+"}").c_str(),"fl"); // Was le
             }else{
-                l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
+                //l0->AddEntry(leg_hack,("#splitline{Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)+ "}{MC Stats Only}").c_str(),"fl"); // Was le
+                l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
             }
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -993,8 +999,23 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
-            if(!stack_mode) l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,0)).c_str(),"lp");		
+            TH1 *leg_hack2 = (TH1*)leg_hack->Clone(("leg_tmp2_tsum"+std::to_string(s)).c_str());
+            if(!stack_mode){
+                l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,0)).c_str(),"lp");		
+                leg_hack2->SetLineColor(kWhite);
+                leg_hack2->SetLineWidth(0);
+                leg_hack2->SetFillStyle(0);
+                l0->AddEntry(leg_hack2,"MC Stats Only","l"); // Was le
+            }else{
+                leg_hack2->SetLineColor(kWhite);
+                leg_hack2->SetLineWidth(0);
+                leg_hack2->SetFillStyle(0);
+                l0->AddEntry(leg_hack2," ","l"); // Was le
+                l0->AddEntry(leg_hack2,"MC Stats Only","l"); // Was le
+            }
 
+
+            double yypos = 0.44;
 
             l0->Draw();
             l0->SetLineWidth(0);
@@ -1028,21 +1049,23 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             pottex.SetNDC();
 
             if (OTPC == true){
-                pottex.DrawLatex(.55,.48, pot_draw.c_str());
+                pottex.DrawLatex(.55, yypos-0.02, pot_draw.c_str());
                 //      std::cout<<"flag 5"<<std::endl;
 
                 //pottex.DrawLatex(.635,.48, pot_draw.c_str());
             } else{
                 //pottex.DrawLatex(.55,.60, pot_draw.c_str());
-                pottex.DrawLatex(.50,.60, pot_draw.c_str());
+                pottex.DrawLatex(.50,yypos+0.1, pot_draw.c_str());
             }
+
+        
 
             TLatex descriptor_tex;
             descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
             descriptor_tex.SetTextAlign(13);  //align at top
             descriptor_tex.SetNDC();
             //descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
-            descriptor_tex.DrawLatex(0.50,0.66,("Selection "+ data_file->topo_name).c_str());
+            descriptor_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
@@ -1065,16 +1088,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TText *pre; 
             TText *pre2; 
             if (isSpectator) {
-                pre = drawPrelim(0.55,stack_mode? 0.525: 0.5,prestring.c_str());
-                if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
+                pre = drawPrelim(0.55,stack_mode? yypos+0.025: yypos,prestring.c_str());
+                if(stack_mode)pre2 = drawPrelim(0.6,yypos-0.02,"Preliminary");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
                 if(OTPC){   
-                    pre = drawPrelim(0.55,0.41,prestring.c_str());
-                    if(stack_mode) pre2 = drawPrelim(0.625,.37,"Preliminary");
+                    pre = drawPrelim(0.55,yypos-0.09,prestring.c_str());
+                    if(stack_mode) pre2 = drawPrelim(0.625,yypos-0.13,"Preliminary");
 
 
                     //std::cout<<"flag 6"<<std::endl;
@@ -1082,8 +1105,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }else{
 
                     //pre = drawPrelim(0.55,stack_mode? 0.525 :0.5,prestring.c_str());
-                    pre = drawPrelim(0.50,stack_mode? 0.525 :0.5,prestring.c_str());
-                    if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
+                    pre = drawPrelim(0.50,stack_mode? yypos+0.025 : yypos,prestring.c_str());
+                    if(stack_mode)pre2 = drawPrelim(0.6,yypos-0.02,"Preliminary");
                 }
 
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
@@ -1258,14 +1281,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             fout->cd();
-            d0->Write(("d0_"+tago).c_str());
+            if(!stack_mode){
+                d0->Write(("d0_"+tago).c_str());
+                ratpre->Write(("ratpre_"+tago).c_str());
+                ratunit->Write(("ratunit_"+tago).c_str());
+                gr->Write(("graph_"+tago).c_str());
+            }
             tsum->Write(("tsum_"+tago).c_str());
-            ratpre->Write(("ratpre_"+tago).c_str());
-            ratunit->Write(("ratunit_"+tago).c_str());
-            gr->Write(("graph_"+tago).c_str());
-
-            //std::string mean = "(Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
-            std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+" #pm "+to_string_prec(tot_norm_error/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
+            stk->Write(("tstk_"+tago).c_str());
+            std::string mean = "(Data/Pred: "+to_string_prec(NdatEvents/NeventsStack,2)+" #pm "+to_string_prec(tot_norm_error/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
 
             // Make text file for chi^2
@@ -1299,14 +1323,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
             std::string combined = mean + "     " +ks;
-            //std::string mean = "Ratio: Normalized" ;
-            TLatex *t = new TLatex(0.11,0.02,combined.c_str());
-            //   TLatex *t = new TLatex(0.11,0.41,ks.c_str());
+            TLatex *t = new TLatex(0.10,0.04,combined.c_str());
             t->SetNDC();
             t->SetTextColor(kRed-7);
-            //t->SetTextFont(43);
             t->SetTextSize(0.09);
-            if(!stack_mode)t->Draw("same");
+            if(!stack_mode){
+                t->Draw("same");
+            }
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
             //var_precut.front()->GetYaxis()->SetTitle("Events");

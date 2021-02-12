@@ -85,6 +85,7 @@
     <definition>
         <cut>mctruth_cc_or_nc==0 </cut> 
         <cut>mctruth_num_exiting_pi0==1</cut>
+        <cut> mctruth_nu_pdg==14</cut>  
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
         <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
     </definition>
@@ -120,6 +121,7 @@
     <definition>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
+        <cut> mctruth_cc_or_nc==0</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
         <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
     </definition>

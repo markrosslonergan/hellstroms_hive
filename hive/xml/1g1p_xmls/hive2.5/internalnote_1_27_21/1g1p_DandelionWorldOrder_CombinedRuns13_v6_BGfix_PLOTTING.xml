@@ -1,10 +1,20 @@
 <?xml version="1.0" ?>
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.974952,0.96273,0.467404,0.570654,0.521623)" />
+<!--V8iround-->
+<topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.9531,0.9845,0.467404,0.7474,0.7088)" />
 
+<!-- This is standard-->
+<!--
 <plot_pot>
     <run_period name ="RunI/II/IIIa" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770) || ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116))" fraction = "0.4742"  />
     <run_period name ="RunIIIb/IV" cut ="( (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.5258" />
+</plot_pot>
+-->
+<!-- More Accurate ? -->
+
+<plot_pot>
+    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.249"  />
+    <run_period name ="RunII/RunIIIb/IV" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.751" />
 </plot_pot>
 
 <covar dir="." name="frac_covariance" type="frac" plotname="Flux, XSec &amp; Det Sys"/>
@@ -17,7 +27,7 @@
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc == 1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut> 
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
     <friend>
         <filename>COFredo/OpticalMatch_ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root</filename>
@@ -25,23 +35,13 @@
     </friend>
 </bdtfile>
 
-<!--
-<bdtfile filename = "ncdelta_overlay_combined_run13_v33.3.uniq.spluff.test.root" tag = "NCDeltaRadOverlay" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "x2 SM NC #Delta Radiative (LEE)" scale = "2.0" signal = "true" plot_on_top = "true" >
-    <definition>
-        <cut> mctruth_is_delta_radiative==1 </cut>
-        <cut> mctruth_cc_or_nc==1</cut> 
-          <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
-    </definition>
-</bdtfile>
--->
-
 <bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter==5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0==1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
     <friend>
         <filename>COFredo/OpticalMatch_ncpi0_overlay_combined_run13_v33.3.uniq.root</filename>
@@ -56,7 +56,7 @@
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0==1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
     <friend>
         <filename>COFredo/OpticalMatch_ncpi0_overlay_combined_run13_v33.3.uniq.root</filename>
@@ -65,28 +65,12 @@
 
 </bdtfile>
 
-<!--
-<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}"  scale = "1.0" plot_on_top = "false" >
-
-    <definition>
-        <cut> mctruth_cc_or_nc==1</cut> 
-        <cut> mctruth_num_exiting_pi0>1</cut>
-        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
-    </definition>
-    <friend>
-        <filename>COFredo/OpticalMatch_bnb_bdt_testing_sample_v33.3.uniq.root</filename>
-        <treename>opt_tree</treename>
-    </friend>
-</bdtfile>
--->
-
 <bdtfile filename = "ccpi0_overlay_combined_run13_v33.3.uniq.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>mctruth_cc_or_nc==0 </cut> 
         <cut>mctruth_num_exiting_pi0==1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
     <friend>
         <filename>COFredo/OpticalMatch_ccpi0_overlay_combined_run13_v33.3.uniq.root</filename>
@@ -106,7 +90,7 @@
         <cut> (!(mctruth_cc_or_nc==0 &amp;&amp; fabs(mctruth_nu_pdg)==12)) </cut> <!-- not cc nue -->
         <cut> !(fabs(mctruth_nu_pdg)==12 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0 >0 ) </cut>  <!-- NC nue with 0 NCpi0 -->
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
     <friend>
         <filename>COFredo/OpticalMatch_bnb_bdt_testing_sample_extra_v43.5.root</filename>
@@ -121,34 +105,32 @@
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
     <friend>
         <filename>COFredo/OpticalMatch_nue_bdt_testing_sample_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
     </friend>
-
-
 </bdtfile>
 
-<bdtfile filename = "bnb_bdt_testing_sample_extra_v43.5.root" tag = "OTPCExtra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "Out of TPC"  scale = "1.0" plot_on_top = "false" mergedown = "true">
-    <definition>
-        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
-        <cut>!(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
-    </definition>
-    <friend>
-        <filename>COFredo/OpticalMatch_bnb_bdt_testing_sample_extra_v43.5.root</filename>
-        <treename>opt_tree</treename>
-    </friend>
-</bdtfile>
-
-<bdtfile filename = "dirt_overlay_combined_run123_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" scale="1.0"> 
+<bdtfile filename = "dirt_overlay_combined_run123_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" scale="1.0" mergedown="true"> 
     <definition>
         <cut>1</cut>
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
     </definition>
     <friend>
         <filename>COFredo/OpticalMatch_dirt_overlay_combined_run123_v33.3.uniq.root</filename>
+        <treename>opt_tree</treename>
+    </friend>
+</bdtfile>
+
+<bdtfile filename = "bnb_bdt_testing_sample_extra_v43.5.root" tag = "OTPCExtra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "Out of TPC"  scale = "1.0" plot_on_top = "false" >
+    <definition>
+        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
+        <cut>!(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
+    </definition>
+    <friend>
+        <filename>COFredo/OpticalMatch_bnb_bdt_testing_sample_extra_v43.5.root</filename>
         <treename>opt_tree</treename>
     </friend>
 </bdtfile>
@@ -200,25 +182,32 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "ssveto_bdt_training_sample_v33.3.root" tag = "SSvetoTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "COFredo/ssv_bdt_training_sample_noduplicates_withCCPi0_v43.5.root" tag = "SSvetoRedoCCpi0TrainParent" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
     </definition>
     <training>
+        <!--
         <cut> sim_shower_pdg[0]==22</cut>
         <cut> sim_shower_parent_pdg[0]==111</cut>
+        -->
+        <cut> (mctruth_pi0_leading_photon_exiting_TPC==1 &amp;&amp; mctruth_pi0_subleading_photon_exiting_TPC==1)</cut>
+        <cut> Sum$(sss_candidate_parent_pdg==111)>0</cut>
     </training>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "SSvetoTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.1,0.2,0.2)" plot_name = "SSveto Test" fillstyle = "3333" scale = "1">
+
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "SSvetoTestParent" hist_style = "hist" dirs = "singlephotonana/" col = "(0.1,0.2,0.2)" plot_name = "SSveto Test" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
     </definition>
     <training>
-        <cut> sim_shower_pdg[0]==22</cut>
-        <cut> sim_shower_parent_pdg[0]==111</cut>
+        <!--<cut> sim_shower_pdg[0]==22</cut>
+        <cut> sim_shower_parent_pdg[0]==111</cut>-->
+        <cut> (mctruth_pi0_leading_photon_exiting_TPC==1 &amp;&amp; mctruth_pi0_subleading_photon_exiting_TPC==1)</cut>
+        <cut> Sum$(sss_candidate_parent_pdg==111)>0</cut>
     </training>
 </bdtfile>
 
@@ -265,6 +254,27 @@
         <cut> sim_track_pdg[0] == 2212 </cut>
     </training>
 </bdtfile>
+
+<bdtfile filename = "ncdelta_bdt_training_sample_v33.3_SSVredo.root" tag = "NCDeltaRedoTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 </cut> 
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -113.5 &amp;&amp; mctruth_nu_vertex_y &lt; 113.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 2.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1033.8 </cut>       
+        <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 0</cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
+        <cut> sim_shower_pdg[0] == 22 </cut>
+        <cut> sim_track_overlay_fraction[0] &lt; 0.5 </cut>
+        <cut> sim_track_pdg[0] == 2212 </cut>
+    </training>
+</bdtfile>
+
 
 <bdtfile filename = "ncdelta_bdt_testing_sample_v33.3.uniq.root" tag = "NCDeltaTest" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NCDeltaTest" fillstyle = "3333" scale = "1">
     <definition>
@@ -358,7 +368,8 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.973" max = "0.975" steps="100"/>
+    <!--<scan min = "0.974952" max = "0.97495201" steps="100"/>-->
+     <scan min = "0.95" max = "1.0" steps="100"/>
 </mva>
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
@@ -383,7 +394,8 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.962" max = "0.964" steps="200"/>
+    <!--<scan min = "0.96273" max = "0.9627301" steps="200"/>-->
+    <scan min = "0.96273" max = "1.0" steps="200"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
@@ -410,7 +422,8 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.467" max = "0.468" steps="50"/>
+    <!--    <scan min = "0.45" max = "0.51" steps="50"/>-->
+    <scan min = "0.467404" max = "0.46740401" steps="50"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "Nue" name ="Nue fake BDT" binning = "(24,0.0,1.0)">    
@@ -436,33 +449,36 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.5697" max = "0.574" steps="50"/>
+    <!--<scan min = "0.570654" max = "0.57065401" steps="50"/>-->
+    <scan min = "0.4" max = "0.8" steps="50"/>
 </mva>
-<mva type="BDT" use="yes" tag = "SSV" name ="SSV focused BDT" binning = "(24,0.0,1.0)">
+
+<mva type="BDT" use="yes" tag = "SSVredo2wCC600parent" name ="SSV focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees=1200</param>
+        <param> n_trees=450</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
         <param> eval_metric=logloss</param>
         <param> min_child_weight=1</param> 
-        <param> gamma=1.0</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will be.    -->
-        <param> max_depth=9</param>    <!-- How many layers deep each tree -->
-        <param> eta=0.015</param>        <!-- Learning Rate -->
-        <param> subsample=0.9</param> <!-- % of events passed to each tree -->
-        <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
+        <param> gamma=5.0</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will be.    -->
+        <param> max_depth=7</param>    <!-- How many layers deep each tree -->
+        <param> eta=0.01</param>        <!-- Learning Rate -->
+        <param> subsample=0.90</param> <!-- % of events passed to each tree -->
+        <param> colsample_bytree=1.0</param>   <!-- % of features that are passed to each tree  -->
         <param> verbosity=1</param>
     </method>
     <file           
-        bkg_train_tag = "SSvetoTrain"
-        bkg_test_tag = "SSvetoTest"
+        bkg_train_tag = "SSvetoRedoCCpi0TrainParent"
+        bkg_test_tag = "SSvetoTestParent"
         bkg_test_cut = "1"
-        sig_train_tag = "NCDeltaTrain"
+        sig_train_tag = "NCDeltaRedoTrain"
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.521" max = "0.522" steps="50"/>
+    <scan min = "0.4" max = "0.9" steps="50"/>
 </mva>
+
 <!-- ================================================== PRE-CUTS   ==================================================== -->
 
 <precut def = "#GE#>40.0" name = "Michel Cut"/>
@@ -786,71 +802,70 @@
 
 
 
-
 <!--- SSS BDT variable -->
 <var def = "log10(Min$(isolation_min_dist_trk_unassoc))" binning = "(24,-1,2)" unit = "Min Dist from track to Unnass hit log[cm]" type="d"    training="4"/>
-<var def = "Sum$(isolation_num_shr_hits_win_1cm_trk)" binning = "(51,0,40)" unit = "Num Shr hits in 1cm" type="d"    training="4"/>
-<var def = "Sum$(isolation_num_shr_hits_win_2cm_trk)" binning = "(51,0,40)" unit = "Num Shr hits in 2cm" type="d"    training="4"/>
-<var def = "Sum$(isolation_num_shr_hits_win_5cm_trk)" binning = "(24,0,40)" unit = "Num Shr hits in 5cm" type="d"    training="4"/>
-<var def = "Sum$(isolation_num_shr_hits_win_10cm_trk)" binning = "(24,0,40)" unit = "Num Shr hits in 10cm" type="d"    training="4"/>
-<var def = "Sum$(isolation_num_unassoc_hits_win_1cm_trk)" binning = "(24,0,40)" unit = "Num Unnass hits in 1cm" type="d"    training="4"/>
-<var def = "Sum$(isolation_num_unassoc_hits_win_2cm_trk)" binning = "(24,0,40)" unit = "Num Unnass hits in 2cm" type="d"    training="4"/>
-<var def = "Sum$(isolation_num_unassoc_hits_win_5cm_trk)" binning = "(24,0,40)" unit = "Num Unnass hits in 5cm" type="d"    training="4"/>
+<var def = "Sum$(isolation_num_shr_hits_win_1cm_trk)" binning = "(51,0,40)" unit = "Num Shr hits in 1cm" type="d"    training=""/>
+<var def = "Sum$(isolation_num_shr_hits_win_2cm_trk)" binning = "(51,0,40)" unit = "Num Shr hits in 2cm" type="d"    training=""/>
+<var def = "Sum$(isolation_num_shr_hits_win_5cm_trk)" binning = "(24,0,40)" unit = "Num Shr hits in 5cm" type="d"    training=""/>
+<var def = "Sum$(isolation_num_shr_hits_win_10cm_trk)" binning = "(24,0,40)" unit = "Num Shr hits in 10cm" type="d"    training=""/>
+<var def = "Sum$(isolation_num_unassoc_hits_win_1cm_trk)" binning = "(24,0,40)" unit = "Num Unnass hits in 1cm" type="d"    training=""/>
+<var def = "Sum$(isolation_num_unassoc_hits_win_2cm_trk)" binning = "(24,0,40)" unit = "Num Unnass hits in 2cm" type="d"    training=""/>
+<var def = "Sum$(isolation_num_unassoc_hits_win_5cm_trk)" binning = "(24,0,40)" unit = "Num Unnass hits in 5cm" type="d"    training=""/>
 <var def = "Sum$(isolation_num_unassoc_hits_win_10cm_trk)" binning = "(24,0,200)" unit = "Num Unnass hits in 10cm" type="d"    training="4"/>
-<var def = "DeNan(sss_num_candidates,0)" binning="(24,0,15)" unit = "Second Shower Number of  candidate" type ="d"  training="4" group = "22"/>
-<var def = "DeNan(sss3d_num_showers,0)" binning="(24,0,50)" unit = "Second Shower 3D Number of  candidate" type ="d"  training="4" group="22"/>
+<var def = "DeNan(sss_num_candidates,0)" binning="(24,0,15)" unit = "Second Shower Number of candidate" type ="d"  training="" group = "22"/>
+<var def = "DeNan(sss3d_num_showers,0)" binning="(24,0,50)" unit = "Second Shower 3D Number of  candidate" type ="d"  training="" group="23"/>
 <var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(24,0,1)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="4"/>
 <var def = "log10(sss_num_unassociated_hits)" binning="(50,0,4)" unit = "Number of unassocaited hits in slice log10" type ="d"  training="4"/>
-<var def = "log10(sss_num_unassociated_hits_below_threshold)" binning="(50,0,4)" unit = "Number of unassocaited hits below thresh in slice log10" type ="d"  training="4"/>
+<var def = "log10(sss_num_unassociated_hits_below_threshold)" binning="(50,0,4)" unit = "Number of unassocaited hits below thresh in slice log10" type ="d"  training=""/>
 
 <var def = "Min$(sss_candidate_impact_parameter)" binning="(50,0,80)" unit = "Min impact parm basic" type="d" training="4"/>
 <var def = "Min$(sss_candidate_min_dist)" binning="(50,0,80)" unit = "Min conv parm basic" type="d" training="4"/>
 
-<var def = "(sss2d_conv_ranked_conv==sss2d_ioc_ranked_conv)" binning = "(2,0,1)" unit = "Is SSS2d same" type = "d" training = "4"/>
+<var def = "(sss2d_conv_ranked_conv==sss2d_ioc_ranked_conv)" binning = "(2,0,1)" unit = "Is SSS2d same" type = "d" training = ""/>
 
-<var def = "sss2d_ioc_ranked_en" binning = "(50,0,200)" unit ="sss2d min IOC candidate energy [MeV]" type="d"  training="4"/>
-<var def = "sss2d_ioc_ranked_conv" binning = "(50,0,120)" unit ="sss2d min IOC candidate conversion Distance [cm]" type="d"  training="4"/>
-<var def = "sss2d_ioc_ranked_ioc" binning = "(50,0,1.2)" unit ="sss2d min IOC candidate IOC ratio" type="d"  training="4"/>
-<var def = "sss2d_ioc_ranked_invar" binning = "(50,0,200)" unit ="sss2d min IOC candidate invariant mass [MeV]" type="d"  training="4"/>
+<var def = "sss2d_ioc_ranked_en" binning = "(50,0,200)" unit ="sss2d min IOC candidate energy [MeV]" type="d"  training=""/>
+<var def = "sss2d_ioc_ranked_conv" binning = "(50,0,120)" unit ="sss2d min IOC candidate conversion Distance [cm]" type="d"  training=""/>
+<var def = "sss2d_ioc_ranked_ioc" binning = "(50,0,1.2)" unit ="sss2d min IOC candidate IOC ratio" type="d"  training=""/>
+<var def = "sss2d_ioc_ranked_invar" binning = "(50,0,200)" unit ="sss2d min IOC candidate invariant mass [MeV]" type="d"  training=""/>
 <var def = "sss2d_ioc_ranked_angle_to_shower" binning = "(50,0,3.14159)" unit ="sss2d min IOC angle wrt primary shower [deg]" type="d"  training="4"/>
-<var def = "sss2d_ioc_ranked_pca" binning = "(50,0.7,1)" unit = "sss2d min IOC PCA" type="d" training="4"/>
-<var def = "sss2d_ioc_ranked_num_planes" binning = "(3,1,3)" unit = "sss2d min IOC num planes" type="d" training="4"/>
+<var def = "sss2d_ioc_ranked_pca" binning = "(50,0.7,1)" unit = "sss2d min IOC PCA" type="d" training=""/>
+<var def = "sss2d_ioc_ranked_num_planes" binning = "(3,1,3)" unit = "sss2d min IOC num planes" type="d" training=""/>
 
 <var def = "sss2d_conv_ranked_en" binning = "(50,0,200)" unit ="sss2d closest candidate energy energy [MeV" type="d"  training="4"/>
-<var def = "sss2d_conv_ranked_conv" binning = "(50,0,80)" unit ="sss2d closest candidate conversion Distance [cm]" type="d"  training="4"/>
+<var def = "sss2d_conv_ranked_conv" binning = "(50,0,80)" unit ="sss2d closest candidate conversion Distance [cm]" type="d"  training=""/>
 <var def = "sss2d_conv_ranked_ioc" binning = "(50,0,1.2)" unit ="sss2d closest candidate IOC ratio" type="d"  training="4"/>
 <var def = "sss2d_conv_ranked_invar" binning = "(50,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="4"/>
 <var def = "sss2d_conv_ranked_angle_to_shower" binning = "(50,0,3.14159)" unit ="sss2d closest candidate angle wrt primary shower [deg]" type="d"  training="4"/>
-<var def = "sss2d_conv_ranked_pca" binning = "(50,0.7,1)" unit = "sss2d closest candidate PCA" type="d" training="4"/>
-<var def = "sss2d_conv_ranked_num_planes" binning = "(3,1,3)" unit = "sss2d closest candidate num planes" type="d" training="4"/>
+<var def = "sss2d_conv_ranked_pca" binning = "(50,0.7,1)" unit = "sss2d closest candidate PCA" type="d" training=""/>
+<var def = "sss2d_conv_ranked_num_planes" binning = "(3,1,3)" unit = "sss2d closest candidate num planes" type="d" training=""/>
 
 <var def = "sss2d_invar_ranked_en" binning = "(50,0,200)" unit ="sss2d invar ranked energy energy [MeV" type="d"  training="4"/>
 <var def = "sss2d_invar_ranked_conv" binning = "(50,0,80)" unit ="sss2d invar ranked conversion Distance [cm]" type="d"  training="4"/>
-<var def = "sss2d_invar_ranked_ioc" binning = "(50,0,1.2)" unit ="sss2d invar ranked IOC ratio" type="d"  training="4"/>
+<var def = "sss2d_invar_ranked_ioc" binning = "(50,0,1.2)" unit ="sss2d invar ranked IOC ratio" type="d"  training=""/>
 <var def = "sss2d_invar_ranked_invar" binning = "(50,0,200)" unit ="sss2d invar ranked invariant mass [MeV]" type="d"  training="4"/>
-<var def = "sss2d_invar_ranked_angle_to_shower" binning = "(50,0,3.14159)" unit ="sss2d invar ranked angle wrt primary shower [deg]" type="d"  training="4"/>
-<var def = "sss2d_invar_ranked_pca" binning = "(50,0.7,1)" unit = "sss2d invar ranked PCA" type="d" training="4"/>
-<var def = "sss2d_invar_ranked_num_planes" binning = "(3,1,3)" unit = "sss2d invar ranked num planes" type="d" training="4"/>
+<var def = "sss2d_invar_ranked_angle_to_shower" binning = "(50,0,3.14159)" unit ="sss2d invar ranked angle wrt primary shower [deg]" type="d"  training=""/>
+<var def = "sss2d_invar_ranked_pca" binning = "(50,0.7,1)" unit = "sss2d invar ranked PCA" type="d" training=""/>
+<var def = "sss2d_invar_ranked_num_planes" binning = "(3,1,3)" unit = "sss2d invar ranked num planes" type="d" training=""/>
 
-<var def = "sss3d_ioc_ranked_en" binning = "(50,0,80)" unit ="sss3d min IOC candidate energy [MeV]" type="d"  training="4"/>
-<var def = "sss3d_ioc_ranked_conv" binning = "(50,0,100)" unit ="sss3d min IOC candidate conversion Distance [cm]" type="d"  training="4"/>
+<var def = "sss3d_ioc_ranked_en" binning = "(50,0,80)" unit ="sss3d min IOC candidate energy [MeV]" type="d"  training=""/>
+<var def = "sss3d_ioc_ranked_conv" binning = "(50,0,100)" unit ="sss3d min IOC candidate conversion Distance [cm]" type="d"  training=""/>
 <var def = "sss3d_ioc_ranked_ioc" binning = "(50,0,1.2)" unit ="sss3d min IOC candidate IOC ratio" type="d"  training="4"/>
-<var def = "sss3d_ioc_ranked_invar" binning = "(50,0,200)" unit ="sss3d min IOC candidate invariant mass [MeV]" type="d"  training="4"/>
-<var def = "sss3d_ioc_ranked_implied_invar" binning = "(50,0,200)" unit ="sss3d min IOC implied invariant mass [MeV]" type="d"  training="4"/>
+<var def = "sss3d_ioc_ranked_invar" binning = "(50,0,200)" unit ="sss3d min IOC candidate invariant mass [MeV]" type="d"  training=""/>
+<var def = "sss3d_ioc_ranked_implied_invar" binning = "(50,0,200)" unit ="sss3d min IOC implied invariant mass [MeV]" type="d"  training=""/>
 <var def = "sss3d_ioc_ranked_opang" binning = "(50,-1,1)" unit ="sss3d min IOC angle wrt primary shower [cos]" type="d"  training="4"/>
-<var def = "sss3d_ioc_ranked_implied_opang" binning = "(50,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="4"/>
+<var def = "sss3d_ioc_ranked_implied_opang" binning = "(50,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training=""/>
 
-<var def = "sss3d_invar_ranked_en" binning = "(50,0,200)" unit ="sss3d best invariant mass candidate energy [MeV]" type="d"  training="4"/>
+<var def = "sss3d_invar_ranked_en" binning = "(50,0,200)" unit ="sss3d best invariant mass candidate energy [MeV]" type="d"  training=""/>
 <var def = "sss3d_invar_ranked_conv" binning = "(50,0,100)" unit ="sss3d best invariant mass candidate conversion Distance [cm]" type="d"  training="4"/>
-<var def = "sss3d_invar_ranked_ioc" binning = "(50,0,1.2)" unit ="sss3d best invariant mass candidate IOC ratio" type="d"  training="4"/>
+<var def = "sss3d_invar_ranked_ioc" binning = "(50,0,1.2)" unit ="sss3d best invariant mass candidate IOC ratio" type="d"  training=""/>
 <var def = "sss3d_invar_ranked_invar" binning = "(50,0,200)" unit ="sss3d best invariant mass candidate invariant mass [MeV]" type="d"  training="4"/>
-<var def = "sss3d_invar_ranked_implied_invar" binning = "(50,0,200)" unit ="sss3d best invariant mass candidate implied invariant mass [MeV]" type="d"  training="4"/>
+<var def = "sss3d_invar_ranked_implied_invar" binning = "(50,0,200)" unit ="sss3d best invariant mass candidate implied invariant mass [MeV]" type="d"  training=""/>
 <var def = "sss3d_invar_ranked_opang" binning = "(50,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="d"  training="4"/>
-<var def = "sss3d_invar_ranked_implied_opang" binning = "(50,-1,1)" unit ="sss3d best invariant mass candidate implied angle w.r.t primary shower [cos]" type="d"  training="4"/>
+<var def = "sss3d_invar_ranked_implied_opang" binning = "(50,-1,1)" unit ="sss3d best invariant mass candidate implied angle w.r.t primary shower [cos]" type="d"  training=""/>
 
 <var def = "reco_shower_plane2_meanRMS" binning = "(50,0,100)" unit = "Reco Shower plane 2 RMS" type="d" training ="" group=""/>
-<var def = "reco_shower_reclustered_energy_max" binning = "(50,0,250)" unit = "Reclustred Energy Max" type = "d" training="1234" group =""/>
-<var def = "(reco_shower_reclustered_energy_plane0+reco_shower_reclustered_energy_plane2+reco_shower_reclustered_energy_plane1)/3.0" binning = "(50,0,125)" unit = "Reclustred Energy Mean" type = "d" training="1234" group ="12"/>
+<var def = "reco_shower_reclustered_energy_max" binning = "(50,0,250)" unit = "Reclustred Energy Max" type = "d" training="123" group =""/>
+<var def = "(reco_shower_reclustered_energy_plane0+reco_shower_reclustered_energy_plane2+reco_shower_reclustered_energy_plane1)/3.0" binning = "(50,0,125)" unit = "Reclustred Energy Mean" type = "d" training="123" group ="12"/>
 
 
 <!--proton reco studies vars-->
@@ -896,9 +911,9 @@
 <!--bdt vars -->
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4BNB_mva" binning = "(25,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6606" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(25,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4SSV_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6606" pmin=0/>
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
@@ -935,6 +950,10 @@
 
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(18,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "330"/>
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "331"/>
+
+<!--chapter 5 stage 6-->
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(9,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "332"/>
+<var def = "#GEO#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "332"/>
 
 
 

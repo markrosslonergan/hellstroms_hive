@@ -128,17 +128,17 @@ struct bdt_file{
         double pot;
 
         TFile *f;
-        TTree *tvertex;
+        TTree *tvertex = NULL;
 
         //copy tvertex into topovertex, but with topological cut.
-        TTree *topovertex;
+        TTree *topovertex = NULL;
 
 
-        TTree *tevent;
-        TTree *tpot;
-        TTree *trs;
-        TTree *teventweight;
-        TTree *tslice;
+        TTree *tevent = NULL;
+        TTree *tpot = NULL;
+        TTree *trs = NULL;
+        TTree *teventweight = NULL;
+        TTree *tslice = NULL;
 
         std::string topological_list_name;
         TEntryList * topological_list;
@@ -239,8 +239,8 @@ struct bdt_file{
         ~bdt_file();
 
         int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu);
-        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,double plot_pot);
-        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,double plot_pot,std::string external_cuts);
+        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot);
+        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot,std::string external_cuts);
 
 
     int makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage, const std::vector<double> & fbdtcuts );

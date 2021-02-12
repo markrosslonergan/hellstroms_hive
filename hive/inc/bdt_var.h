@@ -117,11 +117,11 @@ struct bdt_variable{
             
             bool alt_mode = bins.find("alt")!=std::string::npos;
             if(alt_mode){
+                std::cout<<"applying custom binning with config: "<<std::endl;
                 int pl = bins.find("alt");
                 bins.erase(pl,pl+3);
             }
 
-            std::cout<<bins<<std::endl;
 
             bins.erase(std::remove(bins.begin(), bins.end(), '('), bins.end());
             bins.erase(std::remove(bins.begin(), bins.end(), ')'), bins.end());
