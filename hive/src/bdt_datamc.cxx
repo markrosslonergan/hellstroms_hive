@@ -1005,13 +1005,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 leg_hack2->SetLineColor(kWhite);
                 leg_hack2->SetLineWidth(0);
                 leg_hack2->SetFillStyle(0);
-                l0->AddEntry(leg_hack2,"MC Stats Only","l"); // Was le
+                l0->AddEntry(leg_hack2,"#splitline{MC Stat Error Only}{}","l"); // Was le
             }else{
                 leg_hack2->SetLineColor(kWhite);
                 leg_hack2->SetLineWidth(0);
                 leg_hack2->SetFillStyle(0);
                 l0->AddEntry(leg_hack2," ","l"); // Was le
-                l0->AddEntry(leg_hack2,"MC Stats Only","l"); // Was le
+                l0->AddEntry(leg_hack2,"#splitline{MC Stat Error Only}{}","l"); // Was le
             }
 
 
@@ -1290,7 +1290,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             tsum->Write(("tsum_"+tago).c_str());
             stk->Write(("tstk_"+tago).c_str());
             std::string mean = "(Data/Pred: "+to_string_prec(NdatEvents/NeventsStack,2)+" #pm "+to_string_prec(tot_norm_error/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
-            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
+            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n_{#it{DOF}}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
 
             // Make text file for chi^2
             // Note that this depends on e.g. "Run 1" existing in your plot_name
