@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 
 <mode name="nu" />
+<detector name="uBooNE" />
 
 <channel name="1g0p" unit="Shower Energy [GeV]">
     <bins
