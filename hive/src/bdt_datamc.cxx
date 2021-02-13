@@ -790,10 +790,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             if(var.has_covar&& m_error_string!="stats"){
 //                l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,leg_num_digits) ).c_str(),"fl");
-                l0->AddEntry(leg_hack,("#splitline{Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)+ "}{ "+var.covar_legend_name+"}").c_str(),"fl"); // Was le
+                l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
             }else{
                 //l0->AddEntry(leg_hack,("#splitline{Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)+ "}{MC Stats Only}").c_str(),"fl"); // Was le
                 l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
+
             }
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -1000,18 +1001,22 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
             TH1 *leg_hack2 = (TH1*)leg_hack->Clone(("leg_tmp2_tsum"+std::to_string(s)).c_str());
+            std::string sterrname = "#splitline{MC Stat Error Only}{}";
+            if(var.has_covar){
+                    sterrname = "#splitline{"+var.covar_legend_name+"}{}";
+            }
             if(!stack_mode){
                 l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,0)).c_str(),"lp");		
                 leg_hack2->SetLineColor(kWhite);
                 leg_hack2->SetLineWidth(0);
                 leg_hack2->SetFillStyle(0);
-                l0->AddEntry(leg_hack2,"#splitline{MC Stat Error Only}{}","l"); // Was le
+                l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
             }else{
                 leg_hack2->SetLineColor(kWhite);
                 leg_hack2->SetLineWidth(0);
                 leg_hack2->SetFillStyle(0);
                 l0->AddEntry(leg_hack2," ","l"); // Was le
-                l0->AddEntry(leg_hack2,"#splitline{MC Stat Error Only}{}","l"); // Was le
+                l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
             }
 
 
