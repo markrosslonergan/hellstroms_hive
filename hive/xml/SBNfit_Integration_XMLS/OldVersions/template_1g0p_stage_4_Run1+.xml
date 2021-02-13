@@ -1,0 +1,180 @@
+<?xml version="1.0" ?>
+
+<mode name="nu" />
+
+<detector name="uBooNE" />
+<channel name="1g0p" unit="MeV">
+    <bins
+        edges=BINBINBIN
+        />
+    <subchannel name="NCDeltaRadOverlaySM" osc = "0" />
+    <!-- <subchannel name="NCDeltaRadOverlayLEE" osc = "0" /> --> 
+    <subchannel name="NCPi0Coh" osc = "0" />
+    <subchannel name="NCPi0NotCoh" osc = "0" />
+    <subchannel name="NCMultiPi0" osc = "0" />
+    <subchannel name="CC1Pi0" osc = "0" />
+    <subchannel name="BNBOther" osc = "0" />
+    <subchannel name="NueOverlays" osc = "0" />
+    <subchannel name="Dirt" osc = "0" />
+    <subchannel name="BNBext" osc = "0" data="true"/>
+</channel>
+
+
+<WeightMaps>
+    <variation pattern="NormNCCOH_UBGenie" mode="minmax"/>
+    <variation pattern="NormCCCOH_UBGenie" mode="minmax"/>
+    <variation pattern="Theta_Delta2Npi_UBGenie" mode="minmax" />
+    <variation pattern="RPA_CCQE_UBGenie" mode="minmax" />
+    <variation pattern="XSecShape_CCMEC_UBGenie" mode="minmax" />
+    <variation pattern="VecFFCCQEshape_UBGenie" mode="minmax" />
+    <variation pattern="AxFFCCQEshape_UBGenie" mode="minmax" />
+    <variation pattern="DecayAngMEC_UBGenie" mode="minmax" />
+    <variation pattern="_UBGenie" weight_formula="1.0/genie_CV_tune_weight"/> 
+</WeightMaps>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_BNBOtherRun1.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+    <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_4_BNBOtherRun1+_combined.root"/>
+    <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_BNBOtherRun1.root"/> 
+    <branch 
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_1g0p_BNBOther"
+        additional_weight="simple_pot_weight" 
+        eventweight_branch_name = "mcweight"
+
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_BNBextRun1.root"scale = "24.785592" maxevents="5000000" pot="1.0" fake="true"> 
+    <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/fake/fake_1g0pMar2020_stage_4_BNBextRun1.root"/>
+    <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_BNBextRun1.root"/> 
+    <branch 
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_1g0p_BNBext"
+        additional_weight="simple_pot_weight" 
+        eventweight_branch_name = "mcweight"
+
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_CC1Pi0Run1.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+    <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_4_CC1Pi0Run1+_combined.root"/>
+    <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_CC1Pi0Run1.root"/> 
+    <branch 
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_1g0p_CC1Pi0"
+        additional_weight="simple_pot_weight" 
+        eventweight_branch_name = "mcweight"
+
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_DirtRun1.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+    <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_4_DirtRun1+_combined.root"/>
+    <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_DirtRun1.root"/> 
+    <branch 
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_1g0p_Dirt"
+        additional_weight="simple_pot_weight" 
+        eventweight_branch_name = "mcweight"
+
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCDeltaRadOverlayRun1.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+    <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_4_NCDeltaRadOverlayRun1+_combined.root"/>
+    <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCDeltaRadOverlayRun1.root"/> 
+    <branch 
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_1g0p_NCDeltaRadOverlaySM"
+        additional_weight="simple_pot_weight" 
+        eventweight_branch_name = "mcweight"
+
+        />
+</MultisimFile>
+<!--
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCDeltaRadOverlaySMRun1.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+    <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_4_NCDeltaRadOverlayRun1+_combined.root"/>
+    <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCDeltaRadOverlaySMRun1.root"/> 
+    <branch 
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_1g0p_NCDeltaRadOverlayLEE"
+        additional_weight="simple_pot_weight" 
+        eventweight_branch_name = "mcweight"
+
+        />
+</MultisimFile>
+-->
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCMultiPi0Run1.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+    <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_4_NCMultiPi0Run1+_combined.root"/>
+    <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCMultiPi0Run1.root"/> 
+    <branch 
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_1g0p_NCMultiPi0"
+        additional_weight="simple_pot_weight" 
+        eventweight_branch_name = "mcweight"
+
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCPi0CohRun1.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+    <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_4_NCPi0CohRun1+_combined.root"/>
+    <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCPi0CohRun1.root"/> 
+    <branch 
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_1g0p_NCPi0Coh"
+        additional_weight="simple_pot_weight" 
+        eventweight_branch_name = "mcweight"
+
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCPi0NotCohRun1.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+    <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_4_NCPi0NotCohRun1+_combined.root"/>
+    <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NCPi0NotCohRun1.root"/> 
+    <branch 
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_1g0p_NCPi0NotCoh"
+        additional_weight="simple_pot_weight" 
+        eventweight_branch_name = "mcweight"
+
+        />
+</MultisimFile>
+<MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NueOverlaysRun1.root"scale = "24.785592" maxevents="5000000" pot="1.0"> 
+    <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/gyarbrou/reassemble_samples/05_20/all/output/sbnfit_1g0pMar2020_stage_4_NueOverlaysRun1+_combined.root"/>
+    <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/1g0p_PostApril_collab_v2/Run1/sbnfit_1g0pMar2020_stage_4_NueOverlaysRun1.root"/> 
+    <branch 
+        name=VARVARVAR
+        type="double"
+        associated_subchannel="nu_uBooNE_1g0p_NueOverlays"
+        additional_weight="simple_pot_weight" 
+        eventweight_branch_name = "mcweight"
+
+        />
+</MultisimFile>
+
+<variation_list>
+    <whitelist>All_UBGenie</whitelist>
+    <whitelist>NormNCCOH_UBGenie</whitelist>
+    <whitelist>NormCCCOH_UBGenie</whitelist>
+    <whitelist>Theta_Delta2Npi_UBGenie</whitelist>
+    <whitelist>RPA_CCQE_UBGenie</whitelist>
+    <whitelist>XSecShape_CCMEC_UBGenie</whitelist>
+    <whitelist>VecFFCCQEshape_UBGenie</whitelist>
+    <whitelist>AxFFCCQEshape_UBGenie</whitelist>
+    <whitelist>DecayAngMEC_UBGenie</whitelist>
+    <whitelist>expskin_FluxUnisim</whitelist>
+    <whitelist>horncurrent_FluxUnisim</whitelist>
+    <whitelist>kminus_PrimaryHadronNormalization</whitelist>
+    <whitelist>kplus_PrimaryHadronFeynmanScaling</whitelist>
+    <whitelist>kzero_PrimaryHadronSanfordWang</whitelist>
+    <whitelist>nucleoninexsec_FluxUnisim</whitelist>
+    <whitelist>nucleonqexsec_FluxUnisim</whitelist>
+    <whitelist>nucleontotxsec_FluxUnisim</whitelist>
+    <whitelist>piminus_PrimaryHadronSWCentralSplineVariation</whitelist>
+    <whitelist>pioninexsec_FluxUnisim</whitelist>
+    <whitelist>pionqexsec_FluxUnisim</whitelist>
+    <whitelist>piontotxsec_FluxUnisim</whitelist>
+    <whitelist>piplus_PrimaryHadronSWCentralSplineVariation</whitelist>
+</variation_list>
