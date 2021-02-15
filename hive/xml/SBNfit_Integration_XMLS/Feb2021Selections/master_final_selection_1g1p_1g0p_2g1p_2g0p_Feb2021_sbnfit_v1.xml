@@ -282,8 +282,8 @@
 </MultisimFile>
 
 <!--   #################################### 2g1p    ##################################### -->
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NCDeltaRadOverlaySM_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NCDeltaRadOverlaySM_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NCDeltaRadOverlaySM_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NCDeltaRadOverlaySM_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_implied_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -293,8 +293,8 @@
         />
 </MultisimFile>
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NCPi0Coh_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NCPi0Coh_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NCPi0Coh_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NCPi0Coh_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_implied_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -305,8 +305,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NCPi0NotCoh_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NCPi0NotCoh_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NCPi0NotCoh_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NCPi0NotCoh_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_implied_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -317,8 +317,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_CC1Pi0_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_CC1Pi0_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_CC1Pi0_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_CC1Pi0_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_implied_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -329,8 +329,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_BNBOtherExtra_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_BNBOtherExtra_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_BNBOtherExtra_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_BNBOtherExtra_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_implied_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -341,8 +341,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NueOverlays_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NueOverlays_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NueOverlays_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_NueOverlays_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_implied_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -353,8 +353,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_Dirt_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_Dirt_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_Dirt_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_Dirt_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_implied_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -365,8 +365,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_OTPCExtra_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_OTPCExtra_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_OTPCExtra_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_OTPCExtra_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_implied_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -377,8 +377,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_BNBext_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0" > 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_BNBext_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_BNBext_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0" > 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g1p/sbnfit_pigLEE_combined_stage_2_BNBext_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_implied_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_implied_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_implied_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -389,8 +389,8 @@
 </MultisimFile>
 
 <!--   #################################### 2g0p    ##################################### -->
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NCDeltaRadOverlaySM_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NCDeltaRadOverlaySM_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NCDeltaRadOverlaySM_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NCDeltaRadOverlaySM_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -400,8 +400,8 @@
         />
 </MultisimFile>
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NCPi0Coh_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NCPi0Coh_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NCPi0Coh_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NCPi0Coh_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])]))/1000)"
 
@@ -413,8 +413,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NCPi0NotCoh_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NCPi0NotCoh_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NCPi0NotCoh_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NCPi0NotCoh_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -425,8 +425,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_CC1Pi0_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0" > 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_CC1Pi0_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_CC1Pi0_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0" > 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_CC1Pi0_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -437,8 +437,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_BNBOtherExtra_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0" > 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_BNBOtherExtra_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_BNBOtherExtra_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0" > 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_BNBOtherExtra_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -449,8 +449,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NueOverlays_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0" > 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NueOverlays_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NueOverlays_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0" > 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_NueOverlays_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -461,8 +461,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_Dirt_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_Dirt_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_Dirt_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_Dirt_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -473,8 +473,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_OTPCExtra_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_OTPCExtra_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_OTPCExtra_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_OTPCExtra_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])]))/1000)"
         type="double"
@@ -485,8 +485,8 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_BNBext_VolFix_Dec2020.root" scale = "1.0" maxevents="5000000" pot="1.0"  > 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_BNBext_VolFix_Dec2020.root"/> 
+<MultisimFile treename="singlephoton/simple_tree" filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_BNBext_Feb2021.root" scale = "1.0" maxevents="5000000" pot="1.0"  > 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/SBNfit_files/2g0p/sbnfit_pigLEE_2g0p_combined_stage_2_BNBext_Feb2021.root"/> 
     <branch 
         name="(sqrt(((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirx[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirx[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]]      + 8.50486)*reco_shower_dirx[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])])*((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_diry[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_diry[(i_shr[1])]) + ((1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])])*(     (1.21989*reco_shower_energy_max[i_shr[0]] + 8.50486)*reco_shower_dirz[i_shr[0]] + (1.21989*reco_shower_energy_max[i_shr[1]] + 8.50486)*reco_shower_dirz[(i_shr[1])]))/1000)"
         type="double"

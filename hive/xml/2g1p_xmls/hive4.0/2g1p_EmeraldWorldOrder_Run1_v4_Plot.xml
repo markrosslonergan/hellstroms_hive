@@ -4,10 +4,8 @@
 <!-- 0.85416 -->
 
 <plot_pot>
-    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.26014320"  />
-    <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number     <= 18960))" fraction = "0.73985680" />
+    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "1.0"  />
 </plot_pot>
-
 
 <!-- Directory for all covariance matrices -->
 <covar dir="/" name="frac_covariance" plotname="Flux &amp; XSec Sys" />
@@ -91,24 +89,25 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "filter_2g1p_data_combined_run123_v33.3.uniq.root" tag = "Data2g1pFiltered" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Data, Run 1+2+3 On-Beam" >
+<bdtfile filename = "filter_2g1p_data_run1_v33.3.uniq.root" tag = "Data2g1pFilteredRun1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Data, On-Beam Data Run 1">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam" plot_name="Filtered" >
-        <tor860_wcut> 5.845E+20 </tor860_wcut>   
-        <E1DCNT_wcut> 136203371 </E1DCNT_wcut>   
+    <data type="OnBeam" plot_name="Filtered">
+        <tor860_wcut> 1.557e+20 </tor860_wcut>   
+        <E1DCNT_wcut> 34574935.0</E1DCNT_wcut>   
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 1+2+3 Cosmic" fillstyle = "3333" scale = "1">
+<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 1 Cosmic" fillstyle = "3333" scale = "0.0">
     <definition>
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 5.845E+20 </tor860_wcut>   
-        <E1DCNT_wcut> 136203371</E1DCNT_wcut>   
-        <EXT>314602374</EXT>  
+        <tor860_wcut> 1.557e+20 </tor860_wcut>   
+        <E1DCNT_wcut> 34574935.0</E1DCNT_wcut>   
+        <EXT>28264427.0</EXT>
     </data>
 </bdtfile>
+
 
 
 
