@@ -141,25 +141,31 @@ int bdt_stack::makeSBNspec(std::string tagin, bdt_variable var, double c1, doubl
 }
 
 TH1* bdt_stack::getEntrySum(bdt_variable var){
-    return getEntrySum(var, 0);
+    std::vector<double> tmp;
+    return getEntrySum(var, 0,tmp);
+}
+TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
+    std::vector<double> tmp;
+    return getEntrySum(var, level,tmp);
 }
 
 
-TH1* bdt_stack::getEntrySum(bdt_variable var,int level){
-    int stack_rebin = 1;
-    //if(level ==2) stack_rebin=2;
-    //if(level ==3) stack_rebin=2;
 
+TH1* bdt_stack::getEntrySum(bdt_variable var,int level,std::vector<double> &full){
+    int stack_rebin = 1;
 
     TH1* summed = (TH1*)stack.at(0)->getTH1(var, "1", "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
+    full.clear();
 
-    std::cout<<"Summed: "<<summed->GetSumOfWeights()<<std::endl;
-
+    //std::cout<<"Summed: "<<summed->GetSumOfWeights()<<std::endl;
     for(int t=1; t<stack.size(); t++){
         if(!signal_on_top[t]){
             TH1* hist = (TH1*)stack.at(t)->getTH1(var, "1", "summed_"+std::to_string(t)+"_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, stack_rebin);
             summed->Add(hist);
-            std::cout<<"Summed: "<<summed->Integral()<<std::endl;
+            for(int i=0; i<hist->GetNbinsX(); i++){
+                    full.push_back(hist->GetBinContent(i+1));
+            }
+            //std::cout<<"Summed: "<<summed->Integral()<<std::endl;
         }
     }
 
@@ -192,12 +198,12 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 
     TH1* summed = (TH1*)stack.at(0)->getTH1(var, stack.at(0)->getStageCuts(level,cut1, cut2), "summed_"+stack.at(0)->tag+"_"+var.safe_name, plot_pot);
 
-    std::cout<<"Summed: "<<summed->GetSumOfWeights()<<std::endl;
+    //std::cout<<"Summed: "<<summed->GetSumOfWeights()<<std::endl;
 
     for(int t=1; t<stack.size(); t++){
         TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "summed_"+std::to_string(t)+"_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, stack_rebin);
         summed->Add(hist);
-        std::cout<<"Summed: "<<summed->Integral()<<std::endl;
+        //std::cout<<"Summed: "<<summed->Integral()<<std::endl;
     }
 
     summed->SetTitle((this->name+"_"+var.name).c_str());
@@ -230,7 +236,7 @@ std::vector<double> bdt_stack::getEntryFullVector(bdt_variable var){
 
         TH1 *hist = (TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, 0);
         for(int i=0; i< hist->GetNbinsX(); i++){
-            std::cout<<"StackCheck "<<ib<<" "<<stack.at(t)->tag<<" "<<hist->GetBinContent(i+1)<<std::endl;
+            //std::cout<<"StackCheck "<<ib<<" "<<stack.at(t)->tag<<" "<<hist->GetBinContent(i+1)<<std::endl;
             ans.push_back(hist->GetBinContent(i+1)); 
             ib++;
         }
@@ -244,39 +250,21 @@ std::vector<double> bdt_stack::getEntryFullVector(bdt_variable var){
 THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
     THStack *stacked = new THStack((this->name+"_stack").c_str(), (this->name+"_stack").c_str());
     int stack_rebin = 1;
-    //	if(level ==2) stack_rebin=2;
-    //	if(level ==3) stack_rebin=2;
 
-    /*
-
-       to_sort.push_back(&h);
-       l_to_sort.push_back(tmp);
-       integral_sorter.push_back(total_events);	
-
-       for (int i: sort_indexes(integral_sorter)) {
-       hs->Add(to_sort.at(i));	
-       legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
-       }
-
-*/
-
-    std::vector<TH1*> to_sort;
-    std::vector<double> integral_sorter;
     vec_hists.clear();
 
     for(int t=0; t<stack.size(); t++){
-        std::cout<<"Stack "<<stack.at(t)->tag<<" level "<<t<<std::endl;
 
         vec_hists.push_back((TH1*)stack.at(t)->getTH1(var, "1", "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin));
+        
         TH1* hist = vec_hists.back();
         hist->SetTitle((this->name+"_"+var.name).c_str());
-
         //if(signal_on_top[t]){
         //    hist->SetLineColor(stack[t]->col);
         //    hist->SetLineWidth(3);
         //}else{
-            hist->SetLineColor(kBlack);
-            hist->SetLineWidth(1);
+        hist->SetLineColor(kBlack);
+        hist->SetLineWidth(1);
         //}
         hist->SetStats(0);
         //hist->SetMarkerStyle(20);
@@ -287,9 +275,8 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
         hist->GetXaxis()->SetTitle(var.unit.c_str());
         hist->GetYaxis()->SetTitle("Events");
 
-
-        to_sort.push_back(hist);
-        integral_sorter.push_back(hist->GetSumOfWeights());
+      // to_sort.push_back(hist);
+      // integral_sorter.push_back(hist->GetSumOfWeights());
 
         if(do_subtraction){
             if(!subtraction_vec[t]){
@@ -306,10 +293,10 @@ THStack* bdt_stack::getEntryStack(bdt_variable var, int level){
 
     }
 
-    for (int i: sort_indexes(integral_sorter)) {
+    //for (int i: sort_indexes(integral_sorter)) {
         //stacked->Add(to_sort.at(i));	
         //legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
-    }
+    //}
 
 
     return stacked;	

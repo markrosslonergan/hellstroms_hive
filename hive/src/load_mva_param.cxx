@@ -131,6 +131,19 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
             }
         }
 
+        const char* t_mergedown = pBDTfile->Attribute("mergedown");
+        if(t_mergedown==NULL){
+            bdt_mergedown.push_back(false);
+        }else{
+            std::string sig = t_mergedown;
+            if(sig=="true"){
+                bdt_mergedown.push_back(true);
+            }else{
+                bdt_mergedown.push_back(false);
+
+            }
+        }
+
         const char* t_valid = pBDTfile->Attribute("validate");
         if(t_valid==NULL){
             bdt_is_validate_file.push_back(false);
@@ -153,6 +166,15 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
 
 
 
+        TiXmlElement *pAddWeight = pBDTfile->FirstChildElement("additional_weight");
+        std::string add_wei = "1.0";
+        while(pAddWeight){
+                std::string unpar =  pAddWeight->GetText();
+                std::string parsed = this->AliasParse(unpar);
+                add_wei = parsed;
+            pAddWeight = pAddWeight->NextSiblingElement("additional_weight");
+            }
+        bdt_additional_weights.push_back(add_wei);
 
         TiXmlElement *pDefinition = pBDTfile->FirstChildElement("definition");
         std::vector<std::string> this_denom; 
@@ -168,6 +190,41 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
         }//-->end definition
         bdt_definitions.push_back(this_denom);
 
+
+        std::vector<std::string> tmp_fr_filenames;
+        std::vector<std::string> tmp_fr_treenames;
+        TiXmlElement *pFriend = pBDTfile->FirstChildElement("friend");
+        while(pFriend){
+            TiXmlElement *pFName = pFriend->FirstChildElement("filename");
+            while(pFName){
+                std::string unpar =  pFName->GetText();
+                tmp_fr_filenames.push_back(unpar);
+                pFName = pFName->NextSiblingElement("filename");
+            }
+            
+            TiXmlElement *pTName = pFriend->FirstChildElement("treename");
+            while(pTName){
+                std::string unpar =  pTName->GetText();
+                tmp_fr_treenames.push_back(unpar);
+                pTName = pTName->NextSiblingElement("treename");
+            }
+
+            pFriend = pFriend->NextSiblingElement("friend");
+        }//-->end friend
+        bdt_friend_filenames.push_back(tmp_fr_filenames);
+        bdt_friend_treenames.push_back(tmp_fr_treenames);
+
+
+        TiXmlElement *pWeight = pBDTfile->FirstChildElement("weight");
+        std::string wei_val = "1.0";
+        while(pWeight){
+                std::string unpar =  pWeight->GetText();
+                std::string parsed = this->AliasParse(unpar);
+                wei_val = parsed;
+                pWeight = pWeight->NextSiblingElement("weight");
+        }
+        bdt_weight_values.push_back(wei_val);
+           
         //next lets check if its the Signal Training
         TiXmlElement *pTrain = pBDTfile->FirstChildElement("training");
         std::vector<std::string> this_tcut; 
@@ -201,13 +258,15 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
         bdt_onbeam_pot.push_back(-999);
         bdt_offbeam_spills.push_back(-999);
         bdt_onbeam_spills.push_back(-999);
-
+        bdt_data_descriptor.push_back("NOTDATA");
 
         while(pData){
 
             const char* t_use = pData->Attribute("use");
             if(t_use=="no"){break;}
 
+
+           
             const char* t_type = pData->Attribute("type");
             if(t_type==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated data, but not given a `type` attribute! wither OnBeam or OffBeam!! "<<std::endl; exit(EXIT_FAILURE);}
             std::string s_type = t_type;
@@ -220,9 +279,20 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
             }else{
                 std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated data, but its `type` attribute is neither OnBeam or OffBeam!! "<<t_type<<" "<<std::endl; exit(EXIT_FAILURE);
             }
+             
+            std::string data_plot_name;
+             const char* t_plotname = pData->Attribute("plot_name");
+            if(t_plotname==NULL){
+                //fill the plotname as the Type.
+                data_plot_name = s_type;
+            }else{
+                data_plot_name = t_plotname;   
+            }
+            
             bdt_onbeam_pot.back() = 0;
             bdt_offbeam_spills.back() = 0;
             bdt_onbeam_spills.back() = 0;
+            bdt_data_descriptor.back() = data_plot_name;
 
             TiXmlElement *pTor = pData->FirstChildElement("tor860_wcut");
             while(pTor){
@@ -388,7 +458,8 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         filedir =std::string(pFileDir->GetText());
         pFileDir = pFileDir->NextSiblingElement("filedir");
     }else{
-        filedir = "./";
+       // filedir = "./";
+       filedir = "/";
     }
 
 
@@ -651,6 +722,20 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             }
         }
 
+        const char* t_mergedown = pBDTfile->Attribute("mergedown");
+        if(t_mergedown==NULL){
+            bdt_mergedown.push_back(false);
+        }else{
+            std::string sig = t_mergedown;
+            if(sig=="true"){
+                bdt_mergedown.push_back(true);
+            }else{
+                bdt_mergedown.push_back(false);
+
+            }
+        }
+
+
         const char* t_valid = pBDTfile->Attribute("validate");
         if(t_valid==NULL){
             bdt_is_validate_file.push_back(false);
@@ -673,6 +758,17 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
 
 
 
+        TiXmlElement *pAddWeight = pBDTfile->FirstChildElement("additional_weight");
+        std::string add_wei = "1.0";
+        while(pAddWeight){
+                std::string unpar =  pAddWeight->GetText();
+                std::string parsed = this->AliasParse(unpar);
+                add_wei = parsed;
+            pAddWeight = pAddWeight->NextSiblingElement("additional_weight");
+            }
+        bdt_additional_weights.push_back(add_wei);
+
+
 
         TiXmlElement *pDefinition = pBDTfile->FirstChildElement("definition");
         std::vector<std::string> this_denom; 
@@ -687,6 +783,42 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             pDefinition = pDefinition->NextSiblingElement("definition");
         }//-->end definition
         bdt_definitions.push_back(this_denom);
+
+
+        std::vector<std::string> tmp_fr_filenames;
+        std::vector<std::string> tmp_fr_treenames;
+        TiXmlElement *pFriend = pBDTfile->FirstChildElement("friend");
+        while(pFriend){
+            TiXmlElement *pFName = pFriend->FirstChildElement("filename");
+            while(pFName){
+                std::string unpar =  pFName->GetText();
+                tmp_fr_filenames.push_back(unpar);
+                pFName = pFName->NextSiblingElement("filename");
+            }
+            
+            TiXmlElement *pTName = pFriend->FirstChildElement("treename");
+            while(pTName){
+                std::string unpar =  pTName->GetText();
+                tmp_fr_treenames.push_back(unpar);
+                pTName = pTName->NextSiblingElement("treename");
+            }
+
+            pFriend = pFriend->NextSiblingElement("friend");
+        }//-->end friend
+        bdt_friend_filenames.push_back(tmp_fr_filenames);
+        bdt_friend_treenames.push_back(tmp_fr_treenames);
+
+        TiXmlElement *pWeight = pBDTfile->FirstChildElement("weight");
+        std::string wei_val = "1.0";
+        while(pWeight){
+                std::string unpar =  pWeight->GetText();
+                std::string parsed = this->AliasParse(unpar);
+                wei_val = parsed;
+                pWeight = pWeight->NextSiblingElement("weight");
+        }
+        bdt_weight_values.push_back(wei_val);
+         
+
 
         //next lets check if its the Signal Training
         TiXmlElement *pTrain = pBDTfile->FirstChildElement("training");
@@ -721,7 +853,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         bdt_onbeam_pot.push_back(-999);
         bdt_offbeam_spills.push_back(-999);
         bdt_onbeam_spills.push_back(-999);
-
+        bdt_data_descriptor.push_back("NOTDATA");
 
         while(pData){
 
@@ -743,6 +875,19 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             bdt_onbeam_pot.back() = 0;
             bdt_offbeam_spills.back() = 0;
             bdt_onbeam_spills.back() = 0;
+
+            std::string data_plot_name;
+             const char* t_plotname = pData->Attribute("plot_name");
+            if(t_plotname==NULL){
+                //fill the plotname as the Type.
+                data_plot_name = s_type;
+            }else{
+                data_plot_name = t_plotname;   
+            }
+            
+            bdt_data_descriptor.back() = data_plot_name;
+
+
 
             TiXmlElement *pTor = pData->FirstChildElement("tor860_wcut");
             while(pTor){
@@ -831,6 +976,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
 
         std::string var_binning = pVar->Attribute("binning");
         std::string var_unit = pVar->Attribute("unit");
+        //std::cout<<" var_unit = "<< var_unit<<std::endl;
         std::string var_type = pVar->Attribute("type");
         const char * var_logplot = pVar->Attribute("logplot");
         bool var_logplot_bool = false;
@@ -861,6 +1007,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         std::string covar_plotname;
         std::string covar_type;
         std::string covar_leg = "default";
+      
 
         bool has_covar = false;
         const char* var_covar_file = pVar->Attribute("covarfile");
@@ -890,8 +1037,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             covar_type = var_covar_type;
         }
 
-        
-        if(has_global_covar){
+        if(has_global_covar && m_error_string!="stat"){
             has_covar= true;
             covar_file =  global_covar_dir;
             covar_name = global_covar_name;
@@ -922,6 +1068,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         const char * t_cat = pVar->Attribute("group");
          if(t_cat!=NULL){
             in_cat = atoi(t_cat);
+            std::cout << "[GROUP] " << var_unit << std::endl;
          }
 
 
@@ -962,13 +1109,23 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             //std::cout<<" -- adding Training Variable  "<<var_def<<" with binning: "<<var_binning<<std::endl;
         }
 
+       // std::string  var_train_string = "";
+       // var_train_string = pVar->Attribute("training");
         std::string var_train_string = pVar->Attribute("training");
         std::vector<int> var_train_int;
+        bool var_is_spec = true;
         std::cout<<" -- Variable training string is "<<var_train_string<<std::endl;
-        for (auto && c : var_train_string) {
+       for (auto && c : var_train_string) {
             var_train_int.push_back((int)c - '0');
         }
 
+       if (var_train_int.size() >0){
+        var_is_spec = false;
+          }
+
+       t.is_spectator = var_is_spec;
+       std::cout<<" t.is_spectator =  "<< t.is_spectator<<std::endl;
+      
         //Loop over vec_methods
         for(int p=0; p< vec_methods.size(); p++){
 

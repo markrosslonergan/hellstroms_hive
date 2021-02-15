@@ -821,7 +821,7 @@ int bdt_XGtrain(bdt_info &info){
     std::string const name = info.identifier;
 
     TFile *f = new TFile(("XGBoost_train_output_"+name+".root").c_str(),"recreate");
-
+    f->cd();
     TH1* btest = new TH1D("btest","btest",100,0,1);
     TH1* btrain = new TH1D("btrain","btrain",100,0,1);
     TH1* stest = new TH1D("stest","stest",100,0,1);
@@ -1021,7 +1021,8 @@ int bdt_XGtrain(bdt_info &info){
 
         f->cd();
 
-        TCanvas *c_error = new TCanvas("","",1800,1800);
+        TCanvas *c_error = new TCanvas("c_error","",1800,1800);
+        TFile *hfile = new TFile(("XGBoost_Validation_"+name+".root").c_str(),"RECREATE");
         c_error->Divide(2,2);
         c_error->cd(1);
 
@@ -1032,15 +1033,53 @@ int bdt_XGtrain(bdt_info &info){
                 p->SetLogy();
                 p->SetLogx();
             }
+        
+            
             TGraph *g_test= new TGraph(iteration.size(),&iteration[0],&(test_metric_res[i])[0]);
             TGraph *g_train = new TGraph(iteration.size(),&iteration[0],&(train_metric_res[i])[0]);
-            g_train->Draw("AL");
+         /*   TGraph *g_test2;
+               if (split_test){
+                g_test2 = new TGraph(iteration.size(),&iteration[0],&(train_metric_res[i])[0]);
+         
+            }*/
+
+            double mmax1 = std::max(test_metric_res[i].front(),test_metric_res[i].back());
+            double mmax2 = std::max(train_metric_res[i].front(),train_metric_res[i].back());
+            double mmax = std::max(mmax1,mmax2)*1.2;
+		if(i==0)mmax= std::max(mmax,1.0);
+
+            g_test->Draw("AL");
+ 
+	   g_test->SetMinimum(0);
+            g_test->SetMaximum(mmax);
+            g_test->GetHistogram()->SetMaximum(mmax);
+            g_test->GetHistogram()->SetMinimum(0.0);
+           
+            g_test->Draw("AL");
+
+
+	   g_test->SetTitle(s_english[i].c_str());
+
+            g_train->Draw("same AL");
             g_train->SetTitle(s_english[i].c_str());
             g_train->SetLineColor(kRed);
             g_train->SetLineWidth(2);
             g_test->Draw("same CL");
             g_test->SetLineColor(kBlue);
             g_test->SetLineWidth(2);
+
+            /*
+            g_test2->Draw("same CL");
+            g_test2->SetLineColor(kBlue);
+            g_test2->SetLineWidth(2);
+*/
+            g_test->SetMinimum(0);
+            g_test->SetMaximum(mmax);
+            g_train->SetMaximum(mmax);
+            g_train->SetMinimum(0.0);
+            g_test->GetHistogram()->SetMaximum(mmax);
+            g_test->GetHistogram()->SetMinimum(0.0);
+
 
             TGraph *g_min = new TGraph(1);
             g_min->SetPoint(0,test_min_vals[i].second,test_min_vals[i].first);
@@ -1054,13 +1093,22 @@ int bdt_XGtrain(bdt_info &info){
                 lgr->AddEntry(g_test,"Test","f"); 
                 lgr->SetLineWidth(0);
                 lgr->SetLineColor(kWhite);
+                lgr->SetFillStyle(0);
                 lgr->Draw();
+                g_test->Write("g_test");
+                g_train->Write("g_train");
+                g_min->Write("g_min");
             }
+            
+
             c_error->Update();
         }
+     //   c_error->SaveAs(("XGBoost_Validation_"+name+".root").c_str(),"root");
         c_error->SaveAs(("XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
         c_error->Write(); 
+        hfile ->Close();
 
+        f->cd();
 
         std::vector<double> pos;
         std::vector<double> st,st2;
@@ -1097,6 +1145,8 @@ int bdt_XGtrain(bdt_info &info){
 
         t_strain->Write();
         t_btrain->Write();
+        t_stest->Write();
+        t_btest->Write();
         btest->Write();
         stest->Write();
         strain->Write();
@@ -1272,7 +1322,9 @@ int bdt_XGtrain(bdt_info &info){
             }
         }
 
+        double total_gain_allvars = 0;
         for(int i=0; i<total_gain.size() ; ++i){
+            total_gain_allvars+=  total_gain[i];
             mean_gain[i] = total_gain[i]/(double)variable_uses[i];
         }
 
@@ -1289,6 +1341,17 @@ int bdt_XGtrain(bdt_info &info){
            std::cout<<i<<":  "<<info.train_vars[i].unit<<std::endl;
            }
            */
+         std::cout<<"----------- Sort By Input Order: "<<info.identifier<<" ----------------------"<<std::endl;
+       for(int i=0; i< is_training.size();i++){
+               if( is_training[i]){ 
+               std::cout<<i<<" Variable: "<<info.train_vars[train_var_id[i]].unit<<"-- -- uses: "<<variable_uses[i]<<" gain: "<<total_gain[i]<<"  <gain>: "<<total_gain[i]/(double)variable_uses[i]<<"   relative gain: "<<total_gain[i]/total_gain_allvars<<std::endl;      
+     
+               } else{
+                std::cout<<i<<" Variable: "<<info.train_vars[train_var_id[i]].unit<<"  -"<<std::endl;
+               }
+       }
+               
+       
 
         TCanvas cuses("","",3000,1200);
         cuses.cd();

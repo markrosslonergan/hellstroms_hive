@@ -522,6 +522,7 @@
 
 <var def = "#GE#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV] Combined A^{0}-D" type = "d"   training="" group ="25" cut = "(1g0pMar2020NCPi0_mva &lt; #NCP0# || 1g0pMar2020BNB_mva&lt; #BNB0# ||1g0pMar2020COSMIC_mva &lt; #COS0#) &amp;&amp; (1g0pMar2020NCPi0_mva &gt;= #NCP# &amp;&amp;1g0pMar2020BNB_mva&gt;= #BNB#  &amp;&amp; DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0]) &gt;= #DEDX#)"/> <!-- A0-D combined -->
 
+<var def = "sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)" binning = "(10,0.0,1.0)" unit ="True #pi^{0} Momentum" type = "d" training = "" group = "2"/>
 
 
 <!--pi0 vars -->

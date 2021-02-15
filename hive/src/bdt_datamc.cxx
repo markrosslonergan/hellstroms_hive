@@ -155,7 +155,6 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                     pad->Draw();
                     pad->cd();
                     //                  std::cout<<"flag3"<<std::endl;
-                    //THStack *stk = (THStack*)mc_stack->getEntryStack(var,s);
                     //TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
                     TH2 * d0 = (TH2*)data_file->getTH2(var1,var2, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
                     //TH2 * d0;
@@ -174,6 +173,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                     d0->GetXaxis()->SetTitleSize(0.01);
                     d0->GetXaxis()->SetTitleOffset(0.9);
                     pad->SetRightMargin(0.15);
+
 
                     std::cout<<"Writing pdf."<<std::endl;
                     cobs->Write();
@@ -214,6 +214,9 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                         cobsmc->Write();
                         cobsmc->SaveAs(("var2D/"+tag+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".pdf").c_str(),"pdf");
 
+
+                        std::cout<<"VAR2D::Corrr "<<f->tag<<" "<<var1.safe_unit<<" "<<var2.safe_unit<<" "<<mc->GetCorrelationFactor()<<std::endl;
+
                         //cobsmc->SaveAs(("var2D/"+tag+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 
@@ -239,7 +242,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::string tago, std::vector<bdt_info> bdt_infos){
     // NEW (and soon to be only) ONE
-
+    //
     bool entry_mode = false;
     double plot_pot=data_file->pot;
     if(stack_mode) plot_pot = stack_pot;
@@ -256,6 +259,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
     double title_offset_upper = 0.6;
 
     std::vector<std::string> stage_names;
+
+    int leg_num_digits = 1;
 
     bool OTPC = false;
 
@@ -278,31 +283,50 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         s_max = plot_stage+1;
     }
 
-
-
-    //for(int s = s_min; s< s_max; s++){
     {
         int s = plot_stage;
 
+
+
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
+
         for(auto &f: mc_stack->stack){
-            std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-            if(s>1 && false) f->calcBDTEntryList(s,bdt_cuts); //Turn off, use below
+            //std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
+            //if(s>1 && false) f->calcBDTEntryList(s,bdt_cuts); //Turn off, use below
             std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-            f->setStageEntryList( (s ? s < 2 : s ));
-        }	
+            f->setStageEntryList((s ? s < 2 : s ));
+        }
 
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
-
-        if(s>1 && false) data_file->calcBDTEntryList(s,bdt_cuts);
-        data_file->setStageEntryList( (s ? s <2 :s ));
+        //if(s>1 && false) data_file->calcBDTEntryList(s,bdt_cuts);
+        data_file->setStageEntryList((s ? s <2 :s ));
 
 
         //And all variables in the vector var
         for(auto &var: vars){
 
+            TFile *fout = new TFile(("datamc/Ratio_"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".root").c_str(),"recreate");
+            fout->cd();
 
+
+
+            std::string isSpec;
+            if (!var.is_spectator){
+                isSpec = var.unit+ " is a training variable";
+            }else{
+                isSpec = var.unit + " is a spectator variable";
+                if (isSpectator==true){
+                    std::cout<<isSpec<<std::endl;
+                    std::cout<<"set to plot train only, skipping!"<<std::endl;
+                    continue;
+                }
+            }
+            std::cout<<isSpec<<std::endl;
+
+
+
+            //If we are at a later stage that 1, lets find the variable.
             if(s>1){
                 std::string faster_cut ="(";
                 for(int ss=0; ss<s-1; ss++){
@@ -315,8 +339,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 std::cout<<" var.additional_cut = "<< var.additional_cut <<std::endl;
             }
 
-            //var.is_logplot = true;
+            std::cout<<" var.additional_cut = "<< var.additional_cut <<std::endl;
 
+            //var.is_logplot = false;
             std::cout<<"Starting on variable "<<var.name<<std::endl;
 
             TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(), (stack_mode? 2200 : 1801),1400); //1600
@@ -327,18 +352,25 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 mc_stack->setSubtractionVector(subtraction_vec);
             }
 
-            THStack *stk;
-            TH1 * tsum;
-            TH1 * d0;
-            TH1 * tsum_after;
+            std::vector<double> m_fullvec;
 
-            stk = (THStack*)mc_stack->getEntryStack(var,s);
-            tsum = (TH1*)mc_stack->getEntrySum(var,s);
-            d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
-            tsum_after = (TH1*)tsum->Clone("tsumafter");
+            THStack *stk = (THStack*)mc_stack->getEntryStack(var,s); //so at this point its all in "stack"
+            TH1 * tsum  = (TH1*)mc_stack->getEntrySum(var,s, m_fullvec);
+            TH1* d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
+            TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
+
             //Check Covar for plotting
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
 
+
+
+            std::vector<double> vec_mc_stats_error;
+            std::vector<double> vec_mc;
+            for(int c=0; c< tsum->GetNbinsX();c++){
+                double mc_stats_error = tsum->GetBinError(c+1);
+                vec_mc_stats_error.push_back(mc_stats_error);
+                vec_mc.push_back(tsum->GetBinContent(c+1));
+            }
             /*
                TH1 *trev = (TH1*)mc_stack->stack.at(1)->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+"arse+"+var.safe_name, plot_pot); 
                trev->Scale(125.0);
@@ -357,35 +389,89 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
             //var.covar_name = "frac_covariance";
 
-            if(var.has_covar && m_error_string !="stat"){
+            if(var.has_covar && m_error_string !="stats"){
 
                 TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
+                if(covar_f->IsZombie()){
+                    std::cout<<"Error!! The covariance file failed to open: Does not exist?  "<<var.covar_file.c_str()<<std::endl;
+                    exit(EXIT_FAILURE);
+                }
+
+
                 TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
                 covar_collapsed->Zero();
+
                 std::cout<<"Reading this from a covariance matrix "<<var.covar_file.c_str()<<std::endl;
                 std::cout<<"Is it frac or full? "<<var.covar_type.c_str()<<std::endl;
+
+                m_fullvec = mc_stack->getEntryFullVector(var);
+
+                if(covar_full->GetNcols() != m_fullvec.size()){
+                    std::cout<<"Aghr "<<covar_full->GetNcols()<<" "<<m_fullvec.size()<<std::endl;
+                    exit(EXIT_FAILURE);
+                }
+
+
+
+                //std::vector<TMatrixT<double>> Mshapenorm = splitNormShape(*covar_full, m_fullvec);
+                //(*covar_full) = (*covar_full) = Mshapenorm[2];
+
                 this->calcCollapsedCovariance(covar_full, covar_collapsed,var);
 
+                //Some shape/norm
+                //std::vector<TMatrixT<double>> Mshapenorm = splitNormShape(*covar_collapsed, vec_mc);
+
+                /*
+                   if(true){
+                   for(int p=0; p<Mshapenorm[2].GetNcols();p++){
+                   std::cout<<"NORM "<<Mshapenorm[2](p,p)<<" "<<"SHAPE "<<Mshapenorm[0](p,p)<<" "<<"MIXED "<<Mshapenorm[1](p,p)<<" ALL "<<(*covar_full)(p,p)<<" || Result : "<<(*covar_full)(p,p) - Mshapenorm[2](p,p) <<std::endl;
+                   }
+                   (*covar_full) =  (*covar_full) - Mshapenorm[2];
+
+                   }else{
+                   for(int p=0; p<Mshapenorm[2].GetNcols();p++){
+                   std::cout<<"NORM "<<Mshapenorm[2](p,p)<<" "<<"SHAPE "<<Mshapenorm[0](p,p)<<" "<<"MIXED "<<Mshapenorm[1](p,p)<<" ALL "<<(*covar_collapsed)(p,p)<<" || Result : "<<(*covar_collapsed)(p,p) - Mshapenorm[2](p,p) <<std::endl;
+                   }
+                   (*covar_collapsed) =  (*covar_collapsed) - Mshapenorm[2];
+                   }
+                   */
+
                 //std::vector<double> fkr = {0.144464,0.0794493,0.204987};
-                std::vector<double> fkr = {0.0941,0.0823,0.2135};
+                //std::vector<double> fkr = {0.0941,0.0823,0.2135};
                 //std::vector<double> fkr = {0.145171,0.0859779,0.11318,0.0891966,0.151207,0.189539};
                 //std::vector<double> fkr = {0.26,0.123,0.116,0.094,0.137,0.145};
+
+                //with coh not coh
+                std::vector<double> fkr = {0.235736,0.23907,0.304031};//1g1p before
+                //fkr = {0.0954412,0.0903098,0.146111};//1g1p after
+
+                //fkr = {0.285885,0.201206, 0.209106,0.193913,0.229783,0.226371};//1g0p before
+                //fkr = {0.259299, 0.120909, 0.108522, 0.0874204, 0.12301, 0.140846};//1g0p after
+
+                //October2020
+                //fkr={1.26481, 2.44423,  4.22811,  1.28523,    1.54774,      2.10316};
+                fkr = { 5.45969,         18.0884,      19.234,     53.0878,    23.4021,    10.0496,     6.35323,    3.72808,    2.22644,    1.36843};
+
 
                 for(int c=0; c< tsum->GetNbinsX();c++){
                     //double dv = tsum->GetBinContent(c+1);
                     //tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
                     //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
+                    //  double mc_sys_error = fkr[c]*tsum->GetBinContent(c+1);  //sqrt((*covar_collapsed)(c,c));
+
                     double mc_stats_error = tsum->GetBinError(c+1);
-                    //   double mc_sys_error = fkr[c];//sqrt((*covar_collapsed)(c,c));
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
-                    std::cout<<"Yarp: "<<mc_sys_error<<std::endl;
+                    //mc_sys_error = sqrt(fkr[c]);
+                    //double mc_sys_error = sqrt(fabs((*covar_collapsed)(c,c)));
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
+
+                    //double tot_error = sqrt(mc_sys_error*mc_sys_error);
+
                     //double tot_error = mc_sys_error; 
+                    std::cout<<"Error Summary || Bin "<<c<<" Nmc: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" FracErr: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" SysFrac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" MCStatFrac: "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
                     tsum->SetBinError(c+1, tot_error);
-                    std::cout<<"DETOL: "<<c<<" N: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" Frac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
-                    //And add on the systematic error that is MC stats
-                    //               (*covar_collapsed)(c,c) += mc_stats_error*mc_stats_error;
                 }
+
 
                 covar_f->Close();
             }else{
@@ -400,14 +486,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //            std::vector<double> ks_sum = data_file->getVector(var,s);
 
             double rmin = 0.0;
-            double rmax = 2.0;
+            double rmax = 1.999;
             int data_rebin = 1;
             //if(s==0 || s == 1){
             //    rmin=0; rmax = 1.99;
             //}//else if(s==2){ data_rebin = 2;};//else if(s==3){data_rebin=2;};
 
 
-            //tsum->Rebin(data_rebin);
             //d0->Rebin(data_rebin);
 
             if(false &&do_subtraction){
@@ -430,10 +515,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     auto &f = mc_stack->stack[i];
                     double scale = (plot_pot/f->pot)*f->scale_data;
 
+                    std::cout<<"plot_pot = "<<plot_pot<<std::endl;
+                    std::cout<<"f->pot = "<<f->pot<<std::endl;
+                    std::cout<<"f->scale_data = "<<f->scale_data<<std::endl;
+
                     std::cout<<"the entries in this file (weighted) = "<<f->GetEntries()<<std::endl;
                     std::cout<<"the scaling to POT= "<<scale<<" which is x"<<1/scale<<" times POT" <<std::endl;
                     std::cout<<"the total number of entries = "<<f->GetEntries()*scale<<std::endl;
-
 
 
                     for(int p=0; p<mc_stack->vec_hists[i]->GetNbinsX();p++){
@@ -508,10 +596,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
 
-            if(var.is_logplot){
-                pad0top->SetLogy();
-                max_modifier=100.0;
-            }
             //     double max_modifier = 1.7;
             double min_val = 0.01;
             if(is_bdt_variable) {
@@ -520,9 +604,57 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 min_val = 0.1;
             }
 
+            if(var.is_logplot){
+                pad0top->SetLogy();
+                max_modifier = 500.0;
+                // min_val = 0.0001;
+                //max_modifier=3500.0;
+            }
+
+            bool isBDT = false;
+            int max_val;
+            if(isBDT){
+                min_val = 1e-2;
+                max_val = 1e5;
+
+            }
+
             d0->SetMarkerStyle(20);
             d0->SetMarkerSize(3);
             d0->SetLineColor(kBlack);
+
+            std::vector<bool> remove_to_merge = merge_down_vec; 
+
+            TList *stlists = (TList*)stk->GetHists();
+
+            int lor = 0;
+            TH1* saved;
+            bool mergetarget = false;
+            for(const auto&& obj: *stlists){
+                if(remove_to_merge[lor]){
+                    saved = (TH1*)obj->Clone(("saved_clone_"+std::to_string(lor)).c_str());
+                    mergetarget = true;
+                    obj->Print();
+                    lor++;
+                    continue;
+                }
+                if(mergetarget){
+                    ((TH1*)obj)->Add(saved);
+                    mergetarget = false;
+                }
+                obj->Print();
+                lor++;
+            }
+            lor=0;//and Zero
+             for(const auto&& obj: *stlists){
+                if(remove_to_merge[lor]){
+                    ((TH1*)obj)->Scale(0);
+                }
+                obj->Print();
+                lor++;
+            }
+                
+
 
             stk->Draw("hist");
             stk->SetTitle("");
@@ -535,7 +667,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 stk->GetYaxis()->SetTitleOffset(title_offset_upper);
             }
             stk->SetMinimum(min_val);
-            std::cout<<"the max modifier is "<<max_modifier<<std::endl;
+            std::cout<<"the max modifier is "<<max_modifier<<" and the min val is "<< min_val<<std::endl;
 
             if(var.plot_max==-999){ 
                 stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
@@ -549,10 +681,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 stk->SetMinimum(var.plot_min);
             }
 
+            if (isBDT){
+                stk->SetMaximum(max_val);
+                stk->SetMinimum(min_val);
+            }
+
+
             tsum->SetLineWidth(3);
-            //tsum_after->SetLineWidth(3);
             tsum->DrawCopy("Same E2");
-            //tsum_after->DrawCopy("Same E1");
 
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
             TH1 *tmp_tsum2 = (TH1*)tsum->Clone(("tmp_tsum2"+std::to_string(s)).c_str());
@@ -573,13 +709,19 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             l0->SetLineWidth(0);
             l0->SetNColumns(2);
             double NeventsStack = 0;
+            double NErrStack = 0;
             int which_signal = 0;
             int n=0;
             std::vector<TH1F*> fake_legend_hists;
 
+            double Nevents_save_for_later = 0.0;
+
             for(auto &f: mc_stack->stack){
 
-                double Nevents = f->GetEntries(var.additional_cut)*(plot_pot/f->pot)*f->scale_data;
+                double Nentries = f->GetEntries(var.additional_cut);
+                double Nevents = Nentries*(plot_pot/f->pot)*f->scale_data;
+                double N_MCerr = sqrt(Nentries)*(plot_pot/f->pot)*f->scale_data;
+                ;
                 /*  stack->vec_hists[i];
                     for(int p=0; p<h1->GetNbinsX();p++){
 
@@ -590,6 +732,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
                 NeventsStack+=Nevents;
+                NErrStack +=N_MCerr*N_MCerr; 
 
                 auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
                 fake_legend_hists.push_back(h1);
@@ -607,29 +750,44 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //}else{
                 h1->SetLineColor(kBlack);
                 //}
-                std::string string_events = to_string_prec(Nevents,2);
+                std::string string_events = to_string_prec(Nevents,leg_num_digits);
                 if(do_subtraction){
                     if(subtraction_vec[n]) string_events+=" Subtracted";
                 }
                 std::string leg_type = "f";   
 
+                std::cout<<"Run2Run: "<<f->plot_name<<" events/1e20 POT "<<to_string_prec(Nevents/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(N_MCerr/(double)data_file->pot*1e20,3)<<std::endl;
+
                 //if(mc_stack->signal_on_top[n]) leg_type = "l";
                 //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
-                l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
+
+                //int f->plot_name.size(); 
+
+                if(!remove_to_merge[n]){
+                    string_events = to_string_prec(Nevents+Nevents_save_for_later,leg_num_digits);
+                    l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
+                    Nevents_save_for_later =0;
+                }else{
+                    Nevents_save_for_later += Nevents;
+
+                }
                 //l0->AddEntry(h1,(f->plot_name).c_str(),"f");
 
                 if(mc_stack->signal_on_top[n]) which_signal = n;
                 n++;
             }
+            NErrStack = sqrt(NErrStack);
+            std::cout<<"Run2Run: StackAll  events/1e20 POT "<<to_string_prec(NeventsStack/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(NErrStack/(double)data_file->pot*1e20,2)<<std::endl;
+
 
             //This one is just for legend messing
             TH1 *leg_hack = (TH1*)tmp_tsum->Clone(("leg_tmp_tsum"+std::to_string(s)).c_str());
             leg_hack->SetLineWidth(2);
 
-            if(var.has_covar&& m_error_string!="stat"){
-                l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,2) ).c_str(),"fl");
+            if(var.has_covar&& m_error_string!="stats"){
+                l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,leg_num_digits) ).c_str(),"fl");
             }else{
-                l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,2)).c_str(),"fl"); // Was le
+                l0->AddEntry(leg_hack,("MC Stats-Only Error, MC Events: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
             }
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -637,11 +795,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Binned Chi-test: "<<var.name<<" "<<tsum->Chi2Test(d0,"UW CHI2")<<std::endl;
             std::cout<<"Binned Chi-test (rev): "<<var.name<<" "<<d0->Chi2Test(tsum,"UW CHI2")<<std::endl;
 
-
+            double tot_norm_error= 0;
             double mychi =0;
             int ndof = 0;
             bool use_cnp = true;
-            if(!var.has_covar || m_error_string=="stat"){
+            if(!var.has_covar || m_error_string=="stats"){
+
 
                 for(int p=0; p<d0->GetNbinsX();p++){
 
@@ -665,25 +824,44 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                         double tk = pow(da-bk,2)/(da_err*da_err+bk_err*bk_err);
 
-                        std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
+
+                        tot_norm_error += pow(tsum->GetBinError(p+1),2)+d0->GetBinContent(p+1);
+                        //std::cout<<da<<" "<<bk<<" "<<da_err<<" "<<bk_err<<" total: "<<sqrt(da_err*da_err+bk_err*bk_err)<<" chi^2 "<<tk<< std::endl;
                         if(tk==tk){
                             mychi+=tk;
                             ndof++;
                         }
 
-
                     }
                 }
-            } else if (var.has_covar && use_cnp && m_error_string!="stat") {
+                tot_norm_error = sqrt(tot_norm_error);
+            } else if (var.has_covar && use_cnp && m_error_string!="stats") {
 
-                std::cout << "[TEST] Starting chi^2 CNP calculation" << std::endl;
+
+                std::cout << "[CHI_CNP] Starting chi^2 CNP calculation" << std::endl;
+
                 TMatrixT<double> Mout = *covar_collapsed;
-
                 // Calculate middle term, sys + stat covar matrices
                 // CNP + intrinsic MC error^2
+                // this was the block
+
                 for(int i =0; i<covar_collapsed->GetNcols(); i++) {
-                    Mout(i,i) += ( d0->GetBinContent(i+1) >0.001 ? 3.0/(1.0/d0->GetBinContent(i+1) +  2.0/tsum->GetBinContent(i+1))  : tsum->GetBinContent(i+1)/2.0 ) + tsum->GetBinError(i+1)*tsum->GetBinError(i+1);
+                    Mout(i,i) += ( d0->GetBinContent(i+1) >0.001 ? 3.0/(1.0/d0->GetBinContent(i+1) +  2.0/tsum->GetBinContent(i+1))  : tsum->GetBinContent(i+1)/2.0 ) + pow(vec_mc_stats_error[i],2);
                 }
+
+                if(false){//just for zeroing
+
+                    for(int i =0; i<covar_collapsed->GetNcols(); i++) {
+                        for(int k =0; k<covar_collapsed->GetNcols(); k++) {
+                            if(i!=k)Mout(i,k)=0;
+                        }
+                    }
+                }
+
+
+
+                tot_norm_error = sqrt(calcTotalNormError(&Mout,var));
+
 
                 // Invert matrix, because the formula says so
                 Double_t *determ_ptr;
@@ -722,12 +900,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }
                 ndof = var.n_bins;
             }
-            std::cout<<"[TEST] MyChi: "<<var.name<<" "<<mychi<<" "<<std::endl;
 
-            //stk->SetMaximum( std::max(tsum->GetMaximum(), d0->GetMaximum()*max_modifier));
 
             double NdatEvents = data_file->GetEntries(var.additional_cut)*(plot_pot/data_file->pot )*data_file->scale_data;
-
+            std::cout<<"Run2Run: Data   events/1e20 POT "<<to_string_prec(NdatEvents/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(sqrt(NdatEvents)/(double)data_file->pot*1e20,3)<<std::endl;
             //trev->DrawCopy("same hist");
 
             d0->SetBinErrorOption(TH1::kPoisson);
@@ -741,49 +917,83 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             // Fit Gaussian to that variable
             if (found != std::string::npos && false) {
-                std::cout << "[BLARG] Getting diphoton width for " << var.unit << " stage " << std::to_string(s) << std::endl;
-                TF1 *gausfit_data = new TF1("gausfit_data", "gaus", 0.05, 0.25);
-                TF1 *gausfit_mc = new TF1("gausfit_mc", "gaus");
-                TH1 *tmp_hist = stk->GetHistogram();
-                double lowFit = 0.05, highFit = 0.25;
-                double mass_data = 0., mass_err_data = 0;
-                double mass_width_data = 0., mass_width_err_data = 0.;
-                double mass_res_data = 0., mass_res_data_err = 0.;
-                double mass_mc = 0., mass_err_mc = 0;
-                double mass_width_mc = 0., mass_width_err_mc = 0.;
+                std::cout << "[BLARG] Fitting " << var.unit << " stage " << std::to_string(s) << std::endl;
+                TF1 *gausfit_data  = new TF1("gausfit_data" , "gaus", 0.05 , 0.25);
+                //TF1 *gausfit_data2 = new TF1("gausfit_data2", "gaus", 0.135, 0.245);
+                TF1 *gausfit_data2 = new TF1("gausfit_data2", "pol1", 0.00, 0.4);
+                //TF1 *doub_gaus = new TF1("doub_gaus", "gaus(0)+gaus(3)", 0.015, 0.25);
+                TF1 *doub_gaus = new TF1("doub_gaus", "gaus(0)+pol1(3)", 0.00, 0.4);
+                gausfit_data ->SetLineColor(kRed);
+                gausfit_data2->SetLineColor(kAzure);
+                doub_gaus    ->SetLineColor(kCyan);
+
+                d0->Fit(gausfit_data, "lvr");
+                d0->Fit(gausfit_data2, "lvr");
+                Double_t par[5]; // 3 Gaus + 2 linear parameters
+                gausfit_data ->GetParameters(&par[0]);
+                gausfit_data2->GetParameters(&par[3]);
+                doub_gaus->SetParameters(par);
+                d0->Fit(doub_gaus, "lvr");
+                //std::cout << "BLARG Doub 0 = " << doub_gaus->GetParameter(0) << std::endl;
+                //std::cout << "BLARG Doub mean = " << doub_gaus->GetParameter(1) << std::endl;
+                //std::cout << "BLARG Doub width = " << doub_gaus->GetParameter(2) << std::endl;
+                double mass_data           = doub_gaus->GetParameter(1);
+                double mass_err_data       = doub_gaus->GetParError(1);
+                double mass_width_data     = doub_gaus->GetParameter(2);
+                double mass_width_err_data = doub_gaus->GetParError(2);
+                double mass_res_data = doub_gaus->GetParameter(2)/doub_gaus->GetParameter(1);
+                double mass_res_data_err = sqrt(std::pow(doub_gaus->GetParError(1)/doub_gaus->GetParameter(1) ,2) +
+                        std::pow(doub_gaus->GetParError(2)/doub_gaus->GetParameter(2), 2) );
+                std::cout << "BLARG Linear A = " << doub_gaus->GetParameter(3) << " +/- " << doub_gaus->GetParError(3) << std::endl;
+                std::cout << "BLARG Linear B = " << doub_gaus->GetParameter(4) << " +/- " << doub_gaus->GetParError(4) << std::endl;
+                std::cout << "[BLARG] Data mass: " << mass_data << " +/- " << mass_err_data << std::endl;
+                std::cout << "[BLARG] Data mass StdDev: " << mass_width_data << " +/- " << mass_width_err_data << std::endl;
+                std::cout << "[BLARG] Data mass Res: " << mass_res_data*100. << "% +/- " << mass_res_data_err*100. << "%" << std::endl;
+                //std::cout << "BLARG Doub other width? = " << doub_gaus->GetParameter(5) << std::endl;
+                /*
+                   TF1 *gausfit_data = new TF1("gausfit_data", "gaus", 0.05, 0.25);
+                   TF1 *gausfit_mc = new TF1("gausfit_mc", "gaus");
+                   TH1 *tmp_hist = stk->GetHistogram();
+                   double lowFit = 0.05, highFit = 0.25;
+                   double mass_data = 0., mass_err_data = 0;
+                   double mass_width_data = 0., mass_width_err_data = 0.;
+                   double mass_res_data = 0., mass_res_data_err = 0.;
+                   double mass_mc = 0., mass_err_mc = 0;
+                   double mass_width_mc = 0., mass_width_err_mc = 0.;
                 // Fit range should be similar for data and MC
                 //lowFit = d0->GetXaxis()->GetBinLowEdge(1);
                 //highFit = d0->GetXaxis()->GetBinLowEdge(d0->GetNbinsX()+1);
                 d0->Fit(gausfit_data, "lvr", "", lowFit, highFit);
-                tmp_hist->Fit(gausfit_mc, "q", "", lowFit, highFit);
+                //tmp_hist->Fit(gausfit_mc, "q", "", lowFit, highFit);
                 //tsum->Fit(gausfit_mc, "q", "", lowFit, highFit);
                 //std::cout << "[BLARG] tmp max = " << tmp_hist->GetMaximum() << std::endl;
                 mass_data = gausfit_data->GetParameter(1);
                 mass_err_data = gausfit_data->GetParError(1);
                 mass_width_data = gausfit_data->GetParameter(2);
                 mass_width_err_data = gausfit_data->GetParError(2);
-                mass_mc = gausfit_mc->GetParameter(1);
-                mass_err_mc = gausfit_mc->GetParError(1);
-                mass_width_mc = gausfit_mc->GetParameter(2);
-                mass_width_err_mc = gausfit_mc->GetParError(2);
+                //mass_mc = gausfit_mc->GetParameter(1);
+                //mass_err_mc = gausfit_mc->GetParError(1);
+                //mass_width_mc = gausfit_mc->GetParameter(2);
+                //mass_width_err_mc = gausfit_mc->GetParError(2);
                 // Calculate resolution: StdDev/width (w/ uncertainty)
                 mass_res_data = gausfit_data->GetParameter(2)/gausfit_data->GetParameter(1);
                 mass_res_data_err = sqrt(std::pow(gausfit_data->GetParError(1)/gausfit_data->GetParameter(1) ,2) +
-                        std::pow(gausfit_data->GetParError(2)/gausfit_data->GetParameter(2), 2) );
+                std::pow(gausfit_data->GetParError(2)/gausfit_data->GetParameter(2), 2) );
                 std::cout << "[BLARG] Data mass: " << mass_data << " +/- " << mass_err_data << std::endl;
                 std::cout << "[BLARG] Data mass StdDev: " << mass_width_data << " +/- " << mass_width_err_data << std::endl;
                 std::cout << "[BLARG] Data mass Res: " << mass_res_data*100. << "% +/- " << mass_res_data_err*100. << "%" << std::endl;
                 std::cout << "[BLARG] MC mass: " << mass_mc << " +/- " << mass_err_mc << std::endl;
                 std::cout << "[BLARG] MC mass StdDev: " << mass_width_mc << " +/- " << mass_width_err_mc << std::endl;
                 gausfit_data->SetLineColor(kRed);
-                gausfit_mc->SetLineColor(kAzure+1);
+                //gausfit_mc->SetLineColor(kAzure+1);
                 gausfit_data->Draw("same");
-                gausfit_mc->Draw("same");
+                //gausfit_mc->Draw("same");
+                */
             }
 
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
-            if(!stack_mode) l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,2)).c_str(),"lp");	
+            if(!stack_mode) l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,0)).c_str(),"lp");		
 
 
             l0->Draw();
@@ -791,6 +1001,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             l0->SetLineColor(0);
             //l0->SetFillStyle(0); //comment in for transparent
             l0->SetTextSize(stack_mode ? 0.03 : 0.04);
+
+            // Added by A. Mogan 9/30/20
+            std::string topo_draw = data_file->topo_name;
+            TLatex topotex;
+            topotex.SetTextSize(stack_mode ? 0.04 : 0.06);
+            topotex.SetTextAlign(13);  //align at top
+            topotex.SetNDC();
+            //topotex.DrawLatex(.55,.70, topo_draw.c_str());
 
             //  TLatex latex;
             // latex.SetTextSize(0.06);
@@ -806,15 +1024,25 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //std::string pot_unit_s = stack_mode ? "e20" : "e19";
             double pot_unit = 1e20;
             std::string pot_unit_s = "E20";
-            std::string pot_draw = data_file->topo_name+"   "+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
+            std::string pot_draw = data_file->data_descriptor+" "+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
+            pottex.SetNDC();
 
             if (OTPC == true){
+                pottex.DrawLatex(.55,.48, pot_draw.c_str());
                 //      std::cout<<"flag 5"<<std::endl;
 
-                pottex.DrawLatex(.60,.48, pot_draw.c_str());
+                //pottex.DrawLatex(.635,.48, pot_draw.c_str());
             } else{
-                pottex.DrawLatex(.55,.60, pot_draw.c_str());
+                //pottex.DrawLatex(.55,.60, pot_draw.c_str());
+                pottex.DrawLatex(.50,.60, pot_draw.c_str());
             }
+
+            TLatex descriptor_tex;
+            descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
+            descriptor_tex.SetTextAlign(13);  //align at top
+            descriptor_tex.SetNDC();
+            //descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
+            descriptor_tex.DrawLatex(0.50,0.66,("Selection "+ data_file->topo_name).c_str());
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
@@ -829,15 +1057,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // t->SetTextColor(kRed-7);
             // stage->SetTextFont(43);
             // stage->SetTextSize(0.10);
-            stage.DrawLatex(0.6, 0.92, stage_names.at(s).c_str());
+            //stage.DrawLatex(0.6, 0.92, stage_names.at(s).c_str());
+            stage.DrawLatex(0.5, 0.92, stage_names.at(s).c_str());
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
 
-            std::cout<<"5"<<std::endl;
             TText *pre; 
             TText *pre2; 
             if (isSpectator) {
-                pre = drawPrelim(0.6,stack_mode? 0.525: 0.5,prestring.c_str());
+                pre = drawPrelim(0.55,stack_mode? 0.525: 0.5,prestring.c_str());
                 if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
@@ -846,21 +1074,22 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
                 if(OTPC){   
                     pre = drawPrelim(0.55,0.41,prestring.c_str());
-                    if(stack_mode)pre2 = drawPrelim(0.625,.37,"Preliminary");
-                   
-                   
+                    if(stack_mode) pre2 = drawPrelim(0.625,.37,"Preliminary");
+
+
                     //std::cout<<"flag 6"<<std::endl;
 
                 }else{
 
-                    pre = drawPrelim(0.6,stack_mode? 0.525 :0.5,prestring.c_str());
+                    //pre = drawPrelim(0.55,stack_mode? 0.525 :0.5,prestring.c_str());
+                    pre = drawPrelim(0.50,stack_mode? 0.525 :0.5,prestring.c_str());
                     if(stack_mode)pre2 = drawPrelim(0.6,0.48,"Preliminary");
                 }
 
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
-            pre->SetTextSize(stack_mode ? 0.04 : 0.06);;
+            pre->SetTextSize(stack_mode ? 0.04 : 0.06);
             pre->Draw();
             if(stack_mode){
                 pre2->SetTextSize(stack_mode ? 0.04 : 0.06);;
@@ -928,7 +1157,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //          rat_signal->Divide(tsum);
             for(int b=0; b< rat_signal->GetNbinsX()+1; b++){
                 double val = (signal_hist->GetBinContent(b)+tsum->GetBinContent(b))/tsum->GetBinContent(b);
-                std::cout<<b<<" "<<val<<" "<<tsum->GetBinContent(b)<<" "<<signal_hist->GetBinContent(b)<<std::endl;
+                //std::cout<<b<<" "<<val<<" "<<tsum->GetBinContent(b)<<" "<<signal_hist->GetBinContent(b)<<std::endl;
                 if(val !=val) val = 0;
                 rat_signal->SetBinContent(b,val);
             }
@@ -1028,8 +1257,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 gr->Draw("E0 same");
             }
 
+            fout->cd();
+            d0->Write(("d0_"+tago).c_str());
+            tsum->Write(("tsum_"+tago).c_str());
+            ratpre->Write(("ratpre_"+tago).c_str());
+            ratunit->Write(("ratunit_"+tago).c_str());
+            gr->Write(("graph_"+tago).c_str());
+
             //std::string mean = "(Ratio: "+to_string_prec(NdatEvents/NeventsStack,2)+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
-            std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
+            std::string mean = "(Data/MC: "+to_string_prec(NdatEvents/NeventsStack,2)+" #pm "+to_string_prec(tot_norm_error/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
 
             // Make text file for chi^2
@@ -1049,8 +1285,18 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             else    simple_topo_name = "unknown_topo";
             std::ofstream outfile;
             std::cout << "TESTING run_name = " << run_name << std::endl;
-            outfile.open("chisq_"+simple_topo_name+"_"+run_name+"_stage_"+std::to_string(s)+".txt", std::ios_base::app);
+            outfile.open("chisq_"+ simple_topo_name+ "_"+data_file->tag+"_values_stage_"+std::to_string(s)+".txt", std::ios_base::app);
             outfile << to_string_prec(TMath::Prob(mychi, ndof),3) << std::endl;
+            outfile.close();
+
+            outfile.open("chisq_"+ simple_topo_name+ "_"+data_file->tag+"_names_stage_"+std::to_string(s)+".txt", std::ios_base::app);
+            outfile << var.safe_unit << std::endl;
+            outfile.close();
+
+
+            // outfile.open("chisq_"+simple_topo_name+"_"+ run_name +"_stage_"+std::to_string(s)+".txt", std::ios_base::app);
+            //   outfile << to_string_prec(TMath::Prob(mychi, ndof),3) << std::endl;
+
 
             std::string combined = mean + "     " +ks;
             //std::string mean = "Ratio: Normalized" ;
@@ -1059,7 +1305,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             t->SetNDC();
             t->SetTextColor(kRed-7);
             //t->SetTextFont(43);
-            t->SetTextSize(0.10);
+            t->SetTextSize(0.09);
             if(!stack_mode)t->Draw("same");
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
@@ -1101,7 +1347,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             delete cobs;
             for(auto &h: fake_legend_hists) delete h;
 
+            fout->Close();
         }
+
+
     }
 
     return 0;
@@ -1234,7 +1483,6 @@ int bdt_datamc::calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *full_col
 
     for(int i=0; i< frac_full->GetNrows();i++){
         for(int j=0; j< frac_full->GetNrows();j++){
-
             double pt = (*frac_full)(i,j);
             if(pt!=pt || isinf(pt)){
                 if(full_vec[i] !=0 && full_vec[j]!=0){
@@ -1249,9 +1497,9 @@ int bdt_datamc::calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *full_col
             }
 
         }
-        std::cout<<"StackCheck2 "<<i<<" "<<full_vec[i]<<" Err: "<<sqrt(tmp_full(i,i))<<" "<<(full_vec[i]>0 ? sqrt(tmp_full(i,i))/full_vec[i]*100.0 : -9 )<<std::endl;
+        // std::cout<<"StackCheck2 "<<i<<" "<<full_vec[i]<<" Err: "<<sqrt(tmp_full(i,i))<<" "<<(full_vec[i]>0 ? sqrt(tmp_full(i,i))/full_vec[i]*100.0 : -9 )<<std::endl;
     }
-    std::cout<<"Done"<<std::endl;
+    //std::cout<<"Done"<<std::endl;
     //Going to do collapsing here, but for now just do diagonal!
 
     this->simpleCollapse(&tmp_full, full_coll, var);
@@ -1415,6 +1663,63 @@ int bdt_datamc::simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & v
     }
 
     return 0 ;
+
+}
+
+
+double bdt_datamc::calcTotalNormError(TMatrixD * Min, bdt_variable & var){
+    //Ripped directly from...
+    //void SBNchi::CollapseSubchannels(TMatrixT <double> & M, TMatrixT <double> & Mc)
+    int num_channels = 1;
+    std::vector<int> num_subchannels = {var.n_bins};
+    std::vector<int> num_bins = {1};
+    TMatrixD * Mout = new TMatrixD(1,1);
+
+    std::vector<std::vector<TMatrixT<double>>> Summed(num_channels, std::vector<TMatrixT<double>>(num_channels) );	//Initialise a matrix of matricies, to ZERO.
+    for(int ic = 0; ic < num_channels; ic++){
+        for(int jc =0; jc < num_channels; jc++){
+            Summed[ic][jc].ResizeTo(num_bins[jc],num_bins[ic]) ;// This is CORRECT, do not switch (ie Summed[0][1] = size (num_bins[1], num_bins[0])
+            Summed[ic][jc] = 0.0;
+        }
+    }
+
+    int mrow = 0.0;
+    int mcol = 0.0;
+
+    for(int ic = 0; ic < num_channels; ic++){ 	 //Loop over all rows
+        for(int jc =0; jc < num_channels; jc++){ //Loop over all columns
+
+            for(int m=0; m < num_subchannels[ic]; m++){
+                for(int n=0; n< num_subchannels[jc]; n++){ //For each big block, loop over all subchannels summing toGether
+                    Summed[ic][jc] +=  Min->GetSub(mrow+n*num_bins[jc] ,mrow + n*num_bins[jc]+num_bins[jc]-1, mcol + m*num_bins[ic], mcol+ m*num_bins[ic]+num_bins[ic]-1 );
+                }
+            }
+
+            mrow += num_subchannels[jc]*num_bins[jc];//As we work our way left in columns, add on that many bins
+        }//end of column loop
+
+        mrow = 0; // as we end this row, reSet row count, but jump down 1 column
+        mcol += num_subchannels[ic]*num_bins[ic];
+    }//end of row loop
+
+    ///********************************* And put them back toGether! ************************//
+    Mout->Zero();
+    mrow = 0;
+    mcol = 0;
+
+    //Repeat again for Contracted matrix
+    for(int ic = 0; ic < num_channels; ic++){
+        for(int jc =0; jc < num_channels; jc++){
+
+            Mout->SetSub(mrow,mcol,Summed[ic][jc]);
+            mrow += num_bins[jc];
+        }
+
+        mrow = 0;
+        mcol +=num_bins[ic];
+    }
+
+    return (*Mout)(0,0) ;
 
 }
 

@@ -264,7 +264,7 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
         }
         if(have_filled == working_index){
 
-            std::cout<<have_filled<<" "<<working_index<<" "<<i<<" "<<out_result[i]<<std::endl;      
+            //std::cout<<have_filled<<" "<<working_index<<" "<<i<<" "<<out_result[i]<<std::endl;      
             mva = out_result[i];
             mva2 = mva;
             tree->Fill();

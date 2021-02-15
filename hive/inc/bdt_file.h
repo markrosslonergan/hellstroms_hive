@@ -36,6 +36,7 @@
 #include "TFriendElement.h"
 #include "TText.h"
 #include "TRandom3.h"
+#include "TMath.h"
 #include "TVectorT.h"
 #include "TEntryList.h"
 
@@ -70,6 +71,8 @@ std::vector<size_t> sort_indexes(const std::vector<T> &v) {
     return idx;
 }
 
+std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<double>&vin);
+
 
 TText * drawPrelim(double x, double y);
 TText * drawPrelim(double x, double y,double s);
@@ -85,8 +88,11 @@ struct bdt_file{
         std::string plot_name;
         std::string plot_ops;
         std::string root_dir;
+    
+        std::string data_descriptor;
 
         std::string weight_branch;
+        std::string global_weight_string;
 
 
         TRandom3* rangen;
@@ -214,8 +220,13 @@ struct bdt_file{
         double GetEntries(std::string cuts);
         double GetEntries();
         TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);
-        TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
-        TH1* getTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
+        
+        int getRunEfficiency();
+
+
+        TH1* getTH1(bdt_variable & var, std::string cuts, std::string nam, double  plot_POT, int  rebin);
+        TH1* getTH1(bdt_variable & var, std::string cuts, std::string nam, double  plot_POT);
+        
         TH2* getTH2(bdt_variable varx, bdt_variable vary, std::string cuts, std::string nam, double plot_POT);
 
         std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
@@ -236,12 +247,19 @@ struct bdt_file{
 
 
 
+    int splitAndPlot(int nsplit, bdt_variable var, double pot,int stage,std::vector<double> bdt_cuts);
+
+    std::vector<double> getVector(bdt_variable & var, std::string  cuts);
+
+
+
         std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
         std::string getStageCuts(int stage, std::vector<double> bdt_cuts);
 
 
         int writeStageFriendTree(std::string nam,double,double);
         int addPlotName(std::string plotin);
+        int addDataDescriptor(std::string pin){ data_descriptor = pin;}
         int setTColor(TColor &);
         TColor f_TColor;
 };

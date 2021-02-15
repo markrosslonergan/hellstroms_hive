@@ -181,8 +181,7 @@ void doCalibration() {
 
     // Fit line
     //TF1 *fit_corr = new TF1("fit_corr", "pol1", 400, h_max_corr->GetNbinsX() );
-    //TF1 *fit_corr = new TF1("fit_corr", "pol1", 20, 500 );
-    TF1 *fit_corr = new TF1("fit_corr", "pol1", 20, 500 );
+    TF1 *fit_corr = new TF1("fit_corr", "pol1", 20, 400 );
     fit_corr->SetLineColor(kWhite);
     fit_corr->SetLineStyle(8);
 

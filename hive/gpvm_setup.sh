@@ -13,5 +13,4 @@
 	setup gcc v6_4_0
 	echo "Setting up root v6_12_04e"
 	setup root v6_12_04e -q e15:prof
-
     echo "Done!."
