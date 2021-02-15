@@ -48,12 +48,12 @@ std::string to_string_prec(const T a_value, const int n = 6)
     return out.str();
 }
 
-template<typename T>
+    template<typename T>
 bool marks_compare_vec_nonsense(std::vector<T>& v1, std::vector<T>& v2)
 {
-        std::sort(v1.begin(), v1.end());
-            std::sort(v2.begin(), v2.end());
-                return v1 == v2;
+    std::sort(v1.begin(), v1.end());
+    std::sort(v2.begin(), v2.end());
+    return v1 == v2;
 }
 
 
@@ -71,8 +71,9 @@ std::vector<size_t> sort_indexes(const std::vector<T> &v) {
     return idx;
 }
 
-std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<double>&vin);
 
+std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<double>&vin);
+int removeSubStrings(std::string &, std::string&);
 
 TText * drawPrelim(double x, double y);
 TText * drawPrelim(double x, double y,double s);
@@ -88,7 +89,7 @@ struct bdt_file{
         std::string plot_name;
         std::string plot_ops;
         std::string root_dir;
-    
+
         std::string data_descriptor;
 
         std::string weight_branch;
@@ -162,9 +163,9 @@ struct bdt_file{
         //a function that splits a BDT file based on string and !string
         int splitBDTfile(std::string split_string,std::string trueTAG, bdt_file* truesplit, std::string falseTAG, bdt_file *falsesplit);
 
-        
+
         unsigned long jenkins_hash(std::string key);
-        
+
 
 
         int setStageEntryList(int j);
@@ -216,17 +217,17 @@ struct bdt_file{
 
         TH1* getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
         int CheckWeights();
-     
+
         double GetEntries(std::string cuts);
         double GetEntries();
         TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);
-        
+
         int getRunEfficiency();
 
 
         TH1* getTH1(bdt_variable & var, std::string cuts, std::string nam, double  plot_POT, int  rebin);
         TH1* getTH1(bdt_variable & var, std::string cuts, std::string nam, double  plot_POT);
-        
+
         TH2* getTH2(bdt_variable varx, bdt_variable vary, std::string cuts, std::string nam, double plot_POT);
 
         std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
@@ -243,13 +244,13 @@ struct bdt_file{
         int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot,std::string external_cuts);
 
 
-    int makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage, const std::vector<double> & fbdtcuts );
+        int makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage, const std::vector<double> & fbdtcuts );
 
 
 
-    int splitAndPlot(int nsplit, bdt_variable var, double pot,int stage,std::vector<double> bdt_cuts);
+        int splitAndPlot(int nsplit, bdt_variable var, double pot,int stage,std::vector<double> bdt_cuts);
 
-    std::vector<double> getVector(bdt_variable & var, std::string  cuts);
+        std::vector<double> getVector(bdt_variable & var, std::string  cuts);
 
 
 

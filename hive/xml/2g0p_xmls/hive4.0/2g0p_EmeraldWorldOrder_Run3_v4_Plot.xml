@@ -2,11 +2,12 @@
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="pigLEE_2g0p_combined" name ="2#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==2 &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.95)" />
+<!-- 0.76516 -->
 
 <plot_pot>
-    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.25039075"  />
-    <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number     <= 18960))" fraction = "0.74960925" />
+    <run_period name ="RunIII" cut ="( (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "1.0" />
 </plot_pot>
+
 
 <covar dir="/" name="frac_covariance" plotname="Flux &amp; XS Systematics" />
 
@@ -89,24 +90,28 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "filter_2g0p_data_combined_run123_v33.3.uniq.root" tag = "Data2g0pFiltered" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Data, Run 1+2+3 On-Beam">
+
+<bdtfile filename = "filter_2g0p_data_run3_v33.3.uniq.root" tag = "Data2g0pFilteredRun3" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Data, On-Beam Run 3 ">
     <definition><cut>1</cut></definition>
     <data type="OnBeam" plot_name="Filtered" >
-        <tor860_wcut> 5.893E+20 </tor860_wcut>   
-        <E1DCNT_wcut> 137557244 </E1DCNT_wcut>   
+        <tor860_wcut> 1.731e+20 </tor860_wcut>   
+        <E1DCNT_wcut> 41342671.0</E1DCNT_wcut>   
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 1+2+3 Cosmic" fillstyle = "3333" scale = "1">
+<bdtfile filename = "bnbext_run3_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun3" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 3 Cosmic" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 5.893E+20 </tor860_wcut>
-        <E1DCNT_wcut> 137557244</E1DCNT_wcut>
-        <EXT>314602374</EXT> 
+        <tor860_wcut> 1.731e+20 </tor860_wcut>   
+        <E1DCNT_wcut> 41342671.0</E1DCNT_wcut>   
+        <EXT>73196017.0</EXT>
     </data>
 </bdtfile>
+
+
+
 
 <!-- ============================================ BDT FILES [Now the training files]============================================= -->
 
@@ -128,7 +133,7 @@
         <cut> sim_shower_pdg[i_shr[1]] == 22 </cut>
         <cut> sim_shower_parent_pdg[i_shr[0]] == 111 </cut>
         <cut> sim_shower_parent_pdg[i_shr[1]] == 111 </cut>
-    </training>
+     </training>
 </bdtfile>
 
 <bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
@@ -149,27 +154,27 @@
         <cut> sim_shower_pdg[i_shr[1]] == 22 </cut>
         <cut> sim_shower_parent_pdg[i_shr[0]] == 111 </cut>
         <cut> sim_shower_parent_pdg[i_shr[1]] == 111 </cut>
-    </training>
+     </training>
 </bdtfile>
 
 <bdtfile filename = "bnb_bdt_training_sample_v33.3.uniq.root" tag = "BNBOtherTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BnbTrain" fillstyle = "3333" scale = "1">
-    <definition>
-        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
-    </definition>
-    <training>
-        <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
-        <cut> sim_shower_overlay_fraction[1]&lt;0.9</cut>
-    </training>
+      <definition>
+          <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+      </definition>
+      <training>
+          <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
+          <cut> sim_shower_overlay_fraction[1]&lt;0.9</cut>
+      </training>
 </bdtfile>
 
 <bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "BNBOtherTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BNBTest" fillstyle = "3333" scale = "1">
-    <definition>
-        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
-    </definition>
-    <training>
-        <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
-        <cut> sim_shower_overlay_fraction[1]&lt;0.9</cut>
-    </training>
+      <definition>
+          <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+      </definition>
+      <training>
+          <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
+          <cut> sim_shower_overlay_fraction[1]&lt;0.9</cut>
+      </training>
 </bdtfile>
 
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
@@ -325,23 +330,23 @@
 <!-- ================= RECO-MC Matching ======================== -->
 
 <recomc>
-    <def name="#pi^{0} Charge Exchange" col ="(0.2,0.2,0.4)"> 
-        abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_pipm>0 &amp;&amp; sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0  
+  <def name="#pi^{0} Charge Exchange" col ="(0.2,0.2,0.4)"> 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_pipm>0 &amp;&amp; sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0  
     </def> 
     <def name="CC Other" col ="(0.2,0.2,0.6)"> 
-        abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_photons==0 &amp;&amp; !(sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111) &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8  ) &amp;&amp; mctruth_num_exiting_photons==0            
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_photons==0 &amp;&amp; !(sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111) &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8  ) &amp;&amp; mctruth_num_exiting_photons==0            
     </def> 
     <def name="CC Multi-#pi^{0}" col ="(0.4,0.2,0.4)"> 
-        abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0>1 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; mctruth_num_exiting_pipm==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0>1 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; mctruth_num_exiting_pipm==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0 
     </def> 
     <def name="NC Multi-#pi^{0}" col ="(0.4,0.2,0.4)"> 
-        abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0>1 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pipm==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0 
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0>1 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pipm==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0 
     </def> 
     <def name="NC Other" col ="(0.2,0.2,0.6)"> 
-        abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_photons==0 &amp;&amp; !(sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111) &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8  )    
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_photons==0 &amp;&amp; !(sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111) &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8  )    
     </def> 
     <def name="#eta" col ="(0.2,0.6,0.4)"> 
-        abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_photons==2 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8)             
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_photons==2 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8)             
     </def> 
     <!--
     <def name="Intrinsic #nu_{e}" col ="(0.2,0.8,0.8)"> 
@@ -349,7 +354,7 @@
     </def> 
     -->
     <def name = "Overlay" col="(0.2,0.8,0.2)">
-        (sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 )
+      (sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 )
     </def>
 
 </recomc>

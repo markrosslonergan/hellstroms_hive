@@ -4,7 +4,7 @@
 
 <plot_pot>
     <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.249"  />
-    <run_period name ="RunII/RunIIIb/IV" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960) || (run_number >=18961 &amp;&amp; run_number <=23542))" fraction = "0.751" />
+    <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "0.751" />
 </plot_pot>
 
 <covar dir="." name="frac_covariance" type="frac" plotname="Flux, XSec &amp; Det Sys"/>

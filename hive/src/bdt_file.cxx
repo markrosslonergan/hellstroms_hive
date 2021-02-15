@@ -1,5 +1,14 @@
 # include "bdt_file.h"
 
+int removeSubStrings(std::string & s, std::string & p) {
+    auto n = p.length();
+    for (auto i = s.find(p);
+            i !=std::string::npos;
+            i = s.find(p))
+        s.erase(i, n);
+    return 0;
+}
+
 std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<double> & fullvec){
 
     int ncol = Min.GetNrows();
@@ -402,25 +411,35 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
     run_fractions_file.resize(run_fractions.size(),0);
     double combin = 0.0;
+   
+    std::string modified_runsubrun_string = "0";
+   
     for(int i=0; i< run_fractions.size(); i++){
         run_fractions_file[i] = tvertex->GetEntries(run_cuts[i].c_str())/(double)tvertex->GetEntries();
         std::cout<<run_cuts[i]<<std::endl;
         std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
         combin+=run_fractions_file[i];
+        modified_runsubrun_string += "|| "+run_cuts[i];
     }
+
 
     std::cout<<"Total is "<<combin<<std::endl;
+    /* This is no longer a bad thing, we want to be able to ignore these in some sense.
     if(fabs(combin-1.0)>0.00001  && !is_data){
         std::cout<<"ERROR! The total that each defined run period adds up to is "<<combin<<" which is not 1."<<" "<<this->tag<<" "<<is_data<<std::endl;
-
         exit(EXIT_FAILURE);
     }
-
+    */
+    
     for(int i=0; i< run_fractions.size(); i++){
         std::cout<<"Run_Frac: "<<run_fractions[i]<<" in this file "<<run_fractions_file[i]<<std::endl;
+        std::cout<<"..But as we only have a totoal of "<<combin<<" we modify run_fractions_file[i] to "<<run_fractions_file[i]/combin<<std::endl;
+        run_fractions_file[i] = run_fractions_file[i]/combin;
     }
 
     run_weight_string = "1.0*("+run_cuts[0]+"*"+std::to_string(run_fractions[0]/run_fractions_file[0]);
+    
+    
     for(int i=1; i< run_fractions.size(); i++){
 
         double mval = mval = run_fractions[i]/run_fractions_file[i]; 
@@ -445,6 +464,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     tslice = (TTree*)f->Get(tnam_slice.c_str());
     trs = (TTree*)f->Get(tnam_rs.c_str());    
 
+
     if(is_mc){
         //If its MC or Overlay, lets just grab the POT from the nice POT tree
         leg = "l";
@@ -462,11 +482,25 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         int tmpnum = 0;
         double tmppot=0;
 
+
         std::cout<<"bdt_file::bdt_file()\t||\t There was "<<trs->GetEntries()<<" subruns merged to make this root file."<<std::endl;
+        std::cout<<"The original string to see if its inside any of the run perios is : ";
+        std::cout<<modified_runsubrun_string<<std::endl;
+       
+        std::string remover = "_number";
+        removeSubStrings(modified_runsubrun_string,remover);
+
+        std::cout<<"The modified string to see if its inside any of the run perios is : ";
+        std::cout<<modified_runsubrun_string<<std::endl;
+        std::cout<<"bdt_file::bdt_file()\t||\t Which contains "<<trs->GetEntries(modified_runsubrun_string.c_str())<<" subruns that pass the run_string."<<std::endl;
+
+        TTreeFormula * frunpass = new TTreeFormula((this->tag+"tfor").c_str() , modified_runsubrun_string.c_str(), trs);
 
         for(int i=0; i<trs->GetEntries(); i++) {
             trs->GetEntry(i);
-            tmppot += potbranch;
+            frunpass->GetNdata();
+            bool isin = frunpass->EvalInstance();
+            if(isin) tmppot += potbranch;
         }
 
         if (this->tag == "DarkNue"){
