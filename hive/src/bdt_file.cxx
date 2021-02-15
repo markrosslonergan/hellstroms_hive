@@ -359,7 +359,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         exit(EXIT_FAILURE);
     }
 
-
+    //guanqun: what does this do?
     run_weight_string = "1.0*("+run_cuts[0]+"*"+std::to_string(run_fractions[0]/run_fractions_file[0]);
     for(int i=1; i< run_fractions.size(); i++){
          run_weight_string += "+" +run_cuts[i]+"*"+std::to_string(run_fractions[i]/run_fractions_file[i]);

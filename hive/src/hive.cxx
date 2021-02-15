@@ -223,7 +223,8 @@ int main (int argc, char *argv[]){
     }
 
 
-    dir = XMLconfig.filedir;
+    //dir = XMLconfig.filedir;
+    dir="";
     std::cout<<"Core File dir set as "<<dir<<std::endl;
 
     std::cout<<"We have "<<TMVAmethods.size()<<" Different BDT's we are going to train today"<<std::endl;
