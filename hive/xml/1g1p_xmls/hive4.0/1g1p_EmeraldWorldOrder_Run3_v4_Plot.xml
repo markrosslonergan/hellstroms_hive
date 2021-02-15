@@ -6,8 +6,7 @@
     <run_period name ="RunIII" cut ="((run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "1.0" />
 </plot_pot>
 
-<covar dir="." name="frac_covariance" type="frac" plotname="Flux, XSec &amp; Det Sys"/>
-
+<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XSec Systematics"/>
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
 
