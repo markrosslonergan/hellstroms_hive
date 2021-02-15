@@ -3,7 +3,7 @@
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.988209,0.892728,0.428825)"/>
 
-<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Det Sys" />
+<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
 
 <plot_pot>
     <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "1.0"  />
@@ -96,7 +96,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 1 Cosmic" fillstyle = "3333" scale = "0.0">
+<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 1 Cosmic" fillstyle = "3333" scale = "1.0">
     <definition>
         <cut> 1 </cut>
     </definition>

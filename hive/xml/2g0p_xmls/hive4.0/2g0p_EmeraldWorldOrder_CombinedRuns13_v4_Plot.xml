@@ -4,7 +4,7 @@
 <topology tag="pigLEE_2g0p_combined" name ="2#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==2 &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.95)" />
 
 <plot_pot>
-    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.25039075"  />
+    <run_period name ="RunI" cut ="((run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.25039075"  />
     <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number     <= 18960))" fraction = "0.74960925" />
 </plot_pot>
 
