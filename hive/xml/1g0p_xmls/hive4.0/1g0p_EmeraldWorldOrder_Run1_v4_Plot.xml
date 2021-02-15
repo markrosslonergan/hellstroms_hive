@@ -436,6 +436,17 @@
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_dirx[0],2))" unit = "Photon Implied Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = ""/>
 -->
 
+
+<!-- ################################################################################################################ -->
+<!-- ######################## The variables below are for plotting in the internal note! ############################ -->
+<!-- ################################################################################################################ -->
+<!-- ################################################################################################################ -->
+
+<alias key="BNB0" value ="0.892728"/> <!--these aliases are for the final BDT cuts, must be updated properly for the single bdt cut plots -->
+<alias key="COS0" value ="0.988209"/>
+<alias key="NCP0" value ="0.428825"/>
+
+
 <!--bdt vars -->
 <var def = "1g0pMar2020COSMIC_mva" binning = "(50,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" group = "6" logplot = "true"/>
 <var def = "1g0pMar2020BNB_mva" binning = "(50,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""  group = "6" logplot = "true" />
@@ -447,10 +458,23 @@
 <var def = "#GEO#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "9"/>
 <var def = "#GEO#" binning = "(4,100,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "10"/>
 
-<!-- stage 4 stack -->
-<var def = "#GEO#" binning = "(6,100,700)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "11"/>
+<!--stage 0+1-->
+<var def = "#GEO#" binning = "(18,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
 
+<!--stage 1-->
+<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"  training="" group = "12"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group = "12"/>
+<var def = "#GE#/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Geometric Size [GeV/cm*rad]" binning = "(24,0,0.1)" type = "d"   training = "" group = "12"/>
+<var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(24,0,0.3)" type = "d"  training = "" group = "12"/>
 
+<!--single BDT cuts-->
+<var def = "#GEO#" binning = "(4,30,800)" unit = "Corrected Calorimetric Shower Energy [MeV] Cosmic Only Cut" type = "d"   training=""  cut = "(1g0pMar2020COSMIC_mva &gt;= #COS0#)" group = "13"/>
+<var def = "#GEO#" binning = "(5,30,600)" unit = "Corrected Calorimetric Shower Energy [MeV] BNB Other Only Cut" type = "d"   training=""  cut = "(1g0pMar2020BNB_mva &gt;= #BNB0#)" group = "13"/>
+<var def = "#GEO#" binning = "(5,30,600)" unit = "Corrected Calorimetric Shower Energy [MeV] NC #pi^{0} Only Cut" type = "d"   training=""  cut = "(1g0pMar2020NCPi0_mva &gt;= #NCP0#)" group = "13"/>
+
+<!--stage 4 datamc -->
+<var def = "#GEO#/1000" binning="alt(0.1,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.7)" unit = "Corrected Calorimetric Shower Energy [GeV]" type = "d"   training="" group = "11"/>
+<!--<var def = "#GEO#" binning="(6, 100,700)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "11"/>-->
 
 
 <!--pi0 vars -->
