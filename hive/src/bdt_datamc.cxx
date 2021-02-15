@@ -669,18 +669,20 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 stk->GetYaxis()->SetLabelSize(label_size_upper);
                 stk->GetYaxis()->SetTitleOffset(title_offset_upper);
             }
-            stk->SetMinimum(min_val);
             std::cout<<"the max modifier is "<<max_modifier<<" and the min val is "<< min_val<<std::endl;
+            std::cout<<" and input pmin "<<var.plot_min<<" and pmax "<<var.plot_max<<std::endl;
 
             if(var.plot_max==-999){ 
                 stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
             }else{
+                max_val = var.plot_max;
                 stk->SetMaximum(var.plot_max);
             }
 
             if(var.plot_min==-999){ 
                 stk->SetMinimum(min_val);
             }else{
+                min_val=var.plot_min;
                 stk->SetMinimum(var.plot_min);
             }
 
