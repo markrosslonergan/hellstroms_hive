@@ -669,18 +669,20 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 stk->GetYaxis()->SetLabelSize(label_size_upper);
                 stk->GetYaxis()->SetTitleOffset(title_offset_upper);
             }
-            stk->SetMinimum(min_val);
             std::cout<<"the max modifier is "<<max_modifier<<" and the min val is "<< min_val<<std::endl;
+            std::cout<<" and input pmin "<<var.plot_min<<" and pmax "<<var.plot_max<<std::endl;
 
             if(var.plot_max==-999){ 
                 stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
             }else{
+                max_val = var.plot_max;
                 stk->SetMaximum(var.plot_max);
             }
 
             if(var.plot_min==-999){ 
                 stk->SetMinimum(min_val);
             }else{
+                min_val=var.plot_min;
                 stk->SetMinimum(var.plot_min);
             }
 
@@ -790,10 +792,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             if(var.has_covar&& m_error_string!="stats"){
 //                l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,leg_num_digits) ).c_str(),"fl");
-                l0->AddEntry(leg_hack,("#splitline{Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)+ "}{ "+var.covar_legend_name+"}").c_str(),"fl"); // Was le
+                l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
             }else{
                 //l0->AddEntry(leg_hack,("#splitline{Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)+ "}{MC Stats Only}").c_str(),"fl"); // Was le
                 l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
+
             }
 
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
@@ -1000,18 +1003,22 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
             TH1 *leg_hack2 = (TH1*)leg_hack->Clone(("leg_tmp2_tsum"+std::to_string(s)).c_str());
+            std::string sterrname = "#splitline{MC Stat Error Only}{}";
+            if(var.has_covar){
+                    sterrname = "#splitline{"+var.covar_legend_name+"}{}";
+            }
             if(!stack_mode){
                 l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,0)).c_str(),"lp");		
                 leg_hack2->SetLineColor(kWhite);
                 leg_hack2->SetLineWidth(0);
                 leg_hack2->SetFillStyle(0);
-                l0->AddEntry(leg_hack2,"MC Stats Only","l"); // Was le
+                l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
             }else{
                 leg_hack2->SetLineColor(kWhite);
                 leg_hack2->SetLineWidth(0);
                 leg_hack2->SetFillStyle(0);
                 l0->AddEntry(leg_hack2," ","l"); // Was le
-                l0->AddEntry(leg_hack2,"MC Stats Only","l"); // Was le
+                l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
             }
 
 
@@ -1290,7 +1297,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             tsum->Write(("tsum_"+tago).c_str());
             stk->Write(("tstk_"+tago).c_str());
             std::string mean = "(Data/Pred: "+to_string_prec(NdatEvents/NeventsStack,2)+" #pm "+to_string_prec(tot_norm_error/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
-            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n#it{DOF}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
+            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n_{#it{DOF}}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
 
             // Make text file for chi^2
             // Note that this depends on e.g. "Run 1" existing in your plot_name

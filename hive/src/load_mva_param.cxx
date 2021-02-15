@@ -1063,7 +1063,6 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         std::cout<<"Plotting Min/Max "<<pmin<<" "<<pmax<<std::endl;
 
         
-       
         int in_cat = 0; 
         const char * t_cat = pVar->Attribute("group");
          if(t_cat!=NULL){
