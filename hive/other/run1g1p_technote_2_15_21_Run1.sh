@@ -4,7 +4,7 @@
 ####################### 1g1p Plotting Macro ####################
 #this script generates all the 1g1p plots in chapter 5 of the internal note using run1 data and MC
 #the final stack plots scaled to 6.9e20POT use MC from combined runs
-####################### Kathryn 2/4/21 #########################
+####################### Kathryn 2/15/21 #########################
 ################################################################
 
 
