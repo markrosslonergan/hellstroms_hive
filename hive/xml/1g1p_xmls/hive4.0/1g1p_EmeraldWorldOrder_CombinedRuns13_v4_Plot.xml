@@ -136,7 +136,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "COFredo/ssv_bdt_training_sample_noduplicates_withCCPi0_v43.5.root" tag = "SSvetoRedoCCpi0TrainParent" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "ssv_bdt_training_sample_noduplicates_withCCPi0_v43.5.root" tag = "SSvetoRedoCCpi0TrainParent" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>

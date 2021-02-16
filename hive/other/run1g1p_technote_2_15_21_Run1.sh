@@ -41,13 +41,13 @@ NUM=2212
 ## in order to run a specific group of plots you can comment sections in and out
 
 #stage0 + 1
-./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g330
-./../../bin/hive -o datamc  -x $XML -s 0 -g330 --systematics "flux_fracfixed"
-./../../bin/hive -o datamc  -x $XML -s 1 -g330 --systematics "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g330
+#./../../bin/hive -o datamc  -x $XML -s 0 -g330 --systematics "flux_fracfixed"
+#./../../bin/hive -o datamc  -x $XML -s 1 -g330 --systematics "flux_fracfixed"
 
 #stage 1
-./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g331
-./../../bin/hive -o datamc  -x $XML -s 1 -g331 --systematics "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g331
+#./../../bin/hive -o datamc  -x $XML -s 1 -g331 --systematics "flux_fracfixed"
 
 #Single BDT Cuts
 #./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g335
@@ -85,6 +85,7 @@ NUM=2212
 #stage 6
 #./../../bin/hive  --makefluxcovar $FXXML6 -x $XML -s 6 -g332
 #./../../bin/hive -o datamc  -x $XML -s 6 -g332 --systematics "flux_fracfixed"
-#./../../bin/hive  --makefluxcovar $FXXML6 -x $XML13 -s 6 -g332
-#./../../bin/hive -o stack -x $XML13 -s 6 -g332 --systematics "flux_fracfixed" --pot 6.91e20
+
+./../../bin/hive  --makefluxcovar $FXXML6 -x $XML13 -s 6 -g332
+./../../bin/hive -o stack -x $XML13 -s 6 -g332 --systematics "flux_fracfixed" --pot 6.91e20
 
