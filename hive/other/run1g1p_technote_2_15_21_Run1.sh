@@ -41,28 +41,28 @@ NUM=2212
 ## in order to run a specific group of plots you can comment sections in and out
 
 #stage0 + 1
-#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g330
+./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g330
 ./../../bin/hive -o datamc  -x $XML -s 0 -g330 --systematics "flux_fracfixed"
 ./../../bin/hive -o datamc  -x $XML -s 1 -g330 --systematics "flux_fracfixed"
 
 #stage 1
-#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g331
+./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g331
 ./../../bin/hive -o datamc  -x $XML -s 1 -g331 --systematics "flux_fracfixed"
 
 #Single BDT Cuts
-#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g335
+./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g335
 ./../../bin/hive -o datamc  -x $XML -s 1 -g335 --systematics "flux_fracfixed"
 
-#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g336
+./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g336
 ./../../bin/hive -o datamc  -x $XML -s 1 -g336 --systematics "flux_fracfixed"
 
-#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g337
+./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g337
 ./../../bin/hive -o datamc  -x $XML -s 1 -g337 --systematics "flux_fracfixed"
 
-#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g338
+./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g338
 ./../../bin/hive -o datamc  -x $XML -s 1 -g338 --systematics "flux_fracfixed"
 
-#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g339
+./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g339
 ./../../bin/hive -o datamc  -x $XML -s 1 -g339 --systematics "flux_fracfixed"
 
 #Efficiency plots - these are currently still broken
@@ -79,7 +79,7 @@ NUM=2212
 
 
 #BDT Scores
-#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g6
+./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g6
 ./../../bin/hive -o datamc  -x $XML -s 1 -g6 --systematics "flux_fracfixed"
 
 #stage 6
