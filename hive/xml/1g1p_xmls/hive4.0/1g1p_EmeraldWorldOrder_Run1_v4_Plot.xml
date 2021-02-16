@@ -90,7 +90,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Data, Run 1 On-Beam">
+<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Data, Run 1 On-Beam">
     <definition><cut>1</cut></definition>
     <data type="OnBeam" plot_name="Unbiased">
         <tor860_wcut>   4.081e+19 </tor860_wcut>   
@@ -898,7 +898,7 @@
 <var def = "log10(reco_track_spacepoint_max_dist[0])" binning = "(18,-2,1.5)" unit = "Reconstructed Track Max Distance Spacepoint from Line Log[cm]" type = "d"  training = "" group = "331"/>
 <var def = "(reco_track_trackscore[0])" binning = "(18,0.5,1)" unit = "Track Score" type ="d"  training ="" group = "331"/>
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(18,0,0.3)" type = "d"  training = "" group = "331"/>
-<var def = "sss2d_conv_ranked_conv" binning = "(18,0,80)" unit ="sss2d closest candidate conversion Distance [cm]" type="d"  training="" group = "331"/>
+<var def = "sss2d_conv_ranked_conv" binning = "(8,0,80)" unit ="sss2d closest candidate conversion Distance [cm]" type="d"  training="" group = "331"/>
 <var def = "sss3d_ioc_ranked_implied_opang" binning = "(18,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="" group = "331"/>
 <var def = "#GEO#" binning = "(18,40,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "331"/>
 <var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(18,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="" group = "331"/>
