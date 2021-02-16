@@ -107,7 +107,7 @@
 
 
 <MultisimFile treename="singlephoton/simple_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/Jan2021_FullRedo_BGfix/1g1p/sbnfit_1g1pMar2020_v4_stage_1_CC1Pi0.root" scale = "16.932124" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/Jan2021_FullRedo_BGfix/1g1p/arborist_stage_1_C1Pi0.root"/>
+    <friend treename="arborist/eventweight_tree" filename="/uboone/data/users/markross/Mar2020/SBNfit_files/Jan2021_FullRedo_BGfix/1g1p/arborist_stage_1_CC1Pi0.root"/>
     <friend treename="singlephoton/vertex_tree"  filename="/uboone/data/users/markross/Mar2020/SBNfit_files/Jan2021_FullRedo_BGfix/1g1p/sbnfit_1g1pMar2020_v4_stage_1_CC1Pi0.root"/> 
     <branch 
         name=VARVARVAR
