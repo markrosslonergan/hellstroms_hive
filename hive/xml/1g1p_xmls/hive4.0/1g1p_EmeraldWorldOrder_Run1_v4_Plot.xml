@@ -37,7 +37,7 @@
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0==1</cut>
-        <cut>(m_flash_optfltr_pe_beam>20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+        <cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
@@ -58,7 +58,7 @@
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; fabs(mctruth_nu_pdg)==12) </cut> <!-- not cc nue or nuebar -->
-        <cut> (m_flash_optfltr_pe_beam>20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+        <cut> (m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut> (MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
@@ -69,7 +69,7 @@
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
         <cut> mctruth_cc_or_nc==0</cut>
-        <cut> (m_flash_optfltr_pe_beam>20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+        <cut> (m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
@@ -138,7 +138,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "COFredo/ssv_bdt_training_sample_noduplicates_withCCPi0_v43.5.root" tag = "SSvetoRedoCCpi0TrainParent" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "ssv_bdt_training_sample_noduplicates_withCCPi0_v43.5.root" tag = "SSvetoRedoCCpi0TrainParent" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
@@ -325,7 +325,7 @@
         sig_test_cut = "1"
         />
     <!--<scan min = "0.974952" max = "0.97495201" steps="100"/>-->
-     <scan min = "0.95" max = "1.0" steps="100"/>
+    <scan min = "0.95" max = "1.0" steps="100"/>
 </mva>
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
@@ -864,16 +864,69 @@
 <!-- ################################################################################################################ -->
 <!-- ################################################################################################################ -->
 
+
+<!-- ################################################################################################################ -->
+<!-- ######################## The variables below are for plotting in the internal note! ############################ -->
+<!-- ################################################################################################################ -->
+<!-- ################################################################################################################ -->
+
+<alias key="BNB0" value ="0.9845"/> <!--these aliases are for the final BDT cuts, must be updated properly for the single bdt cut plots -->
+<alias key="COS0" value = "0.9531"/>
+<alias key="NCP0" value ="0.467404"/>
+<alias key="NUE0" value ="0.7474"/>
+<alias key="SSV0" value ="0.7088"/>
+
 <!--bdt vars -->
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(25,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6606" pmin=0/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" pmin=0/>
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
 <var def = "#GEO#" binning = "(3,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
+
+<!--chapter 5 stage 1+0-->
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(18,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "330"/>
+
+<!--chapter 5 stage 1-->
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(16,0,8.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group= "331"/>
+<var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(18,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d"    training="" group = "331"/>
+<var def = "(reco_shower_trackscore[0])" binning = "(18,0,0.5)" unit = "Shower Score" type ="d"  training ="" group = "331"/>
+<var def = "log(reco_shower_conversion_distance[0])" binning = "(18,-3,7)" unit = " Reconstructed Shower Conversion Distance Log[cm]" type = "d"     training="" group = "331"/>
+<var def = "log10(reco_track_spacepoint_max_dist[0])" binning = "(18,-2,1.5)" unit = "Reconstructed Track Max Distance Spacepoint from Line Log[cm]" type = "d"  training = "" group = "331"/>
+<var def = "(reco_track_trackscore[0])" binning = "(18,0.5,1)" unit = "Track Score" type ="d"  training ="" group = "331"/>
+<var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(18,0,0.3)" type = "d"  training = "" group = "331"/>
+<var def = "sss2d_conv_ranked_conv" binning = "(8,0,80)" unit ="sss2d closest candidate conversion Distance [cm]" type="d"  training="" group = "331"/>
+<var def = "sss3d_ioc_ranked_implied_opang" binning = "(18,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="" group = "331"/>
+<var def = "#GEO#" binning = "(18,40,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "331"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(18,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="" group = "331"/>
+
+<!--single BDT cut plots -->
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(5,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) Cosmic Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4COSMIC_mva &gt;= #COS0#)" group = "335" />
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(5,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) NC#pi^{0} Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4NCPi0_mva &gt;= #NCP0#)" group = "336" />
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(5,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) BNB Other Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4BNB_mva &gt;= #BNB0#)" group = "337"/>
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(5,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) #nu_{e} Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4Nue_mva &gt;= #NUE0#)" group = "338"/>
+
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(5,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (corrected) SSV Only Cut" type  = "d"  training = "" cut = "(1g1pMar2020_v4SSVredo2wCC600parent_mva &gt;= #SSV0#)" group = "339"/>
+
+
+<!--chapter 5 stage 6-->
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning ="(5,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "332"/>
+<var def = "#GEO#" binning = "(1,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "332"/>
+
+
+<!-- ################################################################################################################ -->
+<!-- ######################## The variables above are for plotting in the internal note! ############################ -->
+<!-- ################################################################################################################ -->
+<!-- ################################################################################################################ -->
+
+
 
 <!--pi0 vars -->
 <!--
@@ -901,16 +954,20 @@
 
 
 <!--<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="alt(0.0,0.15,0.225,0.3,0.375,0.450,0.6)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="333"/>-->
+
+<!--
 <var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="alt(0.0,0.15,0.225,0.3,0.375,0.450,0.6)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="333"/>
 <var def = "cos(atan2(sqrt(pow(reco_shower_implied_diry[0], 2)+ pow(reco_shower_implied_dirx[0],2)),reco_shower_implied_dirz[0]))" binning = "(8,-1,1)" unit = "Reconstructed Shower Implied Cos(#theta_{azy})" type = "d"     training="" group="334"/>
 
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(18,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "330"/>
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "331"/>
+-->
 
 <!--chapter 5 stage 6-->
+<!--
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(9,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "332"/>
 <var def = "#GEO#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "332"/>
-
+-->
 
 
 

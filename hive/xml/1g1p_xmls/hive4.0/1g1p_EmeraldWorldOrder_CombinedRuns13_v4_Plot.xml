@@ -136,7 +136,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "COFredo/ssv_bdt_training_sample_noduplicates_withCCPi0_v43.5.root" tag = "SSvetoRedoCCpi0TrainParent" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "ssv_bdt_training_sample_noduplicates_withCCPi0_v43.5.root" tag = "SSvetoRedoCCpi0TrainParent" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
@@ -862,6 +862,12 @@
 <!-- ################################################################################################################ -->
 <!-- ################################################################################################################ -->
 
+<!-- ################################################################################################################ -->
+<!-- ######################## The variables below are for plotting in the internal note! ############################ -->
+<!-- ################################################################################################################ -->
+<!-- ################################################################################################################ -->
+
+
 <!--bdt vars -->
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
@@ -872,6 +878,18 @@
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
 <var def = "#GEO#" binning = "(3,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
+
+<!--chapter 5 stage 6-->
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(9,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "332"/>
+<var def = "#GEO#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "332"/>
+
+<!-- ################################################################################################################ -->
+<!-- ######################## The variables above are for plotting in the internal note! ############################ -->
+<!-- ################################################################################################################ -->
+<!-- ################################################################################################################ -->
+
+
+
 
 <!--pi0 vars -->
 <!--
@@ -904,12 +922,6 @@
 
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(18,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "330"/>
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "331"/>
-
-<!--chapter 5 stage 6-->
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(9,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "332"/>
-<var def = "#GEO#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "332"/>
-
-
 
 
 <alias key="xc" value ="TMath::Min(abs(mctruth_nu_vertex_x-0),abs(256.35-mctruth_nu_vertex_x))"/>
