@@ -90,7 +90,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19Run1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Data, Run 1 On-Beam">
+<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Data, Run 1 On-Beam">
     <definition><cut>1</cut></definition>
     <data type="OnBeam" plot_name="Unbiased">
         <tor860_wcut>   4.081e+19 </tor860_wcut>   
@@ -891,7 +891,7 @@
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(18,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "330"/>
 
 <!--chapter 5 stage 1-->
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(18,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group= "331"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(16,0,8.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group= "331"/>
 <var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(18,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d"    training="" group = "331"/>
 <var def = "(reco_shower_trackscore[0])" binning = "(18,0,0.5)" unit = "Shower Score" type ="d"  training ="" group = "331"/>
 <var def = "log(reco_shower_conversion_distance[0])" binning = "(18,-3,7)" unit = " Reconstructed Shower Conversion Distance Log[cm]" type = "d"     training="" group = "331"/>
