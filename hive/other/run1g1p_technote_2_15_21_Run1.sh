@@ -41,29 +41,29 @@ NUM=2212
 ## in order to run a specific group of plots you can comment sections in and out
 
 #stage0 + 1
-./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g330
-./../../bin/hive -o datamc  -x $XML -s 0 -g330 --systematics "flux_fracfixed"
-./../../bin/hive -o datamc  -x $XML -s 1 -g330 --systematics "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g330
+#./../../bin/hive -o datamc  -x $XML -s 0 -g330 --systematics "flux_fracfixed"
+#./../../bin/hive -o datamc  -x $XML -s 1 -g330 --systematics "flux_fracfixed"
 
 #stage 1
-./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g331
-./../../bin/hive -o datamc  -x $XML -s 1 -g331 --systematics "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g331
+#./../../bin/hive -o datamc  -x $XML -s 1 -g331 --systematics "flux_fracfixed"
 
 #Single BDT Cuts
-./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g335
-./../../bin/hive -o datamc  -x $XML -s 1 -g335 --systematics "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g335
+#./../../bin/hive -o datamc  -x $XML -s 1 -g335 --systematics "flux_fracfixed"
 
-./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g336
-./../../bin/hive -o datamc  -x $XML -s 1 -g336 --systematics "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g336
+#./../../bin/hive -o datamc  -x $XML -s 1 -g336 --systematics "flux_fracfixed"
 
-./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g337
-./../../bin/hive -o datamc  -x $XML -s 1 -g337 --systematics "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g337
+#./../../bin/hive -o datamc  -x $XML -s 1 -g337 --systematics "flux_fracfixed"
 
-./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g338
-./../../bin/hive -o datamc  -x $XML -s 1 -g338 --systematics "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g338
+#./../../bin/hive -o datamc  -x $XML -s 1 -g338 --systematics "flux_fracfixed"
 
-./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g339
-./../../bin/hive -o datamc  -x $XML -s 1 -g339 --systematics "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g339
+#./../../bin/hive -o datamc  -x $XML -s 1 -g339 --systematics "flux_fracfixed"
 
 #Efficiency plots - these are currently still broken
 #./../../bin/hive -o eff -n2 -f18 -s1 -x $XML -s 1 -g335 #generate eff plots for ncdelta signal def file
@@ -83,9 +83,9 @@ NUM=2212
 ./../../bin/hive -o datamc  -x $XML -s 1 -g6 --systematics "flux_fracfixed"
 
 #stage 6
-./../../bin/hive  --makefluxcovar $FXXML6 -x $XML -s 6 -g332
-./../../bin/hive -o datamc  -x $XML -s 6 -g332 --systematics "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML6 -x $XML -s 6 -g332
+#./../../bin/hive -o datamc  -x $XML -s 6 -g332 --systematics "flux_fracfixed"
 
-./../../bin/hive  --makefluxcovar $FXXML6 -x $XML13 -s 6 -g332 #if you're runnning something from the combined xml you always need to regenerate covar matrix
-./../../bin/hive -o stack -x $XML13 -s 6 -g332 --systematics "flux_fracfixed" --pot 6.91e20
+#./../../bin/hive  --makefluxcovar $FXXML6 -x $XML13 -s 6 -g332 #if you're runnning something from the combined xml you always need to regenerate covar matrix
+#./../../bin/hive -o stack -x $XML13 -s 6 -g332 --systematics "flux_fracfixed" --pot 6.91e20
 
