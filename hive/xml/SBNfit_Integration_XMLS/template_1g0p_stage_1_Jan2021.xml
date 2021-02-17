@@ -124,7 +124,7 @@
         name=VARVARVAR
         type="double"
         associated_subchannel="nu_uBooNE_1g0p_BNBOther"
-        additional_weight="simple_pot_weight*WEIWEIWEI" 
+        additional_weight="simple_pot_weight*(genie_CV_tune_weight<30)*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
 </MultisimFile>
