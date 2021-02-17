@@ -141,7 +141,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "COFredo/ssv_bdt_training_sample_noduplicates_withCCPi0_v43.5.root" tag = "SSvetoRedoCCpi0TrainParent" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "ssv_bdt_training_sample_noduplicates_withCCPi0_v43.5.root" tag = "SSvetoRedoCCpi0TrainParent" hist_style = "hist" dirs = "singlephotonana/" col = "(0.0,0.2,0.2)" plot_name = "SSveto Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_num_exiting_pi0==1</cut>
@@ -915,6 +915,19 @@
 <var def = "#GEO#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "332"/>
 
 
+<!-- Run 2 Run comparasons -->
+<!--        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>-->
+
+<var def = "reco_shower_startz[0]" binning = "(16,0.1,1036.9)" unit = "Reconstructed Shower Start Position in Z [cm]" type="d"    training="" group="5505" pmax=135/>
+<var def = "reco_shower_startz[0]" binning = "(12,0.1,1036.9)" unit = "Reconstructed Shower Start Position in Z [cm]" type="d"    training="" group="5506" pmax=30/>
+<var def = "reco_shower_startz[0]" binning = "(8,0.1,1036.9)" unit = "Reconstructed Shower Start Position in Z [cm]" type="d"    training="" group="5507" pmax=25/>
+
+
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(200,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "5508" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(200,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "5508" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(200,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "5508" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(200,0.3,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "5508" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(100,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6606" pmin=0/>
 
 
 <alias key="xc" value ="TMath::Min(abs(mctruth_nu_vertex_x-0),abs(256.35-mctruth_nu_vertex_x))"/>
