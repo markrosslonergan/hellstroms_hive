@@ -20,6 +20,9 @@ XML="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/
 #combined runs xml, here used only for final selection plots
 XML13="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/1g1p_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
 
+##this cut defines the ncdelta signal
+SIGNAL="(TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 && mctruth_is_delta_radiative==1 && mctruth_nu_vertex_x > 2.0 && mctruth_nu_vertex_x < 253.35 && mctruth_nu_vertex_y > -113.5 && mctruth_nu_vertex_y < 113.5 && mctruth_nu_vertex_z > 2.0 && mctruth_nu_vertex_z < 1033.8 && mctruth_cc_or_nc == 1  && mctruth_num_exiting_pi0 == 0  && mctruth_exiting_photon_energy > 0.02  && Sum\$(mctruth_exiting_proton_energy-0.93827 > 0.02 )==1 )"
+
 
 ##these cuts are for far sidebands#
 # Full FS Cuts
@@ -66,21 +69,22 @@ NUM=2212
 #./../../bin/hive -o datamc  -x $XML -s 1 -g339 --systematics "flux_fracfixed"
 
 #Efficiency plots - these are currently still broken
-#./../../bin/hive -o eff -n2 -f18 -s1 -x $XML -s 1 -g335 #generate eff plots for ncdelta signal def file
-#./../../bin/hive -o eff -n2 -s1 -x $XML -s 1 -g335 
+#./../../bin/hive -o eff -n2 -s1 -f18 -x $XML  -g335 
+./../../bin/hive -o eff -n2 -f18 -s1 -x $XML -g335  
 
-#./../../bin/hive -o eff -n2 -s1 -x $XML -s 1 -g336
 
-#./../../bin/hive -o eff -n2 -s1  -x $XML -s 1 -g337
+#./../../bin/hive -o eff -n2 -s1 -x $XML  -g336
 
-#./../../bin/hive -o eff -n2 -s1  -x $XML -s 1 -g338
+#./../../bin/hive -o eff -n2 -s1  -x $XML  -g337
 
-#./../../bin/hive -o eff -n2 -s1  -x $XML -s 1 -g339
+#./../../bin/hive -o eff -n2 -s1  -x $XML  -g338
+
+#./../../bin/hive -o eff -n2 -s1  -x $XML  -g339
 
 
 #BDT Scores
-./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g6
-./../../bin/hive -o datamc  -x $XML -s 1 -g6 --systematics "flux_fracfixed"
+#./../../bin/hive  --makefluxcovar $FXXML1 -x $XML -s 1 -g6
+#./../../bin/hive -o datamc  -x $XML -s 1 -g6 --systematics "flux_fracfixed"
 
 #stage 6
 #./../../bin/hive  --makefluxcovar $FXXML6 -x $XML -s 6 -g332
