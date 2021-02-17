@@ -113,7 +113,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:o:u:d:s:f:q:y:m:t:p:b:i:n:g:v:a:c:rjh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:o:u:d:s:f:q:y:m:t:p:b:i:n:g:v:c:arjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -685,6 +685,8 @@ int main (int argc, char *argv[]){
                 std::vector<bdt_variable> tmp_vars;
                 for(auto &v: vars){
                     if(which_group == -1 || which_group == v.cat){
+                 
+                        if(plot_train_only && v.is_spectator)continue;
                         tmp_vars.push_back(v);
                     }
                 }
@@ -693,7 +695,7 @@ int main (int argc, char *argv[]){
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setMergeDown(mergeDownVector);
                 real_datamc.setErrorString(systematics_error_string);
-                if(plot_train_only) real_datamc.SetSpectator();
+                //if(plot_train_only) real_datamc.SetSpectator();
 
                 if(which_bdt==-1){
                     real_datamc.plotStacks(ftest, tmp_vars,  fbdtcuts, additional_tag, bdt_infos);
