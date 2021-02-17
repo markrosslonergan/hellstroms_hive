@@ -439,6 +439,11 @@
 <var def = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_implied_dirx[0],2))" unit = "Photon Implied Transverse Momentum [GeV]" binning = "(24,0,0.6)" type = "d" training = ""/>
 -->
 
+<!-- ################################################################################################################ -->
+<!-- ######################## The variables below are for plotting in the internal note! ############################ -->
+<!-- ################################################################################################################ -->
+<!-- ################################################################################################################ -->
+
 <!--bdt vars -->
 <var def = "1g0pMar2020COSMIC_mva" binning = "(50,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" group = "6" logplot = "true"/>
 <var def = "1g0pMar2020BNB_mva" binning = "(50,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""  group = "6" logplot = "true" />
@@ -451,9 +456,13 @@
 <var def = "#GEO#" binning = "(4,100,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "10"/>
 
 <!-- stage 4 stack -->
-<var def = "#GEO#" binning = "(6,100,700)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "11"/>
+<!--<var def = "#GEO#" binning = "(6,100,700)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "11"/>-->
+<var def="#GEO#/1000.0" binning = "alt(0.1,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.7)" unit = "Corrected Calorimetric Shower Energy [GeV]" type="d" training="" group="11" pmin=0.1 />
 
-
+<!-- ################################################################################################################ -->
+<!-- ######################## The variables above are for plotting in the internal note! ############################ -->
+<!-- ################################################################################################################ -->
+<!-- ################################################################################################################ -->
 
 
 <!--pi0 vars -->
@@ -487,8 +496,6 @@
 <var def = "cos(atan2(sqrt(pow(reco_shower_diry[0], 2)+ pow(reco_shower_dirx[0],2)),reco_shower_dirz[0]))" binning = "(8,-1,1)" unit = "Reconstructed Shower Cos(#theta_{azy})" type = "d"     training="" group="334"/>
 
 <var def="#GEO#" binning = "(18,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type="d" training="" group="808" />
-<var def="#GEO#/1000.0" binning = "alt(0.1,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.7)" unit = "Corrected Calorimetric Shower Energy [MeV]" type="d" training="" group="809" logplot="true" pmin=0.1 pmax=10/>
-
 <!-- ================= Efficiency  ======================== -->
 
 <efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "0" numer_cut = "sim_shower_pdg==22 &amp;&amp; sim_shower_parent_pdg==111" /> 
