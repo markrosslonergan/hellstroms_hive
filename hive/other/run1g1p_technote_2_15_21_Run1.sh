@@ -20,6 +20,8 @@ XML="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/
 #run1 only xml, used to make all the training vars plots for the appendix
 XMLTRAINVARS="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/1g1p_EmeraldWorldOrder_Run1_v4_PlotTrainVars.xml"
 
+#has the signal training definition, only for making the eff plots 
+XMLEFF="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/1g1p_EmeraldWorldOrder_Run1_v4_EffPlots.xml"
 
 #combined runs xml, here used only for final selection plots
 XML13="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/1g1p_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
@@ -73,17 +75,17 @@ NUM=2212
 #./../../bin/hive -o datamc  -x $XML -s 1 -g339 --systematics "flux_fracfixed"
 
 #Efficiency plots - these are currently still broken
-./../../bin/hive -o eff -n2 -s1 -x $XMLTRAINVARS  -g335 
+#./../../bin/hive -o eff -n2 -s1 -x $XMLEFF  -g335 
 #./../../bin/hive -o eff -n2 -f18 -s1 -x $XML -g335  
 
 
-./../../bin/hive -o eff -n2 -s1 -x $XMLTRAINVARS  -g336
+#./../../bin/hive -o eff -n2 -s1 -x $XMLEFF  -g336
 
-./../../bin/hive -o eff -n2 -s1  -x $XMLTRAINVARS  -g337
+#./../../bin/hive -o eff -n2 -s1  -x $XMLEFF  -g337
 
-./../../bin/hive -o eff -n2 -s1  -x $XMLTRAINVARS  -g338
+#./../../bin/hive -o eff -n2 -s1  -x $XMLEFF  -g338
 
-./../../bin/hive -o eff -n2 -s1  -x $XMLTRAINVARS  -g339
+#./../../bin/hive -o eff -n2 -s1  -x $XMLEFF  -g339
 
 
 #BDT Scores
@@ -100,4 +102,4 @@ NUM=2212
 
 #all training variables for appendix
 #./../../bin/hive --makefluxcovar $FXXML1 -x $XMLTRAINVARS -s 1 -g31 
-#./../../bin/hive -o datamc  -x $XMLTRAINVARS -s 1 -g31 #--systematics "flux_fracfixed"
+./../../bin/hive -o datamc  -x $XMLTRAINVARS -s 1 -g31 #--systematics "flux_fracfixed"
