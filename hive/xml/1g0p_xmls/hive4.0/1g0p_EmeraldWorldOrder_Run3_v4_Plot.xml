@@ -448,13 +448,13 @@
 
 
 <!--bdt vars -->
-<var def = "1g0pMar2020COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" group = "6" logplot = "true"/>
-<var def = "1g0pMar2020BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""  group = "6" logplot = "true" />
-<var def = "1g0pMar2020NCPi0_mva" binning = "(24,0.0,0.95)" unit = "NC#pi^{0} BDT Score" type="d" training= ""  group = "6" logplot = "true"/>
+<var def = "1g0pMar2020COSMIC_mva" binning = "(8,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" group = "6" logplot = "true"/>
+<var def = "1g0pMar2020BNB_mva" binning = "(8,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""  group = "6" logplot = "true" />
+<var def = "1g0pMar2020NCPi0_mva" binning = "(8,0.0,0.95)" unit = "NC#pi^{0} BDT Score" type="d" training= ""  group = "6" logplot = "true"/>
 
-<var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
+<var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(8,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
-<var def = "#GEO#" binning = "(18,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
+<var def = "#GEO#" binning = "(6,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
 <var def = "#GEO#" binning = "(10,75,550)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "9"/>
 <var def = "#GEO#" binning = "(4,100,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "10"/>
 
@@ -462,10 +462,10 @@
 <var def = "#GEO#" binning = "(18,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
 
 <!--stage 1-->
-<var def = "reco_shower_nuscore[0]" binning = "(18, 0, 1)" unit = "Neutrino Slice Score" type = "d"  training="" group = "12" logplot = "true"/>
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(16,0,8.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group = "12"/>
-<var def = "#GE#/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Geometric Size [GeV/cm*rad]" binning = "(18,0,0.05)" type = "d"   training = "" group = "12"/>
-<var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(18,0,0.3)" type = "d"  training = "" group = "12"/>
+<var def = "reco_shower_nuscore[0]" binning = "(6, 0, 1)" unit = "Neutrino Slice Score" type = "d"  training="" group = "12" logplot = "true"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(5,0,8.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group = "12"/>
+<var def = "#GE#/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Geometric Size [GeV/cm*rad]" binning = "(6,0,0.05)" type = "d"   training = "" group = "12"/>
+<var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(6,0,0.3)" type = "d"  training = "" group = "12"/>
 
 <!--single BDT cuts-->
 <var def = "#GEO#" binning = "(4,30,800)" unit = "Corrected Calorimetric Shower Energy [MeV] Cosmic Only Cut" type = "d"   training=""  cut = "(1g0pMar2020COSMIC_mva &gt;= #COS0#)" group = "13"/>
