@@ -70,7 +70,7 @@ NUM=2212
 
 #Efficiency plots - these are currently still broken
 #./../../bin/hive -o eff -n2 -s1 -f18 -x $XML  -g335 
-./../../bin/hive -o eff -n2 -f18 -s1 -x $XML -g335  
+3./../../bin/hive -o eff -n2 -f18 -s1 -x $XML -g335  
 
 
 #./../../bin/hive -o eff -n2 -s1 -x $XML  -g336
@@ -93,3 +93,7 @@ NUM=2212
 #./../../bin/hive  --makefluxcovar $FXXML6 -x $XML13 -s 6 -g332 #if you're runnning something from the combined xml you always need to regenerate covar matrix
 #./../../bin/hive -o stack -x $XML13 -s 6 -g332 --systematics "flux_fracfixed" --pot 6.91e20
 
+
+#all training variables for appendix
+./../../bin/hive --makefluxcovar $FXXML1 -x $XML -s 1 --plottrainonly 
+./../../bin/hive -o datamc  -x $XML -s 1 --plottrainonly --systematics "flux_fracfixed"
