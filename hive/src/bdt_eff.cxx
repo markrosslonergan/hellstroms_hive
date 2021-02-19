@@ -750,7 +750,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     h_true_photon_ratio->GetYaxis()->SetTitle("Efficiency [%]");
     h_true_photon_ratio->GetXaxis()->SetTitle("True Photon/Proton Energy [GeV]");
 
-    h_true_photon_ratio->SetMaximum(130.0);
+    h_true_photon_ratio->SetMaximum(90.0);
     h_true_photon_ratio->SetMinimum(0);
     h_true_photon_ratio->GetXaxis()->SetRangeUser(0,max_x_range);
 

@@ -73,17 +73,17 @@ NUM=2212
 #./../../bin/hive -o datamc  -x $XML -s 1 -g339 --systematics "flux_fracfixed"
 
 #Efficiency plots - these are currently still broken
-#./../../bin/hive -o eff -n2 -s1 -f18 -x $XML  -g335 
+./../../bin/hive -o eff -n2 -s1 -x $XMLTRAINVARS  -g335 
 #./../../bin/hive -o eff -n2 -f18 -s1 -x $XML -g335  
 
 
-#./../../bin/hive -o eff -n2 -s1 -x $XML  -g336
+./../../bin/hive -o eff -n2 -s1 -x $XMLTRAINVARS  -g336
 
-#./../../bin/hive -o eff -n2 -s1  -x $XML  -g337
+./../../bin/hive -o eff -n2 -s1  -x $XMLTRAINVARS  -g337
 
-#./../../bin/hive -o eff -n2 -s1  -x $XML  -g338
+./../../bin/hive -o eff -n2 -s1  -x $XMLTRAINVARS  -g338
 
-#./../../bin/hive -o eff -n2 -s1  -x $XML  -g339
+./../../bin/hive -o eff -n2 -s1  -x $XMLTRAINVARS  -g339
 
 
 #BDT Scores
@@ -100,4 +100,4 @@ NUM=2212
 
 #all training variables for appendix
 #./../../bin/hive --makefluxcovar $FXXML1 -x $XMLTRAINVARS -s 1 -g31 
-./../../bin/hive -o datamc  -x $XMLTRAINVARS -s 1 -g31 #--systematics "flux_fracfixed"
+#./../../bin/hive -o datamc  -x $XMLTRAINVARS -s 1 -g31 #--systematics "flux_fracfixed"

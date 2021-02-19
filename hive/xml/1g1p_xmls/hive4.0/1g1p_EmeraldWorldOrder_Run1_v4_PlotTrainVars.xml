@@ -19,6 +19,15 @@
         <cut>mctruth_cc_or_nc==1</cut>
         <cut>(m_flash_optfltr_pe_beam &gt;20 &amp;&amp; m_flash_optfltr_pe_veto &lt; 20)</cut> 
         <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
+        <!-- 
+        <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -113.5 &amp;&amp; mctruth_nu_vertex_y &lt; 113.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 2.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1033.8 </cut>       
+        <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 0</cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
+    -->
     </definition>
 </bdtfile>
 
