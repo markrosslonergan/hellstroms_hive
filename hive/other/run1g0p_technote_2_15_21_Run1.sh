@@ -12,6 +12,9 @@ FXXML1="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/x
 
 XML="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g0p_xmls/hive4.0/1g0p_EmeraldWorldOrder_Run1_v4_Plot.xml"
 
+XMLTRAINVARS="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g0p_xmls/hive4.0/1g0p_EmeraldWorldOrder_Run1_v4_PlotTrainVars.xml"
+
+
 XML13="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g0p_xmls/hive4.0/1g0p_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
 
 
@@ -40,5 +43,5 @@ XML13="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xm
 #./../../bin/hive -o stack -x $XML13 -s 4 -g11 --systematics "flux_fracfixed" --pot 6.91e20
 
 #for training variable plot dump in appendix
-./../../bin/hive --makefluxcovar $FXXML1 -x $XML -s 1 --plottrainonly 
-./../../bin/hive -o datamc  -x $XML -s 1 --plottrainonly --systematics "flux_fracfixed"
+#./../../bin/hive --makefluxcovar $FXXML1 -x $XMLTRAINVARS -s 1 --g31 
+./../../bin/hive -o datamc  -x $XML -s 1 --g31 #--systematics "flux_fracfixed"

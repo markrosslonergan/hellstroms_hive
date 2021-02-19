@@ -14,8 +14,12 @@ FXXML6="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/x
 #flux and xsec xml for precuts stage 1 (use for all stages except final selection)
 FXXML1="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/SBNfit_Integration_XMLS/template_1g1p_stage_1_Jan2021.xml"
 
-#run1 only xml, use for all data-MC plots
+#run1 only xml, used for all data-MC plots in Chapter 5
 XML="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/1g1p_EmeraldWorldOrder_Run1_v4_Plot.xml"
+
+#run1 only xml, used to make all the training vars plots for the appendix
+XMLTRAINVARS="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/1g1p_EmeraldWorldOrder_Run1_v4_PlotTrainVars.xml"
+
 
 #combined runs xml, here used only for final selection plots
 XML13="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/1g1p_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
@@ -70,7 +74,7 @@ NUM=2212
 
 #Efficiency plots - these are currently still broken
 #./../../bin/hive -o eff -n2 -s1 -f18 -x $XML  -g335 
-3./../../bin/hive -o eff -n2 -f18 -s1 -x $XML -g335  
+#./../../bin/hive -o eff -n2 -f18 -s1 -x $XML -g335  
 
 
 #./../../bin/hive -o eff -n2 -s1 -x $XML  -g336
@@ -95,5 +99,5 @@ NUM=2212
 
 
 #all training variables for appendix
-./../../bin/hive --makefluxcovar $FXXML1 -x $XML -s 1 --plottrainonly 
-./../../bin/hive -o datamc  -x $XML -s 1 --plottrainonly --systematics "flux_fracfixed"
+#./../../bin/hive --makefluxcovar $FXXML1 -x $XMLTRAINVARS -s 1 -g31 
+./../../bin/hive -o datamc  -x $XMLTRAINVARS -s 1 -g31 #--systematics "flux_fracfixed"

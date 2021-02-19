@@ -1116,7 +1116,10 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         std::cout<<" -- Variable training string is "<<var_train_string<<std::endl;
        for (auto && c : var_train_string) {
             var_train_int.push_back((int)c - '0');
+            //std::cout<<" adding training "<<c<<std::endl;
         }
+
+       std::cout<<"var_train_int.size() = "<<var_train_int.size()<<std::endl;
 
        if (var_train_int.size() >0){
         var_is_spec = false;
