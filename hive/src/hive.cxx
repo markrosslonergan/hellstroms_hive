@@ -693,12 +693,13 @@ int main (int argc, char *argv[]){
                             continue;
                         }
                          
-                        if(!v.is_spectator ){
+                   /*     if(!v.is_spectator ){
                             std::cout<<"this is a spectator variable"<<std::endl;
                         }else{
                             std::cout<<"this is a training variable"<<std::endl;
 
                         }
+                        */
 
                         tmp_vars.push_back(v);
                     }

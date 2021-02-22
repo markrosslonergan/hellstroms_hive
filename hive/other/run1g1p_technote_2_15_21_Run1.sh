@@ -101,5 +101,5 @@ NUM=2212
 
 
 #all training variables for appendix
-#./../../bin/hive --makefluxcovar $FXXML1 -x $XMLTRAINVARS -s 1 -g31 
-./../../bin/hive -o datamc  -x $XMLTRAINVARS -s 1 -g31 #--systematics "flux_fracfixed"
+./../../bin/hive --makefluxcovar $FXXML1 -x $XMLTRAINVARS -s 1 -g32 
+./../../bin/hive -o datamc  -x $XMLTRAINVARS -s 1 -g32 --systematics "flux_fracfixed"
