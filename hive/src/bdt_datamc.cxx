@@ -597,7 +597,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
             //     double max_modifier = 1.7;
-            double min_val = 0.01;
+           // double min_val = 0.01;
+            double min_val = 0.1;
             if(is_bdt_variable) {
                 max_modifier = 15.0;
                 //  max_modifier = 25.0;
@@ -606,7 +607,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             if(var.is_logplot){
                 pad0top->SetLogy();
-                max_modifier = 500.0;
+                max_modifier = 1000.0;
                 // min_val = 0.0001;
                 //max_modifier=3500.0;
             }
@@ -617,11 +618,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             if(var.name.size() >= mva.size() && var.name.compare(var.name.size() - mva.size(), mva.size(), mva) == 0 && var.is_logplot){
                isBDT = true;
             }
-            if(isBDT){
+        /*    if(isBDT){
                 min_val = 1e-2;
                 max_val = 1e5;
 
-            }
+            }*/
 
             d0->SetMarkerStyle(20);
             d0->SetMarkerSize(3);
