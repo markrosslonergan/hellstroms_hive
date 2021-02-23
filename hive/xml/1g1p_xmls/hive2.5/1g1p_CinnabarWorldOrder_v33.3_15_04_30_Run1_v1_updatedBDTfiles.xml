@@ -2,7 +2,7 @@
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.974952,0.96273,0.467404,0.570654,0.521623)" />
 
-<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/>
+<!-- <covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XS Systematics"/> -->
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>

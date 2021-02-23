@@ -310,6 +310,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TFile *fout = new TFile((urk+"/Ratio_"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".root").c_str(),"recreate");
             fout->cd();
 
+            /*
             std::string isSpec;
             if (!var.is_spectator){
                 isSpec = var.unit+ " is a training variable";
@@ -322,7 +323,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }
             }
             std::cout<<isSpec<<std::endl;
-
+*/
 
 
             //If we are at a later stage that 1, lets find the variable.

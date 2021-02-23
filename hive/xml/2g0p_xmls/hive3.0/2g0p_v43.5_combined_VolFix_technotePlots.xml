@@ -9,7 +9,7 @@
   <run_period name ="RIII"  cut ="(run_number >= 13697)" fraction = "0.322455021"  />
 </plot_pot>
 
-<covar dir="/pnfs/uboone/persistent/users/amogan/v08_00_00_35/sbnfit_covar/2g0p_stage_1_combined_technotePlots" name="frac_covariance" plotname="Flux &amp; XS Systematics" />
+<covar dir="/pnfs/uboone/persistent/users/amogan/v08_00_00_35/sbnfit_covar/2g0p_stage_1_combined_VolFix_Dec2020/" name="frac_covariance" plotname="Flux &amp; XS Systematics" />
 
 <!-- ================================================== BDT FILES ==================================================== -->
 
@@ -116,7 +116,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "dirt_overlay_combined_run123_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt"  > 
+<bdtfile filename = "dirt_overlay_combined_run123_v33.3.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt" mergedown="true" > 
     <friend>
         <filename>/COFredo/OpticalMatch_dirt_overlay_combined_run123_v33.3.uniq.root</filename>
         <treename>opt_tree</treename>
@@ -331,7 +331,7 @@
 
 <!-- Invariant mass -->
 <var def="sqrt(2.0*reco_shower_energy_max[i_shr[0]]*reco_shower_energy_max[(i_shr[1])]*(1.0-(reco_shower_dirx[0]*reco_shower_dirx[1] + reco_shower_diry[0]*reco_shower_diry[1] + reco_shower_dirz[0]*reco_shower_dirz[1])))/1000" binning = "(34, 0, 0.3)" unit = "Reconstructed #pi^{0} Invariant Mass [GeV]" type = "d"  training=""/>
-<var def="sqrt(2.0*#C0#*#C1#*(1.0-(#OPANG1#)))/1000" binning = "(34, 0, 0.4)" unit = "Corrected #pi^{0} Invariant Mass [GeV]" type = "d"  training=""  pmax=90. group="1"/> <!-- Corrected pmax was 280 for pre-sel -->
+<var def="sqrt(2.0*#C0#*#C1#*(1.0-(#OPANG1#)))/1000" binning = "(34, 0, 0.4)" unit = "Corrected #pi^{0} Invariant Mass [GeV]" type = "d"  training=""  group="1"/> <!-- Corrected pmax was 280 for pre-sel -->
 
 <!-- Center-of-mass decay angle -->
 <var def="((reco_shower_energy_max[i_shr[0]] - reco_shower_energy_max[(i_shr[1])])/(sqrt((reco_shower_energy_max[i_shr[0]]*reco_shower_dirx[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirx[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_dirx[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirx[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_diry[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_diry[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirz[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_dirz[(i_shr[1])]))))" binning = "(34, 0, 1)" unit = "Reconstructed cos(#theta_{CM})" type = "d"  training="" pmin=0 group="1" />

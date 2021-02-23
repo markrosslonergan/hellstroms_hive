@@ -586,7 +586,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
         }else{
             precuts += "&&"+v_precuts[i];
         }
-        double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+precuts+"&&" + var.additional_cut)*conversion;
+        double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
         double tmp_events_just_this =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+v_precuts[i])*conversion;
         std::cout<<"--- this file has: "<<tmp_events<<" which on its own is a ("<<tmp_events_just_this/n_topo_events*100.0<<"%) effect relative to topo"<<std::endl;
         n_precut_events = tmp_events;
@@ -623,6 +623,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<file->GetEntries(denominator)<<" "<<file->GetEntries(topocuts)<<std::endl;
 
     std::cout<<"checking stage "<<plot_stage<<" with cuts: "<<denominator+"&&"+topocuts+"&&"+precuts + "&&" + var.additional_cut<<std::endl;
+    std::cout<<"-------- number of entries at this stage is "<<stage_entries <<std::endl;
 
     std::string recotruthmatchingcuts;
 
@@ -688,14 +689,19 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<plot_stage<<" "<<conversion<<" "<<stage_entries<<std::endl;
 
     double finaleff = n_topo_events/n_starting_events*100.0;
-    if(plot_stage==1) {
+  if(plot_stage>=1) {
+                finaleff = stage_entries/n_starting_events*100.0;
+                std::cout<<"final efficiency = "<<stage_entries<<"/"<<n_starting_events<<"*100.0 = "<< finaleff<<"%"<<std::endl;
+             }
+
+    /* if(plot_stage==1) {
         finaleff = n_precut_events/n_starting_events*100.0;
        std::cout<<"final efficiency = "<<n_precut_events<<"/"<<n_starting_events<<"*100.0 = "<< finaleff<<"%"<<std::endl;
     }
     if(plot_stage>1){
         finaleff = stage_entries/n_starting_events*100.0;
         std::cout<<"final efficiency = "<<stage_entries<<"/"<<n_starting_events<<"*100.0 = "<< finaleff<<"%"<<std::endl;
-    }
+    }*/
     std::cout<<"Relative to topo: "<<stage_entries/n_topo_events*100.0<<std::endl;
     //Std::plotting
     //
@@ -744,7 +750,7 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     h_true_photon_ratio->GetYaxis()->SetTitle("Efficiency [%]");
     h_true_photon_ratio->GetXaxis()->SetTitle("True Photon/Proton Energy [GeV]");
 
-    h_true_photon_ratio->SetMaximum(130.0);
+    h_true_photon_ratio->SetMaximum(90.0);
     h_true_photon_ratio->SetMinimum(0);
     h_true_photon_ratio->GetXaxis()->SetRangeUser(0,max_x_range);
 

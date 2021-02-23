@@ -5,12 +5,14 @@
 <!-- 0.85416 -->
 
 <plot_pot>
-  <run_period name ="RI/II" cut ="(run_number <= 13696)" fraction = "0.6964636727"  />
-  <run_period name ="RIII"  cut ="(run_number >= 13697)" fraction = "0.3035363273"  />
+  <run_period name ="RI"       cut ="(run_number <= 7700)" fraction = "0.2601"  />
+  <run_period name ="RII/III"  cut ="(run_number >  7700)" fraction = "0.7399"  />
 </plot_pot>
 
 <!-- Directory for all covariance matrices -->
 <covar dir="/pnfs/uboone/persistent/users/amogan/v08_00_00_35/sbnfit_covar/2g1p_stage_1_combined_VolFix_Dec2020/" name="frac_covariance" plotname="Flux &amp; XSec Sys" />
+
+
 <!-- ================================================== BDT FILES ==================================================== -->
 
 <filedir>/uboone/data/users/markross/Mar2020/</filedir>
@@ -26,7 +28,7 @@
         </cut>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
 
@@ -40,7 +42,7 @@
         <cut> GTruth_Gscatter==5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0==1</cut>
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
 
@@ -54,24 +56,9 @@
         <cut> GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0==1</cut>
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
-
-<!--
-<bdtfile filename = "bnb_bdt_testing_sample_v33.3.uniq.root" tag = "NCMultiPi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.9,1.0)" plot_name = "NC 2+ #pi^{0}" scale = "1.0"  >
-     <friend>
-        <filename>/COFredo/OpticalMatch_bnb_bdt_testing_sample_v33.3.uniq.root</filename>
-        <treename>opt_tree</treename>
-    </friend>
-    <definition>
-        <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
-        <cut> mctruth_cc_or_nc==1</cut> 
-        <cut> mctruth_num_exiting_pi0>1</cut>
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
-    </definition>
-</bdtfile>
--->
 
 <bdtfile filename = "ccpi0_overlay_combined_run13_v33.3.uniq.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}" scale = "1.0"  >
  <friend>
@@ -82,7 +69,7 @@
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
         <cut>mctruth_cc_or_nc==0 </cut> 
         <cut>mctruth_num_exiting_pi0==1</cut>
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
 
@@ -99,7 +86,7 @@
         <cut> !(mctruth_is_delta_radiative &amp;&amp; mctruth_cc_or_nc==1)</cut>  <!--not nc delta -->
         <cut> (!(mctruth_cc_or_nc==0 &amp;&amp; fabs(mctruth_nu_pdg)==12)) </cut> <!-- not cc nue -->
         <cut> !(fabs(mctruth_nu_pdg)==12 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0 >0 ) </cut>  <!-- NC nue with 0 NCpi0 -->
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
 
@@ -112,7 +99,7 @@
         <cut>((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))</cut>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
-        <cut>(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
 
@@ -137,7 +124,7 @@
         <cut>
           ((opt_tree.flash_optfltr_pe_beam>20 &amp;&amp; opt_tree.flash_optfltr_pe_veto&lt; 20)||(opt_tree.flash_optfltr_pe_beam==-999))
         </cut>
-        <cut>!(mctruth_nu_vertex_x &gt; 0.0 &amp;&amp; mctruth_nu_vertex_x &lt; 256.35 &amp;&amp; mctruth_nu_vertex_y &gt; -116.5 &amp;&amp; mctruth_nu_vertex_y &lt; 116.5 &amp;&amp; mctruth_nu_vertex_z &gt; 0.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1036.8)</cut>
+        <cut>!(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
 
@@ -276,7 +263,7 @@
 
 <var def = "run_number" binning = "(34,4000,20000)" unit="Run Number" type="i"  training=""  />
 
-<var def = "(reco_shower_impact_parameter[i_shr[0]])" binning = "(34,0,20)" unit = "Leading Shower Impact Parameter [cm]" type="d"  training="0"  group="1"/>
+<var def = "(reco_shower_impact_parameter[i_shr[0]])" binning = "(34,0,20)" unit = "Leading Shower Impact Parameter [cm]" type="d"  training="0"  group="1" pmax=700. />
 <var def = "(reco_shower_impact_parameter[i_shr[1]])" binning = "(34,0,20)" unit = "Subleading Shower Impact Parameter [cm]" type="d"  training="0"   group="1"/>
 <var def = "(reco_shower_impact_parameter[i_shr[0]]/reco_shower_conversion_distance[i_shr[0]])" binning = "(34,0,1)" unit = "Leading Shower Impact Parameter/Shower Conversion Distance" type="d"  training=""  />
 <var def = "(reco_shower_impact_parameter[i_shr[1]]/reco_shower_conversion_distance[i_shr[1]])" binning = "(34,0,1)" unit = "Subleading Shower Impact Parameter/Shower Conversion Distance" type="d"  training=""  />
@@ -411,7 +398,7 @@
 
 <!-- Invariant mass -->
 <var def="sqrt(2.0*reco_shower_energy_max[i_shr[0]]*reco_shower_energy_max[(i_shr[1])]*(1.0-(reco_shower_implied_dirx[0]*reco_shower_implied_dirx[1] + reco_shower_implied_diry[0]*reco_shower_implied_diry[1] + reco_shower_implied_dirz[0]*reco_shower_implied_dirz[1])))/1000" binning = "(34, 0, 0.4)" unit = "Implied #pi^{0} Invariant Mass [GeV]" type = "d"  training=""  />
-<var def="sqrt(2.0*#C0#*#C1#*(1.0-(#OPANG2#)))/1000" binning = "(34, 0, 0.4)" unit = "Corrected Implied #pi^{0} Invariant Mass [GeV]" type = "d"  training="" group="1" />
+<var def="sqrt(2.0*#C0#*#C1#*(1.0-(#OPANG2#)))/1000" binning = "(34, 0, 0.4)" unit = "Corrected Implied #pi^{0} Invariant Mass [GeV]" type = "d"  training="" pmax=160. group="1" />
 
 <!-- Center-of-mass decay angle -->
 <var def="((reco_shower_energy_max[i_shr[0]] - reco_shower_energy_max[(i_shr[1])])/(sqrt((reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirx[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirx[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirx[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirx[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_implied_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_diry[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_implied_diry[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_diry[(i_shr[1])]) + (reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirz[(i_shr[1])])*(reco_shower_energy_max[i_shr[0]]*reco_shower_implied_dirz[i_shr[0]] + reco_shower_energy_max[(i_shr[1])]*reco_shower_implied_dirz[(i_shr[1])]))))" binning = "(34, 0, 1)" unit = "Implied cos(#theta_{CM})" type = "d"  training=""  />
@@ -484,6 +471,8 @@
 -->
 <var def = "pigLEE_combinedBNB_mva" binning = "(34,0.05,0.95)" unit = "BDT Response" type="d" training= "" logplot="true" pmin=10.0 pmax=10000 group="1" />
 
+<var def="sqrt((sim_shower_energy[i_shr[0]]*#MOMX0# + sim_shower_energy[i_shr[1]]*#MOMX1#)*(sim_shower_energy[i_shr[0]]*#MOMX0# + sim_shower_energy[i_shr[1]]*#MOMX1#) + (sim_shower_energy[i_shr[0]]*#MOMY0# + sim_shower_energy[i_shr[1]]*#MOMY1#)*(sim_shower_energy[i_shr[0]]*#MOMY0# + sim_shower_energy[i_shr[1]]*#MOMY1#) + (sim_shower_energy[i_shr[0]]*#MOMZ0# + sim_shower_energy[i_shr[1]]*#MOMZ1#)*(sim_shower_energy[i_shr[0]]*#MOMZ0# + sim_shower_energy[i_shr[1]]*#MOMZ1#))" binning = "(34, 0, 0.8)" unit = "True #pi^{0} Momentum [GeV]" type = "d"  training="" group="1" pmin=1 />
+
 <!-- ================= Efficiency  ======================== -->
 
 <!--<efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "1" numer_cut = "pigLEE_combinedBNB_mva < 0.5 &amp;&amp; reco_shower_nuscore[0]>0.75 " /> -->
@@ -493,7 +482,6 @@
 
 <!-- ================= RECO-MC Matching ======================== -->
 
-<!--
 <recomc>
   <def name="#pi^{0} Charge Exchange" col ="(0.2,0.2,0.4)"> 
       abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_pipm>0 &amp;&amp; sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 ) &amp;&amp; mctruth_num_exiting_photons==0  
@@ -511,7 +499,7 @@
       abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; mctruth_num_exiting_photons==0 &amp;&amp; !(sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111) &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 )             
     </def> 
     <def name="#eta" col ="(0.2,0.6,0.4)"> 
-      mctruth_num_exiting_photons==2 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8)             
+      abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_num_exiting_photons==2 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8)             
     </def> 
     <def name="Intrinsic #nu_{e}" col ="(0.2,0.8,0.8)"> 
         abs(mctruth_nu_pdg)==12 &amp;&amp; mctruth_num_exiting_pi0==0 &amp;&amp; !(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8)             
@@ -521,10 +509,10 @@
     </def>
 
 </recomc>
--->
 
 
 <!-- For CC Pi0 Backgrounds-->
+<!--
 <recomc>
     <def name="Proton Track" col ="(0.6,0.2,0.2)"> 
       abs(mctruth_nu_pdg)==14 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; sim_shower_pdg[i_shr[0]] == 22 &amp;&amp; sim_shower_pdg[i_shr[1]]==22 &amp;&amp; sim_shower_parent_pdg[i_shr[0]] == 111 &amp;&amp; sim_shower_parent_pdg[i_shr[1]] == 111 &amp;&amp; abs(sim_track_pdg[i_trk[0]])==2212 &amp;&amp;!(sim_shower_overlay_fraction[i_shr[0]] >=0.8 || sim_shower_overlay_fraction[i_shr[1]] >=0.8 || sim_track_overlay_fraction[i_trk[0]]>=0.8 )             
@@ -540,6 +528,7 @@
     </def>
 
 </recomc>
+-->
 
 
 <alias key="PM" value ="(0.938272)"/>
@@ -578,4 +567,10 @@
 <alias key="OPANG2" value="(reco_shower_implied_dirx[i_shr[0]]*reco_shower_implied_dirx[i_shr[1]] + reco_shower_implied_diry[i_shr[0]]*reco_shower_implied_diry[i_shr[1]] + reco_shower_implied_dirz[i_shr[0]]*reco_shower_implied_dirz[i_shr[1]])" />
 <alias key="CONV0" value="sqrt(pow( (reco_shower_startx[i_shr[0]]-reco_track_startx[i_trk[0]]), 2) + pow( (reco_shower_starty[i_shr[0]]-reco_track_starty[i_trk[0]]), 2) + pow( (reco_shower_startz[i_shr[0]]-reco_track_startz[i_trk[0]]), 2) )" />
 <alias key="CONV1" value="sqrt(pow( (reco_shower_startx[i_shr[1]]-reco_track_startx[i_trk[0]]), 2) + pow( (reco_shower_starty[i_shr[1]]-reco_track_starty[i_trk[0]]), 2) + pow( (reco_shower_startz[i_shr[1]]-reco_track_startz[i_trk[0]]), 2) )" />
+<alias key="MOMX0" value="(sim_shower_px[i_shr[0]])/sqrt((sim_shower_px[i_shr[0]])*(sim_shower_px[i_shr[0]]) + (sim_shower_py[i_shr[0]])*(sim_shower_py[i_shr[0]]) + (sim_shower_pz[i_shr[0]])*(sim_shower_pz[i_shr[0]]) )" />
+<alias key="MOMY0" value="(sim_shower_py[i_shr[0]])/sqrt((sim_shower_px[i_shr[0]])*(sim_shower_px[i_shr[0]]) + (sim_shower_py[i_shr[0]])*(sim_shower_py[i_shr[0]]) + (sim_shower_pz[i_shr[0]])*(sim_shower_pz[i_shr[0]]) )" />
+<alias key="MOMZ0" value="(sim_shower_pz[i_shr[0]])/sqrt((sim_shower_px[i_shr[0]])*(sim_shower_px[i_shr[0]]) + (sim_shower_py[i_shr[0]])*(sim_shower_py[i_shr[0]]) + (sim_shower_pz[i_shr[0]])*(sim_shower_pz[i_shr[0]]) )" />
+<alias key="MOMX1" value="(sim_shower_px[i_shr[1]])/sqrt((sim_shower_px[i_shr[1]])*(sim_shower_px[i_shr[1]]) + (sim_shower_py[i_shr[1]])*(sim_shower_py[i_shr[1]]) + (sim_shower_pz[i_shr[1]])*(sim_shower_pz[i_shr[1]]) )" />
+<alias key="MOMY1" value="(sim_shower_py[i_shr[1]])/sqrt((sim_shower_px[i_shr[1]])*(sim_shower_px[i_shr[1]]) + (sim_shower_py[i_shr[1]])*(sim_shower_py[i_shr[1]]) + (sim_shower_pz[i_shr[1]])*(sim_shower_pz[i_shr[1]]) )" />
+<alias key="MOMZ1" value="(sim_shower_pz[i_shr[1]])/sqrt((sim_shower_px[i_shr[1]])*(sim_shower_px[i_shr[1]]) + (sim_shower_py[i_shr[1]])*(sim_shower_py[i_shr[1]]) + (sim_shower_pz[i_shr[1]])*(sim_shower_pz[i_shr[1]]) )" />
 
