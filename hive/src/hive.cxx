@@ -695,7 +695,7 @@ int main (int argc, char *argv[]){
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setMergeDown(mergeDownVector);
                 real_datamc.setErrorString(systematics_error_string);
-                //if(plot_train_only) real_datamc.SetSpectator();
+                if(plot_train_only) real_datamc.SetSpectator();
 
                 if(which_bdt==-1){
                     real_datamc.plotStacks(ftest, tmp_vars,  fbdtcuts, additional_tag, bdt_infos);
@@ -1227,7 +1227,6 @@ cimpact->SaveAs("Impact.pdf","pdf");
         }
     }
 
-
     std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
     std::vector<std::string> v_topo = {TMVAmethods[0].topological_definition};//,"sim_shower_pdg==22","sim_track_pdg==2212","sim_shower_overlay_fraction<0.9","sim_track_overlay_fraction<0.9"};
 
@@ -1528,6 +1527,22 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         if(number > 0 && number !=vc-1) continue;
         if(which_group > 0 && which_group != v.cat) continue;
 
+
+        std::cout<<"First lets add the variable string "<<v.name<<std::endl;
+
+        //check if it's a BDT score variable
+        std::string mva = "_mva";
+        std::string name;
+        if(v.name.find(mva) != std::string::npos){
+            std::cout<<"ERROR this is a BDT score, updating variable name"<<std::endl;
+            v.name = "simple_"+v.name;
+        }else{
+            name = v.name;
+        }
+
+
+
+
         std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
         for(double k = 0; k<=v.n_bins; k++){
             double b = v.edges[1]+k*fabs(v.edges[1]-v.edges[2])/(double)v.n_bins;
@@ -1539,7 +1554,6 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         std::string sVID = "VID"+std::to_string(v.id);
         std::cout<<"Variable ID is "<<sVID<<std::endl;
 
-        std::cout<<"First lets add the variable string "<<v.name<<std::endl;
         std::string sedder_VAR = "sed  's@VARVARVAR@\"" + v.name + "\"@' "+covar_det_template_xml +" > "+ covar_det_template_xml+"."+sVID+".xml";
         std::cout<<sedder_VAR<<std::endl;
         system(sedder_VAR.c_str());

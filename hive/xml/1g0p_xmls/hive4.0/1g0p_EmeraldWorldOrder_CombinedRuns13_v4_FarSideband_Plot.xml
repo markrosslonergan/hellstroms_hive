@@ -3,7 +3,8 @@
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.988209,0.892728,0.428825)"/>
 
-<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Det Sys" />
+<!--<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
+<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Sys" />
 
 <plot_pot>
     <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.249"  />
@@ -319,7 +320,7 @@
 <var def = "reco_shower_phi_yx[0]" binning = "(8,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"     training="012" group="4404"/>
 <var def = "reco_shower_theta_yz[0]" binning = "(8,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"     training="012" group="4404"/>
 <var def = "(reco_shower_trackscore[0])" binning = "(8,0,0.35)" unit = "Shower Score" type ="d"  training ="012" group="4404"/>
-<var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm]" binning ="(8,0,3)" type="d"  training="012p"/>
+<var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm]" binning ="(8,0,3)" type="d"  training="012" group="44042"/>
 <var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(8,0.0,1.571)" unit = "Shower Beamyness" type="d"  training = "012" group="4404"/>
 <var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(8,0.2,1.571)" unit = "Shower Cosmicyness" type="d"  training = "012" group="4404"/>
 <var def = "reco_shower_start_dist_to_SCB" binning="(8,2,110)" unit = "Distance from Shower Start to SCB" type ="d"  training="012" group="4404" />

@@ -1096,7 +1096,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TText *pre2; 
             if (isSpectator) {
                 pre = drawPrelim(0.55,stack_mode? yypos+0.025: yypos,prestring.c_str());
-                if(stack_mode)pre2 = drawPrelim(0.6,yypos-0.02,"Preliminary");
+                if(stack_mode)pre2 = drawPrelim(0.44,yypos-0.02,"Preliminary");//0.6
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
@@ -1113,7 +1113,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                     //pre = drawPrelim(0.55,stack_mode? 0.525 :0.5,prestring.c_str());
                     pre = drawPrelim(0.50,stack_mode? yypos+0.025 : yypos,prestring.c_str());
-                    if(stack_mode)pre2 = drawPrelim(0.6,yypos-0.02,"Preliminary");
+                    if(stack_mode)pre2 = drawPrelim(0.5 ,yypos-0.02,"Preliminary");//0.6
                 }
 
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");

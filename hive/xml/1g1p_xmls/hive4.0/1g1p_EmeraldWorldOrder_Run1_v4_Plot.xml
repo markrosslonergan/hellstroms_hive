@@ -6,8 +6,9 @@
     <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "1.0"  />
 </plot_pot>
 
-<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
 
+<!---<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
+<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Sys" />
 
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
@@ -926,6 +927,9 @@
 <!-- ################################################################################################################ -->
 <!-- ################################################################################################################ -->
 
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(18,0.05,0.5)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3303"/>
+
+<var def = "Min$(sss_candidate_min_dist)" binning="(8,0,80)" unit = "Minimum conversion distance of all SSV candidate clusters" type="d" training="" group="7707"/>
 
 
 <!--pi0 vars -->

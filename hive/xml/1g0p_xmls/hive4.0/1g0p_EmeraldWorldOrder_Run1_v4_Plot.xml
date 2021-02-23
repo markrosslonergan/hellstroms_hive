@@ -3,7 +3,8 @@
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.988209,0.892728,0.428825)"/>
 
-<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
+<!--ar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
+<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Sys" />
 
 <plot_pot>
     <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "1.0"  />
@@ -515,6 +516,9 @@
 
 <var def="#GEO#" binning = "(18,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type="d" training="" group="808" />
 <var def="#GEO#/1000.0" binning = "alt(0.1,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.7)" unit = "Corrected Calorimetric Shower Energy [MeV]" type="d" training="" group="809" logplot="true" pmin=0.1 pmax=10/>
+
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(8,0,8.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group = "1212"/>
+<var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(16,0,8.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group = "1313"/>
 
 <!-- ================= Efficiency  ======================== -->
 

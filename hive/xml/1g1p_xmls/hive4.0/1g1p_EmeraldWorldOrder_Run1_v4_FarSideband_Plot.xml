@@ -6,7 +6,8 @@
     <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "1.0"  />
 </plot_pot>
 
-<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
+<!--<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
+<covar dir = "." name = "frac_covariance" plotname="Detector Systematics" />
 
 
 
@@ -923,11 +924,19 @@
 <var def = "reco_shower_startz[0]" binning = "(8,0.1,1036.9)" unit = "Reconstructed Shower Start Position in Z [cm]" type="d"    training="" group="5507" pmax=25/>
 
 
-<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(200,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "5508" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(200,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "5508" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4BNB_mva" binning = "(200,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "5508" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4Nue_mva" binning = "(200,0.3,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "5508" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(100,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6606" pmin=0/>
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(10,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "5508"  pmin=0.0/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(10,0.0,0.85)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "5508"  pmin=0.0/>
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(10,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "5508"  pmin=0.0/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(10,0.3,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "5508"  pmin=0.0/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(10,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "5508" pmin=0/>
+
+
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(200,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "5509"  pmin=0.0/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(200,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "5509"  pmin=0.0/>
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(200,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "5509"  pmin=0.0/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(200,0.3,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "5509"  pmin=0.0/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(200,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "5509" pmin=0/>
+
 
 
 <alias key="xc" value ="TMath::Min(abs(mctruth_nu_vertex_x-0),abs(256.35-mctruth_nu_vertex_x))"/>

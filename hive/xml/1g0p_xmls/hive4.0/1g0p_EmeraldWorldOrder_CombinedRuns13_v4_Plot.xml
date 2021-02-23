@@ -4,6 +4,7 @@
 <topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.988209,0.892728,0.428825)"/>
 
 <covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
+<!--<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />-->
 
 <plot_pot>
     <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.249"  />

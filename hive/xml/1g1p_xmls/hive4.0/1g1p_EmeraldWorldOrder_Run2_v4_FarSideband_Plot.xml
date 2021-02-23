@@ -6,7 +6,9 @@
     <run_period name ="RunIIandIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) ||(run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "1.0" />
 </plot_pot>
 
-<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XSec Systematics"/>
+<!--<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
+<covar dir = "." name = "frac_covariance" plotname="Detector Systematics" />
+
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
 
@@ -920,12 +922,18 @@
 <var def = "reco_shower_startz[0]" binning = "(12,0.1,1036.9)" unit = "Reconstructed Shower Start Position in Z [cm]" type="d"    training="" group="5506" pmax=30/>
 <var def = "reco_shower_startz[0]" binning = "(8,0.1,1036.9)" unit = "Reconstructed Shower Start Position in Z [cm]" type="d"    training="" group="5507" pmax=25/>
 
-<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(200,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "5508" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(200,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "5508" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4BNB_mva" binning = "(200,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "5508" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4Nue_mva" binning = "(200,0.3,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "5508" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(100,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6606" pmin=0/>
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(10,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "5508"  pmin=0.0/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(10,0.0,0.85)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "5508"  pmin=0.0/>
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(10,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "5508"  pmin=0.0/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(10,0.3,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "5508"  pmin=0.0/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(10,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "5508" pmin=0/>
 
+
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(200,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "5509"  pmin=0.0/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(200,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "5509"  pmin=0.0/>
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(200,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "5509"  pmin=0.0/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(200,0.3,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "5509"  pmin=0.0/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(200,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "5509" pmin=0/>
 
 
 
