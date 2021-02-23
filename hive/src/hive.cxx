@@ -686,8 +686,22 @@ int main (int argc, char *argv[]){
                 std::vector<bdt_variable> tmp_vars;
                 for(auto &v: vars){
                     if(which_group == -1 || which_group == v.cat){
-                 
-                        if(plot_train_only && v.is_spectator)continue;
+
+                        std::cout<<"v.is_spectator = "<<v.is_spectator <<std::endl; 
+                        if(plot_train_only && !v.is_spectator) 
+                        {
+                            std::cout<<"this is a spectator variable: skipping!"<<std::endl;
+                            continue;
+                        }
+                         
+                   /*     if(!v.is_spectator ){
+                            std::cout<<"this is a spectator variable"<<std::endl;
+                        }else{
+                            std::cout<<"this is a training variable"<<std::endl;
+
+                        }
+                        */
+
                         tmp_vars.push_back(v);
                     }
                 }
@@ -1448,10 +1462,15 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
         //lets skip anything that isnt the specific or group we want
         if(number >= 0 && number !=vc-1) continue;
         if(which_group > 0 && which_group != v.cat) continue;
-        if (v.is_spectator && plot_train_only) {
-            std::cout<<"skipping covar for spectator var"<<std::endl;
+          if (v.is_spectator && plot_train_only) {
+             std::cout<<"skipping covar for spectator var"<<std::endl;
+             continue;
+             }
+      /*  if(plot_train_only && !v.is_spectator) {
+            std::cout<<"this is a spectator variable: skipping!"<<std::endl;
             continue;
-        }
+        }*/
+
 
         std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
         for(double k = 0; k<=v.n_bins; k++){
@@ -1609,17 +1628,17 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
         //Then run a FlatFractional for BNBOther and NCMultiPi0
         /*std::string flatter_s1 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s BNBOther -t "+sVID+"_FlatDetSys1 -c " +sVID+"_merged_det.SBNcovar.root";
-        std::string flatter_s2 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s NCMultiPi0 -t "+sVID+"_FlatDetSys2 -c " +sVID+"_FlatDetSys1.SBNcovar.root";
-        std::string flatter_s3 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s OTPCinC -t "+sVID+"_FlatDetSys3 -c " +sVID+"_FlatDetSys2.SBNcovar.root";
+          std::string flatter_s2 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s NCMultiPi0 -t "+sVID+"_FlatDetSys2 -c " +sVID+"_FlatDetSys1.SBNcovar.root";
+          std::string flatter_s3 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s OTPCinC -t "+sVID+"_FlatDetSys3 -c " +sVID+"_FlatDetSys2.SBNcovar.root";
 
-        std::cout<<"Adding Flat components with command || "<<flatter_s1<<std::endl;
-        std::cout<<"Adding Flat components with command || "<<flatter_s2<<std::endl;
-        std::cout<<"Adding Flat components with command || "<<flatter_s3<<std::endl;
+          std::cout<<"Adding Flat components with command || "<<flatter_s1<<std::endl;
+          std::cout<<"Adding Flat components with command || "<<flatter_s2<<std::endl;
+          std::cout<<"Adding Flat components with command || "<<flatter_s3<<std::endl;
 
-        system(flatter_s1.c_str());
-        system(flatter_s2.c_str());
-        system(flatter_s3.c_str());
-        */
+          system(flatter_s1.c_str());
+          system(flatter_s2.c_str());
+          system(flatter_s3.c_str());
+          */
         //*****  If we also ran flux, merge   ***
         if(covar_flux_template_xml !="null.xml"){
 
