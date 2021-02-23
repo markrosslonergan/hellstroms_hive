@@ -370,7 +370,7 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
             wei = 1.0;
         }
 
-        sslibSVMtrain<<"1:"<<wei<<" ";
+        sslibSVMtrain<<"1:"<<wei<<" "; //guanqun: write the weight into file 'sslibSVMtrain'
 
         for(int t=0; t< sig_tree_formulas_v_train.size();++t){
             sig_tree_formulas_v_train[t]->GetNdata();
