@@ -1236,7 +1236,7 @@ cimpact->SaveAs("Impact.pdf","pdf");
     std::vector<bdt_variable> tmp_vars;
 
     if (number == 0) {
-        tmp_vars = vars.at(0);
+        tmp_vars.push_back(vars.at(0));
     } else{
         for(auto &v: vars){
             if(which_group == -1 || which_group == v.cat){

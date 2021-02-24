@@ -435,9 +435,7 @@
 
 <!-- ================================================== PRE-CUTS   ==================================================== -->
 <!--<precut def = "#GE#>30.0" name = "Michel Cut"/>-->
-
-
-<precut def = "reco_track_displacement[0]>30" name = "track length" /> 
+<!--<precut def = "reco_track_displacement[0]<30" name = "track length" />-->
 
 <!--<precut def = "(TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 &amp;&amp; reco_vertex_dist_to_SCB > 2)" name = "Track and Vertex Contained in SCB"/>
 <precut def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])>2.0" name="dedx"/>
@@ -464,8 +462,10 @@
 <var def = "reco_track_mean_trunc_dEdx_plane" binning =  "(24,0,8)" unit = "Reconstructed Track Truncated Mean dE/dx Plane 2 [MeV/cm]" type = "d"    training="" group = "69"/>
 <var def = "reco_track_mean_trunc_dEdx_start_half_plane2/reco_track_mean_trunc_dEdx_end_half_plane2" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "" group = "69" />
 -->
-<var def = "reco_track_calo_energy_max"  binning =  "(48,0,500)" unit = "Reconstructed Track Calorimetric Energy [MeV], greater than 30cm" type = "d"    training="" group = "69"/>
-<var def = "reco_track_proton_kinetic_energy * 1000"  binning =  "(48,0,500)" unit = "Reconstructed Track Range-Based Kinetic Energy [MeV], greater than 30cm" type = "d"    training="" group = "69"/>
+<var def = "reco_track_calo_energy_max"  binning =  "(24,0,1000)" unit = "Reconstructed Track Calorimetric Energy [MeV]" type = "d"    training="" group = "69"/>
+<var def = "reco_track_proton_kinetic_energy * 1000"  binning =  "(24,0,1000)" unit = "Reconstructed Track Range-Based Kinetic Energy [MeV]" type = "d"    training="" group = "69"/>
+
+
 
 
 <var def = "#GE#" binning = "(24,30,400)" unit = "Reconstructed Shower Energy [MeV]" type = "d"   training="" group = "68"/>

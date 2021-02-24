@@ -54,7 +54,7 @@ XMLXN="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xm
 
 
 #stage1 track plots reco chapter with no shower requirement, tracks >100cm
-#rm *entrylist*
+rm *entrylist*
 ./../../bin/hive -o datamc  -x $XMLXN100 -s 1 -g69
 
 #stage1 track plots reco chapter with no shower requirement, tracks <100cm
