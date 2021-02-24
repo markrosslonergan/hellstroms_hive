@@ -2,6 +2,8 @@
 
 FXXML="/uboone/app/users/markrl/SL7test0/hellstroms_hive/hive/xml/SBNfit_Integration_XMLS/template_1g0p_stage_1_Jan2021.xml"
 XML="/uboone/app/users/markrl/SL7test0/hellstroms_hive/hive/xml/1g0p_xmls/hive4.0/1g0p_EmeraldWorldOrder_CombinedRuns13_v4_FarSideband_Plot.xml"
+FXXML2="/uboone/app/users/markrl/SL7test0/hellstroms_hive/hive/xml/SBNfit_Integration_XMLS/template_1g0p_stage_4_Jan2021.xml"
+DXML="/uboone/app/users/markrl/SL7test0/hellstroms_hive/hive/xml/SBNfit_Integration_XMLS/DetSys_Neutrino2020/template_detsys_1g0p_Feb2021_v4.xml"
 
 #XML1="1g1p_CeriseWorldOrder_FarSideband_Run1.xml"
 #XML2="1g1p_CeriseWorldOrder_FarSideband_Run2.xml"
@@ -45,12 +47,11 @@ BNBFS="1g0pMar2020COSMIC_mva >=0.9&& (1g0pMar2020NCPi0_mva > 0.428825  &&1g0pMar
 #./hive -o datamc  -x $XML -s 1 -g 11811  --cuts "$BNBFS" --additional_tag="BNBOtherBox" --systematics "flux_fracfixed"
 #rm  *Far*entry*root
 
-
 # ------------ Full FarSideband BDTs~~
-rm  *Far*entry*root
-./hive -o datamc --makefluxcovar $FXXML -x $XML -g 11111 -s 1 --cuts "$sFULLFSnoC"
-./hive -o datamc  -x $XML -s 1 -g 11111  --cuts "$FULLFSnoC" --additional_tag="BDTFullFS" --systematics "flux_fracfixed"
-rm  *Far*entry*root
+#rm  *Far*entry*root
+#./hive -o datamc --makefluxcovar $FXXML -x $XML -g 11111 -s 1 --cuts "$sFULLFSnoC"
+#./hive -o datamc  -x $XML -s 1 -g 11111  --cuts "$FULLFSnoC" --additional_tag="BDTFullFS" --systematics "flux_fracfixed"
+#rm  *Far*entry*root
 
 
 
@@ -70,6 +71,12 @@ rm  *Far*entry*root
 #rm  *Far*entry*root
 #./hive -o datamc --makefluxcovar $FXXML -x $XML -g 44042 -s 1 --cuts "$sBNBFS"
 #./hive -o datamc  -x $XML -s 1 -g 44042  --cuts "$BNBFS" --additional_tag="TrainBNBBox" --systematics "flux_fracfixed"
+#rm  *Far*entry*root
+
+
+#Just one full farside best, without CC but WITH detsys
+#./hive  --makefluxcovar $FXXML --makedetcovar $DXML -x $XML -g 11511 -s 1 --cuts "$sFULLFSnoC"
+./hive -o datamc  -x $XML -s 1 -g 11511  --cuts "$FULLFSnoC" --additional_tag="FullFSnoCwithDet" --systematics "fluxdet"
 #rm  *Far*entry*root
 
 

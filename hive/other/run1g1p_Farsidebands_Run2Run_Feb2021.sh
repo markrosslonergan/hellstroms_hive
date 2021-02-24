@@ -37,24 +37,31 @@ NUM=5505
 
 
 NUM=5506
-#./hive -o datamc --makedetcovar $DXML -x $XML1 -s 1 -g $NUM --cuts "$sNCPIFS"
-#./hive -o datamc  -x $XML1 -s 1 -g $NUM  --cuts "$NCPIFS" --additional_tag="Run2Run_NCPi0_Run1" --systematics "merged_det"
-#./hive -o datamc  -x $XML2 -s 1 -g $NUM  --cuts "$NCPIFS" --additional_tag="Run2Run_NCPi0_Run2" --systematics "merged_det"
-#./hive -o datamc  -x $XML3 -s 1 -g $NUM  --cuts "$NCPIFS" --additional_tag="Run2Run_NCPi0_Run3" --systematics "merged_det"
+./hive -o datamc --makedetcovar $DXML -x $XML1 -s 1 -g $NUM --cuts "$sNCPIFS"
+./hive -o datamc  -x $XML1 -s 1 -g $NUM  --cuts "$NCPIFS" --additional_tag="Run2Run_NCPi0_Run1" --systematics "merged_det"
+./hive -o datamc  -x $XML2 -s 1 -g $NUM  --cuts "$NCPIFS" --additional_tag="Run2Run_NCPi0_Run2" --systematics "merged_det"
+./hive -o datamc  -x $XML3 -s 1 -g $NUM  --cuts "$NCPIFS" --additional_tag="Run2Run_NCPi0_Run3" --systematics "merged_det"
 
 
 NUM=5507
-#./hive -o datamc --makedetcovar $DXML -x $XML1 -s 1 -g $NUM --cuts "$sBNBFS"
-#./hive -o datamc  -x $XML1 -s 1 -g $NUM  --cuts "$BNBFS" --additional_tag="Run2Run_BNBOther_Run1" --systematics "merged_det"
-#./hive -o datamc  -x $XML2 -s 1 -g $NUM  --cuts "$BNBFS" --additional_tag="Run2Run_BNBOther_Run2" --systematics "merged_det"
-#./hive -o datamc  -x $XML3 -s 1 -g $NUM  --cuts "$BNBFS" --additional_tag="Run2Run_BNBOther_Run3" --systematics "merged_det"
+./hive -o datamc --makedetcovar $DXML -x $XML1 -s 1 -g $NUM --cuts "$sBNBFS"
+./hive -o datamc  -x $XML1 -s 1 -g $NUM  --cuts "$BNBFS" --additional_tag="Run2Run_BNBOther_Run1" --systematics "merged_det"
+./hive -o datamc  -x $XML2 -s 1 -g $NUM  --cuts "$BNBFS" --additional_tag="Run2Run_BNBOther_Run2" --systematics "merged_det"
+./hive -o datamc  -x $XML3 -s 1 -g $NUM  --cuts "$BNBFS" --additional_tag="Run2Run_BNBOther_Run3" --systematics "merged_det"
 
 
 NUM=5508
-./hive -o datamc --makedetcovar $DXML -x $XML1 -s 1 -g $NUM --cuts "$sFULLFSnoC"
-./hive -o datamc  -x $XML1 -s 1 -g $NUM  --cuts "$FULLFSnoC" --additional_tag="Run2Run200_FULL_Run1" --systematics "merged_det"
-./hive -o datamc  -x $XML2 -s 1 -g $NUM  --cuts "$FULLFSnoC" --additional_tag="Run2Run200_FULL_Run2" --systematics "merged_det"
-./hive -o datamc  -x $XML3 -s 1 -g $NUM  --cuts "$FULLFSnoC" --additional_tag="Run2Run200_FULL_Run3" --systematics "merged_det"
+#./hive -o datamc --makedetcovar $DXML -x $XML1 -s 1 -g $NUM --cuts "$sFULLFSnoC"
+#./hive -o datamc  -x $XML1 -s 1 -g $NUM  --cuts "$FULLFSnoC" --additional_tag="Run2Run200_FULL_Run1" --systematics "merged_det"
+#./hive -o datamc  -x $XML2 -s 1 -g $NUM  --cuts "$FULLFSnoC" --additional_tag="Run2Run200_FULL_Run2" --systematics "merged_det"
+#./hive -o datamc  -x $XML3 -s 1 -g $NUM  --cuts "$FULLFSnoC" --additional_tag="Run2Run200_FULL_Run3" --systematics "merged_det"
+
+
+#200 bins stats only
+NUM=5509 
+#./hive -o datamc  -x $XML1 -s 1 -g $NUM  --cuts "$FULLFSnoC" --additional_tag="Run2RunFeather_FULL_Run1" 
+#./hive -o datamc  -x $XML2 -s 1 -g $NUM  --cuts "$FULLFSnoC" --additional_tag="Run2RunFeather_FULL_Run2" 
+#./hive -o datamc  -x $XML3 -s 1 -g $NUM  --cuts "$FULLFSnoC" --additional_tag="Run2RunFeather_FULL_Run3" 
 
 
 
