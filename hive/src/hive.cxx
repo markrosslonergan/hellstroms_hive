@@ -692,14 +692,14 @@ int main (int argc, char *argv[]){
                             std::cout<<"this is a spectator variable: skipping!"<<std::endl;
                             continue;
                         }
-                         
-                   /*     if(!v.is_spectator ){
-                            std::cout<<"this is a spectator variable"<<std::endl;
-                        }else{
-                            std::cout<<"this is a training variable"<<std::endl;
 
-                        }
-                        */
+                        /*     if(!v.is_spectator ){
+                               std::cout<<"this is a spectator variable"<<std::endl;
+                               }else{
+                               std::cout<<"this is a training variable"<<std::endl;
+
+                               }
+                               */
 
                         tmp_vars.push_back(v);
                     }
@@ -1235,9 +1235,13 @@ cimpact->SaveAs("Impact.pdf","pdf");
 
     std::vector<bdt_variable> tmp_vars;
 
-    for(auto &v: vars){
-        if(which_group == -1 || which_group == v.cat){
-            tmp_vars.push_back(v);
+    if (number == 0) {
+        tmp_vars = vars.at(0);
+    } else{
+        for(auto &v: vars){
+            if(which_group == -1 || which_group == v.cat){
+                tmp_vars.push_back(v);
+            }
         }
     }
 
@@ -1461,14 +1465,14 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
         //lets skip anything that isnt the specific or group we want
         if(number >= 0 && number !=vc-1) continue;
         if(which_group > 0 && which_group != v.cat) continue;
-          if (v.is_spectator && plot_train_only) {
-             std::cout<<"skipping covar for spectator var"<<std::endl;
-             continue;
-             }
-      /*  if(plot_train_only && !v.is_spectator) {
+        if (v.is_spectator && plot_train_only) {
+            std::cout<<"skipping covar for spectator var"<<std::endl;
+            continue;
+        }
+        /*  if(plot_train_only && !v.is_spectator) {
             std::cout<<"this is a spectator variable: skipping!"<<std::endl;
             continue;
-        }*/
+            }*/
 
 
         std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";

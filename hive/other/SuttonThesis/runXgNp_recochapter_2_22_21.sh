@@ -20,10 +20,20 @@ FXXML6="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/x
 FXXML1="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/SBNfit_Integration_XMLS/template_1g1p_stage_1_Run13combined_NoLEE_Dec2020.xml"
 
 #combined runs xml for atleast 1 shower 1 track
-XMLNN="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/NgNp_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
+XMLNN="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/SuttonThesis/NgNp_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
 
 #combined runs xml for atleast 1 shower, any track
-XMLNX="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/NgXp_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
+XMLNX="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/SuttonThesis/NgXp_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
+
+#combined runs xml for atleast 1 track > 100cm, any showers
+XMLXN100="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/SuttonThesis/XgNp100_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
+
+#combined runs xml for atleast 1 track > 100cm, any showers
+XMLXN20="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/SuttonThesis/XgNp20_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
+
+#combined runs xml for atleast 1 track, any showers any tracks
+XMLXN="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/SuttonThesis/XgNp_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
+
 
 
 ## for each stage you generate the covariance matrix for each plot (--makefluxcovar), which needs to be done every time you rebin
@@ -36,6 +46,19 @@ XMLNX="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xm
 
 #stage1 shower plots reco chapter with no track requirement
 #rm *entrylist*
-./../../bin/hive -o datamc  -x $XMLNX -s 1 -g68
+#./../../bin/hive -o datamc  -x $XMLNX -s 1 -g68
+
+#stage1 track plots reco chapter with no shower requirement, no track length requirement
+#rm *entrylist*
+#./../../bin/hive -o datamc  -x $XMLXN -s 1 -g69
+
+
+#stage1 track plots reco chapter with no shower requirement, tracks >100cm
+#rm *entrylist*
+./../../bin/hive -o datamc  -x $XMLXN100 -s 1 -g69
+
+#stage1 track plots reco chapter with no shower requirement, tracks <100cm
+#rm *entrylist*
+#./../../bin/hive -o datamc  -x $XMLXN20 -s 1 -g69
 
 
