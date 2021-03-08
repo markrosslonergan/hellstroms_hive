@@ -940,6 +940,8 @@
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(12,1.01,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "11711"/>
 
 
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(50,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6607" />
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(50,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6607" />
 
 
 
