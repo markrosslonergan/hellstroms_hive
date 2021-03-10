@@ -435,7 +435,7 @@
 
 <!-- ================================================== PRE-CUTS   ==================================================== -->
 <!--<precut def = "#GE#>30.0" name = "Michel Cut"/>-->
-<!--<precut def = "reco_track_displacement[0]<30" name = "track length" />-->
+<precut def = "reco_track_displacement[0]>0" name = "track length" />
 
 <!--<precut def = "(TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 &amp;&amp; reco_vertex_dist_to_SCB > 2)" name = "Track and Vertex Contained in SCB"/>
 <precut def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])>2.0" name="dedx"/>

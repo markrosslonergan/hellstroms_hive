@@ -25,10 +25,10 @@ XMLNN="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xm
 #combined runs xml for atleast 1 shower, any track
 XMLNX="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/SuttonThesis/NgXp_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
 
-#combined runs xml for atleast 1 track > 100cm, any showers
+#combined runs xml for atleast 1 track + any showers
 XMLXN100="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/SuttonThesis/XgNp100_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
 
-#combined runs xml for atleast 1 track > 100cm, any showers
+#combined runs xml for atleast 1 track < 30cm, any showers
 XMLXN20="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xml/1g1p_xmls/hive4.0/SuttonThesis/XgNp20_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml"
 
 #combined runs xml for atleast 1 track, any showers any tracks
@@ -53,11 +53,11 @@ XMLXN="/uboone/app/users/ksutton/hellstroms_hive_2.5_sl7/hellstroms_hive/hive/xm
 #./../../bin/hive -o datamc  -x $XMLXN -s 1 -g69
 
 
-#stage1 track plots reco chapter with no shower requirement, tracks >100cm
-rm *entrylist*
+#stage1 track plots reco chapter with no shower requirement, all tracks
+#rm *entrylist*
 ./../../bin/hive -o datamc  -x $XMLXN100 -s 1 -g69
 
-#stage1 track plots reco chapter with no shower requirement, tracks <100cm
+#stage1 track plots reco chapter with no shower requirement, tracks <30cm
 #rm *entrylist*
 #./../../bin/hive -o datamc  -x $XMLXN20 -s 1 -g69
 

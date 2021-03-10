@@ -1,23 +1,28 @@
 <?xml version="1.0" ?>
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g1pMar2020_v4" name ="N#gammaXp" def = "reco_vertex_size==1 &amp;&amp; reco_asso_tracks>0" bdtcut = "(0.9531,0.9845,0.467404,0.7474,0.7088)" />
+<topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.9531,0.9845,0.467404,0.7474,0.7088)" />
 
 <plot_pot>
     <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.249"  />
     <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "0.751" />
 </plot_pot>
 
-<!--<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
+<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
 
 <bdtfile filename = "ncdelta_overlay_combined_run13_COFredo_v43.5.spluff.test.deoverlapped.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false">
     <definition>
-        <cut>mctruth_is_delta_radiative==1</cut>
-        <cut>mctruth_cc_or_nc==1</cut>
-        <cut>(m_flash_optfltr_pe_beam &gt;20 &amp;&amp; m_flash_optfltr_pe_veto &lt; 20)</cut> 
-        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
-    </definition>
+           <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 20.0 &amp;&amp; mctruth_nu_vertex_x &lt; 233.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -93.5 &amp;&amp; mctruth_nu_vertex_y &lt; 93.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 20.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1013.8 </cut>       
+        <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 0</cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 </cut>
+ 
+   </definition>
 </bdtfile>
 
 <bdtfile filename = "ncpi0_overlay_combined_run13_COFredo_tuneCV_v43.5.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
@@ -434,15 +439,14 @@
 </mva>
 
 <!-- ================================================== PRE-CUTS   ==================================================== -->
-<!--<precut def = "#GE#>30.0" name = "Michel Cut"/>-->
-<precut def = "reco_track_displacement[0]>30" name = "track length" />
 
-<!--<precut def = "(TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 &amp;&amp; reco_vertex_dist_to_SCB > 2)" name = "Track and Vertex Contained in SCB"/>
+<precut def = "#GE#>40.0" name = "Michel Cut"/>
+<precut def = "(TMath::Min(reco_track_end_dist_to_SCB,reco_track_start_dist_to_SCB)>2 &amp;&amp; reco_vertex_dist_to_SCB > 2)" name = "Track and Vertex Contained in SCB"/>
 <precut def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])>2.0" name="dedx"/>
 <precut def = "fabs(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])<0.99" name = "angle btb"/>
 <precut def = "reco_shower_start_dist_to_SCB > 7.0" name = "shr"/>
 <precut def = "reco_track_proton_kinetic_energy[0]<0.5" name = "En"/>
-<precut def = "DeNan(reco_track_calo_energy_plane2[0]*0.001, reco_track_calo_energy_max[0]*0.001) < 0.4" name = "Traxk_max"/>-->
+<precut def = "DeNan(reco_track_calo_energy_plane2[0]*0.001, reco_track_calo_energy_max[0]*0.001) < 0.4" name = "Traxk_max"/>
 <!--<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/>-->
 
 
@@ -458,35 +462,11 @@
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
-<!--
-<var def = "reco_track_mean_trunc_dEdx_plane" binning =  "(24,0,8)" unit = "Reconstructed Track Truncated Mean dE/dx Plane 2 [MeV/cm]" type = "d"    training="" group = "69"/>
-<var def = "reco_track_mean_trunc_dEdx_start_half_plane2/reco_track_mean_trunc_dEdx_end_half_plane2" binning = "(24,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "" group = "69" />
--->
-<var def = "reco_track_calo_energy_max"  binning =  "(24,0,250)" unit = "Reconstructed Track Calorimetric Energy [MeV]" type = "d"    training="" group = "69"/>
-<var def = "reco_track_proton_kinetic_energy * 1000"  binning =  "(24,0,250)" unit = "Reconstructed Track Range-Based Kinetic Energy [MeV]" type = "d"    training="" group = "69"/>
-
-
-
-
-<var def = "#GE#" binning = "(24,30,400)" unit = "Reconstructed Shower Energy [MeV]" type = "d"   training="" group = "68"/>
-<var def = "#GDEDXKAL2#" binning = "(24,0,8.0)" unit = "Shower dEdx (Kalman Plane 2) [MeV/cm]" type="d"  training=""  group = "68"/>
-
-<var def = "reco_shower_implied_dirx" binning = "(24,-1,1)" unit = "Reconstructed Shower Implied Direction X" type="d" group = "67" training=""/>
-<var def = "reco_shower_implied_diry" binning = "(24,-1,1)" unit = "Reconstructed Shower Implied Direction Y" type="d" group = "67" training=""/>
-<var def = "reco_shower_implied_dirz" binning = "(24,-1,1)" unit = "Reconstructed Shower Implied Direction Z" type="d" group = "67"  training=""/>
-
-<var def = "reco_shower_dirx" binning = "(24,-1,1)" unit = "Reconstructed Shower Pandora Direction X" type="d" group = "67"   training=""/>
-<var def = "reco_shower_diry" binning = "(24,-1,1)" unit = "Reconstructed Shower Pandora Direction Y" type="d"  group = "67"  training=""/>
-<var def = "reco_shower_dirz" binning = "(24,-1,1)" unit = "Reconstructed Shower Pandora Direction Z" type="d" group = "67"   training=""/>
-
-<var def = "reco_shower_impact_parameter" binning = "(24,0,200)" unit = "Shower Impact Parameter [cm]" type="d" group = "67" training="" logplot = "true"/>
-
-<var def = "reco_shower_conversion_distance" binning = "(24,0,100)" unit = " Reconstructed Shower Conversion Distance [cm]" type = "d" group = "67" training="" logplot = "true" />
-
-
 
 <var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="0123" group = "11"/>
 <var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="0123"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="0123"/>
+<var def = "reco_shower_impact_parameter[0]" binning = "(24,0,200)" unit = "Shower Impact Parameter [cm]" type="d"    training="0123"/>
 <var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(24,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d"    training="0123"/>
 <var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d"     training="0123"/>
 <var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(24,0 ,1000)" unit = "Ratio Reconstrunted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d"  training="0123"/>
@@ -497,6 +477,8 @@
 <var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness" type="d"  training = "0123"/>
 <var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness" type="d"  training = "0123"/>
 <var def = "reco_shower_end_dist_to_active_TPC" binning="(24,0,100)" unit = "Distance from Shower End to Active TPC" type ="d"  training="0123"/>
+<var def = "reco_shower_conversion_distance[0]" binning = "(24,0,100)" unit = " Reconstructed Shower Conversion Distance Log[cm]" type = "d"     training="01234"/>
+
 <var def = "(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])" binning = "(24,-1,1)" unit = "Cosine Angle Between Track and Shower (implied)" type ="d"  training ="0123"/>
 <var def = "(180/TMath::Pi())*acos(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])" binning = "(24,0.0,180)" unit = "Angle Between Track and Shower [deg]" type ="d"  training =""/>
 
@@ -566,6 +548,10 @@
 <var def = "reco_shower_energy_plane0[0]" binning = "(24,0,400)" unit = "Reconstructed Calorimetric Shower Energy Plane 0 [MeV]" type = "d"     training=""/>
 <var def = "reco_shower_energy_plane1[0]" binning = "(24,0,400)" unit = "Reconstructed Calorimetric Shower Energy Plane 1 [MeV]" type = "d"     training=""/>
 <var def = "reco_shower_energy_plane2[0]" binning = "(24,0,400)" unit = "Reconstructed Calorimetric Shower Energy Plane 2 [MeV]" type = "d"  training="" group = "2"/>
+<var def = "reco_shower_implied_dirx/reco_shower_dirx" binning = "(24,-1,3)" unit = "Ratio Shower Implied Dir X/Pandora Dir X" type="d"    training="2"/>
+<var def = "reco_shower_implied_diry/reco_shower_diry" binning = "(24,-1,3)" unit = "Ratio Shower Implied Dir Y/Pandora Dir Y" type="d"    training="2"/>
+<var def = "reco_shower_implied_dirz/reco_shower_dirz" binning = "(24,-1,3)" unit = "Ratio Shower Implied Dir Z/Pandora Dir Z" type="d"    training="2"/>
+
 <var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"     training=""/>
 <var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"     training=""/>
 <var def = "atan(reco_shower_dirx[0]/reco_shower_dirz[0])" binning = "(24,-2.0,2.0)" unit = "Reconstructed Shower #omega_{xz} [rad]" type = "d"     training="2"/>
@@ -586,6 +572,11 @@
 <var def = "reco_shower_startx[0] + (reco_shower_length[0] * reco_shower_dirx[0])" unit = "Shower End X [cm]" binning = "(24,-20,270)" type = "d"  training = "2"  />
 <var def = "reco_shower_starty[0] + (reco_shower_length[0] * reco_shower_diry[0])" unit = "Shower End Y [cm]" binning = "(24,-140,140)" type = "d"  training = "2"  />
 <var def = "reco_shower_startz[0] + (reco_shower_length[0] * reco_shower_dirz[0])" unit = "Shower End Z [cm]" binning = "(24,-20,1100" type = "d"  training = "2"  />
+
+<var def = "reco_shower_implied_dirx" binning = "(24,-1,1)" unit = "Shower Implied Dir X" type="d"  training=""/>
+<var def = "reco_shower_implied_diry" binning = "(24,-1,1)" unit = "Shower Implied Dir Y" type="d"  training=""/>
+<var def = "reco_shower_implied_dirz" binning = "(24,-1,1)" unit = "Shower Implied Dir Z" type="d"  training=""/>
+
 <var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness" type="d"  training = ""/>
 <var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness" type="d"  training = ""/>
 <var def = "reco_shower_start_dist_to_SCB" binning="(24,0,150)" unit = "Distance from Shower Start to SCB" type ="d"  training="2" group="77"/>
@@ -1028,12 +1019,9 @@
 <alias key="GEO" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)" />
 <alias key="GDEDXKAL" value ="(reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0)))"/>
 
-<alias key="GDEDXKAL2" value ="reco_shower_kalman_dEdx_plane2_median[0]*((reco_shower_kalman_dEdx_plane2_median[0] > 0 )== 1)"/>
 
 
-<!--
-<alias key = "GEALL" value= "Sum$(((reco_shower_energy_plane2+reco_shower_energy_max*(reco_shower_energy_plane2==0)))>30 ) == reco_asso_showers" />
--->
+
 
 <alias key = "GTM" value = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))"/>
 <alias key = "PTM" value = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*reco_track_diry[0],2)+pow((reco_track_proton_kinetic_energy[0]+0.938272)*reco_track_dirx[0],2))"/>
