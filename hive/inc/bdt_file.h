@@ -163,9 +163,7 @@ struct bdt_file{
         //a function that splits a BDT file based on string and !string
         int splitBDTfile(std::string split_string,std::string trueTAG, bdt_file* truesplit, std::string falseTAG, bdt_file *falsesplit);
 
-
-        unsigned long jenkins_hash(std::string key);
-
+        unsigned long jenkins_hash(std::string key); //guanqun: what does this do? 
 
 
         int setStageEntryList(int j);

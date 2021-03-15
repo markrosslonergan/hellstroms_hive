@@ -3,7 +3,8 @@
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.988209,0.892728,0.428825)"/>
 
-<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Det Sys" />
+<!--<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
+<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Sys" />
 
 <plot_pot>
     <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.249"  />
@@ -310,28 +311,28 @@
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
 
-<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="012"/>
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="012"/>
-<var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="012" group="77"/>
-<var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d"     training="012"/>
-<var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(24,0 ,1000)" unit = "Ratio Reconstrunted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d"  training="012"/>
-<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(24,0,50)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"     training="012"/>
-<var def = "reco_shower_phi_yx[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"     training="012"/>
-<var def = "reco_shower_theta_yz[0]" binning = "(24,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"     training="012"/>
-<var def = "(reco_shower_trackscore[0])" binning = "(24,0,0.5)" unit = "Shower Score" type ="d"  training ="012"/>
-<var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm]" binning ="(24,0,3)" type="d"  training="012"/>
-<var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(24,0.0,1.571)" unit = "Shower Beamyness" type="d"  training = "012"/>
-<var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(24,0.0,1.571)" unit = "Shower Cosmicyness" type="d"  training = "012"/>
-<var def = "reco_shower_start_dist_to_SCB" binning="(24,0,150)" unit = "Distance from Shower Start to SCB" type ="d"  training="012" />
-<var def = "#GE#/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV]" binning = "(24,0,1)" type="d"  training="012" />
-<var def = "#GE#/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Ratio of Calorimetric Shower Energy to Shower Length x Opening Angle [GeV/cm*rad]" binning = "(24,0,0.1)" type = "d"   training = "012"/>
-<var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(24,0,0.3)" type = "d"  training = "012"/>
-<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(24,0,1)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="012" group="77"/>
-<var def = "Min$(sss_candidate_impact_parameter)" binning="(50,0,80)" unit = "Min impact parm basic" type="d" training="012" group="77"/>
-<var def = "Min$(sss_candidate_min_dist)" binning="(50,0,80)" unit = "Min conv parm basic" type="d" training="012" group="77"/>
-<var def = "sss3d_ioc_ranked_implied_opang" binning = "(50,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="012" group="77"/>
-<var def = "sss3d_ioc_ranked_conv" binning = "(50,0,100)" unit ="sss3d min IOC Conversion Dist [cm]" type="d"  training="012" group="77"/>
-<var def = "sss2d_conv_ranked_invar" binning = "(50,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="012" group="77"/>
+<var def = "reco_shower_nuscore[0]" binning = "(8, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="012" group="4404"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(8,2.5,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="012" group="4404"/>
+<var def = "#GE#" binning = "(8,50,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="012"  group="4404"/>
+<var def = "reco_shower_length[0]" binning = "(8,20,100)" unit = "Reconstructed Shower Length [cm]" type = "d"     training="012" group="4404"/>
+<var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(8,100 ,1000)" unit = "Ratio Reconstrunted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d"  training="012" group="4404"/>
+<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(8,0,30)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"     training="012" group="44042"/>
+<var def = "reco_shower_phi_yx[0]" binning = "(8,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"     training="012" group="4404"/>
+<var def = "reco_shower_theta_yz[0]" binning = "(8,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"     training="012" group="4404"/>
+<var def = "(reco_shower_trackscore[0])" binning = "(8,0,0.35)" unit = "Shower Score" type ="d"  training ="012" group="4404"/>
+<var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm]" binning ="(8,0,3)" type="d"  training="012" group="44042"/>
+<var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(8,0.0,1.571)" unit = "Shower Beamyness" type="d"  training = "012" group="4404"/>
+<var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(8,0.2,1.571)" unit = "Shower Cosmicyness" type="d"  training = "012" group="4404"/>
+<var def = "reco_shower_start_dist_to_SCB" binning="(8,2,110)" unit = "Distance from Shower Start to SCB" type ="d"  training="012" group="4404" />
+<var def = "#GE#/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV]" binning = "(8,0.1,0.275)" type="d"  training="012"  group="4404"/>
+<var def = "#GE#/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Calorimetric Shower Energy/(Shower Length x Opening Angle) [GeV/cm*rad]" binning = "(8,0,0.06)" type = "d"   training = "012" group="44042"/>
+<var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(8,0,0.3)" type = "d"  training = "012" group="4404"/>
+<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(8,0,0.8)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="012" group="4404"/>
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(8,0,80)" unit = "Min impact parm basic" type="d" training="012" group="4404"/>
+<var def = "Min$(sss_candidate_min_dist)" binning="(8,0,80)" unit = "Min conv parm basic" type="d" training="012"  group="4404"/>
+<var def = "sss3d_ioc_ranked_implied_opang" binning = "(8,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="012" group="4404"/>
+<var def = "sss3d_ioc_ranked_conv" binning = "(8,0,80)" unit ="sss3d min IOC Conversion Dist [cm]" type="d"  training="012"  group="4404"/>
+<var def = "sss2d_conv_ranked_invar" binning = "(8,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="012" group="4404"/>
 
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
@@ -440,9 +441,9 @@
 -->
 
 <!--bdt vars -->
-<var def = "1g0pMar2020COSMIC_mva" binning = "(50,0.0,1)" unit = "Cosmic BDT Score" type="d" training= "" group = "6" logplot = "true"/>
-<var def = "1g0pMar2020BNB_mva" binning = "(50,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""  group = "6" logplot = "true" />
-<var def = "1g0pMar2020NCPi0_mva" binning = "(50,0.0,1.0)" unit = "NC#pi^{0} BDT Score" type="d" training= ""  group = "6" logplot = "true"/>
+<var def = "1g0pMar2020COSMIC_mva" binning = "(20,0.0,1)" unit = "Cosmic BDT Score" type="d" training= ""  logplot = "true" group="11111" pmin=1 />
+<var def = "1g0pMar2020BNB_mva" binning = "(20,0.3,1)" unit = "BNB Other BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=1/>
+<var def = "1g0pMar2020NCPi0_mva" binning = "(20,0.2,0.9)" unit = "NC#pi^{0} BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=1/>
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
@@ -453,6 +454,30 @@
 <!-- stage 4 stack -->
 <var def = "#GEO#" binning = "(6,100,700)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "11"/>
 
+
+
+
+<!-- FARSIDE BAND -->
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(18,0.05,0.5)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="11511"/>
+
+<!-- FARSIDE BAND with W-->
+<var def = "reco_shower_theta_yz[0]" binning = "(16,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"     training="" group="11611"/>
+<var def = "#GE#/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV]" binning = "(16,0.1,0.25)" type="d"  training="" group="11611" />
+<var def = "(reco_shower_trackscore[0])" binning = "(16,0,0.5)" unit = "Shower Score" type ="d"  training ="" group="11611"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(16,2.5,8)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group="11611"/>
+
+<!-- FARSIDE BAND with NCPi0 -->
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(10,0.05,0.6)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="11711"/>
+<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(10,0.05,0.7)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="" group="11711"/>
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(10,0,60)" unit = "Minimum Impact Parameters in Clustered Candidates" type="d" training="" group="11711"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(10,2.5,8)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group="11711"/>
+
+
+<!-- FARSIDE BAND with BNB -->
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(7,0.1,0.5)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="11811"/>
+<var def = "#GE#/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV]" binning = "(7,0.1,0.3)" type="d"  training="" group="11811" />
+<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(7,0,30)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"     training="" group="11811"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(7,2.5,8)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group="11811"/>
 
 
 

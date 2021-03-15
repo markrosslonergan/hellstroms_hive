@@ -113,7 +113,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:o:u:d:s:f:q:y:m:t:p:b:i:n:g:v:a:c:rjh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:o:u:d:s:f:q:y:m:t:p:b:i:n:g:v:c:arjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -252,6 +252,7 @@ int main (int argc, char *argv[]){
 
 
     dir = XMLconfig.filedir;
+    //dir="";
     std::cout<<"Core File dir set as "<<dir<<std::endl;
 
     std::cout<<"We have "<<TMVAmethods.size()<<" Different BDT's we are going to train today"<<std::endl;
@@ -685,6 +686,22 @@ int main (int argc, char *argv[]){
                 std::vector<bdt_variable> tmp_vars;
                 for(auto &v: vars){
                     if(which_group == -1 || which_group == v.cat){
+
+                        std::cout<<"v.is_spectator = "<<v.is_spectator <<std::endl; 
+                        if(plot_train_only && !v.is_spectator) 
+                        {
+                            std::cout<<"this is a spectator variable: skipping!"<<std::endl;
+                            continue;
+                        }
+                         
+                   /*     if(!v.is_spectator ){
+                            std::cout<<"this is a spectator variable"<<std::endl;
+                        }else{
+                            std::cout<<"this is a training variable"<<std::endl;
+
+                        }
+                        */
+
                         tmp_vars.push_back(v);
                     }
                 }
@@ -1225,7 +1242,6 @@ cimpact->SaveAs("Impact.pdf","pdf");
         }
     }
 
-
     std::vector<std::string> v_denom = XMLconfig.bdt_definitions[which_file];
     std::vector<std::string> v_topo = {TMVAmethods[0].topological_definition};//,"sim_shower_pdg==22","sim_track_pdg==2212","sim_shower_overlay_fraction<0.9","sim_track_overlay_fraction<0.9"};
 
@@ -1249,7 +1265,7 @@ if(number==2){
         std::cout<<"----------------------------------------------------"<<std::endl;
         std::cout<<"                                                    "<<std::endl;
         std::cout<<"starting on variable "<<var.safe_unit<<std::endl; 
-        bdt_efficiency(bdt_files[which_file], v_denom, v_topo,vec_precuts,fbdtcuts, what_pot, false, which_stage, analysis_tag, false, false, var);
+        bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot, false, which_stage, analysis_tag, false, false, var);
     }
 }
 
@@ -1445,10 +1461,15 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
         //lets skip anything that isnt the specific or group we want
         if(number >= 0 && number !=vc-1) continue;
         if(which_group > 0 && which_group != v.cat) continue;
-        if (v.is_spectator && plot_train_only) {
-            std::cout<<"skipping covar for spectator var"<<std::endl;
+          if (v.is_spectator && plot_train_only) {
+             std::cout<<"skipping covar for spectator var"<<std::endl;
+             continue;
+             }
+      /*  if(plot_train_only && !v.is_spectator) {
+            std::cout<<"this is a spectator variable: skipping!"<<std::endl;
             continue;
-        }
+        }*/
+
 
         std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
         for(double k = 0; k<=v.n_bins; k++){
@@ -1526,6 +1547,22 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         if(number > 0 && number !=vc-1) continue;
         if(which_group > 0 && which_group != v.cat) continue;
 
+
+        std::cout<<"First lets add the variable string "<<v.name<<std::endl;
+
+        //check if it's a BDT score variable
+        std::string mva = "_mva";
+        std::string name;
+        if(v.name.find(mva) != std::string::npos){
+            std::cout<<"ERROR this is a BDT score, updating variable name"<<std::endl;
+            v.name = "simple_"+v.name;
+        }else{
+            name = v.name;
+        }
+
+
+
+
         std::cout<<"EXPORT|NAM|VID"<<v.id<<"|\""<<v.name<<"\""<<"|\""<<v.safe_name<<"\" | "<<v.n_bins<<" | "<<v.edges[1]<<" | "<<v.edges[2]<<" | \"";
         for(double k = 0; k<=v.n_bins; k++){
             double b = v.edges[1]+k*fabs(v.edges[1]-v.edges[2])/(double)v.n_bins;
@@ -1537,7 +1574,6 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         std::string sVID = "VID"+std::to_string(v.id);
         std::cout<<"Variable ID is "<<sVID<<std::endl;
 
-        std::cout<<"First lets add the variable string "<<v.name<<std::endl;
         std::string sedder_VAR = "sed  's@VARVARVAR@\"" + v.name + "\"@' "+covar_det_template_xml +" > "+ covar_det_template_xml+"."+sVID+".xml";
         std::cout<<sedder_VAR<<std::endl;
         system(sedder_VAR.c_str());
@@ -1606,17 +1642,17 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
         //Then run a FlatFractional for BNBOther and NCMultiPi0
         /*std::string flatter_s1 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s BNBOther -t "+sVID+"_FlatDetSys1 -c " +sVID+"_merged_det.SBNcovar.root";
-        std::string flatter_s2 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s NCMultiPi0 -t "+sVID+"_FlatDetSys2 -c " +sVID+"_FlatDetSys1.SBNcovar.root";
-        std::string flatter_s3 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s OTPCinC -t "+sVID+"_FlatDetSys3 -c " +sVID+"_FlatDetSys2.SBNcovar.root";
+          std::string flatter_s2 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s NCMultiPi0 -t "+sVID+"_FlatDetSys2 -c " +sVID+"_FlatDetSys1.SBNcovar.root";
+          std::string flatter_s3 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s OTPCinC -t "+sVID+"_FlatDetSys3 -c " +sVID+"_FlatDetSys2.SBNcovar.root";
 
-        std::cout<<"Adding Flat components with command || "<<flatter_s1<<std::endl;
-        std::cout<<"Adding Flat components with command || "<<flatter_s2<<std::endl;
-        std::cout<<"Adding Flat components with command || "<<flatter_s3<<std::endl;
+          std::cout<<"Adding Flat components with command || "<<flatter_s1<<std::endl;
+          std::cout<<"Adding Flat components with command || "<<flatter_s2<<std::endl;
+          std::cout<<"Adding Flat components with command || "<<flatter_s3<<std::endl;
 
-        system(flatter_s1.c_str());
-        system(flatter_s2.c_str());
-        system(flatter_s3.c_str());
-        */
+          system(flatter_s1.c_str());
+          system(flatter_s2.c_str());
+          system(flatter_s3.c_str());
+          */
         //*****  If we also ran flux, merge   ***
         if(covar_flux_template_xml !="null.xml"){
 

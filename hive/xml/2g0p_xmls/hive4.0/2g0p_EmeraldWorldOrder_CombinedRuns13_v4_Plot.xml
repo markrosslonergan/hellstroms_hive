@@ -8,7 +8,7 @@
     <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number     <= 18960))" fraction = "0.74960925" />
 </plot_pot>
 
-<covar dir="/" name="frac_covariance" plotname="Flux &amp; XS Systematics" />
+<covar dir="/" name="frac_covariance" plotname="Flux, XS &amp; Det Sys" />
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
@@ -321,6 +321,10 @@
 <!--
 <var def = "simple_pigLEE_2g0p_combinedBNB_mva" binning = "(34,0.2,1.0)" unit = "BDT Response" type="d" training= "" logplot="true" pmin=10.0 pmax= 10000 group="1" />
 -->
+
+<var def="sqrt((#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])])*(#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])]) + (#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])])*(#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])]) + (#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])])*(#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])]))/1000" binning = "alt(0, 0.075, 0.15, 0.225, 0.3, 0.375, 0.45, 0.525, 0.6, 0.675,  0.9)" unit = "Corrected #pi^{0} Momentum [GeV]" type = "d"  training="" group="333"/>
+
+<var def = "reco_shower_kalman_dEdx_allplane_median[i_shr[0]]" binning="(34,0.0,6.5)" unit = "Leading Shower Kalman All-Plane Median dE/dx [Mev/cm]" type = "d"   training =""  pmin=0 group="444"/>
 
 <!-- ================= RECO-MC Matching ======================== -->
 

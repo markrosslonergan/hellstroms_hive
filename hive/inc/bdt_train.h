@@ -47,7 +47,9 @@ int bdt_train(bdt_info & info, bdt_file *signal_train_file, bdt_file * signal_te
 int convertToLibSVM(bdt_info &info, bdt_file *file);
 int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_file);
 int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut);//Depreciaed! 
+//guanqun: write weight and variable values into .dat files separately for training and testing events
 int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *signal_file_test, std::string signal_test_cut, bdt_file *background_file_train, bdt_file *background_file_test, std::string background_test_cut);//Modern, use this
+//guanqun: not sure what this does --> need to read xgboost doc.
 int bdt_XGtrain(bdt_info &info);
 int bdt_XGBoost_importance(bdt_info &info);
 int bdt_XGBoost_importance(bdt_info &info, BoosterHandle &booster);

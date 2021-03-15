@@ -10,7 +10,8 @@
 
 
 <!-- Directory for all covariance matrices -->
-<covar dir="/" name="frac_covariance" plotname="Flux &amp; XSec Sys" />
+<covar dir="/" name="frac_covariance" plotname="Flux, XSec &amp; Detector Sys" />
+<!--<covar dir="/" name="frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
@@ -430,6 +431,14 @@
 <var def = "pigLEE_combinedBNB_mva" binning = "(34,0.05,0.95)" unit = "BDT Response" type="d" training= "" logplot="true" pmin=10.0 pmax=10000 group="1" />
 
 <var def = "sqrt((#PM#*#PM# + #PIM#*#PIM#) + 2*(#EPI0#*#PE# - #PPX#*#RECOMOMX# - #PPY#*#RECOMOMY# - #PPZ#*#RECOMOMZ#))" binning = "(34,1.05,2.5)" unit = "Corrected Implied #Delta Invariant Mass" type="d" training= "" group="1" />
+
+
+<var def = "reco_track_mean_trunc_dEdx_best_plane[reco_track_ordered_energy_index[0]]" binning =  "(30,0,8)" unit = "Reco Track Truncated Mean dE/dx Best Plane [MeV/cm]" type = "d"   training=""  pmax=950. group="11811" />
+
+
+<var def="sqrt((#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))/1000" binning = "alt(0, 0.075, 0.15, 0.225, 0.3, 0.375, 0.45, 0.525, 0.6, 0.675,  0.9)" unit = "Corrected Implied #pi^{0} Momentum [GeV]" type = "d"  training="" group="3303"/>
+
+<var def = "reco_shower_kalman_dEdx_allplane_median[i_shr[0]]" binning="(34,0.0,7.2)" unit = "Leading Shower Kalman All-Plane Median dE/dx [Mev/cm]" type = "d"   training ="" group="4404" />
 
 
 <!-- ================= Efficiency  ======================== -->
