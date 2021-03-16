@@ -8,15 +8,15 @@
     <bins
         edges="-1.0 0.0 0.8 1.0"
         />
-    <subchannel name="NCDelta" osc = "0" />
-    <subchannel name="NCPi0Coh" osc = "0" />
-    <subchannel name="NCPi0NotCoh" osc = "0" />
-    <subchannel name="CC1Pi0" osc = "0" />
-    <subchannel name="BNBOther" osc = "0" />
-    <subchannel name="Nue" osc = "0" />
-    <subchannel name="Dirt" osc = "0"/>
-    <subchannel name="OTPCExtra" osc = "0"  />
-    <subchannel name="BNBext" osc = "0" />
+    <subchannel name="NCDelta" plotname="SM NC #Delta Radiative" osc = "0" />
+    <subchannel name="NCPi0Coh" plotname="NC 1 #pi^{0} Coherent" osc = "0" />
+    <subchannel name="NCPi0NotCoh" plotname="NC 1 #pi^{0} Non-Coherent" osc = "0" />
+    <subchannel name="CC1Pi0" plotname="CC #nu_{#mu} 1 #pi^{0}" osc = "0" />
+    <subchannel name="BNBOther" plotname="BNB Other" osc = "0" />
+    <subchannel name="Nue" plotname="CC #nu_{e}/#bar{#nu_{e}} Intrinsic" osc = "0" />
+    <subchannel name="Dirt" plotname="Dirt (Outside Cryostat)" osc = "0" />
+    <subchannel name="OTPCExtra" plotname="Dirt (Inside Cryostat)" osc = "0" />
+    <subchannel name="BNBext" plotname="Cosmic Data" osc = "0" />
 </channel>
 
 
@@ -24,15 +24,15 @@
     <bins
         edges="-1.0 0.0 0.8 1.0"
         />
-    <subchannel name="NCDelta" osc = "0" />
-    <subchannel name="NCPi0Coh" osc = "0" />
-    <subchannel name="NCPi0NotCoh" osc = "0" />
-    <subchannel name="CC1Pi0" osc = "0" />
-    <subchannel name="BNBOther" osc = "0" />
-    <subchannel name="Nue" osc = "0" />
-    <subchannel name="Dirt" osc = "0" />
-    <subchannel name="OTPCExtra" osc = "0"  />
-    <subchannel name="BNBext" osc = "0" />
+    <subchannel name="NCDelta" plotname="SM NC #Delta Radiative" osc = "0" />
+    <subchannel name="NCPi0Coh" plotname="NC 1 #pi^{0} Coherent" osc = "0" />
+    <subchannel name="NCPi0NotCoh" plotname="NC 1 #pi^{0} Non-Coherent" osc = "0" />
+    <subchannel name="CC1Pi0" plotname="CC #nu_{#mu} 1 #pi^{0}" osc = "0" />
+    <subchannel name="BNBOther" plotname="BNB Other" osc = "0" />
+    <subchannel name="Nue" plotname="CC #nu_{e}/#bar{#nu_{e}} Intrinsic" osc = "0" />
+    <subchannel name="Dirt" plotname="Dirt (Outside Cryostat)" osc = "0" />
+    <subchannel name="OTPCExtra" plotname="Dirt (Inside Cryostat)" osc = "0" />
+    <subchannel name="BNBext" plotname="Cosmic Data" osc = "0" />
 </channel>
 
 

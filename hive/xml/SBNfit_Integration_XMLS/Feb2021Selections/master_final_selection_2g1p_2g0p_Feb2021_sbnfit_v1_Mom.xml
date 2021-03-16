@@ -7,33 +7,34 @@
 
 <channel name="2g1p" unit="Pi0 Momentum [GeV]">
     <bins
-         edges="0 0.075 0.15 0.225 0.3 0.375 0.45 0.525 0.6 0.675  0.9"
+        edges="0 0.075 0.15 0.225 0.3 0.375 0.45 0.525 0.6 0.675  0.9"
         />
-    <subchannel name="NCDelta" osc = "0" />
-    <subchannel name="NCPi0Coh" osc = "0" />
-    <subchannel name="NCPi0NotCoh" osc = "0" />
-    <subchannel name="CC1Pi0" osc = "0" />
-    <subchannel name="BNBOther" osc = "0" />
-    <subchannel name="Nue" osc = "0" />
-    <subchannel name="Dirt" osc = "0"/>
-    <subchannel name="OTPCExtra" osc = "0"  />
-    <subchannel name="BNBext" osc = "0" />
+
+    <subchannel name="NCDelta" plotname="SM NC #Delta Radiative" osc = "0" />
+    <subchannel name="NCPi0Coh" plotname="NC 1 #pi^{0} Coherent" osc = "0" />
+    <subchannel name="NCPi0NotCoh" plotname="NC 1 #pi^{0} Non-Coherent" osc = "0" />
+    <subchannel name="CC1Pi0" plotname="CC #nu_{#mu} 1 #pi^{0}" osc = "0" />
+    <subchannel name="BNBOther" plotname="BNB Other" osc = "0" />
+    <subchannel name="Nue" plotname="CC #nu_{e}/#bar{#nu_{e}} Intrinsic" osc = "0" />
+    <subchannel name="Dirt" plotname="Dirt (Outside Cryostat)" osc = "0" />
+    <subchannel name="OTPCExtra" plotname="Dirt (Inside Cryostat)" osc = "0" />
+    <subchannel name="BNBext" plotname="Cosmic Data" osc = "0" />
 </channel>
 
 
 <channel name="2g0p" unit="Pi0 Momentum [GeV]">
     <bins
-         edges="0 0.075 0.15 0.225 0.3 0.375 0.45 0.525 0.6 0.675  0.9"
+        edges="0 0.075 0.15 0.225 0.3 0.375 0.45 0.525 0.6 0.675  0.9"
         />
-    <subchannel name="NCDelta" osc = "0" />
-    <subchannel name="NCPi0Coh" osc = "0" />
-    <subchannel name="NCPi0NotCoh" osc = "0" />
-    <subchannel name="CC1Pi0" osc = "0" />
-    <subchannel name="BNBOther" osc = "0" />
-    <subchannel name="Nue" osc = "0" />
-    <subchannel name="Dirt" osc = "0" />
-    <subchannel name="OTPCExtra" osc = "0"  />
-    <subchannel name="BNBext" osc = "0" />
+    <subchannel name="NCDelta" plotname="SM NC #Delta Radiative" osc = "0" />
+    <subchannel name="NCPi0Coh" plotname="NC 1 #pi^{0} Coherent" osc = "0" />
+    <subchannel name="NCPi0NotCoh" plotname="NC 1 #pi^{0} Non-Coherent" osc = "0" />
+    <subchannel name="CC1Pi0" plotname="CC #nu_{#mu} 1 #pi^{0}" osc = "0" />
+    <subchannel name="BNBOther" plotname="BNB Other" osc = "0" />
+    <subchannel name="Nue" plotname="CC #nu_{e}/#bar{#nu_{e}} Intrinsic" osc = "0" />
+    <subchannel name="Dirt" plotname="Dirt (Outside Cryostat)" osc = "0" />
+    <subchannel name="OTPCExtra" plotname="Dirt (Inside Cryostat)" osc = "0" />
+    <subchannel name="BNBext" plotname="Cosmic Data" osc = "0" />
 </channel>
 
 
@@ -69,6 +70,8 @@
         associated_subchannel="nu_uBooNE_2g1p_NCPi0NotCoh"
         additional_weight="simple_pot_weight" 
         eventweight_branch_name = "mcweight"
+        oscillate="true"
+        true_param_name="sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)"
         />
 </MultisimFile>
 
@@ -177,6 +180,8 @@
         associated_subchannel="nu_uBooNE_2g0p_NCPi0NotCoh"
         additional_weight="(simple_pot_weight)" 
         eventweight_branch_name = "mcweight"
+        oscillate="true"
+        true_param_name="sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766)"
         />
 </MultisimFile>
 

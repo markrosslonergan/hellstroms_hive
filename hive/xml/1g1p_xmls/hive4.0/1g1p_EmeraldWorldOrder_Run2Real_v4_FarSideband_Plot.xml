@@ -3,15 +3,16 @@
 <topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.9531,0.9845,0.467404,0.7474,0.7088)" />
 
 <plot_pot>
-    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.249"  />
-    <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "0.751" />
+    <run_period name ="RunII" cut ="( run_number >= 8317 &amp;&amp; run_number <=  13696)" fraction = "1.0" />
 </plot_pot>
 
-<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />
+<!--<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
+<covar dir = "." name = "frac_covariance" plotname="Detector Systematics" />
+
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run13_COFredo_v43.5.spluff.test.deoverlapped.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false">
+<bdtfile filename = "bnb_overlay_combined123_COFredo_withExtra_v43.5.root.deoverlapped.v1.root" tag = "BNBNCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false">
     <definition>
         <cut>mctruth_is_delta_radiative==1</cut>
         <cut>mctruth_cc_or_nc==1</cut>
@@ -20,7 +21,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_COFredo_tuneCV_v43.5.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_overlay_combined123_COFredo_withExtra_v43.5.root.deoverlapped.v1.root" tag = "BNBNCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> GTruth_Gscatter==5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -30,7 +31,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_COFredo_tuneCV_v43.5.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_overlay_combined123_COFredo_withExtra_v43.5.root.deoverlapped.v1.root" tag = "BNBNCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -40,7 +41,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ccpi0_overlay_combined_run123_COFredo_v43.5.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "bnb_overlay_combined123_COFredo_withExtra_v43.5.root.deoverlapped.v1.root" tag = "BNBCC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut> mctruth_cc_or_nc==0 </cut> 
         <cut> mctruth_num_exiting_pi0==1</cut>
@@ -62,18 +63,18 @@
 </bdtfile>
 
 
-<bdtfile filename = "nue_bdt_testing_sample_COVredo_v43.51.deoverlapped.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
+<bdtfile filename = "bnb_overlay_combined123_COFredo_withExtra_v43.5.root.deoverlapped.v1.root" tag = "BNBNueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
     <definition>
         <cut> mctruth_is_delta_radiative!=1 </cut>
         <cut> fabs(mctruth_nu_pdg)==12 </cut>
         <cut> mctruth_cc_or_nc==0</cut>
         <cut> (m_flash_optfltr_pe_beam>20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
-        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut> 
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
 
 
-<bdtfile filename = "dirt_overlay_combined_run123_COFredo_wCryoFix_v43.5.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "Dirt" scale="1.0"> 
+<bdtfile filename = "dirt_overlay_combined_run123_COFredo_wCryoFix_v43.5.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "Dirt" scale="1.0" mergedown="true"> 
     <definition>
         <cut>1</cut>
         <cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
@@ -87,22 +88,26 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Data, Run 1 On-Beam">
-    <definition><cut>1</cut></definition>
-    <data type="OnBeam" plot_name="Unbiased">
-        <tor860_wcut>   4.081e+19 </tor860_wcut>   
-        <E1DCNT_wcut>   9037544.0</E1DCNT_wcut>   
+
+<bdtfile filename = "sbnfit_1g1pMar2020_v4_stage_1_gLEE_farsideband_v2_tagTotal.root" tag = "FarSideband1g1pRun2" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "Data, On-Beam Run2">
+    <definition>
+        <cut>( run_number &gt;= 8317 &amp;&amp; run_number &lt;=  13696 )</cut>
+    </definition>
+    <data type="OnBeam" plot_name="FarSideband" >
+        <tor860_wcut>2.626e+20</tor860_wcut>   
+        <E1DCNT_wcut>62208093.0</E1DCNT_wcut>   
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 1+2+3 Cosmic" fillstyle = "3333" scale = "1">
+
+<bdtfile filename = "bnbext_run2_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun2" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 2 Cosmic" fillstyle = "3333" scale = "1">
     <definition>
-        <cut> 1 </cut>
+        <cut>1</cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 4.081e+19 </tor860_wcut>   
-        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>   
-        <EXT>166300493.0</EXT>  
+        <tor860_wcut>2.626e+20</tor860_wcut>   
+        <E1DCNT_wcut>62208093.0</E1DCNT_wcut>   
+        <EXT>64840049.0</EXT>
     </data>
 </bdtfile>
 
@@ -862,12 +867,6 @@
 <!-- ################################################################################################################ -->
 <!-- ################################################################################################################ -->
 
-<!-- ################################################################################################################ -->
-<!-- ######################## The variables below are for plotting in the internal note! ############################ -->
-<!-- ################################################################################################################ -->
-<!-- ################################################################################################################ -->
-
-
 <!--bdt vars -->
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
@@ -878,18 +877,6 @@
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
 <var def = "#GEO#" binning = "(3,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "8"/>
-
-<!--chapter 5 stage 6-->
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(9,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "332"/>
-<var def = "#GEO#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "332"/>
-
-<!-- ################################################################################################################ -->
-<!-- ######################## The variables above are for plotting in the internal note! ############################ -->
-<!-- ################################################################################################################ -->
-<!-- ################################################################################################################ -->
-
-
-
 
 <!--pi0 vars -->
 <!--
@@ -923,6 +910,35 @@
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(18,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "330"/>
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "331"/>
 
+<!--chapter 5 stage 6-->
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(9,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "332"/>
+<var def = "#GEO#" binning = "(6,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="" group = "332"/>
+
+
+<!-- Run 2 Run comparasons -->
+<!--        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>-->
+
+<var def = "reco_shower_startz[0]" binning = "(16,0.1,1036.9)" unit = "Reconstructed Shower Start Position in Z [cm]" type="d"    training="" group="5505" pmax=135/>
+<var def = "reco_shower_startz[0]" binning = "(12,0.1,1036.9)" unit = "Reconstructed Shower Start Position in Z [cm]" type="d"    training="" group="5506" pmax=30/>
+<var def = "reco_shower_startz[0]" binning = "(8,0.1,1036.9)" unit = "Reconstructed Shower Start Position in Z [cm]" type="d"    training="" group="5507" pmax=25/>
+
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(10,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "5508"  pmin=0.0/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(10,0.0,0.85)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "5508"  pmin=0.0/>
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(10,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "5508"  pmin=0.0/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(10,0.3,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "5508"  pmin=0.0/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(10,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "5508" pmin=0/>
+
+
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(200,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "5509"  pmin=0.0/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(200,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "5509"  pmin=0.0/>
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(200,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "5509"  pmin=0.0/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(200,0.3,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "5509"  pmin=0.0/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(200,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "5509" pmin=0/>
+
+
+
+
+
 
 <alias key="xc" value ="TMath::Min(abs(mctruth_nu_vertex_x-0),abs(256.35-mctruth_nu_vertex_x))"/>
 <alias key="yc" value ="TMath::Min(abs(mctruth_nu_vertex_y-(-116.5)),abs(116.5-mctruth_nu_vertex_y))"/>
@@ -933,21 +949,12 @@
 <alias key="sgn" value ="max(max(#sgn1#,#sgn2#),#sgn3#)*-1"/> <!--Positive: inside-->
 <var def = "#sgn#*TMath::Min(TMath::Min(#yc#,#xc#),#zc#)" binning = "(104,-400,120)" unit = "MCTruth Vertex Distance to active TPC boundary (inside:>0)" type="d" logplot="false" training="" group = "1109"/>
 
-
-<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="alt(0.0,0.6)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3303" pmax=100/>
-
-<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="alt(0.0,0.6)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3333"/>
-
-<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(50,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6607" />
-<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(50,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6607" />
-
 <!-- ================= Efficiency  ======================== -->
 
 <efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "0" numer_cut = "sim_shower_pdg==22 &amp;&amp; sim_shower_parent_pdg==111" /> 
 
 <!-- ================= RECO-MC Matching ======================== -->
-<!--
-     <recomc>
+<recomc>
     <def name="Cosmic Contaminated" col ="( 126,126,241)"> 
         (sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4 )        
     </def> 
@@ -965,8 +972,8 @@
         ((sim_shower_overlay_fraction &lt; 0.4 &amp;&amp;  sim_track_overlay_fraction &lt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 &amp;&amp;  (mctruth_exiting_photon_energy &gt; 0.02))  &amp;&amp; (sim_shower_pdg==22 &amp;&amp;sim_track_pdg==2212) &amp;&amp;  mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 &amp;&amp; mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 &amp;&amp; mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 &amp;&amp; mctruth_num_exiting_pi0==0 
     </def>
 </recomc>
--->
 
+<!--
 <recomc>
     <def name="QuasiElastic" col ="(1.0,0.4,0.4)"> 
         GTruth_Gscatter == 1             
@@ -984,7 +991,7 @@
         GTruth_Gscatter == 10
     </def>
 </recomc>
-
+-->
 
 <!--
 <recomc>

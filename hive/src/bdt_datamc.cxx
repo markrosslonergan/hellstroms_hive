@@ -762,7 +762,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }
                 std::string leg_type = "f";   
 
-                std::cout<<"Run2Run: "<<f->plot_name<<" events/1e20 POT "<<to_string_prec(Nevents/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(N_MCerr/(double)data_file->pot*1e20,3)<<std::endl;
+                std::cout<<"Run2Run: "<<f->plot_name<<" events/1e20 POT "<<to_string_prec(Nevents/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(N_MCerr/(double)data_file->pot*1e20,3)<<" base "<<Nevents<<std::endl;
 
                 //if(mc_stack->signal_on_top[n]) leg_type = "l";
                 //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
