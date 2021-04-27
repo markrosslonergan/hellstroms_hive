@@ -249,6 +249,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
 
+    bool div_bin = true;
+    double div_scale = 0.075;
+    bool scale_signal_overlay = false;
+
     double title_size_ratio=0.10;
     double label_size_ratio=0.085;
     double title_offset_ratioY = 0.3 ;
@@ -257,6 +261,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
     double title_size_upper=0.06;
     double label_size_upper=0.05;
     double title_offset_upper = 0.6;
+
+
 
     std::vector<std::string> stage_names;
 
@@ -311,19 +317,19 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             fout->cd();
 
             /*
-            std::string isSpec;
-            if (!var.is_spectator){
-                isSpec = var.unit+ " is a training variable";
-            }else{
-                isSpec = var.unit + " is a spectator variable";
-                if (isSpectator==true){
-                    std::cout<<isSpec<<std::endl;
-                    std::cout<<"set to plot train only, skipping!"<<std::endl;
-                    continue;
-                }
-            }
-            std::cout<<isSpec<<std::endl;
-*/
+               std::string isSpec;
+               if (!var.is_spectator){
+               isSpec = var.unit+ " is a training variable";
+               }else{
+               isSpec = var.unit + " is a spectator variable";
+               if (isSpectator==true){
+               std::cout<<isSpec<<std::endl;
+               std::cout<<"set to plot train only, skipping!"<<std::endl;
+               continue;
+               }
+               }
+               std::cout<<isSpec<<std::endl;
+               */
 
 
             //If we are at a later stage that 1, lets find the variable.
@@ -615,7 +621,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             int max_val;
             std::string mva = "mva";
             if(var.name.size() >= mva.size() && var.name.compare(var.name.size() - mva.size(), mva.size(), mva) == 0 && var.is_logplot){
-               isBDT = true;
+                isBDT = true;
             }
             if(isBDT){
                 min_val = 1e-2;
@@ -650,59 +656,25 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 lor++;
             }
             lor=0;//and Zero
-             for(const auto&& obj: *stlists){
+            for(const auto&& obj: *stlists){
                 if(remove_to_merge[lor]){
                     ((TH1*)obj)->Scale(0);
                 }
                 obj->Print();
                 lor++;
             }
-                
 
 
-            stk->Draw("hist");
-            stk->SetTitle("");
-            //stk->SetTitle(stage_names.at(s).c_str());
-            stk->GetXaxis()->SetTitle(var.unit.c_str());
-            stk->GetYaxis()->SetTitle("Events");
-            if(!stack_mode){
-                stk->GetYaxis()->SetTitleSize(title_size_upper);
-                stk->GetYaxis()->SetLabelSize(label_size_upper);
-                stk->GetYaxis()->SetTitleOffset(title_offset_upper);
-            }
-            std::cout<<"the max modifier is "<<max_modifier<<" and the min val is "<< min_val<<std::endl;
-            std::cout<<" and input pmin "<<var.plot_min<<" and pmax "<<var.plot_max<<std::endl;
 
-            if(var.plot_max==-999){ 
-                stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
-            }else{
-                max_val = var.plot_max;
-                stk->SetMaximum(var.plot_max);
-            }
-
-            if(var.plot_min==-999){ 
-                stk->SetMinimum(min_val);
-            }else{
-                min_val=var.plot_min;
-                stk->SetMinimum(var.plot_min);
-            }
-
-            if (isBDT){
-                stk->SetMaximum(max_val);
-                stk->SetMinimum(min_val);
-            }
-
-
-            tsum->SetLineWidth(3);
-            tsum->DrawCopy("Same E2");
-
+            //Lets get the things we need
+            //stk, tsum, d0, tsum
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
             TH1 *tmp_tsum2 = (TH1*)tsum->Clone(("tmp_tsum2"+std::to_string(s)).c_str());
 
-            tmp_tsum2->SetFillStyle(0);
-            tmp_tsum2->DrawCopy("same hist");
 
-            tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
+
+            // ************* Do a lot of math stuf before scaling **************
+
             TLegend *l0;
             if(OTPC==true){
                 // std::cout<<"flag 4"<<std::endl;
@@ -714,6 +686,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             l0->SetFillStyle(0);
             l0->SetLineWidth(0);
             l0->SetNColumns(2);
+
             double NeventsStack = 0;
             double NErrStack = 0;
             int which_signal = 0;
@@ -762,7 +735,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }
                 std::string leg_type = "f";   
 
-                std::cout<<"Run2Run: "<<f->plot_name<<" events/1e20 POT "<<to_string_prec(Nevents/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(N_MCerr/(double)data_file->pot*1e20,3)<<" base "<<Nevents<<std::endl;
+                std::cout<<"Run2Run: "<<f->plot_name<<" events/1e20 POT "<<to_string_prec(Nevents/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(N_MCerr/(double)data_file->pot*1e20,3)<<" base "<<Nevents<<" +/- "<<N_MCerr<<std::endl;
 
                 //if(mc_stack->signal_on_top[n]) leg_type = "l";
                 //l0->AddEntry(h1,("#splitline{"+f->plot_name+"}{"+string_events+"}").c_str(),"f");
@@ -792,7 +765,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
             if(var.has_covar&& m_error_string!="stats"){
-//                l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,leg_num_digits) ).c_str(),"fl");
+                //                l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,leg_num_digits) ).c_str(),"fl");
                 l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
             }else{
                 //l0->AddEntry(leg_hack,("#splitline{Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)+ "}{MC Stats Only}").c_str(),"fl"); // Was le
@@ -800,6 +773,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             }
 
+            double KS_tsum_d0 = tsum->KolmogorovTest(d0);
             std::cout<<"Binned KS-test: "<<var.name<<" "<<tsum->KolmogorovTest(d0)<<std::endl;
             std::cout<<"Binned Chi-test standard: "<<var.name<<" "<<tsum->Chi2Test(d0,"CHI2")<<std::endl;
             std::cout<<"Binned Chi-test: "<<var.name<<" "<<tsum->Chi2Test(d0,"UW CHI2")<<std::endl;
@@ -867,9 +841,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                         }
                     }
                 }
-
-
-
                 tot_norm_error = sqrt(calcTotalNormError(&Mout,var));
 
 
@@ -914,10 +885,74 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             double NdatEvents = data_file->GetEntries(var.additional_cut)*(plot_pot/data_file->pot )*data_file->scale_data;
             std::cout<<"Run2Run: Data   events/1e20 POT "<<to_string_prec(NdatEvents/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(sqrt(NdatEvents)/(double)data_file->pot*1e20,3)<<std::endl;
-            //trev->DrawCopy("same hist");
 
+
+
+            
+
+            //*******************8 Drawing all of things below **********************
+            if(div_bin){
+                TList *stlists = (TList*)stk->GetHists();
+                for(const auto&& obj: *stlists){
+                    ((TH1*)obj)->Scale(div_scale,"width");
+                }
+
+                tsum->Scale(div_scale,"width");
+                tmp_tsum->Scale(div_scale,"width");
+                tmp_tsum2->Scale(div_scale,"width");
+                d0->Scale(div_scale,"width");
+            }
+
+
+            //
+            stk->Draw("hist");
+            stk->SetTitle("");
+            //stk->SetTitle(stage_names.at(s).c_str());
+            stk->GetXaxis()->SetTitle(var.unit.c_str());
+            stk->GetYaxis()->SetTitle("Events");
+            if(!stack_mode){
+                stk->GetYaxis()->SetTitleSize(title_size_upper);
+                stk->GetYaxis()->SetLabelSize(label_size_upper);
+                stk->GetYaxis()->SetTitleOffset(title_offset_upper);
+            }
+            std::cout<<"the max modifier is "<<max_modifier<<" and the min val is "<< min_val<<std::endl;
+            std::cout<<" and input pmin "<<var.plot_min<<" and pmax "<<var.plot_max<<std::endl;
+
+            if(var.plot_max==-999){ 
+                stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
+            }else{
+                max_val = var.plot_max;
+                stk->SetMaximum(var.plot_max);
+            }
+
+            if(var.plot_min==-999){ 
+                stk->SetMinimum(min_val);
+            }else{
+                min_val=var.plot_min;
+                stk->SetMinimum(var.plot_min);
+            }
+
+            if (isBDT){
+                stk->SetMaximum(max_val);
+                stk->SetMinimum(min_val);
+            }
+
+
+
+            tsum->SetLineWidth(3);
+            tsum->DrawCopy("Same E2");
+
+            
+            tmp_tsum2->SetFillStyle(0);
+            tmp_tsum2->DrawCopy("same hist");
+
+            tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
+            
             d0->SetBinErrorOption(TH1::kPoisson);
-            if(!stack_mode) d0->Draw("same E1 E0");
+            if(!stack_mode){
+                              d0->Draw("same E1 E0");
+
+            }
 
 
             /////// Print resolution for diphoton mass ////////
@@ -1006,7 +1041,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 *leg_hack2 = (TH1*)leg_hack->Clone(("leg_tmp2_tsum"+std::to_string(s)).c_str());
             std::string sterrname = "#splitline{MC Stat Error Only}{}";
             if(var.has_covar){
-                    sterrname = "#splitline{"+var.covar_legend_name+"}{}";
+                sterrname = "#splitline{"+var.covar_legend_name+"}{}";
             }
             if(!stack_mode){
                 l0->AddEntry(d0,(data_file->plot_name+" "+to_string_prec(NdatEvents,0)).c_str(),"lp");		
@@ -1066,7 +1101,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 pottex.DrawLatex(.50,yypos+0.1, pot_draw.c_str());
             }
 
-        
+
 
             TLatex descriptor_tex;
             descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
@@ -1126,6 +1161,23 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 pre2->SetTextSize(stack_mode ? 0.04 : 0.06);;
                 pre2->Draw();
             }
+
+
+
+            TH1 * scale_signal_hist = (TH1*)mc_stack->vec_hists[which_signal]->Clone(("signal_clone"+stage_names.at(s)).c_str());
+            scale_signal_hist->Scale(NdatEvents/scale_signal_hist->Integral());
+            scale_signal_hist->SetFillStyle(0);
+            if(scale_signal_overlay){
+                scale_signal_hist->SetLineWidth(3);
+                scale_signal_hist->DrawCopy("hist same");
+                scale_signal_hist->SetLineColor(scale_signal_hist->GetFillColor());
+                scale_signal_hist->SetLineWidth(2);
+                scale_signal_hist->Draw("hist same");
+
+            }
+
+
+
             /* TText *spec;
                if (isSpectator) {
                TText *spec = drawPrelim(0.82, 0.52, "Spectator Variable");
@@ -1169,7 +1221,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Result: "<<mm <<" ChiStat "<<ahchi_stats<<" "<<sqrt(ahchi_stats)<<std::endl;
             }
             */
-            //tsum->Rebin(data_rebin);
+            //tsum->Rebin(daaa_rebin);
             TH1* rat_denom = (TH1*)tsum->Clone(("ratio_denom_"+stage_names.at(s)).c_str());
             for(int i=0; i<rat_denom->GetNbinsX(); i++){
                 rat_denom->SetBinError(i,0.0);
@@ -1222,15 +1274,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //   ratunit->GetYaxis()->SetTitle(  (stack_mode ? "#splitline{Systematic}{Uncertainty}" : "Data/(MC+Cosmic)"));
             if(!stack_mode){
                 ratunit->GetYaxis()->SetTitle("Data/Prediction");
+                ratunit->GetXaxis()->SetTitle(var.unit.c_str());
                 ratunit->GetXaxis()->SetTitleOffset(title_offset_ratioX);
                 ratunit->GetYaxis()->SetTitleOffset(title_offset_ratioY*1.25);
-                ratunit->SetMinimum(rmin);	
+                ratunit->SetMinimum(rmin);     
                 ratunit->SetMaximum(rmax);//ratunit->GetMaximum()*1.1);
                 ratunit->GetYaxis()->SetTitleSize(title_size_ratio);
                 ratunit->GetXaxis()->SetTitleSize(title_size_ratio);
                 ratunit->GetYaxis()->SetLabelSize(label_size_ratio);
                 ratunit->GetXaxis()->SetLabelSize(label_size_ratio);
                 ratunit->GetXaxis()->SetTitle(var.unit.c_str());
+
                 ratunit->GetYaxis()->SetNdivisions(505);
             }
             TH1* ratpre = (TH1*)d0->Clone(("ratio_"+stage_names.at(s)).c_str());
@@ -1298,7 +1352,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             tsum->Write(("tsum_"+tago).c_str());
             stk->Write(("tstk_"+tago).c_str());
             std::string mean = "(Data/Pred: "+to_string_prec(NdatEvents/NeventsStack,2)+" #pm "+to_string_prec(tot_norm_error/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
-            std::string ks = "(KS: "+to_string_prec(tsum->KolmogorovTest(d0),3) + ")     (#chi^{2}/n_{#it{DOF}}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
+            std::string ks = "(KS: "+to_string_prec(KS_tsum_d0,3) + ")     (#chi^{2}/n_{#it{DOF}}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
 
             // Make text file for chi^2
             // Note that this depends on e.g. "Run 1" existing in your plot_name

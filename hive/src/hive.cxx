@@ -1278,6 +1278,36 @@ if(number==3){
     bdt_efficiency(bdt_files[which_file], v_denom, v_topo, vec_precuts, fbdtcuts, what_pot, true, which_stage, analysis_tag, true, false, tmp_vars[0]);
 
 }
+
+
+if(number==4){
+
+    std::string all = "1";
+    std::string comb = "1";
+    for(auto &v:vec_precuts) all+="&& ("+v+")";
+    for(auto &v:v_topo) all+="&& ("+v+")";
+    for(auto &v:v_denom) all+="&& ("+v+")";
+
+    for(auto &var: tmp_vars){
+                    
+        auto Res0 = bdt_files[which_file]->bdt_file::getTH1(var, all , "npre", 0.41e20, 0);
+        std::cout<<"Pre "<<" "<<Res0->Integral()<<" "<<all<<std::endl;
+
+
+        for(int i=0; i< fbdtcuts.size(); i++){
+            bdt_variable stagevar = bdt_files[which_file]->getBDTVariable(bdt_files[which_file]->flow.bdt_vector[i]);
+            auto Res = bdt_files[which_file]->bdt_file::getTH1(var, all+"&&"+stagevar.name+">"+std::to_string(fbdtcuts[i]) , "n"+std::to_string(i), 0.41e20,0);
+            comb+="&&"+stagevar.name+">"+std::to_string(fbdtcuts[i]);
+            std::cout<<"BDT "<<i<<" "<<Res->Integral()<<std::endl;
+        }
+                    auto Res = bdt_files[which_file]->bdt_file::getTH1(var, comb , "nall", 0.41e20, 0);
+                    std::cout<<"ALL "<<" "<<Res->Integral()<<std::endl;
+
+    }
+
+
+
+}
 //bdt_efficiency(bdt_files[which_file], v_denom,v_topo,vec_precuts , fbdtcuts,what_pot     );
 
 //nue_efficiency(bdt_files[which_file], v_topo, vec_precuts , fbdtcuts, what_pot, analysis_tag);

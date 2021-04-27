@@ -428,7 +428,9 @@
 
 <var def = "pigLEE_combinedBNB_mva" binning = "(10,0.05,0.95)" unit = "BDT Response" type="d" training= "" logplot="true" pmin=10.0 pmax=10000 group="1" />
 
-<var def = "sqrt((#PM#*#PM# + #PIM#*#PIM#) + 2*(#EPI0#*#PE# - #PPX#*#RECOMOMX# - #PPY#*#RECOMOMY# - #PPZ#*#RECOMOMZ#))" binning = "(10,1.05,2.5)" unit = "Corrected Implied #Delta Invariant Mass" type="d" training= "" group="1" />
+<!--<var def = "sqrt((#PM#*#PM# + #PIM#*#PIM#) + 2*(#EPI0#*#PE# - #PPX#*#RECOMOMX# - #PPY#*#RECOMOMY# - #PPZ#*#RECOMOMZ#))" binning = "(10,1.05,2.5)" unit = "Corrected Implied #Delta Invariant Mass" type="d" training= "" group="1" />-->
+
+<var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[i_trk[0]]/reco_track_mean_trunc_dEdx_end_half_best_plane[i_trk[0]]" binning = "(18,0.2,1.0)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d"  training="0" group="111011" />
 
 
 <!-- ================= Efficiency  ======================== -->

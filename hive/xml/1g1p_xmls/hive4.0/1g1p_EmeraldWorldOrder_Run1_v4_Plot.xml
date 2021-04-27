@@ -8,7 +8,8 @@
 
 
 <!---<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
-<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Sys" />
+<!--<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Sys" />-->
+<covar dir = "." name = "frac_covariance" plotname="Stats Only" />
 
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
@@ -95,7 +96,7 @@
     <definition><cut>1</cut></definition>
     <data type="OnBeam" plot_name="Unbiased">
         <tor860_wcut>   4.081e+19 </tor860_wcut>   
-        <E1DCNT_wcut>   9037544.0</E1DCNT_wcut>   
+        <E1DCNT_wcut> 9117912</E1DCNT_wcut>   
     </data>
 </bdtfile>
 
@@ -105,7 +106,7 @@
     </definition>
     <data type="OffBeam">
         <tor860_wcut>   4.081e+19 </tor860_wcut>   
-        <E1DCNT_wcut>   9037544.0</E1DCNT_wcut>   
+        <E1DCNT_wcut>   9117912</E1DCNT_wcut> <--9117912-->  
         <EXT>28264427.0</EXT>
     </data>
 </bdtfile>
@@ -882,7 +883,7 @@
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(25,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
@@ -933,6 +934,16 @@
 <var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(18,0.05,0.5)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3303"/>
 
 <var def = "Min$(sss_candidate_min_dist)" binning="(8,0,80)" unit = "Minimum conversion distance of all SSV candidate clusters" type="d" training="" group="7707"/>
+
+<!--signal overlap files-->
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(18,0.05,0.7)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3302" />
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning ="(18,0.96,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "3302"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(18,0,3.5)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "" group="3302"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(18,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="" group="3303"/>
+<var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(18,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d"    training="" group="3302"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(18,0,8.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group="3302"/>
+<var def = "log(reco_shower_conversion_distance[0])" binning = "(18,-3,6)" unit = " Reconstructed Shower Conversion Distance Log[cm]" type = "d"     training="" group="3302"/>
+<var def = "Min$(sss_candidate_min_dist)" binning="(10,0,80)" unit = "Min conversion distance for SSV 2D clusters" type="d" training="" group="3303"/>
 
 
 <!--pi0 vars -->

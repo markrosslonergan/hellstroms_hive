@@ -7,7 +7,9 @@
     <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "0.751" />
 </plot_pot>
 
-<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />
+<!--<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />-->
+<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
+<!--<covar dir = "." name = "frac_covariance" plotname="MC stats only" />-->
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
 
@@ -91,7 +93,7 @@
     <definition><cut>1</cut></definition>
     <data type="OnBeam" plot_name="Unbiased">
         <tor860_wcut>   4.081e+19 </tor860_wcut>   
-        <E1DCNT_wcut>   9037544.0</E1DCNT_wcut>   
+        <E1DCNT_wcut>   9037544.0</E1DCNT_wcut>  <!--9117912 old 9037544.0--> 
     </data>
 </bdtfile>
 
@@ -323,7 +325,7 @@
         sig_test_cut = "1"
         />
     <!--<scan min = "0.974952" max = "0.97495201" steps="100"/>-->
-     <scan min = "0.95" max = "1.0" steps="100"/>
+     <scan min = "0.90" max = "0.9531" steps="100"/>
 </mva>
 <mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
@@ -349,7 +351,7 @@
         sig_test_cut = "1"
         />
     <!--<scan min = "0.96273" max = "0.9627301" steps="200"/>-->
-    <scan min = "0.96273" max = "1.0" steps="200"/>
+    <scan min = "0.9" max = "0.9845" steps="200"/>
 </mva>
 
 <mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
@@ -404,9 +406,8 @@
         sig_test_cut = "1"
         />
     <!--<scan min = "0.570654" max = "0.57065401" steps="50"/>-->
-    <scan min = "0.4" max = "0.8" steps="50"/>
+    <scan min = "0.6" max = "0.7474" steps="50"/>
 </mva>
-
 <mva type="BDT" use="yes" tag = "SSVredo2wCC600parent" name ="SSV focused BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
         <param> n_trees=450</param>
@@ -430,8 +431,9 @@
         sig_test_tag = "NCDeltaTest"
         sig_test_cut = "1"
         />
-    <scan min = "0.4" max = "0.9" steps="50"/>
+    <scan min = "0.6" max = "0.7088" steps="50"/>
 </mva>
+
 
 <!-- ================================================== PRE-CUTS   ==================================================== -->
 
@@ -869,11 +871,11 @@
 
 
 <!--bdt vars -->
-<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(24,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4BNB_mva" binning = "(25,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6" logplot = "true" pmin=0.1/>
-<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(24,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6606" pmin=0/>
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(10,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6"  pmin=0.0/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(10,0.0,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6"  pmin=0.0/>
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(10,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "6"  pmin=0.0/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(10,0.0,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "6"  pmin=0.0/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(10,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "6" pmin=0/>
 
 <var def ="(#GEO#*reco_shower_dirz)/sqrt(#GEO#*reco_shower_dirx*#GEO#*reco_shower_dirx +#GEO#*reco_shower_diry*#GEO#*reco_shower_diry + #GEO#*reco_shower_dirz*#GEO#*reco_shower_dirz)" binning = "(24,0.0,1)" unit = "Cosine theta_#gamma" type="d"  training= "" group = "7" />
 
@@ -941,9 +943,18 @@
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(50,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6607" />
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(50,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6607" />
 
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(34,0.0,0.8)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3302" />
+
+
+<var def = "1000*(mctruth_daughters_E-0.93827)" binning = "(50,0.0,500)" unit = "True Proton KE [MeV]" type="d" training= "" group = "778" />
+<var def = "mctruth_nu_E" binning = "(1,-10,50000)" unit = "True Proton KE [MeV]" type="d" training= "" group = "777" />
+
+
+<var def = "sqrt(#PM#*#PM# +2.0*(sim_track_energy*sim_shower_energy - sim_track_px*sim_shower_px-sim_track_py*sim_shower_py-sim_track_pz*sim_shower_pz))" binning = "(100,1.0,2)" unit = "True Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = ""  group = "779"/>
+
 <!-- ================= Efficiency  ======================== -->
 
-<efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "0" numer_cut = "sim_shower_pdg==22 &amp;&amp; sim_shower_parent_pdg==111" /> 
+<efficiency denom_stage = "-1" denom_cut = "mctruth_daughters_pdg==2212" numer_stage = "0" numer_cut = "sim_track_pdg==2212" /> 
 
 <!-- ================= RECO-MC Matching ======================== -->
 <!--

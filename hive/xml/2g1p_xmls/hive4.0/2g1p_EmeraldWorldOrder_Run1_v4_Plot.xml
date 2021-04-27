@@ -97,7 +97,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 1 Cosmic" fillstyle = "3333" scale = "0.0">
+<bdtfile filename = "bnbext_run1_combined_v33.3.uniq.spluff.test.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 1 Cosmic" fillstyle = "3333" scale = "1.0">
     <definition>
         <cut> 1 </cut>
     </definition>
@@ -427,6 +427,8 @@
 <var def="sqrt(135*135 + (#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]) ) * (1 - (((#C0#*reco_shower_implied_dirz[(i_shr[0])]+#C1#*reco_shower_implied_dirz[(i_shr[1])])/(sqrt((#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))) )) ) " binning = "(34, 0, 600)" unit = "Implied E_{#pi^{0}}(1-cos#theta_{#pi^{0}}) [MeV]" type = "d"  training=""  />
 
 <var def = "pigLEE_combinedBNB_mva" binning = "(34,0.05,0.95)" unit = "BDT Response" type="d" training= "" logplot="true" pmin=10.0 pmax=10000 group="1" />
+
+<var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[i_trk[0]]/reco_track_mean_trunc_dEdx_end_half_best_plane[i_trk[0]]" binning = "(18,0.2,1.0)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d"  training="0" group="111011" />
 
 
 <!-- ================= Efficiency  ======================== -->

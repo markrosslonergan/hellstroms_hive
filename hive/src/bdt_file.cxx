@@ -456,6 +456,11 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
     vec_entry_lists.resize(flow.bdt_vector.size());
 
+    if(this->tag=="gLEE_external_v1_NCP" || this->tag=="gLEE_external_v1_BNBOtherG4reint" || this->tag=="gLEE_external_v1_BNBOtherG4reint2g1p" || this->tag=="gLEE_external_v1_BNBOtherG4reint2g0p"|| this->tag=="gLEE_external_v1_BNBOtherG4reint1g0p"){
+        ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
+        std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
+    }
+
 
 
     double potbranch = 0;
@@ -529,11 +534,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }
 
 
-
-        /*if(this->tag.find("NCPi0")!=std::string::npos){
-          weight_branch = weight_branch +"*"+"(1.0+ (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.3)*0.2 + (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.175)*0.3  +  (sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E - 0.135*0.135)<0.1)*0.3 )";
-
-          }*/
+        //1.18 − 1.4
+        if(this->tag.find("NCPi0")!=std::string::npos){
+              //weight_branch = "("+weight_branch+")*(1.18 - 1.4*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
+          }
 
         if(this->tag=="NCPi0NotCohRun1RedoCof0"){
             //   weight_branch = "("+weight_branch+")*(1.0 - 0.85*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
@@ -1479,6 +1483,10 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     this->teventweight->AddFriend(this->tvertex);
     this->tslice->AddFriend(this->tvertex);
 
+     
+    this->ttrueeventweight->AddFriend(this->tvertex);
+
+
     std::cout<<__LINE__<<" Yarko "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
     std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+this->tag+".root";
 
@@ -1511,7 +1519,10 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     TTree * t_sbnfit_eventweight_tree = (TTree*)this->teventweight->CopyTree(sbnfit_cuts.c_str());
     std::cout<<"Copying Slice tree with cut : "<<sbnfit_cuts<<std::endl;
     TTree * t_sbnfit_slice_tree = (TTree*)this->tslice->CopyTree(sbnfit_cuts.c_str());
-    
+ 
+    std::cout<<"Copying trueeventweight tree (via friends)"<<std::endl;
+    TTree * t_sbnfit_trueeventweight_tree = (TTree*)this->ttrueeventweight->CopyTree(sbnfit_cuts.c_str());
+   
     
     
     std::cout<<__LINE__<<" Creating Simple_Tree "<<std::endl;
@@ -1628,6 +1639,10 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     for(const auto&& obj: *lf2) t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(obj);
 
 
+    TList * lf3 = (TList*)t_sbnfit_trueeventweight_tree->GetListOfFriends();
+    for(const auto&& obj: *lf3) t_sbnfit_trueeventweight_tree->GetListOfFriends()->Remove(obj);
+
+
     //std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
     std::cout<<"Writing to file"<<std::endl;
     cdtof->cd();
@@ -1635,6 +1650,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     t_sbnfit_pot_tree->Write();
     t_sbnfit_rs_tree->Write();
     t_sbnfit_eventweight_tree->Write(); 
+    t_sbnfit_trueeventweight_tree->Write(); 
     t_sbnfit_slice_tree->Write();
     t_sbnfit_simpletree.Write();
     weight->Write();

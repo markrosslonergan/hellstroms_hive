@@ -139,6 +139,7 @@ struct bdt_file{
         TTree *tpot = NULL;
         TTree *trs = NULL;
         TTree *teventweight = NULL;
+        TTree *ttrueeventweight = NULL;
         TTree *tslice = NULL;
 
         std::string topological_list_name;

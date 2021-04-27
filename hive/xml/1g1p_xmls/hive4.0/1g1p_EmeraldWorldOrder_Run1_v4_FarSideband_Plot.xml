@@ -7,7 +7,8 @@
 </plot_pot>
 
 <!--<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
-<covar dir = "." name = "frac_covariance" plotname="Detector Systematics" />
+<!--<covar dir = "." name = "frac_covariance" plotname="Detector Systematics" />-->
+<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Det Systematics" />
 
 
 
@@ -938,6 +939,7 @@
 <var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(200,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "5509" pmin=0/>
 
 
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(20,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "5510" logplot="true"/>
 
 <alias key="xc" value ="TMath::Min(abs(mctruth_nu_vertex_x-0),abs(256.35-mctruth_nu_vertex_x))"/>
 <alias key="yc" value ="TMath::Min(abs(mctruth_nu_vertex_y-(-116.5)),abs(116.5-mctruth_nu_vertex_y))"/>

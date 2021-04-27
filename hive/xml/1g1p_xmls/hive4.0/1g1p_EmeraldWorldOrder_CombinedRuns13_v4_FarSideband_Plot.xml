@@ -32,7 +32,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_COFredo_tuneCV_v43.5.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_combined_run13_COFredo_tuneCV_v43.5.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "0.7" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -943,6 +943,9 @@
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(50,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6607" />
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(50,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6607" />
 
+<var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(10,0.2,1.0)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "" group="6608"/>
+
+<var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(16,0.01,8.0)" unit = "Shower dEdx Plane 2 (Kalman) [MeV/cm]" type = "d" group="5050"    training =""/>
 
 
 <alias key="xc" value ="TMath::Min(abs(mctruth_nu_vertex_x-0),abs(256.35-mctruth_nu_vertex_x))"/>

@@ -4,17 +4,15 @@
 <!-- 0.85416 -->
 
 <plot_pot>
-    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.26014320"  />
-    <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number     <= 18960))" fraction = "0.73985680" />
+    <run_period name ="RunI" cut ="((run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.494"  />
+    <run_period name ="RunIII" cut ="( (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number     <= 18960))" fraction = "0.506" />
 </plot_pot>
 
 
 <!-- Directory for all covariance matrices -->
-<!--<covar dir="/" name="frac_covariance" plotname="Flux, XSec &amp; Detector Sys" />-->
-<!--<covar dir="/" name="frac_covariance" plotname="Detector Sys Only" />-->
+<covar dir="/" name="frac_covariance" plotname="Flux, XSec &amp; Detector Sys" />
 <!--<covar dir="/" name="frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
 
-<covar dir="/" name="frac_covariance" plotname="Det LY Only" />
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
 
@@ -37,7 +35,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_COFredo_tuneCV_v43.5.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_combined_run13_COFredo_tuneCV_v43.5.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "0.69" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -80,7 +78,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "dirt_overlay_combined_run123_COFredo_wCryoFix_v43.5.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "Dirt"  mergedown="true" scale="1.0"> 
+<bdtfile filename = "dirt_overlay_combined_run123_COFredo_wCryoFix_v43.5.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "Dirt" scale="0.0" mergedown="true"> 
     <definition>
         <cut>1</cut>
         <cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
@@ -93,16 +91,15 @@
         <cut>!(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
-
-<bdtfile filename = "filter_2g1p_data_combined_run123_v33.3.uniq.root" tag = "Data2g1pFiltered" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Data, Run 1+2+3 On-Beam" >
+<bdtfile filename = "fakedata_set8_combined_v43.5.root" tag = "FakeDataSet8" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "FakeData, Set 8">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam" plot_name="Filtered" >
-        <tor860_wcut> 5.845E+20 </tor860_wcut>   
-        <E1DCNT_wcut> 136203371 </E1DCNT_wcut>   
+    <data type="OnBeam" plot_name="Fake8">
+        <tor860_wcut>   3.7514260e20 </tor860_wcut>   
+        <E1DCNT_wcut>   9037544.0</E1DCNT_wcut>   
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 1+2+3 Cosmic" fillstyle = "3333" scale = "1.0">
+<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 1+2+3 Cosmic" fillstyle = "3333" scale = "0.0">
     <definition>
         <cut> 1 </cut>
     </definition>
@@ -447,24 +444,6 @@
 <var def="reco_shower_implied_dirx[i_shr[0]]" binning = "alt(-100,100)" unit = "Tot Check [GeV]" type = "d"  training="" group="3305"/>
 
 <var def = "pigLEE_combinedBNB_mva" binning = "(34,0.05,0.95)" unit = "BDT Response" type="d" training= "" logplot="true" pmin=10.0 pmax=10000 group="3300" />
-
-<var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[i_trk[0]]/reco_track_mean_trunc_dEdx_end_half_best_plane[i_trk[0]]" binning = "(34,0,1.6)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d"  training="" group="11911" />
-<var def = "reco_track_mean_trunc_dEdx_start_half_best_plane[i_trk[0]]/reco_track_mean_trunc_dEdx_end_half_best_plane[i_trk[0]]" binning = "(18,0.2,1.0)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Best Plane" type = "d"  training="" group="111011" />
-
-<var def = "reco_track_mean_trunc_dEdx_start_half_plane2[i_trk[0]]/reco_track_mean_trunc_dEdx_end_half_plane2[i_trk[0]]" binning = "(18,0.2,1.0)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 2" type = "d"  training="" group="111111" />
-<var def = "reco_track_mean_trunc_dEdx_start_half_plane1[i_trk[0]]/reco_track_mean_trunc_dEdx_end_half_plane1[i_trk[0]]" binning = "(18,0.2,1.0)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 1" type = "d"  training="" group="111111" />
-<var def = "reco_track_mean_trunc_dEdx_start_half_plane0[i_trk[0]]/reco_track_mean_trunc_dEdx_end_half_plane0[i_trk[0]]" binning = "(18,0.2,1.0)" unit = "Ratio of Truncated Mean Start/End Track dE/dx Plane 0" type = "d"  training="" group="111111" />
-
-<var def = "reco_track_mean_dEdx_start_half_plane2[i_trk[0]]/reco_track_mean_dEdx_end_half_plane2[i_trk[0]]" binning = "(18,0.2,1.0)" unit = "Ratio of Just Mean Start/End Track dE/dx Plane 2" type = "d"  training="" group="111211" />
-
-<var def = "reco_track_mean_trunc_dEdx_plane2[reco_track_ordered_energy_index[0]]" binning =  "(30,0,8)" unit = "Reco Track Truncated Mean dE/dx Plane 2[MeV/cm]" type = "d"   training=""  group="111311" />
-<var def = "reco_track_mean_dEdx_plane2[reco_track_ordered_energy_index[0]]" binning =  "(30,0,8)" unit = "Reco Track Just Mean dE/dx Plane 2[MeV/cm]" type = "d"   training=""  group="111311" />
-
-
-
-<var def = "reco_shower_kalman_dEdx_plane2_median[i_shr[0]]" binning="(36,0.01,8.0)" unit = "Leading Shower Kalman Plane 2 Median dE/dx [Mev/cm]" type = "d"  group="5050" training =""/>
-
-<var def="sqrt((#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))/1000" binning = "alt(0,0.15,0.225,0.3,0.375,0.45,0.6,0.9)" unit = "Corrected Implied #pi^{0} Momentum [GeV]" type = "d"  training="" group="3309"/>
 
 <!-- ================= Efficiency  ======================== -->
 

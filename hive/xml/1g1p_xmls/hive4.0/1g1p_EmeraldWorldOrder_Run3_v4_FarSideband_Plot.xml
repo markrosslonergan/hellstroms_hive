@@ -6,8 +6,9 @@
     <run_period name ="RunIII" cut ="((run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "1.0" />
 </plot_pot>
 
-<!--<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
-<covar dir = "." name = "frac_covariance" plotname="Detector Systematics" />
+<!--<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Det Systematics" />-->
+<!--<covar dir = "." name = "frac_covariance" plotname="Detector Systematics" />-->
+<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Det Systematics" />
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
 
@@ -933,6 +934,7 @@
 
 
 
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(20,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "5510" logplot="true"/>
 
 
 <alias key="xc" value ="TMath::Min(abs(mctruth_nu_vertex_x-0),abs(256.35-mctruth_nu_vertex_x))"/>

@@ -497,6 +497,8 @@
 <var def = "cos(atan2(sqrt(pow(reco_shower_diry[0], 2)+ pow(reco_shower_dirx[0],2)),reco_shower_dirz[0]))" binning = "(8,-1,1)" unit = "Reconstructed Shower Cos(#theta_{azy})" type = "d"     training="" group="334"/>
 
 <var def="#GEO#" binning = "(18,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type="d" training="" group="808" />
+
+<var def="mctruth_nu_E" binning = "(1,-10,500000)" unit = "Corrected Calorimetric Shower Energy [MeV]" type="d" training="" group="777"/>
 <!-- ================= Efficiency  ======================== -->
 
 <efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "0" numer_cut = "sim_shower_pdg==22 &amp;&amp; sim_shower_parent_pdg==111" /> 
