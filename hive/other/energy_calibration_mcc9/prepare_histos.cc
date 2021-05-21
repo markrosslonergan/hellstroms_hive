@@ -14,7 +14,7 @@ void make_2dHisto() {
     //TFile *fin = new TFile(dir+"ncpi0_overlay_run3g_v33.3.uniq.root", "READ");
     TFile *fin = new TFile(dir+"ncpi0_overlay_run1_v33.3.uniq.root", "READ");
     //TFile *fin = new TFile(dir+"ncpi0_overlay_combined_run13_v33.3.uniq.root", "READ");
-    TString tag = "all";
+    TString tag = "run1";
     //TTree *t = (TTree*)fin->Get("singlephotonana/vertex_tree");
     TTree *t = (TTree*)fin->Get("singlephotonana/vertex_tree");
     if (!t || !fin) {

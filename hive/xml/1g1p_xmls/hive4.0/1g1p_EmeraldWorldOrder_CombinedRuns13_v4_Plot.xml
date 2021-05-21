@@ -7,8 +7,8 @@
     <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "0.751" />
 </plot_pot>
 
-<!--<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />-->
-<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
+<covar dir = "." name = "frac_covariance" plotname="Flux, XSec,G4 &amp; Detector Sys" />
+<!--<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
 <!--<covar dir = "." name = "frac_covariance" plotname="MC stats only" />-->
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
@@ -75,7 +75,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "dirt_overlay_combined_run123_COFredo_wCryoFix_v43.5.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "Dirt" scale="1.0"> 
+<bdtfile filename = "dirt_overlay_combined_run123_COFredo_wCryoFix_v43.5.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "Dirt" scale="1.0" mergedown="true"> 
     <definition>
         <cut>1</cut>
         <cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
@@ -951,6 +951,8 @@
 
 
 <var def = "sqrt(#PM#*#PM# +2.0*(sim_track_energy*sim_shower_energy - sim_track_px*sim_shower_px-sim_track_py*sim_shower_py-sim_track_pz*sim_shower_pz))" binning = "(100,1.0,2)" unit = "True Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = ""  group = "779"/>
+
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="alt(0.0,0.6)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3309" pmax=100/>
 
 <!-- ================= Efficiency  ======================== -->
 

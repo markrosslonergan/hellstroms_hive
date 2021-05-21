@@ -3,7 +3,7 @@
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="1g0pMar2020" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.988209,0.892728,0.428825)"/>
 
-<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
+<covar dir = "." name = "frac_covariance" plotname="Flux, XSec, G4 &amp; Det Sys" />
 <!--<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />-->
 
 <plot_pot>
@@ -499,6 +499,10 @@
 <var def="#GEO#" binning = "(18,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type="d" training="" group="808" />
 
 <var def="mctruth_nu_E" binning = "(1,-10,500000)" unit = "Corrected Calorimetric Shower Energy [MeV]" type="d" training="" group="777"/>
+
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="alt(0.1,0.7)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3309" pmax="450"/>
+
+
 <!-- ================= Efficiency  ======================== -->
 
 <efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "0" numer_cut = "sim_shower_pdg==22 &amp;&amp; sim_shower_parent_pdg==111" /> 

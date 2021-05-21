@@ -8,7 +8,9 @@
 </plot_pot>
 
 
-<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />
+<!--<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />-->
+<covar dir = "." name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
+
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
 
@@ -942,7 +944,24 @@
 <var def = "1g1pMar2020_v4COSMIC_mva" binning = "(50,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "6607" />
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(50,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "6607" />
 
-<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(40,0,0.8)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3302" />
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(34,0.04,0.8)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3302" />
+
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(16,0.04,0.8)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3304" />
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(12,0.04,0.8)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3305" />
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(8,0.04,0.8)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="3306" />
+
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(20,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "3307" logplot = "true"pmin=0.1/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(20,0.0,0.85)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "3307" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(20,0.0,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "33077" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(20,0.3,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "3307" logplot = "true" pmin=0.1/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(20,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" logplot="true" group = "3307" pmin=0.1/>
+
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(10,0.0,0.55)" unit = "SSv BDT Score" type="d"  training= "" group = "3308" />
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(10,0.0,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "3308" />
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(10,0.467404,0.85)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "3308" />
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(10,0.96273,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "3309" />
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(10,0.3,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "3308" />
+
 
 <!-- ================= Efficiency  ======================== -->
 

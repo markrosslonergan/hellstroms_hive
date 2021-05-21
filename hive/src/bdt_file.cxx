@@ -533,6 +533,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             weight_branch = "1";
         }
 
+       // if(this->tag.find("NCPi0NotCoh")!=std::string::npos){
+              //weight_branch = "("+weight_branch+")*(mom_weight)";
+         // }
+
 
         //1.18 − 1.4
         if(this->tag.find("NCPi0")!=std::string::npos){
@@ -547,7 +551,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }
     
         if(this->tag.find("LYAtt")!=std::string::npos){
-                weight_branch = "genie_spline_weight*("+run_weight_string+")";
+            //    weight_branch = "genie_spline_weight*("+run_weight_string+")";
         }
 
         numberofevents_raw = numberofevents;
@@ -1483,8 +1487,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     this->teventweight->AddFriend(this->tvertex);
     this->tslice->AddFriend(this->tvertex);
 
-     
-    this->ttrueeventweight->AddFriend(this->tvertex);
+    //this->ttrueeventweight->AddFriend(this->tvertex);
 
 
     std::cout<<__LINE__<<" Yarko "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
@@ -1520,8 +1523,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     std::cout<<"Copying Slice tree with cut : "<<sbnfit_cuts<<std::endl;
     TTree * t_sbnfit_slice_tree = (TTree*)this->tslice->CopyTree(sbnfit_cuts.c_str());
  
-    std::cout<<"Copying trueeventweight tree (via friends)"<<std::endl;
-    TTree * t_sbnfit_trueeventweight_tree = (TTree*)this->ttrueeventweight->CopyTree(sbnfit_cuts.c_str());
+    //std::cout<<"Copying trueeventweight tree (via friends)"<<std::endl;
+    //TTree * t_sbnfit_trueeventweight_tree = (TTree*)this->ttrueeventweight->CopyTree(sbnfit_cuts.c_str());
    
     
     
@@ -1639,8 +1642,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     for(const auto&& obj: *lf2) t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(obj);
 
 
-    TList * lf3 = (TList*)t_sbnfit_trueeventweight_tree->GetListOfFriends();
-    for(const auto&& obj: *lf3) t_sbnfit_trueeventweight_tree->GetListOfFriends()->Remove(obj);
+    //TList * lf3 = (TList*)t_sbnfit_trueeventweight_tree->GetListOfFriends();
+    //for(const auto&& obj: *lf3) t_sbnfit_trueeventweight_tree->GetListOfFriends()->Remove(obj);
 
 
     //std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
@@ -1650,7 +1653,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     t_sbnfit_pot_tree->Write();
     t_sbnfit_rs_tree->Write();
     t_sbnfit_eventweight_tree->Write(); 
-    t_sbnfit_trueeventweight_tree->Write(); 
+    //t_sbnfit_trueeventweight_tree->Write(); 
     t_sbnfit_slice_tree->Write();
     t_sbnfit_simpletree.Write();
     weight->Write();

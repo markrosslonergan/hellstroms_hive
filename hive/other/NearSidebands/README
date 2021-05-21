@@ -1,0 +1,12 @@
+Simple cross check script
+
+Ran with 
+
+./gLEE_crosscheck_nearsideband_script.sh INPUTFILE
+
+example
+
+./gLEE_crosscheck_nearsideband_script.sh /uboone/app/users/markrl/SL7test0/hellstroms_hive/hive/other/NearSidebands/LocalTest/sbnfit_1g1pMar2020_v4_stage_1_gLEE_nearsideband_v1_TEST1.root
+
+
+

@@ -249,7 +249,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
 
-    bool div_bin = true;
+    bool div_bin = false;
     double div_scale = 0.075;
     bool scale_signal_overlay = false;
 
@@ -764,7 +764,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             leg_hack->SetLineWidth(2);
 
 
-            if(var.has_covar&& m_error_string!="stats"){
+            if(var.has_covar && m_error_string!="stats"){
                 //                l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,leg_num_digits) ).c_str(),"fl");
                 l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
             }else{
@@ -909,7 +909,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             stk->SetTitle("");
             //stk->SetTitle(stage_names.at(s).c_str());
             stk->GetXaxis()->SetTitle(var.unit.c_str());
-            stk->GetYaxis()->SetTitle("Events");
+            stk->GetYaxis()->SetTitle((!div_bin ? "Events" :  "Events / "+to_string_prec(div_scale,3)).c_str());
             if(!stack_mode){
                 stk->GetYaxis()->SetTitleSize(title_size_upper);
                 stk->GetYaxis()->SetLabelSize(label_size_upper);
@@ -1039,8 +1039,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             // l0->AddEntry(d0,(data_file->plot_name).c_str(),"lp");	
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
             TH1 *leg_hack2 = (TH1*)leg_hack->Clone(("leg_tmp2_tsum"+std::to_string(s)).c_str());
-            std::string sterrname = "#splitline{MC Stat Error Only}{}";
-            if(var.has_covar){
+            std::string sterrname = "#splitline{MC Intrinsic Stat Error}{}";
+            if(var.has_covar && m_error_string !="stats"){
                 sterrname = "#splitline{"+var.covar_legend_name+"}{}";
             }
             if(!stack_mode){

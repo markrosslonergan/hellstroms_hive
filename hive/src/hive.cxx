@@ -345,7 +345,6 @@ int main (int argc, char *argv[]){
 
         if(is_combined) bdt_files.back()->addFriend("output_"+bdt_files.back()->tag ,analysis_tag+"_superMVA.root");
 
-
         if(XMLconfig.bdt_is_offbeam_data[f]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             bdt_files.back()->setAsOffBeamData( XMLconfig.bdt_onbeam_pot[f], XMLconfig.bdt_onbeam_spills[f], XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
@@ -380,6 +379,8 @@ int main (int argc, char *argv[]){
             std::cout<<"Setting a global weight value of "<<XMLconfig.bdt_weight_values[f]<<std::endl;
             bdt_files.back()->global_weight_string = "("+ XMLconfig.bdt_weight_values[f] + ")";
         }
+        
+        
 
         bdt_files.back()->calcPOT(XMLconfig.run_names, XMLconfig.run_cuts, XMLconfig.run_fractions);
 
@@ -1457,10 +1458,10 @@ else if(mode_option == "eff2"){
     if(which_file==-1){
         for(size_t f =0; f< bdt_files.size(); f++){
             std::cout<<"on bdt file "<<f<<std::endl;
-            bdt_files[f]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot,external_cuts);
+            bdt_files[f]->makeSBNfitFile(analysis_tag+additional_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot,external_cuts);
         }
     }else{
-        bdt_files[which_file]->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,(double)splot_pot,external_cuts);
+        bdt_files[which_file]->makeSBNfitFile(analysis_tag+additional_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,(double)splot_pot,external_cuts);
 
     }
     return 0;

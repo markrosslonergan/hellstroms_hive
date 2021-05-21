@@ -948,6 +948,37 @@
 <var def = "reco_shower_kalman_dEdx_plane2_median[0]" binning = "(16,0.01,8.0)" unit = "Shower dEdx Plane 2 (Kalman) [MeV/cm]" type = "d" group="5050"    training =""/>
 
 
+<!-- #################### Further NEar Sideband #################### -->
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(5,0.5,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "3536"/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(8,0.2,0.85)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "3536" />
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(5,0.5,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "3536" />
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(10,0.3,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "3536"/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(10,0.0,1.0)" unit = "SSv BDT Score" type="d"  training= "" group = "3536" />
+
+<var def = "log10(Min$(isolation_min_dist_trk_unassoc))" binning = "(10,-0.65,1.5)" unit = "Min Dist from track to Unnass hit log[cm]" type="d"    training="" group="35300"/>
+<var def = "Sum$(isolation_num_unassoc_hits_win_10cm_trk)" binning = "(10,0,150)" unit = "Num Unnass hits in 10cm" type="d"    training="" group="3530"/>
+<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(10,0,0.9)" unit = "Fraction of unassoc hits in slice [cm]" type ="d"  training="" group="3530"/>
+<var def = "log10(sss_num_unassociated_hits)" binning="(10,1.25,3.5)" unit = "Number of unassocaited hits in slice log10" type ="d"  training="" group="3530"/>
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(10,0,60)" unit = "Min impact parm basic" type="d" training="" group="3530"/>
+<var def = "Min$(sss_candidate_min_dist)" binning="(10,0,80)" unit = "Min conv parm basic" type="d" training="" group="3530"/>
+<var def = "sss2d_ioc_ranked_angle_to_shower" binning = "(10,0,3.14159)" unit ="sss2d min IOC angle wrt primary shower [deg]" type="d"  training="" group="3530"/>
+<var def = "sss2d_conv_ranked_en" binning = "(10,0,200)" unit ="sss2d closest candidate energy energy [MeV" type="d"  training="" group="3530"/>
+<var def = "sss2d_conv_ranked_ioc" binning = "(10,0,1.2)" unit ="sss2d closest candidate IOC ratio" type="d"  training="" group="3530"/>
+<var def = "sss2d_conv_ranked_invar" binning = "(10,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="" group="3530"/>
+<var def = "sss2d_conv_ranked_angle_to_shower" binning = "(10,0,3.14159)" unit ="sss2d closest candidate angle wrt primary shower [deg]" type="d"  training="" group="3530"/>
+<var def = "sss2d_invar_ranked_en" binning = "(10,0,200)" unit ="sss2d invar ranked energy energy [MeV" type="d"  training="" group="3530"/>
+<var def = "sss2d_invar_ranked_conv" binning = "(10,0,80)" unit ="sss2d invar ranked conversion Distance [cm]" type="d"  training="" group="3530"/>
+<var def = "sss2d_invar_ranked_invar" binning = "(10,0,200)" unit ="sss2d invar ranked invariant mass [MeV]" type="d"  training="" group="3530"/>
+<var def = "sss3d_ioc_ranked_ioc" binning = "(10,0,1.0)" unit ="sss3d min IOC candidate IOC ratio" type="d"  training="" group="3530"/>
+<var def = "sss3d_ioc_ranked_opang" binning = "(10,-1,1)" unit ="sss3d min IOC angle wrt primary shower [cos]" type="d"  training="" group="3530"/>
+<var def = "sss3d_invar_ranked_conv" binning = "(10,0,80)" unit ="sss3d best invariant mass candidate conversion Distance [cm]" type="d"  training="" group="3530"/>
+<var def = "sss3d_invar_ranked_invar" binning = "(10,0,200)" unit ="sss3d best invariant mass candidate invariant mass [MeV]" type="d"  training="" group="3530"/>
+<var def = "sss3d_invar_ranked_opang" binning = "(10,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="d"  training="" group="3530"/>
+<var def = "reco_shower_conversion_distance[0]" binning = "(10,0,100)" unit = " Reconstructed Shower Conversion Distance Log[cm]" type = "d"     training="" group="3530"/>
+
+
+
+
 <alias key="xc" value ="TMath::Min(abs(mctruth_nu_vertex_x-0),abs(256.35-mctruth_nu_vertex_x))"/>
 <alias key="yc" value ="TMath::Min(abs(mctruth_nu_vertex_y-(-116.5)),abs(116.5-mctruth_nu_vertex_y))"/>
 <alias key="zc" value ="TMath::Min(abs(mctruth_nu_vertex_z-0),abs(1036.8-mctruth_nu_vertex_z))"/>

@@ -44,6 +44,7 @@
 std::vector<std::pair<int,int> > leadingProjBins() {
     std::vector<std::pair<int,int> > ranges;
     // v33.3
+   
     /*
     ranges.push_back(std::make_pair(3, 4) );
     ranges.push_back(std::make_pair(4, 5) );
@@ -64,6 +65,7 @@ std::vector<std::pair<int,int> > leadingProjBins() {
     ranges.push_back(std::make_pair(34, 37) );
     ranges.push_back(std::make_pair(37, 40) );
     */
+
     ranges.push_back(std::make_pair(30, 40) );
     ranges.push_back(std::make_pair(40, 50) );
     ranges.push_back(std::make_pair(50, 60) );
@@ -82,6 +84,7 @@ std::vector<std::pair<int,int> > leadingProjBins() {
     ranges.push_back(std::make_pair(310, 340) );
     ranges.push_back(std::make_pair(340, 370) );
     ranges.push_back(std::make_pair(370, 400) );
+    
     return ranges;
 }
 

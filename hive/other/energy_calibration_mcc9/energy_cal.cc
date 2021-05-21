@@ -4,7 +4,7 @@ using std::cout;
 using std::endl;
     
 void doCalibration() {
-    TString tag = "all";
+    TString tag = "run1";
     TFile *fin = new TFile("output_energy_histos_"+tag+".root", "READ");
     TFile *fout = new TFile("output_energy_correction_"+tag+".root", "RECREATE");
     if (!fin) {
