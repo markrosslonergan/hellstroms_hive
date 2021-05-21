@@ -597,7 +597,7 @@ int main (int argc, char *argv[]){
                 datamc.setErrorString(systematics_error_string);
 
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                datamc.plotStacks(ftest,  tmp_var , fbdtcuts,bdt_infos);
+                datamc.plotStacks(ftest,  tmp_var , fbdtcuts,additional_tag, bdt_infos);
             }else{
                 std::vector<bdt_variable> tmp_vars;
                 for(auto &v: vars){
@@ -613,7 +613,7 @@ int main (int argc, char *argv[]){
                         real_datamc.setMergeDown(mergeDownVector);
                         real_datamc.setStackMode( histogram_stack->plot_pot);
                         real_datamc.setErrorString(systematics_error_string);
-                        real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,bdt_infos);
+                        real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,additional_tag,bdt_infos);
                     }
 
                 } else {
@@ -622,7 +622,7 @@ int main (int argc, char *argv[]){
                     real_datamc.setMergeDown(mergeDownVector);
                     real_datamc.setStackMode( histogram_stack->plot_pot);
                     real_datamc.setErrorString(systematics_error_string);
-                    real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,bdt_infos);
+                    real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,additional_tag,bdt_infos);
 
                 }
             }
