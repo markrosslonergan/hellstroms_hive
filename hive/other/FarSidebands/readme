@@ -1,3 +1,6 @@
+old executable is no longer linked correctly. in local the v3 used the nearsideband ones.
+
+
 
 USAGE:
 ./run_gLEE_1g1p_FarSideBand_autoHIVE_v1.sh FULL_PATH_TO_FILE

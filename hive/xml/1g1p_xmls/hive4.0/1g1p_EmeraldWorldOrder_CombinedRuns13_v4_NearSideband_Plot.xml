@@ -8,7 +8,8 @@
 </plot_pot>
 
 <!--<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />-->
-<covar dir="Covar_700series_NearSidebands/" name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
+<!--<covar dir="Covar_700series_NearSidebands/" name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
+<covar dir="Covar_700series_NearSidebands/" name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
 
@@ -88,11 +89,11 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "data_5e19_run1_v33.3.uniq.root" tag = "Data5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Data, Run 1 On-Beam">
+<bdtfile filename = "../../../../../../../uboone/data/users/anavrera/production/gLEE/sbnfit_1g1pMar2020_v4_stage_1_gLEE_nearsideband_v1_allruns_v1.root" tag = "NearSideband" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "Data, NearSideband On-Beam">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam" plot_name="Unbiased">
-        <tor860_wcut>   4.081e+19 </tor860_wcut>   
-        <E1DCNT_wcut>   9037544.0</E1DCNT_wcut>   
+    <data type="OnBeam" plot_name="NearSideband">
+         <tor860_wcut> 6.852e+20  </tor860_wcut>   
+         <E1DCNT_wcut> 160557312.0 </E1DCNT_wcut>   
     </data>
 </bdtfile>
 
@@ -101,8 +102,8 @@
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 4.081e+19 </tor860_wcut>   
-        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>   
+        <tor860_wcut> 6.852e+20  </tor860_wcut>   
+        <E1DCNT_wcut> 160557312.0 </E1DCNT_wcut>   
         <EXT>166300493.0</EXT>  
     </data>
 </bdtfile>
@@ -950,61 +951,63 @@
 <!-- ================= NearSideband  ======================== -->
 <!-- ================= NearSideband  ======================== -->
 
-<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(10,0.05,0.65)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="701"/>
-<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(10,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "701"/>
-<var def = "log10(reco_shower_conversion_distance[0])" binning = "(10,-0.5,2.2)" unit = " Reconstructed Shower Conversion Distance Log10[cm]" type = "d"     training="" group="701"/>
-<var def = "reco_vertex_x" binning = "(10,-1.55,254.8)" unit = "Reconstructed Vertex X [cm]" type="d"    training="" group="701"/>
-<var def = "reco_vertex_y" binning = "(10,-115.53,117.47)" unit = "Reconstructed Vertex Y [cm]" type="d"    training="" group="701"/>
-<var def = "reco_vertex_z" binning = "(10,0.1,1035.9)" unit = "Reconstructed Vertex Z [cm]" type="d"    training="" group="701"/>
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(6,0.05,0.65)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="701" pmin=0 pmax = 110/>
+<var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "701"/>
+<var def = "log10(reco_shower_conversion_distance[0])" binning = "(6,-0.5,2.2)" unit = " Reconstructed Shower Conversion Distance Log10[cm]" type = "d"     training="" group="701"/>
+<var def = "reco_vertex_x" binning = "(6,-1.55,254.8)" unit = "Reconstructed Vertex X [cm]" type="d"    training="" group="701"/>
+<var def = "reco_vertex_y" binning = "(6,-115.53,117.47)" unit = "Reconstructed Vertex Y [cm]" type="d"    training="" group="701"/>
+<var def = "reco_vertex_z" binning = "(6,0.1,1035.9)" unit = "Reconstructed Vertex Z [cm]" type="d"    training="" group="701"/>
 
 <!-- BDT Respones -->
-<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(10,0.99,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "706" />
-<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(10,0.467404,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "706" />
-<var def = "1g1pMar2020_v4BNB_mva" binning = "(10,0.96273,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "706"/>
-<var def = "1g1pMar2020_v4Nue_mva" binning = "(10,0.8,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "706" />
-<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(10,0.0,0.55)" unit = "SSv BDT Score" type="d"  training= "" group = "706"/>
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(6,0.99,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "706" />
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(6,0.467404,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "706" />
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(6,0.96273,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "706"/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(6,0.8,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "706" />
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(6,0.0,0.55)" unit = "SSv BDT Score" type="d"  training= "" group = "7066"/>
 
 <!-- SSV training Variables -->
-<var def = "reco_shower_conversion_distance[0]" binning = "(10,0,100)" unit = " Reconstructed Shower Conversion Distance [cm]" type = "d"     training="" group="707"/>
-<var def = "log10(Min$(isolation_min_dist_trk_unassoc))" binning = "(10,-0.5,1.2)" unit = "Min Dist from track to Unnass hit log[cm]" type="d"    training="" group="707"/>
-<var def = "Sum$(isolation_num_unassoc_hits_win_10cm_trk)" binning = "(10,0,150)" unit = "Num Unnass hits in 10cm" type="d"    training="" group="707"/>
-<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(10,0,0.8)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="" group="707"/>
-<var def = "log10(sss_num_unassociated_hits)" binning="(10,1.5,3.25)" unit = "Number of unassocaited hits in slice log10" type ="d"  training="" group="707"/>
-<var def = "Min$(sss_candidate_impact_parameter)" binning="(10,0,30)" unit = "Min impact parm basic" type="d" training="4" group="707"/>
-<var def = "Min$(sss_candidate_min_dist)" binning="(10,0,50)" unit = "Min conv parm basic" type="d" training="4" group="707"/>
-<var def = "sss2d_ioc_ranked_angle_to_shower" binning = "(10,0,3.14159)" unit ="sss2d min IOC angle wrt primary shower [deg]" type="d"  training="" group="707"/>
-<var def = "sss2d_conv_ranked_en" binning = "(10,0,150)" unit ="sss2d closest candidate energy energy [MeV" type="d"  training="" group="707"/>
-<var def = "sss2d_conv_ranked_ioc" binning = "(10,0,1.2)" unit ="sss2d closest candidate IOC ratio" type="d"  training="" group="707"/>
-<var def = "sss2d_conv_ranked_invar" binning = "(10,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="" group="707"/>
-<var def = "sss2d_conv_ranked_angle_to_shower" binning = "(10,0,3.14159)" unit ="sss2d closest candidate angle wrt primary shower [deg]" type="d"  training="" group="707"/>
-<var def = "sss2d_invar_ranked_en" binning = "(10,0,150)" unit ="sss2d invar ranked energy energy [MeV" type="d"  training="" group="707"/>
-<var def = "sss2d_invar_ranked_conv" binning = "(10,0,80)" unit ="sss2d invar ranked conversion Distance [cm]" type="d"  training="" group="707"/>
-<var def = "sss2d_invar_ranked_invar" binning = "(10,0,200)" unit ="sss2d invar ranked invariant mass [MeV]" type="d"  training="" group="707"/>
-<var def = "sss3d_ioc_ranked_ioc" binning = "(10,0,1.05)" unit ="sss3d min IOC candidate IOC ratio" type="d"  training="" group="707"/>
-<var def = "sss3d_ioc_ranked_opang" binning = "(10,-1,1)" unit ="sss3d min IOC angle wrt primary shower [cos]" type="d"  training="" group="707"/>
-<var def = "sss3d_invar_ranked_conv" binning = "(10,0,80)" unit ="sss3d best invariant mass candidate conversion Distance [cm]" type="d"  training="" group="707"/>
-<var def = "sss3d_invar_ranked_invar" binning = "(10,0,200)" unit ="sss3d best invariant mass candidate invariant mass [MeV]" type="d"  training="" group="707"/>
-<var def = "sss3d_invar_ranked_opang" binning = "(10,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="d"  training="" group="707"/>
+<var def = "reco_shower_conversion_distance[0]" binning = "(6,0,100)" unit = " Reconstructed Shower Conversion Distance [cm]" type = "d"     training="" group="707"/>
+<var def = "log10(Min$(isolation_min_dist_trk_unassoc))" binning = "(6,-0.5,1.2)" unit = "Min Dist from track to Unnass hit log[cm]" type="d"    training="" group="707"/>
+<var def = "Sum$(isolation_num_unassoc_hits_win_10cm_trk)" binning = "(6,0,150)" unit = "Num Unnass hits in 10cm" type="d"    training="" group="707"/>
+<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(6,0,0.8)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="" group="707"/>
+<var def = "log10(sss_num_unassociated_hits)" binning="(6,1.5,3.25)" unit = "Number of unassocaited hits in slice log10" type ="d"  training="" group="707"/>
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(6,0,30)" unit = "Min impact parm basic" type="d" training="4" group="707"/>
+<var def = "Min$(sss_candidate_min_dist)" binning="(6,0,50)" unit = "Min conv parm basic" type="d" training="4" group="707"/>
+<var def = "sss2d_ioc_ranked_angle_to_shower" binning = "(6,0,3.14159)" unit ="sss2d min IOC angle wrt primary shower [deg]" type="d"  training="" group="707"/>
+<var def = "sss2d_conv_ranked_en" binning = "(6,0,150)" unit ="sss2d closest candidate energy energy [MeV" type="d"  training="" group="707"/>
+<var def = "sss2d_conv_ranked_ioc" binning = "(6,0,1.2)" unit ="sss2d closest candidate IOC ratio" type="d"  training="" group="707"/>
+<var def = "sss2d_conv_ranked_invar" binning = "(6,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="" group="707"/>
+<var def = "sss2d_conv_ranked_angle_to_shower" binning = "(6,0,3.14159)" unit ="sss2d closest candidate angle wrt primary shower [deg]" type="d"  training="" group="707"/>
+<var def = "sss2d_invar_ranked_en" binning = "(6,0,150)" unit ="sss2d invar ranked energy energy [MeV" type="d"  training="" group="707"/>
+<var def = "sss2d_invar_ranked_conv" binning = "(6,0,80)" unit ="sss2d invar ranked conversion Distance [cm]" type="d"  training="" group="707"/>
+<var def = "sss2d_invar_ranked_invar" binning = "(6,0,200)" unit ="sss2d invar ranked invariant mass [MeV]" type="d"  training="" group="707"/>
+<var def = "sss3d_ioc_ranked_ioc" binning = "(6,0,1.05)" unit ="sss3d min IOC candidate IOC ratio" type="d"  training="" group="707"/>
+<var def = "sss3d_ioc_ranked_opang" binning = "(6,-1,1)" unit ="sss3d min IOC angle wrt primary shower [cos]" type="d"  training="" group="707"/>
+<var def = "sss3d_invar_ranked_conv" binning = "(6,0,80)" unit ="sss3d best invariant mass candidate conversion Distance [cm]" type="d"  training="" group="707"/>
+<var def = "sss3d_invar_ranked_invar" binning = "(6,0,200)" unit ="sss3d best invariant mass candidate invariant mass [MeV]" type="d"  training="" group="707"/>
+<var def = "sss3d_invar_ranked_opang" binning = "(6,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="d"  training="" group="707"/>
 
 <!-- Angular Variables -->
-<var def = "(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])" binning="(10,-1,1)" unit = "Angle between track and Shower (implied) Cos(#theta)" type="d" training="" group="702"/>
-<var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning="(10,-1,1)" unit = "Angle between track and Shower Cos(#theta)" type="d" training="" group="702"/>
-<var def = "cos(atan2(sqrt(pow(reco_shower_implied_diry[0], 2)+ pow(reco_shower_implied_dirx[0],2)),reco_shower_implied_dirz[0]))" binning = "(10,-1,1)" unit = "Reconstructed Shower Implied Cos(#theta_{azy})" type = "d"     training="" group="702"/>
-<var def = "reco_shower_implied_dirz[0]" binning = "(10,-1,1)" unit = "Reconstructed Shower Implied Cos(#theta)" type = "d"     training="" group="702"/>
-<var def = "reco_track_dirz[0]" binning = "(10,-1,1)" unit = "Reconstructed Track Cos(#theta)" type = "d"     training="" group="702"/>
-<var def = "cos(atan2(reco_shower_diry[0],reco_shower_dirx[0]))" binning = "(10,-1.0,1.0)" unit = "Reconstructed Shower  #phi_{azy} [rad]" type = "d"     training="" group="702"/>
-<var def = "cos(atan2(reco_shower_implied_diry[0],reco_shower_implied_dirx[0]))" binning = "(10,-1.0,1.0)" unit = "Reconstructed Shower Implied #phi_{azy} [rad]" type = "d"     training="" group="702"/>
-<var def = "cos(atan2(reco_track_diry[0],reco_track_dirx[0]))" binning = "(10,-1.0,1.0)" unit = "Reconstructed Trackr #phi_{azy} [rad]" type = "d"     training="" group="702"/>
-<var def = "acos(reco_track_dirz[0])+acos(reco_shower_implied_dirz[0])" binning = "(10,0,6.28)" unit = "Sum of track and shower #theta [deg]" type="d" training="" group = "702"/>
+<var def = "(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])" binning="(6,-1,1)" unit = "Angle between track and Shower (implied) Cos(#theta)" type="d" training="" group="702"/>
+<var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning="(6,-1,1)" unit = "Angle between track and Shower Cos(#theta)" type="d" training="" group="702"/>
+<var def = "cos(atan2(sqrt(pow(reco_shower_implied_diry[0], 2)+ pow(reco_shower_implied_dirx[0],2)),reco_shower_implied_dirz[0]))" binning = "(6,-1,1)" unit = "Reconstructed Shower Implied Cos(#theta_{azy})" type = "d"     training="" group="702"/>
+<var def = "reco_shower_implied_dirz[0]" binning = "(6,-1,1)" unit = "Reconstructed Shower Implied Cos(#theta)" type = "d"     training="" group="702"/>
+<var def = "reco_track_dirz[0]" binning = "(6,-1,1)" unit = "Reconstructed Track Cos(#theta)" type = "d"     training="" group="702"/>
+<var def = "cos(atan2(reco_shower_diry[0],reco_shower_dirx[0]))" binning = "(6,-1.0,1.0)" unit = "Reconstructed Shower  #phi_{azy} [rad]" type = "d"     training="" group="702"/>
+<var def = "cos(atan2(reco_shower_implied_diry[0],reco_shower_implied_dirx[0]))" binning = "(6,-1.0,1.0)" unit = "Reconstructed Shower Implied #phi_{azy} [rad]" type = "d"     training="" group="702"/>
+<var def = "cos(atan2(reco_track_diry[0],reco_track_dirx[0]))" binning = "(6,-1.0,1.0)" unit = "Reconstructed Trackr #phi_{azy} [rad]" type = "d"     training="" group="702"/>
+<var def = "acos(reco_track_dirz[0])+acos(reco_shower_implied_dirz[0])" binning = "(6,0,6.28)" unit = "Sum of track and shower #theta [rad]" type="d" training="" group = "7022"/>
 
 <!-- Misc Variables -->
-<var def = "reco_shower_nuscore[0]" binning = "(10, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="" group="703"/>
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(10,0,8.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group="703"/>
-<var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(10,0.25,1.75)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "" group="703"/>
-<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(10,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="0123"/>
-<var def = "(reco_track_trackscore[0])" binning = "(10,0.7,1)" unit = "Track Score" type ="d"  training ="" group="703"/>
-<var def = "(reco_shower_trackscore[0])" binning = "(10,0.0,0.35)" unit = "Shower Score" type ="d"  training ="" group="703"/>
+<var def = "reco_shower_nuscore[0]" binning = "(6, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="" group="703"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(6,0,8.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group="703"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(6,0.25,1.75)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "" group="703"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(6,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="0123"/>
+<var def = "(reco_track_trackscore[0])" binning = "(6,0.7,1)" unit = "Track Score" type ="d"  training ="" group="703"/>
+<var def = "(reco_shower_trackscore[0])" binning = "(6,0.0,0.35)" unit = "Shower Score" type ="d"  training ="" group="703"/>
 
+
+<var def = "(reco_shower_trackscore[0])" binning = "(1,0.0,1)" unit = "Normalization" type ="d"  training ="" group="700" pmin=0 pmax=300/>
 
 <!-- ================= Efficiency  ======================== -->
 
