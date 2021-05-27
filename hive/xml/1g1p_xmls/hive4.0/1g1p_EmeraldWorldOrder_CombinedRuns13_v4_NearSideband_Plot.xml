@@ -951,7 +951,7 @@
 <!-- ================= NearSideband  ======================== -->
 <!-- ================= NearSideband  ======================== -->
 
-<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(6,0.05,0.65)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="701" pmin=0 pmax = 110/>
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(6,0.05,0.65)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="7011" pmin=0 pmax = 110/>
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "701"/>
 <var def = "log10(reco_shower_conversion_distance[0])" binning = "(6,-0.5,2.2)" unit = " Reconstructed Shower Conversion Distance Log10[cm]" type = "d"     training="" group="701"/>
 <var def = "reco_vertex_x" binning = "(6,-1.55,254.8)" unit = "Reconstructed Vertex X [cm]" type="d"    training="" group="701"/>
@@ -963,7 +963,7 @@
 <var def = "1g1pMar2020_v4NCPi0_mva" binning = "(6,0.467404,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "706" />
 <var def = "1g1pMar2020_v4BNB_mva" binning = "(6,0.96273,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "706"/>
 <var def = "1g1pMar2020_v4Nue_mva" binning = "(6,0.8,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "706" />
-<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(6,0.0,0.55)" unit = "SSv BDT Score" type="d"  training= "" group = "7066"/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(6,0.0,0.55)" unit = "SSv BDT Score" type="d"  training= "" group = "706"/>
 
 <!-- SSV training Variables -->
 <var def = "reco_shower_conversion_distance[0]" binning = "(6,0,100)" unit = " Reconstructed Shower Conversion Distance [cm]" type = "d"     training="" group="707"/>
