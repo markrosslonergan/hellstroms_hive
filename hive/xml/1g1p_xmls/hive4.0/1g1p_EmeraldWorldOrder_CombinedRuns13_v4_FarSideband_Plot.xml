@@ -7,8 +7,8 @@
     <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "0.751" />
 </plot_pot>
 
-<!--<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XSec Systematics"/>-->
-<covar dir="." name="frac_covariance" type="frac" plotname="Flux, XSec &amp; Detector Sys"/>
+<covar dir="." name="frac_covariance" type="frac" plotname="Flux &amp; XSec Systematics"/>
+<!--<covar dir="." name="frac_covariance" type="frac" plotname="Flux, XSec &amp; Detector Sys"/>-->
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
@@ -32,7 +32,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_COFredo_tuneCV_v43.5.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "0.7" plot_on_top = "false" >
+<bdtfile filename = "ncpi0_overlay_combined_run13_COFredo_tuneCV_v43.5.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
     <definition>
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
@@ -987,6 +987,9 @@
 <alias key="sgn3" value ="(mctruth_nu_vertex_z-1036.8)/abs(mctruth_nu_vertex_z-1036.8)*(mctruth_nu_vertex_z-0)/abs(mctruth_nu_vertex_z-0)"/> <!--Negative: inside-->
 <alias key="sgn" value ="max(max(#sgn1#,#sgn2#),#sgn3#)*-1"/> <!--Positive: inside-->
 <var def = "#sgn#*TMath::Min(TMath::Min(#yc#,#xc#),#zc#)" binning = "(104,-400,120)" unit = "MCTruth Vertex Distance to active TPC boundary (inside:>0)" type="d" logplot="false" training="" group = "1109"/>
+
+
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(6,0.0,0.55)" unit = "SSv BDT Score" type="d"  training= "" group = "22122"/>
 
 <!-- ================= Efficiency  ======================== -->
 

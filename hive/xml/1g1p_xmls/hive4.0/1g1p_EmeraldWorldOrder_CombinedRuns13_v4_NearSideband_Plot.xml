@@ -8,8 +8,8 @@
 </plot_pot>
 
 <!--<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />-->
-<!--<covar dir="Covar_700series_NearSidebands/" name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
-<covar dir="Covar_700series_NearSidebands/" name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />
+<covar dir="Covar_700series_NearSidebands/" name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
+<!--<covar dir="Covar_700series_NearSidebands/" name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />-->
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
 
@@ -951,7 +951,7 @@
 <!-- ================= NearSideband  ======================== -->
 <!-- ================= NearSideband  ======================== -->
 
-<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(6,0.05,0.65)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="7011" pmin=0 pmax = 110/>
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(6,0.05,0.65)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="701" pmin=0 pmax = 110/>
 <var def = "sqrt(#PM#*#PM#+2.0*#GEO#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,1.0,1.45)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV] (Corrected)" type  = "d"  training = ""  group = "701"/>
 <var def = "log10(reco_shower_conversion_distance[0])" binning = "(6,-0.5,2.2)" unit = " Reconstructed Shower Conversion Distance Log10[cm]" type = "d"     training="" group="701"/>
 <var def = "reco_vertex_x" binning = "(6,-1.55,254.8)" unit = "Reconstructed Vertex X [cm]" type="d"    training="" group="701"/>
@@ -959,11 +959,11 @@
 <var def = "reco_vertex_z" binning = "(6,0.1,1035.9)" unit = "Reconstructed Vertex Z [cm]" type="d"    training="" group="701"/>
 
 <!-- BDT Respones -->
-<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(6,0.99,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "706" />
-<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(6,0.467404,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "706" />
-<var def = "1g1pMar2020_v4BNB_mva" binning = "(6,0.96273,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "706"/>
-<var def = "1g1pMar2020_v4Nue_mva" binning = "(6,0.8,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "706" />
-<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(6,0.0,0.55)" unit = "SSv BDT Score" type="d"  training= "" group = "706"/>
+<var def = "1g1pMar2020_v4COSMIC_mva" binning = "(6,0.99,1)" unit = "Cosmic BDT Score" type="d"  training= "" group = "706" pmin=0 pmax=250/>
+<var def = "1g1pMar2020_v4NCPi0_mva" binning = "(6,0.467404,0.94)" unit = "NC#pi^{0} BDT Score" type="d" training= "" group = "706" pmin=0 pmax=75 />
+<var def = "1g1pMar2020_v4BNB_mva" binning = "(6,0.96273,1)" unit = "BNB Other BDT Score" type="d"  training= "" group = "706" pmin=0 pmax=100/>
+<var def = "1g1pMar2020_v4Nue_mva" binning = "(6,0.8,1)" unit = "#nu_{E} BDT Score" type="d" training= "" group = "706" pmin=0 pmax=200/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(6,0.0,0.55)" unit = "SSv BDT Score" type="d"  training= "" group = "706" pmin=0 pmax=75/>
 
 <!-- SSV training Variables -->
 <var def = "reco_shower_conversion_distance[0]" binning = "(6,0,100)" unit = " Reconstructed Shower Conversion Distance [cm]" type = "d"     training="" group="707"/>
@@ -1008,6 +1008,26 @@
 
 
 <var def = "(reco_shower_trackscore[0])" binning = "(1,0.0,1)" unit = "Normalization" type ="d"  training ="" group="700" pmin=0 pmax=300/>
+
+
+
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(18,0.0,0.55)" unit = "SSv BDT Score 18 " type="d"  training= "" group = "709"/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(12,0.0,0.55)" unit = "SSv BDT Score 12" type="d"  training= "" group = "709"/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(8,0.0,0.55)" unit = "SSv BDT Score 8" type="d"  training= "" group = "709"/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(6,0.0,0.55)" unit = "SSv BDT Score 6" type="d"  training= "" group = "709"/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(3,0.0,0.55)" unit = "SSv BDT Score 3" type="d"  training= "" group = "709"/>
+
+
+<var def = "reco_shower_nuscore[0]" binning = "(1, -1, 2)" unit = "Neutrino Slice Score (NORM)" type = "d"     training="" group="710"/>
+<var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(1,-1,2)" unit = "SSv BDT Score 1 (NORM)" type="d"  training= "" group = "710"/>
+
+
+<var def = "(Min$(isolation_min_dist_trk_unassoc))" binning = "(6,0,12)" unit = "Min Dist from track to Unnass hit log[cm]" type="d"    training="" group="7077"/>
+
+
+<var def = "acos(reco_track_dirz[0])+acos(reco_shower_implied_dirz[0])" binning = "(6,0,6.28)" unit = "Sum of track and shower #theta [rad]" type="d" training="" group = "711"/>
+<var def = "reco_shower_start_dist_to_SCB" binning="(6,7,116)" unit = "Distance from Shower Start to SCB [cm]" type ="d"  training="" group="711"/>
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(3,0.05,0.65)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="711"/>
 
 <!-- ================= Efficiency  ======================== -->
 
