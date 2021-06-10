@@ -15,11 +15,15 @@
 
 <bdtfile filename = "ncdelta_overlay_combined_run13_COFredo_v43.5.spluff.test.deoverlapped.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false">
     <definition>
-        <cut>mctruth_is_delta_radiative==1</cut>
-        <cut>mctruth_cc_or_nc==1</cut>
-        <cut>(m_flash_optfltr_pe_beam &gt;20 &amp;&amp; m_flash_optfltr_pe_veto &lt; 20)</cut> 
-        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
-    </definition>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -113.5 &amp;&amp; mctruth_nu_vertex_y &lt; 113.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 2.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1033.8 </cut>       
+        <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 0</cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==0 </cut>
+     </definition>
 </bdtfile>
 
 <bdtfile filename = "ncpi0_overlay_combined_run13_COFredo_tuneCV_v43.5.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
@@ -112,7 +116,7 @@
 
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
 
-<bdtfile filename = "ncpi0_bdt_training_sample_v33.3.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "ncpi0_bdt_training_sample_v33.3.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -123,7 +127,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
+<bdtfile filename = "ncpi0_overlay_combined_run13_v33.3.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
@@ -158,7 +162,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_bdt_training_sample_v33.3.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
+<bdtfile filename = "ncdelta_bdt_training_sample_v33.3.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
@@ -175,7 +179,7 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "ncdelta_bdt_testing_sample_v33.3.uniq.root" tag = "NCDeltaTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTest" fillstyle = "3333" scale = "1">
+<bdtfile filename = "ncdelta_bdt_testing_sample_v33.3.uniq.root" tag = "NCDeltaTest" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NCDeltaTest" fillstyle = "3333" scale = "1">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
@@ -310,9 +314,9 @@
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
 
-<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="012"/>
+<var def = "reco_shower_nuscore[0]" binning = "(24, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="012" group = "33"/>
 <var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(24,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="012"/>
-<var def = "#GE#" binning = "(12,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="012" group="77"/>
+<var def = "#GEO#" binning = "(100,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="012" group="77"/>
 <var def = "reco_shower_length[0]" binning = "(24,0,100)" unit = "Reconstructed Shower Length [cm]" type = "d"     training="012"/>
 <var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(24,0 ,1000)" unit = "Ratio Reconstrunted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d"  training="012"/>
 <var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(24,0,50)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"     training="012"/>

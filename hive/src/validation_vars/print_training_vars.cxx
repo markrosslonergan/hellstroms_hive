@@ -38,7 +38,7 @@ int main (int argc, char *argv[]){
     // Just some simple argument things
     //===========================================================================================
 
-    std::ifstream file("train_log_v0.txt");
+    std::ifstream file("1g1p_trainlog.txt");
     std::string str;
     std::string file_contents;
 
