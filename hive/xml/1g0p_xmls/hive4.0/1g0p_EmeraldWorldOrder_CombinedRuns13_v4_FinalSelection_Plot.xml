@@ -92,7 +92,7 @@
 </bdtfile>
 
 
-<bdtfile filename = "LiveUnblindingSBNfits/sbnfit_1g0pMar2020_Fake8_stage_4_FakeDataSet8.root" tag = "FinalSelection1g0p" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "Data, FinalSelection On-Beam">
+<bdtfile filename = "LiveUnblindingSBNfits/sbnfit_1g0pMar2020_stage_4_gLEE_signalregion_1g0p_v1_1g0p_v1.root" tag = "FinalSelection1g0p" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "Data, FinalSelection On-Beam">
     <definition><cut>1</cut></definition>
     <data type="OnBeam" plot_name="FinalSelection">
         <tor860_wcut> 6.852e+20  </tor860_wcut>   
