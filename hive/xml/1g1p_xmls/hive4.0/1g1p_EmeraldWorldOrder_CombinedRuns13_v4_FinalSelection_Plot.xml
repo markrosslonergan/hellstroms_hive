@@ -7,11 +7,11 @@
     <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "0.751" />
 </plot_pot>
 
-<!--<covar dir = "." name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />-->
-<covar dir="Covar_700series_NearSidebands/" name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
-<!--<covar dir="Covar_700series_NearSidebands/" name = "frac_covariance" plotname="Flux, XSec &amp; Detector Systematics" />-->
+<covar dir="Covar_407Series_FinalSelection/" name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
+
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
-<filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
+<!-- <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir> -->
+<filedir>/uboone/data/users/markross/June2021_UnblindingMove/</filedir>
 
 <bdtfile filename = "ncdelta_overlay_combined_run13_COFredo_v43.5.spluff.test.deoverlapped.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false">
     <definition>
@@ -89,9 +89,9 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "../../../../../../../uboone/data/users/anavrera/production/gLEE/sbnfit_1g1pMar2020_v4_stage_1_gLEE_nearsideband_v1_allruns_v1.root" tag = "NearSideband" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "Data, NearSideband On-Beam">
+<bdtfile filename = "LiveUnblindingSBNfits/sbnfit_1g1pMar2020_v4_Fake8_stage_6_FakeDataSet8.root" tag = "FinalSelection1g1p" hist_style = "E1p" dirs = "singlephoton/" col = "(1.0,0.0,0.0)" plot_name = "Data, FinalSelection On-Beam">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam" plot_name="NearSideband">
+    <data type="OnBeam" plot_name="FinalSelection">
          <tor860_wcut> 6.852e+20  </tor860_wcut>   
          <E1DCNT_wcut> 160557312.0 </E1DCNT_wcut>   
 
@@ -1040,6 +1040,15 @@
 
 <var def = "(Min$(isolation_min_dist_trk_unassoc))" binning = "(6,0,12)" unit = "Min Dist from track to Unnass hit A[cm]" type="d"    training="" group="7077"/>
 <var def = "(Min$(isolation_min_dist_trk_unassoc))" binning = "(24,0,12)" unit = "Min Dist from track to Unnass hit B[cm]" type="d"    training="" group="7077"/>
+
+
+<!-- ================= Unblinding 407 Series  ======================== -->
+
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="alt(0.0,0.1,0.2,0.3,0.4,0.5,0.6)" unit = "Reconstructed Shower Energy [GeV]" type="d" training="" group="407"/>
+<var def = "sqrt(#PM#*#PM#+2.0*#GE#*0.001*(#PE#-#PP#*(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])))" binning = "(6,1.0,1.4)" unit = "Implied Invariant Mass of Photon-Proton Pair [GeV]" type  = "d"  training = ""  group = "407"/>
+<var def = "reco_shower_conversion_distance[0]" binning = "(6,0,80)" unit = " Reconstructed Shower Conversion Distance [cm]" type = "d"     training="" group="407"/>
+<var def = "reco_shower_implied_dirz[0]" binning = "(6,-1,1)" unit = "Reconstructed Shower Implied Cos(#theta)" type = "d"     training="" group="407"/>
+
 
 
 <!-- ================= Efficiency  ======================== -->

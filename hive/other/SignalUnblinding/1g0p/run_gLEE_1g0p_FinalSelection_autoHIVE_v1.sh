@@ -32,6 +32,6 @@ sed -i "s@TAGTAG@$2@g" "1g0p_signalregion_external_SED_"$2"_v1.xml"
 echo "Copying BDT model files"
 cp /uboone/app/users/markrl/SL7test0/hellstroms_hive/hive/mod/1g_mods/1g0p*mod .
 echo "OK, beginning to run!"
-/uboone/app/users/markrl/SL7test0/hellstroms_hive/hive/build/bin/hive_nearside_version -x /uboone/app/users/markrl/SL7test0/hellstroms_hive/hive/xml/1g0p_xmls/hive4.0/1g0p_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml -s 4 --extapp "1g0p_signalregion_external_SED_"$2"_v1.xml" --cuts "(1g0pMar2020COSMIC_mva >= 0.988209 && 1g0pMar2020BNB_mva >= 0.892728 && 1g0pMar2020NCPi0_mva >= 0.428825 ) &> "gLEE_signalregion_"$2".log"
+/uboone/app/users/markrl/SL7test0/hellstroms_hive/hive/build/bin/hive_nearside_version -x /uboone/app/users/markrl/SL7test0/hellstroms_hive/hive/xml/1g0p_xmls/hive4.0/1g0p_EmeraldWorldOrder_CombinedRuns13_v4_Plot.xml -s 4 --extapp "1g0p_signalregion_external_SED_"$2"_v1.xml" --cuts "(1g0pMar2020COSMIC_mva >= 0.988209 && 1g0pMar2020BNB_mva >= 0.892728 && 1g0pMar2020NCPi0_mva >= 0.428825 )" &> "gLEE_signalregion_"$2".log"
 
 echo "Done"

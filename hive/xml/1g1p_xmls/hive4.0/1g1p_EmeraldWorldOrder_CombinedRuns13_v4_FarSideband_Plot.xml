@@ -92,17 +92,18 @@
 <bdtfile filename = "sbnfit_1g1pMar2020_v4_stage_1_gLEE_farsideband_v2_tagTotal.root" tag = "FarSideband1g1p" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "Data, FarSideband On-Beam Run123">
     <definition><cut>1</cut></definition>
     <data type="OnBeam"  plot_name="Far Sideband">
-         <tor860_wcut> 6.852e+20  </tor860_wcut>   
+             <tor860_wcut> 6.852e+20  </tor860_wcut>   
          <E1DCNT_wcut> 160557312.0 </E1DCNT_wcut>   
      </data>  
  </bdtfile>
+
 
 <bdtfile filename = "bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 1+2+3 Cosmic" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-         <tor860_wcut> 6.852e+20  </tor860_wcut>   
+            <tor860_wcut> 6.852e+20  </tor860_wcut>   
          <E1DCNT_wcut> 160557312.0 </E1DCNT_wcut>   
         <EXT>166300493.0</EXT>  
     </data>

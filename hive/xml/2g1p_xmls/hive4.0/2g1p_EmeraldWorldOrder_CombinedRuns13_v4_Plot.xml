@@ -10,9 +10,9 @@
 
 
 <!-- Directory for all covariance matrices -->
-<covar dir="/" name="frac_covariance" plotname="Flux, XSec, G4 &amp; Detector Sys" />
+<!--<covar dir="/" name="frac_covariance" plotname="Flux, XSec, G4 &amp; Detector Sys" />-->
 <!--<covar dir="/" name="frac_covariance" plotname="Detector Sys Only" />-->
-<!--<covar dir="/" name="frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
+<covar dir="/" name="frac_covariance" plotname="Flux &amp; XSec Systematics" />
 <!--<covar dir="/" name="frac_covariance" plotname="Det LY Only" />-->
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
@@ -468,6 +468,14 @@
 
 
 <var def="((#C0#*reco_shower_implied_dirz[(i_shr[0])]+#C1#*reco_shower_implied_dirz[(i_shr[1])])/(sqrt((#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))) ) " binning = "(1, 0.9, 1)" unit = "Implied cos(#theta_{#pi^{0}}) [MeV]" type = "d"  training=""  group="6767" />
+
+
+<var def = "(reco_track_dirx[0]*reco_shower_implied_dirx[i_shr[0]]+reco_track_diry[0]*reco_shower_implied_diry[i_shr[0]]+reco_track_dirz[0]*reco_shower_implied_dirz[i_shr[0]])" binning="(6,-1,1)" unit = "Angle between track and leading Shower (implied) Cos(#theta)" type="d" training="" group="4343"/>
+<var def = "(reco_track_dirx[0]*reco_shower_implied_dirx[i_shr[1]]+reco_track_diry[0]*reco_shower_implied_diry[i_shr[1]]+reco_track_dirz[0]*reco_shower_implied_dirz[i_shr[1]])" binning="(6,-1,1)" unit = "Angle between track and subleading Shower (implied) Cos(#theta)" type="d" training="" group="4343"/>
+
+<var def = "reco_shower_implied_dirz[i_shr[0]]" binning = "(6,-1,1)" unit = "Reconstructed Leading Shower Implied Cos(#theta)" type = "d"     training="" group="4344"/>
+<var def = "reco_shower_implied_dirz[i_shr[1]]" binning = "(6,-1,1)" unit = "Reconstructed Subleading Shower Implied Cos(#theta)" type = "d"     training="" group="4344"/>
+
 
 <!-- ================= Efficiency  ======================== -->
 
