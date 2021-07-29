@@ -647,22 +647,24 @@ int main (int argc, char *argv[]){
 
         histogram_stack->plot_pot = onbeam_data_file->pot;
 
+        ///Going to modify this a bit, rather than modify place in the stack as that messes up covariances, 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
             if(stack_bdt_files[f]->is_data) continue;
-            if(!plotOnTopMap[stack_bdt_files[f]] ){
-                histogram_stack->addToStack(stack_bdt_files[f]);
+            //if(!plotOnTopMap[stack_bdt_files[f]] ){
+            if(true){
+                histogram_stack->addToStack(stack_bdt_files[f],plotOnTopMap[stack_bdt_files[f]]);
                 std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
             }
         }
 
-        for(size_t f =0; f< stack_bdt_files.size(); ++f){
-            if(stack_bdt_files[f]->is_data) continue;
-            if(plotOnTopMap[stack_bdt_files[f]] ){
-                histogram_stack->addToStack(stack_bdt_files[f],true);
-                std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
-            }
-        }
-
+        //Going to modify this a bit, rather than modify place in the stack as that messes up covariances, 
+        //for(size_t f =0; f< stack_bdt_files.size(); ++f){
+        //    if(stack_bdt_files[f]->is_data) continue;
+        //    if(plotOnTopMap[stack_bdt_files[f]] ){
+        //        histogram_stack->addToStack(stack_bdt_files[f],true);
+        //        std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+        //    }
+        //}
 
         int ip=0;
         std::vector<bool> subv = {false,false,true};
@@ -1353,6 +1355,8 @@ else if(mode_option == "gif"){
         //  std::cout<<" gif_vars.back().additional_cut=" <<  gif_vars.back().additional_cut<<std::endl;
         gif_vars.back().safe_unit += "_GIF_"+std::to_string(i)+"_"+std::to_string(min_C)+"_"+std::to_string(which_bdt); 
     }
+    datamc.setErrorString(systematics_error_string);
+              datamc.setMergeDown(mergeDownVector);
 
     datamc.plotStacks(ftest,  gif_vars , fbdtcuts,bdt_infos);
     return 0;

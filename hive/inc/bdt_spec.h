@@ -69,7 +69,8 @@ class bdt_stack{
 		THStack* getStack(bdt_variable var, int level,double c1, double c2);
 		THStack* getBDTStack(bdt_info, int level,double c1, double c2);
 		THStack* getBDTStack(bdt_info,std::string bin, int level,double c1, double c2);
-		
+		TH1* getSignalOnTop(bdt_variable var);
+
 std::vector<double> getEntryFullVector(bdt_variable var);
 
 

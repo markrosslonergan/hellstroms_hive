@@ -538,9 +538,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
          // }
 
 
-        //1.18 − 1.4
-        if(this->tag.find("NCPi0")!=std::string::npos){
-              //weight_branch = "("+weight_branch+")*(1.18 - 1.4*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
+        //
+        if(this->tag.find("NCPi0")!=std::string::npos){// 0.92 - 0.8
+              //weight_branch = "("+weight_branch+")*(0.92 - 0.8*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
+              
           }
 
         if(this->tag=="NCPi0NotCohRun1RedoCof0"){

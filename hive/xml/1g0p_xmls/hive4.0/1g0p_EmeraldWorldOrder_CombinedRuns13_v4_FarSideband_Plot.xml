@@ -514,6 +514,8 @@
 <var def="#GEO#" binning = "(18,0,500)" unit = "Corrected Calorimetric Shower Energy [MeV]" type="d" training="" group="808" />
 <var def="#GEO#/1000.0" binning = "alt(0.1,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.7)" unit = "Corrected Calorimetric Shower Energy [MeV]" type="d" training="" group="809" logplot="true" pmin=0.1 pmax=10/>
 
+<var def = "reco_shower_dirz[0]" binning = "alt(-1,-0.5,0,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1)" unit = "Reconstructed Shower Cos(#theta)" type = "d"     training="" group="407"/>
+
 <!-- ================= Efficiency  ======================== -->
 
 <efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "0" numer_cut = "sim_shower_pdg==22 &amp;&amp; sim_shower_parent_pdg==111" /> 

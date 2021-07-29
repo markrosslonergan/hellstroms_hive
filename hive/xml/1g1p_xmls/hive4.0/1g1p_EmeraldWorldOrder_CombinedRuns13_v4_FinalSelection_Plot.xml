@@ -13,7 +13,7 @@
 <!-- <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir> -->
 <filedir>/uboone/data/users/markross/June2021_UnblindingMove/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run13_COFredo_v43.5.spluff.test.deoverlapped.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false">
+<bdtfile filename = "ncdelta_overlay_combined_run13_COFredo_v43.5.spluff.test.deoverlapped.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false"> 
     <definition>
         <cut>mctruth_is_delta_radiative==1</cut>
         <cut>mctruth_cc_or_nc==1</cut>
@@ -990,23 +990,23 @@
 <var def = "sss3d_invar_ranked_opang" binning = "(6,-1,1)" unit ="sss3d best invariant mass candidate angle w.r.t primary shower [cos]" type="d"  training="" group="707"/>
 
 <!-- Angular Variables -->
-<var def = "(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])" binning="(6,-1,1)" unit = "Angle between track and Shower (implied) Cos(#theta)" type="d" training="" group="702"/>
-<var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning="(6,-1,1)" unit = "Angle between track and Shower Cos(#theta)" type="d" training="" group="702"/>
-<var def = "cos(atan2(sqrt(pow(reco_shower_implied_diry[0], 2)+ pow(reco_shower_implied_dirx[0],2)),reco_shower_implied_dirz[0]))" binning = "(6,-1,1)" unit = "Reconstructed Shower Implied Cos(#theta_{azy})" type = "d"     training="" group="702"/>
-<var def = "reco_shower_implied_dirz[0]" binning = "(6,-1,1)" unit = "Reconstructed Shower Implied Cos(#theta)" type = "d"     training="" group="702"/>
-<var def = "reco_track_dirz[0]" binning = "(6,-1,1)" unit = "Reconstructed Track Cos(#theta)" type = "d"     training="" group="702"/>
-<var def = "cos(atan2(reco_shower_diry[0],reco_shower_dirx[0]))" binning = "(6,-1.0,1.0)" unit = "Reconstructed Shower  #phi_{azy} [rad]" type = "d"     training="" group="702"/>
-<var def = "cos(atan2(reco_shower_implied_diry[0],reco_shower_implied_dirx[0]))" binning = "(6,-1.0,1.0)" unit = "Reconstructed Shower Implied #phi_{azy} [rad]" type = "d"     training="" group="702"/>
-<var def = "cos(atan2(reco_track_diry[0],reco_track_dirx[0]))" binning = "(6,-1.0,1.0)" unit = "Reconstructed Trackr #phi_{azy} [rad]" type = "d"     training="" group="702"/>
-<var def = "acos(reco_track_dirz[0])+acos(reco_shower_implied_dirz[0])" binning = "(6,0,6.28)" unit = "Sum of track and shower #theta [rad]" type="d" training="" group = "7022"/>
+<var def = "(reco_track_dirx[0]*reco_shower_implied_dirx[0]+reco_track_diry[0]*reco_shower_implied_diry[0]+reco_track_dirz[0]*reco_shower_implied_dirz[0])" binning="(3,-1,1)" unit = "Angle between track and Shower (implied) Cos(#theta)" type="d" training="" group="702"/>
+<var def = "(reco_track_dirx[0]*reco_shower_dirx[0]+reco_track_diry[0]*reco_shower_diry[0]+reco_track_dirz[0]*reco_shower_dirz[0])" binning="(3,-1,1)" unit = "Angle between track and Shower Cos(#theta)" type="d" training="" group="702"/>
+<var def = "cos(atan2(sqrt(pow(reco_shower_implied_diry[0], 2)+ pow(reco_shower_implied_dirx[0],2)),reco_shower_implied_dirz[0]))" binning = "(3,-1,1)" unit = "Reconstructed Shower Implied Cos(#theta_{azy})" type = "d"     training="" group="702"/>
+<var def = "reco_shower_implied_dirz[0]" binning = "(3,-1,1)" unit = "Reconstructed Shower Implied Cos(#theta)" type = "d"     training="" group="702"/>
+<var def = "reco_track_dirz[0]" binning = "(3,-1,1)" unit = "Reconstructed Track Cos(#theta)" type = "d"     training="" group="702"/>
+<var def = "cos(atan2(reco_shower_diry[0],reco_shower_dirx[0]))" binning = "(3,-1.0,1.0)" unit = "Reconstructed Shower  #phi_{azy} [rad]" type = "d"     training="" group="702"/>
+<var def = "cos(atan2(reco_shower_implied_diry[0],reco_shower_implied_dirx[0]))" binning = "(3,-1.0,1.0)" unit = "Reconstructed Shower Implied #phi_{azy} [rad]" type = "d"     training="" group="702"/>
+<var def = "cos(atan2(reco_track_diry[0],reco_track_dirx[0]))" binning = "(3,-1.0,1.0)" unit = "Reconstructed Trackr #phi_{azy} [rad]" type = "d"     training="" group="702"/>
+<var def = "acos(reco_track_dirz[0])+acos(reco_shower_implied_dirz[0])" binning = "(3,0,6.28)" unit = "Sum of track and shower #theta [rad]" type="d" training="" group = "702"/>
 
 <!-- Misc Variables -->
-<var def = "reco_shower_nuscore[0]" binning = "(6, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="" group="703"/>
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(6,0,8.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group="703"/>
-<var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(6,0.25,1.75)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "" group="703"/>
-<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(6,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="0123"/>
-<var def = "(reco_track_trackscore[0])" binning = "(6,0.7,1)" unit = "Track Score" type ="d"  training ="" group="703"/>
-<var def = "(reco_shower_trackscore[0])" binning = "(6,0.0,0.35)" unit = "Shower Score" type ="d"  training ="" group="703"/>
+<var def = "reco_shower_nuscore[0]" binning = "(3, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="" group="702"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(3,0,8.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group="702"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_start_half_plane2[0]/reco_track_mean_trunc_dEdx_end_half_plane2[0], reco_track_mean_trunc_dEdx_start_half_best_plane[0]/reco_track_mean_trunc_dEdx_end_half_best_plane[0] ) " binning = "(3,0.25,1.75)" unit = "Ratio of Truncated Mean Start/End Track dE/dx" type = "d"    training = "" group="702"/>
+<var def = "DeNan(reco_track_mean_trunc_dEdx_plane2[0], reco_track_mean_trunc_dEdx_best_plane[0])" binning =  "(3,2,12)" unit = "Reconstructed Track Truncated Mean dE/dx [MeV/cm]" type = "d"    training="0123"/>
+<var def = "(reco_track_trackscore[0])" binning = "(3,0.7,1)" unit = "Track Score" type ="d"  training ="" group="702"/>
+<var def = "(reco_shower_trackscore[0])" binning = "(3,0.0,0.35)" unit = "Shower Score" type ="d"  training ="" group="702"/>
 
 
 <var def = "(reco_shower_trackscore[0])" binning = "(1,0.0,1)" unit = "Normalization" type ="d"  training ="" group="700" pmin=0 pmax=300/>
@@ -1049,6 +1049,8 @@
 <var def = "reco_shower_conversion_distance[0]" binning = "(6,0,80)" unit = " Reconstructed Shower Conversion Distance [cm]" type = "d"     training="" group="407"/>
 <var def = "reco_shower_implied_dirz[0]" binning = "(6,-1,1)" unit = "Reconstructed Shower Implied Cos(#theta)" type = "d"     training="" group="407"/>
 
+<!-- ================= Unblinding 408 Series  ======================== -->
+<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(10,0,0.6)" unit = "Fine Reconstructed Shower Energy [GeV]" type="d" training="" group="408"/>
 
 
 <!-- ================= Efficiency  ======================== -->

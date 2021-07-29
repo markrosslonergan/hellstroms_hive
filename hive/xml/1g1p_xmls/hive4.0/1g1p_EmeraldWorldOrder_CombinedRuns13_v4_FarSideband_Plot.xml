@@ -992,6 +992,8 @@
 
 <var def = "1g1pMar2020_v4SSVredo2wCC600parent_mva" binning = "(6,0.0,0.55)" unit = "SSv BDT Score" type="d"  training= "" group = "22122"/>
 
+<var def = "reco_shower_implied_dirz[0]" binning = "(12,-1,1)" unit = "Reconstructed Shower Implied Cos(#theta)" type = "d"     training="" group="407"/>
+
 <!-- ================= Efficiency  ======================== -->
 
 <efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "0" numer_cut = "sim_shower_pdg==22 &amp;&amp; sim_shower_parent_pdg==111" /> 

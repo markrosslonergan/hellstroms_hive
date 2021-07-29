@@ -520,6 +520,13 @@
 <var def = "reco_shower_dirz[0]" binning = "alt(-1,-0.5,0, 0.4,0.6,0.8,1.0)" unit = "Reconstructed Shower Cos(#theta)" type = "d"     training="" group="407"/>
 
 
+<!--  ================ 708 Series ====================== -->
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(8,0,8)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group="408"/>
+
+<var def = "reco_shower_dirz[0]" binning = "alt(-1,-0.5,0, 0.4,0.6,0.8,1.0)" unit = "Reconstructed Shower Cos(#theta)" type = "d"     training="" group="409" cut="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)>200&amp;&amp;((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)<250"/>
+
+
+
 <!-- ================= Efficiency  ======================== -->
 
 

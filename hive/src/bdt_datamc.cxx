@@ -367,8 +367,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             //Check Covar for plotting
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
-
-
+            d0->SetBinErrorOption(TH1::kPoisson);
 
             std::vector<double> vec_mc_stats_error;
             std::vector<double> vec_mc;
@@ -664,14 +663,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 lor++;
             }
 
-
-
             //Lets get the things we need
             //stk, tsum, d0, tsum
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
             TH1 *tmp_tsum2 = (TH1*)tsum->Clone(("tmp_tsum2"+std::to_string(s)).c_str());
-
-
 
             // ************* Do a lot of math stuf before scaling **************
 
@@ -690,6 +685,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             double NeventsStack = 0;
             double NErrStack = 0;
             int which_signal = 0;
+            bool b_signal_on_top = false;
             int n=0;
             std::vector<TH1F*> fake_legend_hists;
 
@@ -698,6 +694,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             for(auto &f: mc_stack->stack){
 
                 double Nentries = f->GetEntries(var.additional_cut);
+                if(mc_stack->signal_on_top[n]) Nentries = 0.0; //remove from calculation
                 double Nevents = Nentries*(plot_pot/f->pot)*f->scale_data;
                 double N_MCerr = sqrt(Nentries)*(plot_pot/f->pot)*f->scale_data;
                 ;
@@ -742,17 +739,25 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 //int f->plot_name.size(); 
 
+                if(mc_stack->signal_on_top[n]){
+                    which_signal = n;
+                    b_signal_on_top = true;
+                }
+
                 if(!remove_to_merge[n]){
                     string_events = to_string_prec(Nevents+Nevents_save_for_later,leg_num_digits);
-                    l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
+                    if(b_signal_on_top){
+                        l0->AddEntry(h1,(f->plot_name).c_str(),leg_type.c_str());
+                    }else{
+                        l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
+                    }
+
                     Nevents_save_for_later =0;
                 }else{
                     Nevents_save_for_later += Nevents;
 
                 }
                 //l0->AddEntry(h1,(f->plot_name).c_str(),"f");
-
-                if(mc_stack->signal_on_top[n]) which_signal = n;
                 n++;
             }
             NErrStack = sqrt(NErrStack);
@@ -765,11 +770,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
             if(var.has_covar && m_error_string!="stats"){
-                //                l0->AddEntry(leg_hack,( var.covar_legend_name + " : " + to_string_prec(NeventsStack,leg_num_digits) ).c_str(),"fl");
-                l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
+                if(b_signal_on_top){
+                    l0->AddEntry(leg_hack,"Total Prediction","fl"); // Was le
+                }else{
+                    l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
+                }
             }else{
-                //l0->AddEntry(leg_hack,("#splitline{Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)+ "}{MC Stats Only}").c_str(),"fl"); // Was le
-                l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
+                if(b_signal_on_top){
+                    l0->AddEntry(leg_hack,"Total Prediction","fl"); // Was le
+                }else{
+                    l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
+                }
 
             }
 
@@ -917,6 +928,24 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
             std::cout<<"the max modifier is "<<max_modifier<<" and the min val is "<< min_val<<std::endl;
             std::cout<<" and input pmin "<<var.plot_min<<" and pmax "<<var.plot_max<<std::endl;
+
+
+
+            //This is where we will add the signal on top, but not part of any maths (covar..etc..)
+        
+            TH1D *sig_on_top;
+            if(b_signal_on_top){ 
+                sig_on_top= (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
+                stk->Add(sig_on_top);
+                stk->DrawClone("hist same");
+            }
+
+
+
+
+
+
+
 
             if(var.plot_max==-999){ 
                 stk->SetMaximum(std::max(tsum->GetMaximum(), (stack_mode ? -1 :d0->GetMaximum()))*max_modifier);
@@ -1163,7 +1192,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
 
-
+        
+            //This is for if we want to draw the signal on with "100x" 
             TH1 * scale_signal_hist = (TH1*)mc_stack->vec_hists[which_signal]->Clone(("signal_clone"+stage_names.at(s)).c_str());
             scale_signal_hist->Scale(NdatEvents/scale_signal_hist->Integral());
             scale_signal_hist->SetFillStyle(0);
@@ -1176,17 +1206,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             }
 
-
-
-            /* TText *spec;
-               if (isSpectator) {
-               TText *spec = drawPrelim(0.82, 0.52, "Spectator Variable");
-               spec->Draw("same");
-               }
-               */
-            //cobs->cd(k+1);	
+                        
+            
             cobs->cd();
-
             TPad *pad0bot;
             if(!stack_mode){
                 pad0bot = new TPad(("padbot_"+stage_names.at(s)).c_str(),("padbot_"+stage_names.at(s)).c_str(), 0, 0.05, 1, 0.4);//0.4 was 0.35
@@ -1348,9 +1370,22 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 ratpre->Write(("ratpre_"+tago).c_str());
                 ratunit->Write(("ratunit_"+tago).c_str());
                 gr->Write(("graph_"+tago).c_str());
+
+
+
             }
             tsum->Write(("tsum_"+tago).c_str());
             stk->Write(("tstk_"+tago).c_str());
+
+            TList *stcollists = (TList*)stk->GetHists();
+            for(const auto&& obj: *stcollists){
+                    TColor *color = (TColor*)gROOT->GetColor(((TH1*)obj)->GetFillColor());
+                    color->Write();
+            }
+
+
+
+
             std::string mean = "(Data/Pred: "+to_string_prec(NdatEvents/NeventsStack,2)+" #pm "+to_string_prec(tot_norm_error/NeventsStack,2)+")";//+"/"+to_string_prec(d0->Integral()/tsum->Integral() ,2)+")" ;
             std::string ks = "(KS: "+to_string_prec(KS_tsum_d0,3) + ")     (#chi^{2}/n_{#it{DOF}}: "+to_string_prec(mychi,2) + "/"+to_string_prec(ndof) +")    (#chi^{2} P^{val}: "+to_string_prec(TMath::Prob(mychi,ndof),3)+")";
 
