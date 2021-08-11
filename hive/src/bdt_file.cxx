@@ -457,8 +457,8 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     vec_entry_lists.resize(flow.bdt_vector.size());
 
     if(this->tag.find("external")!=std::string::npos){
-        ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
-        std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
+        //ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
+        //std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
     }
 
 
@@ -540,7 +540,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         //
         if(this->tag.find("NCPi0")!=std::string::npos){// 0.92 - 0.8
-              //weight_branch = "("+weight_branch+")*(0.92 - 0.8*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
+            //  weight_branch = "("+weight_branch+")*(0.92 - 0.8*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
               
           }
 
@@ -1488,7 +1488,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     this->teventweight->AddFriend(this->tvertex);
     this->tslice->AddFriend(this->tvertex);
 
-    this->ttrueeventweight->AddFriend(this->tvertex);
+    //this->ttrueeventweight->AddFriend(this->tvertex);
 
     std::cout<<__LINE__<<" Yarko "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
     std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+this->tag+".root";
@@ -1524,7 +1524,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     TTree * t_sbnfit_slice_tree = (TTree*)this->tslice->CopyTree(sbnfit_cuts.c_str());
 
     std::cout<<"Copying trueeventweight tree (via friends)"<<std::endl;
-    TTree * t_sbnfit_trueeventweight_tree = (TTree*)this->ttrueeventweight->CopyTree(sbnfit_cuts.c_str());
+    //TTree * t_sbnfit_trueeventweight_tree = (TTree*)this->ttrueeventweight->CopyTree(sbnfit_cuts.c_str());
    
     
     

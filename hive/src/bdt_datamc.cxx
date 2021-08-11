@@ -249,8 +249,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
 
-    bool div_bin = false;
-    double div_scale = 0.075;
+    bool div_bin = true;
+    double div_scale = 0.075;//0.050;
     bool scale_signal_overlay = false;
 
     double title_size_ratio=0.10;
@@ -261,7 +261,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
     double title_size_upper=0.06;
     double label_size_upper=0.05;
     double title_offset_upper = 0.6;
-
 
 
     std::vector<std::string> stage_names;
@@ -365,10 +364,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1* d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
             TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
 
+
+            
+            
+
             //Check Covar for plotting
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
             d0->SetBinErrorOption(TH1::kPoisson);
 
+         
             std::vector<double> vec_mc_stats_error;
             std::vector<double> vec_mc;
             for(int c=0; c< tsum->GetNbinsX();c++){
@@ -393,7 +397,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //var.covar_name = "frac_covariance";
             //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
             //var.covar_name = "frac_covariance";
+            //Now here
 
+           
             if(var.has_covar && m_error_string !="stats"){
 
                 TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
@@ -488,6 +494,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             cobs->cd();
 
 
+
             //            std::vector<double> ks_sum = data_file->getVector(var,s);
 
             double rmin = 0.0;
@@ -542,6 +549,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 }
             }
+
 
             tsum->SetMarkerSize(0);
 
@@ -668,6 +676,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 *tmp_tsum = (TH1*)tsum->Clone(("tmp_tsum"+std::to_string(s)).c_str());
             TH1 *tmp_tsum2 = (TH1*)tsum->Clone(("tmp_tsum2"+std::to_string(s)).c_str());
 
+
             // ************* Do a lot of math stuf before scaling **************
 
             TLegend *l0;
@@ -690,6 +699,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::vector<TH1F*> fake_legend_hists;
 
             double Nevents_save_for_later = 0.0;
+
 
             for(auto &f: mc_stack->stack){
 
@@ -771,13 +781,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             if(var.has_covar && m_error_string!="stats"){
                 if(b_signal_on_top){
-                    l0->AddEntry(leg_hack,"Total Prediction","fl"); // Was le
+                    l0->AddEntry(leg_hack,("Total Prediction ("+var.covar_legend_name+")").c_str() ,"fl"); // Was le
                 }else{
                     l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
                 }
             }else{
                 if(b_signal_on_top){
-                    l0->AddEntry(leg_hack,"Total Prediction","fl"); // Was le
+                    l0->AddEntry(leg_hack,("Total Prediction ("+var.covar_legend_name+")").c_str() ,"fl"); // Was le
                 }else{
                     l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
                 }
@@ -789,6 +799,56 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Binned Chi-test standard: "<<var.name<<" "<<tsum->Chi2Test(d0,"CHI2")<<std::endl;
             std::cout<<"Binned Chi-test: "<<var.name<<" "<<tsum->Chi2Test(d0,"UW CHI2")<<std::endl;
             std::cout<<"Binned Chi-test (rev): "<<var.name<<" "<<d0->Chi2Test(tsum,"UW CHI2")<<std::endl;
+
+             d0->SetBinErrorOption(TH1::kPoisson);
+
+            
+
+             //Ok, move to asymetrical TGraph errors for a bit 
+            std::vector<double> vAsyX;  
+            std::vector<double> vAsyY;  
+ 
+            std::vector<double> vAsyErr_right;
+            std::vector<double> vAsyErr_left;  
+            std::vector<double> vAsyErr_up;  
+            std::vector<double> vAsyErr_down;  
+           
+            for(int id =0; id<d0->GetNbinsX()+1;id++){
+                       vAsyErr_left.push_back(d0->GetBinWidth(id)/2.0);
+                       vAsyErr_right.push_back(d0->GetBinWidth(id)/2.0);
+                       
+                       if(!div_bin){
+                           vAsyErr_up.push_back((d0->GetBinErrorUp(id)));
+                           vAsyErr_down.push_back((d0->GetBinErrorLow(id)));
+                           vAsyX.push_back(d0->GetBinCenter(id));
+                           vAsyY.push_back(d0->GetBinContent(id));
+
+                       }else{
+                            double dy = d0->GetBinWidth(id);
+                            double scal = div_scale/dy;
+                            
+                            vAsyX.push_back(d0->GetBinCenter(id));
+                            vAsyY.push_back(d0->GetBinContent(id)*scal);
+                       
+                            vAsyErr_up.push_back(scal*(d0->GetBinErrorUp(id)));
+                            vAsyErr_down.push_back(scal*(d0->GetBinErrorLow(id)));
+                       }
+
+            }
+
+            
+
+            TGraphAsymmErrors * gAsyData = new TGraphAsymmErrors(vAsyX.size(),&vAsyX[0],&vAsyY[0],&vAsyErr_left[0],&vAsyErr_right[0],&vAsyErr_down[0],&vAsyErr_up[0]);
+            gAsyData->SetLineWidth(1);
+            gAsyData->SetMarkerStyle(20);
+            gAsyData->SetMarkerSize(3);
+            gAsyData->SetMarkerColor(kBlack);
+            gAsyData->SetFillColor(kBlack);
+            gAsyData->SetFillStyle(1001);
+
+
+         
+
 
             double tot_norm_error= 0;
             double mychi =0;
@@ -902,7 +962,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             
 
             //*******************8 Drawing all of things below **********************
-            if(div_bin){
+            //Now scale rest, has to happen after the assignment above of errors and of the TAssymGraph for data
+             if(div_bin){
                 TList *stlists = (TList*)stk->GetHists();
                 for(const auto&& obj: *stlists){
                     ((TH1*)obj)->Scale(div_scale,"width");
@@ -914,18 +975,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 d0->Scale(div_scale,"width");
             }
 
-
             //
             stk->Draw("hist");
             stk->SetTitle("");
             //stk->SetTitle(stage_names.at(s).c_str());
-            stk->GetXaxis()->SetTitle(var.unit.c_str());
-            stk->GetYaxis()->SetTitle((!div_bin ? "Events" :  "Events / "+to_string_prec(div_scale,3)).c_str());
+            /*stk->GetXaxis()->SetTitle(var.unit.c_str());
+            stk->GetYaxis()->SetTitle((!div_bin ? "Events" :  "Events / "+to_string_prec(div_scale,3)+" MeV ").c_str());
             if(!stack_mode){
                 stk->GetYaxis()->SetTitleSize(title_size_upper);
                 stk->GetYaxis()->SetLabelSize(label_size_upper);
                 stk->GetYaxis()->SetTitleOffset(title_offset_upper);
-            }
+            }*/
             std::cout<<"the max modifier is "<<max_modifier<<" and the min val is "<< min_val<<std::endl;
             std::cout<<" and input pmin "<<var.plot_min<<" and pmax "<<var.plot_max<<std::endl;
 
@@ -938,10 +998,28 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 sig_on_top= (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
                 stk->Add(sig_on_top);
                 stk->DrawClone("hist same");
+
+                TH1D *lee_on_top = (TH1D*)sig_on_top->Clone(("lee_sig_"+var.safe_name).c_str());
+                lee_on_top->SetFillStyle(0);
+                lee_on_top->SetLineStyle(9);
+                lee_on_top->Scale(3.18);
+                lee_on_top->Add(tsum);
+                lee_on_top->SetLineColor(mc_stack->stack.at(which_signal)->col);
+                lee_on_top->SetLineWidth(3);
+               
+                if(div_scale!=0.075){
+                    lee_on_top->Draw("hist same");
+                    l0->AddEntry(lee_on_top,("MB LEE Model (x3.18 CV #Delta #rightarrow N#gamma)"),"l");		
+                }else{
+                    TH1D *hfake = new TH1D("fk","",1,0,1);
+                    hfake->SetLineColor(kWhite);
+                    hfake->SetLineWidth(0);
+                    l0->AddEntry(hfake," ","l");		
+                }
             }
 
 
-
+ 
 
 
 
@@ -966,22 +1044,34 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 stk->SetMinimum(min_val);
             }
 
+            //TEST
+            //stk->GetYaxis()->SetTitle((!div_bin ? "Events" :  "Events / Bin Width ["+to_string_prec(div_scale,3)+" GeV]").c_str());
+            stk->GetYaxis()->SetTitle((!div_bin ? "Events" :  "Events / "+to_string_prec(div_scale,3)+" GeV").c_str());
+            //stk->GetYaxis()->SetTitle((!div_bin ? "Events" :  "Events / GeV "));
+            if(!stack_mode){
+                stk->GetYaxis()->SetTitleSize(title_size_upper);
+                stk->GetYaxis()->SetLabelSize(label_size_upper);
+                stk->GetYaxis()->SetTitleOffset(title_offset_upper);
+            }
 
 
             tsum->SetLineWidth(3);
             tsum->DrawCopy("Same E2");
-
             
             tmp_tsum2->SetFillStyle(0);
             tmp_tsum2->DrawCopy("same hist");
 
+          
+
             tsum->SetFillStyle(0);//vec_th1s.at(s)->Draw("hist same");
             
-            d0->SetBinErrorOption(TH1::kPoisson);
+//            d0->SetBinErrorOption(TH1::kPoisson);
             if(!stack_mode){
-                              d0->Draw("same E1 E0");
-
+                  //d0->Draw("same E1 E0");
+                  gAsyData->Draw("same E1P");
+                  gAsyData->Draw("same P");
             }
+
 
 
             /////// Print resolution for diphoton mass ////////
@@ -1069,7 +1159,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //l0->AddEntry(d0,("#splitline{"+data_file->plot_name+"}{"+to_string_prec(NdatEvents,2)+"}").c_str(),"lp");	
             TH1 *leg_hack2 = (TH1*)leg_hack->Clone(("leg_tmp2_tsum"+std::to_string(s)).c_str());
             std::string sterrname = "#splitline{MC Intrinsic Stat Error}{}";
-            if(var.has_covar && m_error_string !="stats"){
+            if(var.has_covar && m_error_string !="stats" ){
                 sterrname = "#splitline{"+var.covar_legend_name+"}{}";
             }
             if(!stack_mode){
@@ -1077,15 +1167,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 leg_hack2->SetLineColor(kWhite);
                 leg_hack2->SetLineWidth(0);
                 leg_hack2->SetFillStyle(0);
-                l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
+                if(!b_signal_on_top) l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
             }else{
                 leg_hack2->SetLineColor(kWhite);
                 leg_hack2->SetLineWidth(0);
                 leg_hack2->SetFillStyle(0);
-                l0->AddEntry(leg_hack2," ","l"); // Was le
-                l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
+                if(!b_signal_on_top){
+                    l0->AddEntry(leg_hack2," ","l"); // Was le
+                    l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
+                    l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
+                }
             }
-
 
             double yypos = 0.44;
 
@@ -1329,8 +1421,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     x.push_back(d0->GetBinCenter(b));
                     err_x_left.push_back(d0->GetBinWidth(b)/2.0);
                     err_x_right.push_back(d0->GetBinWidth(b)/2.0);
-                    err_y_high.push_back((d0->GetBinErrorUp(b))/is_zero);
-                    err_y_low.push_back((d0->GetBinErrorLow(b))/is_zero);
+
+
+                    //Mark:Refer to new TFraphAsymmErrors
+                    //err_y_high.push_back((d0->GetBinErrorUp(b))/is_zero);
+                    //err_y_low.push_back((d0->GetBinErrorLow(b))/is_zero);
+                    err_y_high.push_back((gAsyData->GetErrorYhigh(b))/is_zero);
+                    err_y_low.push_back((gAsyData->GetErrorYlow(b))/is_zero);
 
                 }
 
