@@ -249,8 +249,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
 
-    bool div_bin = true;
-    double div_scale = 0.075;//0.050;
+    bool div_bin = false;
+    double div_scale = 0.05;//0.050;
     bool scale_signal_overlay = false;
 
     double title_size_ratio=0.10;

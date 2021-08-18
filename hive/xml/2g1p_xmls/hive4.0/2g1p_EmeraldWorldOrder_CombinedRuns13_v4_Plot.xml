@@ -94,15 +94,15 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "filter_2g1p_data_combined_run123_v33.3.uniq.root" tag = "Data2g1pFiltered" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "Data, Run 1+2+3 On-Beam" >
+<bdtfile filename = "filter_2g1p_data_combined_run123_v33.3.uniq.root" tag = "Data2g1pFiltered" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "BNB Data, Runs 1-3. Total:" >
     <definition><cut>1</cut></definition>
-    <data type="OnBeam" plot_name="Filtered" >
+    <data type="OnBeam" plot_name="" >
         <tor860_wcut> 5.845E+20 </tor860_wcut>   
         <E1DCNT_wcut> 136203371 </E1DCNT_wcut>   
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Data, Run 1+2+3 Cosmic" fillstyle = "3333" scale = "1.0">
+<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data, Runs 1-3" fillstyle = "3333" scale = "1.0">
     <definition>
         <cut> 1 </cut>
     </definition>
