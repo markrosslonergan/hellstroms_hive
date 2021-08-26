@@ -250,7 +250,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
     std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
 
     bool div_bin = false;
-    double div_scale = 0.05;//0.050;
+    double div_scale = 0.075;//0.050;
     bool scale_signal_overlay = false;
 
     double title_size_ratio=0.10;
@@ -1276,11 +1276,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
 
             }
+
+            //Preliminarly or not?
             pre->SetTextSize(stack_mode ? 0.04 : 0.06);
-            pre->Draw();
+            //pre->Draw();
             if(stack_mode){
                 pre2->SetTextSize(stack_mode ? 0.04 : 0.06);;
-                pre2->Draw();
+            //    pre2->Draw();
             }
 
 
