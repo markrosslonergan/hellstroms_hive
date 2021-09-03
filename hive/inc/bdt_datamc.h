@@ -56,12 +56,17 @@ class bdt_datamc{
         bool is_bdt_variable;
         bool do_subtraction; 
         int plot_stage;
+        bool scale_signal_overlay;
+        bool plot_lee_on_top;
+        bool div_bin;
+        double div_scale;
+        
         std::vector<bool> subtraction_vec;
         std::vector<bool> merge_down_vec;
 
-        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string="stat";additional_pdf_tag="";};
-        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1;stack_mode=false; m_error_string="stat"; additional_pdf_tag="";};
-        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string="stat"; additional_pdf_tag = "";};
+        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string="stat";additional_pdf_tag="";  scale_signal_overlay =false; plot_lee_on_top=true; div_bin=false;};
+        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1;stack_mode=false; m_error_string="stat"; additional_pdf_tag="";  scale_signal_overlay =false;plot_lee_on_top = true; div_bin=false;};
+        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string="stat"; additional_pdf_tag = ""; scale_signal_overlay =false; div_bin = false; };
 
         int setErrorString(std::string in){m_error_string = in; return 0;}
 
@@ -80,6 +85,23 @@ class bdt_datamc{
             do_subtraction=true;
             return 0;
         }
+
+        int setScaledSignal(){
+            scale_signal_overlay = true;
+            return 0;
+        }
+
+        int setDivBin(double val){
+            div_bin = true;
+            div_scale = val;
+            return 0;
+        }
+        int setLEEonTop(){
+            plot_lee_on_top = true;
+            return 0;
+        }
+
+
         std::vector<bdt_variable> GetSelectVars(std::string vector, std::vector<bdt_variable> vars);
         int plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts);
         int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);

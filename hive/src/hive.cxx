@@ -64,6 +64,10 @@ int main (int argc, char *argv[]){
 
     double what_pot = 6.91e20;
 
+    bool div_bin  =false;
+    double div_scale = 0.075;
+    bool signal_scale_on_top = false;
+    bool lee_on_top= false;
 
     int which_file = -1;
     int which_bdt = -1;
@@ -106,6 +110,9 @@ int main (int argc, char *argv[]){
         {"extapp",      required_argument,  0,  'w'},
         {"systematics",	required_argument,	0, 'y'},
         {"vector",      required_argument,  0, 'v'},
+        {"divbin",      required_argument,  0, 'e'},
+        {"lee",      no_argument,  0, 'z'},
+        {"scale",      no_argument,  0, 'k'},
         {"plottrainonly",      no_argument,  0, 'a'},
         {0,			    no_argument, 		0,  0},
     };
@@ -113,7 +120,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:o:u:d:s:f:q:y:m:t:p:b:i:n:g:v:c:arjh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:o:u:d:s:f:q:y:m:t:p:b:i:n:g:v:c:e:azkrjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -130,12 +137,22 @@ int main (int argc, char *argv[]){
             case 'n':
                 number = strtof(optarg,NULL);
                 break;
+            case 'e':
+                div_bin = true;
+                div_scale = strtof(optarg,NULL);
+                break;
             case 'c':
                 external_cuts = optarg;
                 //std::cout<<"Load Time Additional Cut : "<<external_cuts<<std::endl;
                 break;
             case 'j':
                 is_combined = true;
+                break;
+            case 'k':
+                lee_on_top = true;
+                break;
+            case 'z':
+                signal_scale_on_top = true;
                 break;
             case 'x':
                 xml = optarg;
@@ -218,6 +235,9 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag [Superseeded by XML defined tag]"<<std::endl;
                 std::cout<<"\t-d\t--dir\t\tDirectory for file inputs [Superseeded by XML]"<<std::endl;
                 std::cout<<"\t-v\t--vector\t\tA list of variable numbers, currently only works for var2D. Should be comma separated and enclosed in quotes like \"1,2,3\" "<<std::endl;
+                std::cout<<"\t--divbin\t\tDivide by binwidth, 1 argument of the div scale "<<std::endl;
+                std::cout<<"\t--lee\t\tPlots a x3.18 LEE on top"<<std::endl;
+                std::cout<<"\t--scale\t\tScales the signal up to data-sized "<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
                 return 0;
         }
@@ -674,6 +694,9 @@ int main (int argc, char *argv[]){
                 datamc.setPlotStage(which_stage);               
                 datamc.setMergeDown(mergeDownVector);
                 datamc.setErrorString(systematics_error_string);
+                if(signal_scale_on_top)datamc.setScaledSignal();
+                if(lee_on_top)datamc.setLEEonTop();
+                if(div_bin)datamc.setDivBin(div_scale);
                 if(plot_train_only) datamc.SetSpectator();
 
                 //datamc.printPassingDataEvents("tmp", 4, fbdtcuts);
@@ -714,6 +737,12 @@ int main (int argc, char *argv[]){
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setMergeDown(mergeDownVector);
                 real_datamc.setErrorString(systematics_error_string);
+                
+                if(signal_scale_on_top)real_datamc.setScaledSignal();
+                if(lee_on_top)real_datamc.setLEEonTop();
+                if(div_bin)real_datamc.setDivBin(div_scale);
+
+
                 if(plot_train_only) real_datamc.SetSpectator();
 
                 if(which_bdt==-1){

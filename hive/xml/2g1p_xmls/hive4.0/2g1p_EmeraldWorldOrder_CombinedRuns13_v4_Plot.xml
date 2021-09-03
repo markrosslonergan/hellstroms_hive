@@ -10,7 +10,11 @@
 
 
 <!-- Directory for all covariance matrices -->
-<covar dir="Covar_Manual_FinalSelection" name="frac_covariance" plotname="Flux, XSec, G4 &amp; Det Sys" />
+<!--<covar dir="Covar_Manual_FinalSelection" name="frac_covariance" plotname="(Flux, XSec, G4 &amp; Det Sys)" />-->
+<!--<covar dir="Covar_Manual_FinalSelection" name="frac_covariance" plotname=" " />-->
+
+<covar dir="." name="frac_covariance" plotname=" " />
+
 <!--<covar dir="/" name="frac_covariance" plotname="Detector Sys Only" />-->
 <!--<covar dir="/" name="frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
 <!--<covar dir="/" name="frac_covariance" plotname="Det LY Only" />-->
@@ -18,7 +22,7 @@
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run13_COFredo_v43.5.spluff.test.deoverlapped.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "true" scale="1.0">
+<bdtfile filename = "ncdelta_overlay_combined_run13_COFredo_v43.5.spluff.test.deoverlapped.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta#rightarrow N#gamma GENIE CV" signal = "true" plot_on_top = "true" scale="1.0">
     <definition>
         <cut>mctruth_is_delta_radiative==1</cut>
         <cut>mctruth_cc_or_nc==1</cut>
@@ -477,6 +481,9 @@
 <var def = "reco_shower_implied_dirz[i_shr[1]]" binning = "(6,-1,1)" unit = "Reconstructed Subleading Shower Implied Cos(#theta)" type = "d"     training="" group="4344"/>
 
 <var def="sqrt((#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))/1000" binning = "alt(0,0.15,0.225,0.3,0.375,0.45,0.6,0.9)" unit = "Reconstructed #pi^{0} Momentum [GeV]" type = "d"  training="" group="407"/>
+
+<var def="sqrt(2.0*#C0#*#C1#*(1.0-(#OPANG1#)))/1000" binning = "(34, 0, 0.4)" unit = "Reconstructed #pi^{0} Invariant Mass [GeV]" type = "d"  training="" group="408"/>
+
 
 
 <!-- ================= Efficiency  ======================== -->

@@ -249,10 +249,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     std::cout<<"DATAMC PLOT POT "<<plot_pot<<std::endl;
 
-    bool div_bin = false;
-    double div_scale = 0.075;//0.050;
-    bool scale_signal_overlay = false;
-
     double title_size_ratio=0.10;
     double label_size_ratio=0.085;
     double title_offset_ratioY = 0.3 ;
@@ -682,7 +678,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TLegend *l0;
             if(OTPC==true){
                 // std::cout<<"flag 4"<<std::endl;
-
                 l0 = new TLegend(0.11,0.5,0.89,0.89);}
             else{
                 l0 = new TLegend(0.11,0.55,0.89,0.89);
@@ -690,6 +685,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             l0->SetFillStyle(0);
             l0->SetLineWidth(0);
             l0->SetNColumns(2);
+            l0->SetTextFont(43);//63 for bold
+            l0->SetTextSize(stack_mode ? 60 : 45);
 
             double NeventsStack = 0;
             double NErrStack = 0;
@@ -781,13 +778,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             if(var.has_covar && m_error_string!="stats"){
                 if(b_signal_on_top){
-                    l0->AddEntry(leg_hack,("Total Prediction ("+var.covar_legend_name+")").c_str() ,"fl"); // Was le
+                    l0->AddEntry(leg_hack,("Total Prediction "+var.covar_legend_name).c_str() ,"fl"); // Was le
                 }else{
                     l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
                 }
             }else{
                 if(b_signal_on_top){
-                    l0->AddEntry(leg_hack,("Total Prediction ("+var.covar_legend_name+")").c_str() ,"fl"); // Was le
+                    l0->AddEntry(leg_hack,("Total Prediction "+var.covar_legend_name).c_str() ,"fl"); // Was le
                 }else{
                     l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
                 }
@@ -1007,10 +1004,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 lee_on_top->SetLineColor(mc_stack->stack.at(which_signal)->col);
                 lee_on_top->SetLineWidth(3);
                
-                if(div_scale!=0.075){
+                if(div_scale!=0.075 && !plot_lee_on_top){
                     lee_on_top->Draw("hist same");
                     l0->AddEntry(lee_on_top,("MB LEE Model (x3.18 CV #Delta #rightarrow N#gamma)"),"l");		
-                }else{
+                }else if(!scale_signal_overlay){
                     TH1D *hfake = new TH1D("fk","",1,0,1);
                     hfake->SetLineColor(kWhite);
                     hfake->SetLineWidth(0);
@@ -1052,6 +1049,21 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 stk->GetYaxis()->SetTitleSize(title_size_upper);
                 stk->GetYaxis()->SetLabelSize(label_size_upper);
                 stk->GetYaxis()->SetTitleOffset(title_offset_upper);
+            }
+
+            //This is for if we want to draw the signal on with "100x" 
+            TH1 * scale_signal_hist = sig_on_top= (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
+            //(TH1*)mc_stack->vec_hists[which_signal]->Clone(("signal_clone"+stage_names.at(s)).c_str());
+            scale_signal_hist->Scale(NdatEvents/scale_signal_hist->Integral());
+            scale_signal_hist->SetFillStyle(0);
+            if(scale_signal_overlay){
+                scale_signal_hist->SetFillStyle(0);
+                //scale_signal_hist->DrawCopy("hist same");
+                scale_signal_hist->SetLineStyle(2);
+                scale_signal_hist->SetLineColor(mc_stack->stack.at(which_signal)->col);
+                scale_signal_hist->SetLineWidth(3);
+                scale_signal_hist->Draw("same hist");
+                l0->AddEntry(scale_signal_hist,("NC #Delta#rightarrowN#gamma (Scaled to Data)"),"l");		
             }
 
 
@@ -1179,13 +1191,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }
             }
 
-            double yypos = 0.44;
+            double yypos = 0.38;
 
             l0->Draw();
             l0->SetLineWidth(0);
             l0->SetLineColor(0);
             //l0->SetFillStyle(0); //comment in for transparent
-            l0->SetTextSize(stack_mode ? 0.03 : 0.04);
+            //l0->SetTextSize(stack_mode ? 0.03 : 0.04);
 
             // Added by A. Mogan 9/30/20
             std::string topo_draw = data_file->topo_name;
@@ -1287,20 +1299,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
 
         
-            //This is for if we want to draw the signal on with "100x" 
-            TH1 * scale_signal_hist = (TH1*)mc_stack->vec_hists[which_signal]->Clone(("signal_clone"+stage_names.at(s)).c_str());
-            scale_signal_hist->Scale(NdatEvents/scale_signal_hist->Integral());
-            scale_signal_hist->SetFillStyle(0);
-            if(scale_signal_overlay){
-                scale_signal_hist->SetLineWidth(3);
-                scale_signal_hist->DrawCopy("hist same");
-                scale_signal_hist->SetLineColor(scale_signal_hist->GetFillColor());
-                scale_signal_hist->SetLineWidth(2);
-                scale_signal_hist->Draw("hist same");
-
-            }
-
-                        
+                       
             
             cobs->cd();
             TPad *pad0bot;
@@ -1523,8 +1522,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             t->SetNDC();
             t->SetTextColor(kRed-7);
             t->SetTextSize(0.09);
-            if(!stack_mode){
-                t->Draw("same");
+            if(!stack_mode ){
+               t->Draw("same");
             }
 
             //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
