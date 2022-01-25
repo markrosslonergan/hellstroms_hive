@@ -256,7 +256,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     double title_size_upper=0.06;
     double label_size_upper=0.05;
-    double title_offset_upper = 0.6;
+    double title_offset_upper = 0.7;
 
 
     std::vector<std::string> stage_names;
@@ -346,6 +346,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::cout<<"Starting on variable "<<var.name<<std::endl;
 
             TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(), (stack_mode? 2200 : 1801),1400); //1600
+            //TCanvas *cobs = new TCanvas(("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(),("can_"+var.safe_name+"_stage_"+std::to_string(s)).c_str(), (stack_mode? 2200 : 1801),1400); //1600
             cobs->cd();
 
             if(false&&do_subtraction){
@@ -565,6 +566,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 pad0top= new TPad(("pad0top_"+stage_names.at(s)).c_str(), ("pad0top_"+stage_names.at(s)).c_str(), 0, 0, 1.0, 1.0);//0.4 was 0.35
                 pad0top->Draw();
                 pad0top->cd();
+                std::cout<<"jarp"<<std::endl; 
             }
 
             //      double rmin = 0.5;
@@ -686,7 +688,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             l0->SetLineWidth(0);
             l0->SetNColumns(2);
             l0->SetTextFont(43);//63 for bold
-            l0->SetTextSize(stack_mode ? 60 : 45);
+            l0->SetTextSize(stack_mode ? 53 : 45);
 
             double NeventsStack = 0;
             double NErrStack = 0;
@@ -778,13 +780,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             if(var.has_covar && m_error_string!="stats"){
                 if(b_signal_on_top){
-                    l0->AddEntry(leg_hack,("Total Prediction "+var.covar_legend_name).c_str() ,"fl"); // Was le
+                    l0->AddEntry(leg_hack,("Total Background and Error "+var.covar_legend_name).c_str() ,"fl"); // Was le
                 }else{
                     l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
                 }
             }else{
                 if(b_signal_on_top){
-                    l0->AddEntry(leg_hack,("Total Prediction "+var.covar_legend_name).c_str() ,"fl"); // Was le
+                    l0->AddEntry(leg_hack,("Total Background and Error "+var.covar_legend_name).c_str() ,"fl"); // Was le
                 }else{
                     l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
                 }
@@ -985,12 +987,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }*/
             std::cout<<"the max modifier is "<<max_modifier<<" and the min val is "<< min_val<<std::endl;
             std::cout<<" and input pmin "<<var.plot_min<<" and pmax "<<var.plot_max<<std::endl;
-
-
+            std::cout<<" and do we have a signal on top to plot? "<<b_signal_on_top<<std::endl;
+            std::cout<<" and do we want LEE? "<<plot_lee_on_top<<std::endl;
 
             //This is where we will add the signal on top, but not part of any maths (covar..etc..)
         
             TH1D *sig_on_top;
+             
             if(b_signal_on_top){ 
                 sig_on_top= (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
                 stk->Add(sig_on_top);
@@ -1004,9 +1007,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 lee_on_top->SetLineColor(mc_stack->stack.at(which_signal)->col);
                 lee_on_top->SetLineWidth(3);
                
-                if(div_scale!=0.075 && !plot_lee_on_top){
+                if(plot_lee_on_top){
                     lee_on_top->Draw("hist same");
-                    l0->AddEntry(lee_on_top,("MB LEE Model (x3.18 CV #Delta #rightarrow N#gamma)"),"l");		
+                    l0->AddEntry(lee_on_top,("LEE Model (x_{MB} =3.18)"),"l");		
                 }else if(!scale_signal_overlay){
                     TH1D *hfake = new TH1D("fk","",1,0,1);
                     hfake->SetLineColor(kWhite);
@@ -1042,8 +1045,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             //TEST
+            stk->GetXaxis()->SetTitle(var.unit.c_str());
             //stk->GetYaxis()->SetTitle((!div_bin ? "Events" :  "Events / Bin Width ["+to_string_prec(div_scale,3)+" GeV]").c_str());
-            stk->GetYaxis()->SetTitle((!div_bin ? "Events" :  "Events / "+to_string_prec(div_scale,3)+" GeV").c_str());
+            stk->GetYaxis()->SetTitle((!div_bin ? "Events" :  "Events / "+to_string_prec(div_scale,3)+" GeV/c").c_str());
             //stk->GetYaxis()->SetTitle((!div_bin ? "Events" :  "Events / GeV "));
             if(!stack_mode){
                 stk->GetYaxis()->SetTitleSize(title_size_upper);
@@ -1052,18 +1056,21 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             //This is for if we want to draw the signal on with "100x" 
-            TH1 * scale_signal_hist = sig_on_top= (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
-            //(TH1*)mc_stack->vec_hists[which_signal]->Clone(("signal_clone"+stage_names.at(s)).c_str());
-            scale_signal_hist->Scale(NdatEvents/scale_signal_hist->Integral());
-            scale_signal_hist->SetFillStyle(0);
+            TH1 * scale_signal_hist;
+            
             if(scale_signal_overlay){
+                 scale_signal_hist = sig_on_top= (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
+                //(TH1*)mc_stack->vec_hists[which_signal]->Clone(("signal_clone"+stage_names.at(s)).c_str());
+                double scal_val = NdatEvents/scale_signal_hist->Integral();
+                scale_signal_hist->Scale(scal_val);
+                //scale_signal_hist->Scale(100.0);
                 scale_signal_hist->SetFillStyle(0);
                 //scale_signal_hist->DrawCopy("hist same");
-                scale_signal_hist->SetLineStyle(2);
+                scale_signal_hist->SetLineStyle(1);
                 scale_signal_hist->SetLineColor(mc_stack->stack.at(which_signal)->col);
-                scale_signal_hist->SetLineWidth(3);
+                scale_signal_hist->SetLineWidth(4);
                 scale_signal_hist->Draw("same hist");
-                l0->AddEntry(scale_signal_hist,("NC #Delta#rightarrowN#gamma (Scaled to Data)"),"l");		
+                l0->AddEntry(scale_signal_hist,("NC #Delta#rightarrowN#gamma (x"+to_string_prec(scal_val,0)+")").c_str(),"l");		
             }
 
 
@@ -1192,6 +1199,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
             double yypos = 0.38;
+            double xxpos = 0.5;//0.5
+            if(stack_mode)xxpos=0.55;
 
             l0->Draw();
             l0->SetLineWidth(0);
@@ -1220,8 +1229,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //double pot_unit = stack_mode ? 1e20 : 1e19;
             //std::string pot_unit_s = stack_mode ? "e20" : "e19";
             double pot_unit = 1e20;
-            std::string pot_unit_s = "E20";
-            std::string pot_draw = data_file->data_descriptor+" "+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
+            std::string pot_unit_s = "x10^{20}";
+            std::string pot_draw = data_file->data_descriptor+" ("+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT)";
+            if(stack_mode) pot_draw = "Simulation ("+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT)";
+;
             pottex.SetNDC();
 
             if (OTPC == true){
@@ -1231,17 +1242,25 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //pottex.DrawLatex(.635,.48, pot_draw.c_str());
             } else{
                 //pottex.DrawLatex(.55,.60, pot_draw.c_str());
-                pottex.DrawLatex(.50,yypos+0.1, pot_draw.c_str());
+                pottex.DrawLatex(xxpos,yypos+0.1, pot_draw.c_str());
             }
 
 
+            TLatex uboone_tex;
+            uboone_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
+            uboone_tex.SetTextAlign(13);  //align at top
+            uboone_tex.SetNDC();
+            //uboone_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
+            //uboone_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
+            uboone_tex.DrawLatex(xxpos,yypos+0.16,("MicroBooNE"));
 
             TLatex descriptor_tex;
             descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
             descriptor_tex.SetTextAlign(13);  //align at top
             descriptor_tex.SetNDC();
             //descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
-            descriptor_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
+            //descriptor_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
+            descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name+" Selection" ).c_str());
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
@@ -1281,8 +1300,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 }else{
 
                     //pre = drawPrelim(0.55,stack_mode? 0.525 :0.5,prestring.c_str());
-                    pre = drawPrelim(0.50,stack_mode? yypos+0.025 : yypos,prestring.c_str());
-                    if(stack_mode)pre2 = drawPrelim(0.5 ,yypos-0.02,"Preliminary");//0.6
+                    pre = drawPrelim(xxpos,stack_mode? yypos+0.025 : yypos,prestring.c_str());
+                    if(stack_mode)pre2 = drawPrelim(xxpos ,yypos-0.02,"Preliminary");//0.6
                 }
 
                 //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton In Progress [Training Variable]");
@@ -1349,6 +1368,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             }
 
 
+            /* DEPRECIATED
             TH1 * signal_hist = mc_stack->vec_hists[which_signal];
             TH1* rat_signal = (TH1*)signal_hist->Clone(("ratio_signal_"+stage_names.at(s)).c_str());
             //            rat_signal->Add(tsum);
@@ -1359,7 +1379,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 if(val !=val) val = 0;
                 rat_signal->SetBinContent(b,val);
             }
-
+            */
 
             //  TH1* ratunit_after = (TH1*)tsum_after->Clone(("ratio_unitafter_"+stage_names.at(s)).c_str());
 
@@ -1376,9 +1396,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             if(!stack_mode)          ratunit->Draw("E2");	
 
-            rat_signal->SetFillStyle(0);
-            rat_signal->SetLineColor(mc_stack->stack[which_signal]->col);
-            rat_signal->SetLineWidth(2);
+            //rat_signal->SetFillStyle(0);
+            //rat_signal->SetLineColor(mc_stack->stack[which_signal]->col);
+            //rat_signal->SetLineWidth(2);
             if(!stack_mode) ratunit->DrawCopy("E2 same");	
 
             TLine *line = new TLine(ratunit->GetXaxis()->GetXmin(),1.0,ratunit->GetXaxis()->GetXmax(),1.0 );
@@ -1522,7 +1542,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             t->SetNDC();
             t->SetTextColor(kRed-7);
             t->SetTextSize(0.09);
-            if(!stack_mode ){
+            if(!stack_mode && false){
                t->Draw("same");
             }
 
@@ -1551,14 +1571,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             delete ratunit;
             delete ratpre;
             delete rat_denom;			
-            if(!stack_mode)delete pad0top;
+            //if(!stack_mode)delete pad0top;
             delete tmp_tsum;
             delete tmp_tsum2;
             delete l0;
             delete pre;
             //  delete ratunit_after;
-            delete signal_hist;
-            delete rat_signal;
+            //delete signal_hist;//depreciated
+            //delete rat_signal;//depreciated
             delete gr;
             delete t;
             delete line;

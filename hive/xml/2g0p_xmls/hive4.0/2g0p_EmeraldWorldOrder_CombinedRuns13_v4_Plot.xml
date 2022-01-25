@@ -9,14 +9,14 @@
 </plot_pot>
 
 <!--<covar dir="Covar_Manual_FinalSelection" name="frac_covariance" plotname="Flux, XSec, G4 &amp; Detector Sys" />-->
-<!--<covar dir="Covar_Manual_FinalSelection" name="frac_covariance" plotname=" " />-->
-<covar dir="." name="frac_covariance" plotname=" " />
+<covar dir="Covar_Manual_FinalSelection" name="frac_covariance" plotname=" " />
+<!--<covar dir="." name="frac_covariance" plotname=" " />-->
 <!--<covar dir="." name="frac_covariance" plotname="Flux &amp; XSec Systematics" />-->
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run13_COFredo_v43.5.spluff.test.deoverlapped.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta#rightarrow N#gamma GENIE CV" signal = "true" plot_on_top = "true" scale="1.0">
+<bdtfile filename = "ncdelta_overlay_combined_run13_COFredo_v43.5.spluff.test.deoverlapped.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta#rightarrow N#gamma" signal = "true" plot_on_top = "true" scale="1.0">
     <definition>
         <cut>mctruth_is_delta_radiative==1</cut>
         <cut>mctruth_cc_or_nc==1</cut>
@@ -92,15 +92,15 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "filter_2g0p_data_combined_run123_v33.3.uniq.root" tag = "Data2g0pFiltered" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "BNB Data, Runs 1-3. Total:">
+<bdtfile filename = "filter_2g0p_data_combined_run123_v33.3.uniq.root" tag = "Data2g0pFiltered" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "BNB Data, Total:">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam" plot_name="MicroBooNE " >
+    <data type="OnBeam" plot_name="Runs 1-3" >
         <tor860_wcut> 5.893E+20 </tor860_wcut>   
         <E1DCNT_wcut> 137557244 </E1DCNT_wcut>   
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data, Runs 1-3" fillstyle = "3333" scale = "1.0">
+<bdtfile filename = "bnbext_combined_run123_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1.0">
     <definition>
         <cut> 1 </cut>
     </definition>
@@ -338,7 +338,7 @@
 
 <var def = "reco_shower_nuscore[i_shr[0]]" binning = "(1, 0, 1)" unit = "Reconstructed Leading Shower Associated Slice Neutrino Score 1BIN" type = "d"   training="" group="4404"/>
 
-<var def="sqrt((#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])])*(#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])]) + (#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])])*(#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])]) + (#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])])*(#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])]))/1000" binning = "alt(0, 0.15, 0.225, 0.3, 0.375, 0.45,  0.6,  0.9)" unit = "Reconstructed #pi^{0} Momentum [GeV]" type = "d"  training="" group="407"/>
+<var def="sqrt((#C1#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])])*(#C0#*reco_shower_dirx[i_shr[0]] + #C1#*reco_shower_dirx[(i_shr[1])]) + (#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])])*(#C0#*reco_shower_diry[i_shr[0]] + #C1#*reco_shower_diry[(i_shr[1])]) + (#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])])*(#C0#*reco_shower_dirz[i_shr[0]] + #C1#*reco_shower_dirz[(i_shr[1])]))/1000" binning = "alt(0, 0.15, 0.225, 0.3, 0.375, 0.45,  0.6,  0.9)" unit = "Reconstructed #pi^{0} Momentum [GeV/c]" type = "d"  training="" group="407"/>
 
 <var def="sqrt(2.0*#C0#*#C1#*(1.0-(#OPANG1#)))/1000" binning = "(34, 0, 0.4)" unit = "Reconstructed #pi^{0} Invariant Mass [GeV]" type = "d"  training="" group="408"/> 
 

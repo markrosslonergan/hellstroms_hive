@@ -111,8 +111,8 @@ int main (int argc, char *argv[]){
         {"systematics",	required_argument,	0, 'y'},
         {"vector",      required_argument,  0, 'v'},
         {"divbin",      required_argument,  0, 'e'},
-        {"lee",      no_argument,  0, 'z'},
-        {"scale",      no_argument,  0, 'k'},
+        {"lee",      no_argument,  0, 'k'},
+        {"scale",      no_argument,  0, 'z'},
         {"plottrainonly",      no_argument,  0, 'a'},
         {0,			    no_argument, 		0,  0},
     };
@@ -584,21 +584,24 @@ int main (int argc, char *argv[]){
         histogram_stack->plot_pot =  what_pot;;//2.06988e20  ;//12.25e20;//.115e20; //12.25e20;//10.115e20;//4.9e19;
         std::cout<<"flag1"<<std::endl;
 
+        ///Going to modify this a bit, rather than modify place in the stack as that messes up covariances, 
         for(size_t f =0; f< stack_bdt_files.size(); ++f){
             if(stack_bdt_files[f]->is_data) continue;
-            if(!plotOnTopMap[stack_bdt_files[f]] ){
-                histogram_stack->addToStack(stack_bdt_files[f]);
+            //if(!plotOnTopMap[stack_bdt_files[f]] ){
+            if(true){
+                histogram_stack->addToStack(stack_bdt_files[f],plotOnTopMap[stack_bdt_files[f]]);
                 std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
             }
         }
 
-        for(size_t f =0; f< stack_bdt_files.size(); ++f){
-            if(stack_bdt_files[f]->is_data) continue;
-            if(plotOnTopMap[stack_bdt_files[f]] ){
-                histogram_stack->addToStack(stack_bdt_files[f],true);
-                std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
-            }
-        }
+        //Going to modify this a bit, rather than modify place in the stack as that messes up covariances, 
+        //for(size_t f =0; f< stack_bdt_files.size(); ++f){
+        //    if(stack_bdt_files[f]->is_data) continue;
+        //    if(plotOnTopMap[stack_bdt_files[f]] ){
+        //        histogram_stack->addToStack(stack_bdt_files[f],true);
+        //        std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+        //    }
+        //}
 
         std::cout<<"flag2"<<std::endl;
 
@@ -616,6 +619,9 @@ int main (int argc, char *argv[]){
                 datamc.setMergeDown(mergeDownVector);
                 datamc.setStackMode(histogram_stack->plot_pot);
                 datamc.setErrorString(systematics_error_string);
+                if(signal_scale_on_top)datamc.setScaledSignal();
+                if(lee_on_top)datamc.setLEEonTop();
+                if(div_bin)datamc.setDivBin(div_scale);
 
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
                 datamc.plotStacks(ftest,  tmp_var , fbdtcuts,additional_tag, bdt_infos);
@@ -633,6 +639,11 @@ int main (int argc, char *argv[]){
                         real_datamc.setPlotStage(stage);                
                         real_datamc.setMergeDown(mergeDownVector);
                         real_datamc.setStackMode( histogram_stack->plot_pot);
+                        if(signal_scale_on_top)real_datamc.setScaledSignal();
+                if(lee_on_top)real_datamc.setLEEonTop();
+                if(div_bin)real_datamc.setDivBin(div_scale);
+
+
                         real_datamc.setErrorString(systematics_error_string);
                         real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,additional_tag,bdt_infos);
                     }
@@ -643,6 +654,10 @@ int main (int argc, char *argv[]){
                     real_datamc.setMergeDown(mergeDownVector);
                     real_datamc.setStackMode( histogram_stack->plot_pot);
                     real_datamc.setErrorString(systematics_error_string);
+                    if(signal_scale_on_top)real_datamc.setScaledSignal();
+                    if(lee_on_top)real_datamc.setLEEonTop();
+                    if(div_bin)real_datamc.setDivBin(div_scale);
+
                     real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,additional_tag,bdt_infos);
 
                 }
@@ -1581,6 +1596,9 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
         std::string addc = v.additional_cut;
         addc = ReplaceString(addc,"&&","\\&amp;\\&amp;");
         std::cout<<"Now lets add the variable additional cuts "<<addc<<std::endl;
+
+
+
         std::string sedder_WEI = "sed  -i 's@WEIWEIWEI@(" + addc + ")@' " + covar_flux_template_xml+"."+sVID+".xml";
         std::cout<<sedder_WEI<<std::endl;
         system(sedder_WEI.c_str());
@@ -1588,9 +1606,9 @@ if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flu
         std::cout<<"Ok, now lets use a preprepared sbnfit_make_covariance to generate this "<<std::endl;
         //std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration"<<std::endl;
         //std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance "<<std::endl;
-        std::cout<<"Location: /uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021"<<std::endl;
+        std::cout<<"Location: /uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021_LessOutput"<<std::endl;
 
-        std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -m -t "+sVID+"_flux"; 
+        std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021_LessOutput  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -m -t "+sVID+"_flux"; 
         system(run_str.c_str());
 
         std::string run_fix_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_fix_fractional  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -t "+sVID+"_flux" + " -c " + sVID+"_flux.SBNcovar.root"; 
@@ -1686,13 +1704,13 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
             std::string m_tag = sVID+"_DET_"+det;
             std::cout<<"On Det "<<m_tag<<std::endl;
-            std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021 "<<std::endl;
+            std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021_LessOutput "<<std::endl;
 
             std::string sedder_DET = "sed  's@SYSVAR@" + det + "@' " + covar_det_template_xml+"."+sVID+".xml > " + covar_det_template_xml+"."+sVID+"_"+det+".xml" ;
             std::cout<<sedder_DET<<std::endl;
             system(sedder_DET.c_str());
 
-            std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021  -x "+ covar_det_template_xml+"."+sVID+"_"+det+".xml" + " -d -m -t "+m_tag; 
+            std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021_LessOutput  -x "+ covar_det_template_xml+"."+sVID+"_"+det+".xml" + " -d -m -t "+m_tag; 
             system(run_str.c_str());
 
             //Then run FixFractional 

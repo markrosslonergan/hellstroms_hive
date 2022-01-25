@@ -7,13 +7,13 @@
     <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "0.751" />
 </plot_pot>
 
-<covar dir="Covar_CombinedEpoch/" name = "frac_covariance" plotname="Flux &amp; XSec Systematics" />
+<covar dir = "Covar_WineCheese" name = "frac_covariance" plotname=" " />
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <!-- <filedir>/pnfs/uboone/persistent/users/markross/Feb2021_gLEE_files/</filedir> -->
 <filedir>/uboone/data/users/markross/June2021_UnblindingMove/</filedir>
 
-<bdtfile filename = "ncdelta_overlay_combined_run13_COFredo_v43.5.spluff.test.deoverlapped.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(255,255,153)" plot_name = "SM NC #Delta Radiative" signal = "true" plot_on_top = "false" >
+<bdtfile filename = "ncdelta_overlay_combined_run13_COFredo_v43.5.spluff.test.deoverlapped.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0)" plot_name = "NC #Delta #rightarrow N#gamma" signal = "true" plot_on_top = "false" >
     <definition>
         <cut>mctruth_is_delta_radiative==1</cut>
         <cut>mctruth_cc_or_nc==1</cut>
@@ -89,16 +89,16 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "../../../../../..//pnfs/uboone/scratch/users/markross/gLEE_allEpochs_CleanedDuplicated.uniq.root" tag = "DataAllEpochsUniq" hist_style = "E1p" dirs = "singlephotonana/" col = "(1.0,0.0,0.0)" plot_name = "BNB Data, Runs 1-3.">
+<bdtfile filename = "../../../../../..//pnfs/uboone/scratch/users/markross/gLEE_allEpochs_CleanedDuplicated.uniq.root" tag = "DataAllEpochsUniq" hist_style = "E1p" dirs = "singlephotonana/" col = "(1.0,0.0,0.0)" plot_name = "BNB Data">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam" plot_name=" ">
+    <data type="OnBeam" plot_name="Runs 1-3 ">
          <tor860_wcut>  6.803e+20  </tor860_wcut>   
          <E1DCNT_wcut> 159380327.0 </E1DCNT_wcut>   
 
     </data>
 </bdtfile>
 
-<bdtfile filename = "bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Coamic Data, Runs 1-3" fillstyle = "3333" scale = "1">
+<bdtfile filename = "bnbext_bdt_testing_sample_v33.3.uniq.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
     <definition>
         <cut> 1 </cut>
     </definition>
@@ -146,7 +146,7 @@
 
 <var def = "reco_asso_showers" binning = "(4,0,4)" unit = "Shower Multiplicity" type="d" training="" group="1"/>
 <var def = "reco_asso_showers" binning = "(3,1,4)" unit = "Shower Multiplicity (Zoomed)" type="d" training="" group ="1"/>
-<var def = "#GE#" binning = "(50,0,700)" unit = "Calorimetric Shower Energy [MeV]" type = "d"   training="0" group = "0" logplot="true"/>
+<var def = "#CORGE#*0.001" binning = "(25,0,0.5)" unit = "Reconstructed Shower Energy [GeV]" type = "d"   training="0" group = "0" pmax=60000/>
 
 
 
@@ -178,6 +178,7 @@
 <alias key="PCE" value ="(reco_track_calo_energy_plane2[0]+reco_track_calo_energy_max[0]*(reco_track_calo_energy_plane2[0]==0))"/>
 <alias key="PP" value = "(sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-0.938272*0.938272))"/>
 <alias key="LT" value ="0"/>
+<alias key="CORGE" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)" />
 
 <!-- Take plane 2 by default, unless no calo info -->
 <alias key="GE" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0)))" />

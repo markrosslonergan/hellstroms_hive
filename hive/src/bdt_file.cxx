@@ -514,6 +514,12 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         }
 
+       if(this->tag.find("TextGen")!=std::string::npos){
+             tmppot = 2e21;
+             std::cout<<"Its a TextGen!"<<std::endl;
+             tvertex->SetBranchStatus("grouped_trackstub_candidate_indices",0);
+        }
+
         numberofevents = tvertex->GetEntries();
 
         pot=tmppot;
@@ -533,10 +539,9 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             weight_branch = "1";
         }
 
-       // if(this->tag.find("NCPi0NotCoh")!=std::string::npos){
-              //weight_branch = "("+weight_branch+")*(mom_weight)";
-         // }
-
+       if(this->tag.find("TextGen")!=std::string::npos){
+              weight_branch = "1";
+        }
 
         //
         if(this->tag.find("NCPi0")!=std::string::npos){// 0.92 - 0.8
@@ -1553,10 +1558,13 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     t_sbnfit_simpletree.Branch("original_entry",&original_entry);
 
     //std::cout<<__LINE__<<" Setting up Branchs for BDT responses  "<<std::endl;
-    for(int i=0; i< bdt_infos.size(); i++){
-        std::string nam = "simple_"+bdt_infos[i].identifier+"_mva";
-        t_sbnfit_simpletree.Branch(nam.c_str(), &(bdt_mvas[i]));
-        std::cout<<i<<" Setting up a new Branch called "<<nam<<std::endl;
+
+    if(which_stage!=0){
+        for(int i=0; i< bdt_infos.size(); i++){
+             std::string nam = "simple_"+bdt_infos[i].identifier+"_mva";
+             t_sbnfit_simpletree.Branch(nam.c_str(), &(bdt_mvas[i]));
+             std::cout<<i<<" Setting up a new Branch called "<<nam<<std::endl;
+        }
     }
 
     if(add_vars){
@@ -1574,11 +1582,16 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     std::vector<TTreeFormula*> form_vec;
     std::vector<TTreeFormula*> form_vec_vars;
 
+    
+
     //std::cout<<__LINE__<<" "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
+    
+    if(which_stage!=0){
     for(int i=0; i< bdt_infos.size();i++){
         std::cout<<"BDT form "<<i<<" "<<this->tag+"_"+bdt_infos[i].identifier<<std::endl;
         std::string nam = this->tag+"_"+bdt_infos[i].identifier+".mva";
         form_vec.push_back(new TTreeFormula((bdt_infos[i].identifier+"_mva_formula").c_str(), nam.c_str(),this->tvertex));
+    }
     }
 
     //std::cout<<__LINE__<<" "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
@@ -1619,9 +1632,11 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
         //std::cout<<"YANK: Wei: "<<simple_wei<<" Scale: "<<this->scale_data<<" POT: "<<tsplot_pot<<" This File: "<<this->pot<<std::endl;
         original_entry = i;
 
-        for(int j=0; j< bdt_infos.size();j++){
-            form_vec[j]->GetNdata();
-            bdt_mvas[j] = form_vec[j]->EvalInstance();
+        if(which_stage!=0){
+            for(int j=0; j< bdt_infos.size();j++){
+             form_vec[j]->GetNdata();
+             bdt_mvas[j] = form_vec[j]->EvalInstance();
+            }
         }
 
         if(add_vars){
