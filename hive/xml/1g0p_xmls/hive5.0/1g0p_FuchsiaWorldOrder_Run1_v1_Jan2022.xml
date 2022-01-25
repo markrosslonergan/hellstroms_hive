@@ -1,0 +1,439 @@
+<?xml version="1.0" ?>
+
+<!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
+<topology tag="1g0pJan2022" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.988209,0.892728,0.428825)"/>
+
+<covar dir = "Covar_DetSysChecks_FinalSelection/" name = "frac_covariance" plotname="" />
+<!--
+<plot_pot>
+    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.249"  />
+    <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "0.751" />
+</plot_pot>
+-->
+
+<plot_pot>
+    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "1.0"  />
+</plot_pot>
+
+<!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
+<filedir>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/TestTrainSplit_Jan24_2022/</filedir>
+
+<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta #rightarrow N#gamma" signal = "true" plot_on_top = "true">
+    <definition>
+        <cut>mctruth_is_delta_radiative==1</cut>
+        <cut>mctruth_cc_or_nc==1</cut>
+        <cut>(m_flash_optfltr_pe_beam &gt;20 &amp;&amp; m_flash_optfltr_pe_veto &lt; 20)</cut> 
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "preTopo_vertex_NCPi0_Run123_TestSplit_v50.0.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
+    <definition>
+        <cut> GTruth_Gscatter==5 </cut>
+        <cut> mctruth_cc_or_nc==1</cut> 
+        <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut> (m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+        <cut> (MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "preTopo_vertex_NCPi0_Run123_TestSplit_v50.0.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
+    <definition>
+        <cut>GTruth_Gscatter!=5 </cut>
+        <cut> mctruth_cc_or_nc==1</cut> 
+        <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut>(m_flash_optfltr_pe_beam>20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "../preTopo_vertex_CCPi0_Run13_v50.0.uniq.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
+    <definition>
+        <cut> mctruth_cc_or_nc==0 </cut> 
+        <cut> mctruth_num_exiting_pi0==1</cut>
+        <cut> mctruth_nu_pdg==14 </cut>
+        <cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "preTopo_vertex_BNBOther_Run123_TestSplit_v50.0.uniq.root" tag = "BNBOtherExtra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
+    <definition>
+        <cut> !(mctruth_is_delta_radiative &amp;&amp; mctruth_cc_or_nc==1)</cut>  <!--not nc delta, allows CC delta -->
+        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
+        <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
+        <cut> !(mctruth_cc_or_nc==0 &amp;&amp; fabs(mctruth_nu_pdg)==12) </cut> <!-- not cc nue or nuebar -->
+        <cut> (m_flash_optfltr_pe_beam>20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+        <cut> (MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
+    </definition>
+</bdtfile>
+
+
+<bdtfile filename = "preTopo_vertex_Nue_Run123_TestSplit_v50.0.root" tag = "NueOverlays" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" >
+    <definition>
+        <cut> mctruth_is_delta_radiative!=1 </cut>
+        <cut> fabs(mctruth_nu_pdg)==12 </cut>
+        <cut> mctruth_cc_or_nc==0</cut>
+        <cut> (m_flash_optfltr_pe_beam>20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+        <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
+    </definition>
+</bdtfile>
+
+
+<bdtfile filename = "../preTopo_vertex_Dirt_Run123_v50.0.uniq.root" tag = "Dirt" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.35,0.25)" plot_name = "Dirt" scale="1.0" mergedown="true"> 
+    <definition>
+        <cut>1</cut>
+        <cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+    </definition>
+</bdtfile>
+
+<bdtfile filename = "preTopo_vertex_BNBOther_Run123_TestSplit_v50.0.uniq.root" tag = "OTPCExtra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt (Outside TPC)"  scale = "1.0" plot_on_top = "false" >
+    <definition>
+        <cut>(m_flash_optfltr_pe_beam &gt; 20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+        <cut>!(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
+    </definition>
+</bdtfile>
+
+
+<bdtfile filename = "../preTopo_vertex_Data_Open5e19_Run1_v50.0.uniq.root" tag = "Open5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "BNB Data, Total:">
+    <definition><cut>1</cut></definition>
+    <data type="OnBeam" plot_name="Run 1">
+        <tor860_wcut> 3.99e+19  </tor860_wcut>   
+        <E1DCNT_wcut> 8834469.0 </E1DCNT_wcut>   
+    </data>
+</bdtfile>
+
+<bdtfile filename = "preTopo_vertex_BNBext_Run1_TestSplit_v50.0.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> 1 </cut>
+    </definition>
+    <data type="OffBeam">
+        <tor860_wcut> 3.99e+19  </tor860_wcut>   
+        <E1DCNT_wcut> 8834469.0 </E1DCNT_wcut>   
+        <EXT>28190365.0</EXT>  
+    </data>
+</bdtfile>
+
+
+<!-- ================================================== BDT FILES [Now the training files]==================================================== -->
+
+<bdtfile filename = "preTopo_vertex_NCPi0_Run123_TrainSplit_v50.0.uniq.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> !mctruth_is_delta_radiative==1 </cut>
+        <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
+        <cut> sim_shower_pdg[0]==22</cut>
+    </training>
+</bdtfile>
+
+<bdtfile filename = "preTopo_vertex_NCPi0_Run123_TestSplit_v50.0.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> !mctruth_is_delta_radiative==1 </cut>
+        <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
+        <cut> sim_shower_pdg[0]==22</cut>
+    </training>
+</bdtfile>
+
+<bdtfile filename = "preTopo_vertex_BNBext_Run123_TrainSplit_v50.0.root" tag = "BNBextTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Train" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut>1</cut>
+    </definition>
+    <training><cut>1</cut></training>
+    <data type="OffBeam">
+        <tor860_wcut> 4.081e+19 </tor860_wcut>   
+        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>   
+        <EXT>28264427.0</EXT>  
+    </data>
+</bdtfile>
+
+<bdtfile filename = "preTopo_vertex_BNBext_Run123_TestSplit_v50.0.root" tag = "BNBextTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Test" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut>1</cut>
+    </definition>
+    <training><cut>1</cut></training>
+    <data type="OffBeam">
+        <tor860_wcut> 4.081e+19 </tor860_wcut>   
+        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>   
+        <EXT>28264427.0</EXT>  
+    </data>
+</bdtfile>
+
+<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -113.5 &amp;&amp; mctruth_nu_vertex_y &lt; 113.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 2.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1033.8 </cut>       
+        <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 0</cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==0 </cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
+        <cut> sim_shower_pdg[0] == 22 </cut>
+    </training>
+</bdtfile>
+
+<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTest" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> mctruth_is_delta_radiative==1 </cut>
+        <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
+        <cut> mctruth_nu_vertex_y &gt; -113.5 &amp;&amp; mctruth_nu_vertex_y &lt; 113.5 </cut>
+        <cut> mctruth_nu_vertex_z &gt; 2.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1033.8 </cut>       
+        <cut> mctruth_cc_or_nc == 1 </cut>
+        <cut> mctruth_num_exiting_pi0 == 0</cut>
+        <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
+        <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==0 </cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
+        <cut> sim_shower_pdg[0] == 22 </cut>
+    </training>
+</bdtfile>
+
+<bdtfile filename = "preTopo_vertex_BNBOther_Run123_TrainSplit_v50.0.uniq.root" tag = "BNBOtherTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BnbTrain" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> !mctruth_is_delta_radiative==1 </cut>
+        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0]&lt;0.5</cut>
+    </training>
+</bdtfile>
+
+<bdtfile filename = "preTopo_vertex_BNBOther_Run123_TestSplit_v50.0.uniq.root" tag = "BNBOtherTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BNBTest" fillstyle = "3333" scale = "1">
+    <definition>
+        <cut> !mctruth_is_delta_radiative==1 </cut>
+        <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+    </definition>
+    <training>
+        <cut> sim_shower_overlay_fraction[0]&lt;0.5</cut>
+    </training>
+</bdtfile>
+
+
+<!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
+
+<mva type="BDT" use="yes" tag = "COSMIC" name ="Cosmic focused BDT" binning = "(36,0.9,1.0)">
+    <method type = "XGBoost" use = "yes">
+        <param> n_trees=1500</param>
+        <param> tree_method=exact</param>
+        <param> n_gpus=0</param>
+        <param> objective=binary:logistic</param>
+        <param> eval_metric=logloss</param>
+        <param> min_child_weight=1</param> 
+        <param> gamma=2</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will be.    -->
+        <param> max_depth=6</param>    <!-- How many layers deep each tree -->
+        <param> eta=0.01</param>        <!-- Learning Rate -->
+        <param> subsample=0.9</param> <!-- % of events passed to each tree -->
+        <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
+        <param> verbosity=1</param>
+    </method>
+    <file
+        bkg_train_tag = "BNBextTrain" 
+        bkg_test_tag = "BNBextTest"
+        bkg_test_cut = "1" 
+        sig_train_tag = "NCDeltaTrain"
+        sig_test_tag = "NCDeltaTest"
+        sig_test_cut = "1"
+        />
+    <scan min = "0.98" max = "1.0" steps="10"/>
+</mva>
+<mva type="BDT" use="yes" tag = "BNB" name ="BNB focused BDT" binning = "(24,0.0,1.0)">
+    <method type = "XGBoost" use = "yes">
+        <param> n_trees= 1000</param>
+        <param> tree_method=exact</param>
+        <param> n_gpus=0</param>
+        <param> objective=binary:logistic</param>
+        <param> min_child_weight=1</param>
+        <param> gamma=1.0</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will be    .    -->
+        <param> max_depth=6</param>    <!-- How many layers deep each tree -->
+        <param> eta=0.01</param>        <!-- Learning Rate -->
+        <param> subsample=0.9</param> <!-- % of events passed to each tree -->
+        <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
+    </method>
+    <file
+        bkg_train_tag = "BNBOtherTrain"
+        bkg_test_tag = "BNBOtherTest"
+        bkg_test_cut = "1"
+        sig_train_tag = "NCDeltaTrain"
+        sig_test_tag = "NCDeltaTest"
+        sig_test_cut = "1"
+        />
+    <scan min = "0.892728" max = "1.0" steps="5"/>
+</mva>
+
+<mva type="BDT" use="yes" tag = "NCPi0" name ="NCpi0 focused BDT" binning = "(24,0.0,1.0)">
+    <method type = "XGBoost" use = "yes">
+        <param> n_trees= 1000</param>
+        <param> tree_method=exact</param>
+        <param> n_gpus=0</param>
+        <param> objective=binary:logistic</param>
+        <param> gamma=0.75</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will b    e.    -->
+        <param> max_depth=7</param>    <!-- How many layers deep each tree -->
+        <param> eta=0.01</param>        <!-- Learning Rate -->
+        <param> subsample=0.88</param> <!-- % of events passed to each tree -->
+        <param> colsample_bytree= 0.9</param>   <!-- % of features that are passed to each tree  -->
+        <param> verbosity=1</param>
+    </method>
+    <file      
+        bkg_train_tag = "NCpi0Train"
+        bkg_test_tag = "NCpi0Test"
+        bkg_test_cut = "1"
+        sig_train_tag = "NCDeltaTrain"
+        sig_test_tag = "NCDeltaTest"
+        sig_test_cut = "1"
+        />
+    <scan min = "0.428825" max = "0.6" steps="5"/>
+</mva>
+<!-- ================================================== PRE-CUTS   ==================================================== -->
+
+
+<precut def = "reco_shower_energy_max[0]>30" name = "Michel Cut"/>
+<precut def = "reco_shower_start_dist_to_SCB[0]>2" name = "Shower Start Contained in SCB"/>
+
+<!--<precut def = "reco_shower_nuscore[0] > 0.8 " name ="score"/>-->
+<!--<precut def = "(CRT_veto_nhits < 0 || Max$(CRT_veto_hit_PE)<100)" name = "crt veto"/> -->
+
+<!--
+<covar dir = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml" name = "frac_covariance" plotname="Flux, XS and MC stats Error" />-->
+<!--<covar dir = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/DetSys/LY/autoxml" name = "frac_covariance"  plotname = "LY and MC Stats"/>-->
+     <!--<covar dir = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/DetSys/wireX/autoxml" name = "frac_covariance"  plotname = "WireMod X and MC Stats"/>-->
+     <!--<covar dir = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/DetSys/wireYZ/autoxml" name = "frac_covariance"  plotname = "WireMod YZ and MC Stats"/>-->
+     <!--<covar dir = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/DetSys/wireA/autoxml" name = "frac_covariance"  plotname = "WireMod A and MC Stats"/>-->
+     <!--<covar dir = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/DetSys/AllDet/" name = "frac_covariance" plotname = "Det Sys and MC Stats"/>-->
+     <!--<covar dir = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/DetSys/AllDetFluxGenie/" name = "frac_covariance" plotname = "Flux, XS, Det Sys and MC Stats"/>-->
+     <!-- <covar dir ="/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/Genie_Only/" name = "frac_covariance" plotname = "Genie only"/>-->
+
+<!-- ============================================== Variables, BDT training and otherwise ====================================== -->
+
+
+<var def = "reco_shower_nuscore[0]" binning = "(8, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="012" group="4404"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(8,2.5,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="012" group="4404"/>
+<var def = "#GE#" binning = "(24,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="012"  group="4404"/>
+<var def = "reco_shower_length[0]" binning = "(8,20,100)" unit = "Reconstructed Shower Length [cm]" type = "d"     training="012" group="4404"/>
+<var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(8,100 ,1000)" unit = "Ratio Reconstrunted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d"  training="012" group="4404"/>
+<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(8,0,30)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"     training="012" group="44042"/>
+<var def = "reco_shower_phi_yx[0]" binning = "(8,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"     training="012" group="4404"/>
+<var def = "reco_shower_theta_yz[0]" binning = "(8,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"     training="012" group="4404"/>
+<var def = "(reco_shower_trackscore[0])" binning = "(8,0,0.35)" unit = "Shower Score" type ="d"  training ="012" group="4404"/>
+<var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm]" binning ="(8,0,3)" type="d"  training="012" group="44042"/>
+<var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(8,0.0,1.571)" unit = "Shower Beamyness" type="d"  training = "012" group="4404"/>
+<var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(8,0.2,1.571)" unit = "Shower Cosmicyness" type="d"  training = "012" group="4404"/>
+<var def = "reco_shower_start_dist_to_SCB" binning="(8,2,110)" unit = "Distance from Shower Start to SCB" type ="d"  training="012" group="4404" />
+<var def = "#GE#/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV]" binning = "(8,0.1,0.275)" type="d"  training="012"  group="4404"/>
+<var def = "#GE#/(1000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Calorimetric Shower Energy/(Shower Length x Opening Angle) [GeV/cm*rad]" binning = "(8,0,0.06)" type = "d"   training = "012" group="44042"/>
+<var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(8,0,0.3)" type = "d"  training = "012" group="4404"/>
+<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(8,0,0.8)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="012" group="4404"/>
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(8,0,80)" unit = "Min impact parm basic" type="d" training="012" group="4404"/>
+<var def = "Min$(sss_candidate_min_dist)" binning="(8,0,80)" unit = "Min conv parm basic" type="d" training="012"  group="4404"/>
+<var def = "sss3d_ioc_ranked_implied_opang" binning = "(8,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="012" group="4404"/>
+<var def = "sss3d_ioc_ranked_conv" binning = "(8,0,80)" unit ="sss3d min IOC Conversion Dist [cm]" type="d"  training="012"  group="4404"/>
+<var def = "sss2d_conv_ranked_invar" binning = "(8,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="012" group="4404"/>
+
+<!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
+<!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
+<!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
+
+<!-- ================= Efficiency  ======================== -->
+
+
+<efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "0" numer_cut = "sim_shower_pdg==22 &amp;&amp; sim_shower_parent_pdg==111" /> 
+
+
+<!-- ================= RECO-MC Matching ======================== -->
+<!--<recomc>
+    <def name="Cosmic Contaminated" col ="( 126,126,241)"> 
+        (sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4 )        
+    </def> 
+    <def name="No visible p^{+} or #gamma" col ="(239,202,140)"> 
+        !((sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==0 ||  (mctruth_exiting_photon_energy &lt; 0.02))          
+    </def> 
+    <def name="More than 1 p^{+}" col ="(127,231,204)"> 
+        !((sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )>1 )          
+    </def> 
+
+    <def name="Bad Reco" col ="(223,227,142)"> 
+        ((sim_shower_overlay_fraction &lt; 0.4 &amp;&amp;  sim_track_overlay_fraction &lt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 &amp;&amp;  (mctruth_exiting_photon_energy &gt; 0.02))  &amp;&amp; !(sim_shower_pdg==22 &amp;&amp;sim_track_pdg==2212) 
+    </def> 
+    <def name = "Signal Definition" col="(241,126,126)">
+        ((sim_shower_overlay_fraction &lt; 0.4 &amp;&amp;  sim_track_overlay_fraction &lt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 &amp;&amp;  (mctruth_exiting_photon_energy &gt; 0.02))  &amp;&amp; (sim_shower_pdg==22 &amp;&amp;sim_track_pdg==2212) &amp;&amp;  mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 &amp;&amp; mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 &amp;&amp; mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 &amp;&amp; mctruth_num_exiting_pi0==0 
+    </def>
+</recomc>
+-->
+<!--
+<recomc>
+    <def name="QuasiElastic" col ="(1.0,0.4,0.4)"> 
+        GTruth_Gscatter == 1             
+    </def> 
+    <def name="DeepInelastic" col ="(0.48,0.87,0.3)"> 
+        GTruth_Gscatter == 3             
+    </def> 
+    <def name = "Resonant" col="(0.41,0.38,0.97)">
+        GTruth_Gscatter == 4             
+    </def>
+    <def name = "Coherent" col="(0.8,0.2,0.8)">
+        GTruth_Gscatter == 5
+    </def>
+    <def name = "MEC" col="(1.0,1.0,0.4)">
+        GTruth_Gscatter == 10
+    </def>
+</recomc>
+-->
+
+<recomc>
+    <def name="NC #Delta Radiative #gamma" col ="(1.0,0.4,0.4)"> 
+        sim_shower_pdg[0] == 22 &amp;&amp; sim_shower_parent_pdg[0] != 111 &amp;&amp; mctruth_is_delta_radiative ==1 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )             
+    </def> 
+    <def name="CC #pi^{0}" col ="(0.0,0.0,0.4)"> 
+        sim_shower_pdg[0] == 22 &amp;&amp; sim_shower_parent_pdg[0] == 111 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )             
+    </def> 
+    <def name = "NC #pi^{0}" col="(0.0,0.0,1.0)">
+        sim_shower_pdg[0] == 22 &amp;&amp; sim_shower_parent_pdg[0] == 111 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )             
+    </def>
+    <def name = "Non #pi^{0} #gamma" col="(0.8,0.2,0.8)">
+        sim_shower_pdg[0] == 22 &amp;&amp; sim_shower_parent_pdg[0] != 111 &amp;&amp; mctruth_is_delta_radiative!=1 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )             
+    </def>
+    <def name = "Intrinsic #nu_{e} electron" col="(1.0,1.0,0.4)">
+        (mctruth_lepton_pdg[0])==11 &amp;&amp; abs(sim_shower_pdg[0]) ==11 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )             
+    </def>
+    <def name = "BNB Michel e^{#pm}" col="(1.0,0.6,0.0)">
+        abs(sim_shower_pdg[0]) ==11 &amp;&amp; abs(sim_shower_parent_pdg[0])==13 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )
+    </def>
+    <def name = "Overlay" col="(0.2,0.8,0.2)">
+        (sim_shower_overlay_fraction[0] >=0.8 )
+    </def>
+</recomc>
+
+<alias key="GE" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0)))" />
+<alias key="GEO" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)" /><alias key="PM" value ="(0.938272)"/>
+<alias key="GDEDXKAL" value ="(reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0)))"/>
+
+<alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>
+<alias key="PP" value = "(sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-0.938272*0.938272))"/>
+<alias key="LT" value ="0"/>
+
+<alias key = "GTM" value = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))"/>
+<alias key = "PTM" value = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*reco_track_diry[0],2)+pow((reco_track_proton_kinetic_energy[0]+0.938272)*reco_track_dirx[0],2))"/>
+
+<alias key = "SIDX" value ="(reco_shower_startx[0]-reco_track_startx[0])/(sqrt( pow(reco_shower_startx[0]-reco_track_startx[0],2)+   pow(reco_shower_starty[0]-reco_track_starty[0],2) + pow(reco_shower_startz[0]-reco_track_startz[0],2)    ))"/>
+<alias key = "SIDY" value ="(reco_shower_starty[0]-reco_track_starty[0])/(sqrt( pow(reco_shower_startx[0]-reco_track_startx[0],2)+   pow(reco_shower_starty[0]-reco_track_starty[0],2) + pow(reco_shower_startz[0]-reco_track_startz[0],2)    ))"/>
+<alias key = "SIDZ" value ="(reco_shower_startz[0]-reco_track_startz[0])/(sqrt( pow(reco_shower_startx[0]-reco_track_startx[0],2)+   pow(reco_shower_starty[0]-reco_track_starty[0],2) + pow(reco_shower_startz[0]-reco_track_startz[0],2)    ))"/>
+
+<alias key="TLDIRY" value= "(mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1])/sqrt( (mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0])*(mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0]) + (mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1])*(mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1]) +(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])*(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2]))"  />
+<alias key="TLDIRX" value= "(mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0])/sqrt( (mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0])*(mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0]) + (mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1])*(mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1]) +(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])*(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2]))"  />
+<alias key="TLDIRZ" value= "(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])/sqrt( (mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0])*(mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0]) + (mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1])*(mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1]) +(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])*(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2]))"  />
+
+<alias key="TSDIRY" value= "(mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1])/sqrt( (mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0])*(mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0]) + (mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1])*(mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1]) +(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])*(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2]))"  />
+<alias key="TSDIRX" value= "(mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0])/sqrt( (mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0])*(mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0]) + (mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1])*(mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1]) +(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])*(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2]))"  />
+<alias key="TSDIRZ" value= "(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])/sqrt( (mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0])*(mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0]) + (mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1])*(mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1]) +(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])*(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2]))"  />
+
+
+
+
