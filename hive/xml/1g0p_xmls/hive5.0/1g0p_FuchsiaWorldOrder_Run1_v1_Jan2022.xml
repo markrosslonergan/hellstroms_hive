@@ -103,7 +103,7 @@
     <data type="OnBeam" plot_name="Run1 MC, Run1 Data">
 	<tor860_wcut> 4.566e+19  </tor860_wcut>
          <E1DCNT_wcut> 10127594.0 </E1DCNT_wcut>
-    </data>
+   </data>
 </bdtfile>
 
 <bdtfile filename = "preTopo_vertex_BNBext_Run1_TestSplit_v50.0.root" tag = "BNBextRun1" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
@@ -148,8 +148,8 @@
     </definition>
     <training><cut>1</cut></training>
     <data type="OffBeam">
-        <tor860_wcut> 4.081e+19 </tor860_wcut>   
-        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>   
+         <tor860_wcut> 4.566e+19  </tor860_wcut>   
+        <E1DCNT_wcut> 10127594.0 </E1DCNT_wcut>   
         <EXT>28264427.0</EXT>  
     </data>
 </bdtfile>
@@ -160,8 +160,8 @@
     </definition>
     <training><cut>1</cut></training>
     <data type="OffBeam">
-        <tor860_wcut> 4.081e+19 </tor860_wcut>   
-        <E1DCNT_wcut> 9037544.0</E1DCNT_wcut>   
+        <tor860_wcut> 4.566e+19  </tor860_wcut>   
+        <E1DCNT_wcut> 10127594.0 </E1DCNT_wcut>   
         <EXT>28264427.0</EXT>  
     </data>
 </bdtfile>
