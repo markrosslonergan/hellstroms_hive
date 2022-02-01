@@ -515,9 +515,9 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }
 
        if(this->tag.find("TextGen")!=std::string::npos){
-             tmppot = 2e21;
+             tmppot = 2e24;
              std::cout<<"Its a TextGen!"<<std::endl;
-             tvertex->SetBranchStatus("grouped_trackstub_candidate_indices",0);
+//             tvertex->SetBranchStatus("grouped_trackstub_candidate_indices",0);
         }
 
         numberofevents = tvertex->GetEntries();
