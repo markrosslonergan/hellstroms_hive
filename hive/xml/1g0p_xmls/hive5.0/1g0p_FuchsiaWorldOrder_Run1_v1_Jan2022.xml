@@ -2,6 +2,9 @@
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="1g0pJan2022" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.988209,0.892728,0.428825)"/>
+<!--<topology tag="1g0pJan2022" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.988209, 0, 0)"/>-->
+<!--<topology tag="1g0pJan2022" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0,0.892728,0)"/>-->
+<!--<topology tag="1g0pJan2022" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0,0,0.428825)"/>-->
 
 <covar dir = "Covar_DetSysChecks_FinalSelection/" name = "frac_covariance" plotname="" />
 <!--
@@ -18,7 +21,7 @@
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
 <filedir>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/TestTrainSplit_Jan24_2022/</filedir>
 
-<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta #rightarrow N#gamma" signal = "true" plot_on_top = "true">
+<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaRadOverlaySM" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta #rightarrow N#gamma" signal = "true" plot_on_top = "false" scale = "1.0">
     <definition>
         <cut>mctruth_is_delta_radiative==1</cut>
         <cut>mctruth_cc_or_nc==1</cut>
@@ -95,11 +98,11 @@
 </bdtfile>
 
 
-<bdtfile filename = "../preTopo_vertex_Data_Open5e19_Run1_v50.0.uniq.root" tag = "Open5e19" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "BNB Data, Total:">
+<bdtfile filename = "../preTopo_vertex_Data_Open5e19_Run1_v50.02.uniq.root" tag = "Run1OpenData1g0p" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "BNB Data, Total:">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam" plot_name="Run 1">
-        <tor860_wcut> 3.99e+19  </tor860_wcut>   
-        <E1DCNT_wcut> 8834469.0 </E1DCNT_wcut>   
+    <data type="OnBeam" plot_name="Run1 MC, Run1 Data">
+	<tor860_wcut> 4.566e+19  </tor860_wcut>
+         <E1DCNT_wcut> 10127594.0 </E1DCNT_wcut>
     </data>
 </bdtfile>
 
@@ -108,8 +111,8 @@
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 3.99e+19  </tor860_wcut>   
-        <E1DCNT_wcut> 8834469.0 </E1DCNT_wcut>   
+	<tor860_wcut> 4.566e+19  </tor860_wcut>
+         <E1DCNT_wcut> 10127594.0 </E1DCNT_wcut>
         <EXT>28190365.0</EXT>  
     </data>
 </bdtfile>
@@ -163,7 +166,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
+<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TrainSplit_v50.0.uniq.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
     <definition>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
@@ -316,7 +319,7 @@
 
 <var def = "reco_shower_nuscore[0]" binning = "(8, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="012" group="4404"/>
 <var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(8,2.5,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="012" group="4404"/>
-<var def = "#GE#" binning = "(24,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="012"  group="4404"/>
+<var def = "#GEOR#" binning = "(24,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="012"  group="4404"/>
 <var def = "reco_shower_length[0]" binning = "(8,20,100)" unit = "Reconstructed Shower Length [cm]" type = "d"     training="012" group="4404"/>
 <var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(8,100 ,1000)" unit = "Ratio Reconstrunted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d"  training="012" group="4404"/>
 <var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(8,0,30)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"     training="012" group="44042"/>
@@ -341,6 +344,19 @@
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
 
+<!--  ================= Plotting variables only ======================== -->
+<var def = "1g0pJan2022COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d" training= ""  logplot = "true" group="11111" pmin=0.01 />
+<var def = "1g0pJan2022COSMIC_mva" binning = "(15,0.95,1)" unit = "Cosmic BDT Score Zoom In" type="d" training= ""  logplot = "true" group="11111" pmin=0.01 />
+<var def = "1g0pJan2022BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
+<var def = "1g0pJan2022BNB_mva" binning = "(10,0.9,1)" unit = "BNB Other BDT Score Zoom In" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
+<var def = "1g0pJan2022NCPi0_mva" binning = "(24,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
+
+<var def = "#GEOR#" binning = "(4, 30,800)" unit = "Corrected Calorimetric Shower Energy Coarser Binning[MeV]" type = "d"   training=""  group="3331"/>
+<var def = "#GEOR#" binning = "(5, 30,600)" unit = "Corrected Calorimetric Shower Energy Coarse Binning[MeV]" type = "d"   training=""  group="3331"/>
+<var def = "#GEOR#*0.001" binning = "alt(0.1,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.7)" unit = "Corrected Reconstructed Shower Energy [GeV]" type = "d"   training=""  group="333"/>
+
+<var def = "trackstub_num_candidates" binning = "(50, 0, 400)" unit = "Number of Proton Stub Candidate" type = "d" training = ""  group="777"/>
+<var def = "Min$(trackstub_candidate_min_ioc_to_shower_start)" binning = "(30, 0, 0.06)" unit = "Min IOC to Shower Start" type = "d" training="" group="777" />
 <!-- ================= Efficiency  ======================== -->
 
 
@@ -414,6 +430,7 @@
 <alias key="GE" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0)))" />
 <alias key="GEO" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)" /><alias key="PM" value ="(0.938272)"/>
 <alias key="GDEDXKAL" value ="(reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0)))"/>
+<alias key="GEOR" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)" />
 
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>
 <alias key="PP" value = "(sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-0.938272*0.938272))"/>
