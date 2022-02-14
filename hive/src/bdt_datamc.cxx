@@ -1542,7 +1542,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             t->SetNDC();
             t->SetTextColor(kRed-7);
             t->SetTextSize(0.09);
-            if(!stack_mode && false){
+            if(!stack_mode){
                t->Draw("same");
             }
 
