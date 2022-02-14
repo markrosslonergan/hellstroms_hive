@@ -1791,11 +1791,87 @@ std::vector<double> bdt_file::getVector(bdt_variable & var, std::string  cuts){
 void bdt_file::MakeFlatTree(){
     
     std::string flat_filename = "FLATTEN_"+this->tag+".root"; 
+    TFile *f = new TFile(flat_filename.c_str(),"recreate");
+    f->cd();
+    TTree *ssv2d_out = new TTree("SSV2D","SSV2D");
+
+    //These are length: int sss_num_candidates
+ std::vector<std::string> ssv2d_variables = {"sss_candidate_in_nu_slice","sss_candidate_num_hits","sss_candidate_num_wires","sss_candidate_num_ticks","sss_candidate_plane","sss_candidate_PCA","sss_candidate_mean_ADC","sss_candidate_ADC_RMS","sss_candidate_impact_parameter","sss_candidate_fit_slope","sss_candidate_fit_constant","sss_candidate_mean_tick","sss_candidate_max_tick","sss_candidate_min_tick","sss_candidate_mean_wire","sss_candidate_max_wire","sss_candidate_min_wire","sss_candidate_min_dist","sss_candidate_wire_tick_based_length","sss_candidate_energy","sss_candidate_angle_to_shower","sss_candidate_remerge","sss_candidate_matched","sss_candidate_pdg","sss_candidate_parent_pdg","sss_candidate_trackid","sss_candidate_true_energy","sss_candidate_overlay_fraction","sss_candidate_matched_energy_fraction_best_plane"};
+    std::vector<bool> ssv2d_which = {1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0};
+
+    for(int i=0; i< ssv2d_variables.size(); i++){
+        std::cout<<ssv2d_variables[i]<<" "<<ssv2d_which[i]<<std::endl;
+    }
+
+
+    std::vector<std::vector<double>*> ssv2d_collection_DBL(ssv2d_variables.size(),NULL);
+    std::vector<std::vector<int>*> ssv2d_collection_INT(ssv2d_variables.size(),NULL);
+
+    int sss_num_candidates = 0;
+    tvertex->SetBranchAddress("sss_num_candidates",&sss_num_candidates);
+
+    for(size_t i =0; i< ssv2d_variables.size(); i++){
+            if(ssv2d_which[i]){
+                tvertex->SetBranchAddress(ssv2d_variables[i].c_str(), &(ssv2d_collection_INT[i]));
+            }else {
+                tvertex->SetBranchAddress(ssv2d_variables[i].c_str(), &(ssv2d_collection_DBL[i]));
+            }
+    }
+
+    //Make new branches
+    std::vector<double> ssv2d_pt(ssv2d_variables.size(),0);
+    for(size_t i =0; i< ssv2d_variables.size(); i++){
+            ssv2d_out->Branch(ssv2d_variables[i].c_str(), &(ssv2d_pt[i]));   
+    }
+
+    int out_orig_index = 0; 
+    int out_num_candidates = 0 ;
+    int out_new_index = 0;
+
+    ssv2d_out->Branch("orig_index",&out_orig_index);
+    ssv2d_out->Branch("ssv_num_candidates",&out_num_candidates);
+    ssv2d_out->Branch("new_index",&out_new_index);
+
+    //loop over all old intries
+    for(size_t i=0; i< tvertex->GetEntries(); i++){
+        tvertex->GetEntry(i);
+
+        if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
+
+        for(int j=0; j< sss_num_candidates; j++){
+            
+            for(int s= 0; s< ssv2d_variables.size(); s++){
+                if(ssv2d_which[s]){
+                    //std::cout<<ssv2d_variables[s]<<" "<<ssv2d_which[s]<<" "<<sss_num_candidates<<" "<<ssv2d_collection_INT[s]->size()<<"\n";
+                    ssv2d_pt[s] = (double)ssv2d_collection_INT[s]->at(j);     
+                }else {
+                    //std::cout<<ssv2d_variables[s]<<" "<<ssv2d_which[s]<<" "<<sss_num_candidates<<" "<<ssv2d_collection_DBL[s]->size()<<"\n";
+                    ssv2d_pt[s] = ssv2d_collection_DBL[s]->at(j);     
+                }
+            }
+
+            out_orig_index = i; 
+            out_num_candidates = sss_num_candidates; 
+            out_new_index = j;
+
+            ssv2d_out->Fill();
+
+        }
+
+    }
+
+
+    ssv2d_out->Write();
+    f->Close();
 
 
 
+    //These are length: int sss3d_num_showers
+ //std::vector<std::string> ssv3d_variables = {"sss3d_shower_start_x","sss3d_shower_start_y","sss3d_shower_start_z","sss3d_shower_dir_x","sss3d_shower_dir_y","sss3d_shower_dir_z","sss3d_shower_length","sss3d_shower_conversion_dist","sss3d_shower_invariant_mass","sss3d_shower_implied_invariant_mass","sss3d_shower_impact_parameter","sss3d_shower_ioc_ratio","sss3d_shower_energy_max","sss3d_shower_score"};
 
 
+ //These are length: int trackstub_num_candidates
+//    std::vector<std::string> trackstub_variables = {};
 
 }
 
