@@ -167,6 +167,7 @@ struct bdt_file{
 
         unsigned long jenkins_hash(std::string key); //guanqun: what does this do? 
 
+        int MakeFlatTree();
 
         int setStageEntryList(int j);
         int setStageEntryList(int j, double, double);

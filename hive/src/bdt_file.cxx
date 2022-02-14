@@ -1788,6 +1788,16 @@ std::vector<double> bdt_file::getVector(bdt_variable & var, std::string  cuts){
     return ans;
 }
 
+int bdt_file::MakeFlatTree(){
+    
+    std::string flat_filename = "FLATTEN_"+this->tag+".root"; 
+
+
+
+
+
+
+}
 
 
 //int bdt_file::convertToHashedLibSVM(){

@@ -1062,7 +1062,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                  scale_signal_hist = sig_on_top= (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
                 //(TH1*)mc_stack->vec_hists[which_signal]->Clone(("signal_clone"+stage_names.at(s)).c_str());
                 double scal_val = NdatEvents/scale_signal_hist->Integral();
-                scale_signal_hist->Scale(scal_val);
+                scale_signal_hist->Scale(scal_val*0.5);
                 //scale_signal_hist->Scale(100.0);
                 scale_signal_hist->SetFillStyle(0);
                 //scale_signal_hist->DrawCopy("hist same");
@@ -1542,7 +1542,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             t->SetNDC();
             t->SetTextColor(kRed-7);
             t->SetTextSize(0.09);
-            if(!stack_mode){
+            if(!stack_mode ){
                t->Draw("same");
             }
 

@@ -445,7 +445,9 @@ int main (int argc, char *argv[]){
 
     for(auto &f: bdt_files){
 
-        if(mode_option != "app" && mode_option !="train" ){
+        //if(mode_option != "app" && mode_option !="train" ){
+        //if(mode_option != "app" ){
+        {
             for(int k=0; k<bdt_infos.size(); k++){
                 f->addBDTResponses(bdt_infos[k]);
             }
@@ -1932,10 +1934,27 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         if((which_bdt==i || which_bdt==-1)){
             bdt_file * training_signal = tagToFileMap[bdt_infos[i].TMVAmethod.sig_train_tag]; 
             bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
+
+            //some work for superBDT
+            for(int k=0; k<bdt_infos.size(); k++){
+                training_signal->addBDTResponses(bdt_infos[k]);
+                training_background->addBDTResponses(bdt_infos[k]);
+            }
+
             plot_bdt_variables(training_signal, training_background, t_vars, bdt_infos[i], false, which_stage,fbdtcuts);
         }
 
     }
+
+}else if(mode_option == "flatten"){
+
+        
+        for(int i=0; i< bdt_files.size(); i++){
+            if(which_file<0 || which_file==i){
+                bdt_files[i]->MakeFlatTree();
+            }
+        }
+
 
 
 }else {
