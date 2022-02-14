@@ -182,6 +182,7 @@
 
 <bdtfile filename = "preTopo_vertex_NCSingleCoherent_Run123_TrainSplit_v50.1.uniq.root" tag = "NCCoherentTextGenTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(255, 172, 18)" plot_name = "NC Coh 1 #gamma Train" fillstyle = "3333" scale = "1">
     <definition>
+     <cut>(m_flash_optfltr_pe_beam &gt; 20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut> 1</cut>
     </definition>
     <training>
@@ -194,7 +195,8 @@
 <bdtfile filename = "preTopo_vertex_NCSingleCoherent_Run123_TestSplit_v50.0.uniq.root" tag = "NCCoherentTextGenTest" hist_style = "hist" dirs = "singlephotonana/" col = "(255, 172, 18)" plot_name = "NCCoh 1 #gamma Test" fillstyle = "3333" scale = "1">
     
     <definition>
-        <cut> 1</cut>
+     <cut>(m_flash_optfltr_pe_beam &gt; 20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+       <cut> 1</cut>
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
@@ -224,6 +226,7 @@
 
 <bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TrainSplit_v50.0.uniq.root" tag = "NCDeltaTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.2,0.1)" plot_name = "NCDeltaTrain" fillstyle = "3333" scale = "1">
     <definition>
+    <cut>(m_flash_optfltr_pe_beam &gt; 20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -113.5 &amp;&amp; mctruth_nu_vertex_y &lt; 113.5 </cut>
@@ -241,6 +244,7 @@
 
 <bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaTest" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.2,0.1)" plot_name = "NCDeltaTest" fillstyle = "3333" scale = "1">
     <definition>
+        <cut>(m_flash_optfltr_pe_beam &gt; 20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut> mctruth_is_delta_radiative==1 </cut>
         <cut> mctruth_nu_vertex_x &gt; 2.0 &amp;&amp; mctruth_nu_vertex_x &lt; 253.35 </cut>
         <cut> mctruth_nu_vertex_y &gt; -113.5 &amp;&amp; mctruth_nu_vertex_y &lt; 113.5 </cut>

@@ -723,7 +723,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_
         signal_ttree_prefiltered->GetEntry(i);
 
         sig_weight->GetNdata();
-        double wei = sig_weight->EvalInstance();
+        double wei =sig_weight->EvalInstance();
 
         if(i < sig_train_num){
             sslibSVMtrain<<"1:"<<wei<<" ";
