@@ -1796,8 +1796,8 @@ int bdt_file::MakeFlatTree(){
     TTree *ssv2d_out = new TTree("SSV2D","SSV2D");
 
     //These are length: int sss_num_candidates
- std::vector<std::string> ssv2d_variables = {"sss_candidate_in_nu_slice","sss_candidate_num_hits","sss_candidate_num_wires","sss_candidate_num_ticks","sss_candidate_plane","sss_candidate_PCA","sss_candidate_mean_ADC","sss_candidate_ADC_RMS","sss_candidate_impact_parameter","sss_candidate_fit_slope","sss_candidate_fit_constant","sss_candidate_mean_tick","sss_candidate_max_tick","sss_candidate_min_tick","sss_candidate_mean_wire","sss_candidate_max_wire","sss_candidate_min_wire","sss_candidate_min_dist","sss_candidate_wire_tick_based_length","sss_candidate_energy","sss_candidate_angle_to_shower","sss_candidate_closest_neighbour","sss_candidate_remerge","sss_candidate_matched","sss_candidate_pdg","sss_candidate_parent_pdg","sss_candidate_trackid","sss_candidate_true_energy","sss_candidate_overlay_fraction","sss_candidate_matched_energy_fraction_best_plane"};
-    std::vector<bool> ssv2d_which = {1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0};
+ std::vector<std::string> ssv2d_variables = {"sss_candidate_in_nu_slice","sss_candidate_num_hits","sss_candidate_num_wires","sss_candidate_num_ticks","sss_candidate_plane","sss_candidate_PCA","sss_candidate_mean_ADC","sss_candidate_ADC_RMS","sss_candidate_impact_parameter","sss_candidate_fit_slope","sss_candidate_fit_constant","sss_candidate_mean_tick","sss_candidate_max_tick","sss_candidate_min_tick","sss_candidate_mean_wire","sss_candidate_max_wire","sss_candidate_min_wire","sss_candidate_min_dist","sss_candidate_wire_tick_based_length","sss_candidate_energy","sss_candidate_angle_to_shower","sss_candidate_remerge","sss_candidate_matched","sss_candidate_pdg","sss_candidate_parent_pdg","sss_candidate_trackid","sss_candidate_true_energy","sss_candidate_overlay_fraction","sss_candidate_matched_energy_fraction_best_plane"};
+    std::vector<bool> ssv2d_which = {1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0};
 
     for(int i=0; i< ssv2d_variables.size(); i++){
         std::cout<<ssv2d_variables[i]<<" "<<ssv2d_which[i]<<std::endl;
@@ -1808,7 +1808,7 @@ int bdt_file::MakeFlatTree(){
     std::vector<std::vector<int>*> ssv2d_collection_INT(ssv2d_variables.size(),NULL);
 
     int sss_num_candidates = 0;
-    tvertex->SetBranchAddress("sss_num_candidiates",&sss_num_candidates);
+    tvertex->SetBranchAddress("sss_num_candidates",&sss_num_candidates);
 
     for(size_t i =0; i< ssv2d_variables.size(); i++){
             if(ssv2d_which[i]){
@@ -1842,8 +1842,10 @@ int bdt_file::MakeFlatTree(){
             
             for(int s= 0; s< ssv2d_variables.size(); s++){
                 if(ssv2d_which[s]){
+                    //std::cout<<ssv2d_variables[s]<<" "<<ssv2d_which[s]<<" "<<sss_num_candidates<<" "<<ssv2d_collection_INT[s]->size()<<"\n";
                     ssv2d_pt[s] = (double)ssv2d_collection_INT[s]->at(j);     
                 }else {
+                    //std::cout<<ssv2d_variables[s]<<" "<<ssv2d_which[s]<<" "<<sss_num_candidates<<" "<<ssv2d_collection_DBL[s]->size()<<"\n";
                     ssv2d_pt[s] = ssv2d_collection_DBL[s]->at(j);     
                 }
             }
