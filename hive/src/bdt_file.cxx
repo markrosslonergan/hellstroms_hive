@@ -58,7 +58,9 @@ std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<
 
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) : bdt_file(indir, inname, intag,inops,inrootdir,incol,1001,inflow){}
 
-bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, bdt_flow inflow) :
+bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, bdt_flow inflow) : bdt_file(indir,inname,intag,inops,inrootdir,incol,infillstyle,inflow,"vertex_tree"){}
+
+bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, bdt_flow inflow, std::string inttree ) :
     dir(indir),
     name(inname),
     tag(intag),
@@ -68,7 +70,8 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     flow(inflow),
     is_data(false),
     is_bnbext(false),
-    is_mc(true)
+    is_mc(true),
+    primary_ttree_name(inttree)
 {
 
     plot_name = tag;
@@ -84,9 +87,10 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
         exit(EXIT_FAILURE);
     }
     std::cout<<"bdt_file::bdt_file || "<<name<<" Opened correctly by root."<<std::endl;
+    std::cout<<"TTree name "<<primary_ttree_name<<std::endl;
 
     std::string tnam_event = root_dir+"event_tree";
-    std::string tnam = root_dir+"vertex_tree";
+    std::string tnam = root_dir+primary_ttree_name;
     std::string tnam_pot = root_dir+"pot_tree";
 
     global_weight_string = "1";
@@ -398,7 +402,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
 
     std::string tnam_event = root_dir+"event_tree";
-    std::string tnam = root_dir+"vertex_tree";
+    std::string tnam = root_dir+primary_ttree_name;
     std::string tnam_pot = root_dir+"pot_tree";
     std::string tnam_rs = root_dir+"run_subrun_tree";
     std::string tnam_slice = root_dir+"ncdelta_slice_tree";
@@ -1817,6 +1821,8 @@ int bdt_file::MakeFlatTree(){
                 tvertex->SetBranchAddress(ssv2d_variables[i].c_str(), &(ssv2d_collection_DBL[i]));
             }
     }
+    double tsplot_pot=6.91e20;
+    TTreeFormula* wei = new TTreeFormula("weight_formula ", this->weight_branch.c_str(),this->tvertex);
 
     //Make new branches
     std::vector<double> ssv2d_pt(ssv2d_variables.size(),0);
@@ -1827,15 +1833,21 @@ int bdt_file::MakeFlatTree(){
     int out_orig_index = 0; 
     int out_num_candidates = 0 ;
     int out_new_index = 0;
+    double simple_pot_wei = 0;
 
     ssv2d_out->Branch("orig_index",&out_orig_index);
     ssv2d_out->Branch("ssv_num_candidates",&out_num_candidates);
     ssv2d_out->Branch("new_index",&out_new_index);
+    ssv2d_out->Branch("pot_weight",&simple_pot_wei);
 
     //loop over all old intries
     for(size_t i=0; i< tvertex->GetEntries(); i++){
         tvertex->GetEntry(i);
 
+        wei->GetNdata();
+        double simple_wei = wei->EvalInstance();
+        simple_pot_wei = simple_wei*this->scale_data*tsplot_pot/this->pot;
+ 
         if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
 
         for(int j=0; j< sss_num_candidates; j++){

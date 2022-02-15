@@ -71,6 +71,11 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
             bdt_fillstyles.push_back((int)std::stoi(t_fillstyles,nullptr,10));
         }
 
+        const char* t_ttree_name = pBDTfile->Attribute("ttree_name");
+        if(t_ttree_name==NULL){ bdt_ttree_names.push_back("vertex_tree");}else{
+            bdt_ttree_names.push_back(t_ttree_name);
+        }
+
 
         const char* t_dirs = pBDTfile->Attribute("dirs");
         if(t_dirs==NULL){std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has no `dirs` attribute! "<<std::endl; exit(EXIT_FAILURE);}
@@ -660,6 +665,11 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         const char* t_fillstyles = pBDTfile->Attribute("fillstyle");
         if(t_fillstyles==NULL){ bdt_fillstyles.push_back(1001);}else{
             bdt_fillstyles.push_back((int)std::stoi(t_fillstyles,nullptr,10));
+        }
+
+        const char* t_ttree_name = pBDTfile->Attribute("ttree_name");
+        if(t_ttree_name==NULL){ bdt_ttree_names.push_back("vertex_tree");}else{
+            bdt_ttree_names.push_back(t_ttree_name);
         }
 
 

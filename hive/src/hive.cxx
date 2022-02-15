@@ -338,13 +338,14 @@ int main (int argc, char *argv[]){
         bdt_flow analysis_flow(topological_cuts, def, 	vec_precuts,	postcuts,	bdt_infos);
 
         std::cout<<" -- Filename "<<XMLconfig.bdt_filenames[f]<<" subdir "<<XMLconfig.bdt_dirs[f]<<std::endl;
+        std::cout<<" -- TTreeName "<<XMLconfig.bdt_ttree_names[f]<<std::endl;
         std::cout<<" -- Color ";XMLconfig.bdt_cols[f]->Print();std::cout<<" and hist style "<<XMLconfig.bdt_hist_styles[f]<<" fillstyle "<<XMLconfig.bdt_fillstyles[f]<<std::endl;
         std::cout<<" -- With the following Definition Cuts: "<<std::endl;
         for(int i=0; i< XMLconfig.bdt_definitions[f].size(); ++i){
             std::cout<<" -- ---> "<<XMLconfig.bdt_definitions[f][i]<<std::endl;
         }
 
-        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , analysis_flow));
+        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , analysis_flow, XMLconfig.bdt_ttree_names[f].c_str()));
 
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         bdt_files.back()->addDataDescriptor(XMLconfig.bdt_data_descriptor[f]);
