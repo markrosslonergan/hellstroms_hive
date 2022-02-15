@@ -1875,6 +1875,53 @@ int bdt_file::MakeFlatTree(){
 
 }
 
+int bdt_file::MakeUnFlatTree(bdt_info & info){
+    
+    std::string unflat_filename = "UNFLATTEN_"+this->tag+".root"; 
+    TFile *fout = new TFile(unflat_filename.c_str(),"recreate");
+    fout->cd();
+    
+    TTree *t_out = new TTree((info.identifier+"_unflatten").c_str(),(info.identifier+"unflatten").c_str());
+
+    std::vector<double>* out_score = NULL;
+    int num_out = 0;
+    t_out->Branch("ssv2d_score",&out_score);
+    t_out->Branch("ssv2d_length",&num_out);
+
+    int orig_index = 0;
+    int new_index=0;
+    int num_candidates = 0;
+    
+    tvertex->SetBranchAddress("orig_index",&orig_index);
+    tvertex->SetBranchAddress("ssv_num_candidates",&num_candidates);
+    tvertex->SetBranchAddress("new_index",&new_index);
+
+    TTreeFormula * tmva = new TTreeFormula("mva",  (info.identifier+"_mva").c_str()  ,tvertex);
+
+    out_score->clear();
+    for(size_t i=0; i<tvertex->GetEntries();i++){
+            
+            if(out_score->size()==num_candidates){
+            //we have already filled it to expected length
+               num_out = out_score->size();
+               t_out->Fill();
+               out_score->clear();
+            }
+
+            tvertex->GetEntry(i);
+            tmva->GetNdata();
+            double tmp_score = tmva->EvalInstance();
+
+            out_score->push_back(tmp_score);
+
+    }
+    //and fill the last entry that was missed by construction
+    num_out = out_score->size();
+    t_out->Fill();
+
+
+    return 0;
+}
 
 //int bdt_file::convertToHashedLibSVM(){
 //
