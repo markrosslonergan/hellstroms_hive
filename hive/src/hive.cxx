@@ -1969,7 +1969,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         for(int i=0; i< bdt_files.size(); i++){
 
             if(which_file<0 || which_file==i){
-                 std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
+                 std::string flat_filename = "/pnfs/uboone/scratch/users/markross/FlatTest/FLATTEN_"+bdt_files[i]->tag+".root"; 
                  TFile *fout = new TFile(flat_filename.c_str(),"recreate");
 
                 bdt_files[i]->MakeFlatTree(fout,ssv2d_variables, "SSV2D", "sss_num_candidates");

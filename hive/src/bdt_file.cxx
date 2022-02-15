@@ -1876,8 +1876,7 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
 	num_candidates = std::min(num_candidates, static_cast<int>(var_collection_INT[pos_first_vector_var] == nullptr ? var_collection_DBL[pos_first_vector_var]->size(): var_collection_INT[pos_first_vector_var]->size()));
 
         wei->GetNdata();
-        double simple_wei = wei->EvalInstance();
-        simple_wei = simple_wei;
+        simple_wei = wei->EvalInstance();
         simple_pot_wei = simple_wei*this->scale_data*tsplot_pot/this->pot;
  
         if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
