@@ -1950,12 +1950,13 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 }else if(mode_option == "flatten"){
 
 	// use vector of {variable, int} to indicate whether this variable in vertex tree is int (0), or vector of doubles (1), or vector of int (-1)
-	int is_int = 0, is_vint = -1, is_vdouble = 1;
+	int is_int = 0, is_vint = -1, is_vdouble = 1, is_form = 2;
 
 	//hard-coded variables to be flattened
 	//These are ssv 2d related variables
 	std::vector<std::pair<std::string, int>> ssv2d_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int}, {"sss_num_candidates", is_int}, 
-{"sss_candidate_in_nu_slice",is_vint},{"sss_candidate_num_hits", is_vint},{"sss_candidate_num_wires",is_vint}, {"sss_candidate_num_ticks",is_vint}, {"sss_candidate_plane", is_vint},{"sss_candidate_PCA",is_vdouble}, {"sss_candidate_mean_ADC",is_vdouble}, {"sss_candidate_ADC_RMS",is_vdouble}, {"sss_candidate_impact_parameter",is_vdouble}, {"sss_candidate_fit_slope",is_vdouble}, {"sss_candidate_fit_constant",is_vdouble}, {"sss_candidate_mean_tick",is_vdouble}, {"sss_candidate_max_tick",is_vdouble}, {"sss_candidate_min_tick",is_vdouble}, {"sss_candidate_mean_wire",is_vdouble}, {"sss_candidate_max_wire",is_vdouble}, {"sss_candidate_min_wire",is_vdouble}, {"sss_candidate_min_dist",is_vdouble},{"sss_candidate_wire_tick_based_length",is_vdouble}, {"sss_candidate_energy",is_vdouble}, {"sss_candidate_angle_to_shower",is_vdouble}, {"sss_candidate_remerge",is_vint},{"sss_candidate_matched",is_vint}, {"sss_candidate_pdg",is_vint}, {"sss_candidate_parent_pdg",is_vint}, {"sss_candidate_trackid",is_vint}, {"sss_candidate_true_energy",is_vdouble}, {"sss_candidate_overlay_fraction",is_vdouble}, {"sss_candidate_matched_energy_fraction_best_plane", is_vdouble}};
+{"sss_candidate_in_nu_slice",is_vint},{"sss_candidate_num_hits", is_vint},{"sss_candidate_num_wires",is_vint}, {"sss_candidate_num_ticks",is_vint}, {"sss_candidate_plane", is_vint},{"sss_candidate_PCA",is_vdouble}, {"sss_candidate_mean_ADC",is_vdouble}, {"sss_candidate_ADC_RMS",is_vdouble}, {"sss_candidate_impact_parameter",is_vdouble}, {"sss_candidate_fit_slope",is_vdouble}, {"sss_candidate_fit_constant",is_vdouble}, {"sss_candidate_mean_tick",is_vdouble}, {"sss_candidate_max_tick",is_vdouble}, {"sss_candidate_min_tick",is_vdouble}, {"sss_candidate_mean_wire",is_vdouble}, {"sss_candidate_max_wire",is_vdouble}, {"sss_candidate_min_wire",is_vdouble}, {"sss_candidate_min_dist",is_vdouble},{"sss_candidate_wire_tick_based_length",is_vdouble}, {"sss_candidate_energy",is_vdouble}, {"sss_candidate_angle_to_shower",is_vdouble}, {"sss_candidate_remerge",is_vint},{"sss_candidate_matched",is_vint}, {"sss_candidate_pdg",is_vint}, {"sss_candidate_parent_pdg",is_vint}, {"sss_candidate_trackid",is_vint}, {"sss_candidate_true_energy",is_vdouble}, {"sss_candidate_overlay_fraction",is_vdouble}, {"sss_candidate_matched_energy_fraction_best_plane", is_vdouble},{"reco_shower_energy_plane2",is_form},{"sim_shower_trackID",is_form}, {"reco_shower_energy_max",is_form}};
+
         
        //there are ssv3d related variables
        std::vector<std::pair<std::string, int>> ssv3d_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int},{"sss3d_num_showers", is_int}, {"sss3d_shower_start_x",is_vdouble}, {"sss3d_shower_start_y",is_vdouble}, {"sss3d_shower_start_z",is_vdouble}, {"sss3d_shower_dir_x",is_vdouble}, {"sss3d_shower_dir_y",is_vdouble}, {"sss3d_shower_dir_z",is_vdouble}, {"sss3d_shower_length",is_vdouble}, {"sss3d_shower_conversion_dist",is_vdouble}, {"sss3d_shower_invariant_mass",is_vdouble}, {"sss3d_shower_implied_invariant_mass",is_vdouble}, {"sss3d_shower_impact_parameter",is_vdouble}, {"sss3d_shower_ioc_ratio",is_vdouble}, {"sss3d_shower_energy_max",is_vdouble}, {"sss3d_shower_score",is_vdouble}};
@@ -1969,11 +1970,11 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         for(int i=0; i< bdt_files.size(); i++){
 
             if(which_file<0 || which_file==i){
-                 std::string flat_filename = "/pnfs/uboone/scratch/users/markross/FlatTest/FLATTEN_"+bdt_files[i]->tag+".root"; 
+                 std::string flat_filename = "/pnfs/uboone/scratch/users/markross/FlatTest2/FLATTEN_"+bdt_files[i]->tag+".root"; 
                  TFile *fout = new TFile(flat_filename.c_str(),"recreate");
 
                 bdt_files[i]->MakeFlatTree(fout,ssv2d_variables, "SSV2D", "sss_num_candidates");
-                bdt_files[i]->MakeFlatTree(fout,ssv3d_variables, "SSV3D", "sss3d_num_showers");
+                bdt_files[i]->MakeFlatTree(fout,ssv3d_variables, "SSV3D", "");
                 bdt_files[i]->MakeFlatTree(fout,trackstub_variables, "PSV", "trackstub_num_candidates");
 
 
