@@ -1976,9 +1976,12 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
                 bdt_files[i]->MakeFlatTree(fout,ssv3d_variables, "SSV3D", "sss3d_num_showers");
                 bdt_files[i]->MakeFlatTree(fout,trackstub_variables, "PSV", "trackstub_num_candidates");
 
-                std::cout<<"Copying RunSubrunTree (via friends)"<<std::endl;
+
+                std::cout<<"Copying RunSubrunTree and POT (via friends)"<<std::endl;
+                TTree * t_flat_pot_tree = (TTree*)bdt_files[i]->tpot->CopyTree("1");
                 TTree * t_flat_rs_tree = (TTree*)bdt_files[i]->trs->CopyTree("1");
                 t_flat_rs_tree->Write();
+                t_flat_pot_tree->Write();
                 fout->Close();
 
             }

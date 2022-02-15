@@ -564,6 +564,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             //    weight_branch = "genie_spline_weight*("+run_weight_string+")";
         }
 
+        if(this->tag.find("FLAT")!=std::string::npos){
+              weight_branch = "flat_weight*("+run_weight_string+")";
+        }
+
         numberofevents_raw = numberofevents;
 
     }else if(is_data){
@@ -652,6 +656,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         numberofevents_raw = numberofevents;
 
     }
+
 
 
     weight_branch = weight_branch +"*"+global_weight_string;
@@ -1855,7 +1860,9 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
     }
 
     double simple_pot_wei = 0;
-    tree_out->Branch("pot_weight",&simple_pot_wei);
+    double simple_wei = 0;
+    tree_out->Branch("flat_weight",&simple_wei);
+    tree_out->Branch("flat_pot_weight",&simple_pot_wei);
 
     //loop over all old intries 
     for(size_t i=0; i< tvertex->GetEntries(); ++i){
@@ -1870,6 +1877,7 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
 
         wei->GetNdata();
         double simple_wei = wei->EvalInstance();
+        simple_wei = simple_wei;
         simple_pot_wei = simple_wei*this->scale_data*tsplot_pot/this->pot;
  
         if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
