@@ -453,10 +453,15 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     run_weight_string +=")";
     std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
 
-    std::cout<<"Getting eventweight tree"<<std::endl;
-    teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
-    tvertex->AddFriend(teventweight);
-    std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
+    bool is_flat = this->tag.find("FLAT")!=std::string::npos;
+
+    std::cout<<"Getting eventweight tree.  Is it flat? "<<is_flat<<std::endl;
+
+    if(!is_flat){
+        teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
+        tvertex->AddFriend(teventweight);
+        std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
+    }
 
     vec_entry_lists.resize(flow.bdt_vector.size());
 
@@ -935,7 +940,7 @@ double bdt_file::GetEntries(std::string cuts){
         }
         */
     // this->CheckWeights(); //catch erroneous values of the weight
-    this->tvertex->Draw(("reco_asso_showers>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+    this->tvertex->Draw(("run_number>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
 
     //std::cout<<"("+cuts+")*"+this->weight_branch<<std::endl;
     //std::cout<<"namr = "<<namr<<std::endl;
@@ -1845,7 +1850,7 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
         }else if(variables[i].second == is_vdouble) {
             tvertex->SetBranchAddress(variables[i].first.c_str(), &(var_collection_DBL[i]));
         }else if(variables[i].second == is_form){
-                vec_form[i] = new TTreeFormula(variables[i].first.c_str(),variables[i].first.c_str(),tvertex);
+            vec_form[i] = new TTreeFormula(variables[i].first.c_str(),variables[i].first.c_str(),tvertex);
         }
     }
     double tsplot_pot=6.91e20;
@@ -1894,11 +1899,11 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
         if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
 
         for(size_t s= 0; s != variables.size(); ++s){
-                if(variables[s].second == is_form){
-                      vec_form[s]->GetNdata();
-                      flat_branch[s] = vec_form[s]->EvalInstance();
-                }
+            if(variables[s].second == is_form){
+                vec_form[s]->GetNdata();
+                flat_branch[s] = vec_form[s]->EvalInstance();
             }
+        }
 
         for(int j=0; j != num_candidates ; ++j){
 
@@ -1923,8 +1928,8 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
 
     }//event-level loop
 
+    fout->cd();
     tree_out->Write();
-    //f->Close();  close outside
 
     // NECESSARY to reset the address of branches in vertex tree before we lose the pointer
     for(size_t i =0; i != variables.size(); ++i){
