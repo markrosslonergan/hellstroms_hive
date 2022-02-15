@@ -23,7 +23,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaRadOverlaySMTrueP" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta #rightarrow N#gamma (1+p)" signal = "false" plot_on_top = "false">
+<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaRadOverlaySMTrueP" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta #rightarrow N#gamma (1+p)" signal = "false" plot_on_top = "false" fillstyle="3245">
     <definition>
         <cut>mctruth_is_delta_radiative==1</cut>
         <cut>mctruth_cc_or_nc==1</cut>
@@ -33,7 +33,7 @@
     </definition>
 </bdtfile>
 
-<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaRadOverlaySMTrueN" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.82,0.05)" plot_name = "NC #Delta #rightarrow N#gamma (0p)" signal = "false" plot_on_top = "false">
+<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaRadOverlaySMTrueN" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.82,0.05)" plot_name = "NC #Delta #rightarrow N#gamma (0p)" signal = "false" plot_on_top = "false" fillstyle="3254">
     <definition>
         <cut>mctruth_is_delta_radiative==1</cut>
         <cut>mctruth_cc_or_nc==1</cut>
@@ -58,7 +58,7 @@
         <cut>GTruth_Gscatter!=5 </cut>
         <cut> mctruth_cc_or_nc==1</cut> 
         <cut> mctruth_num_exiting_pi0==1</cut>
-        <cut>(m_flash_optfltr_pe_beam>20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+        <cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
@@ -79,7 +79,7 @@
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut> <!-- Not NC 1 pi0 -->
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; mctruth_nu_pdg == 14 &amp;&amp; mctruth_num_exiting_pi0==1) </cut><!-- Not CC numu 1 pi0, allows numubar -->
         <cut> !(mctruth_cc_or_nc==0 &amp;&amp; fabs(mctruth_nu_pdg)==12) </cut> <!-- not cc nue or nuebar -->
-        <cut> (m_flash_optfltr_pe_beam>20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
+        <cut> (m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut> (MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
 </bdtfile>
@@ -134,10 +134,11 @@
 
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
 
-<bdtfile filename = "preTopo_vertex_NCPi0_Run123_TrainSplit_v50.0.uniq.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
+<bdtfile filename = "preTopo_vertex_NCPi0_Run123_TrainSplit_v50.0.uniq.root" tag = "NCpi0Train" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+	<cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
@@ -145,10 +146,11 @@
     </training>
 </bdtfile>
 
-<bdtfile filename = "preTopo_vertex_NCPi0_Run123_TestSplit_v50.0.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
+<bdtfile filename = "preTopo_vertex_NCPi0_Run123_TestSplit_v50.0.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> (mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+	<cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
@@ -184,6 +186,7 @@
     <definition>
      <cut>(m_flash_optfltr_pe_beam &gt; 20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut> 1</cut>
+	<cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
@@ -208,6 +211,7 @@
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+	<cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0]&lt;0.5</cut>
@@ -218,6 +222,7 @@
     <definition>
         <cut> !mctruth_is_delta_radiative==1 </cut>
         <cut> !(mctruth_cc_or_nc==1 &amp;&amp; mctruth_num_exiting_pi0==1)</cut>
+	<cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0]&lt;0.5</cut>
@@ -235,6 +240,7 @@
         <cut> mctruth_num_exiting_pi0 == 0</cut>
         <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
         <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==0 </cut>
+	<cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
@@ -253,6 +259,7 @@
         <cut> mctruth_num_exiting_pi0 == 0</cut>
         <cut> mctruth_exiting_photon_energy &gt; 0.02 </cut>
         <cut> Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==0 </cut>
+	<cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
     </definition>
     <training>
         <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
@@ -275,7 +282,7 @@
         <param> max_depth=6</param>    <!-- How many layers deep each tree -->
         <param> eta=0.01</param>        <!-- Learning Rate -->
         <param> subsample=0.9</param> <!-- % of events passed to each tree -->
-        <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
+        <param> colsample_bytree= 1.0</param>   <!-- % of features that are passed to each tree  -->
         <param> verbosity=1</param>
     </method>
     <file
@@ -299,7 +306,7 @@
         <param> max_depth=6</param>    <!-- How many layers deep each tree -->
         <param> eta=0.01</param>        <!-- Learning Rate -->
         <param> subsample=0.9</param> <!-- % of events passed to each tree -->
-        <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
+        <param> colsample_bytree=1.0</param>   <!-- % of features that are passed to each tree  -->
     </method>
     <file
         bkg_train_tag = "BNBOtherTrain"
@@ -322,7 +329,7 @@
         <param> max_depth=7</param>    <!-- How many layers deep each tree -->
         <param> eta=0.01</param>        <!-- Learning Rate -->
         <param> subsample=0.88</param> <!-- % of events passed to each tree -->
-        <param> colsample_bytree= 0.9</param>   <!-- % of features that are passed to each tree  -->
+        <param> colsample_bytree= 1.0</param>   <!-- % of features that are passed to each tree  -->
         <param> verbosity=1</param>
     </method>
     <file      
@@ -347,7 +354,7 @@
         <param> max_depth=7</param>    <!-- How many layers deep each tree -->
         <param> eta=0.01</param>        <!-- Learning Rate -->
         <param> subsample=0.88</param> <!-- % of events passed to each tree -->
-        <param> colsample_bytree= 0.9</param>   <!-- % of features that are passed to each tree  -->
+        <param> colsample_bytree= 1.0</param>   <!-- % of features that are passed to each tree  -->
         <param> verbosity=1</param>
     </method>
     <file      
@@ -385,62 +392,62 @@
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
 
-<var def = "reco_shower_nuscore[0]" binning = "(50, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="0123" group="4404"/>
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(50,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="0123" group="4404"/>
-<var def = "reco_shower_dirz[0]" binning = "(50,-1,1)" unit="Reco Shower CosTheta" type="d" training="0123" />
-<var def = "reco_shower_implied_dirz[0]" binning = "(50,-1,1)" unit="Reco Shower Implied CosTheta" type="d" training="0123" />
-<var def = "reco_shower_impact_parameter[0]" binning = "(50,0,200)" unit = "Shower Impact Parameter [cm]" type="d"    training="0123"/>
-<var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(50,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d"    training="0123"/>
-<var def = "#GE#" binning = "(50,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="0123"  group="4404"/>
-<var def = "reco_shower_length[0]" binning = "(50,20,100)" unit = "Reconstructed Shower Length [cm]" type = "d"     training="0123" group="4404"/>
-<var def = "reco_shower_length[0]/(#GE#/1000.0)" binning = "(50,100 ,1000)" unit = "Ratio Reconstrunted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d"  training="0123" group="4404"/>
-<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(50,0,30)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"     training="0123" group="44042"/>
-<var def = "reco_shower_phi_yx[0]" binning = "(50,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"     training="0123" group="4404"/>
-<var def = "reco_shower_theta_yz[0]" binning = "(50,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"     training="0123" group="4404"/>
-<var def = "(reco_shower_trackscore[0])" binning = "(50,0,0.5)" unit = "Shower Score" type ="d"  training ="0123" group="4404"/>
-<var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0,reco_shower_start_to_nearest_dead_wire_plane1),reco_shower_start_to_nearest_dead_wire_plane2)" unit = "Distance from Shower Start to Nearest Dead Wire [cm]" binning ="(50,0,100)" type="d"  training="0123" group="44042"/>
-<var def = "TMath::Min(fabs(acos(reco_shower_dirz)),fabs(acos(-reco_shower_dirz)))" binning = "(50,0.0,1.571)" unit = "Shower Beamyness" type="d"  training = "0123" group="4404"/>
-<var def = "TMath::Min(fabs(acos(reco_shower_diry)),fabs(acos(-reco_shower_diry)))" binning = "(50,0.0,1.571)" unit = "Shower Cosmicyness" type="d"  training = "0123" group="4404"/>
-<var def = "reco_shower_start_dist_to_SCB" binning="(50,2,110)" unit = "Distance from Shower Start to SCB" type ="d"  training="0123" group="4404" />
-<var def = "reco_shower_num_daughters" binning = "(3,0,3)" unit = "Number Daughter Showers" type="d"  training="0123"/>
-<var def = "#GE#/(3.0*(reco_shower_num_hits_plane2+reco_shower_num_hits_plane0+reco_shower_num_hits_plane1))" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV]" binning = "(50,0.0,0.5)" type="d"  training="0123"  group="4404"/>
-<var def = "#GE#/(5000.0*reco_shower_length*reco_shower_opening_angle)" unit = "Calorimetric Shower Energy/(Shower Length x Opening Angle) [GeV/cm*rad]" binning = "(50,0,0.03)" type = "d"   training = "0123" group="44042"/>
-<var def = "sqrt(pow(0.001*#GE#*reco_shower_diry[0],2)+pow(0.001*#GE#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(50,0,0.3)" type = "d"  training = "0123" group="4404"/>
-<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(50,0,1.0)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="0123" group="4404"/>
-<var def = "Min$(sss_candidate_impact_parameter)" binning="(50,0,80)" unit = "Min impact parm basic" type="d" training="0123" group="4404"/>
-<var def = "Min$(sss_candidate_min_dist)" binning="(50,0,80)" unit = "Min conv parm basic" type="d" training="0123"  group="4404"/>
-<var def = "sss3d_ioc_ranked_implied_opang" binning = "(50,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="0123" group="4404"/>
-<var def = "sss3d_ioc_ranked_conv" binning = "(50,0,80)" unit ="sss3d min IOC Conversion Dist [cm]" type="d"  training="0123"  group="4404"/>
-<var def = "sss2d_conv_ranked_invar" binning = "(50,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="0123" group="4404"/>
+<var def = "reco_shower_nuscore[0]" binning = "(50, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="01" group="4404"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(50,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="12" group="4404"/>
+<var def = "reco_shower_dirz[0]" binning = "(50,-1,1)" unit="Reco Shower CosTheta" type="d" training="012" />
+<var def = "reco_shower_implied_dirz[0]" binning = "(50,-1,1)" unit="Reco Shower Implied CosTheta" type="d" training="" />
+<var def = "reco_shower_impact_parameter[0]" binning = "(50,0,200)" unit = "Shower Impact Parameter [cm]" type="d"    training=""/>
+<var def = "(reco_shower_impact_parameter[0]/reco_shower_conversion_distance[0])" binning = "(50,0,1)" unit = "Shower Impact Parameter/Shower Conversion Distance" type="d"    training=""/>
+<var def = "#GEOR#" binning = "(50,0,600)" unit = "Corrected Calorimetric Shower Energy [MeV]" type = "d"   training="012"  group="4404"/>
+<var def = "reco_shower_length[0]" binning = "(50,20,100)" unit = "Reconstructed Shower Length [cm]" type = "d"     training="1" group="4404"/>
+<var def = "reco_shower_length[0]/(#GEOR#/1000.0)" binning = "(50,100 ,1000)" unit = "Ratio Reconstrunted Shower Length/Reconstructed Shower Energy [cm/GeV]" type = "d"  training="" group="4404"/>
+<var def = "reco_shower_opening_angle[0] * 180/TMath::Pi()" binning = "(50,0,30)" unit = "Reconstructed Shower Opening Angle [deg]" type = "d"     training="" group="44042"/>
+<var def = "reco_shower_phi_yx[0]" binning = "(50,-3.14,3.14)" unit = "Reconstructed Shower #phi_{yx} [rad]" type = "d"     training="" group="4404"/>
+<var def = "reco_shower_theta_yz[0]" binning = "(50,-3.14,3.14)" unit = "Reconstructed Shower #theta_{yz} [rad]" type = "d"     training="" group="4404"/>
+<var def = "(reco_shower_trackscore[0])" binning = "(50,0,0.5)" unit = "Shower Score" type ="d"  training ="01" group="4404"/>
+<var def = "TMath::Min(TMath::Min(reco_shower_start_to_nearest_dead_wire_plane0[0],reco_shower_start_to_nearest_dead_wire_plane1[0]),reco_shower_start_to_nearest_dead_wire_plane2[0])" unit = "Distance from Shower Start to Nearest Dead Wire [cm]" binning ="(50,0,100)" type="d"  training="" group="44042"/>
+<var def = "TMath::Min(fabs(acos(reco_shower_dirz[0])),fabs(acos(-reco_shower_dirz[0])))" binning = "(50,0.0,1.571)" unit = "Shower Beamyness" type="d"  training = "012" group="4404"/>
+<var def = "TMath::Min(fabs(acos(reco_shower_diry[0])),fabs(acos(-reco_shower_diry[0])))" binning = "(50,0.0,1.571)" unit = "Shower Cosmicyness" type="d"  training = "0" group="4404"/>
+<var def = "reco_shower_start_dist_to_SCB[0]" binning="(50,2,110)" unit = "Distance from Shower Start to SCB" type ="d"  training="12" group="4404" />
+<var def = "reco_shower_num_daughters[0]" binning = "(3,0,3)" unit = "Number Daughter Showers" type="d"  training=""/>
+<var def = "#GEOR#*3.0/(reco_shower_num_hits_plane2[0]+reco_shower_num_hits_plane0[0]+reco_shower_num_hits_plane1[0])" unit="Ratio of Shower Calorimetric Energy to Number of Hits [MeV]" binning = "(40,0.0,8.0)" type="d"  training="12"  group="4404"/>
+<var def = "#GEOR#/(5000.0*reco_shower_length[0]*reco_shower_opening_angle[0])" unit = "Calorimetric Shower Energy/(Shower Length x Opening Angle) [GeV/cm*rad]" binning = "(50,0,0.03)" type = "d"   training = "" group="44042"/>
+<var def = "sqrt(pow(0.001*#GEOR#*reco_shower_diry[0],2)+pow(0.001*#GEOR#*reco_shower_dirx[0],2))" unit = "Photon Transverse Momentum [GeV]" binning = "(80,0,0.5)" type = "d"  training = "012" group="4404"/>
+<var def = "sss_num_unassociated_hits/(sss_num_associated_hits+sss_num_unassociated_hits)" binning="(50,0,1.0)" unit = "Fraction of unassocaited hits in slice [cm]" type ="d"  training="12" group="4404"/>
+<var def = "Min$(sss_candidate_impact_parameter)" binning="(50,0,80)" unit = "Min impact parm basic" type="d" training="" group="4404"/>
+<var def = "Min$(sss_candidate_min_dist)" binning="(50,0,80)" unit = "Min conv parm basic" type="d" training="2"  group="4404"/>
+<var def = "sss3d_ioc_ranked_implied_opang" binning = "(50,-1,1)" unit ="sss3d min IOC implied angle w.r.t primary shower [cos]" type="d"  training="" group="4404"/>
+<var def = "sss3d_ioc_ranked_conv" binning = "(50,0,80)" unit ="sss3d min IOC Conversion Dist [cm]" type="d"  training=""  group="4404"/>
+<var def = "sss2d_conv_ranked_invar" binning = "(50,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="2" group="4404"/>
 
-<var def = "reco_shower3d_dEdx_plane2[0]" binning = "(50,0,10.0)" unit = "Shower3D dEdx Plane 2 [MeV/cm]" type = "d"   training ="0123"/>
-<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(50,0,8.0)" unit = "Median Shower dEdx Plane 2 [MeV/cm]" type = "d"    training ="0123"/>
+<var def = "reco_shower3d_dEdx_plane2[0]" binning = "(50,0,10.0)" unit = "Shower3D dEdx Plane 2 [MeV/cm]" type = "d"   training ="012"/>
+<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(50,0,8.0)" unit = "Median Shower dEdx Plane 2 [MeV/cm]" type = "d"    training ="012"/>
 
-<var def = "reco_shower_plane2_meanRMS" binning = "(50,0,12)" unit = "Reco Shower plane 2 RMS" type="d" training ="0123" group="11811"/>
-<var def = "reco_shower_reclustered_energy_max" binning = "(50,0,250)" unit = "Reclustred Energy Max" type = "d" training="0123" group =""/>
-<var def = "(reco_shower_reclustered_energy_plane0+reco_shower_reclustered_energy_plane2+reco_shower_reclustered_energy_plane1)/3.0" binning = "(50,0,125)" unit = "Reclustred Energy Mean" type = "d" training="0123" group ="12"/>
-<var def = "Sum$(reco_flash_total_pe_in_beamgate)" binning ="(50,0,4000)" unit = "Total PE in Beamgate" type ="d"  training="0123"/>
-<var def = "Min$(reco_shower_flash_shortest_distz)" binning ="(50,0,200)" unit = "Distance Shower to Flash in Z [cm]" type ="d"  training="0123"/>
-<var def = "Min$(reco_shower_flash_shortest_distyz)" binning ="(50,0,200)" unit = "Distance Shower to Flash in YZ [cm]" type ="d"  training="0123"/>
-<var def = "reco_shower_conversion_distance[0]" binning = "(50,0,100)" unit = " Reconstructed Shower Conversion Distance Log[cm]" type = "d"     training="0123"/>
+<var def = "reco_shower_plane2_meanRMS[0]" binning = "(50,0,12)" unit = "Reco Shower plane 2 RMS" type="d" training ="01" group="11811"/>
+<var def = "reco_shower_reclustered_energy_max[0]" binning = "(50,0,250)" unit = "Reclustred Energy Max" type = "d" training="" group =""/>
+<var def = "(reco_shower_reclustered_energy_plane0[0]+reco_shower_reclustered_energy_plane2[0]+reco_shower_reclustered_energy_plane1[0])/3.0" binning = "(50,0,125)" unit = "Reclustred Energy Mean" type = "d" training="" group ="12"/>
+<var def = "m_flash_optfltr_pe_beam" binning ="(50,0,4000)" unit = "Total PE in Beamgate" type ="d"  training="02"/>
+<var def = "Min$(reco_shower_flash_shortest_distz)" binning ="(50,0,200)" unit = "Distance Shower to Flash in Z [cm]" type ="d"  training="012"/>
+<var def = "Min$(reco_shower_flash_shortest_distyz)" binning ="(50,0,200)" unit = "Distance Shower to Flash in YZ [cm]" type ="d"  training="0"/>
+<var def = "reco_shower_conversion_distance[0]" binning = "(50,0,100)" unit = " Reconstructed Shower Conversion Distance Log[cm]" type = "d"     training=""/>
 <var def = "Max$(CRT_veto_hit_PE)" binning = "(50,0,1000)" unit = " Max CRT Veto Hit PE" type = "d"     training="0"/>
-<var def = "Max$(reco_shower_daughter_trackscore)" binning = "(50,0,1)" unit = "Daughter Track Score" type="d"  training="0123"/>
+<var def = "Max$(reco_shower_daughter_trackscore)" binning = "(50,0,1)" unit = "Daughter Track Score" type="d"  training=""/>
 
-<var def ="fabs(Max$(reco_shower_spacepoint_z)-Min$(reco_shower_spacepoint_z))" binning="(500,0,200)" unit = "Spacepoint Width Z" type="d" training="0123"/>
-<var def ="fabs(Max$(reco_shower_spacepoint_x)-Min$(reco_shower_spacepoint_x))" binning="(500,0,200)" unit = "Spacepoint Width X" type="d" training="0123"/>
-<var def ="fabs(Max$(reco_shower_spacepoint_y)-Min$(reco_shower_spacepoint_y))" binning="(500,0,200)" unit = "Spacepoint Width Y" type="d" training="0123"/>
-<var def ="fabs(Max$(reco_shower_spacepoint_y)-Min$(reco_shower_spacepoint_y))*fabs(Max$(reco_shower_spacepoint_x)-Min$(reco_shower_spacepoint_x))*fabs(Max$(reco_shower_spacepoint_z)-Min$(reco_shower_spacepoint_z))" binning="(500,0,50000)" unit = "Spacepoint Area" type="d" training="0123"/>
+<var def ="fabs(Max$(reco_shower_spacepoint_z)-Min$(reco_shower_spacepoint_z))" binning="(500,0,200)" unit = "Spacepoint Width Z" type="d" training="0"/>
+<var def ="fabs(Max$(reco_shower_spacepoint_x)-Min$(reco_shower_spacepoint_x))" binning="(500,0,200)" unit = "Spacepoint Width X" type="d" training="2"/>
+<var def ="fabs(Max$(reco_shower_spacepoint_y)-Min$(reco_shower_spacepoint_y))" binning="(500,0,200)" unit = "Spacepoint Width Y" type="d" training=""/>
+<var def ="(Max$(reco_shower_spacepoint_y)-Min$(reco_shower_spacepoint_y))*(Max$(reco_shower_spacepoint_x)-Min$(reco_shower_spacepoint_x))*(Max$(reco_shower_spacepoint_z)-Min$(reco_shower_spacepoint_z))" binning="(250,0,50000)" unit = "Spacepoint Volume" type="d" training=""/>
 
 
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
-<var def = "1g0pJan2022COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d" training= ""  logplot = "true" group="11111" pmin=0.01 />
-<var def = "1g0pJan2022BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
-<var def = "1g0pJan2022NCPi0_mva" binning = "(24,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
+<var def = "1g0pCohFeb2022COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d" training= ""  logplot = "true" group="11111" pmin=0.01 />
+<var def = "1g0pCohFeb2022BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
+<var def = "1g0pCohFeb2022NCPi0_mva" binning = "(24,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
 
-<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="(34,0,0.6)" unit = "Corrected Reconstructed Shower Energy [GeV]" type="d" training="" group="3333"/>
-<var def ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)*0.001" binning="alt(0.1,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.7)" unit = "Corrected Reconstructed Shower Energy [GeV]" type="d" training="" group="333"/>
+<var def ="#GEOR#*0.001" binning="(34,0,0.6)" unit = "Corrected Reconstructed Shower Energy Fine Bin [GeV]" type="d" training="" group="3333"/>
+<var def ="#GEOR#*0.001" binning="alt(0.1,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.7)" unit = "Corrected Reconstructed Shower Energy [GeV]" type="d" training="" group="333"/>
 
 <!-- ================= Efficiency  ======================== -->
 
@@ -515,6 +522,7 @@
 <alias key="GE" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0)))" />
 <alias key="GEO" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)" /><alias key="PM" value ="(0.938272)"/>
 <alias key="GDEDXKAL" value ="(reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0)))"/>
+<alias key="GEOR" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)" />
 
 <alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>
 <alias key="PP" value = "(sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-0.938272*0.938272))"/>

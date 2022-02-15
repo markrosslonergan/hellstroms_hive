@@ -1792,57 +1792,81 @@ std::vector<double> bdt_file::getVector(bdt_variable & var, std::string  cuts){
     return ans;
 }
 
-int bdt_file::MakeFlatTree(){
+void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string, int>>& variables, const std::string& treename, const std::string& num_candidate_var){
     
-    std::string flat_filename = "FLATTEN_"+this->tag+".root"; 
-    TFile *f = new TFile(flat_filename.c_str(),"recreate");
-    f->cd();
-    TTree *ssv2d_out = new TTree("SSV2D","SSV2D");
 
-    //These are length: int sss_num_candidates
- std::vector<std::string> ssv2d_variables = {"sss_candidate_in_nu_slice","sss_candidate_num_hits","sss_candidate_num_wires","sss_candidate_num_ticks","sss_candidate_plane","sss_candidate_PCA","sss_candidate_mean_ADC","sss_candidate_ADC_RMS","sss_candidate_impact_parameter","sss_candidate_fit_slope","sss_candidate_fit_constant","sss_candidate_mean_tick","sss_candidate_max_tick","sss_candidate_min_tick","sss_candidate_mean_wire","sss_candidate_max_wire","sss_candidate_min_wire","sss_candidate_min_dist","sss_candidate_wire_tick_based_length","sss_candidate_energy","sss_candidate_angle_to_shower","sss_candidate_remerge","sss_candidate_matched","sss_candidate_pdg","sss_candidate_parent_pdg","sss_candidate_trackid","sss_candidate_true_energy","sss_candidate_overlay_fraction","sss_candidate_matched_energy_fraction_best_plane"};
-    std::vector<bool> ssv2d_which = {1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0};
+    //define whether a branch in tree is int, or vector of int, or vector of doubles.
+    int is_int = 0, is_vint = -1, is_vdouble = 1;
 
-    for(int i=0; i< ssv2d_variables.size(); i++){
-        std::cout<<ssv2d_variables[i]<<" "<<ssv2d_which[i]<<std::endl;
+    //print out some debug info
+    std::cout << variables.size() << " Variables flattened for tree: " << treename << " as follows: " << std::endl;
+    for(auto& vpair : variables){
+        std::cout<< vpair.first << " --  " << (vpair.second == is_int ? "int" : (vpair.second == is_vint ? "vector of ints" : "vector of doubles")) << std::endl;
     }
 
+    //locate vector variable
+    int pos_num_candidate_var = -1, pos_first_vector_var = -1;
+    for(size_t i = 0; i!=variables.size(); ++i){
+	auto& vpair = variables[i];
 
-    std::vector<std::vector<double>*> ssv2d_collection_DBL(ssv2d_variables.size(),NULL);
-    std::vector<std::vector<int>*> ssv2d_collection_INT(ssv2d_variables.size(),NULL);
+	if((vpair.second == is_vint || vpair.second == is_vdouble) && pos_first_vector_var == -1)
+	    pos_first_vector_var = i;
+	if(vpair.first == num_candidate_var){
+	    pos_num_candidate_var = i;
+	} 
+    }
+    if(pos_first_vector_var == -1){
+	std::cout << "No vector branch in your list of variables? You probably don't need to flat the tree!\nExiting..." << std::endl;
+	return;
+    }
 
-    int sss_num_candidates = 0;
-    tvertex->SetBranchAddress("sss_num_candidates",&sss_num_candidates);
+    fout->cd();
+    TTree *tree_out = new TTree(treename.c_str(),treename.c_str());
 
-    for(size_t i =0; i< ssv2d_variables.size(); i++){
-            if(ssv2d_which[i]){
-                tvertex->SetBranchAddress(ssv2d_variables[i].c_str(), &(ssv2d_collection_INT[i]));
-            }else {
-                tvertex->SetBranchAddress(ssv2d_variables[i].c_str(), &(ssv2d_collection_DBL[i]));
-            }
+
+    std::vector<int> var_int(variables.size(), 0);
+    std::vector<std::vector<double>*> var_collection_DBL(variables.size(), nullptr);
+    std::vector<std::vector<int>*> var_collection_INT(variables.size(),nullptr);
+
+    //grab event-level branch
+    for(size_t i =0; i != variables.size(); ++i){
+        if(variables[i].second == is_int){
+	    tvertex->SetBranchAddress(variables[i].first.c_str(), &var_int[i]);
+	}
+	else if(variables[i].second == is_vint){ 
+            tvertex->SetBranchAddress(variables[i].first.c_str(), &(var_collection_INT[i]));
+        }else {
+            tvertex->SetBranchAddress(variables[i].first.c_str(), &(var_collection_DBL[i]));
+        }
     }
     double tsplot_pot=6.91e20;
     TTreeFormula* wei = new TTreeFormula("weight_formula ", this->weight_branch.c_str(),this->tvertex);
 
     //Make new branches
-    std::vector<double> ssv2d_pt(ssv2d_variables.size(),0);
-    for(size_t i =0; i< ssv2d_variables.size(); i++){
-            ssv2d_out->Branch(ssv2d_variables[i].c_str(), &(ssv2d_pt[i]));   
+    int out_event_index = 0; 
+    int out_cluster_index = 0;
+
+    tree_out->Branch("orig_event_index",&out_event_index);
+    tree_out->Branch("inside_candidate_index",&out_cluster_index);
+
+    std::vector<double> flat_branch(variables.size(),0);
+    for(size_t i =0; i != variables.size(); i++){
+            tree_out->Branch(variables[i].first.c_str(), &(flat_branch[i]));   
     }
 
-    int out_orig_index = 0; 
-    int out_num_candidates = 0 ;
-    int out_new_index = 0;
     double simple_pot_wei = 0;
+    tree_out->Branch("pot_weight",&simple_pot_wei);
 
-    ssv2d_out->Branch("orig_index",&out_orig_index);
-    ssv2d_out->Branch("ssv_num_candidates",&out_num_candidates);
-    ssv2d_out->Branch("new_index",&out_new_index);
-    ssv2d_out->Branch("pot_weight",&simple_pot_wei);
+    //loop over all old intries 
+    for(size_t i=0; i< tvertex->GetEntries(); ++i){
+        this->tvertex->GetEntry(i);
 
-    //loop over all old intries
-    for(size_t i=0; i< tvertex->GetEntries(); i++){
-        tvertex->GetEntry(i);
+
+	//something hacked together to grab the number of candidates in the events
+	int num_candidates = INT_MAX;
+	if(pos_num_candidate_var != -1)
+	   num_candidates = var_int[pos_num_candidate_var];
+	num_candidates = std::min(num_candidates, static_cast<int>(var_collection_INT[pos_first_vector_var] == nullptr ? var_collection_DBL[pos_first_vector_var]->size(): var_collection_INT[pos_first_vector_var]->size()));
 
         wei->GetNdata();
         double simple_wei = wei->EvalInstance();
@@ -1850,41 +1874,40 @@ int bdt_file::MakeFlatTree(){
  
         if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
 
-        for(int j=0; j< sss_num_candidates; j++){
+        for(int j=0; j != num_candidates ; ++j){
             
-            for(int s= 0; s< ssv2d_variables.size(); s++){
-                if(ssv2d_which[s]){
-                    //std::cout<<ssv2d_variables[s]<<" "<<ssv2d_which[s]<<" "<<sss_num_candidates<<" "<<ssv2d_collection_INT[s]->size()<<"\n";
-                    ssv2d_pt[s] = (double)ssv2d_collection_INT[s]->at(j);     
+            for(size_t s= 0; s != variables.size(); ++s){
+                if(variables[s].second == is_int)
+		   flat_branch[s] = static_cast<double>(var_int[s]);
+		else if(variables[s].second == is_vint){
+                    //std::cout<<variables[s].first << " " << num_candidates<<" "<<var_collection_INT[s]->size()<<"\n";
+                    flat_branch[s] = static_cast<double>(var_collection_INT[s]->at(j));     
                 }else {
-                    //std::cout<<ssv2d_variables[s]<<" "<<ssv2d_which[s]<<" "<<sss_num_candidates<<" "<<ssv2d_collection_DBL[s]->size()<<"\n";
-                    ssv2d_pt[s] = ssv2d_collection_DBL[s]->at(j);     
+                    //std::cout<<variables[s].first<<" "<<num_candidates<<" "<<var_collection_DBL[s]->size()<<"\n";
+                    flat_branch[s] = var_collection_DBL[s]->at(j);     
                 }
             }
 
-            out_orig_index = i; 
-            out_num_candidates = sss_num_candidates; 
-            out_new_index = j;
+            out_event_index = i; 
+            out_cluster_index = j;
 
-            ssv2d_out->Fill();
+            tree_out->Fill();
 
-        }
+        }//candiates loop
 
+    }//event-level loop
+
+    tree_out->Write();
+    //f->Close();  close outside
+
+    // NECESSARY to reset the address of branches in vertex tree before we lose the pointer
+    for(size_t i =0; i != variables.size(); ++i){
+	TBranch* br = tvertex->GetBranch(variables[i].first.c_str());
+	tvertex->ResetBranchAddress(br);
     }
+    //tvertex->ResetBranchAddresses();
 
-
-    ssv2d_out->Write();
-    f->Close();
-
-
-
-    //These are length: int sss3d_num_showers
- //std::vector<std::string> ssv3d_variables = {"sss3d_shower_start_x","sss3d_shower_start_y","sss3d_shower_start_z","sss3d_shower_dir_x","sss3d_shower_dir_y","sss3d_shower_dir_z","sss3d_shower_length","sss3d_shower_conversion_dist","sss3d_shower_invariant_mass","sss3d_shower_implied_invariant_mass","sss3d_shower_impact_parameter","sss3d_shower_ioc_ratio","sss3d_shower_energy_max","sss3d_shower_score"};
-
-
- //These are length: int trackstub_num_candidates
-//    std::vector<std::string> trackstub_variables = {};
-
+    return;
 }
 
 int bdt_file::MakeUnFlatTree(bdt_info & info){

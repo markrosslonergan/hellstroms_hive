@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <numeric>
 #include <utility>
+#include <climits>
 /******** Our includes *****/
 
 #include  "bdt_flow.h"
@@ -168,8 +169,8 @@ struct bdt_file{
 
         unsigned long jenkins_hash(std::string key); //guanqun: what does this do? 
 
-        int MakeFlatTree();
-        int MakeUnFlatTree(bdt_info &info);
+        int MakeUnFlatTree(bdt_info & info);
+        void MakeFlatTree(TFile * fout, const std::vector<std::pair<std::string, int>>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name);
 
         int setStageEntryList(int j);
         int setStageEntryList(int j, double, double);
