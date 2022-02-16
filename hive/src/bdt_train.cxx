@@ -1152,6 +1152,53 @@ int bdt_XGtrain(bdt_info &info){
         btrain->Write();
 
 
+        TCanvas*cPP = new TCanvas();
+  
+        TPad *pPP = (TPad*)cPP->cd();
+
+    pPP->SetLogy();
+
+    btest->Scale(1.0/btest->Integral());
+    stest->Scale(1.0/stest->Integral());
+    btrain->Scale(1.0/btrain->Integral());
+    strain->Scale(1.0/strain->Integral());
+
+
+   btest->Draw("hist");
+   btrain->Draw("hist same");
+   stest->Draw("hist same");
+   strain->Draw("hist same");
+
+   btest->SetTitle("");
+   btest->GetXaxis()->SetTitle("BDT Score");
+
+   btest->SetLineColor(kBlue-7);
+   btrain->SetLineStyle(9);
+   btrain->SetLineColor(kBlue-7);
+
+   stest->SetLineColor(kRed-7);
+   strain->SetLineStyle(9);
+   strain->SetLineColor(kRed-7);
+
+ 
+   btest->SetLineWidth(2);
+   btrain->SetLineWidth(2);
+   stest->SetLineWidth(2);
+   strain->SetLineWidth(2);
+
+   TLegend *lP = new TLegend(0.59,0.89,0.59,0.89);
+   lP->AddEntry(btest,"Bkg Test","l");
+   lP->AddEntry(btrain,"Bkg Train","l");
+   lP->AddEntry(stest,"Sig Test","l");
+   lP->AddEntry(strain,"Sig Train","l");
+   lP->Draw();
+
+   //gStyle->SetOptStat(0);
+    cPP->Write();
+
+
+
+
         f->Close(); 
 
 

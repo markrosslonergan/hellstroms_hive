@@ -1960,7 +1960,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 	//hard-coded variables to be flattened
 	//These are ssv 2d related variables
 	std::vector<FlatVar> ssv2d_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int}, {"sss_num_candidates", is_int}, 
-{"sss_candidate_in_nu_slice",is_vint},{"sss_candidate_num_hits", is_vint},{"sss_candidate_num_wires",is_vint}, {"sss_candidate_num_ticks",is_vint}, {"sss_candidate_plane", is_vint},{"sss_candidate_PCA",is_vdouble}, {"sss_candidate_mean_ADC",is_vdouble}, {"sss_candidate_ADC_RMS",is_vdouble}, {"sss_candidate_impact_parameter",is_vdouble}, {"sss_candidate_fit_slope",is_vdouble}, {"sss_candidate_fit_constant",is_vdouble}, {"sss_candidate_mean_tick",is_vdouble}, {"sss_candidate_max_tick",is_vdouble}, {"sss_candidate_min_tick",is_vdouble}, {"sss_candidate_mean_wire",is_vdouble}, {"sss_candidate_max_wire",is_vdouble}, {"sss_candidate_min_wire",is_vdouble}, {"sss_candidate_min_dist",is_vdouble},{"sss_candidate_wire_tick_based_length",is_vdouble}, {"sss_candidate_energy",is_vdouble}, {"sss_candidate_angle_to_shower",is_vdouble}, {"sss_candidate_remerge",is_vint},{"sss_candidate_matched",is_vint}, {"sss_candidate_pdg",is_vint}, {"sss_candidate_parent_pdg",is_vint}, {"sss_candidate_trackid",is_vint}, {"sss_candidate_true_energy",is_vdouble}, {"sss_candidate_overlay_fraction",is_vdouble}, {"sss_candidate_matched_energy_fraction_best_plane", is_vdouble},{"reco_shower_energy_plane2[0]",is_form, "reco_shower_energy_plane2_0"},{"sim_shower_trackID[0]",is_form}, {"reco_shower_energy_max[0]",is_form, "reco_shower_energy_max_0"}};
+{"sss_candidate_in_nu_slice",is_vint},{"sss_candidate_num_hits", is_vint},{"sss_candidate_num_wires",is_vint}, {"sss_candidate_num_ticks",is_vint}, {"sss_candidate_plane", is_vint},{"sss_candidate_PCA",is_vdouble}, {"sss_candidate_mean_ADC",is_vdouble}, {"sss_candidate_ADC_RMS",is_vdouble}, {"sss_candidate_impact_parameter",is_vdouble}, {"sss_candidate_fit_slope",is_vdouble}, {"sss_candidate_fit_constant",is_vdouble}, {"sss_candidate_mean_tick",is_vdouble}, {"sss_candidate_max_tick",is_vdouble}, {"sss_candidate_min_tick",is_vdouble}, {"sss_candidate_mean_wire",is_vdouble}, {"sss_candidate_max_wire",is_vdouble}, {"sss_candidate_min_wire",is_vdouble}, {"sss_candidate_min_dist",is_vdouble},{"sss_candidate_wire_tick_based_length",is_vdouble}, {"sss_candidate_energy",is_vdouble}, {"sss_candidate_angle_to_shower",is_vdouble}, {"sss_candidate_remerge",is_vint},{"sss_candidate_matched",is_vint}, {"sss_candidate_pdg",is_vint}, {"sss_candidate_parent_pdg",is_vint}, {"sss_candidate_trackid",is_vint}, {"sss_candidate_true_energy",is_vdouble}, {"sss_candidate_overlay_fraction",is_vdouble}, {"sss_candidate_matched_energy_fraction_best_plane", is_vdouble},{"sim_shower_trackID[0]",is_form}, {"((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)",is_form, "corrected_shower_energy"}, {"sss_candidate_energy*1.21989+8.50486",is_form,"sss_corrected_candidate_energy"}};
 
         
        //there are ssv3d related variables
@@ -1974,9 +1974,9 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
    
         for(int i=0; i< bdt_files.size(); i++){
 
-            if(which_file<0 || which_file==i){
-                 std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
-                 //std::string flat_filename = "/pnfs/uboone/scratch/users/markross/FlatTest2/FLATTEN_"+bdt_files[i]->tag+".root"; 
+                if(which_file<0 || which_file==i){
+//                 std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
+                 std::string flat_filename = "/pnfs/uboone/scratch/users/markross/FlatTest3/FLATTEN_"+bdt_files[i]->tag+".root"; 
                  TFile *fout = new TFile(flat_filename.c_str(),"recreate");
 
                 bdt_files[i]->MakeFlatTree(fout,ssv2d_variables, "SSV2D", "sss_num_candidates");

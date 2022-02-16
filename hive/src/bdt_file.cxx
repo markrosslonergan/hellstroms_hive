@@ -1904,7 +1904,7 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar> variables, const s
 
     //grab event-level branch
     for(size_t i =0; i != variables.size(); ++i){
-	variables[i].LinkWithTTree(tvertex);
+        	variables[i].LinkWithTTree(tvertex);
     }
 
     double tsplot_pot=6.91e20;
@@ -1946,11 +1946,11 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar> variables, const s
 
         simple_wei = wei->EvalInstance();
         flat_cut = tcut->EvalInstance();
+        if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
         if(!flat_cut) continue;
 
         simple_pot_wei = simple_wei*this->scale_data*tsplot_pot/this->pot;
 
-        if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
 
         for(size_t s= 0; s != variables.size(); ++s){
             if(!variables[s].IsVector()){
@@ -1982,7 +1982,6 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar> variables, const s
     for(size_t i =0; i != variables.size(); ++i){
 	variables[i].DelinkTTree(tvertex);
     }
-    //tvertex->ResetBranchAddresses();
 
     return;
 }
