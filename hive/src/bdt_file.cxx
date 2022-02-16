@@ -119,6 +119,7 @@ double FlatVar::Evaluate(int index = 0){
     }
     return 0;
 }
+
 void FlatVar::Print(){
     std::cout << "Flat Var, def: " << def << ", type: " << (type == int_type? " int" : (type == vint_type ? "vector of ints" : (type == vdouble_type ? "vector of doubles" : "TTree formula"))) << ", name: " << name << std::endl;
     return;
@@ -1873,11 +1874,8 @@ std::vector<double> bdt_file::getVector(bdt_variable & var, std::string  cuts){
     return ans;
 }
 
-void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const std::string& treename, const std::string& num_candidate_var){
+void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar> variables, const std::string& treename, const std::string& num_candidate_var){
 
-
-    //define whether a branch in tree is int, or vector of int, or vector of doubles.
-    int is_int = 0, is_vint = -1, is_vdouble = 1, is_form = 2;
 
     //print out some debug info
     std::cout << variables.size() << " Variables flattened for tree: " << treename << " as follows: " << std::endl;
