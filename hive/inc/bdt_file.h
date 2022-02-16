@@ -10,6 +10,7 @@
 #include <numeric>
 #include <utility>
 #include <climits>
+#include <stdexcept>
 /******** Our includes *****/
 
 #include  "bdt_flow.h"
@@ -20,6 +21,7 @@
 /******** Root includes *****/
 
 #include "TTreeFormula.h"
+#include "TBranch.h"
 #include "TFile.h"
 #include "TCanvas.h"
 #include "TColor.h"
@@ -82,6 +84,49 @@ TText * drawPrelim(double x, double y,double s);
 TText * drawPrelim(double x, double y,double s, std::string in);
 TText * drawPrelim(double x, double y, std::string in);
 
+class FlatVar{
+private:
+    std::string def;
+    std::string name;
+    int type;
+
+    //address for ntuples
+    int bint=-999;
+    std::vector<int>* bvint=nullptr;
+    std::vector<double>* bvdouble=nullptr;
+    TTreeFormula* bform=nullptr;
+
+    void special_character_check_helper(std::string& str);
+public:
+    static const int int_type = 0, vint_type = -1, vdouble_type = 1, formula_type = 2;
+
+    FlatVar(const std::string& in_def, int in_type, const std::string& in_name = "NONE"): def(in_def),type(in_type), name(in_name){
+        if(name == "NONE"){
+            name = def;
+            special_character_check_helper(name);
+        }
+    }
+
+    void LinkWithTTree(TTree* tree);
+    void DelinkTTree(TTree* tree);
+    double Evaluate(int index);
+    std::string GetName() const {return name;}
+    std::string GetDef() const {return def;}
+    bool IsInt() const {return type == int_type;}
+    bool IsVector() const {return (type == vint_type || type == vdouble_type);}
+    int GetLength(){
+	if(!IsVector()){
+	    throw std::runtime_error("This variable is not vector, can't get length..");
+	}
+
+	if(type == vint_type)
+	    return bvint->size();
+	else
+	    return bvdouble->size();
+	return 0;
+    }
+    void Print();
+};
 
 struct bdt_file{
     public:
@@ -170,7 +215,7 @@ struct bdt_file{
         unsigned long jenkins_hash(std::string key); //guanqun: what does this do? 
 
         int MakeUnFlatTree(bdt_info & info);
-        void MakeFlatTree(TFile * fout, const std::vector<std::pair<std::string, int>>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name);
+        void MakeFlatTree(TFile * fout, std::vector<FlatVar>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name);
 
         int setStageEntryList(int j);
         int setStageEntryList(int j, double, double);
