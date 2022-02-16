@@ -1802,7 +1802,7 @@ std::vector<double> bdt_file::getVector(bdt_variable & var, std::string  cuts){
     return ans;
 }
 
-void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string, int>>& variables, const std::string& treename, const std::string& num_candidate_var){
+void bdt_file::MakeFlatTree(TFile *fout, const std::vector<flattenHelper>& variables, const std::string& treename, const std::string& num_candidate_var){
 
 
     //define whether a branch in tree is int, or vector of int, or vector of doubles.
@@ -1811,7 +1811,8 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
     //print out some debug info
     std::cout << variables.size() << " Variables flattened for tree: " << treename << " as follows: " << std::endl;
     for(auto& vpair : variables){
-        std::cout<< vpair.first << " --  " << (vpair.second == is_int ? "int" : (vpair.second == is_vint ? "vector of ints" : "vector of doubles")) << std::endl;
+        std::cout<< vpair.name << " --  " << (vpair.type == is_int ? "int" : (vpair.type == is_vint ? "vector of ints" : "vector of doubles")) << std::endl;
+        if(vpair.type==2)std::cout<<" -- -- Formula: "<<vpair.formula<<std::endl;
     }
 
 
@@ -1820,9 +1821,9 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
     for(size_t i = 0; i!=variables.size(); ++i){
         auto& vpair = variables[i];
 
-        if((vpair.second == is_vint || vpair.second == is_vdouble) && pos_first_vector_var == -1)
+        if((vpair.type == is_vint || vpair.type == is_vdouble) && pos_first_vector_var == -1)
             pos_first_vector_var = i;
-        if(vpair.first == num_candidate_var){
+        if(vpair.name == num_candidate_var){
             pos_num_candidate_var = i;
         }
     }
@@ -1842,15 +1843,15 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
     std::vector<TTreeFormula*> vec_form(variables.size(),NULL);
     //grab event-level branch
     for(size_t i =0; i != variables.size(); ++i){
-        if(variables[i].second == is_int){
-            tvertex->SetBranchAddress(variables[i].first.c_str(), &var_int[i]);
+        if(variables[i].type == is_int){
+            tvertex->SetBranchAddress(variables[i].name.c_str(), &var_int[i]);
         }
-        else if(variables[i].second == is_vint){ 
-            tvertex->SetBranchAddress(variables[i].first.c_str(), &(var_collection_INT[i]));
-        }else if(variables[i].second == is_vdouble) {
-            tvertex->SetBranchAddress(variables[i].first.c_str(), &(var_collection_DBL[i]));
-        }else if(variables[i].second == is_form){
-            vec_form[i] = new TTreeFormula(variables[i].first.c_str(),variables[i].first.c_str(),tvertex);
+        else if(variables[i].type == is_vint){ 
+            tvertex->SetBranchAddress(variables[i].name.c_str(), &(var_collection_INT[i]));
+        }else if(variables[i].type == is_vdouble) {
+            tvertex->SetBranchAddress(variables[i].name.c_str(), &(var_collection_DBL[i]));
+        }else if(variables[i].type == is_form){
+            vec_form[i] = new TTreeFormula(variables[i].name.c_str(),variables[i].formula.c_str(),tvertex);
         }
     }
     double tsplot_pot=6.91e20;
@@ -1866,7 +1867,7 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
 
     std::vector<double> flat_branch(variables.size(),0);
     for(size_t i =0; i != variables.size(); i++){
-        tree_out->Branch(variables[i].first.c_str(), &(flat_branch[i]));   
+        tree_out->Branch(variables[i].name.c_str(), &(flat_branch[i]));   
     }
 
     double simple_pot_wei = 0;
@@ -1899,7 +1900,7 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
         if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
 
         for(size_t s= 0; s != variables.size(); ++s){
-            if(variables[s].second == is_form){
+            if(variables[s].type == is_form){
                 vec_form[s]->GetNdata();
                 flat_branch[s] = vec_form[s]->EvalInstance();
             }
@@ -1908,13 +1909,13 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
         for(int j=0; j != num_candidates ; ++j){
 
             for(size_t s= 0; s != variables.size(); ++s){
-                if(variables[s].second == is_int)
+                if(variables[s].type == is_int)
                     flat_branch[s] = static_cast<double>(var_int[s]);
-                else if(variables[s].second == is_vint){
-                    //std::cout<<variables[s].first << " " << num_candidates<<" "<<var_collection_INT[s]->size()<<"\n";
+                else if(variables[s].type == is_vint){
+                    //std::cout<<variables[s].name << " " << num_candidates<<" "<<var_collection_INT[s]->size()<<"\n";
                     flat_branch[s] = static_cast<double>(var_collection_INT[s]->at(j));     
-                }else if(variables[s].second == is_vdouble){
-                    //std::cout<<variables[s].first<<" "<<num_candidates<<" "<<var_collection_DBL[s]->size()<<"\n";
+                }else if(variables[s].type == is_vdouble){
+                    //std::cout<<variables[s].name<<" "<<num_candidates<<" "<<var_collection_DBL[s]->size()<<"\n";
                     flat_branch[s] = var_collection_DBL[s]->at(j);     
                 }
             }
@@ -1933,7 +1934,7 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<std::pair<std::string
 
     // NECESSARY to reset the address of branches in vertex tree before we lose the pointer
     for(size_t i =0; i != variables.size(); ++i){
-        TBranch* br = tvertex->GetBranch(variables[i].first.c_str());
+        TBranch* br = tvertex->GetBranch(variables[i].name.c_str());
         tvertex->ResetBranchAddress(br);
     }
     //tvertex->ResetBranchAddresses();

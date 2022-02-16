@@ -73,6 +73,21 @@ std::vector<size_t> sort_indexes(const std::vector<T> &v) {
     return idx;
 }
 
+struct flattenHelper {
+    std::string name;
+    std::string formula;
+    int type;
+
+    flattenHelper(std::string inname, std::string inform, int intype) : name(inname), formula(inform) , type(intype) {};
+    flattenHelper(std::string inname,  int intype) : name(inname), formula(inname) , type(intype) {};
+    int print(){
+        std::cout<<"Name: "<<name<<" Formula: "<<formula<<" Type: "<<type<<std::endl;
+        return 0;
+    }
+
+};
+
+
 
 std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<double>&vin);
 int removeSubStrings(std::string &, std::string&);
@@ -170,7 +185,7 @@ struct bdt_file{
         unsigned long jenkins_hash(std::string key); //guanqun: what does this do? 
 
         int MakeUnFlatTree(bdt_info & info);
-        void MakeFlatTree(TFile * fout, const std::vector<std::pair<std::string, int>>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name);
+        void MakeFlatTree(TFile * fout, const std::vector<flattenHelper>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name);
 
         int setStageEntryList(int j);
         int setStageEntryList(int j, double, double);
