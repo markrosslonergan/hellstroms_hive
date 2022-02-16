@@ -53,8 +53,79 @@ std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<
     return ans;
 }
 
+//******** memeber function for FlatVar class ******************
+void FlatVar::special_character_check_helper(std::string& str){
+    //replace any char that's not English letters or numbers or underscores to '_'
+    for(auto& ch : str){
+	if( (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ( ch >= '0' && ch <= '9') || ch =='_') continue;
+
+        ch = '_';
+    }
+
+    while(str.back() == '_')
+	str.pop_back();
+    return;
+}
+
+void FlatVar::LinkWithTTree(TTree* tree){
+//int_type = 0, vint_type = -1, vdouble_type = 1, formula_type = 2;
+    switch(type)
+    {
+    	case int_type:
+	    tree->SetBranchAddress(def.c_str(), &bint); break;
+    	case vint_type:
+	    tree->SetBranchAddress(def.c_str(), &bvint); break;
+    	case vdouble_type:
+            tree->SetBranchAddress(def.c_str(), &bvdouble); break;
+    	case formula_type:
+	    bform = new TTreeFormula(name.c_str(), def.c_str(),tree);
+	    break;
+    	default:
+	    std::cerr << "Invalid flat varible type! " << std::endl;
+    }
+    return;
+}
+
+void FlatVar::DelinkTTree(TTree* tree){
+    if(type != formula_type){
+        TBranch* br = tree->GetBranch(def.c_str());
+        tree->ResetBranchAddress(br); 
+    }   
+    return;
+}
+
+double FlatVar::Evaluate(int index = 0){
+    switch(type){
+	case int_type:
+	   return static_cast<double>(bint);
+	case vint_type:
+	   if(!bvint){
+		throw std::runtime_error("Flat variable not linked to TTree, exiting..");
+	   }
+	   return static_cast<double>(bvint->at(index));
+	case vdouble_type:
+	   if(!bvdouble){
+                throw std::runtime_error("Flat variable not linked to TTree, exiting..");
+           }
+           return static_cast<double>(bvdouble->at(index));
+	case formula_type:
+	    if(!bform){
+		throw std::runtime_error("TTree Formula not defined, exiting...");
+	    }
+	    bform->GetNdata();	 
+	    return static_cast<double>(bform->EvalInstance());
+	default:
+	    std::cerr << "Invalid flat varible type! " << std::endl;  	   
+    }
+    return 0;
+}
+void FlatVar::Print(){
+    std::cout << "Flat Var, def: " << def << ", type: " << (type == int_type? " int" : (type == vint_type ? "vector of ints" : (type == vdouble_type ? "vector of doubles" : "TTree formula"))) << ", name: " << name << std::endl;
+    return;
+}
 
 
+//************ MEMBER function for BDT_FILE class ******************
 
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) : bdt_file(indir, inname, intag,inops,inrootdir,incol,1001,inflow){}
 
@@ -1802,7 +1873,7 @@ std::vector<double> bdt_file::getVector(bdt_variable & var, std::string  cuts){
     return ans;
 }
 
-void bdt_file::MakeFlatTree(TFile *fout, const std::vector<flattenHelper>& variables, const std::string& treename, const std::string& num_candidate_var){
+void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const std::string& treename, const std::string& num_candidate_var){
 
 
     //define whether a branch in tree is int, or vector of int, or vector of doubles.
@@ -1810,20 +1881,18 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<flattenHelper>& varia
 
     //print out some debug info
     std::cout << variables.size() << " Variables flattened for tree: " << treename << " as follows: " << std::endl;
-    for(auto& vpair : variables){
-        std::cout<< vpair.name << " --  " << (vpair.type == is_int ? "int" : (vpair.type == is_vint ? "vector of ints" : "vector of doubles")) << std::endl;
-        if(vpair.type==2)std::cout<<" -- -- Formula: "<<vpair.formula<<std::endl;
+    for(auto& var : variables){
+	var.Print();
     }
 
 
     //locate vector variable
     int pos_num_candidate_var = -1, pos_first_vector_var = -1;
     for(size_t i = 0; i!=variables.size(); ++i){
-        auto& vpair = variables[i];
-
-        if((vpair.type == is_vint || vpair.type == is_vdouble) && pos_first_vector_var == -1)
+	auto& var = variables[i];
+        if(var.IsVector() && pos_first_vector_var == -1)
             pos_first_vector_var = i;
-        if(vpair.name == num_candidate_var){
+        if(var.GetDef() == num_candidate_var){
             pos_num_candidate_var = i;
         }
     }
@@ -1835,25 +1904,11 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<flattenHelper>& varia
     fout->cd();
     TTree *tree_out = new TTree(treename.c_str(),treename.c_str());
 
-
-    std::vector<int> var_int(variables.size(), 0);
-    std::vector<std::vector<double>*> var_collection_DBL(variables.size(), nullptr);
-    std::vector<std::vector<int>*> var_collection_INT(variables.size(),nullptr);
-
-    std::vector<TTreeFormula*> vec_form(variables.size(),NULL);
     //grab event-level branch
     for(size_t i =0; i != variables.size(); ++i){
-        if(variables[i].type == is_int){
-            tvertex->SetBranchAddress(variables[i].name.c_str(), &var_int[i]);
-        }
-        else if(variables[i].type == is_vint){ 
-            tvertex->SetBranchAddress(variables[i].name.c_str(), &(var_collection_INT[i]));
-        }else if(variables[i].type == is_vdouble) {
-            tvertex->SetBranchAddress(variables[i].name.c_str(), &(var_collection_DBL[i]));
-        }else if(variables[i].type == is_form){
-            vec_form[i] = new TTreeFormula(variables[i].name.c_str(),variables[i].formula.c_str(),tvertex);
-        }
+        	variables[i].LinkWithTTree(tvertex);
     }
+
     double tsplot_pot=6.91e20;
     TTreeFormula* wei = new TTreeFormula("weight_formula ", this->weight_branch.c_str(),this->tvertex);
     TTreeFormula * tcut = new TTreeFormula("precut",  this->getStageCuts(1,{}).c_str()  ,tvertex);
@@ -1867,7 +1922,7 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<flattenHelper>& varia
 
     std::vector<double> flat_branch(variables.size(),0);
     for(size_t i =0; i != variables.size(); i++){
-        tree_out->Branch(variables[i].name.c_str(), &(flat_branch[i]));   
+        tree_out->Branch(variables[i].GetName().c_str(), &(flat_branch[i]));   
     }
 
     double simple_pot_wei = 0;
@@ -1885,8 +1940,8 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<flattenHelper>& varia
         //something hacked together to grab the number of candidates in the events
         int num_candidates = INT_MAX;
         if(pos_num_candidate_var != -1)
-            num_candidates = var_int[pos_num_candidate_var];
-        num_candidates = std::min(num_candidates, static_cast<int>(var_collection_INT[pos_first_vector_var] == nullptr ? var_collection_DBL[pos_first_vector_var]->size(): var_collection_INT[pos_first_vector_var]->size()));
+            num_candidates = static_cast<int>(variables[pos_num_candidate_var].Evaluate());
+        num_candidates = std::min(num_candidates, variables[pos_first_vector_var].GetLength());
 
         wei->GetNdata();
         tcut->GetNdata();
@@ -1900,24 +1955,17 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<flattenHelper>& varia
         if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
 
         for(size_t s= 0; s != variables.size(); ++s){
-            if(variables[s].type == is_form){
-                vec_form[s]->GetNdata();
-                flat_branch[s] = vec_form[s]->EvalInstance();
+            if(!variables[s].IsVector()){
+                flat_branch[s] = variables[s].Evaluate();
             }
         }
 
         for(int j=0; j != num_candidates ; ++j){
 
             for(size_t s= 0; s != variables.size(); ++s){
-                if(variables[s].type == is_int)
-                    flat_branch[s] = static_cast<double>(var_int[s]);
-                else if(variables[s].type == is_vint){
-                    //std::cout<<variables[s].name << " " << num_candidates<<" "<<var_collection_INT[s]->size()<<"\n";
-                    flat_branch[s] = static_cast<double>(var_collection_INT[s]->at(j));     
-                }else if(variables[s].type == is_vdouble){
-                    //std::cout<<variables[s].name<<" "<<num_candidates<<" "<<var_collection_DBL[s]->size()<<"\n";
-                    flat_branch[s] = var_collection_DBL[s]->at(j);     
-                }
+                if(variables[s].IsVector())
+                    flat_branch[s] = variables[s].Evaluate(j);
+                    //std::cout<<variables[s].first << " " << num_candidates<<" "<<var_collection_INT[s]->size()<<"\n";
             }
 
             out_event_index = i; 
@@ -1934,8 +1982,7 @@ void bdt_file::MakeFlatTree(TFile *fout, const std::vector<flattenHelper>& varia
 
     // NECESSARY to reset the address of branches in vertex tree before we lose the pointer
     for(size_t i =0; i != variables.size(); ++i){
-        TBranch* br = tvertex->GetBranch(variables[i].name.c_str());
-        tvertex->ResetBranchAddress(br);
+	variables[i].DelinkTTree(tvertex);
     }
     //tvertex->ResetBranchAddresses();
 
