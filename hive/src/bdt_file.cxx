@@ -910,7 +910,7 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
         TFile* fpre = new TFile(filename.c_str(),"update");	
 
-        TVectorT<double> stored_hash;
+        TVectorT<double> stored_hash ;
 
         fpre->cd();
         stored_hash.Write(s_precut_hash.c_str(),TObject::kWriteDelete);
@@ -1949,7 +1949,7 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
         simple_wei = wei->EvalInstance();
         flat_cut = tcut->EvalInstance();
         if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
-        if(!flat_cut) continue;
+        //if(!flat_cut) continue;
 
         simple_pot_wei = simple_wei*this->scale_data*tsplot_pot/this->pot;
 
@@ -1977,6 +1977,11 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
 
     }//event-level loop
 
+
+    TVectorT<double> n_even(1);
+    n_even[0] = tvertex->GetEntries();
+    n_even.Write("original_file_nevents",TObject::kWriteDelete);
+
     fout->cd();
     tree_out->Write();
 
@@ -1988,50 +1993,65 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
     return;
 }
 
-int bdt_file::MakeUnFlatTree(bdt_info & info){
+int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir ){
 
-    std::string unflat_filename = "UNFLATTEN_"+this->tag+".root"; 
+    std::string unflat_filename = outdir+"/UNFLATTEN_"+this->tag+".root"; 
     TFile *fout = new TFile(unflat_filename.c_str(),"recreate");
     fout->cd();
 
-    TTree *t_out = new TTree((info.identifier+"_unflatten").c_str(),(info.identifier+"unflatten").c_str());
+    TTree *t_out = new TTree(("unflatten_"+info.identifier).c_str(),("unflatten_"+info.identifier).c_str());
 
     std::vector<double>* out_score = NULL;
-    int num_out = 0;
     t_out->Branch("ssv2d_score",&out_score);
-    t_out->Branch("ssv2d_length",&num_out);
 
     int orig_index = 0;
     int new_index=0;
-    int num_candidates = 0;
 
-    tvertex->SetBranchAddress("orig_index",&orig_index);
-    tvertex->SetBranchAddress("ssv_num_candidates",&num_candidates);
-    tvertex->SetBranchAddress("new_index",&new_index);
-
+    tvertex->SetBranchAddress("orig_event_index",&orig_index);
+    tvertex->SetBranchAddress("inside_candidate_index",&new_index);
     TTreeFormula * tmva = new TTreeFormula("mva",  (info.identifier+"_mva").c_str()  ,tvertex);
-
+    
     out_score->clear();
-    for(size_t i=0; i<tvertex->GetEntries();i++){
 
-        if(out_score->size()==num_candidates){
-            //we have already filled it to expected length
-            num_out = out_score->size();
-            t_out->Fill();
-            out_score->clear();
+
+    int last_event_index = 0;
+
+    for(size_t i=0; i<tvertex->GetEntries();i++){
+        tvertex->GetEntry(i);
+
+        while(last_event_index < orig_index){
+             t_out->Fill();
+             last_event_index++;  
+             std::cout<<out_score->size()<<" "<<last_event_index<<" "<<orig_index<<" "<<i<<std::endl;
+             out_score->clear();
         }
 
-        tvertex->GetEntry(i);
         tmva->GetNdata();
         double tmp_score = tmva->EvalInstance();
-
         out_score->push_back(tmp_score);
+        
 
     }
     //and fill the last entry that was missed by construction
-    num_out = out_score->size();
     t_out->Fill();
+    last_event_index++;
 
+    out_score->clear();
+
+    TVectorT<double> *original_file_events = (TVectorT<double>*)f->Get("original_file_events");
+    std::cout<<"Topping up any events a the end of the file "<<last_event_index<<" "<<(*original_file_events)[0]<<std::endl;
+    while(last_event_index < (*original_file_events)[0]){
+            t_out->Fill();
+            last_event_index++;  
+    }
+
+
+    t_out->Write();
+    fout->Close();
+
+
+    std::cout<<out_score->size()<<" "<<last_event_index<<" "<<orig_index<<" "<<std::endl;
+    out_score->clear();
 
     return 0;
 }

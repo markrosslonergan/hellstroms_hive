@@ -215,7 +215,7 @@ struct bdt_file{
 
         unsigned long jenkins_hash(std::string key); //guanqun: what does this do? 
 
-        int MakeUnFlatTree(bdt_info & info);
+        int MakeUnFlatTree(bdt_info & info,std::string &dir);
         void MakeFlatTree(TFile * fout, std::vector<FlatVar>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name);
 
         int setStageEntryList(int j);

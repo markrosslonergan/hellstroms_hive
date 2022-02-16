@@ -1994,6 +1994,16 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
             }
         }
 
+}else if(mode_option == "unflatten"){
+
+    std::string outdir="/pnfs/uboone/scratch/users/markross/FlatTest3/";
+
+    for(int i=0; i< bdt_files.size(); i++){
+                if(which_file<0 || which_file==i){
+                    bdt_files[i]->MakeUnFlatTree(bdt_infos[0] ,outdir);
+
+            }
+        }
 
 
 }else {
