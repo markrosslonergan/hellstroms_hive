@@ -68,7 +68,6 @@ void FlatVar::special_character_check_helper(std::string& str){
 }
 
 void FlatVar::LinkWithTTree(TTree* tree){
-//int_type = 0, vint_type = -1, vdouble_type = 1, formula_type = 2;
     switch(type)
     {
     	case int_type:
@@ -118,6 +117,18 @@ double FlatVar::Evaluate(int index = 0){
 	    std::cerr << "Invalid flat varible type! " << std::endl;  	   
     }
     return 0;
+}
+
+int FlatVar::GetLength() const{
+        if(!IsVector()){
+            throw std::runtime_error("This variable is not vector, can't get length..");
+        }
+
+        if(type == vint_type)
+            return bvint->size();
+        else
+            return bvdouble->size();
+        return 0;
 }
 
 void FlatVar::Print(){

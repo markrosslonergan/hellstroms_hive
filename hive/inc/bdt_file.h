@@ -115,17 +115,7 @@ public:
     std::string GetDef() const {return def;}
     bool IsInt() const {return type == int_type;}
     bool IsVector() const {return (type == vint_type || type == vdouble_type);}
-    int GetLength(){
-	if(!IsVector()){
-	    throw std::runtime_error("This variable is not vector, can't get length..");
-	}
-
-	if(type == vint_type)
-	    return bvint->size();
-	else
-	    return bvdouble->size();
-	return 0;
-    }
+    int GetLength() const;
     void Print();
 };
 

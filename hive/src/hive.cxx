@@ -1950,12 +1950,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 }else if(mode_option == "flatten"){
 
 	// use vector of {variable, int} to indicate whether this variable in vertex tree is int (0), or vector of doubles (1), or vector of int (-1)
-	int is_int = 0, is_vint = -1, is_vdouble = 1, is_form = 2;
-
-	std::cout << "Guanqun Test" << std::endl;
-	FlatVar var_test("reco_shower_energy_plane2[0]", is_form);
-        var_test.Print();
-
+	int is_int = FlatVar::int_type, is_vint = FlatVar::vint_type, is_vdouble = FlatVar::vdouble_type, is_form = FlatVar::formula_type;
 
 	//hard-coded variables to be flattened
 	//These are ssv 2d related variables
@@ -1975,8 +1970,8 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         for(int i=0; i< bdt_files.size(); i++){
 
                 if(which_file<0 || which_file==i){
-//                 std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
-                 std::string flat_filename = "/pnfs/uboone/scratch/users/markross/FlatTest3/FLATTEN_"+bdt_files[i]->tag+".root"; 
+                std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
+                 //std::string flat_filename = "/pnfs/uboone/scratch/users/markross/FlatTest3/FLATTEN_"+bdt_files[i]->tag+".root"; 
                  TFile *fout = new TFile(flat_filename.c_str(),"recreate");
 
                 bdt_files[i]->MakeFlatTree(fout,ssv2d_variables, "SSV2D", "sss_num_candidates");
