@@ -1976,7 +1976,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
                 if(which_file<0 || which_file==i){
 //                 std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
-                 std::string flat_filename = "/pnfs/uboone/scratch/users/markross/FlatTest3/FLATTEN_"analysis_tag+"_"+bdt_files[i]->tag+".root"; 
+                 std::string flat_filename = "/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
                  TFile *fout = new TFile(flat_filename.c_str(),"recreate");
 
                 bdt_files[i]->MakeFlatTree(fout,ssv2d_variables, "SSV2D", "sss_num_candidates");
@@ -1996,7 +1996,7 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
 }else if(mode_option == "unflatten"){
 
-    std::string outdir="/pnfs/uboone/scratch/users/markross/FlatTest4/";
+    std::string outdir="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/";
 
     for(int i=0; i< bdt_files.size(); i++){
                 if(which_file<0 || which_file==i){
