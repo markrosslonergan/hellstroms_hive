@@ -653,7 +653,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }
 
         if(this->tag.find("FLAT")!=std::string::npos){
-            weight_branch = "flat_weight*("+run_weight_string+")";
+            weight_branch = "preselection_weight*("+run_weight_string+")";
         }
 
         numberofevents_raw = numberofevents;
@@ -1937,9 +1937,9 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
     double simple_pot_wei = 0;
     double simple_wei = 0;
     int flat_cut = 0;
-    tree_out->Branch("flat_weight",&simple_wei);
-    tree_out->Branch("flat_cut",&flat_cut);
-    tree_out->Branch("flat_pot_weight",&simple_pot_wei);
+    tree_out->Branch("preselection_weight",&simple_wei);
+    tree_out->Branch("preselection_cut",&flat_cut);
+    tree_out->Branch("preselection_pot_weight",&simple_pot_wei);
 
     //loop over all old intries 
     for(size_t i=0; i< tvertex->GetEntries(); ++i){
@@ -2002,16 +2002,16 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
     return;
 }
 
-int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir ){
+int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir , std::string & analysis_tag){
 
-    std::string unflat_filename = outdir+"UNFLATTEN_"+this->tag+".root"; 
+    std::string unflat_filename = outdir+"UNFLATTEN_"+info.identifier+"_"+this->tag+".root"; 
     TFile *fout = new TFile(unflat_filename.c_str(),"recreate");
     fout->cd();
 
     TTree *t_out = new TTree(("unflatten_"+info.identifier).c_str(),("unflatten_"+info.identifier).c_str());
 
     std::vector<double>* out_score = NULL;
-    t_out->Branch("candidate_bdt_scores",&out_score);
+    t_out->Branch((info.identifier+"_score").c_str(),&out_score);
 
     int orig_index = 0;
     int new_index=0;

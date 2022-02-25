@@ -412,7 +412,7 @@ int main (int argc, char *argv[]){
 
             for(int fr =0; fr < XMLconfig.bdt_friend_filenames[f].size(); fr++){
                 std::cout<<"Adding a Friend Tree : "<<XMLconfig.bdt_friend_treenames[f][fr]<<" from file "<<dir+"/"+XMLconfig.bdt_friend_filenames[f][fr]<<std::endl;
-                bdt_files.back()->addFriend(XMLconfig.bdt_friend_treenames[f][fr],dir+"/"+XMLconfig.bdt_friend_filenames[f][fr]);
+                bdt_files.back()->addFriend(XMLconfig.bdt_friend_treenames[f][fr],XMLconfig.bdt_friend_filenames[f][fr]);
             }
         }
 
@@ -1970,8 +1970,9 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
         for(int i=0; i< bdt_files.size(); i++){
 
                 if(which_file<0 || which_file==i){
-                std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
-                 //std::string flat_filename = "/pnfs/uboone/scratch/users/markross/FlatTest3/FLATTEN_"+bdt_files[i]->tag+".root"; 
+//                 std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
+                 std::string flat_filename = "/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
+
                  TFile *fout = new TFile(flat_filename.c_str(),"recreate");
 
                 bdt_files[i]->MakeFlatTree(fout,ssv2d_variables, "SSV2D", "sss_num_candidates");
@@ -1991,12 +1992,16 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
 }else if(mode_option == "unflatten"){
 
+<<<<<<< HEAD
 //    std::string outdir="/pnfs/uboone/scratch/users/markross/FlatTest3/";
     std::string outdir="";
+=======
+    std::string outdir="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/";
+>>>>>>> 1db007a8d02085b39b3cc2880ccc6dcca2ca4d11
 
     for(int i=0; i< bdt_files.size(); i++){
                 if(which_file<0 || which_file==i){
-                    bdt_files[i]->MakeUnFlatTree(bdt_infos[0] ,outdir);
+                    bdt_files[i]->MakeUnFlatTree(bdt_infos[0] ,outdir,analysis_tag);
 
             }
         }

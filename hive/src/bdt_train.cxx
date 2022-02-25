@@ -1125,15 +1125,50 @@ int bdt_XGtrain(bdt_info &info){
         c_eff->cd();
         TGraph *gc = new TGraph(pos.size(),&bt[0],&st[0]);
         TGraph *gc2 = new TGraph(pos.size(),&bt2[0],&st2[0]);
-        TGraph *gst = new TGraph(pos.size(),&pos[0],&st[0]);
-        TGraph *gbt = new TGraph(pos.size(),&pos[0],&bt[0]);
+        TGraph *gst = new TGraph(pos.size(),&pos[0],&st2[0]);
+        TGraph *gbt = new TGraph(pos.size(),&pos[0],&bt2[0]);
         gst->Draw("AL");
         gst->SetMaximum(1);
         gst->SetMinimum(0);
-        gst->SetLineColor(kRed);
+        gst->SetLineColor(kRed-7);
+        gst->SetLineWidth(3);
         gbt->Draw("same CL");
-        gbt->SetLineColor(kBlue);
-        c_eff->Write(); 
+        gbt->SetLineColor(kBlue-7);
+        gbt->SetLineWidth(3);
+        TLegend *leff = new TLegend(0.1,0.3,0.3,0.6);
+        leff->AddEntry(gst,"Signal (Test) Acceptance Eff","l");
+        leff->AddEntry(gbt,"BKG (Test) Rejection Eff","l");
+        leff->Draw();
+        gst->GetXaxis()->SetTitle("BDT score cut position");
+        gst->GetYaxis()->SetTitle("Efficiency");
+
+
+        c_eff->Write("Test Efficiency"); 
+
+
+        TCanvas *c_eff3 = new TCanvas();//same for training
+        c_eff3->cd();
+        TGraph *gst3 = new TGraph(pos.size(),&pos[0],&st[0]);
+        TGraph *gbt3 = new TGraph(pos.size(),&pos[0],&bt[0]);
+
+        gst3->Draw("AL");
+        gst3->SetMaximum(1);
+        gst3->SetMinimum(0);
+        gst3->SetLineColor(kRed-7);
+        gst3->SetLineWidth(3);
+        gbt3->Draw("same CL");
+        gbt3->SetLineColor(kBlue-7);
+        gbt3->SetLineWidth(3);
+        TLegend *leff3 = new TLegend(0.1,0.3,0.3,0.6);
+        leff3->AddEntry(gst,"Signal (Train) Acceptance Eff","l");
+        leff3->AddEntry(gbt,"BKG (Train) Rejection Eff","l");
+        leff3->Draw();
+        gst3->GetXaxis()->SetTitle("BDT score cut position");
+        gst3->GetYaxis()->SetTitle("Efficiency");
+
+
+        c_eff3->Write("Train Efficiency"); 
+
 
         TCanvas *c_eff2 = new TCanvas();
         c_eff2->cd();
