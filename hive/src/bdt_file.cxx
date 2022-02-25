@@ -2004,14 +2004,14 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
 
 int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir ){
 
-    std::string unflat_filename = outdir+"/UNFLATTEN_"+this->tag+".root"; 
+    std::string unflat_filename = outdir+"UNFLATTEN_"+this->tag+".root"; 
     TFile *fout = new TFile(unflat_filename.c_str(),"recreate");
     fout->cd();
 
     TTree *t_out = new TTree(("unflatten_"+info.identifier).c_str(),("unflatten_"+info.identifier).c_str());
 
     std::vector<double>* out_score = NULL;
-    t_out->Branch("ssv2d_score",&out_score);
+    t_out->Branch("candidate_bdt_scores",&out_score);
 
     int orig_index = 0;
     int new_index=0;
@@ -2031,12 +2031,10 @@ int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir ){
         while(last_event_index < orig_index){
              t_out->Fill();
              last_event_index++;  
-             std::cout<<out_score->size()<<" "<<last_event_index<<" "<<orig_index<<" "<<i<<std::endl;
              out_score->clear();
         }
-
         tmva->GetNdata();
-        double tmp_score = tmva->EvalInstance();
+	double tmp_score = tmva->EvalInstance();
         out_score->push_back(tmp_score);
         
 
@@ -2044,22 +2042,21 @@ int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir ){
     //and fill the last entry that was missed by construction
     t_out->Fill();
     last_event_index++;
-
     out_score->clear();
 
-    TVectorT<double> *original_file_events = (TVectorT<double>*)f->Get("original_file_events");
+    TVectorT<double> *original_file_events = (TVectorT<double>*)f->Get("original_file_nevents");
     std::cout<<"Topping up any events a the end of the file "<<last_event_index<<" "<<(*original_file_events)[0]<<std::endl;
     while(last_event_index < (*original_file_events)[0]){
             t_out->Fill();
             last_event_index++;  
     }
+    std::cout<<"Final check of events saved to unflat file: "<<last_event_index<<" expected: "<<(*original_file_events)[0]<<std::endl;
 
 
     t_out->Write();
     fout->Close();
 
 
-    std::cout<<out_score->size()<<" "<<last_event_index<<" "<<orig_index<<" "<<std::endl;
     out_score->clear();
 
     return 0;
