@@ -1992,12 +1992,10 @@ if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det
 
 }else if(mode_option == "unflatten"){
 
-<<<<<<< HEAD
 //    std::string outdir="/pnfs/uboone/scratch/users/markross/FlatTest3/";
     std::string outdir="";
-=======
-    std::string outdir="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/";
->>>>>>> 1db007a8d02085b39b3cc2880ccc6dcca2ca4d11
+    //std::string outdir="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/";
+
 
     for(int i=0; i< bdt_files.size(); i++){
                 if(which_file<0 || which_file==i){
