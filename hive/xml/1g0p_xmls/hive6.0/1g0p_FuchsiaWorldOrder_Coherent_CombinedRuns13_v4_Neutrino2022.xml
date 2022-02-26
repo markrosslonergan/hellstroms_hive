@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g0pCohNeutrino2022" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.980464,0.940755,0.571771,0)"/>
+<topology tag="1g0pCohNeutrino2022" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.0,0.0,0.0,0.5)"/>
 
 <covar dir = "Covar_DetSysChecks_FinalSelection/" name = "frac_covariance" plotname="" />
 <plot_pot>
@@ -21,6 +21,10 @@
     <definition>
         <cut>(m_flash_optfltr_pe_beam &gt;20 &amp;&amp; m_flash_optfltr_pe_veto &lt; 20)</cut> 
     </definition>
+    <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_NCSingleCoherentTestTextGenFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
 </bdtfile>
 
 <bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaRadOverlaySMTrueP" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta #rightarrow N#gamma (1+p)" signal = "false" plot_on_top = "false" fillstyle="3245">
@@ -31,6 +35,11 @@
         <cut>(m_flash_optfltr_pe_beam &gt;20 &amp;&amp; m_flash_optfltr_pe_veto &lt; 20)</cut> 
         <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_NCDeltaRadOverlaySMTruePFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 <bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaRadOverlaySMTrueN" hist_style = "hist" dirs = "singlephotonana/" col = "(0.9,0.82,0.05)" plot_name = "NC #Delta #rightarrow N#gamma (0p)" signal = "false" plot_on_top = "false" fillstyle="3254">
@@ -41,6 +50,11 @@
         <cut>(m_flash_optfltr_pe_beam &gt;20 &amp;&amp; m_flash_optfltr_pe_veto &lt; 20)</cut> 
         <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_NCDeltaRadOverlaySMTrueNFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 <bdtfile filename = "preTopo_vertex_NCPi0_Run123_TestSplit_v50.0.uniq.root" tag = "NCPi0Coh" hist_style = "hist" dirs = "singlephotonana/" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" >
@@ -51,6 +65,10 @@
         <cut> (m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut> (MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_NCPi0CohFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
 </bdtfile>
 
 <bdtfile filename = "preTopo_vertex_NCPi0_Run123_TestSplit_v50.0.uniq.root" tag = "NCPi0NotCoh" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" >
@@ -61,6 +79,11 @@
         <cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_NCPi0NotCohFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 <bdtfile filename = "../preTopo_vertex_CCPi0_Run13_v50.0.uniq.root" tag = "CC1Pi0" hist_style = "hist" dirs = "singlephotonana/" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" >
@@ -71,6 +94,11 @@
         <cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_CC1Pi0FLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 <bdtfile filename = "preTopo_vertex_BNBOther_Run123_TestSplit_v50.0.uniq.root" tag = "BNBOtherExtra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" >
@@ -82,6 +110,11 @@
         <cut> (m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut> (MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_BNBOtherExtraFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 
@@ -93,6 +126,11 @@
         <cut> (m_flash_optfltr_pe_beam>20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut>(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_NueOverlaysFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 
@@ -101,6 +139,11 @@
         <cut>1</cut>
         <cut>(m_flash_optfltr_pe_beam&gt;20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
     </definition>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_DirtFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 <bdtfile filename = "preTopo_vertex_BNBOther_Run123_TestSplit_v50.0.uniq.root" tag = "OTPCExtra" hist_style = "hist" dirs = "singlephotonana/" col = "(0.6,0.4,0.2)" plot_name = "Dirt (Outside TPC)"  scale = "1.0" plot_on_top = "false" >
@@ -108,6 +151,11 @@
         <cut>(m_flash_optfltr_pe_beam &gt; 20 &amp;&amp; m_flash_optfltr_pe_veto&lt; 20)</cut>
         <cut>!(MCFlux_NuPosX &gt; (0.0-1.55) &amp;&amp; MCFlux_NuPosX &lt; (256.35-1.55) &amp;&amp; MCFlux_NuPosY &gt; (-116.5+0.97) &amp;&amp; MCFlux_NuPosY &lt; (116.5+0.97) &amp;&amp; MCFlux_NuPosZ &gt; 0.0+0.1 &amp;&amp; MCFlux_NuPosZ &lt; 1036.8+0.1)</cut>
     </definition>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_OTPCExtraFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 
@@ -117,6 +165,11 @@
         <tor860_wcut> 4.566e+19  </tor860_wcut>   
         <E1DCNT_wcut> 10127594.0 </E1DCNT_wcut>   
     </data>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_FinalSelection1g0pFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 <bdtfile filename = "preTopo_vertex_BNBext_Run123_TestSplit_v50.0.root" tag = "BNBext" hist_style = "hist" dirs = "singlephotonana/" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1">
@@ -128,6 +181,11 @@
         <E1DCNT_wcut> 10127594.0 </E1DCNT_wcut>   
         <EXT>180439635.0</EXT>  
     </data>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_BNBextFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 
@@ -144,6 +202,11 @@
         <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
         <cut> sim_shower_pdg[0]==22</cut>
     </training>
+   <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_NCpi0TrainFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 <bdtfile filename = "preTopo_vertex_NCPi0_Run123_TestSplit_v50.0.uniq.root" tag = "NCpi0Test" hist_style = "hist" dirs = "singlephotonana/" col = "(1,0.4,0.4)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1">
@@ -156,6 +219,11 @@
         <cut> sim_shower_overlay_fraction[0]&lt;0.9</cut>
         <cut> sim_shower_pdg[0]==22</cut>
     </training>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_NCpi0TestFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 <bdtfile filename = "preTopo_vertex_BNBext_Run123_TrainSplit_v50.0.root" tag = "BNBextTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "Cosmic Data Train" fillstyle = "3333" scale = "1">
@@ -192,6 +260,11 @@
         <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
         <cut> sim_shower_pdg[0] == 22 </cut>
     </training>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_NCCoherentTextGenTrainFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 
@@ -205,6 +278,11 @@
         <cut> sim_shower_overlay_fraction[0] &lt; 0.5 </cut>
         <cut> sim_shower_pdg[0] == 22 </cut>
     </training>
+  <friend>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_NCCoherentTextGenTestFLAT.root</filename>
+        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+    </friend>
+
 </bdtfile>
 
 <bdtfile filename = "preTopo_vertex_BNBOther_Run123_TrainSplit_v50.0.uniq.root" tag = "BNBOtherTrain" hist_style = "hist" dirs = "singlephotonana/" col = "(0.2,0.8,0.2)" plot_name = "BnbTrain" fillstyle = "3333" scale = "1">
@@ -403,7 +481,7 @@
 
 
 <var def = "reco_shower_nuscore[0]" binning = "(50, 0, 1)" unit = "Neutrino Slice Score" type = "d"     training="01" group="4404"/>
-<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(50,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="12" group="4404"/>
+<var def = "DeNan(#GDEDXKAL#,reco_shower_dEdx_amalgamated[0])" binning = "(50,0,10.0)" unit = "Shower dEdx [MeV/cm]" type="d"  training="" group="4404"/>
 <var def = "reco_shower_dirz[0]" binning = "(50,-1,1)" unit="Reco Shower CosTheta" type="d" training="0123" />
 <var def = "reco_shower_implied_dirz[0]" binning = "(50,-1,1)" unit="Reco Shower Implied CosTheta" type="d" training="" />
 <var def = "reco_shower_impact_parameter[0]" binning = "(50,0,200)" unit = "Shower Impact Parameter [cm]" type="d"    training=""/>
@@ -430,8 +508,8 @@
 <var def = "sss3d_ioc_ranked_conv" binning = "(50,0,80)" unit ="sss3d min IOC Conversion Dist [cm]" type="d"  training=""  group="4404"/>
 <var def = "sss2d_conv_ranked_invar" binning = "(50,0,200)" unit ="sss2d closest candidate invariant mass [MeV]" type="d"  training="2" group="4404"/>
 
-<var def = "reco_shower3d_dEdx_plane2[0]" binning = "(50,0,10.0)" unit = "Shower3D dEdx Plane 2 [MeV/cm]" type = "d"   training ="012"/>
-<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(50,0,8.0)" unit = "Median Shower dEdx Plane 2 [MeV/cm]" type = "d"    training ="012"/>
+<var def = "reco_shower3d_dEdx_plane2[0]" binning = "(50,0,10.0)" unit = "Shower3D dEdx Plane 2 [MeV/cm]" type = "d"   training ="01"/>
+<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(50,0,8.0)" unit = "Median Shower dEdx Plane 2 [MeV/cm]" type = "d"    training ="01"/>
 
 <var def = "reco_shower_plane2_meanRMS[0]" binning = "(50,0,12)" unit = "Reco Shower plane 2 RMS" type="d" training ="01" group="11811"/>
 <var def = "reco_shower_reclustered_energy_max[0]" binning = "(50,0,250)" unit = "Reclustred Energy Max" type = "d" training="" group =""/>
@@ -448,23 +526,24 @@
 <var def ="fabs(Max$(reco_shower_spacepoint_y)-Min$(reco_shower_spacepoint_y))" binning="(500,0,200)" unit = "Spacepoint Width Y" type="d" training=""/>
 <var def ="(Max$(reco_shower_spacepoint_y)-Min$(reco_shower_spacepoint_y))*(Max$(reco_shower_spacepoint_x)-Min$(reco_shower_spacepoint_x))*(Max$(reco_shower_spacepoint_z)-Min$(reco_shower_spacepoint_z))" binning="(250,0,50000)" unit = "Spacepoint Volume" type="d" training=""/>
 
-<var def = "Max$((sss_candidate_plane==0)*ssv2d_score)" binning ="(25,0,1)" unit = "Max SSV cluster score Plane 0" type="d" group="404" logplot="true" pmax=1e8 training="2"/>
-<var def = "Max$((sss_candidate_plane==1)*ssv2d_score)" binning ="(25,0,1)" unit = "Max SSV cluster score Plane 1" type="d" group="404" logplot="true" pmax=1e8 training="2"/>
-<var def = "Max$((sss_candidate_plane==2)*ssv2d_score)" binning ="(25,0,1)" unit = "Max SSV cluster score Plane 2" type="d" group="404" logplot="true" pmax=1e8 training="2"/>
+<var def = "Max$((sss_candidate_plane==0)*1g0pCohNeutrino2022SSV2D_CxC_score)" binning ="(25,0,1)" unit = "Max SSV cluster score Plane 0" type="d" group="404" logplot="true" pmax=1e8 training="2"/>
+<var def = "Max$((sss_candidate_plane==1)*1g0pCohNeutrino2022SSV2D_CxC_score)" binning ="(25,0,1)" unit = "Max SSV cluster score Plane 1" type="d" group="404" logplot="true" pmax=1e8 training="2"/>
+<var def = "Max$((sss_candidate_plane==2)*1g0pCohNeutrino2022SSV2D_CxC_score)" binning ="(25,0,1)" unit = "Max SSV cluster score Plane 2" type="d" group="404" logplot="true" pmax=1e8 training="2"/>
 
-<var def = "reco_shower3d_dEdx_plane2[0]" binning = "(50,0,10.0)" unit = "Shower3D dEdx Plane 2 [MeV/cm]" type = "d"   training ="3"/>
-<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(50,0,8.0)" unit = "Median Shower dEdx Plane 2 [MeV/cm]" type = "d"    training ="3"/>
+<var def = "reco_shower3d_dEdx_plane2[0]" binning = "(50,0,10.0)" unit = "Shower3D dEdx Plane 2 [MeV/cm]" type = "d"   training ="13" group="1111"/>
+<var def = "reco_shower_dEdx_plane2_median[0]" binning = "(50,0,8.0)" unit = "Median Shower dEdx Plane 2 [MeV/cm]" type = "d"    training ="13" group="1111"/>
 
-<var def = "( (reco_shower3d_dEdx_plane1[0]>reco_shower3d_dEdx_plane0[0])*reco_shower3d_dEdx_plane1[0] +(reco_shower3d_dEdx_plane1[0]<reco_shower3d_dEdx_plane0[0])*reco_shower3d_dEdx_plane0[0] ) " binning="(50,0,8.0)" unit = "3D Max Plane01" type="d" training="3"  />
+<var def = "( (reco_shower3d_dEdx_plane1[0]>reco_shower3d_dEdx_plane0[0])*reco_shower3d_dEdx_plane1[0] +(reco_shower3d_dEdx_plane1[0]<reco_shower3d_dEdx_plane0[0])*reco_shower3d_dEdx_plane0[0] ) " binning="(50,0,8.0)" unit = "3D Max Plane01" type="d" training="13"  group="1111"/>
 
 <var def = "( (reco_shower3d_dEdx_plane2[0]>0)*reco_shower3d_dEdx_plane2[0] + (reco_shower3d_dEdx_plane2[0]<=0)*reco_shower_dEdx_plane2_median[0]) " binning="(50,0,8.0)" unit = "3D to Median dEdx Plane 2" type="d" training=""  />
 
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
-<var def = "1g0pCohFeb2022COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d" training= ""  logplot = "true" group="11111" pmin=0.01 />
-<var def = "1g0pCohFeb2022BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
-<var def = "1g0pCohFeb2022NCPi0_mva" binning = "(24,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
+<var def = "1g0pCohNeutrino2022COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d" training= ""  logplot = "true" group="11111" pmin=0.01 />
+<var def = "1g0pCohNeutrino2022BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
+<var def = "1g0pCohNeutrino2022NCPi0_mva" binning = "(24,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
+<var def = "1g0pCohNeutrino2022Nue_mva" binning = "(24,0.0,1)" unit = "CC #nu_{e} BDT Score" type="d" training= ""   logplot = "true" group="1111" pmin=0.01/>
 
 <var def ="#GEOR#*0.001" binning="(34,0,0.6)" unit = "Corrected Reconstructed Shower Energy Fine Bin [GeV]" type="d" training="" group="3333"/>
 <var def ="#GEOR#*0.001" binning="alt(0.1,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.7)" unit = "Corrected Reconstructed Shower Energy [GeV]" type="d" training="" group="333"/>
