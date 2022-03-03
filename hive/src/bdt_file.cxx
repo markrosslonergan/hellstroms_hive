@@ -1578,6 +1578,20 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     this->teventweight->AddFriend(this->tvertex);
     this->tslice->AddFriend(this->tvertex);
 
+    
+    std::vector<TFile*> f_sbnfit_friend_files;
+    std::vector<TTree*> t_sbnfit_friend_origins;
+    
+    for(int k=0; k< friend_names.size(); k++){
+        std::cout<<"Saving Friend Tree "<<friend_names[k]<<" in "<<friend_files[k]<<std::endl;
+        TFile *ftmp = new TFile(friend_files[k].c_str(),"read");
+        f_sbnfit_friend_files.push_back(ftmp);
+        TTree * tmpo = (TTree*)ftmp->Get(friend_names[k].c_str());
+        tmpo->AddFriend(tvertex);
+        t_sbnfit_friend_origins.push_back(tmpo);
+    }
+     
+    
     //this->ttrueeventweight->AddFriend(this->tvertex);
 
     std::cout<<__LINE__<<" Yarko "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
@@ -1616,6 +1630,14 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     std::cout<<"Copying trueeventweight tree (via friends)"<<std::endl;
     //TTree * t_sbnfit_trueeventweight_tree = (TTree*)this->ttrueeventweight->CopyTree(sbnfit_cuts.c_str());
 
+    //New section to save all Friended TTrees 
+    //   friend_files  and friend_names (ttrees)
+  
+    std::vector<TTree*> t_sbnfit_friends;
+    for(int k=0; k< friend_names.size(); k++){
+            TTree * sfriend = (TTree*)t_sbnfit_friend_origins[k]->CopyTree(sbnfit_cuts.c_str());
+            t_sbnfit_friends.push_back(sfriend);
+    }
 
 
     std::cout<<__LINE__<<" Creating Simple_Tree "<<std::endl;
@@ -1733,6 +1755,12 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
         t_sbnfit_simpletree.Fill();
     }
 
+
+
+
+
+
+
     //std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
 
     TList * lf1 = (TList*)t_sbnfit_tree->GetListOfFriends();
@@ -1741,6 +1769,10 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     TList * lf2 = (TList*)t_sbnfit_eventweight_tree->GetListOfFriends();
     for(const auto&& obj: *lf2) t_sbnfit_eventweight_tree->GetListOfFriends()->Remove(obj);
 
+    for(int k=0; k<  t_sbnfit_friends.size(); k++){
+        TList * lf3 = (TList*)t_sbnfit_friends[k]->GetListOfFriends();
+        for(const auto&& obj: *lf3) t_sbnfit_friends[k]->GetListOfFriends()->Remove(obj);
+    }
 
     //TList * lf3 = (TList*)t_sbnfit_trueeventweight_tree->GetListOfFriends();
     //for(const auto&& obj: *lf3) t_sbnfit_trueeventweight_tree->GetListOfFriends()->Remove(obj);
@@ -1756,8 +1788,13 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     //t_sbnfit_trueeventweight_tree->Write(); 
     t_sbnfit_slice_tree->Write();
     t_sbnfit_simpletree.Write();
+    for(int k=0; k<  t_sbnfit_friends.size(); k++){
+        t_sbnfit_friends[k]->Write(); 
+    }
     weight->Write();
     var->Write();
+
+
 
     TVectorD POT_value(1);
     POT_value[0] = this->pot;
@@ -1765,6 +1802,9 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 
     f_sbnfit->Close();
     std::cout<<"Done!"<<std::endl;
+
+    for (auto &f: f_sbnfit_friend_files)f->Close();
+
 
     return 0;
 }

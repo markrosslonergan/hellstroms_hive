@@ -183,15 +183,15 @@
 
 <mva type="BDT" use="yes" tag = "SSV2D_CxC" name ="SSV flat BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees= 400</param>
+        <param> n_trees= 1000</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
-        <param> gamma=0.75</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will b    e.    -->
-        <param> max_depth=5</param>    <!-- How many layers deep each tree -->
-        <param> eta=0.125</param>        <!-- Learning Rate -->
+        <param> gamma=1.0</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will b    e.    -->
+        <param> max_depth=6</param>    <!-- How many layers deep each tree -->
+        <param> eta=0.05</param>        <!-- Learning Rate -->
         <param> subsample=0.9</param> <!-- % of events passed to each tree -->
-        <param> colsample_bytree= 1.0</param>   <!-- % of features that are passed to each tree  -->
+        <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
         <param> verbosity=1</param>
     </method>
     <file      
