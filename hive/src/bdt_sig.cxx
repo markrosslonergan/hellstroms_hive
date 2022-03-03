@@ -392,8 +392,8 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
     double best_impact = 0;
     std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
 
-    double plot_pot = 6.91e20;//5e19;// 10.115e20;
-    double sig_scale = 10.0;
+    double plot_pot = 6.8e20;//5e19;// 10.115e20;
+    double sig_scale = 1.0;
 
     std::cout<<"Setting stage entry lists"<<std::endl;
     for(size_t i = 0; i < sig_files.size(); ++i) {
@@ -495,20 +495,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         for(int i=0; i< bdt_infos.size(); i++){
             d[i] = rangen->Uniform(minvals[i], maxvals[i]);
         }
-        double impact = rangen->Uniform(10,22);
         
-        double s1 = rangen->Uniform(0.3,0.6);
-        double s2 = rangen->Uniform(0.3,s1);
-
-        //double impact = rangen->Uniform(0.5,0.7);
-        //  std::string s_impact = "((sss_num_candidates==0) ||  Min$(sss_candidate_impact_parameter)>"+std::to_string(impact) +") ";
-
-        //Yarp
-        std::string s_impact = "1";
-        //std::string s_impact = "((sss_num_candidates==0)|| Sum$(sss_candidate_impact_parameter<"+std::to_string(impact)+ "&& sss_candidate_min_dist<70.0)==0 )";
-
-        //std::string s_impact = "((sss_num_candidates==0)|| Max$(sss_candidate_veto_score)<"+std::to_string(s1)+  " )";
-
         double signal = 0;
         double background = 0;
         std::vector<double> bkg;	
@@ -516,7 +503,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         for(size_t i = 0; i < sig_files.size(); ++i) {
             double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
 
-            std::string bnbcut = sig_files.at(i)->getStageCuts(1+bdt_infos.size(), d)+"&&"+s_impact; 
+            std::string bnbcut = sig_files.at(i)->getStageCuts(1+bdt_infos.size(), d); 
             double thiss = sig_scale*sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
             signal += thiss; 
 
@@ -527,7 +514,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
             double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
 
 
-            std::string bnbcut = bkg_files.at(i)->getStageCuts(1+bdt_infos.size(),d)+"&&"+s_impact; 
+            std::string bnbcut = bkg_files.at(i)->getStageCuts(1+bdt_infos.size(),d); 
             //     std::cout<<bnbcut<<std::endl;
             bkg.push_back(bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
 
@@ -552,7 +539,6 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         if(significance > best_significance) {
             best_significance = significance;
             best_mva = d;
-            best_impact = impact;
             s_mod = "(Current Best)";
         }
 
@@ -563,7 +549,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         for(auto &dd:bkg){
             std::cout<<dd<<" ";   
         }
-        std::cout<<") w/ Impact: "<<impact<<" N_signal: "<<signal<<" (E_signal: "<<(signal/(double)total_sig)<<") N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+        std::cout<<")  N_signal: "<<signal<<" (E_signal: "<<(signal/(double)total_sig)<<") N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
 
         s_mod = "";
 

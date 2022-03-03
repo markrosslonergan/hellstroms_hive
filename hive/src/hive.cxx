@@ -1080,13 +1080,13 @@ int main (int argc, char *argv[]){
         std::cout<<"the input number is "<<number<<std::endl;
         switch(number){
             case 0:
-                scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot);
+                scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot);   //this
                 break;
             case 1:
                 scan_likelihood(stack_bdt_files, bdt_infos);
                 break;
             case 2:
-                scan_significance_random(signal_bdt_files, bkg_bdt_files, bdt_infos,sig_type);
+                scan_significance_random(signal_bdt_files, bkg_bdt_files, bdt_infos,sig_type); //this
                 break;
             case 3:
                 scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos, what_pot, sig_type);
