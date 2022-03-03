@@ -393,6 +393,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
     std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
 
     double plot_pot = 6.91e20;//5e19;// 10.115e20;
+    double sig_scale = 10.0;
 
     std::cout<<"Setting stage entry lists"<<std::endl;
     for(size_t i = 0; i < sig_files.size(); ++i) {
@@ -482,7 +483,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         std::cout << "POT scale: " << pot_scale << std::endl;
 
         std::string bnbcut = sig_files.at(i)->getStageCuts(1,minvals); 
-        total_sig += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
+        total_sig += sig_scale*sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
     }
 
     std::string s_mod = "";
@@ -516,7 +517,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
             double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
 
             std::string bnbcut = sig_files.at(i)->getStageCuts(1+bdt_infos.size(), d)+"&&"+s_impact; 
-            double thiss = sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
+            double thiss = sig_scale*sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
             signal += thiss; 
 
             //std::cout<<" "<<sig_files[i]->tag<<" "<<thiss;
