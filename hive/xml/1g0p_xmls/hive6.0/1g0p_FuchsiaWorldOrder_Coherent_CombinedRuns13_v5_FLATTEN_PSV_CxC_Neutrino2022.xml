@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g0pCohNeutrino2022" name ="SSV" def = "preselection_cut==1" bdtcut = "(0)"/>
+<topology tag="1g0pCohNeutrino2022" name ="PSV" def = "preselection_cut==1" bdtcut = "(0)"/>
 
 <covar dir = "Covar_DetSysChecks_FinalSelection/" name = "frac_covariance" plotname="" />
 
@@ -11,72 +11,72 @@
 </plot_pot>
 
 <!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
-<filedir>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022</filedir>
+<filedir>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5</filedir>
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCSingleCoherentTestTextGen.root" tag = "NCSingleCoherentTestTextGenFLAT" hist_style = "hist" dirs = "" col = "(256, 172, 18)" plot_name = "NC Coherent 1 #gamma" signal = "true" plot_on_top = "true" ttree_name="SSV2D">
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCSingleCoherentTestTextGen.root" tag = "NCSingleCoherentTestTextGenFLAT" hist_style = "hist" dirs = "" col = "(256, 172, 18)" plot_name = "NC Coherent 1 #gamma" signal = "true" plot_on_top = "false" ttree_name="PSV">
     <definition>
         <cut>1</cut> 
     </definition>
 </bdtfile>
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadOverlaySMTrueP.root" tag = "NCDeltaRadOverlaySMTruePFLAT" hist_style = "hist" dirs = "" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta #rightarrow N#gamma (1+p)" signal = "false" plot_on_top = "false" fillstyle="3245" ttree_name="SSV2D">
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadOverlaySMTrueP.root" tag = "NCDeltaRadOverlaySMTruePFLAT" hist_style = "hist" dirs = "" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta #rightarrow N#gamma (1+p)" signal = "false" plot_on_top = "false" fillstyle="3245" ttree_name="PSV">
     <definition>
         <cut>1</cut>
     </definition>
 </bdtfile>
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadOverlaySMTrueN.root" tag = "NCDeltaRadOverlaySMTrueNFLAT" hist_style = "hist" dirs = "" col = "(0.9,0.82,0.05)" plot_name = "NC #Delta #rightarrow N#gamma (0p)" signal = "false" plot_on_top = "false" fillstyle="3254" ttree_name="SSV2D" >
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadOverlaySMTrueN.root" tag = "NCDeltaRadOverlaySMTrueNFLAT" hist_style = "hist" dirs = "" col = "(0.9,0.82,0.05)" plot_name = "NC #Delta #rightarrow N#gamma (0p)" signal = "false" plot_on_top = "false" fillstyle="3254" ttree_name="PSV" >
     <definition>
         <cut>1</cut>
     </definition>
 </bdtfile>
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCPi0Coh.root" tag = "NCPi0CohFLAT" hist_style = "hist" dirs = "" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" ttree_name="SSV2D" >
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCPi0Coh.root" tag = "NCPi0CohFLAT" hist_style = "hist" dirs = "" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" ttree_name="PSV" >
     <definition>
         <cut> 1 </cut>
     </definition>
 </bdtfile>
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCPi0NotCoh.root" tag = "NCPi0NotCohFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" ttree_name="SSV2D">
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCPi0NotCoh.root" tag = "NCPi0NotCohFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" ttree_name="PSV">
     <definition>
         <cut>1</cut>
     </definition>
 </bdtfile>
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_CC1Pi0.root" tag = "CC1Pi0FLAT" hist_style = "hist" dirs = "" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" ttree_name="SSV2D">
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_CC1Pi0.root" tag = "CC1Pi0FLAT" hist_style = "hist" dirs = "" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" ttree_name="PSV">
     <definition>
         <cut> 1 </cut> 
     </definition>
 </bdtfile>
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_BNBOtherExtra.root" tag = "BNBOtherExtraFLAT" hist_style = "hist" dirs = "" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" ttree_name="SSV2D">
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_BNBOtherExtra.root" tag = "BNBOtherExtraFLAT" hist_style = "hist" dirs = "" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" ttree_name="PSV">
     <definition>
-        <cut>1</cut>  
+        <cut>1</cut>  <!--not nc delta, allows CC delta -->
     </definition>
 </bdtfile>
 
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NueOverlays.root" tag = "NueOverlaysFLAT" hist_style = "hist" dirs = "" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" ttree_name="SSV2D">
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NueOverlays.root" tag = "NueOverlaysFLAT" hist_style = "hist" dirs = "" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" ttree_name="PSV">
     <definition>
         <cut> 1 </cut>
     </definition>
 </bdtfile>
 
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_Dirt.root" tag = "DirtFLAT" hist_style = "hist" dirs = "" col = "(0.6,0.35,0.25)" plot_name = "Dirt" scale="1.0" mergedown="true" ttree_name="SSV2D"> 
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_Dirt.root" tag = "DirtFLAT" hist_style = "hist" dirs = "" col = "(0.6,0.35,0.25)" plot_name = "Dirt" scale="1.0" mergedown="true" ttree_name="PSV"> 
     <definition>
         <cut>1</cut>
     </definition>
 </bdtfile>
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_OTPCExtra.root" tag = "OTPCExtraFLAT" hist_style = "hist" dirs = "" col = "(0.6,0.4,0.2)" plot_name = "Dirt (Outside TPC)"  scale = "1.0" plot_on_top = "false" ttree_name="SSV2D">
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_OTPCExtra.root" tag = "OTPCExtraFLAT" hist_style = "hist" dirs = "" col = "(0.6,0.4,0.2)" plot_name = "Dirt (Outside TPC)"  scale = "1.0" plot_on_top = "false" ttree_name="PSV">
     <definition>
         <cut>1</cut>
     </definition>
 </bdtfile>
 
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_FinalSelection1g0p.root" tag = "FinalSelection1g0pFLAT" hist_style = "E1p" dirs = "" col = "(0.0,0.0,0.0)" plot_name = "BNB Data, Total:" ttree_name="SSV2D" >
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_FinalSelection1g0p.root" tag = "FinalSelection1g0pFLAT" hist_style = "E1p" dirs = "" col = "(0.0,0.0,0.0)" plot_name = "BNB Data, Total:" ttree_name="PSV" >
     <definition><cut>1</cut></definition>
     <data type="OnBeam" plot_name="Runs 1-3">
         <tor860_wcut> 4.566e+19  </tor860_wcut>   
@@ -84,7 +84,7 @@
     </data>
 </bdtfile>
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_BNBext.root" tag = "BNBextFLAT" hist_style = "hist" dirs = "" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1" ttree_name="SSV2D">
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_BNBext.root" tag = "BNBextFLAT" hist_style = "hist" dirs = "" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1" ttree_name="PSV">
     <definition>
         <cut> 1 </cut>
     </definition>
@@ -99,107 +99,65 @@
 
 <!-- ================================================== BDT FILES [Now the training files]==================================================== -->
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCpi0Train.root" tag = "CxCSSVTrainFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "SSV CxC Train" fillstyle = "3333" scale = "1" ttree_name="SSV2D">
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadTrain.root" tag = "NCDeltaTruePTrainFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "NCDelta TrueP Train" fillstyle = "3333" scale = "1" ttree_name="PSV">
+    <definition> <!-- what's the difference between definition and training cuts here? -->
+        <cut> 1 </cut>
+    </definition>
+    <training>
+        <cut> trackstub_candidate_matched==1 &amp;&amp; trackstub_candidate_pdg == 2212</cut>
+    </training>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadTest.root" tag = "NCDeltaTruePTestFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "NCDelta TrueP Test" fillstyle = "3333" scale = "1" ttree_name="PSV" >
     <definition>
         <cut> 1 </cut>
     </definition>
     <training>
-        <cut> sss_candidate_pdg==22</cut>
-        <cut> sss_candidate_parent_pdg==111</cut>
-        <cut> sss_candidate_trackid!=sim_shower_trackID_0</cut>
+        <cut> trackstub_candidate_matched==1 &amp;&amp; trackstub_candidate_pdg == 2212</cut>
     </training>
 </bdtfile>
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCpi0Test.root" tag = "CxCSSVTestFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "SSV CxC Test" fillstyle = "3333" scale = "1" ttree_name="SSV2D" >
-    <definition>
-        <cut> 1 </cut>
-    </definition>
-    <training>
-        <cut> sss_candidate_pdg==22</cut>
-        <cut> sss_candidate_parent_pdg==111</cut>
-        <cut> sss_candidate_trackid!=sim_shower_trackID_0</cut>
-    </training>
-</bdtfile>
-
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCCoherentTextGenTrain.root" tag = "NCCoherentTextGenTrainFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = "NC Coh 1 #gamma Train" fillstyle = "3333" scale = "1"  ttree_name="SSV2D">
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadTrain.root" tag = "NCDeltaNonPTrainFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = "NCDelta NonP Train" fillstyle = "3333" scale = "1"  ttree_name="PSV">
     <definition>
         <cut> 1</cut>
     </definition>
     <training>
-        <cut> 1</cut>
+        <cut> trackstub_candidate_pdg != 2212 </cut>
     </training>
 </bdtfile>
 
 
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCCoherentTextGenTest.root" tag = "NCCoherentTextGenTestFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = "NCCoh 1 #gamma Test" fillstyle = "3333" scale = "1" ttree_name="SSV2D" >
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadTest.root" tag = "NCDeltaNonPTestFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = "NCDelta NonP Test" fillstyle = "3333" scale = "1" ttree_name="PSV" >
     <definition>
         <cut> 1</cut>
     </definition>
     <training>
-        <cut> 1 </cut>
+        <cut> trackstub_candidate_pdg != 2212 </cut>
     </training>
 </bdtfile>
-
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCpi0Train.root" tag = "NCpi0TrainFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1" ttree_name="SSV2D">
-    <definition>
-        <cut> 1 </cut>
-    </definition>
-    <training>
-        <cut> 1</cut>
-    </training>
-</bdtfile>
-
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCpi0Test.root" tag = "NCpi0TestFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1" ttree_name="SSV2D" >
-    <definition>
-        <cut> 1 </cut>
-    </definition>
-    <training>
-        <cut> 1 </cut>
-    </training>
-</bdtfile>
-
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadTrain.root" tag = "NCDeltaRadTrainFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = "NC Delta Train" fillstyle = "3333" scale = "1"  ttree_name="SSV2D">
-    <definition>
-        <cut> 1</cut>
-    </definition>
-    <training>
-        <cut> 1</cut>
-    </training>
-</bdtfile>
-
-
-<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadTest.root" tag = "NCDeltaRadTestFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = "NC Delta Test" fillstyle = "3333" scale = "1"  ttree_name="SSV2D">
-    <definition>
-        <cut> 1</cut>
-    </definition>
-    <training>
-        <cut> 1</cut>
-    </training>
-</bdtfile>
-
 
 
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
 
-<mva type="BDT" use="yes" tag = "SSV2D_CxC" name ="SSV flat BDT" binning = "(24,0.0,1.0)">
+<mva type="BDT" use="yes" tag = "PSV" name ="PSV flat BDT" binning = "(24,0.0,1.0)">
     <method type = "XGBoost" use = "yes">
-        <param> n_trees= 1000</param>
+        <param> n_trees= 300</param>
         <param> tree_method=exact</param>
         <param> n_gpus=0</param>
         <param> objective=binary:logistic</param>
-        <param> gamma=1.0</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will b    e.    -->
-        <param> max_depth=6</param>    <!-- How many layers deep each tree -->
-        <param> eta=0.05</param>        <!-- Learning Rate -->
+        <param> gamma=0.75</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will b    e.    -->
+        <param> max_depth=7</param>    <!-- How many layers deep each tree -->
+        <param> eta=0.1</param>        <!-- Learning Rate -->
         <param> subsample=0.9</param> <!-- % of events passed to each tree -->
-        <param> colsample_bytree= 0.95</param>   <!-- % of features that are passed to each tree  -->
+        <param> colsample_bytree= 1.0</param>   <!-- % of features that are passed to each tree  -->
         <param> verbosity=1</param>
     </method>
     <file      
-        sig_train_tag = "CxCSSVTrainFLAT"
-        sig_test_tag = "CxCSSVTestFLAT"
+        bkg_train_tag = "NCDeltaNonPTrainFLAT"
+        bkg_test_tag = "NCDeltaNonPTestFLAT"
         bkg_test_cut = "1"
-        bkg_train_tag = "NCCoherentTextGenTrainFLAT"
-        bkg_test_tag = "NCCoherentTextGenTestFLAT"
+        sig_train_tag = "NCDeltaTruePTrainFLAT"
+        sig_test_tag = "NCDeltaTruePTestFLAT"
         sig_test_cut = "1"
         />
     <scan min = "0.54" max = "0.58" steps="5"/>
@@ -212,32 +170,30 @@
 
 
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
+<!--<var def = "" binning = "()" unit = "" type = "d"     training="0" group=""/>-->
 
 
-<var def = "sss_candidate_energy" binning = "(50, 0, 400)" unit = "Cluster Energy" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_energy/corrected_shower_energy" binning = "(50,0,2)" unit = "Ratio energy to shower enegry" type = "d" training = "0" group="4404"/>
-<var def = "sss_candidate_wire_tick_based_length" binning = "(50, 0, 100)" unit = "Cluster Length" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_num_hits" binning = "(50, 0, 100)" unit = "Number Hits" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_PCA" binning = "(50, 0, 1)" unit = "PCA" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_impact_parameter" binning = "(51, 0, 250)" unit = "impact par" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_num_wires" binning = "(50, 0, 50)" unit = "Num Wires" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_num_ticks" binning = "(50, 0, 50)" unit = "Num Ticks" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_mean_ADC" binning = "(50, 0, 500)" unit = "Mean ADC" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_ADC_RMS" binning = "(50, 0, 500)" unit = " ADC RMS" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_fit_constant" binning = "(50, 0, 250)" unit = "Fit Const" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_fit_slope" binning = "(50, 0, 50)" unit = "Fit Slope" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_angle_to_shower*180.0/3.14159" binning = "(50, 0, 180)" unit = "2DAngleToShower" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_min_dist" binning = "(50,0,250)" unit = "Distance to vertex" type = "d" training="0" group="4404"/>
-<var def = "sqrt(2.0*(sss_corrected_candidate_energy)*corrected_shower_energy*(1.0-cos(sss_candidate_angle_to_shower)))" binning = "(50,0,400)" unit = "Simple Invar" training="0" group="4404" type="d"/>
-<!-- =================  ======================== -->
-<var def = "sss_candidate_remerge" binning = "(2, 0, 1)" unit = "Remerge" type = "d"     training="" group="4404"/>
-<var def = "sss_candidate_fit_slope" binning = "(50, 0, 50)" unit = "Fit Slope" type = "d"     training="" group="4404"/>
-<var def = "fabs(sss_candidate_max_tick/25.0-sss_candidate_min_tick/25.0)*fabs(sss_candidate_max_wire*0.3-sss_candidate_min_wire*0.3)" binning = "(50,0,1000)" unit="cluster extent wire x tick [fake cm]^{2}" training="" group="4404" type="d"/>
-<var def = "fabs(sss_candidate_max_wire*0.3-sss_candidate_min_wire*0.3)" binning = "(50,0,100)" unit="cluster extent wire [fake cm]" training="" group="4404" type="d"/>
-<var def = "fabs(sss_candidate_max_tick/25.0-sss_candidate_min_tick/25.0)" binning = "(50,0,100)" unit="cluster extent tick [fake cm]" training="" group="4404" type="d"/>
+<!-- ================= ############ Start of BDT training Variables ########### ======================== -->
+<var def = "trackstub_candidate_num_hits" binning = "(40, 0, 40)" unit = "Num of Hits/cluster" type = "d"   training="" group = "1"/>
+<var def = "trackstub_candidate_PCA" binning = "(40, 0.5, 1.0)" unit = "PCA" type = "d"   training="0" group = "1"/>
+<var def = "trackstub_candidate_mean_ADC" binning = "(30, 1, 1000)" unit = "mean ADC Per hit" type = "d"   training="0" group = "1"/>
+<var def = "trackstub_candidate_ADC_RMS" binning = "(30, 0, 1000)" unit = "ADC RMS" type = "d"   training="0" group = "1"/>
+<var def = "trackstub_candidate_min_impact_parameter_to_shower" binning = "(40, 0,400)" unit = "Min Impact Parameter to Shower Direction" type = "d"   training="0" group = "1"/>
+<var def = "trackstub_candidate_min_conversion_dist_to_shower_start" binning = "(40, 0, 600)" unit = "Min Conversion Distance to Shower Start" type = "d"   training="0" group = "1"/>
+<var def = "trackstub_candidate_min_ioc_to_shower_start" binning = "(40, 0, 1)" unit = "Min IOC to Shower Start" type = "d"   training="0" group = "1"/>
+<var def = "trackstub_candidate_ioc_based_length" binning = "(30, 0, 7)" unit = "IOC based cluster length" type = "d"   training="0" group = "1"/>
+<var def = "trackstub_candidate_wire_tick_based_length" binning = "(30, 0, 7)" unit = "Wire-Tick based cluster length" type = "d"   training="" group = "1"/>
+<var def = "trackstub_candidate_mean_ADC_first_to_second_ratio" binning = "(70, 0, 7)" unit = "mean ADC ratio (first to second half)" type = "d"   training="0" group = "1"/>
+<var def = "trackstub_candidate_track_angle_wrt_shower_direction" binning = "(60, 0, 3.15)" unit = "Cluster Angle wrt Shower Direction" type = "d"   training="" group = "1"/>
+<var def = "trackstub_candidate_linear_fit_chi2" binning = "(40, 0, 7)" unit = "#chi^{2} from linear fit" type = "d"   training="0" group = "1"/>
+
+<!-- ================= ############ End of BDT training Variables ########### ======================== -->
 
 
-<var def ="1g0pCohFeb2022SSV_mva" binning="(50,0,1)" unit = "SSV v2 Score" type="d" training="" group="111" logplot="true"/>
+<var def = "1g0pCohFeb2022PSV_mva" binning = "(50, 0, 1)" unit = "PSV BDT SCORES" logplot="true" type = "d"     training="" group="11"/>
+
+
+
 <!-- ================= Efficiency  ======================== -->
 
 

@@ -140,6 +140,7 @@
     </training>
 </bdtfile>
 
+<!-- use to apply SSV bdt to all clusters in the NCpi0 training and test sample for use at later stage -->
 <bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCpi0Train.root" tag = "NCpi0TrainFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1" ttree_name="SSV2D">
     <definition>
         <cut> 1 </cut>
