@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g0pCohNeutrino2022" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.992577,0.991601,0.912134,0.576064)"/>
-<covar dir = "Covar_DetSysChecks_FinalSelection/" name = "frac_covariance" plotname="" />
+<topology tag="1g0pCohNeutrino2022" name ="1#gamma0p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==0" bdtcut = "(0.7,0.991601,0.912134,0.576064)"/>
+<covar dir = "./" name = "frac_covariance" plotname="Flux and XS Sys Only" />
 <plot_pot>
     <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.249"  />
     <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "0.751" />
@@ -544,10 +544,11 @@
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
 <!-- ******************************* WARNING TRAINING ABOVE! ********************************* -->
 
-<var def = "1g0pCohNeutrino2022COSMIC_mva" binning = "(24,0.0,1)" unit = "Cosmic BDT Score" type="d" training= ""  logplot = "true" group="11111" pmin=0.01 />
-<var def = "1g0pCohNeutrino2022BNB_mva" binning = "(24,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
-<var def = "1g0pCohNeutrino2022NCPi0_mva" binning = "(24,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
-<var def = "1g0pCohNeutrino2022Nue_mva" binning = "(24,0.0,1)" unit = "#nu_{e} BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
+<var def = "1g0pCohNeutrino2022COSMIC_mva" binning = "(25,0.0,1)" unit = "Cosmic BDT Score" type="d" training= ""  logplot = "true" group="11111" pmin=0.01 />
+<var def = "1g0pCohNeutrino2022BNB_mva" binning = "(25,0.0,1)" unit = "BNB Other BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
+<var def = "1g0pCohNeutrino2022NCPi0_mva" binning = "(25,0.0,1)" unit = "NC#pi^{0} BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
+<var def = "1g0pCohNeutrino2022Nue_mva" binning = "(25,0.0,1)" unit = "CC #nu_{e} BDT Score" type="d" training= ""   logplot = "true" group="11111" pmin=0.01/>
+
 <var def = "(Max$(1g0pCohNeutrino2022PSV_score))" binning = "(24, 0.0, 1)" unit = "Max PSV BDT cluster score" type = "d" training= ""  logplot = "true" group = "99999" pmin=0.01/>
 <var def = "sqrt(Max$(1g0pCohNeutrino2022PSV_score))" binning = "(24, 0.0, 1)" unit = "Max PSV BDT cluster score Square Root" type = "d" training= ""  logplot = "true" group = "111112" pmin=0.01/>
 <var def = "pow(Max$(1g0pCohNeutrino2022PSV_score), 2.0)" binning = "(24, 0.0, 1)" unit = "Max PSV BDT cluster score square" type = "d" training= ""  logplot = "true" group = "111112" pmin=0.01/>
