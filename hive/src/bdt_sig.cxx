@@ -494,6 +494,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         std::vector<double> d (bdt_infos.size(),0);
         for(int i=0; i< bdt_infos.size(); i++){
             d[i] = rangen->Uniform(minvals[i], maxvals[i]);
+            d[i] = std::round(d[i]*1000.0)/1000.0;
         }
         
         double signal = 0;
@@ -529,7 +530,8 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
             significance =0;
         }else if(background !=0){
             //significance = signal/(signal+background);
-            significance = signal/sqrt(background);
+            //significance = signal/sqrt(background);
+            significance = (signal/(double)total_sig)*31.8*signal/(31.8*signal+background);
 
         }else{
             std::cout<<"method_best_significane_seperate || signal2+background2 == 0 , sig: "<<signal<<" , so significance  = nan. Woopsie."<<std::endl;
