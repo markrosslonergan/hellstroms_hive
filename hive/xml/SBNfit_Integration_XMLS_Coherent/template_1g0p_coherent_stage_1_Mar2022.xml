@@ -63,8 +63,7 @@
 </variation_list>
 
 <!--   #################################### 1g0p    ##################################### -->
-<MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCSingleCoherentTestTextGen.root" scale = "1" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCSingleCoherentTestTextGen.root"/>
+<MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCSingleCoherentTestTextGen.root" scale = "1" maxevents="5000000" pot="1.0" fake="true"> 
     <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCSingleCoherentTestTextGen.root"/> 
     <friend treename="singlephoton/NCSingleCoherentTestTextGen_1g0pCohNeutrino2022COSMIC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCSingleCoherentTestTextGen.root"/> 
     <friend treename="singlephoton/NCSingleCoherentTestTextGen_1g0pCohNeutrino2022BNB"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCSingleCoherentTestTextGen.root"/> 
@@ -72,6 +71,7 @@
     <friend treename="singlephoton/NCSingleCoherentTestTextGen_1g0pCohNeutrino2022Nue"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCSingleCoherentTestTextGen.root"/> 
     <friend treename="singlephoton/unflatten_1g0pCohNeutrino2022PSV"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCSingleCoherentTestTextGen.root"/> 
     <friend treename="singlephoton/unflatten_1g0pCohNeutrino2022SSV2D_CxC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCSingleCoherentTestTextGen.root"/> 
+    <friend treename="eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCSingleCoherentTestTextGen.FAKEWEIGHT.root"/>
     <branch 
         name=VARVARVAR
         type="double"
@@ -82,7 +82,7 @@
 </MultisimFile>
 
 <MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCDeltaRadOverlaySMTrueP.root" scale = "1" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCDeltaRadOverlaySMTrueP.root"/>
+    <friend treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCDeltaRadOverlaySMTrueP.root"/>
     <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCDeltaRadOverlaySMTrueP.root"/> 
     <friend treename="singlephoton/NCDeltaRadOverlaySMTrueP_1g0pCohNeutrino2022COSMIC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCDeltaRadOverlaySMTrueP.root"/> 
     <friend treename="singlephoton/NCDeltaRadOverlaySMTrueP_1g0pCohNeutrino2022BNB"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCDeltaRadOverlaySMTrueP.root"/> 
@@ -101,7 +101,7 @@
 
 
 <MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCDeltaRadOverlaySMTrueN.root" scale = "1" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCDeltaRadOverlaySMTrueN.root"/>
+    <friend treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCDeltaRadOverlaySMTrueN.root"/>
     <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCDeltaRadOverlaySMTrueN.root"/> 
     <friend treename="singlephoton/NCDeltaRadOverlaySMTrueN_1g0pCohNeutrino2022COSMIC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCDeltaRadOverlaySMTrueN.root"/> 
     <friend treename="singlephoton/NCDeltaRadOverlaySMTrueN_1g0pCohNeutrino2022BNB"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCDeltaRadOverlaySMTrueN.root"/> 
@@ -120,7 +120,7 @@
 
 
 <MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0Coh.root" scale = "1" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0Coh.root"/>
+    <friend treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0Coh.root"/>
     <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0Coh.root"/> 
     <friend treename="singlephoton/NCPi0Coh_1g0pCohNeutrino2022COSMIC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0Coh.root"/> 
     <friend treename="singlephoton/NCPi0Coh_1g0pCohNeutrino2022BNB"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0Coh.root"/> 
@@ -138,7 +138,7 @@
 </MultisimFile>
 
 <MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0NotCoh.root" scale = "1" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0NotCoh.root"/>
+    <friend treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0NotCoh.root"/>
     <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0NotCoh.root"/> 
     <friend treename="singlephoton/NCPi0NotCoh_1g0pCohNeutrino2022COSMIC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0NotCoh.root"/> 
     <friend treename="singlephoton/NCPi0NotCoh_1g0pCohNeutrino2022BNB"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0NotCoh.root"/> 
@@ -157,7 +157,7 @@
 
 
 <MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0Coh.root" scale = "1" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0Coh.root"/>
+    <friend treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0Coh.root"/>
     <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0Coh.root"/> 
     <friend treename="singlephoton/NCPi0Coh_1g0pCohNeutrino2022COSMIC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0Coh.root"/> 
     <friend treename="singlephoton/NCPi0Coh_1g0pCohNeutrino2022BNB"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NCPi0Coh.root"/> 
@@ -168,7 +168,7 @@
     <branch 
         name=VARVARVAR
         type="double"
-        associated_subchannel="nu_uBooNE_1g0p_CC1Pi1"
+        associated_subchannel="nu_uBooNE_1g0p_NCPi0Coh"
         additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
@@ -176,7 +176,7 @@
 
 
 <MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_CC1Pi0.root" scale = "1" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_CC1Pi0.root"/>
+    <friend treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_CC1Pi0.root"/>
     <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_CC1Pi0.root"/> 
     <friend treename="singlephoton/CC1Pi0_1g0pCohNeutrino2022COSMIC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_CC1Pi0.root"/> 
     <friend treename="singlephoton/CC1Pi0_1g0pCohNeutrino2022BNB"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_CC1Pi0.root"/> 
@@ -187,7 +187,7 @@
     <branch 
         name=VARVARVAR
         type="double"
-        associated_subchannel="nu_uBooNE_1g0p_CC1Pi1"
+        associated_subchannel="nu_uBooNE_1g0p_CC1Pi0"
         additional_weight="simple_pot_weight*WEIWEIWEI" 
         eventweight_branch_name = "mcweight"
         />
@@ -196,7 +196,7 @@
 
 
 <MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBOtherExtra.root" scale = "1" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBOtherExtra.root"/>
+    <friend treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBOtherExtra.root"/>
     <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBOtherExtra.root"/> 
     <friend treename="singlephoton/BNBOtherExtra_1g0pCohNeutrino2022COSMIC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBOtherExtra.root"/> 
     <friend treename="singlephoton/BNBOtherExtra_1g0pCohNeutrino2022BNB"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBOtherExtra.root"/> 
@@ -216,7 +216,7 @@
 
 
 <MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NueOverlays.root" scale = "1" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NueOverlays.root"/>
+    <friend treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NueOverlays.root"/>
     <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NueOverlays.root"/> 
     <friend treename="singlephoton/NueOverlays_1g0pCohNeutrino2022COSMIC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NueOverlays.root"/> 
     <friend treename="singlephoton/NueOverlays_1g0pCohNeutrino2022BNB"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_NueOverlays.root"/> 
@@ -235,7 +235,7 @@
 
 
 <MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_Dirt.root" scale = "1" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_Dirt.root"/>
+    <friend treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_Dirt.root"/>
     <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_Dirt.root"/> 
     <friend treename="singlephoton/Dirt_1g0pCohNeutrino2022COSMIC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_Dirt.root"/> 
     <friend treename="singlephoton/Dirt_1g0pCohNeutrino2022BNB"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_Dirt.root"/> 
@@ -254,7 +254,7 @@
 
 
 <MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_OTPCExtra.root" scale = "1" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_OTPCExtra.root"/>
+    <friend treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_OTPCExtra.root"/>
     <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_OTPCExtra.root"/> 
     <friend treename="singlephoton/OTPCExtra_1g0pCohNeutrino2022COSMIC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_OTPCExtra.root"/> 
     <friend treename="singlephoton/OTPCExtra_1g0pCohNeutrino2022BNB"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_OTPCExtra.root"/> 
@@ -272,8 +272,7 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBext.root" scale = "1" maxevents="5000000" pot="1.0"> 
-    <friend treename="arborist/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBext.root"/>
+<MultisimFile treename="singlephoton/vertex_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBext.root" scale = "1" maxevents="5000000" pot="1.0" fake="true"> 
     <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBext.root"/> 
     <friend treename="singlephoton/BNBext_1g0pCohNeutrino2022COSMIC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBext.root"/> 
     <friend treename="singlephoton/BNBext_1g0pCohNeutrino2022BNB"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBext.root"/> 
@@ -281,6 +280,7 @@
     <friend treename="singlephoton/BNBext_1g0pCohNeutrino2022Nue"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBext.root"/> 
     <friend treename="singlephoton/unflatten_1g0pCohNeutrino2022PSV"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBext.root"/> 
     <friend treename="singlephoton/unflatten_1g0pCohNeutrino2022SSV2D_CxC"  filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBext.root"/> 
+    <friend treename ="eventweight_tree" filename="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/SBNfit_files/Coherent_Neutrino2022_v5/sbnfit_1g0pCohNeutrino2022_stage_1_BNBext.FAKEWEIGHT.root"/>
     <branch 
         name=VARVARVAR
         type="double"
