@@ -524,7 +524,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         run_fractions_file[i] = run_fractions_file[i]/combin;
     }
 
-    run_weight_string = "1.0*("+run_cuts[0]+"*"+std::to_string(run_fractions[0]/run_fractions_file[0]);
+    run_weight_string = "1.0*("+run_cuts[0]+"*"+std::to_string(run_fractions.at(0)/run_fractions_file.at(0));
 
 
     for(int i=1; i< run_fractions.size(); i++){
@@ -544,13 +544,12 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
         tvertex->AddFriend(teventweight);
         std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
-    }
 
-    vec_entry_lists.resize(flow.bdt_vector.size());
+        vec_entry_lists.resize(flow.bdt_vector.size());
 
         ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
         std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
-
+    }
 
 
     double potbranch = 0;
@@ -598,14 +597,14 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             if(isin) tmppot += potbranch;
         }
 
-        if (this->tag == "DarkNue"){
+        if (this->tag.find("DarkNue") != std::string::npos){
             tmppot = 2e21;
             std::cout<<"for the dark nue setting to arbitrary POT: "<<tmppot<<std::endl;
 
         }
 
         if(this->tag.find("TextGen")!=std::string::npos){
-            tmppot = 2e24;
+            tmppot = 2.28149e+24;
             std::cout<<"Its a TextGen!"<<std::endl;
             //             tvertex->SetBranchStatus("grouped_trackstub_candidate_indices",0);
         }
@@ -625,7 +624,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*("+run_weight_string+")*(GTruth_ResNum!=9)";
 
-        if(this->tag=="DarkNue"){
+        if(this->tag.find("DarkNue") != std::string::npos){
             weight_branch = "1";
         }
 
