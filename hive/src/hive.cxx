@@ -419,16 +419,19 @@ int main (int argc, char *argv[]){
 
         //if run1 only manual, and not training. Force.
 
-        std::vector<std::string> i_run_names;
-        std::vector<std::string> i_run_cuts;
-        std::vector<double> i_run_fractions;
+        std::vector<std::string> i_run_names = XMLconfig.run_names;
+        std::vector<std::string> i_run_cuts = XMLconfig.run_cuts;
+        std::vector<double> i_run_fractions = XMLconfig.run_fractions;
+        //std::vector<std::string> i_run_names;
+        //std::vector<std::string> i_run_cuts;
+        //std::vector<double> i_run_fractions;
 
         if(run1_only &&  !XMLconfig.bdt_is_training_signal[f]){
             i_run_names = {XMLconfig.run_names[0]}; 
             i_run_cuts = {XMLconfig.run_cuts[0]}; 
             i_run_fractions = {1.0};
         }
-
+        //std::cout << "Guanqun check " << i_run_names.size()  << " "<< i_run_cuts.size() << " " << i_run_fractions.size() << std::endl;
         bdt_files.back()->calcPOT(i_run_names, i_run_cuts, i_run_fractions);
 
         std::cout<<"Checking for friend trees: "<<XMLconfig.bdt_friend_filenames[f].size()<<" "<<XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
@@ -605,7 +608,7 @@ int main (int argc, char *argv[]){
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
-        histogram_stack->plot_pot =  what_pot;;//2.06988e20  ;//12.25e20;//.115e20; //12.25e20;//10.115e20;//4.9e19;
+        histogram_stack->plot_pot =  what_pot;//2.06988e20  ;//12.25e20;//.115e20; //12.25e20;//10.115e20;//4.9e19;
         std::cout<<"flag1"<<std::endl;
 
         ///Going to modify this a bit, rather than modify place in the stack as that messes up covariances, 
@@ -1904,13 +1907,8 @@ int main (int argc, char *argv[]){
 
     }else if(mode_option == "flatten"){
 
-        // use vector of {variable, int} to indicate whether this variable in vertex tree is int (0), or vector of doubles (1), or vector of int (-1)
-        int is_int = 0, is_vint = -1, is_vdouble = 1, is_form = 2;
-
-        std::cout << "Guanqun Test" << std::endl;
-        FlatVar var_test("reco_shower_energy_plane2[0]", is_form);
-        var_test.Print();
-
+	// use vector of {variable, int} to indicate whether this variable in vertex tree is int (0), or vector of doubles (1), or vector of int (-1)
+	int is_int = FlatVar::int_type, is_vint = FlatVar::vint_type, is_vdouble = FlatVar::vdouble_type, is_form = FlatVar::formula_type;
 
         //hard-coded variables to be flattened
         //These are ssv 2d related variables
@@ -1931,7 +1929,8 @@ int main (int argc, char *argv[]){
 
             if(which_file<0 || which_file==i){
                 //                 std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
-                std::string flat_filename = "/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5/FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
+                //std::string flat_filename = "/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5/FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
+                std::string flat_filename = "/uboone/app/users/gge/hellstroms_hive/hive/working_directory/Jan2022_1g0p/new_coherent_sp/EplusEminus/FLATTEN/FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
                 TFile *fout = new TFile(flat_filename.c_str(),"recreate");
 
                 bdt_files[i]->MakeFlatTree(fout,ssv2d_variables, "SSV2D", "sss_num_candidates");
@@ -1951,7 +1950,8 @@ int main (int argc, char *argv[]){
 
     }else if(mode_option == "unflatten"){
 
-        std::string outdir="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5/";
+        //std::string outdir="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5/";
+        std::string outdir="/uboone/app/users/gge/hellstroms_hive/hive/working_directory/Jan2022_1g0p/new_coherent_sp/EplusEminus/FLATTEN/";
 
         for(int i=0; i< bdt_files.size(); i++){
             if(which_file<0 || which_file==i){

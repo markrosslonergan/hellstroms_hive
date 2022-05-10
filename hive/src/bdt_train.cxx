@@ -1112,7 +1112,8 @@ int bdt_XGtrain(bdt_info &info){
         std::vector<double> pos;
         std::vector<double> st,st2;
         std::vector<double> bt,bt2;
-        for(double p =0; p<=1;p+=0.01){
+        for(int ip =0; ip<=1000;ip++){
+	    double p = (double)ip*0.001;
             pos.push_back(p);
             st.push_back((double)t_strain->GetEntries(("sig_train > "+std::to_string(p)).c_str())/(double)t_strain->GetEntries());
             bt.push_back(1.0-(double)t_btrain->GetEntries(("bkg_train > "+std::to_string(p)).c_str())/(double)t_btrain->GetEntries());
