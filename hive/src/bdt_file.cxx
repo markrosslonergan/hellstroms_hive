@@ -524,14 +524,19 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         run_fractions_file[i] = run_fractions_file[i]/combin;
     }
 
-    run_weight_string = "1.0*("+run_cuts[0]+"*"+std::to_string(run_fractions.at(0)/run_fractions_file.at(0));
 
+    run_weight_string = "1.0*(";
+    for(int i=0; i< run_fractions.size(); i++){
 
-    for(int i=1; i< run_fractions.size(); i++){
+        double mval = run_fractions[i]/run_fractions_file[i]; 
+	if(!isfinite(mval)){
+	    std::cout << "Run normalization factor mval is NaN or infinity, setting it to 1..." << std::endl;
+	    mval = 1.0;
+	}
 
-        double mval = mval = run_fractions[i]/run_fractions_file[i]; 
-
-        run_weight_string += "+" +run_cuts[i]+"*"+std::to_string(mval);
+	if(i > 0)
+            run_weight_string += "+";
+	run_weight_string += run_cuts[i]+"*"+std::to_string(mval);
     }
     run_weight_string +=")";
     std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
@@ -597,8 +602,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             if(isin) tmppot += potbranch;
         }
 
+        numberofevents = tvertex->GetEntries();
+
         if (this->tag.find("DarkNue") != std::string::npos){
-            tmppot = 2e21;
+            tmppot = numberofevents/125*6.80e+20;
             std::cout<<"for the dark nue setting to arbitrary POT: "<<tmppot<<std::endl;
 
         }
@@ -609,7 +616,6 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             //             tvertex->SetBranchStatus("grouped_trackstub_candidate_indices",0);
         }
 
-        numberofevents = tvertex->GetEntries();
 
         pot=tmppot;
         std::cout<<"bdt_file::bdt_file()\t||\t---> POT is MC/OVERLAY "<<std::endl;

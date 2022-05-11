@@ -10,6 +10,7 @@
 #include <numeric>
 #include <utility>
 #include <climits>
+#include <cmath>
 #include <stdexcept>
 /******** Our includes *****/
 
