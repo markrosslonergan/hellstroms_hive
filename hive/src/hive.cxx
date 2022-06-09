@@ -419,9 +419,9 @@ int main (int argc, char *argv[]){
 
         //if run1 only manual, and not training. Force.
 
-        std::vector<std::string> i_run_names;
-        std::vector<std::string> i_run_cuts;
-        std::vector<double> i_run_fractions;
+        std::vector<std::string> i_run_names = XMLconfig.run_names;
+        std::vector<std::string> i_run_cuts = XMLconfig.run_cuts;
+        std::vector<double> i_run_fractions = XMLconfig.run_fractions;
 
         if(run1_only &&  !XMLconfig.bdt_is_training_signal[f]){
             i_run_names = {XMLconfig.run_names[0]}; 
@@ -1107,7 +1107,7 @@ int main (int argc, char *argv[]){
                     super_significance(signal_bdt_files, bkg_bdt_files);
                     break;
                 case 5:
-                    scan_significance_linlin(signal_bdt_files, bkg_bdt_files, bdt_infos,fbdtcuts, which_bdt);
+                    scan_significance_linlin(signal_bdt_files, bkg_bdt_files, bdt_infos,fbdtcuts, which_bdt,which_file);
                     break;
                 default:
                     break;
@@ -1962,7 +1962,6 @@ int main (int argc, char *argv[]){
 
 
     }else {
-        std::cout << "WARNING:i " << mode_option << " is an invalid option\n";
     }
 
     return 0;

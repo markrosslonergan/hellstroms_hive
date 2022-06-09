@@ -593,7 +593,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }
 
         if(this->tag.find("TextGen")!=std::string::npos){
-            tmppot = 2e24;
+            tmppot = 6.8e20;
             std::cout<<"Its a TextGen!"<<std::endl;
             //             tvertex->SetBranchStatus("grouped_trackstub_candidate_indices",0);
         }
@@ -618,7 +618,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }
 
         if(this->tag.find("TextGen")!=std::string::npos){
-            weight_branch = "1";
+            weight_branch = "textgen_info[0]";
         }
 
         //
@@ -687,7 +687,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }
         numberofevents = tmpnum;
         numberofevents_raw = numberofevents;
-
+    
 
 
         leg = "lp";

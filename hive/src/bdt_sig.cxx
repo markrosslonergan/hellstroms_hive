@@ -445,6 +445,17 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
     std::vector<TEntryList*> sig_min_lists;
     std::vector<TEntryList*> bkg_min_lists;
 
+    // Calculate total signal for efficiency . Needs to happen before entry list setting
+    double total_sig = 0.;
+
+    for(size_t i = 0; i < sig_files.size(); ++i) {
+        double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
+        std::cout << "POT scale: " << pot_scale << std::endl;
+
+        std::string bnbcut = sig_files.at(i)->getStageCuts(1,minvals); 
+        total_sig += sig_scale*sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
+    }
+    std::cout<<"Total sig is apparrently "<<total_sig<<std::endl;
 
 
     std::cout<<"Setting Min entry lists"<<std::endl;
@@ -474,16 +485,6 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
     std::cout<<"We are going to scan between these values "<<std::endl;
     for(int i=0; i< bdt_infos.size();i++){
         std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<std::endl;
-    }
-    // Calculate total signal for efficiency 
-    double total_sig = 0.;
-
-    for(size_t i = 0; i < sig_files.size(); ++i) {
-        double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
-        std::cout << "POT scale: " << pot_scale << std::endl;
-
-        std::string bnbcut = sig_files.at(i)->getStageCuts(1,minvals); 
-        total_sig += sig_scale*sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
     }
 
     std::string s_mod = "";
@@ -526,13 +527,15 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         //std::cout<<std::endl;
 
         double significance =0;
+        double purity = signal/(signal+background);
+        double eff = signal/total_sig;
         if(signal==0){
             significance =0;
         }else if(background !=0){
             //significance = signal/(signal+background);
-            //significance = signal/sqrt(background);
-            significance = (signal/(double)total_sig)*31.8*signal/(31.8*signal+background);
-
+            significance = signal/sqrt(background);
+            //significance = (signal/(double)total_sig)*31.8*signal/(31.8*signal+background);
+            //significance = signal/(signal+background)*signal/total_sig*100;
         }else{
             std::cout<<"method_best_significane_seperate || signal2+background2 == 0 , sig: "<<signal<<" , so significance  = nan. Woopsie."<<std::endl;
             //break;
@@ -551,7 +554,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         for(auto &dd:bkg){
             std::cout<<dd<<" ";   
         }
-        std::cout<<")  N_signal: "<<signal<<" (E_signal: "<<(signal/(double)total_sig)<<") N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+        std::cout<<")  N_signal: "<<signal<<" (E_signal: "<<(signal/(double)total_sig)<<") N_bkg: "<<background<<" || Purity : "<<purity<<"  ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
 
         s_mod = "";
 
@@ -1050,13 +1053,17 @@ std::vector<double> super_significance(std::vector<bdt_file*> sig_files, std::ve
 }
 
 
-std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, std::vector<double> bdt_cuts, int which_bdt){
-    std::cout<<"Starting to Scan Significance (randomly)"<<std::endl;
+std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, std::vector<double> bdt_cuts, int which_bdt, int which_bdt2){
+
+
+    std::cout<<"Starting to Scan Significance LinLin Grid"<<std::endl;
     double best_significance = 0;
     double best_impact = 0;
     std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
 
-    double plot_pot = 5e19;//10.115e20;
+
+
+    double plot_pot = 6.8e20;//10.115e20;
 
     std::cout<<"Setting stage entry lists"<<std::endl;
     for(size_t i = 0; i < sig_files.size(); ++i) {
@@ -1073,6 +1080,7 @@ std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, s
     std::vector<double> n_steps;
 
     for(size_t b=0; b<bdt_infos.size();b++){
+	//if(!(b==(size_t)which_bdt || b==(size_t)which_bdt2))bdt_cuts[b]=0.0;//
         in_min_vals.push_back(bdt_infos[b].TMVAmethod.scan_min);
         in_max_vals.push_back(bdt_infos[b].TMVAmethod.scan_max);
         n_steps.push_back(bdt_infos[b].TMVAmethod.scan_steps);
@@ -1088,7 +1096,7 @@ std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, s
         std::cout<<"Taking scanning range from xml "<<std::endl;
         maxvals = in_max_vals;
         minvals = in_min_vals;
-        n_steps = std::vector<double>(bdt_infos.size(),30.0);
+        //n_steps = std::vector<double>(bdt_infos.size(),30.0);
     }else{
         std::cout<<"Automatically calculting scanning range"<<std::endl;
         for(size_t i = 0; i < sig_files.size(); ++i) {
@@ -1153,7 +1161,6 @@ std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, s
     TRandom3 *rangen  = new TRandom3(0);  
     std::cout<<"Starting"<<std::endl;
     
-    int which_bdt2=4;
     TH2D hsig("hsig","hsig",n_steps[which_bdt],minvals[which_bdt],maxvals[which_bdt],n_steps[which_bdt2],minvals[which_bdt2],maxvals[which_bdt2]);
    
     int icc = 1;
@@ -1230,7 +1237,22 @@ std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, s
     c->cd();
     hsig.SetStats(0);
     hsig.Draw("colz");
-    c->SaveAs("Yes.pdf","pdf");
+
+    hsig.SetTitle("sig/#sqrt{bkg} Surface");
+    hsig.GetXaxis()->SetTitle(bdt_infos[which_bdt].name.c_str());
+    hsig.GetYaxis()->SetTitle(bdt_infos[which_bdt2].name.c_str());
+    
+            TGraph *g_min = new TGraph(1);
+            g_min->SetPoint(0,bdt_cuts[which_bdt], bdt_cuts[which_bdt2]);
+            g_min->SetLineColor(kCyan);
+            g_min->SetMarkerStyle(29);
+            g_min->SetMarkerSize(3);
+            g_min->Draw("p");
+
+
+	c->SaveAs(("LinLin_Scan_"+std::to_string(which_bdt)+"_"+std::to_string(which_bdt2)+".pdf").c_str(),"pdf");
+
+
 
 
     std::cout<<"------------_FINAL Best Sig: "<<best_significance<<std::endl;

@@ -384,19 +384,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                trev->SetLineWidth(3); 
                */
 
-            //some cheating
-            //var.has_covar = false;
-            //var.has_covar = true;
-            //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/DetSys/wireX/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
-            //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_2g1p/autoxml/Stage2/VID"+std::to_string(var.id)+".SBNcovar.root";
-            //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/MCrich/VID"+std::to_string(var.id)+".SBNcovar.root";
-            //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
-            //var.covar_name = "frac_covariance";
-            //var.covar_file = "/uboone/app/users/markrl/SBNfit_uBooNE/NEW_Improved_V2/whipping_star/build/bin/Jan2020_technote_v1_1g1p/autoxml/VID"+std::to_string(var.id)+".SBNcovar.root";
-            //var.covar_name = "frac_covariance";
-            //Now here
-
-           
+                       
             if(var.has_covar && m_error_string !="stats"){
 
                 TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
@@ -1059,7 +1047,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TH1 * scale_signal_hist;
             
             if(scale_signal_overlay){
-                 scale_signal_hist = sig_on_top= (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
+                 scale_signal_hist = (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
                 //(TH1*)mc_stack->vec_hists[which_signal]->Clone(("signal_clone"+stage_names.at(s)).c_str());
                 double scal_val = NdatEvents/scale_signal_hist->Integral();
                 scale_signal_hist->Scale(scal_val*0.5);
@@ -1099,7 +1087,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::size_t found = var.unit.find(massSearch);
 
             // Fit Gaussian to that variable
-            if (found != std::string::npos && false) {
+            if (found != std::string::npos ) {
                 std::cout << "[BLARG] Fitting " << var.unit << " stage " << std::to_string(s) << std::endl;
                 TF1 *gausfit_data  = new TF1("gausfit_data" , "gaus", 0.05 , 0.25);
                 //TF1 *gausfit_data2 = new TF1("gausfit_data2", "gaus", 0.135, 0.245);
@@ -1109,14 +1097,16 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 gausfit_data ->SetLineColor(kRed);
                 gausfit_data2->SetLineColor(kAzure);
                 doub_gaus    ->SetLineColor(kCyan);
+                doub_gaus->SetLineWidth(3);
 
-                d0->Fit(gausfit_data, "lvr");
-                d0->Fit(gausfit_data2, "lvr");
+                d0->Fit(gausfit_data, "lvrN");
+                d0->Fit(gausfit_data2, "lvrN");
                 Double_t par[5]; // 3 Gaus + 2 linear parameters
                 gausfit_data ->GetParameters(&par[0]);
                 gausfit_data2->GetParameters(&par[3]);
                 doub_gaus->SetParameters(par);
-                d0->Fit(doub_gaus, "lvr");
+                d0->Fit(doub_gaus, "lvr","same");
+                
                 //std::cout << "BLARG Doub 0 = " << doub_gaus->GetParameter(0) << std::endl;
                 //std::cout << "BLARG Doub mean = " << doub_gaus->GetParameter(1) << std::endl;
                 //std::cout << "BLARG Doub width = " << doub_gaus->GetParameter(2) << std::endl;
