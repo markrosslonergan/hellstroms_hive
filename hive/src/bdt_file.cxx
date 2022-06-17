@@ -532,14 +532,16 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
         tvertex->AddFriend(teventweight);
         std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
-    }
-
-    vec_entry_lists.resize(flow.bdt_vector.size());
-
+   
         ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
         std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
 
 
+    }
+
+    vec_entry_lists.resize(flow.bdt_vector.size());
+
+      
 
     double potbranch = 0;
     int  numbranch = 0;
@@ -618,7 +620,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }
 
         if(this->tag.find("TextGen")!=std::string::npos){
-            weight_branch = "textgen_info[0]";
+            weight_branch = "1";//textgen_info[0]";
         }
 
         //
@@ -2029,9 +2031,9 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
     return;
 }
 
-int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir , std::string & analysis_tag){
+int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir , std::string & filename){
 
-    std::string unflat_filename = outdir+"UNFLATTEN_"+info.identifier+"_"+this->tag+".root"; 
+    std::string unflat_filename = outdir+filename; 
     TFile *fout = new TFile(unflat_filename.c_str(),"recreate");
     fout->cd();
 

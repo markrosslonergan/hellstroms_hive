@@ -1235,7 +1235,7 @@ bdt_efficiency::bdt_efficiency(std::vector<bdt_file*> vec_files, std::vector<bdt
 
 
 
-int fancyFiciency(bdt_file *file, std::string additional_denom, std::string additional_numer, bdt_variable & var, std::string tag, int denom_stage, int numer_stage,std::vector<double> bdtcuts){
+int fancyFiciency(bdt_file *file, std::string additional_denom, std::string additional_numer, bdt_variable & var, std::string tag, int denom_stage, int numer_stage,std::vector<double> bdtcuts, std::string denom_name, std::string numer_name){
 
 
 
@@ -1311,8 +1311,8 @@ int fancyFiciency(bdt_file *file, std::string additional_denom, std::string addi
     l2->SetLineColor(kWhite);
     l2->SetLineWidth(0);
     l2->SetNColumns(2);
-    l2->AddEntry(h_spec_denom,("Denominator: "+std::to_string(denom_stage)).c_str(),"l");
-    l2->AddEntry(h_spec_numer,("Numerator: "+std::to_string(numer_stage)).c_str(),"fl");
+    l2->AddEntry(h_spec_denom,(denom_name).c_str(),"l");
+    l2->AddEntry(h_spec_numer,(numer_name).c_str(),"fl");
     l2->AddEntry(h_spec_ratio,("Efficiency : "+to_string_prec(h_spec_numer->Integral()/h_spec_denom->Integral()*100.0  ,2)+"\%").c_str(),"pl");
     l2->Draw();
 

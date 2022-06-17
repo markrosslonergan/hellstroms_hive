@@ -81,8 +81,12 @@ int main (int argc, char *argv[]){
     std::string systematics_error_string = "stats";
     std::string covar_flux_template_xml = "null.xml";
     std::string covar_det_template_xml = "null.xml";
+
+    bool isExternal = false;
     std::string external_xml = "null.xml";
     std::string external_cuts = "1";
+
+    std::string flatten_dir = "./";
 
     bool plot_train_only = false;
     bool run1_only = false;
@@ -108,6 +112,7 @@ int main (int argc, char *argv[]){
         {"number",		required_argument,	0, 'n'},
         {"response",	no_argument,	    0, 'r'},
         {"file",		required_argument,	0, 'f'},
+        {"extxml",      required_argument,  0, 'X'},
         {"extapp",      required_argument,  0,  'w'},
         {"systematics",	required_argument,	0, 'y'},
         {"vector",      required_argument,  0, 'v'},
@@ -115,6 +120,8 @@ int main (int argc, char *argv[]){
         {"run1",		no_argument,	0, 'l'},
         {"lee",         no_argument,  0, 'k'},
         {"scale",       no_argument,  0, 'z'},
+        {"flatten",     required_argument, 0, 'F'},
+        {"unflatten",    required_argument, 0, 'U'},
         {"plottrainonly",no_argument,  0, 'a'},
         {0,			    no_argument, 		0,  0},
     };
@@ -122,7 +129,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:o:u:d:s:f:q:y:m:t:p:b:i:n:g:v:c:e:azkrljh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:s:f:F:U:q:y:m:t:p:b:i:n:g:v:c:e:azkrljh?", longopts, &index);
 
         switch(iarg)
         {
@@ -161,6 +168,10 @@ int main (int argc, char *argv[]){
                 break;
             case 'x':
                 xml = optarg;
+                break;
+            case 'X':
+                external_xml = optarg;
+                isExternal=true;
                 break;
             case 'm':
                 covar_flux_template_xml = optarg;
@@ -204,6 +215,14 @@ int main (int argc, char *argv[]){
             case 'a':
                 plot_train_only = true;
                 break;
+            case 'U':
+                flatten_dir = optarg;
+                mode_option = "unflatten";
+                break;
+            case 'F':
+                flatten_dir = optarg;
+                mode_option = "flatten";
+                break;
             case 'i':
                 input_string = optarg;
                 break;
@@ -229,6 +248,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t\t\t\t tplot: Produces a test/training for BDT -b/--bdt B (auto ran at train mode too)"<<std::endl;
                 std::cout<<"\t\t\t\t sbnfit: Makes a file at stage S (set with --stage S) for file set with --file. Can also make a flattened simpletree based on a variable passed in with argument `i` "<<std::endl;
                 std::cout<<"\t\t\t\t vars: Prints training variables"<<std::endl;
+                std::cout<<"\t-F\t--flatten\t\t Flatten the SSV and PSV variables, argument is output Dir"<<std::endl;
                 std::cout<<"\t-i\t--input\t\t An input generic input_string, used in a variety of places, notably sbnfit mode"<<std::endl;
                 std::cout<<"\t-b\t--bdt\t\t Run only N BDT training/app, or BDT specific option"<<std::endl;
                 std::cout<<"\t-f\t--file\t\t Which file in bdt_files you want to run over, for file specifc options."<<std::endl;
@@ -489,11 +509,81 @@ int main (int argc, char *argv[]){
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
+
+    //if there is an external XML, lets get ready for it. 
+    //First lets read the external XML file that contains the external things
+    std::vector<bdt_file*> external_files;
+
+    if(isExternal){
+        std::cout<<"Starting on External XML loading : "<<external_xml<<std::endl;
+        MVALoader External_XMLconfig(external_xml,-1);
+        std::vector<method_struct> External_TMVAmethods  = External_XMLconfig.GetMethods(); 
+
+        for(size_t f = 0; f < External_XMLconfig.GetNFiles(); ++f){
+            std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<External_XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
+            //First build a bdt_flow for this file.
+            std::string def = "1";  
+            for(int i=0; i< External_XMLconfig.bdt_definitions[f].size(); ++i){
+                def += "&&" + External_XMLconfig.bdt_definitions[f][i];
+            }
+
+            std::cout<<def<<std::endl;
+            bdt_flow external_analysis_flow(topological_cuts, def, 	vec_precuts,	postcuts,	bdt_infos);
+
+            std::cout<<" -- Filename "<<External_XMLconfig.bdt_filenames[f]<<" subdir "<<External_XMLconfig.bdt_dirs[f]<<std::endl;
+            std::cout<<" -- TTreeName "<<External_XMLconfig.bdt_ttree_names[f]<<std::endl;
+            std::cout<<" -- Color ";External_XMLconfig.bdt_cols[f]->Print();std::cout<<" and hist style "<<External_XMLconfig.bdt_hist_styles[f]<<" fillstyle "<<External_XMLconfig.bdt_fillstyles[f]<<std::endl;
+            std::cout<<" -- With the following Definition Cuts: "<<std::endl;
+            for(int i=0; i< External_XMLconfig.bdt_definitions[f].size(); ++i){
+                std::cout<<" -- ---> "<<External_XMLconfig.bdt_definitions[f][i]<<std::endl;
+            }
+
+            external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , external_analysis_flow,External_XMLconfig.bdt_ttree_names[f]));
+
+            external_files.back()->addPlotName(External_XMLconfig.bdt_plotnames[f]);
+
+            if(External_XMLconfig.bdt_scales[f] != 1.0){
+                std::cout<<" -- Scaling "<<External_XMLconfig.bdt_tags[f]<<" file by a factor of "<<External_XMLconfig.bdt_scales[f]<<std::endl;
+                external_files.back()->scale_data = External_XMLconfig.bdt_scales[f];
+            }
+
+
+            if(External_XMLconfig.bdt_is_onbeam_data[f]){
+                std::cout<<" -- Setting as ON beam data with "<<External_XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
+                external_files.back()->setAsOnBeamData(External_XMLconfig.bdt_onbeam_pot[f]); //tor860_wc
+            }
+
+            if(External_XMLconfig.bdt_is_offbeam_data[f]){
+                std::cout<<" -- Setting as Off beam data with "<<External_XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<External_XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<External_XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
+                external_files.back()->setAsOffBeamData( External_XMLconfig.bdt_onbeam_pot[f], External_XMLconfig.bdt_onbeam_spills[f], External_XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
+            }
+
+            external_files.back()->calcPOT({"1"},{"1"},{1.0});
+            external_files.back()->calcBaseEntryList(analysis_tag);
+
+            std::cout<<"Checking for friend trees: "<<External_XMLconfig.bdt_friend_filenames[f].size()<<" "<<External_XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
+            if(External_XMLconfig.bdt_friend_filenames[f].size()>0){
+
+            for(int fr =0; fr < External_XMLconfig.bdt_friend_filenames[f].size(); fr++){
+                std::cout<<"Adding a Friend Tree : "<<External_XMLconfig.bdt_friend_treenames[f][fr]<<" from file "<<dir+"/"+External_XMLconfig.bdt_friend_filenames[f][fr]<<std::endl;
+                bdt_files.back()->addFriend(External_XMLconfig.bdt_friend_treenames[f][fr],External_XMLconfig.bdt_friend_filenames[f][fr]);
+                }
+            }
+
+        }//end of external_file getting
+        std::cout<<"Finishing on External XML : "<<external_xml<<std::endl;
+
+    }//end of external file bool
+
+    std::cout<<"Mode Option is "<<mode_option<<std::endl;
+
+
     //===========================================================================================
     //===========================================================================================
     //		Main flow of the program , using OPTIONS
     //===========================================================================================
     //===========================================================================================
+
 
 
     if(mode_option == "train") {
@@ -992,7 +1082,7 @@ int main (int argc, char *argv[]){
                     std::cout<<" -- ---> "<<External_XMLconfig.bdt_definitions[f][i]<<std::endl;
                 }
 
-                external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , external_analysis_flow));
+                external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , external_analysis_flow, External_XMLconfig.bdt_ttree_names[f]));
 
                 external_files.back()->addPlotName(External_XMLconfig.bdt_plotnames[f]);
 
@@ -1015,6 +1105,14 @@ int main (int argc, char *argv[]){
                 external_files.back()->calcPOT({"1"},{"1"},{1.0});
                 external_files.back()->calcBaseEntryList(analysis_tag);
 
+            std::cout<<"Checking for friend trees: "<<External_XMLconfig.bdt_friend_filenames[f].size()<<" "<<External_XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
+            if(External_XMLconfig.bdt_friend_filenames[f].size()>0){
+
+            for(int fr =0; fr < External_XMLconfig.bdt_friend_filenames[f].size(); fr++){
+                std::cout<<"Adding a Friend Tree : "<<External_XMLconfig.bdt_friend_treenames[f][fr]<<" from file "<<dir+"/"+External_XMLconfig.bdt_friend_filenames[f][fr]<<std::endl;
+                bdt_files.back()->addFriend(External_XMLconfig.bdt_friend_treenames[f][fr],External_XMLconfig.bdt_friend_filenames[f][fr]);
+                }
+            }
             }//end of external_file getting
 
             for(auto &file: external_files){
@@ -1036,10 +1134,12 @@ int main (int argc, char *argv[]){
 
 
                 //Now make the SBNfit files
-                std::cout<<"Making an SBNfit file with the additional cuts of : "<<external_cuts<<std::endl;
-                std::vector<double> fcuts(bdt_infos.size(),-999);
-                file->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fcuts, "1", vars, file->pot,external_cuts);
-                std::cout<<"Done with this file"<<std::endl;
+                if(number > 0){
+                    std::cout<<"Making an SBNfit file with the additional cuts of : "<<external_cuts<<std::endl;
+                    std::vector<double> fcuts(bdt_infos.size(),-999);
+                    file->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fcuts, "1", vars, file->pot,external_cuts);
+                }
+                    std::cout<<"Done with this file"<<std::endl;
             }
 
 
@@ -1281,7 +1381,7 @@ int main (int argc, char *argv[]){
 
             for(auto &var: vars){
                 if(which_group == -1 || which_group == var.cat){
-                    fancyFiciency(bdt_files[which_file], XMLconfig.v_eff_denom_cut[0], XMLconfig.v_eff_numer_cut[0], var, analysis_tag, XMLconfig.v_eff_denom_stage[0], XMLconfig.v_eff_numer_stage[0], fbdtcuts);
+                    fancyFiciency(bdt_files[which_file], XMLconfig.v_eff_denom_cut[0], XMLconfig.v_eff_numer_cut[0], var, analysis_tag, XMLconfig.v_eff_denom_stage[0], XMLconfig.v_eff_numer_stage[0], fbdtcuts,XMLconfig.v_eff_denom_name[0],XMLconfig.v_eff_numer_name[0]);
                 }
             }
 
@@ -1907,11 +2007,6 @@ int main (int argc, char *argv[]){
         // use vector of {variable, int} to indicate whether this variable in vertex tree is int (0), or vector of doubles (1), or vector of int (-1)
         int is_int = 0, is_vint = -1, is_vdouble = 1, is_form = 2;
 
-        std::cout << "Guanqun Test" << std::endl;
-        FlatVar var_test("reco_shower_energy_plane2[0]", is_form);
-        var_test.Print();
-
-
         //hard-coded variables to be flattened
         //These are ssv 2d related variables
         std::vector<FlatVar> ssv2d_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int}, {"sss_num_candidates", is_int}, 
@@ -1927,21 +2022,28 @@ int main (int argc, char *argv[]){
 
 
 
-        for(int i=0; i< bdt_files.size(); i++){
+        int nfiles = (isExternal ? external_files.size() : bdt_files.size());
+
+        for(int i=0; i< nfiles; i++){
 
             if(which_file<0 || which_file==i){
-                //                 std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
-                std::string flat_filename = "/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5/FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
+                
+                bdt_file * bfile = (isExternal ? external_files[i] : bdt_files[i]);
+
+
+                std::string flat_filename = flatten_dir+"FLATTEN_"+analysis_tag+"_"+bfile->tag+".root"; 
+                std::cout<<"FLATFILEDIR"<<std::endl;
+                std::cout<<flat_filename<<std::endl;
                 TFile *fout = new TFile(flat_filename.c_str(),"recreate");
 
-                bdt_files[i]->MakeFlatTree(fout,ssv2d_variables, "SSV2D", "sss_num_candidates");
-                bdt_files[i]->MakeFlatTree(fout,ssv3d_variables, "SSV3D", "");
-                bdt_files[i]->MakeFlatTree(fout,trackstub_variables, "PSV", "trackstub_num_candidates");
+                bfile->MakeFlatTree(fout,ssv2d_variables, "SSV2D", "sss_num_candidates");
+                bfile->MakeFlatTree(fout,ssv3d_variables, "SSV3D", "");
+                bfile->MakeFlatTree(fout,trackstub_variables, "PSV", "trackstub_num_candidates");
 
 
                 std::cout<<"Copying RunSubrunTree and POT (via friends)"<<std::endl;
-                TTree * t_flat_pot_tree = (TTree*)bdt_files[i]->tpot->CopyTree("1");
-                TTree * t_flat_rs_tree = (TTree*)bdt_files[i]->trs->CopyTree("1");
+                TTree * t_flat_pot_tree = (TTree*)bfile->tpot->CopyTree("1");
+                TTree * t_flat_rs_tree = (TTree*)bfile->trs->CopyTree("1");
                 t_flat_rs_tree->Write();
                 t_flat_pot_tree->Write();
                 fout->Close();
@@ -1951,11 +2053,24 @@ int main (int argc, char *argv[]){
 
     }else if(mode_option == "unflatten"){
 
-        std::string outdir="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5/";
 
-        for(int i=0; i< bdt_files.size(); i++){
+        int nfiles = (isExternal ? external_files.size() : bdt_files.size());
+
+        for(int i=0; i< nfiles; i++){
+
             if(which_file<0 || which_file==i){
-                bdt_files[i]->MakeUnFlatTree(bdt_infos[0] ,outdir,analysis_tag);
+                
+                bdt_file * bfile = (isExternal ? external_files[i] : bdt_files[i]);
+                //presumably your unflattening for app scores, so add them
+                for(int k=0; k<bdt_infos.size(); k++){
+                    bfile->addBDTResponses(bdt_infos[k]);
+                }
+ 
+                std::string nar = "UNFLATTEN_"+analysis_tag+"_"+additional_tag+"_"+bfile->tag+".root";
+                std::string unflat_filename = flatten_dir+nar; 
+                std::cout<<"UNFLATFILEDIR"<<std::endl;
+                std::cout<<unflat_filename<<std::endl;
+                bfile->MakeUnFlatTree(bdt_infos[0] , flatten_dir, nar);
 
             }
         }

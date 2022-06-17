@@ -162,6 +162,14 @@
         <cut> 1</cut>
     </training>
 </bdtfile>
+<bdtfile filename = "FLATTEN_DarkNu_MultiTop_v2_DarkNu_BenchC_NoHF_TestTextGen.root" tag = "DarkNu_BenchC_NoHF_TestTextGenFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = " Dark nu Bench C Test" fillstyle = "3333" scale = "1"  ttree_name="PSV">
+    <definition>
+        <cut> 1</cut>
+    </definition>
+    <training>
+        <cut> 1</cut>
+    </training>
+</bdtfile>
 
 
 
