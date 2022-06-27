@@ -1062,7 +1062,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             if(scale_signal_overlay){
                  scale_signal_hist =  (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
                 //(TH1*)mc_stack->vec_hists[which_signal]->Clone(("signal_clone"+stage_names.at(s)).c_str());
-                double scal_val =230.0;
+                double scal_val =2500.0;
                 //double scal_val = NdatEvents/scale_signal_hist->Integral();
                 scale_signal_hist->Scale(scal_val);
                 //scale_signal_hist->Scale(100.0);
@@ -1201,7 +1201,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 		}
             }
 
-            double yypos = 0.38; //0.38
+            double yypos = 0.38; //0.46 for pre and topo stage
             double xxpos = 0.5;//0.5
             if(stack_mode)xxpos=0.55;
 
@@ -1233,9 +1233,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //std::string pot_unit_s = stack_mode ? "e20" : "e19";
             double pot_unit = 1e20;
             std::string pot_unit_s = "x10^{20}";
-            std::string pot_draw = data_file->data_descriptor+" ("+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT)";
-            if(stack_mode) pot_draw = "Simulation ("+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT)";
-;
+            std::string pot_draw = "Preliminary ("+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT)";
             pottex.SetNDC();
 
             if (OTPC == true){
@@ -1246,7 +1244,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             } else{
                 //pottex.DrawLatex(.55,.60, pot_draw.c_str());
 	        //Guanqun: comment out the legend showing POT of the plots 
-                pottex.DrawLatex(xxpos,yypos+0.1, pot_draw.c_str());
+                pottex.DrawLatex(xxpos,yypos+0.11, pot_draw.c_str());
             }
 
 
@@ -1257,8 +1255,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //uboone_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
             //uboone_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
 	    //Guanqun: comment out the legend showing "MicroBooNE"
-            uboone_tex.DrawLatex(xxpos,yypos+0.14,("MicroBooNE"));
-            //uboone_tex.DrawLatex(xxpos,yypos+0.16,("MicroBooNE in-progress"));
+            if(stack_mode)
+		uboone_tex.DrawLatex(xxpos,yypos+0.15,("MicroBooNE Simulation"));
+            else
+		uboone_tex.DrawLatex(xxpos,yypos+0.15,("MicroBooNE " + data_file->data_descriptor).c_str());	
 
             TLatex descriptor_tex;
             descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
@@ -1268,7 +1268,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //descriptor_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
 	    //Guanqun: comment out the legend showing "xxx selections"
             //descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name+" Selection" ).c_str());
-            descriptor_tex.DrawLatex(xxpos,yypos+0.02,(plot_stage == 0 ? "Topological Selection Stage" : (plot_stage == 1 ? "Pre-selection Stage" : (plot_stage == 5 ? "Final Selection": " "))));
+            descriptor_tex.DrawLatex(xxpos,yypos+0.05,(plot_stage == 0 ? "Topological Selection Stage" : (plot_stage == 1 ? "Pre-selection Stage" : (plot_stage == 5 ? "Final Selection": " "))));
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );

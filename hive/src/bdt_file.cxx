@@ -139,11 +139,11 @@ void FlatVar::Print(){
 
 //************ MEMBER function for BDT_FILE class ******************
 
-bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow) : bdt_file(indir, inname, intag,inops,inrootdir,incol,1001,inflow){}
+bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, std::string add_weight, bdt_flow inflow) : bdt_file(indir, inname, intag,inops,inrootdir,incol,1001,add_weight, inflow){}
 
-bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, bdt_flow inflow) : bdt_file(indir,inname,intag,inops,inrootdir,incol,infillstyle,inflow,"vertex_tree"){}
+bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string add_weight, bdt_flow inflow) : bdt_file(indir,inname,intag,inops,inrootdir,incol,infillstyle,add_weight,inflow,"vertex_tree"){}
 
-bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, bdt_flow inflow, std::string inttree ) :
+bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string add_weight, bdt_flow inflow, std::string inttree ) :
     dir(indir),
     name(inname),
     tag(intag),
@@ -154,14 +154,14 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     is_data(false),
     is_bnbext(false),
     is_mc(true),
-    primary_ttree_name(inttree)
+    primary_ttree_name(inttree),
+    scale_data(1.0)
 {
 
     plot_name = tag;
 
     rangen = new TRandom3();
 
-    scale_data =1.0;
     std::cout<<"Loading : "<<name<<std::endl;
     f = new TFile((dir+"/"+name).c_str(), "read");	
 
@@ -187,8 +187,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
         // weight_branch = "genie_spline_weight";
 
 
-        weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*(GTruth_ResNum!=9)";
-
+        //weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*(GTruth_ResNum!=9)";
+        weight_branch = add_weight;
+	std::cout <<"additional weight set as: " << weight_branch<< std::endl;
         /*std::cout<<"tag = "<<tag<<std::endl;
           if(tag == "DarkNue"){
           weight_branch = "1";
@@ -200,7 +201,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     }
 
     fillstyle = infillstyle;
-    scale_data = 1.0;
 
     //    run_names = {"RI","RII","RIIIa","RIIIb","RIV"};
     //    run_fractions_plot = {0.16638655, 0.26435986, 0.043400890, 0.21413742, 0.31171527};
@@ -524,11 +524,16 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         run_fractions_file[i] = run_fractions_file[i]/combin;
     }
 
+    bool is_flat = this->tag.find("FLAT")!=std::string::npos;
+    std::cout<<"Getting relative run fraction and eventweight tree.  Is it flat? "<<is_flat<<std::endl;
 
     run_weight_string = "1.0*(";
     for(int i=0; i< run_fractions.size(); i++){
 
-        double mval = run_fractions[i]/run_fractions_file[i]; 
+        double mval = run_fractions[i];
+        if(!is_flat)
+            mval /=run_fractions_file[i]; 
+
 	if(!isfinite(mval)){
 	    std::cout << "Run normalization factor mval is NaN or infinity, setting it to 1..." << std::endl;
 	    mval = 1.0;
@@ -541,9 +546,6 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     run_weight_string +=")";
     std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
 
-    bool is_flat = this->tag.find("FLAT")!=std::string::npos;
-
-    std::cout<<"Getting eventweight tree.  Is it flat? "<<is_flat<<std::endl;
 
     if(!is_flat){
         teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
@@ -605,13 +607,14 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         numberofevents = tvertex->GetEntries();
 
         if (this->tag.find("DarkNue") != std::string::npos){
-            tmppot = numberofevents/125*6.80e+20;
+            tmppot = 3.33e+25;
             std::cout<<"for the dark nue setting to arbitrary POT: "<<tmppot<<std::endl;
 
         }
 
         if(this->tag.find("TextGen")!=std::string::npos){
             tmppot = 2.28149e+24;
+            //tmppot = 2.1e+24;
             std::cout<<"Its a TextGen!"<<std::endl;
             //             tvertex->SetBranchStatus("grouped_trackstub_candidate_indices",0);
         }
@@ -628,8 +631,13 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         //weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
 
-        weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*("+run_weight_string+")*(GTruth_ResNum!=9)";
+        //weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*("+run_weight_string+")*(GTruth_ResNum!=9)";
 
+	// weight_branch has been set during initialization of bdt_file
+	// now, add in run reweighting
+	weight_branch += "*(" + run_weight_string+")";
+
+	/*
         if(this->tag.find("DarkNue") != std::string::npos){
             weight_branch = "1";
         }
@@ -658,6 +666,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         if(this->tag.find("FLAT")!=std::string::npos){
             weight_branch = "preselection_weight*("+run_weight_string+")";
         }
+	*/
 
         numberofevents_raw = numberofevents;
 
@@ -679,10 +688,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         leg = "lp";
         pot = this->data_tor860_wcut; // tor860_wcut
-        weight_branch = "1";
         std::cout<<"bdt_file::bdt_file()\t||\t---> POT is DATA. Setting from internal ZARKOS's tool numbers."<<std::endl;
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
 
+	//Guanqun: Technically not needed, but keep it here for file info 
         if(this->tag=="PseudoFakeDataRedo1"){
             this->tvertex->AddFriend((root_dir+"/simple_tree").c_str(),"/uboone/data/users/markross/Mar2020/SBNfit_files/1g1p_April_collab/Comb13/sbnfit_1g1pMar2020_v4_stage_1_PseudoFakeDataSet1.root"); 
             weight_branch = "(simple_pot_weight/simple_weight)*genie_spline_weight*(genie_spline_weight>0)";
@@ -743,14 +752,14 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         std::cout<<"--> scaled to 5e19 number of Entries: "<<numberofevents/pot*5e19<<std::endl;
 
-        weight_branch = "("+run_weight_string+")";
+	weight_branch += "*(" + run_weight_string+")";
         numberofevents_raw = numberofevents;
 
     }
 
 
 
-    weight_branch = weight_branch +"*"+global_weight_string;
+    weight_branch += "*"+global_weight_string;
     std::cout<<"global_weight_string = "<<global_weight_string<<std::endl;
     std::cout<<"weight_branch = "<< weight_branch<<std::endl;
 
@@ -1280,10 +1289,12 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
     friend_names.push_back(in_friend_tree_nam);
 
     TFile *ftmp = new TFile(friend_files.back().c_str(),"read");
+    //std::cout << ftmp << " " << ftmp->GetName() <<  " " << ftmp->IsOpen() << std::endl;
+
     if(ftmp->IsOpen()){
         TTree * tmp = (TTree*)ftmp->Get(friend_names.back().c_str());
 
-
+   	//std::cout << tmp << std::endl;
         if(tmp->GetEntries()!= tvertex->GetEntries()){
             std::cout<<"Now adding TreeFriend: "<<in_friend_tree_nam<<" from file: "<<in_friend_file<<std::endl;
             std::cout<<"ERROR!! they have different numbers of events!"<<std::endl;
@@ -1293,7 +1304,6 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
     tvertex->AddFriend(friend_names.back().c_str(), friend_files.back().c_str());
 
     if(ftmp)    ftmp->Close();
-
     return 0;
 }
 
@@ -1421,8 +1431,8 @@ int bdt_file::splitBDTfile(std::string split_string,std::string trueTAG, bdt_fil
     false_flow.definition_cuts = false_flow.definition_cuts + "&& !(" +split_string+")";  //notice the !
     false_flow.base_cuts = false_flow.topological_cuts+ false_flow.definition_cuts;
 
-    truesplit = new bdt_file(this->dir, this->name,	trueTAG,	this->plot_ops, this->root_dir,  this->col, true_flow);
-    falsesplit = new bdt_file(this->dir, this->name,	falseTAG,	this->plot_ops, this->root_dir,  this->col, false_flow);
+    truesplit = new bdt_file(this->dir, this->name,	trueTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch, true_flow);
+    falsesplit = new bdt_file(this->dir, this->name,	falseTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch, false_flow);
 
 
     return 0;
