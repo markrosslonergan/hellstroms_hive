@@ -78,6 +78,7 @@ class MVALoader {
     std::vector<std::string> v_eff_numer_cut;
     
     int num_plot_periods; 
+     std::string event_level_identifier;
      std::vector<std::string> run_names;
      std::vector<std::string> run_cuts;
      std::vector<double> run_fractions;

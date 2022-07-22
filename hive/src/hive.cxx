@@ -266,6 +266,7 @@ int main (int argc, char *argv[]){
     MVALoader XMLconfig(xml,true,systematics_error_string);
     std::vector<method_struct> TMVAmethods  = XMLconfig.GetMethods(); 
     std::string analysis_tag = XMLconfig.analysis_tag;
+    std::string event_identifier = XMLconfig.event_level_identifier;
 
     std::vector<double> fbdtcuts = XMLconfig.bdt_cuts;
     if(fbdtcuts.size()==0){
@@ -353,6 +354,10 @@ int main (int argc, char *argv[]){
 
         bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , XMLconfig.bdt_additional_weights[f], analysis_flow, XMLconfig.bdt_ttree_names[f].c_str()));
 
+
+        if(event_identifier != "1"){
+	    bdt_files.back()->setEventIdentifier(event_identifier);
+	}
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         bdt_files.back()->addDataDescriptor(XMLconfig.bdt_data_descriptor[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
@@ -380,7 +385,8 @@ int main (int argc, char *argv[]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             if(run1_only && !XMLconfig.bdt_is_training_signal[f]){
                 std::cout<<" -- WOOPS we have it set to Run 1 only, manually resetting EXT spills to 28190365.0"<<std::endl;
-                off_spills = 28190365.0;
+                //off_spills = 2633564.9;    // temporary, to match run1 open data
+                off_spills = 28190365.0; // all run1 spill
             }
 
             bdt_files.back()->setAsOffBeamData( on_pot, on_spills, off_spills);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
@@ -1930,7 +1936,8 @@ int main (int argc, char *argv[]){
             if(which_file<0 || which_file==i){
                 //                 std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
                 //std::string flat_filename = "/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5/FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
-                std::string flat_filename = "/uboone/app/users/gge/hellstroms_hive/hive/working_directory/Jan2022_1g0p/new_coherent_sp/EplusEminus/FLATTEN/FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
+                std::string outdir = "/uboone/app/users/gge/hellstroms_hive/hive/working_directory/ModuleTest/FlatFile/";
+                std::string flat_filename = outdir+"FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
                 TFile *fout = new TFile(flat_filename.c_str(),"recreate");
 
                 bdt_files[i]->MakeFlatTree(fout,ssv2d_variables, "SSV2D", "sss_num_candidates");

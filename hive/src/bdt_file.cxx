@@ -155,7 +155,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     is_bnbext(false),
     is_mc(true),
     primary_ttree_name(inttree),
-    scale_data(1.0)
+    scale_data(1.0),
+    fillstyle(infillstyle),
+    event_identifier("1")
 {
 
     plot_name = tag;
@@ -180,27 +182,14 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     if(is_mc){
         std::cout<<"setting weight branch - mc"<<std::endl;
-        //weight_branch = "genie_spline_weight";
-        //weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
-        //weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)";
-        // weight_branch = "genie_spline_weight";//*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)";
-        // weight_branch = "genie_spline_weight";
-
-
-        //weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*(GTruth_ResNum!=9)";
         weight_branch = add_weight;
 	std::cout <<"additional weight set as: " << weight_branch<< std::endl;
-        /*std::cout<<"tag = "<<tag<<std::endl;
-          if(tag == "DarkNue"){
-          weight_branch = "1";
-          }*/
     } 
     if (is_data ||  is_bnbext ) {
         std::cout<<"setting weight branch - on/off beam data"<<std::endl;
         weight_branch = "1";
     }
 
-    fillstyle = infillstyle;
 
     //    run_names = {"RI","RII","RIIIa","RIIIb","RIV"};
     //    run_fractions_plot = {0.16638655, 0.26435986, 0.043400890, 0.21413742, 0.31171527};
@@ -502,7 +491,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     std::string modified_runsubrun_string = "0";
 
     for(int i=0; i< run_fractions.size(); i++){
-        run_fractions_file[i] = tvertex->GetEntries(run_cuts[i].c_str())/(double)tvertex->GetEntries();
+        run_fractions_file[i] = tvertex->GetEntries(("("+event_identifier + ")*"+run_cuts[i]).c_str())/(double)tvertex->GetEntries(event_identifier.c_str());
         std::cout<<run_cuts[i]<<std::endl;
         std::cout<<"-- of which "<<run_fractions_file[i]*100.0<<" \% are in "<<run_names[i]<<std::endl;
         combin+=run_fractions_file[i];
@@ -524,15 +513,11 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         run_fractions_file[i] = run_fractions_file[i]/combin;
     }
 
-    bool is_flat = this->tag.find("FLAT")!=std::string::npos;
-    std::cout<<"Getting relative run fraction and eventweight tree.  Is it flat? "<<is_flat<<std::endl;
 
     run_weight_string = "1.0*(";
     for(int i=0; i< run_fractions.size(); i++){
 
-        double mval = run_fractions[i];
-        if(!is_flat)
-            mval /=run_fractions_file[i]; 
+        double mval = run_fractions[i]/run_fractions_file[i]; 
 
 	if(!isfinite(mval)){
 	    std::cout << "Run normalization factor mval is NaN or infinity, setting it to 1..." << std::endl;
@@ -547,6 +532,8 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
 
 
+    bool is_flat = this->tag.find("FLAT")!=std::string::npos;
+    std::cout<<"Getting eventweight tree.  Is it flat? "<<is_flat<<std::endl;
     if(!is_flat){
         teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
         tvertex->AddFriend(teventweight);
@@ -604,7 +591,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             if(isin) tmppot += potbranch;
         }
 
-        numberofevents = tvertex->GetEntries();
+        numberofevents = tvertex->GetEntries(event_identifier.c_str());
 
         if (this->tag.find("DarkNue") != std::string::npos){
             tmppot = 3.33e+25;
@@ -612,8 +599,9 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         }
 
+
         if(this->tag.find("TextGen")!=std::string::npos){
-            tmppot = 2.28149e+24;
+            tmppot = combin*static_cast<double>(tvertex->GetEntries(event_identifier.c_str()))/16139.*2.28149e+24;
             //tmppot = 2.1e+24;
             std::cout<<"Its a TextGen!"<<std::endl;
             //             tvertex->SetBranchStatus("grouped_trackstub_candidate_indices",0);
@@ -625,17 +613,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         std::cout<<"--> Events scaled to 13.2e20 "<<numberofevents/pot*13.2e20<<std::endl;
         std::cout<<"--> Events scaled to 10.1e20 "<<numberofevents/pot*10.1e20<<std::endl;
-        //weight_branch = "1";
-        //weight_branch = "genie_spline_weight";
-        //weight_branch = "genie_spline_weight*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<10000)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
-
-        //weight_branch = "genie_spline_weight*(genie_spline_weight<25)*tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<25)*(genie_CV_tune_weight>0)*("+run_weight_string+")";
-
-        //weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*("+run_weight_string+")*(GTruth_ResNum!=9)";
 
 	// weight_branch has been set during initialization of bdt_file
 	// now, add in run reweighting
-	weight_branch += "*(" + run_weight_string+")";
+	//weight_branch += "*(" + run_weight_string+")";
 
 	/*
         if(this->tag.find("DarkNue") != std::string::npos){
@@ -690,6 +671,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         pot = this->data_tor860_wcut; // tor860_wcut
         std::cout<<"bdt_file::bdt_file()\t||\t---> POT is DATA. Setting from internal ZARKOS's tool numbers."<<std::endl;
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
+  	run_weight_string = "1";
 
 	//Guanqun: Technically not needed, but keep it here for file info 
         if(this->tag=="PseudoFakeDataRedo1"){
@@ -752,7 +734,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         std::cout<<"--> scaled to 5e19 number of Entries: "<<numberofevents/pot*5e19<<std::endl;
 
-	weight_branch += "*(" + run_weight_string+")";
+	//weight_branch += "*(" + run_weight_string+")";
         numberofevents_raw = numberofevents;
 
     }
@@ -763,6 +745,12 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     std::cout<<"global_weight_string = "<<global_weight_string<<std::endl;
     std::cout<<"weight_branch = "<< weight_branch<<std::endl;
 
+
+    //reset branch address 
+    TBranch* brs = trs->GetBranch("subrun_pot");
+    trs->ResetBranchAddress(brs);
+    TBranch* bnum = tpot->GetBranch("number_of_events");
+    tpot->ResetBranchAddress(bnum);
     return 0;
 }
 
@@ -1003,7 +991,7 @@ double bdt_file::GetEntries(){
 
 int bdt_file::CheckWeights(){
 
-    TTreeFormula* weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
+    TTreeFormula* weight = new TTreeFormula("weight",(this->weight_branch+"*"+run_weight_string).c_str(),tvertex);
 
     int count = 0;
     for(int k=0; k<tvertex->GetEntries(); k++){
@@ -1024,7 +1012,7 @@ int bdt_file::CheckWeights(){
 double bdt_file::GetEntries(std::string cuts){
     std::string namr = std::to_string(rangen->Uniform(10000));
 
-    /*  TTreeFormula* weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
+    /*  TTreeFormula* weight = new TTreeFormula("weight",(this->weight_branch+"*"+run_weight_string).c_str(),tvertex);
 
         for(int k=0; k<tvertex->GetEntries(); k++){
         tvertex->GetEntry(k);
@@ -1035,9 +1023,9 @@ double bdt_file::GetEntries(std::string cuts){
         }
         */
     // this->CheckWeights(); //catch erroneous values of the weight
-    this->tvertex->Draw(("run_number>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+    this->tvertex->Draw(("run_number>>"+namr).c_str() ,("("+cuts+")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
 
-    //std::cout<<"("+cuts+")*"+this->weight_branch<<std::endl;
+    //std::cout<<"("+cuts+")*"+this->weight_branch+"*"+run_weight_string<<std::endl;
     //std::cout<<"namr = "<<namr<<std::endl;
 
     TH1* th1 = (TH1*)gDirectory->Get(namr.c_str()) ;
@@ -1063,7 +1051,7 @@ TH1* bdt_file::getEventTH1(bdt_variable var, std::string cuts, std::string nam, 
 
     TCanvas *ctmp = new TCanvas();
     //  this->CheckWeights();
-    this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+    this->tevent->Draw((var.name+">>"+nam+ var.binning).c_str() , ("("+cuts+")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
     std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
 
     TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
@@ -1089,7 +1077,7 @@ TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, doub
     //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
     //this->CheckWeights();
-    this->tvertex->Draw((invar+">>"+nam).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+    this->tvertex->Draw((invar+">>"+nam).c_str() , ("("+cuts+")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
 
@@ -1137,7 +1125,7 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
     std::cout<<"Starting to get for "<<(varx.name+vary.name+">>"+bin ).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
     // this->CheckWeights();
-    this->tvertex->Draw((vary.name+":"+varx.name+">>"+nam+bin).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
+    this->tvertex->Draw((vary.name+":"+varx.name+">>"+nam+bin).c_str() , ("("+cuts+")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH2* th2 = (TH2*)gDirectory->Get(nam.c_str()) ;
     //th1->Sumw2();
@@ -1170,7 +1158,7 @@ TH1* bdt_file::getTH1(bdt_variable & var, std::string  cuts, std::string  nam, d
 
 
     TH1D* th1 = new TH1D(nam.c_str(),nam.c_str(),var.n_bins,&(var.low_edges)[0]);
-    this->tvertex->Draw((var.name+">>+"+nam).c_str() , ("("+cuts+"&&"+in_bins+"&&" + var.additional_cut+ ")*"+this->weight_branch).c_str(),"goff");
+    this->tvertex->Draw((var.name+">>+"+nam).c_str() , ("("+cuts+"&&"+in_bins+"&&" + var.additional_cut+ ")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     //TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
 
@@ -1215,7 +1203,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
         std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
         TCanvas *ctmp = new TCanvas();
         //    this->CheckWeights();
-        this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+var.additional_cut+"&&"+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch).c_str(),"goff");
+        this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+var.additional_cut+"&&"+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
         std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
         //gDirectory->ls();
 
@@ -1249,7 +1237,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
 
     /*
        TCanvas *ctmp = new TCanvas();
-       this->tvertex->Draw((var.name+">>"+nam+"_"+other+ var.binning).c_str() , ("("+other_cuts+")*"+this->weight_branch).c_str(),"goff");
+       this->tvertex->Draw((var.name+">>"+nam+"_"+other+ var.binning).c_str() , ("("+other_cuts+")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
 
 
        TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+other).c_str()) ;
@@ -1431,8 +1419,8 @@ int bdt_file::splitBDTfile(std::string split_string,std::string trueTAG, bdt_fil
     false_flow.definition_cuts = false_flow.definition_cuts + "&& !(" +split_string+")";  //notice the !
     false_flow.base_cuts = false_flow.topological_cuts+ false_flow.definition_cuts;
 
-    truesplit = new bdt_file(this->dir, this->name,	trueTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch, true_flow);
-    falsesplit = new bdt_file(this->dir, this->name,	falseTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch, false_flow);
+    truesplit = new bdt_file(this->dir, this->name,	trueTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch+"*"+run_weight_string, true_flow);
+    falsesplit = new bdt_file(this->dir, this->name,	falseTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch+"*"+run_weight_string, false_flow);
 
 
     return 0;
@@ -1454,7 +1442,7 @@ int bdt_file::writeStageFriendTree(std::string nam, double bdtvar1, double bdtva
 
     std::vector<TTreeFormula*> tf_vec;
 
-    TTreeFormula* tf_weight = new TTreeFormula("weight",(this->weight_branch).c_str(),tvertex);
+    TTreeFormula* tf_weight = new TTreeFormula("weight",(this->weight_branch+"*"+run_weight_string).c_str(),tvertex);
 
     for(int i=0; i < 4; i++){
         tf_vec.push_back( new TTreeFormula(("tf_"+std::to_string(i)).c_str(), this->getStageCuts(i, bdtvar1,bdtvar2).c_str(), tvertex));
@@ -1704,8 +1692,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
         }
     }
 
-    std::cout<<" WeiCut "<<this->weight_branch<<std::endl; 
-    TTreeFormula* weight = new TTreeFormula("weight_formula ", this->weight_branch.c_str(),this->tvertex);
+    std::cout<<" WeiCut "<<this->weight_branch+"*"+run_weight_string<<std::endl; 
+    TTreeFormula* weight = new TTreeFormula("weight_formula ", (this->weight_branch+"*"+run_weight_string).c_str(),this->tvertex);
     std::cout<<" Var "<<input_string<<std::endl; 
     TTreeFormula* var = new TTreeFormula("var_formula ",input_string.c_str(),this->tvertex);
 
@@ -1972,6 +1960,7 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
     double tsplot_pot=6.91e20;
     TTreeFormula* wei = new TTreeFormula("weight_formula ", this->weight_branch.c_str(),this->tvertex);
     TTreeFormula * tcut = new TTreeFormula("precut",  this->getStageCuts(1,{}).c_str()  ,tvertex);
+    TTreeFormula * t_defcut = new TTreeFormula("defcut",  this->getStageCuts(-1,{}).c_str()  ,tvertex);
 
     //Make new branches
     int out_event_index = 0; 
@@ -1987,15 +1976,16 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
 
     double simple_pot_wei = 0;
     double simple_wei = 0;
-    int flat_cut = 0;
-    tree_out->Branch("preselection_weight",&simple_wei);
-    tree_out->Branch("preselection_cut",&flat_cut);
+    int flat_precut = 0;
+    int flat_defcut = 0;
+    tree_out->Branch("event_weight",&simple_wei);
+    tree_out->Branch("definition_cut",&flat_defcut);
+    tree_out->Branch("preselection_cut",&flat_precut);
     tree_out->Branch("preselection_pot_weight",&simple_pot_wei);
 
     //loop over all old intries 
     for(size_t i=0; i< tvertex->GetEntries(); ++i){
         this->tvertex->GetEntry(i);
-
 
         //something hacked together to grab the number of candidates in the events
         int num_candidates = INT_MAX;
@@ -2007,19 +1997,33 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
         tcut->GetNdata();
 
         simple_wei = wei->EvalInstance();
-        flat_cut = tcut->EvalInstance();
+        flat_defcut = t_defcut->EvalInstance();
+        flat_precut = tcut->EvalInstance();
         if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
-        //if(!flat_cut) continue;
+        //if(!flat_precut) continue;
 
         simple_pot_wei = simple_wei*this->scale_data*tsplot_pot/this->pot;
 
-
+	//scalar ntuples
+        out_event_index = i; 
         for(size_t s= 0; s != variables.size(); ++s){
             if(!variables[s].IsVector()){
                 flat_branch[s] = variables[s].Evaluate();
             }
         }
 
+	//write nonsense value if current event does not have vector ntuple
+	if(num_candidates == 0){
+	   out_cluster_index = -1;
+	   for(size_t s= 0; s != variables.size(); ++s)
+                if(variables[s].IsVector())
+                    flat_branch[s] = -1.0;
+
+	   tree_out->Fill();
+	   continue;
+   	}
+
+	//vector ntuples
         for(int j=0; j != num_candidates ; ++j){
 
             for(size_t s= 0; s != variables.size(); ++s){
@@ -2028,7 +2032,6 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
                     //std::cout<<variables[s].first << " " << num_candidates<<" "<<var_collection_INT[s]->size()<<"\n";
             }
 
-            out_event_index = i; 
             out_cluster_index = j;
 
             tree_out->Fill();
@@ -2079,11 +2082,18 @@ int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir , std::string
     for(size_t i=0; i<tvertex->GetEntries();i++){
         tvertex->GetEntry(i);
 
-        while(last_event_index < orig_index){
+	//write prev event to file 
+        if(last_event_index < orig_index){
              t_out->Fill();
              last_event_index++;  
              out_score->clear();
         }
+
+	// skip if current entry is not part of vector ntuple
+	if(new_index == -1){
+	    continue;
+	}
+
         tmva->GetNdata();
 	double tmp_score = tmva->EvalInstance();
         out_score->push_back(tmp_score);
@@ -2095,6 +2105,8 @@ int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir , std::string
     last_event_index++;
     out_score->clear();
 
+
+    //this is not needed now..
     TVectorT<double> *original_file_events = (TVectorT<double>*)f->Get("original_file_nevents");
     std::cout<<"Topping up any events a the end of the file "<<last_event_index<<" "<<(*original_file_events)[0]<<std::endl;
     while(last_event_index < (*original_file_events)[0]){
@@ -2109,10 +2121,15 @@ int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir , std::string
 
 
     out_score->clear();
-
+    this->tvertex->ResetBranchAddresses();
     return 0;
 }
 
+void bdt_file::setEventIdentifier(std::string cut){
+    event_identifier = cut;
+    std::cout << "Event level identification criterion: " << event_identifier << std::endl;
+    return;
+}
 //int bdt_file::convertToHashedLibSVM(){
 //
 //}

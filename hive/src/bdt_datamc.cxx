@@ -759,7 +759,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                     if(b_signal_on_top){
                         l0->AddEntry(h1,(f->plot_name).c_str(),leg_type.c_str());
                     }else{
+			// Guanqun: add total count to the legend 
                         l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
+                        //l0->AddEntry(h1,(f->plot_name).c_str(),leg_type.c_str());
                     }
 
                     Nevents_save_for_later =0;

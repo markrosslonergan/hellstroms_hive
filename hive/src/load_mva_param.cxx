@@ -423,7 +423,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
     TiXmlElement *pPlotPOT;
     pPlotPOT = doc.FirstChildElement("plot_pot");
     num_plot_periods = 0; 
-       while(pPlotPOT )
+    while(pPlotPOT )
     {
 
                TiXmlElement *pRunPeriod = pPlotPOT->FirstChildElement("run_period");
@@ -441,6 +441,13 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             pRunPeriod = pRunPeriod->NextSiblingElement("run_period");
         }   
        
+
+	TiXmlElement *pEventID = pPlotPOT->FirstChildElement("event_indicator");
+	event_level_identifier = "1";
+  	if(pEventID)
+	   event_level_identifier = std::string(pEventID->GetText());
+
+
         pPlotPOT = pPlotPOT->NextSiblingElement("plot_pot");
     }
     if(num_plot_periods==0){

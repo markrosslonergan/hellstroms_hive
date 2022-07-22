@@ -131,6 +131,7 @@ struct bdt_file{
 
         std::string data_descriptor;
 
+
         std::string weight_branch;
         std::string global_weight_string;
 
@@ -194,7 +195,10 @@ struct bdt_file{
         std::vector<TEntryList*> vec_entry_lists;
 
 
-        //Run management stuff, there is 5 Runs R1,R2,R3a , R3b,R4
+        //---- Run management stuff, there is 5 Runs R1,R2,R3a , R3b,R4
+
+	//criteria used to identify if TTree entry is an event --> for run-to-run normalization 
+	std::string event_identifier;
         std::vector<double> run_fractions_plot; //fractions to plot
         std::vector<double> run_fractions_file; //fractions in file
         std::vector<std::string> run_names;
@@ -233,7 +237,7 @@ struct bdt_file{
         int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext);
 
         int calcPOT();
-
+	void setEventIdentifier(std::string cut);
         int calcPOT(std::vector<std::string> run_names, std::vector<std::string> run_cuts, std::vector<double> run_fractions);
 
         int makeRunSubRunList();
