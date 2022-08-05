@@ -601,7 +601,9 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
 
         if(this->tag.find("TextGen")!=std::string::npos){
-            tmppot = combin*static_cast<double>(tvertex->GetEntries(event_identifier.c_str()))/16139.*2.28149e+24;
+	    // considering only numu POT is 2.28149e+24 
+	    // considering all contribution, the POT is 2.22242e+24
+            tmppot = combin*static_cast<double>(tvertex->GetEntries(event_identifier.c_str()))/16139.*2.22242e+24;
             //tmppot = 2.1e+24;
             std::cout<<"Its a TextGen!"<<std::endl;
             //             tvertex->SetBranchStatus("grouped_trackstub_candidate_indices",0);

@@ -224,7 +224,7 @@ struct bdt_file{
         int scanStage(int which_stage, std::vector<double> bdt_cuts , std::string scan_string);
 
 
-        int calcBaseEntryList(std::string);
+        int calcBaseEntryList(std::string analysis_tag); // generate entrylist for entries that pass topological cut and preselection cut
         double data_tor860_wcut;
         double data_spills_E1DCNT_wcut;
         double ext_spills_ext;
@@ -264,8 +264,10 @@ struct bdt_file{
         TH1* getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
         int CheckWeights();
 
+	/* Get number of events passing given cuts, after run-to-run configuration */
         double GetEntries(std::string cuts);
         double GetEntries();
+
         TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);
 
         int getRunEfficiency();

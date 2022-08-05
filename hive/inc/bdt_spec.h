@@ -64,17 +64,27 @@ class bdt_stack{
             signal_on_top.push_back(false);
 			return 0;
 		}
+
+		/* getEntryStack function creates stack of distribution for given varible
+ 		 * Cuts for different stages are implicitly added to var.additional_cut
+ 		 */
 		THStack* getEntryStack(bdt_variable var);
-		THStack* getEntryStack(bdt_variable var,int);
+		THStack* getEntryStack(bdt_variable var,int);  // second argument - stage number - is not used
+
 		THStack* getStack(bdt_variable var, int level,double c1, double c2);
 		THStack* getBDTStack(bdt_info, int level,double c1, double c2);
 		THStack* getBDTStack(bdt_info,std::string bin, int level,double c1, double c2);
+
+		/* Get the TH1 distribution of variable var for bdt file that's set as a signal_on_top in the configuration xml */
 		TH1* getSignalOnTop(bdt_variable var);
 
-std::vector<double> getEntryFullVector(bdt_variable var);
+		/* get full vector of predictions for every stacked histogram and every bin, corresponding to plot_pot*/
+		std::vector<double> getEntryFullVector(bdt_variable var);
 
 
 		TH1* getSum(bdt_variable, int level, double c1, double c2);
+
+		/* series of getEntrySum function creates histogram sum of distributions for given varible before any selection */
 		TH1* getEntrySum(bdt_variable);
 		TH1* getEntrySum(bdt_variable,int);
 		TH1* getEntrySum(bdt_variable,int,std::vector<double>&full);

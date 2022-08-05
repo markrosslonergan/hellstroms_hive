@@ -292,11 +292,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
         std::cout<<"On stage: "<<s<<std::endl;
         //First set the files at this stage
 
+
+	// generate entrylist passing stage 0 or/and stage 1
+	// cuts for later stages are applied later in bdt_var
         for(auto &f: mc_stack->stack){
             //std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
             //if(s>1 && false) f->calcBDTEntryList(s,bdt_cuts); //Turn off, use below
             std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-            f->setStageEntryList((s ? s < 2 : s ));
+            f->setStageEntryList((s ? s < 2 : s )); 
         }
 
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
@@ -327,7 +330,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                */
 
 
-            //If we are at a later stage that 1, lets find the variable.
+            //If we are at a later stage that 1, lets find the variable. 
+            // gather BDT cuts after stage1
             if(s>1){
                 std::string faster_cut ="(";
                 for(int ss=0; ss<s-1; ss++){
@@ -369,7 +373,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             TMatrixD * covar_collapsed = new TMatrixD(var.n_bins,var.n_bins);
             d0->SetBinErrorOption(TH1::kPoisson);
 
-         
+        
+	    // get total count and corresponding MC intrinsic error for each bin 
             std::vector<double> vec_mc_stats_error;
             std::vector<double> vec_mc;
             for(int c=0; c< tsum->GetNbinsX();c++){
@@ -397,7 +402,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //Now here
 
            
+
+	 
             if(var.has_covar && m_error_string !="stats"){
+	    // Add systematic uncertainty band to the summed histogram 
+	   
+		var.covar_file = var.covar_file+"/VID_stage_"+ std::to_string(plot_stage) + "_" + var.GetID()+"_"+m_error_string+".SBNcovar.root";
 
                 TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
                 if(covar_f->IsZombie()){
@@ -1914,7 +1924,7 @@ int bdt_datamc::simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & v
 
 }
 
-
+//Guanqun: I guess this is to collapse all elements into one, why not do a sum over all elements? 
 double bdt_datamc::calcTotalNormError(TMatrixD * Min, bdt_variable & var){
     //Ripped directly from...
     //void SBNchi::CollapseSubchannels(TMatrixT <double> & M, TMatrixT <double> & Mc)

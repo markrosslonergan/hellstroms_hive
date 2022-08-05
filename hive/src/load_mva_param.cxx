@@ -1099,7 +1099,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         if(has_covar){
             std::cout<<"Adding a covariance matrix "<<covar_name<<" from file "<<covar_file<<std::endl;
             if(has_global_covar){
-                   covar_file = covar_file+"/VID"+std::to_string(n_var)+"_"+m_error_string+".SBNcovar.root";
+                   //covar_file = covar_file+"/VID"+std::to_string(n_var)+"_"+m_error_string+".SBNcovar.root";
             }
             
             t.addCovar(covar_name,covar_file);

@@ -1579,7 +1579,7 @@ int main (int argc, char *argv[]){
             std::cout<<"\""<<std::endl;
 
 
-            std::string sVID = "VID"+std::to_string(v.id);
+            std::string sVID = "VID_stage_"+ std::to_string(which_stage) + "_" +v.GetID();
             std::cout<<"Variable ID is "<<sVID<<std::endl;
 
             std::cout<<"First lets add the variable string "<<v.name<<std::endl;
@@ -1600,12 +1600,14 @@ int main (int argc, char *argv[]){
             system(sedder_VAR.c_str());
 
 
-            std::string sBinning = "\"";
+            std::string sBinning = "\"" + v.GetBinEdges() + "\"";
+/*
             for(double k = 0; k<v.low_edges.size(); k++){
                 double b = v.low_edges[k];
                 sBinning +=" " + std::to_string(b);
             }
             sBinning += "\"";
+*/
 
             std::cout<<"Now lets add the variable Binning "<<sBinning<<std::endl;
             std::string sedder_BIN = "sed  -i 's@BINBINBIN@" + sBinning + "@' " + covar_flux_template_xml+"."+sVID+".xml";
@@ -1673,7 +1675,7 @@ int main (int argc, char *argv[]){
             std::cout<<"\""<<std::endl;
 
 
-            std::string sVID = "VID"+std::to_string(v.id);
+            std::string sVID = "VID_"+ v.GetID();
             std::cout<<"Variable ID is "<<sVID<<std::endl;
 
             std::string sedder_VAR = "sed  's@VARVARVAR@\"" + v.name + "\"@' "+covar_det_template_xml +" > "+ covar_det_template_xml+"."+sVID+".xml";

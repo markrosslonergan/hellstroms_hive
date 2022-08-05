@@ -33,6 +33,7 @@
 #include "TGraphAsymmErrors.h"
 #include "TF1.h"
 #include "TMath.h"
+#include "TSystem.h"
 
 class bdt_datamc{
     public:
@@ -128,7 +129,10 @@ class bdt_datamc{
         int calcChi2(TH1 *mc_hist, TH1 *data_hist);
         void scaleNorm(std::vector<bdt_variable> var, std::vector<bdt_file*> stack_files, double scaleLow, double scaleHigh, double scaleStep, int stage, std::vector<double> bdt_cuts, std::string analysis_tag);
 
+	/* Given fractional/full covariance matrix and variable, calculate corresponding collapsed covariace matrix */
         int calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *frac_coll,bdt_variable & var);
+
+	/* Collapse full covariance matrix `Min` into collapsed matrix `Mout` */
         int simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & var);
 
         double calcTotalNormError(TMatrixD * Min, bdt_variable & var);

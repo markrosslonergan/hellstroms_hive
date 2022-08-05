@@ -39,7 +39,8 @@ struct bdt_variable{
         bool is_spectator;
 
         std::string additional_cut;
-        
+        std::string unique_hash;
+ 
         std::string covar_name;
         std::string covar_file;
         std::string covar_legend_name;
@@ -183,6 +184,43 @@ struct bdt_variable{
 
 };
 
+
+        std::string GetBinEdges() const {
+	    std::string Binning;
+            for(auto e : low_edges){
+                Binning += std::to_string(e) + " ";
+            }
+	    Binning.pop_back();
+	    return Binning;
+	}
+
+	unsigned long Jenkins_hash(const std::string& key) const{
+    	    size_t length = key.size();
+    	    size_t i = 0;
+    	    unsigned long hash = 0;
+    	    while (i != length) {
+        	hash += key[i++];
+        	hash += hash << 10;
+        	hash ^= hash >> 6;
+    	    }
+    	    hash += hash << 3;
+    	    hash ^= hash >> 11;
+    	    hash += hash << 15;
+    	    return hash;
+   	}
+
+	void GetUniqueJenkinsHash(){
+	    std::string long_id =  name + "_" + binning + "_" + additional_cut;  
+	    std::replace(long_id.begin(), long_id.end(), ' ', '_');
+	    unique_hash = std::to_string(Jenkins_hash(long_id));
+	    return;
+  	}
+
+	std::string GetID(){
+	   if(unique_hash.empty())
+	      GetUniqueJenkinsHash();
+	   return unique_hash;
+	}
 };
 
 
