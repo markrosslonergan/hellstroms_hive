@@ -7,8 +7,8 @@
 	setup uboonecode v06_26_01_13 -qe10:prof
 	echo "Setting up gallery v1_03_08"
 	setup gallery v1_03_08 -qe10:nu:prof
-	echo "Setting up cmake v3_7_1"
-	setup cmake v3_7_1
+	echo "Setting up cmake v3_17_1"
+	setup cmake v3_17_1
 	echo "Setting up gcc v6_4_0"
 	setup gcc v6_4_0
 	echo "Setting up root v6_12_04e"

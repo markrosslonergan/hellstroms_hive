@@ -10,7 +10,7 @@
 #include  "bdt_var.h"
 #include  "bdt_info.h"
 #include  "bdt_spec.h"
-
+#include  "SBNcovariance.h" //header from dependency 
 /******** Root includes *****/
 
 #include "TTreeFormula.h"

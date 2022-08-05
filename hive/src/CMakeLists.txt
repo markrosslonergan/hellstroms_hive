@@ -4,7 +4,7 @@ include_directories ( ${CMAKE_SOURCE_DIR}/root_linkdefs/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/xgboost/include/)
 
 add_library (hiveLib bdt_eff.cxx variable_list.cxx bdt_datamc.cxx bdt_varplot.cxx bdt_spec.cxx bdt_sig.cxx bdt_recomc.cxx bdt_response.cxx bdt_app.cxx bdt_train.cxx bdt_file.cxx load_mva_param.cxx bdt_precalc.cxx TruncMean.cxx bdt_boxcut.cxx bdt_test.cxx bdt_vertex_eff.cxx bdt_scatter.cxx)
-target_link_libraries (hiveLib DeNan tinyxmllib xgboost ${ROOT_LIBRARIES})
+target_link_libraries (hiveLib DeNan tinyxmllib xgboost ${ROOT_LIBRARIES} SBNfitlib)
 
 message(STATUS "ROOT_LIBRARIES @: ${ROOT_LIBRARIES}")
 
