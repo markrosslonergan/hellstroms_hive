@@ -5,7 +5,9 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+
 /******** Our includes *****/
+#include "global_func.h"
 
 /******** Root includes *****/
 
@@ -42,7 +44,10 @@ struct bdt_variable{
         std::string unique_hash;
  
         std::string covar_name;
+        std::string covar_dir;
+        std::string covar_file_prefix;
         std::string covar_file;
+        std::string covar_sys;
         std::string covar_legend_name;
         std::string covar_type;
 
@@ -53,9 +58,10 @@ struct bdt_variable{
         std::vector<double> edges;
         std::vector<double> low_edges;
 
-        int addCovar(std::string name, std::string file){
+        int addCovar(std::string name, std::string dir, std::string file){
             has_covar=true;
             covar_name = name;
+	    covar_dir = dir;
             covar_file = file;
             return 0;
         }
@@ -158,6 +164,7 @@ struct bdt_variable{
                 }
             }
 
+	    update_def();
             /*std::cout<<"Nbin "<<n_bins<<std::endl;
             std::cout<<"edges "<<std::endl;
             for(auto &v: edges) std::cout<<v<<std::endl;
@@ -168,9 +175,10 @@ struct bdt_variable{
            //low_edges = {0,0.15,0.225,0.3,0.375,0.45,0.6}; 
            //low_edges = {0.1,  0.2, 0.25, 0.3, 0.35, 0.4 ,0.45, 0.5, 0.55, 0.6, 0.7};
            // low_edges = {0, 0.075, 0.15, 0.225, 0.3, 0.375, 0.45, 0.525, 0.6, 0.675,  0.9};           
-		};
+		}
 
-		bdt_variable(){};
+
+		bdt_variable(){}
 
 		bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack) : 
 			name(inname), 
@@ -182,8 +190,66 @@ struct bdt_variable{
             plot_max =-999;
             cat = 0;
 
-};
+	     update_def();
+	}
 
+	//---- function that I'd like to use only internally ----
+	
+	void update_def(){
+	    if(name.find("_mva") != std::string::npos)
+		name = "simple_"+name;
+	    return;
+  	}
+
+	//---- End of private internal function ----
+	
+
+	void GetUniqueJenkinsHash(){
+	    std::string long_id =  name + "_" + binning + "_" + additional_cut;  
+	    std::replace(long_id.begin(), long_id.end(), ' ', '_');
+	    unique_hash = std::to_string(jenkins_hash(long_id));
+	    return;
+  	}
+
+	std::string GetID(){
+	   if(unique_hash.empty())
+	      GetUniqueJenkinsHash();
+	   return unique_hash;
+	}
+
+	std::string GetCovarFileID(int stage){
+	     if(covar_file_prefix.empty()){
+		covar_file_prefix = "VarCovar_Stage_"+ std::to_string(stage) + "_" + this->GetID(); 
+
+		if(flux_xs_sys_only())
+		    covar_file_prefix += "_FluxXS";
+		else if(detector_sys_only())
+		    covar_file_prefix += "_Det";
+	    }
+	    return covar_file_prefix;
+	}
+
+	void UpdateCovarFileName(const std::string& fname){
+	    covar_dir = "";
+	    covar_file = fname;
+	    return;
+	}
+	void UpdateCovarName(const std::string& mname){
+	    covar_name= mname;
+	    return;
+	}
+
+	void UpdateCovarType(const std::string& in_type){
+	    covar_type = in_type;
+	    return;
+	}
+
+	std::string GetCovarFile(int s){
+	    if(covar_file.empty()){
+	        covar_file = GetCovarFileID(s) + ".SBNcovar.root";
+	    }
+	    return covar_dir +  covar_file;
+ 	}
 
         std::string GetBinEdges() const {
 	    std::string Binning;
@@ -194,32 +260,23 @@ struct bdt_variable{
 	    return Binning;
 	}
 
-	unsigned long Jenkins_hash(const std::string& key) const{
-    	    size_t length = key.size();
-    	    size_t i = 0;
-    	    unsigned long hash = 0;
-    	    while (i != length) {
-        	hash += key[i++];
-        	hash += hash << 10;
-        	hash ^= hash >> 6;
-    	    }
-    	    hash += hash << 3;
-    	    hash ^= hash >> 11;
-    	    hash += hash << 15;
-    	    return hash;
-   	}
+   	std::string GetVarDef() const {
+	    return name;
+        }
 
-	void GetUniqueJenkinsHash(){
-	    std::string long_id =  name + "_" + binning + "_" + additional_cut;  
-	    std::replace(long_id.begin(), long_id.end(), ' ', '_');
-	    unique_hash = std::to_string(Jenkins_hash(long_id));
-	    return;
+	std::string GetAdditionalCut() const{
+            return ReplaceString(additional_cut,"&&","\\&amp;\\&amp;");
   	}
+	bool flux_xs_sys_only() const{
+	    return covar_sys == "fluxxs";
+	}
 
-	std::string GetID(){
-	   if(unique_hash.empty())
-	      GetUniqueJenkinsHash();
-	   return unique_hash;
+	bool detector_sys_only() const{
+	    return covar_sys == "det";
+	}
+
+	bool full_sys() const{
+	    return covar_sys == "fluxxsdet";
 	}
 };
 

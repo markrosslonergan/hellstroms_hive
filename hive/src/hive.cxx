@@ -8,10 +8,12 @@
 #include "TSystem.h"
 
 
+#include "global_func.h"
 #include "variable_list.h"
 #include "bdt_file.h"
 #include "bdt_datamc.h"
 #include "bdt_var.h"
+#include "bdt_covar.h"
 #include "bdt_varplot.h"
 #include "bdt_precalc.h"
 #include "bdt_info.h"
@@ -31,15 +33,6 @@
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name,bool shape_only);
 
-std::string ReplaceString(std::string subject, const std::string& search,
-        const std::string& replace) {
-    size_t pos = 0;
-    while ((pos = subject.find(search, pos)) != std::string::npos) {
-        subject.replace(pos, search.length(), replace);
-        pos += replace.length();
-    }
-    return subject;
-}
 
 
 int main (int argc, char *argv[]){
@@ -1579,7 +1572,11 @@ int main (int argc, char *argv[]){
             std::cout<<"\""<<std::endl;
 
 
-            std::string sVID = "VID_stage_"+ std::to_string(which_stage) + "_" +v.GetID();
+	    //new code 
+	    bdt_covar covar_handle(&v, which_stage);
+	    covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
+/*
+            std::string sVID = v.GetCovarFile(); //"VID_stage_"+ std::to_string(which_stage) + "_" +v.GetID();
             std::cout<<"Variable ID is "<<sVID<<std::endl;
 
             std::cout<<"First lets add the variable string "<<v.name<<std::endl;
@@ -1601,13 +1598,13 @@ int main (int argc, char *argv[]){
 
 
             std::string sBinning = "\"" + v.GetBinEdges() + "\"";
-/*
+
             for(double k = 0; k<v.low_edges.size(); k++){
                 double b = v.low_edges[k];
                 sBinning +=" " + std::to_string(b);
             }
             sBinning += "\"";
-*/
+
 
             std::cout<<"Now lets add the variable Binning "<<sBinning<<std::endl;
             std::string sedder_BIN = "sed  -i 's@BINBINBIN@" + sBinning + "@' " + covar_flux_template_xml+"."+sVID+".xml";
@@ -1635,7 +1632,7 @@ int main (int argc, char *argv[]){
 
             std::string run_fix_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_fix_fractional  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -t "+sVID+"_flux" + " -c " + sVID+"_flux.SBNcovar.root"; 
             system(run_fix_str.c_str());
-
+*/
         }
         std::cout<<"Finished the makefluxcovar mode: "<<std::endl;
 
@@ -1674,7 +1671,15 @@ int main (int argc, char *argv[]){
             }
             std::cout<<"\""<<std::endl;
 
+	    //new code 
+	    bdt_covar covar_handle(&v, which_stage);
+	    covar_handle.GenerateDetectorCovar(covar_det_template_xml);
+	    if(covar_flux_template_xml !="null.xml"){
+		covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
+		covar_handle.MergeCovar();
+	    }
 
+/*
             std::string sVID = "VID_"+ v.GetID();
             std::cout<<"Variable ID is "<<sVID<<std::endl;
 
@@ -1745,7 +1750,7 @@ int main (int argc, char *argv[]){
             std::string merger_s = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration_May2021 -f -t "+sVID + "_merged_det -c "+sVID+"_DET_*_fracfixed*.SBNcovar.root";
 
             system(merger_s.c_str());
-
+*/
             //Then run a FlatFractional for BNBOther and NCMultiPi0
             /*std::string flatter_s1 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s BNBOther -t "+sVID+"_FlatDetSys1 -c " +sVID+"_merged_det.SBNcovar.root";
               std::string flatter_s2 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s NCMultiPi0 -t "+sVID+"_FlatDetSys2 -c " +sVID+"_FlatDetSys1.SBNcovar.root";
@@ -1759,7 +1764,7 @@ int main (int argc, char *argv[]){
               system(flatter_s2.c_str());
               system(flatter_s3.c_str());
               */
-            //*****  If we also ran flux, merge   ***
+/*            //*****  If we also ran flux, merge   ***
             if(covar_flux_template_xml !="null.xml"){
 
                 std::cout<<"Going to merge Flux and Det together"<<std::endl;
@@ -1770,7 +1775,7 @@ int main (int argc, char *argv[]){
                 system(merger_a.c_str());
             }
 
-
+*/
 
 
         }//end vars

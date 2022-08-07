@@ -406,13 +406,33 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 	 
             if(var.has_covar && m_error_string !="stats"){
 	    // Add systematic uncertainty band to the summed histogram 
-	   
-		var.covar_file = var.covar_file+"/VID_stage_"+ std::to_string(plot_stage) + "_" + var.GetID()+"_"+m_error_string+".SBNcovar.root";
 
-                TFile *covar_f = new TFile(var.covar_file.c_str(),"read");
+		//test	   
+                TFile *covar_f = new TFile(var.GetCovarFile(s).c_str(),"read");
                 if(covar_f->IsZombie()){
-                    std::cout<<"Error!! The covariance file failed to open: Does not exist?  "<<var.covar_file.c_str()<<std::endl;
-                    exit(EXIT_FAILURE);
+        
+	            std::cout<<"Error!! The covariance file failed to open: Does not exist?  "<<var.GetCovarFile(s)<<std::endl;
+			
+		    //check existence of local file 
+		    std::cout << "WARNING: Trying local covariance file if available: " << var.GetCovarFileID(s) + ".SBNcovar.root" << std::endl;
+		    covar_f = new TFile((var.GetCovarFileID(s) + ".SBNcovar.root").c_str(), "read");
+		    if(covar_f->IsZombie()){
+			
+			std::cout << "WARNING: attempt failed, will generate covariance matrix locally " << std::endl;
+
+		    	std::string covar_flux_template_xml = "/uboone/app/users/gge/hellstroms_hive/hive/working_directory/ModuleTest/SBNfitDependency/template_1g0p_stage_1_Jan2021.xml";
+		    	std::string  covar_det_template_xml = "";
+		    	std::cout << "Hardcoded template xml: ";
+		    	std::cout << "For reweighable systematic: " << covar_flux_template_xml << std::endl;
+		    	std::cout << "For detector systematic: " << covar_det_template_xml << std::endl;
+
+		    	bdt_covar covar_handle(&var, s);
+                    	covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
+		    	covar_handle.GenerateDetectorCovar(covar_det_template_xml);
+                    	covar_handle.MergeCovar();
+
+		    	covar_f = new TFile(var.GetCovarFile(s).c_str(),"read");
+            	    }
                 }
 
 

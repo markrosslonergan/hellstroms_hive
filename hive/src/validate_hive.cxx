@@ -8,6 +8,7 @@
 #include "bdt_file.h"
 #include "bdt_datamc.h"
 #include "bdt_var.h"
+#include "bdt_covar.h"
 #include "bdt_varplot.h"
 #include "bdt_precalc.h"
 #include "bdt_info.h"

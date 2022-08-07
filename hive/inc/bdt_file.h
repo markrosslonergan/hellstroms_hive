@@ -14,6 +14,7 @@
 #include <stdexcept>
 /******** Our includes *****/
 
+#include  "global_func.h"
 #include  "bdt_flow.h"
 #include  "bdt_file.h"
 #include  "bdt_var.h"
@@ -208,7 +209,6 @@ struct bdt_file{
         //a function that splits a BDT file based on string and !string
         int splitBDTfile(std::string split_string,std::string trueTAG, bdt_file* truesplit, std::string falseTAG, bdt_file *falsesplit);
 
-        unsigned long jenkins_hash(std::string key); //guanqun: what does this do? 
 
         int MakeUnFlatTree(bdt_info & info,std::string &dir,std::string & s);
         void MakeFlatTree(TFile * fout, std::vector<FlatVar>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name);

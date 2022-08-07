@@ -790,7 +790,7 @@ int bdt_file::calcPrecutEntryList(){
     precut_key+=this->flow.base_cuts;
 
 
-    unsigned long precut_hash = this->jenkins_hash(precut_key); 
+    unsigned long precut_hash = jenkins_hash(precut_key); 
     std::cout<<"These particular precuts have a hash of "<<precut_hash<<std::endl;
     std::string s_precut_hash = std::to_string(precut_hash);
 
@@ -881,7 +881,7 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
     }
     precut_key+=this->flow.base_cuts;
 
-    unsigned long precut_hash = this->jenkins_hash(precut_key); 
+    unsigned long precut_hash = jenkins_hash(precut_key); 
     std::cout<<"These particular precuts and definitions have a hash of "<<precut_hash<<std::endl;
     std::string s_precut_hash = std::to_string(precut_hash);
 
@@ -1534,21 +1534,6 @@ void get_joy(){
     return;
 }
 
-
-unsigned long  bdt_file::jenkins_hash(std::string key) {
-    size_t length = key.size();
-    size_t i = 0;
-    unsigned long hash = 0;
-    while (i != length) {
-        hash += key[i++];
-        hash += hash << 10;
-        hash ^= hash >> 6;
-    }
-    hash += hash << 3;
-    hash ^= hash >> 11;
-    hash += hash << 15;
-    return hash;
-}
 
 
 int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage, const std::vector<double> & fbdtcuts ){
