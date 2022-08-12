@@ -335,7 +335,7 @@ int main (int argc, char *argv[]){
         }
 
         std::cout<<def<<std::endl;
-        bdt_flow analysis_flow(topological_cuts, def, 	vec_precuts,	postcuts,	bdt_infos);
+        bdt_flow analysis_flow(topological_cuts, def, 	vec_precuts,	postcuts,	bdt_infos, fbdtcuts);
 
         std::cout<<" -- Filename "<<XMLconfig.bdt_filenames[f]<<" subdir "<<XMLconfig.bdt_dirs[f]<<std::endl;
         std::cout<<" -- TTreeName "<<XMLconfig.bdt_ttree_names[f]<<std::endl;
@@ -640,7 +640,7 @@ int main (int argc, char *argv[]){
                 if(div_bin)datamc.setDivBin(div_scale);
 
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                datamc.plotStacks(ftest,  tmp_var , fbdtcuts,additional_tag, bdt_infos);
+                datamc.plotStacks(ftest,  tmp_var , additional_tag);
             }else{
                 std::vector<bdt_variable> tmp_vars;
                 for(auto &v: vars){
@@ -661,7 +661,7 @@ int main (int argc, char *argv[]){
 
 
                         real_datamc.setErrorString(systematics_error_string);
-                        real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,additional_tag,bdt_infos);
+                        real_datamc.plotStacks(ftest, tmp_vars, additional_tag);
                     }
 
                 } else {
@@ -674,7 +674,7 @@ int main (int argc, char *argv[]){
                     if(lee_on_top)real_datamc.setLEEonTop();
                     if(div_bin)real_datamc.setDivBin(div_scale);
 
-                    real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,additional_tag,bdt_infos);
+                    real_datamc.plotStacks(ftest, tmp_vars, additional_tag);
 
                 }
             }
@@ -736,7 +736,7 @@ int main (int argc, char *argv[]){
                 //datamc.printPassingPi0DataEvents("tmp", 2, fbdtcuts);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                datamc.plotStacks(ftest,  tmp_var , fbdtcuts, additional_tag , bdt_infos);
+                datamc.plotStacks(ftest,  tmp_var , additional_tag );
                 // TODO: Commented out for time's sake. Put back in later
                 //datamc.plotEfficiency(tmp_var,fbdtcuts,1,(which_stage>1 ? which_stage : 2));
             }else{
@@ -777,11 +777,11 @@ int main (int argc, char *argv[]){
                 if(plot_train_only) real_datamc.SetSpectator();
 
                 if(which_bdt==-1){
-                    real_datamc.plotStacks(ftest, tmp_vars,  fbdtcuts, additional_tag, bdt_infos);
+                    real_datamc.plotStacks(ftest, tmp_vars,  additional_tag);
                     // TODO: Commented out for time's sake. Put back in later
                     //real_datamc.plotEfficiency(tmp_vars,fbdtcuts,1, (which_stage > 1? which_stage : 2 ) );
                 }else{
-                    real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts, additional_tag, bdt_infos);
+                    real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, additional_tag);
                     // TODO: Commented out for time's sake. Put back in later
                     //real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,  (which_stage >1 ? which_stage :2 ));
                 }
@@ -941,9 +941,9 @@ int main (int argc, char *argv[]){
 
             if (vector != ""){//if passed specific variables
                 std::vector<bdt_variable> tmp_var =  real_datamc.GetSelectVars(vector, vars);
-                real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
+                real_datamc.plot2D(ftest, tmp_var);
             }else{    
-                real_datamc.plot2D(ftest, vars, fbdtcuts); //warning this will make a lot of plots
+                real_datamc.plot2D(ftest, vars); //warning this will make a lot of plots
             }//if passed a vector
         }
         else if(mode_option == "precalc"){ 
@@ -1417,7 +1417,7 @@ int main (int argc, char *argv[]){
         datamc.setErrorString(systematics_error_string);
         datamc.setMergeDown(mergeDownVector);
 
-        datamc.plotStacks(ftest,  gif_vars , fbdtcuts,bdt_infos);
+        datamc.plotStacks(ftest,  gif_vars );
         return 0;
 
     }else if(mode_option == "eff2"){
@@ -1534,10 +1534,10 @@ int main (int argc, char *argv[]){
         if(which_file==-1){
             for(size_t f =0; f< bdt_files.size(); ++f){
                 std::cout<<"on bdt file "<<f<<std::endl;
-                bdt_files[f]->makePrecalcSBNfitFile(analysis_tag, which_stage, fbdtcuts);
+                bdt_files[f]->makePrecalcSBNfitFile(analysis_tag, which_stage);
             }
         }else{
-            bdt_files[which_file]->makePrecalcSBNfitFile(analysis_tag,which_stage, fbdtcuts);
+            bdt_files[which_file]->makePrecalcSBNfitFile(analysis_tag,which_stage);
 
         }
         return 0;

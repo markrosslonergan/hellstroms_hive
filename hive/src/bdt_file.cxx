@@ -824,7 +824,7 @@ int bdt_file::calcPrecutEntryList(){
 
             TVectorT<double> * stored_hash;
 
-            this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
+            this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1).c_str() , "entrylist");
 
             precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
             fpre->cd();
@@ -838,6 +838,13 @@ int bdt_file::calcPrecutEntryList(){
     }
     return 0;
 
+}
+
+int bdt_file::calcBDTEntryList(int stage){
+    std::string tmp_list_name = "stage_"+std::to_string(stage)+"_BDT_" +this->tag;
+    this->tvertex->Draw((">>"+tmp_list_name).c_str(), this->getStageCuts(stage).c_str() , "entrylist");
+    vec_entry_lists[stage-2] = (TEntryList*)gDirectory->Get(tmp_list_name.c_str());
+    return 0;
 }
 
 int bdt_file::calcBDTEntryList(int stage, std::vector<double> bdt_cuts){
@@ -876,10 +883,13 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
     //first check if a file exists with a topological entry list in it!
 
     std::string precut_key = this->name;
-    for(auto &s: this->flow.vec_pre_cuts){
+    precut_key += this->flow.GetStageCuts(1);
+
+/*    for(auto &s: this->flow.vec_pre_cuts){
         precut_key+=s;
     }
     precut_key+=this->flow.base_cuts;
+*/
 
     unsigned long precut_hash = jenkins_hash(precut_key); 
     std::cout<<"These particular precuts and definitions have a hash of "<<precut_hash<<std::endl;
@@ -915,10 +925,10 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
         std::cout<<"Entry List file does not exists (or hash is wrong) "<<this->tag<<" creating it."<<std::endl;
 
-        this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0, -9,-9).c_str() , "entrylist");
+        this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0).c_str() , "entrylist");
         topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
 
-        this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1, -9,-9).c_str() , "entrylist");
+        this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1).c_str() , "entrylist");
         precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
 
 
@@ -965,7 +975,7 @@ int bdt_file::calcTopologicalEntryList(){
 
         std::cout<<"Topological Entry List does not exists for "<<this->tag<<" creating it."<<std::endl;
 
-        this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0, -9,-9).c_str() , "entrylist");
+        this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0).c_str() , "entrylist");
         topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
 
 
@@ -1096,6 +1106,15 @@ TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, doub
 
     //delete ctmp;
     return th1;
+}
+
+
+int bdt_file::scanStage(int which_stage, std::string scan_string){
+
+    std::string cuts = this->getStageCuts(which_stage);
+    this->tvertex->Scan(scan_string.c_str(),cuts.c_str());
+
+    return 0;
 }
 
 int bdt_file::scanStage(int which_stage, std::vector<double> bdt_cuts , std::string scan_string){
@@ -1256,9 +1275,10 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
     return ans_th1s;	
 }
 
+// this function should be in bdt_info class
 bdt_variable bdt_file::getBDTVariable(bdt_info info){
     //   std::cout<<"Getting bdt_file var bdt : "<<this->tag+"_"+info.identifier+".mva"<<std::endl;
-    return bdt_variable(this->tag +"_"+info.identifier+ ".mva", info.binning, info.name+" Response" ,false,"d");
+    return this->getBDTVariable(info, info.binning);
 }
 
 bdt_variable bdt_file::getBDTVariable(bdt_info info, std::string binning){
@@ -1320,7 +1340,7 @@ int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,  
     return 0;
 }
 
-int bdt_file::setStageEntryList(int j){
+int bdt_file::setStageEntryList(int j, std::vector<double> bdt_cuts){
 
     if(j==0){
         this->tvertex->SetEntryList(topological_list);
@@ -1330,11 +1350,26 @@ int bdt_file::setStageEntryList(int j){
         std::cout<<"bdt_file::setStageEntryList. Only up to level "<<flow.bdt_vector.size()<<" allowed with Entry Lists"<<std::endl;
         exit(EXIT_FAILURE);
     }else if(j>1){
+
+	if(vec_entry_lists[j-2] == nullptr){
+	    if(bdt_cuts.empty())
+		this->calcBDTEntryList(j);
+	    else
+		this->calcBDTEntryList(j, bdt_cuts);
+	}
         this->tvertex->SetEntryList(vec_entry_lists[j-2]);
     }
 
 
     return 0;
+}
+
+std::string bdt_file::getStageCuts(int stage){
+   return this->flow.GetStageCuts(stage);
+}
+
+std::string bdt_file::getGeneralStageCuts(int stage){
+   return this->flow.GetGeneralStageCuts(stage);
 }
 
 std::string bdt_file::getStageCuts(int stage, std::vector<double> bdt_cuts){
@@ -1344,15 +1379,14 @@ std::string bdt_file::getStageCuts(int stage, std::vector<double> bdt_cuts){
     std::string ans;
 
 
-    if(stage==-1){
-        ans = flow.definition_cuts;//flow.topological_cuts; stage -1 is now "pre topo"
-    }else if(stage==0){
-        ans = flow.base_cuts;
-    }else if(stage ==1){
-        ans = flow.base_cuts + "&&"+ flow.pre_cuts;
-        if(verbose)std::cout << "Stage 1 cuts: " << ans << std::endl;
-    }else if(stage > 1){
-        ans = flow.base_cuts + "&&" + flow.pre_cuts;
+    if(stage==-1 || stage==0 || stage ==1){
+        ans = this->flow.GetStageCuts(stage);
+    }
+    else if(stage < 0 || stage > static_cast<int>(this->flow.bdt_vector.size()) + 1){
+	std::cerr << "Invalid stage ... set cut to 1 " << std::endl;
+	ans = "1";
+    }else{
+        ans = this->flow.GetStageCuts(1);
         for(int i=0; i< stage-1; i++){
             bdt_variable stagevar = this->getBDTVariable(flow.bdt_vector[i]);		
             ans += "&& "+stagevar.name +">"+std::to_string(bdt_cuts[i]);
@@ -1371,34 +1405,34 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
     std::string ans;
     switch(stage) {
         case 0:
-            ans = flow.base_cuts;
+            ans = this->flow.GetStageCuts(0);
             break;
         case 1:
-            ans = flow.base_cuts + "&&"+ flow.pre_cuts;
+            ans = this->flow.GetStageCuts(1);
             if(verbose)std::cout << "Stage 1 cuts: " << ans << std::endl;
             break;
         case 2: {
-                    bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
-                    ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1);
+                    bdt_variable stage2var = this->getBDTVariable(this->flow.bdt_vector.at(0));		
+                    ans = this->flow.GetStageCuts(1) + " && "+  stage2var.name + ">" +std::to_string(bdtvar1);
                     if(verbose)std::cout << "Stage 2 cuts: " << ans << std::endl;
                     break;
                 }
 
         case 3: {
-                    bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
-                    bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
-                    ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2);
+                    bdt_variable stage2var = this->getBDTVariable(this->flow.bdt_vector.at(0));		
+                    bdt_variable stage3var = this->getBDTVariable(this->flow.bdt_vector.at(1));		
+                    ans = this->flow.GetStageCuts(1) + " && "+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2);
                     if(verbose)std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
                     if(verbose)std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
                     if(verbose)std::cout << "Stage 3 cuts: " << ans << std::endl;
                     break;
                 }
         case 4: {
-                    bdt_variable stage2var = this->getBDTVariable(flow.bdt_cosmic_cuts);		
-                    bdt_variable stage3var = this->getBDTVariable(flow.bdt_bnb_cuts);		
+                    bdt_variable stage2var = this->getBDTVariable(this->flow.bdt_vector.at(0));		
+                    bdt_variable stage3var = this->getBDTVariable(this->flow.bdt_vector.at(1));		
                     if(verbose)std::cout << "Stage 2 var name: " << stage2var.name << std::endl;
                     if(verbose)std::cout << "Stage 3 var name: " << stage3var.name << std::endl;
-                    ans = flow.base_cuts + "&&" + flow.pre_cuts + "&&"+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2) +"&&" +flow.post_cuts;
+                    ans = this->flow.GetStageCuts(1)  + " && "+  stage2var.name + ">" +std::to_string(bdtvar1)+"&&"+stage3var.name +">" +std::to_string(bdtvar2) +"&&" +flow.post_cuts;
                     if(verbose)std::cout << "Stage 4 cuts: " << ans << std::endl;
                     break;
                 }
@@ -1536,7 +1570,7 @@ void get_joy(){
 
 
 
-int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage, const std::vector<double> & fbdtcuts ){
+int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage){
     TFile *f = new TFile((analysis_tag+"_"+this->tag+"_SSSprecalc.root").c_str(),"read");
     TTree *t = (TTree*)f->Get("sss_precalc");
 
@@ -1548,7 +1582,7 @@ int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_s
     TDirectory *cdtof = f_sbnfit->mkdir("singlephoton");
     cdtof->cd();    
 
-    std::string sbnfit_cuts = this->getStageCuts(which_stage,fbdtcuts);
+    std::string sbnfit_cuts = this->getStageCuts(which_stage);
 
     std::cout<<"Copying precalc tree"<<std::endl;
     TTree * t_sbnfit_tree = (TTree*)t->CopyTree(sbnfit_cuts.c_str());
@@ -1694,6 +1728,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     if(which_stage!=0){
         for(int i=0; i< bdt_infos.size();i++){
             std::cout<<"BDT form "<<i<<" "<<this->tag+"_"+bdt_infos[i].identifier<<std::endl;
+//guanqun: not sure why in this format: tree_name.tuple_name ?  
             std::string nam = this->tag+"_"+bdt_infos[i].identifier+".mva";
             form_vec.push_back(new TTreeFormula((bdt_infos[i].identifier+"_mva_formula").c_str(), nam.c_str(),this->tvertex));
         }
@@ -1946,8 +1981,8 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
 
     double tsplot_pot=6.91e20;
     TTreeFormula* wei = new TTreeFormula("weight_formula ", this->weight_branch.c_str(),this->tvertex);
-    TTreeFormula * tcut = new TTreeFormula("precut",  this->getStageCuts(1,{}).c_str()  ,tvertex);
-    TTreeFormula * t_defcut = new TTreeFormula("defcut",  this->getStageCuts(-1,{}).c_str()  ,tvertex);
+    TTreeFormula * tcut = new TTreeFormula("precut",  this->getStageCuts(1).c_str()  ,tvertex);
+    TTreeFormula * t_defcut = new TTreeFormula("defcut",  this->getStageCuts(-1).c_str()  ,tvertex);
 
     //Make new branches
     int out_event_index = 0; 

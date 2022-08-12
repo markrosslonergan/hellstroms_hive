@@ -104,12 +104,15 @@ class bdt_datamc{
 
 
         std::vector<bdt_variable> GetSelectVars(std::string vector, std::vector<bdt_variable> vars);
-        int plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts);
-        int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
+        int plot2D(TFile *ftest, std::vector<bdt_variable> vars);
 
         //THIS IS It
-        int plotStacks(TFile*f,std::vector<bdt_variable> vars, std::vector<double> cuts, std::vector<bdt_info> bdt_infos);
-        int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::string tago,std::vector<bdt_info> bdt_infos);
+        /* Draw stacked distributions for provided variables 
+ 	 * If external bdt cuts are provided, will use these bdt cuts instead of the cuts configured in xml
+ 	 */
+        int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
+        int plotStacks(TFile*f,std::vector<bdt_variable> vars, std::vector<double> cuts = {} );
+        int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::string tago, std::vector<double> bdt_cuts={}  );
 
         int plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt);
         int plotStacks(TFile*f, bdt_variable var,double,double);

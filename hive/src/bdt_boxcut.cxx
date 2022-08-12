@@ -17,7 +17,7 @@ int bdt_boxcut::doCuts(TFile *ftest){
 
 
 		for(auto &f: mc_stack->stack){
-			std::string allcuts = this->core_cuts+"&&"+ f->getStageCuts(0,-9,-9);
+			std::string allcuts = this->core_cuts+"&&"+ f->getStageCuts(0);
 			for(int i=0; i<boxcuts.size(); i++){
 				allcuts+="&&"+ boxcuts.at(i);
 			}

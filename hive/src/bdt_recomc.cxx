@@ -198,7 +198,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
 
 
     //-------------- Topological Selection -------------
-    std::string selection = file->getStageCuts(0, -9, -9);
+    std::string selection = file->getStageCuts(0);
 
     reco_mc_vec_sel = file->getRecoMCTH1(var, selection, "sel_"+file->tag+"_"+var.safe_name, plot_pot);
     std::cout<<"TEST "<<reco_mc_vec_sel.size()<<std::endl;
@@ -207,7 +207,7 @@ int bdt_recomc::plot_recomc(TFile *fout, bdt_file* file, bdt_variable var, doubl
     N_selection = file->GetEntries((selection).c_str())*plot_pot/file->pot*file->scale_data;
 
     //-------------- Pre-Selection -------------
-    std::string precut = file->getStageCuts(1, -9, -9);
+    std::string precut = file->getStageCuts(1);
 
     reco_mc_vec_pre = file->getRecoMCTH1(var, precut , "pre_"+file->tag+"_"+var.safe_name, plot_pot);
     reco_mc_all_pre = (TH1*)file->getTH1(var , precut ,"all_pre_"+file->tag+"_"+var.safe_name, plot_pot);

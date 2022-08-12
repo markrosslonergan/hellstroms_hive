@@ -47,7 +47,7 @@ int bdt_datamc::printPassingDataEvents(std::string outfilename, int stage, std::
 
 int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2){
     //for redudancy, calls new function
-    return this->plotStacks(ftest,vars,{c1,c2},{});
+    return this->plotStacks(ftest,vars,std::vector<double>({c1,c2}));
 }
 
 std::vector<bdt_variable> bdt_datamc::GetSelectVars(std::string vector, std::vector<bdt_variable> vars){
@@ -77,7 +77,7 @@ std::vector<bdt_variable> bdt_datamc::GetSelectVars(std::string vector, std::vec
     return select_vars;
 }
 
-int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
+int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars){
     if (vars.size() < 2){
         std::cout<<"need min 2 vars to make 2D plots"<<std::endl;
         return 0;
@@ -106,7 +106,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
     //Loop over all stages
 
     int s_min = 0;
-    int s_max = bdt_cuts.size()+2;
+    int s_max = data_file->flow.GetNumStage();
     if(plot_stage >=0){
         s_min = plot_stage;
         s_max = plot_stage+1;
@@ -120,14 +120,14 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
         //First set the files at this stage
         for(auto &f: mc_stack->stack){
             std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-            if(s>1) f->calcBDTEntryList(s,bdt_cuts);
+            if(s>1) f->calcBDTEntryList(s);
             std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
             f->setStageEntryList(s);
         }	
 
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
 
-        if(s>1) data_file->calcBDTEntryList(s,bdt_cuts);
+        if(s>1) data_file->calcBDTEntryList(s);
 
         data_file->setStageEntryList(s);
 
@@ -156,7 +156,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
                     pad->cd();
                     //                  std::cout<<"flag3"<<std::endl;
                     //TH1 * tsum = (TH1*)mc_stack->getEntrySum(var,s);
-                    TH2 * d0 = (TH2*)data_file->getTH2(var1,var2, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
+                    TH2 * d0 = (TH2*)data_file->getTH2(var1,var2, "1", std::to_string(s)+"_d0_"+data_file->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
                     //TH2 * d0;
                     //                std::cout<<"flag4"<<std::endl;
                     pad->cd();
@@ -200,7 +200,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
                         padmc->SetLogz();
 
-                        TH2 * mc = (TH2*)f->getTH2(var1,var2, "1", std::to_string(s)+"_mc_"+std::to_string(bdt_cuts[s])+"_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
+                        TH2 * mc = (TH2*)f->getTH2(var1,var2, "1", std::to_string(s)+"_mc_"+f->tag+"_"+var1.safe_unit+"_"+var2.safe_unit, plot_pot);
                         padmc->cd();
 
                         mc->Draw("COLZ");
@@ -236,11 +236,11 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector
 
 
 
-int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::vector<bdt_info> bdt_infos){
-    return  plotStacks(ftest,vars,bdt_cuts,"",bdt_infos);
+int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts){
+    return  plotStacks(ftest,vars, "", bdt_cuts);
 }
 
-int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::string tago, std::vector<bdt_info> bdt_infos){
+int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::string tago, std::vector<double> bdt_cuts){
     // NEW (and soon to be only) ONE
     //
     bool entry_mode = false;
@@ -278,7 +278,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
     //Loop over all stages
 
     int s_min = -1;
-    int s_max = bdt_cuts.size()+2;
+    int s_max = data_file->flow.GetNumStage();
     if(plot_stage >=0){
         s_min = plot_stage;
         s_max = plot_stage+1;
@@ -286,25 +286,29 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
     {
         int s = plot_stage;
+	std::string stage_cut = data_file->getGeneralStageCuts(s);
 
 
 
         std::cout<<"On stage: "<<s<<std::endl;
+	std::cout<<"Corresponding cut: " << stage_cut << std::endl;
         //First set the files at this stage
 
 
 	// generate entrylist passing stage 0 or/and stage 1
 	// cuts for later stages are applied later in bdt_var
+	// why not set entrylist for directly up to stage s 
         for(auto &f: mc_stack->stack){
             //std::cout<<"Calculating any necessary EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
             //if(s>1 && false) f->calcBDTEntryList(s,bdt_cuts); //Turn off, use below
             std::cout<<"Setting up EntryLists for "<<f->tag<<" On stage "<<s<<"."<<std::endl;
-            f->setStageEntryList((s ? s < 2 : s )); 
+            f->setStageEntryList(s, bdt_cuts); 
         }
 
         std::cout<<"Done with computations on TTrees and bdt_stacks"<<std::endl;
         //if(s>1 && false) data_file->calcBDTEntryList(s,bdt_cuts);
-        data_file->setStageEntryList((s ? s <2 :s ));
+        data_file->setStageEntryList(s, bdt_cuts);
+
 
 
         //And all variables in the vector var
@@ -332,6 +336,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
             //If we are at a later stage that 1, lets find the variable. 
             // gather BDT cuts after stage1
+            // Not needed anymore
+            /*
             if(s>1){
                 std::string faster_cut ="(";
                 for(int ss=0; ss<s-1; ss++){
@@ -343,7 +349,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //var.additional_cut  = faster_cut;
                 std::cout<<" var.additional_cut = "<< var.additional_cut <<std::endl;
             }
-
+	    */
             std::cout<<" var.additional_cut = "<< var.additional_cut <<std::endl;
 
             //var.is_logplot = false;
@@ -426,7 +432,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 		    	std::cout << "For reweighable systematic: " << covar_flux_template_xml << std::endl;
 		    	std::cout << "For detector systematic: " << covar_det_template_xml << std::endl;
 
-		    	bdt_covar covar_handle(&var, s);
+		    	bdt_covar covar_handle(&var, s, stage_cut);
                     	covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
 		    	covar_handle.GenerateDetectorCovar(covar_det_template_xml);
                     	covar_handle.MergeCovar();
@@ -1813,12 +1819,12 @@ int bdt_datamc::plotEfficiency(std::vector<bdt_variable> vars, std::vector<doubl
         //First get Denominator
         std::vector<TH1*> denom_stack;
         for(auto &f: mc_stack->stack){
-            if(stage_denom>1) f->calcBDTEntryList(stage_denom,bdt_cuts);
+            if(stage_denom>1) f->calcBDTEntryList(stage_denom);
             f->setStageEntryList(stage_denom);
             TH1 * h = (TH1*)f->getTH1(var, "1", std::to_string(stage_denom)+"_denom_b_"+std::to_string(bdt_cuts[stage_denom])+"_"+f->tag+"_"+var.safe_name, plot_pot);
             denom_stack.push_back(h);
         }	
-        if(stage_denom>1) data_file->calcBDTEntryList(stage_denom,bdt_cuts);
+        if(stage_denom>1) data_file->calcBDTEntryList(stage_denom);
         data_file->setStageEntryList(stage_denom);
 
         cobs->cd();
@@ -1830,12 +1836,12 @@ int bdt_datamc::plotEfficiency(std::vector<bdt_variable> vars, std::vector<doubl
         //Now Numerator
         std::vector<TH1*> numer_stack;
         for(auto &f: mc_stack->stack){
-            if(stage_numer>1) f->calcBDTEntryList(stage_numer,bdt_cuts);
+            if(stage_numer>1) f->calcBDTEntryList(stage_numer);
             f->setStageEntryList(stage_numer);
             TH1 * h = (TH1*)f->getTH1(var, "1", std::to_string(stage_numer)+"_numer_b_"+std::to_string(bdt_cuts[stage_numer])+"_"+f->tag+"_"+var.safe_name, plot_pot);
             numer_stack.push_back(h);
         }	
-        if(stage_numer>1) data_file->calcBDTEntryList(stage_numer,bdt_cuts);
+        if(stage_numer>1) data_file->calcBDTEntryList(stage_numer);
         data_file->setStageEntryList(stage_numer);
 
         cobs->cd();
