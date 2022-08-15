@@ -782,12 +782,8 @@ int bdt_file::makeRunSubRunList(){
 int bdt_file::calcPrecutEntryList(){
 
     //first check if a file exists with a precut entry list in it!
-
     std::string precut_key = this->name;
-    for(auto &s: this->flow.vec_pre_cuts){
-        precut_key+=s;
-    }
-    precut_key+=this->flow.base_cuts;
+    precut_key += this->flow.GetStageCuts(1);
 
 
     unsigned long precut_hash = jenkins_hash(precut_key); 
@@ -1372,6 +1368,10 @@ std::string bdt_file::getGeneralStageCuts(int stage){
    return this->flow.GetGeneralStageCuts(stage);
 }
 
+std::vector<std::string> bdt_file::getStageNames() const{
+   return this->flow.GetStageNames();
+}
+
 std::string bdt_file::getStageCuts(int stage, std::vector<double> bdt_cuts){
     //modern
     bool verbose = false;
@@ -1698,13 +1698,15 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 
     //std::cout<<__LINE__<<" Setting up Branchs for BDT responses  "<<std::endl;
 
-    if(which_stage!=0){
+    //Guanqun: why limited to only after preselection stage? 
+    //comment this out
+    //if(which_stage!=0){
         for(int i=0; i< bdt_infos.size(); i++){
             std::string nam = "simple_"+bdt_infos[i].identifier+"_mva";
             t_sbnfit_simpletree.Branch(nam.c_str(), &(bdt_mvas[i]));
             std::cout<<i<<" Setting up a new Branch called "<<nam<<std::endl;
         }
-    }
+    
 
     if(add_vars){
         for(int i=0; i< vars.size(); i++){
@@ -1725,14 +1727,14 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 
     //std::cout<<__LINE__<<" "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
 
-    if(which_stage!=0){
+    //if(which_stage!=0){
         for(int i=0; i< bdt_infos.size();i++){
             std::cout<<"BDT form "<<i<<" "<<this->tag+"_"+bdt_infos[i].identifier<<std::endl;
 //guanqun: not sure why in this format: tree_name.tuple_name ?  
             std::string nam = this->tag+"_"+bdt_infos[i].identifier+".mva";
             form_vec.push_back(new TTreeFormula((bdt_infos[i].identifier+"_mva_formula").c_str(), nam.c_str(),this->tvertex));
         }
-    }
+    
 
     //std::cout<<__LINE__<<" "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
     if(add_vars){
@@ -1772,12 +1774,12 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
         //std::cout<<"YANK: Wei: "<<simple_wei<<" Scale: "<<this->scale_data<<" POT: "<<tsplot_pot<<" This File: "<<this->pot<<std::endl;
         original_entry = i;
 
-        if(which_stage!=0){
+        //if(which_stage!=0){
             for(int j=0; j< bdt_infos.size();j++){
                 form_vec[j]->GetNdata();
                 bdt_mvas[j] = form_vec[j]->EvalInstance();
             }
-        }
+        
 
         if(add_vars){
             for(int j=0; j< vars.size();j++){

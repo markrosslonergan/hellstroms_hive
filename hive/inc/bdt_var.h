@@ -229,8 +229,8 @@ struct bdt_variable{
 	    return covar_file_prefix;
 	}
 
-	void UpdateCovarFileName(const std::string& fname){
-	    covar_dir = "";
+	void UpdateCovarFileName(const std::string& fname, std::string fdirs=""){
+	    covar_dir = fdirs;
 	    covar_file = fname;
 	    return;
 	}
@@ -265,8 +265,9 @@ struct bdt_variable{
         }
 
 	std::string GetAdditionalCut() const{
-            return ReplaceString(additional_cut,"&&","\\&amp;\\&amp;");
+            return additional_cut;
   	}
+
 	bool flux_xs_sys_only() const{
 	    return covar_sys == "fluxxs";
 	}

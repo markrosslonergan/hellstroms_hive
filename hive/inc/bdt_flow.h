@@ -79,80 +79,35 @@ struct bdt_flow{
 
 
 		/* Get number of stages in this analysis flow */
-		int GetNumStage() const{
-		    return bdt_vector.size() + 2;
- 		}
+		int GetNumStage() const;
+	
+		/* Get the plot name for stages */
+		std::vector<std::string> GetStageNames() const;
+
 
 		/* Get related cuts for given stage, file specific 
  		 * stage 0: topological cut + definition cut 
  		 * stage 1: stage 0 cut + precuts
  		 * stage 2/3/4/..:  stage 1 cut + bdtcuts
  		 */
-		std::string GetStageCuts(int stage) const{
+		std::string GetStageCuts(int stage) const;
 
-		    std::cout << "bdt_flow: Get file-specific stage cut.. " << std::endl;
-
-		    if(stage == -1){
-			std::cout << "bdt_flow: requested for stage -1, returning definition cut ... " << std::endl;
-			return definition_cuts;
-		    }
-		    return definition_cuts + " && " + GetGeneralStageCuts(stage);
-		}
 
 		/* Get related cuts for given stage, not file specific 
  		 * stage 0: topological cut 
  		 * stage 1: stage 0 cut + precuts
  		 * stage 2/3/4/..:  stage 1 cut + bdtcuts
  		 */
-		std::string GetGeneralStageCuts(int stage) const{
-		    std::cout << "bdt_flow: Get general stage cut.. " << std::endl;
-
-		    if(stage < 0){
-			std::cerr << "bdt_flow: INVALID stage number : " << stage << std::endl;
-			throw std::runtime_error("");
-		    }else if(stage + 1 > stage_cuts.size()){
-			std::cerr << "bdt_flow: WARNING stage number too large..  stage number: " << stage << " total number of stages " << stage_cuts.size() << std::endl;
-			std::cerr << "bdt_flow: WARNING check if you set the bdt cut scores .." << std::endl;
-			std::cerr << "bdt_flow: Will grab cuts up to stage " << std::min(stage+1, (int)stage_cuts.size()) -1 << std::endl;
-		    }
-
-
-		    std::string current_cut = topological_cuts;
-                    for(int i = 1; i != std::min(stage+1, (int)stage_cuts.size()); ++i){
-                        current_cut += " && " + stage_cuts[i];
-                    }
-		    return current_cut;
-		}
+		std::string GetGeneralStageCuts(int stage) const;
 
 
 		//---- internal function ------
 
-                void get_precut(){
-		    pre_cuts = vec_pre_cuts.front();
-                    for(int i=1; i<vec_pre_cuts.size(); i++){
-                         pre_cuts = pre_cuts + "&&"+ vec_pre_cuts.at(i);
-                    }
-		    return;
-		}
+	 	/* Form the whole precut string */
+                void get_precut();
 
-		void set_stage_cuts(){
-		    base_cuts = topological_cuts+"&&"+definition_cuts;
-		    stage_cuts.push_back(base_cuts);
-		    stage_cuts.push_back(pre_cuts);
-
-		    for(int i = 0; i != std::min(bdt_vector.size(), bdt_cuts.size()); ++i){
-		        stage_cuts.push_back(bdt_vector[i].identifier+"_mva >="+std::to_string(bdt_cuts[i]));
-		    }
-
-		    //print help info
-		    std::cout << "bdt_flow: finish setting up stage cuts.. " << std::endl;
-		    std::string previous_cut = "1";
-		    for(int i = 0; i != stage_cuts.size(); ++i){
-			std::cout << "stage " << i << " | cuts " << previous_cut << " && " << stage_cuts[i] << std::endl; 
-			previous_cut += " && " + stage_cuts[i];
-		    }
-		    return;
-		}
+		/* Fill the stage_cuts vector with cuts of each individual stage */ 
+		void set_stage_cuts();
 };
 
 #endif

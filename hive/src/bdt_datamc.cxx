@@ -259,7 +259,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
     double title_offset_upper = 0.7;
 
 
-    std::vector<std::string> stage_names;
+    std::vector<std::string> stage_names = data_file->getStageNames();
 
     int leg_num_digits = 1;
 
@@ -267,13 +267,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
 
     ftest->cd();
-    if (OTPC){
-        stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Final Selection"};
-        //stage_names = {"Topological Selection","Pre-Selection Cuts","Post-Cosmic BDT","Post-BNB BDT","Post-NC#pi^{0} BDT","Post-#nu_{e} BDT","Final Selection"};
-        // std::cout<<"flag 2"<<std::endl;
-
-    } else{
-        stage_names = {"","","","","","","","",""};
+    if (!OTPC){
+//        stage_names = {"","","","","","","","",""};
     }
     //Loop over all stages
 
@@ -366,13 +361,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
             std::vector<double> m_fullvec;
 
+	    //Grab stacked distributions of the variable
             THStack *stk = (THStack*)mc_stack->getEntryStack(var,s); //so at this point its all in "stack"
             TH1 * tsum  = (TH1*)mc_stack->getEntrySum(var,s, m_fullvec);
-            TH1* d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+std::to_string(bdt_cuts[s])+"_"+data_file->tag+"_"+var.safe_name, plot_pot);
+            TH1* d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+data_file->tag+"_"+var.safe_name, plot_pot);
             TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
-
-
-            
             
 
             //Check Covar for plotting
@@ -413,28 +406,26 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             if(var.has_covar && m_error_string !="stats"){
 	    // Add systematic uncertainty band to the summed histogram 
 
-		//test	   
+		//read provided covariance file to get covar matrix
                 TFile *covar_f = new TFile(var.GetCovarFile(s).c_str(),"read");
                 if(covar_f->IsZombie()){
         
 	            std::cout<<"Error!! The covariance file failed to open: Does not exist?  "<<var.GetCovarFile(s)<<std::endl;
-			
+
 		    //check existence of local file 
-		    std::cout << "WARNING: Trying local covariance file if available: " << var.GetCovarFileID(s) + ".SBNcovar.root" << std::endl;
-		    covar_f = new TFile((var.GetCovarFileID(s) + ".SBNcovar.root").c_str(), "read");
+		    bdt_covar covar_handle(&var, s, stage_cut);
+		    std::string local_covar_file = covar_handle.LocalDir() + var.GetCovarFileID(s) + ".SBNcovar.root";
+
+		    std::cout << "WARNING: Trying local covariance file if available: " << local_covar_file << std::endl;
+		    covar_f = new TFile(local_covar_file.c_str(), "read");
+
 		    if(covar_f->IsZombie()){
-			
-			std::cout << "WARNING: attempt failed, will generate covariance matrix locally " << std::endl;
 
-		    	std::string covar_flux_template_xml = "/uboone/app/users/gge/hellstroms_hive/hive/working_directory/ModuleTest/SBNfitDependency/template_1g0p_stage_1_Jan2021.xml";
-		    	std::string  covar_det_template_xml = "";
-		    	std::cout << "Hardcoded template xml: ";
-		    	std::cout << "For reweighable systematic: " << covar_flux_template_xml << std::endl;
-		    	std::cout << "For detector systematic: " << covar_det_template_xml << std::endl;
+			//create local covar file
+			std::cout << "WARNING WARNING: attempt failed, will generate covariance matrix locally " << std::endl;
 
-		    	bdt_covar covar_handle(&var, s, stage_cut);
-                    	covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
-		    	covar_handle.GenerateDetectorCovar(covar_det_template_xml);
+                    	covar_handle.GenerateReweightingCovar();
+		    	covar_handle.GenerateDetectorCovar();
                     	covar_handle.MergeCovar();
 
 		    	covar_f = new TFile(var.GetCovarFile(s).c_str(),"read");
@@ -444,8 +435,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
                 TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
                 covar_collapsed->Zero();
-
-                std::cout<<"Reading this from a covariance matrix "<<var.covar_file.c_str()<<std::endl;
                 std::cout<<"Is it frac or full? "<<var.covar_type.c_str()<<std::endl;
 
                 m_fullvec = mc_stack->getEntryFullVector(var);
@@ -1282,7 +1271,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             } else{
                 //pottex.DrawLatex(.55,.60, pot_draw.c_str());
 	        //Guanqun: comment out the legend showing POT of the plots 
-                pottex.DrawLatex(xxpos,yypos+0.11, pot_draw.c_str());
+                pottex.DrawLatex(xxpos,yypos+0.10, pot_draw.c_str());
             }
 
 
@@ -1306,7 +1295,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             //descriptor_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
 	    //Guanqun: comment out the legend showing "xxx selections"
             //descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name+" Selection" ).c_str());
-            descriptor_tex.DrawLatex(xxpos,yypos+0.05,(plot_stage == 0 ? "Topological Selection Stage" : (plot_stage == 1 ? "Pre-selection Stage" : (plot_stage == 5 ? "Final Selection": " "))));
+            descriptor_tex.DrawLatex(xxpos,yypos+0.05, stage_names.at(s).c_str());
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
@@ -1322,7 +1311,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             // stage->SetTextFont(43);
             // stage->SetTextSize(0.10);
             //stage.DrawLatex(0.6, 0.92, stage_names.at(s).c_str());
-            stage.DrawLatex(0.5, 0.92, stage_names.at(s).c_str());
+            //stage.DrawLatex(xxpos,yypos+0.05, stage_names.at(s).c_str());
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
 

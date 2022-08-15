@@ -78,7 +78,9 @@ class bdt_stack{
 		/* Get the TH1 distribution of variable var for bdt file that's set as a signal_on_top in the configuration xml */
 		TH1* getSignalOnTop(bdt_variable var);
 
-		/* get full vector of predictions for every stacked histogram and every bin, corresponding to plot_pot*/
+		/* get full vector of predictions for every stacked histogram and every bin, corresponding to plot_pot
+		 * The order of prediction vector for bdt files is the same as bdtfile order in configuration xml 
+		 */
 		std::vector<double> getEntryFullVector(bdt_variable var);
 
 

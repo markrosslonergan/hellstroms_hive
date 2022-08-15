@@ -210,7 +210,14 @@ struct bdt_file{
         int splitBDTfile(std::string split_string,std::string trueTAG, bdt_file* truesplit, std::string falseTAG, bdt_file *falsesplit);
 
 
+	/* Generate a file where BDT scores of clusters from one event are saved in one vector 
+ 	 * Note: as opposite to flat file, one entry in this file corresponds to one event 
+ 	 */
         int MakeUnFlatTree(bdt_info & info,std::string &dir,std::string & s);
+
+	/* Generate flat file for clusters in the event
+	 * Note: in the flat file, each cluster corresponds to one entry
+	 */
         void MakeFlatTree(TFile * fout, std::vector<FlatVar>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name);
 
 
@@ -342,6 +349,8 @@ struct bdt_file{
         std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
         std::string getStageCuts(int stage, std::vector<double> bdt_cuts);
 
+	/* get the plot name for all analysis stages */
+	std::vector<std::string> getStageNames() const;
 
         int writeStageFriendTree(std::string nam,double,double);
         int addPlotName(std::string plotin);
