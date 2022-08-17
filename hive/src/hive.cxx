@@ -1573,7 +1573,8 @@ int main (int argc, char *argv[]){
 
 
 	    //new code 
-	    bdt_covar covar_handle(&v, which_stage);
+	    std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage);
+	    bdt_covar covar_handle(&v, which_stage, stage_cut);
 	    covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
 /*
             std::string sVID = v.GetCovarFile(); //"VID_stage_"+ std::to_string(which_stage) + "_" +v.GetID();
@@ -1672,8 +1673,11 @@ int main (int argc, char *argv[]){
             std::cout<<"\""<<std::endl;
 
 	    //new code 
-	    bdt_covar covar_handle(&v, which_stage);
+	    std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage);
+	    bdt_covar covar_handle(&v, which_stage, stage_cut);
 	    covar_handle.GenerateDetectorCovar(covar_det_template_xml);
+
+	    //in order to generate flux covar matrix together with det matrix, the "covarsys" needs to be set to "fluxxsdet" (default behavior)
 	    if(covar_flux_template_xml !="null.xml"){
 		covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
 		covar_handle.MergeCovar();
