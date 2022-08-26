@@ -104,7 +104,7 @@ class bdt_datamc{
 
 
         std::vector<bdt_variable> GetSelectVars(std::string vector, std::vector<bdt_variable> vars);
-        int plot2D(TFile *ftest, std::vector<bdt_variable> vars);
+        int plot2D(TFile *ftest, std::vector<bdt_variable> vars, bool scatter_plot=false);
 
         //THIS IS It
         /* Draw stacked distributions for provided variables 

@@ -378,7 +378,7 @@ int main (int argc, char *argv[]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             if(run1_only && !XMLconfig.bdt_is_training_signal[f]){
                 std::cout<<" -- WOOPS we have it set to Run 1 only, manually resetting EXT spills to 28190365.0"<<std::endl;
-                //off_spills = 2633564.9;    // temporary, to match run1 open data
+                //off_spills = 2633564.9;    // temporary, to match run1 open data -- wrong number, simply scaled
                 off_spills = 28190365.0; // all run1 spill
             }
 
@@ -941,7 +941,8 @@ int main (int argc, char *argv[]){
 
             if (vector != ""){//if passed specific variables
                 std::vector<bdt_variable> tmp_var =  real_datamc.GetSelectVars(vector, vars);
-                real_datamc.plot2D(ftest, tmp_var);
+                //real_datamc.plot2D(ftest, tmp_var, true);   //set scatter plot 
+                real_datamc.plot2D(ftest, tmp_var); 	    //set binned histograms
             }else{    
                 real_datamc.plot2D(ftest, vars); //warning this will make a lot of plots
             }//if passed a vector
@@ -1922,50 +1923,73 @@ int main (int argc, char *argv[]){
 
         }
 
-    }else if(mode_option == "flatten"){
+    }else if(mode_option == "flatten" || mode_option == "flatfriend"){
+                
+	//directory to save the output
+	std::string outdir = "/uboone/app/users/gge/hellstroms_hive/hive/working_directory/ModuleTest/FlatFile/";
 
-	// use vector of {variable, int} to indicate whether this variable in vertex tree is int (0), or vector of doubles (1), or vector of int (-1)
-	int is_int = FlatVar::int_type, is_vint = FlatVar::vint_type, is_vdouble = FlatVar::vdouble_type, is_form = FlatVar::formula_type;
+	if(mode_option == "flatfriend"){
 
-        //hard-coded variables to be flattened
-        //These are ssv 2d related variables
-        std::vector<FlatVar> ssv2d_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int}, {"sss_num_candidates", is_int}, 
-            {"sss_candidate_in_nu_slice",is_vint},{"sss_candidate_num_hits", is_vint},{"sss_candidate_num_wires",is_vint}, {"sss_candidate_num_ticks",is_vint}, {"sss_candidate_plane", is_vint},{"sss_candidate_PCA",is_vdouble}, {"sss_candidate_mean_ADC",is_vdouble}, {"sss_candidate_ADC_RMS",is_vdouble}, {"sss_candidate_impact_parameter",is_vdouble}, {"sss_candidate_fit_slope",is_vdouble}, {"sss_candidate_fit_constant",is_vdouble}, {"sss_candidate_mean_tick",is_vdouble}, {"sss_candidate_max_tick",is_vdouble}, {"sss_candidate_min_tick",is_vdouble}, {"sss_candidate_mean_wire",is_vdouble}, {"sss_candidate_max_wire",is_vdouble}, {"sss_candidate_min_wire",is_vdouble}, {"sss_candidate_min_dist",is_vdouble},{"sss_candidate_wire_tick_based_length",is_vdouble}, {"sss_candidate_energy",is_vdouble}, {"sss_candidate_angle_to_shower",is_vdouble}, {"sss_candidate_remerge",is_vint},{"sss_candidate_matched",is_vint}, {"sss_candidate_pdg",is_vint}, {"sss_candidate_parent_pdg",is_vint}, {"sss_candidate_trackid",is_vint}, {"sss_candidate_true_energy",is_vdouble}, {"sss_candidate_overlay_fraction",is_vdouble}, {"sss_candidate_matched_energy_fraction_best_plane", is_vdouble},{"sim_shower_trackID[0]",is_form}, {"((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)",is_form, "corrected_shower_energy"}, {"sss_candidate_energy*1.21989+8.50486",is_form,"sss_corrected_candidate_energy"}};
+            for(int i=0; i< bdt_files.size(); i++){
 
+            	if(which_file<0 || which_file==i){
+                
+		    std::string flat_friendname = outdir+"FLATTEN_Friend_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
+                    TFile *fout = new TFile(flat_friendname.c_str(),"update");
+	    		
+		    std::string applied_cut = bdt_files[i]->getStageCuts(which_stage);
+		    if(external_cuts != "1")
+			applied_cut += "&& (" + external_cuts + ")"; 
 
-        //there are ssv3d related variables
-        std::vector<FlatVar> ssv3d_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int},{"sss3d_num_showers", is_int}, {"sss3d_shower_start_x",is_vdouble}, {"sss3d_shower_start_y",is_vdouble}, {"sss3d_shower_start_z",is_vdouble}, {"sss3d_shower_dir_x",is_vdouble}, {"sss3d_shower_dir_y",is_vdouble}, {"sss3d_shower_dir_z",is_vdouble}, {"sss3d_shower_length",is_vdouble}, {"sss3d_shower_conversion_dist",is_vdouble}, {"sss3d_shower_invariant_mass",is_vdouble}, {"sss3d_shower_implied_invariant_mass",is_vdouble}, {"sss3d_shower_impact_parameter",is_vdouble}, {"sss3d_shower_ioc_ratio",is_vdouble}, {"sss3d_shower_energy_max",is_vdouble}, {"sss3d_shower_score",is_vdouble}};
+                    bdt_files[i]->MakeFlatFriend(fout, "PSV", applied_cut, "trackstub_num_candidates"); 
 
+                    fout->Close();
 
-        //these are proton-stub related variables
-        std::vector<FlatVar> trackstub_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int}, {"trackstub_num_candidates", is_int}, {"trackstub_candidate_in_nu_slice", is_vint}, {"trackstub_candidate_num_hits",is_vint}, {"trackstub_candidate_num_wires",is_vint}, {"trackstub_candidate_num_ticks",is_vint}, {"trackstub_candidate_plane", is_vint}, {"trackstub_candidate_PCA", is_vdouble}, {"trackstub_candidate_mean_ADC", is_vdouble}, {"trackstub_candidate_ADC_RMS", is_vdouble}, {"trackstub_candidate_mean_tick", is_vdouble}, {"trackstub_candidate_max_tick", is_vdouble}, {"trackstub_candidate_min_tick", is_vdouble}, {"trackstub_candidate_min_wire", is_vdouble}, {"trackstub_candidate_max_wire", is_vdouble}, {"trackstub_candidate_mean_wire", is_vdouble}, {"trackstub_candidate_min_dist", is_vdouble}, {"trackstub_candidate_min_impact_parameter_to_shower",is_vdouble}, {"trackstub_candidate_min_conversion_dist_to_shower_start", is_vdouble}, {"trackstub_candidate_min_ioc_to_shower_start", is_vdouble}, {"trackstub_candidate_ioc_based_length", is_vdouble}, {"trackstub_candidate_wire_tick_based_length", is_vdouble}, {"trackstub_candidate_mean_ADC_first_half", is_vdouble}, {"trackstub_candidate_mean_ADC_second_half", is_vdouble}, {"trackstub_candidate_mean_ADC_first_to_second_ratio", is_vdouble}, {"trackstub_candidate_track_angle_wrt_shower_direction", is_vdouble}, {"trackstub_candidate_linear_fit_chi2", is_vdouble}, {"trackstub_candidate_energy", is_vdouble}, {"trackstub_candidate_remerge", is_vint}, {"trackstub_candidate_matched", is_vint}, {"trackstub_candidate_matched_energy_fraction_best_plane", is_vdouble}, {"trackstub_candidate_pdg", is_vint}, {"trackstub_candidate_parent_pdg", is_vint}, {"trackstub_candidate_trackid",is_vint}, {"trackstub_candidate_true_energy", is_vdouble}, {"trackstub_candidate_overlay_fraction",is_vdouble}}; 
+            	}
+           }
+	} // end of flat friend mode
+	else{
+	    // use vector of {variable, int} to indicate whether this variable in vertex tree is int (0), or vector of doubles (1), or vector of int (-1)
+	    int is_int = FlatVar::int_type, is_vint = FlatVar::vint_type, is_vdouble = FlatVar::vdouble_type, is_form = FlatVar::formula_type;
 
-
-
-        for(int i=0; i< bdt_files.size(); i++){
-
-            if(which_file<0 || which_file==i){
-                //                 std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
-                //std::string flat_filename = "/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5/FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
-                std::string outdir = "/uboone/app/users/gge/hellstroms_hive/hive/working_directory/ModuleTest/FlatFile/";
-                std::string flat_filename = outdir+"FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
-                TFile *fout = new TFile(flat_filename.c_str(),"recreate");
-
-                bdt_files[i]->MakeFlatTree(fout,ssv2d_variables, "SSV2D", "sss_num_candidates");
-                bdt_files[i]->MakeFlatTree(fout,ssv3d_variables, "SSV3D", "");
-                bdt_files[i]->MakeFlatTree(fout,trackstub_variables, "PSV", "trackstub_num_candidates");
+            //hard-coded variables to be flattened
+            //These are ssv 2d related variables
+            std::vector<FlatVar> ssv2d_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int}, {"sss_num_candidates", is_int}, {"sss_candidate_in_nu_slice",is_vint},{"sss_candidate_num_hits", is_vint},{"sss_candidate_num_wires",is_vint}, {"sss_candidate_num_ticks",is_vint}, {"sss_candidate_plane", is_vint},{"sss_candidate_PCA",is_vdouble}, {"sss_candidate_mean_ADC",is_vdouble}, {"sss_candidate_ADC_RMS",is_vdouble}, {"sss_candidate_impact_parameter",is_vdouble}, {"sss_candidate_fit_slope",is_vdouble}, {"sss_candidate_fit_constant",is_vdouble}, {"sss_candidate_mean_tick",is_vdouble}, {"sss_candidate_max_tick",is_vdouble}, {"sss_candidate_min_tick",is_vdouble}, {"sss_candidate_mean_wire",is_vdouble}, {"sss_candidate_max_wire",is_vdouble}, {"sss_candidate_min_wire",is_vdouble}, {"sss_candidate_min_dist",is_vdouble},{"sss_candidate_wire_tick_based_length",is_vdouble}, {"sss_candidate_energy",is_vdouble}, {"sss_candidate_angle_to_shower",is_vdouble}, {"sss_candidate_remerge",is_vint},{"sss_candidate_matched",is_vint}, {"sss_candidate_pdg",is_vint}, {"sss_candidate_parent_pdg",is_vint}, {"sss_candidate_trackid",is_vint}, {"sss_candidate_true_energy",is_vdouble}, {"sss_candidate_overlay_fraction",is_vdouble}, {"sss_candidate_matched_energy_fraction_best_plane", is_vdouble},{"sim_shower_trackID[0]",is_form}, {"((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)",is_form, "corrected_shower_energy"}, {"sss_candidate_energy*1.21989+8.50486",is_form,"sss_corrected_candidate_energy"}};
 
 
-                std::cout<<"Copying RunSubrunTree and POT (via friends)"<<std::endl;
-                TTree * t_flat_pot_tree = (TTree*)bdt_files[i]->tpot->CopyTree("1");
-                TTree * t_flat_rs_tree = (TTree*)bdt_files[i]->trs->CopyTree("1");
-                t_flat_rs_tree->Write();
-                t_flat_pot_tree->Write();
-                fout->Close();
+            //there are ssv3d related variables
+            std::vector<FlatVar> ssv3d_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int},{"sss3d_num_showers", is_int}, {"sss3d_shower_start_x",is_vdouble}, {"sss3d_shower_start_y",is_vdouble}, {"sss3d_shower_start_z",is_vdouble}, {"sss3d_shower_dir_x",is_vdouble}, {"sss3d_shower_dir_y",is_vdouble}, {"sss3d_shower_dir_z",is_vdouble}, {"sss3d_shower_length",is_vdouble}, {"sss3d_shower_conversion_dist",is_vdouble}, {"sss3d_shower_invariant_mass",is_vdouble}, {"sss3d_shower_implied_invariant_mass",is_vdouble}, {"sss3d_shower_impact_parameter",is_vdouble}, {"sss3d_shower_ioc_ratio",is_vdouble}, {"sss3d_shower_energy_max",is_vdouble}, {"sss3d_shower_score",is_vdouble}};
 
+
+            //these are proton-stub related variables
+            std::vector<FlatVar> trackstub_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int}, {"trackstub_num_candidates", is_int}, {"trackstub_candidate_in_nu_slice", is_vint}, {"trackstub_candidate_num_hits",is_vint}, {"trackstub_candidate_num_wires",is_vint}, {"trackstub_candidate_num_ticks",is_vint}, {"trackstub_candidate_plane", is_vint}, {"trackstub_candidate_PCA", is_vdouble}, {"trackstub_candidate_mean_ADC", is_vdouble}, {"trackstub_candidate_ADC_RMS", is_vdouble}, {"trackstub_candidate_mean_tick", is_vdouble}, {"trackstub_candidate_max_tick", is_vdouble}, {"trackstub_candidate_min_tick", is_vdouble}, {"trackstub_candidate_min_wire", is_vdouble}, {"trackstub_candidate_max_wire", is_vdouble}, {"trackstub_candidate_mean_wire", is_vdouble}, {"trackstub_candidate_min_dist", is_vdouble}, {"trackstub_candidate_min_impact_parameter_to_shower",is_vdouble}, {"trackstub_candidate_min_conversion_dist_to_shower_start", is_vdouble}, {"trackstub_candidate_min_ioc_to_shower_start", is_vdouble}, {"trackstub_candidate_ioc_based_length", is_vdouble}, {"trackstub_candidate_wire_tick_based_length", is_vdouble}, {"trackstub_candidate_mean_ADC_first_half", is_vdouble}, {"trackstub_candidate_mean_ADC_second_half", is_vdouble}, {"trackstub_candidate_mean_ADC_first_to_second_ratio", is_vdouble}, {"trackstub_candidate_track_angle_wrt_shower_direction", is_vdouble}, {"trackstub_candidate_linear_fit_chi2", is_vdouble}, {"trackstub_candidate_energy", is_vdouble}, {"trackstub_candidate_remerge", is_vint}, {"trackstub_candidate_matched", is_vint}, {"trackstub_candidate_matched_energy_fraction_best_plane", is_vdouble}, {"trackstub_candidate_pdg", is_vint}, {"trackstub_candidate_parent_pdg", is_vint}, {"trackstub_candidate_trackid",is_vint}, {"trackstub_candidate_true_energy", is_vdouble}, {"trackstub_candidate_overlay_fraction",is_vdouble}}; 
+
+
+
+            for(int i=0; i< bdt_files.size(); i++){
+
+            	if(which_file<0 || which_file==i){
+                	//                 std::string flat_filename = "FLATTEN_"+bdt_files[i]->tag+".root"; 
+                	//std::string flat_filename = "/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5/FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
+                    std::string flat_filename = outdir+"FLATTEN_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
+                    TFile *fout = new TFile(flat_filename.c_str(),"recreate");
+
+                    bdt_files[i]->MakeFlatTree(fout,ssv2d_variables, "SSV2D", "sss_num_candidates");
+                    bdt_files[i]->MakeFlatTree(fout,ssv3d_variables, "SSV3D", "");
+                    bdt_files[i]->MakeFlatTree(fout,trackstub_variables, "PSV", "trackstub_num_candidates");
+
+
+                    std::cout<<"Copying RunSubrunTree and POT (via friends)"<<std::endl;
+                    TTree * t_flat_pot_tree = (TTree*)bdt_files[i]->tpot->CopyTree("1");
+                    TTree * t_flat_rs_tree = (TTree*)bdt_files[i]->trs->CopyTree("1");
+                    t_flat_rs_tree->Write();
+                    t_flat_pot_tree->Write();
+                    fout->Close();
+
+            	}
             }
-        }
-
+	} //end of flatten mode
+	
     }else if(mode_option == "unflatten"){
 
         //std::string outdir="/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5/";

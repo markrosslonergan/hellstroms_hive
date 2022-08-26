@@ -215,11 +215,17 @@ struct bdt_file{
  	 */
         int MakeUnFlatTree(bdt_info & info,std::string &dir,std::string & s);
 
-	/* Generate flat file for clusters in the event
+	/* Generate flat file for clusters in the event and save cluster info for every cluster
 	 * Note: in the flat file, each cluster corresponds to one entry
+	 * Note: for event with no clusters, one entry will be created and saved with `-1` value  
 	 */
         void MakeFlatTree(TFile * fout, std::vector<FlatVar>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name);
 
+	/* Generate a flat file for clusters
+ 	 * Note: unlike saving cluster info, this function evaluate if event passes given cut, and save this information for all clusters in the event 
+	 * Note: for event with no clusters, one entry will be created and saved with `-1` value   <--- correponding to MakeFlatTree() function
+ 	 */
+	void MakeFlatFriend(TFile *fout, const std::string& treename, const std::string& cut, const std::string& num_candidate_var);
 
 	/* set the TTree entrylist for given stage j
 	 * If external bdt cuts are given, use extenal cuts instead
@@ -294,13 +300,15 @@ struct bdt_file{
 
         int getRunEfficiency();
 
-	/* Draw TH1 distribution of "invar", with provided cuts applied */
+	/* Grab TH1 distribution of "invar", with provided cuts applied */
         TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);
 
-	/* Draw TH1 distribution of var, with provided cuts and additional cuts embedded in bdt_variable applied */
+	/* Grab TH1 distribution of var, with provided cuts and additional cuts embedded in bdt_variable applied */
         TH1* getTH1(bdt_variable & var, std::string cuts, std::string nam, double  plot_POT, int  rebin);
         TH1* getTH1(bdt_variable & var, std::string cuts, std::string nam, double  plot_POT);
 
+	/* Grab 2D histogram of variable varx and vary, with provided cuts applied 
+ 	 */
         TH2* getTH2(bdt_variable varx, bdt_variable vary, std::string cuts, std::string nam, double plot_POT);
 
         std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);

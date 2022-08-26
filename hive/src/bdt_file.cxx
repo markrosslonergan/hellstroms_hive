@@ -1139,10 +1139,12 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
 
     std::string bin = binx_c + std::string(", ") + biny_c ;
 
-    std::cout<<"Starting to get for "<<(varx.name+vary.name+">>"+bin ).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
     // this->CheckWeights();
+
+    std::cout<<"Starting to get for "<<(varx.name+vary.name+">>"+bin ).c_str()<<std::endl;
     this->tvertex->Draw((vary.name+":"+varx.name+">>"+nam+bin).c_str() , ("("+cuts+")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
+
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
     TH2* th2 = (TH2*)gDirectory->Get(nam.c_str()) ;
     //th1->Sumw2();
@@ -2077,6 +2079,69 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
 	variables[i].DelinkTTree(tvertex);
     }
 
+    return;
+}
+
+void bdt_file::MakeFlatFriend(TFile *fout, const std::string& treename, const std::string& cut, const std::string& num_candidate_var){
+
+
+    fout->cd();
+    TTree* tree_out = (TTree*)fout->Get(treename.c_str());
+    if(tree_out == nullptr){
+        tree_out = new TTree(treename.c_str(),treename.c_str());
+    }
+
+    //create new branch which indicates whether events passing the cut 
+    std::string cut_branch_name = std::to_string(jenkins_hash(cut)) + "_cut";
+    std::cout << "Cut: " << cut << " corresponding branch name: " << cut_branch_name << std::endl; 
+
+
+    int pass_cut = 0;
+    auto branchstatus = tree_out->SetBranchAddress(cut_branch_name.c_str(), &pass_cut);
+    if(branchstatus == TTree::kMissingBranch){
+	std::cout << "Create branch.." << std::endl;
+        tree_out->Branch(cut_branch_name.c_str(), &pass_cut);
+    }else{
+	std::cout << "Branch already exists...Exiting... " << std::endl;
+	TBranch* br = tree_out->GetBranch(cut_branch_name.c_str());
+        tree_out->ResetBranchAddress(br);
+ 	return;
+    }
+
+
+    FlatVar num_cluster_var(num_candidate_var, FlatVar::int_type);
+    num_cluster_var.LinkWithTTree(tvertex);
+    FlatVar cut_var(cut, FlatVar::formula_type);
+    cut_var.LinkWithTTree(tvertex);
+
+    //loop over all old intries 
+    for(size_t i=0; i< tvertex->GetEntries(); ++i){
+	if(i%1000==0)  std::cout <<"On event entry: " << i << std::endl;
+        this->tvertex->GetEntry(i);
+
+        int num_candidates = num_cluster_var.Evaluate();
+        pass_cut = cut_var.Evaluate(); 
+
+
+	//write nonsense value if current event does not have vector ntuple
+	if(num_candidates == 0){
+	   pass_cut = -1;
+	   tree_out->Fill();
+	   continue;
+   	}
+
+	//vector ntuples
+        for(int j=0; j != num_candidates ; ++j)
+            tree_out->Fill();
+
+    }//event-level loop
+
+
+    fout->cd();
+    tree_out->Write();
+
+    num_cluster_var.DelinkTTree(tvertex);
+    cut_var.DelinkTTree(tvertex);
     return;
 }
 

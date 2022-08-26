@@ -205,7 +205,7 @@ struct bdt_variable{
 	
 
 	void GetUniqueJenkinsHash(){
-	    std::string long_id =  name + "_" + binning + "_" + additional_cut;  
+	    std::string long_id =  name + "_" + GetBinEdges() + "_" + additional_cut;  
 	    std::replace(long_id.begin(), long_id.end(), ' ', '_');
 	    unique_hash = std::to_string(jenkins_hash(long_id));
 	    return;

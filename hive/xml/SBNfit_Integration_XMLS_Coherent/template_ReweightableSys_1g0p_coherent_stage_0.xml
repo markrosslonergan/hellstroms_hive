@@ -23,12 +23,12 @@
 <WeightMaps>
     <variation pattern="_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))"/>
     <!-- These are N=1 min/max variations -->
-     <variation pattern="Theta_Delta2Npi_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))" mode="minmax" />
-    <variation pattern="VecFFCCQEshape_UBGenie"  weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))" mode="minmax" />
-    <variation pattern="AxFFCCQEshape_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))"  mode="minmax" />
-    <variation pattern="DecayAngMEC_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))"  mode="minmax" />
-     <variation pattern="NormNCCOH_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))" mode="minmax"/>
-    <variation pattern="NormCCCOH_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))" mode="minmax"/>
+     <variation pattern="Theta_Delta2Npi_UBGenie" weight_formula="1.0" mode="minmax" />
+    <variation pattern="VecFFCCQEshape_UBGenie"  weight_formula="1.0" mode="minmax" />
+    <variation pattern="AxFFCCQEshape_UBGenie" weight_formula="1.0"  mode="minmax" />
+    <variation pattern="DecayAngMEC_UBGenie" weight_formula="1.0"  mode="minmax" />
+     <variation pattern="NormNCCOH_UBGenie" weight_formula="1.0" mode="minmax"/>
+    <variation pattern="NormCCCOH_UBGenie" weight_formula="1.0" mode="minmax"/>
     <!-- This one is bugged under old CV -->
     <!--    <variation pattern="XSecShape_CCMEC_UBGenie" weight_formula="1.0/((1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0)))" mode="minmax" />-->
     <!-- These are N=2 varaitions, so should be treated as normal -->
