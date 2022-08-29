@@ -44,6 +44,8 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
         for(size_t i = 0; i < sig_files.size(); ++i) {
             for(size_t k=0; k< bdt_infos.size(); k++){
                 double tmax_1 = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
+
+		// Guanqun: does this line work????
                 double tmax_2 = bkg_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
                 maxvals[k] = std::max(maxvals[k], std::max(tmax_1,tmax_2));
             }
@@ -99,8 +101,8 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
     for(size_t i = 0; i < sig_files.size(); ++i) {
         double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
         //    std::cout << "POT scale: " << pot_scale << std::endl;
-        std::string bnbcut = sig_files.at(i)->getStageCuts(1,minvals); 
-        total_sig += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
+        std::string bnbcut = sig_files.at(i)->getStageCuts(1,minvals);     //preselection cut 
+        total_sig += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale; 	// scaled # entries
     }
 
     std::cout<<"Starting"<<std::endl;
@@ -114,6 +116,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
         std::vector<double> cur_pt(bdt_infos.size(),0.0);
 
+	//Given global index, find local position of it in every sub-vector
         //were going to take each number and write each digit in base K where K is that vectors length
         int divisor=1;
         int f_num_dimensions = bdt_infos.size();
@@ -133,7 +136,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
         for(size_t is = 0; is < sig_files.size(); ++is) {
             double pot_scale = (plot_pot/sig_files.at(is)->pot )*sig_files.at(is)->scale_data;
             std::string bnbcut = sig_files.at(is)->getStageCuts(1+bdt_infos.size(), cur_pt); 
-            signal += sig_files.at(is)->GetEntries(bnbcut.c_str())*pot_scale;
+            signal += sig_files.at(is)->GetEntries(bnbcut.c_str())*pot_scale;    //!!! scaled entries
         }
 
         for(size_t ib = 0; ib < bkg_files.size(); ++ib) {
@@ -494,7 +497,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         std::vector<double> d (bdt_infos.size(),0);
         for(int i=0; i< bdt_infos.size(); i++){
             d[i] = rangen->Uniform(minvals[i], maxvals[i]);
-            d[i] = std::round(d[i]*1000.0)/1000.0;
+            d[i] = std::round(d[i]*1000.0)/1000.0;    //to make cut value only have 3 decimal point?
         }
         
         double signal = 0;
