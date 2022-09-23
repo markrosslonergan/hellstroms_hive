@@ -533,6 +533,7 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
             significance =0;
         }else if(background !=0){
             //significance = signal/(signal+background);
+            //significance = sqrt(signal*signal/(background*background + pow(0.15*background,2)));
             significance = signal/sqrt(background);
             //significance = (signal/(double)total_sig)*31.8*signal/(31.8*signal+background);
             //significance = signal/(signal+background)*signal/total_sig*100;

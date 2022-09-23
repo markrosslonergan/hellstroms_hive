@@ -168,6 +168,7 @@ struct bdt_file{
         bool is_bnbext;
         bool is_mc;
 
+
         std::string leg;
 
         int rebin;	
@@ -175,6 +176,7 @@ struct bdt_file{
         int numberofevents;
         int numberofevents_raw;
         double pot;
+        bool m_weightless;
 
         TFile *f;
         TTree *tvertex = NULL;
@@ -244,6 +246,9 @@ struct bdt_file{
         int calcPOT();
 
         int calcPOT(std::vector<std::string> run_names, std::vector<std::string> run_cuts, std::vector<double> run_fractions);
+        int makeWeightless(){
+            m_weightless = true;
+        }
 
         int makeRunSubRunList();
 
@@ -292,7 +297,7 @@ struct bdt_file{
 
         int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu);
         int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot);
-        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot,std::string external_cuts);
+        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot,std::string external_cuts, std::string dir);
 
 
         int makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage, const std::vector<double> & fbdtcuts );

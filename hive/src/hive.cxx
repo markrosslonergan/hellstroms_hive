@@ -48,6 +48,7 @@ int main (int argc, char *argv[]){
     std::string dir = "/pnfs/uboone/persistent/users/markross/single_photon_persistent_data/vertexed_mcc9_v17/";
     std::string mydir = "/uboone/app/users/amogan/wes_ncpi0_filter/workdir/";
     std::string dir2g0p = "/uboone/app/users/amogan/singlePhotonFilterMCC9.1_2g0p/workdir/";
+    std::string outdir = "./";
 
     std::string mode_option = "enter_a_mode_please"; 
     std::string xml = "default.xml";
@@ -68,6 +69,7 @@ int main (int argc, char *argv[]){
     double div_scale = 0.075;
     bool signal_scale_on_top = false;
     bool lee_on_top= false;
+    bool weightless = false;
 
     int which_file = -1;
     int which_bdt = -1;
@@ -95,6 +97,7 @@ int main (int argc, char *argv[]){
     const struct option longopts[] = 
     {
         {"dir", 		required_argument, 	0, 'd'},
+        {"outdir",      required_argument,  0, 'D'},
         {"option",		required_argument,	0, 'o'},
         {"input",		required_argument,	0, 'i'},
         {"xml"	,		required_argument,	0, 'x'},
@@ -114,6 +117,7 @@ int main (int argc, char *argv[]){
         {"file",		required_argument,	0, 'f'},
         {"extxml",      required_argument,  0, 'X'},
         {"extapp",      required_argument,  0,  'w'},
+        {"weightless",	no_argument,	0, 'W'},
         {"systematics",	required_argument,	0, 'y'},
         {"vector",      required_argument,  0, 'v'},
         {"divbin",      required_argument,  0, 'e'},
@@ -129,7 +133,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:s:f:F:U:q:y:m:t:p:b:i:n:g:v:c:e:azkrljh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -157,6 +161,11 @@ int main (int argc, char *argv[]){
                 external_cuts = optarg;
                 //std::cout<<"Load Time Additional Cut : "<<external_cuts<<std::endl;
                 break;
+            case 'W':
+                weightless = true;
+                std::cout<<"Running with No Weights! Be careful, this is mainly for training with very small numbers."<<std::endl;
+                break;
+
             case 'j':
                 is_combined = true;
                 break;
@@ -192,6 +201,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'o':
                 mode_option = optarg;
+                break;
+            case 'D':
+                outdir = optarg;
                 break;
             case 'd':
                 dir = optarg;
@@ -253,6 +265,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-b\t--bdt\t\t Run only N BDT training/app, or BDT specific option"<<std::endl;
                 std::cout<<"\t-f\t--file\t\t Which file in bdt_files you want to run over, for file specifc options."<<std::endl;
                 std::cout<<"\t-p\t--pot\t\tSet POT for plots"<<std::endl;
+                std::cout<<"\t-D\t--outdir\t\tSet output Dir for some things "<<std::endl;
                 std::cout<<"\t-g\t--group\t\tSet a group for variable plotting"<<std::endl;
                 std::cout<<"\t-y\t--systematics\t\tWhat is the systematics error band string?"<<std::endl;
                 std::cout<<"\t-s\t--stage\t\tSet what stage to do things at."<<std::endl;
@@ -450,6 +463,7 @@ int main (int argc, char *argv[]){
         }
 
         bdt_files.back()->calcPOT(i_run_names, i_run_cuts, i_run_fractions);
+        if(weightless)bdt_files.back()->makeWeightless();
 
         std::cout<<"Checking for friend trees: "<<XMLconfig.bdt_friend_filenames[f].size()<<" "<<XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
         if(XMLconfig.bdt_friend_filenames[f].size()>0){
@@ -559,6 +573,7 @@ int main (int argc, char *argv[]){
             }
 
             external_files.back()->calcPOT({"1"},{"1"},{1.0});
+            if(weightless)external_files.back()->makeWeightless();
             external_files.back()->calcBaseEntryList(analysis_tag);
 
             std::cout<<"Checking for friend trees: "<<External_XMLconfig.bdt_friend_filenames[f].size()<<" "<<External_XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
@@ -566,7 +581,7 @@ int main (int argc, char *argv[]){
 
             for(int fr =0; fr < External_XMLconfig.bdt_friend_filenames[f].size(); fr++){
                 std::cout<<"Adding a Friend Tree : "<<External_XMLconfig.bdt_friend_treenames[f][fr]<<" from file "<<dir+"/"+External_XMLconfig.bdt_friend_filenames[f][fr]<<std::endl;
-                bdt_files.back()->addFriend(External_XMLconfig.bdt_friend_treenames[f][fr],External_XMLconfig.bdt_friend_filenames[f][fr]);
+                external_files.back()->addFriend(External_XMLconfig.bdt_friend_treenames[f][fr],External_XMLconfig.bdt_friend_filenames[f][fr]);
                 }
             }
 
@@ -1103,6 +1118,7 @@ int main (int argc, char *argv[]){
                 }
 
                 external_files.back()->calcPOT({"1"},{"1"},{1.0});
+                if(weightless)external_files.back()->makeWeightless();
                 external_files.back()->calcBaseEntryList(analysis_tag);
 
             std::cout<<"Checking for friend trees: "<<External_XMLconfig.bdt_friend_filenames[f].size()<<" "<<External_XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
@@ -1110,7 +1126,7 @@ int main (int argc, char *argv[]){
 
             for(int fr =0; fr < External_XMLconfig.bdt_friend_filenames[f].size(); fr++){
                 std::cout<<"Adding a Friend Tree : "<<External_XMLconfig.bdt_friend_treenames[f][fr]<<" from file "<<dir+"/"+External_XMLconfig.bdt_friend_filenames[f][fr]<<std::endl;
-                bdt_files.back()->addFriend(External_XMLconfig.bdt_friend_treenames[f][fr],External_XMLconfig.bdt_friend_filenames[f][fr]);
+                external_files.back()->addFriend(External_XMLconfig.bdt_friend_treenames[f][fr],External_XMLconfig.bdt_friend_filenames[f][fr]);
                 }
             }
             }//end of external_file getting
@@ -1137,7 +1153,7 @@ int main (int argc, char *argv[]){
                 if(number > 0){
                     std::cout<<"Making an SBNfit file with the additional cuts of : "<<external_cuts<<std::endl;
                     std::vector<double> fcuts(bdt_infos.size(),-999);
-                    file->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fcuts, "1", vars, file->pot,external_cuts);
+                    file->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fcuts, "1", vars, file->pot,external_cuts,outdir);
                 }
                     std::cout<<"Done with this file"<<std::endl;
             }
@@ -1619,10 +1635,10 @@ int main (int argc, char *argv[]){
         if(which_file==-1){
             for(size_t f =0; f< bdt_files.size(); f++){
                 std::cout<<"on bdt file "<<f<<std::endl;
-                bdt_files[f]->makeSBNfitFile(analysis_tag+additional_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot,external_cuts);
+                bdt_files[f]->makeSBNfitFile(analysis_tag+additional_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot,external_cuts,outdir);
             }
         }else{
-            bdt_files[which_file]->makeSBNfitFile(analysis_tag+additional_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,(double)splot_pot,external_cuts);
+            bdt_files[which_file]->makeSBNfitFile(analysis_tag+additional_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,(double)splot_pot,external_cuts,outdir);
 
         }
         return 0;
@@ -1719,9 +1735,13 @@ int main (int argc, char *argv[]){
             //std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance "<<std::endl;
             std::cout<<"Location: /uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021_LessOutput"<<std::endl;
 
-            std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021_LessOutput  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -m -t "+sVID+"_flux"; 
+            //std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021_LessOutput  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -m -t "+sVID+"_flux"; 
+            std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/MajorMerge_GGE_mark/whipping_star/build/bin/sbnfit_make_covariance  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -m -t "+sVID+"_flux"; 
+            std::cout<<"Running :  "<<std::endl;
+            std::cout<<"----- "<<run_str<<std::endl;
             system(run_str.c_str());
 
+            std::cout<<"Should have finished FluxSide of things, frac fixed"<<std::endl;
             std::string run_fix_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_fix_fractional  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -t "+sVID+"_flux" + " -c " + sVID+"_flux.SBNcovar.root"; 
             system(run_fix_str.c_str());
 
@@ -1854,6 +1874,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"Going to merge Flux and Det together"<<std::endl;
                 //std::string merger_a = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_fluxdet -c "+sVID+"_FlatDetSys3.SBNcovar.root "+ sVID+"_flux_fracfixed.SBNcovar.root";
                 std::string merger_a = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration_May2021 -f -t "+sVID + "_fluxdet -c "+sVID+"_merged_det.SBNcovar.root  " + sVID+"_flux.SBNcovar.root";
+//                std::string merger_a = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration_May2021 -f -t "+sVID + "_fluxdet -c "+sVID+"_merged_det.SBNcovar.root  " + sVID+"_flux_fracfixed.SBNcovar.root";
                 std::cout<<"Merge String "<<std::endl;
                 std::cout<<merger_a<<std::endl;
                 system(merger_a.c_str());
