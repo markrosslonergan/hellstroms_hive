@@ -275,7 +275,9 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
             std::string bnbcut = bkg_files.at(ib)->getStageCuts(1+bdt_infos.size(),d); 
             bkg.push_back(bkg_files.at(ib)->GetEntries(bnbcut)*bkg_pot_scale[ib]);			
             background += bkg.back();
+            //std::cout<<" "<<bkg_files[i]->tag<<" "<<bkg.back();
         }
+        //std::cout<<std::endl;
 
 
 	double significance = calculate_significance(signal, background, sig_type, total_sig, sig_scale);
@@ -293,7 +295,6 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
             std::cout<<dd<<" ";   
         }
         std::cout<<")  N_signal: "<<signal<<" (E_signal: "<<(signal/(double)total_sig)<<") N_bkg: "<<background<<" ||  " << sig_metric_name << " : " <<significance<<" "<<s_mod<<std::endl;
-
         s_mod = "";
 
     
@@ -791,13 +792,17 @@ std::vector<double> super_significance(std::vector<bdt_file*> sig_files, std::ve
 }
 
 
-std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, std::vector<double> bdt_cuts, int which_bdt){
-    std::cout<<"Starting to Scan Significance (randomly)"<<std::endl;
+std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, std::vector<double> bdt_cuts, int which_bdt, int which_bdt2){
+
+
+    std::cout<<"Starting to Scan Significance LinLin Grid"<<std::endl;
     double best_significance = 0;
     double best_impact = 0;
     std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
 
-    double plot_pot = 5e19;//10.115e20;
+
+
+    double plot_pot = 6.8e20;//10.115e20;
 
     std::cout<<"Setting stage entry lists"<<std::endl;
     for(size_t i = 0; i < sig_files.size(); ++i) {
@@ -814,6 +819,7 @@ std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, s
     std::vector<double> n_steps;
 
     for(size_t b=0; b<bdt_infos.size();b++){
+	//if(!(b==(size_t)which_bdt || b==(size_t)which_bdt2))bdt_cuts[b]=0.0;//
         in_min_vals.push_back(bdt_infos[b].TMVAmethod.scan_min);
         in_max_vals.push_back(bdt_infos[b].TMVAmethod.scan_max);
         n_steps.push_back(bdt_infos[b].TMVAmethod.scan_steps);
@@ -829,7 +835,7 @@ std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, s
         std::cout<<"Taking scanning range from xml "<<std::endl;
         maxvals = in_max_vals;
         minvals = in_min_vals;
-        n_steps = std::vector<double>(bdt_infos.size(),30.0);
+        //n_steps = std::vector<double>(bdt_infos.size(),30.0);
     }else{
         std::cout<<"Automatically calculting scanning range"<<std::endl;
         for(size_t i = 0; i < sig_files.size(); ++i) {
@@ -894,7 +900,6 @@ std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, s
     TRandom3 *rangen  = new TRandom3(0);  
     std::cout<<"Starting"<<std::endl;
     
-    int which_bdt2=4;
     TH2D hsig("hsig","hsig",n_steps[which_bdt],minvals[which_bdt],maxvals[which_bdt],n_steps[which_bdt2],minvals[which_bdt2],maxvals[which_bdt2]);
    
     int icc = 1;
@@ -971,7 +976,22 @@ std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, s
     c->cd();
     hsig.SetStats(0);
     hsig.Draw("colz");
-    c->SaveAs("Yes.pdf","pdf");
+
+    hsig.SetTitle("sig/#sqrt{bkg} Surface");
+    hsig.GetXaxis()->SetTitle(bdt_infos[which_bdt].name.c_str());
+    hsig.GetYaxis()->SetTitle(bdt_infos[which_bdt2].name.c_str());
+    
+            TGraph *g_min = new TGraph(1);
+            g_min->SetPoint(0,bdt_cuts[which_bdt], bdt_cuts[which_bdt2]);
+            g_min->SetLineColor(kCyan);
+            g_min->SetMarkerStyle(29);
+            g_min->SetMarkerSize(3);
+            g_min->Draw("p");
+
+
+	c->SaveAs(("LinLin_Scan_"+std::to_string(which_bdt)+"_"+std::to_string(which_bdt2)+".pdf").c_str(),"pdf");
+
+
 
 
     std::cout<<"------------_FINAL Best Sig: "<<best_significance<<std::endl;

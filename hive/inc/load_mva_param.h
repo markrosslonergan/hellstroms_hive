@@ -75,7 +75,9 @@ class MVALoader {
     std::vector<int> v_eff_denom_stage;
     std::vector<int> v_eff_numer_stage;
     std::vector<std::string> v_eff_denom_cut;
+    std::vector<std::string> v_eff_denom_name;
     std::vector<std::string> v_eff_numer_cut;
+    std::vector<std::string> v_eff_numer_name;
     
     int num_plot_periods; 
      std::string event_level_identifier;

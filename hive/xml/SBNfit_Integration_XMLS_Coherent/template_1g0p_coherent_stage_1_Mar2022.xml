@@ -37,6 +37,7 @@
     -->
 </WeightMaps>
 
+<varied_spectrum writeout="false" writeout_tag="NA" form_matrix = "true"/>
 
 <variation_list>
     <whitelist>All_UBGenie</whitelist>

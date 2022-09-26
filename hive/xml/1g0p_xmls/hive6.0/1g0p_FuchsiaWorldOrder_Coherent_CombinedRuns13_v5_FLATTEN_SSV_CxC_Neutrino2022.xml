@@ -179,6 +179,50 @@
 </bdtfile>
 
 
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NueTrain.root" tag = "NueTrainFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = " Nue Train" fillstyle = "3333" scale = "1"  ttree_name="SSV2D">
+    <definition>
+        <cut> 1</cut>
+    </definition>
+    <training>
+        <cut> 1</cut>
+    </training>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NueTest.root" tag = "NueTestFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = " Nue Test" fillstyle = "3333" scale = "1"  ttree_name="SSV2D">
+    <definition>
+        <cut> 1</cut>
+    </definition>
+    <training>
+        <cut> 1</cut>
+    </training>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_DarkNu_MultiTop_v2_DarkNu_BenchD_NoHF_TestTextGen.root" tag = "DarkNu_BenchD_NoHF_TestTextGenFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = " Dark nu Bench D Test" fillstyle = "3333" scale = "1"  ttree_name="SSV2D">
+    <definition>
+        <cut> 1</cut>
+    </definition>
+    <training>
+        <cut> 1</cut>
+    </training>
+</bdtfile>
+<bdtfile filename = "FLATTEN_DarkNu_MultiTop_v2_DarkNu_MergedBench_DiracMaj_TrainTextGen.root" tag = "DarkNu_MergedBench_DiracMaj_TrainTextGenFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = " Dark nu Bench D Train" fillstyle = "3333" scale = "1"  ttree_name="SSV2D">
+    <definition>
+        <cut> 1</cut>
+    </definition>
+    <training>
+        <cut>1</cut>
+    </training>
+</bdtfile>
+<bdtfile filename = "FLATTEN_DarkNu_MultiTop_v2_DarkNu_BenchC_NoHF_TestTextGen.root" tag = "DarkNu_BenchC_NoHF_TestTextGenFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = " Dark nu Bench C Test" fillstyle = "3333" scale = "1"  ttree_name="SSV2D">
+    <definition>
+        <cut> 1</cut>
+    </definition>
+    <training>
+        <cut> 1</cut>
+    </training>
+</bdtfile>
+
+
 
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
 
@@ -215,21 +259,21 @@
 <!-- ============================================== Variables, BDT training and otherwise ====================================== -->
 
 
-<var def = "sss_candidate_energy" binning = "(50, 0, 400)" unit = "Cluster Energy" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_energy/corrected_shower_energy" binning = "(50,0,2)" unit = "Ratio energy to shower enegry" type = "d" training = "0" group="4404"/>
-<var def = "sss_candidate_wire_tick_based_length" binning = "(50, 0, 100)" unit = "Cluster Length" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_num_hits" binning = "(50, 0, 100)" unit = "Number Hits" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_PCA" binning = "(50, 0, 1)" unit = "PCA" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_impact_parameter" binning = "(51, 0, 250)" unit = "impact par" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_num_wires" binning = "(50, 0, 50)" unit = "Num Wires" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_num_ticks" binning = "(50, 0, 50)" unit = "Num Ticks" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_mean_ADC" binning = "(50, 0, 500)" unit = "Mean ADC" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_ADC_RMS" binning = "(50, 0, 500)" unit = " ADC RMS" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_fit_constant" binning = "(50, 0, 250)" unit = "Fit Const" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_fit_slope" binning = "(50, 0, 50)" unit = "Fit Slope" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_angle_to_shower*180.0/3.14159" binning = "(50, 0, 180)" unit = "2DAngleToShower" type = "d"     training="0" group="4404"/>
-<var def = "sss_candidate_min_dist" binning = "(50,0,250)" unit = "Distance to vertex" type = "d" training="0" group="4404"/>
-<var def = "sqrt(2.0*(sss_corrected_candidate_energy)*corrected_shower_energy*(1.0-cos(sss_candidate_angle_to_shower)))" binning = "(50,0,400)" unit = "Simple Invar" training="0" group="4404" type="d"/>
+<var def = "sss_candidate_energy" binning = "(100, 0, 400)" unit = "Cluster Energy" type = "d"     training="0" group="4404"/>
+<var def = "sss_candidate_energy/corrected_shower_energy" binning = "(100,0,2)" unit = "Ratio energy to shower enegry" type = "d" training = "0" group="4404"/>
+<var def = "sss_candidate_wire_tick_based_length" binning = "(100, 0, 100)" unit = "Cluster Length" type = "d"     training="0" group="4404"/>
+<var def = "sss_candidate_num_hits" binning = "(100, 0, 100)" unit = "Number Hits" type = "d"     training="0" group="4404"/>
+<var def = "sss_candidate_PCA" binning = "(100, 0, 1)" unit = "PCA" type = "d"     training="0" group="4404"/>
+<var def = "sss_candidate_impact_parameter" binning = "(100, 0, 250)" unit = "Impact Parameter [cm]" type = "d"     training="0" group="4404"/>
+<var def = "sss_candidate_num_wires" binning = "(100, 0, 50)" unit = "Num Wires" type = "d"     training="0" group="4404"/>
+<var def = "sss_candidate_num_ticks" binning = "(100, 0, 50)" unit = "Num Ticks" type = "d"     training="0" group="4404"/>
+<var def = "sss_candidate_mean_ADC" binning = "(100, 0, 500)" unit = "Mean ADC" type = "d"     training="0" group="4404"/>
+<var def = "sss_candidate_ADC_RMS" binning = "(100, 0, 500)" unit = " ADC RMS" type = "d"     training="0" group="4404"/>
+<var def = "sss_candidate_fit_constant" binning = "(100, 0, 250)" unit = "Fit Const" type = "d"     training="0" group="4404"/>
+<var def = "sss_candidate_fit_slope" binning = "(100, 0, 50)" unit = "Fit Slope" type = "d"     training="0" group="4404"/>
+<var def = "sss_candidate_angle_to_shower*180.0/3.14159" binning = "(100, 0, 180)" unit = "2DAngleToShower" type = "d"     training="0" group="4404"/>
+<var def = "sss_candidate_min_dist" binning = "(100,0,250)" unit = "Distance to Vertex [cm]" type = "d" training="0" group="4404"/>
+<var def = "sqrt(2.0*(sss_corrected_candidate_energy)*corrected_shower_energy*(1.0-cos(sss_candidate_angle_to_shower)))" binning = "(100,0,400)" unit = "Simple Invar" training="0" group="4404" type="d"/>
 <!-- =================  ======================== -->
 <var def = "sss_candidate_remerge" binning = "(2, 0, 1)" unit = "Remerge" type = "d"     training="" group="4404"/>
 <var def = "sss_candidate_fit_slope" binning = "(50, 0, 50)" unit = "Fit Slope" type = "d"     training="" group="4404"/>

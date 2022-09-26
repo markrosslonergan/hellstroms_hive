@@ -348,6 +348,7 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
 
     std::vector<int> id_v;
     for(bdt_variable &var : variables){
+        std::cout<<"TTreeFormula: "<<var.id<<std::endl;
         sig_tree_formulas_v_train.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),signal_file_train->tvertex));
         bkg_tree_formulas_v_train.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),background_file_train->tvertex));
         sig_tree_formulas_v_test.push_back(new TTreeFormula(var.safe_name.c_str(), var.name.c_str(),signal_file_test->tvertex));
@@ -592,7 +593,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }else{
 
-                sslibSVMtrain<<id<<":"<<-999<<" ";
+               sslibSVMtrain<<id<<":"<<-999<<" ";
             }
         }
         sslibSVMtrain<<std::endl;
@@ -1113,7 +1114,7 @@ int bdt_XGtrain(bdt_info &info){
         std::vector<double> st,st2;
         std::vector<double> bt,bt2;
         for(int ip =0; ip<=1000;ip++){
-	    double p = (double)ip*0.001;
+	        double p = (double)ip*0.001;
             pos.push_back(p);
             st.push_back((double)t_strain->GetEntries(("sig_train > "+std::to_string(p)).c_str())/(double)t_strain->GetEntries());
             bt.push_back(1.0-(double)t_btrain->GetEntries(("bkg_train > "+std::to_string(p)).c_str())/(double)t_btrain->GetEntries());

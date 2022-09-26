@@ -57,7 +57,8 @@
 
 	/* Function: Given a set of cuts `bdt_cuts`, vary the BDT of order `which_bdt` and the 5th BDT while keeping cuts of other BDTs fixed, calculate the corresponding signal/Sqrt(background) 
  	 */ 
-	std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, std::vector<double> bdt_cuts, int which_bdt);
+	//std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, std::vector<double> bdt_cuts, int which_bdt);
+	std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, std::vector<double> bdt_cuts, int which_bdt, int which_bdt2);
 
 
 

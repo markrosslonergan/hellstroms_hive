@@ -161,6 +161,7 @@ struct bdt_file{
         bool is_bnbext;
         bool is_mc;
 
+
         std::string leg;
 
         int rebin;	
@@ -168,6 +169,7 @@ struct bdt_file{
         int numberofevents;
         int numberofevents_raw;
         double pot;
+        bool m_weightless;
 
         TFile *f;
         TTree *tvertex = NULL;
@@ -267,6 +269,9 @@ struct bdt_file{
         int calcPOT();
 	void setEventIdentifier(std::string cut);
         int calcPOT(std::vector<std::string> run_names, std::vector<std::string> run_cuts, std::vector<double> run_fractions);
+        int makeWeightless(){
+            m_weightless = true;
+        }
 
         int makeRunSubRunList();
 
@@ -327,7 +332,7 @@ struct bdt_file{
  	 * Note: bdt scores of events are saved in simple_tree, and all trees in original bdt file and their friend trees will also be saved 
  	 */
         int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot);
-        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot,std::string external_cuts);
+        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot,std::string external_cuts, std::string dir);
 
 
 	/* create a sbnfit file with events that passing given stage

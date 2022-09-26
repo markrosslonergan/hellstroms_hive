@@ -1216,7 +1216,15 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
                 v_eff_denom_cut.push_back(t_denom_cut);
                 std::cout<<"Setting Denom Cut of "<<t_denom_cut<<std::endl;
             }
-  
+         const char* t_denom_name = pEff->Attribute("denom_name");
+            if(t_denom_name==NULL){
+                std::cout<<"Setting default denominator name of Denominator "<<std::endl;
+                v_eff_denom_name.push_back("Denominator");
+            }else{
+                v_eff_denom_name.push_back(t_denom_name);
+                std::cout<<"Setting Denom name of "<<t_denom_name<<std::endl;
+            }
+ 
         const char* t_numer_stage = pEff->Attribute("numer_stage");
             if(t_numer_stage==NULL){
                 std::cout<<"Setting default numerinator stage of -1"<<std::endl;
@@ -1234,7 +1242,15 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
                 v_eff_numer_cut.push_back(t_numer_cut);
                 std::cout<<"Setting Numer Cut of "<<t_numer_cut<<std::endl;
             }
-
+         const char* t_numer_name = pEff->Attribute("numer_name");
+            if(t_numer_name==NULL){
+                std::cout<<"Setting default numerinator name of Numerator "<<std::endl;
+                v_eff_numer_name.push_back("Numerator");
+            }else{
+                v_eff_numer_name.push_back(t_numer_name);
+                std::cout<<"Setting Numer name of "<<t_numer_name<<std::endl;
+            }
+ 
 
         pEff = pEff->NextSiblingElement("efficiency");
 

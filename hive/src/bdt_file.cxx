@@ -161,6 +161,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 {
 
     plot_name = tag;
+    m_weightless = false;
 
     rangen = new TRandom3();
 
@@ -541,10 +542,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         vec_entry_lists.resize(flow.bdt_vector.size());
 
+      
         ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
         std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
     }
-
 
     double potbranch = 0;
     int  numbranch = 0;
@@ -594,7 +595,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         numberofevents = tvertex->GetEntries(event_identifier.c_str());
 
         if (this->tag.find("DarkNue") != std::string::npos){
-            tmppot = 3.33e+25;
+            tmppot = 2e21;
             std::cout<<"for the dark nue setting to arbitrary POT: "<<tmppot<<std::endl;
 
         }
@@ -620,38 +621,13 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 	// now, add in run reweighting
 	//weight_branch += "*(" + run_weight_string+")";
 
-	/*
-        if(this->tag.find("DarkNue") != std::string::npos){
-            weight_branch = "1";
-        }
+        // weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*("+run_weight_string+")*(GTruth_ResNum!=9)";
 
-        if(this->tag.find("TextGen")!=std::string::npos){
-            weight_branch = "1";
-        }
-
-        //
-        if(this->tag.find("NCPi0")!=std::string::npos){// 0.92 - 0.8
-            //  weight_branch = "("+weight_branch+")*(0.92 - 0.8*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
-
-        }
-
-        if(this->tag=="NCPi0NotCohRun1RedoCof0"){
-            //   weight_branch = "("+weight_branch+")*(1.0 - 0.85*sqrt(mctruth_exiting_pi0_E*mctruth_exiting_pi0_E-0.1349766*0.1349766))";
-            weight_branch = "genie_spline_weight*(genie_spline_weight>0)*("+run_weight_string+")";
-
-
-        }
-
-        if(this->tag.find("LYAtt")!=std::string::npos){
-            //    weight_branch = "genie_spline_weight*("+run_weight_string+")";
-        }
-
-        if(this->tag.find("FLAT")!=std::string::npos){
-            weight_branch = "preselection_weight*("+run_weight_string+")";
-        }
-	*/
 
         numberofevents_raw = numberofevents;
+
+        if(m_weightless) weight_branch = "1";
+
 
     }else if(is_data){
         //Ths is for Pure On beam Data. Taken as input by calling 
@@ -697,7 +673,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }
         numberofevents = tmpnum;
         numberofevents_raw = numberofevents;
-
+    
 
 
         leg = "lp";
@@ -741,7 +717,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
     }
 
-
+   if(m_weightless) weight_branch = "1";
 
     weight_branch += "*"+global_weight_string;
     std::cout<<"global_weight_string = "<<global_weight_string<<std::endl;
@@ -1601,19 +1577,21 @@ int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_s
 }
 
 int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars,const double splot_pot){
-    return makeSBNfitFile( analysis_tag, bdt_infos, which_stage,fbdtcuts,input_string,vars,splot_pot,"1");
+    return makeSBNfitFile( analysis_tag, bdt_infos, which_stage,fbdtcuts,input_string,vars,splot_pot,"1","./");
 }
 
-int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, const double internal_pot, std::string external_cuts){
+int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, const double internal_pot, std::string external_cuts, std::string outdir){
     double tsplot_pot = internal_pot;
+
+   bool true_eweight_exist = false;
 
     std::cout<<"Beginning SBNfit file creation for stage "<<which_stage<<" for file "<<this->tag<<" at "<<tsplot_pot<<std::endl;
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
-
+    std::cout<<"Output to "<<outdir<<std::endl;
     std::cout<<"With external cuts "<<external_cuts<<std::endl;
     this->teventweight->AddFriend(this->tvertex);
     this->tslice->AddFriend(this->tvertex);
-    this->ttrueeventweight->AddFriend(this->tvertex);
+ if(true_eweight_exist) this->ttrueeventweight->AddFriend(this->tvertex);
     
     std::vector<TFile*> f_sbnfit_friend_files;
     std::vector<TTree*> t_sbnfit_friend_origins;
@@ -1633,7 +1611,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+this->tag+".root";
 
     std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
-    TFile* f_sbnfit = new TFile(output_file_name.c_str(),"RECREATE");
+    TFile* f_sbnfit = new TFile( (outdir+"/"+output_file_name).c_str(),"RECREATE");
     if(!f_sbnfit->IsOpen()){
         std::cout<<__LINE__<<" Error! SBNfit file not created correctly perhaps?"<<std::endl;
     }
@@ -1661,8 +1639,12 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     TTree * t_sbnfit_eventweight_tree = (TTree*)this->teventweight->CopyTree(sbnfit_cuts.c_str());
     std::cout<<"Copying Slice tree with cut : "<<sbnfit_cuts<<std::endl;
     TTree * t_sbnfit_slice_tree = (TTree*)this->tslice->CopyTree(sbnfit_cuts.c_str());
-    std::cout<<"Copying trueeventweight tree (via friends)"<<std::endl;
-    TTree * t_sbnfit_trueeventweight_tree = (TTree*)this->ttrueeventweight->CopyTree(sbnfit_cuts.c_str());
+
+    TTree * t_sbnfit_trueeventweight_tree;
+    if(true_eweight_exist){
+     std::cout<<"Copying trueeventweight tree (via friends)"<<std::endl;
+      t_sbnfit_trueeventweight_tree = (TTree*)this->ttrueeventweight->CopyTree(sbnfit_cuts.c_str());
+ }
 
     //New section to save all Friended TTrees 
     //   friend_files  and friend_names (ttrees)
@@ -1811,9 +1793,10 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
         for(const auto&& obj: *lf3) t_sbnfit_friends[k]->GetListOfFriends()->Remove(obj);
     }
 
+    if(true_eweight_exist){
     TList * lf3 = (TList*)t_sbnfit_trueeventweight_tree->GetListOfFriends();
     for(const auto&& obj: *lf3) t_sbnfit_trueeventweight_tree->GetListOfFriends()->Remove(obj);
-
+    }
 
     //std::cout<<__LINE__<<" "<<bdt_infos.size()<<std::endl;
     std::cout<<"Writing to file"<<std::endl;
@@ -1822,7 +1805,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     t_sbnfit_pot_tree->Write();
     t_sbnfit_rs_tree->Write();
     t_sbnfit_eventweight_tree->Write(); 
-    t_sbnfit_trueeventweight_tree->Write(); 
+    if(true_eweight_exist) t_sbnfit_trueeventweight_tree->Write(); 
     t_sbnfit_slice_tree->Write();
     t_sbnfit_simpletree.Write();
     for(int k=0; k<  t_sbnfit_friends.size(); k++){
@@ -1987,6 +1970,7 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
     TTreeFormula* wei = new TTreeFormula("weight_formula ", this->weight_branch.c_str(),this->tvertex);
     TTreeFormula * tcut = new TTreeFormula("precut",  this->getStageCuts(1).c_str()  ,tvertex);
     TTreeFormula * t_defcut = new TTreeFormula("defcut",  this->getStageCuts(-1).c_str()  ,tvertex);
+    std::cout<<"CHECK FLATTEN WEIGHT "<<this->weight_branch<<std::endl;
 
     //Make new branches
     int out_event_index = 0; 
@@ -2145,9 +2129,9 @@ void bdt_file::MakeFlatFriend(TFile *fout, const std::string& treename, const st
     return;
 }
 
-int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir , std::string & analysis_tag){
+int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir , std::string & filename){
 
-    std::string unflat_filename = outdir+"UNFLATTEN_"+info.identifier+"_"+this->tag+".root"; 
+    std::string unflat_filename = outdir+filename; 
     TFile *fout = new TFile(unflat_filename.c_str(),"recreate");
     fout->cd();
 

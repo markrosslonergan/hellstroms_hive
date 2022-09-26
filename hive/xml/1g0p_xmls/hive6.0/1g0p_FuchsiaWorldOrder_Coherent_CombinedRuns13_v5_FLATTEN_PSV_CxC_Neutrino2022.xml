@@ -136,6 +136,44 @@
     </training>
 </bdtfile>
 
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCpi0Test.root" tag = "NCpi0TestFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = "NCpi0 Test Flat" fillstyle = "3333" scale = "1" ttree_name="PSV" >
+    <definition>
+        <cut> 1</cut>
+    </definition>
+</bdtfile>
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCpi0Train.root" tag = "NCpi0TrainFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = "NCpi0 Train Flat" fillstyle = "3333" scale = "1" ttree_name="PSV" >
+    <definition>
+        <cut> 1</cut>
+    </definition>
+</bdtfile>
+<bdtfile filename = "FLATTEN_DarkNu_MultiTop_v2_DarkNu_BenchD_NoHF_TestTextGen.root" tag = "DarkNu_BenchD_NoHF_TestTextGenFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = " Dark nu Bench D Test" fillstyle = "3333" scale = "1"  ttree_name="PSV">
+    <definition>
+        <cut> 1</cut>
+    </definition>
+    <training>
+        <cut> 1</cut>
+    </training>
+</bdtfile>
+<bdtfile filename = "FLATTEN_DarkNu_MultiTop_v2_DarkNu_MergedBench_DiracMaj_TrainTextGen.root" tag = "DarkNu_MergedBench_DiracMaj_TrainTextGenFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = " Dark nu Bench D Train" fillstyle = "3333" scale = "1"  ttree_name="PSV">
+    <definition>
+        <cut> 1</cut>
+    </definition>
+    <training>
+        <cut> 1</cut>
+    </training>
+</bdtfile>
+<bdtfile filename = "FLATTEN_DarkNu_MultiTop_v2_DarkNu_BenchC_NoHF_TestTextGen.root" tag = "DarkNu_BenchC_NoHF_TestTextGenFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = " Dark nu Bench C Test" fillstyle = "3333" scale = "1"  ttree_name="PSV">
+    <definition>
+        <cut> 1</cut>
+    </definition>
+    <training>
+        <cut> 1</cut>
+    </training>
+</bdtfile>
+
+
+
+
 
 <!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
 
