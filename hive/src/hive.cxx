@@ -1100,7 +1100,7 @@ int main (int argc, char *argv[]){
                     scan_likelihood(stack_bdt_files, bdt_infos);
                     break;
                 case 2:
-                    scan_significance_random(signal_bdt_files, bkg_bdt_files, bdt_infos,sig_type); //this
+                    scan_significance_random(signal_bdt_files, bkg_bdt_files, bdt_infos, what_pot,sig_type); //this
                     break;
                 case 3:
                     scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos, what_pot, sig_type);

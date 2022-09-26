@@ -3,6 +3,10 @@
 
 
 std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, double plot_pot){
+    return scan_significance(sig_files, bkg_files, bdt_infos, plot_pot, 0);
+}
+
+std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, double plot_pot, int sig_type){
     std::cout<<"Starting to Scan Significance [Simple Linear Scan, can take a while!] "<<std::endl;
     //This just goes between some set values of all BDT's
     double best_significance = 0;
@@ -16,64 +20,37 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
         bkg_files.at(i)->setStageEntryList(1);
     }
 
-    std::vector<double> in_min_vals;
-    std::vector<double> in_max_vals;
-    std::vector<int> n_steps;
+
+    //set up cut range
+    std::vector<double> maxvals(bdt_infos.size(),-999);
+    std::vector<double> minvals(bdt_infos.size(),999);
+    std::vector<int> n_steps(bdt_infos.size(), -999);
     int max_pts=1;
 
     for(size_t b=0; b<bdt_infos.size();b++){
-        in_min_vals.push_back(bdt_infos[b].TMVAmethod.scan_min);
-        in_max_vals.push_back(bdt_infos[b].TMVAmethod.scan_max);
-        n_steps.push_back((int)bdt_infos[b].TMVAmethod.scan_steps);
-        max_pts = max_pts*n_steps.back();
-        //std::cout<<"AGHR "<<in_min_vals.back()<<" "<<in_max_vals.back()<<" "<<n_steps.back()<<std::endl;
-    }
-
-    //So if min_max val vectors are negative, we calculate it ourselves.
-    double sum_of_elems = std::accumulate(in_max_vals.begin(), in_max_vals.end(), 0.0);
-    std::vector<double>maxvals(bdt_infos.size(),-999);
-    std::vector<double> minvals = maxvals;
-    std::cout<<sum_of_elems<<std::endl;
-    if(sum_of_elems >0){
-        std::cout<<"Taking scanning range from xml "<<std::endl;
-        maxvals = in_max_vals;
-        minvals = in_min_vals;
-        //n_steps = s;
-    }else{
-        std::cout<<"Automatically calculting scanning range"<<std::endl;
-        for(size_t i = 0; i < sig_files.size(); ++i) {
-            for(size_t k=0; k< bdt_infos.size(); k++){
-                double tmax_1 = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
-
-		// Guanqun: does this line work????
-                double tmax_2 = bkg_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
-                maxvals[k] = std::max(maxvals[k], std::max(tmax_1,tmax_2));
+        minvals[b] = bdt_infos[b].TMVAmethod.scan_min;
+        maxvals[b] = bdt_infos[b].TMVAmethod.scan_max;
+        n_steps[b] = (int)bdt_infos[b].TMVAmethod.scan_steps;
+   
+	if(maxvals[b] == -99){
+       	    std::cout<<"Automatically calculting scanning range"<<std::endl;
+            for(size_t i = 0; i < sig_files.size(); ++i) {
+            	double tmax  = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[b]).name.c_str()    );
+                maxvals[b] = std::max(maxvals[b], tmax);
             }
-        }
+            for(size_t i = 0; i < bkg_files.size(); ++i) {
+            	double tmax  = bkg_files.at(i)->tvertex->GetMaximum( bkg_files.at(i)->getBDTVariable(bdt_infos[b]).name.c_str()    );
+                maxvals[b] = std::max(maxvals[b], tmax);
+            }
+        
 
-        //for(auto &v: minvals) v=v*0.2;
-        for(auto &v: minvals) v=0.0;
+            minvals[b] = 0.0;
+	    n_steps[b] = 10;
+	}
+
+        max_pts = max_pts*n_steps[b];
 
     }
-
-    //Create N2tempoary TEntryLists  at minimum for all sig files
-    std::vector<TEntryList*> sig_min_lists;
-    std::vector<TEntryList*> bkg_min_lists;
-
-    std::cout<<"Setting Min entry lists"<<std::endl;
-    for(size_t i = 0; i < sig_files.size(); ++i) {
-        std::string min_list_name  = "micam"+std::to_string(i);
-        sig_files.at(i)->tvertex->Draw((">>"+min_list_name).c_str(), sig_files.at(i)->getStageCuts(1+bdt_infos.size(), minvals ).c_str() , "entrylist");
-        sig_min_lists.push_back(  (TEntryList*)gDirectory->Get(min_list_name.c_str()) );
-        sig_files.at(i)->tvertex->SetEntryList(sig_min_lists.back());
-    }
-    for(size_t i = 0; i < bkg_files.size(); ++i) {
-        std::string min_list_name  = "mibam"+std::to_string(i);
-        bkg_files.at(i)->tvertex->Draw((">>"+min_list_name).c_str(), bkg_files.at(i)->getStageCuts(1+bdt_infos.size(), minvals).c_str() , "entrylist");
-        bkg_min_lists.push_back(  (TEntryList*)gDirectory->Get(min_list_name.c_str()) );
-        bkg_files.at(i)->tvertex->SetEntryList(bkg_min_lists.back());
-    }	
-
 
     std::vector<double> steps(bdt_infos.size(),0.0);
     for(int i=0; i< bdt_infos.size(); i++){
@@ -95,16 +72,31 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
         std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<" (n_steps:  "<<n_steps[i]<<")"<<std::endl;
     }
 
+
+    //set entrylist 
+    std::cout<<"Setting Min entry lists and POT scaling"<<std::endl;
+    std::vector<double> sig_pot_scale, bkg_pot_scale;
+    for(size_t i = 0; i < sig_files.size(); ++i) {
+	sig_files.at(i)->setStageEntryList(1+bdt_infos.size(), minvals);
+        double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
+	sig_pot_scale.push_back(pot_scale);
+    }
+    for(size_t i = 0; i < bkg_files.size(); ++i) {
+	bkg_files.at(i)->setStageEntryList(1+bdt_infos.size(), minvals);
+        double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
+	bkg_pot_scale.push_back(pot_scale);
+    }	
+
+
+
     //Calculate total signal for efficiency 
     double total_sig = 0.;
-
     for(size_t i = 0; i < sig_files.size(); ++i) {
-        double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
-        //    std::cout << "POT scale: " << pot_scale << std::endl;
-        std::string bnbcut = sig_files.at(i)->getStageCuts(1,minvals);     //preselection cut 
-        total_sig += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale; 	// scaled # entries
+        std::string bnbcut = sig_files.at(i)->getStageCuts(1);      
+        total_sig += sig_files.at(i)->GetEntries(bnbcut.c_str())*sig_pot_scale[i];	
     }
 
+    auto sig_metric_name = significance_name(sig_type);
     std::cout<<"Starting"<<std::endl;
     std::cout<<"----------------------------------------------------"<<std::endl;
     std::string s_mod = "";
@@ -134,26 +126,17 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
         std::vector<double> bkg;	
 
         for(size_t is = 0; is < sig_files.size(); ++is) {
-            double pot_scale = (plot_pot/sig_files.at(is)->pot )*sig_files.at(is)->scale_data;
             std::string bnbcut = sig_files.at(is)->getStageCuts(1+bdt_infos.size(), cur_pt); 
-            signal += sig_files.at(is)->GetEntries(bnbcut.c_str())*pot_scale;    //!!! scaled entries
+            signal += sig_files.at(is)->GetEntries(bnbcut.c_str())*sig_pot_scale[is];    
         }
 
         for(size_t ib = 0; ib < bkg_files.size(); ++ib) {
-            double pot_scale = (plot_pot/bkg_files.at(ib)->pot)*bkg_files.at(ib)->scale_data;
             std::string bnbcut = bkg_files.at(ib)->getStageCuts(1+bdt_infos.size(),cur_pt); 
-            bkg.push_back(bkg_files.at(ib)->GetEntries(bnbcut.c_str())*pot_scale);			
+            bkg.push_back(bkg_files.at(ib)->GetEntries(bnbcut)*bkg_pot_scale[ib]);			
             background += bkg.back();
         }
 
-        double significance =0;
-        if(signal==0){
-            significance =0;
-        }else if(background !=0){
-            significance = signal/sqrt(background);
-        }else{
-            std::cout<<" Warning Backgrounds are identically 0 here, signal is "<<signal<<", so significance NAN. Woopsie. setting to Zero."<<std::endl;
-        }
+	double significance = calculate_significance(signal, background, sig_type, total_sig);
 
         if(significance > best_significance) {
             best_significance = significance;
@@ -166,7 +149,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
         for(auto &dd:cur_pt){
             std::cout<<dd<<",";   
         }
-        std::cout<<") N_signal: "<<signal<<" N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+        std::cout<<") N_signal: "<<signal<<" N_bkg: "<<background<<" ||  " << sig_metric_name << ": " <<significance<<" "<<s_mod<<std::endl;
 
         s_mod = "";
         n_pt++;
@@ -177,201 +160,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
     }
 
     std::cout<<"----------------------------------------------------"<<std::endl;
-    std::cout<<"------------ Finished. Best Significance was  "<<best_significance<<" at point "<<best_pt<<" with Cuts at "<<std::endl;
-    for(auto &dd: best_mva){
-        std::cout<<dd<<" ";   
-    }
-    std::cout<<std::endl;
-    std::cout<<"Done with simple significance scan"<<std::endl;
-
-    return std::vector<double>{0,0,0};
-
-}
-
-std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, double plot_pot, int sig_type){
-    std::cout<<"Starting to Scan Significance [Simple Linear Scan, can take a while!] "<<std::endl;
-    //This just goes between some set values of all BDT's
-    double best_significance = 0;
-    std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
-
-    std::cout<<"Setting stage entry lists"<<std::endl;
-    for(size_t i = 0; i < sig_files.size(); ++i) {
-        sig_files.at(i)->setStageEntryList(1);
-    }
-    for(size_t i = 0; i < bkg_files.size(); ++i) {
-        bkg_files.at(i)->setStageEntryList(1);
-    }
-
-    std::vector<double> in_min_vals;
-    std::vector<double> in_max_vals;
-    std::vector<int> n_steps;
-    int max_pts=1;
-
-    for(size_t b=0; b<bdt_infos.size();b++){
-        in_min_vals.push_back(bdt_infos[b].TMVAmethod.scan_min);
-        in_max_vals.push_back(bdt_infos[b].TMVAmethod.scan_max);
-        n_steps.push_back((int)bdt_infos[b].TMVAmethod.scan_steps);
-        max_pts = max_pts*n_steps.back();
-        //std::cout<<"AGHR "<<in_min_vals.back()<<" "<<in_max_vals.back()<<" "<<n_steps.back()<<std::endl;
-    }
-
-    //So if min_max val vectors are negative, we calculate it ourselves.
-    double sum_of_elems = std::accumulate(in_max_vals.begin(), in_max_vals.end(), 0.0);
-    std::vector<double>maxvals(bdt_infos.size(),-999);
-    std::vector<double> minvals = maxvals;
-    std::cout<<sum_of_elems<<std::endl;
-    if(sum_of_elems >0){
-        std::cout<<"Taking scanning range from xml "<<std::endl;
-        maxvals = in_max_vals;
-        minvals = in_min_vals;
-        //n_steps = s;
-    }else{
-        std::cout<<"Automatically calculting scanning range"<<std::endl;
-        for(size_t i = 0; i < sig_files.size(); ++i) {
-            for(size_t k=0; k< bdt_infos.size(); k++){
-                double tmax_1 = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
-                double tmax_2 = bkg_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
-                maxvals[k] = std::max(maxvals[k], std::max(tmax_1,tmax_2));
-            }
-        }
-
-        //for(auto &v: minvals) v=v*0.2;
-        for(auto &v: minvals) v=0.0;
-
-    }
-
-    //Create N2tempoary TEntryLists  at minimum for all sig files
-    std::vector<TEntryList*> sig_min_lists;
-    std::vector<TEntryList*> bkg_min_lists;
-
-    std::cout<<"Setting Min entry lists"<<std::endl;
-    for(size_t i = 0; i < sig_files.size(); ++i) {
-        std::string min_list_name  = "micam"+std::to_string(i);
-        sig_files.at(i)->tvertex->Draw((">>"+min_list_name).c_str(), sig_files.at(i)->getStageCuts(1+bdt_infos.size(), minvals ).c_str() , "entrylist");
-        sig_min_lists.push_back(  (TEntryList*)gDirectory->Get(min_list_name.c_str()) );
-        sig_files.at(i)->tvertex->SetEntryList(sig_min_lists.back());
-    }
-    for(size_t i = 0; i < bkg_files.size(); ++i) {
-        std::string min_list_name  = "mibam"+std::to_string(i);
-        bkg_files.at(i)->tvertex->Draw((">>"+min_list_name).c_str(), bkg_files.at(i)->getStageCuts(1+bdt_infos.size(), minvals).c_str() , "entrylist");
-        bkg_min_lists.push_back(  (TEntryList*)gDirectory->Get(min_list_name.c_str()) );
-        bkg_files.at(i)->tvertex->SetEntryList(bkg_min_lists.back());
-    }	
-
-
-    std::vector<double> steps(bdt_infos.size(),0.0);
-    for(int i=0; i< bdt_infos.size(); i++){
-        steps[i] = (maxvals[i]-minvals[i])/((double)n_steps[i]);
-    }
-
-    std::vector<std::vector<double>> bdt_scan_pts;
-    for(int i=0; i< bdt_infos.size(); i++){
-        std::vector<double> tmp;
-        for(int ip=0; ip<n_steps[i]; ip++){
-            tmp.push_back(minvals[i]+(double)ip*steps[i]);
-        }
-        bdt_scan_pts.push_back(tmp);
-    }
-
-
-    std::cout<<"We are going to scan between these values "<<std::endl;
-    for(int i=0; i< bdt_infos.size();i++){
-        std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<" (n_steps:  "<<n_steps[i]<<")"<<std::endl;
-    }
-
-    //Calculate total signal for efficiency 
-    double total_sig = 0.;
-
-    for(size_t i = 0; i < sig_files.size(); ++i) {
-        double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
-        //    std::cout << "POT scale: " << pot_scale << std::endl;
-        std::string bnbcut = sig_files.at(i)->getStageCuts(1,minvals); 
-        total_sig += sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
-    }
-
-    std::cout<<"Starting"<<std::endl;
-    std::cout<<"----------------------------------------------------"<<std::endl;
-    std::string s_mod = "";
-    int n_pt = 0;
-    int best_pt = -9;
-
-
-    for(int i=0; i < max_pts; i++){
-
-        std::vector<double> cur_pt(bdt_infos.size(),0.0);
-
-        //were going to take each number and write each digit in base K where K is that vectors length
-        int divisor=1;
-        int f_num_dimensions = bdt_infos.size();
-        for(int j =f_num_dimensions-1 ;j>=0; j--){
-            int this_index =  (i/divisor)%bdt_scan_pts[j].size();
-
-            cur_pt[j] = bdt_scan_pts[j][this_index];
-            //in order so that each digit is written in the correct base, modify divisor here
-            divisor=divisor*bdt_scan_pts[j].size();
-        }
-
-
-        double signal = 0;
-        double background = 0;
-        std::vector<double> bkg;	
-
-        for(size_t is = 0; is < sig_files.size(); ++is) {
-            double pot_scale = (plot_pot/sig_files.at(is)->pot )*sig_files.at(is)->scale_data;
-            std::string bnbcut = sig_files.at(is)->getStageCuts(1+bdt_infos.size(), cur_pt); 
-            signal += sig_files.at(is)->GetEntries(bnbcut.c_str())*pot_scale;
-        }
-
-        for(size_t ib = 0; ib < bkg_files.size(); ++ib) {
-            double pot_scale = (plot_pot/bkg_files.at(ib)->pot)*bkg_files.at(ib)->scale_data;
-            std::string bnbcut = bkg_files.at(ib)->getStageCuts(1+bdt_infos.size(),cur_pt); 
-            bkg.push_back(bkg_files.at(ib)->GetEntries(bnbcut.c_str())*pot_scale);			
-            background += bkg.back();
-        }
-
-        double significance =0;
-        double purity = 0;
-        double efficiency = 0;
-        if(signal==0){
-            significance =0;
-        }else if(background !=0 && sig_type!=3){
-            significance = signal/sqrt(background);
-        }else if(background !=0 && sig_type==3){
-            significance = signal/(signal+background)*signal/total_sig*100;
-            purity = signal/(signal+background);
-            efficiency = signal/total_sig;
-        }else{
-            std::cout<<" Warning Backgrounds are identically 0 here, signal is "<<signal<<", so significance NAN. Woopsie. setting to Zero."<<std::endl;
-        }
-
-        if(significance > best_significance) {
-            best_significance = significance;
-            best_mva = cur_pt;
-            best_pt = n_pt;
-            s_mod = "(Current Best)";
-        }
-
-        std::cout<<"Point: "<<n_pt<<" (";
-        for(auto &dd:cur_pt){
-            std::cout<<dd<<",";   
-        }
-        if(sig_type==3){
-            std::cout<<") N_signal: "<<signal<<" N_bkg: "<<background<<" ||  P*E: " <<significance<<" Eff: "<<efficiency<<" Purity: "<<purity<<"   @ "<<s_mod<<std::endl;
-        }else{
-            std::cout<<") N_signal: "<<signal<<" N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
-        }
-
-
-        s_mod = "";
-        n_pt++;
-
-
-
-
-    }
-
-    std::cout<<"----------------------------------------------------"<<std::endl;
-    std::cout<<"------------ Finished. Best Significance was  "<<best_significance<<" at point "<<best_pt<<" with Cuts at "<<std::endl;
+    std::cout<<"------------ Finished. Best " << sig_metric_name << " was  "<<best_significance<<" at point "<<best_pt<<" with Cuts at "<<std::endl;
     for(auto &dd: best_mva){
         std::cout<<dd<<" ";   
     }
@@ -384,18 +173,16 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
 
 
-
-std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_info){
-    return scan_significance_random(sig_files,bkg_files,bdt_info,0);
+std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_info, double plot_pot){
+    return scan_significance_random(sig_files,bkg_files,bdt_info,plot_pot,0);
 }
 
-std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos,int sig_type){
+std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, double plot_pot, int sig_type){
     std::cout<<"Starting to Scan Significance (randomly)"<<std::endl;
     double best_significance = 0;
     double best_impact = 0;
     std::vector<double> best_mva(bdt_infos.size(), DBL_MAX);
 
-    double plot_pot = 6.8e20;//5e19;// 10.115e20;
     double sig_scale = 1.0;
 
     std::cout<<"Setting stage entry lists"<<std::endl;
@@ -408,88 +195,62 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         std::cout<<bkg_files[i]->tag<<" is a BKG file"<<std::endl;
     }
 
-    std::vector<double> in_min_vals;
-    std::vector<double> in_max_vals;
-    std::vector<double> n_steps;
+
+    //set up cut range
+    std::vector<double> maxvals(bdt_infos.size(),-999);
+    std::vector<double> minvals(bdt_infos.size(),999);
 
     for(size_t b=0; b<bdt_infos.size();b++){
-        in_min_vals.push_back(bdt_infos[b].TMVAmethod.scan_min);
-        in_max_vals.push_back(bdt_infos[b].TMVAmethod.scan_max);
-        n_steps.push_back(bdt_infos[b].TMVAmethod.scan_steps);
-        //std::cout<<"AGHR "<<in_min_vals.back()<<" "<<in_max_vals.back()<<" "<<n_steps.back()<<std::endl;
-    }
-
-    //So if min_max val vectors are negative, we calculate it ourselves.
-    double sum_of_elems = std::accumulate(in_max_vals.begin(), in_max_vals.end(), 0.0);
-    std::vector<double>maxvals(bdt_infos.size(),-999);
-    std::vector<double> minvals = maxvals;
-    std::cout<<sum_of_elems<<std::endl;
-    if(sum_of_elems >0){
-        std::cout<<"Taking scanning range from xml "<<std::endl;
-        maxvals = in_max_vals;
-        minvals = in_min_vals;
-        n_steps = std::vector<double>(bdt_infos.size(),10.0);
-    }else{
-        std::cout<<"Automatically calculting scanning range"<<std::endl;
-        for(size_t i = 0; i < sig_files.size(); ++i) {
-            for(size_t k=0; k< bdt_infos.size(); k++){
-                double tmax_1 = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
-                double tmax_2 = bkg_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[k]).name.c_str()    );
-                maxvals[k] = std::max(maxvals[k], std::max(tmax_1,tmax_2));
+        minvals[b] = bdt_infos[b].TMVAmethod.scan_min;
+        maxvals[b] = bdt_infos[b].TMVAmethod.scan_max;
+   
+	if(maxvals[b] == -99){
+       	    std::cout<<"Automatically calculting scanning range"<<std::endl;
+            for(size_t i = 0; i < sig_files.size(); ++i) {
+            	double tmax  = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[b]).name.c_str()    );
+                maxvals[b] = std::max(maxvals[b], tmax);
             }
-        }
+            for(size_t i = 0; i < bkg_files.size(); ++i) {
+            	double tmax  = bkg_files.at(i)->tvertex->GetMaximum( bkg_files.at(i)->getBDTVariable(bdt_infos[b]).name.c_str()    );
+                maxvals[b] = std::max(maxvals[b], tmax);
+            }
+        
 
-        //for(auto &v: minvals) v=v*0.2;
-        for(auto &v: minvals) v=0.0;
+            minvals[b] = 0.0;
+	}
 
-    }
-
-    //Create N2tempoary TEntryLists  at minimum
-    std::vector<TEntryList*> sig_min_lists;
-    std::vector<TEntryList*> bkg_min_lists;
-
-
-
-    std::cout<<"Setting Min entry lists"<<std::endl;
-    for(size_t i = 0; i < sig_files.size(); ++i) {
-
-        std::string min_list_name  = "micam"+std::to_string(i);
-        sig_files.at(i)->tvertex->Draw((">>"+min_list_name).c_str(), sig_files.at(i)->getStageCuts(1+bdt_infos.size(), minvals ).c_str() , "entrylist");
-        sig_min_lists.push_back(  (TEntryList*)gDirectory->Get(min_list_name.c_str()) );
-        sig_files.at(i)->tvertex->SetEntryList(sig_min_lists.back());
-
-    }
-    for(size_t i = 0; i < bkg_files.size(); ++i) {
-
-        std::string min_list_name  = "mibam"+std::to_string(i);
-        bkg_files.at(i)->tvertex->Draw((">>"+min_list_name).c_str(), bkg_files.at(i)->getStageCuts(1+bdt_infos.size(), minvals).c_str() , "entrylist");
-        bkg_min_lists.push_back(  (TEntryList*)gDirectory->Get(min_list_name.c_str()) );
-        bkg_files.at(i)->tvertex->SetEntryList(bkg_min_lists.back());
-    }	
-
-
-
-    std::vector<double> steps(bdt_infos.size(),0.0);
-    for(int i=0; i< bdt_infos.size(); i++){
-        steps[i] = (maxvals[i]-minvals[i])/((double)n_steps[i]);
     }
 
     std::cout<<"We are going to scan between these values "<<std::endl;
     for(int i=0; i< bdt_infos.size();i++){
-        std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<std::endl;
+        std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<std::endl;
     }
-    // Calculate total signal for efficiency 
-    double total_sig = 0.;
 
+
+    //set entrylist 
+    std::cout<<"Setting Min entry lists and POT scaling"<<std::endl;
+    std::vector<double> sig_pot_scale, bkg_pot_scale;
     for(size_t i = 0; i < sig_files.size(); ++i) {
+	sig_files.at(i)->setStageEntryList(1+bdt_infos.size(), minvals);
         double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
-        std::cout << "POT scale: " << pot_scale << std::endl;
+	sig_pot_scale.push_back(pot_scale);
+    }
+    for(size_t i = 0; i < bkg_files.size(); ++i) {
+	bkg_files.at(i)->setStageEntryList(1+bdt_infos.size(), minvals);
+        double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
+	bkg_pot_scale.push_back(pot_scale);
+    }	
 
-        std::string bnbcut = sig_files.at(i)->getStageCuts(1,minvals); 
-        total_sig += sig_scale*sig_files.at(i)->tvertex->GetEntries(bnbcut.c_str())*pot_scale;
+    //Calculate total signal for efficiency 
+    double total_sig = 0.;
+    for(size_t i = 0; i < sig_files.size(); ++i) {
+        std::string bnbcut = sig_files.at(i)->getStageCuts(1);      
+        total_sig += sig_files.at(i)->GetEntries(bnbcut.c_str())*sig_pot_scale[i];	
+
     }
 
     std::string s_mod = "";
+    auto sig_metric_name = significance_name(sig_type);
     TRandom3 *rangen  = new TRandom3(0);  
     std::cout<<"Starting"<<std::endl;
     for(int t=0; t < 100000; t++){
@@ -500,47 +261,24 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
             d[i] = std::round(d[i]*1000.0)/1000.0;    //to make cut value only have 3 decimal point?
         }
         
+
         double signal = 0;
         double background = 0;
         std::vector<double> bkg;	
 
-        for(size_t i = 0; i < sig_files.size(); ++i) {
-            double pot_scale = (plot_pot/sig_files.at(i)->pot )*sig_files.at(i)->scale_data;
-
-            std::string bnbcut = sig_files.at(i)->getStageCuts(1+bdt_infos.size(), d); 
-            double thiss = sig_scale*sig_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale;
-            signal += thiss; 
-
-            //std::cout<<" "<<sig_files[i]->tag<<" "<<thiss;
+        for(size_t is = 0; is < sig_files.size(); ++is) {
+            std::string bnbcut = sig_files.at(is)->getStageCuts(1+bdt_infos.size(), d); 
+            signal += sig_files.at(is)->GetEntries(bnbcut.c_str())*sig_pot_scale[is];    
         }
 
-        for(size_t i = 0; i < bkg_files.size(); ++i) {
-            double pot_scale = (plot_pot/bkg_files.at(i)->pot)*bkg_files.at(i)->scale_data;
-
-
-            std::string bnbcut = bkg_files.at(i)->getStageCuts(1+bdt_infos.size(),d); 
-            //     std::cout<<bnbcut<<std::endl;
-            bkg.push_back(bkg_files.at(i)->GetEntries(bnbcut.c_str())*pot_scale);			
-
+        for(size_t ib = 0; ib < bkg_files.size(); ++ib) {
+            std::string bnbcut = bkg_files.at(ib)->getStageCuts(1+bdt_infos.size(),d); 
+            bkg.push_back(bkg_files.at(ib)->GetEntries(bnbcut)*bkg_pot_scale[ib]);			
             background += bkg.back();
-
-            //std::cout<<" "<<bkg_files[i]->tag<<" "<<bkg.back();
-        }
-        //std::cout<<std::endl;
-
-        double significance =0;
-        if(signal==0){
-            significance =0;
-        }else if(background !=0){
-            //significance = signal/(signal+background);
-            //significance = signal/sqrt(background);
-            significance = (signal/(double)total_sig)*31.8*signal/(31.8*signal+background);
-
-        }else{
-            std::cout<<"method_best_significane_seperate || signal2+background2 == 0 , sig: "<<signal<<" , so significance  = nan. Woopsie."<<std::endl;
-            //break;
         }
 
+
+	double significance = calculate_significance(signal, background, sig_type, total_sig, sig_scale);
         if(significance > best_significance) {
             best_significance = significance;
             best_mva = d;
@@ -554,14 +292,14 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
         for(auto &dd:bkg){
             std::cout<<dd<<" ";   
         }
-        std::cout<<")  N_signal: "<<signal<<" (E_signal: "<<(signal/(double)total_sig)<<") N_bkg: "<<background<<" ||  Sigma: " <<significance<<" "<<s_mod<<std::endl;
+        std::cout<<")  N_signal: "<<signal<<" (E_signal: "<<(signal/(double)total_sig)<<") N_bkg: "<<background<<" ||  " << sig_metric_name << " : " <<significance<<" "<<s_mod<<std::endl;
 
         s_mod = "";
 
     
     }
 
-    std::cout<<"------------_FINAL Best Sig: "<<best_significance<<std::endl;
+    std::cout<<"------------_FINAL Best " << sig_metric_name << ": "<<best_significance<<std::endl;
 
     std::cout<<"  --ccut: ";
     for(auto &dd: best_mva){
@@ -1246,6 +984,67 @@ std::vector<double> scan_significance_linlin(std::vector<bdt_file*> sig_files, s
 
     return std::vector<double>{0,0,0};
 
+}
+
+std::string significance_name(int sig_type){
+    if(sig_type == 0)
+	return "Sigma (S/sqrt(B))";
+    if(sig_type == 3)
+	return "Efficiency times Purity";
+    if(sig_type == 4)
+	return "Efficiency";
+    if(sig_type == 5)
+	return "Purity";
+    return "";
+}
+
+double calculate_significance(double signal, double background, int sig_type, double total_signal, double signal_scale){
+
+    double significance =0;
+    double purity, efficiency;
+    if(signal==0){
+        significance =0;
+    }else if(background !=0){
+
+	switch(sig_type){
+	    case 0:	//stats S/B ratio
+		significance = signal_scale*signal/sqrt(background);
+		break;
+	    case 3:     //efficiency times purity
+	    {
+		if(total_signal == 0){
+		    std::cerr << "bdt_sig::calculate_significance\t||\t Orignal signal is 0, can't calculate efficiency" << std::endl;
+		    throw std::runtime_error("Not set up original signal prediction");
+		}
+		efficiency = signal/total_signal;	
+		purity = signal_scale*signal/(signal_scale*signal+background);
+		significance = efficiency * purity;
+		break;
+	    }
+	    case 4:     //efficiency 
+	    {
+		if(total_signal == 0){
+                    std::cerr << "bdt_sig::calculate_significance\t||\t Orignal signal is 0, can't calculate efficiency" << std::endl;
+                    throw std::runtime_error("Not set up original signal prediction");
+                }
+		efficiency = signal/total_signal;	
+		significance = efficiency;
+		break;
+	    }
+	    case 5:     //purity
+		purity = signal_scale*signal/(signal_scale*signal+background);
+                significance = purity;
+		break;
+	    default:
+		std::cerr << "bdt_sig::calculate_significance\t||\t Don't recognize the significance type.. " << std::endl;
+		break;
+	}
+
+    }else{
+	std::cerr << "bdt_sig::calculate_significance\t||\t Signal is " << signal << " but backgrounds is 0... Set significance to 0..." << std::endl;
+    }
+   
+    return significance;
 }
 
 

@@ -2005,9 +2005,9 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
     int flat_precut = 0;
     int flat_defcut = 0;
     tree_out->Branch("event_weight",&simple_wei);
+    tree_out->Branch("event_pot_weight",&simple_pot_wei);
     tree_out->Branch("definition_cut",&flat_defcut);
     tree_out->Branch("preselection_cut",&flat_precut);
-    tree_out->Branch("preselection_pot_weight",&simple_pot_wei);
 
     //loop over all old intries 
     for(size_t i=0; i< tvertex->GetEntries(); ++i){
