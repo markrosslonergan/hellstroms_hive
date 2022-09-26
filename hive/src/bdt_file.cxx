@@ -738,7 +738,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
     }
 
-
+   if(m_weightless) weight_branch = "1";
 
     weight_branch = weight_branch +"*"+global_weight_string;
     std::cout<<"global_weight_string = "<<global_weight_string<<std::endl;
@@ -1962,6 +1962,7 @@ void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const 
     double tsplot_pot=6.91e20;
     TTreeFormula* wei = new TTreeFormula("weight_formula ", this->weight_branch.c_str(),this->tvertex);
     TTreeFormula * tcut = new TTreeFormula("precut",  this->getStageCuts(1,{}).c_str()  ,tvertex);
+    std::cout<<"CHECK FLATTEN WEIGHT "<<this->weight_branch<<std::endl;
 
     //Make new branches
     int out_event_index = 0; 

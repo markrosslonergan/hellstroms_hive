@@ -462,8 +462,8 @@ int main (int argc, char *argv[]){
             i_run_fractions = {1.0};
         }
 
-        bdt_files.back()->calcPOT(i_run_names, i_run_cuts, i_run_fractions);
         if(weightless)bdt_files.back()->makeWeightless();
+        bdt_files.back()->calcPOT(i_run_names, i_run_cuts, i_run_fractions);
 
         std::cout<<"Checking for friend trees: "<<XMLconfig.bdt_friend_filenames[f].size()<<" "<<XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
         if(XMLconfig.bdt_friend_filenames[f].size()>0){
@@ -572,8 +572,8 @@ int main (int argc, char *argv[]){
                 external_files.back()->setAsOffBeamData( External_XMLconfig.bdt_onbeam_pot[f], External_XMLconfig.bdt_onbeam_spills[f], External_XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
             }
 
-            external_files.back()->calcPOT({"1"},{"1"},{1.0});
             if(weightless)external_files.back()->makeWeightless();
+            external_files.back()->calcPOT({"1"},{"1"},{1.0});
             external_files.back()->calcBaseEntryList(analysis_tag);
 
             std::cout<<"Checking for friend trees: "<<External_XMLconfig.bdt_friend_filenames[f].size()<<" "<<External_XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
@@ -1117,8 +1117,8 @@ int main (int argc, char *argv[]){
                     external_files.back()->setAsOffBeamData( External_XMLconfig.bdt_onbeam_pot[f], External_XMLconfig.bdt_onbeam_spills[f], External_XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
                 }
 
-                external_files.back()->calcPOT({"1"},{"1"},{1.0});
                 if(weightless)external_files.back()->makeWeightless();
+                external_files.back()->calcPOT({"1"},{"1"},{1.0});
                 external_files.back()->calcBaseEntryList(analysis_tag);
 
             std::cout<<"Checking for friend trees: "<<External_XMLconfig.bdt_friend_filenames[f].size()<<" "<<External_XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
@@ -2050,7 +2050,7 @@ int main (int argc, char *argv[]){
             if(which_file<0 || which_file==i){
                 
                 bdt_file * bfile = (isExternal ? external_files[i] : bdt_files[i]);
-
+                if(weightless)bfile->makeWeightless();
 
                 std::string flat_filename = flatten_dir+"FLATTEN_"+analysis_tag+"_"+bfile->tag+".root"; 
                 std::cout<<"FLATFILEDIR"<<std::endl;

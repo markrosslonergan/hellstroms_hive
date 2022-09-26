@@ -253,6 +253,7 @@ int convertToLibSVM(bdt_info& info, bdt_file *file){
     sslibSVM.open (name+"_"+file->tag+".libSVM.dat");
     TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
 
+    std::cout<<"Using weight branch of "<<file->weight_branch<<std::endl;
     TTreeFormula* weight = new TTreeFormula("sig_w",file->weight_branch.c_str(),file->tvertex);
 
     std::vector<TTreeFormula*> tree_formulas_v;
@@ -288,7 +289,7 @@ int convertToLibSVM(bdt_info& info, bdt_file *file){
                 sslibSVM<<id<<":"<<val<<" ";
             }else{
                 int id = id_v[t];
-              //  sslibSVM<<id<<":"<<-999<<" ";
+                sslibSVM<<id<<":"<<-999<<" ";
 
             }
         }
@@ -382,7 +383,7 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
             if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99 || val == -9)){
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }else{
-                //sslibSVMtrain<<id<<":"<<-999<<" ";
+                sslibSVMtrain<<id<<":"<<-999<<" ";
             
             }
         }
@@ -420,7 +421,7 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
             if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99 || val == -9)){
                 sslibSVMtest<<id<<":"<<val<<" ";
             }else{
-                //sslibSVMtest<<id<<":"<<-999<<" ";
+                sslibSVMtest<<id<<":"<<-999<<" ";
             }
         }
         sslibSVMtest<<std::endl;  
@@ -457,7 +458,7 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
             if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99 || val == -9)){
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }else{
-                //sslibSVMtrain<<id<<":"<<-999<<" ";
+                sslibSVMtrain<<id<<":"<<-999<<" ";
 
             }
         }
@@ -495,7 +496,7 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
             if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99 || val == -9)){
                 sslibSVMtest<<id<<":"<<val<<" ";
             }else{
-                //sslibSVMtest<<id<<":"<<-999<<" ";
+                sslibSVMtest<<id<<":"<<-999<<" ";
             }
         }
         sslibSVMtest<<std::endl;  
@@ -593,7 +594,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }else{
 
-               // sslibSVMtrain<<id<<":"<<-999<<" ";
+               sslibSVMtrain<<id<<":"<<-999<<" ";
             }
         }
         sslibSVMtrain<<std::endl;
@@ -616,7 +617,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
 
                 sslibSVMtest<<id<<":"<<val<<" ";
             }else{
-             //   sslibSVMtest<<id<<":"<<-999<<" ";
+                sslibSVMtest<<id<<":"<<-999<<" ";
 
             }
         }
@@ -641,7 +642,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
 
                 sslibSVMtrain<<id<<":"<<val<<" ";
             }else{
-             //   sslibSVMtrain<<id<<":"<<-999<<" ";
+                sslibSVMtrain<<id<<":"<<-999<<" ";
 
             }
         }
@@ -664,7 +665,7 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
             if(!(val!=val || val == -999 || val == -9999 || val == -99999 || val == -99 || val == -9)){
                 sslibSVMtest<<id<<":"<<val<<" ";
             }else{
-               // sslibSVMtest<<id<<":"<<-999<<" ";
+                sslibSVMtest<<id<<":"<<-999<<" ";
             }
         }
         sslibSVMtest<<std::endl;
