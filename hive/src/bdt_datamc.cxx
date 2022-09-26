@@ -691,7 +691,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             for(auto &f: mc_stack->stack){
 
                 double Nentries = f->GetEntries(var.additional_cut);
-                if(mc_stack->signal_on_top[n]) Nentries = 0.0; //remove from calculation
+		// Guanqun: print out signal events even when we plot it on top
+                //if(mc_stack->signal_on_top[n]) Nentries = 0.0; //remove from calculation
                 double Nevents = Nentries*(plot_pot/f->pot)*f->scale_data;
                 double N_MCerr = sqrt(Nentries)*(plot_pot/f->pot)*f->scale_data;
                 ;
@@ -738,7 +739,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 if(mc_stack->signal_on_top[n]){
                     which_signal = n;
-                    b_signal_on_top = true;
+                    //b_signal_on_top = true;
                 }
 
                 if(!remove_to_merge[n]){
@@ -1049,8 +1050,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             if(scale_signal_overlay){
                  scale_signal_hist = (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
                 //(TH1*)mc_stack->vec_hists[which_signal]->Clone(("signal_clone"+stage_names.at(s)).c_str());
-                double scal_val = NdatEvents/scale_signal_hist->Integral();
-                scale_signal_hist->Scale(scal_val*0.5);
+                double scal_val =230.0;
+                //double scal_val = NdatEvents/scale_signal_hist->Integral();
+                scale_signal_hist->Scale(scal_val);
                 //scale_signal_hist->Scale(100.0);
                 scale_signal_hist->SetFillStyle(0);
                 //scale_signal_hist->DrawCopy("hist same");
@@ -1058,7 +1060,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 scale_signal_hist->SetLineColor(mc_stack->stack.at(which_signal)->col);
                 scale_signal_hist->SetLineWidth(4);
                 scale_signal_hist->Draw("same hist");
-                l0->AddEntry(scale_signal_hist,("NC #Delta#rightarrowN#gamma (x"+to_string_prec(scal_val,0)+")").c_str(),"l");		
+                l0->AddEntry(scale_signal_hist,("NC Coherent 1 #gamma (x"+to_string_prec(scal_val,0)+")").c_str(),"l");		
             }
 
 
@@ -1182,13 +1184,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 leg_hack2->SetLineWidth(0);
                 leg_hack2->SetFillStyle(0);
                 if(!b_signal_on_top){
-                    l0->AddEntry(leg_hack2," ","l"); // Was le
+		    if(!scale_signal_overlay)
+                        l0->AddEntry(leg_hack2," ","l"); // Was le
                     l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
-                    l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
-                }
+                    //l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
+		}
             }
 
-            double yypos = 0.38;
+            double yypos = 0.38; //0.38
             double xxpos = 0.5;//0.5
             if(stack_mode)xxpos=0.55;
 
@@ -1232,6 +1235,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
                 //pottex.DrawLatex(.635,.48, pot_draw.c_str());
             } else{
                 //pottex.DrawLatex(.55,.60, pot_draw.c_str());
+	        //Guanqun: comment out the legend showing POT of the plots 
                 pottex.DrawLatex(xxpos,yypos+0.1, pot_draw.c_str());
             }
 
@@ -1242,7 +1246,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             uboone_tex.SetNDC();
             //uboone_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
             //uboone_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
-            uboone_tex.DrawLatex(xxpos,yypos+0.16,("MicroBooNE"));
+	    //Guanqun: comment out the legend showing "MicroBooNE"
+            uboone_tex.DrawLatex(xxpos,yypos+0.14,("MicroBooNE"));
+            //uboone_tex.DrawLatex(xxpos,yypos+0.16,("MicroBooNE in-progress"));
 
             TLatex descriptor_tex;
             descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
@@ -1250,7 +1256,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             descriptor_tex.SetNDC();
             //descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
             //descriptor_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
-            descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name+" Selection" ).c_str());
+	    //Guanqun: comment out the legend showing "xxx selections"
+            //descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name+" Selection" ).c_str());
+            descriptor_tex.DrawLatex(xxpos,yypos+0.02,(plot_stage == 0 ? "Topological Selection Stage" : (plot_stage == 1 ? "Pre-selection Stage" : (plot_stage == 5 ? "Final Selection": " "))));
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );

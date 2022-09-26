@@ -68,7 +68,6 @@ void FlatVar::special_character_check_helper(std::string& str){
 }
 
 void FlatVar::LinkWithTTree(TTree* tree){
-//int_type = 0, vint_type = -1, vdouble_type = 1, formula_type = 2;
     switch(type)
     {
     	case int_type:
@@ -119,6 +118,19 @@ double FlatVar::Evaluate(int index = 0){
     }
     return 0;
 }
+
+int FlatVar::GetLength() const{
+        if(!IsVector()){
+            throw std::runtime_error("This variable is not vector, can't get length..");
+        }
+
+        if(type == vint_type)
+            return bvint->size();
+        else
+            return bvdouble->size();
+        return 0;
+}
+
 void FlatVar::Print(){
     std::cout << "Flat Var, def: " << def << ", type: " << (type == int_type? " int" : (type == vint_type ? "vector of ints" : (type == vdouble_type ? "vector of doubles" : "TTree formula"))) << ", name: " << name << std::endl;
     return;
@@ -513,7 +525,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         run_fractions_file[i] = run_fractions_file[i]/combin;
     }
 
-    run_weight_string = "1.0*("+run_cuts[0]+"*"+std::to_string(run_fractions[0]/run_fractions_file[0]);
+    run_weight_string = "1.0*("+run_cuts[0]+"*"+std::to_string(run_fractions.at(0)/run_fractions_file.at(0));
 
 
     for(int i=1; i< run_fractions.size(); i++){
@@ -537,13 +549,14 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         //ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
         //std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
 
-
-
     }
 
-    vec_entry_lists.resize(flow.bdt_vector.size());
+        vec_entry_lists.resize(flow.bdt_vector.size());
 
       
+        ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
+        std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
+
 
     double potbranch = 0;
     int  numbranch = 0;
@@ -590,7 +603,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             if(isin) tmppot += potbranch;
         }
 
-        if (this->tag == "DarkNue"){
+        if (this->tag.find("DarkNue") != std::string::npos){
             tmppot = 2e21;
             std::cout<<"for the dark nue setting to arbitrary POT: "<<tmppot<<std::endl;
 
@@ -617,7 +630,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         weight_branch = "genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*("+run_weight_string+")*(GTruth_ResNum!=9)";
 
-        if(this->tag=="DarkNue"){
+        if(this->tag.find("DarkNue") != std::string::npos){
             weight_branch = "1";
         }
 
@@ -1926,9 +1939,6 @@ std::vector<double> bdt_file::getVector(bdt_variable & var, std::string  cuts){
 void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const std::string& treename, const std::string& num_candidate_var){
 
 
-    //define whether a branch in tree is int, or vector of int, or vector of doubles.
-    int is_int = 0, is_vint = -1, is_vdouble = 1, is_form = 2;
-
     //print out some debug info
     std::cout << variables.size() << " Variables flattened for tree: " << treename << " as follows: " << std::endl;
     for(auto& var : variables){
@@ -2073,12 +2083,10 @@ int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir , std::string
         while(last_event_index < orig_index){
              t_out->Fill();
              last_event_index++;  
-             //std::cout<<out_score->size()<<" "<<last_event_index<<" "<<orig_index<<" "<<i<<std::endl;
              out_score->clear();
         }
-
         tmva->GetNdata();
-        double tmp_score = tmva->EvalInstance();
+	double tmp_score = tmva->EvalInstance();
         out_score->push_back(tmp_score);
         
 
@@ -2086,22 +2094,21 @@ int bdt_file::MakeUnFlatTree(bdt_info & info, std::string & outdir , std::string
     //and fill the last entry that was missed by construction
     t_out->Fill();
     last_event_index++;
-
     out_score->clear();
 
     TVectorT<double> *original_file_events = (TVectorT<double>*)f->Get("original_file_nevents");
-    std::cout<<"Topping up any events a the end of the file "<<last_event_index<<" "<<(*original_file_events)(0)<<std::endl;
-    while(last_event_index < (*original_file_events)(0)){
+    std::cout<<"Topping up any events a the end of the file "<<last_event_index<<" "<<(*original_file_events)[0]<<std::endl;
+    while(last_event_index < (*original_file_events)[0]){
             t_out->Fill();
             last_event_index++;  
     }
+    std::cout<<"Final check of events saved to unflat file: "<<last_event_index<<" expected: "<<(*original_file_events)[0]<<std::endl;
 
 
     t_out->Write();
     fout->Close();
 
 
-    std::cout<<out_score->size()<<" "<<last_event_index<<" "<<orig_index<<" "<<std::endl;
     out_score->clear();
 
     return 0;
