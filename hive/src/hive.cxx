@@ -1076,7 +1076,6 @@ int main (int argc, char *argv[]){
             //First lets read the external XML file that contains the external things
             MVALoader External_XMLconfig(external_xml,-1);
             std::vector<method_struct> External_TMVAmethods  = External_XMLconfig.GetMethods(); 
-
             std::vector<bdt_file*> external_files;
 
             for(size_t f = 0; f < External_XMLconfig.GetNFiles(); ++f){
@@ -1105,7 +1104,6 @@ int main (int argc, char *argv[]){
                     std::cout<<" -- Scaling "<<External_XMLconfig.bdt_tags[f]<<" file by a factor of "<<External_XMLconfig.bdt_scales[f]<<std::endl;
                     external_files.back()->scale_data = External_XMLconfig.bdt_scales[f];
                 }
-
 
                 if(External_XMLconfig.bdt_is_onbeam_data[f]){
                     std::cout<<" -- Setting as ON beam data with "<<External_XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
