@@ -247,17 +247,20 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
     DMatrixHandle dfile;
     safe_xgboost(XGDMatrixCreateFromFile((info.identifier+"_"+f->tag+".libSVM.dat").c_str(), 0, &dfile));
 
+
     bst_ulong out_len = 0;
     const float* out_result = NULL;
 
     XGBoosterPredict(booster, dfile, 0, 0, &out_len, &out_result);
+
+    std::cout<<"XGApp - Beginning loop over precut_list. tvertex has "<<f->tvertex->GetEntries()<<" and precut_list has: "<<f->precut_list->GetN()<<std::endl;
 
     size_t have_filled = 0;
     size_t working_index = f->precut_list->GetEntry(0);
     for (int i = 0; i < out_len; ++i) {
 
         while(have_filled < working_index){
-            std::cout<<have_filled<<" "<<working_index<<" "<<i<<" "<<-999<<std::endl;      
+            std::cout<<"LESS "<<have_filled<<" "<<working_index<<" "<<i<<" "<<-999<<std::endl;      
             mva = -999;
             mva2 =mva;
             tree->Fill();
@@ -265,7 +268,7 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
         }
         if(have_filled == working_index){
 
-            std::cout<<have_filled<<" "<<working_index<<" "<<i<<" "<<out_result[i]<<std::endl;      
+            std::cout<<"EQUI "<<have_filled<<" "<<working_index<<" "<<i<<" "<<out_result[i]<<std::endl;      
             mva = out_result[i];
             mva2 = mva;
             tree->Fill();
@@ -276,7 +279,7 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
         }   
     }
     while(have_filled < f->tvertex->GetEntries()){
-        std::cout<<have_filled<<" "<<working_index<<" "<<f->tvertex->GetEntries()<<" "<<-999<<std::endl;      
+        std::cout<<"FIN "<<have_filled<<" "<<working_index<<" "<<f->tvertex->GetEntries()<<" "<<-999<<std::endl;      
         mva = -999;
         mva2 = mva;
         tree->Fill();

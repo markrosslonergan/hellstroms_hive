@@ -789,6 +789,8 @@ int bdt_file::calcPrecutEntryList(){
         precut_key+=s;
     }
     precut_key+=this->flow.base_cuts;
+    //curcual, add on primary ttree name!
+    precut_key+=this->primary_ttree_name;
 
 
     unsigned long precut_hash = this->jenkins_hash(precut_key); 
@@ -796,7 +798,7 @@ int bdt_file::calcPrecutEntryList(){
     std::string s_precut_hash = std::to_string(precut_hash);
 
     std::string filename = this->tag+"_entrylists.root";
-    precut_list_name = "precut_list_"+this->tag;
+    precut_list_name = "precut_list_"+analysis_tag+"_"+this->tag+"_"+this->primary_ttree_name;
 
     std::ifstream ifile(filename.c_str());
     bool does_local_exist = (bool)ifile;
@@ -815,7 +817,8 @@ int bdt_file::calcPrecutEntryList(){
 
         if(fpre->GetListOfKeys()->Contains(precut_list_name.c_str()) &&hash_right  ) {
 
-            std::cout<<"And it contains a list. Loading"<<std::endl;
+
+            std::cout<<"And it contains a list. Loading precut_list_name: "<<precut_list_name<<std::endl;
 
             precut_list = (TEntryList*)fpre->Get(precut_list_name.c_str());
         } else{
@@ -881,6 +884,9 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
         precut_key+=s;
     }
     precut_key+=this->flow.base_cuts;
+    //curcual, add on primary ttree name!
+    precut_key+=this->primary_ttree_name;
+
 
     unsigned long precut_hash = this->jenkins_hash(precut_key); 
     std::cout<<"These particular precuts and definitions have a hash of "<<precut_hash<<std::endl;
@@ -888,7 +894,7 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
     std::string filename = this->tag+"_"+analysis_tag+"_entrylists.root";
     topological_list_name = "topological_list_"+analysis_tag+"_"+this->tag;
-    precut_list_name = "precut_list_"+analysis_tag+"_"+this->tag;
+    precut_list_name = "precut_list_"+analysis_tag+"_"+this->tag+"_"+this->primary_ttree_name;
 
     std::ifstream ifile(filename.c_str());
     bool does_local_exist = (bool)ifile;
