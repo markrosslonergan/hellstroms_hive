@@ -1121,7 +1121,7 @@ TH2D* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, st
     this->tvertex->Draw((vary.name+":"+varx.name+">>"+nam+bin).c_str() , ("("+cuts+")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
 
     //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
-    TH2* th2 = (TH2*)gDirectory->Get(nam.c_str()) ;
+    TH2D* th2 = (TH2D*)gDirectory->Get(nam.c_str()) ;
     //th1->Sumw2();
 
     th2->Scale(this->scale_data*plot_POT/this->pot);
