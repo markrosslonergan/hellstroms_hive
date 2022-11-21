@@ -314,7 +314,7 @@ struct bdt_file{
 
 	/* Grab 2D histogram of variable varx and vary, with provided cuts applied 
  	 */
-        TH2* getTH2(bdt_variable varx, bdt_variable vary, std::string cuts, std::string nam, double plot_POT);
+        TH2D* getTH2(bdt_variable varx, bdt_variable vary, std::string cuts, std::string nam, double plot_POT);
 
         std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
         std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
