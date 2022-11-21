@@ -101,12 +101,12 @@ void bdt_covar::GenerateDetectorCovar(const std::string& xml){
 void bdt_covar::MergeCovar(){
 
     if(pvar->full_sys()){
-	std::string file_tag = pvar->GetCovarFileID(stage);
-	std::vector<std::string> files_to_merge = {file_dir + file_tag + "_FluxXS.SBNcovar.root", file_dir + file_tag + "_Det.SBNcovar.root"};
-	merge_covar(files_to_merge, file_dir + file_tag + ".SBNcovar.root");
-	pvar->UpdateCovarFileName(file_tag + ".SBNcovar.root", file_dir);
-	pvar->UpdateCovarName("frac_covariance");
-	pvar->UpdateCovarType("frac");
+        std::string file_tag = pvar->GetCovarFileID(stage);
+        std::vector<std::string> files_to_merge = {file_dir + file_tag + "_FluxXS.SBNcovar.root", file_dir + file_tag + "_Det.SBNcovar.root"};
+        merge_covar(files_to_merge, file_dir + file_tag + ".SBNcovar.root");
+        pvar->UpdateCovarFileName(file_tag + ".SBNcovar.root", file_dir);
+        pvar->UpdateCovarName("frac_covariance");
+        pvar->UpdateCovarType("frac");
     }
     return;
 }
