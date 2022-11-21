@@ -543,8 +543,8 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         vec_entry_lists.resize(flow.bdt_vector.size());
 
       
-        ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
-        std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
+        //ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
+        //std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
     }
 
     double potbranch = 0;
