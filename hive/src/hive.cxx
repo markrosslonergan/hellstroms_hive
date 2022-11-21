@@ -90,6 +90,7 @@ int main (int argc, char *argv[]){
 
     std::string flatten_dir = "./";
 
+
     bool plot_train_only = false;
     bool run1_only = false;
 
@@ -1400,6 +1401,20 @@ int main (int argc, char *argv[]){
             }
 
             return 0;
+        }else if(mode_option == "fancy2d"){
+
+            if(which_file<0) which_file = 0; //default to first file.
+            
+            if(XMLconfig.v_eff_denom_stage.size()!= 1){
+                std::cout<<"Warning your running Eff Fancy with no XML inputs, breaking."<<std::endl;
+                return 0;
+            }
+
+                 
+            fancyFiciency2D(bdt_files[which_file], XMLconfig.v_eff_denom_cut[0], XMLconfig.v_eff_numer_cut[0], vars[which_stage], vars[which_group], analysis_tag, XMLconfig.v_eff_denom_stage[0], XMLconfig.v_eff_numer_stage[0], fbdtcuts,XMLconfig.v_eff_denom_name[0],XMLconfig.v_eff_numer_name[0]);
+
+            return 0;
+
 
         }else if(mode_option == "eff"){
 

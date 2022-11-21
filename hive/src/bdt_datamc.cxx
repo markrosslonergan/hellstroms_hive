@@ -739,7 +739,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
 
                 if(mc_stack->signal_on_top[n]){
                     which_signal = n;
-                    //b_signal_on_top = true;
+                    b_signal_on_top = true;
                 }
 
                 if(!remove_to_merge[n]){
@@ -1089,7 +1089,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             std::size_t found = var.unit.find(massSearch);
 
             // Fit Gaussian to that variable
-            if (found != std::string::npos ) {
+            if (found != std::string::npos &&false) {
                 std::cout << "[BLARG] Fitting " << var.unit << " stage " << std::to_string(s) << std::endl;
                 TF1 *gausfit_data  = new TF1("gausfit_data" , "gaus", 0.05 , 0.25);
                 //TF1 *gausfit_data2 = new TF1("gausfit_data2", "gaus", 0.135, 0.245);
@@ -1257,8 +1257,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::ve
             //descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
             //descriptor_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
 	    //Guanqun: comment out the legend showing "xxx selections"
-            //descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name+" Selection" ).c_str());
-            descriptor_tex.DrawLatex(xxpos,yypos+0.02,(plot_stage == 0 ? "Topological Selection Stage" : (plot_stage == 1 ? "Pre-selection Stage" : (plot_stage == 5 ? "Final Selection": " "))));
+            descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name+" Selection" ).c_str());
+            //descriptor_tex.DrawLatex(xxpos,yypos+0.02,(plot_stage == 0 ? "Topological Selection Stage" : (plot_stage == 1 ? "Pre-selection Stage" : (plot_stage == 5 ? "Final Selection": " "))));
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );

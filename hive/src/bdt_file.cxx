@@ -546,8 +546,8 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         tvertex->AddFriend(teventweight);
         std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
    
-        ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
-        std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
+        //ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
+        //std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
 
     }
 
@@ -798,7 +798,7 @@ int bdt_file::calcPrecutEntryList(){
     std::string s_precut_hash = std::to_string(precut_hash);
 
     std::string filename = this->tag+"_entrylists.root";
-    precut_list_name = "precut_list_"+analysis_tag+"_"+this->tag+"_"+this->primary_ttree_name;
+    precut_list_name = "precut_list_"+this->tag+"_"+this->primary_ttree_name;
 
     std::ifstream ifile(filename.c_str());
     bool does_local_exist = (bool)ifile;
@@ -1113,7 +1113,7 @@ int bdt_file::scanStage(int which_stage, std::vector<double> bdt_cuts , std::str
     return 0;
 }
 
-TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std::string nam, double plot_POT){
+TH2D* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std::string nam, double plot_POT){
     std::string binx = varx.binning;
     std::string biny = vary.binning;
 
@@ -1131,16 +1131,16 @@ TH2* bdt_file::getTH2(bdt_variable varx,bdt_variable vary, std::string cuts, std
 
     std::string bin = binx_c + std::string(", ") + biny_c ;
 
-    std::cout<<"Starting to get for "<<(varx.name+vary.name+">>"+bin ).c_str()<<std::endl;
+    std::cout<<"Starting to get for "<<(varx.name+":"+vary.name+">>"+bin ).c_str()<<std::endl;
     TCanvas *ctmp = new TCanvas();
     // this->CheckWeights();
     this->tvertex->Draw((vary.name+":"+varx.name+">>"+nam+bin).c_str() , ("("+cuts+")*"+this->weight_branch).c_str(),"goff");
-    //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
-    TH2* th2 = (TH2*)gDirectory->Get(nam.c_str()) ;
+    std::cout<<"Done with Draw,weights of "<<("("+cuts+")*"+this->weight_branch)<<std::endl;
+    TH2D* th2 = (TH2D*)gDirectory->Get(nam.c_str()) ;
     //th1->Sumw2();
 
     th2->Scale(this->scale_data*plot_POT/this->pot);
-    //std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th2->GetSumOfWeights()<<std::endl;
+    std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th2->GetSumOfWeights()<<std::endl;
     //th2->SetLineColor(col);
     //th2->SetLineWidth(1);
     th2->SetStats(0);

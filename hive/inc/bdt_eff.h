@@ -31,6 +31,7 @@
 #include "TStyle.h"
 #include "TGaxis.h"
 int fancyFiciency(bdt_file *file,std::string, std::string additonal_defin, bdt_variable & var, std::string tag, int denom_stage, int numer_stage,std::vector<double> bdtcuts,std::string,std::string);
+int fancyFiciency2D(bdt_file *file,std::string, std::string additonal_defin, bdt_variable & var1, bdt_variable & var2, std::string tag, int denom_stage, int numer_stage,std::vector<double> bdtcuts,std::string,std::string);
 
 int nue_efficiency(bdt_file* filein, std::vector<std::string> v_topo, std::vector<std::string> v_precuts , std::vector<double> bdt_cuts, double plot_POT,std::string tag);
 

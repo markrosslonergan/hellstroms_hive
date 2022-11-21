@@ -260,7 +260,7 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
     for (int i = 0; i < out_len; ++i) {
 
         while(have_filled < working_index){
-            std::cout<<"LESS "<<have_filled<<" "<<working_index<<" "<<i<<" "<<-999<<std::endl;      
+            //std::cout<<"LESS "<<have_filled<<" "<<working_index<<" "<<i<<" "<<-999<<std::endl;      
             mva = -999;
             mva2 =mva;
             tree->Fill();
@@ -268,7 +268,7 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
         }
         if(have_filled == working_index){
 
-            std::cout<<"EQUI "<<have_filled<<" "<<working_index<<" "<<i<<" "<<out_result[i]<<std::endl;      
+           // std::cout<<"EQUI "<<have_filled<<" "<<working_index<<" "<<i<<" "<<out_result[i]<<std::endl;      
             mva = out_result[i];
             mva2 = mva;
             tree->Fill();
@@ -279,7 +279,7 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
         }   
     }
     while(have_filled < f->tvertex->GetEntries()){
-        std::cout<<"FIN "<<have_filled<<" "<<working_index<<" "<<f->tvertex->GetEntries()<<" "<<-999<<std::endl;      
+     //   std::cout<<"FIN "<<have_filled<<" "<<working_index<<" "<<f->tvertex->GetEntries()<<" "<<-999<<std::endl;      
         mva = -999;
         mva2 = mva;
         tree->Fill();

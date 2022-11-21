@@ -1322,4 +1322,35 @@ int fancyFiciency(bdt_file *file, std::string additional_denom, std::string addi
 
 
 
+int fancyFiciency2D(bdt_file *file, std::string additional_denom, std::string additional_numer, bdt_variable & var1, bdt_variable & var2,std::string tag, int denom_stage, int numer_stage,std::vector<double> bdtcuts, std::string denom_name, std::string numer_name){
+
+
+
+    TCanvas * ceff = new TCanvas();
+    TPad *p = (TPad*)ceff->cd();
+
+    std::string denom_cuts = "("+file->getStageCuts(denom_stage,bdtcuts)+"&&"+additional_denom+")";
+    TH2D* h_spec_denom = (TH2D*)file->getTH2(var1,var2, denom_cuts, "true_"+var1.safe_unit+"_num_"+file->tag, 6.6e20);
+
+    std::string numer_cuts = "("+file->getStageCuts(numer_stage,bdtcuts)+"&&"+additional_numer+ ")";
+    TH2D* h_spec_numer = (TH2D*)file->getTH2(var1,var2, numer_cuts, "true_"+var1.safe_unit+"_num_"+file->tag, 6.6e20);
+
+    std::cout<<"Gotten stage cuts"<<std::endl;
+    p->cd();
+
+    int col1 = kBlue -4;
+    int col2 = kRed - 4;
+
+    std::cout<<"Integral Denom: "<<h_spec_denom->Integral()<<" Integral Numer: "<<h_spec_numer->Integral()<<std::endl;
+    h_spec_numer->Divide(h_spec_denom);
+    h_spec_numer->Scale(100.0);
+    h_spec_numer->Draw("colz");
+
+    
+    ceff->SaveAs(("fancyFiciency2D_"+tag+"_"+file->tag+"_"+var1.safe_unit+var2.safe_unit+"_stage_"+std::to_string(numer_stage)+"_over_"+std::to_string(denom_stage)+".pdf").c_str(),"pdf");
+    return 0;
+}
+
+
+
 
