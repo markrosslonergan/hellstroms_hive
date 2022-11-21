@@ -44,6 +44,8 @@ class bdt_efficiency{
 
         std::vector<double> verticies;
 
+
+	/* print out selection efficiency and generate efficiency distributions */
         bdt_efficiency(bdt_file*, std::string denomin,double,double);
         bdt_efficiency(bdt_file*, std::string denomin,double,double,bool);
         bdt_efficiency(bdt_file* filein, std::vector<std::string> denomin, std::vector<std::string> topoin, std::vector<std::string> precuts, double c1, double c2, double p);

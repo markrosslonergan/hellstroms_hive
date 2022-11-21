@@ -175,11 +175,11 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
         std::string add_wei = "1.0";
         while(pAddWeight){
                 std::string unpar =  pAddWeight->GetText();
-                std::string parsed = this->AliasParse(unpar);
-                add_wei = parsed;
+                add_wei += "*(" + this->AliasParse(unpar) + ")";
             pAddWeight = pAddWeight->NextSiblingElement("additional_weight");
             }
         bdt_additional_weights.push_back(add_wei);
+
 
         TiXmlElement *pDefinition = pBDTfile->FirstChildElement("definition");
         std::vector<std::string> this_denom; 
@@ -423,7 +423,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
     TiXmlElement *pPlotPOT;
     pPlotPOT = doc.FirstChildElement("plot_pot");
     num_plot_periods = 0; 
-       while(pPlotPOT )
+    while(pPlotPOT )
     {
 
                TiXmlElement *pRunPeriod = pPlotPOT->FirstChildElement("run_period");
@@ -441,6 +441,13 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             pRunPeriod = pRunPeriod->NextSiblingElement("run_period");
         }   
        
+
+	TiXmlElement *pEventID = pPlotPOT->FirstChildElement("event_indicator");
+	event_level_identifier = "1";
+  	if(pEventID)
+	   event_level_identifier = std::string(pEventID->GetText());
+
+
         pPlotPOT = pPlotPOT->NextSiblingElement("plot_pot");
     }
     if(num_plot_periods==0){
@@ -772,12 +779,10 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         std::string add_wei = "1.0";
         while(pAddWeight){
                 std::string unpar =  pAddWeight->GetText();
-                std::string parsed = this->AliasParse(unpar);
-                add_wei = parsed;
+                add_wei += "*(" + this->AliasParse(unpar) + ")";
             pAddWeight = pAddWeight->NextSiblingElement("additional_weight");
             }
         bdt_additional_weights.push_back(add_wei);
-
 
 
         TiXmlElement *pDefinition = pBDTfile->FirstChildElement("definition");
@@ -944,6 +949,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
     bool has_global_covar = false;
     std::string global_covar_dir;
     std::string global_covar_name;
+    std::string global_covar_sys;
     std::string global_leg_name;
     std::string global_covar_type;
     while(pCovar){
@@ -951,6 +957,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
 
         const char* var_covar_dir = pCovar->Attribute("dir");
         const char* var_covar_name = pCovar->Attribute("name");
+        const char* var_covar_sys = pCovar->Attribute("sys");
         const char* var_leg_name = pCovar->Attribute("plotname");
         const char* var_covar_type = pCovar->Attribute("type");
         if (var_covar_dir==NULL || var_covar_name==NULL){
@@ -959,10 +966,17 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             global_covar_dir = var_covar_dir;
             global_covar_name = var_covar_name;
 
-            if(var_covar_type==NULL){ global_covar_type="full";}
+            if(var_covar_type==NULL){ global_covar_type="frac";}
             else{
                 global_covar_type = var_covar_type;
             }
+
+	    global_covar_sys = "fluxxsdet"; 
+	    if(var_covar_sys != NULL)
+		global_covar_sys = var_covar_sys;
+
+        if(m_error_string!="stat") global_covar_sys = m_error_string;
+
             global_leg_name = var_leg_name;
             std::cout<<"Loading a GLOBAL covariance matrix direectory"<<std::endl;
         }
@@ -1011,9 +1025,10 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         var_cut = "("+var_cut+")";
         std::cout<<"Adding an additional_cut of "<<var_cut<<std::endl;
 
-
+	std::string covar_dir;
         std::string covar_file;
         std::string covar_name;
+        std::string covar_sys;
         std::string covar_plotname;
         std::string covar_type;
         std::string covar_leg = "default";
@@ -1022,6 +1037,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         bool has_covar = false;
         const char* var_covar_file = pVar->Attribute("covarfile");
         const char* var_covar_name = pVar->Attribute("covarname");
+        const char* var_covar_sys = pVar->Attribute("covarsys");
         const char* var_covar_plotname = pVar->Attribute("plotname");
         const char* var_covar_type = pVar->Attribute("covartype");
         
@@ -1029,12 +1045,17 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             has_covar= false;
         }else{
             has_covar= true;
+	    covar_dir = "";
             covar_file = var_covar_file;
             covar_name = var_covar_name;
         }
 
+	covar_sys = "fluxxsdet";
+ 	if(var_covar_sys != NULL )
+	    covar_sys = var_covar_sys;
+
         if (var_covar_plotname==NULL){
-            var_covar_plotname = "Not Set";
+            covar_plotname = "Not Set";
         }else{
             covar_plotname = var_covar_plotname;
         }
@@ -1049,8 +1070,10 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
 
         if(has_global_covar && m_error_string!="stat"){
             has_covar= true;
-            covar_file =  global_covar_dir;
+            covar_dir =  global_covar_dir;
+	    covar_file = "";
             covar_name = global_covar_name;
+            covar_sys = global_covar_sys;
             covar_leg = global_leg_name;
             covar_type = global_covar_type;
         }
@@ -1092,15 +1115,13 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         t.additional_cut = var_cut;
         std::cout<<"t.additional_cut = "<<t.additional_cut <<std::endl;
         if(has_covar){
-            std::cout<<"Adding a covariance matrix "<<covar_name<<" from file "<<covar_file<<std::endl;
-            if(has_global_covar){
-                   covar_file = covar_file+"/VID"+std::to_string(n_var)+"_"+m_error_string+".SBNcovar.root";
-            }
-            
-            t.addCovar(covar_name,covar_file);
+            std::cout<<"Adding a covariance matrix "<< covar_name<<" from directory [" << covar_dir << "] and file ["<<covar_file<< "]" << std::endl;
+            t.addCovar(covar_name,covar_dir, covar_file);
             t.covar_legend_name = covar_leg; 
+	    t.covar_sys = covar_sys;
             t.covar_type = covar_type;
         }
+
 
 
 

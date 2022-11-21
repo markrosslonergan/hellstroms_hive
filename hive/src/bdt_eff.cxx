@@ -530,15 +530,14 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<"File has  "<<filein->GetEntries("1")*conversion<<" events when scaled to "<<plot_POT<<std::endl;
 
 
-    denominator = "";
+    
+    denominator = " 1 ";
 
-   for(int i=0; i<v_denomin.size();i++){
+    // get bdt file definition 
+    for(int i=0; i<v_denomin.size();i++){
         std::cout<<" On Cut "<<v_denomin[i]<<std::endl;
-        if(i==0){
-            denominator = v_denomin[i];
-        }else{
-            denominator += "&&"+v_denomin[i];
-        }
+        denominator += "&&"+v_denomin[i];
+        
         // std::cout<<"denominator = "<<denominator<<std::endl;
         double tmp_events =  filein->GetEntries(denominator)*conversion;
         std::cout<<"filein->GetEntries(denominator)*conversion =  "<<filein->GetEntries(denominator)*conversion<<std::endl;
@@ -560,15 +559,13 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
           std::cout<<"starting on variable "<<var.safe_unit<<std::endl; 
           */
 
-    std::string topocuts = "";
+    // get events after definition cut and topological cut 
+    std::string topocuts = " 1 ";
     double n_topo_events = 0;
     for(int i=0; i<v_topo.size();i++){
         std::cout<<" On topo: "<<v_topo[i]<<std::endl;
-        if(i==0){
-            topocuts = v_topo[i];
-        }else{
-            topocuts += "&&"+v_topo[i];
-        }
+        topocuts += "&&"+v_topo[i];
+        
         double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts)*conversion;
         double tmp_events_just_this =  filein->GetEntries(denominator+"&&"+v_topo[i])*conversion;
         std::cout<<"--- this file has: "<<tmp_events<<" which on its own is a ("<<tmp_events_just_this/n_starting_events*100.0<<"%) effect"<<std::endl;
@@ -577,15 +574,14 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     std::cout<<"So the DENOMINATOR + TOPOLOGICAL is "<<n_topo_events<<std::endl;
     std::cout<<"So total Pandora Reco Efficiency is "<<n_topo_events/n_starting_events*100.0<<"%"<<std::endl;
 
-    std::string precuts = "";
+
+    // get events after definition cut, topological cut and precuts
+    std::string precuts = " 1 ";
     double n_precut_events = 0;
     for(int i=0; i<v_precuts.size();i++){
         std::cout<<" On precut: "<<v_precuts[i]<<std::endl;
-        if(i==0){
-            precuts = v_precuts[i];
-        }else{
-            precuts += "&&"+v_precuts[i];
-        }
+        precuts += "&&"+v_precuts[i];
+        
         double tmp_events =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+precuts)*conversion;
         double tmp_events_just_this =  filein->GetEntries(denominator+"&&"+topocuts+"&&"+v_precuts[i])*conversion;
         std::cout<<"--- this file has: "<<tmp_events<<" which on its own is a ("<<tmp_events_just_this/n_topo_events*100.0<<"%) effect relative to topo"<<std::endl;
@@ -636,6 +632,8 @@ bdt_efficiency::bdt_efficiency(bdt_file* filein, std::vector<std::string> v_deno
     //    std::string recotruthmatchingcuts = "1";
 
 
+
+    //Guanqun: entrylist already set up by file->setStageEntryList(plot_stage) before, so this doesn't work if plot_stage >= 1, unless var.additional_cut is setup
     if(plot_stage==0){
         h_true_photon_numer = (TH1*)file->getTH1(true_photon, denominator+"&&"+topocuts + "&&" + recotruthmatchingcuts , "photon_true_numer", 10.1e20);
     }else{

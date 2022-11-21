@@ -8,10 +8,12 @@
 #include "TSystem.h"
 
 
+#include "global_func.h"
 #include "variable_list.h"
 #include "bdt_file.h"
 #include "bdt_datamc.h"
 #include "bdt_var.h"
+#include "bdt_covar.h"
 #include "bdt_varplot.h"
 #include "bdt_precalc.h"
 #include "bdt_info.h"
@@ -31,15 +33,6 @@
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name,bool shape_only);
 
-std::string ReplaceString(std::string subject, const std::string& search,
-        const std::string& replace) {
-    size_t pos = 0;
-    while ((pos = subject.find(search, pos)) != std::string::npos) {
-        subject.replace(pos, search.length(), replace);
-        pos += replace.length();
-    }
-    return subject;
-}
 
 
 int main (int argc, char *argv[]){
@@ -300,6 +293,7 @@ int main (int argc, char *argv[]){
     MVALoader XMLconfig(xml,true,systematics_error_string);
     std::vector<method_struct> TMVAmethods  = XMLconfig.GetMethods(); 
     std::string analysis_tag = XMLconfig.analysis_tag;
+    std::string event_identifier = XMLconfig.event_level_identifier;
 
     std::vector<double> fbdtcuts = XMLconfig.bdt_cuts;
     if(fbdtcuts.size()==0){
@@ -375,7 +369,7 @@ int main (int argc, char *argv[]){
         }
 
         std::cout<<def<<std::endl;
-        bdt_flow analysis_flow(topological_cuts, def, 	vec_precuts,	postcuts,	bdt_infos);
+        bdt_flow analysis_flow(topological_cuts, def, 	vec_precuts,	postcuts,	bdt_infos, fbdtcuts);
 
         std::cout<<" -- Filename "<<XMLconfig.bdt_filenames[f]<<" subdir "<<XMLconfig.bdt_dirs[f]<<std::endl;
         std::cout<<" -- TTreeName "<<XMLconfig.bdt_ttree_names[f]<<std::endl;
@@ -385,8 +379,12 @@ int main (int argc, char *argv[]){
             std::cout<<" -- ---> "<<XMLconfig.bdt_definitions[f][i]<<std::endl;
         }
 
-        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , analysis_flow, XMLconfig.bdt_ttree_names[f].c_str()));
+        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , XMLconfig.bdt_additional_weights[f], analysis_flow, XMLconfig.bdt_ttree_names[f].c_str()));
 
+
+        if(event_identifier != "1"){
+	    bdt_files.back()->setEventIdentifier(event_identifier);
+	}
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         bdt_files.back()->addDataDescriptor(XMLconfig.bdt_data_descriptor[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
@@ -395,7 +393,7 @@ int main (int argc, char *argv[]){
 
         if(XMLconfig.bdt_scales[f] != 1.0){
             std::cout<<" -- Scaling "<<XMLconfig.bdt_tags[f]<<" file by a factor of "<<XMLconfig.bdt_scales[f]<<std::endl;
-            bdt_files.back()->scale_data = XMLconfig.bdt_scales[f];
+            bdt_files.back()->scale(XMLconfig.bdt_scales[f]);
         }
 
         if(XMLconfig.bdt_is_onbeam_data[f]){
@@ -414,7 +412,8 @@ int main (int argc, char *argv[]){
             std::cout<<" -- Setting as Off beam data with "<<XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
             if(run1_only && !XMLconfig.bdt_is_training_signal[f]){
                 std::cout<<" -- WOOPS we have it set to Run 1 only, manually resetting EXT spills to 28190365.0"<<std::endl;
-                off_spills = 28190365.0;
+                //off_spills = 2633564.9;    // temporary, to match run1 open data -- wrong number, simply scaled
+                off_spills = 28190365.0; // all run1 spill
             }
 
             bdt_files.back()->setAsOffBeamData( on_pot, on_spills, off_spills);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
@@ -553,7 +552,7 @@ int main (int argc, char *argv[]){
                 std::cout<<" -- ---> "<<External_XMLconfig.bdt_definitions[f][i]<<std::endl;
             }
 
-            external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , external_analysis_flow,External_XMLconfig.bdt_ttree_names[f]));
+            external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] ,External_XMLconfig.bdt_additional_weights[f],  external_analysis_flow, External_XMLconfig.bdt_ttree_names[f]));
 
             external_files.back()->addPlotName(External_XMLconfig.bdt_plotnames[f]);
 
@@ -744,7 +743,7 @@ int main (int argc, char *argv[]){
                 if(div_bin)datamc.setDivBin(div_scale);
 
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                datamc.plotStacks(ftest,  tmp_var , fbdtcuts,additional_tag, bdt_infos);
+                datamc.plotStacks(ftest,  tmp_var , additional_tag);
             }else{
                 std::vector<bdt_variable> tmp_vars;
                 for(auto &v: vars){
@@ -765,7 +764,7 @@ int main (int argc, char *argv[]){
 
 
                         real_datamc.setErrorString(systematics_error_string);
-                        real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,additional_tag,bdt_infos);
+                        real_datamc.plotStacks(ftest, tmp_vars, additional_tag);
                     }
 
                 } else {
@@ -778,7 +777,7 @@ int main (int argc, char *argv[]){
                     if(lee_on_top)real_datamc.setLEEonTop();
                     if(div_bin)real_datamc.setDivBin(div_scale);
 
-                    real_datamc.plotStacks(ftest, tmp_vars, fbdtcuts,additional_tag,bdt_infos);
+                    real_datamc.plotStacks(ftest, tmp_vars, additional_tag);
 
                 }
             }
@@ -840,7 +839,7 @@ int main (int argc, char *argv[]){
                 //datamc.printPassingPi0DataEvents("tmp", 2, fbdtcuts);
                 //datamc.setSubtractionVector(subv);
                 std::vector<bdt_variable> tmp_var = {vars.at(number)};
-                datamc.plotStacks(ftest,  tmp_var , fbdtcuts, additional_tag , bdt_infos);
+                datamc.plotStacks(ftest,  tmp_var , additional_tag );
                 // TODO: Commented out for time's sake. Put back in later
                 //datamc.plotEfficiency(tmp_var,fbdtcuts,1,(which_stage>1 ? which_stage : 2));
             }else{
@@ -881,11 +880,11 @@ int main (int argc, char *argv[]){
                 if(plot_train_only) real_datamc.SetSpectator();
 
                 if(which_bdt==-1){
-                    real_datamc.plotStacks(ftest, tmp_vars,  fbdtcuts, additional_tag, bdt_infos);
+                    real_datamc.plotStacks(ftest, tmp_vars,  additional_tag);
                     // TODO: Commented out for time's sake. Put back in later
                     //real_datamc.plotEfficiency(tmp_vars,fbdtcuts,1, (which_stage > 1? which_stage : 2 ) );
                 }else{
-                    real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, fbdtcuts, additional_tag, bdt_infos);
+                    real_datamc.plotStacks(ftest, bdt_infos[which_bdt].train_vars, additional_tag);
                     // TODO: Commented out for time's sake. Put back in later
                     //real_datamc.plotEfficiency(bdt_infos[which_bdt].train_vars,fbdtcuts,1,  (which_stage >1 ? which_stage :2 ));
                 }
@@ -1045,9 +1044,10 @@ int main (int argc, char *argv[]){
 
             if (vector != ""){//if passed specific variables
                 std::vector<bdt_variable> tmp_var =  real_datamc.GetSelectVars(vector, vars);
-                real_datamc.plot2D(ftest, tmp_var, fbdtcuts);
+                //real_datamc.plot2D(ftest, tmp_var, true);   //set scatter plot 
+                real_datamc.plot2D(ftest, tmp_var); 	    //set binned histograms
             }else{    
-                real_datamc.plot2D(ftest, vars, fbdtcuts); //warning this will make a lot of plots
+                real_datamc.plot2D(ftest, vars); //warning this will make a lot of plots
             }//if passed a vector
         }
         else if(mode_option == "precalc"){ 
@@ -1097,13 +1097,13 @@ int main (int argc, char *argv[]){
                     std::cout<<" -- ---> "<<External_XMLconfig.bdt_definitions[f][i]<<std::endl;
                 }
 
-                external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , external_analysis_flow, External_XMLconfig.bdt_ttree_names[f]));
+                external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , External_XMLconfig.bdt_additional_weights[f], external_analysis_flow));
 
                 external_files.back()->addPlotName(External_XMLconfig.bdt_plotnames[f]);
 
                 if(External_XMLconfig.bdt_scales[f] != 1.0){
                     std::cout<<" -- Scaling "<<External_XMLconfig.bdt_tags[f]<<" file by a factor of "<<External_XMLconfig.bdt_scales[f]<<std::endl;
-                    external_files.back()->scale_data = External_XMLconfig.bdt_scales[f];
+                    external_files.back()->scale(External_XMLconfig.bdt_scales[f]);
                 }
 
                 if(External_XMLconfig.bdt_is_onbeam_data[f]){
@@ -1212,7 +1212,7 @@ int main (int argc, char *argv[]){
                     scan_likelihood(stack_bdt_files, bdt_infos);
                     break;
                 case 2:
-                    scan_significance_random(signal_bdt_files, bkg_bdt_files, bdt_infos,sig_type); //this
+                    scan_significance_random(signal_bdt_files, bkg_bdt_files, bdt_infos, what_pot,sig_type); //this
                     break;
                 case 3:
                     scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos, what_pot, sig_type);
@@ -1544,7 +1544,7 @@ int main (int argc, char *argv[]){
         datamc.setErrorString(systematics_error_string);
         datamc.setMergeDown(mergeDownVector);
 
-        datamc.plotStacks(ftest,  gif_vars , fbdtcuts,bdt_infos);
+        datamc.plotStacks(ftest,  gif_vars );
         return 0;
 
     }else if(mode_option == "eff2"){
@@ -1605,9 +1605,9 @@ int main (int argc, char *argv[]){
         bdt_flow nue_bkg_flow(topological_cuts,	nue_intrinsic_def,	vec_precuts,	postcuts,	bdt_infos[0],	bdt_infos[0]);
         bdt_flow deltarad_1g1p_flow(topological_cuts,	deltarad_1g1p_def, vec_precuts,	postcuts,	bdt_infos[0],	bdt_infos[0]);
 
-        bdt_file *ncpi0 = new bdt_file(dir2g0p, "vertexed_ncpi0_run1_overlay_2g0p.root", "NCPi0Overlay", "hist","singlephotonana/", kRed-7, signal_flow);
-        bdt_file *nue = new bdt_file(dir2g0p,"vertexed_intrinsic_nue_run1_overlay.root","IntrinsicNuE","hist","singlephotonana/", kGreen+1, nue_bkg_flow);
-        bdt_file *deltarad_1g1p = new bdt_file(dir2g0p,"vertexed_ncdeltarad_run1_overlay.root","NCDeltaRad","hist","singlephotonana/", kAzure+1, deltarad_1g1p_flow);
+        bdt_file *ncpi0 = new bdt_file(dir2g0p, "vertexed_ncpi0_run1_overlay_2g0p.root", "NCPi0Overlay", "hist","singlephotonana/", kRed-7, "1", signal_flow);
+        bdt_file *nue = new bdt_file(dir2g0p,"vertexed_intrinsic_nue_run1_overlay.root","IntrinsicNuE","hist","singlephotonana/", kGreen+1, "1", nue_bkg_flow);
+        bdt_file *deltarad_1g1p = new bdt_file(dir2g0p,"vertexed_ncdeltarad_run1_overlay.root","NCDeltaRad","hist","singlephotonana/", kAzure+1, "1", deltarad_1g1p_flow);
 
         ncpi0->calcPOT();
         nue->calcPOT();
@@ -1661,10 +1661,10 @@ int main (int argc, char *argv[]){
         if(which_file==-1){
             for(size_t f =0; f< bdt_files.size(); ++f){
                 std::cout<<"on bdt file "<<f<<std::endl;
-                bdt_files[f]->makePrecalcSBNfitFile(analysis_tag, which_stage, fbdtcuts);
+                bdt_files[f]->makePrecalcSBNfitFile(analysis_tag, which_stage);
             }
         }else{
-            bdt_files[which_file]->makePrecalcSBNfitFile(analysis_tag,which_stage, fbdtcuts);
+            bdt_files[which_file]->makePrecalcSBNfitFile(analysis_tag,which_stage);
 
         }
         return 0;
@@ -1699,7 +1699,12 @@ int main (int argc, char *argv[]){
             std::cout<<"\""<<std::endl;
 
 
-            std::string sVID = "VID"+std::to_string(v.id);
+	    //new code 
+	    std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage);
+	    bdt_covar covar_handle(&v, which_stage, stage_cut);
+	    covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
+/*
+            std::string sVID = v.GetCovarFile(); //"VID_stage_"+ std::to_string(which_stage) + "_" +v.GetID();
             std::cout<<"Variable ID is "<<sVID<<std::endl;
 
             std::cout<<"First lets add the variable string "<<v.name<<std::endl;
@@ -1720,12 +1725,14 @@ int main (int argc, char *argv[]){
             system(sedder_VAR.c_str());
 
 
-            std::string sBinning = "\"";
+            std::string sBinning = "\"" + v.GetBinEdges() + "\"";
+
             for(double k = 0; k<v.low_edges.size(); k++){
                 double b = v.low_edges[k];
                 sBinning +=" " + std::to_string(b);
             }
             sBinning += "\"";
+
 
             std::cout<<"Now lets add the variable Binning "<<sBinning<<std::endl;
             std::string sedder_BIN = "sed  -i 's@BINBINBIN@" + sBinning + "@' " + covar_flux_template_xml+"."+sVID+".xml";
@@ -1757,7 +1764,7 @@ int main (int argc, char *argv[]){
             std::cout<<"Should have finished FluxSide of things, frac fixed"<<std::endl;
             std::string run_fix_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_fix_fractional  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -t "+sVID+"_flux" + " -c " + sVID+"_flux.SBNcovar.root"; 
             system(run_fix_str.c_str());
-
+*/
         }
         std::cout<<"Finished the makefluxcovar mode: "<<std::endl;
 
@@ -1796,8 +1803,19 @@ int main (int argc, char *argv[]){
             }
             std::cout<<"\""<<std::endl;
 
+	    //new code 
+	    std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage);
+	    bdt_covar covar_handle(&v, which_stage, stage_cut);
+	    covar_handle.GenerateDetectorCovar(covar_det_template_xml);
 
-            std::string sVID = "VID"+std::to_string(v.id);
+	    //in order to generate flux covar matrix together with det matrix, the "covarsys" needs to be set to "fluxxsdet" (default behavior)
+	    if(covar_flux_template_xml !="null.xml"){
+		covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
+		covar_handle.MergeCovar();
+	    }
+
+/*
+            std::string sVID = "VID_"+ v.GetID();
             std::cout<<"Variable ID is "<<sVID<<std::endl;
 
             std::string sedder_VAR = "sed  's@VARVARVAR@\"" + v.name + "\"@' "+covar_det_template_xml +" > "+ covar_det_template_xml+"."+sVID+".xml";
@@ -1867,7 +1885,7 @@ int main (int argc, char *argv[]){
             std::string merger_s = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration_May2021 -f -t "+sVID + "_merged_det -c "+sVID+"_DET_*_fracfixed*.SBNcovar.root";
 
             system(merger_s.c_str());
-
+*/
             //Then run a FlatFractional for BNBOther and NCMultiPi0
             /*std::string flatter_s1 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s BNBOther -t "+sVID+"_FlatDetSys1 -c " +sVID+"_merged_det.SBNcovar.root";
               std::string flatter_s2 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s NCMultiPi0 -t "+sVID+"_FlatDetSys2 -c " +sVID+"_FlatDetSys1.SBNcovar.root";
@@ -1881,7 +1899,7 @@ int main (int argc, char *argv[]){
               system(flatter_s2.c_str());
               system(flatter_s3.c_str());
               */
-            //*****  If we also ran flux, merge   ***
+/*            //*****  If we also ran flux, merge   ***
             if(covar_flux_template_xml !="null.xml"){
 
                 std::cout<<"Going to merge Flux and Det together"<<std::endl;
@@ -1893,7 +1911,7 @@ int main (int argc, char *argv[]){
                 system(merger_a.c_str());
             }
 
-
+*/
 
 
         }//end vars
@@ -2036,23 +2054,44 @@ int main (int argc, char *argv[]){
 
         }
 
-    }else if(mode_option == "flatten"){
+    }else if(mode_option == "flatten" || mode_option == "flatfriend"){
+                
 
-	// use vector of {variable, int} to indicate whether this variable in vertex tree is int (0), or vector of doubles (1), or vector of int (-1)
-	int is_int = FlatVar::int_type, is_vint = FlatVar::vint_type, is_vdouble = FlatVar::vdouble_type, is_form = FlatVar::formula_type;
+	if(mode_option == "flatfriend"){
 
-        //hard-coded variables to be flattened
-        //These are ssv 2d related variables
-        std::vector<FlatVar> ssv2d_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int}, {"sss_num_candidates", is_int}, 
-            {"sss_candidate_in_nu_slice",is_vint},{"sss_candidate_num_hits", is_vint},{"sss_candidate_num_wires",is_vint}, {"sss_candidate_num_ticks",is_vint}, {"sss_candidate_plane", is_vint},{"sss_candidate_PCA",is_vdouble}, {"sss_candidate_mean_ADC",is_vdouble}, {"sss_candidate_ADC_RMS",is_vdouble}, {"sss_candidate_impact_parameter",is_vdouble}, {"sss_candidate_fit_slope",is_vdouble}, {"sss_candidate_fit_constant",is_vdouble}, {"sss_candidate_mean_tick",is_vdouble}, {"sss_candidate_max_tick",is_vdouble}, {"sss_candidate_min_tick",is_vdouble}, {"sss_candidate_mean_wire",is_vdouble}, {"sss_candidate_max_wire",is_vdouble}, {"sss_candidate_min_wire",is_vdouble}, {"sss_candidate_min_dist",is_vdouble},{"sss_candidate_wire_tick_based_length",is_vdouble}, {"sss_candidate_energy",is_vdouble}, {"sss_candidate_angle_to_shower",is_vdouble}, {"sss_candidate_remerge",is_vint},{"sss_candidate_matched",is_vint}, {"sss_candidate_pdg",is_vint}, {"sss_candidate_parent_pdg",is_vint}, {"sss_candidate_trackid",is_vint}, {"sss_candidate_true_energy",is_vdouble}, {"sss_candidate_overlay_fraction",is_vdouble}, {"sss_candidate_matched_energy_fraction_best_plane", is_vdouble},{"sim_shower_trackID[0]",is_form}, {"((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)",is_form, "corrected_shower_energy"}, {"sss_candidate_energy*1.21989+8.50486",is_form,"sss_corrected_candidate_energy"}};
+            for(int i=0; i< bdt_files.size(); i++){
+
+            	if(which_file<0 || which_file==i){
+                
+		    std::string flat_friendname = flatten_dir+"FLATTEN_Friend_"+analysis_tag+"_"+bdt_files[i]->tag+".root"; 
+                    TFile *fout = new TFile(flat_friendname.c_str(),"update");
+	    		
+		    std::string applied_cut = bdt_files[i]->getStageCuts(which_stage);
+		    if(external_cuts != "1")
+			applied_cut += "&& (" + external_cuts + ")"; 
+
+                    bdt_files[i]->MakeFlatFriend(fout, "PSV", applied_cut, "trackstub_num_candidates"); 
+
+                    fout->Close();
+
+            	}
+           }
+	} // end of flat friend mode
+	else{
+	    // use vector of {variable, int} to indicate whether this variable in vertex tree is int (0), or vector of doubles (1), or vector of int (-1)
+	    int is_int = FlatVar::int_type, is_vint = FlatVar::vint_type, is_vdouble = FlatVar::vdouble_type, is_form = FlatVar::formula_type;
+
+            //hard-coded variables to be flattened
+            //These are ssv 2d related variables
+            std::vector<FlatVar> ssv2d_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int}, {"sss_num_candidates", is_int}, {"sss_candidate_in_nu_slice",is_vint},{"sss_candidate_num_hits", is_vint},{"sss_candidate_num_wires",is_vint}, {"sss_candidate_num_ticks",is_vint}, {"sss_candidate_plane", is_vint},{"sss_candidate_PCA",is_vdouble}, {"sss_candidate_mean_ADC",is_vdouble}, {"sss_candidate_ADC_RMS",is_vdouble}, {"sss_candidate_impact_parameter",is_vdouble}, {"sss_candidate_fit_slope",is_vdouble}, {"sss_candidate_fit_constant",is_vdouble}, {"sss_candidate_mean_tick",is_vdouble}, {"sss_candidate_max_tick",is_vdouble}, {"sss_candidate_min_tick",is_vdouble}, {"sss_candidate_mean_wire",is_vdouble}, {"sss_candidate_max_wire",is_vdouble}, {"sss_candidate_min_wire",is_vdouble}, {"sss_candidate_min_dist",is_vdouble},{"sss_candidate_wire_tick_based_length",is_vdouble}, {"sss_candidate_energy",is_vdouble}, {"sss_candidate_angle_to_shower",is_vdouble}, {"sss_candidate_remerge",is_vint},{"sss_candidate_matched",is_vint}, {"sss_candidate_pdg",is_vint}, {"sss_candidate_parent_pdg",is_vint}, {"sss_candidate_trackid",is_vint}, {"sss_candidate_true_energy",is_vdouble}, {"sss_candidate_overlay_fraction",is_vdouble}, {"sss_candidate_matched_energy_fraction_best_plane", is_vdouble},{"sim_shower_trackID[0]",is_form}, {"((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)",is_form, "corrected_shower_energy"}, {"sss_candidate_energy*1.21989+8.50486",is_form,"sss_corrected_candidate_energy"}};
 
 
-        //there are ssv3d related variables
-        std::vector<FlatVar> ssv3d_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int},{"sss3d_num_showers", is_int}, {"sss3d_shower_start_x",is_vdouble}, {"sss3d_shower_start_y",is_vdouble}, {"sss3d_shower_start_z",is_vdouble}, {"sss3d_shower_dir_x",is_vdouble}, {"sss3d_shower_dir_y",is_vdouble}, {"sss3d_shower_dir_z",is_vdouble}, {"sss3d_shower_length",is_vdouble}, {"sss3d_shower_conversion_dist",is_vdouble}, {"sss3d_shower_invariant_mass",is_vdouble}, {"sss3d_shower_implied_invariant_mass",is_vdouble}, {"sss3d_shower_impact_parameter",is_vdouble}, {"sss3d_shower_ioc_ratio",is_vdouble}, {"sss3d_shower_energy_max",is_vdouble}, {"sss3d_shower_score",is_vdouble}};
+            //there are ssv3d related variables
+            std::vector<FlatVar> ssv3d_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int},{"sss3d_num_showers", is_int}, {"sss3d_shower_start_x",is_vdouble}, {"sss3d_shower_start_y",is_vdouble}, {"sss3d_shower_start_z",is_vdouble}, {"sss3d_shower_dir_x",is_vdouble}, {"sss3d_shower_dir_y",is_vdouble}, {"sss3d_shower_dir_z",is_vdouble}, {"sss3d_shower_length",is_vdouble}, {"sss3d_shower_conversion_dist",is_vdouble}, {"sss3d_shower_invariant_mass",is_vdouble}, {"sss3d_shower_implied_invariant_mass",is_vdouble}, {"sss3d_shower_impact_parameter",is_vdouble}, {"sss3d_shower_ioc_ratio",is_vdouble}, {"sss3d_shower_energy_max",is_vdouble}, {"sss3d_shower_score",is_vdouble}};
 
 
-        //these are proton-stub related variables
-        std::vector<FlatVar> trackstub_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int}, {"trackstub_num_candidates", is_int}, {"trackstub_candidate_in_nu_slice", is_vint}, {"trackstub_candidate_num_hits",is_vint}, {"trackstub_candidate_num_wires",is_vint}, {"trackstub_candidate_num_ticks",is_vint}, {"trackstub_candidate_plane", is_vint}, {"trackstub_candidate_PCA", is_vdouble}, {"trackstub_candidate_mean_ADC", is_vdouble}, {"trackstub_candidate_ADC_RMS", is_vdouble}, {"trackstub_candidate_mean_tick", is_vdouble}, {"trackstub_candidate_max_tick", is_vdouble}, {"trackstub_candidate_min_tick", is_vdouble}, {"trackstub_candidate_min_wire", is_vdouble}, {"trackstub_candidate_max_wire", is_vdouble}, {"trackstub_candidate_mean_wire", is_vdouble}, {"trackstub_candidate_min_dist", is_vdouble}, {"trackstub_candidate_min_impact_parameter_to_shower",is_vdouble}, {"trackstub_candidate_min_conversion_dist_to_shower_start", is_vdouble}, {"trackstub_candidate_min_ioc_to_shower_start", is_vdouble}, {"trackstub_candidate_ioc_based_length", is_vdouble}, {"trackstub_candidate_wire_tick_based_length", is_vdouble}, {"trackstub_candidate_mean_ADC_first_half", is_vdouble}, {"trackstub_candidate_mean_ADC_second_half", is_vdouble}, {"trackstub_candidate_mean_ADC_first_to_second_ratio", is_vdouble}, {"trackstub_candidate_track_angle_wrt_shower_direction", is_vdouble}, {"trackstub_candidate_linear_fit_chi2", is_vdouble}, {"trackstub_candidate_energy", is_vdouble}, {"trackstub_candidate_remerge", is_vint}, {"trackstub_candidate_matched", is_vint}, {"trackstub_candidate_matched_energy_fraction_best_plane", is_vdouble}, {"trackstub_candidate_pdg", is_vint}, {"trackstub_candidate_parent_pdg", is_vint}, {"trackstub_candidate_trackid",is_vint}, {"trackstub_candidate_true_energy", is_vdouble}, {"trackstub_candidate_overlay_fraction",is_vdouble}}; 
+            //these are proton-stub related variables
+            std::vector<FlatVar> trackstub_variables = {{"run_number", is_int},{"subrun_number", is_int}, {"event_number", is_int}, {"trackstub_num_candidates", is_int}, {"trackstub_candidate_in_nu_slice", is_vint}, {"trackstub_candidate_num_hits",is_vint}, {"trackstub_candidate_num_wires",is_vint}, {"trackstub_candidate_num_ticks",is_vint}, {"trackstub_candidate_plane", is_vint}, {"trackstub_candidate_PCA", is_vdouble}, {"trackstub_candidate_mean_ADC", is_vdouble}, {"trackstub_candidate_ADC_RMS", is_vdouble}, {"trackstub_candidate_mean_tick", is_vdouble}, {"trackstub_candidate_max_tick", is_vdouble}, {"trackstub_candidate_min_tick", is_vdouble}, {"trackstub_candidate_min_wire", is_vdouble}, {"trackstub_candidate_max_wire", is_vdouble}, {"trackstub_candidate_mean_wire", is_vdouble}, {"trackstub_candidate_min_dist", is_vdouble}, {"trackstub_candidate_min_impact_parameter_to_shower",is_vdouble}, {"trackstub_candidate_min_conversion_dist_to_shower_start", is_vdouble}, {"trackstub_candidate_min_ioc_to_shower_start", is_vdouble}, {"trackstub_candidate_ioc_based_length", is_vdouble}, {"trackstub_candidate_wire_tick_based_length", is_vdouble}, {"trackstub_candidate_mean_ADC_first_half", is_vdouble}, {"trackstub_candidate_mean_ADC_second_half", is_vdouble}, {"trackstub_candidate_mean_ADC_first_to_second_ratio", is_vdouble}, {"trackstub_candidate_track_angle_wrt_shower_direction", is_vdouble}, {"trackstub_candidate_linear_fit_chi2", is_vdouble}, {"trackstub_candidate_energy", is_vdouble}, {"trackstub_candidate_remerge", is_vint}, {"trackstub_candidate_matched", is_vint}, {"trackstub_candidate_matched_energy_fraction_best_plane", is_vdouble}, {"trackstub_candidate_pdg", is_vint}, {"trackstub_candidate_parent_pdg", is_vint}, {"trackstub_candidate_trackid",is_vint}, {"trackstub_candidate_true_energy", is_vdouble}, {"trackstub_candidate_overlay_fraction",is_vdouble}}; 
 
 
 
@@ -2082,9 +2121,10 @@ int main (int argc, char *argv[]){
                 t_flat_pot_tree->Write();
                 fout->Close();
 
+            	}
             }
-        }
-
+	} //end of flatten mode
+	
     }else if(mode_option == "unflatten"){
 
 
@@ -2108,7 +2148,6 @@ int main (int argc, char *argv[]){
 
             }
         }
-
 
     }else {
     }

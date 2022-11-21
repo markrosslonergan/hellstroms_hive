@@ -218,8 +218,8 @@ int bdt_train(bdt_info &info, bdt_file *signal_train_file, bdt_file * signal_tes
     int background_train_entries = background_train_file->tvertex->GetEntries(back_traincut);
     int background_test_entries  = background_test_file->tvertex->GetEntries(back_testcut);
 
-    dataloader->SetSignalWeightExpression(signal_train_file->weight_branch.c_str());
-    dataloader->SetBackgroundWeightExpression(background_train_file->weight_branch.c_str());
+    dataloader->SetSignalWeightExpression((signal_train_file->weight_branch+"*"+signal_train_file->run_weight_string).c_str());
+    dataloader->SetBackgroundWeightExpression((background_train_file->weight_branch+"*"+background_train_file->run_weight_string).c_str());
 
     for(bdt_variable &var: variables) dataloader->AddVariable(var.name.c_str());
 
@@ -253,8 +253,7 @@ int convertToLibSVM(bdt_info& info, bdt_file *file){
     sslibSVM.open (name+"_"+file->tag+".libSVM.dat");
     TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
 
-    std::cout<<"Using weight branch of "<<file->weight_branch<<std::endl;
-    TTreeFormula* weight = new TTreeFormula("sig_w",file->weight_branch.c_str(),file->tvertex);
+    TTreeFormula* weight = new TTreeFormula("sig_w",(file->weight_branch+"*"+file->run_weight_string).c_str(),file->tvertex);
 
     std::vector<TTreeFormula*> tree_formulas_v;
     std::vector<int> id_v;
@@ -337,10 +336,10 @@ int convertToLibSVMTT(bdt_info &info, bdt_file *signal_file_train, bdt_file *sig
     std::cout<<"Train signal_entries: "<<signal_entries_train<<" background_entries_train: "<<background_entries_train<<std::endl;
     std::cout<<"Test signal_entries: "<<signal_entries_test<<" background_entries_test: "<<background_entries_test<<std::endl;
 
-    TTreeFormula* sig_weight_train = new TTreeFormula("sig_w",signal_file_train->weight_branch.c_str(),signal_file_train->tvertex);
-    TTreeFormula* bkg_weight_train = new TTreeFormula("bkg_w",background_file_train->weight_branch.c_str(),background_file_train->tvertex);
-    TTreeFormula* sig_weight_test = new TTreeFormula("sig_w",signal_file_test->weight_branch.c_str(),signal_file_test->tvertex);
-    TTreeFormula* bkg_weight_test = new TTreeFormula("bkg_w",background_file_test->weight_branch.c_str(),background_file_test->tvertex);
+    TTreeFormula* sig_weight_train = new TTreeFormula("sig_w",(signal_file_train->weight_branch+"*"+signal_file_train->run_weight_string).c_str(),signal_file_train->tvertex);
+    TTreeFormula* bkg_weight_train = new TTreeFormula("bkg_w",(background_file_train->weight_branch+"*"+background_file_train->run_weight_string).c_str(),background_file_train->tvertex);
+    TTreeFormula* sig_weight_test = new TTreeFormula("sig_w",(signal_file_test->weight_branch+"*"+signal_file_test->run_weight_string).c_str(),signal_file_test->tvertex);
+    TTreeFormula* bkg_weight_test = new TTreeFormula("bkg_w",(background_file_test->weight_branch+"*"+background_file_test->run_weight_string).c_str(),background_file_test->tvertex);
 
     std::vector<TTreeFormula*> sig_tree_formulas_v_train;
     std::vector<TTreeFormula*> bkg_tree_formulas_v_train;
@@ -556,10 +555,10 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file_train, bdt_file *signa
     std::cout<<"TEST PREFILTERED signal_entries: "<<signal_ttree_prefiltered_test->GetEntries()<<" background_entries_test: "<<background_ttree_prefiltered_test->GetEntries()<<std::endl;
 
 
-    TTreeFormula* sig_weight_train = new TTreeFormula("sig_w",signal_file_train->weight_branch.c_str(),signal_ttree_prefiltered_train);
-    TTreeFormula* bkg_weight_train = new TTreeFormula("bkg_w",background_file_train->weight_branch.c_str(),background_ttree_prefiltered_train);
-    TTreeFormula* sig_weight_test = new TTreeFormula("sig_w",signal_file_test->weight_branch.c_str(),signal_ttree_prefiltered_test);
-    TTreeFormula* bkg_weight_test = new TTreeFormula("bkg_w",background_file_test->weight_branch.c_str(),background_ttree_prefiltered_test);
+    TTreeFormula* sig_weight_train = new TTreeFormula("sig_w",(signal_file_train->weight_branch+"*"+signal_file_train->run_weight_string).c_str(),signal_ttree_prefiltered_train);
+    TTreeFormula* bkg_weight_train = new TTreeFormula("bkg_w",(background_file_train->weight_branch+"*"+background_file_train->run_weight_string).c_str(),background_ttree_prefiltered_train);
+    TTreeFormula* sig_weight_test = new TTreeFormula("sig_w",(signal_file_test->weight_branch+"*"+signal_file_test->run_weight_string).c_str(),signal_ttree_prefiltered_test);
+    TTreeFormula* bkg_weight_test = new TTreeFormula("bkg_w",(background_file_test->weight_branch+"*"+background_file_test->run_weight_string).c_str(),background_ttree_prefiltered_test);
 
 
     std::vector<TTreeFormula*> sig_tree_formulas_v_train;
@@ -706,8 +705,8 @@ int convertToLibSVM(bdt_info &info, bdt_file *signal_file, bdt_file *background_
     std::cout<<"signal_entries: "<<signal_entries<<" background_entries: "<<background_entries<<std::endl;
     std::cout<<"PREFILTERED signal_entries: "<<signal_ttree_prefiltered->GetEntries()<<" background_entries: "<<background_ttree_prefiltered->GetEntries()<<std::endl;
 
-    TTreeFormula* sig_weight = new TTreeFormula("sig_w",signal_file->weight_branch.c_str(),signal_ttree_prefiltered);
-    TTreeFormula* bkg_weight = new TTreeFormula("bkg_w",background_file->weight_branch.c_str(),background_ttree_prefiltered);
+    TTreeFormula* sig_weight = new TTreeFormula("sig_w",(signal_file->weight_branch+"*"+signal_file->run_weight_string).c_str(),signal_ttree_prefiltered);
+    TTreeFormula* bkg_weight = new TTreeFormula("bkg_w",(background_file->weight_branch+"*"+background_file->run_weight_string).c_str(),background_ttree_prefiltered);
 
     std::vector<TTreeFormula*> sig_tree_formulas_v;
     std::vector<TTreeFormula*> bkg_tree_formulas_v;

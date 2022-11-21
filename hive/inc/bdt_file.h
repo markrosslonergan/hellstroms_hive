@@ -10,9 +10,11 @@
 #include <numeric>
 #include <utility>
 #include <climits>
+#include <cmath>
 #include <stdexcept>
 /******** Our includes *****/
 
+#include  "global_func.h"
 #include  "bdt_flow.h"
 #include  "bdt_file.h"
 #include  "bdt_var.h"
@@ -130,6 +132,7 @@ struct bdt_file{
 
         std::string data_descriptor;
 
+
         std::string weight_branch;
         std::string global_weight_string;
 
@@ -195,7 +198,10 @@ struct bdt_file{
         std::vector<TEntryList*> vec_entry_lists;
 
 
-        //Run management stuff, there is 5 Runs R1,R2,R3a , R3b,R4
+        //---- Run management stuff, there is 5 Runs R1,R2,R3a , R3b,R4
+
+	//criteria used to identify if TTree entry is an event --> for run-to-run normalization 
+	std::string event_identifier;
         std::vector<double> run_fractions_plot; //fractions to plot
         std::vector<double> run_fractions_file; //fractions in file
         std::vector<std::string> run_names;
@@ -205,23 +211,50 @@ struct bdt_file{
         //a function that splits a BDT file based on string and !string
         int splitBDTfile(std::string split_string,std::string trueTAG, bdt_file* truesplit, std::string falseTAG, bdt_file *falsesplit);
 
-        unsigned long jenkins_hash(std::string key); //guanqun: what does this do? 
 
+	/* Generate a file where BDT scores of clusters from one event are saved in one vector 
+ 	 * Note: as opposite to flat file, one entry in this file corresponds to one event 
+ 	 */
         int MakeUnFlatTree(bdt_info & info,std::string &dir,std::string & s);
+
+	/* Generate flat file for clusters in the event and save cluster info for every cluster
+	 * Note: in the flat file, each cluster corresponds to one entry
+	 * Note: for event with no clusters, one entry will be created and saved with `-1` value  
+	 */
         void MakeFlatTree(TFile * fout, std::vector<FlatVar>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name);
 
-        int setStageEntryList(int j);
+	/* Generate a flat file for clusters
+ 	 * Note: unlike saving cluster info, this function evaluate if event passes given cut, and save this information for all clusters in the event 
+	 * Note: for event with no clusters, one entry will be created and saved with `-1` value   <--- correponding to MakeFlatTree() function
+ 	 */
+	void MakeFlatFriend(TFile *fout, const std::string& treename, const std::string& cut, const std::string& num_candidate_var);
+
+	/* set the TTree entrylist for given stage j
+	 * If external bdt cuts are given, use extenal cuts instead
+	 */
+        int setStageEntryList(int j, std::vector<double> bdt_cuts={});
+
+	/* set the TTree entrylist for given stage j
+ 	 * for stage > 1, use the external bdt cuts given instead of bdt cuts configured in xml */
         int setStageEntryList(int j, double, double);
         int calcPrecutEntryList();
         int calcTopologicalEntryList();
         int calcCosmicBDTEntryList(double,double);
         int calcBNBBDTEntryList(double,double);
+
+	/* calculate the entrylist that satisfies cuts at given stage */
+        int calcBDTEntryList(int stage);
+
+	/* calculate the entrylist that satisfies cuts at given stage
+ 	 * for stage > 1, use the external bdt cuts given */
         int calcBDTEntryList(int stage, std::vector<double> bdt_cuts);
 
+        int scanStage(int which_stage , std::string scan_string);
         int scanStage(int which_stage, std::vector<double> bdt_cuts , std::string scan_string);
 
+	/*grab entrylist for entries that pass topological cut and preselection cut, or generate them if not exist  */
+        int calcBaseEntryList(std::string analysis_tag); 
 
-        int calcBaseEntryList(std::string);
         double data_tor860_wcut;
         double data_spills_E1DCNT_wcut;
         double ext_spills_ext;
@@ -234,7 +267,7 @@ struct bdt_file{
         int setAsOffBeamData(double in_data_tor860_wcut, double in_data_spills_E1DCNT_wcut, double in_ext_spills_ext);
 
         int calcPOT();
-
+	void setEventIdentifier(std::string cut);
         int calcPOT(std::vector<std::string> run_names, std::vector<std::string> run_cuts, std::vector<double> run_fractions);
         int makeWeightless(){
             m_weightless = true;
@@ -250,12 +283,13 @@ struct bdt_file{
         //legacy code, and damned lazy too
         //bdt_variable getBDTVariable(std::string cut);
 
-        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, bdt_flow inflow);
-        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, bdt_flow inflow);
-        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, bdt_flow inflow, std::string inttree );
+        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, std::string addtional_weight, bdt_flow inflow);
+        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string addtional_weight,bdt_flow inflow);
+        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string addtional_weight, bdt_flow inflow, std::string inttree );
    
         //legacy code OBSOLETE
         //bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, std::string infriend, std::string infriendtree, int incol, bool indata);	
+        ~bdt_file();
 
 
         int scale(double scalein);
@@ -264,17 +298,23 @@ struct bdt_file{
         TH1* getEventTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
         int CheckWeights();
 
+	/* Get number of events passing given cuts, after run-to-run configuration */
         double GetEntries(std::string cuts);
         double GetEntries();
-        TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);
+
 
         int getRunEfficiency();
 
+	/* Grab TH1 distribution of "invar", with provided cuts applied */
+        TH1* getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin);
 
+	/* Grab TH1 distribution of var, with provided cuts and additional cuts embedded in bdt_variable applied */
         TH1* getTH1(bdt_variable & var, std::string cuts, std::string nam, double  plot_POT, int  rebin);
         TH1* getTH1(bdt_variable & var, std::string cuts, std::string nam, double  plot_POT);
 
-        TH2D* getTH2(bdt_variable varx, bdt_variable vary, std::string cuts, std::string nam, double plot_POT);
+	/* Grab 2D histogram of variable varx and vary, with provided cuts applied 
+ 	 */
+        TH2* getTH2(bdt_variable varx, bdt_variable vary, std::string cuts, std::string nam, double plot_POT);
 
         std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
         std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
@@ -283,14 +323,22 @@ struct bdt_file{
         int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
         int addBDTResponses(bdt_info input_bdt_info);
 
-        ~bdt_file();
 
+
+	// not defined yet
         int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu);
+
+	/* create SBNfit file for events passing given stage 
+ 	 * Note: bdt scores of events are saved in simple_tree, and all trees in original bdt file and their friend trees will also be saved 
+ 	 */
         int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot);
         int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot,std::string external_cuts, std::string dir);
 
 
-        int makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage, const std::vector<double> & fbdtcuts );
+	/* create a sbnfit file with events that passing given stage
+ 	 * note: events are from a precalculate sbnfit file, in format of analysis_tag+"_"+this->tag+"_SSSprecalc.root"
+ 	 */ 
+        int makePrecalcSBNfitFile(const std::string &analysis_tag, int which_stage);
 
 
 
@@ -299,10 +347,23 @@ struct bdt_file{
         std::vector<double> getVector(bdt_variable & var, std::string  cuts);
 
 
+	/* get cuts for given stage, use the bdt cuts embedded locally
+ 	 * This is file specific, ie, the cut will include definition cut for the file 
+ 	 */
+        std::string getStageCuts(int stage);
 
+
+	/* get cuts for given stage, use the bdt cuts embedded locally
+ 	 * This is not file-specific, ie, the cut doens't include definition cut, and is applicable for all files 
+ 	 */
+        std::string getGeneralStageCuts(int stage);
+
+	/* get cuts for given stage, use the bdt cuts provided in arguments */
         std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
         std::string getStageCuts(int stage, std::vector<double> bdt_cuts);
 
+	/* get the plot name for all analysis stages */
+	std::vector<std::string> getStageNames() const;
 
         int writeStageFriendTree(std::string nam,double,double);
         int addPlotName(std::string plotin);

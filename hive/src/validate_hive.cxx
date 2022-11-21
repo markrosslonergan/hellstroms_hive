@@ -8,6 +8,7 @@
 #include "bdt_file.h"
 #include "bdt_datamc.h"
 #include "bdt_var.h"
+#include "bdt_covar.h"
 #include "bdt_varplot.h"
 #include "bdt_precalc.h"
 #include "bdt_info.h"
@@ -230,7 +231,7 @@ int main (int argc, char *argv[]){
             std::cout<<" -- ---> "<<XMLconfig.bdt_definitions[f][i]<<std::endl;
         }
 
-        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , analysis_flow));
+        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , XMLconfig.bdt_additional_weights[f], analysis_flow));
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
 
@@ -238,7 +239,7 @@ int main (int argc, char *argv[]){
 
         if(XMLconfig.bdt_scales[f] != 1.0){
             std::cout<<" -- Scaling "<<XMLconfig.bdt_tags[f]<<" file by a factor of "<<XMLconfig.bdt_scales[f]<<std::endl;
-            bdt_files.back()->scale_data = XMLconfig.bdt_scales[f];
+            bdt_files.back()->scale(XMLconfig.bdt_scales[f]);
         }
 
 

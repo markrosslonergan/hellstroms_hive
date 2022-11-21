@@ -10,7 +10,7 @@
 #include  "bdt_var.h"
 #include  "bdt_info.h"
 #include  "bdt_spec.h"
-
+#include  "bdt_covar.h"
 /******** Root includes *****/
 
 #include "TTreeFormula.h"
@@ -33,6 +33,7 @@
 #include "TGraphAsymmErrors.h"
 #include "TF1.h"
 #include "TMath.h"
+#include "TSystem.h"
 
 class bdt_datamc{
     public:
@@ -103,12 +104,15 @@ class bdt_datamc{
 
 
         std::vector<bdt_variable> GetSelectVars(std::string vector, std::vector<bdt_variable> vars);
-        int plot2D(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts);
-        int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
+        int plot2D(TFile *ftest, std::vector<bdt_variable> vars, bool scatter_plot=false);
 
         //THIS IS It
-        int plotStacks(TFile*f,std::vector<bdt_variable> vars, std::vector<double> cuts, std::vector<bdt_info> bdt_infos);
-        int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::vector<double> bdt_cuts, std::string tago,std::vector<bdt_info> bdt_infos);
+        /* Draw stacked distributions for provided variables 
+ 	 * If external bdt cuts are provided, will use these bdt cuts instead of the cuts configured in xml
+ 	 */
+        int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, double c1, double c2);
+        int plotStacks(TFile*f,std::vector<bdt_variable> vars, std::vector<double> cuts = {} );
+        int plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::string tago, std::vector<double> bdt_cuts={}  );
 
         int plotStacks(TFile *ftest, bdt_variable var,double c1, double c2, bdt_info whichbdt);
         int plotStacks(TFile*f, bdt_variable var,double,double);
@@ -128,7 +132,10 @@ class bdt_datamc{
         int calcChi2(TH1 *mc_hist, TH1 *data_hist);
         void scaleNorm(std::vector<bdt_variable> var, std::vector<bdt_file*> stack_files, double scaleLow, double scaleHigh, double scaleStep, int stage, std::vector<double> bdt_cuts, std::string analysis_tag);
 
+	/* Given fractional/full covariance matrix and variable, calculate corresponding collapsed covariace matrix */
         int calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *frac_coll,bdt_variable & var);
+
+	/* Collapse full covariance matrix `Min` into collapsed matrix `Mout` */
         int simpleCollapse(TMatrixD * Min, TMatrixD * Mout, bdt_variable & var);
 
         double calcTotalNormError(TMatrixD * Min, bdt_variable & var);
