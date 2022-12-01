@@ -418,7 +418,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                */
 
 	 
-            if(var.has_covar && m_error_string !="stats"){
+            if(var.has_covar && m_error_string !=STATS){ //Guanqun: let m_error_string take full control
 	    // Add systematic uncertainty band to the summed histogram 
 
 		//read provided covariance file to get covar matrix
@@ -821,7 +821,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             leg_hack->SetLineWidth(2);
 
 
-            if(var.has_covar && m_error_string!="stats"){
+            if(var.has_covar && m_error_string!=STATS){
                 if(b_signal_on_top){
                     l0->AddEntry(leg_hack,("Total Background and Error "+var.covar_legend_name).c_str() ,"fl"); // Was le
                 }else{
@@ -896,7 +896,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             double mychi =0;
             int ndof = 0;
             bool use_cnp = true;
-            if(!var.has_covar || m_error_string=="stats"){
+            if(!var.has_covar || m_error_string==STATS){
 
 
                 for(int p=0; p<d0->GetNbinsX();p++){
@@ -932,7 +932,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                     }
                 }
                 tot_norm_error = sqrt(tot_norm_error);
-            } else if (var.has_covar && use_cnp && m_error_string!="stats") {
+            } else if (var.has_covar && use_cnp && m_error_string!=STATS) {
 
 
                 std::cout << "[CHI_CNP] Starting chi^2 CNP calculation" << std::endl;
@@ -1245,7 +1245,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             TH1 *leg_hack2 = (TH1*)leg_hack->Clone(("leg_tmp2_tsum"+std::to_string(s)).c_str());
             //std::string sterrname = "#splitline{MC Intrinsic Stat Error}{}";
             std::string sterrname = "MC Intrinsic Stat Error";
-            if(var.has_covar && m_error_string !="stats" ){
+            if(var.has_covar && m_error_string !=STATS ){
                 //sterrname = "#splitline{"+var.covar_legend_name+"}{}";
                 sterrname = var.covar_legend_name;
             }

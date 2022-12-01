@@ -269,15 +269,15 @@ struct bdt_variable{
   	}
 
 	bool flux_xs_sys_only() const{
-	    return covar_sys == "fluxxs";
+	    return covar_sys == FLUXXS;
 	}
 
 	bool detector_sys_only() const{
-	    return covar_sys == "det";
+	    return covar_sys == DET;
 	}
 
 	bool full_sys() const{
-	    return covar_sys == "fluxxsdet";
+	    return covar_sys == FULL;
 	}
 };
 

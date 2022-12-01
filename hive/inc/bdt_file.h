@@ -160,6 +160,7 @@ struct bdt_file{
         bool is_data;
         bool is_bnbext;
         bool is_mc;
+ 	bool is_signal;
 
 
         std::string leg;
@@ -260,6 +261,11 @@ struct bdt_file{
         double ext_spills_ext;
         double N_samweb_ext;
 
+ 	/* Function: set the bdt_file as a signal input, for the purpose of calculating significance */
+	void setAsSignal();
+
+	/* Function: check whether this bdt_file is a signal input */
+	bool IsSignal() const;
         int setAsMC();
         int setAsOverlay();
         int setAsOnBeamData(double in_tor860_wcut);
@@ -349,6 +355,8 @@ struct bdt_file{
 
 	/* get cuts for given stage, use the bdt cuts embedded locally
  	 * This is file specific, ie, the cut will include definition cut for the file 
+ 	 * Note: see function GetStageCuts() in bdt_flow.h for details
+ 	 * Note: special case: when stage < -1, it will return "1" instead. 
  	 */
         std::string getStageCuts(int stage);
 
@@ -357,6 +365,7 @@ struct bdt_file{
  	 * This is not file-specific, ie, the cut doens't include definition cut, and is applicable for all files 
  	 */
         std::string getGeneralStageCuts(int stage);
+        std::string getGeneralStageCuts(int stage, const std::vector<double>& external_bdt_cuts, bool for_sbnfit = false);
 
 	/* get cuts for given stage, use the bdt cuts provided in arguments */
         std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);

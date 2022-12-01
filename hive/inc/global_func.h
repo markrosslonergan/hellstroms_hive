@@ -11,6 +11,14 @@
 #include "TMatrixT.h"
 
 
+// define systematic ucnertainty symbols 
+#define STATS "stats"
+#define FLUXXS "fluxxs"
+#define DET "det" 
+#define FULL "fluxxsdet"
+
+
+
 /* Replace 'search' by 'replace' in input string 'subject'and return the new string */
 inline
 std::string ReplaceString(std::string subject, const std::string& search,

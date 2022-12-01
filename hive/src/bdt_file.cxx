@@ -154,6 +154,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     is_data(false),
     is_bnbext(false),
     is_mc(true),
+    is_signal(false),
     primary_ttree_name(inttree),
     scale_data(1.0),
     fillstyle(infillstyle),
@@ -1345,6 +1346,10 @@ std::string bdt_file::getGeneralStageCuts(int stage){
    return this->flow.GetGeneralStageCuts(stage);
 }
 
+std::string bdt_file::getGeneralStageCuts(int stage, const std::vector<double>& bdt_cuts, bool for_sbnfit){
+   return this->flow.GetGeneralStageCuts(stage, bdt_cuts, for_sbnfit);
+}
+
 std::vector<std::string> bdt_file::getStageNames() const{
    return this->flow.GetStageNames();
 }
@@ -1356,11 +1361,11 @@ std::string bdt_file::getStageCuts(int stage, std::vector<double> bdt_cuts){
     std::string ans;
 
 
-    if(stage==-1 || stage==0 || stage ==1){
+    if(stage <= 1){
         ans = this->flow.GetStageCuts(stage);
     }
-    else if(stage < 0 || stage > static_cast<int>(this->flow.bdt_vector.size()) + 1){
-	std::cerr << "Invalid stage ... set cut to 1 " << std::endl;
+    else if(stage > static_cast<int>(this->flow.bdt_vector.size()) + 1){
+	std::cerr << "Invalid stage : " << stage << "... set cut to 1 " << std::endl;
 	ans = "1";
     }else{
         ans = this->flow.GetStageCuts(1);
@@ -1381,6 +1386,9 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 
     std::string ans;
     switch(stage) {
+	case -1:
+	    ans = this->flow.GetStageCuts(-1);
+            break;
         case 0:
             ans = this->flow.GetStageCuts(0);
             break;
@@ -2201,6 +2209,15 @@ void bdt_file::setEventIdentifier(std::string cut){
     event_identifier = cut;
     std::cout << "Event level identification criterion: " << event_identifier << std::endl;
     return;
+}
+
+void bdt_file::setAsSignal(){
+    is_signal = true;
+    return;
+}
+
+bool bdt_file::IsSignal() const {
+    return is_signal;
 }
 //int bdt_file::convertToHashedLibSVM(){
 //

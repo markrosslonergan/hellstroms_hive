@@ -48,6 +48,7 @@ int main (int argc, char *argv[]){
     std::string topo_tag = "this_is_xml_now";
 
     int number = -1;
+    int sig_type = -1;
     bool response_only = false;
     bool is_combined = false;
     // Added by A. Mogan 1/13/20 for doing normalization fits
@@ -73,7 +74,7 @@ int main (int argc, char *argv[]){
 
     std::string additional_tag = "";
 
-    std::string systematics_error_string = "stats";
+    std::string systematics_error_string = STATS;
     std::string covar_flux_template_xml = "null.xml";
     std::string covar_det_template_xml = "null.xml";
 
@@ -120,6 +121,7 @@ int main (int argc, char *argv[]){
         {"scale",       no_argument,  0, 'z'},
         {"flatten",     required_argument, 0, 'F'},
         {"unflatten",    required_argument, 0, 'U'},
+        {"type",    required_argument, 0, 'T'},
         {"plottrainonly",no_argument,  0, 'a'},
         {0,			    no_argument, 		0,  0},
     };
@@ -127,7 +129,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWjh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:T:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -232,6 +234,9 @@ int main (int argc, char *argv[]){
             case 'i':
                 input_string = optarg;
                 break;
+	    case 'T':
+		sig_type = (int)strtof(optarg,NULL);
+		break;
             case '?':
             case 'h':
                 std::cout<<"Allowed arguments:"<<std::endl;
@@ -241,12 +246,13 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t\t\t\t train: Train all BDT (Or just BDT number B defined with -b/--bdt B)"<<std::endl;
                 std::cout<<"\t\t\t\t app: Apply the BDT to all files in bdt_files, (Or just file F --f/--file on BDB -b/--bdt B)"<<std::endl;
                 std::cout<<"\t\t\t\t response: Make a training BDT response [bit obsolete, -o train makes it anyway] "<<std::endl;
-                std::cout<<"\t\t\t\t sig: Significance scan, combined with -n/--number N "<<std::endl;
-                std::cout<<"\t\t\t\t\t -- N=0 (default) Do a simple box scan between XML defined values "<<std::endl;
-                std::cout<<"\t\t\t\t\t -- N=1 Combine BDT's into a likelihood (experimental) "<<std::endl;
-                std::cout<<"\t\t\t\t\t -- N=2 Random points within XML defined regions (experimental) "<<std::endl;
-                std::cout<<"\t\t\t\t\t -- N=3 Similar to N=0, but cut values maximized for efficiency*purity "<<std::endl;
-                std::cout<<"\t\t\t\t\t -- N=4 Similar to N=0, but cut values maximized efficiency"<<std::endl;
+                std::cout<<"\t\t\t\t sig: Significance scan, combined with -T/--type T "<<std::endl;
+                std::cout<<"\t\t\t\t\t -- T=0 (default) Do a simple box scan between XML defined values "<<std::endl;
+                std::cout<<"\t\t\t\t\t -- T=1 Combine BDT's into a likelihood (experimental) "<<std::endl;
+                std::cout<<"\t\t\t\t\t -- T=2 Random points within XML defined regions (experimental) "<<std::endl;
+                std::cout<<"\t\t\t\t\t -- T=3 Similar to N=0, but cut values maximized for efficiency*purity "<<std::endl;
+                std::cout<<"\t\t\t\t\t -- T=4 Similar to N=0, but cut values maximized efficiency"<<std::endl;
+                std::cout<<"\t\t\t\t\t -- T=5 Similar to N=0, but cut values maximized purity"<<std::endl;
                 std::cout<<"\t\t\t\t stack: Produce a Stacked PDF for BDT variable -n/--number N, at stage -s/--stage S for POT -p/--pot P"<<std::endl;
                 std::cout<<"\t\t\t\t datamc: Produce a Stacked MV V data PDF for BDT variable -n/--number N, at stage -s/--stage S for POT -p/--pot P"<<std::endl;
                 std::cout<<"\t\t\t\t recomc:"<<std::endl;
@@ -262,6 +268,10 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-D\t--outdir\t\tSet output Dir for some things "<<std::endl;
                 std::cout<<"\t-g\t--group\t\tSet a group for variable plotting"<<std::endl;
                 std::cout<<"\t-y\t--systematics\t\tWhat is the systematics error band string?"<<std::endl;
+		std::cout<<"\t\t\t\t\t -- stats     Only statistical error" << std::endl;
+		std::cout<<"\t\t\t\t\t -- fluxxs    Only flux+xs+stats systematic error" << std::endl;
+		std::cout<<"\t\t\t\t\t -- det 	    Only detector systematic error" << std::endl;
+		std::cout<<"\t\t\t\t\t -- fluxxsdet Full systematic error" << std::endl;
                 std::cout<<"\t-s\t--stage\t\tSet what stage to do things at."<<std::endl;
                 std::cout<<"\t-r\t--response\t\t Run only BDT response plots for datamc/recomc"<<std::endl;
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag [Superseeded by XML defined tag]"<<std::endl;
@@ -328,7 +338,7 @@ int main (int argc, char *argv[]){
         std::cout<<"Adding an additonal cut of "<<external_cuts<<std::endl;
         for(auto &v: vars){
             v.additional_cut +="&& ("+external_cuts+")";
-            if(systematics_error_string=="stats")v.has_covar = false;
+            if(systematics_error_string== STATS ) v.has_covar = false;
         }
     }
 
@@ -424,6 +434,7 @@ int main (int argc, char *argv[]){
         if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f]  && !XMLconfig.bdt_is_validate_file[f] && !XMLconfig.bdt_is_offbeam_data[f]){
             if(XMLconfig.bdt_is_signal[f]){
                 std::cout<<" -- For the purposes of calculting a significance, this is a signal file"<<std::endl;
+		bdt_files.back()->setAsSignal();
                 signal_bdt_files.push_back(bdt_files.back());
             }else{
                 std::cout<<" -- For the purposes of calculting a significance, this is a BKG file "<<std::endl;
@@ -1197,14 +1208,22 @@ int main (int argc, char *argv[]){
             return 0;
         }else if(mode_option == "sig"){
 
+             bdt_stack *MC_stack = new bdt_stack(analysis_tag+"_sig_stack");
+
+             MC_stack->plot_pot =  what_pot;
+
+             for(size_t f =0; f< stack_bdt_files.size(); ++f){
+                 if(stack_bdt_files[f]->is_data) continue;
+                 MC_stack->addToStack(stack_bdt_files[f],plotOnTopMap[stack_bdt_files[f]]);
+             }
+
             // sig_type tells the function which cut metric to maximize for
             //    sig_type == 3: efficiency times purity
             //    sig_Type == 4: efficinecy
             //    sig_type == 5: purity 
-            int sig_type = number; 
 
-            std::cout<<"the input number is "<<number<<std::endl;
-            switch(number){
+            std::cout<<"the input significance type is "<< sig_type <<std::endl;
+            switch(sig_type){
                 case 0:
                     scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot);   //this
                     break;
@@ -1215,15 +1234,26 @@ int main (int argc, char *argv[]){
                     scan_significance_random(signal_bdt_files, bkg_bdt_files, bdt_infos, what_pot,sig_type); //this
                     break;
                 case 3:
+		case 4:
+		case 5:
                     scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos, what_pot, sig_type);
                     break;
-                case 4:
+                case 6:
                     //What is this?
                     super_significance(signal_bdt_files, bkg_bdt_files);
                     break;
-                case 5:
+                case 7:
                     scan_significance_linlin(signal_bdt_files, bkg_bdt_files, bdt_infos,fbdtcuts, which_bdt,which_file);
                     break;
+		case 8:
+		{ 
+		    if(number == -1){
+			std::cout << "no variable is provided, default to use first variable" << std::endl;
+			number = 0;
+		    }
+		    scan_significance_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, 10*what_pot);
+		    break;
+		}
                 default:
                     break;
             }

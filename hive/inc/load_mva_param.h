@@ -4,6 +4,7 @@
 #include "tinyxml.h"
 
 #include "method_struct.h"
+#include "global_func.h"
 
 #include <vector>
 #include <string>
