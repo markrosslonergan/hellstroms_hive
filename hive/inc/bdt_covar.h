@@ -43,10 +43,6 @@ private:
 
     void merge_covar(const std::vector<std::string>& files_to_merge, const std::string& target_file);
 
-    /* copy template xml into local xml and set up the binning, definition and eventweight in the xml
-     * Note: local xml will be copied into separate `xml` subdir
-     */
-    std::string prepare_xml(const std::string& xml_template, const std::string& tag);
 
     /* create covariance matrix using given xml configuration
      * Note: generated covariance matrix will be under separate file_dir(`SBNcovar`) subdir, with name tag.SBNcovar.root
@@ -70,7 +66,11 @@ public:
     bdt_covar(bdt_variable* in_var, int s, const std::string& cut): pvar(in_var), stage(s), base_cut(cut){   
     }
 
+    /* Function: returns the default template xml for reweightable systematics */
+    std::vector<std::string> GetTemplateXmls();
+
     /* given template xml for reweighable/detector systematic, genereate covariance matrix
+     * Note: in the case where no xml is provided, default template xml will be used, which is located under /hive/xml/SBNfit_Integration_XMLS_Coherent/..
      * Note: vararible definition and binning, and name of the covariance file is determined by the bdt_variable 'pvar'
      * Note: any file-specific thing such as defintion, file-specific weight etc. should be set in the template xml
      */
@@ -84,5 +84,9 @@ public:
 
     std::string LocalDir() const {return file_dir; }
    
+    /* copy template xml into local xml and set up the binning, definition and eventweight in the xml
+     * Note: local xml will be copied into separate `xml` subdir
+     */
+    std::string PrepareXml(const std::string& xml_template, const std::string& tag);
 };
 #endif

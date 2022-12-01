@@ -21,7 +21,7 @@ void bdt_covar::GenerateReweightingCovar(const std::string& xml ){
 
         std::cout << "bdt_covar: start to generate reweighable systematic covariance matrix...." << std::endl;
         std::cout << "bdt_covar: WARNING covariance matrix will be generated locally" << std::endl;
-	auto covar_xml = prepare_xml(xml, file_tag);
+	auto covar_xml = PrepareXml(xml, file_tag);
 	generate_covar(covar_xml, file_tag);
 
 	//if var only include flux xs error, update file name
@@ -51,7 +51,7 @@ void bdt_covar::GenerateDetectorCovar(const std::string& xml){
 
         std::cout << "bdt_covar: start to generate detector covariance matrix...." << std::endl;
         std::cout << "bdt_covar: WARNING covariance matrix will be generated locally" << std::endl;
-	auto covar_base_xml = prepare_xml(xml, file_tag);
+	auto covar_base_xml = PrepareXml(xml, file_tag);
  
 	//set stages
 	//Guanqun: not sure what this does, so comment it out for now 
@@ -111,6 +111,13 @@ void bdt_covar::MergeCovar(){
     return;
 }
 
+
+std::vector<std::string> bdt_covar::GetTemplateXmls(){
+    if(!set_template)
+        set_template_path();
+    return {fluxxs_template_xml, det_template_xml};
+}
+
 //---- END of PUBLIC function -----
 
 void bdt_covar::merge_covar(const std::vector<std::string>& files_to_merge, const std::string& target_file){
@@ -143,7 +150,7 @@ void bdt_covar::merge_covar(const std::vector<std::string>& files_to_merge, cons
 }
 
 
-std::string bdt_covar::prepare_xml(const std::string& xml, const std::string& file_tag){
+std::string bdt_covar::PrepareXml(const std::string& xml, const std::string& file_tag){
     std::cout << "bdt::covar|| Template xml provided: " << xml << std::endl;
 
     //configure name of local, copied xml 

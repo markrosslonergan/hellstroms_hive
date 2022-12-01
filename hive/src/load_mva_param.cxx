@@ -971,11 +971,11 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
                 global_covar_type = var_covar_type;
             }
 
-	    global_covar_sys = "fluxxsdet"; 
+	    global_covar_sys = STATS; 
 	    if(var_covar_sys != NULL)
 		global_covar_sys = var_covar_sys;
 
-        if(m_error_string!="stat") global_covar_sys = m_error_string;
+            if(m_error_string!= STATS ) global_covar_sys = m_error_string;
 
             global_leg_name = var_leg_name;
             std::cout<<"Loading a GLOBAL covariance matrix direectory"<<std::endl;
@@ -1050,7 +1050,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             covar_name = var_covar_name;
         }
 
-	covar_sys = "fluxxsdet";
+	covar_sys = STATS ;
  	if(var_covar_sys != NULL )
 	    covar_sys = var_covar_sys;
 
@@ -1068,7 +1068,8 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             covar_type = var_covar_type;
         }
 
-        if(has_global_covar && m_error_string!="stat"){
+        //if(has_global_covar && m_error_string!=STATS){
+        if(has_global_covar || m_error_string!= STATS ){ //Guanqun: change the logic here. Precedence as: m_error_string > glocal_covar > var_covar   
             has_covar= true;
             covar_dir =  global_covar_dir;
 	    covar_file = "";
@@ -1114,11 +1115,12 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         t.cat = in_cat;
         t.additional_cut = var_cut;
         std::cout<<"t.additional_cut = "<<t.additional_cut <<std::endl;
+	t.covar_sys = STATS;
         if(has_covar){
             std::cout<<"Adding a covariance matrix "<< covar_name<<" from directory [" << covar_dir << "] and file ["<<covar_file<< "]" << std::endl;
             t.addCovar(covar_name,covar_dir, covar_file);
+  	    t.covar_sys = covar_sys;
             t.covar_legend_name = covar_leg; 
-	    t.covar_sys = covar_sys;
             t.covar_type = covar_type;
         }
 

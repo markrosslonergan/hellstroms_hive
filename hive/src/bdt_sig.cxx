@@ -22,50 +22,10 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
 
     //set up cut range
-    std::vector<double> maxvals(bdt_infos.size(),-999);
-    std::vector<double> minvals(bdt_infos.size(),999);
-    std::vector<int> n_steps(bdt_infos.size(), -999);
-    int max_pts=1;
-
-    for(size_t b=0; b<bdt_infos.size();b++){
-        minvals[b] = bdt_infos[b].TMVAmethod.scan_min;
-        maxvals[b] = bdt_infos[b].TMVAmethod.scan_max;
-        n_steps[b] = (int)bdt_infos[b].TMVAmethod.scan_steps;
-   
-	if(maxvals[b] == -99){
-       	    std::cout<<"Automatically calculting scanning range"<<std::endl;
-            for(size_t i = 0; i < sig_files.size(); ++i) {
-            	double tmax  = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[b]).name.c_str()    );
-                maxvals[b] = std::max(maxvals[b], tmax);
-            }
-            for(size_t i = 0; i < bkg_files.size(); ++i) {
-            	double tmax  = bkg_files.at(i)->tvertex->GetMaximum( bkg_files.at(i)->getBDTVariable(bdt_infos[b]).name.c_str()    );
-                maxvals[b] = std::max(maxvals[b], tmax);
-            }
-        
-
-            minvals[b] = 0.0;
-	    n_steps[b] = 10;
-	}
-
-        max_pts = max_pts*n_steps[b];
-
-    }
-
-    std::vector<double> steps(bdt_infos.size(),0.0);
-    for(int i=0; i< bdt_infos.size(); i++){
-        steps[i] = (maxvals[i]-minvals[i])/((double)n_steps[i]);
-    }
-
+    int max_pts = 1;
     std::vector<std::vector<double>> bdt_scan_pts;
-    for(int i=0; i< bdt_infos.size(); i++){
-        std::vector<double> tmp;
-        for(int ip=0; ip<n_steps[i]; ip++){
-            tmp.push_back(minvals[i]+(double)ip*steps[i]);
-        }
-        bdt_scan_pts.push_back(tmp);
-    }
-
+    auto grid = setup_bdt_cut_grid(bdt_infos, bdt_scan_pts, max_pts, sig_files, bkg_files);
+    std::vector<double> maxvals = grid[0], minvals = grid[1], n_steps = grid[2], steps = grid[3];
 
     std::cout<<"We are going to scan between these values "<<std::endl;
     for(int i=0; i< bdt_infos.size();i++){
@@ -105,21 +65,7 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
 
     for(int i=0; i < max_pts; i++){
-
-        std::vector<double> cur_pt(bdt_infos.size(),0.0);
-
-	//Given global index, find local position of it in every sub-vector
-        //were going to take each number and write each digit in base K where K is that vectors length
-        int divisor=1;
-        int f_num_dimensions = bdt_infos.size();
-        for(int j =f_num_dimensions-1 ;j>=0; j--){
-            int this_index =  (i/divisor)%bdt_scan_pts[j].size();
-
-            cur_pt[j] = bdt_scan_pts[j][this_index];
-            //in order so that each digit is written in the correct base, modify divisor here
-            divisor=divisor*bdt_scan_pts[j].size();
-        }
-
+	std::vector<double> cur_pt = grab_point(i, bdt_scan_pts);
 
         double signal = 0;
         double background = 0;
@@ -171,6 +117,113 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
 }
 
+std::vector<double> scan_significance_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, TMatrixT<double>* fixed_frac_matrix, double plot_pot){
+    int stage = bdt_infos.size() + 1;
+ 
+    //grab POT of stacked histogram
+    double current_pot = stack->getPOT();
+    double scale = plot_pot / current_pot; 
+
+    //set up cut range
+    int max_pts = 1;
+    std::vector<std::vector<double>> bdt_scan_pts;
+    auto grid = setup_bdt_cut_grid(bdt_infos, bdt_scan_pts, max_pts, stack);
+    std::vector<double> maxvals = grid[0], minvals = grid[1], n_steps = grid[2], steps = grid[3];
+
+    std::cout<<"We are going to scan between these values "<<std::endl;
+    std::cout<< "Total of " << max_pts <<" grid points to scan" << std::endl;
+    for(int i=0; i< bdt_infos.size();i++){
+        std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<" (n_steps:  "<<n_steps[i]<<")"<<std::endl;
+    }
+
+    //set entrylist 
+    std::cout<<"Setting Min entry lists and POT scaling"<<std::endl;
+    for(auto f: stack->getFiles()) {
+	f->setStageEntryList(1+bdt_infos.size(), minvals);
+    }
+
+
+    //set up SBNchi 
+    // first, form a valid xml, for SBNchi to use
+    bdt_covar covar_handle(&var, stage);
+    std::string template_xml = covar_handle.GetTemplateXmls().at(0);
+    std::string xml = covar_handle.PrepareXml(template_xml, "SBNchi_Helper");
+    std::cout << "xml: " << xml << std::endl;
+
+    sbn::SBNchi chi_handle(xml);	
+    chi_handle.is_stat_only = false;
+
+    int best_point = -1;
+    double best_chi = 0;
+    std::vector<double> chivec;
+    int start_time = time(nullptr);
+    // iterate through all grid point
+    for(int i =0; i != max_pts; ++i){
+
+	std::vector<double> cur_pt = grab_point(i, bdt_scan_pts);
+
+	auto full_vector = stack->getFullVector(var, stage, cur_pt);
+	auto full_bkg_spec = stack->getFullVectorWithError(var, stage, cur_pt, true); //skip signal contribution
+	auto full_bkg_vector = full_bkg_spec[0], full_bkg_error = full_bkg_spec[1]; 
+
+	// scale prediction to match pot, if necessary 
+	std::transform(full_vector.begin(), full_vector.end(), full_vector.begin(), [&scale](double d){return scale*d;});
+	std::transform(full_bkg_vector.begin(), full_bkg_vector.end(), full_bkg_vector.begin(), [&scale](double d){return scale*d;});
+	std::transform(full_bkg_error.begin(), full_bkg_error.end(), full_bkg_error.begin(), [&scale](double d){return scale*d;});
+
+
+	//calculate chi at background prediction
+	auto full_covar_matrix = chi_handle.CalcCovarianceMatrix(fixed_frac_matrix, full_bkg_vector, full_bkg_error);
+
+	TMatrixT<double> collapse_covar_matrix(chi_handle.num_bins_total_compressed, chi_handle.num_bins_total_compressed);
+	chi_handle.CollapseModes(full_covar_matrix, collapse_covar_matrix);
+	TMatrixT<double> inverted_matrix = chi_handle.InvertMatrix(collapse_covar_matrix);
+	double current_chi = chi_handle.CalcChi(inverted_matrix, full_bkg_vector, full_vector);
+	chivec.push_back(current_chi);
+
+	if(current_chi > best_chi){
+	    best_chi = current_chi;
+	    best_point = i;
+	    std::cout << "at Point " << i << " Corresponding cuts: (";
+	    for(auto& p : cur_pt)
+		std::cout <<  p << ", ";
+	    std::cout << ")  ------ Current best chi " << best_chi << std::endl;
+	}
+
+	if( (i+1) % 100 ==0){
+	    std::cout << i << "/" << max_pts << " Running over 100 points costs " << time(nullptr) - start_time << " seconds" << std::endl;
+	    start_time = time(nullptr);
+	}
+    }
+    
+    std::cout<<"----------------------------------------------------"<<std::endl;
+    std::cout<<"------------ Finished. Largest chi was  "<< best_chi <<" at point "<< best_point <<" with Cuts at "<<std::endl;
+    for(auto &dd: grab_point(best_point, bdt_scan_pts)){
+        std::cout<<dd<<" ";
+    }
+    std::cout<<std::endl;
+    std::cout<<"Done with chi2 scan with systeamtic uncertainties"<<std::endl;
+
+    make_project_plots(bdt_scan_pts, bdt_infos, chivec, "TEST_sys_chi.pdf");
+    return grab_point(best_point, bdt_scan_pts);
+}
+
+std::vector<double> scan_significance_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& cuts, double plot_pot){
+    int stage = bdt_infos.size() + 1;
+
+    //generates the covaraince matrix at given bdt cuts 
+    std::string stage_cuts = stack->getFiles().at(0)->getGeneralStageCuts(stage, cuts, true);
+
+    // only consider flux and xs uncertainty for now
+    bdt_covar covar_handle(&var, stage, stage_cuts);
+    covar_handle.GenerateReweightingCovar();
+    TFile* covar_f = new TFile(var.GetCovarFile(stage).c_str(),"read");
+    TMatrixT<double>* covar_matrix = (TMatrixT<double>*)covar_f->Get(var.covar_name.c_str());
+
+    auto res = scan_significance_sys_fixed(stack, bdt_infos, var, covar_matrix, plot_pot);
+    covar_f->Close();
+    return res; 
+}
 
 
 std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_info, double plot_pot){
@@ -197,29 +250,11 @@ std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, s
 
 
     //set up cut range
-    std::vector<double> maxvals(bdt_infos.size(),-999);
-    std::vector<double> minvals(bdt_infos.size(),999);
+    int max_pts = 1;
+    std::vector<std::vector<double>> bdt_scan_pts;
+    auto grid = setup_bdt_cut_grid(bdt_infos, bdt_scan_pts, max_pts, sig_files, bkg_files);
+    std::vector<double> maxvals = grid[0], minvals = grid[1];
 
-    for(size_t b=0; b<bdt_infos.size();b++){
-        minvals[b] = bdt_infos[b].TMVAmethod.scan_min;
-        maxvals[b] = bdt_infos[b].TMVAmethod.scan_max;
-   
-	if(maxvals[b] == -99){
-       	    std::cout<<"Automatically calculting scanning range"<<std::endl;
-            for(size_t i = 0; i < sig_files.size(); ++i) {
-            	double tmax  = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[b]).name.c_str()    );
-                maxvals[b] = std::max(maxvals[b], tmax);
-            }
-            for(size_t i = 0; i < bkg_files.size(); ++i) {
-            	double tmax  = bkg_files.at(i)->tvertex->GetMaximum( bkg_files.at(i)->getBDTVariable(bdt_infos[b]).name.c_str()    );
-                maxvals[b] = std::max(maxvals[b], tmax);
-            }
-        
-
-            minvals[b] = 0.0;
-	}
-
-    }
 
     std::cout<<"We are going to scan between these values "<<std::endl;
     for(int i=0; i< bdt_infos.size();i++){
@@ -1067,4 +1102,201 @@ double calculate_significance(double signal, double background, int sig_type, do
     return significance;
 }
 
+std::vector<std::vector<double>> setup_bdt_cut_grid(const std::vector<bdt_info>& bdt_infos, std::vector<std::vector<double>>& bdt_scan_pts, int& total_pts, bdt_stack* MCstack){
+ 
+    std::vector<bdt_file*> sig_files, bkg_files; 
+    if(MCstack){
+	for(auto f : MCstack->getFiles()){
+	    if(f->IsSignal())
+		sig_files.push_back(f);
+	    else
+		bkg_files.push_back(f);
+	}
+    }
 
+    return setup_bdt_cut_grid(bdt_infos, bdt_scan_pts, total_pts, sig_files, bkg_files);
+}
+
+
+std::vector<std::vector<double>> setup_bdt_cut_grid(const std::vector<bdt_info>& bdt_infos, std::vector<std::vector<double>>& bdt_scan_pts, int& total_pts, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files){
+    std::vector<double> maxvals(bdt_infos.size(),-999);
+    std::vector<double> minvals(bdt_infos.size(),999);
+    std::vector<double> n_steps(bdt_infos.size(), -999);
+    std::vector<double> steps(bdt_infos.size(),0.0);
+    total_pts = 1;
+    bdt_scan_pts.clear();
+
+    // grab range and number of stepss for bdt score
+    for(size_t b=0; b<bdt_infos.size();b++){
+        minvals[b] = bdt_infos[b].TMVAmethod.scan_min;
+        maxvals[b] = bdt_infos[b].TMVAmethod.scan_max;
+        n_steps[b] = (int)bdt_infos[b].TMVAmethod.scan_steps;
+   
+	if(maxvals[b] == -99){
+	    std::cout<<"Scan range not setup in xml. Automatically calculting scanning range"<<std::endl;
+	    if(sig_files.empty() && bkg_files.empty()){
+		std::cout << "WARNING: No bdt files nor max allowed BDT score provided, set maxval = 1.0" << std::endl;
+		maxvals[b] = 1.0;
+	    }
+
+            for(size_t i = 0; i < sig_files.size(); ++i) {
+            	double tmax  = sig_files.at(i)->tvertex->GetMaximum( sig_files.at(i)->getBDTVariable(bdt_infos[b]).name.c_str()    );
+                maxvals[b] = std::max(maxvals[b], tmax);
+            }
+            for(size_t i = 0; i < bkg_files.size(); ++i) {
+            	double tmax  = bkg_files.at(i)->tvertex->GetMaximum( bkg_files.at(i)->getBDTVariable(bdt_infos[b]).name.c_str()    );
+                maxvals[b] = std::max(maxvals[b], tmax);
+            }
+        
+
+            minvals[b] = 0.0;
+	    n_steps[b] = 10;
+	}
+
+
+    }
+
+    // calculate cut positions for all BDTs
+    for(int i=0; i< bdt_infos.size(); i++){
+	total_pts *= n_steps[i];
+        steps[i] = (maxvals[i]-minvals[i])/(n_steps[i]);
+
+        std::vector<double> tmp;
+        for(int ip=0; ip<n_steps[i]; ip++){
+            tmp.push_back(minvals[i]+(double)ip*steps[i]);
+        }
+        bdt_scan_pts.push_back(tmp);
+    }
+
+    return {maxvals, minvals, n_steps, steps};
+}
+
+std::vector<double> grab_point(int pt, const std::vector<std::vector<double>>& all_bdt_pts){
+  //Input: idnex of grid point 
+  //Input: 2D vector containing all points, each row represents all possible values for one axis. (one row <--> one BDT)
+  //Output: Given global index, find coordinate values at given index 
+
+
+	std::vector<double> current_point;
+	auto indices = get_local_indices(pt, all_bdt_pts);
+	for(int i = 0; i!= indices.size(); ++i)
+	    current_point.push_back(all_bdt_pts[i][indices[i]]);
+
+	return current_point;
+}
+
+std::vector<int> get_local_indices(int global_index, const std::vector<std::vector<double>>& all_bdt_pts){
+  //Input: idnex of grid point 
+  //Input: 2D vector containing all points, each row represents all possible values for one axis. (one row <--> one BDT)
+  //Output: Given global index, find local position of it in every sub-vector
+
+        std::vector<int> index; 
+
+        //were going to take each number and write each digit in base K where K is that vectors length
+        int f_num_dimensions = all_bdt_pts.size();
+        for(int j =f_num_dimensions-1 ;j>=0; j--){
+            int this_index =  global_index % all_bdt_pts[j].size();
+
+            index.push_back(this_index);
+
+            //in order so that each digit is written in the correct base, modify divisor here
+            global_index /= all_bdt_pts[j].size();
+        }
+
+	std::reverse(index.begin(), index.end());
+	return index;
+     
+}
+
+
+void make_project_plots(const std::vector<std::vector<double>>& bdt_scan_pts, const std::vector<bdt_info>& bdt_infos, const std::vector<double>& chi_vec, std::string pdfname){
+     int num_bdts = bdt_infos.size();
+     int total_pts = 1; 
+
+
+     // grab the grid configuration 
+     std::vector<double> max_val, min_val, n_step;
+     for(int i = 0; i != num_bdts; ++i){
+	const std::vector<double>& bdt_pt = bdt_scan_pts[i];
+  	total_pts *= bdt_pt.size();
+	min_val.push_back(bdt_pt[0]);
+	n_step.push_back(bdt_pt.size());
+
+	if(n_step.back() == 1){
+	    max_val.push_back(std::min(1., 2*min_val.back()));
+	}else{
+	    max_val.push_back(bdt_pt.back() + bdt_pt[1] - bdt_pt[0]);
+	}
+     }
+
+     //initialze list of histograms 
+     //1D histos
+     std::vector<TH1D*> hist_vec_1D; 
+     std::vector<TH2D*> hist_vec_2D;
+     std::vector<std::pair<int, int>> Comb_2D;
+     for(int i = 0; i != num_bdts; ++i){
+	std::string bdt_name_i = bdt_infos[i].getName();
+
+	hist_vec_1D.push_back(new TH1D( bdt_name_i.c_str(), bdt_name_i.c_str(), n_step[i], min_val[i], max_val[i] ) );
+	hist_vec_1D.back()->GetXaxis()->SetTitle((bdt_name_i + " Score").c_str());
+	hist_vec_1D.back()->GetYaxis()->SetTitle("Marginalized #chi^{2}");
+
+	for(int j = i+1; j != num_bdts; ++j){
+	    std::string bdt_name_j = bdt_infos[j].getName();
+	    std::string hist_name = bdt_name_i + "_" +  bdt_name_j;
+	    Comb_2D.push_back({i,j });
+
+	    hist_vec_2D.push_back(new TH2D(hist_name.c_str(), hist_name.c_str(), n_step[i], min_val[i], max_val[i], n_step[j], min_val[j], max_val[j]));
+	    hist_vec_2D.back()->SetTitle(("Marginalized #chi^{2};" + bdt_name_i + " Score ;" + bdt_name_j + " Score").c_str());
+	}
+     }
+
+     //fill the histograms 
+    for(int i = 0 ; i != total_pts; ++i){
+	auto indices = get_local_indices(i, bdt_scan_pts);
+
+
+	//update 1D histogram 
+	for(int j = 0; j != num_bdts; ++j){
+	    double bin_content = hist_vec_1D[j]->GetBinContent(indices[j]+1);
+	    bin_content = (bin_content == 0 ? chi_vec[i] : std::min(bin_content, chi_vec[i])); //check if bin has been filled
+	    hist_vec_1D[j]->SetBinContent( indices[j]+1, bin_content);
+	}
+
+	// update 2D histos 
+	for(int j = 0; j != Comb_2D.size(); ++j){
+	    int bin_x = indices[Comb_2D[j].first] + 1, bin_y = indices[Comb_2D[j].second] + 1;
+
+	    double bin_content = hist_vec_2D[j]->GetBinContent(bin_x, bin_y);
+	    bin_content = (bin_content == 0? chi_vec[i] : std::min(bin_content, chi_vec[i]));
+	    hist_vec_2D[j]->SetBinContent(bin_x, bin_y, bin_content);
+	}
+    }
+
+    //draw the histogram 
+    TCanvas* c = new TCanvas("c", "c");
+    c->Print( (pdfname + "[").c_str());
+    gStyle->SetOptStat(0);
+    c->cd();
+    for(auto h : hist_vec_1D){
+	c->Clear();
+	h->Draw("hist");	
+	c->Print(pdfname.c_str());
+    }
+    for(auto h : hist_vec_2D){
+	c->Clear();
+        h->Draw("colz");        
+        c->Print(pdfname.c_str());
+    }
+
+    c->Print( (pdfname + "]").c_str());
+          
+
+    //delete pointers
+    for(auto h : hist_vec_1D)
+	delete h;
+    for(auto h : hist_vec_2D)
+	delete h;
+
+    return;
+}

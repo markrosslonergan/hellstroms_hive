@@ -5,11 +5,17 @@
 #include <string>
 #include <iostream>
 #include <stdexcept>
+#include <algorithm>
+#include <ctime>
+#include <utility>
 /******** Our includes *****/
 
 #include  "bdt_file.h"
 #include  "bdt_var.h"
 #include  "bdt_info.h"
+#include  "bdt_covar.h"
+#include  "bdt_spec.h"
+#include  "SBNchi.h"
 
 /******** Root includes *****/
 
@@ -24,6 +30,7 @@
 #include "THStack.h"
 #include "TGraph.h"
 #include "TLine.h"
+#include "TMatrixDfwd.h"
 #include "TMVA/Types.h"
 #include "TMVA/DataLoader.h"
 #include "TMVA/Reader.h"
@@ -44,6 +51,18 @@
  	 * Note: return value is NOT useful
  	 */
 	std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_infos, double plot_pot, int sig_type);
+
+
+        /* Function: scan linear grid of cuts for all BDTs, find set of cuts with highest significance, taking into consideration of systematic uncertainty 
+ 	 * Note: fixed fractional covariance matrix is used to evaluate chi2 values for all grid points
+ 	 * Argument: stack - marks the MC predictions of all subchannels
+ 	 * Argument: fixed_frac_matrix - input fractional covariance matrix 
+ 	 * Argument: var - varaible to perform sensitivity calculation with 
+ 	 * Argument: plot_pot - POT at which sensitivity is evaluated with 
+ 	 * Argument: external_bdt_cuts: This marks a selection, with which  a fractional covariance matrix will be calculated, and then used for chi2 sensitivity evaluation for all grid points    
+ 	 */
+        std::vector<double> scan_significance_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, TMatrixT<double>* fixed_frac_matrix, double plot_pot);
+	std::vector<double> scan_significance_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot);
 
 	
 	/* Function: Scan the grid of cuts for all BDTs, by randomly choosing cuts within [min, max] cut range, choose set of cuts with max significance 
@@ -101,4 +120,24 @@
  	 * Note: signal_scale is a flat factor that will be applied to signal during significance calculation
  	 */
 	double calculate_significance(double signal, double background, int sig_type, double total_signal= 0, double signal_scale = 1);
+
+
+ 	void make_project_plots(const std::vector<std::vector<double>>& bdt_scan_pts, const std::vector<bdt_info>& bdt_infos, const std::vector<double>& chi_vec, std::string pdfname);
+
+	/* Function: calculate the grid for bdt score cut 
+ 	 * Returns: {maxvals, minvals, n_steps, steps}
+ 	 * - maxvals (minvals): max(min) score boundary for all BDTs 
+ 	 * - n_steps: number of steps for each BDT range
+ 	 * - steps: step size for each BDT cut
+ 	 * Note: arguments bdt_scan_pts will be updated and filled with all cut positions for all BDTs
+ 	 * Note: argument total_pts will be filled, as total number of grid points.
+ 	 */
+        std::vector<std::vector<double>> setup_bdt_cut_grid(const std::vector<bdt_info>& bdt_infos, std::vector<std::vector<double>>& bdt_scan_pts, int& total_pts, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files);
+        std::vector<std::vector<double>> setup_bdt_cut_grid(const std::vector<bdt_info>& bdt_infos, std::vector<std::vector<double>>& bdt_scan_pts, int& total_pts, bdt_stack* stack);
+
+
+	/* Given global index, find local position of it in every sub-vector, and return value for this index
+ 	 */
+	std::vector<int> get_local_indices(int global_index, const std::vector<std::vector<double>>& bdt_scan_pts);
+	std::vector<double> grab_point(int global_index, const std::vector<std::vector<double>>& bdt_scan_pts);
 #endif
