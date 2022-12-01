@@ -33,6 +33,8 @@
 
 class bdt_stack{
 	public:
+
+		int num_files;
 		std::string name;
 		double plot_pot;
 		std::vector<bdt_file*> stack;
@@ -44,7 +46,7 @@ class bdt_stack{
         	std::vector<bool> signal_on_top;
 
 
-		bdt_stack(std::string in) : name(in){
+		bdt_stack(std::string in) : name(in), num_files(0){
 		    //plot_pot=6.6e20;
         	    //plot_pot=13.2e20;
         	    plot_pot=10.1e20;
@@ -56,18 +58,22 @@ class bdt_stack{
 		int addToStack(bdt_file* in,bool signalish){
 			stack.push_back(in);
             		signal_on_top.push_back(signalish);
+			++num_files;
 			return 0;
 		}
 
 		int addToStack(bdt_file* in){
 			stack.push_back(in);
             		signal_on_top.push_back(false);
+			++num_files;
 			return 0;
 		}
 
 
 		inline
 		std::vector<bdt_file*> getFiles() {return stack;}
+
+		int getNFiles() const {return num_files;}
 	
 		inline 
 		double getPOT() const {return plot_pot;}
@@ -158,6 +164,7 @@ class bdt_stack{
     // Added by A. Mogan 1/14/20 to help with normalization fits
     int clearStack() {
         stack.clear();
+	num_files=0;
         return 0;
     }
 

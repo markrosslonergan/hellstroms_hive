@@ -123,47 +123,7 @@ struct bdt_variable{
 
             has_covar = false;
 
-            std::string bins = binning;
-            edges.clear();
-            
-            bool alt_mode = bins.find("alt")!=std::string::npos;
-            if(alt_mode){
-                std::cout<<"applying custom binning with config: "<<std::endl;
-                int pl = bins.find("alt");
-                bins.erase(pl,pl+3);
-            }
-
-
-            bins.erase(std::remove(bins.begin(), bins.end(), '('), bins.end());
-            bins.erase(std::remove(bins.begin(), bins.end(), ')'), bins.end());
-
-            size_t pos = 0;
-            std::string delim = ",";
-            std::string token;
-            n_bins = -1;
-
-            while ((pos = bins.find(delim)) != std::string::npos) {
-                token = bins.substr(0, pos);
-                if(n_bins<0 &&!alt_mode) n_bins = (int)std::stod(token);
-                edges.push_back(std::stod(token));
-                bins.erase(0, pos + delim.length());
-            }
-            edges.push_back(std::stod(bins));
-
-            if(alt_mode){
-                n_bins = edges.size()-1;
-                low_edges = edges;
-                edges = {(double)n_bins, low_edges.front(), low_edges.back()};
-            }else{
-                double elow = edges[1];
-                double ehigh = edges[2];
-                double ediff = ehigh-elow;
-                double estep = ediff/(double)n_bins;
-                for(int i=0; i<=n_bins;i++){
-                    low_edges.push_back(elow+i*estep);
-                }
-            }
-
+	    decode_bins();
 	    update_def();
             /*std::cout<<"Nbin "<<n_bins<<std::endl;
             std::cout<<"edges "<<std::endl;
@@ -189,7 +149,7 @@ struct bdt_variable{
                 plot_min =-999;
             plot_max =-999;
             cat = 0;
-
+	     decode_bins();
 	     update_def();
 	}
 
@@ -200,6 +160,51 @@ struct bdt_variable{
 		name = "simple_"+name;
 	    return;
   	}
+
+	void decode_bins(){
+            edges.clear();
+	    low_edges.clear();
+            n_bins = -1;
+            
+            bool alt_mode = binning.find("alt")!=std::string::npos;
+            if(alt_mode){
+                std::cout<<"applying custom binning with config: "<<std::endl;
+                int pl = binning.find("alt");
+                binning.erase(pl,pl+3);
+            }
+
+
+            binning.erase(std::remove(binning.begin(), binning.end(), '('), binning.end());
+            binning.erase(std::remove(binning.begin(), binning.end(), ')'), binning.end());
+
+            size_t pos = 0;
+            std::string delim = ",";
+            std::string token;
+
+            while ((pos = binning.find(delim)) != std::string::npos) {
+                token = binning.substr(0, pos);
+                if(n_bins<0 &&!alt_mode) n_bins = (int)std::stod(token);
+                edges.push_back(std::stod(token));
+                binning.erase(0, pos + delim.length());
+            }
+            edges.push_back(std::stod(binning));
+
+            if(alt_mode){
+                n_bins = edges.size()-1;
+                low_edges = edges;
+                edges = {(double)n_bins, low_edges.front(), low_edges.back()};
+            }else{
+                double elow = edges[1];
+                double ehigh = edges[2];
+                double ediff = ehigh-elow;
+                double estep = ediff/(double)n_bins;
+                for(int i=0; i<=n_bins;i++){
+                    low_edges.push_back(elow+i*estep);
+                }
+            }
+
+	    return;
+	}
 
 	//---- End of private internal function ----
 	
@@ -268,6 +273,8 @@ struct bdt_variable{
             return additional_cut;
   	}
 
+	int GetNBins() const {return n_bins;}
+
 	bool flux_xs_sys_only() const{
 	    return covar_sys == FLUXXS;
 	}
@@ -279,6 +286,7 @@ struct bdt_variable{
 	bool full_sys() const{
 	    return covar_sys == FULL;
 	}
+
 };
 
 
