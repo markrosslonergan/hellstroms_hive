@@ -253,6 +253,8 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t\t\t\t\t -- T=3 Similar to N=0, but cut values maximized for efficiency*purity "<<std::endl;
                 std::cout<<"\t\t\t\t\t -- T=4 Similar to N=0, but cut values maximized efficiency"<<std::endl;
                 std::cout<<"\t\t\t\t\t -- T=5 Similar to N=0, but cut values maximized purity"<<std::endl;
+                std::cout<<"\t\t\t\t\t -- T=8 Do a simple box scan between XML defined values, with flux and xs uncertainty considered (multi-bin variable allowed)"<<std::endl;
+                std::cout<<"\t\t\t\t\t -- T=9 Do a simple box scan between XML defined values, with stats uncertainty considered (multi-bin variable allowed)"<<std::endl;
                 std::cout<<"\t\t\t\t stack: Produce a Stacked PDF for BDT variable -n/--number N, at stage -s/--stage S for POT -p/--pot P"<<std::endl;
                 std::cout<<"\t\t\t\t datamc: Produce a Stacked MV V data PDF for BDT variable -n/--number N, at stage -s/--stage S for POT -p/--pot P"<<std::endl;
                 std::cout<<"\t\t\t\t recomc:"<<std::endl;
@@ -267,6 +269,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-p\t--pot\t\tSet POT for plots"<<std::endl;
                 std::cout<<"\t-D\t--outdir\t\tSet output Dir for some things "<<std::endl;
                 std::cout<<"\t-g\t--group\t\tSet a group for variable plotting"<<std::endl;
+		std::cout<<"\t-T\t--type\t\tSpecify which type of significance should be quantified" << std::endl;
                 std::cout<<"\t-y\t--systematics\t\tWhat is the systematics error band string?"<<std::endl;
 		std::cout<<"\t\t\t\t\t -- stats     Only statistical error" << std::endl;
 		std::cout<<"\t\t\t\t\t -- fluxxs    Only flux+xs+stats systematic error" << std::endl;
@@ -1223,6 +1226,13 @@ int main (int argc, char *argv[]){
             //    sig_type == 5: purity 
 
             std::cout<<"the input significance type is "<< sig_type <<std::endl;
+	    if(sig_type == 9 || sig_type == 8){
+		if(number == -1){
+		    std::cout << "no variable is provided, default to use first variable" << std::endl;
+		    number = 0;
+		}
+	    }
+
             switch(sig_type){
                 case 0:
                     scan_significance(signal_bdt_files , bkg_bdt_files, bdt_infos,what_pot);   //this
@@ -1246,14 +1256,11 @@ int main (int argc, char *argv[]){
                     scan_significance_linlin(signal_bdt_files, bkg_bdt_files, bdt_infos,fbdtcuts, which_bdt,which_file);
                     break;
 		case 8:
-		{ 
-		    if(number == -1){
-			std::cout << "no variable is provided, default to use first variable" << std::endl;
-			number = 0;
-		    }
 		    scan_significance_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, 10*what_pot);
 		    break;
-		}
+		case 9:
+                    scan_significance_stat(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, 10*what_pot);
+                    break;
                 default:
                     break;
             }

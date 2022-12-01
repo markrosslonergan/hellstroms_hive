@@ -225,6 +225,19 @@ std::vector<double> scan_significance_sys_fixed(bdt_stack* stack,  std::vector<b
     return res; 
 }
 
+std::vector<double> scan_significance_stat(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot){
+
+    int num_subchannel = stack->getNFiles();
+    int num_bins = var.GetNBins();
+    int total_bins = num_subchannel * num_bins;
+
+    TMatrixT<double> stat_matrix(total_bins, total_bins);
+    stat_matrix.Zero();
+    auto res = scan_significance_sys_fixed(stack, bdt_infos, var, &stat_matrix, plot_pot);
+
+    return res; 
+}
+
 
 std::vector<double> scan_significance_random(std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, std::vector<bdt_info> bdt_info, double plot_pot){
     return scan_significance_random(sig_files,bkg_files,bdt_info,plot_pot,0);
