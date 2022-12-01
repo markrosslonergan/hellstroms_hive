@@ -277,7 +277,6 @@ int main (int argc, char *argv[]){
     }
 
 
-    gSystem->Load("/uboone/app/users/markrl/Hive_v3.0/hellstroms_hive/hive/root_linkdefs/loc/SL7/denan_cxx.so");
     //===========================================================================================
     //===========================================================================================
     //			Begininning of main program here!
