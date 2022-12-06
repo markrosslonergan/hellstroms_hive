@@ -72,6 +72,9 @@ int main (int argc, char *argv[]){
     std::string input_string = "";
     int which_group = -1;
 
+    //legacy mode for bdt_files
+    bool legacy_mode = false;
+
     std::string additional_tag = "";
 
     std::string systematics_error_string = STATS;
@@ -117,6 +120,7 @@ int main (int argc, char *argv[]){
         {"vector",      required_argument,  0, 'v'},
         {"divbin",      required_argument,  0, 'e'},
         {"run1",		no_argument,	0, 'l'},
+        {"legacy",      no_argument,   0, 'L'},
         {"lee",         no_argument,  0, 'k'},
         {"scale",       no_argument,  0, 'z'},
         {"flatten",     required_argument, 0, 'F'},
@@ -129,7 +133,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:T:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWjh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:T:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWLjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -167,6 +171,9 @@ int main (int argc, char *argv[]){
                 break;
             case 'k':
                 lee_on_top = true;
+                break;
+            case 'L':
+                legacy_mode = true;
                 break;
             case 'z':
                 signal_scale_on_top = true;
@@ -475,6 +482,7 @@ int main (int argc, char *argv[]){
             i_run_fractions = {1.0};
         }
 
+        if(legacy_mode) bdt_files.back()->setAsLegacy();
         if(weightless)bdt_files.back()->makeWeightless();
         bdt_files.back()->calcPOT(i_run_names, i_run_cuts, i_run_fractions);
 
@@ -585,6 +593,7 @@ int main (int argc, char *argv[]){
                 external_files.back()->setAsOffBeamData( External_XMLconfig.bdt_onbeam_pot[f], External_XMLconfig.bdt_onbeam_spills[f], External_XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
             }
 
+            if(legacy_mode) external_files.back()->setAsLegacy();
             if(weightless)external_files.back()->makeWeightless();
             external_files.back()->calcPOT({"1"},{"1"},{1.0});
             external_files.back()->calcBaseEntryList(analysis_tag);
@@ -1110,7 +1119,7 @@ int main (int argc, char *argv[]){
                     std::cout<<" -- ---> "<<External_XMLconfig.bdt_definitions[f][i]<<std::endl;
                 }
 
-                external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , External_XMLconfig.bdt_additional_weights[f], external_analysis_flow));
+                external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , External_XMLconfig.bdt_additional_weights[f], external_analysis_flow,External_XMLconfig.bdt_ttree_names[f]));
 
                 external_files.back()->addPlotName(External_XMLconfig.bdt_plotnames[f]);
 
@@ -1129,6 +1138,7 @@ int main (int argc, char *argv[]){
                     external_files.back()->setAsOffBeamData( External_XMLconfig.bdt_onbeam_pot[f], External_XMLconfig.bdt_onbeam_spills[f], External_XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
                 }
 
+                if(legacy_mode) external_files.back()->setAsLegacy();
                 if(weightless)external_files.back()->makeWeightless();
                 external_files.back()->calcPOT({"1"},{"1"},{1.0});
                 external_files.back()->calcBaseEntryList(analysis_tag);
@@ -2139,6 +2149,7 @@ int main (int argc, char *argv[]){
             if(which_file<0 || which_file==i){
                 
                 bdt_file * bfile = (isExternal ? external_files[i] : bdt_files[i]);
+                if(legacy_mode)bfile->setAsLegacy();
                 if(weightless)bfile->makeWeightless();
 
                 std::string flat_filename = flatten_dir+"FLATTEN_"+analysis_tag+"_"+bfile->tag+".root"; 

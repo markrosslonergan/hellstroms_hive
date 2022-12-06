@@ -155,10 +155,10 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     is_bnbext(false),
     is_mc(true),
     is_signal(false),
-    primary_ttree_name(inttree),
     scale_data(1.0),
     fillstyle(infillstyle),
-    event_identifier("1")
+    event_identifier("1"),
+    primary_ttree_name(inttree)
 {
 
     plot_name = tag;
@@ -191,6 +191,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
         std::cout<<"setting weight branch - on/off beam data"<<std::endl;
         weight_branch = "1";
     }
+
+    //default is not legacy mode;
+    is_legacy = false;
 
 
     //    run_names = {"RI","RII","RIIIa","RIIIb","RIV"};
@@ -482,9 +485,16 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     std::string tnam_slice = root_dir+"ncdelta_slice_tree";
 
 
-    std::cout<<"Getting vertex tree"<<std::endl;
+    std::cout<<"Getting primary ttree name: "<<primary_ttree_name<<std::endl;
+    if(!f->GetListOfKeys()->Contains(tnam.c_str())){
+        std::cout<<"Error, BDT_FILE does not contain a primary tree namted "<<tnam<<std::endl;
+        f->GetListOfKeys()->Print();
+        std::cout<<"Terminating"<<std::endl;
+        exit(EXIT_FAILURE);
+    }
+
     tvertex = (TTree*)f->Get(tnam.c_str());
-    std::cout<<"Got vertex tree: "<<tvertex->GetEntries()<<std::endl;
+    std::cout<<"Got primary ttree name: "<<tvertex->GetEntries()<<std::endl;
 
 
     run_fractions_file.resize(run_fractions.size(),0);
@@ -543,9 +553,12 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         vec_entry_lists.resize(flow.bdt_vector.size());
 
-      
-        ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
-        std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
+        if(!is_legacy){
+            ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
+            std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
+        }else{
+            std::cout<<"Running in legacy mode, no trueeventweight tree"<<std::endl;
+        }
     }
 
     double potbranch = 0;
@@ -1590,7 +1603,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, const double internal_pot, std::string external_cuts, std::string outdir){
     double tsplot_pot = internal_pot;
 
-   bool true_eweight_exist = false;
+   bool true_eweight_exist = is_legacy;
 
     std::cout<<"Beginning SBNfit file creation for stage "<<which_stage<<" for file "<<this->tag<<" at "<<tsplot_pot<<std::endl;
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
@@ -1598,7 +1611,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     std::cout<<"With external cuts "<<external_cuts<<std::endl;
     this->teventweight->AddFriend(this->tvertex);
     this->tslice->AddFriend(this->tvertex);
- if(true_eweight_exist) this->ttrueeventweight->AddFriend(this->tvertex);
+     if(true_eweight_exist) this->ttrueeventweight->AddFriend(this->tvertex);
     
     std::vector<TFile*> f_sbnfit_friend_files;
     std::vector<TTree*> t_sbnfit_friend_origins;

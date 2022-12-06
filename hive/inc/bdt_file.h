@@ -132,6 +132,8 @@ struct bdt_file{
 
         std::string data_descriptor;
 
+        //legacy check for things like true_eventweight
+        bool is_legacy;
 
         std::string weight_branch;
         std::string global_weight_string;
@@ -278,6 +280,8 @@ struct bdt_file{
         int makeWeightless(){
             m_weightless = true;
         }
+
+        int setAsLegacy(){is_legacy=true; return 0;}
 
         int makeRunSubRunList();
 
