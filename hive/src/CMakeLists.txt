@@ -10,7 +10,6 @@ target_link_libraries (hiveLib DeNan tinyxmllib xgboost ${ROOT_LIBRARIES} EventW
 
 message(STATUS "ROOT_LIBRARIES @: ${ROOT_LIBRARIES}")
 
-
 add_executable (hive hive.cxx)
 target_link_libraries (hive tinyxmllib DeNan hiveLib xgboost ${ROOT_LIBRARIES})
 

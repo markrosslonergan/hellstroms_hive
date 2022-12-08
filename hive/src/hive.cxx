@@ -296,7 +296,7 @@ int main (int argc, char *argv[]){
         }
     }
 
-
+    gSystem->Load("/uboone/app/users/markrl/SL7test0/hellstroms_hive/hive/build/root_linkdefs/loc/denan_cxx.so");
     //===========================================================================================
     //===========================================================================================
     //			Begininning of main program here!
@@ -1099,9 +1099,10 @@ int main (int argc, char *argv[]){
             //First lets read the external XML file that contains the external things
             MVALoader External_XMLconfig(external_xml,-1);
             std::vector<method_struct> External_TMVAmethods  = External_XMLconfig.GetMethods(); 
-            std::vector<bdt_file*> external_files;
+            std::vector<bdt_file*> app_external_files;
 
             for(size_t f = 0; f < External_XMLconfig.GetNFiles(); ++f){
+                if(which_file>=0 && which_file!=f) continue;
                 std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<External_XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
                 //First build a bdt_flow for this file.
                 std::string def = "1";  
@@ -1119,41 +1120,42 @@ int main (int argc, char *argv[]){
                     std::cout<<" -- ---> "<<External_XMLconfig.bdt_definitions[f][i]<<std::endl;
                 }
 
-                external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , External_XMLconfig.bdt_additional_weights[f], external_analysis_flow,External_XMLconfig.bdt_ttree_names[f]));
+                app_external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , External_XMLconfig.bdt_additional_weights[f], external_analysis_flow,External_XMLconfig.bdt_ttree_names[f]));
 
-                external_files.back()->addPlotName(External_XMLconfig.bdt_plotnames[f]);
+                app_external_files.back()->addPlotName(External_XMLconfig.bdt_plotnames[f]);
 
                 if(External_XMLconfig.bdt_scales[f] != 1.0){
                     std::cout<<" -- Scaling "<<External_XMLconfig.bdt_tags[f]<<" file by a factor of "<<External_XMLconfig.bdt_scales[f]<<std::endl;
-                    external_files.back()->scale(External_XMLconfig.bdt_scales[f]);
+                    app_external_files.back()->scale(External_XMLconfig.bdt_scales[f]);
                 }
 
                 if(External_XMLconfig.bdt_is_onbeam_data[f]){
                     std::cout<<" -- Setting as ON beam data with "<<External_XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
-                    external_files.back()->setAsOnBeamData(External_XMLconfig.bdt_onbeam_pot[f]); //tor860_wc
+                    app_external_files.back()->setAsOnBeamData(External_XMLconfig.bdt_onbeam_pot[f]); //tor860_wc
                 }
 
                 if(External_XMLconfig.bdt_is_offbeam_data[f]){
                     std::cout<<" -- Setting as Off beam data with "<<External_XMLconfig.bdt_offbeam_spills[f]<<" EXT spills being normalized to "<<External_XMLconfig.bdt_onbeam_spills[f]<<" BNB spills at a "<<External_XMLconfig.bdt_onbeam_pot[f]/1e19<<" e19 POT equivalent"<<std::endl;
-                    external_files.back()->setAsOffBeamData( External_XMLconfig.bdt_onbeam_pot[f], External_XMLconfig.bdt_onbeam_spills[f], External_XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
+                    app_external_files.back()->setAsOffBeamData( External_XMLconfig.bdt_onbeam_pot[f], External_XMLconfig.bdt_onbeam_spills[f], External_XMLconfig.bdt_offbeam_spills[f]);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
                 }
 
-                if(legacy_mode) external_files.back()->setAsLegacy();
-                if(weightless)external_files.back()->makeWeightless();
-                external_files.back()->calcPOT({"1"},{"1"},{1.0});
-                external_files.back()->calcBaseEntryList(analysis_tag);
+                if(legacy_mode) app_external_files.back()->setAsLegacy();
+                if(weightless)app_external_files.back()->makeWeightless();
+                app_external_files.back()->calcPOT({"1"},{"1"},{1.0});
+                app_external_files.back()->calcBaseEntryList(analysis_tag);
 
             std::cout<<"Checking for friend trees: "<<External_XMLconfig.bdt_friend_filenames[f].size()<<" "<<External_XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
             if(External_XMLconfig.bdt_friend_filenames[f].size()>0){
 
             for(int fr =0; fr < External_XMLconfig.bdt_friend_filenames[f].size(); fr++){
                 std::cout<<"Adding a Friend Tree : "<<External_XMLconfig.bdt_friend_treenames[f][fr]<<" from file "<<dir+"/"+External_XMLconfig.bdt_friend_filenames[f][fr]<<std::endl;
-                external_files.back()->addFriend(External_XMLconfig.bdt_friend_treenames[f][fr],External_XMLconfig.bdt_friend_filenames[f][fr]);
+                app_external_files.back()->addFriend(External_XMLconfig.bdt_friend_treenames[f][fr],External_XMLconfig.bdt_friend_filenames[f][fr]);
                 }
             }
             }//end of external_file getting
 
-            for(auto &file: external_files){
+            std::cout<<"So we are running over "<<app_external_files.size()<<" external files"<<std::endl;
+            for(auto &file: app_external_files){
                 for(int i=0; i< bdt_infos.size();++i){
                     //By default loop over all bdt's but if specified do just that 1 BDT
                     if(!((which_bdt==i || which_bdt==-1 ))) continue;

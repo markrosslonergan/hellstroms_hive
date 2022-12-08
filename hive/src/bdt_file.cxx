@@ -486,8 +486,10 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
 
     std::cout<<"Getting primary ttree name: "<<primary_ttree_name<<std::endl;
-    if(!f->GetListOfKeys()->Contains(tnam.c_str())){
-        std::cout<<"Error, BDT_FILE does not contain a primary tree namted "<<tnam<<std::endl;
+    std::string bdir = root_dir;
+    bdir.erase(std::remove(bdir.begin(), bdir.end(), '/'), bdir.end());
+    if(!f->GetListOfKeys()->Contains(bdir.c_str()) && !f->GetListOfKeys()->Contains(primary_ttree_name.c_str()) ){
+        std::cout<<"Error, BDT_FILE does not contain a primary directory named "<<bdir<<" or "<<primary_ttree_name<<std::endl;
         f->GetListOfKeys()->Print();
         std::cout<<"Terminating"<<std::endl;
         exit(EXIT_FAILURE);
