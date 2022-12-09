@@ -1605,7 +1605,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, const double internal_pot, std::string external_cuts, std::string outdir){
     double tsplot_pot = internal_pot;
 
-   bool true_eweight_exist = is_legacy;
+   bool true_eweight_exist = !is_legacy;
 
     std::cout<<"Beginning SBNfit file creation for stage "<<which_stage<<" for file "<<this->tag<<" at "<<tsplot_pot<<std::endl;
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments

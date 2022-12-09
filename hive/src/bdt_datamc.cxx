@@ -310,7 +310,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
     {
         int s = plot_stage;
-        std::string stage_cut = data_file->getGeneralStageCuts(s);
+        std::string stage_cut = data_file->getGeneralStageCuts(s,bdt_cuts,true);
 
 
 
@@ -427,6 +427,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
                     std::cout<<"Error!! The covariance file failed to open: Does not exist?  "<<var.GetCovarFile(s)<<std::endl;
 
+
                     //check existence of local file 
                     bdt_covar covar_handle(&var, s, stage_cut);
                     std::string local_covar_file = covar_handle.LocalDir() + var.GetCovarFileID(s) + ".SBNcovar.root";
@@ -464,7 +465,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 //std::vector<TMatrixT<double>> Mshapenorm = splitNormShape(*covar_full, m_fullvec);
                 //(*covar_full) = (*covar_full) = Mshapenorm[2];
 
-                this->calcCollapsedCovariance(covar_full, covar_collapsed,var);
+                this->calcCollapsedCovariance(covar_full, covar_collapsed, var);
 
                 //Some shape/norm
                 //std::vector<TMatrixT<double>> Mshapenorm = splitNormShape(*covar_collapsed, vec_mc);
@@ -484,38 +485,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                    }
                    */
 
-                //std::vector<double> fkr = {0.144464,0.0794493,0.204987};
-                //std::vector<double> fkr = {0.0941,0.0823,0.2135};
-                //std::vector<double> fkr = {0.145171,0.0859779,0.11318,0.0891966,0.151207,0.189539};
-                //std::vector<double> fkr = {0.26,0.123,0.116,0.094,0.137,0.145};
-
-                //with coh not coh
-                std::vector<double> fkr = {0.235736,0.23907,0.304031};//1g1p before
-                //fkr = {0.0954412,0.0903098,0.146111};//1g1p after
-
-                //fkr = {0.285885,0.201206, 0.209106,0.193913,0.229783,0.226371};//1g0p before
-                //fkr = {0.259299, 0.120909, 0.108522, 0.0874204, 0.12301, 0.140846};//1g0p after
-
-                //October2020
-                //fkr={1.26481, 2.44423,  4.22811,  1.28523,    1.54774,      2.10316};
-                fkr = { 5.45969,         18.0884,      19.234,     53.0878,    23.4021,    10.0496,     6.35323,    3.72808,    2.22644,    1.36843};
-
-
                 for(int c=0; c< tsum->GetNbinsX();c++){
-                    //double dv = tsum->GetBinContent(c+1);
-                    //tsum->SetBinError(c+1, sqrt((*covar_full)(c,c)*dv*dv));
-                    //tsum_after->SetBinError(c+1, sqrt((*covar_m2)(c,c)));
-                    //  double mc_sys_error = fkr[c]*tsum->GetBinContent(c+1);  //sqrt((*covar_collapsed)(c,c));
 
                     double mc_stats_error = tsum->GetBinError(c+1);
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
-                    //mc_sys_error = sqrt(fkr[c]);
-                    //double mc_sys_error = sqrt(fabs((*covar_collapsed)(c,c)));
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
 
-                    //double tot_error = sqrt(mc_sys_error*mc_sys_error);
-
-                    //double tot_error = mc_sys_error; 
                     std::cout<<"Error Summary || Bin "<<c<<" Nmc: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" FracErr: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" SysFrac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" MCStatFrac: "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
                     tsum->SetBinError(c+1, tot_error);
                 }
@@ -1807,11 +1782,12 @@ int bdt_datamc::calcCollapsedCovariance(TMatrixD * frac_full, TMatrixD *full_col
                 tmp_full(i,j) = pt;
             }else         if(ctype==1)
             {tmp_full(i,j) = pt*full_vec[i]*full_vec[j];
-                //	std::cout <<" calc matrix matrix: (" << i << ", " << j << "), pt: " << pt << " vec_i " << full_vec[i] << " vec_j " << full_vec[j] << std::endl; 
+               //std::cout <<" calc matrix matrix: (" << i << ", " << j << "), pt: " << pt << " vec_i " << full_vec[i] << " vec_j " << full_vec[j] << std::endl; 
             }
 
         }
         // std::cout<<"StackCheck2 "<<i<<" "<<full_vec[i]<<" Err: "<<sqrt(tmp_full(i,i))<<" "<<(full_vec[i]>0 ? sqrt(tmp_full(i,i))/full_vec[i]*100.0 : -9 )<<std::endl;
+        std::cout <<" PURN calc matrix matrix: (" << i << ", " << i << "), pt: " << tmp_full(i,i) << " vec_i " << full_vec[i] <<" frac "<<sqrt(tmp_full(i,i))/full_vec[i]<< std::endl; 
     }
     //std::cout<<"Done"<<std::endl;
     //Going to do collapsing here, but for now just do diagonal!

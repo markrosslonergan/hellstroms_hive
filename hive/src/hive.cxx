@@ -1748,7 +1748,7 @@ int main (int argc, char *argv[]){
 
 
 	    //new code 
-	    std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage);
+	    std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage,fbdtcuts,true);
         std::cout<<"Starting SBNfit covar handle w stage cuts "<<stage_cut<<std::endl;
 	    bdt_covar covar_handle(&v, which_stage, stage_cut);
 	    covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
@@ -1853,7 +1853,7 @@ int main (int argc, char *argv[]){
             std::cout<<"\""<<std::endl;
 
 	    //new code 
-	    std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage);
+	    std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage,fbdtcuts,true);
 	    bdt_covar covar_handle(&v, which_stage, stage_cut);
 	    covar_handle.GenerateDetectorCovar(covar_det_template_xml);
 
