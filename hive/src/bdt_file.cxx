@@ -9,7 +9,7 @@ int removeSubStrings(std::string & s, std::string & p) {
     return 0;
 }
 
-std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<double> & fullvec){
+std::vector<TMatrixT<double>> splitNormShapeCopy(TMatrixT<double> & Min,std::vector<double> & fullvec){
 
     int ncol = Min.GetNrows();
     std::vector<TMatrixT<double>> ans;

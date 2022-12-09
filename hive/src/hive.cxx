@@ -33,7 +33,7 @@
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name,bool shape_only);
 
-
+log_level_t GLOBAL_LEVEL = LOG_DEBUG;
 
 int main (int argc, char *argv[]){
 
