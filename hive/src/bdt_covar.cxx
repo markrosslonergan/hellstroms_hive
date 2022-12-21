@@ -134,6 +134,8 @@ void bdt_covar::merge_covar(const std::vector<std::string>& files_to_merge, cons
 	TFile* fin = new TFile(files_to_merge[i].c_str(), "read");
 	TMatrixT<double>* matrix_in = (TMatrixT<double>*)fin->Get("frac_covariance");
 	remove_nan(matrix_in);
+    covar_matrix.ResizeTo(matrix_in->GetNrows(),matrix_in->GetNcols());
+    covar_matrix.Zero();
 	if(i== 0)
 	    covar_matrix = *matrix_in; 
 	else 
@@ -177,11 +179,11 @@ void bdt_covar::generate_covar(const std::string& xml, const std::string& tag, b
 
     std::cout << "bdt_covar: Generate covariance matrix under name " << tag << ".SBNcovar.root" << std::endl; 
     if(run_det){
-	sbn::SBNcovariance covar(xml, false);
-	covar.FormCovarianceMatrix(tag);
+	    sbn::SBNcovariance covar(xml, false);
+	    covar.FormCovarianceMatrix(tag);
     }else{
-	sbn::SBNcovariance covar(xml);
-	covar.FormCovarianceMatrix(tag);
+	    sbn::SBNcovariance covar(xml);
+	    covar.FormCovarianceMatrix(tag);
     }
 
     //move covariance matrix to designated place

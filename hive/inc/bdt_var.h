@@ -124,7 +124,7 @@ struct bdt_variable{
             has_covar = false;
 
 	    decode_bins();
-	    update_def();
+	    //update_def();
             /*std::cout<<"Nbin "<<n_bins<<std::endl;
             std::cout<<"edges "<<std::endl;
             for(auto &v: edges) std::cout<<v<<std::endl;
@@ -150,7 +150,7 @@ struct bdt_variable{
             plot_max =-999;
             cat = 0;
 	     decode_bins();
-	     update_def();
+	     //update_def();
 	}
 
 	//---- function that I'd like to use only internally ----
@@ -225,12 +225,15 @@ struct bdt_variable{
 	std::string GetCovarFileID(int stage){
 	     if(covar_file_prefix.empty()){
 		covar_file_prefix = "VarCovar_Stage_"+ std::to_string(stage) + "_" + this->GetID(); 
-
-		if(flux_xs_sys_only())
-		    covar_file_prefix += "_FluxXS";
-		else if(detector_sys_only())
-		    covar_file_prefix += "_Det";
-	    }
+        
+        //default to using covar_sys
+		//if(flux_xs_sys_only())
+		//    covar_file_prefix += "_FluxXS";
+		//else if(detector_sys_only())
+		//    covar_file_prefix += "_Det";
+	    //}
+        covar_file_prefix += "_"+covar_sys; 
+    }
 	    return covar_file_prefix;
 	}
 

@@ -32,7 +32,8 @@ private:
 
 
     std::string file_dir="SBNcovar/";
-    std::vector<std::string> detsys = {"AngleXZ","AngleYZ","WireYZ","WireX","LY","LYAtt","LYRay", "Recom2","SCE"};
+    std::vector<std::string> detsys = {"WiremodX","WiremodYZ","WiremodAngleYZ","WiremodAngleXZ","lightYieldAttn","lightYieldDown","lightYieldRay","SCE","Recomb2"};
+    //std::vector<std::string> detsys = {"WiremodAngleXZ"};
 
     int stage;
     std::string base_cut;

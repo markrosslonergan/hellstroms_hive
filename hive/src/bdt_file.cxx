@@ -1629,7 +1629,6 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
      
     
 
-    std::cout<<__LINE__<<" Yarko "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
     std::string output_file_name = "sbnfit_"+analysis_tag+"_stage_"+std::to_string(which_stage)+"_"+this->tag+".root";
 
     std::cout<<"Starting to make SBNFit output file named: "<<output_file_name<<std::endl;
@@ -1640,11 +1639,9 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     f_sbnfit->cd();
 
     std::cout<<"Creating directory structure"<<std::endl;
-    std::cout<<__LINE__<<" Yarko "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
 
     TDirectory *cdtof = f_sbnfit->mkdir("singlephoton");
     cdtof->cd();    
-    std::cout<<__LINE__<<" Yarko "<<bdt_infos.size()<<" "<<tsplot_pot<<std::endl;
 
     std::string sbnfit_cuts = this->getStageCuts(which_stage, fbdtcuts);
     sbnfit_cuts="("+sbnfit_cuts+")&&("+external_cuts+")"; 
