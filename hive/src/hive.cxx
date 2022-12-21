@@ -290,7 +290,7 @@ int main (int argc, char *argv[]){
     }
 
 
-    gSystem->Load("/uboone/app/users/markrl/Hive_v3.0/hellstroms_hive/hive/root_linkdefs/loc/SL7/denan_cxx.so");
+    //gSystem->Load("/uboone/app/users/markrl/Hive_v3.0/hellstroms_hive/hive/root_linkdefs/loc/SL7/denan_cxx.so");
     //===========================================================================================
     //===========================================================================================
     //			Begininning of main program here!
@@ -1256,11 +1256,14 @@ int main (int argc, char *argv[]){
                     scan_significance_linlin(signal_bdt_files, bkg_bdt_files, bdt_infos,fbdtcuts, which_bdt,which_file);
                     break;
 		case 8:
-		    scan_significance_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, 10*what_pot);
+		    scan_chisquare_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, additional_tag, 10.);
 		    break;
 		case 9:
-                    scan_significance_stat(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, 10*what_pot);
+                    scan_chisquare_stat(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, additional_tag, 10.);
                     break;
+		case 10:
+		    random_scan_chisquare_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, 10000, 10.);
+		    break;
                 default:
                     break;
             }

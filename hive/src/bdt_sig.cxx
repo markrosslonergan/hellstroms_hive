@@ -117,12 +117,22 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
 }
 
-std::vector<double> scan_significance_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, TMatrixT<double>* fixed_frac_matrix, double plot_pot){
+std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, TMatrixT<double>* fixed_frac_matrix, double plot_pot, std::string pdfname, double signal_scale){
     int stage = bdt_infos.size() + 1;
+    bool _debug = false; //print debugging information
+    if(_debug){
+	std::cout << "Print fractional covariance matrix " << std::endl; 
+
+	for(int i = 0; i != fixed_frac_matrix->GetNrows(); ++i){
+	    for(int j = 0; j != fixed_frac_matrix->GetNrows(); ++j)
+		std::cout << "(" << i << ", " << j << ") " <<  (*fixed_frac_matrix)(i,j) << std::endl;
+	}
+    }
+
  
     //grab POT of stacked histogram
     double current_pot = stack->getPOT();
-    double scale = plot_pot / current_pot; 
+    double pot_scale = plot_pot / current_pot; 
 
     //set up cut range
     int max_pts = 1;
@@ -134,6 +144,169 @@ std::vector<double> scan_significance_sys_fixed(bdt_stack* stack,  std::vector<b
     std::cout<< "Total of " << max_pts <<" grid points to scan" << std::endl;
     for(int i=0; i< bdt_infos.size();i++){
         std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<" (n_steps:  "<<n_steps[i]<<")"<<std::endl;
+    }
+    std::cout << "POT: " << plot_pot << " | signal scaling: " << signal_scale << std::endl;
+
+    //set entrylist 
+    std::cout<<"Setting Min entry lists"<<std::endl;
+    for(auto f: stack->getFiles()) {
+	f->setStageEntryList(1+bdt_infos.size(), minvals);
+    }
+
+
+    //set up SBNchi 
+    // first, form a valid xml, for SBNchi to use
+    bdt_covar covar_handle(&var, stage);
+    std::string template_xml = covar_handle.GetTemplateXmls().at(0);
+    std::string xml = covar_handle.PrepareXml(template_xml, "SBNchi_Helper");
+    std::cout << "xml: " << xml << std::endl;
+
+    sbn::SBNchi chi_handle(xml);	
+    chi_handle.is_stat_only = false;
+ 
+
+    int best_point = -1;
+    double best_chi = 0;
+    std::vector<double> chivec, sigvec;
+    int start_time = time(nullptr);
+    // iterate through all grid point
+    for(int i =0; i != max_pts; ++i){
+
+	std::vector<double> cur_pt = grab_point(i, bdt_scan_pts);
+
+	auto full_vector = stack->getFullVector(var, stage, cur_pt, signal_scale);
+	auto full_bkg_spec = stack->getFullVectorWithError(var, stage, cur_pt, true); //same dimension as full vector, but skip signal contribution
+	auto full_bkg_vector = full_bkg_spec[0], full_bkg_error = full_bkg_spec[1]; 
+
+	if(_debug &&  i%100 == 0 ){
+	    std::cout << "Print full vector : ";
+	    for(auto& f : full_vector){
+		std::cout << f << " ";
+	    } 
+	    std::cout << " Total of " << std::accumulate(full_vector.begin(), full_vector.end(), 0.0) << std::endl;
+	     
+	    std::cout << "Print background vector : ";
+	    for(auto& f : full_bkg_vector){
+		std::cout << f << " ";
+	    } 
+	    std::cout << " Total of " << std::accumulate(full_bkg_vector.begin(), full_bkg_vector.end(), 0.0) << std::endl;
+
+	    std::cout << "Print background error : ";
+	    for(auto& f : full_bkg_error){
+		std::cout << f << " ";
+	    } 
+	    std::cout << " Total of " << std::accumulate(full_bkg_error.begin(), full_bkg_error.end(), 0.0) << std::endl;
+
+	    std::cout << "POT Scale " << pot_scale << std::endl;
+	    std::cout << "Signal Scale " << signal_scale << std::endl;
+	}
+
+	double current_chi = calculate_chi(&chi_handle, fixed_frac_matrix, full_vector, full_bkg_vector, full_bkg_error, pot_scale);	
+	chivec.push_back(current_chi);
+
+	    
+	//grab stats S/sqrt(B) ratio
+	double total_bkg = std::accumulate(full_bkg_vector.begin(), full_bkg_vector.end(), 0.0);
+    	double total_sig = std::accumulate(full_vector.begin(), full_vector.end(), 0.0) - total_bkg;
+	sigvec.push_back(calculate_significance(total_sig, total_bkg, 0));
+
+	if(_debug && i%100 == 0 ){
+	    std::cout << "Print full vector : ";
+	    for(auto& f : full_vector){
+		std::cout << f << " ";
+	    } 
+	    std::cout << " Total of " << std::accumulate(full_vector.begin(), full_vector.end(), 0.0) << std::endl;
+	     
+	    std::cout << "Print background vector : ";
+	    for(auto& f : full_bkg_vector){
+		std::cout << f << " ";
+	    } 
+	    std::cout << " Total of " << std::accumulate(full_bkg_vector.begin(), full_bkg_vector.end(), 0.0) << std::endl;
+
+	    std::cout << "Print background error : ";
+	    for(auto& f : full_bkg_error){
+		std::cout << f << " ";
+	    } 
+	    std::cout << " Total of " << std::accumulate(full_bkg_error.begin(), full_bkg_error.end(), 0.0) << std::endl;
+
+	    std::cout << "Current chi: " << current_chi << std::endl;
+	}
+
+	if(current_chi > best_chi){
+	    best_chi = current_chi;
+	    best_point = i;
+	    std::cout << "at Point " << i << " Corresponding cuts: (";
+	    for(auto& p : cur_pt)
+		std::cout <<  p << ", ";
+	    std::cout << ")  ------ Current best chi " << best_chi << " P-value: " << TMath::Prob(best_chi, chi_handle.num_bins_total_compressed);
+    
+	    std::cout << "  signal prediction: " << total_sig << "  background prediction: " << total_bkg << " S/sqrt(B) is " << sigvec.back() << std::endl; 
+	}
+
+	if( (i+1) % 100 ==0){
+	    std::cout << i << "/" << max_pts << " Running over 100 points costs " << time(nullptr) - start_time << " seconds" << std::endl;
+	    start_time = time(nullptr);
+	}
+    }
+    
+    std::cout<<"----------------------------------------------------"<<std::endl;
+    std::cout<<"------------ Finished. Largest chi was  "<< best_chi <<" at point "<< best_point <<" with Cuts at ( "<<std::endl;
+    auto best_pt = grab_point(best_point, bdt_scan_pts);
+    for(auto &dd: best_pt){
+        std::cout<<dd<<" ";
+    }
+    std::cout<<")" << std::endl;
+
+    std::cout<<"Done with chi2 scan with systeamtic uncertainties"<<std::endl;
+
+    make_project_plots(bdt_scan_pts, bdt_infos, chivec, "Marginalized #chi^{2}", pdfname + "_Chi.pdf");
+    make_project_plots(bdt_scan_pts, bdt_infos, sigvec, "Marginalized S/sqrt(B)", pdfname + "_Significance.pdf");
+    return best_pt;
+}
+
+std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& cuts, double plot_pot, std::string pdfname, double signal_scale){
+    int stage = bdt_infos.size() + 1;
+
+    //generates the covaraince matrix at given bdt cuts 
+    std::string stage_cuts = stack->getFiles().at(0)->getGeneralStageCuts(stage, cuts, true);
+
+    // only consider flux and xs uncertainty for now
+    bdt_covar covar_handle(&var, stage, stage_cuts);
+    covar_handle.GenerateReweightingCovar();
+    TFile* covar_f = new TFile(var.GetCovarFile(stage).c_str(),"read");
+    TMatrixT<double>* covar_matrix = (TMatrixT<double>*)covar_f->Get(var.covar_name.c_str());
+
+    auto res = scan_chisquare_sys_fixed(stack, bdt_infos, var, covar_matrix, plot_pot, pdfname, signal_scale);
+    covar_f->Close();
+    return res; 
+}
+
+
+std::vector<double> random_scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, TMatrixT<double>* fixed_frac_matrix, double plot_pot, int num_scans, double signal_scale){
+    int stage = bdt_infos.size() + 1;
+ 
+    //grab POT of stacked histogram
+    double current_pot = stack->getPOT();
+    double pot_scale = plot_pot / current_pot; 
+
+    //set up cut range
+    int dummy_pts;
+    std::vector<std::vector<double>> dummy_bdt_scan_pts;
+    auto grid = setup_bdt_cut_grid(bdt_infos, dummy_bdt_scan_pts, dummy_pts, stack);
+    std::vector<double> maxvals = grid[0], minvals = grid[1];
+
+    std::cout<<"We are going to scan randomly between these values "<<std::endl;
+    std::cout<< "Total of " << num_scans <<" random scans" << std::endl;
+    for(int i=0; i< bdt_infos.size();i++){
+        std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<std::endl;
+    }
+
+    //random number generator 
+    unsigned seed = 1; 
+    std::default_random_engine generator(seed);
+    std::vector<std::uniform_real_distribution<double>> random_dists; 
+    for(int i=0; i< bdt_infos.size();i++){
+	random_dists.push_back(std::uniform_real_distribution<double>(minvals[i], maxvals[i]));
     }
 
     //set entrylist 
@@ -153,62 +326,69 @@ std::vector<double> scan_significance_sys_fixed(bdt_stack* stack,  std::vector<b
     sbn::SBNchi chi_handle(xml);	
     chi_handle.is_stat_only = false;
 
-    int best_point = -1;
-    double best_chi = 0;
-    std::vector<double> chivec;
+
+
+    std::vector<double> best_chi_pt, best_significance_pt; 
+    double best_chi = 0, best_significance = 0;
     int start_time = time(nullptr);
     // iterate through all grid point
-    for(int i =0; i != max_pts; ++i){
+    for(int i =0; i != num_scans; ++i){
 
-	std::vector<double> cur_pt = grab_point(i, bdt_scan_pts);
+        std::vector<double> cur_pt; 
+        for(auto& dist : random_dists){
+	    cur_pt.push_back( round_to( dist(generator), 0.001 ) );
+        }
 
-	auto full_vector = stack->getFullVector(var, stage, cur_pt);
+	auto full_vector = stack->getFullVector(var, stage, cur_pt, signal_scale);
 	auto full_bkg_spec = stack->getFullVectorWithError(var, stage, cur_pt, true); //skip signal contribution
 	auto full_bkg_vector = full_bkg_spec[0], full_bkg_error = full_bkg_spec[1]; 
 
-	// scale prediction to match pot, if necessary 
-	std::transform(full_vector.begin(), full_vector.end(), full_vector.begin(), [&scale](double d){return scale*d;});
-	std::transform(full_bkg_vector.begin(), full_bkg_vector.end(), full_bkg_vector.begin(), [&scale](double d){return scale*d;});
-	std::transform(full_bkg_error.begin(), full_bkg_error.end(), full_bkg_error.begin(), [&scale](double d){return scale*d;});
-
-
-	//calculate chi at background prediction
-	auto full_covar_matrix = chi_handle.CalcCovarianceMatrix(fixed_frac_matrix, full_bkg_vector, full_bkg_error);
-
-	TMatrixT<double> collapse_covar_matrix(chi_handle.num_bins_total_compressed, chi_handle.num_bins_total_compressed);
-	chi_handle.CollapseModes(full_covar_matrix, collapse_covar_matrix);
-	TMatrixT<double> inverted_matrix = chi_handle.InvertMatrix(collapse_covar_matrix);
-	double current_chi = chi_handle.CalcChi(inverted_matrix, full_bkg_vector, full_vector);
-	chivec.push_back(current_chi);
-
+	double current_chi = calculate_chi(&chi_handle, fixed_frac_matrix, full_vector, full_bkg_vector, full_bkg_error, pot_scale);    
 	if(current_chi > best_chi){
 	    best_chi = current_chi;
-	    best_point = i;
+	    best_chi_pt = cur_pt;
+	    std::cout << "[BEST CHI] ";
+	}
+
+	    
+	//grab stats S/sqrt(B) ratio
+	double total_bkg = std::accumulate(full_bkg_vector.begin(), full_bkg_vector.end(), 0.0);
+    	double total_sig = std::accumulate(full_vector.begin(), full_vector.end(), 0.0) - total_bkg;
+	double current_sig = calculate_significance(total_sig, total_bkg, 0);
+
+	if(current_sig > best_significance){
+	    best_significance = current_sig;
+	    best_significance_pt = cur_pt;
+	    std::cout << "[BEST SIG] ";
+	}
+
+	// print info for every point
+	if(true){
 	    std::cout << "at Point " << i << " Corresponding cuts: (";
 	    for(auto& p : cur_pt)
 		std::cout <<  p << ", ";
-	    std::cout << ")  ------ Current best chi " << best_chi << std::endl;
+	    std::cout << ")  ------ Current chi " << current_chi << " P-value: " << TMath::Prob(best_chi, chi_handle.num_bins_total_compressed) << " signal prediction: " << total_sig << "  background prediction: " << total_bkg << " S/sqrt(B) is " << current_sig << std::endl; 
 	}
 
 	if( (i+1) % 100 ==0){
-	    std::cout << i << "/" << max_pts << " Running over 100 points costs " << time(nullptr) - start_time << " seconds" << std::endl;
+	    std::cout << i << "/" << num_scans << " Running over 100 points costs " << time(nullptr) - start_time << " seconds" << std::endl;
 	    start_time = time(nullptr);
 	}
     }
     
     std::cout<<"----------------------------------------------------"<<std::endl;
-    std::cout<<"------------ Finished. Largest chi was  "<< best_chi <<" at point "<< best_point <<" with Cuts at "<<std::endl;
-    for(auto &dd: grab_point(best_point, bdt_scan_pts)){
+    std::cout<<"------------ Finished. Largest chi was  "<< best_chi <<" at Cuts ( "<<std::endl;
+    for(auto &dd: best_chi_pt){
         std::cout<<dd<<" ";
     }
-    std::cout<<std::endl;
+    std::cout<<")" << std::endl;
+
     std::cout<<"Done with chi2 scan with systeamtic uncertainties"<<std::endl;
 
-    make_project_plots(bdt_scan_pts, bdt_infos, chivec, "TEST_sys_chi.pdf");
-    return grab_point(best_point, bdt_scan_pts);
+    return best_chi_pt;
 }
 
-std::vector<double> scan_significance_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& cuts, double plot_pot){
+std::vector<double> random_scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& cuts, double plot_pot, int num_scans, double signal_scale){
     int stage = bdt_infos.size() + 1;
 
     //generates the covaraince matrix at given bdt cuts 
@@ -220,12 +400,12 @@ std::vector<double> scan_significance_sys_fixed(bdt_stack* stack,  std::vector<b
     TFile* covar_f = new TFile(var.GetCovarFile(stage).c_str(),"read");
     TMatrixT<double>* covar_matrix = (TMatrixT<double>*)covar_f->Get(var.covar_name.c_str());
 
-    auto res = scan_significance_sys_fixed(stack, bdt_infos, var, covar_matrix, plot_pot);
+    auto res = random_scan_chisquare_sys_fixed(stack, bdt_infos, var, covar_matrix, plot_pot, num_scans, signal_scale);
     covar_f->Close();
     return res; 
 }
 
-std::vector<double> scan_significance_stat(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot){
+std::vector<double> random_scan_chisquare_stat(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, int num_scans, double signal_scale){
 
     int num_subchannel = stack->getNFiles();
     int num_bins = var.GetNBins();
@@ -233,7 +413,20 @@ std::vector<double> scan_significance_stat(bdt_stack* stack,  std::vector<bdt_in
 
     TMatrixT<double> stat_matrix(total_bins, total_bins);
     stat_matrix.Zero();
-    auto res = scan_significance_sys_fixed(stack, bdt_infos, var, &stat_matrix, plot_pot);
+    auto res = random_scan_chisquare_sys_fixed(stack, bdt_infos, var, &stat_matrix, plot_pot, num_scans, signal_scale); 
+
+    return res; 
+}
+
+std::vector<double> scan_chisquare_stat(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, std::string pdfname, double signal_scale){
+
+    int num_subchannel = stack->getNFiles();
+    int num_bins = var.GetNBins();
+    int total_bins = num_subchannel * num_bins;
+
+    TMatrixT<double> stat_matrix(total_bins, total_bins);
+    stat_matrix.Zero();
+    auto res = scan_chisquare_sys_fixed(stack, bdt_infos, var, &stat_matrix, plot_pot, pdfname, signal_scale);
 
     return res; 
 }
@@ -1081,7 +1274,7 @@ double calculate_significance(double signal, double background, int sig_type, do
 	    case 3:     //efficiency times purity
 	    {
 		if(total_signal == 0){
-		    std::cerr << "bdt_sig::calculate_significance\t||\t Orignal signal is 0, can't calculate efficiency" << std::endl;
+		    std::cerr << "\nbdt_sig::calculate_significance\t||\t Orignal signal is 0, can't calculate efficiency" << std::endl;
 		    throw std::runtime_error("Not set up original signal prediction");
 		}
 		efficiency = signal/total_signal;	
@@ -1092,7 +1285,7 @@ double calculate_significance(double signal, double background, int sig_type, do
 	    case 4:     //efficiency 
 	    {
 		if(total_signal == 0){
-                    std::cerr << "bdt_sig::calculate_significance\t||\t Orignal signal is 0, can't calculate efficiency" << std::endl;
+                    std::cerr << "\nbdt_sig::calculate_significance\t||\t Orignal signal is 0, can't calculate efficiency" << std::endl;
                     throw std::runtime_error("Not set up original signal prediction");
                 }
 		efficiency = signal/total_signal;	
@@ -1222,7 +1415,7 @@ std::vector<int> get_local_indices(int global_index, const std::vector<std::vect
 }
 
 
-void make_project_plots(const std::vector<std::vector<double>>& bdt_scan_pts, const std::vector<bdt_info>& bdt_infos, const std::vector<double>& chi_vec, std::string pdfname){
+void make_project_plots(const std::vector<std::vector<double>>& bdt_scan_pts, const std::vector<bdt_info>& bdt_infos, const std::vector<double>& result_vec, std::string metric_name, std::string pdfname){
      int num_bdts = bdt_infos.size();
      int total_pts = 1; 
 
@@ -1247,12 +1440,18 @@ void make_project_plots(const std::vector<std::vector<double>>& bdt_scan_pts, co
      std::vector<TH1D*> hist_vec_1D; 
      std::vector<TH2D*> hist_vec_2D;
      std::vector<std::pair<int, int>> Comb_2D;
+
+     //flag to keep track of whether givn bin is filled. may not be needed.. checking.
+     std::vector<std::vector<int>> filled_1D;
+     std::vector<std::vector<std::vector<int>>> filled_2D;
+
      for(int i = 0; i != num_bdts; ++i){
 	std::string bdt_name_i = bdt_infos[i].getName();
 
 	hist_vec_1D.push_back(new TH1D( bdt_name_i.c_str(), bdt_name_i.c_str(), n_step[i], min_val[i], max_val[i] ) );
 	hist_vec_1D.back()->GetXaxis()->SetTitle((bdt_name_i + " Score").c_str());
-	hist_vec_1D.back()->GetYaxis()->SetTitle("Marginalized #chi^{2}");
+	hist_vec_1D.back()->GetYaxis()->SetTitle(metric_name.c_str());
+	filled_1D.push_back(std::vector<int>(n_step[i]+1, 0));
 
 	for(int j = i+1; j != num_bdts; ++j){
 	    std::string bdt_name_j = bdt_infos[j].getName();
@@ -1260,7 +1459,9 @@ void make_project_plots(const std::vector<std::vector<double>>& bdt_scan_pts, co
 	    Comb_2D.push_back({i,j });
 
 	    hist_vec_2D.push_back(new TH2D(hist_name.c_str(), hist_name.c_str(), n_step[i], min_val[i], max_val[i], n_step[j], min_val[j], max_val[j]));
-	    hist_vec_2D.back()->SetTitle(("Marginalized #chi^{2};" + bdt_name_i + " Score ;" + bdt_name_j + " Score").c_str());
+	    hist_vec_2D.back()->SetTitle(( metric_name + ";" + bdt_name_i + " Score ;" + bdt_name_j + " Score").c_str());
+
+	    filled_2D.push_back(std::vector<std::vector<int>>(n_step[i]+1, std::vector<int>(n_step[j]+1, 0)));
 	}
      }
 
@@ -1271,17 +1472,34 @@ void make_project_plots(const std::vector<std::vector<double>>& bdt_scan_pts, co
 
 	//update 1D histogram 
 	for(int j = 0; j != num_bdts; ++j){
-	    double bin_content = hist_vec_1D[j]->GetBinContent(indices[j]+1);
-	    bin_content = (bin_content == 0 ? chi_vec[i] : std::min(bin_content, chi_vec[i])); //check if bin has been filled
-	    hist_vec_1D[j]->SetBinContent( indices[j]+1, bin_content);
+
+	    int bin = indices[j]+1;
+
+	    //check if bin has been filled
+	    double bin_content;
+	    if(filled_1D[j][bin]){
+		bin_content = std::min(hist_vec_1D[j]->GetBinContent(bin), result_vec[i]);
+	    }
+	    else{
+		filled_1D[j][bin] = 1;
+		bin_content = result_vec[i];
+	    }
+
+	    hist_vec_1D[j]->SetBinContent( bin, bin_content);
 	}
 
 	// update 2D histos 
 	for(int j = 0; j != Comb_2D.size(); ++j){
 	    int bin_x = indices[Comb_2D[j].first] + 1, bin_y = indices[Comb_2D[j].second] + 1;
 
-	    double bin_content = hist_vec_2D[j]->GetBinContent(bin_x, bin_y);
-	    bin_content = (bin_content == 0? chi_vec[i] : std::min(bin_content, chi_vec[i]));
+	    double bin_content;
+	    if(filled_2D[j][bin_x][bin_y]){
+		bin_content = std::min(hist_vec_2D[j]->GetBinContent(bin_x, bin_y), result_vec[i]);
+	    }else{
+		filled_2D[j][bin_x][bin_y] = 1;
+		bin_content = result_vec[i];
+	    }
+
 	    hist_vec_2D[j]->SetBinContent(bin_x, bin_y, bin_content);
 	}
     }
@@ -1311,5 +1529,60 @@ void make_project_plots(const std::vector<std::vector<double>>& bdt_scan_pts, co
     for(auto h : hist_vec_2D)
 	delete h;
 
+    delete c;
     return;
 }
+
+double calculate_chi(sbn::SBNchi* chi_handle, TMatrixT<double>* frac_matrix, std::vector<double>& fulldata, std::vector<double>& full_spec, std::vector<double>& full_spec_error, double scale){
+
+	// scale spectrum, if necessary 
+	if(scale != 1){
+	    std::transform(fulldata.begin(), fulldata.end(), fulldata.begin(), [&scale](double d){return scale*d;});
+	    std::transform(full_spec.begin(), full_spec.end(), full_spec.begin(), [&scale](double d){return scale*d;});
+	    std::transform(full_spec_error.begin(), full_spec_error.end(), full_spec_error.begin(), [&scale](double d){return scale*d;});
+	}
+
+	// collapse full vector into collapsed ones 
+	std::vector<double> collapsed_data(chi_handle->num_bins_total_compressed, 0), collapsed_spec(chi_handle->num_bins_total_compressed, 0);
+	chi_handle->CollapseVectorStandAlone(&fulldata, &collapsed_data);
+	chi_handle->CollapseVectorStandAlone(&full_spec, &collapsed_spec);
+
+
+	//calculate chi at background prediction
+	//CNP chi-square
+	TMatrixT<double> collapse_covar_matrix = chi_handle->CalcCovarianceMatrixCNP(*frac_matrix, full_spec, full_spec_error, collapsed_spec, collapsed_data);
+
+	//Pearson chi-square
+	if(false){
+		auto full_covar_matrix = chi_handle->CalcCovarianceMatrix(frac_matrix, full_spec, full_spec_error);
+		TMatrixT<double> collapse_covar_matrix(chi_handle->num_bins_total_compressed, chi_handle->num_bins_total_compressed);
+		chi_handle->CollapseModes(full_covar_matrix, collapse_covar_matrix);
+	}
+
+	TMatrixT<double> inverted_matrix = chi_handle->InvertMatrix(collapse_covar_matrix);
+
+	// print matrix to log
+	if(false){
+	    std::cout << "Collapsed covariance matrix: " << std::endl;
+	    for(int i = 0; i != collapse_covar_matrix.GetNrows(); ++i){
+		for(int j = 0;j != collapse_covar_matrix.GetNcols(); ++j)
+		    std::cout << collapse_covar_matrix(i,j) << " ";
+		std::cout << std::endl;
+	    }
+	    std::cout << "Inverted covariance matrix: " << std::endl;
+	    for(int i = 0; i != inverted_matrix.GetNrows(); ++i){
+		for(int j = 0;j != inverted_matrix.GetNcols(); ++j)
+		    std::cout << inverted_matrix(i,j) << " ";
+		std::cout << std::endl;
+	    }
+	}
+	double current_chi = chi_handle->CalcChi(inverted_matrix, collapsed_spec, collapsed_data);
+
+	return current_chi;
+}
+	
+double round_to(double value, double precision)
+{
+    return std::round(value / precision) * precision;
+}
+

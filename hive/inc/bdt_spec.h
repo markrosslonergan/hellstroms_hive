@@ -109,9 +109,10 @@ class bdt_stack{
 		 * Note: The order of prediction vector for bdt files is the same as bdtfile order in configuration xml 
 		 * Note: if skip_signal is set to true, signal will be zeroed out.
 		 */
-		std::vector<double> getEntryFullVector(bdt_variable var, bool skip_signal = false);
-		std::vector<double> getFullVector(bdt_variable var, int stage, const std::vector<double>& cuts, bool skip_signal=false, std::string additional_cut="1");
-		std::vector<std::vector<double>> getFullVectorWithError(bdt_variable var, int stage, const std::vector<double>& cuts, bool skip_signal=false, std::string additional_cut="1");
+		std::vector<double> getEntryFullVector(bdt_variable var, bool skip_signal = false, double signal_scale = 1.0);
+		std::vector<double> getFullVector(bdt_variable var, int stage, const std::vector<double>& cuts, double signal_scale, std::string additional_cut="1");
+		std::vector<double> getFullVector(bdt_variable var, int stage, const std::vector<double>& cuts, bool skip_signal=false, double signal_scale = 1.0, std::string additional_cut="1");
+		std::vector<std::vector<double>> getFullVectorWithError(bdt_variable var, int stage, const std::vector<double>& cuts, bool skip_signal=false, double signal_scale = 1.0, std::string additional_cut="1");
 
 
 		/* Function: returns sum of distribution histograms for given variable, at given stage. 

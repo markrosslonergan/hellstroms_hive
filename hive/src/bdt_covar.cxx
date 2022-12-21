@@ -165,7 +165,7 @@ std::string bdt_covar::PrepareXml(const std::string& xml, const std::string& fil
 
 
     std::vector<std::string> targets = {"VARVARVAR", "BINBINBIN", "WEIWEIWEI"};
-    std::vector<std::string> replacements = {"\""+ pvar->GetVarDef() + "\"", "\""+ pvar->GetBinEdges() + "\"", "(" + base_cut + " && " + pvar->GetAdditionalCut() + ")"};
+    std::vector<std::string> replacements = {"\""+ pvar->GetVarSimpleDef() + "\"", "\""+ pvar->GetBinEdges() + "\"", "(" + base_cut + " && " + pvar->GetAdditionalCut() + ")"};
 
     copy_and_replace(xml, output_xml, targets, replacements, "xml");   
 

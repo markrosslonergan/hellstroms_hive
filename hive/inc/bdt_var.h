@@ -124,7 +124,6 @@ struct bdt_variable{
             has_covar = false;
 
 	    decode_bins();
-	    update_def();
             /*std::cout<<"Nbin "<<n_bins<<std::endl;
             std::cout<<"edges "<<std::endl;
             for(auto &v: edges) std::cout<<v<<std::endl;
@@ -150,16 +149,9 @@ struct bdt_variable{
             plot_max =-999;
             cat = 0;
 	     decode_bins();
-	     update_def();
 	}
 
 	//---- function that I'd like to use only internally ----
-	
-	void update_def(){
-	    if(name.find("_mva") != std::string::npos)
-		name = "simple_"+name;
-	    return;
-  	}
 
 	void decode_bins(){
             edges.clear();
@@ -266,6 +258,13 @@ struct bdt_variable{
 	}
 
    	std::string GetVarDef() const {
+	    return name;
+        }
+
+	std::string GetVarSimpleDef() const{
+	    if(name.find("_mva") != std::string::npos && name.find("simple_") == std::string::npos)
+		return "simple_"+name;
+
 	    return name;
         }
 
