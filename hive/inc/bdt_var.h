@@ -124,7 +124,6 @@ struct bdt_variable{
             has_covar = false;
 
 	    decode_bins();
-	    //update_def();
             /*std::cout<<"Nbin "<<n_bins<<std::endl;
             std::cout<<"edges "<<std::endl;
             for(auto &v: edges) std::cout<<v<<std::endl;
@@ -150,16 +149,9 @@ struct bdt_variable{
             plot_max =-999;
             cat = 0;
 	     decode_bins();
-	     //update_def();
 	}
 
 	//---- function that I'd like to use only internally ----
-	
-	void update_def(){
-	    if(name.find("_mva") != std::string::npos)
-		name = "simple_"+name;
-	    return;
-  	}
 
 	void decode_bins(){
             edges.clear();
@@ -212,6 +204,14 @@ struct bdt_variable{
 	void GetUniqueJenkinsHash(){
 	    std::string long_id =  name + "_" + GetBinEdges() + "_" + additional_cut;  
 	    std::replace(long_id.begin(), long_id.end(), ' ', '_');
+        //lets ignore simples 
+        std::string rmo = "_mva";
+        std::string sim = "simple_";
+        size_t index = long_id.find(rmo);
+        if(index!=std::string::npos && long_id.find(sim)==std::string::npos){
+           long_id.insert(0,sim); 
+        }
+        
 	    unique_hash = std::to_string(jenkins_hash(long_id));
 	    return;
   	}
@@ -269,6 +269,13 @@ struct bdt_variable{
 	}
 
    	std::string GetVarDef() const {
+	    return name;
+        }
+
+	std::string GetVarSimpleDef() const{
+	    if(name.find("_mva") != std::string::npos && name.find("simple_") == std::string::npos)
+		return "simple_"+name;
+
 	    return name;
         }
 

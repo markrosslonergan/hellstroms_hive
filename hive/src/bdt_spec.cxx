@@ -183,16 +183,23 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 }
 
 
-std::vector<double> bdt_stack::getEntryFullVector(bdt_variable var, bool skip_signal){
-    return this->getFullVector(var, -2, {}, skip_signal);
+std::vector<double> bdt_stack::getEntryFullVector(bdt_variable var, bool skip_signal, double signal_scale){
+    return this->getFullVector(var, -2, {}, skip_signal, signal_scale);
 }
 
-std::vector<double> bdt_stack::getFullVector(bdt_variable var, int stage, const std::vector<double>& cuts, bool skip_signal, std::string additional_cut){
-    auto res = this->getFullVectorWithError(var, stage, cuts, skip_signal, additional_cut);
+std::vector<double> bdt_stack::getFullVector(bdt_variable var, int stage, const std::vector<double>& cuts, bool skip_signal, double signal_scale, std::string additional_cut){
+    auto res = this->getFullVectorWithError(var, stage, cuts, skip_signal, signal_scale, additional_cut);
     return res[0];
 }
 
-std::vector<std::vector<double>> bdt_stack::getFullVectorWithError(bdt_variable var, int stage, const std::vector<double>& cuts, bool skip_signal, std::string additional_cut){
+
+std::vector<double> bdt_stack::getFullVector(bdt_variable var, int stage, const std::vector<double>& cuts, double signal_scale, std::string additional_cut){
+    auto res = this->getFullVectorWithError(var, stage, cuts, false, signal_scale, additional_cut);
+    return res[0];
+}
+
+
+std::vector<std::vector<double>> bdt_stack::getFullVectorWithError(bdt_variable var, int stage, const std::vector<double>& cuts, bool skip_signal, double signal_scale, std::string additional_cut){
 
     std::vector<double> fullvec, errvec;
 
@@ -203,8 +210,12 @@ std::vector<std::vector<double>> bdt_stack::getFullVectorWithError(bdt_variable 
 
 	// if only prediction for background is desired. 
 	// For maxtri dimension purpose, bins need to be kept
-	if(skip_signal && stack.at(t)->IsSignal())
-            hist->Reset();         
+	if(stack.at(t)->IsSignal()){
+	    if(skip_signal)
+            	hist->Reset();         
+	    else if( signal_scale != 1.0)
+	    	hist->Scale(signal_scale);
+	}
 
         for(int i=0; i< hist->GetNbinsX(); ++i){
             fullvec.push_back(hist->GetBinContent(i+1)); 

@@ -77,8 +77,7 @@ std::vector<size_t> sort_indexes(const std::vector<T> &v) {
     return idx;
 }
 
-
-
+std::string convertToXRootD(std::string fname_orig);
 std::vector<TMatrixT<double>> splitNormShapeCopy(TMatrixT<double> & Min,std::vector<double>&vin);
 int removeSubStrings(std::string &, std::string&);
 

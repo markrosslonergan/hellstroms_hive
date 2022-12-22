@@ -8,6 +8,19 @@ int removeSubStrings(std::string & s, std::string & p) {
         s.erase(i, n);
     return 0;
 }
+std::string convertToXRootD(std::string fname_orig){
+    std::string fname_use = fname_orig;
+    if(fname_orig.find("pnfs")!=std::string::npos){
+        std::string p = "/pnfs";
+        std::string::size_type i = fname_orig.find(p);
+        fname_orig.erase(i,p.length());
+        fname_use = "root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr"+fname_orig;
+        std::cout<<"Converting to XrootD: "<<fname_use<<std::endl;
+    }
+    return fname_use;
+
+ }
+
 
 std::vector<TMatrixT<double>> splitNormShapeCopy(TMatrixT<double> & Min,std::vector<double> & fullvec){
 
@@ -167,7 +180,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     rangen = new TRandom3();
 
     std::cout<<"Loading : "<<name<<std::endl;
-    f = new TFile((dir+"/"+name).c_str(), "read");	
+
+    //Check some xrootd things
+    std::string fname_orig = (dir+"/"+name);
+    //remove leading /pnfs;
+    std::string fname_use = convertToXRootD(fname_orig);
+
+       
+    //f = new TFile(fname_use.c_str(), "read");	
+    f = (TFile*)TFile::Open(fname_use.c_str(),"read");
 
     if(!f->IsOpen() || !f){
         std::cout<<"ERROR: didnt open file right: "<<dir<<"/"<<name<<std::endl;
@@ -1287,8 +1308,15 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
     friend_files.push_back(in_friend_file);
     friend_names.push_back(in_friend_tree_nam);
 
-    TFile *ftmp = new TFile(friend_files.back().c_str(),"read");
-    //std::cout << ftmp << " " << ftmp->GetName() <<  " " << ftmp->IsOpen() << std::endl;
+
+    //Check some xrootd things
+    std::string fname_orig = friend_files.back();
+    //remove leading /pnfs;
+    std::string fname_use = convertToXRootD(fname_orig);
+
+
+    //TFile *ftmp = new TFile(fname_use.c_str(),"read");
+    TFile *ftmp = (TFile*)TFile::Open(fname_use.c_str(),"read");
 
     if(ftmp->IsOpen()){
         TTree * tmp = (TTree*)ftmp->Get(friend_names.back().c_str());

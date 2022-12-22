@@ -373,6 +373,11 @@ int main (int argc, char *argv[]){
     std::cout<<"================================================================================"<<std::endl;
 
     for(size_t f = 0; f < XMLconfig.GetNFiles(); ++f){
+
+
+        if(f!=0 &&(mode_option == "makedetcovar" || mode_option == "makefluxcovar")) break;
+
+
         std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
         //First build a bdt_flow for this file.
         std::string def = "1";  
@@ -1266,12 +1271,15 @@ int main (int argc, char *argv[]){
                 case 7:
                     scan_significance_linlin(signal_bdt_files, bkg_bdt_files, bdt_infos,fbdtcuts, which_bdt,which_file);
                     break;
-                case 8:
-                    scan_significance_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, 10*what_pot);
+		case 8:
+		    scan_chisquare_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, additional_tag, 10.);
+		    break;
+		case 9:
+                    scan_chisquare_stat(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, additional_tag, 10.);
                     break;
-                case 9:
-                    scan_significance_stat(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, 10*what_pot);
-                    break;
+		case 10:
+		    random_scan_chisquare_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, 10000, 10.);
+		    break;
                 default:
                     break;
             }
