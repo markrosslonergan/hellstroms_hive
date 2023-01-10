@@ -17,7 +17,7 @@ void bdt_covar::GenerateReweightingCovar(const std::string& xml ){
 
     	std::string file_tag = pvar->GetCovarFileID(stage);
 	if(pvar->full_sys()) 
-	    file_tag += "_FluxXS";
+	    file_tag = pvar->GetCovarFileID_FluxXS(stage);
 
         std::cout << "bdt_covar: start to generate reweighable systematic covariance matrix...." << std::endl;
         std::cout << "bdt_covar: WARNING covariance matrix will be generated locally" << std::endl;
@@ -47,7 +47,8 @@ void bdt_covar::GenerateDetectorCovar(const std::string& xml){
     if(pvar->detector_sys_only() || pvar->full_sys()){
 
         std::string file_tag = pvar->GetCovarFileID(stage);
-	if(pvar->full_sys()) file_tag += "_Det";
+	if(pvar->full_sys()) 
+	    file_tag = pvar->GetCovarFileID_Det(stage);
 
         std::cout << "bdt_covar: start to generate detector covariance matrix...." << std::endl;
         std::cout << "bdt_covar: WARNING covariance matrix will be generated locally" << std::endl;
@@ -101,10 +102,11 @@ void bdt_covar::GenerateDetectorCovar(const std::string& xml){
 void bdt_covar::MergeCovar(){
 
     if(pvar->full_sys()){
-        std::string file_tag = pvar->GetCovarFileID(stage);
-        std::vector<std::string> files_to_merge = {file_dir + file_tag + "_FluxXS.SBNcovar.root", file_dir + file_tag + "_Det.SBNcovar.root"};
-        merge_covar(files_to_merge, file_dir + file_tag + ".SBNcovar.root");
-        pvar->UpdateCovarFileName(file_tag + ".SBNcovar.root", file_dir);
+        std::string merged_file_tag = pvar->GetCovarFileID(stage);
+	std::string fluxxs_file = pvar->GetCovarFileID_FluxXS(stage), det_file = pvar->GetCovarFileID_Det(stage);
+        std::vector<std::string> files_to_merge = {file_dir + fluxxs_file + ".SBNcovar.root", file_dir + det_file + ".SBNcovar.root"};
+        merge_covar(files_to_merge, file_dir + merged_file_tag + ".SBNcovar.root");
+        pvar->UpdateCovarFileName(merged_file_tag + ".SBNcovar.root", file_dir);
         pvar->UpdateCovarName("frac_covariance");
         pvar->UpdateCovarType("frac");
     }
@@ -134,8 +136,11 @@ void bdt_covar::merge_covar(const std::vector<std::string>& files_to_merge, cons
 	TFile* fin = new TFile(files_to_merge[i].c_str(), "read");
 	TMatrixT<double>* matrix_in = (TMatrixT<double>*)fin->Get("frac_covariance");
 	remove_nan(matrix_in);
-    covar_matrix.ResizeTo(matrix_in->GetNrows(),matrix_in->GetNcols());
-    covar_matrix.Zero();
+
+	// Guanqun: why zero out???? comment this out 
+        //covar_matrix.ResizeTo(matrix_in->GetNrows(),matrix_in->GetNcols());
+        //covar_matrix.Zero();
+
 	if(i== 0)
 	    covar_matrix = *matrix_in; 
 	else 

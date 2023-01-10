@@ -1229,7 +1229,7 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
     if (var.additional_cut == "")  {
         var.additional_cut = "1.0";
     }
-
+ 
     for(int i=0; i< recomc_cuts.size(); i++){
         std::cout<<"On "<<i<<" of "<<recomc_names.at(i)<<std::endl;
         TCanvas *ctmp = new TCanvas();
@@ -1237,7 +1237,6 @@ std::vector<TH1*> bdt_file::getRecoMCTH1(bdt_variable var, std::string cuts, std
         this->tvertex->Draw((var.name+">>"+nam+"_"+std::to_string(i)+ var.binning).c_str() , ("("+var.additional_cut+"&&"+cuts+"&&"+recomc_cuts.at(i) +")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
         std::cout<<"Done with Draw for "<<(var.name+">>"+nam+"_"+std::to_string(i)).c_str()<<std::endl;
         //gDirectory->ls();
-
         TH1* th1 = (TH1*)gDirectory->Get((nam+"_"+std::to_string(i)).c_str()) ;
         th1->Scale(this->scale_data*plot_POT/this->pot);
         if(rebin > 1 ) th1->Rebin(rebin);
@@ -1314,11 +1313,10 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
     //remove leading /pnfs;
     std::string fname_use = convertToXRootD(fname_orig);
 
-
     //TFile *ftmp = new TFile(fname_use.c_str(),"read");
-    TFile *ftmp = (TFile*)TFile::Open(fname_use.c_str(),"read");
+    TFile *ftmp = (TFile*)TFile::Open(fname_use.c_str(),"read"); //used to open xrootd file
 
-    if(ftmp->IsOpen()){
+    if(ftmp && ftmp->IsOpen()){
         TTree * tmp = (TTree*)ftmp->Get(friend_names.back().c_str());
 
    	//std::cout << tmp << std::endl;
