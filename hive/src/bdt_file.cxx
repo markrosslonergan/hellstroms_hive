@@ -153,10 +153,14 @@ void FlatVar::Print(){
 //************ MEMBER function for BDT_FILE class ******************
 
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, std::string add_weight, bdt_flow inflow) : bdt_file(indir, inname, intag,inops,inrootdir,incol,1001,add_weight, inflow){}
+bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, std::string add_weight, bdt_flow inflow, bool in_use_xrootd) : bdt_file(indir, inname, intag,inops,inrootdir,incol,1001,add_weight, inflow, in_use_xrootd){}
 
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string add_weight, bdt_flow inflow) : bdt_file(indir,inname,intag,inops,inrootdir,incol,infillstyle,add_weight,inflow,"vertex_tree"){}
+bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string add_weight, bdt_flow inflow, bool in_use_xrootd) : bdt_file(indir,inname,intag,inops,inrootdir,incol,infillstyle,add_weight,inflow,"vertex_tree", in_use_xrootd){}
 
-bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string add_weight, bdt_flow inflow, std::string inttree ) :
+bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string add_weight, bdt_flow inflow, std::string inttree):bdt_file(indir,inname,intag,inops,inrootdir,incol,infillstyle,add_weight,inflow,inttree, false){}
+
+bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string add_weight, bdt_flow inflow, std::string inttree, bool in_use_xrootd) :
     dir(indir),
     name(inname),
     tag(intag),
@@ -168,6 +172,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     is_bnbext(false),
     is_mc(true),
     is_signal(false),
+    use_xrootd(in_use_xrootd),
     scale_data(1.0),
     fillstyle(infillstyle),
     event_identifier("1"),
@@ -183,14 +188,18 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     //Check some xrootd things
     std::string fname_orig = (dir+"/"+name);
+
+    // Check if use xrootd to open file
+    std::string fname_use = fname_orig;
+    if(use_xrootd)
     //remove leading /pnfs;
-    std::string fname_use = convertToXRootD(fname_orig);
+        fname_use = convertToXRootD(fname_orig);
 
        
     //f = new TFile(fname_use.c_str(), "read");	
     f = (TFile*)TFile::Open(fname_use.c_str(),"read");
 
-    if(!f->IsOpen() || !f){
+    if(!f || !f->IsOpen()){
         std::cout<<"ERROR: didnt open file right: "<<dir<<"/"<<name<<std::endl;
         exit(EXIT_FAILURE);
     }
@@ -641,9 +650,30 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         if(this->tag.find("TextGen")!=std::string::npos){
 	    // considering only numu POT is 2.28149e+24 
 	    // considering all contribution, the POT is 2.22242e+24
-            tmppot = combin*static_cast<double>(tvertex->GetEntries(event_identifier.c_str()))/16139.*2.22242e+24;
+
+	    //count one event only if it is by itself an event, and passes run number cut
+	    //number of event prediction is calculated by taking into account run-weight as well as individual event weight
+	    //I assume this is based on assumption that same prediction corresponds to the same amount of POT, might not be true...
+	    double modified_event_count = 0; 
+	    std::string modified_event_weight = "(" + event_identifier + ") * " + run_weight_string + " * (" + weight_branch + ")";
+	    //std::cout << "modified event weight " << modified_event_weight << std::endl;
+
+
+	    TTreeFormula* feve_weight = new TTreeFormula((this->tag+"teve_weight").c_str() , modified_event_weight.c_str(), tvertex);
+	    for(int i =0; i != tvertex->GetEntries(); ++i){
+		tvertex->GetEntry(i);
+		feve_weight->GetNdata();
+		modified_event_count += feve_weight->EvalInstance();
+	    }
+	
+	    std::cout << "Coherent event count check: prediction by adding individual event weight: " << modified_event_count;
+	    std::cout << " || prediction by scaling overall TTree entry count: " << combin*static_cast<double>(tvertex->GetEntries(event_identifier.c_str())) << std::endl;
+
+            tmppot = modified_event_count/16139.*2.22242e+24;
+            //tmppot = combin*static_cast<double>(tvertex->GetEntries(event_identifier.c_str()))/16139.*2.22242e+24; //use number of entries to calculate the corresponding POT
             //tmppot = 2.1e+24;
             std::cout<<"Its a TextGen!"<<std::endl;
+	    feve_weight = nullptr;
             //             tvertex->SetBranchStatus("grouped_trackstub_candidate_indices",0);
         }
 
@@ -1310,8 +1340,11 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
 
     //Check some xrootd things
     std::string fname_orig = friend_files.back();
+    std::string fname_use = fname_orig;
+
+    if(use_xrootd)
     //remove leading /pnfs;
-    std::string fname_use = convertToXRootD(fname_orig);
+        fname_use = convertToXRootD(fname_orig);
 
     //TFile *ftmp = new TFile(fname_use.c_str(),"read");
     TFile *ftmp = (TFile*)TFile::Open(fname_use.c_str(),"read"); //used to open xrootd file
@@ -1481,8 +1514,8 @@ int bdt_file::splitBDTfile(std::string split_string,std::string trueTAG, bdt_fil
     false_flow.definition_cuts = false_flow.definition_cuts + "&& !(" +split_string+")";  //notice the !
     false_flow.base_cuts = false_flow.topological_cuts+ false_flow.definition_cuts;
 
-    truesplit = new bdt_file(this->dir, this->name,	trueTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch+"*"+run_weight_string, true_flow);
-    falsesplit = new bdt_file(this->dir, this->name,	falseTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch+"*"+run_weight_string, false_flow);
+    truesplit = new bdt_file(this->dir, this->name,	trueTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch+"*"+run_weight_string, true_flow, use_xrootd);
+    falsesplit = new bdt_file(this->dir, this->name,	falseTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch+"*"+run_weight_string, false_flow, use_xrootd);
 
 
     return 0;
