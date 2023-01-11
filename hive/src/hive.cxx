@@ -90,6 +90,7 @@ int main (int argc, char *argv[]){
 
     bool plot_train_only = false;
     bool run1_only = false;
+    bool use_xrootd = false;
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -127,13 +128,14 @@ int main (int argc, char *argv[]){
         {"unflatten",    required_argument, 0, 'U'},
         {"type",    required_argument, 0, 'T'},
         {"plottrainonly",no_argument,  0, 'a'},
+        {"xrootd",no_argument,  0, 'R'},
         {0,			    no_argument, 		0,  0},
     };
 
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:T:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWLjh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:T:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWLRjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -241,6 +243,9 @@ int main (int argc, char *argv[]){
             case 'i':
                 input_string = optarg;
                 break;
+	    case 'R':
+		use_xrootd = true;
+		break;
             case 'T':
                 sig_type = (int)strtof(optarg,NULL);
                 break;
@@ -291,6 +296,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t--lee\t\tPlots a x3.18 LEE on top"<<std::endl;
                 std::cout<<"\t--scale\t\tScales the signal up to data-sized "<<std::endl;
                 std::cout<<"\t--run1\t\tPlots Run1 Only"<<std::endl;
+                std::cout<<"\t--xrootd\t\tUse XrootD to open root files"<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
                 return 0;
         }
@@ -403,7 +409,7 @@ int main (int argc, char *argv[]){
             std::cout<<" -- ---> "<<XMLconfig.bdt_definitions[f][i]<<std::endl;
         }
 
-        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , XMLconfig.bdt_additional_weights[f], analysis_flow, XMLconfig.bdt_ttree_names[f].c_str()));
+        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , XMLconfig.bdt_additional_weights[f], analysis_flow, XMLconfig.bdt_ttree_names[f].c_str(), use_xrootd));
 
 
         if(event_identifier != "1"){
@@ -578,7 +584,7 @@ int main (int argc, char *argv[]){
                 std::cout<<" -- ---> "<<External_XMLconfig.bdt_definitions[f][i]<<std::endl;
             }
 
-            external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] ,External_XMLconfig.bdt_additional_weights[f],  external_analysis_flow, External_XMLconfig.bdt_ttree_names[f]));
+            external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] ,External_XMLconfig.bdt_additional_weights[f],  external_analysis_flow, External_XMLconfig.bdt_ttree_names[f], use_xrootd));
 
             external_files.back()->addPlotName(External_XMLconfig.bdt_plotnames[f]);
 
@@ -1125,7 +1131,7 @@ int main (int argc, char *argv[]){
                     std::cout<<" -- ---> "<<External_XMLconfig.bdt_definitions[f][i]<<std::endl;
                 }
 
-                app_external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , External_XMLconfig.bdt_additional_weights[f], external_analysis_flow,External_XMLconfig.bdt_ttree_names[f]));
+                app_external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , External_XMLconfig.bdt_additional_weights[f], external_analysis_flow,External_XMLconfig.bdt_ttree_names[f], use_xrootd));
 
                 app_external_files.back()->addPlotName(External_XMLconfig.bdt_plotnames[f]);
 
@@ -1661,9 +1667,9 @@ int main (int argc, char *argv[]){
         bdt_flow nue_bkg_flow(topological_cuts,	nue_intrinsic_def,	vec_precuts,	postcuts,	bdt_infos[0],	bdt_infos[0]);
         bdt_flow deltarad_1g1p_flow(topological_cuts,	deltarad_1g1p_def, vec_precuts,	postcuts,	bdt_infos[0],	bdt_infos[0]);
 
-        bdt_file *ncpi0 = new bdt_file(dir2g0p, "vertexed_ncpi0_run1_overlay_2g0p.root", "NCPi0Overlay", "hist","singlephotonana/", kRed-7, "1", signal_flow);
-        bdt_file *nue = new bdt_file(dir2g0p,"vertexed_intrinsic_nue_run1_overlay.root","IntrinsicNuE","hist","singlephotonana/", kGreen+1, "1", nue_bkg_flow);
-        bdt_file *deltarad_1g1p = new bdt_file(dir2g0p,"vertexed_ncdeltarad_run1_overlay.root","NCDeltaRad","hist","singlephotonana/", kAzure+1, "1", deltarad_1g1p_flow);
+        bdt_file *ncpi0 = new bdt_file(dir2g0p, "vertexed_ncpi0_run1_overlay_2g0p.root", "NCPi0Overlay", "hist","singlephotonana/", kRed-7, "1", signal_flow, use_xrootd);
+        bdt_file *nue = new bdt_file(dir2g0p,"vertexed_intrinsic_nue_run1_overlay.root","IntrinsicNuE","hist","singlephotonana/", kGreen+1, "1", nue_bkg_flow, use_xrootd);
+        bdt_file *deltarad_1g1p = new bdt_file(dir2g0p,"vertexed_ncdeltarad_run1_overlay.root","NCDeltaRad","hist","singlephotonana/", kAzure+1, "1", deltarad_1g1p_flow, use_xrootd);
 
         ncpi0->calcPOT();
         nue->calcPOT();
