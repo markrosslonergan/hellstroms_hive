@@ -375,7 +375,7 @@ int main (int argc, char *argv[]){
     for(size_t f = 0; f < XMLconfig.GetNFiles(); ++f){
 
 
-        if(f!=0 &&(mode_option == "makedetcovar" || mode_option == "makefluxcovar")) break;
+        if(f!=0 &&(mode_option == "makedetcovar" || mode_option == "makefluxcovar" || (isExternal && (mode_option == "flatten" || mode_option == "unflatten"))) ) break;
 
 
         std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
