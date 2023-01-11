@@ -134,11 +134,12 @@ void bdt_covar::merge_covar(const std::vector<std::string>& files_to_merge, cons
 	TFile* fin = new TFile(files_to_merge[i].c_str(), "read");
 	TMatrixT<double>* matrix_in = (TMatrixT<double>*)fin->Get("frac_covariance");
 	remove_nan(matrix_in);
-    covar_matrix.ResizeTo(matrix_in->GetNrows(),matrix_in->GetNcols());
-    covar_matrix.Zero();
-	if(i== 0)
+
+	if(i==0){
+        covar_matrix.ResizeTo(matrix_in->GetNrows(),matrix_in->GetNcols());
+        covar_matrix.Zero();
 	    covar_matrix = *matrix_in; 
-	else 
+    }	else 
 	    covar_matrix += *matrix_in;
 
 	fin->Close();
