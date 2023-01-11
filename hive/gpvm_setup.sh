@@ -18,3 +18,6 @@
         export HIVEDIR=$PWD
         echo "Done!."
 
+    ## needed for using XrootD
+    kx509
+    voms-proxy-init -noregen -rfc -voms fermilab:/fermilab/uboone/Role=Analysis
