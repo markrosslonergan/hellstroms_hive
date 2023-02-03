@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
-<topology tag="1g1pMar2020_v4" name ="1#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.9531,0.9845,0.467404,0.7474,0.7088)" />
+<topology tag="1g1pMar2020_v4" name ="Everything" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==1  &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.9531,0.9845,0.467404,0.7474,0.7088)" />
 
 <plot_pot>
     <run_period name ="RunIII" cut ="((run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "1.0" />

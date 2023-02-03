@@ -13,8 +13,13 @@
 	setup gcc v6_4_0
 	echo "Setting up root v6_12_04e"
 	setup root v6_12_04e -q e15:prof
+#	setup root v6_16_00 -q e17:prof
     	echo -e "Setting up HIVEDIR environmental variable: "$PWD
 	# HIVEDIR enviromental varaible is used to setup template xmls by bdt_covar class
         export HIVEDIR=$PWD
         echo "Done!."
+
+    ## needed for using XrootD
+	kx509
+	voms-proxy-init -noregen -rfc -voms fermilab:/fermilab/uboone/Role=Analysis
 

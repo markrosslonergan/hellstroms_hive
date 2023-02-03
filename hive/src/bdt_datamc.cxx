@@ -618,7 +618,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 rmin=0; rmax = 1.99;
             }//else if(s==2){ data_rebin = 2;}//else if(s==3){data_rebin=2;};
 
-            double max_modifier = 1.65;
+            double max_modifier = 2;//1.65;
             if (OTPC == true){
                 max_modifier = 3.25;
                 //std::cout<<"flag 3"<<std::endl;
@@ -1267,7 +1267,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 }
             }
 
-            double yypos = 0.38; //0.46 for pre and topo stage
+            double yypos = 0.53; //0.46 for pre and topo stage
             double xxpos = 0.5;//0.5
             if(stack_mode)xxpos=0.55;
 
@@ -1633,9 +1633,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 // cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".root").c_str(),"root");
                 // cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
             }else{
-                cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".pdf").c_str(),"pdf");
+               // cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".pdf").c_str(),"pdf");
             }
-            //cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
+            cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 
 
@@ -1896,7 +1896,7 @@ int bdt_datamc::plotEfficiency(std::vector<bdt_variable> vars, std::vector<doubl
 
         tsum_numer->SetLineColor(kRed);
         tsum_numer->SetMinimum(0);
-        tsum_numer->SetMaximum( std::max(tsum_numer->GetMaximum(),data_numer->GetMaximum())*1.5);
+        tsum_numer->SetMaximum( std::max(tsum_numer->GetMaximum(),data_numer->GetMaximum())*2);
         tsum_numer->SetFillStyle(0);
         tsum_numer->Draw("hist");
         TH1 * tsum_numer2 = (TH1*)tsum_numer->Clone("varsd");
