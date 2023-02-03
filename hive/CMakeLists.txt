@@ -7,7 +7,7 @@ include(FetchContent)
 FetchContent_Declare(
   sbnfit
   GIT_REPOSITORY https://github.com/NevisUB/whipping_star.git 
-  GIT_TAG        641861404b092fa3113ada53f93385adc03936d0     #  branch guanqun_fractionfit
+  GIT_TAG        946cab5487dfdb2542e57a46e32c39000aa84927  #641861404b092fa3113ada53f93385adc03936d0     #  branch guanqun_fractionfit
 )
 
 # After the following call, the CMake targets defined by sbnfit 
@@ -19,10 +19,13 @@ FetchContent_MakeAvailable(sbnfit)
 set (Hive_VERSION_MAJOR 2)
 set (Hive_VERSION_MINOR 0)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (CMAKE_VERSION VERSION_LESS "3.1")
     if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-          set (CMAKE_CXX_FLAGS "--std=c++11 ${CMAKE_CXX_FLAGS}")
+          set (CMAKE_CXX_FLAGS "--std=c++17 ${CMAKE_CXX_FLAGS}")
     endif ()
     else ()
 	  set (CMAKE_CXX_STANDARD 14)

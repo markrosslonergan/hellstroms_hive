@@ -124,7 +124,6 @@ struct bdt_variable{
             has_covar = false;
 
 	    decode_bins();
-	    update_def();
             /*std::cout<<"Nbin "<<n_bins<<std::endl;
             std::cout<<"edges "<<std::endl;
             for(auto &v: edges) std::cout<<v<<std::endl;
@@ -150,44 +149,38 @@ struct bdt_variable{
             plot_max =-999;
             cat = 0;
 	     decode_bins();
-	     update_def();
 	}
 
 	//---- function that I'd like to use only internally ----
-	
-	void update_def(){
-	    if(name.find("_mva") != std::string::npos)
-		name = "simple_"+name;
-	    return;
-  	}
 
 	void decode_bins(){
             edges.clear();
 	    low_edges.clear();
             n_bins = -1;
-            
-            bool alt_mode = binning.find("alt")!=std::string::npos;
+
+	    std::string temp_binning = binning;            
+            bool alt_mode = temp_binning.find("alt")!=std::string::npos;
             if(alt_mode){
                 std::cout<<"applying custom binning with config: "<<std::endl;
-                int pl = binning.find("alt");
-                binning.erase(pl,pl+3);
+                int pl = temp_binning.find("alt");
+                temp_binning.erase(pl,pl+3);
             }
 
 
-            binning.erase(std::remove(binning.begin(), binning.end(), '('), binning.end());
-            binning.erase(std::remove(binning.begin(), binning.end(), ')'), binning.end());
+            temp_binning.erase(std::remove(temp_binning.begin(), temp_binning.end(), '('), temp_binning.end());
+            temp_binning.erase(std::remove(temp_binning.begin(), temp_binning.end(), ')'), temp_binning.end());
 
             size_t pos = 0;
             std::string delim = ",";
             std::string token;
 
-            while ((pos = binning.find(delim)) != std::string::npos) {
-                token = binning.substr(0, pos);
+            while ((pos = temp_binning.find(delim)) != std::string::npos) {
+                token = temp_binning.substr(0, pos);
                 if(n_bins<0 &&!alt_mode) n_bins = (int)std::stod(token);
                 edges.push_back(std::stod(token));
-                binning.erase(0, pos + delim.length());
+                temp_binning.erase(0, pos + delim.length());
             }
-            edges.push_back(std::stod(binning));
+            edges.push_back(std::stod(temp_binning));
 
             if(alt_mode){
                 n_bins = edges.size()-1;
@@ -212,6 +205,14 @@ struct bdt_variable{
 	void GetUniqueJenkinsHash(){
 	    std::string long_id =  name + "_" + GetBinEdges() + "_" + additional_cut;  
 	    std::replace(long_id.begin(), long_id.end(), ' ', '_');
+        //lets ignore simples 
+        std::string rmo = "_mva";
+        std::string sim = "simple_";
+        size_t index = long_id.find(rmo);
+        if(index!=std::string::npos && long_id.find(sim)==std::string::npos){
+           long_id.insert(0,sim); 
+        }
+        
 	    unique_hash = std::to_string(jenkins_hash(long_id));
 	    return;
   	}
@@ -222,15 +223,33 @@ struct bdt_variable{
 	   return unique_hash;
 	}
 
+	std::string GetBareFileID(int stage){
+	// get fileid for the variable, with syst string
+	
+	   std::string temp_fileid = this->GetCovarFileID(stage);
+		
+	   auto pos = temp_fileid.rfind(covar_sys);
+	   temp_fileid = temp_fileid.substr(0, pos - 1);
+	   
+	   return temp_fileid;
+	}
+
+	std::string GetCovarFileID_FluxXS(int stage){
+	   std::string bare_fileid = GetBareFileID(stage);
+	   return bare_fileid + "_" + FLUXXS;
+	}
+	std::string GetCovarFileID_Det(int stage){
+	   std::string bare_fileid = GetBareFileID(stage);
+	   return bare_fileid + "_" + DET;
+	}
+
 	std::string GetCovarFileID(int stage){
 	     if(covar_file_prefix.empty()){
 		covar_file_prefix = "VarCovar_Stage_"+ std::to_string(stage) + "_" + this->GetID(); 
+        
+        	covar_file_prefix += "_"+covar_sys; 
+    	     }
 
-		if(flux_xs_sys_only())
-		    covar_file_prefix += "_FluxXS";
-		else if(detector_sys_only())
-		    covar_file_prefix += "_Det";
-	    }
 	    return covar_file_prefix;
 	}
 
@@ -266,6 +285,13 @@ struct bdt_variable{
 	}
 
    	std::string GetVarDef() const {
+	    return name;
+        }
+
+	std::string GetVarSimpleDef() const{
+	    if(name.find("_mva") != std::string::npos && name.find("simple_") == std::string::npos)
+		return "simple_"+name;
+
 	    return name;
         }
 

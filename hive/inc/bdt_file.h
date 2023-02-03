@@ -77,9 +77,8 @@ std::vector<size_t> sort_indexes(const std::vector<T> &v) {
     return idx;
 }
 
-
-
-std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<double>&vin);
+std::string convertToXRootD(std::string fname_orig);
+std::vector<TMatrixT<double>> splitNormShapeCopy(TMatrixT<double> & Min,std::vector<double>&vin);
 int removeSubStrings(std::string &, std::string&);
 
 TText * drawPrelim(double x, double y);
@@ -163,7 +162,7 @@ struct bdt_file{
         bool is_bnbext;
         bool is_mc;
  	bool is_signal;
-
+	bool use_xrootd;
 
         std::string leg;
 
@@ -296,6 +295,9 @@ struct bdt_file{
         bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, std::string addtional_weight, bdt_flow inflow);
         bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string addtional_weight,bdt_flow inflow);
         bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string addtional_weight, bdt_flow inflow, std::string inttree );
+        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, std::string addtional_weight, bdt_flow inflow, bool inuse_xrootd);
+        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string addtional_weight,bdt_flow inflow, bool inuse_xrootd);
+        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string addtional_weight, bdt_flow inflow, std::string inttree, bool inuse_xrootd);
    
         //legacy code OBSOLETE
         //bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, std::string infriend, std::string infriendtree, int incol, bool indata);	
