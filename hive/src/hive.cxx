@@ -1113,6 +1113,23 @@ int main (int argc, char *argv[]){
             std::vector<method_struct> External_TMVAmethods  = External_XMLconfig.GetMethods(); 
             std::vector<bdt_file*> app_external_files;
 
+            bool add_training_flag = true;
+            std::vector<RSE> rses; 
+            if(add_training_flag){
+            std::cout<<"Adding a training flag to simple_tree, from /uboone/app/users/markrl/useful_scripts/duplicate_suite_2022/Detsys_2022/buildingMasterTrainingRSE/MasterTraining.RSE.sort.uniq"<<std::endl;
+                ifstream infile; 
+                infile.open("/uboone/app/users/markrl/useful_scripts/duplicate_suite_2022/Detsys_2022/buildingMasterTrainingRSE/MasterTraining.RSE.sort.uniq"); 
+                
+                int run, subrun,event;
+                while(infile >> run >> subrun >> event){
+                    rses.emplace_back(run,subrun,event);
+                }
+                infile.close();
+            } 
+            runlist masterRSElist(rses);
+            std::cout<<"Loaded RSE master list: "<<masterRSElist.f_rses.size()<<std::endl;
+
+
             for(size_t f = 0; f < External_XMLconfig.GetNFiles(); ++f){
                 if(which_file>=0 && which_file!=f) continue;
                 std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<External_XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
@@ -1189,7 +1206,7 @@ int main (int argc, char *argv[]){
                 if(number > 0){
                     std::cout<<"Making an SBNfit file with the additional cuts of : "<<external_cuts<<std::endl;
                     std::vector<double> fcuts(bdt_infos.size(),-999);
-                    file->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fcuts, "1", vars, file->pot,external_cuts,outdir);
+                    file->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fcuts, "1", vars, file->pot,external_cuts,outdir,masterRSElist);
                 }
                 std::cout<<"Done with this file"<<std::endl;
             }
@@ -1707,14 +1724,34 @@ int main (int argc, char *argv[]){
 
         std::cout<<"Starting SBNfit with "<<splot_pot<<" POT"<<std::endl;
 
+        bool add_training_flag = true;
+        
+        std::vector<RSE> rses; 
+        if(add_training_flag){
+        std::cout<<"Adding a training flag to simple_tree, from /uboone/app/users/markrl/useful_scripts/duplicate_suite_2022/Detsys_2022/buildingMasterTrainingRSE/MasterTraining.RSE.sort.uniq"<<std::endl;
+            ifstream infile; 
+            infile.open("/uboone/app/users/markrl/useful_scripts/duplicate_suite_2022/Detsys_2022/buildingMasterTrainingRSE/MasterTraining.RSE.sort.uniq"); 
+            
+            int run, subrun,event;
+            while(infile >> run >> subrun >> event){
+                rses.emplace_back(run,subrun,event);
+            }
+
+
+            infile.close();
+        } 
+
+        runlist masterRSElist(rses);
+        std::cout<<"Loaded RSE master list: "<<masterRSElist.f_rses.size()<<std::endl;
+
         if(which_stage==-1) which_stage ==1;
         if(which_file==-1){
             for(size_t f =0; f< bdt_files.size(); f++){
                 std::cout<<"on bdt file "<<f<<std::endl;
-                bdt_files[f]->makeSBNfitFile(analysis_tag+additional_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot,external_cuts,outdir);
+                bdt_files[f]->makeSBNfitFile(analysis_tag+additional_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,splot_pot,external_cuts,outdir,masterRSElist);
             }
         }else{
-            bdt_files[which_file]->makeSBNfitFile(analysis_tag+additional_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,(double)splot_pot,external_cuts,outdir);
+            bdt_files[which_file]->makeSBNfitFile(analysis_tag+additional_tag, bdt_infos, which_stage, fbdtcuts,input_string,vars,(double)splot_pot,external_cuts,outdir,masterRSElist);
 
         }
         return 0;
