@@ -29,6 +29,7 @@
 #include "bdt_scatter.h"
 #include "load_mva_param.h"
 #include "tinyxml.h"
+#include "duplicate_suite_2022.h"
 
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name,bool shape_only);

@@ -20,6 +20,7 @@
 #include  "bdt_var.h"
 #include  "bdt_info.h"
 #include  "method_struct.h"
+#include  "duplicate_suite_2022.h"
 /******** Root includes *****/
 
 #include "TTreeFormula.h"

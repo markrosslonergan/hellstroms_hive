@@ -173,6 +173,7 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
 
         TiXmlElement *pAddWeight = pBDTfile->FirstChildElement("additional_weight");
         std::string add_wei = "genie_spline_weight*(genie_spline_weight >0)*(genie_CV_tune_weight > 0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)  +  tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight)) < 30.0))*(GTruth_ResNum!=9)";
+        if(pAddWeight) add_wei="1";
         while(pAddWeight){
                 std::string unpar =  pAddWeight->GetText();
                 add_wei += "*(" + this->AliasParse(unpar) + ")";
@@ -777,6 +778,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
 
         TiXmlElement *pAddWeight = pBDTfile->FirstChildElement("additional_weight");
         std::string add_wei = "genie_spline_weight*(genie_spline_weight >0)*(genie_CV_tune_weight > 0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)  +  tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight)) < 30.0))*(GTruth_ResNum!=9)";
+        if(pAddWeight) add_wei="1";
         while(pAddWeight){
                 std::string unpar =  pAddWeight->GetText();
                 add_wei += "*(" + this->AliasParse(unpar) + ")";
