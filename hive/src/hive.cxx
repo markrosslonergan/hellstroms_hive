@@ -382,7 +382,7 @@ int main (int argc, char *argv[]){
     for(size_t f = 0; f < XMLconfig.GetNFiles(); ++f){
 
 
-        if(f!=0 &&(mode_option == "makedetcovar" || mode_option == "makefluxcovar" || (isExternal && (mode_option == "flatten" || mode_option == "unflatten"))) ) break;
+        if((mode_option =="extapp") ||( f!=0 &&(mode_option == "makedetcovar" || mode_option == "makefluxcovar" || (isExternal && (mode_option == "flatten" || mode_option == "unflatten")))) ) break;
 
 
         std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
@@ -1803,6 +1803,7 @@ int main (int argc, char *argv[]){
             std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage,fbdtcuts,true);
             std::cout<<"Starting SBNfit covar handle w stage cuts "<<stage_cut<<std::endl;
             bdt_covar covar_handle(&v, which_stage, stage_cut);
+            std::cout<<" J.Before GenerateReweightingCovar: "<<covar_flux_template_xml<<std::endl;
             covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
             /*
                std::string sVID = v.GetCovarFile(); //"VID_stage_"+ std::to_string(which_stage) + "_" +v.GetID();

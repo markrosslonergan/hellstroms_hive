@@ -403,13 +403,15 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         TTreeFormula * frunpass = new TTreeFormula((this->tag+"tfor").c_str() , modified_runsubrun_string.c_str(), trs);
 
+
         for(int i=0; i<trs->GetEntries(); i++) {
             trs->GetEntry(i);
+            if(i%1000==0)std::cout<<i<<"/"<<trs->GetEntries()<<std::endl;
             frunpass->GetNdata();
             bool isin = frunpass->EvalInstance();
             if(isin) tmppot += potbranch;
         }
-
+        std::cout<<"OUT"<<std::endl;
         numberofevents = tvertex->GetEntries(event_identifier.c_str());
 
         if (this->tag.find("DarkNue") != std::string::npos){
@@ -436,12 +438,15 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
 
             TTreeFormula* feve_weight = new TTreeFormula((this->tag+"teve_weight").c_str() , modified_event_weight.c_str(), tvertex);
+            /*
             for(int i =0; i != tvertex->GetEntries(); ++i){
                 tvertex->GetEntry(i);
+                if(i%100==0)std::cout<<i<<" Marv"<<std::endl;
                 feve_weight->GetNdata();
                 modified_event_count += feve_weight->EvalInstance();
             }
-
+            */
+            
             std::cout << "Coherent event count check: prediction by adding individual event weight: " << modified_event_count;
             std::cout << " || prediction by scaling overall TTree entry count: " << combin*static_cast<double>(tvertex->GetEntries(event_identifier.c_str())) << std::endl;
 
@@ -1873,7 +1878,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
             simple_wei = wei->EvalInstance();
             flat_defcut = t_defcut->EvalInstance();
             flat_precut = tcut->EvalInstance();
-            if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
+            if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<" Flatten! \n";
             //if(!flat_precut) continue;
 
             simple_pot_wei = simple_wei*this->scale_data*tsplot_pot/this->pot;
