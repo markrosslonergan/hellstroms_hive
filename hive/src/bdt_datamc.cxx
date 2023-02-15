@@ -773,7 +773,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 if(!remove_to_merge[n]){
                     string_events = to_string_prec(Nevents+Nevents_save_for_later,leg_num_digits);
                     if(b_signal_on_top){
-                        l0->AddEntry(h1,(f->plot_name).c_str(),leg_type.c_str());
+
+			//Guanqun: for internal plotting purpose, print out event prediction even with data overlaid
+                        //l0->AddEntry(h1,(f->plot_name).c_str(),leg_type.c_str());
+			l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
                     }else{
                         // Guanqun: add total count to the legend 
                         l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
@@ -1100,8 +1103,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             if(scale_signal_overlay){
                 scale_signal_hist = (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
                 //(TH1*)mc_stack->vec_hists[which_signal]->Clone(("signal_clone"+stage_names.at(s)).c_str());
-                double scal_val =230.0;
-                //double scal_val = NdatEvents/scale_signal_hist->Integral();
+                //double scal_val =230.0;
+                double scal_val = NdatEvents/scale_signal_hist->Integral();
                 scale_signal_hist->Scale(scal_val);
                 //scale_signal_hist->Scale(100.0);
                 scale_signal_hist->SetFillStyle(0);

@@ -1248,7 +1248,7 @@ int main (int argc, char *argv[]){
             //    sig_type == 5: purity 
 
             std::cout<<"the input significance type is "<< sig_type <<std::endl;
-            if(sig_type == 9 || sig_type == 8){
+            if(sig_type >= 8){
                 if(number == -1){
                     std::cout << "no variable is provided, default to use first variable" << std::endl;
                     number = 0;
@@ -1285,6 +1285,9 @@ int main (int argc, char *argv[]){
                     break;
 		case 10:
 		    random_scan_chisquare_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, 10000, 10.);
+		    break;
+		case 11: 
+		    scan_chisquare_sys_iterative(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, additional_tag, 10.);
 		    break;
                 default:
                     break;

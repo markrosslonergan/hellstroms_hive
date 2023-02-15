@@ -117,8 +117,8 @@ std::vector<double> scan_significance(std::vector<bdt_file*> sig_files, std::vec
 
 }
 
-std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, TMatrixT<double>* fixed_frac_matrix, double plot_pot, std::string pdfname, double signal_scale){
-    int stage = bdt_infos.size() + 1;
+std::vector<std::vector<double>> chisquare_grid_scan_sys_fixed(sbn::SBNchi* chi_handle, bdt_stack* stack,  bdt_variable var, std::vector<std::vector<double>>& bdt_scan_pts, int max_pts, TMatrixT<double>* fixed_frac_matrix, int stage, double plot_pot, double signal_scale){
+
     bool _debug = false; //print debugging information
     if(_debug){
 	std::cout << "Print fractional covariance matrix " << std::endl; 
@@ -133,36 +133,7 @@ std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_
     //grab POT of stacked histogram
     double current_pot = stack->getPOT();
     double pot_scale = plot_pot / current_pot; 
-
-    //set up cut range
-    int max_pts = 1;
-    std::vector<std::vector<double>> bdt_scan_pts;
-    auto grid = setup_bdt_cut_grid(bdt_infos, bdt_scan_pts, max_pts, stack);
-    std::vector<double> maxvals = grid[0], minvals = grid[1], n_steps = grid[2], steps = grid[3];
-
-    std::cout<<"We are going to scan between these values "<<std::endl;
-    std::cout<< "Total of " << max_pts <<" grid points to scan" << std::endl;
-    for(int i=0; i< bdt_infos.size();i++){
-        std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<" (n_steps:  "<<n_steps[i]<<")"<<std::endl;
-    }
     std::cout << "POT: " << plot_pot << " | signal scaling: " << signal_scale << std::endl;
-
-    //set entrylist 
-    std::cout<<"Setting Min entry lists"<<std::endl;
-    for(auto f: stack->getFiles()) {
-	f->setStageEntryList(1+bdt_infos.size(), minvals);
-    }
-
-
-    //set up SBNchi 
-    // first, form a valid xml, for SBNchi to use
-    bdt_covar covar_handle(&var, stage);
-    std::string template_xml = covar_handle.GetTemplateXmls().at(0);
-    std::string xml = covar_handle.PrepareXml(template_xml, "SBNchi_Helper");
-    std::cout << "xml: " << xml << std::endl;
-
-    sbn::SBNchi chi_handle(xml);	
-    chi_handle.is_stat_only = false;
  
 
     int best_point = -1;
@@ -201,7 +172,7 @@ std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_
 	    std::cout << "Signal Scale " << signal_scale << std::endl;
 	}
 
-	double current_chi = calculate_chi(&chi_handle, fixed_frac_matrix, full_vector, full_bkg_vector, full_bkg_error, pot_scale);	
+	double current_chi = calculate_chi(chi_handle, fixed_frac_matrix, full_vector, full_bkg_vector, full_bkg_error, pot_scale);	
 	chivec.push_back(current_chi);
 
 	    
@@ -235,22 +206,23 @@ std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_
 	if(current_chi > best_chi){
 	    best_chi = current_chi;
 	    best_point = i;
-	    std::cout << "at Point " << i << " Corresponding cuts: (";
-	    for(auto& p : cur_pt)
-		std::cout <<  p << ", ";
-	    std::cout << ")  ------ Current best chi " << best_chi << " P-value: " << TMath::Prob(best_chi, chi_handle.num_bins_total_compressed);
+	    if(_debug){
+	    	std::cout << "at Point " << i << " Corresponding cuts: (";
+	    	for(auto& p : cur_pt)
+		    std::cout <<  p << ", ";
+	    	std::cout << ")  ------ Current best chi " << best_chi << " P-value: " << TMath::Prob(best_chi, chi_handle->num_bins_total_compressed);
     
-	    std::cout << "  signal prediction: " << total_sig << "  background prediction: " << total_bkg << " S/sqrt(B) is " << sigvec.back() << std::endl; 
+	    	std::cout << "  signal prediction: " << total_sig << "  background prediction: " << total_bkg << " S/sqrt(B) is " << sigvec.back() << std::endl; 
+	    }
 	}
-
-	if( (i+1) % 100 ==0){
-	    std::cout << i << "/" << max_pts << " Running over 100 points costs " << time(nullptr) - start_time << " seconds" << std::endl;
+	if( (i+1) % 500 ==0){
+	    std::cout << i << "/" << max_pts << " Running over 500 points costs " << time(nullptr) - start_time << " seconds" << std::endl;
 	    start_time = time(nullptr);
 	}
     }
     
     std::cout<<"----------------------------------------------------"<<std::endl;
-    std::cout<<"------------ Finished. Largest chi was  "<< best_chi <<" at point "<< best_point <<" with Cuts at ( "<<std::endl;
+    std::cout<<"------------ Largest chi was  "<< best_chi <<" at point "<< best_point <<" with Cuts at ( ";
     auto best_pt = grab_point(best_point, bdt_scan_pts);
     for(auto &dd: best_pt){
         std::cout<<dd<<" ";
@@ -258,29 +230,103 @@ std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_
     std::cout<<")" << std::endl;
 
     std::cout<<"Done with chi2 scan with systeamtic uncertainties"<<std::endl;
-
-    make_project_plots(bdt_scan_pts, bdt_infos, chivec, "Marginalized #chi^{2}", pdfname + "_Chi.pdf");
-    make_project_plots(bdt_scan_pts, bdt_infos, sigvec, "Marginalized S/sqrt(B)", pdfname + "_Significance.pdf");
-    return best_pt;
+    return {{best_point,best_chi}, best_pt, chivec, sigvec};
 }
+
+
+std::vector<double> scan_chisquare_stat(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, std::string pdfname, double signal_scale){
+    return scan_chisquare_sys_iterative(stack,  bdt_infos, var, external_bdt_cuts, plot_pot, pdfname, signal_scale,1, true);
+}
+
 
 std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& cuts, double plot_pot, std::string pdfname, double signal_scale){
-    int stage = bdt_infos.size() + 1;
-
-    //generates the covaraince matrix at given bdt cuts 
-    std::string stage_cuts = stack->getFiles().at(0)->getGeneralStageCuts(stage, cuts, true);
-
-    // only consider flux and xs uncertainty for now
-    bdt_covar covar_handle(&var, stage, stage_cuts);
-    covar_handle.GenerateReweightingCovar();
-    TFile* covar_f = new TFile(var.GetCovarFile(stage).c_str(),"read");
-    TMatrixT<double>* covar_matrix = (TMatrixT<double>*)covar_f->Get(var.covar_name.c_str());
-
-    auto res = scan_chisquare_sys_fixed(stack, bdt_infos, var, covar_matrix, plot_pot, pdfname, signal_scale);
-    covar_f->Close();
-    return res; 
+    return scan_chisquare_sys_iterative(stack,  bdt_infos, var, cuts, plot_pot, pdfname, signal_scale, 1);
 }
 
+
+std::vector<double> scan_chisquare_sys_iterative(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& cuts, double plot_pot, std::string pdfname, double signal_scale, int num_iter, bool stats_only){
+    int stage = bdt_infos.size() + 1;
+
+    //set up cut range
+    int max_pts = 1;
+    std::vector<std::vector<double>> bdt_scan_pts;
+    auto grid = setup_bdt_cut_grid(bdt_infos, bdt_scan_pts, max_pts, stack);
+    std::vector<double> maxvals = grid[0], minvals = grid[1], n_steps = grid[2], steps = grid[3];
+
+    std::cout<<"We are going to scan between these values "<<std::endl;
+    std::cout<< "Total of " << max_pts <<" grid points to scan" << std::endl;
+    for(int i=0; i< bdt_infos.size();i++){
+        std::cout<<bdt_infos[i].identifier<<" Min: "<<minvals[i]<<" Max "<<maxvals[i]<<" Steps "<<steps[i]<<" (n_steps:  "<<n_steps[i]<<")"<<std::endl;
+    }
+    std::cout << "POT: " << plot_pot << " | signal scaling: " << signal_scale << std::endl;
+
+    //set entrylist 
+    std::cout<<"Setting Min entry lists"<<std::endl;
+    for(auto f: stack->getFiles()) {
+	f->setStageEntryList(1+bdt_infos.size(), minvals);
+    }
+
+
+    //set up SBNchi 
+    // first, form a valid xml, for SBNchi to use
+    bdt_covar covar_handle(&var, stage);
+    std::string template_xml = covar_handle.GetTemplateXmls().at(0);
+    std::string xml = covar_handle.PrepareXml(template_xml, "SBNchi_Helper");
+    std::cout << "xml: " << xml << std::endl;
+
+    sbn::SBNchi chi_handle(xml);	
+    chi_handle.is_stat_only = false;
+ 
+ 
+    TMatrixT<double> fixed_frac_matrix(chi_handle.num_bins_total, chi_handle.num_bins_total);
+    int last_best_point = -1, best_point = -1;
+    double last_best_chi = -999, best_chi = 0;
+    double converge_thres = 1e-4;
+    for(int iter = 0; iter < num_iter; ++iter){
+	std::cout<<" On " << iter+1 << " Iteration.." << std::endl;
+
+	//construct the fractional covariance matrix 
+	if(stats_only){
+    	    fixed_frac_matrix.Zero();
+ 	}
+	else{
+	    std::vector<double> last_best_cuts = (iter == 0 ? cuts : grab_point(last_best_point, bdt_scan_pts));
+ 	    std::string stage_cuts = stack->getFiles().at(0)->getGeneralStageCuts(stage, last_best_cuts, true);
+ 	    bdt_covar local_covar_handle(&var, stage, stage_cuts);
+ 	    local_covar_handle.GenerateReweightingCovar();
+ 	
+	    TFile* covar_f = new TFile(var.GetCovarFile(stage).c_str(),"read");
+ 	    fixed_frac_matrix  = *(TMatrixT<double>*)covar_f->Get(var.covar_name.c_str());
+	    covar_f->Close();
+ 	}
+
+	auto results = chisquare_grid_scan_sys_fixed(&chi_handle, stack, var, bdt_scan_pts, max_pts, &fixed_frac_matrix, stage, plot_pot, signal_scale);
+	best_chi = results[0][1];
+	best_point = results[0][0];
+
+        make_project_plots(bdt_scan_pts, bdt_infos, results[2], "Marginalized #chi^{2}", pdfname + "_" +std::to_string(iter+1) +  "Iter_Chi.pdf");
+        make_project_plots(bdt_scan_pts, bdt_infos, results[3], "Marginalized S/sqrt(B)", pdfname + "_" +std::to_string(iter+1) + "Iter_Significance.pdf");
+
+	if(fabs(best_chi - last_best_chi) < converge_thres ){
+	    std::cout << "Reach convergence with chi-difference: " << fabs(best_chi - last_best_chi) << ", End iteration early" << std::endl;
+	    break;
+	}
+
+	last_best_chi = best_chi;
+  	last_best_point = best_point;
+    } 
+    std::cout<<"----------------------------------------------------"<<std::endl;
+    std::cout<<"------------ Finish Iterative Fit. Largest chi was  "<< best_chi <<" at point "<< best_point <<" with Cuts at ( ";
+    auto best_pt = grab_point(best_point, bdt_scan_pts);
+    for(auto &dd: best_pt){
+        std::cout<<dd<<" ";
+    }
+    std::cout<<")" << std::endl;
+
+    std::cout<<"Done with iterative chi2 scan with systeamtic uncertainties"<<std::endl;
+
+    return best_pt;
+}
 
 std::vector<double> random_scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, TMatrixT<double>* fixed_frac_matrix, double plot_pot, int num_scans, double signal_scale){
     int stage = bdt_infos.size() + 1;
@@ -414,19 +460,6 @@ std::vector<double> random_scan_chisquare_stat(bdt_stack* stack,  std::vector<bd
     TMatrixT<double> stat_matrix(total_bins, total_bins);
     stat_matrix.Zero();
     auto res = random_scan_chisquare_sys_fixed(stack, bdt_infos, var, &stat_matrix, plot_pot, num_scans, signal_scale); 
-
-    return res; 
-}
-
-std::vector<double> scan_chisquare_stat(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, std::string pdfname, double signal_scale){
-
-    int num_subchannel = stack->getNFiles();
-    int num_bins = var.GetNBins();
-    int total_bins = num_subchannel * num_bins;
-
-    TMatrixT<double> stat_matrix(total_bins, total_bins);
-    stat_matrix.Zero();
-    auto res = scan_chisquare_sys_fixed(stack, bdt_infos, var, &stat_matrix, plot_pot, pdfname, signal_scale);
 
     return res; 
 }
@@ -1369,7 +1402,7 @@ std::vector<std::vector<double>> setup_bdt_cut_grid(const std::vector<bdt_info>&
 
         std::vector<double> tmp;
         for(int ip=0; ip<n_steps[i]; ip++){
-            tmp.push_back(minvals[i]+(double)ip*steps[i]);
+            tmp.push_back(round_to(minvals[i]+(double)ip*steps[i], 0.001));
         }
         bdt_scan_pts.push_back(tmp);
     }
