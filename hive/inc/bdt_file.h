@@ -20,6 +20,7 @@
 #include  "bdt_var.h"
 #include  "bdt_info.h"
 #include  "method_struct.h"
+#include  "duplicate_suite_2022.h"
 /******** Root includes *****/
 
 #include "TTreeFormula.h"
@@ -344,7 +345,7 @@ struct bdt_file{
  	 * Note: bdt scores of events are saved in simple_tree, and all trees in original bdt file and their friend trees will also be saved 
  	 */
         int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot);
-        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot,std::string external_cuts, std::string dir);
+        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot,std::string external_cuts, std::string dir,runlist & masterRSE);
 
 
 	/* create a sbnfit file with events that passing given stage
