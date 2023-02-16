@@ -176,7 +176,9 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     scale_data(1.0),
     fillstyle(infillstyle),
     event_identifier("1"),
-    primary_ttree_name(inttree)
+    primary_ttree_name(inttree),
+    is_legacy(false),   //default is not legacy mode;
+    manual_POT_norm(false)
 {
 
     plot_name = tag;
@@ -221,9 +223,6 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
         std::cout<<"setting weight branch - on/off beam data"<<std::endl;
         weight_branch = "1";
     }
-
-    //default is not legacy mode;
-    is_legacy = false;
 
 };
 
@@ -342,7 +341,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         if(i > 0)
             run_weight_string += "+";
-            run_weight_string += run_cuts[i]+"*"+std::to_string(mval);
+        run_weight_string += run_cuts[i]+"*"+std::to_string(mval);
     }
     run_weight_string +=")";
     std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
@@ -383,10 +382,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         std::cout<<"bdt_file::bdt_file()\t||\tFile is either MC or OVERLAY for purposes of getting POT."<<std::endl;
         std::cout<<"bdt_file::bdt_file()\t||\tGetting POT tree: "<<tnam_pot<<" "<<std::endl;
         tpot = (TTree*)f->Get(tnam_pot.c_str());
-        //tpot->SetBranchAddress("number_of_events", &numbranch);
-        //tpot->SetBranchAddress("POT",&potbranch);
         std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
-        int tmpnum = 0;
         double tmppot=0;
 
 
@@ -414,49 +410,45 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         std::cout<<"OUT"<<std::endl;
         numberofevents = tvertex->GetEntries(event_identifier.c_str());
 
-        if (this->tag.find("DarkNue") != std::string::npos){
-            tmppot = 2e21;
-            std::cout<<"for the dark nue setting to arbitrary POT: "<<tmppot<<std::endl;
-
-        }
-
-        //weight_branch += "*genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*(GTruth_ResNum!=9)";
-
-        if(this->tag.find("TextGen")!=std::string::npos){
-            // considering only numu POT is 2.28149e+24 
-            // considering all contribution, the POT is 2.22242e+24
-
-            tmppot = 6.6e20;
-            run_weight_string = "1";
+	// if this file requires manual POT normalization 
+	if(manual_POT_norm){
 
             //count one event only if it is by itself an event, and passes run number cut
             //number of event prediction is calculated by taking into account run-weight as well as individual event weight
             //I assume this is based on assumption that same prediction corresponds to the same amount of POT, might not be true...
             double modified_event_count = 0; 
             std::string modified_event_weight = "(" + event_identifier + ") * " + run_weight_string + " * (" + weight_branch + ")";
-            //std::cout << "modified event weight " << modified_event_weight << std::endl;
+            std::cout << "Manual POT normalization --- \n Event weight string: " << modified_event_weight << std::endl;
 
 
             TTreeFormula* feve_weight = new TTreeFormula((this->tag+"teve_weight").c_str() , modified_event_weight.c_str(), tvertex);
-            /*
             for(int i =0; i != tvertex->GetEntries(); ++i){
                 tvertex->GetEntry(i);
-                if(i%100==0)std::cout<<i<<" Marv"<<std::endl;
+                if(i%2000==0)std::cout<<i<<" / " << tvertex->GetEntries()<<std::endl;
                 feve_weight->GetNdata();
                 modified_event_count += feve_weight->EvalInstance();
             }
-            */
             
-            std::cout << "Coherent event count check: prediction by adding individual event weight: " << modified_event_count;
+            std::cout << "Event count check: prediction by adding individual event weight: " << modified_event_count;
             std::cout << " || prediction by scaling overall TTree entry count: " << combin*static_cast<double>(tvertex->GetEntries(event_identifier.c_str())) << std::endl;
 
-            //tmppot = modified_event_count/16139.*2.22242e+24;
+            tmppot = modified_event_count/reference_event_count*reference_pot;
+            delete feve_weight;
+	}
+
+        if (this->tag.find("DarkNue") != std::string::npos && !manual_POT_norm){
+            tmppot = 2e21;
+            std::cout<<"for the dark nue setting to arbitrary POT: "<<tmppot<<std::endl;
+
+        }
+
+
+        if(this->tag.find("TextGen")!=std::string::npos && !manual_POT_norm){
+
             tmppot = 6.6e20;
-            //tmppot = combin*static_cast<double>(tvertex->GetEntries(event_identifier.c_str()))/16139.*2.22242e+24; //use number of entries to calculate the corresponding POT
-            //tmppot = 2.1e+24;
-            std::cout<<"Its a TextGen!"<<std::endl;
-            feve_weight = nullptr;
             run_weight_string = "1";
+            std::cout<<"Its a TextGen!"<<std::endl;
+          
         }
 
         pot=tmppot;
@@ -466,10 +458,6 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         std::cout<<"--> Events scaled to 10.1e20 "<<numberofevents/pot*10.1e20<<std::endl;
 
         // weight_branch has been set during initialization of bdt_file
-        // now, add in run reweighting
-        //weight_branch += "*(" + run_weight_string+")";
-
-
         numberofevents_raw = numberofevents;
 
         if(m_weightless) weight_branch = "1";
@@ -477,6 +465,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
     }else if(is_data){
         //Ths is for Pure On beam Data. Taken as input by calling 
+	weight_branch = "1";
 
         std::cout<<"bdt_file::bdt_file()\t||\tFile is ON-BEAM DATA for purposes of getting POT."<<std::endl;
         tpot = (TTree*)f->Get(tnam_pot.c_str());
@@ -558,7 +547,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         std::cout<<"--> scaled to 5e19 number of Entries: "<<numberofevents/pot*5e19<<std::endl;
 
-        //weight_branch += "*(" + run_weight_string+")";
+	weight_branch = "1";
         numberofevents_raw = numberofevents;
 
     }
@@ -1437,8 +1426,7 @@ int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_s
 }
 
 int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars,const double splot_pot){
-    std::vector<RSE> rses;
-    runlist MSE(rses);
+    runlist MSE;
     return makeSBNfitFile( analysis_tag, bdt_infos, which_stage,fbdtcuts,input_string,vars,splot_pot,"1","./",MSE);
 }
 
@@ -1451,7 +1439,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
     std::cout<<"Output to "<<outdir<<std::endl;
     std::cout<<"With external cuts "<<external_cuts<<std::endl;
-    std::cout<<"masterRSE list for training has "<<masterRSElist.f_rses.size()<<" rse's"<<std::endl;
+    std::cout<<"masterRSE list for training has "<<masterRSElist.size()<<" rse's"<<std::endl;
     this->teventweight->AddFriend(this->tvertex);
     this->tslice->AddFriend(this->tvertex);
     if(true_eweight_exist) this->ttrueeventweight->AddFriend(this->tvertex);
@@ -1516,10 +1504,10 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     }
 
 
-    std::cout<<__LINE__<<" Creating Simple_Tree "<<std::endl;
+    std::cout<<" Creating Simple_Tree "<<std::endl;
     cdtof->cd();    
     TTree t_sbnfit_simpletree("simple_tree","simple_tree");
-    std::cout<<__LINE__<<" Created Simple_Tree "<<vars.size()<<" "<<bdt_infos.size()<<std::endl;
+    std::cout<<" Created Simple_Tree "<<vars.size()<<" "<<bdt_infos.size()<<std::endl;
 
     double simple_var = 0;
     double simple_wei = 0;
@@ -2080,6 +2068,13 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 
     bool bdt_file::IsSignal() const {
         return is_signal;
+    }
+
+    void bdt_file::setRefPOT(double incount, double inpot){
+	manual_POT_norm = true;
+	reference_event_count = incount;
+	reference_pot = inpot;
+ 	return;	
     }
     //int bdt_file::convertToHashedLibSVM(){
     //

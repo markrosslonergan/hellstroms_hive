@@ -174,6 +174,12 @@ struct bdt_file{
         double pot;
         bool m_weightless;
 
+	// numbers used to manually determine the POT of bdt file
+  	bool manual_POT_norm;
+ 	double reference_event_count;
+	double reference_pot;
+
+
         TFile *f;
         TTree *tvertex = NULL;
         std::string primary_ttree_name;
@@ -380,6 +386,9 @@ struct bdt_file{
 
 	/* get the plot name for all analysis stages */
 	std::vector<std::string> getStageNames() const;
+
+	/* set up quantities needed for manual POT normalization */
+	void setRefPOT(double incount, double inpot);
 
         int writeStageFriendTree(std::string nam,double,double);
         int addPlotName(std::string plotin);

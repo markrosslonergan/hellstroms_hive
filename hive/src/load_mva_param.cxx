@@ -171,6 +171,26 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
 
 
 
+	bool do_manual_norm = false;
+	double manual_refer_count = 1., manual_refer_pot = 1.;
+        TiXmlElement *pPOTnorm = pBDTfile->FirstChildElement("POT");
+        if(pPOTnorm){
+
+	     const char* t_manualnorm = pPOTnorm->Attribute("manual_norm");
+	     if(t_manualnorm != NULL && std::string(t_manualnorm) == "true"){
+		do_manual_norm = true;
+		TiXmlElement *pRefCount = pPOTnorm->FirstChildElement("reference_count");
+		manual_refer_count = stod(std::string(pRefCount->GetText()));	
+
+		TiXmlElement *pRefPOT = pPOTnorm->FirstChildElement("reference_pot"); 
+		manual_refer_pot = stod(std::string(pRefPOT->GetText()));
+	     }
+	}
+	bdt_manual_pot_norm.push_back(do_manual_norm);
+	bdt_reference_event_count.push_back(manual_refer_count);
+	bdt_reference_pot.push_back(manual_refer_pot);
+
+
         TiXmlElement *pAddWeight = pBDTfile->FirstChildElement("additional_weight");
         std::string add_wei = "genie_spline_weight*(genie_spline_weight >0)*(genie_CV_tune_weight > 0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)  +  tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight)) < 30.0))*(GTruth_ResNum!=9)";
         if(pAddWeight) add_wei="1";
@@ -773,6 +793,26 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         }else{
             bdt_plotnames.push_back(t_plotname);
         }
+
+
+	bool do_manual_norm = false;
+	double manual_refer_count = 1., manual_refer_pot = 1.;
+        TiXmlElement *pPOTnorm = pBDTfile->FirstChildElement("POT");
+        if(pPOTnorm){
+
+	     const char* t_manualnorm = pPOTnorm->Attribute("manual_norm");
+	     if(t_manualnorm != NULL && std::string(t_manualnorm) == "true"){
+		do_manual_norm = true;
+		TiXmlElement *pRefCount = pPOTnorm->FirstChildElement("reference_count");
+		manual_refer_count = stod(std::string(pRefCount->GetText()));	
+
+		TiXmlElement *pRefPOT = pPOTnorm->FirstChildElement("reference_pot"); 
+		manual_refer_pot = stod(std::string(pRefPOT->GetText()));
+	     }
+	}
+	bdt_manual_pot_norm.push_back(do_manual_norm);
+	bdt_reference_event_count.push_back(manual_refer_count);
+	bdt_reference_pot.push_back(manual_refer_pot);
 
 
 

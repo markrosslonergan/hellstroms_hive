@@ -55,6 +55,12 @@ class MVALoader {
     std::vector<std::string> bdt_additional_weights;
     std::vector<std::vector<std::string>> bdt_definitions;
     std::vector<std::vector<std::string>> bdt_training_cuts;
+
+    // Setup used to manually calculate POT of the file
+    std::vector<bool> bdt_manual_pot_norm;
+    std::vector<double> bdt_reference_event_count;
+    std::vector<double> bdt_reference_pot;
+
     std::vector<bool> bdt_is_onbeam_data;
     std::vector<double> bdt_onbeam_pot;
     std::vector<double> bdt_onbeam_spills;

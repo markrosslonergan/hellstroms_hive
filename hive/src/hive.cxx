@@ -496,6 +496,10 @@ int main (int argc, char *argv[]){
 
         if(legacy_mode) bdt_files.back()->setAsLegacy();
         if(weightless)bdt_files.back()->makeWeightless();
+
+	if(XMLconfig.bdt_manual_pot_norm[f]){
+	   bdt_files.back()->setRefPOT(XMLconfig.bdt_reference_event_count[f], XMLconfig.bdt_reference_pot[f]);
+	}
         bdt_files.back()->calcPOT(i_run_names, i_run_cuts, i_run_fractions);
 
         std::cout<<"Checking for friend trees: "<<XMLconfig.bdt_friend_filenames[f].size()<<" "<<XMLconfig.bdt_friend_treenames[f].size()<<std::endl;
@@ -607,6 +611,9 @@ int main (int argc, char *argv[]){
 
             if(legacy_mode) external_files.back()->setAsLegacy();
             if(weightless)external_files.back()->makeWeightless();
+	    if(External_XMLconfig.bdt_manual_pot_norm[f]){
+	   	external_files.back()->setRefPOT(External_XMLconfig.bdt_reference_event_count[f], External_XMLconfig.bdt_reference_pot[f]);
+	    }
             external_files.back()->calcPOT({"1"},{"1"},{1.0});
             external_files.back()->calcBaseEntryList(analysis_tag);
 
@@ -1127,7 +1134,7 @@ int main (int argc, char *argv[]){
                 infile.close();
             } 
             runlist masterRSElist(rses);
-            std::cout<<"Loaded RSE master list: "<<masterRSElist.f_rses.size()<<std::endl;
+            std::cout<<"Loaded RSE master list: "<<masterRSElist.size()<<std::endl;
 
 
             for(size_t f = 0; f < External_XMLconfig.GetNFiles(); ++f){
@@ -1170,6 +1177,9 @@ int main (int argc, char *argv[]){
 
                 if(legacy_mode) app_external_files.back()->setAsLegacy();
                 if(weightless)app_external_files.back()->makeWeightless();
+		if(External_XMLconfig.bdt_manual_pot_norm[f]){
+	   	    app_external_files.back()->setRefPOT(External_XMLconfig.bdt_reference_event_count[f], External_XMLconfig.bdt_reference_pot[f]);
+		}
                 app_external_files.back()->calcPOT({"1"},{"1"},{1.0});
                 app_external_files.back()->calcBaseEntryList(analysis_tag);
 
@@ -1745,9 +1755,9 @@ int main (int argc, char *argv[]){
         } 
 
         runlist masterRSElist(rses);
-        std::cout<<"Loaded RSE master list: "<<masterRSElist.f_rses.size()<<std::endl;
+        std::cout<<"Loaded RSE master list: "<<masterRSElist.size()<<std::endl;
 
-        if(which_stage==-1) which_stage ==1;
+        if(which_stage==-1) which_stage =1;
         if(which_file==-1){
             for(size_t f =0; f< bdt_files.size(); f++){
                 std::cout<<"on bdt file "<<f<<std::endl;

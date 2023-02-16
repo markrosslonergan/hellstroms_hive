@@ -10,7 +10,6 @@
 #include <numeric> 
 #include <iostream> 
 #include <algorithm>
-#include <map>
 #include <memory>
 struct RSE{
 
@@ -23,12 +22,14 @@ struct RSE{
         f_rse[2]=e;
     }
 
+    //Ideally should define hash to use unordered_set.
     //some comparative operators, for mapping and such. What does it mean for a RSE to be < = or > than another RSE,
     bool operator==( const RSE& rhs)
     {
         return (this->f_rse[0]==rhs.f_rse[0] &&this->f_rse[1]==rhs.f_rse[1] && this->f_rse[2]==rhs.f_rse[2] );
     }
 
+   
     bool operator<(const RSE& X) const {
         if(this->f_rse[0]>X.f_rse[0]) return false;
         if(this->f_rse[0]==X.f_rse[0] && this->f_rse[1]>X.f_rse[1]) return false;
@@ -57,57 +58,40 @@ struct runlist{
     public:
         std::vector<RSE> f_rses; 
 
-        std::map<int,bool> m_runs;
-        std::map<int,bool> m_subruns;
-        std::map<int,bool> m_events;
-
-        //This map will tell us if a given RSE is in this runlist
-        std::map<RSE,int> m_rses;
-        //This map will tell us if a given RS is in this runlist
-        std::map<RSE,int> m_rss;
+	// Unique set of {run,subrun, event} lists
+	// For every (run,subrun) pair, {run,subrun,-1} is also included
+        std::set<RSE> m_rses;
+	int unique_events;
 
 
+        //Constructor from the vector of RSE
+        runlist(std::vector<RSE> rses): unique_events(0){
+            f_rses = rses;
+
+            for(auto &rse: rses){
+		int run = rse.f_rse[0], subrun = rse.f_rse[1], event = rse.f_rse[2];
+		if(m_rses.count(rse) == 0){
+		    ++unique_events;
+		    m_rses.insert(rse);
+		    m_rses.insert(RSE(run, subrun, -1));
+		}
+            }
+        }
+
+        runlist(): unique_events(0){}
 
         //Is this R S in this?
         int inList(int &run, int &subrun){
-            RSE this_rse(run,subrun,-1); 
-
-            if(m_runs.count(run)>0){
-                if(m_rss.count(this_rse)>0){
-                    return m_rss[this_rse];
-                }
-            }
-            return 0;
+            return m_rses.count(RSE(run,subrun,-1));
         }
 
         //Is this r, s r in this?
         bool inList(int &run, int &subrun, const int &event){
 
             if(event<0) return inList(run,subrun);
-
-            RSE this_rse(run,subrun,event); 
-            if(m_runs.count(run)>0 && m_subruns.count(subrun)>0){
-                return m_rses[this_rse];
-            }
-            return 0;
+	    return m_rses.count(RSE(run,subrun,event));
         }
 
-        //Constructor from the vector of RSE
-        runlist(std::vector<RSE> rses){
-            f_rses = rses;
-
-            for(auto &rse: rses){
-
-                m_rses[rse] = ( m_rses.count(rse)==0 ? 1 : m_rses.count(rse)+1 );
-
-                m_runs[rse.f_rse[0]] = true;
-                m_subruns[rse.f_rse[1]] = true;
-                m_events[rse.f_rse[2]] = true;
-
-                RSE rs = rse;rs.f_rse[2]=-1;
-                m_rss[rs] = true;
-            }
-        }
 
 
 
@@ -116,30 +100,27 @@ struct runlist{
 
             std::vector<RSE> ans;
 
-            for(auto &e: R.f_rses){
-                if(m_rses.count(e)>0) ans.push_back(e);
+            for(auto &e: R.m_rses){
+                if(e.f_rse[2]!=-1 && m_rses.count(e)>0 ) ans.push_back(e);
             }
 
-            runlist Rans(ans);
-            return Rans;
+            return runlist(ans);
         }
 
         
-
+	//Print out duplicate (run,subrun, event)
         runlist checkDuplicates(){
 
+            std::set<RSE> m_dups = m_rses;
             std::vector<RSE> ans;
 
-            double dup = 0;
+            std::cout<<"Total Duplicate Entries "<< f_rses.size() - unique_events <<" / "<<f_rses.size()<<std::endl;
             for(auto &r: f_rses){
-                if(m_rses[r]>1){
-                    r.Print();
-                    std::cout<<m_rses[r]<<std::endl;
-                    dup+=1;
-                }
+                if(m_dups.erase(r) == 0){
+		   r.Print();
+		}
             }
 
-            std::cout<<"Total Duplicate Entries "<<dup<<" / "<<f_rses.size()<<std::endl;
 
             runlist Rans(ans);
             return Rans;
@@ -147,9 +128,10 @@ struct runlist{
         }
 
         //This bit is new
+        //Guanqun comment: randomly grab subruns
         runlist getSubSet(double per){
             std::vector<RSE> ans;
-            std::map<RSE,bool> tmp_rss;
+            std::set<RSE> visited_rss_pass, visited_rss_fail;  //Set to record (run,subrun) pairs seen already
             TRandom3 * rang = new TRandom3(0);
 
             for(auto &rse: f_rses){
@@ -157,30 +139,22 @@ struct runlist{
                 int subrun = rse.f_rse[1];
                 RSE rs(run,subrun,-1000);
 
-                if( tmp_rss.count(rs)==1){//have we looked at this subrun before
-                    if(tmp_rss[rs]){//is it in the SubSet
-                        ans.emplace_back(run,subrun,rse.f_rse[2]);
-                    }else{//its not
-                        //nothing happends then. 
-                    }
-
-                }else{//Lets choose to accept or reject
+		if(visited_rss_pass.count(rs)) //If this (run,subrun) pair is seen before and accepted
+		    ans.push_back(rse);
+		else if(visited_rss_fail.count(rs))  // /If this (run,subrun) pair is seen before but rejected
+		    continue;
+		else{				    //For new (run,subrun) pair, Lets choose to accept or reject
                     double ran = rang->Uniform(0,1);
                     if(ran>per){
-                        tmp_rss[rs] = true;
-                        ans.emplace_back(run,subrun,rse.f_rse[2]);
+			visited_rss_pass.insert(rs);
+                        ans.push_back(rse);
                     }else{
-                        tmp_rss[rs] = false;
+			visited_rss_fail.insert(rs);
                     }
+		}
+	    } //end of f_rses loop
 
-
-                }//end of first pass
-
-            }//end of f_rses loop
-
-            runlist Rans(ans);
-
-            return Rans;
+            return runlist(ans);
         }
 
 
@@ -193,7 +167,7 @@ struct runlist{
             return 0;
         }
 
-
+	int size() const{return f_rses.size();}
 };
 
 
