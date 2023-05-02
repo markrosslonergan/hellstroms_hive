@@ -305,7 +305,7 @@ int main (int argc, char *argv[]){
         }
     }
 
-    gSystem->Load("/uboone/app/users/markrl/SL7test0/hellstroms_hive/hive/build/root_linkdefs/loc/denan_cxx.so");
+    gSystem->Load("/uboone/app/users/markrl/HIVE_masterfolder_2023/v64_compiler_check/hellstroms_hive/hive/root_linkdefs/loc/denan_cxx.so");
     //===========================================================================================
     //===========================================================================================
     //			Begininning of main program here!
