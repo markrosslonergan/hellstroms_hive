@@ -46,9 +46,10 @@ private:
 
 
     /* create covariance matrix using given xml configuration
-     * Note: generated covariance matrix will be under separate file_dir(`SBNcovar`) subdir, with name tag.SBNcovar.root
+     * Note: generated covariance matrix will be under separate file_dir subdir, with name tag.SBNcovar.root
+     * Note: if file_dir is not explicitly specified through SetOutputDir() function, it would be instead a local subdirectory called (`SBNcovar`)  
      */
-    void generate_covar(const std::string& xml, const std::string& tag, bool run_det=false);
+    void generate_covar(const std::string& xml, std::string tag, bool run_det=false);
 
     /* find the fullpath for fluxxs and detector template xmls */
     void set_template_path();
@@ -80,10 +81,15 @@ public:
     void GenerateDetectorCovar();
     void GenerateDetectorCovar(const std::string& xml_template);
 
-    /* Merge the fluxXS and detector covariance matrix */
+    /* Merge the fluxXS and detector covariance matrix 
+     * Note: this functionality only works when the systematic error string matches with what's defined in inc/global_func.h
+     */
     void MergeCovar();
 
-    std::string LocalDir() const {return file_dir; }
+
+    /* Set the output directory for covariance files */
+    void SetOutputDir(const std::string& indir) { file_dir = indir; return; }
+    std::string OutputDir() const {return file_dir; }
    
     /* copy template xml into local xml and set up the binning, definition and eventweight in the xml
      * Note: local xml will be copied into separate `xml` subdir

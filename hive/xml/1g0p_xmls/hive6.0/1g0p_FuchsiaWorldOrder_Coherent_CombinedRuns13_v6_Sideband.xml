@@ -8,8 +8,9 @@
 
 
 <plot_pot>
-    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.249"  />
-    <run_period name ="RunII/RunIII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "0.751" />
+    <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.243"  />
+    <run_period name ="RunII" cut ="( ( run_number >= 8317 &amp;&amp; run_number <=  13696)) " fraction = "0.383" />
+    <run_period name ="RunIII" cut ="((run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number <= 18960))" fraction = "0.374" />
     <event_indicator>1</event_indicator>
 </plot_pot>
 
@@ -196,20 +197,20 @@
 </bdtfile>
 
 
-<bdtfile filename = "/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/preTopo_vertex_Data_Open5e19_Run1_v50.02.uniq.root" tag = "OpenDataRun1" hist_style = "E1p" dirs = "singlephotonana/" col = "(0.0,0.0,0.0)" plot_name = "BNB Data, Total:">
+<bdtfile filename = "/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/Run123_ntupleReprocess2023/v2_May2023/sbnfit_1g0pCohNeutrino2022_Sideband_Data_Run123_v68_0.root" tag = "NCPi0Sideband" hist_style = "E1p" dirs = "singlephoton/" col = "(0.0,0.0,0.0)" plot_name = "Sideband, Total:">
     <definition><cut>1</cut></definition>
-    <data type="OnBeam" plot_name="OpenData Run1">
-        <tor860_wcut> 4.566e+19  </tor860_wcut>   
-        <E1DCNT_wcut> 10127594.0 </E1DCNT_wcut>   
+    <data type="OnBeam" plot_name="Sideband Runs123">
+        <tor860_wcut> 6.868e+20  </tor860_wcut>   
+        <E1DCNT_wcut> 160888239.0 </E1DCNT_wcut>   
     </data>
     <additional_weight>1</additional_weight>
     <friend>
-        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5/UNFLATTEN_1g0pCohNeutrino2022PSV_FinalSelection1g0pFLAT.root</filename>
-        <treename>unflatten_1g0pCohNeutrino2022PSV</treename>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/Run123_ntupleReprocess2023/v2_May2023/sbnfit_1g0pCohNeutrino2022_Sideband_Data_Run123_v68_0.root</filename>
+        <treename>singlephoton/unflatten_1g0pCohNeutrino2022PSV</treename>
     </friend>
     <friend>
-        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/UniqDir/Precut2Topo/Flatten_Neutrino2022_v5/UNFLATTEN_1g0pCohNeutrino2022SSV2D_CxC_FinalSelection1g0pFLAT.root</filename>
-        <treename>unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
+        <filename>/pnfs/uboone/persistent/users/markross/Jan2022_gLEE_files/Run123_ntupleReprocess2023/v2_May2023/sbnfit_1g0pCohNeutrino2022_Sideband_Data_Run123_v68_0.root</filename>
+        <treename>singlephoton/unflatten_1g0pCohNeutrino2022SSV2D_CxC</treename>
     </friend>
 </bdtfile>
 
@@ -218,8 +219,8 @@
         <cut> 1 </cut>
     </definition>
     <data type="OffBeam">
-        <tor860_wcut> 4.566e+19  </tor860_wcut>   
-        <E1DCNT_wcut> 10127594.0 </E1DCNT_wcut>   
+        <tor860_wcut> 6.868e+20  </tor860_wcut>   
+        <E1DCNT_wcut> 160888239.0 </E1DCNT_wcut>   
         <EXT>180439635.0</EXT>  
     </data>
     <additional_weight>1</additional_weight>

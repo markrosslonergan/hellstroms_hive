@@ -184,7 +184,7 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 
 
 std::vector<double> bdt_stack::getEntryFullVector(bdt_variable var, bool skip_signal, double signal_scale){
-    return this->getFullVector(var, -2, {}, skip_signal, signal_scale);
+    return this->getFullVector(var, 0, {}, skip_signal, signal_scale);
 }
 
 std::vector<double> bdt_stack::getFullVector(bdt_variable var, int stage, const std::vector<double>& cuts, bool skip_signal, double signal_scale, std::string additional_cut){

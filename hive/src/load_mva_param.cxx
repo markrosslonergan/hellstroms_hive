@@ -36,6 +36,17 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
     }
 
 
+    TiXmlElement *pFileDir;
+    pFileDir = doc.FirstChildElement("filedir");
+    if(pFileDir)
+    {
+        filedir =std::string(pFileDir->GetText());
+        pFileDir = pFileDir->NextSiblingElement("filedir");
+    }else{
+        //filedir = "./";
+        filedir = "/";
+    }
+
 
     std::cout<<"#######################  BDT_Files  ########################################"<<std::endl;
     std::cout<<"(Print out will be below when constructing bdt_file class)"<<std::endl;
@@ -1013,11 +1024,13 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
                 global_covar_type = var_covar_type;
             }
 
-	    global_covar_sys = STATS; 
-	    if(var_covar_sys != NULL)
-		global_covar_sys = var_covar_sys;
 
-            if(m_error_string!= STATS ) global_covar_sys = m_error_string;
+            if(m_error_string!= STATS ) 
+		global_covar_sys = m_error_string;
+	    else if(var_covar_sys != NULL)
+		global_covar_sys = var_covar_sys;
+	    else 
+		global_covar_sys = STATS; 
 
             global_leg_name = var_leg_name;
             std::cout<<"Loading a GLOBAL covariance matrix direectory"<<std::endl;

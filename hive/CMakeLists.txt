@@ -19,14 +19,18 @@ FetchContent_MakeAvailable(sbnfit)
 set (Hive_VERSION_MAJOR 2)
 set (Hive_VERSION_MINOR 0)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (CMAKE_VERSION VERSION_LESS "3.1")
     if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-          set (CMAKE_CXX_FLAGS "--std=c++11 ${CMAKE_CXX_FLAGS}")
+          set (CMAKE_CXX_FLAGS "--std=c++17 ${CMAKE_CXX_FLAGS}")
     endif ()
     else ()
-	  set (CMAKE_CXX_STANDARD 14)
+          set (CMAKE_CXX_STANDARD 14)
 endif ()
+
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 #This works if your root as compiled with cmake, 

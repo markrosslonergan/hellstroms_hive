@@ -65,9 +65,9 @@
 
 
 <!--   #################################### 1g0p    ##################################### -->
-<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCSingleCoherentTestTextGen.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCSingleCoherentTestTextGen.root"/> 
-    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCSingleCoherentTestTextGen.root"/> 
+<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCSingleCoherent.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCSingleCoherent.root"/> 
+    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCSingleCoherent.root"/> 
     <branch 
         name=VARVARVAR
         type="double"
@@ -77,9 +77,9 @@
         />
 </MultisimFile>
 
-<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCDeltaRadOverlaySMTrueP.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCDeltaRadOverlaySMTrueP.root"/> 
-    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCDeltaRadOverlaySMTrueP.root"/> 
+<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCDeltaRadOverlaySMTrueP.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCDeltaRadOverlaySMTrueP.root"/> 
+    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCDeltaRadOverlaySMTrueP.root"/> 
     <branch 
         name=VARVARVAR
         type="double"
@@ -89,9 +89,9 @@
         />
 </MultisimFile>
 
-<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCDeltaRadOverlaySMTrueN.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCDeltaRadOverlaySMTrueN.root"/> 
-    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCDeltaRadOverlaySMTrueN.root"/> 
+<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCDeltaRadOverlaySMTrueN.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCDeltaRadOverlaySMTrueN.root"/> 
+    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCDeltaRadOverlaySMTrueN.root"/> 
     <branch 
         name=VARVARVAR
         type="double"
@@ -101,9 +101,9 @@
         />
 </MultisimFile>
 
-<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCPi0Coh.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCPi0Coh.root"/> 
-    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCPi0Coh.root"/> 
+<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCPi0Coh.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCPi0Coh.root"/> 
+    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCPi0Coh.root"/> 
     <branch 
         name=VARVARVAR
         type="double"
@@ -114,9 +114,9 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCPi0NotCoh.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCPi0NotCoh.root"/> 
-    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NCPi0NotCoh.root"/> 
+<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCPi0NotCoh.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCPi0NotCoh.root"/> 
+    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NCPi0NotCoh.root"/> 
     <branch 
         name=VARVARVAR
         type="double"
@@ -127,9 +127,9 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_CC1Pi0.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_CC1Pi0.root"/> 
-    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_CC1Pi0.root"/> 
+<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_CC1Pi0.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_CC1Pi0.root"/> 
+    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_CC1Pi0.root"/> 
     <branch 
         name=VARVARVAR
         type="double"
@@ -140,9 +140,9 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_BNBOtherExtra.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_BNBOtherExtra.root"/> 
-    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_BNBOtherExtra.root"/> 
+<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_BNBOtherExtra.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_BNBOtherExtra.root"/> 
+    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_BNBOtherExtra.root"/> 
     <branch 
         name=VARVARVAR
         type="double"
@@ -153,9 +153,9 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NueOverlays.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NueOverlays.root"/> 
-    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_NueOverlays.root"/> 
+<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NueOverlays.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NueOverlays.root"/> 
+    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_NueOverlays.root"/> 
     <branch 
         name=VARVARVAR
         type="double"
@@ -166,9 +166,9 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_Dirt.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_Dirt.root"/> 
-    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_Dirt.root"/> 
+<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_Dirt.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_Dirt.root"/> 
+    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_Dirt.root"/> 
     <branch 
         name=VARVARVAR
         type="double"
@@ -179,9 +179,9 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_OTPCExtra.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_OTPCExtra.root"/> 
-    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_OTPCExtra.root"/> 
+<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_OTPCExtra.root" scale = "1.0" maxevents="5000000" pot="1.0"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_OTPCExtra.root"/> 
+    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_OTPCExtra.root"/> 
     <branch 
         name=VARVARVAR
         type="double"
@@ -192,9 +192,9 @@
 </MultisimFile>
 
 
-<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_BNBext.root" scale = "1.0" maxevents="5000000" pot="1.0" fake="true"> 
-    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_BNBext.root"/> 
-    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/stage_0_sbnfit_files/sbnfit_1g0pCohNeutrino2022_stage_0_BNBext.root"/> 
+<MultisimFile treename="singlephoton/true_eventweight_tree" filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_BNBext.root" scale = "1.0" maxevents="5000000" pot="1.0" fake="true"> 
+    <friend treename="singlephoton/vertex_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_BNBext.root"/> 
+    <friend treename="singlephoton/simple_tree"  filename="/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/SBNfit_files/CombinedRuns13MC/stage_0/sbnfit_1g0pCohNeutrino2022_6.8e20POT_stage_0_BNBext.root"/> 
     <branch 
         name=VARVARVAR
         type="double"

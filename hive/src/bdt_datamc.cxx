@@ -101,7 +101,7 @@ int bdt_datamc::plot2D(TFile *ftest, std::vector<bdt_variable> vars, bool scatte
 
     ftest->cd();
 
-    std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","", "", "", "", "Final Selection"};
+    std::vector<std::string> stage_names = data_file->getStageNames(); 
     //  std::vector<std::string> stage_names = {"Topological Selection","Pre-Selection Cuts","Final Selection"};
     //Loop over all stages
 
@@ -392,6 +392,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
             //Grab stacked distributions of the variable
             THStack *stk = (THStack*)mc_stack->getEntryStack(var,s); //so at this point its all in "stack"
+
+	    //note: tsum does NOT include signal if it's set to be plotted on top
             TH1 * tsum  = (TH1*)mc_stack->getEntrySum(var,s, m_fullvec);
             TH1* d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+data_file->tag+"_"+var.safe_name, plot_pot);
             TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
@@ -430,7 +432,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
                     //check existence of local file 
                     bdt_covar covar_handle(&var, s, stage_cut);
-                    std::string local_covar_file = covar_handle.LocalDir() + var.GetCovarFileID(s) + ".SBNcovar.root";
+                    std::string local_covar_file = covar_handle.OutputDir() + var.GetCovarFileID(s) + ".SBNcovar.root";
 
                     std::cout << "WARNING: Trying local covariance file if available: " << local_covar_file << std::endl;
                     covar_f = new TFile(local_covar_file.c_str(), "read");
@@ -451,7 +453,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
                 TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
                 covar_collapsed->Zero();
-                std::cout<<"Is it frac or full? "<<var.covar_type.c_str()<<std::endl;
 
                 m_fullvec = mc_stack->getEntryFullVector(var);
 
@@ -511,7 +512,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             //            std::vector<double> ks_sum = data_file->getVector(var,s);
 
             double rmin = 0.0;
-            double rmax = 1.999;
+            double rmax = 2.1;
             int data_rebin = 1;
             //if(s==0 || s == 1){
             //    rmin=0; rmax = 1.99;
@@ -733,8 +734,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                     */
 
 
-                NeventsStack+=Nevents;
-                NErrStack +=N_MCerr*N_MCerr; 
+                if(!mc_stack->signal_on_top[n]){ 
+		    NeventsStack+=Nevents;
+                    NErrStack +=N_MCerr*N_MCerr; 
+		}
 
                 auto h1 = new TH1F(("tmp"+stage_names.at(s)+var.safe_name+f->tag).c_str(),"TLegend Example",200,-10,10);
                 fake_legend_hists.push_back(h1);
@@ -802,13 +805,17 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
             if(var.has_covar && m_error_string!=STATS){
                 if(b_signal_on_top){
-                    l0->AddEntry(leg_hack,("Total Background and Error "+var.covar_legend_name).c_str() ,"fl"); // Was le
+                    //l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
+                    //l0->AddEntry(leg_hack,("Total Background and Error "+var.covar_legend_name).c_str() ,"fl"); // Was le
+                    l0->AddEntry(leg_hack,("Total Background: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
                 }else{
                     l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
                 }
             }else{
                 if(b_signal_on_top){
-                    l0->AddEntry(leg_hack,("Total Background and Error "+var.covar_legend_name).c_str() ,"fl"); // Was le
+                    //l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
+                    l0->AddEntry(leg_hack,("Total Background: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
+                    //l0->AddEntry(leg_hack, "Total Background and MC Intrinsic Error " ,"fl"); // Was le
                 }else{
                     l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
                 }
@@ -1082,7 +1089,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             }
 
             if (isBDT){
-                stk->SetMaximum(max_val);
+                stk->SetMaximum(max_val*100);
                 stk->SetMinimum(min_val);
             }
 
@@ -1103,8 +1110,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             if(scale_signal_overlay){
                 scale_signal_hist = (TH1D*)mc_stack->getSignalOnTop(var); //Signal on top
                 //(TH1*)mc_stack->vec_hists[which_signal]->Clone(("signal_clone"+stage_names.at(s)).c_str());
-                //double scal_val =230.0;
-                double scal_val = NdatEvents/scale_signal_hist->Integral();
+                double scal_val =2500.0;
+                //double scal_val = NdatEvents/scale_signal_hist->Integral();
                 scale_signal_hist->Scale(scal_val);
                 //scale_signal_hist->Scale(100.0);
                 scale_signal_hist->SetFillStyle(0);
@@ -1241,9 +1248,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 if(!b_signal_on_top){
                     if(!scale_signal_overlay)
                         l0->AddEntry(leg_hack2," ","l"); // Was le
-                    l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
                     //l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
                 }
+                    
+		l0->AddEntry(leg_hack2,sterrname.c_str(),"l"); // Was le
             }
 
             double yypos = 0.38; //0.46 for pre and topo stage
@@ -1278,18 +1286,20 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             //std::string pot_unit_s = stack_mode ? "e20" : "e19";
             double pot_unit = 1e20;
             std::string pot_unit_s = "x10^{20}";
-            std::string pot_draw = "Preliminary ("+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT)";
+            std::string pot_draw = to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
+	    if(!stack_mode)
+		pot_draw = "Preliminary (" + pot_draw + ")";
             pottex.SetNDC();
 
             if (OTPC == true){
-                pottex.DrawLatex(.55, yypos-0.02, pot_draw.c_str());
+                pottex.DrawLatex(.55, yypos+0.02, pot_draw.c_str());
                 //      std::cout<<"flag 5"<<std::endl;
 
                 //pottex.DrawLatex(.635,.48, pot_draw.c_str());
             } else{
                 //pottex.DrawLatex(.55,.60, pot_draw.c_str());
                 //Guanqun: comment out the legend showing POT of the plots 
-                pottex.DrawLatex(xxpos,yypos+0.10, pot_draw.c_str());
+                pottex.DrawLatex(xxpos,yypos+0.15, pot_draw.c_str());
             }
 
 
@@ -1301,19 +1311,19 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             //uboone_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
             //Guanqun: comment out the legend showing "MicroBooNE"
             if(stack_mode)
-                uboone_tex.DrawLatex(xxpos,yypos+0.15,("MicroBooNE Simulation"));
+                uboone_tex.DrawLatex(xxpos,yypos+0.20,("MicroBooNE Simulation"));
             else
-                uboone_tex.DrawLatex(xxpos,yypos+0.15,("MicroBooNE " + data_file->data_descriptor).c_str());	
+                uboone_tex.DrawLatex(xxpos,yypos+0.20,("MicroBooNE " + data_file->data_descriptor).c_str());	
 
             TLatex descriptor_tex;
             descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
             descriptor_tex.SetTextAlign(13);  //align at top
             descriptor_tex.SetNDC();
+            //Guanqun: comment out the legend showing "xxx selections"
             //descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
             //descriptor_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
-            //Guanqun: comment out the legend showing "xxx selections"
-            descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name+" Selection" ).c_str());
-            //descriptor_tex.DrawLatex(xxpos,yypos+0.02,(plot_stage == 0 ? "Topological Selection Stage" : (plot_stage == 1 ? "Pre-selection Stage" : (plot_stage == 5 ? "Final Selection": " "))));
+            //descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name+" Selection" ).c_str());
+            descriptor_tex.DrawLatex(xxpos,yypos+0.10, stage_names.at(s).c_str());
 
             // Draw stage name. Added by A. Mogan 10/14/19
             /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );

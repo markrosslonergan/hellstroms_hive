@@ -12,16 +12,16 @@ void bdt_covar::GenerateReweightingCovar(){
 
 void bdt_covar::GenerateReweightingCovar(const std::string& xml ){
 
-    std::cout <<" bdt_covar: start to generate reweighable systematic covariance matrix...." << std::endl;
-    std::cout<<" Bare is "<<pvar->GetBareFileID(stage)<<std::endl;
-    std::cout<<" FileID "<<pvar->GetCovarFileID(stage)<<std::endl;
-
-    if(pvar->flux_xs_sys_only() || pvar->full_sys()){
+    if(!pvar->detector_sys_only()){ // alow fluxxs matrix generation for almost any string input
 
         std::string file_tag = pvar->GetCovarFileID(stage);
         if(pvar->full_sys()) 
             file_tag = pvar->GetCovarFileID_FluxXS(stage);
-        std::cout << "bdt_covar: WARNING covariance matrix will be generated locally" << std::endl;
+
+	std::cout <<" bdt_covar: WARNING start to generate reweighable systematic covariance matrix locally...." << std::endl;
+    	std::cout<<" Bare is "<<pvar->GetBareFileID(stage)<<std::endl;
+    	std::cout<<" FileID "<< file_tag <<std::endl;
+
         auto covar_xml = PrepareXml(xml, file_tag);
         generate_covar(covar_xml, file_tag);
 
@@ -31,10 +31,6 @@ void bdt_covar::GenerateReweightingCovar(const std::string& xml ){
             pvar->UpdateCovarName("frac_covariance");
             pvar->UpdateCovarType("frac");
         }
-    }else{
-        std::string file_tag = pvar->GetCovarFileID(stage);
-        auto covar_xml = PrepareXml(xml, file_tag);
-        generate_covar(covar_xml, file_tag);
     }
     return;
 }
@@ -49,14 +45,15 @@ void bdt_covar::GenerateDetectorCovar(){
 
 void bdt_covar::GenerateDetectorCovar(const std::string& xml){ 
 
-    if(pvar->detector_sys_only() || pvar->full_sys()){
+    if(!pvar->flux_xs_sys_only()){ // alow detector matrix generation for almost any string input
 
         std::string file_tag = pvar->GetCovarFileID(stage);
         if(pvar->full_sys()) 
             file_tag = pvar->GetCovarFileID_Det(stage);
 
-        std::cout << "bdt_covar: start to generate detector covariance matrix...." << std::endl;
-        std::cout << "bdt_covar: WARNING covariance matrix will be generated locally" << std::endl;
+	std::cout <<" bdt_covar: WARNING start to generate detector systematic covariance matrix locally...." << std::endl;
+    	std::cout<<" FileID "<< file_tag <<std::endl;
+
         auto covar_base_xml = PrepareXml(xml, file_tag);
 
         //set stages
@@ -82,11 +79,7 @@ void bdt_covar::GenerateDetectorCovar(const std::string& xml){
             //somehow redirecting sed output to a new file doesn't always work 
             //explicitly create new xml instead
             copy_and_replace(covar_base_xml, covar_xml, {"SYSVAR"}, {syst}, "xml");
-            /*
-               copy_file(covar_base_xml, covar_xml);
-               std::string sedder_DET = "sed  -i 's@SYSVAR@" + syst + "@' " +  covar_xml;
-               system(sedder_DET.c_str());
-               */
+
             generate_covar(covar_xml ,file_tag + "_" + syst, true);
             files_to_merge.push_back(file_dir +  file_tag + "_" + syst + ".SBNcovar.root");
         }
@@ -182,10 +175,21 @@ std::string bdt_covar::PrepareXml(const std::string& xml, const std::string& fil
     return output_xml; 
 }
 
-void bdt_covar::generate_covar(const std::string& xml, const std::string& tag, bool run_det){
-
-
+void bdt_covar::generate_covar(const std::string& xml, std::string tag, bool run_det){
+    
     std::cout << "bdt_covar: Generate covariance matrix under name " << tag << ".SBNcovar.root" << std::endl; 
+
+    //generate covariance matrix in designated place
+    if(file_dir.size()){
+        std::cout << "bdt_covar: matrix will be generated in " << file_dir << " subdir..." << std::endl; 
+        if(system(NULL))
+            system(("mkdir -p " + file_dir).c_str());
+        else
+            mkdir(file_dir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+	tag = file_dir + tag;
+    }
+
     if(run_det){
         sbn::SBNcovariance covar(xml, false);
         covar.FormCovarianceMatrix(tag);
@@ -194,6 +198,7 @@ void bdt_covar::generate_covar(const std::string& xml, const std::string& tag, b
         covar.FormCovarianceMatrix(tag);
     }
 
+/*
     //move covariance matrix to designated place
     if(file_dir.size()){
         std::cout << "bdt_covar: move covariance matrix to " << file_dir << " subdir..." << std::endl; 
@@ -209,7 +214,7 @@ void bdt_covar::generate_covar(const std::string& xml, const std::string& tag, b
             }
         }
     }
-
+*/
     return; 
 }
 

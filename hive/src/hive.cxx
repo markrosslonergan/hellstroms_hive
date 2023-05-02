@@ -59,6 +59,7 @@ int main (int argc, char *argv[]){
     //    double what_pot = 6.8e20;
 
     double what_pot = 6.91e20;
+    bool set_pot = false;
 
     bool div_bin  =false;
     double div_scale = 0.075;
@@ -216,6 +217,7 @@ int main (int argc, char *argv[]){
                 break;
             case 'p':
                 what_pot = strtod(optarg,NULL);
+		set_pot = true;
                 std::cout<<"Setting POT to : "<<what_pot<<std::endl;
                 break;
             case 's':
@@ -589,7 +591,7 @@ int main (int argc, char *argv[]){
                 std::cout<<" -- ---> "<<External_XMLconfig.bdt_definitions[f][i]<<std::endl;
             }
 
-            external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] ,External_XMLconfig.bdt_additional_weights[f],  external_analysis_flow, External_XMLconfig.bdt_ttree_names[f], use_xrootd));
+            external_files.push_back(new bdt_file(External_XMLconfig.filedir, External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] ,External_XMLconfig.bdt_additional_weights[f],  external_analysis_flow, External_XMLconfig.bdt_ttree_names[f], use_xrootd));
 
             external_files.back()->addPlotName(External_XMLconfig.bdt_plotnames[f]);
 
@@ -1156,7 +1158,7 @@ int main (int argc, char *argv[]){
                     std::cout<<" -- ---> "<<External_XMLconfig.bdt_definitions[f][i]<<std::endl;
                 }
 
-                app_external_files.push_back(new bdt_file("/", External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , External_XMLconfig.bdt_additional_weights[f], external_analysis_flow,External_XMLconfig.bdt_ttree_names[f], use_xrootd));
+                app_external_files.push_back(new bdt_file(External_XMLconfig.filedir, External_XMLconfig.bdt_filenames[f].c_str(),	External_XMLconfig.bdt_tags[f].c_str(), External_XMLconfig.bdt_hist_styles[f].c_str(),External_XMLconfig.bdt_dirs[f].c_str(), External_XMLconfig.bdt_cols[f]->GetNumber() , External_XMLconfig.bdt_fillstyles[f] , External_XMLconfig.bdt_additional_weights[f], external_analysis_flow,External_XMLconfig.bdt_ttree_names[f], use_xrootd));
 
                 app_external_files.back()->addPlotName(External_XMLconfig.bdt_plotnames[f]);
 
@@ -1217,6 +1219,7 @@ int main (int argc, char *argv[]){
                     std::cout<<"Making an SBNfit file with the additional cuts of : "<<external_cuts<<std::endl;
                     std::vector<double> fcuts(bdt_infos.size(),-999);
                     file->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fcuts, "1", vars, file->pot,external_cuts,outdir,masterRSElist);
+                    //file->makeSBNfitFile(analysis_tag, bdt_infos, which_stage, fcuts, "1", vars, 1.0e19,external_cuts,outdir,masterRSElist);
                 }
                 std::cout<<"Done with this file"<<std::endl;
             }
@@ -1734,6 +1737,8 @@ int main (int argc, char *argv[]){
 
 
         double splot_pot =  onbeam_data_file->pot;
+ 	if(set_pot)
+	    splot_pot = what_pot;
 
         std::cout<<"Starting SBNfit with "<<splot_pot<<" POT"<<std::endl;
 
@@ -1757,7 +1762,9 @@ int main (int argc, char *argv[]){
         runlist masterRSElist(rses);
         std::cout<<"Loaded RSE master list: "<<masterRSElist.size()<<std::endl;
 
-        if(which_stage==-1) which_stage =1;
+	//Guanqun: comment this out because I want to generate sbnfit files at definition level 
+        //if(which_stage==-1) which_stage =1;
+
         if(which_file==-1){
             for(size_t f =0; f< bdt_files.size(); f++){
                 std::cout<<"on bdt file "<<f<<std::endl;
@@ -1816,70 +1823,18 @@ int main (int argc, char *argv[]){
             std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage,fbdtcuts,true);
             std::cout<<"Starting SBNfit covar handle w stage cuts "<<stage_cut<<std::endl;
             bdt_covar covar_handle(&v, which_stage, stage_cut);
-            std::cout<<" J.Before GenerateReweightingCovar: "<<covar_flux_template_xml<<std::endl;
-            covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
-            /*
-               std::string sVID = v.GetCovarFile(); //"VID_stage_"+ std::to_string(which_stage) + "_" +v.GetID();
-               std::cout<<"Variable ID is "<<sVID<<std::endl;
+	    if(outdir != "./")
+		covar_handle.SetOutputDir(outdir);
 
-               std::cout<<"First lets add the variable string "<<v.name<<std::endl;
+	    if(covar_flux_template_xml != "null.xml"){
+            	std::cout<<" J.Before GenerateReweightingCovar: "<<covar_flux_template_xml<<std::endl;
+            	covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
+	    }
+	    else{
+		std::cout << "Use Template XMLs to generate reweight covar matrix " << std::endl;
+		covar_handle.GenerateReweightingCovar();
+	    }
 
-            //check if it's a BDT score variable
-            std::string mva = "mva";
-            std::string name;
-            if(v.name.size() >= mva.size() && v.name.compare(v.name.size() - mva.size(), mva.size(), mva) == 0){
-            std::cout<<"ERROR this is a BDT score, updating variable name"<<std::endl;
-            name = "simple_"+v.name;
-            }else{
-            name = v.name;
-            }
-
-
-            std::string sedder_VAR = "sed  's@VARVARVAR@\"" + name + "\"@' "+covar_flux_template_xml +" > "+ covar_flux_template_xml+"."+sVID+".xml";
-            std::cout<<sedder_VAR<<std::endl;
-            system(sedder_VAR.c_str());
-
-
-            std::string sBinning = "\"" + v.GetBinEdges() + "\"";
-
-            for(double k = 0; k<v.low_edges.size(); k++){
-            double b = v.low_edges[k];
-            sBinning +=" " + std::to_string(b);
-            }
-            sBinning += "\"";
-
-
-            std::cout<<"Now lets add the variable Binning "<<sBinning<<std::endl;
-            std::string sedder_BIN = "sed  -i 's@BINBINBIN@" + sBinning + "@' " + covar_flux_template_xml+"."+sVID+".xml";
-            std::cout<<sedder_BIN<<std::endl;
-            system(sedder_BIN.c_str());
-
-
-            std::string addc = v.additional_cut;
-            addc = ReplaceString(addc,"&&","\\&amp;\\&amp;");
-            std::cout<<"Now lets add the variable additional cuts "<<addc<<std::endl;
-
-
-
-            std::string sedder_WEI = "sed  -i 's@WEIWEIWEI@(" + addc + ")@' " + covar_flux_template_xml+"."+sVID+".xml";
-            std::cout<<sedder_WEI<<std::endl;
-            system(sedder_WEI.c_str());
-
-            std::cout<<"Ok, now lets use a preprepared sbnfit_make_covariance to generate this "<<std::endl;
-            //std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/April2020/whipping_star/build/bin/sbnfit_make_covariance_hive_integration"<<std::endl;
-            //std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance "<<std::endl;
-            std::cout<<"Location: /uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021_LessOutput"<<std::endl;
-
-            //std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021_LessOutput  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -m -t "+sVID+"_flux"; 
-            std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/MajorMerge_GGE_mark/whipping_star/build/bin/sbnfit_make_covariance  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -m -t "+sVID+"_flux"; 
-            std::cout<<"Running :  "<<std::endl;
-            std::cout<<"----- "<<run_str<<std::endl;
-            system(run_str.c_str());
-
-            std::cout<<"Should have finished FluxSide of things, frac fixed"<<std::endl;
-            std::string run_fix_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_fix_fractional  -x "+ covar_flux_template_xml+"."+sVID+".xml" + " -t "+sVID+"_flux" + " -c " + sVID+"_flux.SBNcovar.root"; 
-            system(run_fix_str.c_str());
-            */
         }
         std::cout<<"Finished the makefluxcovar mode: "<<std::endl;
 
@@ -1927,114 +1882,16 @@ int main (int argc, char *argv[]){
             //new code 
             std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage,fbdtcuts,true);
             bdt_covar covar_handle(&v, which_stage, stage_cut);
+	    if(outdir != "./")
+		covar_handle.SetOutputDir(outdir);
+
             covar_handle.GenerateDetectorCovar(covar_det_template_xml);
 
-            //in order to generate flux covar matrix together with det matrix, the "covarsys" needs to be set to "fluxxsdet" (default behavior)
+            //in order to generate flux covar matrix together with det matrix, the "covarsys" or input systematic error string needs to be set to "fluxxsdet" (default behavior)
             if(covar_flux_template_xml !="null.xml"){
                 covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
                 covar_handle.MergeCovar();
             }
-
-            /*
-               std::string sVID = "VID_"+ v.GetID();
-               std::cout<<"Variable ID is "<<sVID<<std::endl;
-
-               std::string sedder_VAR = "sed  's@VARVARVAR@\"" + v.name + "\"@' "+covar_det_template_xml +" > "+ covar_det_template_xml+"."+sVID+".xml";
-               std::cout<<sedder_VAR<<std::endl;
-               system(sedder_VAR.c_str());
-
-
-               std::string sBinning = "\"";
-               for(double k = 0; k<v.low_edges.size(); k++){
-               double b = v.low_edges[k];
-               sBinning +=" " + std::to_string(b);
-               }
-               sBinning += "\"";
-
-               std::cout<<"Now lets add the variable Binning "<<sBinning<<std::endl;
-               std::string sedder_BIN = "sed  -i 's@BINBINBIN@" + sBinning + "@' " + covar_det_template_xml+"."+sVID+".xml";
-               std::cout<<sedder_BIN<<std::endl;
-               system(sedder_BIN.c_str());
-
-
-            //set stages
-            std::cout<<"Now lets add the Stages: "<<which_stage<<std::endl;
-            std::string s_stagea ="stage_"+std::to_string((int)which_stage);
-            std::string s_stageb ="stage_"+std::to_string((int)which_stage); ;
-            std::string sedder_STAGEA = "sed  -i 's@STAGESTAGESTAGE@" + s_stagea + "@' " + covar_det_template_xml+"."+sVID+".xml";
-            std::string sedder_STAGEB = "sed  -i 's@STAGEZOOMZOOM@" + s_stageb + "@' " + covar_det_template_xml+"."+sVID+".xml";
-
-            std::cout<<sedder_STAGEA<<std::endl;
-            std::cout<<sedder_STAGEB<<std::endl;
-            system(sedder_STAGEA.c_str());
-            system(sedder_STAGEB.c_str());
-
-            std::string addc = v.additional_cut;
-            addc = ReplaceString(addc,"&&","\\&amp;\\&amp;");
-            std::cout<<"Now lets add the variable additional cuts "<<addc<<std::endl;
-            std::string sedder_WEI = "sed  -i 's@WEIWEIWEI@(" + addc + ")@' " + covar_det_template_xml+"."+sVID+".xml";
-            std::cout<<sedder_WEI<<std::endl;
-            system(sedder_WEI.c_str());
-
-
-            std::cout<<"Ok, now lets use a preprepared sbnfit_make_covariance to generate this "<<std::endl;
-            std::cout<<"Looping over the following DetSYs: "<<std::endl;
-            for(auto &ss: det_names)std::cout<<" "<<ss;
-            std::cout<<std::endl;
-
-            for(auto &det: det_names){
-
-            std::string m_tag = sVID+"_DET_"+det;
-            std::cout<<"On Det "<<m_tag<<std::endl;
-            std::cout<<"Location: "<<"/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021_LessOutput "<<std::endl;
-
-            std::string sedder_DET = "sed  's@SYSVAR@" + det + "@' " + covar_det_template_xml+"."+sVID+".xml > " + covar_det_template_xml+"."+sVID+"_"+det+".xml" ;
-            std::cout<<sedder_DET<<std::endl;
-            system(sedder_DET.c_str());
-
-            std::string run_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_make_covariance_hive_integration_May2021_LessOutput  -x "+ covar_det_template_xml+"."+sVID+"_"+det+".xml" + " -d -m -t "+m_tag; 
-            system(run_str.c_str());
-
-            //Then run FixFractional 
-            std::string run_fix_str = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_fix_fractional  -x "+ covar_det_template_xml+"."+sVID+"_"+det+".xml" + " -t "+m_tag + " -c " + m_tag+".SBNcovar.root"; 
-            std::cout<<run_fix_str<<std::endl;
-            system(run_fix_str.c_str());
-            }
-            //Then run a SBNfit Merge Fractional
-
-            std::cout<<"Going to merge it all"<<std::endl;
-            std::string merger_s = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration_May2021 -f -t "+sVID + "_merged_det -c "+sVID+"_DET_*_fracfixed*.SBNcovar.root";
-
-            system(merger_s.c_str());
-            */
-                //Then run a FlatFractional for BNBOther and NCMultiPi0
-                /*std::string flatter_s1 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s BNBOther -t "+sVID+"_FlatDetSys1 -c " +sVID+"_merged_det.SBNcovar.root";
-                  std::string flatter_s2 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s NCMultiPi0 -t "+sVID+"_FlatDetSys2 -c " +sVID+"_FlatDetSys1.SBNcovar.root";
-                  std::string flatter_s3 = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_flat_fractional -x" + covar_det_template_xml+"."+sVID+"_"+det_names[0]+".xml" + " -v 0.35 -s OTPCinC -t "+sVID+"_FlatDetSys3 -c " +sVID+"_FlatDetSys2.SBNcovar.root";
-
-                  std::cout<<"Adding Flat components with command || "<<flatter_s1<<std::endl;
-                  std::cout<<"Adding Flat components with command || "<<flatter_s2<<std::endl;
-                  std::cout<<"Adding Flat components with command || "<<flatter_s3<<std::endl;
-
-                  system(flatter_s1.c_str());
-                  system(flatter_s2.c_str());
-                  system(flatter_s3.c_str());
-                  */
-                /*            //*****  If we also ran flux, merge   ***
-                              if(covar_flux_template_xml !="null.xml"){
-
-                              std::cout<<"Going to merge Flux and Det together"<<std::endl;
-                //std::string merger_a = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration -t "+sVID + "_fluxdet -c "+sVID+"_FlatDetSys3.SBNcovar.root "+ sVID+"_flux_fracfixed.SBNcovar.root";
-                std::string merger_a = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration_May2021 -f -t "+sVID + "_fluxdet -c "+sVID+"_merged_det.SBNcovar.root  " + sVID+"_flux.SBNcovar.root";
-                //                std::string merger_a = "/uboone/app/users/markrl/SBNfit_uBooNE/July2020_SL7/whipping_star/build/bin/sbnfit_merge_fractional_hive_integration_May2021 -f -t "+sVID + "_fluxdet -c "+sVID+"_merged_det.SBNcovar.root  " + sVID+"_flux_fracfixed.SBNcovar.root";
-                std::cout<<"Merge String "<<std::endl;
-                std::cout<<merger_a<<std::endl;
-                system(merger_a.c_str());
-                }
-
-*/
-
-
         }//end vars
 
     }else if(mode_option == "export"){

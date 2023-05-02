@@ -1,0 +1,459 @@
+<?xml version="1.0" ?>
+
+<!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
+<topology tag="1g0pCohNeutrino2022" name ="SSV" def = "definition_cut == 1" bdtcut = "(0)"/>
+
+<covar dir = "/" name = "frac_covariance" plotname="" />
+
+<plot_pot>
+    <event_indicator>inside_candidate_index&lt;1</event_indicator>
+	
+    <!--  Limit run number to be in the same range as open Run1 data -->
+    <run_period name ="RunI" cut ="( (run_number >= 5121 &amp;&amp; run_number <= 5946))" fraction = "1.0"  />
+</plot_pot>
+
+<!-- ================================================== BDT FILES [First the ones that we stack in things]==================================================== -->
+<filedir>/pnfs/uboone/persistent/users/gge/gLEE_Coherent_files/FLATTEN_UnFLATTEN_Files/CombinedRun123/</filedir>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCSingleCoherent.root" tag = "NCSingleCoherentFLAT" hist_style = "hist" dirs = "" col = "(256, 172, 18)" plot_name = "NC Coherent 1 #gamma" signal = "true" plot_on_top = "true" ttree_name="SSV2D">
+    <!-- Manual POT normalization for file without subrunpot-->
+    <POT manual_norm = "true">
+        <reference_count>16139.</reference_count>
+        <reference_pot>2.22242e+24</reference_pot>
+    </POT>
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadOverlaySMTrueP.root" tag = "NCDeltaRadOverlaySMTruePFLAT" hist_style = "hist" dirs = "" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta #rightarrow N#gamma (1+p)" signal = "false" plot_on_top = "false" fillstyle="3245" ttree_name="SSV2D">
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadOverlaySMTrueN.root" tag = "NCDeltaRadOverlaySMTrueNFLAT" hist_style = "hist" dirs = "" col = "(0.9,0.82,0.05)" plot_name = "NC #Delta #rightarrow N#gamma (0p)" signal = "false" plot_on_top = "false" fillstyle="3254" ttree_name="SSV2D" >
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCPi0Coh.root" tag = "NCPi0CohFLAT" hist_style = "hist" dirs = "" col = "(255,189,189)" plot_name = "NC 1 #pi^{0} Coherent"  scale = "1.0" plot_on_top = "false" ttree_name="SSV2D" >
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCPi0NotCoh.root" tag = "NCPi0NotCohFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "NC 1 #pi^{0} Non-Coherent"  scale = "1.0" plot_on_top = "false" ttree_name="SSV2D">
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_CC1Pi0.root" tag = "CC1Pi0FLAT" hist_style = "hist" dirs = "" col = "(0.4,0.4,1.0)" plot_name = "CC #nu_{#mu} 1 #pi^{0}"  scale = "1.0" plot_on_top = "false" ttree_name="SSV2D">
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_BNBOtherExtra.root" tag = "BNBOtherExtraFLAT" hist_style = "hist" dirs = "" col = "(0.6,0.8,1.0)" plot_name = "BNB Other"  scale = "1.0" plot_on_top = "false" ttree_name="SSV2D">
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+</bdtfile>
+
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NueOverlays.root" tag = "NueOverlaysFLAT" hist_style = "hist" dirs = "" col = "(0.9,0.5,0.9)" plot_name = "CC #nu_{e}/#bar{#nu_{e}} Intrinsic" ttree_name="SSV2D">
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+</bdtfile>
+
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_Dirt.root" tag = "DirtFLAT" hist_style = "hist" dirs = "" col = "(0.6,0.35,0.25)" plot_name = "Dirt" scale="1.0" mergedown="true" ttree_name="SSV2D"> 
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_OTPCExtra.root" tag = "OTPCExtraFLAT" hist_style = "hist" dirs = "" col = "(0.6,0.4,0.2)" plot_name = "Dirt (Outside TPC)"  scale = "1.0" plot_on_top = "false" ttree_name="SSV2D">
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+</bdtfile>
+
+
+<bdtfile filename = "../Run1OpenData/Flatten/FLATTEN_1g0pCohNeutrino2022_OpenDataRun1.root" tag = "OpenDataRun1FLAT" hist_style = "E1p" dirs = "" col = "(0.0,0.0,0.0)" plot_name = "BNB Data, Total:" ttree_name="SSV2D" >
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>1</additional_weight>
+    <data type="OnBeam" plot_name="Run 1 Open Data">
+        <tor860_wcut> 4.566e+19  </tor860_wcut>   
+        <E1DCNT_wcut> 10127594.0 </E1DCNT_wcut>   
+    </data>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_BNBextRun123.root" tag = "BNBextFLAT" hist_style = "hist" dirs = "" col = "(.2,0.8,0.2)" plot_name = "Cosmic Data" fillstyle = "3333" scale = "1" ttree_name="SSV2D">
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>1</additional_weight>
+    <data type="OffBeam">
+        <tor860_wcut> 4.566e+19  </tor860_wcut>   
+        <E1DCNT_wcut> 10127594.0 </E1DCNT_wcut>   
+	<!--<EXT>180439635.0</EXT> -->   <!-- spill of Runs 123 -->
+        <EXT>2557089.0</EXT>            <!-- spill of events with run_number [5121 5946] -->
+    </data>
+</bdtfile>
+
+
+
+<!-- ================================================== BDT FILES [Now the training files]==================================================== -->
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCpi0Train.root" tag = "CxCSSVTrainFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "SSV CxC Train" fillstyle = "3333" scale = "1" ttree_name="SSV2D">
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+    
+    <training>
+        <cut> sss_candidate_pdg==22</cut>
+        <cut> sss_candidate_parent_pdg==111</cut>
+        <cut> sss_candidate_trackid!=sim_shower_trackID_0</cut>
+    </training>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCpi0Test.root" tag = "CxCSSVTestFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "SSV CxC Test" fillstyle = "3333" scale = "1" ttree_name="SSV2D" >
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+    <training>
+        <cut> sss_candidate_pdg==22</cut>
+        <cut> sss_candidate_parent_pdg==111</cut>
+        <cut> sss_candidate_trackid!=sim_shower_trackID_0</cut>
+    </training>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCCoherentTrain.root" tag = "NCCoherentTrainFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = "NC COH 1 #gamma Train" fillstyle = "3333" scale = "1"  ttree_name="SSV2D">
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+    <training>
+        <cut> 1</cut>
+    </training>
+</bdtfile>
+
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCCoherentTest.root" tag = "NCCoherentTestFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = "NC COH 1 #gamma Test" fillstyle = "3333" scale = "1" ttree_name="SSV2D" >
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+    <training>
+        <cut> 1 </cut>
+    </training>
+</bdtfile>
+
+<!-- use to apply SSV bdt to all clusters in the NCpi0 training and test sample for use at later stage -->
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCpi0Train.root" tag = "NCpi0TrainFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "NCpi0 Train" fillstyle = "3333" scale = "1" ttree_name="SSV2D">
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+    <training>
+        <cut> 1</cut>
+    </training>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCpi0Test.root" tag = "NCpi0TestFLAT" hist_style = "hist" dirs = "" col = "(1,0.4,0.4)" plot_name = "NCpi0 Test" fillstyle = "3333" scale = "1" ttree_name="SSV2D" >
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+    <training>
+        <cut> 1 </cut>
+    </training>
+</bdtfile>
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadTrain.root" tag = "NCDeltaRadTrainFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = "NC Delta Train" fillstyle = "3333" scale = "1"  ttree_name="SSV2D">
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+    <training>
+        <cut> 1</cut>
+    </training>
+</bdtfile>
+
+
+<bdtfile filename = "FLATTEN_1g0pCohNeutrino2022_NCDeltaRadTest.root" tag = "NCDeltaRadTestFLAT" hist_style = "hist" dirs = "" col = "(255, 172, 18)" plot_name = "NC Delta Test" fillstyle = "3333" scale = "1"  ttree_name="SSV2D">
+    <definition>
+        <cut>inside_candidate_index != -1</cut>
+    </definition>
+    <additional_weight>event_weight</additional_weight>
+    <training>
+        <cut> 1</cut>
+    </training>
+</bdtfile>
+
+
+
+<!-- ============================================== ACTUAL BDT TMVA Setup ==================================== -->
+
+<mva type="BDT" use="yes" tag = "SSV2D_CxC" name ="SSV flat BDT" binning = "(24,0.0,1.0)">
+    <method type = "XGBoost" use = "yes">
+        <param> n_trees= 400</param>
+        <param> tree_method=exact</param>
+        <param> n_gpus=0</param>
+        <param> objective=binary:logistic</param>
+        <param> gamma=0.75</param>          <!--   Minimum reduction required to split . The larger gamma is, the more conservative the algorithm will b    e.    -->
+        <param> max_depth=5</param>    <!-- How many layers deep each tree -->
+        <param> eta=0.125</param>        <!-- Learning Rate -->
+        <param> subsample=0.9</param> <!-- % of events passed to each tree -->
+        <param> colsample_bytree= 1.0</param>   <!-- % of features that are passed to each tree  -->
+        <param> verbosity=1</param>
+    </method>
+    <file      
+        sig_train_tag = "CxCSSVTrainFLAT"
+        sig_test_tag = "CxCSSVTestFLAT"
+        bkg_test_cut = "1"
+        bkg_train_tag = "NCCoherentTrainFLAT"
+        bkg_test_tag = "NCCoherentTestFLAT"
+        sig_test_cut = "1"
+        />
+    <scan min = "0.54" max = "0.58" steps="5"/>
+</mva>
+
+<!-- ================================================== PRE-CUTS   ==================================================== -->
+
+
+<precut def = "preselection_cut == 1" name = "Event-level Preselection Cut"/>
+
+
+<!-- ============================================== Variables, BDT training and otherwise ====================================== -->
+
+<!-- ================= ############ Start of BDT training Variables ########### ======================== -->
+<!-- ================= ############ Start of BDT training Variables ########### ======================== -->
+<!-- ================= ############ Start of BDT training Variables ########### ======================== -->
+
+<var def = "sss_candidate_energy" binning = "(20, 0, 400)" unit = "Cluster Calometric Energy [MeV]" type = "d"     training="0" group="1"/>
+<var def = "sss_candidate_energy/corrected_shower_energy" binning = "(25,0,2)" unit = "Ratio of cluster energy to primary shower energy" type = "d" training = "0" group="1"/>
+<var def = "sss_candidate_wire_tick_based_length" binning = "(25, 0, 100)" unit = "Cluster Length [cm]" type = "d"     training="0" group="1"/>
+<var def = "sss_candidate_num_hits" binning = "(23, 8, 100)" unit = "Number of Hits in Cluster" type = "d"     training="0" group="1"/>
+<var def = "sss_candidate_PCA" binning = "(20, 0, 1)" unit = "Size of primary PCA of cluster" type = "d"     training="0" group="1"/>
+<var def = "sss_candidate_impact_parameter" binning = "(30, 0, 250)" unit = "Impact parameter between cluster and reco vertex [cm]" type = "d"     training="0" group="1"/>
+<var def = "sss_candidate_num_wires" binning = "(25, 0, 50)" unit = "Number of wires cluster extends over" type = "d"     training="0" group="1"/>
+<var def = "sss_candidate_num_ticks" binning = "(25, 0, 50)" unit = "Number of time ticks cluster extends over" type = "d"     training="0" group="1"/>
+<var def = "sss_candidate_mean_ADC" binning = "(25, 0, 500)" unit = "Mean ADC of cluster hits" type = "d"     training="0" group="1"/>
+<var def = "sss_candidate_ADC_RMS" binning = "(25, 0, 500)" unit = "The RMS of ADC in cluster hits" type = "d"     training="0" group="1"/>
+<var def = "sss_candidate_fit_constant" binning = "(25, 0, 250)" unit = "The const of a fit of cluster to straight line" type = "d"     training="0" group="1"/>
+<var def = "sss_candidate_fit_slope" binning = "(25, 0, 50)" unit = "The slope of a fit of cluster to straight line" type = "d"     training="0" group="1"/>
+<var def = "sss_candidate_angle_to_shower*180.0/3.14159" binning = "(25, 0, 180)" unit = "2D angle between cluster and primary shower [deg]" type = "d"     training="0" group="1"/>
+<var def = "sss_candidate_min_dist" binning = "(25,0,250)" unit = "Distance from cluster to reco vertex [cm]" type = "d" training="0" group="1"/>
+<var def = "sqrt(2.0*(sss_corrected_candidate_energy)*corrected_shower_energy*(1.0-cos(sss_candidate_angle_to_shower)))" binning = "(20,0,400)" unit = "Invariant mass of cluster and primary shower [MeV]" training="0" group="1" type="d"/>
+
+<!-- ================= ############ End of BDT training Variables ########### ======================== -->
+<!-- ================= ############ End of BDT training Variables ########### ======================== -->
+<!-- ================= ############ End of BDT training Variables ########### ======================== -->
+
+<var def = "sss_candidate_remerge" binning = "(2, 0, 1)" unit = "Remerge" type = "d"     training="" group="10"/>
+<var def = "sss_candidate_fit_slope" binning = "(50, 0, 50)" unit = "Fit Slope" type = "d"     training="" group="15"/>
+<var def = "fabs(sss_candidate_max_tick/25.0-sss_candidate_min_tick/25.0)*fabs(sss_candidate_max_wire*0.3-sss_candidate_min_wire*0.3)" binning = "(50,0,1000)" unit="cluster extent wire x tick [fake cm]^{2}" training="" group="10" type="d"/>
+<var def = "fabs(sss_candidate_max_wire*0.3-sss_candidate_min_wire*0.3)" binning = "(50,0,100)" unit="cluster extent wire [fake cm]" training="" group="10" type="d"/>
+<var def = "fabs(sss_candidate_max_tick/25.0-sss_candidate_min_tick/25.0)" binning = "(50,0,100)" unit="cluster extent tick [fake cm]" training="" group="10" type="d"/>
+<var def ="1g0pCohFeb2022SSV_mva" binning="(50,0,1)" unit = "SSV v2 Score" type="d" training="" group="111" logplot="true"/>
+
+
+<var def = "sss_candidate_energy" binning = "(20, 0, 60)" unit = "Cluster Calometric Energy [MeV]" type = "d"     training="0" group="55"/>
+<var def = "sss_candidate_wire_tick_based_length" binning = "(20, 0, 20)" unit = "Cluster Length [cm]" type = "d"     training="0" group="55"/>
+
+<!-- Cluster of different sizes -->
+<var def = "sss_candidate_wire_tick_based_length" binning = "(20, 0, 30)" unit = "Length of Cluster w/ Energy Smaller Than 60 MeV [cm]" type = "d" cut="sss_candidate_energy &lt;60"    training="0" group="55"/>
+<var def = "sss_candidate_wire_tick_based_length" binning = "(20, 0, 30)" unit = "Length of Cluster w/ Energy Not Smaller than 60 MeV [cm]" type = "d" cut="sss_candidate_energy >= 60"    training="0" group="55"/>
+<var def = "sss_candidate_energy" binning = "(15, 0, 150)" unit = "Calometric Energy of Cluster w/ Length <= 5cm [MeV]" type = "d"  cut="sss_candidate_wire_tick_based_length <= 5"   training="0" group="55"/>
+<var def = "sss_candidate_energy" binning = "(6, 0, 150)" unit = "Calometric Energy of Cluster w/ Length >= 25cm [MeV]" type = "d"  cut="sss_candidate_wire_tick_based_length >= 25"   training="0" group="555"/>
+<var def = "sss_candidate_energy" binning = "(15, 0, 150)" unit = "Calometric Energy of Cluster w/ Length in [5, 25] cm [MeV]" type = "d"  cut="sss_candidate_wire_tick_based_length &gt; 5 &amp;&amp; sss_candidate_wire_tick_based_length &lt; 25"   training="0" group="55"/>
+<var def = "sss_candidate_mean_ADC" binning = "(30, 20, 500)" unit = "Mean Hits ADC of Cluster w/ Length in [5, 25]cm and Energy < 60MeV" type = "d"  cut="sss_candidate_wire_tick_based_length &gt; 5 &amp;&amp; sss_candidate_wire_tick_based_length &lt; 25 &amp;&amp; sss_candidate_energy &lt;60"   training="0" group="3333"/>
+<var def = "sss_candidate_mean_ADC" binning = "(30, 20, 500)" unit = "Mean Hits ADC of Other Clusters" type = "d"  cut="!(sss_candidate_wire_tick_based_length &gt; 5 &amp;&amp; sss_candidate_wire_tick_based_length &lt; 25 &amp;&amp; sss_candidate_energy &lt;60)"   training="0" group="3333"/>
+
+
+<var def = "sss_candidate_num_hits" binning = "(46, 8, 100)" unit = "Number of Hits in Clusters on Plane 0" type = "d"  cut="sss_candidate_plane == 0"    training="" group="4405"/>
+<var def = "sss_candidate_num_hits" binning = "(46, 8, 100)" unit = "Number of Hits in Clusters on Plane 1" type = "d"  cut="sss_candidate_plane == 1"    training="" group="4405"/>
+<var def = "sss_candidate_num_hits" binning = "(46, 8, 100)" unit = "Number of Hits in Clusters on Plane 2" type = "d"  cut="sss_candidate_plane == 2"    training="" group="4405"/>
+<var def = "sss_candidate_energy" binning = "(25, 0, 200)" unit = "Cluster Calometric Energy on Plane 0 [MeV]" type = "d"   cut="sss_candidate_plane == 0"    training="" group="4405"/>
+<var def = "sss_candidate_energy" binning = "(25, 0, 200)" unit = "Cluster Calometric Energy on Plane 1 [MeV]" type = "d"   cut="sss_candidate_plane == 1"    training="" group="4405"/>
+<var def = "sss_candidate_energy" binning = "(25, 0, 200)" unit = "Cluster Calometric Energy on Plane 2 [MeV]" type = "d"   cut="sss_candidate_plane == 2"    training="" group="4405"/>
+<var def = "sss_candidate_mean_wire" binning = "(30, 0, 2400)" unit = "Mean Wire number of clusters on Plane 0" type = "d"  cut="sss_candidate_plane == 0"     training="" group="555"/>
+<var def = "sss_candidate_mean_wire" binning = "(24, 0, 2400)" unit = "Mean Wire number of clusters on Plane 1" type = "d"  cut="sss_candidate_plane == 1"     training="" group="555"/>
+<var def = "sss_candidate_mean_wire" binning = "(17, 0, 3500)" unit = "Mean Wire number of clusters on Plane 2" type = "d"  cut="sss_candidate_plane == 2"     training="" group="555"/>
+
+<var def = "sss_candidate_remerge" binning = "(2, 0, 2)" unit = "Remerge" type = "d"     training="" group="4405"/>
+<var def = "sss_candidate_fit_slope" binning = "(25, 0, 25)" unit = "Cluster Fit Slope" type = "d"     training="" group="4405"/>
+<var def = "fabs(sss_candidate_max_tick/25.0-sss_candidate_min_tick/25.0)*fabs(sss_candidate_max_wire*0.3-sss_candidate_min_wire*0.3)" binning = "(50,0,300)" unit="Cluster Extent Area (wire x tick) [fake cm^{2}]" training="" group="4405" type="d"/>
+<var def = "fabs(sss_candidate_max_wire*0.3-sss_candidate_min_wire*0.3)" binning = "(30,0,70)" unit="Cluster Extent Wire [fake cm]" training="" group="4405" type="d"/>
+<var def = "fabs(sss_candidate_max_tick/25.0-sss_candidate_min_tick/25.0)" binning = "(40,0,80)" unit="Cluster Extent Tick [fake cm]" training="" group="4405" type="d"/>
+
+
+<var def ="1g0pCohFeb2022SSV_mva" binning="(50,0,1)" unit = "SSV v2 Score" type="d" training="" group="111" logplot="true"/>
+
+<!-- Specific Region wire#1400-2000 on Plane 1 -->
+<var def = "sss_candidate_energy" binning = "(15, 0, 150)" unit = "Calometric Energy of Cluster in Plane 1 Limited Wire Region" type = "d"  cut="sss_candidate_plane == 1 &amp;&amp; sss_candidate_mean_wire &gt; 1400 &amp;&amp; sss_candidate_mean_wire &lt; 2000"   training="0" group="55"/>
+<var def = "sss_candidate_wire_tick_based_length" binning = "(20, 0, 30)" unit = "Length of Cluster in Plane 1 Limited Wire Region" type = "d"  cut="sss_candidate_plane == 1 &amp;&amp; sss_candidate_mean_wire &gt; 1400 &amp;&amp; sss_candidate_mean_wire &lt; 2000"   training="0" group="55"/>
+<var def = "sss_candidate_num_wires" binning = "(49, 1, 50)" unit = "Number of Different Wires Cluster Extends Over in Plane 1 Limited Wire Region" type = "d"  cut="sss_candidate_plane == 1 &amp;&amp; sss_candidate_mean_wire &gt; 1400 &amp;&amp; sss_candidate_mean_wire &lt; 2000"   training="0" group="4407"/>
+<var def = "sss_candidate_num_ticks" binning = "(49, 1, 50)" unit = "Number of Different Time Ticks Cluster Extends Over in Plane 1 Limited Wire Region" type = "d"  cut="sss_candidate_plane == 1 &amp;&amp; sss_candidate_mean_wire &gt; 1400 &amp;&amp; sss_candidate_mean_wire &lt; 2000"   training="0" group="4406"/>
+<var def = "sss_candidate_mean_ADC" binning = "(40, 20, 500)" unit = "Mean ADC of Cluster Hits in Plane 1 Limited Wire Region" type = "d"  cut="sss_candidate_plane == 1 &amp;&amp; sss_candidate_mean_wire &gt; 1400 &amp;&amp; sss_candidate_mean_wire &lt; 2000"   training="0" group="4406"/>
+<var def = "sss_candidate_ADC_RMS" binning = "(25, 0, 300)" unit = "The RMS of ADC in Cluster Hits in Plane 1 Limited Wire Region" type = "d"  cut="sss_candidate_plane == 1 &amp;&amp; sss_candidate_mean_wire &gt; 1400 &amp;&amp; sss_candidate_mean_wire &lt; 2000"   training="0" group="4406"/>
+<var def = "sss_candidate_energy" binning = "(15, 0, 150)" unit = "Calometric Energy of Cluster Outside Limited Wire Region" type = "d"  cut="!(sss_candidate_plane == 1 &amp;&amp; sss_candidate_mean_wire &gt; 1400 &amp;&amp; sss_candidate_mean_wire &lt; 2000)"   training="0" group="55"/>
+<var def = "sss_candidate_wire_tick_based_length" binning = "(20, 0, 30)" unit = "Length of Cluster Outside Limited Wire Region" type = "d"  cut="!(sss_candidate_plane == 1 &amp;&amp; sss_candidate_mean_wire &gt; 1400 &amp;&amp; sss_candidate_mean_wire &lt; 2000)"   training="0" group="55"/>
+<var def = "sss_candidate_num_wires" binning = "(49, 1, 50)" unit = "Number of Different Wires Cluster Extends Over Outside Limited Wire Region" type = "d"  cut="!(sss_candidate_plane == 1 &amp;&amp; sss_candidate_mean_wire &gt; 1400 &amp;&amp; sss_candidate_mean_wire &lt; 2000)"   training="0" group="4406"/>
+<var def = "sss_candidate_num_ticks" binning = "(49, 1, 50)" unit = "Number of Different Time Ticks Cluster Extends Over Outside Limited Wire Region" type = "d"  cut="!(sss_candidate_plane == 1 &amp;&amp; sss_candidate_mean_wire &gt; 1400 &amp;&amp; sss_candidate_mean_wire &lt; 2000)"   training="0" group="4407"/>
+<var def = "sss_candidate_mean_ADC" binning = "(40, 20, 500)" unit = "Mean ADC of Cluster Hits Outside Limited Wire Region" type = "d"  cut="!(sss_candidate_plane == 1 &amp;&amp; sss_candidate_mean_wire &gt; 1400 &amp;&amp; sss_candidate_mean_wire &lt; 2000)"   training="0" group="4406"/>
+<var def = "sss_candidate_ADC_RMS" binning = "(25, 0, 300)" unit = "The RMS of ADC in Cluster Hits Outside Limited Wire Region" type = "d"  cut="!(sss_candidate_plane == 1 &amp;&amp; sss_candidate_mean_wire &gt; 1400 &amp;&amp; sss_candidate_mean_wire &lt; 2000)"   training="0" group="4406"/>
+
+<!-- Plane 1 only -->
+<var def = "sss_candidate_energy" binning = "(25, 0, 200)" unit = "Cluster Calometric Energy Plane 1 [MeV]" type = "d"  cut="sss_candidate_plane == 1"   training="" group="4401"/>
+<var def = "sss_candidate_energy/corrected_shower_energy" binning = "(50,0,2)" unit = "Ratio of cluster energy to primary shower energy Plane 1" type = "d" cut="sss_candidate_plane == 1" training = "" group="4401"/>
+<var def = "sss_candidate_wire_tick_based_length" binning = "(25, 0, 50)" unit = "Cluster Length on Plane 1 [cm]" type = "d"  cut="sss_candidate_plane == 1"     training="" group="4401"/>
+<var def = "sss_candidate_num_hits" binning = "(46, 8, 100)" unit = "Number of Hits in Cluster on Plane 1" type = "d"  cut="sss_candidate_plane == 1"     training="" group="4401"/>
+<var def = "sss_candidate_PCA" binning = "(25, 0.5, 1)" unit = "Size of primary PCA of cluster on Plane 1" type = "d"  cut="sss_candidate_plane == 1"     training="" group="4401"/>
+<var def = "sss_candidate_impact_parameter" binning = "(40, 0, 250)" unit = "Impact parameter between cluster and reco vertex on Plane 1 [cm]" type = "d"  cut="sss_candidate_plane == 1"     training="" group="4401"/>
+<var def = "sss_candidate_num_wires" binning = "(49, 1, 50)" unit = "Number of wires cluster extends over on Plane 1" type = "d"  cut="sss_candidate_plane == 1"     training="" group="4401"/>
+<var def = "sss_candidate_mean_wire" binning = "(40, 0, 2400)" unit = "Mean Wire number of clusters on Plane 1" type = "d"  cut="sss_candidate_plane == 1"     training="" group="44011"/>
+<var def = "sss_candidate_mean_tick" binning = "(40, 0, 6600)" unit = "Mean Time Tick of clusters on Plane 1" type = "d"  cut="sss_candidate_plane == 1"     training="" group="44011"/>
+<var def = "sss_candidate_num_ticks" binning = "(49, 1, 50)" unit = "Number of time ticks cluster extends over on Plane 1" type = "d"  cut="sss_candidate_plane == 1"     training="" group="4401"/>
+<var def = "sss_candidate_mean_ADC" binning = "(40, 20, 500)" unit = "Mean ADC of cluster hits on Plane 1" type = "d"  cut="sss_candidate_plane == 1"     training="" group="4401"/>
+<var def = "sss_candidate_ADC_RMS" binning = "(25, 0, 300)" unit = "The RMS of ADC in cluster hits on Plane 1" type = "d"  cut="sss_candidate_plane == 1"     training="" group="4401"/>
+<var def = "sss_candidate_fit_constant" binning = "(50, 0, 250)" unit = "The const of a fit of cluster to straight line on Plane 1" type = "d"  cut="sss_candidate_plane == 1"     training="" group="4401"/>
+<var def = "sss_candidate_fit_slope" binning = "(30, 0, 30)" unit = "The slope of a fit of cluster to straight line on Plane 1" type = "d"  cut="sss_candidate_plane == 1"     training="" group="4401"/>
+<var def = "sss_candidate_angle_to_shower*180.0/3.14159" binning = "(50, 0, 180)" unit = "2D angle between cluster and primary shower on Plane 1 [deg]" type = "d"  cut="sss_candidate_plane == 1"     training="" group="4401"/>
+<var def = "sss_candidate_min_dist" binning = "(40,0,250)" unit = "Distance from Cluster to Reco Vertex on Plane 1 [cm]" type = "d" cut="sss_candidate_plane == 1"   training="" group="4401"/>
+<var def = "sqrt(2.0*(sss_corrected_candidate_energy)*corrected_shower_energy*(1.0-cos(sss_candidate_angle_to_shower)))" binning = "(50,0,400)" unit = "Invariant mass of cluster and primary shower on Plane 1 [MeV]" cut="sss_candidate_plane == 1"   training="" group="4401" type="d"/>
+
+<!-- Plane 2 only -->
+<var def = "sss_candidate_energy" binning = "(25, 0, 200)" unit = "Cluster Calometric Energy Plane 2 [MeV]" type = "d"  cut="sss_candidate_plane == 2"   training="" group="4402"/>
+<var def = "sss_candidate_energy/corrected_shower_energy" binning = "(50,0,2)" unit = "Ratio of cluster energy to primary shower energy Plane 2" type = "d" cut="sss_candidate_plane == 2" training = "" group="4402"/>
+<var def = "sss_candidate_wire_tick_based_length" binning = "(25, 0, 50)" unit = "Cluster Length on Plane 2 [cm]" type = "d"  cut="sss_candidate_plane == 2"     training="" group="4402"/>
+<var def = "sss_candidate_num_hits" binning = "(46, 8, 100)" unit = "Number of Hits in Cluster on Plane 2" type = "d"  cut="sss_candidate_plane == 2"     training="" group="4402"/>
+<var def = "sss_candidate_PCA" binning = "(25, 0.5, 1)" unit = "Size of primary PCA of cluster on Plane 2" type = "d"  cut="sss_candidate_plane == 2"     training="" group="4402"/>
+<var def = "sss_candidate_impact_parameter" binning = "(40, 0, 250)" unit = "Impact parameter between cluster and reco vertex on Plane 2 [cm]" type = "d"  cut="sss_candidate_plane == 2"     training="" group="4402"/>
+<var def = "sss_candidate_num_wires" binning = "(49, 1, 50)" unit = "Number of wires cluster extends over on Plane 2" type = "d"  cut="sss_candidate_plane == 2"     training="" group="4402"/>
+<var def = "sss_candidate_num_ticks" binning = "(49, 1, 50)" unit = "Number of time ticks cluster extends over on Plane 2" type = "d"  cut="sss_candidate_plane == 2"     training="" group="4402"/>
+<var def = "sss_candidate_mean_ADC" binning = "(40, 20, 500)" unit = "Mean ADC of cluster hits on Plane 2" type = "d"  cut="sss_candidate_plane == 2"     training="" group="4402"/>
+<var def = "sss_candidate_ADC_RMS" binning = "(25, 0, 300)" unit = "The RMS of ADC in cluster hits on Plane 2" type = "d"  cut="sss_candidate_plane == 2"     training="" group="4402"/>
+<var def = "sss_candidate_fit_constant" binning = "(50, 0, 250)" unit = "The const of a fit of cluster to straight line on Plane 2" type = "d"  cut="sss_candidate_plane == 2"     training="" group="4402"/>
+<var def = "sss_candidate_fit_slope" binning = "(30, 0, 30)" unit = "The slope of a fit of cluster to straight line on Plane 2" type = "d"  cut="sss_candidate_plane == 2"     training="" group="4402"/>
+<var def = "sss_candidate_angle_to_shower*180.0/3.14159" binning = "(50, 0, 180)" unit = "2D angle between cluster and primary shower on Plane 2 [deg]" type = "d"  cut="sss_candidate_plane == 2"     training="" group="4402"/>
+<var def = "sss_candidate_min_dist" binning = "(40,0,250)" unit = "Distance from Cluster to Reco Vertex on Plane 2 [cm]" type = "d" cut="sss_candidate_plane == 2"   training="" group="4402"/>
+<var def = "sqrt(2.0*(sss_corrected_candidate_energy)*corrected_shower_energy*(1.0-cos(sss_candidate_angle_to_shower)))" binning = "(50,0,400)" unit = "Invariant mass of cluster and primary shower on Plane 2 [MeV]" cut="sss_candidate_plane == 2"   training="" group="4402" type="d"/>
+
+
+<!-- ================= Efficiency  ======================== -->
+
+
+<efficiency denom_stage = "-1" denom_cut = "mctruth_num_exiting_pi0 ==1" numer_stage = "0" numer_cut = "sim_shower_pdg==22 &amp;&amp; sim_shower_parent_pdg==111" /> 
+
+
+<!-- ================= RECO-MC Matching ======================== -->
+<!--<recomc>
+    <def name="Cosmic Contaminated" col ="( 126,126,241)"> 
+        (sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4 )        
+    </def> 
+    <def name="No visible p^{+} or #gamma" col ="(239,202,140)"> 
+        !((sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==0 ||  (mctruth_exiting_photon_energy &lt; 0.02))          
+    </def> 
+    <def name="More than 1 p^{+}" col ="(127,231,204)"> 
+        !((sim_shower_overlay_fraction &gt; 0.4 ||  sim_track_overlay_fraction &gt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )>1 )          
+    </def> 
+
+    <def name="Bad Reco" col ="(223,227,142)"> 
+        ((sim_shower_overlay_fraction &lt; 0.4 &amp;&amp;  sim_track_overlay_fraction &lt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 &amp;&amp;  (mctruth_exiting_photon_energy &gt; 0.02))  &amp;&amp; !(sim_shower_pdg==22 &amp;&amp;sim_track_pdg==2212) 
+    </def> 
+    <def name = "Signal Definition" col="(241,126,126)">
+        ((sim_shower_overlay_fraction &lt; 0.4 &amp;&amp;  sim_track_overlay_fraction &lt; 0.4) ) &amp;&amp; ( Sum$(mctruth_exiting_proton_energy-0.93827 &gt; 0.02 )==1 &amp;&amp;  (mctruth_exiting_photon_energy &gt; 0.02))  &amp;&amp; (sim_shower_pdg==22 &amp;&amp;sim_track_pdg==2212) &amp;&amp;  mctruth_nu_vertex_x &gt; 5.0 &amp;&amp; mctruth_nu_vertex_x &lt; 252.35 &amp;&amp; mctruth_nu_vertex_y &gt; -111.5 &amp;&amp; mctruth_nu_vertex_y &lt; 111.5 &amp;&amp; mctruth_nu_vertex_z &gt; 5.0 &amp;&amp; mctruth_nu_vertex_z &lt; 1031.8 &amp;&amp; mctruth_num_exiting_pi0==0 
+    </def>
+</recomc>
+-->
+<!--
+<recomc>
+    <def name="QuasiElastic" col ="(1.0,0.4,0.4)"> 
+        GTruth_Gscatter == 1             
+    </def> 
+    <def name="DeepInelastic" col ="(0.48,0.87,0.3)"> 
+        GTruth_Gscatter == 3             
+    </def> 
+    <def name = "Resonant" col="(0.41,0.38,0.97)">
+        GTruth_Gscatter == 4             
+    </def>
+    <def name = "Coherent" col="(0.8,0.2,0.8)">
+        GTruth_Gscatter == 5
+    </def>
+    <def name = "MEC" col="(1.0,1.0,0.4)">
+        GTruth_Gscatter == 10
+    </def>
+</recomc>
+-->
+
+<recomc>
+    <def name="NC #Delta Radiative #gamma" col ="(1.0,0.4,0.4)"> 
+        sim_shower_pdg[0] == 22 &amp;&amp; sim_shower_parent_pdg[0] != 111 &amp;&amp; mctruth_is_delta_radiative ==1 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )             
+    </def> 
+    <def name="CC #pi^{0}" col ="(0.0,0.0,0.4)"> 
+        sim_shower_pdg[0] == 22 &amp;&amp; sim_shower_parent_pdg[0] == 111 &amp;&amp; mctruth_cc_or_nc==0 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )             
+    </def> 
+    <def name = "NC #pi^{0}" col="(0.0,0.0,1.0)">
+        sim_shower_pdg[0] == 22 &amp;&amp; sim_shower_parent_pdg[0] == 111 &amp;&amp; mctruth_cc_or_nc==1 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )             
+    </def>
+    <def name = "Non #pi^{0} #gamma" col="(0.8,0.2,0.8)">
+        sim_shower_pdg[0] == 22 &amp;&amp; sim_shower_parent_pdg[0] != 111 &amp;&amp; mctruth_is_delta_radiative!=1 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )             
+    </def>
+    <def name = "Intrinsic #nu_{e} electron" col="(1.0,1.0,0.4)">
+        (mctruth_lepton_pdg[0])==11 &amp;&amp; abs(sim_shower_pdg[0]) ==11 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )             
+    </def>
+    <def name = "BNB Michel e^{#pm}" col="(1.0,0.6,0.0)">
+        abs(sim_shower_pdg[0]) ==11 &amp;&amp; abs(sim_shower_parent_pdg[0])==13 &amp;&amp; !(sim_shower_overlay_fraction[0] >=0.8 )
+    </def>
+    <def name = "Overlay" col="(0.2,0.8,0.2)">
+        (sim_shower_overlay_fraction[0] >=0.8 )
+    </def>
+</recomc>
+
+<alias key="GE" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0)))" />
+<alias key="GEO" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21 +10.0)" /><alias key="PM" value ="(0.938272)"/>
+<alias key="GDEDXKAL" value ="(reco_shower_kalman_dEdx_plane2_median[0]+(reco_shower_kalman_dEdx_allplane_median[0]*(reco_shower_kalman_dEdx_plane2_median==0)))"/>
+<alias key="GEOR" value ="((reco_shower_energy_plane2[0]+reco_shower_energy_max[0]*(reco_shower_energy_plane2[0]==0))*1.21989 +8.50486)" />
+
+<alias key="PE" value ="(reco_track_proton_kinetic_energy[0]+0.938272)"/>
+<alias key="PP" value = "(sqrt(pow(reco_track_proton_kinetic_energy[0]+0.938272,2)-0.938272*0.938272))"/>
+<alias key="LT" value ="0"/>
+
+<alias key = "GTM" value = "sqrt(pow(0.001*reco_shower_energy_max[0]*reco_shower_diry[0],2)+pow(0.001*reco_shower_energy_max[0]*reco_shower_dirx[0],2))"/>
+<alias key = "PTM" value = "sqrt(pow((reco_track_proton_kinetic_energy[0]+0.938272)*reco_track_diry[0],2)+pow((reco_track_proton_kinetic_energy[0]+0.938272)*reco_track_dirx[0],2))"/>
+
+<alias key = "SIDX" value ="(reco_shower_startx[0]-reco_track_startx[0])/(sqrt( pow(reco_shower_startx[0]-reco_track_startx[0],2)+   pow(reco_shower_starty[0]-reco_track_starty[0],2) + pow(reco_shower_startz[0]-reco_track_startz[0],2)    ))"/>
+<alias key = "SIDY" value ="(reco_shower_starty[0]-reco_track_starty[0])/(sqrt( pow(reco_shower_startx[0]-reco_track_startx[0],2)+   pow(reco_shower_starty[0]-reco_track_starty[0],2) + pow(reco_shower_startz[0]-reco_track_startz[0],2)    ))"/>
+<alias key = "SIDZ" value ="(reco_shower_startz[0]-reco_track_startz[0])/(sqrt( pow(reco_shower_startx[0]-reco_track_startx[0],2)+   pow(reco_shower_starty[0]-reco_track_starty[0],2) + pow(reco_shower_startz[0]-reco_track_startz[0],2)    ))"/>
+
+<alias key="TLDIRY" value= "(mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1])/sqrt( (mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0])*(mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0]) + (mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1])*(mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1]) +(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])*(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2]))"  />
+<alias key="TLDIRX" value= "(mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0])/sqrt( (mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0])*(mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0]) + (mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1])*(mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1]) +(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])*(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2]))"  />
+<alias key="TLDIRZ" value= "(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])/sqrt( (mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0])*(mctruth_pi0_leading_photon_end[0]-mctruth_pi0_leading_photon_start[0]) + (mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1])*(mctruth_pi0_leading_photon_end[1]-mctruth_pi0_leading_photon_start[1]) +(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2])*(mctruth_pi0_leading_photon_end[2]-mctruth_pi0_leading_photon_start[2]))"  />
+
+<alias key="TSDIRY" value= "(mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1])/sqrt( (mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0])*(mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0]) + (mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1])*(mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1]) +(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])*(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2]))"  />
+<alias key="TSDIRX" value= "(mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0])/sqrt( (mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0])*(mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0]) + (mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1])*(mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1]) +(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])*(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2]))"  />
+<alias key="TSDIRZ" value= "(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])/sqrt( (mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0])*(mctruth_pi0_subleading_photon_end[0]-mctruth_pi0_subleading_photon_start[0]) + (mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1])*(mctruth_pi0_subleading_photon_end[1]-mctruth_pi0_subleading_photon_start[1]) +(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2])*(mctruth_pi0_subleading_photon_end[2]-mctruth_pi0_subleading_photon_start[2]))"  />
+
+
+
+

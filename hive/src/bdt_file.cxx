@@ -190,7 +190,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     //Check some xrootd things
     std::string fname_orig = (dir+"/"+name);
-
+    std::cout << "full name : " <<fname_orig << std::endl;
     // Check if use xrootd to open file
     std::string fname_use = fname_orig;
     if(use_xrootd)
