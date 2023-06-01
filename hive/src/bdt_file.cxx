@@ -333,15 +333,16 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     for(int i=0; i< run_fractions.size(); i++){
 
         double mval = run_fractions[i]/run_fractions_file[i]; 
+        if(run_fractions_file[i]==1)mval = 1.0;
 
         if(!isfinite(mval)){
-            std::cout << "Run normalization factor mval is NaN or infinity, setting it to 1..." << std::endl;
-            mval = 1.0;
+            std::cout << "Run normalization factor mval is NaN or infinity, setting it to 0..." << std::endl;
+            mval = 0.0;
         }
 
         if(i > 0)
             run_weight_string += "+";
-        run_weight_string += run_cuts[i]+"*"+std::to_string(mval);
+            run_weight_string += run_cuts[i]+"*"+std::to_string(mval);
     }
     run_weight_string +=")";
     std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
@@ -402,13 +403,15 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         TTreeFormula * frunpass = new TTreeFormula((this->tag+"tfor").c_str() , modified_runsubrun_string.c_str(), trs);
 
+
         for(int i=0; i<trs->GetEntries(); i++) {
             trs->GetEntry(i);
+            if(i%1000==0)std::cout<<i<<"/"<<trs->GetEntries()<<std::endl;
             frunpass->GetNdata();
             bool isin = frunpass->EvalInstance();
             if(isin) tmppot += potbranch;
         }
-
+        std::cout<<"OUT"<<std::endl;
         numberofevents = tvertex->GetEntries(event_identifier.c_str());
 
         if (this->tag.find("DarkNue") != std::string::npos){
@@ -435,12 +438,15 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
 
             TTreeFormula* feve_weight = new TTreeFormula((this->tag+"teve_weight").c_str() , modified_event_weight.c_str(), tvertex);
+            /*
             for(int i =0; i != tvertex->GetEntries(); ++i){
                 tvertex->GetEntry(i);
+                if(i%100==0)std::cout<<i<<" Marv"<<std::endl;
                 feve_weight->GetNdata();
                 modified_event_count += feve_weight->EvalInstance();
             }
-
+            */
+            
             std::cout << "Coherent event count check: prediction by adding individual event weight: " << modified_event_count;
             std::cout << " || prediction by scaling overall TTree entry count: " << combin*static_cast<double>(tvertex->GetEntries(event_identifier.c_str())) << std::endl;
 
@@ -1431,10 +1437,12 @@ int bdt_file::makePrecalcSBNfitFile(const std::string &analysis_tag, int which_s
 }
 
 int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars,const double splot_pot){
-    return makeSBNfitFile( analysis_tag, bdt_infos, which_stage,fbdtcuts,input_string,vars,splot_pot,"1","./");
+    std::vector<RSE> rses;
+    runlist MSE(rses);
+    return makeSBNfitFile( analysis_tag, bdt_infos, which_stage,fbdtcuts,input_string,vars,splot_pot,"1","./",MSE);
 }
 
-int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, const double internal_pot, std::string external_cuts, std::string outdir){
+int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string &input_string, const std::vector<bdt_variable> & vars, const double internal_pot, std::string external_cuts, std::string outdir, runlist & masterRSElist){
     double tsplot_pot = internal_pot;
 
     bool true_eweight_exist = !is_legacy;
@@ -1443,6 +1451,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     //have to first add the vertex tree as a friend to the eventweight tree, you will see why later.. if i get to those comments
     std::cout<<"Output to "<<outdir<<std::endl;
     std::cout<<"With external cuts "<<external_cuts<<std::endl;
+    std::cout<<"masterRSE list for training has "<<masterRSElist.f_rses.size()<<" rse's"<<std::endl;
     this->teventweight->AddFriend(this->tvertex);
     this->tslice->AddFriend(this->tvertex);
     if(true_eweight_exist) this->ttrueeventweight->AddFriend(this->tvertex);
@@ -1515,7 +1524,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     double simple_var = 0;
     double simple_wei = 0;
     double simple_pot_wei = 0;
-
+    int training_flag = 0;
     int original_entry = 0;
     bool add_vars=false;
 
@@ -1530,6 +1539,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     t_sbnfit_simpletree.Branch("simple_weight",&simple_wei);
     t_sbnfit_simpletree.Branch("simple_pot_weight",&simple_pot_wei);
     t_sbnfit_simpletree.Branch("original_entry",&original_entry);
+    t_sbnfit_simpletree.Branch("training_flag",&training_flag);
 
     //std::cout<<__LINE__<<" Setting up Branchs for BDT responses  "<<std::endl;
 
@@ -1580,6 +1590,12 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 
 
     std::string var_string = input_string;
+    int run_number = 0;
+    int subrun_number = 0;
+    int event_number = 0;
+    tvertex->SetBranchAddress("run_number",&run_number);
+    tvertex->SetBranchAddress("subrun_number",&subrun_number);
+    tvertex->SetBranchAddress("event_number",&event_number);
 
     if(var_string == "") var_string = "reco_vertex_size";
     std::cout<<"Starting to make a simpletree with variable "<<var_string<<std::endl;
@@ -1603,6 +1619,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
            simple_wei = 1.0;
            }
            */
+
+        training_flag = masterRSElist.inList(run_number,subrun_number,event_number);
 
         simple_var = var->EvalInstance();
         simple_pot_wei = simple_wei*this->scale_data*tsplot_pot/this->pot;
@@ -1860,7 +1878,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
             simple_wei = wei->EvalInstance();
             flat_defcut = t_defcut->EvalInstance();
             flat_precut = tcut->EvalInstance();
-            if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<"\n";
+            if(i%1000==0)std::cout<<i<<"/"<<tvertex->GetEntries()<<" Flatten! \n";
             //if(!flat_precut) continue;
 
             simple_pot_wei = simple_wei*this->scale_data*tsplot_pot/this->pot;
