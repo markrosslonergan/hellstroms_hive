@@ -384,6 +384,7 @@ int main (int argc, char *argv[]){
 
         if((mode_option =="extapp") ||( f!=0 &&(mode_option == "makedetcovar" || mode_option == "makefluxcovar" || (isExternal && (mode_option == "flatten" || mode_option == "unflatten")))) ) break;
 
+        //For now, only load training files if training.
 
         std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
         //First build a bdt_flow for this file.
@@ -394,6 +395,8 @@ int main (int argc, char *argv[]){
 
         //If its a training file we are working with, add the training definitions 
         if(XMLconfig.bdt_is_training_signal[f]){
+        if(!( mode_option == "train" || mode_option =="vars")) break;
+
             for(int i=0; i< XMLconfig.bdt_training_cuts[f].size(); ++i){
                 def += "&&" + XMLconfig.bdt_training_cuts[f][i];
             }
@@ -444,7 +447,8 @@ int main (int argc, char *argv[]){
             if(run1_only && !XMLconfig.bdt_is_training_signal[f]){
                 std::cout<<" -- WOOPS we have it set to Run 1 only, manually resetting EXT spills to 28190365.0"<<std::endl;
                 //off_spills = 2633564.9;    // temporary, to match run1 open data -- wrong number, simply scaled
-                off_spills = 28190365.0; // all run1 spill
+                //off_spills = 28190365.0; // all run1 spill
+                //Whats this eh? remove for now
             }
 
             bdt_files.back()->setAsOffBeamData( on_pot, on_spills, off_spills);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)

@@ -406,7 +406,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         for(int i=0; i<trs->GetEntries(); i++) {
             trs->GetEntry(i);
-            if(i%1000==0)std::cout<<i<<"/"<<trs->GetEntries()<<std::endl;
+            //if(i%1000==0)std::cout<<i<<"/"<<trs->GetEntries()<<std::endl;
             frunpass->GetNdata();
             bool isin = frunpass->EvalInstance();
             if(isin) tmppot += potbranch;
