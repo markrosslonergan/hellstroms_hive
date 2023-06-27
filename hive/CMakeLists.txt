@@ -7,7 +7,7 @@ include(FetchContent)
 FetchContent_Declare(
   sbnfit
   GIT_REPOSITORY https://github.com/NevisUB/whipping_star.git 
-  GIT_TAG        946cab5487dfdb2542e57a46e32c39000aa84927  #641861404b092fa3113ada53f93385adc03936d0     #  branch guanqun_fractionfit
+  GIT_TAG        7eabaf401154cf1011d7a472dcd7fae59ee5c781 # <- New master w/memory issues tweaks   | 946cab5487dfdb2542e57a46e32c39000aa84927  #641861404b092fa3113ada53f93385adc03936d0     #  branch guanqun_fractionfit
 )
 
 # After the following call, the CMake targets defined by sbnfit 

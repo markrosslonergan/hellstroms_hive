@@ -297,7 +297,6 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
 
         vec_hists.push_back( (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin));
         
-        
         if(skip_signal && signal_on_top[t]){
             vec_hists.back()->Reset();
         }

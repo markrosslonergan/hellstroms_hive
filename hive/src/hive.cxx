@@ -447,8 +447,7 @@ int main (int argc, char *argv[]){
             if(run1_only && !XMLconfig.bdt_is_training_signal[f]){
                 std::cout<<" -- WOOPS we have it set to Run 1 only, manually resetting EXT spills to 28190365.0"<<std::endl;
                 //off_spills = 2633564.9;    // temporary, to match run1 open data -- wrong number, simply scaled
-                //off_spills = 28190365.0; // all run1 spill
-                //Whats this eh? remove for now
+                off_spills = 28190365.0; // all run1 spill
             }
 
             bdt_files.back()->setAsOffBeamData( on_pot, on_spills, off_spills);  //onbeam tor860_wcut, on beam spills E1DCNT_wcut, off beam spills EXT)
@@ -1774,9 +1773,9 @@ int main (int argc, char *argv[]){
         return 0;
 
 
-    }    if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flux_template_xml!="null.xml") ){
-
-        std::cout<<"Starting to make an SBNfit integration covar with template: "<<covar_flux_template_xml<<std::endl;
+    //}    if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" & covar_flux_template_xml!="null.xml") ){
+    }    if(mode_option == "makefluxcovar" && covar_det_template_xml=="null.xml" ){
+        std::cout<<"Starting to make a Reweight-Style SBNfit integration covar with template: "<<covar_flux_template_xml<<std::endl;
 
 
         int vc=0;
@@ -1872,7 +1871,7 @@ int main (int argc, char *argv[]){
             system(run_fix_str.c_str());
             */
         }
-        std::cout<<"Finished the makefluxcovar mode: "<<std::endl;
+        std::cout<<"Finished the makefluxcovar mode. "<<std::endl;
 
     } if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det_template_xml!="null.xml") ){
 
@@ -1922,7 +1921,9 @@ int main (int argc, char *argv[]){
 
             //in order to generate flux covar matrix together with det matrix, the "covarsys" needs to be set to "fluxxsdet" (default behavior)
             if(covar_flux_template_xml !="null.xml"){
+                std::cout<<"Going to make a flux covar equivalent"<<std::endl;
                 covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
+                std::cout<<"Going to merge det and fluxxs"<<std::endl;
                 covar_handle.MergeCovar();
             }
 
@@ -2027,6 +2028,7 @@ int main (int argc, char *argv[]){
 
 
         }//end vars
+        std::cout<<"Ending makedetcovar. If you saw nothing in the middle, you probably have no variables in group."<<std::endl;
 
     }else if(mode_option == "export"){
 
