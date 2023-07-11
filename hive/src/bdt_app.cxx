@@ -223,19 +223,19 @@ int bdt_app(bdt_info info, bdt_file* file, std::vector<bdt_variable> vars, std::
 
 
 
-int bdt_XGapp(bdt_info info, bdt_file* file){
+int bdt_XGapp(std::string dir, bdt_info info, bdt_file* file){
     method_struct bdt_method = info.TMVAmethod;
     std::vector<bdt_variable> vars = info.train_vars;
 
-    convertToLibSVM(info, file);
+    convertToLibSVM(dir, info, file);
 
     // create the booster
     BoosterHandle booster;
     XGBoosterCreate(0, 0, &booster);
-    safe_xgboost(XGBoosterLoadModel(booster,(info.identifier+".XGBoost.mod").c_str()));
+    safe_xgboost(XGBoosterLoadModel(booster,(dir+info.identifier+".XGBoost.mod").c_str()));
 
     auto f = file;
-    TFile * app_ofile = TFile::Open((info.identifier+"_"+f->tag+"_app"+".root").c_str(), "recreate");
+    TFile * app_ofile = TFile::Open((dir+info.identifier+"_"+f->tag+"_app"+".root").c_str(), "recreate");
     std::string bdt_response_friend_tree_name = f->tag+"_"+info.identifier;
     app_ofile->cd();
     TTree * tree = new TTree(bdt_response_friend_tree_name.c_str(), "");
@@ -245,7 +245,7 @@ int bdt_XGapp(bdt_info info, bdt_file* file){
     tree->Branch((info.identifier+"_mva").c_str(), &mva2, (info.identifier+"_mva/D").c_str());
 
     DMatrixHandle dfile;
-    safe_xgboost(XGDMatrixCreateFromFile((info.identifier+"_"+f->tag+".libSVM.dat").c_str(), 0, &dfile));
+    safe_xgboost(XGDMatrixCreateFromFile((dir+info.identifier+"_"+f->tag+".libSVM.dat").c_str(), 0, &dfile));
 
 
     bst_ulong out_len = 0;

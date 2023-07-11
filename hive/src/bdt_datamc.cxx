@@ -594,7 +594,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 rmin=0; rmax = 1.99;
             }//else if(s==2){ data_rebin = 2;}//else if(s==3){data_rebin=2;};
 
-            double max_modifier = 2;//1.65;
+            double max_modifier = 3.5;//1.65;
             if (OTPC == true){
                 max_modifier = 3.25;
                 //std::cout<<"flag 3"<<std::endl;
@@ -719,11 +719,14 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             for(auto &f: mc_stack->stack){
 
                 double Nentries = f->GetEntries(var.additional_cut);
+				std::cout<<"Entries "<<f->GetEntries()<<" with cuts "<<var.additional_cut<<std::endl;
                 // Guanqun: print out signal events even when we plot it on top
                 //if(mc_stack->signal_on_top[n]) Nentries = 0.0; //remove from calculation
+			std::cout<<"CHECK All evt"<<f->GetEntries()<<std::endl;
+			std::cout<<"CHECK "<<Nentries<<" * "<<plot_pot<<"/"<<f->pot<<" * "<<f->scale_data<<std::endl;
                 double Nevents = Nentries*(plot_pot/f->pot)*f->scale_data;
                 double N_MCerr = sqrt(Nentries)*(plot_pot/f->pot)*f->scale_data;
-                ;
+
                 /*  stack->vec_hists[i];
                     for(int p=0; p<h1->GetNbinsX();p++){
 
@@ -993,6 +996,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
 
             double NdatEvents = data_file->GetEntries(var.additional_cut)*(plot_pot/data_file->pot )*data_file->scale_data;
+//			std::cout<<"CHECK "<<data_file->GetEntries(var.additional_cut)<<" * "<<plot_pot/data_file->pot<<" * "<<data_file->scale_data<<std::endl;
             std::cout<<"Run2Run: Data   events/1e20 POT "<<to_string_prec(NdatEvents/(double)data_file->pot*1e20,3)<<"  +/-  "<<to_string_prec(sqrt(NdatEvents)/(double)data_file->pot*1e20,3)<<std::endl;
 
 
@@ -1243,7 +1247,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 }
             }
 
-            double yypos = 0.53; //0.46 for pre and topo stage
+            double yypos = 0.39; //0.46 for pre and topo stage
             double xxpos = 0.5;//0.5
             if(stack_mode)xxpos=0.55;
 
@@ -1528,6 +1532,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
             ratpre->SetFillStyle(3144);
             if(!stack_mode){
+
+				if(true){//add a fitted line, Keng
+					ratpre->Fit("pol0","L", "same");//with + old stuff is not deleted;
+					ratpre->GetFunction("pol0")->SetLineStyle(7);
+					ratpre->GetFunction("pol0")->SetLineColor(kRed-7);
+				}
                 ratpre->Draw("same P hist");	
                 gr->Draw("E0 same");
             }
@@ -1575,11 +1585,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             else    simple_topo_name = "unknown_topo";
             std::ofstream outfile;
             std::cout << "TESTING run_name = " << run_name << std::endl;
-            outfile.open("chisq_"+ simple_topo_name+ "_"+data_file->tag+"_values_stage_"+std::to_string(s)+".txt", std::ios_base::app);
+            outfile.open("chisq_record/chisq_"+ simple_topo_name+ "_"+data_file->tag+"_values_stage_"+std::to_string(s)+".txt", std::ios_base::app);
             outfile << to_string_prec(TMath::Prob(mychi, ndof),3) << std::endl;
             outfile.close();
 
-            outfile.open("chisq_"+ simple_topo_name+ "_"+data_file->tag+"_names_stage_"+std::to_string(s)+".txt", std::ios_base::app);
+            outfile.open("chisq_record/chisq_"+ simple_topo_name+ "_"+data_file->tag+"_names_stage_"+std::to_string(s)+".txt", std::ios_base::app);
             outfile << var.safe_unit << std::endl;
             outfile.close();
 

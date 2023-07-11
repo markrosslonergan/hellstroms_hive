@@ -153,6 +153,7 @@ void FlatVar::Print(){
 //************ MEMBER function for BDT_FILE class ******************
 
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, std::string add_weight, bdt_flow inflow) : bdt_file(indir, inname, intag,inops,inrootdir,incol,1001,add_weight, inflow){}
+
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, std::string add_weight, bdt_flow inflow, bool in_use_xrootd) : bdt_file(indir, inname, intag,inops,inrootdir,incol,1001,add_weight, inflow, in_use_xrootd){}
 
 bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string add_weight, bdt_flow inflow) : bdt_file(indir,inname,intag,inops,inrootdir,incol,infillstyle,add_weight,inflow,"vertex_tree"){}
@@ -184,10 +185,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     rangen = new TRandom3();
 
-    std::cout<<"Loading : "<<name<<std::endl;
 
     //Check some xrootd things
-    std::string fname_orig = (dir+"/"+name);
+	std::string fname_orig = (name.at(0) == '.' || name.at(0) == '/' )? 
+		name
+		:dir + "/" + name;//CHECK, add local directory
+
+    std::cout<<"Loading : "<<fname_orig<<std::endl;
+
+//    std::string fname_orig = (dir+"/"+name);
 
     // Check if use xrootd to open file
     std::string fname_use = fname_orig;
@@ -200,7 +206,7 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     f = (TFile*)TFile::Open(fname_use.c_str(),"read");
 
     if(!f || !f->IsOpen()){
-        std::cout<<"ERROR: didnt open file right: "<<dir<<"/"<<name<<std::endl;
+        std::cout<<"ERROR: didnt open file right: "<<fname_use<<std::endl;
         exit(EXIT_FAILURE);
     }
     std::cout<<"bdt_file::bdt_file || "<<name<<" Opened correctly by root."<<std::endl;
@@ -212,15 +218,15 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
 
     global_weight_string = "1";
 
-    if(is_mc){
+    if (is_data ||  is_bnbext ) {
+        std::cout<<"setting weight branch - on/off beam data"<<std::endl;
+        weight_branch = "1";
+    } else if(is_mc){
         std::cout<<"setting weight branch - mc"<<std::endl;
         weight_branch = add_weight;
         std::cout <<"additional weight set as: " << weight_branch<< std::endl;
     } 
-    if (is_data ||  is_bnbext ) {
-        std::cout<<"setting weight branch - on/off beam data"<<std::endl;
-        weight_branch = "1";
-    }
+
 
     //default is not legacy mode;
     is_legacy = false;
@@ -297,7 +303,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     }
 
     tvertex = (TTree*)f->Get(tnam.c_str());
-    std::cout<<"Got primary ttree name: "<<tvertex->GetEntries()<<std::endl;
+    std::cout<<"Got primary ttree events #: "<<tvertex->GetEntries()<<std::endl;
 
 
     run_fractions_file.resize(run_fractions.size(),0);
@@ -347,18 +353,19 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
 
 
-    bool is_flat = this->tag.find("FLAT")!=std::string::npos;
-    std::cout<<"Getting eventweight tree.  Is it flat? "<<is_flat<<std::endl;
-    if(!is_flat){
+    if(this->tag.find("FLAT")==std::string::npos){
+	std::cout<<"Got a non-flat eventweight tree. "<<std::endl;
         teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
+		std::cout<<"CHECK DIR "<<root_dir+"eventweight_tree"<<std::endl;
         tvertex->AddFriend(teventweight);
-        std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
+//CHECK Temporary server problem cause segmentation fault? 
+//CHECK        std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
 
         vec_entry_lists.resize(flow.bdt_vector.size());
 
         if(!is_legacy){
             ttrueeventweight = (TTree*)f->Get((root_dir+"true_eventweight_tree").c_str());
-            std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
+//CHECK            std::cout<<"Got trueeventweight tree: "<<ttrueeventweight->GetEntries()<<std::endl;
         }else{
             std::cout<<"Running in legacy mode, no trueeventweight tree"<<std::endl;
         }
@@ -368,16 +375,13 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     int  numbranch = 0;
 
     tslice = (TTree*)f->Get(tnam_slice.c_str());
-    trs = (TTree*)f->Get(tnam_rs.c_str());    
+    trs = (TTree*)f->Get(tnam_rs.c_str());
 
 
-    if(is_mc){
+    if(is_mc && trs ){
+//	if(!is_data && !is_bnbext){}
         //If its MC or Overlay, lets just grab the POT from the nice POT tree
         leg = "l";
-
-
-        trs->SetBranchAddress("subrun_pot",&potbranch);
-
 
         std::cout<<"bdt_file::bdt_file()\t||\tFile is either MC or OVERLAY for purposes of getting POT."<<std::endl;
         std::cout<<"bdt_file::bdt_file()\t||\tGetting POT tree: "<<tnam_pot<<" "<<std::endl;
@@ -389,7 +393,24 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         double tmppot=0;
 
 
-        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<trs->GetEntries()<<" subruns merged to make this root file."<<std::endl;
+		if(trs){
+			trs->SetBranchAddress("subrun_pot",&potbranch);
+			std::cout<<"bdt_file::bdt_file()\t||\t There was "<<trs->GetEntries()<<" subruns merged to make this root file."<<std::endl;
+
+			std::cout<<"bdt_file::bdt_file()\t||\t Which contains "<<trs->GetEntries(modified_runsubrun_string.c_str())<<" subruns that pass the run_string."<<std::endl;
+
+			TTreeFormula * frunpass = new TTreeFormula((this->tag+"tfor").c_str() , modified_runsubrun_string.c_str(), trs);
+
+			for(int i=0; i<trs->GetEntries(); i++) {
+				trs->GetEntry(i);
+				frunpass->GetNdata();
+				bool isin = frunpass->EvalInstance();
+				if(isin) tmppot += potbranch;
+			}
+		}
+
+
+
         std::cout<<"The original string to see if its inside any of the run perios is : ";
         std::cout<<modified_runsubrun_string<<std::endl;
 
@@ -397,26 +418,16 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         removeSubStrings(modified_runsubrun_string,remover);
 
         std::cout<<"The modified string to see if its inside any of the run perios is : ";
-        std::cout<<modified_runsubrun_string<<std::endl;
-        std::cout<<"bdt_file::bdt_file()\t||\t Which contains "<<trs->GetEntries(modified_runsubrun_string.c_str())<<" subruns that pass the run_string."<<std::endl;
+        std::cout<<modified_runsubrun_string<<std::endl;        numberofevents = tvertex->GetEntries(event_identifier.c_str());
 
-        TTreeFormula * frunpass = new TTreeFormula((this->tag+"tfor").c_str() , modified_runsubrun_string.c_str(), trs);
-
-        for(int i=0; i<trs->GetEntries(); i++) {
-            trs->GetEntry(i);
-            frunpass->GetNdata();
-            bool isin = frunpass->EvalInstance();
-            if(isin) tmppot += potbranch;
-        }
-
-        numberofevents = tvertex->GetEntries(event_identifier.c_str());
-
-        if (this->tag.find("DarkNue") != std::string::npos){
+//        if (this->tag.find("DarkNue") != std::string::npos){}
+        if (this->tag.find("Axion") != std::string::npos){
             tmppot = 2e21;
             std::cout<<"for the dark nue setting to arbitrary POT: "<<tmppot<<std::endl;
 
         }
-
+		//CHECK add NuMI weight
+//		if(is_numiweight) weight_branch = "weightSplineTimesTune*ppfx_cv";
         //weight_branch += "*genie_spline_weight*(genie_spline_weight>0)*(genie_CV_tune_weight>0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)   +    tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight))<30.0))*(GTruth_ResNum!=9)";
 
         if(this->tag.find("TextGen")!=std::string::npos){
@@ -431,7 +442,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             //I assume this is based on assumption that same prediction corresponds to the same amount of POT, might not be true...
             double modified_event_count = 0; 
             std::string modified_event_weight = "(" + event_identifier + ") * " + run_weight_string + " * (" + weight_branch + ")";
-            //std::cout << "modified event weight " << modified_event_weight << std::endl;
+            std::cout << "modified event weight " << modified_event_weight << std::endl;
 
 
             TTreeFormula* feve_weight = new TTreeFormula((this->tag+"teve_weight").c_str() , modified_event_weight.c_str(), tvertex);
@@ -465,6 +476,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
 
         numberofevents_raw = numberofevents;
+		std::cout<<"CHECK number of raw events "<<numberofevents_raw<<std::endl;
 
         if(m_weightless) weight_branch = "1";
 
@@ -501,18 +513,18 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     }else if(is_bnbext){
 
         std::cout<<"bdt_file::bdt_file()\t||\tFile is OFF-BEAM (BNBEXT) DATA for purposes of getting POT."<<std::endl;
-        tpot = (TTree*)f->Get(tnam_pot.c_str());
-        int numbranch =0;
-        tpot->SetBranchAddress("number_of_events", &numbranch);
-        std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
-        int tmpnum = 0;
-        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
-        for(int i=0; i<tpot->GetEntries(); i++) {
-            tpot->GetEntry(i);
-            tmpnum += (double)numbranch;
-        }
-        numberofevents = tmpnum;
-        numberofevents_raw = numberofevents;
+        //tpot = (TTree*)f->Get(tnam_pot.c_str());
+        //int numbranch =0;
+        //tpot->SetBranchAddress("number_of_events", &numbranch);
+        //std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
+        //int tmpnum = 0;
+        //std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
+        //for(int i=0; i<tpot->GetEntries(); i++) {
+        //    tpot->GetEntry(i);
+        //    tmpnum += (double)numbranch;
+        //}
+        //numberofevents = tmpnum;
+        //numberofevents_raw = numberofevents;
 
 
 
@@ -545,7 +557,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         std::cout<<"--> POT is data: From Zarkos tool..";
         //going to scale by how many events I actually have in MCC9
-        pot =this->data_tor860_wcut/modifier;
+        pot = this->data_tor860_wcut/modifier;
         std::cout<<"--> value: "<<pot<<std::endl;
 
         std::cout<<"bdt_file::bdt_file()\t||\t---> POT is OFF BEAM DATA "<<std::endl;
@@ -565,10 +577,16 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
 
     //reset branch address 
+	if(!is_bnbext){
+	if(trs){
     TBranch* brs = trs->GetBranch("subrun_pot");
     trs->ResetBranchAddress(brs);
+	}
+	if(tpot){
     TBranch* bnum = tpot->GetBranch("number_of_events");
     tpot->ResetBranchAddress(bnum);
+	}
+	}
     return 0;
 }
 
@@ -706,7 +724,7 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
     std::cout<<"These particular precuts and definitions have a hash of "<<precut_hash<<std::endl;
     std::string s_precut_hash = std::to_string(precut_hash);
 
-    std::string filename = this->tag+"_"+analysis_tag+"_entrylists.root";
+	std::string filename = analysis_tag+"entrylists/"+this->tag+"_"+analysis_tag+"_entrylists.root";
     topological_list_name = "topological_list_"+analysis_tag+"_"+this->tag;
     precut_list_name = "precut_list_"+analysis_tag+"_"+this->tag+"_"+this->primary_ttree_name;
 
@@ -731,7 +749,7 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 
     }
 
-    if(!does_local_exist || !hash_right){
+if(!does_local_exist || !hash_right){
         //create it
 
         std::cout<<"Entry List file does not exists (or hash is wrong) "<<this->tag<<" creating it."<<std::endl;
@@ -742,7 +760,7 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
         this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1).c_str() , "entrylist");
         precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
 
-
+		std::cout<<"Creating "<<filename<<std::endl;
         TFile* fpre = new TFile(filename.c_str(),"update");	
 
         TVectorT<double> stored_hash ;
@@ -1138,28 +1156,16 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
     return 0;
 }
 
-int bdt_file::addBDTResponses(bdt_info input_bdt_info){
+int bdt_file::addBDTResponses(std::string dir, bdt_info input_bdt_info){
     topo_name = input_bdt_info.topo_name; 
     auto method = input_bdt_info.TMVAmethod;
 
-    std::cout<<"Now adding TreeFriend: "<<input_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
-    this->addFriend(this->tag +"_"+input_bdt_info.identifier,  input_bdt_info.identifier+"_"+this->tag+"_app"+".root");
+    std::cout<<"Now adding TreeFriend: "<<dir+input_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
+    this->addFriend(this->tag +"_"+input_bdt_info.identifier,  dir+input_bdt_info.identifier+"_"+this->tag+"_app"+".root");
 
     return 0;
 }
-int bdt_file::addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods){
-    topo_name = bnb_bdt_info.topo_name; 
-    for(auto &method: TMVAmethods){
 
-        std::cout<<"Now adding TreeFriend: "<<cosmic_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
-        this->addFriend(this->tag +"_"+cosmic_bdt_info.identifier,  cosmic_bdt_info.identifier+"_"+this->tag+"_app"+".root");
-
-        std::cout<<"Now adding TreeFriend: "<<bnb_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
-        this->addFriend(this->tag +"_"+bnb_bdt_info.identifier,  bnb_bdt_info.identifier+"_"+this->tag+"_app"+".root");
-    }
-
-    return 0;
-}
 
 int bdt_file::setStageEntryList(int j, std::vector<double> bdt_cuts){
 

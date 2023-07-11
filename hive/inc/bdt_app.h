@@ -45,7 +45,7 @@ int bdt_app(bdt_info info, bdt_file* file);
 int bdt_app(bdt_info info, bdt_file* file, std::vector<bdt_variable> vars, std::vector<method_struct> & method);
 
 /* Predict xgboost training result on input bdt_file, and save bdt scores into corresponding **_app.root file */
-int bdt_XGapp(bdt_info info, bdt_file* file);
+int bdt_XGapp(std::string dir, bdt_info info, bdt_file* file);
 
 void super_bdt_app(std::string &analysis_tag, const std::vector<bdt_info> & bdt_infos, const std::vector<bdt_file*> & files);
 

@@ -161,6 +161,7 @@ struct bdt_file{
         bool is_data;
         bool is_bnbext;
         bool is_mc;
+        bool is_numiweight;
  	bool is_signal;
 	bool use_xrootd;
 
@@ -332,8 +333,7 @@ struct bdt_file{
         std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 
         int addFriend(std::string in_friend_tree_nam, std::string in_friend_file);
-        int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
-        int addBDTResponses(bdt_info input_bdt_info);
+        int addBDTResponses(std::string dir, bdt_info input_bdt_info);
 
 
 

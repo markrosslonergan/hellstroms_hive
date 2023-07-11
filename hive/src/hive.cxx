@@ -30,6 +30,23 @@
 #include "load_mva_param.h"
 #include "tinyxml.h"
 
+/*
+ *  * A gadget to make a directory after
+ *   * checking if that directory exist.
+ *    *
+ *     */
+void gadget_buildfolder( std::string name){
+	std::cout<<"Starting "<<name<<std::endl;
+	if (access(name.c_str(),F_OK) == -1){
+		mkdir(name.c_str(),0777);//Create a folder for pdf.
+	}
+	else{
+		std::cout<<"Overwrite "<<name<<"/ in 2 seconds, 1 seconds, ..."<<std::endl;
+		sleep(2);
+	}
+}
+
+
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name,bool shape_only);
 
@@ -501,8 +518,15 @@ int main (int argc, char *argv[]){
         if(XMLconfig.bdt_friend_filenames[f].size()>0){
 
             for(int fr =0; fr < XMLconfig.bdt_friend_filenames[f].size(); fr++){
-                std::cout<<"Adding a Friend Tree : "<<XMLconfig.bdt_friend_treenames[f][fr]<<" from file "<<dir+"/"+XMLconfig.bdt_friend_filenames[f][fr]<<std::endl;
-                bdt_files.back()->addFriend(XMLconfig.bdt_friend_treenames[f][fr],XMLconfig.bdt_friend_filenames[f][fr]);
+
+
+				std::string tmp_fileadd = (XMLconfig.bdt_friend_filenames[f][fr].at(0) == '.' || XMLconfig.bdt_friend_filenames[f][fr].at(0) == '/' )? 
+				XMLconfig.bdt_friend_filenames[f][fr]
+				:dir + "/" + XMLconfig.bdt_friend_filenames[f][fr];//CHECK, add local directory
+
+                bdt_files.back()->addFriend(XMLconfig.bdt_friend_treenames[f][fr],tmp_fileadd);
+
+                std::cout<<"Adding a Friend Tree : "<<XMLconfig.bdt_friend_treenames[f][fr]<<" from file "<<tmp_fileadd<<std::endl;
             }
         }
 
@@ -534,11 +558,13 @@ int main (int argc, char *argv[]){
     std::cout<<" If you see warnings, but havenet yet ran app stage, thats ok!            "<<std::endl;
     std::cout<<"--------------------------------------------------------------------------"<<std::endl;
 
+	gadget_buildfolder(analysis_tag+"entrylists");
+
     for(auto &f: bdt_files){
 
         {
             for(int k=0; k<bdt_infos.size(); k++){
-                f->addBDTResponses(bdt_infos[k]);
+                f->addBDTResponses(analysis_tag+"/",bdt_infos[k]);
             }
         }
         if(mode_option != "train"  && mode_option != "sbnfit" && mode_option !="extapp" ){
@@ -566,7 +592,7 @@ int main (int argc, char *argv[]){
         std::vector<method_struct> External_TMVAmethods  = External_XMLconfig.GetMethods(); 
 
         for(size_t f = 0; f < External_XMLconfig.GetNFiles(); ++f){
-            std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<External_XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
+            std::cout<<"\n============= Starting bdt_file number "<<f<<"  with tag -- "<<External_XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
             //First build a bdt_flow for this file.
             std::string def = "1";  
             for(int i=0; i< External_XMLconfig.bdt_definitions[f].size(); ++i){
@@ -674,15 +700,17 @@ int main (int argc, char *argv[]){
             bdt_file * training_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_train_tag]; 
             bdt_file * testing_background = tagToFileMap[bdt_infos[i].TMVAmethod.bkg_test_tag]; 
 
+			gadget_buildfolder(analysis_tag);
+
             if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
 
                 //This is NAF, need to save it and not repeat
-                convertToLibSVMTT(bdt_infos[i], training_signal, testing_signal, bdt_infos[i].TMVAmethod.sig_test_cut, training_background, testing_background, bdt_infos[i].TMVAmethod.bkg_test_cut);
-                bdt_XGtrain(bdt_infos[i]);
+                convertToLibSVMTT(analysis_tag+"/", bdt_infos[i], training_signal, testing_signal, bdt_infos[i].TMVAmethod.sig_test_cut, training_background, testing_background, bdt_infos[i].TMVAmethod.bkg_test_cut);
+                bdt_XGtrain(analysis_tag+"/", bdt_infos[i]);
 
             }else if(bdt_infos[i].TMVAmethod.str=="TMVA"){
 
-                bdt_train(bdt_infos[i], training_signal, testing_signal, training_background, testing_background);
+                bdt_train( bdt_infos[i], training_signal, testing_signal, training_background, testing_background);
                 plot_train(bdt_infos[i], training_signal, testing_signal, training_background, testing_background);
             }
 
@@ -699,7 +727,7 @@ int main (int argc, char *argv[]){
 
                 if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
 
-                    bdt_XGapp(bdt_infos[i], bdt_files[f]);
+                    bdt_XGapp(analysis_tag+"/", bdt_infos[i], bdt_files[f]);
 
                 }else{
                     bdt_app(bdt_infos[i], bdt_files[f]);
@@ -739,7 +767,7 @@ int main (int argc, char *argv[]){
 
         std::cout<<"flag0"<<std::endl;
 
-        TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
+        TFile * ftest = new TFile((analysis_tag+"Eentrylists/test+"+analysis_tag+".root").c_str(),"recreate");
 
         bdt_stack *histogram_stack = new bdt_stack(analysis_tag+"_stack");
 
@@ -819,13 +847,7 @@ int main (int argc, char *argv[]){
     }    else if(mode_option == "datamc"){
         std::cout<<"Starting datamc with systeamatic error string: "<<systematics_error_string<<std::endl;
 
-        if (access("datamc",F_OK) == -1){
-            mkdir("datamc",0777);//Create a folder for pdf.
-        }
-        else{
-            std::cout<<"Overwrite datamc/ NOW ..."<<std::endl;
-        }
-
+		gadget_buildfolder("datamc");
 
 
         TFile * ftest = new TFile(("test+"+analysis_tag+".root").c_str(),"recreate");
@@ -841,6 +863,7 @@ int main (int argc, char *argv[]){
             if(true){
                 histogram_stack->addToStack(stack_bdt_files[f],plotOnTopMap[stack_bdt_files[f]]);
                 std::cout<<"adding to stack ON BOTTOM: "<<stack_bdt_files[f]->tag<<std::endl;
+				std::cout<<"Has entries: "<<stack_bdt_files[f]->tvertex->GetEntries()<<std::endl;
             }
         }
 
@@ -1172,14 +1195,14 @@ int main (int argc, char *argv[]){
                     if(!((which_bdt==i || which_bdt==-1 ))) continue;
 
                     if(bdt_infos[i].TMVAmethod.str=="XGBoost"){
-                        bdt_XGapp(bdt_infos[i], file);
+                        bdt_XGapp(analysis_tag+"/", bdt_infos[i], file);
 
                     }else{
                         std::cout<<"ERROR! External App is not backward comparabale with TMVA. XGBoost only"<<std::endl;
                     }
 
                     //and add the responses as a friend
-                    file->addBDTResponses(bdt_infos[i]);
+                    file->addBDTResponses(analysis_tag+"/",bdt_infos[i]);
                 }
 
 
@@ -1228,7 +1251,7 @@ int main (int argc, char *argv[]){
 
             return 0;
             if(which_bdt==-1)which_bdt = 0;
-            bdt_XGBoost_importance(bdt_infos[which_bdt]);
+            bdt_XGBoost_importance(analysis_tag+"/", bdt_infos[which_bdt]);
 
             return 0;
         }else if(mode_option == "sig"){
@@ -2114,8 +2137,8 @@ int main (int argc, char *argv[]){
 
                 //some work for superBDT
                 for(int k=0; k<bdt_infos.size(); k++){
-                    training_signal->addBDTResponses(bdt_infos[k]);
-                    training_background->addBDTResponses(bdt_infos[k]);
+                    training_signal->addBDTResponses(analysis_tag+"/",bdt_infos[k]);
+                    training_background->addBDTResponses(analysis_tag+"/",bdt_infos[k]);
                 }
 
                 plot_bdt_variables(training_signal, training_background, t_vars, bdt_infos[i], false, which_stage,fbdtcuts);
@@ -2207,7 +2230,7 @@ int main (int argc, char *argv[]){
                 bdt_file * bfile = (isExternal ? external_files[i] : bdt_files[i]);
                 //presumably your unflattening for app scores, so add them
                 for(int k=0; k<bdt_infos.size(); k++){
-                    bfile->addBDTResponses(bdt_infos[k]);
+                    bfile->addBDTResponses(analysis_tag+"/",bdt_infos[k]);
                 }
 
                 std::string nar = "UNFLATTEN_"+analysis_tag+"_"+additional_tag+"_"+bfile->tag+".root";

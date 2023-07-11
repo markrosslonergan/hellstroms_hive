@@ -136,6 +136,7 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
             }
         }
 
+
         const char* t_mergedown = pBDTfile->Attribute("mergedown");
         if(t_mergedown==NULL){
             bdt_mergedown.push_back(false);
