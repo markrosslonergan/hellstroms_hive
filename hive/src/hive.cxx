@@ -2230,10 +2230,12 @@ int main (int argc, char *argv[]){
 
 
                     std::cout<<"Copying RunSubrunTree and POT (via friends)"<<std::endl;
-                    TTree * t_flat_pot_tree = (TTree*)bfile->tpot->CopyTree("1");
-                    TTree * t_flat_rs_tree = (TTree*)bfile->trs->CopyTree("1");
-                    t_flat_rs_tree->Write();
-                    t_flat_pot_tree->Write();
+                    if(false){
+                        TTree * t_flat_pot_tree = (TTree*)bfile->tpot->CopyTree("1");
+                        TTree * t_flat_rs_tree = (TTree*)bfile->trs->CopyTree("1");
+                        t_flat_rs_tree->Write();
+                        t_flat_pot_tree->Write();
+                    }
                     fout->Close();
 
                 }

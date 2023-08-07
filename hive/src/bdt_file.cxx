@@ -350,11 +350,13 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
     bool is_flat = this->tag.find("FLAT")!=std::string::npos;
     std::cout<<"Getting eventweight tree.  Is it flat? "<<is_flat<<std::endl;
+
     if(!is_flat){
+        
         teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
         tvertex->AddFriend(teventweight);
-        std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
 
+        std::cout<<"Got eventweight tree: "<<teventweight->GetEntries()<<std::endl;
         vec_entry_lists.resize(flow.bdt_vector.size());
 
         if(!is_legacy){
@@ -363,26 +365,28 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }else{
             std::cout<<"Running in legacy mode, no trueeventweight tree"<<std::endl;
         }
+    }else{
+        std::cout<<"Skipping eventweight tree as its flat."<<std::endl;
     }
 
     double potbranch = 0;
     int  numbranch = 0;
 
+    std::cout<<"Getting slice tree, a bit old: "<<tnam_slice<<std::endl;
     tslice = (TTree*)f->Get(tnam_slice.c_str());
+    std::cout<<"And run_subrun tree "<<tnam_rs<<std::endl;
     trs = (TTree*)f->Get(tnam_rs.c_str());    
+    std::cout<<"Done with both"<<std::endl;
 
-
-    if(is_mc){
+    if(is_mc && !is_flat ){
         //If its MC or Overlay, lets just grab the POT from the nice POT tree
         leg = "l";
-
+        std::cout<<"bdt_file::bdt_file()\t||\tFile is either MC or OVERLAY for purposes of getting POT."<<std::endl;
+        std::cout<<"bdt_file::bdt_file()\t||\tGetting POT tree: "<<tnam_pot<<" "<<std::endl;
 
         trs->SetBranchAddress("subrun_pot",&potbranch);
 
-
-        std::cout<<"bdt_file::bdt_file()\t||\tFile is either MC or OVERLAY for purposes of getting POT."<<std::endl;
-        std::cout<<"bdt_file::bdt_file()\t||\tGetting POT tree: "<<tnam_pot<<" "<<std::endl;
-        tpot = (TTree*)f->Get(tnam_pot.c_str());
+        //tpot = (TTree*)f->Get(tnam_pot.c_str());
         //tpot->SetBranchAddress("number_of_events", &numbranch);
         //tpot->SetBranchAddress("POT",&potbranch);
         std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
@@ -478,6 +482,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     }else if(is_data){
         //Ths is for Pure On beam Data. Taken as input by calling 
 
+        if(true){
         std::cout<<"bdt_file::bdt_file()\t||\tFile is ON-BEAM DATA for purposes of getting POT."<<std::endl;
         tpot = (TTree*)f->Get(tnam_pot.c_str());
         tpot->SetBranchAddress("number_of_events", &numbranch);
@@ -490,13 +495,18 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }
         numberofevents = tmpnum;
         numberofevents_raw = numberofevents;
+        }else{
+            //just for fake data
+            numberofevents = this->tvertex->GetEntries();
+            numberofevents_raw =this->tvertex->GetEntries();
+        }
 
         leg = "lp";
         pot = this->data_tor860_wcut; // tor860_wcut
         std::cout<<"bdt_file::bdt_file()\t||\t---> POT is DATA. Setting from internal ZARKOS's tool numbers."<<std::endl;
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
         run_weight_string = "1";
-
+        weight_branch = "1";
         //Guanqun: Technically not needed, but keep it here for file info 
         if(this->tag=="PseudoFakeDataRedo1"){
             this->tvertex->AddFriend((root_dir+"/simple_tree").c_str(),"/uboone/data/users/markross/Mar2020/SBNfit_files/1g1p_April_collab/Comb13/sbnfit_1g1pMar2020_v4_stage_1_PseudoFakeDataSet1.root"); 
@@ -519,6 +529,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         }
         numberofevents = tmpnum;
         numberofevents_raw = numberofevents;
+        weight_branch = "1";
 
 
 
@@ -570,11 +581,17 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     std::cout<<"weight_branch = "<< weight_branch<<std::endl;
 
 
+
     //reset branch address 
-    TBranch* brs = trs->GetBranch("subrun_pot");
-    trs->ResetBranchAddress(brs);
-    TBranch* bnum = tpot->GetBranch("number_of_events");
-    tpot->ResetBranchAddress(bnum);
+    if(trs){
+        TBranch* brs = trs->GetBranch("subrun_pot");
+        trs->ResetBranchAddress(brs);
+    }
+
+    if(tpot){
+        TBranch* bnum = tpot->GetBranch("number_of_events");
+        tpot->ResetBranchAddress(bnum);
+    }
     return 0;
 }
 
@@ -1491,7 +1508,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     std::cout<<"Copying vertex tree"<<std::endl;
     TTree * t_sbnfit_tree = (TTree*)this->tvertex->CopyTree(sbnfit_cuts.c_str());
     std::cout<<"Copying POT tree"<<std::endl;
-    TTree * t_sbnfit_pot_tree = (TTree*)this->tpot->CopyTree("1");
+    //TTree * t_sbnfit_pot_tree = (TTree*)this->tpot->CopyTree("1");
     std::cout<<"Copying RunSubrunTree"<<std::endl;
     std::cout<<__LINE__<<" Yarko "<<bdt_infos.size()<<" "<<tsplot_pot<<" "<<&tsplot_pot<<" "<<internal_pot<<" "<<vars.size()<<std::endl;
     TTree * t_sbnfit_rs_tree = (TTree*)this->trs->CopyTree("1");
@@ -1596,6 +1613,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     tvertex->SetBranchAddress("run_number",&run_number);
     tvertex->SetBranchAddress("subrun_number",&subrun_number);
     tvertex->SetBranchAddress("event_number",&event_number);
+    int num_training = 0;
 
     if(var_string == "") var_string = "reco_vertex_size";
     std::cout<<"Starting to make a simpletree with variable "<<var_string<<std::endl;
@@ -1621,7 +1639,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
            */
 
         training_flag = masterRSElist.inList(run_number,subrun_number,event_number);
-
+        num_training += training_flag;
         simple_var = var->EvalInstance();
         simple_pot_wei = simple_wei*this->scale_data*tsplot_pot/this->pot;
         //std::cout<<"YANK: Wei: "<<simple_wei<<" Scale: "<<this->scale_data<<" POT: "<<tsplot_pot<<" This File: "<<this->pot<<std::endl;
@@ -1643,6 +1661,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
         t_sbnfit_simpletree.Fill();
     }
 
+    std::cout<<"Warning, training elements corresponds to : "<<num_training<<std::endl;
 
 
 
@@ -1671,7 +1690,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     std::cout<<"Writing to file"<<std::endl;
     cdtof->cd();
     t_sbnfit_tree->Write();
-    t_sbnfit_pot_tree->Write();
+    //t_sbnfit_pot_tree->Write();
     t_sbnfit_rs_tree->Write();
     t_sbnfit_eventweight_tree->Write(); 
     if(true_eweight_exist) t_sbnfit_trueeventweight_tree->Write(); 
