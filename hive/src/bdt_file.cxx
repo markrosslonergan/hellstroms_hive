@@ -106,7 +106,23 @@ void FlatVar::DelinkTTree(TTree* tree){
     return;
 }
 
-double FlatVar::Evaluate(int index = 0){
+void FlatVar::WriteToFile(TFile* file){  
+    if(type  == formula_type && bform){
+	if(file->IsOpen()){
+	    file->cd();
+	    bform->Write(name.c_str(),TObject::kWriteDelete);
+	    return;
+  	}
+    }
+
+    std::cerr << "WriteToFile operation ignored" << std::endl;
+    std::cerr << "Check if flat variable has TTreeFormula correctly setup" << std::endl;
+    std::cerr << "Check if destination file is open" << std::endl;
+    
+    return;
+}
+
+double FlatVar::Evaluate(int index){
     switch(type){
         case int_type:
             return static_cast<double>(bint);
@@ -177,12 +193,12 @@ bdt_file::bdt_file(std::string indir,std::string inname, std::string intag, std:
     fillstyle(infillstyle),
     event_identifier("1"),
     primary_ttree_name(inttree),
+    plot_name(intag),
+    m_weightless(false),
     is_legacy(false),   //default is not legacy mode;
     manual_POT_norm(false)
 {
 
-    plot_name = tag;
-    m_weightless = false;
 
     rangen = new TRandom3();
 
@@ -346,7 +362,6 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     run_weight_string +=")";
     std::cout<<"Run Weight String is: \n "<<run_weight_string<<std::endl;
 
-
     bool is_flat = this->tag.find("FLAT")!=std::string::npos;
     std::cout<<"Getting eventweight tree.  Is it flat? "<<is_flat<<std::endl;
     if(!is_flat){
@@ -407,6 +422,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             bool isin = frunpass->EvalInstance();
             if(isin) tmppot += potbranch;
         }
+	delete frunpass; frunpass=nullptr;
         std::cout<<"OUT"<<std::endl;
         numberofevents = tvertex->GetEntries(event_identifier.c_str());
 
@@ -433,7 +449,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
             std::cout << " || prediction by scaling overall TTree entry count: " << combin*static_cast<double>(tvertex->GetEntries(event_identifier.c_str())) << std::endl;
 
             tmppot = modified_event_count/reference_event_count*reference_pot;
-            delete feve_weight;
+            delete feve_weight; feve_weight = nullptr;
 	}
 
         if (this->tag.find("DarkNue") != std::string::npos && !manual_POT_norm){
@@ -484,7 +500,8 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
         pot = this->data_tor860_wcut; // tor860_wcut
         std::cout<<"bdt_file::bdt_file()\t||\t---> POT is DATA. Setting from internal ZARKOS's tool numbers."<<std::endl;
         std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
-        run_weight_string = "1";
+  	
+        run_weight_string = "1.0*(" +modified_runsubrun_string +")";
 
         //Guanqun: Technically not needed, but keep it here for file info 
         if(this->tag=="PseudoFakeDataRedo1"){
@@ -644,6 +661,7 @@ int bdt_file::calcPrecutEntryList(){
         }
 
         fpre->Close();
+	if(fpre) {delete fpre; fpre=nullptr;}
         f->cd();
 
     }
@@ -723,6 +741,8 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
             std::cout<<"File does not have a valid hash, regenerating!"<<std::endl;
 
         }
+	//fpre->Close();
+	//if(fpre) {delete fpre; fpre = nullptr;}
 
     }
 
@@ -747,6 +767,7 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
         topological_list->Write();
         precut_list->Write();
         fpre->Close();
+	if(fpre) {delete fpre; fpre = nullptr;}
         f->cd();
 
 
@@ -774,6 +795,8 @@ int bdt_file::calcTopologicalEntryList(){
         std::cout<<"Topological Entry List already exists for "<<this->tag<<std::endl;
         TFile* fpre = new TFile(filename.c_str(),"read");	
         topological_list = (TEntryList*)fpre->Get(topological_list_name.c_str());
+	fpre->Close();
+	delete fpre; fpre = nullptr;
 
 
     }else{
@@ -789,6 +812,7 @@ int bdt_file::calcTopologicalEntryList(){
         fpre->cd();
         topological_list->Write();
         fpre->Close();
+	delete fpre; fpre = nullptr;
         f->cd();
 
     }
@@ -798,7 +822,7 @@ int bdt_file::calcTopologicalEntryList(){
 }
 
 
-int bdt_file::addPlotName(std::string plotin){
+int bdt_file::addPlotName(const std::string& plotin){
     plot_name = plotin;
     return 0;
 }
@@ -822,6 +846,7 @@ int bdt_file::CheckWeights(){
             count++;
         }
     }
+    delete weight; weight =nullptr;
     std::cout<<"the number of events with odd weights in the file is "<<count<<std::endl;
     return 0;
 
@@ -851,7 +876,7 @@ double bdt_file::GetEntries(std::string cuts){
     double ans = th1->GetSumOfWeights();
     //std::cout<<"sum of weights: "<<ans<<std::endl;
 
-    delete th1;
+    delete th1; th1 = nullptr;
 
     return ans;
 
@@ -1096,12 +1121,13 @@ bdt_variable bdt_file::getBDTVariable(bdt_info info, std::string binning){
 
 
 bdt_file::~bdt_file(){
+    delete rangen; rangen =nullptr;
     f->Close();
 }
 
 
 
-int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_file){
+int bdt_file::addFriend(const std::string& in_friend_tree_nam, const std::string& in_friend_file){
     friend_files.push_back(in_friend_file);
     friend_names.push_back(in_friend_tree_nam);
 
@@ -1129,7 +1155,7 @@ int bdt_file::addFriend(std::string in_friend_tree_nam, std::string in_friend_fi
     }
     tvertex->AddFriend(friend_names.back().c_str(), friend_files.back().c_str());
 
-    if(ftmp)    ftmp->Close();
+    if(ftmp){ ftmp->Close(); delete ftmp; ftmp = nullptr; }
     return 0;
 }
 
@@ -1757,7 +1783,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 
 
         c->SaveAs(("SplitAndPlot_"+var.safe_unit+"_"+this->tag+".pdf").c_str(),"pdf");
-
+	delete c; c = nullptr;
 
         return 0;
     }
@@ -1786,11 +1812,13 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
             }
 
         }
+	delete value; value = nullptr;
+	delete fcuts; fcuts = nullptr;
 
         return ans;
     }
 
-    void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const std::string& treename, const std::string& num_candidate_var){
+    void bdt_file::MakeFlatTree(TFile *fout, std::vector<FlatVar>& variables, const std::string& treename, const std::string& num_candidate_var, const std::string& filter_cut, bool remove_train){
 
 
         //print out some debug info
@@ -1823,7 +1851,19 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
             variables[i].LinkWithTTree(tvertex);
         }
 
+
+	FlatVar run("run_number", FlatVar::int_type), subrun("subrun_number", FlatVar::int_type), event("event_number", FlatVar::int_type);
+ 	runlist masterRSElist;
+	if(remove_train){
+	    run.LinkWithTTree(tvertex);
+	    subrun.LinkWithTTree(tvertex);
+	    event.LinkWithTTree(tvertex);
+	    masterRSElist = LoadTrainList();
+	}
+
+
         double tsplot_pot=6.91e20;
+        TTreeFormula * tfilter = new TTreeFormula("filter_cut", filter_cut.c_str() ,tvertex);
         TTreeFormula* wei = new TTreeFormula("weight_formula ", this->weight_branch.c_str(),this->tvertex);
         TTreeFormula * tcut = new TTreeFormula("precut",  this->getStageCuts(1).c_str()  ,tvertex);
         TTreeFormula * t_defcut = new TTreeFormula("defcut",  this->getStageCuts(-1).c_str()  ,tvertex);
@@ -1853,6 +1893,15 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
         //loop over all old intries 
         for(size_t i=0; i< tvertex->GetEntries(); ++i){
             this->tvertex->GetEntry(i);
+
+	    //skip if event doesn't pass the filter
+	    tfilter->GetNdata();
+  	    if(!tfilter->EvalInstance())
+		continue;
+
+	    //skip if event has overlap with training sample 
+	    if(remove_train && masterRSElist.inList(run.Evaluate(), subrun.Evaluate(), event.Evaluate()) )
+		continue;
 
             //something hacked together to grab the number of candidates in the events
             int num_candidates = INT_MAX;
@@ -1914,37 +1963,51 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 
         fout->cd();
         tree_out->Write();
+	if(filter_cut != "1")
+	    tfilter->Write("filter_cut", TObject::kWriteDelete);
 
         // NECESSARY to reset the address of branches in vertex tree before we lose the pointer
         for(size_t i =0; i != variables.size(); ++i){
             variables[i].DelinkTTree(tvertex);
         }
+	if(remove_train){
+            run.DelinkTTree(tvertex);
+            subrun.DelinkTTree(tvertex);
+            event.DelinkTTree(tvertex);
+        }
 
+	if(wei) {delete wei;   wei = nullptr;}
+        if(tcut) {delete tcut;  tcut = nullptr;}
+        if(t_defcut) {delete t_defcut; t_defcut = nullptr;}
+	if(tfilter) {delete tfilter;  tfilter = nullptr;}
         return;
     }
 
-    void bdt_file::MakeFlatFriend(TFile *fout, const std::string& treename, const std::string& cut, const std::string& num_candidate_var){
+    void bdt_file::MakeFlatFriend(TFile *fout, const std::string& treename, const std::string& cut, const std::string& cut_name, const std::string& num_candidate_var){
 
 
         fout->cd();
         TTree* tree_out = (TTree*)fout->Get(treename.c_str());
+	bool create_tree = false;
         if(tree_out == nullptr){
+	    create_tree = true;
             tree_out = new TTree(treename.c_str(),treename.c_str());
         }
 
         //create new branch which indicates whether events passing the cut 
-        std::string cut_branch_name = std::to_string(jenkins_hash(cut)) + "_cut";
+        std::string cut_branch_name =  cut_name + "_cut";// + std::to_string(jenkins_hash(cut));
         std::cout << "Cut: " << cut << " corresponding branch name: " << cut_branch_name << std::endl; 
 
 
         int pass_cut = 0;
+	TBranch* br = nullptr;
         auto branchstatus = tree_out->SetBranchAddress(cut_branch_name.c_str(), &pass_cut);
         if(branchstatus == TTree::kMissingBranch){
-            std::cout << "Create branch.." << std::endl;
-            tree_out->Branch(cut_branch_name.c_str(), &pass_cut);
+            br = tree_out->Branch(cut_branch_name.c_str(), &pass_cut);
+            std::cout << "Create branch.." << br << std::endl;
         }else{
             std::cout << "Branch already exists...Exiting... " << std::endl;
-            TBranch* br = tree_out->GetBranch(cut_branch_name.c_str());
+            br = tree_out->GetBranch(cut_branch_name.c_str());
             tree_out->ResetBranchAddress(br);
             return;
         }
@@ -1952,8 +2015,9 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
 
         FlatVar num_cluster_var(num_candidate_var, FlatVar::int_type);
         num_cluster_var.LinkWithTTree(tvertex);
-        FlatVar cut_var(cut, FlatVar::formula_type);
+        FlatVar cut_var(cut, FlatVar::formula_type, cut_branch_name);
         cut_var.LinkWithTTree(tvertex);
+	cut_var.WriteToFile(fout);
 
         //loop over all old intries 
         for(size_t i=0; i< tvertex->GetEntries(); ++i){
@@ -1967,20 +2031,21 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
             //write nonsense value if current event does not have vector ntuple
             if(num_candidates == 0){
                 pass_cut = -1;
-                tree_out->Fill();
+                create_tree ? tree_out->Fill() : br->Fill();
                 continue;
             }
 
             //vector ntuples
             for(int j=0; j != num_candidates ; ++j)
-                tree_out->Fill();
+                create_tree ? tree_out->Fill() : br->Fill();
 
         }//event-level loop
 
 
         fout->cd();
-        tree_out->Write();
-
+	tree_out->Print();
+        tree_out->Write(treename.c_str(), TObject::kWriteDelete);
+      
         num_cluster_var.DelinkTTree(tvertex);
         cut_var.DelinkTTree(tvertex);
         return;

@@ -1006,13 +1006,23 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
     std::string global_leg_name;
     std::string global_covar_type;
     while(pCovar){
-        has_global_covar = true;
 
         const char* var_covar_dir = pCovar->Attribute("dir");
         const char* var_covar_name = pCovar->Attribute("name");
         const char* var_covar_sys = pCovar->Attribute("sys");
         const char* var_leg_name = pCovar->Attribute("plotname");
         const char* var_covar_type = pCovar->Attribute("type");
+       
+	// set global systematic error string 
+        has_global_covar = true;
+	if(m_error_string!= STATS ) 
+	    global_covar_sys = m_error_string;
+	else if(var_covar_sys != NULL)
+	    global_covar_sys = var_covar_sys;
+	else 
+	    global_covar_sys = STATS; 
+
+
         if (var_covar_dir==NULL || var_covar_name==NULL){
             has_global_covar = false;
         }else{
@@ -1023,14 +1033,6 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             else{
                 global_covar_type = var_covar_type;
             }
-
-
-            if(m_error_string!= STATS ) 
-		global_covar_sys = m_error_string;
-	    else if(var_covar_sys != NULL)
-		global_covar_sys = var_covar_sys;
-	    else 
-		global_covar_sys = STATS; 
 
             global_leg_name = var_leg_name;
             std::cout<<"Loading a GLOBAL covariance matrix direectory"<<std::endl;

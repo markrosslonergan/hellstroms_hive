@@ -1,15 +1,10 @@
 #include "bdt_var.h"
 
-bdt_variable::bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack) : 
-	name(inname), 
-	binning(inbin),
-	is_track(intrack),
-	unit(inunit)
-{ 
-                plot_min =-999;
-            	plot_max =-999;
+//initialize static member      
+std::string bdt_variable::math_op_character=" ()\\/[]+-*|:#{}^=$";
+
+bdt_variable::bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack) : bdt_variable(inname,inbin,inunit,intrack,"d",-1){ 
             	cat = 0;
-	     	decode_bins();
 }
 
 
@@ -27,47 +22,11 @@ bdt_variable::bdt_variable(std::string inname, std::string inbin, std::string in
 		plot_min =-999;
 		plot_max =-999;
 		safe_name = name;
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '('), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ')'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '\\'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '/'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '['), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ']'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '+'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '-'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '*'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '.'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ' '), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ','), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '|'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ':'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '#'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '{'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '}'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '^'), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '='), safe_name.end());
-		safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '$'), safe_name.end());
-
 		safe_unit = unit;
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ' '), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '('), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ')'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '\\'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '/'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '['), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ']'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '+'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '-'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '*'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '|'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ':'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '#'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '{'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '}'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '^'), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '='), safe_unit.end());
-		safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '$'), safe_unit.end());
-
+		for(char ch : bdt_variable::math_op_character){
+			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ch), safe_name.end());
+			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ch), safe_unit.end());
+		}
             	has_covar = false;
 
 	    	decode_bins();
@@ -160,7 +119,7 @@ std::string bdt_variable::GetVarDef() const {
 
 std::string bdt_variable::GetVarSimpleDef() const{
     if(name.find("_mva") != std::string::npos && name.find("simple_") == std::string::npos)
-	return "simple_"+name;
+        return this->add_simple_to_formula(name);
 
     return name;
 }
@@ -169,7 +128,38 @@ std::string bdt_variable::GetAdditionalCut() const{
     return additional_cut;
 }
 
+std::string bdt_variable::GetSimpleAdditionalCut() const{
+    return this->add_simple_to_formula(additional_cut);
+}
+
 //---- function that I'd like to use only internally ----
+
+std::string bdt_variable::add_simple_to_formula(const std::string& input_formula) const{
+
+  
+    std::string temp_formula = input_formula;
+    std::string result_simple_formula;
+    auto pos = temp_formula.find("_mva");
+
+    while(pos != std::string::npos){
+	auto bdt_var_start = temp_formula.find_last_of(bdt_variable::math_op_character, pos-1);
+	if(bdt_var_start != std::string::npos){
+	    result_simple_formula += temp_formula.substr(0, bdt_var_start + 1) + "simple_" + temp_formula.substr(bdt_var_start +1, pos+3 - bdt_var_start);
+	}else{
+
+	    //the first character is part of the BDT score name 
+	    result_simple_formula += "simple_" + temp_formula.substr(0, pos+4);
+	}
+
+	temp_formula = temp_formula.substr(pos+4);
+	pos = temp_formula.find("_mva");
+	
+    }
+    result_simple_formula += temp_formula;
+    
+    return result_simple_formula;
+
+}
 
 void bdt_variable::decode_bins(){
             edges.clear();

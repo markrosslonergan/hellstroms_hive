@@ -395,7 +395,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
 	    //note: tsum does NOT include signal if it's set to be plotted on top
             TH1 * tsum  = (TH1*)mc_stack->getEntrySum(var,s, m_fullvec);
-            TH1* d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+data_file->tag+"_"+var.safe_name, plot_pot);
+            TH1* d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+data_file->tag+"_"+var.safe_name +"_" + var.GetID(), plot_pot);
             TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
 
 
@@ -409,6 +409,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             std::vector<double> vec_mc;
             for(int c=0; c< tsum->GetNbinsX();c++){
                 double mc_stats_error = tsum->GetBinError(c+1);
+		std::cout << "Bin : " << c+1 << ", MC prediction: " << tsum->GetBinContent(c+1) << ", MC intrinsic Error: " << mc_stats_error << std::endl; 
                 vec_mc_stats_error.push_back(mc_stats_error);
                 vec_mc.push_back(tsum->GetBinContent(c+1));
             }
@@ -449,6 +450,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                         covar_f = new TFile(var.GetCovarFile(s).c_str(),"read");
                     }
                 }
+		std::cout << " Successfully open covariance matrix file: " << var.GetCovarFile(s) << std::endl;
 
 
                 TMatrixD * covar_full = (TMatrixD*)covar_f->Get(var.covar_name.c_str());
@@ -489,6 +491,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 for(int c=0; c< tsum->GetNbinsX();c++){
 
                     double mc_stats_error = tsum->GetBinError(c+1);
+
+		    //Guanqun: temporary hard-coded chagne for cluster plot, no MC intrinsic error
+                    //double mc_stats_error = 0.0;
+
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
 
@@ -925,6 +931,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
                 TMatrixT<double> Mout = *covar_collapsed;
                 if(false){
+		std::cout << "after collapse: " << std::endl;
                     for(int i = 0 ; i != covar_collapsed->GetNcols(); ++i){
                         for(int j = 0; j != covar_collapsed->GetNcols(); ++j){
                             std::cout << i << " " << j << " " << Mout(i,j) << std::endl;
@@ -967,10 +974,18 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 }
 
                 // Do the thing
+                if(false){
+		std::cout << "after inversion: " << std::endl;
+                    for(int i = 0 ; i != covar_collapsed->GetNcols(); ++i){
+                        for(int j = 0; j != covar_collapsed->GetNcols(); ++j){
+                            std::cout << i << " " << j << " " << Mout(i,j) << std::endl;
+                        }
+                    }
+                }
                 for (int ib = 0; ib<var.n_bins; ib++) {
                     for (int jb=0; jb<var.n_bins; jb++) {
                         mychi += (tsum->GetBinContent(ib+1)-d0->GetBinContent(ib+1))*(Mout)(ib,jb)*(tsum->GetBinContent(jb+1)-d0->GetBinContent(jb+1));
-                        //std::cout << "("  << ib << ", " << jb << ")  mchi : " << mychi << " inverted matrix : " << Mout(ib,jb) << " vec diff " << tsum->GetBinContent(ib+1)-d0->GetBinContent(ib+1) << " " << tsum->GetBinContent(jb+1)-d0->GetBinContent(jb+1) << std::endl;
+                        std::cout << "("  << ib << ", " << jb << ")  mchi : " << mychi << " inverted matrix : " << Mout(ib,jb) << " vec diff " << tsum->GetBinContent(ib+1)-d0->GetBinContent(ib+1) << " " << tsum->GetBinContent(jb+1)-d0->GetBinContent(jb+1) << std::endl;
                     }
                 }
                 ndof = var.n_bins;
@@ -986,6 +1001,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
                     if((*covar_collapsed)(ib,ib)==0){
                         std::cout<<"WARNING a 0 in the matrix "<<ib<<std::endl;
+                    }
+                }
+                if(false){//just for zeroing
+
+                    for(int i =0; i<covar_collapsed->GetNcols(); i++) {
+                        for(int k =0; k<covar_collapsed->GetNcols(); k++) {
+                            if(i!=k)
+				(*covar_collapsed)(i,k)=0;
+                        }
                     }
                 }
                 covar_collapsed->Invert(determ_ptr);

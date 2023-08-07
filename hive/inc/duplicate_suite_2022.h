@@ -81,12 +81,12 @@ struct runlist{
         runlist(): unique_events(0){}
 
         //Is this R S in this?
-        int inList(int &run, int &subrun){
+        int inList(const int &run, const int &subrun){
             return m_rses.count(RSE(run,subrun,-1));
         }
 
         //Is this r, s r in this?
-        bool inList(int &run, int &subrun, const int &event){
+        bool inList(const int &run, const int &subrun, const int &event){
 
             if(event<0) return inList(run,subrun);
 	    return m_rses.count(RSE(run,subrun,event));

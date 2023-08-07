@@ -27,15 +27,17 @@
 struct bdt_variable{
 
 	public:
-		std::string name;
+
+ 	static std::string math_op_character;
+	std::string name;
         int id;
-		int cat;
+	int cat;
         std::string safe_name;
-		std::string binning;
-		std::string unit;
-		std::string safe_unit;
-		bool is_track;
-		std::string type;
+	std::string binning;
+	std::string unit;
+	std::string safe_unit;
+	bool is_track;
+	std::string type;
         bool is_logplot;
         bool has_covar;
         bool is_spectator;
@@ -72,13 +74,19 @@ struct bdt_variable{
         std::string GetBinEdges() const;
 	int GetNBins() const {return n_bins;}
 
+	// Func: return the unit of variable (usually used for x axis title)	
+	std::string GetVarUnit() const {return unit;}
+
 	// Func: return varaible definition 
    	std::string GetVarDef() const; 
-	std::string GetVarSimpleDef() const;
+	std::string GetVarSimpleDef() const; //Note: add "simple_" in front of BDT score variables
 
 	// Func: return additional cut associated with this variable
 	std::string GetAdditionalCut() const;
 
+	// Func: same as GetAdditionalCut() function, return additional cut associated with this variable
+	// Note: add "simple_" in front of BDT score variables
+	std::string GetSimpleAdditionalCut() const;
 
 
 	// Func: return the unique hash of the variable, see function get_unique_jenkins_hash() for how hash is defined.
@@ -126,6 +134,13 @@ struct bdt_variable{
 	// Note: information used: variable name, variable bin edges, and additional cut associated with the variable
 	void get_unique_jenkins_hash();
 
+
+	// Func: given a variable definition or math formula, for every appearance of BDT score variable that ends with "_mva", add "simple_" to the front.
+	// Note: this is added to make sure that sbnfit files can be read correctly since BDT score variables are saved with "simple_" prefix in sbnfit files.
+	// Guanqun: something I hacked together don't like this
+	std::string add_simple_to_formula(const std::string& input_formula) const;
 	//---- End of private internal function ----
 };
+
+
 #endif

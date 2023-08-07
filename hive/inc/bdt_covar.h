@@ -33,6 +33,7 @@ private:
 
     std::string file_dir="SBNcovar/";
     std::vector<std::string> detsys = {"WiremodX","WiremodYZ","WiremodAngleYZ","WiremodAngleXZ","lightYieldAttn","lightYieldDown","lightYieldRay","SCE","Recomb2"};
+    //std::vector<std::string> detsys = {"WiremodAngleYZ","WiremodAngleXZ","lightYieldAttn","lightYieldDown","lightYieldRay","SCE","Recomb2"};
     //std::vector<std::string> detsys = {"WiremodAngleXZ"};
 
     int stage;
@@ -63,9 +64,11 @@ public:
 
 
     bdt_covar(bdt_variable* in_var, int s): pvar(in_var), stage(s), base_cut("1"){ 
+	this->SetOutputDir(file_dir);
     }   
 
     bdt_covar(bdt_variable* in_var, int s, const std::string& cut): pvar(in_var), stage(s), base_cut(cut){   
+	this->SetOutputDir(file_dir);
     }
 
     /* Function: returns the default template xml for reweightable systematics */
@@ -80,15 +83,17 @@ public:
     void GenerateReweightingCovar(const std::string& xml_template);
     void GenerateDetectorCovar();
     void GenerateDetectorCovar(const std::string& xml_template);
+    std::string GenerateSingleDetCovar(const std::string& covar_base_xml, const std::string& syst_name, const std::string& file_tag);
 
     /* Merge the fluxXS and detector covariance matrix 
      * Note: this functionality only works when the systematic error string matches with what's defined in inc/global_func.h
      */
     void MergeCovar();
+    void MergeCovar(const std::vector<std::string>& source_files, const std::string& dest);
 
 
     /* Set the output directory for covariance files */
-    void SetOutputDir(const std::string& indir) { file_dir = indir; return; }
+    void SetOutputDir(const std::string& indir);
     std::string OutputDir() const {return file_dir; }
    
     /* copy template xml into local xml and set up the binning, definition and eventweight in the xml

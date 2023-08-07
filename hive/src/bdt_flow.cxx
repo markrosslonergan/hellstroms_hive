@@ -7,7 +7,8 @@ int bdt_flow::GetNumStage() const{
 
 
 std::vector<std::string> bdt_flow::GetStageNames() const{
-    std::vector<std::string> res = {"Topological Selection","Pre-Selection"};
+    //std::vector<std::string> res = {"Topological Selection","Pre-Selection"};
+    std::vector<std::string> res = {"",""};
     for(auto & bdtinfo : bdt_vector){
 	//res.push_back("After " + bdtinfo.name);
 	res.push_back("");

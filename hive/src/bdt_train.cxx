@@ -252,7 +252,6 @@ int convertToLibSVM(bdt_info& info, bdt_file *file){
     std::ofstream sslibSVM;
     sslibSVM.open (name+"_"+file->tag+".libSVM.dat");
     TFile * outfile = TFile::Open((name+"libSVM_test.root").c_str(), "recreate");
-
     TTreeFormula* weight = new TTreeFormula("sig_w",(file->weight_branch+"*"+file->run_weight_string).c_str(),file->tvertex);
 
     std::vector<TTreeFormula*> tree_formulas_v;

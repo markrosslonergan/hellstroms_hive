@@ -96,6 +96,35 @@ void bdt_covar::GenerateDetectorCovar(const std::string& xml){
     return;
 }
 
+std::string bdt_covar::GenerateSingleDetCovar(const std::string& covar_base_xml, const std::string& syst_name, const std::string& file_tag){ 
+
+    if(!pvar->flux_xs_sys_only()){ // alow detector matrix generation for almost any string input
+
+	std::cout <<" bdt_covar: WARNING start to generate detector systematic covariance matrix locally...." << std::endl;
+    	std::cout<<" FileID "<< file_tag <<std::endl;
+
+
+        std::string covar_xml_name = covar_base_xml.substr(0, covar_base_xml.find_last_of('.'));
+
+
+            std::string covar_xml = covar_xml_name + "_" + syst_name + ".xml"; 
+            std::cout<<"On Det "<< syst_name << ", xml used: " << covar_xml << std::endl;
+
+            //somehow redirecting sed output to a new file doesn't always work 
+            //explicitly create new xml instead
+            copy_and_replace(covar_base_xml, covar_xml, {"SYSVAR"}, {syst_name}, "xml");
+
+            generate_covar(covar_xml ,file_tag + "_" + syst_name, true);
+
+
+    }
+    return file_dir +  file_tag + "_" + syst_name + ".SBNcovar.root";
+}
+
+void bdt_covar::MergeCovar(const std::vector<std::string>& source_files, const std::string& dest){
+    merge_covar(source_files, dest);
+    return;
+}
 
 void bdt_covar::MergeCovar(){
 
@@ -116,6 +145,21 @@ std::vector<std::string> bdt_covar::GetTemplateXmls(){
     if(!set_template)
         set_template_path();
     return {fluxxs_template_xml, det_template_xml};
+}
+
+void bdt_covar::SetOutputDir(const std::string& indir){ 
+ 
+    file_dir = indir; 
+
+    //create directory if not exist
+    if(file_dir.size()){
+        std::cout << "bdt_covar: matrix will be generated in " << file_dir << " subdir..." << std::endl;
+        if(system(NULL))
+            system(("mkdir -p " + file_dir).c_str());
+        else
+            mkdir(file_dir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    }
+    return;
 }
 
 //---- END of PUBLIC function -----
@@ -167,8 +211,8 @@ std::string bdt_covar::PrepareXml(const std::string& xml, const std::string& fil
     std::cout << "bdt::covar|| Will copy into xml: " << output_xml << std::endl;
 
 
-    std::vector<std::string> targets = {"VARVARVAR", "BINBINBIN", "WEIWEIWEI"};
-    std::vector<std::string> replacements = {"\""+ pvar->GetVarSimpleDef() + "\"", "\""+ pvar->GetBinEdges() + "\"", "(" + base_cut + " && " + pvar->GetAdditionalCut() + ")"};
+    std::vector<std::string> targets = {"VARVARVAR", "BINBINBIN", "WEIWEIWEI", "UNITUNITUNIT"};
+    std::vector<std::string> replacements = {"\""+ pvar->GetVarSimpleDef() + "\"", "\""+ pvar->GetBinEdges() + "\"", "(" + base_cut + " && " + pvar->GetSimpleAdditionalCut() + ")", pvar->GetVarUnit()};
 
     copy_and_replace(xml, output_xml, targets, replacements, "xml");   
 
@@ -181,31 +225,23 @@ void bdt_covar::generate_covar(const std::string& xml, std::string tag, bool run
 
     //generate covariance matrix in designated place
     if(file_dir.size()){
-        std::cout << "bdt_covar: matrix will be generated in " << file_dir << " subdir..." << std::endl; 
-        if(system(NULL))
-            system(("mkdir -p " + file_dir).c_str());
-        else
-            mkdir(file_dir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-
 	tag = file_dir + tag;
     }
 
     if(run_det){
         sbn::SBNcovariance covar(xml, false);
         covar.FormCovarianceMatrix(tag);
+	std::cout << "Free bdt_covar SBNcovar " << __LINE__ << std::endl;
     }else{
         sbn::SBNcovariance covar(xml);
         covar.FormCovarianceMatrix(tag);
     }
+	std::cout << "Free bdt_covar SBNcovar " << __LINE__ << std::endl;
 
 /*
     //move covariance matrix to designated place
     if(file_dir.size()){
         std::cout << "bdt_covar: move covariance matrix to " << file_dir << " subdir..." << std::endl; 
-        if(system(NULL))
-            system(("mkdir -p " + file_dir).c_str());
-        else
-            mkdir(file_dir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
         std::vector<std::string> files_to_move = {tag+".SBNcovar.root", tag+".SBNspec.root", "SBNfit_spectrum_plots_"+tag+".root"};
         for(auto& f : files_to_move){
@@ -229,7 +265,7 @@ void bdt_covar::set_template_path(){
         std::cout << "bdt_covar || Successfully find HIVEDIR environmental variable = " << path << std::endl;
         std::string full_path(path);
         fluxxs_template_xml = full_path + "/xml/SBNfit_Integration_XMLS_Coherent/template_ReweightableSys_1g0p_coherent_stage_0.xml";
-        det_template_xml = ""; //remain to be set
+        det_template_xml = full_path + "/xml/SBNfit_Integration_XMLS_Coherent/template_DetectorSys_1g0p_coherent_stage_1.xml";
         std::cout << "bdt_covar || template xmls:" << std::endl;
         std::cout << "bdt_covar || reweightable systematic xml: " << fluxxs_template_xml << std::endl;
         std::cout << "bdt_covar || detectory systematic xml: " << det_template_xml << std::endl;
