@@ -87,7 +87,7 @@ int main (int argc, char *argv[]){
     std::string external_cuts = "1";
 
     std::string flatten_dir = "./";
-
+    bool isPublicPlot = false;
 
     bool plot_train_only = false;
     bool run1_only = false;
@@ -122,6 +122,7 @@ int main (int argc, char *argv[]){
         {"vector",      required_argument,  0, 'v'},
         {"divbin",      required_argument,  0, 'e'},
         {"run1",		no_argument,	0, 'l'},
+        {"public",		no_argument,	0, 'P'},
         {"legacy",      no_argument,   0, 'L'},
         {"lee",         no_argument,  0, 'k'},
         {"scale",       no_argument,  0, 'z'},
@@ -136,7 +137,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:T:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWLRjh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:T:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWLRPjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -171,6 +172,9 @@ int main (int argc, char *argv[]){
 
             case 'j':
                 is_combined = true;
+                break;
+            case 'P':
+                isPublicPlot = true;
                 break;
             case 'k':
                 lee_on_top = true;
@@ -775,6 +779,7 @@ int main (int argc, char *argv[]){
                 datamc.setMergeDown(mergeDownVector);
                 datamc.setStackMode(histogram_stack->plot_pot);
                 datamc.setErrorString(systematics_error_string);
+                datamc.setPublicPlot(isPublicPlot);
                 if(signal_scale_on_top)datamc.setScaledSignal();
                 if(lee_on_top)datamc.setLEEonTop();
                 if(div_bin)datamc.setDivBin(div_scale);
@@ -795,6 +800,7 @@ int main (int argc, char *argv[]){
                         real_datamc.setPlotStage(stage);                
                         real_datamc.setMergeDown(mergeDownVector);
                         real_datamc.setStackMode( histogram_stack->plot_pot);
+                        real_datamc.setPublicPlot(isPublicPlot);
                         if(signal_scale_on_top)real_datamc.setScaledSignal();
                         if(lee_on_top)real_datamc.setLEEonTop();
                         if(div_bin)real_datamc.setDivBin(div_scale);
@@ -810,6 +816,7 @@ int main (int argc, char *argv[]){
                     real_datamc.setMergeDown(mergeDownVector);
                     real_datamc.setStackMode( histogram_stack->plot_pot);
                     real_datamc.setErrorString(systematics_error_string);
+                    real_datamc.setPublicPlot(isPublicPlot);
                     if(signal_scale_on_top)real_datamc.setScaledSignal();
                     if(lee_on_top)real_datamc.setLEEonTop();
                     if(div_bin)real_datamc.setDivBin(div_scale);
@@ -865,6 +872,8 @@ int main (int argc, char *argv[]){
                 datamc.setPlotStage(which_stage);               
                 datamc.setMergeDown(mergeDownVector);
                 datamc.setErrorString(systematics_error_string);
+                datamc.setPublicPlot(isPublicPlot);
+
                 if(signal_scale_on_top)datamc.setScaledSignal();
                 if(lee_on_top)datamc.setLEEonTop();
                 if(div_bin)datamc.setDivBin(div_scale);
@@ -908,7 +917,8 @@ int main (int argc, char *argv[]){
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setMergeDown(mergeDownVector);
                 real_datamc.setErrorString(systematics_error_string);
-
+                real_datamc.setPublicPlot(isPublicPlot);
+                
                 if(signal_scale_on_top)real_datamc.setScaledSignal();
                 if(lee_on_top)real_datamc.setLEEonTop();
                 if(div_bin)real_datamc.setDivBin(div_scale);

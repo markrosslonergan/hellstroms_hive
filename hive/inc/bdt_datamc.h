@@ -61,7 +61,7 @@ class bdt_datamc{
         bool plot_lee_on_top;
         bool div_bin;
         double div_scale;
-        
+        bool isPublicPlot = false; 
         std::vector<bool> subtraction_vec;
         std::vector<bool> merge_down_vec;
 
@@ -75,6 +75,12 @@ class bdt_datamc{
             merge_down_vec =merin;
             return 0;
         }
+
+        int setPublicPlot(bool inval){
+            isPublicPlot = inval;
+            return 0;
+        }
+
 
         int setPlotStage(int s){
             plot_stage =s;

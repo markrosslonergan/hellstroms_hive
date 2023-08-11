@@ -3,7 +3,7 @@
 <!-- Some basic information, a tag that defines uniquely this analysis, and a topology that also defines it -->
 <topology tag="2g1p_NextGen_v4" name ="2#gamma1p" def = "reco_vertex_size==1 &amp;&amp; reco_asso_showers==2 &amp;&amp; reco_asso_tracks==1" bdtcut = "(0.894,0.737)" />
 
-<covar dir = "Covar_DetSysChecks_FinalSelection/" name = "frac_covariance" plotname="" />
+<covar dir = "Covar_DetSysChecks_FinalSelection/" name = "frac_covariance" plotname="Flux,XS,G4 &amp; Det" />
 <plot_pot>
     <run_period name ="RunI" cut ="( (run_number >= 4952 &amp;&amp; run_number <= 7770))" fraction = "0.243"  />
     <run_period name ="RunII/RunIII" cut ="(( run_number >= 8317 &amp;&amp; run_number <=  13696) || (run_number >= 13697 &amp;&amp; run_number <= 14116) || (run_number >= 14117 &amp;&amp; run_number     <= 18960))" fraction = "0.757" />
@@ -19,7 +19,7 @@
     </bdtfile>
     -->
 
-<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaRadOverlaySMTrueP" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta #rightarrow N#gamma (1+p)" signal = "false" plot_on_top = "false" fillstyle="3245">
+<bdtfile filename = "preTopo_vertex_NCDeltaOverlay_Run13_TestSplit_v50.0.uniq.root" tag = "NCDeltaRadOverlaySMTrueP" hist_style = "hist" dirs = "singlephotonana/" col = "(0.97,0.75,0.0)" plot_name = "NC #Delta #rightarrow N#gamma (1+p)" signal = "false" plot_on_top = "false" fillstyle="3245" mergedown="true">
     <definition>
         <cut>mctruth_is_delta_radiative==1</cut>
         <cut>mctruth_cc_or_nc==1</cut>
@@ -582,7 +582,7 @@
 <var def="((#C0#*reco_shower_implied_dirz[(i_shr[0])]+#C1#*reco_shower_implied_dirz[(i_shr[1])])/(sqrt((#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))) ) " binning = "(34, -1, 1)" unit = "Reconstructed cos(#theta_{#pi^{0}})" type = "d"  training=""  group="4098" />
 <var def = "reco_shower_kalman_dEdx_plane2_median[i_shr[0]]" binning="(34,0.001,8.0)" unit = "Leading Shower Reconstucted dE/dx Plane 2 [Mev/cm]" type = "d"  group="4098" training =""/>
 <var def = "reco_shower_kalman_dEdx_plane2_median[i_shr[1]]" binning="(34,0.001,8.0)" unit = "Subleading Shower Reconstucted dE/dx Plane 2 [Mev/cm]" type = "d"  group="4098" training =""/>
-<var def="sqrt((#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))/1000" binning = "(34, 0, 0.8)" unit = "Reconstructed #pi^{0} Momentum [GeV/c]" type = "d"  training="" group="4099" /> <!--Corrected Implied #pi^{0} Momentum [GeV]-->
+<var def="sqrt((#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))/1000" binning = "(18, 0, 0.9)" unit = "Reconstructed #pi^{0} Momentum [GeV/c]" type = "d"  training="" group="4099" /> <!--Corrected Implied #pi^{0} Momentum [GeV]-->
 <var def = "reco_shower_conversion_distance[i_shr[0]]" binning = "(34,0,100)" unit = "Reconstructed Leading Shower Conversion Distance [cm]" type = "d" training=""  group="408"/>
 <var def = "reco_shower_conversion_distance[i_shr[1]]" binning = "(34,0,100)" unit = "Reconstructed Subleading Shower Conversion Distance [cm]" type = "d" training=""  group="408"/>
 <var def="((#C0# - #C1#)/(sqrt((#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])])*(#C0#*reco_shower_implied_dirx[i_shr[0]] + #C1#*reco_shower_implied_dirx[(i_shr[1])]) + (#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])])*(#C0#*reco_shower_implied_diry[i_shr[0]] + #C1#*reco_shower_implied_diry[(i_shr[1])]) + (#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])])*(#C0#*reco_shower_implied_dirz[i_shr[0]] + #C1#*reco_shower_implied_dirz[(i_shr[1])]))))" binning = "(34, 0, 1)" unit = "Reconstructed cos(#theta_{CM})" type = "d"  training="" group="4098" pmax=120/>

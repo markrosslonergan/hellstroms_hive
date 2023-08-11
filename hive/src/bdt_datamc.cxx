@@ -772,7 +772,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
                 if(!remove_to_merge[n]){
                     string_events = to_string_prec(Nevents+Nevents_save_for_later,leg_num_digits);
-                    if(b_signal_on_top){
+                    if(isPublicPlot){
                         l0->AddEntry(h1,(f->plot_name).c_str(),leg_type.c_str());
                     }else{
                         // Guanqun: add total count to the legend 
@@ -798,13 +798,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
 
             if(var.has_covar && m_error_string!=STATS){
-                if(b_signal_on_top){
+                if(isPublicPlot){
                     l0->AddEntry(leg_hack,("Total Background and Error "+var.covar_legend_name).c_str() ,"fl"); // Was le
                 }else{
                     l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
                 }
             }else{
-                if(b_signal_on_top){
+                if(isPublicPlot){
                     l0->AddEntry(leg_hack,("Total Background and Error "+var.covar_legend_name).c_str() ,"fl"); // Was le
                 }else{
                     l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
