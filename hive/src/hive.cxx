@@ -88,12 +88,13 @@ int main (int argc, char *argv[]){
     std::string external_cuts = "1";
 
     std::string flatten_dir = "./";
-
+    bool isPublicPlot = false;
 
     bool plot_train_only = false;
     bool run1_only = false;
     bool use_xrootd = false;
     bool remove_training_events = false;
+    double legend_posx = -999;
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -120,10 +121,12 @@ int main (int argc, char *argv[]){
         {"extxml",      required_argument,  0, 'X'},
         {"extapp",      required_argument,  0,  'w'},
         {"weightless",	no_argument,	0, 'W'},
+        {"legend", required_argument, 0 , 'N'},
         {"systematics",	required_argument,	0, 'y'},
         {"vector",      required_argument,  0, 'v'},
         {"divbin",      required_argument,  0, 'e'},
         {"run1",		no_argument,	0, 'l'},
+        {"public",		no_argument,	0, 'P'},
         {"legacy",      no_argument,   0, 'L'},
         {"lee",         no_argument,  0, 'k'},
         {"scale",       no_argument,  0, 'z'},
@@ -132,14 +135,14 @@ int main (int argc, char *argv[]){
         {"type",    required_argument, 0, 'T'},
         {"plottrainonly",no_argument,  0, 'a'},
         {"xrootd",no_argument,  0, 'R'},
- 	{"removetrain",  no_argument,  0, 'Q'},
+ 	      {"removetrain",  no_argument,  0, 'Q'},
         {0,			    no_argument, 		0,  0},
     };
 
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:T:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWLRQjh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:T:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWLRNQPjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -163,6 +166,9 @@ int main (int argc, char *argv[]){
                 div_bin = true;
                 div_scale = strtof(optarg,NULL);
                 break;
+            case 'N':
+                legend_posx = strtof(optarg,NULL);
+                break;
             case 'c':
                 external_cuts = optarg;
                 //std::cout<<"Load Time Additional Cut : "<<external_cuts<<std::endl;
@@ -174,6 +180,9 @@ int main (int argc, char *argv[]){
 
             case 'j':
                 is_combined = true;
+                break;
+            case 'P':
+                isPublicPlot = true;
                 break;
             case 'k':
                 lee_on_top = true;
@@ -247,13 +256,13 @@ int main (int argc, char *argv[]){
             case 'i':
                 input_string = optarg;
                 break;
-	    case 'R':
-		use_xrootd = true;
-		break;
-	    case 'Q':
-		remove_training_events = true;
-		break;
-            case 'T':
+            case 'R':
+                use_xrootd = true;
+                break;
+            case 'Q':
+                remove_training_events = true;
+                break;
+           case 'T':
                 sig_type = (int)strtof(optarg,NULL);
                 break;
             case '?':
@@ -302,6 +311,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t--divbin\t\tDivide by binwidth, 1 argument of the div scale "<<std::endl;
                 std::cout<<"\t--lee\t\tPlots a x3.18 LEE on top"<<std::endl;
                 std::cout<<"\t--scale\t\tScales the signal up to data-sized "<<std::endl;
+                std::cout<<"\t--legend\t\tinput double for x position of legend"<<std::endl;
                 std::cout<<"\t--run1\t\tPlots Run1 Only"<<std::endl;
                 std::cout<<"\t--xrootd\t\tUse XrootD to open root files"<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
@@ -389,6 +399,7 @@ int main (int argc, char *argv[]){
 
         if((mode_option =="extapp" || mode_option == "makedetcovar" || mode_option == "makefluxcovar") ||( f!=0 && (isExternal && (mode_option == "flatten" || mode_option == "unflatten" || mode_option == "flatfriend" )) ) ) break;
 
+        //For now, only load training files if training.
 
         std::cout<<"============= Starting bdt_file number "<<f<<"  with tag -- "<<XMLconfig.bdt_tags[f]<<"==========="<<std::endl;
         //First build a bdt_flow for this file.
@@ -399,6 +410,8 @@ int main (int argc, char *argv[]){
 
         //If its a training file we are working with, add the training definitions 
         if(XMLconfig.bdt_is_training_signal[f]){
+        if(!( mode_option == "train" || mode_option =="vars")) break;
+
             for(int i=0; i< XMLconfig.bdt_training_cuts[f].size(); ++i){
                 def += "&&" + XMLconfig.bdt_training_cuts[f][i];
             }
@@ -784,6 +797,7 @@ int main (int argc, char *argv[]){
                 datamc.setMergeDown(mergeDownVector);
                 datamc.setStackMode(histogram_stack->plot_pot);
                 datamc.setErrorString(systematics_error_string);
+                datamc.setPublicPlot(isPublicPlot);
                 if(signal_scale_on_top)datamc.setScaledSignal();
                 if(lee_on_top)datamc.setLEEonTop();
                 if(div_bin)datamc.setDivBin(div_scale);
@@ -804,6 +818,7 @@ int main (int argc, char *argv[]){
                         real_datamc.setPlotStage(stage);                
                         real_datamc.setMergeDown(mergeDownVector);
                         real_datamc.setStackMode( histogram_stack->plot_pot);
+                        real_datamc.setPublicPlot(isPublicPlot);
                         if(signal_scale_on_top)real_datamc.setScaledSignal();
                         if(lee_on_top)real_datamc.setLEEonTop();
                         if(div_bin)real_datamc.setDivBin(div_scale);
@@ -819,6 +834,7 @@ int main (int argc, char *argv[]){
                     real_datamc.setMergeDown(mergeDownVector);
                     real_datamc.setStackMode( histogram_stack->plot_pot);
                     real_datamc.setErrorString(systematics_error_string);
+                    real_datamc.setPublicPlot(isPublicPlot);
                     if(signal_scale_on_top)real_datamc.setScaledSignal();
                     if(lee_on_top)real_datamc.setLEEonTop();
                     if(div_bin)real_datamc.setDivBin(div_scale);
@@ -874,6 +890,9 @@ int main (int argc, char *argv[]){
                 datamc.setPlotStage(which_stage);               
                 datamc.setMergeDown(mergeDownVector);
                 datamc.setErrorString(systematics_error_string);
+                datamc.setPublicPlot(isPublicPlot);
+                datamc.setLegendPos(legend_posx);
+
                 if(signal_scale_on_top)datamc.setScaledSignal();
                 if(lee_on_top)datamc.setLEEonTop();
                 if(div_bin)datamc.setDivBin(div_scale);
@@ -917,6 +936,8 @@ int main (int argc, char *argv[]){
                 real_datamc.setPlotStage(which_stage);                
                 real_datamc.setMergeDown(mergeDownVector);
                 real_datamc.setErrorString(systematics_error_string);
+                real_datamc.setPublicPlot(isPublicPlot);
+                real_datamc.setLegendPos(legend_posx);
 
                 if(signal_scale_on_top)real_datamc.setScaledSignal();
                 if(lee_on_top)real_datamc.setLEEonTop();
@@ -1798,9 +1819,9 @@ int main (int argc, char *argv[]){
         return 0;
 
 
-    }    if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" && covar_flux_template_xml!="null.xml") ){
-
-        std::cout<<"Starting to make an SBNfit integration covar with template: "<<covar_flux_template_xml<<std::endl;
+    //}    if(mode_option == "makefluxcovar" || (mode_option == "makedetcovar" & covar_flux_template_xml!="null.xml") ){
+    }    if(mode_option == "makefluxcovar" && covar_det_template_xml=="null.xml" ){
+        std::cout<<"Starting to make a Reweight-Style SBNfit integration covar with template: "<<covar_flux_template_xml<<std::endl;
 
         bdt_flow analysis_flow(topological_cuts, "1",   vec_precuts,    postcuts,       bdt_infos, fbdtcuts);
 	std::string stage_cut = analysis_flow.GetGeneralStageCuts(which_stage,fbdtcuts,true);
@@ -1843,7 +1864,7 @@ int main (int argc, char *argv[]){
 	    }
 
         }
-        std::cout<<"Finished the makefluxcovar mode: "<<std::endl;
+        std::cout<<"Finished the makefluxcovar mode. "<<std::endl;
 
     } if(mode_option == "makedetcovar" || (mode_option == "makefluxcovar" && covar_det_template_xml!="null.xml") ){
 
@@ -1884,42 +1905,11 @@ int main (int argc, char *argv[]){
             if(v.full_sys())
             	file_tag = v.GetCovarFileID_Det(which_stage);
 
-
-	    std::string covar_base_xml; 
-            bdt_covar covar_handle(&v, which_stage, stage_cut);
-	    if(outdir != "./")
-		covar_handle.SetOutputDir(outdir);
-	
-	    //generate det covar matrix 
-	    if(covar_det_template_xml == "null.xml")
-		covar_det_template_xml = "/uboone/app/users/gge/Hive/2023_hive/hive/xml/SBNfit_Integration_XMLS_Coherent/template_DetectorSys_1g0p_coherent_stage_1.xml";
-
-
-	    {
-		std::cout << "Use xml: " << covar_det_template_xml << " to generate detector systmatic covariance matrix" << std::endl;
-		covar_base_xml = covar_handle.PrepareXml(covar_det_template_xml, file_tag);
-		covar_handle.GenerateSingleDetCovar(covar_base_xml, additional_tag, file_tag);
-	    }
-		
-	    //merge all det var matrices
-            if(additional_tag == "Recomb2" ){
-	        std::vector<std::string> files_to_merge;
-
-		for(auto d : detsys)
-		    files_to_merge.push_back(outdir + file_tag + "_" + d + ".SBNcovar.root");
-	        std::string destination_file = outdir + file_tag + ".SBNcovar.root"; 
-		covar_handle.MergeCovar(files_to_merge, destination_file);		
-	    }
-
-            //in order to generate flux covar matrix together with det matrix, the "covarsys" or input systematic error string needs to be set to "fluxxsdet" (default behavior)
-            if(additional_tag == "Recomb2" && (systematics_error_string == FULL || covar_flux_template_xml !="null.xml")){
-		//if(covar_flux_template_xml !="null.xml")
-
-                //    covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
-		//else 
-		//    covar_handle.GenerateReweightingCovar();
-
-		//merge fluxxs and det covar matrix
+            //in order to generate flux covar matrix together with det matrix, the "covarsys" needs to be set to "fluxxsdet" (default behavior)
+            if(covar_flux_template_xml !="null.xml"){
+                std::cout<<"Going to make a flux covar equivalent"<<std::endl;
+                covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
+                std::cout<<"Going to merge det and fluxxs"<<std::endl;
                 covar_handle.MergeCovar();
             }
 
@@ -1952,6 +1942,7 @@ int main (int argc, char *argv[]){
             }
 	}
         }//end vars
+        std::cout<<"Ending makedetcovar. If you saw nothing in the middle, you probably have no variables in group."<<std::endl;
 
     }else if(mode_option == "export"){
 
@@ -2178,10 +2169,12 @@ int main (int argc, char *argv[]){
 
 
                     std::cout<<"Copying RunSubrunTree and POT (via friends)"<<std::endl;
-                    TTree * t_flat_pot_tree = (TTree*)bfile->tpot->CopyTree("1");
-                    TTree * t_flat_rs_tree = (TTree*)bfile->trs->CopyTree("1");
-                    t_flat_rs_tree->Write();
-                    t_flat_pot_tree->Write();
+                    if(false){
+                        TTree * t_flat_pot_tree = (TTree*)bfile->tpot->CopyTree("1");
+                        TTree * t_flat_rs_tree = (TTree*)bfile->trs->CopyTree("1");
+                        t_flat_rs_tree->Write();
+                        t_flat_pot_tree->Write();
+                    }
                     fout->Close();
 
                 }

@@ -426,6 +426,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 // Add systematic uncertainty band to the summed histogram 
 
                 //read provided covariance file to get covar matrix
+                std::cout<<"Loading Covariance File "<<var.GetCovarFile(s)<<std::endl;
                 TFile *covar_f = new TFile(var.GetCovarFile(s).c_str(),"read");
                 if(covar_f->IsZombie()){
 
@@ -516,7 +517,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
 
 
-            //            std::vector<double> ks_sum = data_file->getVector(var,s);
 
             double rmin = 0.0;
             double rmax = 2.1;
@@ -782,15 +782,11 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
                 if(!remove_to_merge[n]){
                     string_events = to_string_prec(Nevents+Nevents_save_for_later,leg_num_digits);
-                    if(b_signal_on_top){
-
-			//Guanqun: for internal plotting purpose, print out event prediction even with data overlaid
-                        //l0->AddEntry(h1,(f->plot_name).c_str(),leg_type.c_str());
-			l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
+                    if(isPublicPlot){
+                        l0->AddEntry(h1,(f->plot_name).c_str(),leg_type.c_str());
                     }else{
                         // Guanqun: add total count to the legend 
                         l0->AddEntry(h1,(f->plot_name+" "+string_events).c_str(),leg_type.c_str());
-                        //l0->AddEntry(h1,(f->plot_name).c_str(),leg_type.c_str());
                     }
 
                     Nevents_save_for_later =0;
@@ -811,18 +807,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
 
             if(var.has_covar && m_error_string!=STATS){
-                if(b_signal_on_top){
-                    //l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
-                    //l0->AddEntry(leg_hack,("Total Background and Error "+var.covar_legend_name).c_str() ,"fl"); // Was le
-                    l0->AddEntry(leg_hack,("Total Background: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
+
+                if(isPublicPlot){
+                    l0->AddEntry(leg_hack,("Total Background and Error "+var.covar_legend_name).c_str() ,"fl"); // Was le
                 }else{
                     l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
                 }
             }else{
-                if(b_signal_on_top){
-                    //l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
-                    l0->AddEntry(leg_hack,("Total Background: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
-                    //l0->AddEntry(leg_hack, "Total Background and MC Intrinsic Error " ,"fl"); // Was le
+                if(isPublicPlot){
+                    l0->AddEntry(leg_hack,("Total Background and Error "+var.covar_legend_name).c_str() ,"fl"); // Was le
                 }else{
                     l0->AddEntry(leg_hack,("Total Prediction: "+ to_string_prec(NeventsStack,leg_num_digits)).c_str(),"fl"); // Was le
                 }
@@ -1280,8 +1273,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             }
 
             double yypos = 0.38; //0.46 for pre and topo stage
-            double xxpos = 0.5;//0.5
-            if(stack_mode)xxpos=0.55;
+            double xxpos = legend_posx;//0.5;//0.5
+            if(stack_mode)xxpos= legend_posx+0.05;
 
             l0->Draw();
             l0->SetLineWidth(0);
@@ -1312,8 +1305,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             double pot_unit = 1e20;
             std::string pot_unit_s = "x10^{20}";
             std::string pot_draw = to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
-	    if(!stack_mode)
-		pot_draw = "Preliminary (" + pot_draw + ")";
+
             pottex.SetNDC();
 
             if (OTPC == true){
@@ -1344,27 +1336,10 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             descriptor_tex.SetTextSize(stack_mode ? 0.04 : 0.06);
             descriptor_tex.SetTextAlign(13);  //align at top
             descriptor_tex.SetNDC();
-            //Guanqun: comment out the legend showing "xxx selections"
-            //descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
-            //descriptor_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
-            //descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name+" Selection" ).c_str());
-            descriptor_tex.DrawLatex(xxpos,yypos+0.10, stage_names.at(s).c_str());
+            descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name ).c_str());
 
-            // Draw stage name. Added by A. Mogan 10/14/19
-            /*   TText *stage = drawPrelim(0.88, 0.92, stage_names.at(s) );
-                 stage->SetTextAlign(31); // Right-adjusted 
-                 stage->SetTextSize(0.04);
-                 stage->Draw();
-                 */
-            //   TLatex *stage = new TLatex(0.88, 0.92, stage_names.at(s).c_str());
-            //   TLatex *t = new TLatex(0.11,0.41,ks.c_str());
             TLatex stage;
             stage.SetNDC();
-            // t->SetTextColor(kRed-7);
-            // stage->SetTextFont(43);
-            // stage->SetTextSize(0.10);
-            //stage.DrawLatex(0.6, 0.92, stage_names.at(s).c_str());
-            //stage.DrawLatex(xxpos,yypos+0.05, stage_names.at(s).c_str());
 
             std::string prestring = (stack_mode ? "MicroBooNE Simulation": "MicroBooNE Preliminary");
 
@@ -1373,11 +1348,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             if (isSpectator) {
                 pre = drawPrelim(0.55,stack_mode? yypos+0.025: yypos,prestring.c_str());
                 if(stack_mode)pre2 = drawPrelim(0.44,yypos-0.02,"Preliminary");//0.6
-                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation");
-                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress");
-                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulaton - In Progress  [Spectator Variable]");
             }else {
-                //pre = drawPrelim(0.12,0.92,"MicroBooNE Simulation ");
                 if(OTPC){   
                     pre = drawPrelim(0.55,yypos-0.09,prestring.c_str());
                     if(stack_mode) pre2 = drawPrelim(0.625,yypos-0.13,"Preliminary");
@@ -1419,31 +1390,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 pad0bot->cd();       // pad0bot becomes the current pad
             }
 
-            /*
-               std::cout<<"BNLAR ";
-               std::vector<double> ptc = {7.7,16.9,11.6,4.3};
-               double ssum = 0;
-               double psum = 5.38+10.77;
-               for(auto s: ptc) ssum+=s;
 
-
-               for(auto &s: ptc) s = s/ssum*psum;
-
-               for(double mm =0.95; mm < 1.3; mm+=0.01){
-               double ahchi =0;
-               double ahchi_stats =0;
-               for(int l=0; l<tsum->GetNbinsX(); l++){
-            //                    std::cout<<tsum->GetBinContent(l+1)<<" "<<ptc[l]<<" "<<tsum->GetBinError(l+1)<<std::endl;
-            double err = sqrt(  pow(tsum->GetBinError(l+1) ,2) + tsum->GetBinContent(l+1));
-            double err_statonly = sqrt(tsum->GetBinContent(l+1));
-            ahchi += pow(tsum->GetBinContent(l+1)-mm*ptc[l],2)/pow(err,2);
-            ahchi_stats += pow(tsum->GetBinContent(l+1)-ptc[l],3)/pow(err_statonly     ,2); 
-            }
-            std::cout<<"Result: "<<mm <<" Chi "<<ahchi<<" "<<sqrt(ahchi)<<std::endl;
-            std::cout<<"Result: "<<mm <<" ChiStat "<<ahchi_stats<<" "<<sqrt(ahchi_stats)<<std::endl;
-            }
-            */
-            //tsum->Rebin(daaa_rebin);
             TH1* rat_denom = (TH1*)tsum->Clone(("ratio_denom_"+stage_names.at(s)).c_str());
             for(int i=0; i<rat_denom->GetNbinsX(); i++){
                 rat_denom->SetBinError(i,0.0);
@@ -1456,28 +1403,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             }
 
 
-            /* DEPRECIATED
-               TH1 * signal_hist = mc_stack->vec_hists[which_signal];
-               TH1* rat_signal = (TH1*)signal_hist->Clone(("ratio_signal_"+stage_names.at(s)).c_str());
-            //            rat_signal->Add(tsum);
-            //          rat_signal->Divide(tsum);
-            for(int b=0; b< rat_signal->GetNbinsX()+1; b++){
-            double val = (signal_hist->GetBinContent(b)+tsum->GetBinContent(b))/tsum->GetBinContent(b);
-            //std::cout<<b<<" "<<val<<" "<<tsum->GetBinContent(b)<<" "<<signal_hist->GetBinContent(b)<<std::endl;
-            if(val !=val) val = 0;
-            rat_signal->SetBinContent(b,val);
-            }
-            */
-
-            //  TH1* ratunit_after = (TH1*)tsum_after->Clone(("ratio_unitafter_"+stage_names.at(s)).c_str());
-
-            //   ratunit_after->Divide(rat_denom);		
-
-
             ratunit->SetFillColor(kGray+1);
             ratunit->SetMarkerStyle(0);
             ratunit->SetMarkerSize(0);
-            //   ratunit->SetFillStyle(3001);
             ratunit->SetFillStyle(3354);
             //gStyle->SetHatchesLineWidth(1);
             //gStyle->SetHatchesSpacing(1);
@@ -1493,8 +1421,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             if(!stack_mode)line->Draw("same");
             ratunit->SetLineColor(kBlack);
             ratunit->SetTitle("");
-            //ratunit->GetYaxis()->SetTitle("Data/(MC+EXT)");
-            //   ratunit->GetYaxis()->SetTitle(  (stack_mode ? "#splitline{Systematic}{Uncertainty}" : "Data/(MC+Cosmic)"));
             if(!stack_mode){
                 ratunit->GetYaxis()->SetTitle("Data/Prediction");
                 ratunit->GetXaxis()->SetTitle(var.unit.c_str());
@@ -1542,7 +1468,6 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
             }
 
-            //TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_high[0],&err_y_low[0]);
             TGraphAsymmErrors * gr = new TGraphAsymmErrors(x.size(),&x[0],&y[0],&err_x_left[0],&err_x_right[0],&err_y_low[0],&err_y_high[0]);
 
             //gr->Divide(d0,tsum,"pois");
@@ -1635,21 +1560,13 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 t->Draw("same");
             }
 
-            //var_precut.front()->GetYaxis()->SetRangeUser(0.1,ymax_pre);
-            //var_precut.front()->GetYaxis()->SetTitle("Events");
-
-
-
             std::cout<<"Writing pdf."<<std::endl;
             cobs->Write();
             if(stack_mode){
                 cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".pdf").c_str(),"pdf");
-                // cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".root").c_str(),"root");
-                // cobs->SaveAs(("stack/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
             }else{
                 cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+tago+".pdf").c_str(),"pdf");
             }
-            //cobs->SaveAs(("datamc/"+tag+"_"+data_file->tag+"_"+var.safe_unit+"_stage_"+std::to_string(s)+".png").c_str(),"png");
 
 
 
@@ -2122,27 +2039,6 @@ void bdt_datamc::scaleNorm(std::vector<bdt_variable> var, std::vector<bdt_file*>
 return;
 }
 
-// Added 5/12/20 by A. Mogan
-/*
-   TMatrixD CalcCovarianceMatrixCNP(TMatrixD *M, std::vector<double> spec, const std::vector<double> datavec ) {
-
-   TMatrixT<double> Mout(M->GetNcols(), M->GetNcols() );
-
-   for(int i =0; i<M->GetNcols(); i++)
-   {
-   for(int j =0; j<M->GetNrows(); j++)
-   {
-   if(std::isnan( (*M)(i,j) )){
-   Mout(i,j) = 0.0;
-   }else{
-   Mout(i,j) = (*M)(i,j)*spec[i]*spec[j];
-   }
-   if(i==j) Mout(i,i) +=   ( datavec[i] >0.001 ? 3.0/(1.0/datavec[i] +  2.0/spec[i])  : spec[i]/2.0 );
-   }
-   }
-   return Mout;
-   }
-   */
 
 
 

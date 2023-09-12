@@ -61,13 +61,15 @@ class bdt_datamc{
         bool plot_lee_on_top;
         bool div_bin;
         double div_scale;
-        
+        bool isPublicPlot = false; 
         std::vector<bool> subtraction_vec;
         std::vector<bool> merge_down_vec;
 
-        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string=STATS;additional_pdf_tag="";  scale_signal_overlay =false; plot_lee_on_top=false; div_bin=false;};
-        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1;stack_mode=false; m_error_string=STATS; additional_pdf_tag="";  scale_signal_overlay =false;plot_lee_on_top = false; div_bin=false;};
-        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string=STATS; additional_pdf_tag = ""; scale_signal_overlay =false; plot_lee_on_top=false;div_bin = false; };
+        double legend_posx;
+
+        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin) : data_file(datafilein), mc_stack(stackin) {tag = "null";is_bdt_variable=false; do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string=STATS;additional_pdf_tag="";  scale_signal_overlay =false; plot_lee_on_top=false; div_bin=false; legend_posx = 0.5;};
+        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {is_bdt_variable = false; do_subtraction=false;plot_stage=-1;stack_mode=false; m_error_string=STATS; additional_pdf_tag="";  scale_signal_overlay =false;plot_lee_on_top = false; div_bin=false; legend_posx = 0.5;};
+        bdt_datamc(bdt_file* datafilein, bdt_stack* stackin, std::string tagin, bdt_info infoin) : data_file(datafilein), mc_stack(stackin), tag(tagin) {do_subtraction=false;plot_stage=-1;stack_mode=false;m_error_string=STATS; additional_pdf_tag = ""; scale_signal_overlay =false; plot_lee_on_top=false;div_bin = false; legend_posx = 0.5;};
 
         int setErrorString(std::string in){m_error_string = in; return 0;}
 
@@ -75,6 +77,18 @@ class bdt_datamc{
             merge_down_vec =merin;
             return 0;
         }
+
+        int setLegendPos(double in){
+            legend_posx = in!=-999 ? in : legend_posx;
+            return 0;
+        }
+
+
+        int setPublicPlot(bool inval){
+            isPublicPlot = inval;
+            return 0;
+        }
+
 
         int setPlotStage(int s){
             plot_stage =s;
