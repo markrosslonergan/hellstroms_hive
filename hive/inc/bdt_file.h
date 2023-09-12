@@ -112,7 +112,8 @@ public:
 
     void LinkWithTTree(TTree* tree);
     void DelinkTTree(TTree* tree);
-    double Evaluate(int index);
+    void WriteToFile(TFile* file);
+    double Evaluate(int index=0);
     std::string GetName() const {return name;}
     std::string GetDef() const {return def;}
     bool IsInt() const {return type == int_type;}
@@ -174,6 +175,12 @@ struct bdt_file{
         double pot;
         bool m_weightless;
 
+	// numbers used to manually determine the POT of bdt file
+  	bool manual_POT_norm;
+ 	double reference_event_count;
+	double reference_pot;
+
+
         TFile *f;
         TTree *tvertex = NULL;
         std::string primary_ttree_name;
@@ -223,14 +230,21 @@ struct bdt_file{
 	/* Generate flat file for clusters in the event and save cluster info for every cluster
 	 * Note: in the flat file, each cluster corresponds to one entry
 	 * Note: for event with no clusters, one entry will be created and saved with `-1` value  
+	 *
+	 * Parameters:
+	 * 	fout: TFile pointer of the output file, which the flat tree will be written into
+	 * 	variable_list:   list of variables which will be flattened and write into output file
+	 * 	treename:	 name of the output TTree
+	 * 	optional_helper_variable_name: name of vector variable. Optional
+	 * 	filter_cut:      cuts applied to events. Note only clusters of events passing this filter cut will be saved.
 	 */
-        void MakeFlatTree(TFile * fout, std::vector<FlatVar>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name);
+        void MakeFlatTree(TFile * fout, std::vector<FlatVar>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name="DefaultNone", const std::string& filter_cut="1", bool remove_train = false);
 
 	/* Generate a flat file for clusters
  	 * Note: unlike saving cluster info, this function evaluate if event passes given cut, and save this information for all clusters in the event 
 	 * Note: for event with no clusters, one entry will be created and saved with `-1` value   <--- correponding to MakeFlatTree() function
  	 */
-	void MakeFlatFriend(TFile *fout, const std::string& treename, const std::string& cut, const std::string& num_candidate_var);
+	void MakeFlatFriend(TFile *fout, const std::string& treename, const std::string& cut, const std::string& cut_name, const std::string& num_candidate_var);
 
 	/* set the TTree entrylist for given stage j
 	 * If external bdt cuts are given, use extenal cuts instead
@@ -332,7 +346,7 @@ struct bdt_file{
         std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
         std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 
-        int addFriend(std::string in_friend_tree_nam, std::string in_friend_file);
+        int addFriend(const std::string& in_friend_tree_nam, const std::string& in_friend_file);
         int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
         int addBDTResponses(bdt_info input_bdt_info);
 
@@ -381,9 +395,12 @@ struct bdt_file{
 	/* get the plot name for all analysis stages */
 	std::vector<std::string> getStageNames() const;
 
+	/* set up quantities needed for manual POT normalization */
+	void setRefPOT(double incount, double inpot);
+
         int writeStageFriendTree(std::string nam,double,double);
-        int addPlotName(std::string plotin);
-        int addDataDescriptor(std::string pin){ data_descriptor = pin;}
+        int addPlotName(const std::string& plotin);
+        int addDataDescriptor(const std::string& pin){ data_descriptor = pin;}
         int setTColor(TColor &);
         TColor f_TColor;
 };

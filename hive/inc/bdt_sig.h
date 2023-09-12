@@ -58,16 +58,17 @@
 
         /* Function: scan linear grid of cuts for all BDTs, find set of cuts with highest Chi-square, taking into consideration of systematic uncertainty 
  	 * Return: cut position with the highest chi-square
- 	 * Note: fixed fractional covariance matrix is used to evaluate chi2 values for all grid points
  	 * Argument: stack - marks the MC predictions of all subchannels
- 	 * Argument: fixed_frac_matrix - input fractional covariance matrix 
  	 * Argument: var - varaible to perform sensitivity calculation with 
+ 	 * Argument: external_bdt_cuts: This marks a selection, with which  a fractional covariance matrix will be constructed, and then used for chi2 sensitivity evaluation for all grid points    
  	 * Argument: plot_pot - POT at which sensitivity is evaluated with 
- 	 * Argument: external_bdt_cuts: This marks a selection, with which  a fractional covariance matrix will be calculated, and then used for chi2 sensitivity evaluation for all grid points    
+ 	 * Argument: signal_scale  - scaling factor applied only to signal files
  	 */
-        std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, TMatrixT<double>* fixed_frac_matrix, double plot_pot, std::string pdfname = "CHIS_SYS.pdf", double signal_scale=1.0);
-	std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, std::string pdfname = "CHIS_SYS.pdf" , double signal_scale=1.0);
-	std::vector<double> scan_chisquare_stat(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, std::string pdfname = "CHIS_SYS.pdf", double signal_scale=1.0);
+	std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, std::string pdfname = "CHIS_SYS" , double signal_scale=1.0);
+	std::vector<double> scan_chisquare_sys_iterative(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, std::string pdfname = "CHIS_SYS", double signal_scale = 1.0, int num_iter = 5, bool stats_only = false);
+	std::vector<double> scan_chisquare_stat(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, std::string pdfname = "CHIS_STAT", double signal_scale=1.0);
+
+
 
         /* Function: similar to function "scan_significance_sys_fixed", but instead of scaning linear grid setup by BDTinfos in the xmls, randomly choose cut positions within ranges.  
  	 * Return: cut position with the highest chi-square
@@ -119,6 +120,9 @@
  	 */
 	std::vector<double> scan_significance(TFile * fout, std::vector<bdt_file*> sig_files, std::vector<bdt_file*> bkg_files, bdt_info cosmic_cut, bdt_info bnb_cut);
 
+	//############################################################
+	//----------- BELOW ARE INTENDED FOR INTERNAL FUNCTION -------
+	//############################################################
 
 	/* Function: Return the name of the significance type */
 	std::string significance_name(int sig_type);
@@ -168,4 +172,20 @@
 	 * 	     ...
 	 */
 	double round_to(double value, double precision = 1.0);
+
+
+        /* Function: scan grid of cuts for all BDTs, find set of cuts with highest Chi-square, taking into consideration of systematic uncertainty 
+ 	 * Return: cut position with the highest chi-square
+ 	 * Note: fixed fractional covariance matrix is used to evaluate chi2 values for all grid points
+ 	 * Argument: stack - marks the MC predictions of all subchannels
+ 	 * Argument: chi_handle - SBNchi pointers, required for covariance matrix inversion and chi-calculation
+ 	 * Argument: var - varaible to perform sensitivity calculation with 
+ 	 * Argument: bdt_scan_pts - 2D vector, where each 1D vector represents different cut potisionts for each BDT
+ 	 * Argument: max_pts - total number of different BDT cut combinations
+ 	 * Argument: fixed_frac_matrix - input fractional covariance matrix 
+ 	 * Argument: plot_pot - POT at which sensitivity is evaluated with 
+ 	 * Argumnet: stage - stage of the analysis, usually should be Num_BDT + 1
+ 	 * Argument: signal_scale  - scaling factor applied only to signal files
+ 	 */
+	std::vector<std::vector<double>> chisquare_grid_scan_sys_fixed(sbn::SBNchi* chi_handle, bdt_stack* stack,  bdt_variable var, std::vector<std::vector<double>>& bdt_scan_pts, int max_pts, TMatrixT<double>* fixed_frac_matrix, int stage, double plot_pot, double signal_scale);
 #endif

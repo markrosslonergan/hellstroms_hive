@@ -28,8 +28,9 @@ if (CMAKE_VERSION VERSION_LESS "3.1")
           set (CMAKE_CXX_FLAGS "--std=c++17 ${CMAKE_CXX_FLAGS}")
     endif ()
     else ()
-	  set (CMAKE_CXX_STANDARD 14)
+          set (CMAKE_CXX_STANDARD 14)
 endif ()
+
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 #This works if your root as compiled with cmake, 

@@ -117,7 +117,7 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2, st
     //std::cout<<"Summed: "<<summed->GetSumOfWeights()<<std::endl;
     for(int t=1; t<stack.size(); t++){
         if(!signal_on_top[t]){
-    	    TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "summed_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot, stack_rebin);
+    	    TH1* hist = (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "summed_"+stack.at(t)->tag+"_"+var.safe_name+"_"+var.GetID(), plot_pot, stack_rebin);
             summed->Add(hist);
             for(int i=0; i<hist->GetNbinsX(); i++){
                 full.push_back(hist->GetBinContent(i+1));
@@ -184,7 +184,7 @@ TH1* bdt_stack::getSum(bdt_variable var, int level, double cut1, double cut2){
 
 
 std::vector<double> bdt_stack::getEntryFullVector(bdt_variable var, bool skip_signal, double signal_scale){
-    return this->getFullVector(var, -2, {}, skip_signal, signal_scale);
+    return this->getFullVector(var, 0, {}, skip_signal, signal_scale);
 }
 
 std::vector<double> bdt_stack::getFullVector(bdt_variable var, int stage, const std::vector<double>& cuts, bool skip_signal, double signal_scale, std::string additional_cut){
@@ -295,7 +295,7 @@ THStack* bdt_stack::getStack(bdt_variable var, int level, double cut1, double cu
     for(int t=0; t<stack.size(); t++){
         std::cout<<"Stack "<<stack.at(t)->tag<<" level "<<t<<std::endl;
 
-        vec_hists.push_back( (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name, plot_pot,stack_rebin));
+        vec_hists.push_back( (TH1*)stack.at(t)->getTH1(var, stack.at(t)->getStageCuts(level,cut1, cut2), "stack_"+stack.at(t)->tag+"_"+var.safe_name+"_"+var.GetID(), plot_pot,stack_rebin));
         
         if(skip_signal && signal_on_top[t]){
             vec_hists.back()->Reset();
