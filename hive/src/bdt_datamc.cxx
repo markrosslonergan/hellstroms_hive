@@ -422,6 +422,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
                 // Add systematic uncertainty band to the summed histogram 
 
                 //read provided covariance file to get covar matrix
+                std::cout<<"Loading Covariance File "<<var.GetCovarFile(s)<<std::endl;
                 TFile *covar_f = new TFile(var.GetCovarFile(s).c_str(),"read");
                 if(covar_f->IsZombie()){
 
@@ -1244,8 +1245,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             }
 
             double yypos = 0.38; //0.46 for pre and topo stage
-            double xxpos = 0.5;//0.5
-            if(stack_mode)xxpos=0.55;
+            double xxpos = legend_posx;//0.5;//0.5
+            if(stack_mode)xxpos= legend_posx+0.05;
 
             l0->Draw();
             l0->SetLineWidth(0);
@@ -1275,7 +1276,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             //std::string pot_unit_s = stack_mode ? "e20" : "e19";
             double pot_unit = 1e20;
             std::string pot_unit_s = "x10^{20}";
-            std::string pot_draw = "Preliminary ("+to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT)";
+            std::string pot_draw = to_string_prec(plot_pot/pot_unit,2)+ pot_unit_s+" POT";
             pottex.SetNDC();
 
             if (OTPC == true){
@@ -1309,7 +1310,7 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             //descriptor_tex.DrawLatex(0.55,0.66,("Selection "+ data_file->topo_name).c_str());
             //descriptor_tex.DrawLatex(0.50,yypos+0.16,("Selection "+ data_file->topo_name).c_str());
             //Guanqun: comment out the legend showing "xxx selections"
-            descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name+" Selection" ).c_str());
+            descriptor_tex.DrawLatex(xxpos,yypos+0.02,(data_file->topo_name ).c_str());
             //descriptor_tex.DrawLatex(xxpos,yypos+0.02,(plot_stage == 0 ? "Topological Selection Stage" : (plot_stage == 1 ? "Pre-selection Stage" : (plot_stage == 5 ? "Final Selection": " "))));
 
             // Draw stage name. Added by A. Mogan 10/14/19

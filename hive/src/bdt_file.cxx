@@ -372,8 +372,8 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     double potbranch = 0;
     int  numbranch = 0;
 
-    std::cout<<"Getting slice tree, a bit old: "<<tnam_slice<<std::endl;
-    tslice = (TTree*)f->Get(tnam_slice.c_str());
+//    std::cout<<"Getting slice tree, a bit old: "<<tnam_slice<<std::endl;
+    //tslice = (TTree*)f->Get(tnam_slice.c_str());
     std::cout<<"And run_subrun tree "<<tnam_rs<<std::endl;
     trs = (TTree*)f->Get(tnam_rs.c_str());    
     std::cout<<"Done with both"<<std::endl;
@@ -1470,7 +1470,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     std::cout<<"With external cuts "<<external_cuts<<std::endl;
     std::cout<<"masterRSE list for training has "<<masterRSElist.f_rses.size()<<" rse's"<<std::endl;
     this->teventweight->AddFriend(this->tvertex);
-    this->tslice->AddFriend(this->tvertex);
+    //this->tslice->AddFriend(this->tvertex);
     if(true_eweight_exist) this->ttrueeventweight->AddFriend(this->tvertex);
 
     std::vector<TFile*> f_sbnfit_friend_files;
@@ -1514,8 +1514,8 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     TTree * t_sbnfit_rs_tree = (TTree*)this->trs->CopyTree("1");
     std::cout<<"Copying eventweight tree (via friends)"<<std::endl;
     TTree * t_sbnfit_eventweight_tree = (TTree*)this->teventweight->CopyTree(sbnfit_cuts.c_str());
-    std::cout<<"Copying Slice tree with cut : "<<sbnfit_cuts<<std::endl;
-    TTree * t_sbnfit_slice_tree = (TTree*)this->tslice->CopyTree(sbnfit_cuts.c_str());
+    //std::cout<<"Copying Slice tree with cut : "<<sbnfit_cuts<<std::endl;
+    //TTree * t_sbnfit_slice_tree = (TTree*)this->tslice->CopyTree(sbnfit_cuts.c_str());
 
     TTree * t_sbnfit_trueeventweight_tree;
     if(true_eweight_exist){
@@ -1694,7 +1694,7 @@ int bdt_file::makeSBNfitFile(const std::string &analysis_tag, const std::vector<
     t_sbnfit_rs_tree->Write();
     t_sbnfit_eventweight_tree->Write(); 
     if(true_eweight_exist) t_sbnfit_trueeventweight_tree->Write(); 
-    t_sbnfit_slice_tree->Write();
+//    t_sbnfit_slice_tree->Write();
     t_sbnfit_simpletree.Write();
     for(int k=0; k<  t_sbnfit_friends.size(); k++){
         t_sbnfit_friends[k]->Write(); 

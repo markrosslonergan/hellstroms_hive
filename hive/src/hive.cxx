@@ -92,6 +92,7 @@ int main (int argc, char *argv[]){
     bool plot_train_only = false;
     bool run1_only = false;
     bool use_xrootd = false;
+    double legend_posx = -999;
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -118,6 +119,7 @@ int main (int argc, char *argv[]){
         {"extxml",      required_argument,  0, 'X'},
         {"extapp",      required_argument,  0,  'w'},
         {"weightless",	no_argument,	0, 'W'},
+        {"legend", required_argument, 0 , 'N'},
         {"systematics",	required_argument,	0, 'y'},
         {"vector",      required_argument,  0, 'v'},
         {"divbin",      required_argument,  0, 'e'},
@@ -137,7 +139,7 @@ int main (int argc, char *argv[]){
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:T:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWLRPjh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "w:x:X:o:u:d:D:s:f:F:U:T:q:y:m:t:p:b:i:n:g:v:c:e:azkrlWLRNPjh?", longopts, &index);
 
         switch(iarg)
         {
@@ -160,6 +162,9 @@ int main (int argc, char *argv[]){
             case 'e':
                 div_bin = true;
                 div_scale = strtof(optarg,NULL);
+                break;
+            case 'N':
+                legend_posx = strtof(optarg,NULL);
                 break;
             case 'c':
                 external_cuts = optarg;
@@ -300,6 +305,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t--divbin\t\tDivide by binwidth, 1 argument of the div scale "<<std::endl;
                 std::cout<<"\t--lee\t\tPlots a x3.18 LEE on top"<<std::endl;
                 std::cout<<"\t--scale\t\tScales the signal up to data-sized "<<std::endl;
+                std::cout<<"\t--legend\t\tinput double for x position of legend"<<std::endl;
                 std::cout<<"\t--run1\t\tPlots Run1 Only"<<std::endl;
                 std::cout<<"\t--xrootd\t\tUse XrootD to open root files"<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
@@ -873,6 +879,7 @@ int main (int argc, char *argv[]){
                 datamc.setMergeDown(mergeDownVector);
                 datamc.setErrorString(systematics_error_string);
                 datamc.setPublicPlot(isPublicPlot);
+                datamc.setLegendPos(legend_posx);
 
                 if(signal_scale_on_top)datamc.setScaledSignal();
                 if(lee_on_top)datamc.setLEEonTop();
@@ -918,7 +925,8 @@ int main (int argc, char *argv[]){
                 real_datamc.setMergeDown(mergeDownVector);
                 real_datamc.setErrorString(systematics_error_string);
                 real_datamc.setPublicPlot(isPublicPlot);
-                
+                real_datamc.setLegendPos(legend_posx);
+
                 if(signal_scale_on_top)real_datamc.setScaledSignal();
                 if(lee_on_top)real_datamc.setLEEonTop();
                 if(div_bin)real_datamc.setDivBin(div_scale);

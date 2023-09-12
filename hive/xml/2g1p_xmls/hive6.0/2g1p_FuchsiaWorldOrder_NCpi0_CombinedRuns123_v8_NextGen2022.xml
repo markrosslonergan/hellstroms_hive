@@ -594,7 +594,7 @@
 <var def = "(#RPIE#)" binning="(100,0,2000)" unit = "Reconstructed PION energy [MeV]" type = "d"   training ="" group="707" />
 <var def = "(#RPRE#) " binning="(100,0,2000)" unit = "Reconstructed PROTON energy [MeV]" type = "d"   training ="" group="707" />
 
-
+<var def = "reco_track_proton_kinetic_energy[0]" binning="(50,0,0.5)" unit = "Proton KE energy (range based) [GeV]" type ="d" training = "" group= "303"/>
 
 <!-- ================= Efficiency  ======================== -->
 
