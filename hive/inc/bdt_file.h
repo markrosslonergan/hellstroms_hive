@@ -20,6 +20,7 @@
 #include  "bdt_var.h"
 #include  "bdt_info.h"
 #include  "method_struct.h"
+#include  "duplicate_suite_2022.h"
 /******** Root includes *****/
 
 #include "TTreeFormula.h"
@@ -77,9 +78,8 @@ std::vector<size_t> sort_indexes(const std::vector<T> &v) {
     return idx;
 }
 
-
-
-std::vector<TMatrixT<double>> splitNormShape(TMatrixT<double> & Min,std::vector<double>&vin);
+std::string convertToXRootD(std::string fname_orig);
+std::vector<TMatrixT<double>> splitNormShapeCopy(TMatrixT<double> & Min,std::vector<double>&vin);
 int removeSubStrings(std::string &, std::string&);
 
 TText * drawPrelim(double x, double y);
@@ -112,7 +112,8 @@ public:
 
     void LinkWithTTree(TTree* tree);
     void DelinkTTree(TTree* tree);
-    double Evaluate(int index);
+    void WriteToFile(TFile* file);
+    double Evaluate(int index=0);
     std::string GetName() const {return name;}
     std::string GetDef() const {return def;}
     bool IsInt() const {return type == int_type;}
@@ -132,6 +133,8 @@ struct bdt_file{
 
         std::string data_descriptor;
 
+        //legacy check for things like true_eventweight
+        bool is_legacy;
 
         std::string weight_branch;
         std::string global_weight_string;
@@ -160,7 +163,8 @@ struct bdt_file{
         bool is_data;
         bool is_bnbext;
         bool is_mc;
-
+ 	bool is_signal;
+	bool use_xrootd;
 
         std::string leg;
 
@@ -170,6 +174,12 @@ struct bdt_file{
         int numberofevents_raw;
         double pot;
         bool m_weightless;
+
+	// numbers used to manually determine the POT of bdt file
+  	bool manual_POT_norm;
+ 	double reference_event_count;
+	double reference_pot;
+
 
         TFile *f;
         TTree *tvertex = NULL;
@@ -220,14 +230,21 @@ struct bdt_file{
 	/* Generate flat file for clusters in the event and save cluster info for every cluster
 	 * Note: in the flat file, each cluster corresponds to one entry
 	 * Note: for event with no clusters, one entry will be created and saved with `-1` value  
+	 *
+	 * Parameters:
+	 * 	fout: TFile pointer of the output file, which the flat tree will be written into
+	 * 	variable_list:   list of variables which will be flattened and write into output file
+	 * 	treename:	 name of the output TTree
+	 * 	optional_helper_variable_name: name of vector variable. Optional
+	 * 	filter_cut:      cuts applied to events. Note only clusters of events passing this filter cut will be saved.
 	 */
-        void MakeFlatTree(TFile * fout, std::vector<FlatVar>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name);
+        void MakeFlatTree(TFile * fout, std::vector<FlatVar>& variable_list, const std::string& treename, const std::string& optional_helper_variable_name="DefaultNone", const std::string& filter_cut="1", bool remove_train = false);
 
 	/* Generate a flat file for clusters
  	 * Note: unlike saving cluster info, this function evaluate if event passes given cut, and save this information for all clusters in the event 
 	 * Note: for event with no clusters, one entry will be created and saved with `-1` value   <--- correponding to MakeFlatTree() function
  	 */
-	void MakeFlatFriend(TFile *fout, const std::string& treename, const std::string& cut, const std::string& num_candidate_var);
+	void MakeFlatFriend(TFile *fout, const std::string& treename, const std::string& cut, const std::string& cut_name, const std::string& num_candidate_var);
 
 	/* set the TTree entrylist for given stage j
 	 * If external bdt cuts are given, use extenal cuts instead
@@ -260,6 +277,11 @@ struct bdt_file{
         double ext_spills_ext;
         double N_samweb_ext;
 
+ 	/* Function: set the bdt_file as a signal input, for the purpose of calculating significance */
+	void setAsSignal();
+
+	/* Function: check whether this bdt_file is a signal input */
+	bool IsSignal() const;
         int setAsMC();
         int setAsOverlay();
         int setAsOnBeamData(double in_tor860_wcut);
@@ -272,6 +294,8 @@ struct bdt_file{
         int makeWeightless(){
             m_weightless = true;
         }
+
+        int setAsLegacy(){is_legacy=true; return 0;}
 
         int makeRunSubRunList();
 
@@ -286,6 +310,9 @@ struct bdt_file{
         bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, std::string addtional_weight, bdt_flow inflow);
         bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string addtional_weight,bdt_flow inflow);
         bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string addtional_weight, bdt_flow inflow, std::string inttree );
+        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, std::string addtional_weight, bdt_flow inflow, bool inuse_xrootd);
+        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string addtional_weight,bdt_flow inflow, bool inuse_xrootd);
+        bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, int incol, int infillstyle, std::string addtional_weight, bdt_flow inflow, std::string inttree, bool inuse_xrootd);
    
         //legacy code OBSOLETE
         //bdt_file(std::string indir,std::string inname, std::string intag, std::string inops, std::string inrootdir, std::string infriend, std::string infriendtree, int incol, bool indata);	
@@ -319,7 +346,7 @@ struct bdt_file{
         std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT);
         std::vector<TH1*> getRecoMCTH1(bdt_variable var, std::string cuts, std::string nam, double plot_POT, int rebin);
 
-        int addFriend(std::string in_friend_tree_nam, std::string in_friend_file);
+        int addFriend(const std::string& in_friend_tree_nam, const std::string& in_friend_file);
         int addBDTResponses(bdt_info cosmic_bdt_info, bdt_info bnb_bdt_info,   std::vector<method_struct> TMVAmethods);
         int addBDTResponses(bdt_info input_bdt_info);
 
@@ -332,7 +359,7 @@ struct bdt_file{
  	 * Note: bdt scores of events are saved in simple_tree, and all trees in original bdt file and their friend trees will also be saved 
  	 */
         int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot);
-        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot,std::string external_cuts, std::string dir);
+        int makeSBNfitFile(const std::string &analysis_tag, const std::vector<bdt_info>& bdt_infos, int which_stage, const std::vector<double> & fbdtcuts, const std::string & inpu, const std::vector<bdt_variable> &vars ,const double splot_pot,std::string external_cuts, std::string dir,runlist & masterRSE);
 
 
 	/* create a sbnfit file with events that passing given stage
@@ -349,6 +376,8 @@ struct bdt_file{
 
 	/* get cuts for given stage, use the bdt cuts embedded locally
  	 * This is file specific, ie, the cut will include definition cut for the file 
+ 	 * Note: see function GetStageCuts() in bdt_flow.h for details
+ 	 * Note: special case: when stage < -1, it will return "1" instead. 
  	 */
         std::string getStageCuts(int stage);
 
@@ -357,6 +386,7 @@ struct bdt_file{
  	 * This is not file-specific, ie, the cut doens't include definition cut, and is applicable for all files 
  	 */
         std::string getGeneralStageCuts(int stage);
+        std::string getGeneralStageCuts(int stage, const std::vector<double>& external_bdt_cuts, bool for_sbnfit = false);
 
 	/* get cuts for given stage, use the bdt cuts provided in arguments */
         std::string getStageCuts(int stage, double bdtvar1, double bdtvar2);
@@ -365,9 +395,12 @@ struct bdt_file{
 	/* get the plot name for all analysis stages */
 	std::vector<std::string> getStageNames() const;
 
+	/* set up quantities needed for manual POT normalization */
+	void setRefPOT(double incount, double inpot);
+
         int writeStageFriendTree(std::string nam,double,double);
-        int addPlotName(std::string plotin);
-        int addDataDescriptor(std::string pin){ data_descriptor = pin;}
+        int addPlotName(const std::string& plotin);
+        int addDataDescriptor(const std::string& pin){ data_descriptor = pin;}
         int setTColor(TColor &);
         TColor f_TColor;
 };

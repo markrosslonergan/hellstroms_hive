@@ -59,6 +59,8 @@ struct bdt_info{
 	int setSignalDefinition(std::string in){ signal_definition = in; return 0;}; 
 	int setBackgroundDefinition(std::string in){ background_definition = in; return 0;}; 
 
+	std::string getName() const {return name;}
+
 };
 
 #endif

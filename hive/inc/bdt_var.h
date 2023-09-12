@@ -27,15 +27,17 @@
 struct bdt_variable{
 
 	public:
-		std::string name;
+
+ 	static std::string math_op_character;
+	std::string name;
         int id;
-		int cat;
+	int cat;
         std::string safe_name;
-		std::string binning;
-		std::string unit;
-		std::string safe_unit;
-		bool is_track;
-		std::string type;
+	std::string binning;
+	std::string unit;
+	std::string safe_unit;
+	bool is_track;
+	std::string type;
         bool is_logplot;
         bool has_covar;
         bool is_spectator;
@@ -58,231 +60,87 @@ struct bdt_variable{
         std::vector<double> edges;
         std::vector<double> low_edges;
 
-        int addCovar(std::string name, std::string dir, std::string file){
-            has_covar=true;
-            covar_name = name;
-	    covar_dir = dir;
-            covar_file = file;
-            return 0;
-        }
 
-		bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack, std::string intype) : bdt_variable(inname,inbin,inunit,intrack,intype,-1){}; 
-		
-        bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack, std::string intype,int in_id) : 
-			name(inname), 
-			binning(inbin),
-			unit(inunit),
-			is_track(intrack),
-			type(intype),
-            id(in_id),
-            is_logplot(false)
-		{
-            plot_min =-999;
-            plot_max =-999;
-			safe_name = name;
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '('), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ')'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '\\'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '/'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '['), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ']'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '+'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '-'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '*'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '.'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ' '), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ','), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '|'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), ':'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '#'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '{'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '}'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '^'), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '='), safe_name.end());
-			safe_name.erase(std::remove(safe_name.begin(), safe_name.end(), '$'), safe_name.end());
+ 	// constructors 
+	bdt_variable(){}
+	bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack);
+	bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack, std::string intype); 
+        bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack, std::string intype,int in_id);
+
+
+	//---------- Member Functions ------------
 	
-           	safe_unit = unit;
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ' '), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '('), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ')'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '\\'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '/'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '['), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ']'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '+'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '-'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '*'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '|'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), ':'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '#'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '{'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '}'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '^'), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '='), safe_unit.end());
-			safe_unit.erase(std::remove(safe_unit.begin(), safe_unit.end(), '$'), safe_unit.end());
+	// Func: return bin edges of the variable
+        std::string GetBinEdges() const;
+	int GetNBins() const {return n_bins;}
 
-            has_covar = false;
+	// Func: return the unit of variable (usually used for x axis title)	
+	std::string GetVarUnit() const {return unit;}
 
-            std::string bins = binning;
-            edges.clear();
-            
-            bool alt_mode = bins.find("alt")!=std::string::npos;
-            if(alt_mode){
-                std::cout<<"applying custom binning with config: "<<std::endl;
-                int pl = bins.find("alt");
-                bins.erase(pl,pl+3);
-            }
+	// Func: return varaible definition 
+   	std::string GetVarDef() const; 
+	std::string GetVarSimpleDef() const; //Note: add "simple_" in front of BDT score variables
+
+	// Func: return additional cut associated with this variable
+	std::string GetAdditionalCut() const;
+
+	// Func: same as GetAdditionalCut() function, return additional cut associated with this variable
+	// Note: add "simple_" in front of BDT score variables
+	std::string GetSimpleAdditionalCut() const;
 
 
-            bins.erase(std::remove(bins.begin(), bins.end(), '('), bins.end());
-            bins.erase(std::remove(bins.begin(), bins.end(), ')'), bins.end());
-
-            size_t pos = 0;
-            std::string delim = ",";
-            std::string token;
-            n_bins = -1;
-
-            while ((pos = bins.find(delim)) != std::string::npos) {
-                token = bins.substr(0, pos);
-                if(n_bins<0 &&!alt_mode) n_bins = (int)std::stod(token);
-                edges.push_back(std::stod(token));
-                bins.erase(0, pos + delim.length());
-            }
-            edges.push_back(std::stod(bins));
-
-            if(alt_mode){
-                n_bins = edges.size()-1;
-                low_edges = edges;
-                edges = {(double)n_bins, low_edges.front(), low_edges.back()};
-            }else{
-                double elow = edges[1];
-                double ehigh = edges[2];
-                double ediff = ehigh-elow;
-                double estep = ediff/(double)n_bins;
-                for(int i=0; i<=n_bins;i++){
-                    low_edges.push_back(elow+i*estep);
-                }
-            }
-
-	    update_def();
-            /*std::cout<<"Nbin "<<n_bins<<std::endl;
-            std::cout<<"edges "<<std::endl;
-            for(auto &v: edges) std::cout<<v<<std::endl;
-
-            std::cout<<"Low edges "<<std::endl;
-            for(auto &v: low_edges) std::cout<<v<<std::endl;
-            */
-           //low_edges = {0,0.15,0.225,0.3,0.375,0.45,0.6}; 
-           //low_edges = {0.1,  0.2, 0.25, 0.3, 0.35, 0.4 ,0.45, 0.5, 0.55, 0.6, 0.7};
-           // low_edges = {0, 0.075, 0.15, 0.225, 0.3, 0.375, 0.45, 0.525, 0.6, 0.675,  0.9};           
-		}
-
-
-		bdt_variable(){}
-
-		bdt_variable(std::string inname, std::string inbin, std::string inunit,bool intrack) : 
-			name(inname), 
-			binning(inbin),
-			is_track(intrack),
-			unit(inunit)
-	{ 
-                plot_min =-999;
-            plot_max =-999;
-            cat = 0;
-
-	     update_def();
-	}
-
-	//---- function that I'd like to use only internally ----
+	// Func: return the unique hash of the variable, see function get_unique_jenkins_hash() for how hash is defined.
+	std::string GetID();
 	
-	void update_def(){
-	    if(name.find("_mva") != std::string::npos)
-		name = "simple_"+name;
-	    return;
-  	}
+	// Func: return fileid tag for the variable, with associated systematic string 
+	std::string GetCovarFileID(int stage);
 
-	//---- End of private internal function ----
-	
+	// Func: return fileid tag for the variable, without associated systematic string 
+	std::string GetBareFileID(int stage);
+	std::string GetCovarFileID_FluxXS(int stage);
+	std::string GetCovarFileID_Det(int stage);
 
-	void GetUniqueJenkinsHash(){
-	    std::string long_id =  name + "_" + GetBinEdges() + "_" + additional_cut;  
-	    std::replace(long_id.begin(), long_id.end(), ' ', '_');
-	    unique_hash = std::to_string(jenkins_hash(long_id));
-	    return;
-  	}
+        // Add covariance matrix associated with this variable
+        int addCovar(std::string name, std::string dir, std::string file);
 
-	std::string GetID(){
-	   if(unique_hash.empty())
-	      GetUniqueJenkinsHash();
-	   return unique_hash;
-	}
+	// Func: update associated covariance matrix file, covar matrix, and matrix type("frac" or "full") for the variable
+	void UpdateCovarFileName(const std::string& fname, const std::string& fdirs="");
+	void UpdateCovarName(const std::string& mname);
+	void UpdateCovarType(const std::string& in_type);
 
-	std::string GetCovarFileID(int stage){
-	     if(covar_file_prefix.empty()){
-		covar_file_prefix = "VarCovar_Stage_"+ std::to_string(stage) + "_" + this->GetID(); 
-
-		if(flux_xs_sys_only())
-		    covar_file_prefix += "_FluxXS";
-		else if(detector_sys_only())
-		    covar_file_prefix += "_Det";
-	    }
-	    return covar_file_prefix;
-	}
-
-	void UpdateCovarFileName(const std::string& fname, std::string fdirs=""){
-	    covar_dir = fdirs;
-	    covar_file = fname;
-	    return;
-	}
-	void UpdateCovarName(const std::string& mname){
-	    covar_name= mname;
-	    return;
-	}
-
-	void UpdateCovarType(const std::string& in_type){
-	    covar_type = in_type;
-	    return;
-	}
-
-	std::string GetCovarFile(int s){
-	    if(covar_file.empty()){
-	        covar_file = GetCovarFileID(s) + ".SBNcovar.root";
-	    }
-	    return covar_dir +  covar_file;
- 	}
-
-        std::string GetBinEdges() const {
-	    std::string Binning;
-            for(auto e : low_edges){
-                Binning += std::to_string(e) + " ";
-            }
-	    Binning.pop_back();
-	    return Binning;
-	}
-
-   	std::string GetVarDef() const {
-	    return name;
-        }
-
-	std::string GetAdditionalCut() const{
-            return additional_cut;
-  	}
+	// Func: return full path of the associated covariance matrix file
+	std::string GetCovarFile(int s);
 
 	bool flux_xs_sys_only() const{
-	    return covar_sys == "fluxxs";
+	    return covar_sys == FLUXXS;
 	}
 
 	bool detector_sys_only() const{
-	    return covar_sys == "det";
+	    return covar_sys == DET;
 	}
 
 	bool full_sys() const{
-	    return covar_sys == "fluxxsdet";
+	    return covar_sys == FULL;
 	}
+
+
+
+	//---- Internal Functions  ----
+
+	// Func: Decode binning information, and generate vector of bin edges 
+	void decode_bins();
+	
+	// Func: Calculate and set unique jenkins hash for the variables 
+	// Note: information used: variable name, variable bin edges, and additional cut associated with the variable
+	void get_unique_jenkins_hash();
+
+
+	// Func: given a variable definition or math formula, for every appearance of BDT score variable that ends with "_mva", add "simple_" to the front.
+	// Note: this is added to make sure that sbnfit files can be read correctly since BDT score variables are saved with "simple_" prefix in sbnfit files.
+	// Guanqun: something I hacked together don't like this
+	std::string add_simple_to_formula(const std::string& input_formula) const;
+	//---- End of private internal function ----
 };
-
-
-
 
 
 #endif

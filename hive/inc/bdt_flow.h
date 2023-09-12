@@ -86,12 +86,14 @@ struct bdt_flow{
 
 
 		/* Get related cuts for given stage, file specific 
+ 		 * stage < -1: return "1"
+ 		 * stage -1: defintion cut
  		 * stage 0: topological cut + definition cut 
  		 * stage 1: stage 0 cut + precuts
  		 * stage 2/3/4/..:  stage 1 cut + bdtcuts
  		 */
 		std::string GetStageCuts(int stage) const;
-
+		std::string GetStageCuts(int stage, const std::vector<double>& external_cuts) const;
 
 		/* Get related cuts for given stage, not file specific 
  		 * stage 0: topological cut 
@@ -99,7 +101,7 @@ struct bdt_flow{
  		 * stage 2/3/4/..:  stage 1 cut + bdtcuts
  		 */
 		std::string GetGeneralStageCuts(int stage) const;
-
+		std::string GetGeneralStageCuts(int stage, const std::vector<double>& external_bdt_cuts, bool for_sbnfit=false) const;
 
 		//---- internal function ------
 
@@ -108,6 +110,13 @@ struct bdt_flow{
 
 		/* Fill the stage_cuts vector with cuts of each individual stage */ 
 		void set_stage_cuts();
+
+
+		/* Return cuts for negative stages .. 
+ 		 * Stage = -1: returns definition cut, which is bdt_file specific 
+ 		 * Stage < -1: returns "1" 
+ 		 */ 
+		std::string file_negative_stage_handle(int stage) const;
 };
 
 #endif

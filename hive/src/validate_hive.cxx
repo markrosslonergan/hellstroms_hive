@@ -47,6 +47,7 @@ int main (int argc, char *argv[]){
     std::string vector = "";
     std::string input_string = "";
     int which_group =-1;
+    bool use_xrootd = false;
 
     //All of this is just to load in command-line arguments, its not that important
     const struct option longopts[] = 
@@ -65,13 +66,14 @@ int main (int argc, char *argv[]){
         {"response",	no_argument,	    0, 'r'},
         {"file",		required_argument,	0, 'f'},
         {"vector",      required_argument,  0, 'v'},
+	{"xrootd",		no_argument,  0, 'R'},
         {0,			    no_argument, 		0,  0},
     };
 
     int iarg = 0; opterr=1; int index;
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "x:o:d:s:f:g:t:p:b:i:n:v:rh?", longopts, &index);
+        iarg = getopt_long(argc,argv, "x:o:d:s:f:g:t:p:b:i:n:v:Rrh?", longopts, &index);
 
         switch(iarg)
         {
@@ -115,6 +117,9 @@ int main (int argc, char *argv[]){
             case 'i':
                 input_string = optarg;
                 break;
+	    case 'R':
+                use_xrootd = true;
+                break;
             case '?':
             case 'h':
                 std::cout<<"Allowed arguments:"<<std::endl;
@@ -145,6 +150,7 @@ int main (int argc, char *argv[]){
                 std::cout<<"\t-t\t--topo_tag\t\tTopological Tag [Superseeded by XML defined tag]"<<std::endl;
                 std::cout<<"\t-d\t--dir\t\tDirectory for file inputs [Superseeded by XML]"<<std::endl;
                 std::cout<<"\t-v\t--vector\t\tA list of variable numbers, currently only works for var2D. Should be comma separated and enclosed in quotes like \"1,2,3\" "<<std::endl;
+		std::cout<<"\t--xrootd\t\tUse XrootD to open root files"<<std::endl;
                 std::cout<<"\t-h\t--help\t\tThis help menu"<<std::endl;
                 return 0;
         }
@@ -231,7 +237,7 @@ int main (int argc, char *argv[]){
             std::cout<<" -- ---> "<<XMLconfig.bdt_definitions[f][i]<<std::endl;
         }
 
-        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , XMLconfig.bdt_additional_weights[f], analysis_flow));
+        bdt_files.push_back(new bdt_file(dir, XMLconfig.bdt_filenames[f].c_str(),	XMLconfig.bdt_tags[f].c_str(), XMLconfig.bdt_hist_styles[f].c_str(),XMLconfig.bdt_dirs[f].c_str(), XMLconfig.bdt_cols[f]->GetNumber() , XMLconfig.bdt_fillstyles[f] , XMLconfig.bdt_additional_weights[f], analysis_flow, use_xrootd));
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
 
@@ -258,6 +264,7 @@ int main (int argc, char *argv[]){
         if(!bdt_files.back()->is_data && !XMLconfig.bdt_is_training_signal[f] ){
             if(XMLconfig.bdt_is_signal[f]){
                 std::cout<<" -- For the purposes of calculting a significance, this is a signal file"<<std::endl;
+		bdt_files.back()->setAsSignal();
                 signal_bdt_files.push_back(bdt_files.back());
             }else{
                 std::cout<<" -- For the purposes of calculting a significance, this is a BKG file"<<std::endl;

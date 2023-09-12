@@ -36,6 +36,17 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
     }
 
 
+    TiXmlElement *pFileDir;
+    pFileDir = doc.FirstChildElement("filedir");
+    if(pFileDir)
+    {
+        filedir =std::string(pFileDir->GetText());
+        pFileDir = pFileDir->NextSiblingElement("filedir");
+    }else{
+        //filedir = "./";
+        filedir = "/";
+    }
+
 
     std::cout<<"#######################  BDT_Files  ########################################"<<std::endl;
     std::cout<<"(Print out will be below when constructing bdt_file class)"<<std::endl;
@@ -171,8 +182,29 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
 
 
 
+	bool do_manual_norm = false;
+	double manual_refer_count = 1., manual_refer_pot = 1.;
+        TiXmlElement *pPOTnorm = pBDTfile->FirstChildElement("POT");
+        if(pPOTnorm){
+
+	     const char* t_manualnorm = pPOTnorm->Attribute("manual_norm");
+	     if(t_manualnorm != NULL && std::string(t_manualnorm) == "true"){
+		do_manual_norm = true;
+		TiXmlElement *pRefCount = pPOTnorm->FirstChildElement("reference_count");
+		manual_refer_count = stod(std::string(pRefCount->GetText()));	
+
+		TiXmlElement *pRefPOT = pPOTnorm->FirstChildElement("reference_pot"); 
+		manual_refer_pot = stod(std::string(pRefPOT->GetText()));
+	     }
+	}
+	bdt_manual_pot_norm.push_back(do_manual_norm);
+	bdt_reference_event_count.push_back(manual_refer_count);
+	bdt_reference_pot.push_back(manual_refer_pot);
+
+
         TiXmlElement *pAddWeight = pBDTfile->FirstChildElement("additional_weight");
-        std::string add_wei = "1.0";
+        std::string add_wei = "genie_spline_weight*(genie_spline_weight >0)*(genie_CV_tune_weight > 0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)  +  tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight)) < 30.0))*(GTruth_ResNum!=9)";
+        if(pAddWeight) add_wei="1";
         while(pAddWeight){
                 std::string unpar =  pAddWeight->GetText();
                 add_wei += "*(" + this->AliasParse(unpar) + ")";
@@ -774,9 +806,30 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         }
 
 
+	bool do_manual_norm = false;
+	double manual_refer_count = 1., manual_refer_pot = 1.;
+        TiXmlElement *pPOTnorm = pBDTfile->FirstChildElement("POT");
+        if(pPOTnorm){
+
+	     const char* t_manualnorm = pPOTnorm->Attribute("manual_norm");
+	     if(t_manualnorm != NULL && std::string(t_manualnorm) == "true"){
+		do_manual_norm = true;
+		TiXmlElement *pRefCount = pPOTnorm->FirstChildElement("reference_count");
+		manual_refer_count = stod(std::string(pRefCount->GetText()));	
+
+		TiXmlElement *pRefPOT = pPOTnorm->FirstChildElement("reference_pot"); 
+		manual_refer_pot = stod(std::string(pRefPOT->GetText()));
+	     }
+	}
+	bdt_manual_pot_norm.push_back(do_manual_norm);
+	bdt_reference_event_count.push_back(manual_refer_count);
+	bdt_reference_pot.push_back(manual_refer_pot);
+
+
 
         TiXmlElement *pAddWeight = pBDTfile->FirstChildElement("additional_weight");
-        std::string add_wei = "1.0";
+        std::string add_wei = "genie_spline_weight*(genie_spline_weight >0)*(genie_CV_tune_weight > 0)*( 1.0*(tan(atan(genie_CV_tune_weight))>=30.0)  +  tan(atan(genie_CV_tune_weight))*(tan(atan(genie_CV_tune_weight)) < 30.0))*(GTruth_ResNum!=9)";
+        if(pAddWeight) add_wei="1";
         while(pAddWeight){
                 std::string unpar =  pAddWeight->GetText();
                 add_wei += "*(" + this->AliasParse(unpar) + ")";
@@ -953,13 +1006,23 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
     std::string global_leg_name;
     std::string global_covar_type;
     while(pCovar){
-        has_global_covar = true;
 
         const char* var_covar_dir = pCovar->Attribute("dir");
         const char* var_covar_name = pCovar->Attribute("name");
         const char* var_covar_sys = pCovar->Attribute("sys");
         const char* var_leg_name = pCovar->Attribute("plotname");
         const char* var_covar_type = pCovar->Attribute("type");
+       
+	// set global systematic error string 
+        has_global_covar = true;
+	if(m_error_string!= STATS ) 
+	    global_covar_sys = m_error_string;
+	else if(var_covar_sys != NULL)
+	    global_covar_sys = var_covar_sys;
+	else 
+	    global_covar_sys = STATS; 
+
+
         if (var_covar_dir==NULL || var_covar_name==NULL){
             has_global_covar = false;
         }else{
@@ -970,12 +1033,6 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             else{
                 global_covar_type = var_covar_type;
             }
-
-	    global_covar_sys = "fluxxsdet"; 
-	    if(var_covar_sys != NULL)
-		global_covar_sys = var_covar_sys;
-
-        if(m_error_string!="stat") global_covar_sys = m_error_string;
 
             global_leg_name = var_leg_name;
             std::cout<<"Loading a GLOBAL covariance matrix direectory"<<std::endl;
@@ -1050,7 +1107,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             covar_name = var_covar_name;
         }
 
-	covar_sys = "fluxxsdet";
+	covar_sys = STATS ;
  	if(var_covar_sys != NULL )
 	    covar_sys = var_covar_sys;
 
@@ -1068,7 +1125,8 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
             covar_type = var_covar_type;
         }
 
-        if(has_global_covar && m_error_string!="stat"){
+        //if(has_global_covar && m_error_string!=STATS){
+        if(has_global_covar || m_error_string!= STATS ){ //Guanqun: change the logic here. Precedence as: m_error_string > glocal_covar > var_covar   
             has_covar= true;
             covar_dir =  global_covar_dir;
 	    covar_file = "";
@@ -1114,11 +1172,12 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
         t.cat = in_cat;
         t.additional_cut = var_cut;
         std::cout<<"t.additional_cut = "<<t.additional_cut <<std::endl;
+	t.covar_sys = STATS;
         if(has_covar){
             std::cout<<"Adding a covariance matrix "<< covar_name<<" from directory [" << covar_dir << "] and file ["<<covar_file<< "]" << std::endl;
             t.addCovar(covar_name,covar_dir, covar_file);
+  	    t.covar_sys = covar_sys;
             t.covar_legend_name = covar_leg; 
-	    t.covar_sys = covar_sys;
             t.covar_type = covar_type;
         }
 
