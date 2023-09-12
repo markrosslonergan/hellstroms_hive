@@ -405,11 +405,12 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
 
             // get total count and corresponding MC intrinsic error for each bin 
+	    double total_prediction = tsum->Integral();
             std::vector<double> vec_mc_stats_error;
             std::vector<double> vec_mc;
             for(int c=0; c< tsum->GetNbinsX();c++){
                 double mc_stats_error = tsum->GetBinError(c+1);
-		std::cout << "Bin : " << c+1 << ", MC prediction: " << tsum->GetBinContent(c+1) << ", MC intrinsic Error: " << mc_stats_error << std::endl; 
+		std::cout << "Bin : " << c+1 << ", MC prediction: " << tsum->GetBinContent(c+1) << " Percentage of all: " << tsum->GetBinContent(c+1)/total_prediction << ", MC intrinsic Error: " << mc_stats_error << std::endl; 
                 vec_mc_stats_error.push_back(mc_stats_error);
                 vec_mc.push_back(tsum->GetBinContent(c+1));
             }
@@ -490,15 +491,15 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
                 for(int c=0; c< tsum->GetNbinsX();c++){
 
-                    double mc_stats_error = tsum->GetBinError(c+1);
+                    //double mc_stats_error = tsum->GetBinError(c+1);
 
 		    //Guanqun: temporary hard-coded chagne for cluster plot, no MC intrinsic error
-                    //double mc_stats_error = 0.0;
+                    double mc_stats_error = 0.0;
 
                     double mc_sys_error = sqrt((*covar_collapsed)(c,c));
                     double tot_error = sqrt(mc_stats_error*mc_stats_error+mc_sys_error*mc_sys_error);
 
-                    std::cout<<"Error Summary || Bin "<<c<<" Nmc: "<<tsum->GetBinContent(c+1)<<" Err: "<<tot_error<<" FracErr: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" SysFrac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" MCStatFrac: "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
+                    std::cout<<"Error Summary || Bin "<<c<<" Nmc: "<<tsum->GetBinContent(c+1)<< " Percentage of all: " << tsum->GetBinContent(c+1)/total_prediction << " Err: "<<tot_error<<" FracErr: "<<tot_error/tsum->GetBinContent(c+1)*100.0<<" SysErr: "<<mc_sys_error<<" SysFrac: "<<mc_sys_error/tsum->GetBinContent(c+1)*100.0<<" MCStat: "<<mc_stats_error<<" MCStatFrac: "<<mc_stats_error/tsum->GetBinContent(c+1)*100.0<<std::endl;
                     tsum->SetBinError(c+1, tot_error);
                 }
 
