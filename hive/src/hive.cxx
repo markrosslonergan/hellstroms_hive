@@ -1907,6 +1907,8 @@ int main (int argc, char *argv[]){
 
             //in order to generate flux covar matrix together with det matrix, the "covarsys" needs to be set to "fluxxsdet" (default behavior)
             if(covar_flux_template_xml !="null.xml"){
+                bdt_covar covar_handle(&v, which_stage, stage_cut);
+
                 std::cout<<"Going to make a flux covar equivalent"<<std::endl;
                 covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
                 std::cout<<"Going to merge det and fluxxs"<<std::endl;
