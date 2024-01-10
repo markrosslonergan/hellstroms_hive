@@ -394,6 +394,9 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
             THStack *stk = (THStack*)mc_stack->getEntryStack(var,s); //so at this point its all in "stack"
             TH1 * tsum  = (TH1*)mc_stack->getEntrySum(var,s, m_fullvec);
             TH1* d0 = (TH1*)data_file->getTH1(var, "1", std::to_string(s)+"_d0_"+data_file->tag+"_"+var.safe_name, plot_pot);
+			std::cout<<"CHECK "<<__LINE__<<" Get cuts here "<<s<<std::endl;
+			std::cout<<"CHECK MC sum "<<tsum->Integral()<<std::endl;
+			std::cout<<"CHECK data sum "<<d0->Integral()<<std::endl;
             TH1 * tsum_after = (TH1*)tsum->Clone("tsumafter");
 
 
@@ -722,8 +725,8 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 				std::cout<<"Entries "<<f->GetEntries()<<" with cuts "<<var.additional_cut<<std::endl;
                 // Guanqun: print out signal events even when we plot it on top
                 //if(mc_stack->signal_on_top[n]) Nentries = 0.0; //remove from calculation
-			std::cout<<"CHECK All evt"<<f->GetEntries()<<std::endl;
-			std::cout<<"CHECK "<<Nentries<<" * "<<plot_pot<<"/"<<f->pot<<" * "<<f->scale_data<<std::endl;
+//			std::cout<<"CHECK All evt"<<f->GetEntries()<<std::endl;
+//			std::cout<<"CHECK "<<Nentries<<" * "<<plot_pot<<"/"<<f->pot<<" * "<<f->scale_data<<std::endl;
                 double Nevents = Nentries*(plot_pot/f->pot)*f->scale_data;
                 double N_MCerr = sqrt(Nentries)*(plot_pot/f->pot)*f->scale_data;
 

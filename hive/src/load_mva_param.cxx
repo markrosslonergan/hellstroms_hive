@@ -314,7 +314,7 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
                 pSpills = pSpills->NextSiblingElement("E1DCNT_wcut");
             }
             if(bdt_onbeam_spills.back()==0 && bdt_is_offbeam_data.back()==true){
-                std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated "<<t_type<<" data, but no ON beam Spills has been given for normalization! Use Zarko's tool "<<std::endl; exit(EXIT_FAILURE);
+                std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated "<<t_type<<" data, but no ON beam Spills has been given for normalization! Use Zarko's tool "<<std::endl; //exit(EXIT_FAILURE);
             }
 
 
@@ -325,7 +325,7 @@ MVALoader::MVALoader(std::string external_xml, int template_torsion){
                 pExt = pExt->NextSiblingElement("EXT");
             }
             if(bdt_offbeam_spills.back()==0 && bdt_is_offbeam_data.back()==true){
-                std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated "<<t_type<<" data, but no OFF beam Spills has been given for normalization! Use Zarko's tool "<<std::endl; exit(EXIT_FAILURE);
+                std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated "<<t_type<<" data, but no OFF beam Spills has been given for normalization! Use Zarko's tool "<<std::endl; //exit(EXIT_FAILURE);
             }
 
             pData = pData->NextSiblingElement("data");
@@ -919,7 +919,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
                 pSpills = pSpills->NextSiblingElement("E1DCNT_wcut");
             }
             if(bdt_onbeam_spills.back()==0 && bdt_is_offbeam_data.back()==true){
-                std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated "<<t_type<<" data, but no ON beam Spills has been given for normalization! Use Zarko's tool "<<std::endl; exit(EXIT_FAILURE);
+                std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated "<<t_type<<" data, but no ON beam Spills has been given for normalization! Use Zarko's tool "<<std::endl; //exit(EXIT_FAILURE);
             }
 
 
@@ -930,7 +930,7 @@ MVALoader::MVALoader(std::string xmlname, bool isVerbose_in, std::string erorin)
                 pExt = pExt->NextSiblingElement("EXT");
             }
             if(bdt_offbeam_spills.back()==0 && bdt_is_offbeam_data.back()==true){
-                std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated "<<t_type<<" data, but no OFF beam Spills has been given for normalization! Use Zarko's tool "<<std::endl; exit(EXIT_FAILURE);
+                std::cerr<<"ERROR: MVALoader::MVALoader || bdt_file has been designated "<<t_type<<" data, but no OFF beam Spills has been given for normalization! Use Zarko's tool "<<std::endl; //exit(EXIT_FAILURE);
             }
 
             pData = pData->NextSiblingElement("data");

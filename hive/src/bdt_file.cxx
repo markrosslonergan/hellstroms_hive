@@ -281,7 +281,6 @@ int bdt_file::calcPOT(){
 }
 
 int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::string> run_cuts, std::vector<double> run_fractions){
-
     //First we will run with plot POT stuff
 
 
@@ -303,6 +302,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     }
 
     tvertex = (TTree*)f->Get(tnam.c_str());
+	std::cout<<"Get TTree "<< tnam<<std::endl;
     std::cout<<"Got primary ttree events #: "<<tvertex->GetEntries()<<std::endl;
 
 
@@ -513,18 +513,18 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     }else if(is_bnbext){
 
         std::cout<<"bdt_file::bdt_file()\t||\tFile is OFF-BEAM (BNBEXT) DATA for purposes of getting POT."<<std::endl;
-        //tpot = (TTree*)f->Get(tnam_pot.c_str());
-        //int numbranch =0;
-        //tpot->SetBranchAddress("number_of_events", &numbranch);
-        //std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
-        //int tmpnum = 0;
-        //std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
-        //for(int i=0; i<tpot->GetEntries(); i++) {
-        //    tpot->GetEntry(i);
-        //    tmpnum += (double)numbranch;
-        //}
-        //numberofevents = tmpnum;
-        //numberofevents_raw = numberofevents;
+//        tpot = (TTree*)f->Get(tnam_pot.c_str());
+//        int numbranch =0;
+//        tpot->SetBranchAddress("number_of_events", &numbranch);
+//        std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
+//        int tmpnum = 0;
+//        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
+//        for(int i=0; i<tpot->GetEntries(); i++) {
+//            tpot->GetEntry(i);
+//            tmpnum += (double)numbranch;
+//        }
+//        numberofevents = tmpnum;
+//        numberofevents_raw = numberofevents;
 
 
 
@@ -553,19 +553,20 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
         if(N_samweb_ext ==-1) N_samweb_ext = numberofevents;
 
-        double modifier = data_spills_E1DCNT_wcut/ext_spills_ext*(N_samweb_ext/numberofevents);
+//        double modifier = data_spills_E1DCNT_wcut/ext_spills_ext*(N_samweb_ext/numberofevents);
+//		std::cout<<" modifier brakdowns: "<<data_spills_E1DCNT_wcut<<","<<ext_spills_ext<<","<<N_samweb_ext<<","<<numberofevents<<std::endl;
 
         std::cout<<"--> POT is data: From Zarkos tool..";
         //going to scale by how many events I actually have in MCC9
-        pot = this->data_tor860_wcut/modifier;
+        pot = this->data_tor860_wcut;///modifier;
         std::cout<<"--> value: "<<pot<<std::endl;
 
         std::cout<<"bdt_file::bdt_file()\t||\t---> POT is OFF BEAM DATA "<<std::endl;
-        std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
-        std::cout<<"--> scaled to 5e19 number of Entries: "<<numberofevents/pot*5e19<<std::endl;
+ //       std::cout<<"--> POT: "<<pot<<" Number of Entries: "<<numberofevents<<std::endl;
+ //       std::cout<<"--> scaled to 5e19 number of Entries: "<<numberofevents/pot*5e19<<std::endl;
 
         //weight_branch += "*(" + run_weight_string+")";
-        numberofevents_raw = numberofevents;
+//        numberofevents_raw = numberofevents;
 
     }
 
@@ -752,11 +753,13 @@ int bdt_file::calcBaseEntryList(std::string analysis_tag){
 if(!does_local_exist || !hash_right){
         //create it
 
-        std::cout<<"Entry List file does not exists (or hash is wrong) "<<this->tag<<" creating it."<<std::endl;
+        std::cout<<"/nEntry List file does not exists (or hash is wrong) "<<this->tag<<" creating it."<<std::endl;
 
+		std::cout<<" stage 0 cuts "<<this->getStageCuts(0).c_str()<<std::endl;
         this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0).c_str() , "entrylist");
         topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
 
+		std::cout<<" stage 1 cuts "<<this->getStageCuts(1).c_str()<<std::endl;
         this->tvertex->Draw((">>"+precut_list_name).c_str(), this->getStageCuts(1).c_str() , "entrylist");
         precut_list = (TEntryList*)gDirectory->Get(precut_list_name.c_str());
 
@@ -782,39 +785,40 @@ if(!does_local_exist || !hash_right){
 
 
 int bdt_file::calcTopologicalEntryList(){
-
+std::cout<<"CHECK USELES "<<std::endl;
+exit(0);
     //first check if a file exists with a topological entry list in it!
 
 
 
-    std::string filename = this->tag+"_entrylists.root";
-    topological_list_name = "topological_list_"+this->tag;
-
-    std::ifstream ifile(filename.c_str());
-    bool does_local_exist = (bool)ifile;
-    if(does_local_exist){
-
-        std::cout<<"Topological Entry List already exists for "<<this->tag<<std::endl;
-        TFile* fpre = new TFile(filename.c_str(),"read");	
-        topological_list = (TEntryList*)fpre->Get(topological_list_name.c_str());
-
-
-    }else{
-        //create it
-
-        std::cout<<"Topological Entry List does not exists for "<<this->tag<<" creating it."<<std::endl;
-
-        this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0).c_str() , "entrylist");
-        topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
-
-
-        TFile* fpre = new TFile(filename.c_str(),"recreate");	
-        fpre->cd();
-        topological_list->Write();
-        fpre->Close();
-        f->cd();
-
-    }
+//    std::string filename = this->tag+"_entrylists.root";
+//    topological_list_name = "topological_list_"+this->tag;
+//
+//    std::ifstream ifile(filename.c_str());
+//    bool does_local_exist = (bool)ifile;
+//    if(does_local_exist){
+//
+//        std::cout<<"Topological Entry List already exists for "<<this->tag<<std::endl;
+//        TFile* fpre = new TFile(filename.c_str(),"read");	
+//        topological_list = (TEntryList*)fpre->Get(topological_list_name.c_str());
+//
+//
+//    }else{
+//        //create it
+//
+//        std::cout<<"Topological Entry List does not exists for "<<this->tag<<" creating it."<<std::endl;
+//
+//        this->tvertex->Draw((">>"+topological_list_name).c_str(), this->getStageCuts(0).c_str() , "entrylist");
+//        topological_list = (TEntryList*)gDirectory->Get(topological_list_name.c_str());
+//
+//
+//        TFile* fpre = new TFile(filename.c_str(),"recreate");	
+//        fpre->cd();
+//        topological_list->Write();
+//        fpre->Close();
+//        f->cd();
+//
+//    }
 
     return 0;
 
@@ -914,27 +918,28 @@ TH1* bdt_file::getTH1(bdt_variable & var, std::string  cuts, std::string nam, do
 }
 
 TH1* bdt_file::getTH1(std::string invar, std::string cuts, std::string nam, double plot_POT, int rebin){
-
-    //std::cout<<"Starting to get for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
-    TCanvas *ctmp = new TCanvas();
-    //this->CheckWeights();
-    this->tvertex->Draw((invar+">>"+nam).c_str() , ("("+cuts+")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
-    //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
-    TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
-
-    //th1->Sumw2();
-    th1->Scale(this->scale_data*plot_POT/this->pot);
-    //std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
-    if(rebin>1) th1->Rebin(rebin);
-    th1->SetLineColor(col);
-    th1->SetLineWidth(1);
-    th1->SetStats(0);
-    th1->GetXaxis()->SetTitle("Unit");
-    th1->GetYaxis()->SetTitle("Events");
-    th1->SetDirectory(0);	
-
-    //delete ctmp;
-    return th1;
+std::cout<<"OUTDATED "<<std::endl;
+exit(0);
+//
+//    TCanvas *ctmp = new TCanvas();
+//    //this->CheckWeights();
+//    this->tvertex->Draw((invar+">>"+nam).c_str() , ("("+cuts+")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
+//    TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
+//	std::cout<<"CHECK th1 sum "<<th1->Integral()<<std::endl;
+//
+//    //th1->Sumw2();
+//    th1->Scale(this->scale_data*plot_POT/this->pot);
+//    //std::cout<<"IS THIS: "<<this->scale_data*plot_POT/this->pot<<" "<<th1->GetSumOfWeights()<<std::endl;
+//    if(rebin>1) th1->Rebin(rebin);
+//    th1->SetLineColor(col);
+//    th1->SetLineWidth(1);
+//    th1->SetStats(0);
+//    th1->GetXaxis()->SetTitle("Unit");
+//    th1->GetYaxis()->SetTitle("Events");
+//    th1->SetDirectory(0);	
+//
+//    //delete ctmp;
+//    return th1;
 }
 
 
@@ -1010,8 +1015,13 @@ TH1* bdt_file::getTH1(bdt_variable & var, std::string  cuts, std::string  nam, d
 
 
     TH1D* th1 = new TH1D(nam.c_str(),nam.c_str(),var.n_bins,&(var.low_edges)[0]);
+
     this->tvertex->Draw((var.name+">>+"+nam).c_str() , ("("+cuts+"&&"+in_bins+"&&" + var.additional_cut+ ")*"+this->weight_branch+"*"+run_weight_string).c_str(),"goff");
-    //std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
+//	std::cout<<"CHECK TTree  entries "<<this->tvertex->GetEntries()<<std::endl;
+    std::cout<<"Done with Draw for "<<(var.name+">>"+nam+ var.binning).c_str()<<std::endl;
+//	std::cout<<"Cuts "<< ("("+cuts+"&&"+in_bins+"&&" + var.additional_cut+ ")*"+this->weight_branch+"*"+run_weight_string).c_str()<<std::endl;
+//	std::cout<<"Get Entries Evts "<<th1->Integral()<<std::endl;
+//	std::cout<<std::endl;
     //TH1* th1 = (TH1*)gDirectory->Get(nam.c_str()) ;
 
     if(plot_POT==0){
@@ -1169,6 +1179,7 @@ int bdt_file::addBDTResponses(std::string dir, bdt_info input_bdt_info){
 
 int bdt_file::setStageEntryList(int j, std::vector<double> bdt_cuts){
 
+	std::cout<<"CHECK Set Entry List for  "<<this->plot_name<<" at stage "<<j<<std::endl;
     if(j==0){
         this->tvertex->SetEntryList(topological_list);
     }else if(j==1){
@@ -1283,83 +1294,86 @@ std::string bdt_file::getStageCuts(int stage, double bdtvar1, double bdtvar2){
 }
 
 int bdt_file::splitBDTfile(std::string split_string,std::string trueTAG, bdt_file* truesplit, std::string falseTAG, bdt_file *falsesplit){
-
-
-    bdt_flow true_flow = this->flow;
-    true_flow.definition_cuts = true_flow.definition_cuts + "&& (" +split_string+")"; 
-    true_flow.base_cuts = true_flow.topological_cuts+ true_flow.definition_cuts;
-
-    bdt_flow false_flow = this->flow;
-    false_flow.definition_cuts = false_flow.definition_cuts + "&& !(" +split_string+")";  //notice the !
-    false_flow.base_cuts = false_flow.topological_cuts+ false_flow.definition_cuts;
-
-    truesplit = new bdt_file(this->dir, this->name,	trueTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch+"*"+run_weight_string, true_flow, use_xrootd);
-    falsesplit = new bdt_file(this->dir, this->name,	falseTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch+"*"+run_weight_string, false_flow, use_xrootd);
-
+std::cout<<"CHECK no use?"<<std::endl;
+exit(0);
+//
+//    bdt_flow true_flow = this->flow;
+//    true_flow.definition_cuts = true_flow.definition_cuts + "&& (" +split_string+")"; 
+//    true_flow.base_cuts = true_flow.topological_cuts+ true_flow.definition_cuts;
+//
+//    bdt_flow false_flow = this->flow;
+//    false_flow.definition_cuts = false_flow.definition_cuts + "&& !(" +split_string+")";  //notice the !
+//    false_flow.base_cuts = false_flow.topological_cuts+ false_flow.definition_cuts;
+//
+//    truesplit = new bdt_file(this->dir, this->name,	trueTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch+"*"+run_weight_string, true_flow, use_xrootd);
+//    falsesplit = new bdt_file(this->dir, this->name,	falseTAG,	this->plot_ops, this->root_dir,  this->col, this->weight_branch+"*"+run_weight_string, false_flow, use_xrootd);
+//
 
     return 0;
 }
 int bdt_file::writeStageFriendTree(std::string nam, double bdtvar1, double bdtvar2){
 
-    TFile *f = new TFile((this->tag+"_"+nam).c_str(), "recreate");
-    f->cd();
-    TTree * stage_tree = new TTree("stage_cuts","stage_cuts");
-    std::vector<int> passed(4,0);
-    double weight =0;	
-
-    TBranch *b_s0 = stage_tree->Branch("passed_topological_selection",&passed.at(0));
-    TBranch *b_s1 = stage_tree->Branch("passed_precuts",&passed.at(1));
-    TBranch *b_s2 = stage_tree->Branch("passed_cosmic_bdt_cut",&passed.at(2));
-    TBranch *b_s3 = stage_tree->Branch("passed_bnb_bdt_cut",&passed.at(3));
-
-    TBranch *b_w = stage_tree->Branch("weight",&weight);
-
-    std::vector<TTreeFormula*> tf_vec;
-
-    TTreeFormula* tf_weight = new TTreeFormula("weight",(this->weight_branch+"*"+run_weight_string).c_str(),tvertex);
-
-    for(int i=0; i < 4; i++){
-        tf_vec.push_back( new TTreeFormula(("tf_"+std::to_string(i)).c_str(), this->getStageCuts(i, bdtvar1,bdtvar2).c_str(), tvertex));
-    }
-
-    for(int k=0; k<tvertex->GetEntries(); k++){
-        tvertex->GetEntry(k);
-        if(k%10000 ==0 ){ std::cout<<"On event "<<k<<std::endl;}
-
-        double bnbc = tf_weight->EvalInstance();
-
-        /*
-           if(bnbc<0 || bnbc!=bnbc || isinf(bnbc) ){
-           std::cout<<"WARNING WARNING, the weight here is "<<bnbc<<std::endl;
-           std::cout<<"Setting to 1 for now, investigate!"<<std::endl;
-           bnbc = 1.0;
-           }
-           */
-
-        double pot_scale = this->scale_data;
-        weight = bnbc*pot_scale;
-
-
-
-
-        for(int i=0; i < 4; i++){
-            if(tf_vec.at(i)->EvalInstance()){
-                passed.at(i) = 1;
-            }else{
-                passed.at(i) = 0;
-            }
-
-        }
-
-
-        stage_tree->Fill();
-
-    }
-
-    f->cd();
-    stage_tree->Write();
-    f->Close();
-
+std::cout<<"CHECK no use?"<<std::endl;
+exit(0);
+//    TFile *f = new TFile((this->tag+"_"+nam).c_str(), "recreate");
+//    f->cd();
+//    TTree * stage_tree = new TTree("stage_cuts","stage_cuts");
+//    std::vector<int> passed(4,0);
+//    double weight =0;	
+//
+//    TBranch *b_s0 = stage_tree->Branch("passed_topological_selection",&passed.at(0));
+//    TBranch *b_s1 = stage_tree->Branch("passed_precuts",&passed.at(1));
+//    TBranch *b_s2 = stage_tree->Branch("passed_cosmic_bdt_cut",&passed.at(2));
+//    TBranch *b_s3 = stage_tree->Branch("passed_bnb_bdt_cut",&passed.at(3));
+//
+//    TBranch *b_w = stage_tree->Branch("weight",&weight);
+//
+//    std::vector<TTreeFormula*> tf_vec;
+//
+//    TTreeFormula* tf_weight = new TTreeFormula("weight",(this->weight_branch+"*"+run_weight_string).c_str(),tvertex);
+//
+//    for(int i=0; i < 4; i++){
+//        tf_vec.push_back( new TTreeFormula(("tf_"+std::to_string(i)).c_str(), this->getStageCuts(i, bdtvar1,bdtvar2).c_str(), tvertex));
+//    }
+//
+//    for(int k=0; k<tvertex->GetEntries(); k++){
+//        tvertex->GetEntry(k);
+//        if(k%10000 ==0 ){ std::cout<<"On event "<<k<<std::endl;}
+//
+//        double bnbc = tf_weight->EvalInstance();
+//
+//        /*
+//           if(bnbc<0 || bnbc!=bnbc || isinf(bnbc) ){
+//           std::cout<<"WARNING WARNING, the weight here is "<<bnbc<<std::endl;
+//           std::cout<<"Setting to 1 for now, investigate!"<<std::endl;
+//           bnbc = 1.0;
+//           }
+//           */
+//
+//        double pot_scale = this->scale_data;
+//        weight = bnbc*pot_scale;
+//
+//
+//
+//
+//        for(int i=0; i < 4; i++){
+//            if(tf_vec.at(i)->EvalInstance()){
+//                passed.at(i) = 1;
+//            }else{
+//                passed.at(i) = 0;
+//            }
+//
+//        }
+//
+//
+//        stage_tree->Fill();
+//
+//    }
+//
+//    f->cd();
+//    stage_tree->Write();
+//    f->Close();
+//
     return 0;
 }
 

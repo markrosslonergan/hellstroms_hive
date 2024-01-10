@@ -568,6 +568,7 @@ int main (int argc, char *argv[]){
             }
         }
         if(mode_option != "train"  && mode_option != "sbnfit" && mode_option !="extapp" ){
+			std::cout<<__LINE__<<std::endl;
             f->calcBaseEntryList(analysis_tag);
         }
 
