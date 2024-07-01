@@ -13,7 +13,7 @@
 #include "bdt_file.h"
 #include "bdt_datamc.h"
 #include "bdt_var.h"
-#include "bdt_covar.h"
+//#include "bdt_covar.h"
 #include "bdt_varplot.h"
 #include "bdt_precalc.h"
 #include "bdt_info.h"
@@ -50,7 +50,7 @@ void gadget_buildfolder( std::string name){
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name);
 int compareQuick(bdt_variable var, std::vector<bdt_file*> files, std::vector<std::string> cuts, std::string name,bool shape_only);
 
-log_level_t GLOBAL_LEVEL = LOG_DEBUG;
+//log_level_t GLOBAL_LEVEL = LOG_DEBUG;
 
 int main (int argc, char *argv[]){
 
@@ -205,11 +205,11 @@ int main (int argc, char *argv[]){
                 isExternal=true;
                 break;
             case 'm':
-                covar_flux_template_xml = optarg;
+//                covar_flux_template_xml = optarg;
                 mode_option = "makefluxcovar";
                 break;
             case 'q':
-                covar_det_template_xml = optarg;
+//                covar_det_template_xml = optarg;
                 mode_option = "makedetcovar";
                 break;
             case 'y':
@@ -1302,13 +1302,16 @@ int main (int argc, char *argv[]){
                     scan_significance_linlin(signal_bdt_files, bkg_bdt_files, bdt_infos,fbdtcuts, which_bdt,which_file);
                     break;
 		case 8:
-		    scan_chisquare_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, additional_tag, 10.);
+		std::cout<<" OOPS CHECK "<<__LINE__<< " at "<<__FILE__<<std::endl;
+//		    scan_chisquare_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, additional_tag, 10.);
 		    break;
 		case 9:
-                    scan_chisquare_stat(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, additional_tag, 10.);
+		std::cout<<" OOPS CHECK "<<__LINE__<< " at "<<__FILE__<<std::endl;
+//                    scan_chisquare_stat(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, additional_tag, 10.);
                     break;
 		case 10:
-		    random_scan_chisquare_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, 10000, 10.);
+		std::cout<<" OOPS CHECK "<<__LINE__<< " at "<<__FILE__<<std::endl;
+//		    random_scan_chisquare_sys_fixed(MC_stack,  bdt_infos, vars.at(number), fbdtcuts, what_pot, 10000, 10.);
 		    break;
                 default:
                     break;
@@ -1788,8 +1791,8 @@ int main (int argc, char *argv[]){
             //new code 
             std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage,fbdtcuts,true);
             std::cout<<"Starting SBNfit covar handle w stage cuts "<<stage_cut<<std::endl;
-            bdt_covar covar_handle(&v, which_stage, stage_cut);
-            covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
+//            bdt_covar covar_handle(&v, which_stage, stage_cut);
+//            covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
             /*
                std::string sVID = v.GetCovarFile(); //"VID_stage_"+ std::to_string(which_stage) + "_" +v.GetID();
                std::cout<<"Variable ID is "<<sVID<<std::endl;
@@ -1898,13 +1901,13 @@ int main (int argc, char *argv[]){
 
             //new code 
             std::string stage_cut = bdt_files[0]->getGeneralStageCuts(which_stage,fbdtcuts,true);
-            bdt_covar covar_handle(&v, which_stage, stage_cut);
-            covar_handle.GenerateDetectorCovar(covar_det_template_xml);
+//            bdt_covar covar_handle(&v, which_stage, stage_cut);
+//            covar_handle.GenerateDetectorCovar(covar_det_template_xml);
 
             //in order to generate flux covar matrix together with det matrix, the "covarsys" needs to be set to "fluxxsdet" (default behavior)
             if(covar_flux_template_xml !="null.xml"){
-                covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
-                covar_handle.MergeCovar();
+//                covar_handle.GenerateReweightingCovar(covar_flux_template_xml);
+//                covar_handle.MergeCovar();
             }
 
             /*

@@ -5,14 +5,14 @@ include(FetchContent)
 
 # Fetch necessary dependency --> require cmake version >= 3.14
 FetchContent_Declare(
-  sbnfit
+#  sbnfit
   GIT_REPOSITORY https://github.com/NevisUB/whipping_star.git 
   GIT_TAG        946cab5487dfdb2542e57a46e32c39000aa84927  #641861404b092fa3113ada53f93385adc03936d0     #  branch guanqun_fractionfit
 )
 
 # After the following call, the CMake targets defined by sbnfit 
 # will be available to the rest of the build
-FetchContent_MakeAvailable(sbnfit)
+#FetchContent_MakeAvailable(sbnfit)
 
 
 # The version number.

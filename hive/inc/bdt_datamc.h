@@ -10,7 +10,7 @@
 #include  "bdt_var.h"
 #include  "bdt_info.h"
 #include  "bdt_spec.h"
-#include  "bdt_covar.h"
+//#include  "bdt_covar.h"
 /******** Root includes *****/
 
 #include "TTreeFormula.h"
@@ -34,6 +34,8 @@
 #include "TF1.h"
 #include "TMath.h"
 #include "TSystem.h"
+//for gROOT
+#include "TROOT.h"
 
 class bdt_datamc{
     public:

@@ -432,20 +432,20 @@ int bdt_datamc::plotStacks(TFile *ftest, std::vector<bdt_variable> vars, std::st
 
 
                     //check existence of local file 
-                    bdt_covar covar_handle(&var, s, stage_cut);
-                    std::string local_covar_file = covar_handle.LocalDir() + var.GetCovarFileID(s) + ".SBNcovar.root";
+//                    bdt_covar covar_handle(&var, s, stage_cut);
+//                    std::string local_covar_file = covar_handle.LocalDir() + var.GetCovarFileID(s) + ".SBNcovar.root";
 
-                    std::cout << "WARNING: Trying local covariance file if available: " << local_covar_file << std::endl;
-                    covar_f = new TFile(local_covar_file.c_str(), "read");
+//                    std::cout << "WARNING: Trying local covariance file if available: " << local_covar_file << std::endl;
+//                    covar_f = new TFile(local_covar_file.c_str(), "read");
 
                     if(covar_f->IsZombie()){
 
                         //create local covar file
                         std::cout << "WARNING WARNING: attempt failed, will generate covariance matrix locally " << std::endl;
 
-                        covar_handle.GenerateReweightingCovar();
-                        covar_handle.GenerateDetectorCovar();
-                        covar_handle.MergeCovar();
+//                        covar_handle.GenerateReweightingCovar();
+//                        covar_handle.GenerateDetectorCovar();
+//                        covar_handle.MergeCovar();
 
                         covar_f = new TFile(var.GetCovarFile(s).c_str(),"read");
                     }

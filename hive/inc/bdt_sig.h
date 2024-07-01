@@ -16,9 +16,9 @@
 #include  "bdt_file.h"
 #include  "bdt_var.h"
 #include  "bdt_info.h"
-#include  "bdt_covar.h"
+//#include  "bdt_covar.h"
 #include  "bdt_spec.h"
-#include  "SBNchi.h"
+//#include  "SBNchi.h"
 
 /******** Root includes *****/
 
@@ -65,16 +65,16 @@
  	 * Argument: plot_pot - POT at which sensitivity is evaluated with 
  	 * Argument: external_bdt_cuts: This marks a selection, with which  a fractional covariance matrix will be calculated, and then used for chi2 sensitivity evaluation for all grid points    
  	 */
-        std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, TMatrixT<double>* fixed_frac_matrix, double plot_pot, std::string pdfname = "CHIS_SYS.pdf", double signal_scale=1.0);
-	std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, std::string pdfname = "CHIS_SYS.pdf" , double signal_scale=1.0);
+//        std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, TMatrixT<double>* fixed_frac_matrix, double plot_pot, std::string pdfname = "CHIS_SYS.pdf", double signal_scale=1.0);
+//	std::vector<double> scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, std::string pdfname = "CHIS_SYS.pdf" , double signal_scale=1.0);
 	std::vector<double> scan_chisquare_stat(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, std::string pdfname = "CHIS_SYS.pdf", double signal_scale=1.0);
 
         /* Function: similar to function "scan_significance_sys_fixed", but instead of scaning linear grid setup by BDTinfos in the xmls, randomly choose cut positions within ranges.  
  	 * Return: cut position with the highest chi-square
  	 * Note: result of each randomly chosen point will be printed out.
  	 */
-	std::vector<double> random_scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, TMatrixT<double>* fixed_frac_matrix, double plot_pot,  int num_scans = 5000, double signal_scale=1.0 );
-	std::vector<double> random_scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, int num_scans = 5000, double signal_scale=1.0);
+//	std::vector<double> random_scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, TMatrixT<double>* fixed_frac_matrix, double plot_pot,  int num_scans = 5000, double signal_scale=1.0 );
+//	std::vector<double> random_scan_chisquare_sys_fixed(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, int num_scans = 5000, double signal_scale=1.0);
 	std::vector<double> random_scan_chisquare_stat(bdt_stack* stack,  std::vector<bdt_info> bdt_infos, bdt_variable var, std::vector<double>& external_bdt_cuts, double plot_pot, int num_scans = 5000, double signal_scale=1.0);
 	
 	/* Function: Scan the grid of cuts for all BDTs, by randomly choosing cuts within [min, max] cut range, choose set of cuts with max significance 
@@ -158,7 +158,7 @@
  	 * Argument: scale --> overall scaling to input spectra		
  	 * Return: chi-square value
  	 */
-	double calculate_chi(sbn::SBNchi* chi_handle, TMatrixT<double>* frac_matrix, std::vector<double>& fulldata, std::vector<double>& full_spec, std::vector<double>& full_spec_error, double scale=1.0);
+//	double calculate_chi(sbn::SBNchi* chi_handle, TMatrixT<double>* frac_matrix, std::vector<double>& fulldata, std::vector<double>& full_spec, std::vector<double>& full_spec_error, double scale=1.0);
 
 
 	/* Round given value to certain decimal points
