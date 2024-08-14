@@ -7,9 +7,8 @@ include(FetchContent)
 FetchContent_Declare(
   sbnfit
   GIT_REPOSITORY https://github.com/NevisUB/whipping_star.git 
-  GIT_TAG        56bb28e573efab99ea0550f847360d941e461223 # <- New master w/memory issues tweaks   | 946cab5487dfdb2542e57a46e32c39000aa84927  #641861404b092fa3113ada53f93385adc03936d0     #  branch guanqun_fractionfit
+  GIT_TAG        8e763ad95b5a816d72918cb2d56e00fd425ac691 # SL7 container boost fix <- New master w/memory issues tweaks   | 946cab5487dfdb2542e57a46e32c39000aa84927  #641861404b092fa3113ada53f93385adc03936d0     #  branch guanqun_fractionfit
 )
-
 # After the following call, the CMake targets defined by sbnfit 
 # will be available to the rest of the build
 FetchContent_MakeAvailable(sbnfit)
@@ -31,7 +30,6 @@ if (CMAKE_VERSION VERSION_LESS "3.1")
           set (CMAKE_CXX_STANDARD 14)
 endif ()
 
-
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 #This works if your root as compiled with cmake, 
 find_package(ROOT REQUIRED COMPONENTS TMVA TreePlayer)# COMPONENTS Core Cint RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread)
@@ -41,6 +39,7 @@ set (ROOTXTRAS "-lTMVA -lTreePlayer")
 execute_process(COMMAND "root-config" "--cflags" "--libs" OUTPUT_VARIABLE rootcflag)
 execute_process(COMMAND "root-config" "--incdir" OUTPUT_VARIABLE ROOT_INCDIR)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  ${ROOTXTRAS} ")
+
 
 # Update compile flags in order to be able to compile sbnfit related files
 # Get our GSL libraries
@@ -60,6 +59,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)
 include_directories(${ROOT_INCDIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tinyxml/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/xgboost/include/)
+
+find_package(Boost)
+if(Boost_FOUND)
+    message(STATUS "include boost dir of " ${Boost_INCLUDE_DIRS})
+    include_directories(${Boost_INCLUDE_DIRS})
+endif()
+
 
 add_subdirectory(root_linkdefs)
 add_subdirectory(tinyxml)
