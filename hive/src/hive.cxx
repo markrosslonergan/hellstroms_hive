@@ -433,7 +433,9 @@ int main (int argc, char *argv[]){
             bdt_files.back()->setEventIdentifier(event_identifier);
         }
         bdt_files.back()->addPlotName(XMLconfig.bdt_plotnames[f]);
-        bdt_files.back()->addDataDescriptor(XMLconfig.bdt_data_descriptor[f]);
+		std::cout<<XMLconfig.bdt_data_descriptor[f]<<std::endl;        
+//		CHECK WHY THERE is a problem of adding the following line? It breaks the loop..
+//		bdt_files.back()->addDataDescriptor(XMLconfig.bdt_data_descriptor[f]);
         tagToFileMap[XMLconfig.bdt_tags[f]] = bdt_files.back();
 
         bool incl_in_stack = true;
@@ -537,6 +539,7 @@ int main (int argc, char *argv[]){
         if(incl_in_stack) stack_bdt_files.push_back(bdt_files.back());
 
         if(XMLconfig.bdt_is_validate_file[f]) validate_files.push_back(bdt_files.back());
+
 
     }
 
@@ -719,6 +722,7 @@ int main (int argc, char *argv[]){
         return 0;
 
     }else if(mode_option == "app"){
+
 
         for(int f=0; f< bdt_files.size();++f){
             for(int i=0; i< bdt_infos.size();++i){

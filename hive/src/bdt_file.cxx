@@ -354,7 +354,7 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
 
 
     if(this->tag.find("FLAT")==std::string::npos){
-	std::cout<<"Got a non-flat eventweight tree. "<<std::endl;
+		std::cout<<"Got a non-flat eventweight tree. "<<std::endl;
         teventweight = (TTree*)f->Get((root_dir+"eventweight_tree").c_str());
 		std::cout<<"CHECK DIR "<<root_dir+"eventweight_tree"<<std::endl;
         tvertex->AddFriend(teventweight);
@@ -484,16 +484,22 @@ int bdt_file::calcPOT(std::vector<std::string> run_names, std::vector<std::strin
     }else if(is_data){
         //Ths is for Pure On beam Data. Taken as input by calling 
 
-        std::cout<<"bdt_file::bdt_file()\t||\tFile is ON-BEAM DATA for purposes of getting POT."<<std::endl;
-        tpot = (TTree*)f->Get(tnam_pot.c_str());
-        tpot->SetBranchAddress("number_of_events", &numbranch);
-        std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
-        int tmpnum = 0;
-        std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
-        for(int i=0; i<tpot->GetEntries(); i++) {
-            tpot->GetEntry(i);
-            tmpnum += (double)numbranch;
-        }
+		int tmpnum = 0;
+		std::cout<<"bdt_file::bdt_file()\t||\tFile is ON-BEAM DATA for purposes of getting POT."<<std::endl;
+		tpot = (TTree*)f->Get(tnam_pot.c_str());
+		if( tpot){
+			tpot->SetBranchAddress("number_of_events", &numbranch);
+			std::cout<<"bdt_file::bdt_file()\t||\tBranches all setup."<<std::endl;
+			std::cout<<"bdt_file::bdt_file()\t||\t There was "<<tpot->GetEntries()<<" files merged to make this root file."<<std::endl;
+			for(int i=0; i<tpot->GetEntries(); i++) {
+				tpot->GetEntry(i);
+				tmpnum += (double)numbranch;
+			};
+
+		}
+		else{
+			tmpnum = 10;
+		};
         numberofevents = tmpnum;
         numberofevents_raw = numberofevents;
 
@@ -1171,7 +1177,22 @@ int bdt_file::addBDTResponses(std::string dir, bdt_info input_bdt_info){
     auto method = input_bdt_info.TMVAmethod;
 
     std::cout<<"Now adding TreeFriend: "<<dir+input_bdt_info.identifier<<"_app.root"<<" "<<this->tag<<std::endl;
-    this->addFriend(this->tag +"_"+input_bdt_info.identifier,  dir+input_bdt_info.identifier+"_"+this->tag+"_app"+".root");
+
+	//Add a check
+	std::string treename = this->tag +"_"+input_bdt_info.identifier;
+	std::string filename = dir+input_bdt_info.identifier+"_"+this->tag+"_app"+".root";
+
+	TFile *f = TFile::Open( filename.c_str(), "READ");
+	if (f && !f->IsZombie()) {
+		TTree *friendtree = (TTree*)f->Get(treename.c_str());
+		if (friendtree) {
+			this->addFriend(treename, filename);
+		} else {
+			std::cout << "\nWarning: Tree "<<treename<<" was not found in "<<filename<< std::endl;
+		}
+	} else {
+		std::cout << "\nWarning: "<<filename<<"is missing or corrupted." << std::endl;
+	}
 
     return 0;
 }
