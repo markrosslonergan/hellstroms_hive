@@ -558,7 +558,7 @@ int bdt_XGtrain(std::string dir, bdt_info &info){
     int silent = 0;
     int use_gpu = 0;  // set to 1 to use the GPU for training
 
-    std::cout<<"CHECK File: "<<dir+info.identifier+".libSVM.train.dat"<<std::endl;
+//    std::cout<<"CHECK File: "<<dir+info.identifier+".libSVM.train.dat"<<std::endl;
     safe_xgboost(XGDMatrixCreateFromFile((dir+info.identifier+".libSVM.train.dat").c_str(), silent, &dtrain));
     safe_xgboost(XGDMatrixCreateFromFile((dir+info.identifier+".libSVM.test.dat").c_str(), silent, &dtest));
 
@@ -838,7 +838,7 @@ int bdt_XGtrain(std::string dir, bdt_info &info){
         c_error->Update();
     }
     //   c_error->SaveAs(("XGBoost_Validation_"+name+".root").c_str(),"root");
-    c_error->SaveAs(("XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
+    c_error->SaveAs((dir+"XGBoost_Validation_"+name+".pdf").c_str(),"pdf");
     c_error->Write(); 
     hfile ->Close();
 
